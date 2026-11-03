@@ -20,7 +20,6 @@ updated: "2026-10-05"
 
 - Platform Engineers
 - DevOps Engineers
-- AI Agents
 
 ### Scope
 
@@ -71,12 +70,6 @@ gitops/
 - **Example boundary**: [Azure reference implementation](../README.md)
 - **Infrastructure**: [../infrastructure/README.md](../infrastructure/README.md)
 - **Repository operations**: GitOps platform runbook (`docs/05.operations/runbooks/README.md`)
-
-### AI Agent Guidance
-
-1. 매니페스트 수정 시 기존 연동된 Azure 리소스(ID, Resource ID 등)가 유효한지 확인한다.
-2. 보안 상 중요한 비밀 정보(Secret)는 매니페스트에 직접 커밋하지 않고 Secret Store CSI 드라이버 설정을 사용한다.
-3. 리소스 네이밍 및 라벨링 정책을 엄격히 준수한다.
 
 ## Verification
 

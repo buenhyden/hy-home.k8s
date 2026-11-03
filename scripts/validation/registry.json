@@ -62,46 +62,6 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "archive-contract-tests",
-      "argv": [
-        "python3",
-        "scripts/run-contract-tests.py",
-        "--root",
-        ".",
-        "--suite",
-        "archive"
-      ],
-      "lanes": [
-        "affected",
-        "staged"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Stage 98 archive contract regressions are required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
-      "id": "archive-integrity",
-      "argv": [
-        "python3",
-        "scripts/validate-archive-integrity.py",
-        "--root",
-        "."
-      ],
-      "lanes": [
-        "affected",
-        "staged"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Current Stage 98 archive integrity and secret validation is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
       "id": "workspace-memory-regressions",
       "argv": [
         "python3",
@@ -202,27 +162,6 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "archive-validation-tests",
-      "argv": [
-        "python3",
-        "scripts/run-contract-tests.py",
-        "--root",
-        ".",
-        "--suite",
-        "archive-validation"
-      ],
-      "lanes": [
-        "affected",
-        "staged"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Archive validator regressions are required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
       "id": "document-lifecycle-tests",
       "argv": [
         "python3",
@@ -239,7 +178,7 @@
       "optional": false,
       "fallback": {
         "status": "FAIL",
-        "reason": "Document lifecycle migration and identity regressions are required."
+        "reason": "Document lifecycle and identity regressions are required."
       },
       "evidenceLane": "repo-static"
     },
@@ -1010,8 +949,6 @@
       "validators": [
         "affected-surface-contract",
         "agent-governance",
-        "archive-contract-tests",
-        "archive-integrity",
         "document-contract-registry",
         "document-contract-tests",
         "document-lifecycle",
@@ -1023,7 +960,7 @@
       "protectedLevel": "protected",
       "fallback": {
         "status": "FAIL",
-        "reason": "Stage 99 machine contracts require document and Archive regressions."
+        "reason": "Stage 99 machine contracts require document regressions."
       },
       "evidenceLane": "repo-static"
     },
@@ -1032,7 +969,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!docs/99\\.templates/(?:registry\\.json$|contracts/.*\\.json$))docs/99\\.templates/.*$"
+          "value": "^(?!.*(?:^|/)(?:README|AGENTS)\\.md$)(?!docs/99\\.templates/(?:registry\\.json$|contracts/.*\\.json$))docs/99\\.templates/.*$"
         }
       ],
       "validators": [
@@ -1106,16 +1043,33 @@
         }
       ],
       "validators": [
-        "archive-integrity",
-        "document-contract-registry",
-        "document-lifecycle",
-        "links-and-owners",
-        "markdown-profiles"
+        "secret-handling"
       ],
       "protectedLevel": "review",
       "fallback": {
         "status": "FAIL",
-        "reason": "Archive changes require current integrity and document checks."
+        "reason": "Archive content is not validated; changes only rerun secret scanning."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "folder-agents-guides",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/(?!98\\.archive/)(?:[^/]+/)*AGENTS\\.md$"
+        }
+      ],
+      "validators": [
+        "document-contract-registry",
+        "links-and-owners",
+        "markdown-profiles",
+        "repository-quality"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Folder agent instructions require document registry, link and profile checks."
       },
       "evidenceLane": "repo-static"
     },
@@ -1124,7 +1078,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)docs/(?:README\\.md|01\\.requirements/.*|02\\.architecture/.*|03\\.specs/.*|04\\.execution/.*|05\\.operations/.*|90\\.references/.*)$"
+          "value": "^(?!.*(?:^|/)(?:README|AGENTS)\\.md$)docs/(?:README\\.md|01\\.requirements/.*|02\\.architecture/.*|03\\.specs/.*|05\\.operations/.*|90\\.references/.*)$"
         },
         {
           "kind": "exact",
@@ -1329,27 +1283,15 @@
         },
         {
           "kind": "exact",
-          "value": "tests/test_completed_state_migration.py"
-        },
-        {
-          "kind": "exact",
           "value": "tests/test_document_lifecycle_cumulative_history.py"
         },
         {
           "kind": "exact",
+          "value": "tests/test_document_lifecycle_completion.py"
+        },
+        {
+          "kind": "exact",
           "value": "tests/git_fixture.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/archive_generation_fixture.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_document_lifecycle_archive_cutover.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_document_lifecycle_migration.py"
         },
         {
           "kind": "exact",
@@ -1358,8 +1300,6 @@
       ],
       "validators": [
         "affected-surface-contract",
-        "archive-contract-tests",
-        "archive-integrity",
         "document-contract-registry",
         "document-contract-tests",
         "document-lifecycle",
@@ -1371,7 +1311,7 @@
       "protectedLevel": "protected",
       "fallback": {
         "status": "FAIL",
-        "reason": "Shared document history readers require current document checks and Archive recovery and integrity guards."
+        "reason": "Shared document history readers require current document checks."
       },
       "evidenceLane": "repo-static"
     },
@@ -1452,11 +1392,7 @@
         },
         {
           "kind": "exact",
-          "value": "tests/test_common_agents_archive_routes.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_document_strict_cutover.py"
+          "value": "tests/test_document_terminal_contract.py"
         },
         {
           "kind": "exact",
@@ -1492,14 +1428,6 @@
         },
         {
           "kind": "exact",
-          "value": "scripts/agent_governance_consumers.py"
-        },
-        {
-          "kind": "exact",
-          "value": "scripts/agent_registry_loader.py"
-        },
-        {
-          "kind": "exact",
           "value": "tests/test_validate_agent_registry.py"
         },
         {
@@ -1508,15 +1436,11 @@
         },
         {
           "kind": "exact",
-          "value": "tests/test_agent_governance_consumers.py"
-        },
-        {
-          "kind": "exact",
           "value": "tests/test_validate_agent_harness_contract.py"
         },
         {
           "kind": "exact",
-          "value": "tests/test_validate_agent_core_cutover.py"
+          "value": "tests/test_validate_agent_core.py"
         }
       ],
       "validators": [
@@ -1554,10 +1478,6 @@
         {
           "kind": "exact",
           "value": "tests/test_validation_profiles.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_affected_surface_migration.py"
         },
         {
           "kind": "exact",
@@ -1854,52 +1774,6 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "archive-scripts",
-      "routes": [
-        {
-          "kind": "exact",
-          "value": "scripts/archive_dispositions.py"
-        },
-        {
-          "kind": "exact",
-          "value": "scripts/archive_objects.py"
-        },
-        {
-          "kind": "exact",
-          "value": "scripts/archive_recovery.py"
-        },
-        {
-          "kind": "exact",
-          "value": "scripts/archive_validation.py"
-        },
-        {
-          "kind": "exact",
-          "value": "scripts/validate-archive-integrity.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_validation.py"
-        }
-      ],
-      "validators": [
-        "affected-surface-contract",
-        "agent-governance",
-        "archive-contract-tests",
-        "archive-integrity",
-        "archive-validation-tests",
-        "document-contract-tests",
-        "document-lifecycle",
-        "links-and-owners",
-        "repository-quality"
-      ],
-      "protectedLevel": "protected",
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Archive scripts rerun the Archive gates and the repository contract."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
       "id": "tooling-scripts",
       "routes": [
         {
@@ -1949,10 +1823,6 @@
         {
           "kind": "exact",
           "value": "tests/test_prompt_input.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_provider_guard_registry_generation.py"
         },
         {
           "kind": "exact",
@@ -2019,7 +1889,6 @@
       "validators": [
         "affected-surface-contract",
         "agent-governance",
-        "archive-contract-tests",
         "gitops-structure",
         "infrastructure-contracts",
         "k8s-manifests",
@@ -2071,7 +1940,6 @@
       "validators": [
         "affected-surface-contract",
         "agent-governance",
-        "archive-contract-tests",
         "gitops-structure",
         "infrastructure-contracts",
         "k8s-manifests",
@@ -2100,8 +1968,6 @@
         "affected-surface-contract",
         "agent-governance",
         "agent-governance-tests",
-        "archive-contract-tests",
-        "archive-validation-tests",
         "ci-metadata-tests",
         "cluster-gate-tests",
         "document-contract-tests",
@@ -2120,84 +1986,16 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "archive-test-modules",
-      "routes": [
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_registry_contract.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_citation_decision.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_dispositions.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_disposition_lifecycle.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_catalog_reverification.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_reappraisal.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_generic_migration_recovery.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_current_pin.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_disposition_routes.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_generation_fixture.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_historical_proof.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_integrity.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_archive_recovery.py"
-        }
-      ],
-      "validators": [
-        "archive-contract-tests",
-        "repository-quality"
-      ],
-      "protectedLevel": "review",
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Archive contract test modules rerun their suite."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
       "id": "scripts",
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle|pr-metadata|ci-python-contract)\\.py)$)(?!scripts/(?:validate-agent-governance|agent_governance_consumers|agent_registry_loader)\\.py$)(?!scripts/workspace_memory\\.py$)(?!scripts/githooks/(?:pre-commit|commit-msg|pre-push|chained-hook\\.sh)$)(?!scripts/(?:archive_(?:dispositions|objects|recovery|validation)|validate-archive-integrity)\\.py$)(?!scripts/(?:check-secret-handling|render-platform-chart-kinds|validate-(?:gitops-structure|infrastructure-contracts|k8s-manifests|policy-gates))\\.sh$)(?!scripts/validate-(?:gitops-change-set|vault-eso-contracts)\\.py$)(?!scripts/validation/platform/)(?!scripts/(?:commit-message-exceptions|independent_review|prompt-input|provider_write_guard|validate-selected-nonstyle)\\.py$)(?!scripts/validation/(?:current_executable_references|repository/(?:form_contracts|sample_app_contract))\\.py$)(?!scripts/(?:run-contract-tests|run-validation-lane|select-affected-surfaces|validate-affected-surfaces|validate-selected-style|validate-workspace-boundary|validate-knowledge-surface)\\.py$)(?!scripts/validation/repository/(?:bounded_io|quality)\\.py$)(?!scripts/validate-github-actions-security\\.py$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle|pr-metadata|ci-python-contract)\\.py)$)(?!scripts/validate-agent-governance\\.py$)(?!scripts/workspace_memory\\.py$)(?!scripts/githooks/(?:pre-commit|commit-msg|pre-push|chained-hook\\.sh)$)(?!scripts/(?:check-secret-handling|render-platform-chart-kinds|validate-(?:gitops-structure|infrastructure-contracts|k8s-manifests|policy-gates))\\.sh$)(?!scripts/validate-(?:gitops-change-set|vault-eso-contracts)\\.py$)(?!scripts/validation/platform/)(?!scripts/(?:commit-message-exceptions|independent_review|prompt-input|provider_write_guard|validate-selected-nonstyle)\\.py$)(?!scripts/validation/(?:current_executable_references|repository/(?:form_contracts|sample_app_contract))\\.py$)(?!scripts/(?:run-contract-tests|run-validation-lane|select-affected-surfaces|validate-affected-surfaces|validate-selected-style|validate-workspace-boundary|validate-knowledge-surface)\\.py$)(?!scripts/validation/repository/(?:bounded_io|quality)\\.py$)(?!scripts/validate-github-actions-security\\.py$)scripts/.*$"
         }
       ],
       "validators": [
         "affected-surface-contract",
         "agent-governance",
-        "archive-contract-tests",
         "gitops-structure",
         "infrastructure-contracts",
         "k8s-manifests",
@@ -2236,11 +2034,10 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/test_[^/]*\\.py$)(?!tests/(?:fixtures/validation-surfaces\\.json|affected_surface_mutations\\.py)$)(?!tests/(?:fixtures/github-actions-security\\.json|(?:git_fixture|archive_generation_fixture|gitops_change_set_cases|vault_eso_contract_cases)\\.py)$)tests/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/test_[^/]*\\.py$)(?!tests/(?:fixtures/validation-surfaces\\.json|affected_surface_mutations\\.py)$)(?!tests/(?:fixtures/github-actions-security\\.json|(?:git_fixture|gitops_change_set_cases|vault_eso_contract_cases)\\.py)$)tests/.*$"
         }
       ],
       "validators": [
-        "archive-contract-tests",
         "repository-quality"
       ],
       "protectedLevel": "review",
@@ -2321,12 +2118,9 @@
     "quick": [
       "affected-surface-contract",
       "agent-governance",
-      "archive-contract-tests",
-      "archive-integrity",
       "ci-python-contract",
       "document-contract-registry",
       "document-contract-tests",
-      "archive-validation-tests",
       "document-lifecycle-tests",
       "validation-routing-tests",
       "qa-runner-tests",
@@ -2357,12 +2151,9 @@
     "staged": [
       "affected-surface-contract",
       "agent-governance",
-      "archive-contract-tests",
-      "archive-integrity",
       "ci-python-contract",
       "document-contract-registry",
       "document-contract-tests",
-      "archive-validation-tests",
       "document-lifecycle-tests",
       "validation-routing-tests",
       "qa-runner-tests",

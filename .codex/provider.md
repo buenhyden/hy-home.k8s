@@ -17,7 +17,8 @@ execution policy or the agent roster.
 ## Authority Boundary
 
 `AGENTS.md` is the thin Codex gateway; `.codex/CODEX.md` is the local
-baseline. Native sandbox, approval, and configuration surfaces govern the
+baseline. Codex also loads a folder `AGENTS.md` natively for work below it;
+those files carry folder agent rules and never widen the gateway. Native sandbox, approval, and configuration surfaces govern the
 running client. The neutral registry owns shared role and permission meaning.
 
 ## Governance Context
@@ -86,10 +87,16 @@ team document, not a special automatic entry filename.
   budget failure. `--ignore-user-config` did not isolate every user role/skill
   discovery surface. Explicit role/skill file reads, agent-reported denial and
   an absent probe file do not establish native discovery, resolved role model
-  or hook enforcement. The SPEC-0086 Task recorded that attempt's evidence and is recovered from Git
-  through the Retention Catalog in `docs/98.archive/README.md`; SPEC-0072's
+  or hook enforcement. The SPEC-0086 Task recorded that attempt's evidence;
+  SPEC-0072's
   Task recorded it first and transferred it to SPEC-0086 on 2026-09-24 when
-  SPEC-0072 closed on its static half.
+  SPEC-0072 closed on its static half. Git history recovers these Tasks and
+  the SPEC-0114 Task this note cites:
+  `git show bc8e8125:docs/98.archive/completed/03.specs/0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md`,
+  `git show 69445fca:docs/98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md`,
+  and `tsk-0001-provider-permission-hardening.md` of package
+  `0114-provider-permission-hardening` under `docs/03.specs/` at commit
+  `69445fca`.
   At that point the next owner was the user/operator for a reviewed project/hook
   trust state and an explicitly authorized observable session.
 - On `codex-cli 0.155.1` (2026-09-27) an authorized `--sandbox read-only`
@@ -122,8 +129,8 @@ team document, not a special automatic entry filename.
   [Codex bindings](bindings.json), not the neutral registry. Rollout records
   of spawned threads show that the client
   applied each bound model and `model_reasoning_effort`. The SPEC-0096 Task recorded
-  the rationale and the evidence, which Git recovers through the Retention
-  Catalog.
+  the rationale and the evidence; recover it with
+  `git show bc8e8125:docs/98.archive/completed/03.specs/0096-codex-model-tier-rebinding/tasks/tsk-0001-rebind-codex-model-tiers.md`.
 - The intended boundary for a non-authoring role on this provider is the
   operating-system `sandbox_mode` mapped by its binding under the neutral class
   ceiling. A delivered hook does not establish sandbox enforcement. On this host,
@@ -149,19 +156,19 @@ team document, not a special automatic entry filename.
   `tests/test_k8s_pre_edit_hook.py`. These static checks do not establish event
   delivery. The operator's new trusted Codex session on 2026-10-14 observed a
   `PreToolUse` denial on an `apply_patch` probe with no file created after
-  `/hooks` review (SPEC-0114 Task EVD-022). It also observed a dummy
+  `/hooks` review (SPEC-0114 Task EVD-022, in Git history). It also observed a dummy
   secret-named environment variable absent and a network approval prompt;
   those observations do not prove the environment filter's specific cause or
   sandbox isolation. Keep config parsing, hook delivery, rule matching, approval
   and sandbox enforcement as separate evidence lanes.
-  The active SPEC-0115 Task also records this chat's native hook denials while
+  The SPEC-0115 Task (Git history) also recorded this chat's native hook denials while
   an intermediate validation Registry edit was incomplete, followed by a
   bounded repair and selected repository checks. That is further hook invocation
   evidence, not proof that the sandbox started.
 - Use the shared workspace memory store from
   [context and memory](../.agents/governance/context-and-memory.md) instead of
   native memory, and re-observe repository/task state on resume. Shared context and safety rules live in policies, not this note.
-- Reviewed and not adopted on 2026-10-27 (SPEC-0125): no project MCP server
+- Reviewed and not adopted on 2026-10-27 (SPEC-0125, Git history): no project MCP server
   is registered in `.codex/config.toml`, no IDE shortcut or code-action
   configuration is tracked, and no model-generated test cases or hook-based
   automatic memory collection are used. Adding any of them is a separate

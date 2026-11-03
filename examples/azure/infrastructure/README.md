@@ -20,7 +20,6 @@ updated: "2026-10-05"
 
 - DevOps Engineers
 - Cloud Platform Team
-- AI Agents
 
 ### Scope
 
@@ -82,12 +81,6 @@ infrastructure/
 - **Example boundary**: [Azure reference implementation](../README.md)
 - **Repository architecture**: Current local GitOps platform (`docs/02.architecture/descriptions/README.md`)
 - **GitOps**: [../gitops/README.md](../gitops/README.md)
-
-### AI Agent Guidance
-
-1. 리소스 정의 변경 시 반드시 관련 ADR 및 Spec과 일치하는지 확인한다.
-2. 모듈화된 배포 구조를 선호하며, 상호 의존성을 명확히 관리한다.
-3. 배포 파라미터는 하드코딩하지 않고 변수나 파라미터를 통해 주입받도록 구성한다.
 
 ## Verification
 

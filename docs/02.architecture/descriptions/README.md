@@ -11,9 +11,6 @@ layer: "architecture"
 
 > Requirement Package를 시스템 경계, 품질 속성, 참조 아키텍처로 해석하는 AD stage다.
 
-> [!NOTE]
-> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../../.agents/README.md)를 따른다.
-
 ## Overview
 
 이 경로는 Requirement Package를 시스템 경계, 품질 속성, 데이터 흐름,
@@ -30,7 +27,6 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 - Platform Architects
 - Platform Engineers
 - Documentation Writers
-- AI Agents
 
 ## Scope
 
@@ -50,17 +46,17 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 
 | Path | Purpose |
 | --- | --- |
-| [AD-0004](./0004-argo-rollouts-progressive-delivery.md) | Argo Rollouts 점진적 배포 구조. [SPEC-0004](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md)는 완료된 구현의 역사 근거다. |
-| [AD-0005](./0005-argo-notifications-slack.md) | ArgoCD Notifications와 Vault/ESO credential 경계. [SPEC-0005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md)는 완료된 구현의 역사 근거다. |
-| [AD-0006](./0006-workspace-agent-governance-platform.md) | 공통 거버넌스 구조의 현재 소유자. [SPEC-0054 WP-013](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md)은 2026-09-16 완료되었고 잔여 Stage 03 처분은 SPEC-0083·SPEC-0084로 승계되었다(두 package는 [Archive](../../98.archive/README.md) Retention Catalog로 Git에서 복구한다). |
-| [AD-0007](./0007-current-local-gitops-platform.md) | 로컬 GitOps 구조의 현재 소유자이며, 실행 가능한 desired state와 검증기가 구체적인 구현 계약을 소유한다. [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)은 완료된 구현의 증거다. [SPEC-0104](../../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md)는 REQ-0004-FR-0008·FR-0010의 저장소 정적 검증을 완료했다. CRD 스키마·생성 결과·live 관측은 소유자와 재시도 조건이 있는 DEFER다. |
+| [AD-0004](./0004-argo-rollouts-progressive-delivery.md) | Argo Rollouts 점진적 배포 구조. Argo Rollouts 구조의 소유자다. |
+| [AD-0005](./0005-argo-notifications-slack.md) | ArgoCD Notifications와 Vault/ESO credential 경계. Notifications 구조의 소유자다. |
+| [AD-0006](./0006-workspace-agent-governance-platform.md) | 공통 거버넌스 구조의 현재 소유자다. 이전 Spec package는 삭제되었고 Archived Lineage가 요약한다. |
+| [AD-0007](./0007-current-local-gitops-platform.md) | 로컬 GitOps 구조의 현재 소유자이며, 실행 가능한 desired state와 검증기가 구체적인 구현 계약을 소유한다. |
 
 ## Usage
 
 1. 관련 `01.requirements/` 문서를 먼저 읽어 요구사항 경계를 고정한다.
 2. 새 AD는 `../../99.templates/templates/architecture/description.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/descriptions/####-<system-or-domain>.md`다. 안정 ID `AD-####`는 frontmatter에 둔다.
 3. 주요 설계 결정은 `02.architecture/decisions/`에 별도 ADR로 연결한다.
-4. AD의 현재 의미와 소비자를 승계한 뒤 실제 lifecycle에 따라 대체되면 `superseded/`, 후속 없이 철회되면 `retired/`에 원래 profile 그대로 본문을 보존한다([ADR-0040](../decisions/0040-archive-reappraisal-and-verifiable-sources.md)). 원본은 두 번째 복구 원장 없이 Git history가 복구하며, ADR도 예외가 아니다. 기존 봉인 provenance는 동결된 역사 증거로 유지한다.
+4. 대체된 ADR의 ID는 후속 ADR의 `supersedes`와 Traceability가 유지하고, AD Archived Lineage가 요약하며, 같은 변경에서 삭제한다. 원본은 Git history가 복구한다([ADR-0053](../decisions/0053-unvalidated-archive.md)).
 5. 구현 가능한 계약은 `03.specs/`로 내려보내고 양방향 링크를 유지한다.
 
 ### Relative Link Rules

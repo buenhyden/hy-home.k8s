@@ -27,7 +27,7 @@ Research reference with source-backed claims and stated limits.
 A claim here states what an external source documents. Whether this repository
 retains, cites, or validates something is decided by
 [common governance](../../../../.agents/README.md), the Stage 99 registry, and
-[ADR-0039](../../../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)
+ADR-0039
 once accepted.
 
 ## Scope
@@ -137,7 +137,7 @@ truth stays with the governance and registry owners named above.
 
 ### 2026-09-28 Retention and Provenance Addendum
 
-The earlier 2026-09-15 findings and source results above remain their dated evidence. The sources below were read directly on 2026-09-28 to assess the proposed Archive standard; they do not grant repository approval. The current local decision is [ADR-0040](../../../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md).
+The earlier 2026-09-15 findings and source results above remain their dated evidence. The sources below were read directly on 2026-09-28 to assess the proposed Archive standard; they do not grant repository approval. The current local decision is ADR-0040.
 
 - Digital Preservation Coalition describes iterative retention review, documented responsibility, timing, circumstances and approval for de-accession, and retaining a catalogue entry and process record after disposal. Acquisition and appraisal considers context, value, long-term cost and access. Neither guide prescribes a Git layout, a fixed retention period, local status enum or exact-byte rule. Age alone is not an appraisal result.
 - AWS describes an ADR's context, decision and consequences, and a later ADR superseding an accepted decision. Its advice to mark an old ADR superseded must be reconciled with this repository's frozen exact-byte bodies; current judgment in the Archive index and successor decision is a local choice, not an AWS-prescribed form.

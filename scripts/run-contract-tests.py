@@ -20,27 +20,9 @@ def _modules(*names: str) -> tuple[str, ...]:
 
 
 SUITES = {
-    "archive": _modules(
-        "archive_registry_contract",
-        "archive_citation_decision",
-        "archive_dispositions",
-        "archive_disposition_lifecycle",
-        "archive_catalog_reverification",
-        "archive_reappraisal",
-        "generic_migration_recovery",
-        "archive_current_pin",
-        "archive_disposition_routes",
-        "archive_generation_fixture",
-        "archive_historical_proof",
-        "archive_integrity",
-        "archive_recovery",
-    ),
-    # ponytail: about 400 s in one module; split ArchiveTransitionLinkTest out
-    # if archive_validation.py edits become frequent.
-    "archive-validation": _modules("archive_validation"),
     "document": _modules(
-        "completed_state_migration",
         "document_lifecycle_cumulative_history",
+        "document_lifecycle_completion",
         "task_execution_contract",
         "task_acceptance_contract",
         "task_acceptance_boundaries",
@@ -56,20 +38,16 @@ SUITES = {
         "markdown_render_cache",
         "json_schema_validation",
         "common_agents_document_routes",
-        "common_agents_archive_routes",
-        "document_strict_cutover",
+        "document_terminal_contract",
         "document_language",
         "documentation_link_boundary",
     ),
     "document-lifecycle": _modules(
-        "document_lifecycle_migration",
-        "document_lifecycle_archive_cutover",
         "document_artifact_identity",
     ),
     "validation-routing": _modules(
         "validate_affected_surfaces",
         "validation_profiles",
-        "affected_surface_migration",
         "run_validation_lane",
         "validation_tooling_ownership",
         "validation_bounded_io",
@@ -85,15 +63,13 @@ SUITES = {
     "release": _modules("release", "commit_contracts"),
     "agent-governance": _modules(
         "agent_governance",
-        "agent_governance_consumers",
         "validate_agent_registry",
         "validate_agent_harness_contract",
-        "validate_agent_core_cutover",
+        "validate_agent_core",
     ),
     "tooling": _modules(
         "independent_review",
         "prompt_input",
-        "provider_guard_registry_generation",
         "k8s_pre_edit_hook",
         "repository_quality_rules",
         "repository_form_contracts",

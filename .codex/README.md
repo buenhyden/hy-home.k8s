@@ -55,9 +55,9 @@ model 접근, 역할 발견, 권한 강제를 증명하지 않는다. 생성기�
 
 ## Usage
 
-[provider baseline](CODEX.md)을 읽은 뒤 선택한 공통 역할과 그 역할에 필요한
-절차를 읽는다. 공통 skill은 명시적으로만 호출하며 추가 도구나 승인을 주지
-않는다. 절차는 `.agents/skills/`에서 한 번만 고친다. 개인 로컬 설정과 memory는
+Codex 세션은 [provider baseline](CODEX.md)에서 시작해 선택된 공통 역할과
+그 역할에 필요한 절차를 적용한다. 공통 skill은 명시적으로만 호출되며 추가
+도구나 승인을 주지 않는다. 절차의 원본은 `.agents/skills/` 한 곳이다. 개인 로컬 설정과 memory는
 공통 정책이 아니며, 재사용할 맥락은 공유 workspace memory store에 둔다.
 
 ## Verification

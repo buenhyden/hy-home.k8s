@@ -11,9 +11,6 @@ layer: "architecture"
 
 > 요구사항을 아키텍처 요구와 결정 기록으로 연결하는 canonical architecture stage다.
 
-> [!NOTE]
-> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../.agents/README.md)를 따른다.
-
 ## Overview
 
 `02.architecture/`는 요구사항을 시스템 구조와 의사결정으로 연결하는 아키텍처 허브다.
@@ -22,11 +19,8 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 이 stage는 현재 실행계약을 보존한다. 현재 repo-backed 실행계약은
 [`gitops/`](../../gitops/), [`scripts/validate-infrastructure-contracts.sh`](../../scripts/validate-infrastructure-contracts.sh),
 정적 검증 스크립트가 우선한다. ADR을 포함해 더 이상 현재가 아닌 문서는 current consumer와 의미를
-승계한 뒤 Stage 98로 떠난다. 대체된 문서는 `superseded/<stage>/`, 후계자 없이 철회된 문서는 `retired/<stage>/`에
-원래 profile 그대로 보존한다([ADR-0040](./decisions/0040-archive-reappraisal-and-verifiable-sources.md)). 대체된 ADR은
-`98.archive/superseded/`로 떠나며 상호 supersession을 유지한다. ADR-0032 외의 대체된 ADR은 그 뒤 Retention Catalog
-envelope로 Git에서 복구하는 `git-history-only`가 되었다.
-[`Archive index`](../98.archive/README.md)는 현재 탐색 경계이며 보존본은 현재 실행 권위가 아니다.
+승계한 뒤 이 stage를 떠난다. Architecture Description의 Archived Lineage 표에 요약한 뒤 삭제하며, 원본은 Git history가 복구한다([ADR-0053](./decisions/0053-unvalidated-archive.md)). Stage 98은
+검증하지 않는 기록 보관소이며 현재 실행 권위가 아니다.
 
 ### Reader Route
 
@@ -43,7 +37,6 @@ envelope로 Git에서 복구하는 `git-history-only`가 되었다.
 - Platform Engineers
 - GitOps Operators
 - Architecture Reviewers
-- AI Agents
 
 ## Scope
 
@@ -66,13 +59,14 @@ envelope로 Git에서 복구하는 `git-history-only`가 되었다.
 | --- | --- |
 | [descriptions/](./descriptions/) | Architecture Description과 참조 모델 |
 | [decisions/](./decisions/) | 아키텍처 결정 기록(ADR) |
+| [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 
 ## Usage
 
 1. 요구사항을 시스템 경계와 품질 속성으로 확장할 때는 `descriptions/`를 갱신한다.
 2. 기술 선택이나 운영 모델 결정은 `decisions/`에 ADR로 기록한다.
 3. AD target은 `docs/02.architecture/descriptions/####-<system-or-domain>.md`, ADR target은 `docs/02.architecture/decisions/####-<short-title>.md`를 따른다. 유형은 부모 폴더가 결정하고 안정 ID는 frontmatter의 `AD-####`/`ADR-####`로 유지한다.
-4. Superseded ADR은 predecessor/successor를 상호 연결한 뒤 decision log를 떠나 `98.archive/superseded/`에 보존한다. 원본 복구는 Archive index의 Retention Catalog가 명명하는 Git object 하나와 Git history가 소유한다.
+4. 대체된 ADR의 ID는 후속 ADR의 `supersedes`와 Traceability가 유지하고, AD Archived Lineage가 요약하며, 같은 변경에서 삭제한다. 원본은 Git history가 복구한다.
 5. 구현자가 따라야 할 상세 계약은 `../03.specs/`로 넘긴다.
 6. 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다.
 7. Architecture Description에는 arc42의 목적별 구조를 비례적으로 적용하고,

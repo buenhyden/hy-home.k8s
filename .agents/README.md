@@ -31,8 +31,8 @@ provider별 차이와 native adapter는 [.claude/](../.claude/)와
 근거 영역이지 상시 합성 채점기나 저장소 QA 관문이 아니다.
 gate 선택은 여전히 `scripts/validation/registry.json`이, 공용 검증 helper는
 `scripts/`가 소유한다. rule 디렉터리는 `governance/`와 중복되므로 두지 않고,
-쓰이지 않는 script나 rule 뼈대도 도입하지 않는다. MIG-0009가 퇴역시킨 진행
-ledger와 `memory/` 디렉터리는 되살리지 않는다. 세션과 provider를 넘어 재사용할
+쓰이지 않는 script나 rule 뼈대도 도입하지 않는다. 퇴역한 진행 ledger와
+`memory/` 디렉터리는 되살리지 않는다. 세션과 provider를 넘어 재사용할
 판단 맥락은 `governance/context-and-memory.md`가 정한 공유
 workspace memory store에 둔다.
 
@@ -71,28 +71,28 @@ skill의 `scripts/` 아래 검사기를 선택할 수 있지만, 검사기를 �
 
 ## Usage
 
-작업 전에 [work lifecycle](workflows/work-lifecycle.md),
+이 디렉터리를 사용하는 작업은 [work lifecycle](workflows/work-lifecycle.md),
 [agent execution](governance/agent-execution.md), `governance/`의 승인·안전
-정책을 읽는다. [roles](roles/README.md)에서 책임을 고른 뒤 선택한 역할과 그
-역할이 요구하는 skill을 명시적으로 읽는다. 두 provider는 같은 공통 skill
+정책을 따른다. 에이전트용 지침은 루트 게이트웨이와 각 폴더의 AGENTS.md가
+소유한다. 책임은 [roles](roles/README.md)에서 고르고, 선택된 역할과 그 역할이
+요구하는 skill이 함께 적용된다. 두 provider는 같은 공통 skill
 package를 명시 호출용으로 노출한다. skill은 쓰기, 전송, 배포, secret 열람
 권한을 주지 않는다. 근거의 의미는 `governance/`의 quality 정책이, 바뀌는 gate
 명령과 한도는 실행 registry가 소유한다.
 
 ## Verification
 
-역할, skill, 권한, native binding, routing 계약이 선택되면
-`python3 scripts/validate-agent-governance.py --root .`를 실행한다. 이것은
+역할, skill, 권한, native binding, routing 계약의 검증 명령은
+`python3 scripts/validate-agent-governance.py --root .`이다. 이것은
 schema·projection·중립 상한에 대한 정적 근거이며 native 강제의 근거가 아니다.
-실제 변경 범위에는 로컬 affected와 exact-index profile을 쓴다. 공용 QA
+실제 변경 범위에는 로컬 affected와 exact-index profile이 쓰인다. 공용 QA
 machinery를 바꾸거나 범위가 명시된 감사를 할 때는 자원 사전 점검 뒤 등록된
-목적 gate와 이름 있는 동작·Archive·보안 회귀를 고른다. 퇴역한 full/ci
-sweep은 완료 명령이 아니다. 역할 projection 생성기는 쓰지 않는다. native
-발견, 호출, 권한, hook 전달은 새 세션에서 따로 근거를 얻어야 한다.
+목적 gate와 이름 있는 동작·보안 회귀가 선택된다. 퇴역한 full/ci
+sweep은 완료 명령이 아니다. 역할 projection 생성기는 쓰이지 않는다. native
+발견, 호출, 권한, hook 전달은 새 세션에서 따로 얻는 근거다.
 
 ## Related Documents
 
 - Document profiles and templates (`docs/99.templates/README.md`)
 - [Repository documentation](../docs/README.md)
-- Memory retirement: MIG-0009 through the archive index (`docs/98.archive/README.md`)
 - [Governance contracts](governance/)

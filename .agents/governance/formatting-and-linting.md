@@ -83,17 +83,9 @@ about committed bytes.
   keeps Markdown with its own reporting linter.
 - Never suppress a rule for a whole file when the conflict is one rule.
   A whole-file exemption silently drops every other rule on that file.
-- Exclude frozen Archive payloads from every auto-fixing formatter. Validate
-  their envelope, manifest, source commit/blob, digest, and historical links
-  without changing their body bytes. Apply current formatting only to active
-  documents and newly authored current-generation Archive records. The three
-  whitespace hooks share a hook-local native exclusion projection of terminal
-  archive placement and exact sealed migration paths. The ownership regression
-  compares that selector with the lifecycle owner's normalized states, including
-  historical accepted controls. Refresh it with sealing, replacement or path
-  reuse; a path is not permanently frozen merely because an earlier record was.
-  New draft/current migration paths and archive READMEs remain selected. Secret
-  scanners and lifecycle/recovery validators are not excluded by this selector.
+- Exclude `docs/98.archive/` from every auto-fixing formatter and from
+  Markdown lint: it is unvalidated history. The three whitespace hooks share
+  one hook-local exclusion for it. Secret scanners are not excluded.
 
 ## Validation and Refresh
 

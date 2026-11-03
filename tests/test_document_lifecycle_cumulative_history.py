@@ -52,14 +52,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             "sdlc/architecture-description",
             "sdlc/spec",
             "sdlc/plan",
-            "archive/tombstone",
         }
         for domain in raw_registry["lifecycle_domains"]:
-            selected.add(
-                "archive/migration"
-                if "archive/migration" in domain["profile_ids"]
-                else domain["profile_ids"][0]
-            )
+            selected.add(domain["profile_ids"][0])
             domain["profile_ids"] = [
                 profile_id
                 for profile_id in domain["profile_ids"]
@@ -910,26 +905,15 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                     )
                 )
 
-    def test_staged_seed_reuses_exact_blob_and_reparses_changed_or_legacy_blobs(
+    def test_staged_seed_reuses_exact_blob_and_reparses_changed_blobs(
         self,
     ) -> None:
         draft = self.commit("draft")
         blobs = VALIDATOR._tree_blob_map(self.root, draft)
         documents, texts = VALIDATOR._snapshot_projection(
-            self.root,
-            self.registry,
-            blobs,
-            historical=True,
-            legacy_completion=VALIDATOR._legacy_completion_generation(self.root, draft),
+            self.root, self.registry, blobs
         )
-        seed = dict(
-            seed_blobs=blobs,
-            seed_documents=documents,
-            seed_texts=texts,
-            seed_legacy_completion=VALIDATOR._legacy_completion_generation(
-                self.root, draft
-            ),
-        )
+        seed = dict(seed_blobs=blobs, seed_documents=documents, seed_texts=texts)
         cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry, **seed)
         with mock.patch.object(
             VALIDATOR, "_snapshot_projection", wraps=VALIDATOR._snapshot_projection
@@ -943,16 +927,6 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 cache._snapshot(active)[0][PurePosixPath(self.path)].status, "active"
             )
             self.assertEqual(len(project.call_args.args[2]), 1)
-        wrong_legacy = VALIDATOR._CumulativeHistoryCache(
-            self.root,
-            self.registry,
-            **{**seed, "seed_legacy_completion": not seed["seed_legacy_completion"]},
-        )
-        with mock.patch.object(
-            VALIDATOR, "_snapshot_projection", wraps=VALIDATOR._snapshot_projection
-        ) as project:
-            wrong_legacy._snapshot(draft)
-            self.assertEqual(len(project.call_args.args[2]), len(blobs))
 
     def test_rename_rewrite_and_copy_into_target_remain_rejected(self) -> None:
         source = "notes/source.txt"

@@ -7,262 +7,11 @@ that a setting is in force; only a dated authenticated read-back is.
 
 ## Observation Boundary
 
-- **An authenticated read-back was recorded on 2026-09-10 by the account
-  `buenhyden`.** `gh api repos/buenhyden/hy-home.k8s/rulesets` and
-  `gh api repos/buenhyden/hy-home.k8s/rules/branches/main` both returned `[]`
-  at that time. Classic branch protection was read from
-  `gh api repos/buenhyden/hy-home.k8s/branches/main/protection`. The original
-  fields and the correction that followed are retained below as dated history.
-- **A new authenticated read-back was recorded on 2026-10-09 by `buenhyden`.**
-  Classic protection, applied branch rules, inherited rulesets, main HEAD and a
-  prior PR's check runs were read separately. The dated observation is below;
-  the prior PR run does not test a later candidate.
-- **An authenticated read-back was recorded on 2026-10-15 by `buenhyden`.**
-  Classic protection, applied branch rules, repository rulesets, main HEAD,
-  a main push check run, SemVer tag refs and Releases were read separately.
-  The newer observation follows the 2026-10-09 record.
-- **An authenticated read-back was recorded on 2026-10-16 KST by
-  `buenhyden`.** Main protection, repository Actions permissions, default
-  workflow permissions and main HEAD were read separately after PR #150 merged.
-  The before-state and subsequent SHA-pinning read-back are recorded below.
-- **Authenticated read-backs were recorded on 2026-10-16 at `08:22:11Z`,
-  `08:24:26Z`/`08:24:33Z`, `08:39:24Z` and `08:48:05Z` by `buenhyden`**
-  around retiring unused Actions credentials. It follows the independent review requirement below.
-- **An authenticated read-back was recorded on 2026-10-16 at
-  `07:03:23Z`/`07:03:24Z` by `buenhyden`** before and after the approved
-  `required_status_checks` update for SPEC-0116. It follows below.
 - A read-back belongs in the active Task with its date, the exact fields read,
-  and the account that read them, and this file may then carry the claim. The
-  2026-09-10 reading was taken with no Stage 03 package open, so its date,
-  fields and account are carried here instead. The 2026-10-09 read-back is
-  routed through [Stage 03 navigation](../../docs/03.specs/README.md) to the
-  current QA execution record `SPEC-0107-TSK-0003`.
-- Evidence from another repository does not transfer. This file previously
-  carried required-check names, a workflow-contract path, a governance path, a
-  Spec reference and `gh api` targets that belong to the sibling
-  `hy-home.docker` workspace; none of them exist here, and none of them
-  described this repository's protection.
+  and the account that read them.
+- Evidence from another repository does not transfer.
 - Environment, deployment, release, and unobserved control-plane state remain
   `unverified` unless an approved observation records them.
-
-## Historical 2026-09-10 State
-
-Read on 2026-09-10 from `branches/main/protection` by `buenhyden`, before the
-correction recorded below. This is point-in-time evidence for that moment and
-for those fields only.
-
-| Field | Observed | Then-target row | Agreement at the time |
-| --- | --- | --- | --- |
-| `required_pull_request_reviews` | present | Require pull requests before merge | matches |
-| `required_pull_request_reviews.required_approving_review_count` | `0` | Require zero approving reviews | matches |
-| `required_pull_request_reviews.require_code_owner_reviews` | `false` | Do not require CODEOWNERS review | matches |
-| `required_status_checks.contexts` | `["ci-summary"]`, `app_id` `15368` | Require `ci-summary` alone | matches |
-| `allow_force_pushes.enabled` | `false` | Block force pushes | matches |
-| `allow_deletions.enabled` | `false` | Block branch deletion | matches |
-| `required_linear_history.enabled` | `false` | Do not enforce linear history | matches |
-| `required_conversation_resolution.enabled` | `false` | Require conversations to be resolved before merge | **contradicts** |
-| `required_status_checks.strict` | `false` | Require the latest branch head to pass required checks | **contradicts** |
-| `enforce_admins.enabled` | `false` | no row states an expectation | **unstated** |
-
-Also observed and unstated by the then-target: `required_signatures.enabled`
-`false`, `block_creations.enabled` `false`, `lock_branch.enabled` `false`,
-`allow_fork_syncing.enabled` `false`,
-`required_pull_request_reviews.dismiss_stale_reviews` `false`, and
-`required_pull_request_reviews.require_last_push_approval` `false`.
-
-`enforce_admins` being `false` is why a direct push to `main` by the repository
-owner succeeded on 2026-09-10 while the remote reported bypassed rule
-violations for the pull-request requirement and the `ci-summary` check. The
-rules were configured and not applied to administrators. The then-target had
-no expectation for that field; the decision added later appears below.
-
-### 2026-09-10 correction and re-read
-
-The two contradictions above were corrected on 2026-09-10 by `buenhyden` with
-`gh api -X PUT repos/buenhyden/hy-home.k8s/branches/main/protection`, after the
-reading above was captured as the before-state. A re-read of the same endpoint
-confirms the result:
-
-| Field | Before | After |
-| --- | --- | --- |
-| `required_status_checks.strict` | `false` | `true` |
-| `required_conversation_resolution.enabled` | `false` | `true` |
-
-Eleven fields were sent at their observed values and re-read unchanged:
-`required_status_checks.contexts`, `enforce_admins`,
-`required_approving_review_count`, `require_code_owner_reviews`,
-`allow_force_pushes`, `allow_deletions`, `required_linear_history`,
-`block_creations`, `lock_branch`, `allow_fork_syncing` and
-`required_signatures`. The endpoint replaces the whole object, so sending them
-explicitly is what preserved them.
-
-`enforce_admins` was not changed. The target now states an expectation for
-it, so the field is no longer unstated; what remains is a recorded operating
-decision rather than a difference from intent.
-
-Every row above is evidence for 2026-09-10 only. A later claim of enforcement
-needs a new authenticated read-back.
-
-## Observed State
-
-### Historical 2026-10-09 Observation
-
-The account `buenhyden` read
-`repos/buenhyden/hy-home.k8s/branches/main/protection`,
-`repos/buenhyden/hy-home.k8s/rules/branches/main`, and
-`repos/buenhyden/hy-home.k8s/rulesets?includes_parents=true`. The read-back
-also identified main HEAD `5cfd420b723cba7417a0d24c8abb94c4f329caa9`.
-These are remote observations at that revision, not validation of later local
-commits.
-
-| Field | Observed on 2026-10-09 | Consequence |
-| --- | --- | --- |
-| `required_status_checks.strict` | `true` | Required checks use the latest branch input. |
-| `required_status_checks.checks` | `ci-summary` and `style-pr`, each from GitHub Actions App `15368` | Both named PR results are required separately. `qa-provenance` is no longer required. |
-| `required_pull_request_reviews.required_approving_review_count` / `require_code_owner_reviews` | `0` / `false` | A CODEOWNERS entry alone is not a required review. |
-| `enforce_admins.enabled` | `false` | Administrator bypass remains possible. |
-| Applied branch rules | `[]` | No branch ruleset adds an independent workflow-control gate. |
-| Inherited rulesets | Two active tag rulesets, `24341547` and `24342332` | Tag rules do not establish a branch check or PR workflow-control guard. |
-
-For prior PR 136, head `a639120b8548f4835a716a082696f01038870d27`,
-GitHub Actions run `37785109216` reported both named jobs successful. That
-result belongs to its own SHA and run; it does not prove later hosted execution.
-`SEC-P01-001` remained HIGH as of 2026-10-09 for a PR that changes its own
-workflow or control definition; see the 2026-10-16 Independent Review
-Requirement and Credential Retirement sections for its current split. Required checks from App `15368` do not independently authenticate
-PR-editable job definitions. The security/CI operator owns that separate guard.
-
-### Current 2026-10-15 Observation
-
-The authenticated account `buenhyden` read
-`branches/main/protection`, `rules/branches/main`,
-`rulesets?includes_parents=true`, `branches/main`, `releases`, and
-`git/matching-refs/tags/v` for this repository. Main was
-`a45da94c9573c2613943c4881f85b80e4dfa65dc`. The public branch response
-and its main-push check runs were also read through the GitHub connector;
-the connector's full protection request returned 403, so the full protection
-fields below come from the authenticated `gh api` read instead.
-
-| Field | Observed on 2026-10-15 | Consequence |
-| --- | --- | --- |
-| `required_status_checks.strict` / `checks` | `true`; `ci-summary` and `style-pr`, each App `15368` | Both named checks remain required on current PR input. |
-| `required_pull_request_reviews.required_approving_review_count` / `require_code_owner_reviews` | `0` / `false` | CODEOWNERS alone does not require an approving review. |
-| `required_conversation_resolution.enabled` / `allow_force_pushes.enabled` / `allow_deletions.enabled` | `true` / `false` / `false` | Conversations must resolve; force pushes and deletion remain blocked. |
-| `enforce_admins.enabled` | `true` | The 2026-10-09 administrator bypass observation no longer describes this setting. The stale target was corrected after this read; no remote setting changed during it. |
-| Applied branch rules | `[]` | No branch ruleset supplies independent workflow control. |
-| Repository rulesets | Four active tag rulesets: `24341547` immutable main-SHA tags, `24342332` publisher-only main-SHA tag creation, `24769895` immutable SemVer tags, `24769894` publisher-only SemVer tag creation | These govern tags, not PR workflow definitions. The two SemVer rulesets were absent from the older list. |
-| SemVer tag refs / Releases | `[]` / `[]` | No `v*` tag or GitHub Release was observed at this read; this does not certify any later publication. |
-
-Main push run `38491011372` at that SHA reported `ci-summary` successful and
-`style-pr` skipped. This is a main-push result, not PR style evidence. PR #145
-was merged as `24d914d7fb0ad6a79a4aa9dd56d4a3573a4ab5ea`; that earlier
-merge is not a check result for a future candidate. The former
-`enforce_admins` target below was stale; the 2026-10-16 read-back and revised
-target retain administrator enforcement without a protection mutation.
-
-### 2026-10-16 Integration and Actions Setting
-
-At `2026-10-15T23:41:40Z` (`2026-10-16` KST), authenticated account
-`buenhyden` read main at `c49aa468b6d24a511cfb9420f8c56cb09ae5ce0d`.
-Classic protection still required strict `ci-summary` and `style-pr` from
-GitHub Actions App `15368`, enforced administrators and conversation resolution,
-required zero approving reviews, and blocked force pushes and deletion.
-`repos/buenhyden/hy-home.k8s/actions/permissions` returned `enabled: true`,
-`allowed_actions: all`, and `sha_pinning_required: false`.
-`actions/permissions/workflow` returned `default_workflow_permissions: read`
-and `can_approve_pull_request_reviews: false`. These are observed remote
-settings before the SHA-pinning change, not an independent workflow-control
-gate. After the authorized one-field update, the authenticated read-back at
-`2026-10-15T23:51:56Z` returned `sha_pinning_required: true`; Actions stayed
-enabled with `allowed_actions: all`, the token defaults and PR approval setting
-were unchanged, and the same main SHA and protection fields above remained.
-This setting read-back does not establish compatibility of a later PR run.
-
-### 2026-10-16 Independent Review Requirement
-
-At `2026-10-16T07:03:23Z` the authenticated account `buenhyden` read
-`branches/main/protection`: strict checks `ci-summary` and `style-pr` from
-App `15368`, administrators and conversation resolution enforced, zero
-approving reviews, and force pushes and deletion blocked. Under the operator's
-exact approval, `PATCH branches/main/protection/required_status_checks` set
-strict `true` and added `independent-review` from review App `5341483`. The
-read-back at `07:03:24Z` showed the three bound checks, and every other
-protection field was identical to the before-state. The change, its PR
-observations and its acceptance are routed through
-[Stage 03 navigation](../../docs/03.specs/README.md) to SPEC-0116 Task 0001.
-
-`SEC-P01-001` / SPEC-0115 EVD-012 disposition: a PR that rewrites `ci.yml` can
-still forge `ci-summary` and `style-pr`, but no workflow holds the review App
-key, so it cannot produce `independent-review` from App `5341483`. That check
-is published only through RUN-0013 in
-[Stage 05 runbooks](../../docs/05.operations/runbooks/README.md) after a local read-only review of the exact head. The remaining risk is the
-solo operator's own key access, reviewer prompt injection and same-user
-execution of hostile PR code; it is not independent human review.
-
-The two parts now have separate levels. Satisfying every required `main`
-check with a PR-edited workflow is closed as of 2026-10-16: PR #152 head
-`e3a4b713` was observed `BLOCKED` with both Actions checks `success` and no
-`independent-review`, then `CLEAN` after the RUN-0013 publication. The
-PR-editable workflow body itself was HIGH and owner-accepted, as recorded by
-SPEC-0105 Task 0004: a PR-edited `pull_request` workflow still runs
-PR-authored steps in Actions and can declare permissions beyond the read-only
-default. Its Severe impact came from the repository-level secret
-`GHCR_TOKEN`, which no current workflow used but any same-repository PR
-workflow could read.
-
-### 2026-10-16 Credential Retirement and Workflow-Body Regrade
-
-With the operator's decision, the authenticated account `buenhyden` (user
-`9127269`) read the repository at `2026-10-16T08:24:26Z`, deleted the unused
-repository secret `GHCR_TOKEN`, the five retired `QA_*` Actions variables, and
-the retired `qa-control` and `qa-tag-publish` environments with their
-`QA_VERIFIER_PRIVATE_KEY` and `QA_PUBLISHER_PRIVATE_KEY`, and removed the
-retired publisher App `5156559` from the bypass list of ruleset `24342332`.
-The read-back at `08:24:33Z` showed no repository secret, variable or
-environment and an empty `24342332` bypass list; `24342332` still blocks
-`main-<SHA>` tag creation for everyone, matching the retired publication path.
-`24769894` keeps the operator `9127269` as the SemVer tag producer, and the
-two immutable tag rulesets have no bypass. The operator later reported revoking
-the PAT behind `GHCR_TOKEN` and deleting the retired Apps `5156553` and
-`5156559` in the GitHub UI; those are operator reports, not API read-backs.
-`actions/permissions` read at `08:22:11Z` still returned
-`sha_pinning_required: true`. Further operator-run read-only reads returned
-zero Codespaces secrets, no deploy keys, no webhooks and fork PR approval
-`all_external_contributors` at `08:39:24Z`, and zero self-hosted runners with
-GitHub Pages disabled at `08:48:05Z`. A user-owned repository has no
-organization secrets.
-
-The operator then made a current derivation with the risk-report matrix. It
-replaces the earlier HIGH basis of SPEC-0105, which graded the PR-editable job
-definitions themselves. Likelihood is **Possible**: same-repository branches
-come only from the admin collaborator `buenhyden` or a session acting with that
-account, and from `dependabot[bot]`, whose runs get a read-only token and no
-secrets; external fork PRs need approval and receive no secrets. Impact is
-**Moderate**. The observed basis: no repository Actions secret, variable or
-environment, Dependabot or Codespaces secret, deploy key, webhook or
-self-hosted runner remains; every job runs on GitHub-hosted `ubuntu-latest`;
-and no file in the repository trusts the GitHub OIDC token. External OIDC
-trust outside the repository was not inspected. A PR-edited workflow that
-declares write permissions can still push or delete non-`main` branches, create
-tags outside the protected patterns, create or delete releases, cancel or
-disable workflows and delete run logs and artifacts, edit issue and PR text
-that agent sessions later read, and post statuses or deployments. It cannot
-push `main`, change protected tag patterns, approve reviews or produce
-`independent-review` from App `5341483`, and Argo CD tracks only `main`. These
-effects stay inside the repository and are recoverable, which is Moderate. The
-level is **MEDIUM**, monitor-only, as the sole CI and security owner's decision
-with a recorded `security-auditor` concurrence (SPEC-0115 Task 0005 EVD-052).
-Review cue: a new repository secret or access-granting variable, an
-environment without a `main`-only policy, a self-hosted runner, OIDC trust
-keyed on this repository or owner, a GitOps revision other than `main`, a
-cluster image pulled from a package of this repository, GitHub Pages, a new or
-wider write permission in a committed workflow beyond the existing greeting and
-labeler `issues`/`pull-requests` write, or a new collaborator. Any of these
-raises the level back to HIGH until reassessed.
-
-The absent independent human reviewer remains a separate **HIGH** risk owned
-by the operator: the `independent-review` reviewer is an AI agent under the
-same solo operator, so the gate is not independent human review.
 
 ## Target Main Protection
 
@@ -300,10 +49,8 @@ support them.
 Keep Actions enabled, `allowed_actions: all`, default workflow token
 permissions at `read`, and PR creation/approval by Actions disabled. Require
 `sha_pinning_required: true` at the repository setting while every external
-`uses:` reference in tracked workflows remains a full commit SHA. The setting
-is effective in the dated post-update read-back above; the earlier `false`
-reading is its historical before-state. Hosted compatibility for the next PR
-still needs that PR's exact SHA and run result.
+`uses:` reference in tracked workflows remains a full commit SHA. Hosted
+compatibility for the next PR still needs that PR's exact SHA and run result.
 
 This server-side requirement protects Action dependency identity across
 future workflow edits. When upgrading an Action, review its new full SHA and
@@ -314,14 +61,17 @@ operator decision and after-state. SHA pinning does not protect the body of a
 PR-editable `pull_request` workflow, its shell steps, or required job names.
 The repository's default read token is not a hard ceiling on workflow-defined
 permissions. Required-check forgery is closed by the `independent-review`
-requirement above; the PR-editable workflow body is a separate MEDIUM risk
-after the 2026-10-16 credential retirement.
+requirement above; the PR-editable workflow body is a separate MEDIUM risk owned
+by the CI and security operator. SPEC-0115 Task 0005 first recorded it; that
+package left the tree and Git history recovers it.
 
 ## Required Status Checks
 
-The current dated remote observation requires three separate checks.
+The target requires three separate checks.
 `.github/workflows/ci.yml` owns the two Actions job identities and
-`.github/repository-surface.md` explains their roles; SPEC-0116 owns the third.
+`.github/repository-surface.md` explains their roles. The independent review
+runbook RUN-0013 in `docs/05.operations/runbooks/` owns the third; SPEC-0116,
+which introduced it, left the tree and Git history recovers it.
 
 - `ci-summary` (App `15368`)
 - `style-pr` (App `15368`)
@@ -329,21 +79,16 @@ The current dated remote observation requires three separate checks.
 
 `ci-summary` checks pull-request base and source-prefix
 metadata directly, and reports branch policy as `NOT_APPLICABLE` on main
-push/manual dispatch. Its earlier full-QA `NOT_RUN` field is historical
-evidence, not a current required check. Success establishes only this metadata
-policy; local QA has its own input and evidence. `style-pr` checks selected
-style on the PR merge candidate using the reviewed base's tool and configuration
-copies. Its job result is separately required by the 2026-10-09 protection
-read-back. A main push or manual dispatch skips the PR-only job; that skip is
-not PR style PASS.
+push/manual dispatch. Success establishes only this metadata policy; local QA
+has its own input and evidence. `style-pr` checks selected style on the PR
+merge candidate using the reviewed base's tool and configuration copies. Its
+job result is separately required. A main push or manual dispatch skips the
+PR-only job; that skip is not PR style PASS.
 
-The 2026-09-10 observation required only `ci-summary` and is historical.
-Former hosted full-QA proof and `main-<SHA>` publication were retired from the
-current workflows. Their
-historical authenticated results remain reachable through the
-[Archive index](../../docs/98.archive/README.md). A future protected publication
-path requires a new current contract, its own identity and an authenticated
-remote read-back. No setting is changed by this guidance.
+The `independent-review` reviewer is an AI agent under the same solo operator,
+so the gate is not independent human review; the operator owns that HIGH risk.
+A protected publication path requires a new current contract, its own identity
+and an authenticated remote read-back. No setting is changed by this guidance.
 
 GitHub treats a whole workflow skipped by a path or branch filter as an
 expected check that may remain pending. No CI workflow here declares a `paths`
@@ -361,11 +106,8 @@ A difference from this intended contract is a prompt to inspect, not permission
 to restore old settings. Obtain a fresh authenticated read-back and bind any
 approved correction to the exact field, before-state, target and recovery.
 
-The 2026-09-10 reading under Historical 2026-09-10 State is the first captured
-before-state for this repository. It covers `branches/main/protection` and the
-absence of any ruleset on that date, and nothing else. Capture a fresh reading
-before changing any field rather than relying on that one, and record it in the
-active Task when a package is open. Do not import a before-state from another
+Capture a fresh reading before changing any field, and record it in the active
+Task when a package is open. Do not import a before-state from another
 repository. Local Git recovery restores tracked definitions only; it never
 restores remote settings.
 
@@ -393,7 +135,6 @@ templates. That profile carries no frontmatter and requires no section
 list, which is why this file reads as GitHub's own documentation rather
 than an authored Stage document.
 
-The route and this file were added in one change. The current selected local
-document contract check classifies an applicable changed ruleset note against
-the Stage 99 registry and requires exactly one profile. Historical full-QA
-results belong to their original inputs and are not a current admission gate.
+The current selected local document contract check classifies an applicable
+changed ruleset note against the Stage 99 registry and requires exactly one
+profile.

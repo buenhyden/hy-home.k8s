@@ -37,12 +37,6 @@ def _report(source: PurePosixPath, target: str):
     return validator._stage_boundary_diagnostic(source, PROFILE, PurePosixPath(target))
 
 
-def _archive(source: PurePosixPath, target: str, *, profile: str = PROFILE):
-    return validator._archive_boundary_diagnostic(
-        source, profile, PurePosixPath(target)
-    )
-
-
 STAGE_PREFIXES = validator._stage_document_prefixes(validator.load_registry(ROOT))
 
 
@@ -111,7 +105,6 @@ class RetainedReciprocalAndTemplateTests(unittest.TestCase):
                 side_effect=AssertionError("duplicate inventory scan"),
             ),
             mock.patch.object(validator, "_raw_diagnostics", return_value=[]),
-            mock.patch.object(validator, "_apply_debt", return_value=[]),
             mock.patch.object(
                 sys,
                 "argv",
@@ -129,15 +122,8 @@ class RetainedReciprocalAndTemplateTests(unittest.TestCase):
             PurePosixPath("docs/99.templates/templates/specs/task.template.md"),
         )
         # LINK-BROKEN comes only from the link pass, so check just the forms
-        # instead of every diagnostic over the whole corpus. The historical
-        # owner edges only exempt archived links, which the forms never carry,
-        # so their whole-corpus migration proof is not recomputed per call.
+        # instead of every diagnostic over the whole corpus.
         context = replace(validator._build_context(ROOT, forms), paths=forms)
-        no_history = mock.patch.object(
-            validator, "_reviewed_work054_historical_owner_edges", return_value={}
-        )
-        no_history.start()
-        self.addCleanup(no_history.stop)
         expected = "{{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan"
         for path in forms:
             spec_links = [
@@ -172,52 +158,15 @@ class RetainedReciprocalAndTemplateTests(unittest.TestCase):
                 ),
                 malformed,
             )
-        authored = PurePosixPath(
-            "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md"
-        )
+        authored = PurePosixPath("docs/03.specs/0140-archive-check-removal/spec.md")
         self.assertEqual(validator._local_destination(authored, expected)[0], "local")
 
-    def test_retained_saved_backlink_uses_proved_original_coordinates(self) -> None:
-        owner = PurePosixPath(
-            "docs/98.archive/completed/03.specs/0103-qa-evidence-reuse/spec.md"
-        )
-        expected = PurePosixPath(
-            "docs/01.requirements/0003-workspace-agent-governance-platform.md"
-        )
-        index = (ROOT / validator.ARCHIVE_INDEX_PATH).read_text()
-        text = (ROOT / owner).read_text()
-        context = validator._build_context(
-            ROOT, (owner, validator.ARCHIVE_INDEX_PATH, expected)
-        )
-        self.assertIsNone(context.document_registry)
-        self.assertIsNotNone(context.current_registry)
-        self.assertEqual(context.current_inventory.current_paths, context.paths)
-        self.assertTrue(validator._links_back_to(context, owner, expected))
-        self.assertFalse(
-            validator._links_back_to(
-                context, owner, expected.with_name("9999-missing.md")
-            )
-        )
-        rows, errors = validator.parse_catalog(index)
-        self.assertFalse(errors)
-        row = next(row for path, row in rows.items() if path in owner.parents)
-        context.texts[validator.ARCHIVE_INDEX_PATH] = index.replace(
-            row.envelope.commit, "0" * 40
-        )
-        self.assertFalse(validator._links_back_to(context, owner, expected))
-        context.texts[validator.ARCHIVE_INDEX_PATH] = index
-        context.texts[owner] = text + "\nChanged retained bytes.\n"
-        self.assertFalse(validator._links_back_to(context, owner, expected))
-
     def test_current_backlink_is_still_required(self) -> None:
-        owner = PurePosixPath(
-            "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md"
-        )
+        owner = PurePosixPath("docs/03.specs/0140-archive-check-removal/spec.md")
         expected = PurePosixPath(
             "docs/01.requirements/0003-workspace-agent-governance-platform.md"
         )
         context = SimpleNamespace(
-            document_registry=validator.load_registry(ROOT),
             texts={owner: "Current completed Spec without a backlink."},
         )
         self.assertFalse(validator._links_back_to(context, owner, expected))
@@ -240,9 +189,7 @@ class RetainedReciprocalAndTemplateTests(unittest.TestCase):
             )
             self.assertEqual(
                 validator._local_destination(
-                    PurePosixPath(
-                        "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md"
-                    ),
+                    PurePosixPath("docs/03.specs/0140-archive-check-removal/spec.md"),
                     raw,
                 )[0],
                 "local",
@@ -269,164 +216,11 @@ def _grammar(
     )
 
 
-class ArchiveLinkBoundaryTests(unittest.TestCase):
-    def test_reports_every_archive_internal_target(self) -> None:
-        for target in (
-            "docs/98.archive/migrations/0004-document-authority-convergence.md",
-            "docs/98.archive/superseded/01.requirements/0001-wsl-k3d-argocd-platform.md",
-            "docs/98.archive/tombstones/03.specs/0002-legacy.md",
-        ):
-            with self.subTest(target=target):
-                diagnostic = _archive(CONSUMER, target)
-
-                self.assertIsNotNone(diagnostic)
-                assert diagnostic is not None
-                self.assertEqual(diagnostic.rule_id, "LINK-ARCHIVE-BYPASS")
-                self.assertEqual(diagnostic.path, CONSUMER)
-
-    def test_rejects_retention_classes_that_name_no_current_authority(self) -> None:
-        """ADR-0038: cite the successor or current route, never the body."""
-
-        for target in (
-            "docs/98.archive/superseded/02.architecture/decisions/0032-x.md",
-            "docs/98.archive/retired/05.operations/runbooks/0009-x.md",
-            "docs/98.archive/tombstones/0001-old-route.md",
-            "docs/98.archive/migrations/0024-scope-move.md",
-        ):
-            with self.subTest(target=target):
-                diagnostic = _archive(CONSUMER, target)
-                self.assertIsNotNone(diagnostic)
-                assert diagnostic is not None
-                self.assertEqual(diagnostic.rule_id, "LINK-ARCHIVE-BYPASS")
-
-    def test_admits_resolved_bodies_as_historical_evidence(self) -> None:
-        self.assertIsNone(
-            _archive(
-                CONSUMER,
-                "docs/98.archive/resolved/05.operations/incidents/2026/inc-0001-x/incident.md",
-            )
-        )
-
-    def test_admits_the_two_declared_routes_into_the_archive(self) -> None:
-        """The index routes to a record; a retention class holds the document."""
-
-        self.assertIsNone(_archive(CONSUMER, "docs/98.archive/README.md"))
-        self.assertIsNone(
-            _archive(
-                CONSUMER,
-                "docs/98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md",
-            )
-        )
-
-    def test_an_incident_account_cites_retained_bodies_but_not_records(self) -> None:
-        """ADR-0039 narrows the incident exemption to the four retention classes.
-
-        An incident and its postmortem rest on the retained body itself. A route
-        record or a sealed record holds no evidence body, so every source reaches
-        one through the index, and the exemption stays bound to the profile."""
-
-        source = PurePosixPath(
-            "docs/05.operations/incidents/2026/inc-0001-x/incident.md"
-        )
-        body = (
-            "docs/98.archive/superseded/02.architecture/decisions/"
-            "0032-completed-and-terminal-document-retention.md"
-        )
-        record = "docs/98.archive/migrations/0004-document-authority-convergence.md"
-        for profile in ("operation/incident", "operation/postmortem"):
-            with self.subTest(profile=profile):
-                self.assertIsNone(_archive(source, body, profile=profile))
-                self.assertIsNotNone(_archive(source, record, profile=profile))
-        for profile in ("sdlc/task", "sdlc/architecture-decision", "operation/runbook"):
-            with self.subTest(profile=profile):
-                self.assertIsNotNone(_archive(source, body, profile=profile))
-
-    def test_leaves_the_archive_own_cross_references_alone(self) -> None:
-        self.assertIsNone(
-            _archive(
-                PurePosixPath("docs/98.archive/migrations/0004-x.md"),
-                "docs/98.archive/superseded/01.requirements/0001-y.md",
-            )
-        )
-
-    def test_leaves_targets_outside_the_archive_alone(self) -> None:
-        self.assertIsNone(_archive(CONSUMER, "docs/02.architecture/README.md"))
-
-
-class CatalogRetainedLinkTests(unittest.TestCase):
-    """A frozen Stage 98 link to a retained source resolves through the catalog."""
-
-    original = PurePosixPath("docs/02.architecture/decisions/0032-x.md")
-    record = PurePosixPath(
-        "docs/98.archive/superseded/02.architecture/decisions/0032-x.md"
-    )
-    ledger = PurePosixPath("docs/98.archive/migrations/0017-x.md")
-    route = PurePosixPath("docs/98.archive/migrations/0024-x.md")
-
-    def index_text(self, *, row: bool) -> str:
-        text = "# Archive\n"
-        if row:
-            relative = self.record.as_posix().removeprefix("docs/98.archive/")
-            text += (
-                "\n| Disposition Record | Retention Envelope |\n| --- | --- |\n"
-                f"| [`{relative}`](./{relative}) | `{'a' * 40}:{self.original}` |\n"
-            )
-        return text
-
-    def context(self, *, row: bool = True, record: bool = True, held: bool = False):
-        import tempfile
-        import types
-
-        temporary = tempfile.TemporaryDirectory(prefix="catalog-link-")
-        self.addCleanup(temporary.cleanup)
-        root = Path(temporary.name)
-        index = self.index_text(row=row)
-        (root / "docs/98.archive").mkdir(parents=True)
-        (root / "docs/98.archive/README.md").write_text(
-            "# Archive\n" if held else index, encoding="utf-8"
-        )
-        if record:
-            (root / self.record).parent.mkdir(parents=True)
-            (root / self.record).write_text("---\n---\n", encoding="utf-8")
-        profile = types.SimpleNamespace
-        return types.SimpleNamespace(
-            root=root,
-            texts={PurePosixPath("docs/98.archive/README.md"): index} if held else {},
-            adapter_targets={},
-            profiles={
-                self.ledger: profile(profile_id="archive/migration"),
-                self.route: profile(profile_id="archive/scope-migration"),
-            },
-        )
-
-    def admitted(self, context, source) -> bool:
-        return validator._catalog_retained_link(context, source, self.original)
-
-    def test_frozen_link_to_a_retained_source_is_proved(self) -> None:
-        self.assertTrue(self.admitted(self.context(), self.ledger))
-
-    def test_held_index_text_is_the_catalog_read(self) -> None:
-        self.assertTrue(self.admitted(self.context(held=True), self.ledger))
-
-    def test_current_documents_must_cite_the_successor_instead(self) -> None:
-        self.assertFalse(
-            self.admitted(self.context(), PurePosixPath("docs/03.specs/0054-x/spec.md"))
-        )
-
-    def test_route_records_written_under_adr_0038_get_no_admission(self) -> None:
-        self.assertFalse(self.admitted(self.context(), self.route))
-
-    def test_no_row_or_no_retained_record_proves_nothing(self) -> None:
-        for options in ({"row": False}, {"record": False}):
-            with self.subTest(options=options):
-                self.assertFalse(self.admitted(self.context(**options), self.ledger))
-
-
 class StageLinkBoundaryTests(unittest.TestCase):
     def test_reports_every_numbered_stage_target_written_outside_docs(self) -> None:
         for target in (
             "docs/02.architecture/decisions/0031-validation-ownership.md",
-            "docs/03.specs/0008-current-local-gitops-platform/spec.md",
+            "docs/03.specs/0140-archive-check-removal/spec.md",
             "docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md",
             "docs/99.templates/registry.json",
         ):
@@ -443,7 +237,6 @@ class StageLinkBoundaryTests(unittest.TestCase):
         for target in (
             "docs/01.requirements/README.md",
             "docs/03.specs/README.md",
-            "docs/98.archive/README.md",
             "docs/99.templates/README.md",
         ):
             with self.subTest(target=target):
@@ -452,21 +245,21 @@ class StageLinkBoundaryTests(unittest.TestCase):
     def test_normalized_reference_forms_cannot_hide_individual_documents(self) -> None:
         self.assertTrue(hasattr(validator, "_stage_reference_diagnostics"))
         forms = (
-            "<https://github.com/buenhyden/hy-home.k8s/blob/main/docs/03.specs/0102-agent-contracts-and-skill-ownership/spec.md>",
-            "Follow `../docs/03.specs/0102-agent-contracts-and-skill-ownership/spec.md`.",
-            "Follow `/checkout/docs/03.specs/0102-agent-contracts-and-skill-ownership/spec.md`.",
-            "[rule](../docs/03.specs/0008-current-local-gitops-platform/spec.md)",
-            "[rule][x]\n\n[x]: ../docs/03.specs/0008-current-local-gitops-platform/spec.md",
-            '<a href="../docs/03.specs/0008-current-local-gitops-platform/spec.md">rule</a>',
-            "<a href=../docs/03.specs/0008-current-local-gitops-platform/spec.md>rule</a>",
-            "[[docs/03.specs/0008-current-local-gitops-platform/spec.md|rule]]",
-            "[rule](https://github.com/buenhyden/hy-home.k8s/blob/main/docs/03.specs/0008-current-local-gitops-platform/spec.md)",
-            "[rule](https://raw.githubusercontent.com/buenhyden/hy-home.k8s/main/docs/03.specs/0008-current-local-gitops-platform/spec.md)",
-            "[rule](/checkout/docs/03.specs/0008-current-local-gitops-platform/spec.md)",
-            "[rule](../DOCS/03.SPECS/0008-current-local-gitops-platform/SPEC.MD)",
+            "<https://github.com/buenhyden/hy-home.k8s/blob/main/docs/03.specs/0140-archive-check-removal/spec.md>",
+            "Follow `../docs/03.specs/0140-archive-check-removal/spec.md`.",
+            "Follow `/checkout/docs/03.specs/0140-archive-check-removal/spec.md`.",
+            "[rule](../docs/03.specs/0140-archive-check-removal/spec.md)",
+            "[rule][x]\n\n[x]: ../docs/03.specs/0140-archive-check-removal/spec.md",
+            '<a href="../docs/03.specs/0140-archive-check-removal/spec.md">rule</a>',
+            "<a href=../docs/03.specs/0140-archive-check-removal/spec.md>rule</a>",
+            "[[docs/03.specs/0140-archive-check-removal/spec.md|rule]]",
+            "[rule](https://github.com/buenhyden/hy-home.k8s/blob/main/docs/03.specs/0140-archive-check-removal/spec.md)",
+            "[rule](https://raw.githubusercontent.com/buenhyden/hy-home.k8s/main/docs/03.specs/0140-archive-check-removal/spec.md)",
+            "[rule](/checkout/docs/03.specs/0140-archive-check-removal/spec.md)",
+            "[rule](../DOCS/03.SPECS/0140-archive-check-removal/SPEC.MD)",
             r"[[..\docs\03.specs\0008-current-local-gitops-platform\spec.md]]",
             "[rule](../docs%252f03.specs%252f0008-current-local-gitops-platform%252fspec.md)",
-            "Follow `docs/03.specs/0008-current-local-gitops-platform/spec.md` as current policy.",
+            "Follow `docs/03.specs/0140-archive-check-removal/spec.md` as current policy.",
         )
         for text in forms:
             with self.subTest(text=text):
@@ -536,7 +329,7 @@ class StagePathGrammarTests(unittest.TestCase):
         """A literal list here would be the same defect the rule exists to stop."""
 
         self.assertIn("docs/05.operations/incidents/", STAGE_PREFIXES)
-        self.assertNotIn("docs/03.specs/", STAGE_PREFIXES)
+        self.assertIn("docs/03.specs/", STAGE_PREFIXES)
         self.assertIn("docs/05.operations/runbooks/", STAGE_PREFIXES)
         self.assertNotIn("docs/99.templates/templates/operations/", STAGE_PREFIXES)
 
@@ -545,7 +338,7 @@ class StagePathGrammarTests(unittest.TestCase):
 
         self.assertEqual(
             validator._fixed_directory_prefix(
-                r"^(?:docs/03\.specs|docs/98\.archive/completed/03\.specs)"
+                r"^(?:docs/03\.specs|docs/05\.operations)"
                 r"/[0-9]{4}-[a-z]+/spec\.md$"
             ),
             "",
@@ -558,16 +351,16 @@ class StagePathGrammarTests(unittest.TestCase):
         )
 
     def test_a_leading_root_group_contributes_one_prefix_per_root(self) -> None:
-        """ADR-0038 mirrors an active root into Stage 98 in the same pattern."""
+        """A pattern may name several roots that share one profile."""
 
         self.assertEqual(
             validator._fixed_directory_prefixes(
-                r"^(?:docs/05\.operations|docs/98\.archive/resolved/05\.operations)"
+                r"^(?:docs/05\.operations|docs/90\.references)"
                 r"/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z]+/incident\.md$"
             ),
             (
                 "docs/05.operations/incidents/",
-                "docs/98.archive/resolved/05.operations/incidents/",
+                "docs/90.references/incidents/",
             ),
         )
 

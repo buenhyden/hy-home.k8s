@@ -11,9 +11,6 @@ layer: "references"
 
 > workspace harness research pack 참조, 출처 원장, 오래 유지할 연구 종합을 두는 곳이다.
 
-> [!NOTE]
-> 이 디렉터리에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../../.agents/README.md)를 따른다.
-
 ## Overview
 
 `research/`는 workspace harness와 workspace engineering research pack의 오래
@@ -33,7 +30,6 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - Developers
 - Operators
 - Documentation Writers
-- AI Agents
 
 ## Scope
 

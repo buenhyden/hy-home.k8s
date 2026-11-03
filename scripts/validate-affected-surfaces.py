@@ -536,55 +536,18 @@ def reject_symlink_traversal(
         fail("SURFACE-PATH-NODE", raw_path)
 
 
-def _repository_migration_proof(root: Path) -> Any:
-    """Call the canonical proof with fixed sibling owners in a temporary scope."""
-
-    owners = (
-        "document_authority",
-        "archive_recovery",
-        "document_contracts",
-        "archive_validation",
-    )
-    missing = object()
-    aliases = ("json_schema_validation", *owners)
-    previous = {name: sys.modules.get(name, missing) for name in aliases}
-    private_names: list[str] = []
+def _tracked_at_head(root: Path, path: str) -> bool:
     try:
-        directory = Path(__file__).resolve(strict=True).parent
-        sys.modules["json_schema_validation"] = _schema_owner
-        for owner in owners:
-            path = (directory / f"{owner}.py").resolve(strict=True)
-            if path.parent != directory:
-                raise ImportError("canonical migration owner is unavailable")
-            name = f"_affected_migration_{id(missing):x}_{owner}"
-            while name in sys.modules:
-                name += "_private"
-            spec = importlib.util.spec_from_file_location(name, path)
-            if spec is None or spec.loader is None:
-                raise ImportError("canonical migration owner is unavailable")
-            module = importlib.util.module_from_spec(spec)
-            private_names.append(name)
-            sys.modules[name] = module
-            sys.modules[owner] = module
-            spec.loader.exec_module(module)
-        archive = sys.modules["archive_validation"]
-        proof = archive.repository_migration_proof(root)
-        if not isinstance(proof, archive.MigrationProof) or any(
-            not isinstance(item, archive.MigrationDisposition)
-            for item in proof.dispositions.values()
-        ):
-            raise ValueError("canonical migration proof type differs")
-        return proof
-    except Exception:
-        fail("SURFACE-MIGRATION-PROOF", "canonical migration proof is unavailable")
-    finally:
-        for name, module in previous.items():
-            if module is missing:
-                sys.modules.pop(name, None)
-            else:
-                sys.modules[name] = module
-        for name in private_names:
-            sys.modules.pop(name, None)
+        completed = run_bounded_process(
+            ["git", "cat-file", "-e", f"HEAD:{normalize_path(path)}"],
+            cwd=root,
+            timeout=15,
+            stdout_limit=MAX_GIT_STDERR_BYTES,
+            stderr_limit=MAX_GIT_STDERR_BYTES,
+        )
+    except (BoundedOutputError, OSError, subprocess.SubprocessError, ValueError):
+        return False
+    return completed.returncode == 0
 
 
 def _path_is_absent(root: Path, path: str) -> bool:
@@ -611,7 +574,6 @@ def select_paths(
     validator_ids: set[str] = set()
     unmatched_paths: set[str] = set()
     maximum = 0
-    migration_proof = None
     for raw_path in paths:
         if root is not None:
             reject_symlink_traversal(root, raw_path)
@@ -620,46 +582,18 @@ def select_paths(
         except ContractError as exc:
             if exc.code != "SURFACE-PATH-UNMATCHED":
                 raise
-            surface = None
-            if root is not None and _path_is_absent(root, raw_path):
-                if migration_proof is None:
-                    migration_proof = _repository_migration_proof(root)
-                disposition = migration_proof.dispositions.get(raw_path)
-                target = migration_proof.targets.get(raw_path)
-                if disposition is not None or target is not None:
-                    if (
-                        disposition is None
-                        or disposition.record_path not in migration_proof.records
-                        or not isinstance(disposition.source_bytes, bytes)
-                        or disposition.action
-                        not in {"moved", "merged", "replaced", "deleted"}
-                        or not isinstance(target, str)
-                        or target == raw_path
-                        or migration_proof.targets.get(
-                            disposition.target, disposition.target
-                        )
-                        != target
-                    ):
-                        fail(
-                            "SURFACE-MIGRATION-PROOF",
-                            "source disposition is unavailable",
-                        )
-                    reject_symlink_traversal(root, raw_path)
-                    if not _path_is_absent(root, raw_path):
-                        raise exc
-                    try:
-                        reject_symlink_traversal(root, target, require_present=True)
-                        surface = classify_path(contract, target)
-                    except ContractError:
-                        fail(
-                            "SURFACE-MIGRATION-TARGET",
-                            "current terminal surface is unavailable",
-                        )
-            if surface is None:
-                if collect_unmatched:
-                    unmatched_paths.add(normalize_path(raw_path))
-                    continue
-                raise
+            if (
+                root is not None
+                and _path_is_absent(root, raw_path)
+                and _tracked_at_head(root, raw_path)
+            ):
+                # A file deleted from HEAD has nothing left to validate; its
+                # consumers' changes select their own gates.
+                continue
+            if collect_unmatched:
+                unmatched_paths.add(normalize_path(raw_path))
+                continue
+            raise
         for identifier in surface["validators"]:
             if lane in validators_by_id[identifier]["lanes"]:
                 validator_ids.add(identifier)

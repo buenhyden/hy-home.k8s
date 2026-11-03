@@ -26,13 +26,12 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 - Platform maintainers
 - Quality engineers
 - Documentation maintainers
-- AI agents
 
 ### Scope
 
 #### In Scope
 
-- 문서 profile, lifecycle, link, owner, archive 검증
+- 문서 profile, lifecycle, link, owner 검증
 - Agent registry, provider projection, loop, CI 계약 검증
 - 선택된 affected·staged routing과 목적별 제한된 subprocess 실행
 - GitOps, Kubernetes, Vault/ESO, GitHub Actions, CI Python 검사
@@ -59,7 +58,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
   provider note의 관측 경계를 따른다. 품질 검증은 명시적으로 실행하는 QA 작업이다.
 - 테스트와 제한된 합성 데이터는 `tests/`와 `tests/fixtures/`에 둔다.
 - 기본 복구 출처는 Git history다. digest는 외부에서 바뀌지 않는 의존성
-  identity나 봉인된 역사 복구 좌표가 있을 때만 쓴다.
+  identity나 과거 복구 좌표가 있을 때만 쓴다.
 
 Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍스트
 입력은 명시적으로 UTF-8로 읽고 소유 계약이 요구하는 곳에서는 symlink나
@@ -73,44 +72,39 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | Path | Purpose |
 | --- | --- |
 | `validation/registry.json`과 그 schema | validator, surface, lane, 인자, fallback 계약 |
+| `AGENTS.md` | 이 폴더의 에이전트 지시. 실행 코드가 아니다. |
 | `select-affected-surfaces.py` | 경로를 surface로 고르는 순수 선택 projection |
 | `githooks/chained-hook.sh`와 그 `pre-commit`, `commit-msg`, `pre-push` 링크 | 사용자의 전역 Git hook을 먼저 실행한 뒤 이 workspace의 hook을 실행하고, 처음 나온 0이 아닌 상태를 반환 |
 | `commit-message-exceptions.py` | `.pre-commit-config.yaml`의 commit-msg stage에서 pinned Commitizen 뒤에 실행한다. `.cz.toml`의 생성 메시지 pattern으로 Git Merge/Revert 생성 형식의 구문만 예외로 인정하며 prefix 위조를 거부한다. 같은 형식의 수동 메시지도 통과하므로 실제 생성·merge/revert·provenance를 증명하지 않는다. 일반 메시지 문법은 Commitizen, PR title은 trusted-base authored schema가 소유하고 이 guard를 쓰지 않는다. hook 등록만으로 실제 로딩·실행을 주장하지 않는다. |
 | `validate-affected-surfaces.py` | registry와 추적 경로 coverage 검증 |
 | `run-validation-lane.py` | 현재 v4 소스의 affected·staged 선택 입력을 제한해 실행하고 결과를 정규화한다. 선택된 변경 경로를 문서 reader에 전달하며, 인자 수나 크기 한계를 넘으면 reader의 전체 검사를 사용한다. 구형 all-files 집계 경로 제거의 검증·수용 상태는 [Stage 03 Spec navigation](../docs/03.specs/README.md)에서 찾는 SPEC-0107 Task가 기록한다. |
+| `validate-selected-style.py` | 변경 경로에 검토된 style hook을 일회용 저장소에서 실행해 검사한다. |
+| `validate-selected-nonstyle.py` | 검토된 non-style hook을 격리된 QA 스냅샷의 선택 경로에 실행한다. |
 | `qa.py` | 지원되는 QA 진입점. profile의 gate ID를 registry에서 해석해, 격리된 작업 트리나 정확한 index 스냅샷에서 실행한다. 한 실행에서 캡처한 스냅샷 트리를 gate 입력 identity에도 재사용한다. validator argv나 규칙 구현은 담지 않는다. |
 | `validation/` 규칙 module | 전용 validator가 아직 소유하지 않은 저장소 전체 규칙(repository/quality.py)과, 현재 실행 대상과 Git 우선 역사 복구의 구분(current_executable_references.py) |
 
-### Document and archive owners
+### Document owners
 
 | 경로 묶음 | 책임 |
 | --- | --- |
 | `document_contracts.py`, `validate-document-contract-registry.py`, `validate-markdown-profiles.py` | route·profile 분류와 작성된 Markdown의 의미 검증. affected·staged의 변경 경로가 본문 검사 대상을 정하며, 현재 문서의 metadata·identity 검사와 English-only 파일 검사는 유지한다. 생산자·reader helper 변경은 Registry의 문서 검사 owner로 연결한다. |
 | `document_authority.py`, `validate-links-and-owners.py` | 현재 owner와 문서 간 관계의 의미 검증. 링크 검사 한 실행의 context가 Registry와 문서 inventory를 보유해 같은 입력의 재조회에 쓰인다. |
 | `document_lifecycle.py`, `validate-document-lifecycle.py` | registry가 분류한 lifecycle과 staged index 전이 |
-| `validate-archive-integrity.py`, `archive_recovery.py`, `archive_validation.py` | 현재 Archive 보관 무결성·catalog·Git 복구 검사. `archive_recovery.py`의 공용 MIG-0001 reader가 현재 원장 bytes의 고정 digest와 canonical 형식을 확인하며, Archive·link 소비자가 그 결과를 읽는다. 필요할 때 역사 envelope은 bounded Git reader로 복구한다. 과거 cutover 완료 증명은 원래 Task/Archive 증거에 남긴다. |
+| `document_language.py` | 문서의 언어를 판정하는 순수 규칙 |
+| `validate-knowledge-surface.py` | knowledge owner 포인터와 제한된 관찰 출처 검증 |
 | `json_schema_validation.py` | production validator가 함께 쓰는 오프라인 JSON Schema 로딩 |
 | `run-contract-tests.py` | 이름 있는 suite 하나의 계약 회귀를 그 suite의 목적 gate로 실행한다. suite별 모듈 목록은 이 파일이 소유하며, 각 gate는 Registry에서 `--suite`로 suite 하나를 지정한다. 긴 blanket unit discovery의 간접 `coveredBy`를 현재 완료 조건으로 삼지 않는다. |
 
-현재 MIG-0001 원장이 없거나 그 bytes가 바뀌면 Archive 검사는 실패한다.
-고정 digest는 현재 원장 identity를, canonical parser와 현재 record 검사는
-형식·source/blob/provenance를, 필요할 때 실행하는 Git reader는 역사
-envelope 복구를 맡는다. 승인된 현재 경로에서는 과거 93행을 Git에서 매번
-재생성하는 builder/checker와 과거 완료 census만 지키던 namespace guard,
-전용 manifest·테스트를 제거했다. 현재 원장의 누락·변조, record source와
-provenance 오류, alias·링크 오류는 각각의 현재 owner가 계속 거부한다.
-원장 digest나 AST 소비자 조사는 과거 모든 Git object의 존재 또는 보관
-단위의 처분 승인을 증명하지 않는다. 실제 전체 단위 처분은
-[Archive Retention Assessment](../docs/98.archive/README.md)가
-별도로 소유한다.
+`docs/98.archive/`는 검증 대상이 아니다. 문서 검사는 그 경로를 inventory에서
+제외하고, 변경 시에는 secret 검사만 실행한다. 이 경로를 가리키는 링크도 검사하지 않는다.
 
 ### Agent governance owners
 
 | 경로 | 책임 |
 | --- | --- |
-| `agent_registry_loader.py` | governance 검증이 함께 쓰는 제한된 common role registry 로딩 |
-| `validate-agent-governance.py` | role·schema, native metadata, 권한, skill, 소비자 무결성 |
-| `agent_governance_consumers.py` | 제한된 현재 소비자 검사와 Git 기반 역사 복구 검사 |
+| `validate-agent-governance.py` | role·schema, native metadata, 권한, skill |
+| `prompt-input.py` | 선언된 계약에서 모델 호출 없이 prompt 요청을 조립 |
+| `workspace_memory.py` | Claude와 Codex 세션이 공유하는 workspace memory 저장소. memory는 결정 맥락일 뿐 Task 상태나 증거가 아니다. |
 
 ### Platform and supply-chain owners
 
@@ -123,7 +117,8 @@ provenance 오류, alias·링크 오류는 각각의 현재 owner가 계속 거�
 | `validate-github-actions-security.py`, `validate-ci-python-contract.py`, `validate-pr-metadata.py` | workflow 공급망과 Python 의존성 계약. `validate-pr-metadata.py`는 `ci-summary`의 PR metadata 검사 원본으로, 신뢰된 base의 `.cz.toml` 문법에 따라 PR title과 새 commit 범위를 확인한다. hosted 결과는 로컬 QA를 대체하지 않는다. |
 | `validate-workspace-boundary.py` | staged workspace 경계와 ignore 경로 계약 |
 | `render-platform-chart-kinds.sh` | 운영자가 직접 실행하는 chart kind 리뷰 보조 도구 |
-| `independent_review.py` | 운영자가 직접 실행한다. 로컬 독립 리뷰 verdict를 PR의 현재 head에 묶어 리뷰 App의 `independent-review` check run으로 게시한다. 절차는 Stage 05 RUN-0013, 계약은 SPEC-0116이 소유한다. 모델 API를 호출하지 않는다. |
+| `release.py` | main changelog PR을 준비하고 SemVer GitHub Release 하나를 명시적으로 게시한다. 기본은 로컬 읽기 전용 미리보기이며 `publish --execute`는 운영자 작업이다. |
+| `independent_review.py` | 운영자가 직접 실행한다. 로컬 독립 리뷰 verdict를 PR의 현재 head에 묶어 리뷰 App의 `independent-review` check run으로 게시한다. 절차는 Stage 05 RUN-0013이 소유한다. 모델 API를 호출하지 않는다. |
 
 ## Usage
 
@@ -137,7 +132,7 @@ provenance 오류, alias·링크 오류는 각각의 현재 owner가 계속 거�
    hook·CI로 projection한다.
 5. 일회성 또는 오래된 검사는 지속 보장을 현재 owner로 이전하고 caller와
    등록을 제거한 뒤 전용 wrapper·fixture·test의 소비자 0개를 확인한다.
-   필요한 과거 결과는 기존 Task/Archive 위치에 보존하고 복구는 Git으로 한다.
+   필요한 과거 결과는 기존 Task 위치에 남기고 복구는 Git history로 한다.
 6. 커밋 전에 `git diff --check`, 관련 전용 테스트, affected·staged 선택,
    전체 결과를 검토한다.
 
@@ -220,7 +215,7 @@ shfmt와 공백 수정도 리뷰를 거친 소스 경로에 대해 명시적으�
 작업이다. 선택된 staged style은 격리된 정확한 index에서 실행하며 formatter가
 무언가를 바꾸면 검증이 실패한다. 수정과 검사는 분리한다. 명시적 수정은
 리뷰한 소스 경로만 지정해 아래처럼 실행하고, diff를 확인한 뒤 다시 stage하고
-검사를 새로 돌린다. frozen Archive와 raw 평가 출력은 hook의 `exclude`가 막으며,
+검사를 새로 돌린다. 검증하지 않는 Archive와 raw 평가 출력은 hook의 `exclude`가 막으며,
 그 목록은 `tests/test_validation_tooling_ownership.py`가 Registry와 대조한다.
 
 ```bash
@@ -252,8 +247,8 @@ python3 scripts/run-validation-lane.py \
 - [Quality policy](../.agents/governance/quality.md)
 - [Document authoring policy](../.agents/governance/document-authoring.md)
 - Validation ownership ADR (`docs/02.architecture/decisions/README.md`)
+- [Tests](../tests/README.md)
 
 검증 책임의 현재 owner는 공통 Quality policy와 `scripts/validation/registry.json`이다.
-과거 결정과 완료 기록은 문서·archive 탐색을 통해 확인하는 배경 증거이며,
+과거 결정과 완료 기록은 Git history 탐색을 통해 확인하는 배경 증거이며,
 현재 실행 절차의 선행 조건이 아니다.
-- [Tests](../tests/README.md)

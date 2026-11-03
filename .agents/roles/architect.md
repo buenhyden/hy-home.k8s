@@ -54,15 +54,16 @@ content is not a structural choice, is a different task.
 
 ### Guardrails
 
-- Do not edit an accepted decision in place; write a successor and retain the
-  superseded record.
+- Do not edit an accepted decision in place; write a successor that summarizes
+  the predecessor in the owning AD's Archived Lineage table and delete the
+  predecessor in the same change.
 - Do not record a decision that names no alternative and no forgone property.
 - Stop when the structural question is really an unstated requirement, and route
   it upstream.
 
 ### Capability and Evidence
 
-- Required evidence: cite complete Requirement Package member IDs, the affected Spec, and each superseded and successor decision identifier.
+- Required evidence: cite complete Requirement Package member IDs, the affected Spec, and each predecessor and successor decision identifier.
 
 ### Handoff / Escalation
 

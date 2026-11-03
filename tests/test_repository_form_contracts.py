@@ -89,34 +89,6 @@ class CanonicalFormContractTests(unittest.TestCase):
                 self.assertTrue(any(expected in item for item in check(changed)))
         self.assertEqual(canonical_form_content_errors({}, owners, profiles), [])
 
-    def test_archive_comment_markers_are_exact_allowlist(self):
-        form = pathlib.PurePosixPath(
-            "docs/99.templates/templates/archive/example.template.md"
-        )
-        envelope = (
-            "<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->"
-        )
-        migration = "<!-- archive-migration-ledger:v1 format=json -->"
-        source = f"{envelope}\n{migration}\n"
-        self.assertEqual(canonical_form_content_errors({form: source}, [], {}), [])
-        for marker in (envelope, migration):
-            with self.subTest(marker=marker):
-                changed = (
-                    source.replace(":v1", ":v2", 1)
-                    if marker == envelope
-                    else source.replace(
-                        "archive-migration-ledger:v1", "archive-migration-ledger:v2"
-                    )
-                )
-                self.assertTrue(
-                    any(
-                        "non-author form comment" in item
-                        for item in canonical_form_content_errors(
-                            {form: changed}, [], {}
-                        )
-                    )
-                )
-
 
 class SampleAppCopysetTests(unittest.TestCase):
     def test_resources_and_commented_optional_file_define_yaml_copyset(self):

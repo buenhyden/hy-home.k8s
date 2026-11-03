@@ -25,8 +25,8 @@ The decision keeps the approved four-digit identity and lowercase Incident
 grammar, work-unit co-location, transition fail-closed behavior, and explicit
 Git recovery. It replaces conflicting document-family, Archive-census,
 provider-cardinality, script-census, and mutable-SHA designs in its accepted
-predecessors. [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
-is the implementation authority.
+predecessors. Its implementing Spec 0054
+left the tree (N/A; Git history recovers it).
 
 ## Context
 
@@ -313,6 +313,13 @@ have different lifecycle and review responsibilities even when co-located.
 
 ## Traceability
 
+**Current-state clarification (2026-11-03).** Under
+[ADR-0053](./0053-unvalidated-archive.md) the archive is unvalidated: no archive validators, frozen-generation exemptions, migration proofs, tombstones or archive index exist, and the Retention Catalog and Envelope no longer apply.
+Superseded ADRs are summarized in the Archived Lineage table of
+[AD-0006](../descriptions/0006-workspace-agent-governance-platform.md#archived-lineage)
+and deleted; Git history recovers them. The Spec packages named here left the
+tree and are recovered the same way.
+
 **Current-state clarification (2026-10-27).** A census of
 `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs` and
 `docs/05.operations` confirmed that the one-time four-digit numbering
@@ -356,11 +363,11 @@ the Stage 99 foundation is active.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| ADR-0013 | This decision replaces its provider-specific shared surfaces and custom-hook model while preserving its historical decision body and stable identity. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| ADR-0015 | Partially supersedes its fixed metadata baseline and old profile inventory; preserves the declarative document registry as sole document machine authority. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| ADR-0018 | Supersedes mandatory full-body, one-record-per-source, and no-Tombstone clauses; preserves explicit recovery and non-authoritative history. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| ADR-0019 | Supersedes four-provider, Gemini/Antigravity, fixed 12/48, and harness-machine-owner clauses; preserves provider-native deltas, evidence classes, bounded execution, and least privilege. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| ADR-0023 | Partially supersedes `tasks.md`, old agent-contract, and ArchiveEnvelope clauses; preserves Stage 03 co-location, retired Stage 04, stable Stage 05, no Release, and consumer-first migration. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| ADR-0024 | Supersedes its terminal form split, prefixed AD path, mandatory child forms, exact Archive/census/SHA design, and fixed script inventory; preserves AD/ADR meaning, stable identity integrity, native interface contracts, consumer-zero, provenance, and recovery intent. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| ADR-0025 | Partially supersedes only its old family table; preserves four-digit identity, lowercase Incident package, atomic migration, and immutable historical paths. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment only: top-level independent tests/fixtures and responsibility/risk-based module review replace the two validation-layout clauses named above; ADR-0030 remains accepted. | [Spec 0066](../../98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md) |
+| ADR-0013 | This decision replaces its provider-specific shared surfaces and custom-hook model while preserving its historical decision body and stable identity. | N/A — SPEC-0054 left the tree; Git history recovers it |
+| ADR-0015 | Partially supersedes its fixed metadata baseline and old profile inventory; preserves the declarative document registry as sole document machine authority. | N/A — SPEC-0054 left the tree; Git history recovers it |
+| ADR-0018 | Supersedes mandatory full-body, one-record-per-source, and no-Tombstone clauses; preserves explicit recovery and non-authoritative history. | N/A — SPEC-0054 left the tree; Git history recovers it |
+| ADR-0019 | Supersedes four-provider, Gemini/Antigravity, fixed 12/48, and harness-machine-owner clauses; preserves provider-native deltas, evidence classes, bounded execution, and least privilege. | N/A — SPEC-0054 left the tree; Git history recovers it |
+| ADR-0023 | Partially supersedes `tasks.md`, old agent-contract, and ArchiveEnvelope clauses; preserves Stage 03 co-location, retired Stage 04, stable Stage 05, no Release, and consumer-first migration. | N/A — SPEC-0054 left the tree; Git history recovers it |
+| ADR-0024 | Supersedes its terminal form split, prefixed AD path, mandatory child forms, exact Archive/census/SHA design, and fixed script inventory; preserves AD/ADR meaning, stable identity integrity, native interface contracts, consumer-zero, provenance, and recovery intent. | N/A — SPEC-0054 left the tree; Git history recovers it |
+| ADR-0025 | Partially supersedes only its old family table; preserves four-digit identity, lowercase Incident package, atomic migration, and immutable historical paths. | N/A — SPEC-0054 left the tree; Git history recovers it |
+| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment only: top-level independent tests/fixtures and responsibility/risk-based module review replace the two validation-layout clauses named above; ADR-0030 remains accepted. | N/A — SPEC-0066 left the tree; Git history recovers it |

@@ -196,16 +196,12 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
         raise NonstyleError("NONSTYLE-CONFIG: reviewed hook config is invalid") from exc
     if not isinstance(config, dict) or not isinstance(config.get("repos"), list):
         raise NonstyleError("NONSTYLE-CONFIG: hook repositories are unavailable")
-    default_stages = config.get("default_stages", ["pre-commit"])
-    if default_stages not in (["pre-commit", "manual"], ["manual"]):
+    default_stages = config.get("default_stages")
+    if default_stages != ["manual"]:
         raise NonstyleError("NONSTYLE-CONFIG: reviewed default stage is required")
-    file_stage = "manual" if default_stages == ["manual"] else "pre-commit"
     expected_local = {
         **LOCAL_COMMIT_MESSAGE_REPO,
-        "hooks": [
-            *LOCAL_COMMIT_MESSAGE_REPO["hooks"],
-            *([LOCAL_STAGED_QA_HOOK] if file_stage == "manual" else []),
-        ],
+        "hooks": [*LOCAL_COMMIT_MESSAGE_REPO["hooks"], LOCAL_STAGED_QA_HOOK],
     }
     selected = []
     seen: set[str] = set()
@@ -216,13 +212,8 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
                 seen_local
                 or repo != expected_local
                 or not isinstance(repo["hooks"][0]["always_run"], bool)
-                or (
-                    file_stage == "manual"
-                    and (
-                        not isinstance(repo["hooks"][1]["always_run"], bool)
-                        or not isinstance(repo["hooks"][1]["pass_filenames"], bool)
-                    )
-                )
+                or not isinstance(repo["hooks"][1]["always_run"], bool)
+                or not isinstance(repo["hooks"][1]["pass_filenames"], bool)
             ):
                 raise NonstyleError("NONSTYLE-CONFIG: unreviewed local hook")
             seen_local = True
@@ -246,18 +237,18 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
                 raise NonstyleError("NONSTYLE-CONFIG: hook stages are malformed")
             if identifier not in NONSTYLE_IDS | STYLE_IDS | {"commitizen"}:
                 raise NonstyleError("NONSTYLE-CONFIG: unreviewed hook")
-            if file_stage not in stages:
+            if "manual" not in stages:
                 continue
             if identifier in STYLE_IDS or identifier == "commitizen":
                 continue
             if identifier not in NONSTYLE_IDS or identifier in seen:
                 raise NonstyleError("NONSTYLE-CONFIG: unreviewed or repeated hook")
-            if file_stage == "manual" and stages != ["manual"]:
+            if stages != ["manual"]:
                 raise NonstyleError("NONSTYLE-CONFIG: commit file hook changed scope")
             if identifier == "gitleaks" and (
                 hook.get("entry") is not None
                 or hook.get("pass_filenames") is not None
-                or hook.get("stages") != [file_stage]
+                or hook.get("stages") != ["manual"]
                 or hook.get("args") != ["--config=.gitleaks.toml"]
             ):
                 raise NonstyleError("NONSTYLE-CONFIG: staged Gitleaks changed scope")

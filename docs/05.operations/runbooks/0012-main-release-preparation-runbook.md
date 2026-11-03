@@ -1,10 +1,10 @@
 ---
 title: "Main Release Preparation"
-version: "1.2.1"
+version: "1.2.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-03"
 layer: "operations"
 artifact_id: "RUN-0012"
 ---
@@ -16,7 +16,7 @@ artifact_id: "RUN-0012"
 이 Runbook은 main의 검토된 변경을 정규 `CHANGELOG.md`에 기록하고 한
 생산자로 SemVer tag와 GitHub Release를 준비하는 순서를 제공한다. 릴리스는
 저장소의 공개 계약 이력이다. k3d·ArgoCD·Vault의 배포 완료나 live 검증을
-증명하지 않는다. 계약은 [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md),
+증명하지 않는다. 계약은 이 Runbook과 `scripts/release.py`가 소유하며,
 실제 실행 증적은 해당 변경의 Task가 소유한다.
 
 - **Type**: Repository release preparation and publication
@@ -36,7 +36,7 @@ main에 통합된 공개 계약 변경을 릴리스하려는 경우 사용한다
 Python과 구현의 trusted resolver가 받아들이는 `git`, `git-cliff`, `gh`
 도구를 사전에 확인한다. 일반 PATH에서 명령이 보이는 것만으로 이 조건이
 충족되지는 않는다. 특히 `git-cliff`의 사용자별 NVM 경로가 거부된 과거
-관측은 SPEC-0107 Task에 남아 있다. 운영자는 실제 도구 설치와 신뢰 경로를
+관측은 Git history에서 복구한다. 운영자는 실제 도구 설치와 신뢰 경로를
 준비하고 해당 릴리스 Task에 관측 결과를 기록한다. 환경 미확보는 그 실행의
 `DEFER`이며 업무 기한이나 검증 reserve 승인으로 바꾸지 않는다.
 
@@ -46,7 +46,7 @@ Python과 구현의 trusted resolver가 받아들이는 `git`, `git-cliff`, `gh`
 | --- | --- | --- | --- |
 | 1 | main에 통합된 범위와 공개 호환성 영향을 검토한다. 지원 CLI/options, JSON Schema, 문서 profile/frontmatter, GitOps desired state, 외부 서비스 인터페이스의 변경을 분류한다. | 릴리스 범위와 실제 변경 근거가 Task/PR에 연결된다. | 기존 릴리스의 공개 계약이나 배포 결과를 추측해야 한다. |
 | 2 | main에서 `release/vX.Y.Z` 브랜치를 만들고 release tool의 `prepare` preview로 제안 내용을 확인한 뒤, 명시적 `--write`로 정규 `CHANGELOG.md`를 작성해 release-preparation PR을 연다. 1.0 이후 breaking/additive compatible/compatible fix는 major/minor/patch다. 첫 0.y는 운영자가 version과 호환성 약속을 명시한다. | 릴리스 노트가 실제 통합 내용에 대응한다. | dev push 또는 7일 artifact만으로 정규 이력을 대신하려 한다. |
-| 3 | 변경 입력에 해당하는 focused·affected·exact-index 및 명명된 목적·Archive·보안 단위 검사를 수행하고 로컬 커밋 직전 최종 index의 필수 lint·format을 확인한다. 오래 걸리는 full/ci 일괄 검사와 blanket unit discovery는 완료 조건으로 실행하지 않는다. 독립 리뷰, 별도 PR SHA/run의 hosted style 결과와 정상 PR/merge 결과를 확인한다. | Task에 서로 다른 입력의 결과, 도구, 승인 경계와 최종 main SHA가 기록된다. | 선택된 필수 검사 실패, `NOT_RUN`, 중요한 리뷰 finding, 또는 SHA 불일치가 있다. |
+| 3 | 변경 입력에 해당하는 focused·affected·exact-index 및 명명된 목적·보안 단위 검사를 수행하고 로컬 커밋 직전 최종 index의 필수 lint·format을 확인한다. 오래 걸리는 full/ci 일괄 검사와 blanket unit discovery는 완료 조건으로 실행하지 않는다. 독립 리뷰, 별도 PR SHA/run의 hosted style 결과와 정상 PR/merge 결과를 확인한다. | Task에 서로 다른 입력의 결과, 도구, 승인 경계와 최종 main SHA가 기록된다. | 선택된 필수 검사 실패, `NOT_RUN`, 중요한 리뷰 finding, 또는 SHA 불일치가 있다. |
 | 4 | 게시 직전 현재 main commit, 해당 SemVer tag/Release의 부재 또는 동일 대상, 변경된 승인 조건을 원격에서 확인한다. 이전 `main-<full SHA>` tag는 역사로 그대로 둔다. | 정확한 대상과 재시도 가능 조건이 확정된다. | 기존 tag를 이동해야 하거나 remote 설정·권한이 미관측이다. |
 | 5 | release tool의 `publish` preview를 읽고, 원격 대상·승인·자산을 대조한 운영자만 `--execute`를 사용한다. 구현은 정확한 main commit에서 추출한 `CHANGELOG.md`의 릴리스 노트와 모든 자산을 한 draft의 tag·target·prerelease 상태에 묶어 검증한 뒤 게시한다. 게시 후에도 같은 필드·본문과 자산을 재조회한다. immutable Release 설정이 실제 활성이라면 자산 확인 후에만 게시한다. | 하나의 SemVer tag와 Release가 검토된 main commit에 연결된다. | 승인 범위, main blob, 노트 본문, 자산, draft/게시 상태 또는 원격 설정이 다르다. |
 | 6 | tag 대상, Release 상태, `CHANGELOG.md`가 반영된 main SHA를 다시 읽고 Task에 관측 사실을 기록한다. | publish 결과 또는 `DEFER` 원인이 한 owner에 남는다. | 원격 결과가 없으면 로컬 파일로 성공을 추정한다. |
@@ -124,4 +124,4 @@ Release 이력을 보존한다. 원격 결과가 불명확하면 재시도 전�
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) | Reviewed main release-preparation PR, one SemVer producer and external publication boundary | Release Task, Git history and observed GitHub Release/tag |
+| N/A — SPEC-0107 left the tree; Git history recovers it | Reviewed main release-preparation PR, one SemVer producer and external publication boundary | Release Task, Git history and observed GitHub Release/tag |

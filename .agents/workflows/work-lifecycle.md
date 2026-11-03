@@ -69,7 +69,7 @@ relationship, link and state checks for narrative documents. Keep active Task
 evidence current. Before retiring a one-use check, transfer its ongoing
 protection, remove its caller and registration, then its dedicated helper,
 fixture and test when consumer-zero and Git recovery are established. Preserve
-the past result in its existing Task or Archive owner. Use
+the past result in its existing Task or Git history. Use
 [delegated development](delegated-development.md) for authorized subagents.
 
 For an ordinary authored document or README router edit, select common diff,

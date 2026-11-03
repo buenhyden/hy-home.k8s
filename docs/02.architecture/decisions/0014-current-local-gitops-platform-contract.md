@@ -14,12 +14,12 @@ artifact_id: "ADR-0014"
 ## Overview
 
 This ADR fixes the currently implemented local GitOps platform contract as one active architecture decision.
-old topology, endpoint, and cluster UI decisions are archived as Tombstones and no longer serve as active implementation input.
+old topology, endpoint, and cluster UI decisions no longer serve as active implementation input.
 
 ## Context
 
 The repository has current desired state under `gitops/`, bootstrap and validation assets under `infrastructure/`, and quality gates under `scripts/`.
-Several older documents described replaced endpoints or removed UI resources. Active architecture must now describe only the repo-backed current state and link old records through the archive index.
+Several older documents described replaced endpoints or removed UI resources. Active architecture must now describe only the repo-backed current state and leave replaced records to Git history.
 
 ## Decision
 
@@ -27,13 +27,13 @@ Several older documents described replaced endpoints or removed UI resources. Ac
 - Current external service contracts are the `Service` and `EndpointSlice` manifests under `gitops/platform/external-services`.
 - Current network-policy egress contracts are under `gitops/platform/network-policies`.
 - Headlamp is the current cluster UI surface under `gitops/apps/root/platform-headlamp-app.yaml` and `gitops/platform/headlamp`.
-- Kiali, Istio, cert-manager, ingress-nginx, Argo Rollouts, Argo Notifications, monitoring, and ESO/Vault integration remain in active scope.
-- Old replaced decisions are removed from active input and represented only by `docs/98.archive/README.md` and Tombstones.
+- Kiali, Istio, cert-manager, the Traefik ingress controller ([ADR-0050](./0050-ingress-nginx-replacement-with-traefik.md)), Argo Rollouts, Argo Notifications, monitoring, and ESO/Vault integration remain in active scope.
+- Old replaced decisions are removed from active input and removed from this log and recovered only from Git history.
 
 ### Agent decision application
 
 - Agents must prefer this ADR and the active PRD/ARD/Spec chain for current platform work.
-- Agents may use the archive index to understand why a path disappeared, but must not use Tombstones as design input.
+- Agents must not use deleted or archived documents as design input.
 
 ## Explicit Non-goals
 
@@ -46,7 +46,7 @@ Several older documents described replaced endpoints or removed UI resources. Ac
 - **Positive**:
   - Active docs point to one current platform decision.
   - Static checks can fail on stale implementation contracts instead of allowing them with old status markers.
-  - Archived docs remain discoverable without polluting current implementation context.
+  - Replaced docs stay out of current implementation context.
 - **Trade-offs**:
   - Old decision body details are no longer available in active docs.
   - Readers must use Git history for full historical body reconstruction.
@@ -58,12 +58,18 @@ Several older documents described replaced endpoints or removed UI resources. Ac
 - Good: Preserves narrative context in place.
 - Bad: Allows agents and readers to confuse stale contract text with current implementation.
 
-### Delete Old Decisions Without Tombstones
+### Delete Old Decisions Without Replacement Routing
 
 - Good: Maximally reduces stale content.
-- Bad: Loses reviewable routing and replacement evidence.
+- Bad: Loses in-tree routing; Git history is the only recovery path.
 
 ## Traceability
+
+**Current-state clarification (2026-11-03).** Under
+[ADR-0053](./0053-unvalidated-archive.md) there are no tombstones and no archive
+index. The archive wording in this decision is superseded by that rule: deleted
+documents are summarized in the Archived Lineage tables and recovered with
+`git show <commit>:<path>`. The platform baseline is unchanged.
 
 **Current-state clarification (2026-10-03).** The agent application clause's
 current authority chain is [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md)
@@ -71,8 +77,8 @@ current authority chain is [REQ-0004](../../01.requirements/0004-current-local-g
 desired state and validators in [gitops](../../../gitops/),
 [infrastructure](../../../infrastructure/) and [scripts](../../../scripts/).
 AD-0007 names the current operating owners.
-[SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) is completed
-implementation evidence, not ongoing execution authority. A later platform
+The earlier Spec package is
+not ongoing execution authority. A later platform
 change uses its own scoped work unit; this clarification preserves the accepted
 platform decisions and does not declare remaining delivery-assurance gaps closed.
 
@@ -103,12 +109,10 @@ The platform baseline this decision records is unchanged.
 
 - **PRD**: [../../01.requirements/0004-current-local-gitops-platform.md](../../01.requirements/0004-current-local-gitops-platform.md)
 - **ARD**: [../descriptions/0007-current-local-gitops-platform.md](../descriptions/0007-current-local-gitops-platform.md)
-- **Spec**: [../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)
-- **Plan**: [../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md](../../98.archive/README.md#document-index)
-- **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)
+- **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | [Completed implementation evidence](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
+| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | N/A — SPEC-0008 left the tree; Git history recovers it |

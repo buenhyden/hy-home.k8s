@@ -26,27 +26,96 @@
       "description": "Identifies reviewed common input and the local adapter; structural validity does not authenticate approval or adoption.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["contract_id", "version", "stage", "owner", "source", "source_revision", "content_digest", "approval_ref", "local_adapter", "extensions"],
+      "required": [
+        "contract_id",
+        "version",
+        "stage",
+        "owner",
+        "source",
+        "source_revision",
+        "content_digest",
+        "approval_ref",
+        "local_adapter",
+        "extensions"
+      ],
       "properties": {
-        "contract_id": {"type": "string", "minLength": 1},
-        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[a-z0-9]+(?:\\.[a-z0-9]+)*)?$"},
-        "stage": {"enum": ["candidate", "adopted"]},
-        "owner": {"type": "string", "pattern": "\\S"},
-        "source": {"type": "string", "pattern": "\\S"},
-        "source_revision": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
-        "content_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
-        "approval_ref": {"type": ["string", "null"], "pattern": "\\S"},
-        "local_adapter": {"type": "string", "pattern": "\\S"},
-        "extensions": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "\\S"}}
+        "contract_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[a-z0-9]+(?:\\.[a-z0-9]+)*)?$"
+        },
+        "stage": {
+          "enum": [
+            "candidate",
+            "adopted"
+          ]
+        },
+        "owner": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "source": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "source_revision": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "content_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "\\S"
+        },
+        "local_adapter": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "extensions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
       },
-      "allOf": [{
-        "if": {"properties": {"stage": {"const": "adopted"}}},
-        "then": {"properties": {
-          "source_revision": {"type": "string"},
-          "approval_ref": {"type": "string"},
-          "version": {"pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"}
-        }}
-      }]
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "stage": {
+                "const": "adopted"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "source_revision": {
+                "type": "string"
+              },
+              "approval_ref": {
+                "type": "string"
+              },
+              "version": {
+                "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+              }
+            }
+          }
+        }
+      ]
     },
     "profiles": {
       "type": "array",
@@ -70,7 +139,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^(?:common|governance|sdlc|operation|reference|archive|evaluation)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+            "pattern": "^(?:common|governance|sdlc|operation|reference|evaluation)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
           },
           "family": {
             "enum": [
@@ -79,7 +148,6 @@
               "sdlc",
               "operation",
               "reference",
-              "archive",
               "evaluation"
             ]
           },
@@ -269,7 +337,8 @@
                       "single_status_marker",
                       "result_states",
                       "summary_rule",
-                      "acceptance_states"
+                      "acceptance_states",
+                      "criterion_acceptance_section"
                     ],
                     "properties": {
                       "single_status_marker": {
@@ -484,446 +553,6 @@
         }
       }
     },
-    "retention_classes": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "class",
-          "names",
-          "admitted_states"
-        ],
-        "properties": {
-          "class": {
-            "enum": [
-              "completed",
-              "superseded",
-              "retired",
-              "resolved"
-            ]
-          },
-          "names": {
-            "enum": [
-              "promotion",
-              "successor",
-              "reason",
-              "corrective-owner"
-            ]
-          },
-          "admitted_states": {
-            "type": "array",
-            "minItems": 1,
-            "uniqueItems": true,
-            "items": {
-              "type": "string",
-              "minLength": 1
-            }
-          }
-        }
-      }
-    },
-    "retention_units": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "unit",
-          "root_pattern",
-          "anchor",
-          "required_members"
-        ],
-        "properties": {
-          "unit": {
-            "enum": [
-              "spec-package",
-              "incident-bundle"
-            ]
-          },
-          "root_pattern": {
-            "type": "string",
-            "minLength": 2
-          },
-          "anchor": {
-            "type": "string",
-            "pattern": "^[a-z0-9][a-z0-9-]*\\.md$"
-          },
-          "required_members": {
-            "type": "array",
-            "minItems": 1,
-            "uniqueItems": true,
-            "items": {
-              "type": "string",
-              "pattern": "^[a-z0-9][a-z0-9-]*\\.md$"
-            }
-          },
-          "member_admitted_states": {
-            "type": "object",
-            "propertyNames": {
-              "type": "string",
-              "pattern": "^[a-z0-9][a-z0-9-]*\\.md$"
-            },
-            "additionalProperties": {
-              "type": "array",
-              "minItems": 1,
-              "uniqueItems": true,
-              "items": {
-                "type": "string",
-                "minLength": 1
-              }
-            }
-          },
-          "completed_authority_members": {
-            "type": "array",
-            "uniqueItems": true,
-            "items": {
-              "enum": ["spec.md", "plan.md"]
-            }
-          }
-        }
-      }
-    },
-    "retention_modes": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "mode",
-          "profile_id_pattern",
-          "classes"
-        ],
-        "properties": {
-          "mode": {
-            "enum": [
-              "move-frozen-body",
-              "sealed-record",
-              "retain-in-place",
-              "git-history-only"
-            ]
-          },
-          "profile_id_pattern": {
-            "type": "string",
-            "minLength": 2
-          },
-          "classes": {
-            "type": "array",
-            "uniqueItems": true,
-            "items": {
-              "enum": [
-                "completed",
-                "superseded",
-                "retired",
-                "resolved"
-              ]
-            }
-          }
-        }
-      }
-    },
-    "archive_citation": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "index",
-        "default",
-        "rules"
-      ],
-      "properties": {
-        "index": {
-          "const": "docs/98.archive/README.md"
-        },
-        "default": {
-          "const": "reject"
-        },
-        "rules": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "source",
-              "target",
-              "decision"
-            ],
-            "properties": {
-              "source": {
-                "enum": [
-                  "archive",
-                  "any",
-                  "profiles"
-                ]
-              },
-              "source_profile_ids": {
-                "type": "array",
-                "minItems": 1,
-                "uniqueItems": true,
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              },
-              "target": {
-                "enum": [
-                  "any",
-                  "index",
-                  "route-record",
-                  "sealed-record",
-                  "retained-body"
-                ]
-              },
-              "target_classes": {
-                "type": "array",
-                "uniqueItems": true,
-                "items": {
-                  "enum": [
-                    "completed",
-                    "superseded",
-                    "retired",
-                    "resolved"
-                  ]
-                },
-                "minItems": 1
-              },
-              "decision": {
-                "enum": [
-                  "admit",
-                  "reject"
-                ]
-              },
-              "target_assessments": {
-                "type": "array",
-                "minItems": 1,
-                "uniqueItems": true,
-                "items": {
-                  "enum": [
-                    "unreviewed",
-                    "usable",
-                    "superseded",
-                    "withdrawn",
-                    "invalidated"
-                  ]
-                }
-              },
-              "target_availabilities": {
-                "type": "array",
-                "minItems": 1,
-                "uniqueItems": true,
-                "items": {
-                  "enum": [
-                    "retained",
-                    "git-history-only",
-                    "purged"
-                  ]
-                }
-              }
-            },
-            "allOf": [
-              {
-                "if": {
-                  "properties": {
-                    "source": {
-                      "const": "profiles"
-                    }
-                  }
-                },
-                "then": {
-                  "required": [
-                    "source_profile_ids"
-                  ]
-                },
-                "else": {
-                  "not": {
-                    "required": [
-                      "source_profile_ids"
-                    ]
-                  }
-                }
-              },
-              {
-                "if": {
-                  "properties": {
-                    "target": {
-                      "const": "retained-body"
-                    }
-                  }
-                },
-                "then": {
-                  "required": [
-                    "target_classes"
-                  ]
-                },
-                "else": {
-                  "not": {
-                    "required": [
-                      "target_classes"
-                    ]
-                  }
-                }
-              },
-              {
-                "if": {
-                  "anyOf": [
-                    {
-                      "required": [
-                        "target_assessments"
-                      ]
-                    },
-                    {
-                      "required": [
-                        "target_availabilities"
-                      ]
-                    }
-                  ]
-                },
-                "then": {
-                  "properties": {
-                    "target": {
-                      "const": "retained-body"
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        }
-      }
-    },
-    "archive_assessment": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "index",
-        "heading",
-        "columns",
-        "assessments",
-        "availabilities",
-        "default_assessment",
-        "default_availability",
-        "owner_required_assessments",
-        "reserved_availabilities",
-        "removed_availabilities",
-        "decision_profile_ids",
-        "default_branch"
-      ],
-      "properties": {
-        "index": {
-          "const": "docs/98.archive/README.md"
-        },
-        "heading": {
-          "const": "Retention Assessment"
-        },
-        "columns": {
-          "const": [
-            "Disposition Record",
-            "Assessment",
-            "Availability",
-            "Current Owner",
-            "Decision",
-            "Assessed",
-            "Hold"
-          ]
-        },
-        "assessments": {
-          "const": [
-            "unreviewed",
-            "usable",
-            "superseded",
-            "withdrawn",
-            "invalidated"
-          ]
-        },
-        "availabilities": {
-          "const": [
-            "retained",
-            "git-history-only",
-            "purged"
-          ]
-        },
-        "default_assessment": {
-          "enum": [
-            "unreviewed",
-            "usable",
-            "superseded",
-            "withdrawn",
-            "invalidated"
-          ]
-        },
-        "default_availability": {
-          "enum": [
-            "retained",
-            "git-history-only",
-            "purged"
-          ]
-        },
-        "owner_required_assessments": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "enum": [
-              "unreviewed",
-              "usable",
-              "superseded",
-              "withdrawn",
-              "invalidated"
-            ]
-          }
-        },
-        "reserved_availabilities": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "enum": [
-              "retained",
-              "git-history-only",
-              "purged"
-            ]
-          }
-        },
-        "removed_availabilities": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "enum": [
-              "retained",
-              "git-history-only",
-              "purged"
-            ]
-          }
-        },
-        "decision_profile_ids": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "default_branch": {
-          "type": "string",
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$"
-        }
-      }
-    },
-    "legacy_rebased_retained_paths": {
-      "type": "array",
-      "minItems": 16,
-      "maxItems": 16,
-      "uniqueItems": true,
-      "items": {
-        "type": "string",
-        "pattern": "^docs/[^\\s]+\\.md$"
-      }
-    },
     "readme_navigation": {
       "type": "object",
       "additionalProperties": false,
@@ -1073,77 +702,6 @@
           "items": {
             "type": "string",
             "pattern": "\\.md$"
-          }
-        }
-      }
-    },
-    "migration_admission": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "from_generation",
-        "to_generation",
-        "spec_ref",
-        "task_ref",
-        "updated",
-        "entries"
-      ],
-      "properties": {
-        "from_generation": {
-          "const": 9
-        },
-        "to_generation": {
-          "const": 10
-        },
-        "spec_ref": {
-          "const": "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md"
-        },
-        "task_ref": {
-          "const": "docs/03.specs/0106-stage99-lifecycle-normalization/tasks/tsk-0001-lifecycle-normalization.md"
-        },
-        "updated": {
-          "const": "2026-10-05"
-        },
-        "entries": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "path",
-              "source_profile",
-              "source_status",
-              "target_profile",
-              "target_status"
-            ],
-            "properties": {
-              "path": {
-                "type": "string",
-                "minLength": 1
-              },
-              "source_profile": {
-                "type": "string",
-                "minLength": 1
-              },
-              "source_status": {
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
-              "target_profile": {
-                "type": "string",
-                "minLength": 1
-              },
-              "target_status": {
-                "type": [
-                  "string",
-                  "null"
-                ]
-              }
-            }
           }
         }
       }

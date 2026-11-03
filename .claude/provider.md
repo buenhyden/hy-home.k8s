@@ -40,7 +40,9 @@ invocation. The common procedure retains the selected role and user scope.
   authorized delegation through the available runtime mechanism.
 - Read shared skills through `.claude/skills`, a view of the neutral owner.
   File presence alone does not prove native discovery or use.
-- Tracked permissions follow SPEC-0114. Deny is checked first and no allow can
+- Tracked permissions are the allow, ask and deny rules in
+  `.claude/settings.json`; their design record SPEC-0114 is in Git history.
+  Deny is checked first and no allow can
   override it. A rule matches command text from its first character, so deny
   carries option-first forms (`kubectl * delete *`), positional push forms and
   Bash path patterns for secret files: in a session probe a `Read` deny did not
@@ -69,6 +71,9 @@ invocation. The common procedure retains the selected role and user scope.
   advisorily rather than blocked. On Codex the same class binds an
   operating-system `read-only` sandbox. That difference is documented and
   accepted; it is not parity, and neither side is described as the other.
+- Claude loads root `CLAUDE.md`, not a folder `AGENTS.md`. Before working in a
+  directory, read each `AGENTS.md` from the root down to it explicitly, as
+  [agent execution](../.agents/governance/agent-execution.md) requires.
 - Keep managed, project, and user instruction precedence intact. Use imports
   for shared context rather than copying policy into provider files.
 - `settings.json` sets `autoMemoryEnabled: false`, and the validator rejects
@@ -77,7 +82,7 @@ invocation. The common procedure retains the selected role and user scope.
   [context and memory](../.agents/governance/context-and-memory.md). Existing
   native memory files are neither deleted nor imported. A setting proves
   intent only; whether a session honors it is separate runtime evidence.
-- Reviewed and not adopted on 2026-10-27 (SPEC-0125): no project MCP server
+- Reviewed and not adopted on 2026-10-27 (SPEC-0125, Git history): no project MCP server
   is registered (no `.mcp.json` and no MCP key in tracked settings), no IDE
   shortcut, code-action or inline-edit configuration is tracked, and no
   model-generated test cases or hook-based automatic memory collection are
@@ -96,9 +101,8 @@ On `claude 2.1.283` (2026-09-27) an authorized session observed discovery of
 every role projection, `sonnet` resolving to `claude-sonnet-5`, withheld
 structured write tools for `read-only-evidence`, and delivery of the pre-edit
 hook. The client exposes no `Grep` or `Glob` tool, although projections declare
-both. The SPEC-0086 Task
-recorded that evidence and is recovered from Git through the Retention Catalog
-in `docs/98.archive/README.md`.
+both. The SPEC-0086 Task recorded that evidence; recover it with
+`git show bc8e8125:docs/98.archive/completed/03.specs/0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md`.
 Projections also carry `effort`, which the provider binding table owns per
 tier, with a role override where effort or model genuinely differs.
 Models stay aliases (`fable`, `opus`, `sonnet`, `haiku`), so each one follows
@@ -109,8 +113,11 @@ a changed projection from a new session. Native macOS and Linux builds from
 names silently. SPEC-0098 therefore gives every role's Claude scope `Bash`, and
 `Grep` and `Glob` stay for the builds that still ship them. The two read-only
 roles that held no shell now confine it to read-only repository search by
-policy. The SPEC-0097 and SPEC-0098 Tasks recorded that evidence and are
-recovered from Git through the Retention Catalog.
+policy. The SPEC-0097 and SPEC-0098 Tasks recorded that evidence; recover
+them with
+`git show bc8e8125:docs/98.archive/completed/03.specs/0097-claude-model-and-effort-binding/tasks/tsk-0001-bind-claude-model-and-effort.md`
+and
+`git show 9a509be9:docs/98.archive/completed/03.specs/0098-claude-search-grant-and-retention/tasks/tsk-0001-grant-search-and-retain-packages.md`.
 These are configuration intent; availability and resolution remain separate
 runtime evidence. The native `Task` tool remains a documented alias for `Agent`.
 See [subagent fields](https://code.claude.com/docs/en/sub-agents),

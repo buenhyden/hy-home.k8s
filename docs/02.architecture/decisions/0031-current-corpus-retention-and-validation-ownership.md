@@ -53,10 +53,9 @@ not by itself evidence that the control plane is coherent.
 already establishes authority-first convergence, a minimal active topology,
 consumer-first deletion, bounded validation, and Git-backed recovery. This
 decision applies those principles to the current corpus and validation
-routing. [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
-owns the integrated governance convergence, while
-[Spec 0066](../../98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md) owns the
-delegated validation-tooling transition.
+routing. Spec 0054 and Spec 0066
+(N/A — both left the tree; Git history recovers them) carried the
+integrated convergence and the validation-tooling transition.
 
 ## Decision
 
@@ -67,7 +66,7 @@ The terminal ownership map is:
 | Responsibility | Terminal owner | Boundary |
 | --- | --- | --- |
 | Architecture and long-lived governance decisions | Accepted ADRs | Stage 00 explains the approved model but does not create a parallel decision contract. |
-| Integrated convergence implementation and acceptance | Spec 0054, closed `done` and retained in `98.archive/completed/` | Its delegated packages reported evidence to it; later work is accepted by its own current Spec package. |
+| Integrated convergence implementation and acceptance | N/A — Spec 0054 left the tree; Git history recovers it | Its delegated packages reported evidence to it; later work is accepted by its own current Spec package. |
 | Document profiles, frontmatter, lifecycle domains, and document relations | `docs/99.templates/registry.json` | The registry describes document kinds and normalized lifecycle rules, not current execution instances. |
 | Validation selection, routing, command arguments, and CI projection | `scripts/validation/registry.json` | The existing Stage 00 validation-surfaces contract and schema move atomically to this path and are reused rather than copied. |
 | Agent role, permission, skill, and handoff topology | `.agents/roles/registry.json` | Provider projections consume this registry and do not redefine shared authority. |
@@ -275,10 +274,16 @@ byte identity is meaningful.
 
 ## Traceability
 
+**Current-state clarification (2026-11-03).** Under
+[ADR-0053](./0053-unvalidated-archive.md) the archive is unvalidated: no archive validators, frozen-generation exemptions, migration proofs, tombstones or archive index exist, and the Retention Catalog and Envelope no longer apply.
+Superseded ADRs are summarized in the Archived Lineage table of
+[AD-0006](../descriptions/0006-workspace-agent-governance-platform.md#archived-lineage)
+and deleted; Git history recovers them. The Spec packages named here left the
+tree and are recovered the same way.
+
 **Current-state clarification (2026-09-14).** The agent topology owner named
 below as `.agents/registry.json` is now `.agents/roles/registry.json`
-(ADR-0036). Spec 0066 has completed and is retained at
-`docs/98.archive/completed/03.specs/0066-validation-tooling-ownership/`, so its
+(ADR-0036). Spec 0066 has completed and left the tree (Git history recovers it), so its
 delegated validation-tooling ownership is historical.
 
 This ADR supersedes the current lineage and routing
@@ -324,5 +329,5 @@ narrower validation-routing and execution-instance boundaries needed by Specs
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| ADR-0016, ADR-0017, ADR-0020, ADR-0021, and ADR-0022 | Supersedes their current instance-roster and validation-routing authority; scoped amendment, not lifecycle supersession, of the two identified ADR-0030 validation-layout clauses | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Preserves ADR-0030 as accepted while applying the reciprocal two-clause scoped amendment | [Spec 0066](../../98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md) |
+| ADR-0016, ADR-0017, ADR-0020, ADR-0021, and ADR-0022 | Supersedes their current instance-roster and validation-routing authority; scoped amendment, not lifecycle supersession, of the two identified ADR-0030 validation-layout clauses | N/A — SPEC-0054 left the tree; Git history recovers it |
+| [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Preserves ADR-0030 as accepted while applying the reciprocal two-clause scoped amendment | N/A — SPEC-0066 left the tree; Git history recovers it |

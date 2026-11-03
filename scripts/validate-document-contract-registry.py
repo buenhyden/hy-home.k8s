@@ -32,7 +32,6 @@ DOCUMENT_REGISTRY_ROOT_ERROR = (
 TERMINAL_TEMPLATE_GROUPS = frozenset(
     {
         "architecture",
-        "archive",
         "common",
         "evaluations",
         "governance",
@@ -78,11 +77,6 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--mode", choices=("strict",), default="strict")
-    parser.add_argument(
-        "--route-state",
-        choices=("legacy", "transition", "terminal"),
-        help="parse-only compatibility argument; the registry is terminal",
-    )
     parser.add_argument("--profile")
     parser.add_argument(
         "--include-path",
@@ -209,6 +203,7 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
     root_entries = _bounded_directory_entries(stage_root)
     allowed_root_entries = {
         "README.md",
+        "AGENTS.md",
         *(item[0] for item in REFERENCE_PACK_CATEGORIES),
     }
     for entry in root_entries:
@@ -217,9 +212,11 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
         except OSError:
             errors.append(f"REFERENCE_PACK_ROOT_ENTRY: {entry.name} is unavailable")
             continue
-        if entry.name == "README.md":
+        if entry.name in {"README.md", "AGENTS.md"}:
             if not stat.S_ISREG(mode):
-                errors.append("REFERENCE_PACK_ROOT_ENTRY: README.md must be regular")
+                errors.append(
+                    f"REFERENCE_PACK_ROOT_ENTRY: {entry.name} must be regular"
+                )
             else:
                 worktree_files.add(PurePosixPath(entry.relative_to(root).as_posix()))
             continue

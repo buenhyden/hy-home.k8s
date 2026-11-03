@@ -25,7 +25,6 @@ MetalLB bootstrap manifest는 별도 `metallb/` 디렉터리가 아니라 이 �
 - Operators
 - Platform Engineers
 - Documentation Writers
-- AI Agents
 
 ### Scope
 
@@ -98,7 +97,7 @@ infrastructure/
 
 이 표는 `infrastructure/`의 현재 bootstrap/runtime-support entrypoint와
 운영 책임을 연결한다. `repository-quality` 게이트는 이 표가 실제
-`argocd/`, `k3d/`, `verify/`, `vault/`, `bootstrap-local.sh`,
+`argocd/`, `k3d/`, `verify/`, `vault/`, `AGENTS.md`, `bootstrap-local.sh`,
 `coredns-custom.yaml`, `ipaddresspool.yaml`, `l2advertisement.yaml` 표면과 동기화되어 있는지
 검증한다.
 
@@ -108,6 +107,7 @@ infrastructure/
 | `k3d/` | Local cluster configuration owned by platform maintainers. | Defines local k3d cluster shape, the k8s router bind `192.168.0.14:80/443` to NodePorts `30080/30443`, and the API bind `192.168.0.13:6550` that OpenBao Kubernetes auth calls (ADR-0046). | Depends on the Linux server host, native Docker Engine, k3d, and local network conventions (ADR-0042). | Validate by static review and live `infrastructure/verify/verify-cluster.sh` when a cluster is available. |
 | `verify/` | Live cluster validation scripts owned by platform/ops maintainers. | Covers cluster, GitOps, external service, ingress/TLS, network policy, and secret verification. | Requires a bootstrapped k3d/ArgoCD environment and reachable external services. | Run `run-all.sh` only for intentional live validation; the repository-static contract check is `scripts/validate-infrastructure-contracts.sh`. |
 | `vault/` | Vault policy samples owned by platform/security maintainers. | Stores least-privilege HCL policy material for ESO read access; the Rego manifest rules in `policy/` are a different owner and evaluator. | Depends on external Vault runtime and approved secret paths; never stores secret values. | Validate policy expectations through static contracts; live policy state requires external Vault verification. |
+| `AGENTS.md` | Folder-level agent instructions, owned by platform maintainers. | Not a bootstrap or runtime asset. | Refers to `.agents/`, `.claude/` and `.codex/` role projections; holds no secrets. | Checked by the document registry and link validators. |
 | `bootstrap-local.sh` | Local bootstrap entrypoint owned by platform maintainers. | Creates initial namespace, secret, MetalLB, and root GitOps application before ArgoCD owns desired state. | Depends on interactive `/dev/tty`, HTTPS Vault, a readable `VAULT_CA_FILE`, kubectl context, k3d, Helm, and local certificates. | Validate with `bash -n infrastructure/bootstrap-local.sh` and `python3 scripts/validate-vault-eso-contracts.py --root .`; execution is human-approved bootstrap work, not normal agent mutation. |
 | `coredns-custom.yaml` | CoreDNS zone owned by platform maintainers. | Bootstrap applies it to `kube-system` and restarts CoreDNS; it resolves `openbao`, `prometheus` and `grafana.hy.home.arpa` to the host address `192.168.0.13` (ADR-0046). Bootstrap also creates the gateway CA ConfigMaps `openbao-ca`, `hy-home-root-ca` and `kiali-cabundle`. | Depends on the external Traefik routes for OpenBao, the Prometheus API (Basic Auth) and Grafana, and on the k3s `coredns-custom` import. | Validate with `bash scripts/validate-infrastructure-contracts.sh`; live resolution requires a running cluster. |
 | `ipaddresspool.yaml` and `l2advertisement.yaml` | MetalLB bootstrap manifests owned by platform maintainers. | Bootstrap-time LoadBalancer address pool and L2 advertisement. | Depends on local network range and MetalLB controller. | Validate manifests statically; live behavior requires cluster networking checks. |
@@ -194,5 +194,5 @@ rollback은 백업 파일을 `~/.kube/config`로 되돌리는 방식이다.
 
 ## Related Documents
 
-- Infrastructure Spec (`docs/03.specs/README.md`)
+- Stage 03 Spec 안내 (`docs/03.specs/README.md`)
 - Platform bootstrap runbook (`docs/05.operations/runbooks/README.md`)

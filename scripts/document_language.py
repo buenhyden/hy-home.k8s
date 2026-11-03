@@ -25,8 +25,6 @@ HTML_BLOCK = re.compile(
     re.I,
 )
 AUTHOR_PROMPT = re.compile(r"<!--\s*Author prompt:(.*?)-->", re.S)
-ARCHIVE_PREFIX = "docs/98.archive/"
-ARCHIVE_INDEX = "docs/98.archive/README.md"
 
 
 def _body(text: str) -> str:
@@ -172,13 +170,10 @@ def classify(
 ) -> str | None:
     """Name the language rule a document answers to, or None when unchecked."""
 
-    value = path.as_posix()
     if contract.english_only(path):
         return "english-only"
     if contract.korean_allowed_markdown(path):
         return "korean-allowed"
-    if value.startswith(ARCHIVE_PREFIX) and value != ARCHIVE_INDEX:
-        return None
     if mode == "template":
         if template_output is None:
             return None

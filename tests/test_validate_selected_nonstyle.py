@@ -448,38 +448,6 @@ class SelectedNonstyleContractTests(unittest.TestCase):
         self.assertEqual(projected["default_stages"], ["pre-commit"])
         self.assertTrue(all(hook["stages"] == ["pre-commit"] for hook in hooks))
 
-    def test_legacy_contract_remains_projectable(self) -> None:
-        checker = load_checker()
-        config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
-        local = next(repo for repo in config["repos"] if repo["repo"] == "local")
-        legacy = {
-            **config,
-            "default_stages": ["pre-commit", "manual"],
-            "repos": [
-                {**repo, "hooks": [local["hooks"][0]]} if repo is local else repo
-                for repo in config["repos"]
-            ],
-        }
-        gitleaks = next(
-            hook
-            for repo in legacy["repos"]
-            for hook in repo["hooks"]
-            if hook["id"] == "gitleaks"
-        )
-        gitleaks["stages"] = ["pre-commit"]
-        for repo in legacy["repos"]:
-            if repo["repo"] == "local":
-                continue
-            for hook in repo["hooks"]:
-                if hook["id"] not in {"commitizen", "gitleaks"}:
-                    hook.pop("stages", None)
-        projected = checker.project_nonstyle(yaml.safe_dump(legacy).encode())
-        self.assertEqual(projected["default_stages"], ["pre-commit"])
-        self.assertEqual(
-            {hook["id"] for repo in projected["repos"] for hook in repo["hooks"]},
-            set(checker.NONSTYLE_IDS),
-        )
-
     def test_only_exact_reviewed_local_hooks_are_excluded(self) -> None:
         checker = load_checker()
         config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
@@ -547,14 +515,14 @@ class SelectedNonstyleContractTests(unittest.TestCase):
                 if hook["id"] == "detect-secrets"
             )
 
-        original_exclude = original["exclude"]
+        original_exclude = original["exclude"] = r"^docs/example\.json$"
         exclusion = projected_exclude()
         self.assertEqual(exclusion, f"(?:{original_exclude})|^\\.secrets\\.baseline$")
         self.assertIsNotNone(re.search(exclusion, ".secrets.baseline"))
         self.assertIsNotNone(
             re.search(
                 exclusion,
-                "docs/90.references/data/active-corpus-eligibility-ledger.json",
+                "docs/example.json",
             )
         )
         self.assertIsNone(re.search(exclusion, "docs/99.templates/registry.json"))

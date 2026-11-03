@@ -31,6 +31,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             "is_unmarked_command",
             "is_task_evidence_record",
             "rel",
+            "agents_router_gaps",
         }
         nodes = [
             node
@@ -90,6 +91,15 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         sys.modules[spec.name] = cls.document_validator
         spec.loader.exec_module(cls.document_validator)
         cls.document_registry = cls.document_validator.load_registry(ROOT)
+
+    def test_folder_agents_file_needs_its_human_router(self):
+        gaps = self.rules["agents_router_gaps"]
+        self.assertEqual(gaps({"AGENTS.md", "docs/AGENTS.md", "docs/README.md"}), [])
+        self.assertEqual(gaps({"gitops/AGENTS.md"}), ["gitops/README.md"])
+        self.assertEqual(
+            gaps({".github/AGENTS.md", ".github/README.md"}),
+            [".github/repository-surface.md"],
+        )
 
     def test_current_collection_index_header_uses_shared_navigation_contract(self):
         validator = self.document_validator
@@ -453,12 +463,36 @@ class RepositoryQualityRuleTests(unittest.TestCase):
     def test_task_evidence_rows_cite_commands_as_records(self):
         record = self.rules["is_task_evidence_record"]
         row = "| EVD-011 | [VAL-X](../spec.md) | WORK-001 | Review | head | FAIL | scan of `kubectl apply` and `git push` removed | yes | none |"
-        task = "docs/03.specs/0118-qa-phase-two/tasks/tsk-0001-qa-phase-two.md"
+        task = "docs/03.specs/0140-archive-check-removal/tasks/tsk-0001-archive-check-removal.md"
         self.assertTrue(record(task, row))
         self.assertFalse(record(task, "Run `kubectl apply -f app.yaml` now."))
         self.assertFalse(record(task, "| WORK-001 | `kubectl apply` |"))
         self.assertFalse(record("docs/05.operations/runbooks/0001-x.md", row))
-        self.assertFalse(record("docs/03.specs/0118-qa-phase-two/spec.md", row))
+        self.assertFalse(
+            record("docs/03.specs/0140-archive-check-removal/spec.md", row)
+        )
+
+    def test_kubeconfig_rule_flags_only_mutating_config_commands(self):
+        rule = next(
+            entry
+            for entry in self.rules["command_boundary_rules"]
+            if entry[0] == "kubeconfig mutation"
+        )
+        pattern = rule[1]
+        for command in (
+            "kubectl config use-context prod",
+            "kubectl config set-context dev",
+            "kubectl config delete-context old",
+            "kubectl config set users.x.token y",
+            "aws eks update-kubeconfig --name c",
+        ):
+            self.assertIsNotNone(pattern.search(command), command)
+        for command in (
+            "kubectl config current-context",
+            "kubectl config get-contexts",
+            "kubectl config view --minify",
+        ):
+            self.assertIsNone(pattern.search(command), command)
 
     def test_prohibited_prose_does_not_hide_other_live_commands(self):
         decide = self.rules["is_unmarked_command"]

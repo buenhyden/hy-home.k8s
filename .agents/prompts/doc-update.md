@@ -43,14 +43,13 @@ each copy.
 
 The proposal is judged by the document contract registry and the markdown
 profile validator on the target path, and by link and owner validation when it
-changes a route. Sealed and completed records are not rewritten to match a new
-form.
+changes a route. Completed records are not rewritten to match a new form.
 
 ## Refusal Conditions
 
 - No owner can be resolved for the statement, which means the owner must be
   decided before the text is written.
-- The target is a sealed archive record or a completed Task whose body is
+- The target is an archived file or a completed Task whose body is
   historical evidence.
 - The proposal would create a second document stating the same contract.
 

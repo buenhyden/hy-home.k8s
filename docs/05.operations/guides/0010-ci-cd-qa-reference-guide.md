@@ -49,7 +49,7 @@ artifact_id: "GDE-0010"
 | 일반 문서 변경 | 공통 diff·style 검사와 선택된 문서 profile·관계·링크·상태 검사 | 문서 내용·형식과 현재 owner만 로컬에서 확인; 동작 회귀 suite를 추가하지 않음 |
 | 구현·validator·QA 계약 변경 | 바뀐 규칙의 focused 회귀와, 작업 트리 입력에 별도 증거가 필요할 때 `python3 scripts/qa.py quick` | 새 동작의 실패·경계 사례를 해당 입력에서 확인 |
 | staged 변경 | `git diff --cached --check`, 실제 메시지 검사 및 선택된 `python3 scripts/qa.py staged` | 정확한 Git index snapshot과 commit 문법을 서로 다른 입력으로 확인 |
-| global QA 계약 변경 또는 명시적 한정 감사 | 변경 목적에 해당하는 named 동작·Archive·보안 회귀와 선택된 affected/staged gate | 사전 도구·예산 확인 후 필요한 보호만 확인; full/ci sweep·blanket unit discovery는 선택하지 않음 |
+| global QA 계약 변경 또는 명시적 한정 감사 | 변경 목적에 해당하는 named 동작·보안 회귀와 선택된 affected/staged gate | 사전 도구·예산 확인 후 필요한 보호만 확인; full/ci sweep·blanket unit discovery는 선택하지 않음 |
 | hosted CI | GitHub Actions의 PR branch·title result·`ci-summary`와 별도 PR `style-pr` | 각각의 PR SHA/run에서 branch·trusted-base authored title 문법과 선택된 style만 확인; 목적·문서 내용 QA를 대리하지 않음 |
 
 명령과 옵션의 현재 정의는 [`scripts/README.md`](../../../scripts/README.md)를
@@ -124,4 +124,4 @@ hook 연결과 커밋 메시지 검증 절차는
 
 | Promoted owner | Audience outcome | Operating surface |
 | --- | --- | --- |
-| N/A — SPEC-0054-TSK-0006 was retained with its package by SPEC-0087 | 검증 결과의 범위와 한계를 구분해 handoff한다. | local validators, GitHub Actions, approved runtime evidence |
+| N/A — SPEC-0054-TSK-0006 left the tree; Git history recovers it | 검증 결과의 범위와 한계를 구분해 handoff한다. | local validators, GitHub Actions, approved runtime evidence |

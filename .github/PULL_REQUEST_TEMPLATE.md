@@ -62,7 +62,7 @@ do not copy its progress or outcomes into this PR description.
 
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
 - [ ] Workflow triggers and job ownership reviewed (if `.github` automation changed)
-- [ ] Documentation changes preserve current implementation contracts; obsolete or conflicting numbered stage docs are routed through `docs/98.archive/README.md` only.
+- [ ] Documentation changes preserve current implementation contracts; obsolete or conflicting numbered stage docs leave their stage (deleted or moved to the unvalidated `docs/98.archive/`).
 - [ ] Cloud example changes under `examples/aws` or `examples/azure` preserve each provider README and adjacent executable assets as one boundary; they are not live provider-latest guidance unless an approved provider refresh spec exists.
 - [ ] Coverage policy reviewed: apply the approved target where testable application code exists; Bash/YAML/Markdown infrastructure changes use applicable purpose and contract checks instead of application coverage claims
 - [ ] Every validation lane is explicitly classified as `PASS`, `NOT_RUN`, `FAIL`, `DEFER`, or `NOT_APPLICABLE`.

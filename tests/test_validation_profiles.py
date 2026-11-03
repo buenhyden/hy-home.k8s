@@ -211,7 +211,7 @@ class ValidationProfileTests(unittest.TestCase):
         self.assertEqual(affected, staged)
         self.assertEqual(affected[: len(gate["argv"])], gate["argv"])
         self.assertIn("docs/99.templates/README.md", affected)
-        self.assertEqual(affected.count("--include-path"), 2)
+        self.assertEqual(affected.count("--include-path"), 1)
 
     def test_central_registry_may_select_a_skill_owned_checker(self):
         self.assertEqual(
@@ -336,10 +336,10 @@ class SkillAdapterPathTests(unittest.TestCase):
                     )
                 self.assertEqual(raised.exception.code, "SURFACE-PATH-SYMLINK")
 
-    def test_whole_directory_adapter_is_retired(self):
+    def test_whole_directory_adapter_is_rejected(self):
         self.link.unlink()
         self.link.parent.rmdir()
-        self.link.parent.symlink_to("../docs/00.agent-governance/skills")
+        self.link.parent.symlink_to("../.agents/skills")
         with self.assertRaises(ROUTES.ContractError) as raised:
             ROUTES.reject_symlink_traversal(self.root, ".claude/skills")
         self.assertEqual(raised.exception.code, "SURFACE-PATH-SYMLINK")

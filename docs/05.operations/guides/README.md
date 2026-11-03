@@ -11,9 +11,6 @@ layer: "operations"
 
 > 운영자와 개발자가 k3d/GitOps 작업을 이해하고 재현할 수 있도록 how-to 중심 가이드를 관리한다.
 
-> [!NOTE]
-> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../../.agents/README.md)를 따른다.
-
 ## Overview
 
 이 경로는 안정 상태의 사용법, 온보딩 흐름, 배경 설명을 제공한다.
@@ -33,7 +30,6 @@ layer: "operations"
 - Developers
 - Operators
 - Documentation Writers
-- AI Agents
 
 ## Scope
 

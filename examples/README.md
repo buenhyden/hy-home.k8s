@@ -26,7 +26,6 @@ AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 기존 
 - Operators
 - Cloud Architects
 - Documentation Writers
-- AI Agents
 
 ### Scope
 
@@ -57,6 +56,7 @@ examples/
 ├── aws/             # EKS 1.35 target + Terraform AWS provider 6.x 참조 예시
 ├── azure/           # AKS 1.35 target + Bicep/AGC 참조 예시
 ├── sample-app/      # GitOps 앱 온보딩 예시
+├── AGENTS.md        # 폴더 에이전트 지시
 └── README.md        # This file
 ```
 
@@ -124,4 +124,4 @@ provider나 live cluster의 준비 상태를 증명하지 않는다.
 
 - [AWS executable example](aws/README.md)
 - [Azure executable example](azure/README.md)
-- README and Workspace Profiles Spec (`docs/98.archive/README.md`)
+- [Docs README](../docs/README.md)

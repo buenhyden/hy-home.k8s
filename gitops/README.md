@@ -35,7 +35,6 @@ patch/apply가 필요한 경우에도 이는 human-approved break-glass 예외�
 - Developers
 - Operators
 - Documentation Writers
-- AI Agents
 
 ### Scope
 
@@ -119,6 +118,7 @@ gitops/
 ├── apps/        # platform-* Application 선언과 App-of-Apps entry
 ├── platform/    # 공통 플랫폼 리소스
 ├── workloads/   # ApplicationSet이 스캔하는 앱 워크로드
+├── AGENTS.md    # 폴더 에이전트 지시
 └── README.md
 ```
 

@@ -37,8 +37,7 @@ profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
 | Path | Purpose |
 | --- | --- |
 | [architecture/](./architecture/) | decision, description |
-| [archive/](./archive/) | migration, route-tombstone, scope-migration, tombstone |
-| [common/](./common/) | repository, documentation·stage, package, implementation, workspace-staging, runtime-governance entrypoint README form |
+| [common/](./common/) | repository, stage-index, collection-index, implementation, workspace-staging, runtime-governance entrypoint README form |
 | [governance/](./governance/) | contract, knowledge, prompt, provider, role, rule, skill |
 | [evaluations/](./evaluations/) | evaluation-task.template.md, evaluation-score.template.md, evaluation-results.template.md |
 | [operations/](./operations/) | guide, incident, policy, postmortem, runbook |

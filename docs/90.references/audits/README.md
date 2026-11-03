@@ -11,9 +11,6 @@ layer: "references"
 
 > 구현 audit pack, 그 보고서, 오래 유지할 audit 증거를 두는 곳이다.
 
-> [!NOTE]
-> 이 디렉터리에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../../.agents/README.md)를 따른다.
-
 ## Overview
 
 `audits/`는 오래 유지할 audit 자료를 둔다. 저장소에 실제로 무엇이 있는지를
@@ -33,7 +30,6 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - Developers
 - Operators
 - Documentation Writers
-- AI Agents
 
 ## Scope
 

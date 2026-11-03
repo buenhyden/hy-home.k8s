@@ -23,7 +23,6 @@ updated: "2026-10-05"
 - Application Developers
 - Operators
 - Documentation Writers
-- AI Agents
 
 ### Scope
 

@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "2.2.2"
+version: "2.2.5"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-11-03"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -15,17 +15,15 @@ artifact_id: "AD-0006"
 
 This Architecture describes the current owner boundaries of agent, document, validation, and execution evidence.
 [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) owns
-the common governance design, [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) owns
-the cutover and its acceptance conditions, and [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) owns
-the completed convergence record; its remaining Stage 03 dispositions transferred to SPEC-0083 and SPEC-0084.
+the common governance design. The earlier Spec packages are deleted;
+the Archived Lineage table below summarizes them and Git history recovers them.
 
 The selected local delivery design is recorded in
-[ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) and
-[SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md). Their change replaces
+[ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md);
+SPEC-0107 left the tree (Git history recovers it). That change replaces
 recurring hosted QA and per-main-push tagging with local validation and explicit
-SemVer releases. This view describes that target ownership; the Spec's Task
-records which implementation and validation have actually completed. Earlier
-cutover evidence does not establish completion of this change.
+SemVer releases. The implementation is `scripts/qa.py` and `scripts/release.py`; earlier
+cutover evidence does not establish completion of other changes.
 
 ### Convergence boundaries
 
@@ -43,7 +41,7 @@ No separate governance registry, per-provider policy fork, Release family, or sh
 | Verifiability | Repository-static, provider-runtime, hosted-CI, and remote/live kept apart | Direct observation per class; an unobserved class gets an owner and a retry trigger |
 | Reliability | Bounded retry, a no-progress stop, and safe resume | The loop contract and positive/negative recovery fixtures |
 | Security | Least privilege and approval boundaries; secrets, auth, and full transcripts excluded | Static guardrails and independent review; execution permission needs separate approval |
-| Recoverability | Git recovery of ordinary changes kept apart from sealed evidence integrity | Consumer succession, sealed records' source commit/blob/digest, the Retention Envelope of retained bodies, and legal lifecycle edges |
+| Recoverability | Git history recovers any document that left its stage | Consumer succession and legal lifecycle edges |
 | Maintainability | The actual consumer graph instead of a fixed census or duplicate wrappers | The v4 source routes targeted/affected/staged selection, purpose-specific gates and direct negative fixtures; acceptance of the aggregate all-files retirement stays with the owning Task |
 
 ### Convergence authority context
@@ -60,7 +58,7 @@ No separate governance registry, per-provider policy fork, Release family, or sh
 | Execution | [Stage 03](../../03.specs/README.md) | Package-local Spec/Plan/Tasks; state, order, and validation evidence are not copied into a central roster |
 | Skill evaluation evidence | [Evaluation router](../../../.agents/evaluations/README.md) | Same-task noSkill/withSkill observations and their scoring; evidence form belongs to Stage 99, Skill membership and runtime contracts remain with their existing owners |
 | Operations and reference | [Stage 05](../../05.operations/README.md), [Stage 90](../../90.references/README.md) | Operating procedures kept apart from observed evidence; a Reference does not substitute for approval or current policy |
-| Historical recovery | [Stage 98](../../98.archive/README.md) and reachable Git | Sealed records, completed packages, retained superseded bodies; not current execution authority or a reactivation path |
+| Historical recovery | Reachable Git and the Archived Lineage tables | Unvalidated [Stage 98](../../98.archive/README.md) ([ADR-0053](../decisions/0053-unvalidated-archive.md)); not current execution authority or a reactivation path |
 
 The number of roles and surfaces is derived from the common governance registry. The past local/Antigravity/Gemini proposals are not the current
 supported roster. `.agents/roles/` owns the current machine truth of common roles and skills,
@@ -81,8 +79,8 @@ relationship, link and state checks. Implementation regressions follow changes
 to their responsible implementation or declared inputs. A global QA-contract
 change or explicit bounded audit selects named affected purpose and unit checks;
 the long full/ci sweep and blanket unit discovery are retired from completion.
-Distinct document, platform, security and
-Archive rules retain their failure meanings when their orchestration is shared.
+Distinct document, platform and
+security rules retain their failure meanings when their orchestration is shared.
 
 ### Convergence data architecture
 
@@ -100,18 +98,11 @@ enforcement is not evidence of successful execution or policy enforcement.
 
 ### Terminal disposition and historical lineage
 
-Before a disposition, source → current semantic owner → every current consumer → legal terminal route is proven.
-ADR-0038 split the retention of no-longer-current documents into two kinds, ADR-0039 added the retention unit and exact retention, and [ADR-0040](../decisions/0040-archive-reappraisal-and-verifiable-sources.md), which superseded it, keeps that model and adds appraisal of retention units, whole removal of an approved unit (`git-history-only`), and envelope verification against the default branch. The appraisal is owned by the `Retention Assessment` table of the Archive index, not by the original text.
-The retention classes `completed/`, `superseded/`, `retired/`, and `resolved/` keep the original Git objects of a spec package, an Incident bundle, or a single document, links included, under their original profile;
-the route dispositions `tombstones/` and `migrations/` name only the route and the current owner, without a body. The ADR decision-log exception is retired.
-Citability is judged by the registry's ordered citation table, and the catalog's Retention Envelope names the source Git object once
-as `<commit>:<original path>`. The envelopes and source commit/blob/digest of the ADR-0032
-generation are frozen historical evidence and are not edited. A terminal ADR's citations of its original documents stay
-explicit historical links, and current documents do not consume a retained copy as execution authority.
+Before a disposition, source → current semantic owner → every current consumer is proven.
+A document that is no longer current is deleted or moved into `docs/98.archive/`; [ADR-0053](../decisions/0053-unvalidated-archive.md) makes the archive unvalidated (README and structure only) and Git history alone recovers it. Stage 01-03 documents have no superseded, retired or withdrawn state: a replaced or completed document is summarized in an Archived Lineage table and deleted in the same change. A successor ADR's `supersedes` and Traceability keep the predecessor ID. No tombstone, migration record, sealed record or archive index exists.
 
 REQ-0005/0006 → REQ-0008 is the original supersession history. REQ-0003 is the transitive
 current semantic successor of this convergence and does not rewrite the original decision target.
-The Migration seals the unique mapping of this many-to-one succession and does not extend into a practice of requiring a permanent pin for every ordinary document.
 
 ### Loop and checkpoint
 
@@ -120,7 +111,6 @@ the timeout, output, and child cleanup limits, and the Task owns the no-progress
 A checkpoint is ignored transient recovery state and replaces neither policy, the Task, nor a credential store.
 Compaction and resume keep only finished and unfinished work, validation results, and the next action, and exclude sensitive data and full transcripts.
 Reusable decision context may live in the shared workspace memory store of
-[SPEC-0109](../../03.specs/0109-shared-workspace-memory/spec.md)
 (`scripts/workspace_memory.py`, Git-ignored `.workspace-memory/`). Both
 providers read and write it, and their native memory is disabled in project
 configuration. It is never Task status, evidence, approval or acceptance, and
@@ -128,9 +118,7 @@ it is not the retired shared progress ledger. The shared store belongs to the
 representative worktree; source references are checked against the caller
 worktree without following symlinks. Request-bound retries, a capacity bound
 on every store connection, and verified atomic backup replacement protect
-context integrity. [SPEC-0115](../../03.specs/0115-r10-local-remediation/spec.md)
-owns this hardening and its focused evidence; it grants no authority to the
-stored context.
+context integrity. The store grants no authority to the stored context.
 
 ### Convergence infrastructure and deployment
 
@@ -138,36 +126,28 @@ Tracked provider configuration and projections are secret-free repository config
 neither read nor migrated. Native parsers and canaries are handled in the provider owner's independent evidence lane,
 and no provider credential is added to hosted CI.
 
-[SPEC-0114](../../03.specs/0114-provider-permission-hardening/spec.md) owns the
-provider permission and hook hardening. Its Task records native configuration
-parsing and later operator-relayed hook delivery as separate observations.
-The recorded host `bwrap` startup failure does not establish operating-system
+Provider permission and hook hardening is recorded in the provider notes;
+native configuration parsing and operator-relayed hook delivery are separate
+observations. The recorded host `bwrap` startup failure does not establish operating-system
 sandbox isolation; a command subsequently approved outside that sandbox
 supplies no workspace-isolation evidence. Native syntax and loading remain
 with the [provider notes](../../../.codex/provider.md), while current r10
-findings and follow-up verification belong to
-[SPEC-0115](../../03.specs/0115-r10-local-remediation/spec.md). These current
-boundaries preserve the original Task results and their observation classes.
+findings and follow-up verification belong to the provider owner's evidence.
 
 The implementation validation owners are [document contracts](../../../scripts/document_contracts.py),
-[lifecycle](../../../scripts/document_lifecycle.py),
-[Archive recovery](../../../scripts/archive_recovery.py),
-[Archive validation](../../../scripts/archive_validation.py), and the lanes the Validation Registry points to.
+[lifecycle](../../../scripts/document_lifecycle.py), and the lanes the Validation Registry points to.
 Exact commands and tool versions are read from their execution owners and not copied into this Architecture.
 
 ### Unfinished ownership
 
-Spec 0054 closed as `done` through WP-013/TSK-0013 and is kept in
-[98.archive/completed](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md).
-The local QA and release ownership transition belongs to
-[SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md); its Task owns actual
-results and remaining work. The current owner of platform implementation and validation
+N/A — Spec 0054 left the tree; Git history recovers it.
+Local QA and release ownership is implemented in `scripts/qa.py` and
+`scripts/release.py` ([ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md)). The current owner of platform implementation and validation
 is the active Spec that [AD-0007](./0007-current-local-gitops-platform.md) points to;
 this document provides the common routing, approval, and QA boundaries.
 This document describes the responsibility boundaries of common governance, the Claude/Codex adapters, common QA, and
 GitOps operations. [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) owns
-the common governance design, and [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) preserves
-the original cutover and its acceptance conditions. ADR-0048 records the local
+the common governance design. ADR-0048 records the local
 delivery change. The existence of a file does not prove the installed runtime's discovery or
 permission enforcement, nor hosted CI success. Actual validation state is confirmed in the relevant Task.
 
@@ -212,8 +192,8 @@ explicit invocation. Root instructions also require reading the selected role
 and its common procedures. No provider generator or compatibility skill copy
 is needed. A native hook is registered only for an actual supported event;
 routine tool completion does not invoke whole-repository QA. ADR-0036 owns the
-current authority location and carries forward the QA and CD boundary its
-superseded predecessors ADR-0034 and ADR-0035 decided.
+current authority location and carries forward the QA and CD boundary
+its deleted predecessors decided (see Archived Lineage).
 
 ## Data Architecture
 
@@ -241,8 +221,7 @@ input invalidates its dependent result. Within a run, parsing and Git reads may
 be shared without merging independent failure meanings or persisting a second
 source of document state.
 
-Recurring Archive validation owns safe paths, retained-body integrity and
-recoverable source objects. A past cutover's fixed census and completion proof
+A past cutover's fixed census and completion proof
 remain historical evidence. Retirement transfers any unique ongoing protection
 before removing its caller, registration and dedicated helper, fixture or test.
 Frozen bodies and original observed results are preserved.
@@ -292,7 +271,7 @@ evidence capacity available without adding a new QA gate.
 | Feature push | Git transport preserves commit evidence and adds no repeated QA requirement |
 | PR and main integration | Review local evidence and check inputs changed by integration; refresh only invalidated results |
 | After merge | Verify delivered identity and state; a merge resolution that changes validated inputs selects the affected checks |
-| Global QA-contract change or bounded audit | Resolve tools, time, output and native execution approval for affected purpose gates and named behavior, Archive and security units; do not run a blanket sweep |
+| Global QA-contract change or bounded audit | Resolve tools, time, output and native execution approval for affected purpose gates and named behavior and security units; do not run a blanket sweep |
 | Release | Validate release inputs and publish through one producer; tag or Release publication does not repeat QA |
 
 GitHub Actions retains `ci-summary`, which validates branch and PR commit
@@ -351,41 +330,41 @@ verification require their own actual evidence and applicable authorization.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| [REQ-0003-FR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Agent Registry, common governance prose, and Stage 99 document-contract authority planes | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Thin provider projections with native syntax isolated from shared policy | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) | Skill-source provenance and unavailable-capability boundary | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0004](../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local scope and approval handoff into domain owners | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0005](../../01.requirements/0003-workspace-agent-governance-platform.md) | Task-owned durable evidence and ignored transient checkpoint separation | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0006](../../01.requirements/0003-workspace-agent-governance-platform.md) | Repository form owner separated from external reference formats | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0007](../../01.requirements/0003-workspace-agent-governance-platform.md) | Common governance approval gates around secret, external, and live execution | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0008](../../01.requirements/0003-workspace-agent-governance-platform.md) | Registry-derived provider projection admission | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0009](../../01.requirements/0003-workspace-agent-governance-platform.md) | Static provider metadata versus authenticated runtime evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0010](../../01.requirements/0003-workspace-agent-governance-platform.md) | Agent Registry ownership of permission, stop and handoff semantics | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0011](../../01.requirements/0003-workspace-agent-governance-platform.md) | Loop contract as bounded retry, no-progress and resume owner | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0012](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stage 99 machine contract versus common governance authoring policy | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0013](../../01.requirements/0003-workspace-agent-governance-platform.md) | One form route per document profile with schema/template parity | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0014](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stage-specific purpose boundaries and no parallel Release family | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0015](../../01.requirements/0003-workspace-agent-governance-platform.md) | Consumer transfer before source disposition with Git recovery evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0016](../../01.requirements/0003-workspace-agent-governance-platform.md) | Local Registry dispatch, proportional selection and independent failure meanings | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
-| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | Local QA and hosted delivery metadata with separate evidence | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
-| [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-index logical delivery and no repeated identical leaf at later stages | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
-| [REQ-0003-FR-0019](../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local sequencing with unchanged historical program lineage | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | ADR-0040 unit retention, reappraisal, and ordered citation table | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0021](../../01.requirements/0003-workspace-agent-governance-platform.md) | Reference provenance separated from current execution authority | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | Ignored checkpoint state and the shared memory store versus Task-owned durable execution evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md), [SPEC-0109](../../03.specs/0109-shared-workspace-memory/spec.md) |
-| [REQ-0003-FR-0023](../../01.requirements/0003-workspace-agent-governance-platform.md) | Profile-owned stable identity and source-preserving migration mapping | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0024](../../01.requirements/0003-workspace-agent-governance-platform.md) | Consumer-zero removal of compatibility surfaces after semantic transfer | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0025](../../01.requirements/0003-workspace-agent-governance-platform.md) | Current Agent Registry and common governance risk, trust, and approval owners | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | Separate repository-static, provider-runtime, hosted-CI and live evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | Lifecycle edges separated from ordinary body edits and sealed integrity | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0028](../../01.requirements/0003-workspace-agent-governance-platform.md) | Direct negative fixtures with explicit tool-failure and fallback diagnostics | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0031](../../01.requirements/0003-workspace-agent-governance-platform.md) | Paired Skill observations and one aggregate owner, with Stage 99 form and separate runtime authority | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
-| [REQ-0003-NFR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Registry-derived admission rather than a frozen role/provider census | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-input local validation, budget preflight and bounded reuse | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
-| [REQ-0003-NFR-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) | Primary-source traceability with repository conventions labeled separately | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-NFR-0004](../../01.requirements/0003-workspace-agent-governance-platform.md) | Explicit baseline-failure and environment-limit reporting | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Atomic owner/consumer migration and reciprocal-link validation | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-IF-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | External catalog provenance without policy or permission authority | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Agent Registry, common governance prose, and Stage 99 document-contract authority planes | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Thin provider projections with native syntax isolated from shared policy | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) | Skill-source provenance and unavailable-capability boundary | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0004](../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local scope and approval handoff into domain owners | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0005](../../01.requirements/0003-workspace-agent-governance-platform.md) | Task-owned durable evidence and ignored transient checkpoint separation | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0006](../../01.requirements/0003-workspace-agent-governance-platform.md) | Repository form owner separated from external reference formats | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0007](../../01.requirements/0003-workspace-agent-governance-platform.md) | Common governance approval gates around secret, external, and live execution | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0008](../../01.requirements/0003-workspace-agent-governance-platform.md) | Registry-derived provider projection admission | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0009](../../01.requirements/0003-workspace-agent-governance-platform.md) | Static provider metadata versus authenticated runtime evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0010](../../01.requirements/0003-workspace-agent-governance-platform.md) | Agent Registry ownership of permission, stop and handoff semantics | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0011](../../01.requirements/0003-workspace-agent-governance-platform.md) | Loop contract as bounded retry, no-progress and resume owner | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0012](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stage 99 machine contract versus common governance authoring policy | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0013](../../01.requirements/0003-workspace-agent-governance-platform.md) | One form route per document profile with schema/template parity | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0014](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stage-specific purpose boundaries and no parallel Release family | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0015](../../01.requirements/0003-workspace-agent-governance-platform.md) | Consumer transfer before source disposition with Git recovery evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0016](../../01.requirements/0003-workspace-agent-governance-platform.md) | Local Registry dispatch, proportional selection and independent failure meanings | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
+| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | Local QA and hosted delivery metadata with separate evidence | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
+| [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-index logical delivery and no repeated identical leaf at later stages | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
+| [REQ-0003-FR-0019](../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local sequencing with unchanged historical program lineage | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | ADR-0053 unvalidated archive; deletion with Git recovery | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0021](../../01.requirements/0003-workspace-agent-governance-platform.md) | Reference provenance separated from current execution authority | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | Ignored checkpoint state and the shared memory store versus Task-owned durable execution evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0023](../../01.requirements/0003-workspace-agent-governance-platform.md) | Profile-owned stable identity and source-preserving migration mapping | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0024](../../01.requirements/0003-workspace-agent-governance-platform.md) | Consumer-zero removal of compatibility surfaces after semantic transfer | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0025](../../01.requirements/0003-workspace-agent-governance-platform.md) | Current Agent Registry and common governance risk, trust, and approval owners | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | Separate repository-static, provider-runtime, hosted-CI and live evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | Lifecycle edges separated from ordinary body edits | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0028](../../01.requirements/0003-workspace-agent-governance-platform.md) | Direct negative fixtures with explicit tool-failure and fallback diagnostics | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-FR-0031](../../01.requirements/0003-workspace-agent-governance-platform.md) | Paired Skill observations and one aggregate owner, with Stage 99 form and separate runtime authority | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
+| [REQ-0003-NFR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Registry-derived admission rather than a frozen role/provider census | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-input local validation, budget preflight and bounded reuse | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
+| [REQ-0003-NFR-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) | Primary-source traceability with repository conventions labeled separately | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-NFR-0004](../../01.requirements/0003-workspace-agent-governance-platform.md) | Explicit baseline-failure and environment-limit reporting | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Atomic owner/consumer migration and reciprocal-link validation | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| [REQ-0003-IF-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | External catalog provenance without policy or permission authority | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
 
 ### Architecture responsibility transfer
 
@@ -393,14 +372,13 @@ verification require their own actual evidence and applicable authorization.
 | --- | --- | --- |
 | AD-0008 | This AD: document machine owner, form parity, purpose-specific README, affected routing, CI/security and review boundaries | REQ-0003 member-ID map; terminal ADRs retain original decision citations |
 | AD-0009 | This AD: lifecycle/profile evidence, legal recovery, package-local lineage, Reference/scratch and non-promotable evidence | REQ-0003 member-ID map; original follow-up and supersession chronology unchanged |
-| AD-0011 | This AD: authority planes, stable identity, current taxonomy, validator ownership, consumer-zero and lifecycle/body separation | REQ-0003 and Spec 0054; original Spec 0052 history preserved |
-| AD-0010, shared assurance boundary | This AD: validation routing, CI/QA, approval and direct negative tests; AD-0007 retains platform-specific design | REQ-0003/0004 explicit member transfer and Specs 0047..0051 |
+| AD-0011 | This AD: authority planes, stable identity, current taxonomy, validator ownership, consumer-zero and lifecycle/body separation | REQ-0003; earlier Spec history is in Archived Lineage |
+| AD-0010, shared assurance boundary | This AD: validation routing, CI/QA, approval and direct negative tests; AD-0007 retains platform-specific design | REQ-0003/0004 explicit member transfer |
 
 The replacement record and this responsibility table express semantic succession, not a new claim that historical
-ADRs originally served this AD. Superseded ADR bodies keep their reciprocal supersession and are retained under `98.archive/superseded/`.
+ADRs originally served this AD. Superseded ADR bodies are summarized in Archived Lineage and deleted; Git history recovers them.
 The existing requirement IDs retain their identity. ADR-0036 retains the common
-governance design and SPEC-0072 its implementation history. ADR-0048 and SPEC-0107
-own the selected local QA and release transition; predecessor decisions remain
+governance design. ADR-0048 owns the selected local QA and release transition; predecessor decisions remain
 historical evidence rather than parallel operating instructions.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
@@ -436,13 +414,47 @@ historical evidence rather than parallel operating instructions.
 - **Requirement Package**: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
 - **Current decision**: [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md)
 - **Local QA and release decision**: [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md)
-- **Local QA and release implementation**: [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md)
-- **Later current implementations**: Task status derivation and provider boundaries ([SPEC-0108](../../03.specs/0108-task-status-and-provider-boundaries/spec.md)), shared workspace memory ([SPEC-0109](../../03.specs/0109-shared-workspace-memory/spec.md)), provider README language and QA tool diagnostics ([SPEC-0110](../../03.specs/0110-provider-readme-and-qa-diagnostics/spec.md)), lifecycle test fixtures ([SPEC-0111](../../03.specs/0111-historical-fixture-drift/spec.md), [SPEC-0112](../../03.specs/0112-pinned-package-fixtures/spec.md)), document sync ([SPEC-0113](../../03.specs/0113-sdlc-sync-and-v9-gaps/spec.md)) and provider permission/hook hardening ([SPEC-0114](../../03.specs/0114-provider-permission-hardening/spec.md))
-- **Original governance implementation**: [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)
-- **Wider SDLC program**: [SPEC-0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
-- **Historical decisions**: ADR-0019, [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), ADR-0034, ADR-0035
+- **Local QA and release implementation**: `scripts/qa.py` and `scripts/release.py`
+- **Spec**: N/A — earlier Spec packages left the tree; Git history recovers them (see Archived Lineage). The current Spec is [SPEC-0140](../../03.specs/0140-archive-check-removal/spec.md).
+- **Historical decisions**: [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md); earlier ADRs are in Archived Lineage
 
 The prior architecture narrative is recoverable from this same path at commit
 `bb73116b7b09c4f257fc81baa12cfa8359495fc0`. Its retired providers, fixed retry
 counts, synthetic runtime records, and separate agent CI topology are not
 current contracts.
+
+### Archived Lineage
+
+These documents were deleted from `docs/98.archive/` or the decision log under SPEC-0140 and are recovered with `git show 69445fca:<path>`.
+
+| Source | Kind | Summary | Original path |
+| --- | --- | --- | --- |
+| ADR-0032 | superseded decision | Terminal Document Retention and Archive Stage Taxonomy: retained completed and terminal governed documents instead of deleting them and gave Stage 98 four subdirectories. Superseded by ADR-0038 (six dispositions); Stage 98 validation was later withdrawn by ADR-0053. | `docs/98.archive/superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md` |
+| ADR-0039 | superseded decision | Unit Archive Retention and Citation Table: kept ADR-0038's six dispositions, retained whole units byte for byte with one catalog row each, decided every citation through one ordered registry table, and tracked moves between active stages by identity. Superseded by ADR-0040 on 2026-09-17; removed from the decision log under SPEC-0140. | `docs/02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md` |
+| ADR-0040 | superseded decision | Archive Reappraisal and Verifiable Sources: froze retained units against unapproved change, judged their evidential value in a Retention Assessment table, and verified envelopes against the default branch. Superseded by ADR-0053, which stopped validating the archive; removed from the decision log under SPEC-0140. | `docs/02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md` |
+| AD-0008 | superseded architecture | Workspace Document Assurance Operating Model: one owner per fact across human governance, machine-readable profiles, template forms, validators, provider adapters and CI selectors, with copies treated as non-authoritative views. Replaced by AD-0006. | `docs/98.archive/superseded/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md` |
+| AD-0009 | superseded architecture | Document Lifecycle and Evidence Operating Model: extended the assurance platform with lifecycle and evidence handling (Specs 034 to 040, ADR-0020); hosted, provider, remote and live readiness stayed deferred. Replaced by AD-0006. | `docs/98.archive/superseded/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md` |
+| AD-0011 | superseded architecture | Document Taxonomy Consolidation Architecture: one repository-local control plane for SDLC documents, profiles, agent governance and validation, organizing change evidence around a Stage 03 work unit and retiring the separate Stage 04 tree (implements REQ-0008). Replaced by AD-0006. | `docs/98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md` |
+| MIG-0001 | migration ledger | Rehomed 93 Stage 98 records to stable paths during the SDLC taxonomy convergence (93-to-93, no content change). Current structure is owned by the SDLC flow and AD-0006. | `docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md` |
+| MIG-0002 | migration ledger | Bound the WP-002 cutover: 141 document moves from three-digit to four-digit numbering, three Stage 04 index replacements and ten Stage 00/99 owner merges. Current owners are the SDLC flow and Stage 00/99. | `docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md` |
+| MIG-0003 | migration ledger | Merged three legacy reference owners into the canonical Stage 00 agent-governance control plane (WORK-054-003). Current owner is Stage 00 under AD-0006. | `docs/98.archive/migrations/0003-agent-governance-control-plane-consolidation.md` |
+| MIG-0004 | migration ledger | Sealed the WP-004B cutover of Requirement Package, prefix-free Architecture Description and Spec-package Task authority, plus the WP-004C Stage 99 authority/form cutover (33 deleted or moved objects). Current owners are Stage 01, Stage 02, Stage 03 and Stage 99. | `docs/98.archive/migrations/0004-document-authority-convergence.md` |
+| MIG-0005 | migration ledger | Recorded the reviewed authority removals of Spec 0054 WP-003A for Codex and Claude governance; changed prose and projections were merged, not identical moves. Current owner is the agent registry and provider notes. | `docs/98.archive/migrations/0005-codex-claude-agent-governance-convergence.md` |
+| MIG-0006 | migration ledger | Retired three Stage 99 templates (`content/audit`, `content/research`, `content/data`) whose profiles required a `YYYY-<letter>` directory and so never routed a real Stage 90 document; the 43 existing documents were unaffected. Current owner is Stage 99. | `docs/98.archive/migrations/0006-unroutable-reference-profile-retirement.md` |
+| MIG-0007 | migration ledger | Retired `docs/00.agent-governance/memory/progress.md` (Spec 0054 WP-012) because it contradicted its own README; progress evidence lives in the Task. Current owner is the work lifecycle. | `docs/98.archive/migrations/0007-agent-progress-ledger-retirement.md` |
+| MIG-0008 | migration ledger | Retired the `progress.template.md` append form (Spec 0054 WP-012, Spec 0065) after MIG-0007 retired the ledger it appended to. Current owner is the work lifecycle. | `docs/98.archive/migrations/0008-progress-append-form-retirement.md` |
+| MIG-0009 | migration ledger | Retired the `docs/00.agent-governance/memory/` directory, its README, the memory template and the `governance/memory` profile (Spec 0065). Current owner is the shared workspace memory store in context and memory policy. | `docs/98.archive/migrations/0009-governance-memory-retirement.md` |
+| MIG-0010 | migration ledger | Recorded twelve Stage 99 forms renamed or moved when the contract changed to `family/kind` profile identities; nine were replaced with new frontmatter identity. Current owner is Stage 99. | `docs/98.archive/migrations/0010-stage99-form-naming-and-profile-identity-convergence.md` |
+| MIG-0011 | migration ledger | Retired 63 Stage 03 package routers because `spec.md`, `plan.md` and `tasks/` already prove their own navigation. Current owner is the Spec package. | `docs/98.archive/migrations/0011-stage03-package-router-retirement.md` |
+| MIG-0012 | migration ledger | Renamed three Stage 90 reference forms to the family they serve, dropping the redundant `-reference` suffix. Current owner is Stage 99. | `docs/98.archive/migrations/0012-reference-form-family-naming.md` |
+| MIG-0013 | migration ledger | Moved the first completed Stage 03 package into `docs/98.archive/completed/`; the copy re-based its relative links. Superseded by the removal of archive validation (ADR-0053). | `docs/98.archive/migrations/0013-completed-stage03-package-retention.md` |
+| MIG-0014 | migration ledger | Retained 19 completed Stage 03 packages (145 documents) under ADR-0032, batch A of three. Superseded by ADR-0053. | `docs/98.archive/migrations/0014-completed-stage03-package-retention-batch-a.md` |
+| MIG-0015 | migration ledger | Retained 21 completed Stage 03 packages (142 documents) under ADR-0032, batch B of three. Superseded by ADR-0053. | `docs/98.archive/migrations/0015-completed-stage03-package-retention-batch-b.md` |
+| MIG-0016 | migration ledger | Retained 9 completed Stage 03 packages (57 documents) under ADR-0032, batch C of three. Superseded by ADR-0053. | `docs/98.archive/migrations/0016-completed-stage03-package-retention-batch-c.md` |
+| MIG-0017 | migration ledger | Relocated the seventeen sealed supersession records MIG-0001 had placed under `tombstones/` into `superseded/`, which matches their `superseded` reason. Superseded by ADR-0053. | `docs/98.archive/migrations/0017-supersession-record-relocation.md` |
+| MIG-0018 | migration ledger | Retained Spec 0058 (eight done documents, two cancelled tasks) as a terminal package, applying the ADR-0032 rule that the retention unit is the package. Superseded by ADR-0053. | `docs/98.archive/migrations/0018-terminal-stage03-package-retention.md` |
+| MIG-0019 | migration ledger | Recorded the semantic transfer of REQ-0005..0008 and AD-0008..0011 into retained current owners, mirroring source-identical records into the superseded stage. Current owners are REQ-0003/REQ-0004 and AD-0006/AD-0007. | `docs/98.archive/migrations/0019-requirement-and-architecture-authority-transfer.md` |
+| MIG-0020 | migration ledger | Recorded the ADR-0034 transfer of the provider-neutral registry and schema from the retired `.agents/` root to the Stage 00 roles owner (semantic replacement). Current owner is the agent registry under `.agents/roles/`. | `docs/98.archive/migrations/0020-stage00-agent-registry-authority-transfer.md` |
+| MIG-0021 | migration ledger | Applied ADR-0035 to the former Stage 00 authority sources and closed intermediate endpoints left by earlier transitions; deleted unused forms have no successor. Current owner is common governance under `.agents/governance/`. | `docs/98.archive/migrations/0021-common-agent-authority-routing.md` |
+| MIG-0022 | migration ledger | Retained the completed Spec 0052 package (Spec, Plan and seventeen Tasks) at mirrored `completed/` paths under ADR-0032. Superseded by ADR-0053. | `docs/98.archive/migrations/0022-document-taxonomy-package-retention.md` |
+| MIG-0023 | migration ledger | Absorbed seven responsibility documents under `.agents/roles/` into the responsibility router, each reduced to a boundary statement and a few contract bullets. Current owner is `.agents/roles/README.md`. | `docs/98.archive/migrations/0023-responsibility-document-router-absorption.md` |

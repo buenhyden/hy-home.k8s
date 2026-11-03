@@ -25,9 +25,8 @@ README는 탐색을 돕고 별도의 정책·상태 목록을 만들지 않는�
 - Stage 05: Guide, Operations Policy, Runbook, Incident와 Postmortem.
 - Stage 90: 워크스페이스 Audit, 외부 Research, Data와 기타 참고 자료. 다른
   stage의 규칙이나 실행 권한을 덮어쓰지 않는다.
-- Stage 98: SDLC·운영·reference에서 퇴역한 자료를 독립적으로 정리하는
-  historical archive. 활성 stage의 문서는 이 stage를 현재 owner처럼 라우팅하지
-  않으며, 계보·출처 인용만 아래 Archive 참조 규칙에 따라 허용한다.
+- Stage 98: 퇴역한 자료를 위한 historical archive. 검증 대상이 아니며
+  활성 stage의 문서는 이 stage를 현재 owner처럼 라우팅하지 않는다.
 - Stage 99: docs에서 사용하는 문서 profile, 경로, ID, lifecycle, schema와
   복사 가능한 template.
 
@@ -43,8 +42,9 @@ Stage 04는 사용하지 않는다. 모든 변경이 모든 stage의 새 문서�
 | [03.specs](03.specs/README.md) | spec.md, plan.md, tasks/tsk-####-slug.md |
 | [05.operations](05.operations/README.md) | 운영 설명·통제·절차·사고 기록 |
 | [90.references](90.references/README.md) | 출처와 시점이 명확한 Audit·Research·Data 참고 근거 |
-| [98.archive](98.archive/README.md) | 활성 문서와 분리된 historical archive |
+| [98.archive](98.archive/README.md) | 검증하지 않는 historical archive. README와 구조만 유지 |
 | [99.templates](99.templates/README.md) | 유일한 문서 registry와 복사 가능한 template |
+| [AGENTS.md](AGENTS.md) | `docs/` 전체에 적용되는 AI 에이전트용 지시. 사람은 각 README를 읽는다 |
 
 `.agents/roles/registry.json`은 문서 registry와 별개로 역할 ID, 권한, handoff,
 skill과 provider projection을 소유한다.
@@ -61,24 +61,11 @@ skill과 provider projection을 소유한다.
    구현 순서·위험·검증·rollback은 Plan, 작업 결과는 개별 Task에 둔다.
 5. 경로 또는 내용 변경 시 해당 README와 현재 cross-link를 함께 점검한다.
    ID는 재사용하지 않고 다른 문서에서는 전체 ID로 추적한다.
-6. 완료·봉인된 본문을 새 형식에 맞추려고 다시 쓰지 않는다. ADR을 포함해 더
-   이상 현재가 아닌 문서는 Stage 98의 해당 disposition으로 떠나며, 원본은 두
-   번째 복구 원장 없이 Git history가 복구한다
-   ([ADR-0040](02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)). Disposition은
-   spec package, Incident bundle, 단일 문서를 한 단위로 원본 Git object 그대로, 링크까지 보존한다. 대체된 ADR 중
-   ADR-0032만 `98.archive/superseded/`에 남아 있고, ADR-0038을 비롯한 나머지는 Retention Catalog의
-   envelope로 Git에서 복구한다.
-
-   Archive 인용 가능 여부는 registry의 순서 있는 `archive_citation` 표가 판정한다.
-   **허용**: `completed/`는 promote 선언을 통해, `resolved/`는 corrective-work
-   owner를 통해 현재 authority로 이어지므로 인용할 수 있고, `resolved/`는 역사
-   증거로만 인용한다. `operation/incident`와 `operation/postmortem`은 네 retention
-   class 본문을 역사 증거로 인용할 수 있다. 단, Archive index의 `Retention Assessment`가
-   `withdrawn`·`invalidated`로 판정했거나 더 이상 `retained`가 아닌 단위는 어느 문서도 직접 인용하지 않고 index로 찾는다. **금지**: 그 밖의 문서는 `superseded/` 본문 대신 후속 문서를, `retired/`,
-   `tombstones/`, `migrations/` 대신 현재 route를 인용한다. 어느 경우든
-   Archive를 탐색 목록에 현재 owner처럼 두거나 본문 복제본·redirect를 만들지
-   않는다. 봉인된 본문은 재작성하지 않으므로 그 안의 기존 Archive 링크는
-   기록으로 남는다. 열거된 consumer 예외는 두지 않는다.
+6. 완료된 본문을 새 형식에 맞추려고 다시 쓰지 않는다. 더 이상 현재가 아닌
+   문서는 해당 stage를 떠나며, 원본은 Git history가 복구한다
+   (`git show <commit>:<path>`). Stage 98은 검증하지 않는 기록 보관소로,
+   README와 disposition 디렉터리 구조만 유지한다. 현재 문서는 Archive 대신
+   현재 owner를 링크한다.
 7. [문서 작성 정책](../.agents/governance/document-authoring.md)과
    [품질·증거 정책](../.agents/governance/quality.md)에 따라 검증하고
    현재 Task에 결과·제한·다음 담당자를 기록한다.

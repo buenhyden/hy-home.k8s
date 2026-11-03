@@ -1,10 +1,10 @@
 ---
 title: "Single Main Trunk Branch Strategy"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-03"
 layer: "architecture"
 artifact_id: "ADR-0052"
 ---
@@ -103,4 +103,4 @@ reopened.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| N/A — first branch-strategy decision; ADR-0029 and ADR-0048 constrain it as stated in Context | Supersedes no decision | [SPEC-0127](../../03.specs/0127-adr-lineage-and-branch-strategy/spec.md) |
+| N/A — first branch-strategy decision; ADR-0029 and ADR-0048 constrain it as stated in Context | Supersedes no decision | N/A — SPEC-0127 left the tree; Git history recovers it |

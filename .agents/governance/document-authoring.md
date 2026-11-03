@@ -62,19 +62,8 @@ express ownership, not a one-way waterfall.
    tuples in the link validator; they do not authorize rendered links. Route
    grammars stay in the Stage 99 registry. Links inside `docs/` retain their
    historical and current relationship contracts.
-   The registry's ordered `archive_citation` table decides every link into
-   `docs/98.archive/`. A document links no further than the index and the
-   retention classes whose own body still leads a reader to current authority:
-   `completed/`, through its promotion declaration, and `resolved/`, as
-   historical evidence, through its corrective-work owner. It cites the
-   successor instead of a `superseded/` body and the current route instead of a
-   `retired/` body, a tombstone, or a migration. It never links a unit the
-   Archive index's Retention Assessment judges `withdrawn` or `invalidated` or
-   no longer `retained`; it names that unit by identifier through the index. A frozen record it must still
-   name is named by identifier and reached through the index. An
-   `operation/incident` record or its `operation/postmortem` may also cite a
-   body in any retention class as historical evidence, but never a route record
-   or a frozen sealed record, because neither holds an evidence body.
+   Link the current owner instead of `docs/98.archive/`; that directory is
+   unvalidated history, and a link into it is not checked.
 7. Keep a Requirement Package solution-independent. Put executable interface
    contracts and change-scoped Technical Approach and Acceptance Contract in
    the owning Spec package; put order, risks, verification, and rollback in its
@@ -100,7 +89,7 @@ express ownership, not a one-way waterfall.
    also cancelled with actual criterion-specific scope and authorization proof.
    Both cancellation dispositions name the exact criterion, and the Task's
    authorization reference points to that Spec decision.
-   A successor-only handoff, active/completed/superseded Task, or QA
+   A successor-only handoff, active or completed Task, or QA
    `NOT_APPLICABLE` result does not waive a criterion.
    Keep ordered work, dependencies, Task links and verification intent in the
    Plan, without copied execution status. Attach factual checks in Task
@@ -117,6 +106,43 @@ express ownership, not a one-way waterfall.
    provider/live results remain external evidence.
 9. Review the owning README after content or path changes and update stale
    navigation in the same logical change.
+   A README is written for human readers: purpose, structure, usage and
+   navigation. It names no AI agent audience and carries no agent
+   instruction. An `AGENTS.md` is written for AI agents. The root `AGENTS.md`
+   and `CLAUDE.md` stay the provider gateways; the rules below govern folder
+   `AGENTS.md` files.
+   - **README.md and AGENTS.md together** when a folder is the root of a work
+     area that has its own agent responsibilities (a registry role works
+     there) and rules an agent must follow that common policy and the parent
+     `AGENTS.md` do not already state: forbidden live actions, ownership
+     boundaries, required checks. Today: `docs/` and each of its stages
+     `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`,
+     `docs/05.operations/`, `docs/90.references/` and `docs/99.templates/`,
+     plus `gitops/`, `infrastructure/`, `policy/`, `scripts/`, `tests/`,
+     `.github/`, `examples/` and `examples/azure/`, whose single file also
+     carries the rules of its subfolders.
+   - **README.md only** when the folder is navigation or a collection inside
+     an area whose parent `AGENTS.md` already covers it (the collections
+     inside a `docs/` stage, the unvalidated `docs/98.archive/`,
+     `gitops/platform/`, `examples/aws/`, the `examples/azure/` subfolders), when it is a governance or provider
+     surface whose gateway and provider notes are the agent instructions
+     (`.agents/`, `.claude/`, `.codex/`), when its tracked files are fixed by
+     a validator (`_workspace/`, `secrets/`), or when its agent rules would
+     only repeat common policy.
+   - An `AGENTS.md` always sits beside its folder's human router: `README.md`,
+     or `repository-surface.md` in `.github/`, where GitHub renders
+     `README.md` as the profile page. A README never points agents to rules;
+     the folder's README may list `AGENTS.md` in its structure.
+   - A folder `AGENTS.md` is English, has no frontmatter, and applies to its
+     subtree. It states the folder's purpose for agents; names the
+     responsibilities that work there with their common role and skills under
+     `.agents/` and the matching `.claude/agents/`, `.claude/skills/`,
+     `.claude/commands/` and `.codex/agents/` projections and provider notes;
+     and lists only the rules and checks specific to that folder. It links
+     common policy instead of copying it, and a child refers to its parent
+     instead of repeating it.
+   - Add or remove a folder `AGENTS.md` in the same change that creates or
+     retires the responsibility, and update this list.
 10. Do not add a router to a Spec package. `spec.md` owns the change contract,
     `plan.md` owns order and risk, and `tasks/` is the Task inventory; a
     package-level index only restates them and drifts from `tasks/`.
@@ -127,13 +153,13 @@ express ownership, not a one-way waterfall.
     finding with its source. A
     collection with a missing level pushes one of those three jobs onto a
     document that does not own it.
-12. Treat a sealed retirement as retiring a document, not a location. A
-    reviewed, tracked document may later occupy a retired path; never restore
-    the retired bytes there.
+12. Treat a retirement as retiring a document, not a location. A reviewed,
+    tracked document may later occupy a retired path; never restore the
+    retired bytes there.
 13. Preserve accepted decisions and completed evidence. Use successors,
-    reciprocal lifecycle relationships, and the one Git object a Stage 98
-    Retention Envelope names rather than rewriting history, leaving redirects,
-    or keeping a second recovery ledger.
+    reciprocal lifecycle relationships and the Archived Lineage summary in the
+    owning current document; recover removed bytes from Git history rather than
+    rewriting history, leaving redirects, or keeping a second recovery ledger.
 14. Run the checks selected by the affected paths and record evidence in the
     owning Task using [quality policy](quality.md).
 
@@ -193,8 +219,7 @@ check cannot authenticate a current operator, live service or approval.
 
 Run strict registry, Markdown-profile, link/owner, and lifecycle checks when
 their contracts are affected. A deletion or consolidation requires replacement
-coverage, consumer disposition, and applicable Archive recovery evidence in
-the same logical change.
+coverage and consumer disposition in the same logical change.
 
 ## Related Documents
 

@@ -11,9 +11,6 @@ layer: "requirements"
 
 > hy-home.k8s 플랫폼의 장기간 유지되는 solution-independent Requirement Package를 보관하는 canonical stage다.
 
-> [!NOTE]
-> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../.agents/README.md)를 따른다.
-
 ## Overview
 
 이 경로는 문제, 목표, stakeholder 요구, 기능·비기능·외부 interface 요구,
@@ -28,7 +25,6 @@ layer: "requirements"
 - Product Owners
 - Platform Engineers
 - Documentation Writers
-- AI Agents
 
 ## Scope
 
@@ -65,6 +61,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 |   [REQ-0002](./0002-argo-notifications-slack.md) | Argo Notifications Slack 알림 요구 |
 |   [REQ-0003](./0003-workspace-agent-governance-platform.md) | Agent·문서 거버넌스와 검증·승인 요구 |
 |   [REQ-0004](./0004-current-local-gitops-platform.md) | 로컬 플랫폼과 delivery assurance 요구 |
+| [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 
 ## Usage
 
@@ -74,7 +71,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 4. 문제·목표·stakeholder 요구, 기능·비기능·interface 요구, 제약, acceptance 기준과 범위·비범위를 구현 독립적으로 작성한다.
 5. 관련 `../02.architecture/descriptions/`, `../02.architecture/decisions/`, `../03.specs/` 추적 링크를 함께 갱신한다. 변경 가능한 실행 계약과 interface 구현 산출물은 Stage 03에 둔다.
 6. Agent 기능 요구에는 허용·금지 행동과 human-in-the-loop 기준을 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
-7. 변경·폐기 시 `status`, `supersedes`, `superseded_by`로 이력을 연결한다. 더 이상 현재가 아닌 문서는 [ADR-0040](../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)에 따라 대체되면 `superseded/`, 후속 없이 철회되면 `retired/`에 본문 전체를 보존하고, 경로 이동은 본문 없는 `migrations/`가 현재 owner를 명명한다.  원본 바이트는 Git history가 복구한다.
+7. 이 stage에는 superseded·retired·deprecated 상태를 두지 않는다. 대체되거나 철회된 요구는 후속 문서의 `supersedes`와 Traceability에 ID를 남기고, 현재 소유 문서의 `Archived Lineage` 표에 요약한 뒤 같은 변경에서 삭제한다. 원본은 Git history가 복구한다([Document Lifecycle](../../.agents/governance/document-lifecycle.md)).
 
 ### Relative Link Rules
 
@@ -91,24 +88,22 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 - AD와 Spec은 `REQ-####-(FR|NFR|IF)-####` 전체 요구 ID를 추적한다.
 - Agent 기능인 경우 사용 시나리오, 허용/금지 행동, human-in-the-loop 요구를 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
 - 후속 AD/ADR/Spec이 아직 없으면 없는 링크를 만들지 않고, 문서 인덱스와 Requirement Package의 `Related Documents`에 후속 갭으로 표시한다.
-- 현재 구현과 맞지 않는 변경 한정 실행 계약을 Stage 01에 보존하지 않는다. 필요한 이전 경로 증거는 Stage 98 중앙 인덱스를 통해 조회한다.
+- 현재 구현과 맞지 않는 변경 한정 실행 계약을 Stage 01에 보존하지 않는다. 대체·완료된 문서는 Architecture Description의 Archived Lineage 표에 요약하고 삭제하며, 원본은 Git history로 복구한다.
 
 ### 요구사항 읽는 순서
 
 1. 현재 로컬 GitOps 플랫폼 기준은 [`0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md)와 `gitops/**`, `infrastructure/**`, `scripts/**` 정적 검증 증적이 소유한다.
-2. `active` 문서는 현재 요구 권위다. downstream AD/ADR/Spec과 구현 증적을 함께 확인한다.
-3. `draft` 문서는 아직 현재 요구 권위가 아닌 초안이다. 구현은 승인된 downstream Spec과 Plan이 있어야 시작한다.
-4. 과거 문서가 필요한 경우 봉인 record나 보존 본문을 개별 경로로 찾지 않고 [`../98.archive/README.md`](../98.archive/README.md)의 중앙 인덱스(동결 record 표와 Retention Catalog)를 통해 확인한다.
+2. `approved` 문서는 현재 요구 권위다. downstream AD/ADR/Spec과 구현 증적을 함께 확인한다.
+3. `draft`·`in-review` 문서는 아직 현재 요구 권위가 아닌 초안이다. 구현은 승인된 downstream Spec과 Plan이 있어야 시작한다.
+4. 과거 문서가 필요한 경우 Git history에서 복구한다(`git show <commit>:<path>`). 대체·완료된 문서는 AD의 Archived Lineage 표에 요약된다([ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md)).
 
 ### 상태 해석
 
 | 상태 | 의미 | 작업 기준 |
 | --- | --- | --- |
 | `draft` | 검토 중이며 아직 현재 권위가 아닌 요구 초안 | 구현 시작 전 승인과 downstream Spec/Plan 갭을 해소한다. |
-| `active` | 현재 solution-independent 요구 권위 | 관련 AD/ADR/Spec과 current 구현 증적을 함께 확인한다. |
-| `superseded` | 새 Requirement Package가 대체한 이전 권위 | 원래 supersession을 보존한다. 현재 의미·소비자 승계 후 ADR-0040에 따라 `98.archive/superseded/`에 본문 그대로 보존할 수 있다. |
-| `retired` | 대체 없이 의도적으로 종료한 요구 | 종료 사유와 마지막 추적 대상을 남기고 신규 구현의 권위로 사용하지 않는다. |
-| `withdrawn` | 승인 전에 철회한 요구 | 철회 사유를 남기고 downstream 구현을 시작하지 않는다. |
+| `in-review` | 검토 중인 요구 | 승인 전까지 현재 권위로 사용하지 않는다. |
+| `approved` | 현재 solution-independent 요구 권위 | 관련 AD/ADR/Spec과 current 구현 증적을 함께 확인한다. |
 
 ### 예시
 

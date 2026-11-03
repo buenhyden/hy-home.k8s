@@ -1,10 +1,10 @@
 ---
 title: "Reference: Source Coverage"
-version: "1.2.1"
+version: "1.2.2"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-03"
 layer: "references"
 artifact_id: "RES-0001-m0012"
 ---
@@ -444,7 +444,7 @@ Each URL-specific row was directly read on **2026-09-27 Asia/Seoul**, except the
 
 ### 2026-10-27 required-source observations
 
-[SPEC-0124](../../../03.specs/0124-required-source-coverage/spec.md) reads the ten sources that the operator's repository survey requires (SRC-MEM, SRC-AGENT, SRC-DOC, SRC-SDD-A to SRC-SDD-D, SRC-C4, SRC-ADR and SRC-ARC42). A delegated read-only researcher read every row directly on **2026-10-27 Asia/Seoul**. The 2026-09-27 rows above are unchanged. Reused IDs gain a fresh observation; SRC-WERPC-267 to 275 are new. No source content was installed, copied or run, and workspace application is **not observed in this cycle**.
+SPEC-0124 reads the ten sources that the operator's repository survey requires (SRC-MEM, SRC-AGENT, SRC-DOC, SRC-SDD-A to SRC-SDD-D, SRC-C4, SRC-ADR and SRC-ARC42). A delegated read-only researcher read every row directly on **2026-10-27 Asia/Seoul**. The 2026-09-27 rows above are unchanged. Reused IDs gain a fresh observation; SRC-WERPC-267 to 275 are new. No source content was installed, copied or run, and workspace application is **not observed in this cycle**.
 
 | Source ID | Title / publisher | Source type | Original → final URL | Version / revision | Publication / modification | Checked date | Section / selector | Supported Claim IDs | Limits / conflicts | Refresh trigger / result |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -486,7 +486,7 @@ Not read by design this cycle: ai-memory `docs/`, Spec Kit template contents, ad
 
 #### 2026-10-27 SSDF edition check
 
-[SPEC-0125](../../../03.specs/0125-survey-status-and-local-gaps/spec.md) rechecked the SSDF edition that `SRC-WERPC-015` and `SRC-WERPC-033` cite. [SP 800-218 Rev. 1](https://csrc.nist.gov/pubs/sp/800/218/r1/ipd), SSDF version 1.2, is an initial public draft published 2025-12-17; its comment period closed 2026-01-30, and on 2026-10-27 NIST lists no final edition (the `r1/final` page returns 404). SSDF 1.1 (February 2022) therefore stays the final edition cited here, and the 1.2 draft is not policy input until NIST publishes it as final.
+SPEC-0125 rechecked the SSDF edition that `SRC-WERPC-015` and `SRC-WERPC-033` cite. [SP 800-218 Rev. 1](https://csrc.nist.gov/pubs/sp/800/218/r1/ipd), SSDF version 1.2, is an initial public draft published 2025-12-17; its comment period closed 2026-01-30, and on 2026-10-27 NIST lists no final edition (the `r1/final` page returns 404). SSDF 1.1 (February 2022) therefore stays the final edition cited here, and the 1.2 draft is not policy input until NIST publishes it as final.
 
 ### Historical source and claim provenance
 
@@ -884,7 +884,7 @@ source register and claim registers in this report remain the research record.
 The approved gap-only refresh compared all 13 current pack files, the 32
 unique README request rows, all 52 existing source rows, and all 51 existing
 claim rows before any new web research. The complete review-input matrix is
-owned by the active [WERG Plan](../../../98.archive/completed/03.specs/0056-workspace-engineering-gap-only-refresh/plan.md).
+owned by the active WERG Plan.
 
 The four-state result is 18 `complete-existing`, seven
 `admit-under-sourced-partial`, one `admit-unresearched`, and seven

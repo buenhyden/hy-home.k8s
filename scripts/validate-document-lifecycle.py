@@ -15,6 +15,7 @@ import sys
 from collections import OrderedDict
 from collections.abc import Iterator
 from dataclasses import dataclass, field, replace
+from functools import lru_cache
 from pathlib import Path, PurePosixPath
 from types import MappingProxyType, ModuleType
 from typing import Any, Callable, Mapping, Sequence
@@ -23,82 +24,32 @@ from document_contracts import (
     ROOT_FILES,
     TARGET_ROOTS,
     DocumentContractError,
-    DocumentProfile,
     Registry,
-    RetentionClass,
-    RetentionUnit,
-    Route,
     classify_path,
     enumerate_target_markdown,
     is_opaque_evaluation_output,
     verify_opaque_evaluation_output,
     load_registry,
-    legacy_task_profile,
     read_repository_text,
     task_criterion_ids,
     task_execution_issues,
     task_contract_issues,
-    task_baseline_bytes_match,
     direct_parent,
     _typed_registry_from_mapping,
 )
 from document_lifecycle import (
-    ArtifactIdentityLineage,
     LifecycleDiagnostic,
     LifecycleDocument,
     LifecycleEvidenceContext,
     LifecycleEvidenceDocument,
-    LOCAL_CONTRACT_EVIDENCE_GAP,
     LifecycleRename,
-    MigrationLifecycleEvents,
-    RETIRED_DOCUMENT_TYPES,
     artifact_identity_reuse_diagnostics,
     compare_lifecycle,
     document_from_text,
-    generation_admission_paths,
     lifecycle_diagnostic_sort_key,
     local_contract_diagnostics,
     validate_snapshot_documents,
     validate_current_task_evidence,
-)
-
-from archive_dispositions import (
-    ARCHIVE_INDEX as DISPOSITION_ARCHIVE_INDEX,
-    ROUTE_DISPOSITION_PROFILES,
-    canonical_repository_path,
-    enclosing_unit,
-    frontmatter_mapping,
-    assessment_diagnostics,
-    historical_catalog_diagnostics,
-    link_resolved_text,
-    parse_assessment,
-    parse_catalog,
-    retained_unit_of,
-    retention_class_of,
-    retention_source_path,
-)
-from archive_objects import (
-    UnitEntry,
-    commit_entries,
-    index_entries,
-    object_type,
-)
-from archive_validation import (
-    MIGRATION_DOCUMENT_MAX_BYTES,
-    _load_canonical_markdown_module,
-    generic_migration_id,
-    is_sealed_migration,
-    parse_migration_control,
-    parse_pinned_migration_control,
-    validate_archive_immutability,
-    validate_migration_records,
-)
-from archive_recovery import (
-    ArchiveContractError,
-    WP004C_SEALED_TARGET_COMMIT,
-    current_named_durable_ref,
-    require_commits_reachable_from_durable_refs,
-    _git_capture_bounded,
 )
 from document_authority import (
     AuthorityError,
@@ -106,14 +57,13 @@ from document_authority import (
     assert_staged_authority_matches_worktree,
     staged_authority_bytes,
 )
-from validation.repository.bounded_io import read_bytes as read_bounded_bytes
+from validation.repository.bounded_io import (
+    BoundedOutputError,
+    read_bytes as read_bounded_bytes,
+    run as run_bounded,
+)
 
 
-RETIRED_REGISTRY_PATH = PurePosixPath("docs/99.templates/registry.json")
-ARCHIVE_PROFILE = "archive/tombstone"
-ARCHIVE_TEMPLATE_PROFILE = "common/template-archive-tombstone"
-LEGACY_ARCHIVE_PROFILE = "content/archive-tombstone"
-LEGACY_ARCHIVE_TEMPLATE_PROFILE = "template/content/archive-tombstone"
 COMPLETION_AUTHORITY_PATHS = (
     CURRENT_REGISTRY_PATH,
     PurePosixPath("docs/99.templates/contracts/document-profile.schema.json"),
@@ -150,6 +100,7 @@ GIT_GLOBAL_ARGUMENTS = (
     "diff.renames=true",
 )
 GIT_CAPTURE_MAX_BYTES = 2 * 1024 * 1024
+GIT_TIMEOUT_SECONDS = 10.0
 GIT_SIZE_OUTPUT_MAX_BYTES = 64
 DOCUMENT_BLOB_MAX_BYTES = 1024 * 1024
 CUMULATIVE_HISTORY_MAX_COMMITS = 256
@@ -163,533 +114,6 @@ CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES = 4 * 1024 * 1024
 CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES = 16 * 1024 * 1024
 CUMULATIVE_HISTORY_MAX_SNAPSHOT_PATHS = 4_096
 CUMULATIVE_HISTORY_MAX_SNAPSHOT_OBJECTS = 4_096
-WORK105_ADR0023_PATH = PurePosixPath(
-    "docs/02.architecture/decisions/"
-    "0023-work-unit-document-taxonomy-and-governance-authority.md"
-)
-WORK105_ADR0024_PATH = PurePosixPath(
-    "docs/02.architecture/decisions/"
-    "0024-terminal-artifact-identity-and-archive-layout.md"
-)
-WORK105_LEGACY_AD0011_PATH = PurePosixPath(
-    "docs/02.architecture/requirements/"
-    "0011-document-taxonomy-consolidation-architecture.md"
-)
-WORK105_ADR0023_BASE_SHA256 = "fadbd95c581a0874797666e200f283d0f5fdc6c103643cc653e387062adbe53a"  # pragma: allowlist secret
-WORK105_ADR0023_PROPOSED_SHA256 = "717714ce153cbd75ca5a77beb42a24cd1b146f25b1112d492e30d9fd214348d5"  # pragma: allowlist secret
-WORK105_ADR0023_RECIPROCAL_ROW = (
-    "| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | "
-    "Partially supersedes only terminal Stage 98 date/mirror-path immutability; "
-    "preserves transition safety, Stage 05 stability, Release exclusion, and "
-    "every unrelated decision | "
-    "[Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |"
-)
-
-WORK054_WP002_LEDGER_KEYS = (
-    "legacy_path",
-    "stable_path",
-    "artifact_id",
-    "action",
-    "replacement",
-    "source_commit",
-    "source_blob",
-    "content_sha256",
-    "reason",
-)
-
-WORK054_WP003_BASE_COMMIT = "128beada377f18bc9f942c8ebb3e27e1f2fdcfae"
-WORK054_WP003_MIGRATION_PATH = PurePosixPath(
-    "docs/98.archive/migrations/0003-agent-governance-control-plane-consolidation.md"
-)
-WORK054_WP003_MIGRATION_SHA256 = "7baa2a9b2682313d9e8cfc4d3504db14b4985f780f85ff673a4bf535ce4c755e"  # pragma: allowlist secret
-WORK054_WP003_LEDGER_KEYS = WORK054_WP002_LEDGER_KEYS
-WORK054_WP003_OWNER_RETIREMENTS = (
-    {
-        "legacy_path": "docs/00.agent-governance/common-governance.md",
-        "stable_path": None,
-        "artifact_id": None,
-        "action": "merged",
-        "replacement": "docs/00.agent-governance/harness-catalog.md",
-        "source_commit": WORK054_WP003_BASE_COMMIT,
-        "source_blob": "de7e7edfe177ff349cd3824aebd82418adff95d7",  # pragma: allowlist secret
-        "content_sha256": "c5da620d5f6c1aa26f2e0d99769872b90c6d2ec2fdb3c03813be27992f43e4ba",  # pragma: allowlist secret
-    },
-    {
-        "legacy_path": "docs/00.agent-governance/harness-implementation-map.md",
-        "stable_path": None,
-        "artifact_id": None,
-        "action": "merged",
-        "replacement": "docs/00.agent-governance/harness-catalog.md",
-        "source_commit": WORK054_WP003_BASE_COMMIT,
-        "source_blob": "7e7a6d64a05be91658cc6657cd640491153a615a",  # pragma: allowlist secret
-        "content_sha256": "3ea2f89c3ba17fbf0bac64533cbb5a378a85c062a020881a3844cfa190c9c218",  # pragma: allowlist secret
-    },
-    {
-        "legacy_path": "docs/00.agent-governance/providers/agents-md.md",
-        "stable_path": None,
-        "artifact_id": None,
-        "action": "merged",
-        "replacement": "docs/00.agent-governance/providers/codex.md",
-        "source_commit": WORK054_WP003_BASE_COMMIT,
-        "source_blob": "06d9a7a5453ac8b6e28268850467e3e96de06dc9",  # pragma: allowlist secret
-        "content_sha256": "5ea07c187ea54061f5ecc770a58a99edf40dfd73372ba8fc9e1d4ab14bf85bae",  # pragma: allowlist secret
-    },
-)
-
-WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
-    "docs/98.archive/migrations/0004-document-authority-convergence.md"
-)
-WORK054_WP004B_TASK_STATUSES = MappingProxyType(
-    {
-        "done": "done",
-        "complete": "done",
-        "completed": "done",
-        "archived": "done",
-        "transferred": "done",
-        "in progress": "in-progress",
-        "in-progress": "in-progress",
-        "queued": "queued",
-        "pending": "queued",
-        "blocked": "blocked",
-        "cancelled": "cancelled",
-        "canceled": "cancelled",
-    }
-)
-
-
-def _work054_wp004b_table_cells(line: str) -> tuple[str, ...] | None:
-    if not line.startswith("|") or not line.endswith("|"):
-        return None
-    cells: list[str] = []
-    current: list[str] = []
-    escaped = False
-    in_code = False
-    for character in line[1:-1]:
-        if escaped:
-            current.append(character)
-            escaped = False
-        elif character == "\\":
-            current.append(character)
-            escaped = True
-        elif character == "`":
-            current.append(character)
-            in_code = not in_code
-        elif character == "|" and not in_code:
-            cells.append("".join(current).strip())
-            current = []
-        else:
-            current.append(character)
-    if escaped or in_code:
-        return None
-    cells.append("".join(current).strip())
-    return tuple(cells)
-
-
-def _work054_wp004b_task_table(
-    raw: bytes,
-) -> tuple[str, str, tuple[tuple[str, tuple[str, ...]], ...]] | None:
-    try:
-        text = raw.decode("utf-8")
-    except UnicodeDecodeError:
-        return None
-    marker = "\n## Task Table\n"
-    if text.count(marker) != 1:
-        return None
-    section = re.split(r"\n#{2,6} ", text.partition(marker)[2], maxsplit=1)[0]
-    blocks: list[list[str]] = []
-    block: list[str] = []
-    for line in section.splitlines():
-        if line.startswith("|"):
-            block.append(line)
-        elif block:
-            blocks.append(block)
-            block = []
-    if block:
-        blocks.append(block)
-
-    candidates: list[tuple[str, str, tuple[tuple[str, tuple[str, ...]], ...]]] = []
-    for lines in blocks:
-        if len(lines) < 3:
-            continue
-        header = _work054_wp004b_table_cells(lines[0])
-        separator = _work054_wp004b_table_cells(lines[1])
-        if (
-            header is None
-            or separator is None
-            or len(header) != len(separator)
-            or any(re.fullmatch(r":?-{3,}:?", cell) is None for cell in separator)
-            or "id" not in {cell.lower() for cell in header}
-            or "status" not in {cell.lower() for cell in header}
-        ):
-            continue
-        rows: list[tuple[str, tuple[str, ...]]] = []
-        for line in lines[2:]:
-            cells = _work054_wp004b_table_cells(line)
-            if cells is None or len(cells) != len(header):
-                rows = []
-                break
-            rows.append((line, cells))
-        if rows:
-            candidates.append((lines[0], lines[1], tuple(rows)))
-    return candidates[0] if len(candidates) == 1 else None
-
-
-def _work054_wp004b_legacy_id(raw: str) -> str:
-    link = re.fullmatch(r"\[(?P<label>[A-Za-z0-9-]+)\]\([^)]*\)", raw)
-    return link.group("label") if link is not None else raw
-
-
-def _git_blob_oid(content: bytes) -> str:
-    header = f"blob {len(content)}\0".encode("ascii")
-    return hashlib.sha1(header + content).hexdigest()  # noqa: S324 - Git identity
-
-
-def sealed_record_relocation_paths(
-    *,
-    root: Path,
-    base_blobs: Mapping[PurePosixPath, str],
-    proposed_blobs: Mapping[PurePosixPath, str],
-) -> frozenset[PurePosixPath]:
-    """Admit each record vacancy a sealed ledger declares as a byte-identical move.
-
-    A sealed record is immutable, and the directory holding it is a claim about
-    why its origin ended. A later cycle can find that claim wrong, and correcting
-    it deletes the record at one path and recreates it at another. The
-    immutability rule reads that departure as a record being lost unless a sealed
-    `moved` row accounts for it.
-
-    A row is admitted only when the bytes leaving the origin and the bytes
-    arriving at the target are identical and both equal the digest the row pins.
-    A move that changed a byte is not a move, and this admits nothing then: like
-    the declared tables beside it, one bad pair withdraws the whole admission.
-
-    Unlike those tables the pairs are read from the sealed ledger rather than
-    restated here, because the ledger is already the reviewed evidence for the
-    move and a second copy could only disagree with it.
-    """
-
-    admitted: set[PurePosixPath] = set()
-    for path, oid in sorted(proposed_blobs.items()):
-        if generic_migration_id(path.as_posix()) is None:
-            continue
-        try:
-            content = _blob_bytes(root, oid, max_bytes=MIGRATION_DOCUMENT_MAX_BYTES)
-            if not is_sealed_migration(content):
-                continue
-            rows, _consumers = parse_migration_control(path.as_posix(), content)
-        except (ArchiveContractError, InvocationError, OSError, ValueError):
-            return frozenset()
-        for row in rows:
-            if row.get("action") != "moved":
-                continue
-            legacy = PurePosixPath(str(row.get("legacy_path")))
-            target = PurePosixPath(str(row.get("stable_path")))
-            base_oid = base_blobs.get(legacy)
-            proposed_oid = proposed_blobs.get(target)
-            if base_oid is None or proposed_oid is None:
-                # Either the move already landed in an earlier commit or this row
-                # moves something that is not a record. Neither is a vacancy for
-                # this admission to fill.
-                continue
-            digest = row.get("content_sha256")
-            try:
-                base_digest = hashlib.sha256(_blob_bytes(root, base_oid)).hexdigest()
-                target_digest = hashlib.sha256(
-                    _blob_bytes(root, proposed_oid)
-                ).hexdigest()
-            except (InvocationError, OSError):
-                return frozenset()
-            if base_digest != digest or target_digest != digest:
-                return frozenset()
-            admitted.add(legacy)
-    return frozenset(admitted)
-
-
-def _work054_wp002_frontmatter_value(raw: bytes, key: str) -> str | None:
-    try:
-        lines = raw.decode("utf-8").splitlines()
-    except UnicodeDecodeError:
-        return None
-    if not lines or lines[0] != "---":
-        return None
-    try:
-        end = lines.index("---", 1)
-    except ValueError:
-        return None
-    matches: list[str] = []
-    prefix = f"{key}:"
-    for line in lines[1:end]:
-        if not line.startswith(prefix):
-            continue
-        value = line[len(prefix) :].strip()
-        if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
-            value = value[1:-1]
-        matches.append(value)
-    return matches[0] if len(matches) == 1 else None
-
-
-def _wp004c_mig0004_paths(
-    *,
-    root: Path,
-    mode: str,
-    base_commit: str,
-    base_blobs: Mapping[PurePosixPath, str],
-    proposed_blobs: Mapping[PurePosixPath, str],
-) -> frozenset[PurePosixPath]:
-    """Admit only source-pinned WP-004C Stage99 and Spec0054 cutover rows."""
-
-    if mode not in {"staged", "ci"}:
-        return frozenset()
-    migration_oid = proposed_blobs.get(WORK054_WP004B_MIGRATION_PATH)
-    if migration_oid is None:
-        return frozenset()
-    try:
-        rows = parse_pinned_migration_control(
-            WORK054_WP004B_MIGRATION_PATH.as_posix(),
-            _blob_bytes(root, migration_oid),
-        )
-    except (ArchiveContractError, InvocationError):
-        return frozenset()
-
-    cutover_rows = [row for row in rows if row.get("source_commit") == base_commit]
-    task_legacy = PurePosixPath(
-        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
-    )
-    stage99_rows = [
-        row
-        for row in cutover_rows
-        if isinstance(row.get("legacy_path"), str)
-        and str(row["legacy_path"]).startswith("docs/99.templates/")
-        and _approved_markdown(PurePosixPath(str(row["legacy_path"])))
-    ]
-    task_rows = [
-        row for row in cutover_rows if row.get("legacy_path") == task_legacy.as_posix()
-    ]
-    if len(task_rows) != 1 or not stage99_rows:
-        return frozenset()
-
-    try:
-        durable_ref = current_named_durable_ref(root)
-        require_commits_reachable_from_durable_refs(
-            root, (WP004C_SEALED_TARGET_COMMIT,), (durable_ref,)
-        )
-        sealed_target_blobs = _tree_blob_map(root, WP004C_SEALED_TARGET_COMMIT)
-    except (ArchiveContractError, InvocationError):
-        return frozenset()
-
-    consumed: set[PurePosixPath] = set()
-    stage99_legacy: set[PurePosixPath] = set()
-    for row in stage99_rows:
-        legacy_raw = row.get("legacy_path")
-        source_blob = row.get("source_blob")
-        digest = row.get("content_sha256")
-        action = row.get("action")
-        target_raw = (
-            row.get("stable_path") if action == "moved" else row.get("replacement")
-        )
-        if not all(
-            isinstance(value, str)
-            for value in (legacy_raw, source_blob, digest, target_raw)
-        ):
-            return frozenset()
-        legacy = PurePosixPath(legacy_raw)
-        target = PurePosixPath(target_raw)
-        if (
-            legacy in stage99_legacy
-            or base_blobs.get(legacy) != source_blob
-            or hashlib.sha256(_blob_bytes(root, source_blob)).hexdigest() != digest
-            or legacy in proposed_blobs
-            or target not in proposed_blobs
-            or action not in {"moved", "replaced"}
-            or (action == "moved" and sealed_target_blobs.get(target) != source_blob)
-        ):
-            return frozenset()
-        stage99_legacy.add(legacy)
-        consumed.update((legacy, target))
-
-    deleted_stage99 = {
-        path
-        for path in base_blobs
-        if path.as_posix().startswith("docs/99.templates/")
-        and path not in proposed_blobs
-    }
-    if stage99_legacy != deleted_stage99:
-        return frozenset()
-
-    task_row = task_rows[0]
-    if (
-        task_row.get("action") != "replaced"
-        or task_row.get("stable_path") is not None
-        or task_row.get("replacement") != (task_legacy.parent / "README.md").as_posix()
-        or not isinstance(task_row.get("source_blob"), str)
-        or not isinstance(task_row.get("content_sha256"), str)
-    ):
-        return frozenset()
-    source_blob = str(task_row["source_blob"])
-    source = _blob_bytes(root, source_blob)
-    if (
-        base_blobs.get(task_legacy) != source_blob
-        or hashlib.sha256(source).hexdigest() != task_row["content_sha256"]
-    ):
-        return frozenset()
-    source_table = _work054_wp004b_task_table(source)
-    source_status = _work054_wp002_frontmatter_value(source, "status")
-    source_owner = _work054_wp002_frontmatter_value(source, "owner")
-    source_updated = _work054_wp002_frontmatter_value(source, "updated")
-    readme_path = task_legacy.parent / "README.md"
-    readme_oid = proposed_blobs.get(readme_path)
-    if (
-        source_table is None
-        or source_status is None
-        or source_owner is None
-        or source_updated is None
-        or readme_oid is None
-    ):
-        return frozenset()
-    header_line, separator_line, source_entries = source_table
-    headers = _work054_wp004b_task_table(source)
-    assert headers is not None
-    parsed_header = _work054_wp004b_table_cells(header_line)
-    if parsed_header is None:
-        return frozenset()
-    try:
-        status_index = tuple(cell.lower() for cell in parsed_header).index("status")
-    except ValueError:
-        return frozenset()
-    readme = _blob_bytes(root, readme_oid).decode("utf-8", errors="strict")
-    task_links: dict[str, PurePosixPath] = {}
-    for line in readme.splitlines():
-        match = re.fullmatch(
-            r"- \[`(?P<artifact>TSK-0054-(?P<sequence>[0-9]{4}))`\]"
-            r"\((?P<relative>tasks/tsk-(?P=sequence)-[a-z0-9]+"
-            r"(?:-[a-z0-9]+)*\.md)\)",
-            line,
-        )
-        if match is None:
-            continue
-        artifact_id = match.group("artifact")
-        path = task_legacy.parent / match.group("relative")
-        if artifact_id in task_links or path in task_links.values():
-            return frozenset()
-        task_links[artifact_id] = path
-    if len(task_links) != len(source_entries):
-        return frozenset()
-
-    expected_tasks: set[PurePosixPath] = set()
-    for sequence, (row_line, cells) in enumerate(source_entries, 1):
-        legacy_id = _work054_wp004b_legacy_id(cells[0])
-        state = WORK054_WP004B_TASK_STATUSES.get(cells[status_index].strip().lower())
-        if legacy_id is None or state is None:
-            return frozenset()
-        artifact_id = f"TSK-0054-{sequence:04d}"
-        path = task_links.get(artifact_id)
-        if path is None:
-            return frozenset()
-        oid = proposed_blobs.get(path)
-        if oid is None:
-            return frozenset()
-        task_bytes = _blob_bytes(root, oid)
-        task_table = _work054_wp004b_task_table(task_bytes)
-        if task_table is None or path.name not in readme:
-            return frozenset()
-        task_header, task_separator, task_entries = task_table
-        task_cells = task_entries[0][1] if len(task_entries) == 1 else ()
-        task_text = task_bytes.decode("utf-8", errors="strict")
-        checks = {
-            "header": task_header == header_line,
-            "separator": task_separator == separator_line,
-            "work-row": task_cells == cells,
-            "artifact-id": f'artifact_id: "{artifact_id}"' in task_text,
-            "status": f"status: {state}" in task_text,
-            "wp": f"**Plan label:** WP-{sequence:03d}" in task_text,
-            "legacy-id": legacy_id in task_text,
-            "common-contract": "../README.md#common-execution-contract" in task_text,
-            "plan-link": "../plan.md" in task_text,
-        }
-        failed = next((name for name, valid in checks.items() if not valid), None)
-        if failed is not None:
-            raise InvocationError(
-                f"WP004C MIG-0004 task proof failed: {path.as_posix()}:{failed}"
-            )
-        expected_tasks.add(path)
-    actual_tasks = {
-        path for path in proposed_blobs if path.parent == task_legacy.parent / "tasks"
-    }
-    if expected_tasks != actual_tasks:
-        return frozenset()
-    consumed.update((task_legacy, readme_path, *expected_tasks))
-    if any(
-        path.suffix == ".md"
-        and path in proposed_blobs
-        and sealed_target_blobs.get(path) != proposed_blobs[path]
-        for path in consumed
-    ):
-        return frozenset()
-    for path in set(base_blobs) & set(proposed_blobs):
-        if path.suffix != ".md" or base_blobs[path] == proposed_blobs[path]:
-            continue
-        if sealed_target_blobs.get(path) != proposed_blobs[path]:
-            return frozenset()
-        consumed.add(path)
-    return frozenset(consumed)
-
-
-def finite_work054_wp003_agent_governance_paths(
-    *,
-    root: Path,
-    mode: str,
-    base_commit: str,
-    base_blobs: Mapping[PurePosixPath, str],
-    proposed_blobs: Mapping[PurePosixPath, str],
-) -> frozenset[PurePosixPath]:
-    """Admit only the exact WORK-054 WP-003 legacy owner retirements."""
-
-    if mode not in {"staged", "ci"} or base_commit != WORK054_WP003_BASE_COMMIT:
-        return frozenset()
-    migration_oid = proposed_blobs.get(WORK054_WP003_MIGRATION_PATH)
-    if WORK054_WP003_MIGRATION_PATH in base_blobs or migration_oid is None:
-        return frozenset()
-    try:
-        migration_bytes = _blob_bytes(root, migration_oid)
-        migration_text = migration_bytes.decode("utf-8")
-    except (InvocationError, OSError, UnicodeDecodeError):
-        return frozenset()
-    if hashlib.sha256(migration_bytes).hexdigest() != WORK054_WP003_MIGRATION_SHA256:
-        return frozenset()
-    marker = "<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
-    if migration_text.count(marker) != 1:
-        return frozenset()
-    _prefix, remainder = migration_text.split(marker, 1)
-    if remainder.count("\n```") != 1:
-        return frozenset()
-    raw_rows, suffix = remainder.split("\n```", 1)
-    if not suffix.startswith("\n\n## Recovery\n"):
-        return frozenset()
-    try:
-        rows = json.loads(raw_rows)
-    except json.JSONDecodeError:
-        return frozenset()
-    if not isinstance(rows, list) or len(rows) != len(WORK054_WP003_OWNER_RETIREMENTS):
-        return frozenset()
-    consumed: set[PurePosixPath] = {WORK054_WP003_MIGRATION_PATH}
-    for row, expected in zip(rows, WORK054_WP003_OWNER_RETIREMENTS, strict=True):
-        if not isinstance(row, Mapping) or tuple(row) != WORK054_WP003_LEDGER_KEYS:
-            return frozenset()
-        for key, value in expected.items():
-            if row.get(key) != value:
-                return frozenset()
-        if not isinstance(row.get("reason"), str) or not row["reason"].strip():
-            return frozenset()
-        legacy = PurePosixPath(str(row["legacy_path"]))
-        replacement = PurePosixPath(str(row["replacement"]))
-        if (
-            base_blobs.get(legacy) != row["source_blob"]
-            or legacy in proposed_blobs
-            or replacement not in proposed_blobs
-        ):
-            return frozenset()
-        consumed.add(legacy)
-    return frozenset(consumed) if len(consumed) == 4 else frozenset()
 
 
 class InvocationError(ValueError):
@@ -732,6 +156,36 @@ def _link_validator_module() -> ModuleType:
     return module
 
 
+def frontmatter_mapping(text: str) -> Mapping[str, object]:
+    return _link_validator_module().frontmatter_mapping(text)
+
+
+@lru_cache(maxsize=1)
+def _load_canonical_markdown_module() -> ModuleType:
+    """Use the Stage99 document owner for parsing and registry-selected validation."""
+
+    script_path = (
+        Path(__file__).resolve(strict=True).with_name("validate-markdown-profiles.py")
+    )
+    name = "_document_lifecycle_markdown_validator"
+    spec = importlib.util.spec_from_file_location(name, script_path)
+    if spec is None or spec.loader is None:
+        raise InvocationError("canonical Markdown owner is unavailable")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    scripts_path = str(script_path.parent)
+    inserted = scripts_path not in sys.path
+    if inserted:
+        sys.path.insert(0, scripts_path)
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.modules.pop(name, None)
+        if inserted:
+            sys.path.remove(scripts_path)
+    return module
+
+
 @contextlib.contextmanager
 def _git_environment_scope() -> Iterator[None]:
     original = {
@@ -750,6 +204,26 @@ def _git_environment_scope() -> Iterator[None]:
         os.environ.update(original)
 
 
+def _safe_git_environment() -> dict[str, str]:
+    environment = {
+        key: value for key, value in os.environ.items() if not key.startswith("GIT_")
+    }
+    environment.update(
+        {
+            "GIT_CONFIG_GLOBAL": os.devnull,
+            "GIT_CONFIG_SYSTEM": os.devnull,
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_GRAFT_FILE": os.devnull,
+            "GIT_NO_LAZY_FETCH": "1",
+            "GIT_NO_REPLACE_OBJECTS": "1",
+            "GIT_OPTIONAL_LOCKS": "0",
+            "GIT_TERMINAL_PROMPT": "0",
+            "LC_ALL": "C",
+        }
+    )
+    return environment
+
+
 def _git_process(
     root: Path,
     arguments: Sequence[str],
@@ -758,18 +232,31 @@ def _git_process(
     output_limit: int = GIT_CAPTURE_MAX_BYTES,
 ) -> subprocess.CompletedProcess[bytes]:
     try:
-        return _git_capture_bounded(
-            root,
-            *GIT_GLOBAL_ARGUMENTS,
-            *arguments,
+        completed = run_bounded(
+            [
+                "git",
+                "--no-replace-objects",
+                "--literal-pathspecs",
+                "-C",
+                str(root),
+                *GIT_GLOBAL_ARGUMENTS,
+                *arguments,
+            ],
+            timeout=GIT_TIMEOUT_SECONDS,
             stdout_limit=output_limit,
+            stderr_limit=GIT_CAPTURE_MAX_BYTES,
+            env=_safe_git_environment(),
             input_bytes=input_bytes,
         )
-    except ArchiveContractError as exc:
+    except (BoundedOutputError, OSError, subprocess.TimeoutExpired) as exc:
         raise InvocationError(
             f"bounded git provenance failed for "
             f"{arguments[0] if arguments else 'command'}"
         ) from exc
+    # Git diagnostics on stderr never decide a provenance result.
+    return subprocess.CompletedProcess(
+        completed.args, completed.returncode, completed.stdout, b""
+    )
 
 
 def _run_git(
@@ -836,6 +323,8 @@ def _approved_markdown(path: PurePosixPath) -> bool:
         return False
     if path.as_posix() == "RTK.md" or path.parts[0] == ".worktrees":
         return False
+    if path.parts[:2] == ("docs", "98.archive"):
+        return False  # Archive files are not governed documents.
     return path.as_posix() in ROOT_FILES or path.parts[0] in TARGET_ROOTS
 
 
@@ -1097,1290 +586,6 @@ def _blob_bytes(
     return payload
 
 
-def _archive_immutability_diagnostics(
-    root: Path,
-    base_registry: Registry,
-    base_blobs: Mapping[PurePosixPath, str],
-    proposed_blobs: Mapping[PurePosixPath, str],
-    *,
-    mode: str,
-    admitted_rehome_paths: frozenset[PurePosixPath] = frozenset(),
-) -> tuple[LifecycleDiagnostic, ...]:
-    """Compare exact bytes for every base-selected ArchiveEnvelope record."""
-
-    baseline: dict[str, bytes] = {}
-    proposed: dict[str, bytes] = {}
-    for path, oid in base_blobs.items():
-        try:
-            profile = classify_path(base_registry, path)
-        except DocumentContractError:
-            continue
-        if profile.profile_id != ARCHIVE_PROFILE:
-            continue
-        if path in admitted_rehome_paths:
-            continue
-        canonical = path.as_posix()
-        baseline[canonical] = _blob_bytes(root, oid)
-        proposed_oid = proposed_blobs.get(path)
-        if proposed_oid is not None:
-            proposed[canonical] = _blob_bytes(root, proposed_oid)
-    report = validate_archive_immutability(baseline, proposed)
-    return tuple(
-        LifecycleDiagnostic(
-            severity="FAIL",
-            rule_id="LIFECYCLE-EVIDENCE",
-            path=PurePosixPath(item.path),
-            profile=ARCHIVE_PROFILE,
-            expected_transition="existing archive record Git blob bytes remain identical",
-            observed_transition=(
-                "existing archive record deleted"
-                if item.code == "ARCHIVE-IMMUTABLE-DELETION"
-                else "existing archive record bytes changed"
-            ),
-            base_mode=mode,  # type: ignore[arg-type]
-            evidence_gap=f"archive immutability rule {item.code}",
-        )
-        for item in report.diagnostics
-    )
-
-
-def _migration_immutability_diagnostics(
-    root: Path,
-    registry: Registry,
-    base_blobs: Mapping[PurePosixPath, str],
-    proposed_blobs: Mapping[PurePosixPath, str],
-    *,
-    mode: str,
-) -> tuple[LifecycleDiagnostic, ...]:
-    """Protect whole sealed Migration blobs before any event admission."""
-
-    diagnostics: list[LifecycleDiagnostic] = []
-    for path, oid in base_blobs.items():
-        try:
-            profile = classify_path(registry, path)
-        except DocumentContractError:
-            continue
-        if profile.profile_id != "archive/migration":
-            continue
-        text = _blob_text(root, oid, path)
-        assert text is not None
-        document = document_from_text(registry, path, text)
-        if document.status != "sealed" or proposed_blobs.get(path) == oid:
-            continue
-        proposed_text = (
-            _blob_text(root, proposed_blobs[path], path)
-            if path in proposed_blobs
-            else None
-        )
-        if _is_declared_reseal(
-            path,
-            hashlib.sha256(text.encode("utf-8")).hexdigest(),
-            None
-            if proposed_text is None
-            else hashlib.sha256(proposed_text.encode("utf-8")).hexdigest(),
-        ):
-            continue
-        diagnostics.append(
-            LifecycleDiagnostic(
-                severity="FAIL",
-                rule_id="LIFECYCLE-TERMINAL-MUTATION",
-                path=path,
-                profile=profile.profile_id,
-                expected_transition="sealed Migration Git blob bytes unchanged",
-                observed_transition="sealed Migration changed or deleted",
-                base_mode=mode,  # type: ignore[arg-type]
-                evidence_gap="immutable previously sealed Migration",
-            )
-        )
-    return tuple(diagnostics)
-
-
-# One declared re-seal: the domain identity key `migration_id` repeated the
-# value `artifact_id` already carries, so the consolidated frontmatter contract
-# retires it. Sealed Migrations stay byte-immutable against every other change;
-# only these exact reviewed base -> proposed byte pairs are admitted, once.
-_MIGRATION_DOMAIN_KEY_RESEAL: dict[str, tuple[tuple[str, str], ...]] = {
-    "docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md": (
-        (
-            "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206",  # pragma: allowlist secret -- sealed base digest
-            "1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116",  # pragma: allowlist secret -- sealed base digest
-            "7d5e02139b32b14b0b32e17f8b53f01757c54584e597de331808276dbf4ad739",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "9d25b3039750bd60c18129ea7fb62576889449407b2f2fb10092b5624e47030f",  # pragma: allowlist secret -- sealed base digest
-            "7d5e02139b32b14b0b32e17f8b53f01757c54584e597de331808276dbf4ad739",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md": (
-        (
-            "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a",  # pragma: allowlist secret -- sealed base digest
-            "847b8dab8f86b0b16b47decbf59dbf355f2fbae2869582626c43d949f61dfdce",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "05527226d8d353f57bac1b346aaa20f1ab1951eeea7f2f570b04dbcabd381265",  # pragma: allowlist secret -- sealed base digest
-            "847b8dab8f86b0b16b47decbf59dbf355f2fbae2869582626c43d949f61dfdce",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0003-agent-governance-control-plane-consolidation.md": (
-        (
-            "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42",  # pragma: allowlist secret -- sealed base digest
-            "67ab2340b257e3dee0bca1a5d3bf757038082e2ffec919bece5d977d5eb919fd",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "6dd85df46123bb7004b0abf0fc7cd1f1d81fcae5ea66f71f1f07ff1dba904ab2",  # pragma: allowlist secret -- sealed base digest
-            "67ab2340b257e3dee0bca1a5d3bf757038082e2ffec919bece5d977d5eb919fd",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0004-document-authority-convergence.md": (
-        (
-            "503a65a5897301be651217fcc48def5351809f272d9af510f10621f2ec2d1fe6",  # pragma: allowlist secret -- sealed base digest
-            "870aa210464f9059a4760411d3f8261ab14ae637f0719bd3355b59dd984634c6",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "e7eb94fc16f333a3888e8d5c4d5a17cc65a172bf3dbbf4a115b450e73724dd75",  # pragma: allowlist secret -- sealed base digest
-            "870aa210464f9059a4760411d3f8261ab14ae637f0719bd3355b59dd984634c6",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0005-codex-claude-agent-governance-convergence.md": (
-        (
-            "01f9834d73ec930f19d3256e104df8de8549684ae596f7f67a0a7ece28e2b55f",  # pragma: allowlist secret -- sealed base digest
-            "f8e5b0a869f9fcc204b358d4c183f123e28c4db2f19329840018a69f61257be4",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "f8e5b0a869f9fcc204b358d4c183f123e28c4db2f19329840018a69f61257be4",  # pragma: allowlist secret -- sealed base digest
-            "7779477ee36e9e41cc702649f6a1b3093521932f39fa9bab4d81962c18e112a0",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "c6324af84cc73365f303e96c8e34cae4c0a7717c777017de3e8222b94c0aa7a5",  # pragma: allowlist secret -- sealed base digest
-            "7779477ee36e9e41cc702649f6a1b3093521932f39fa9bab4d81962c18e112a0",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "864ac2748c0a21d9b98cc0ddf871fd7335377498d7e554470a9c1a1863e04fdf",  # pragma: allowlist secret -- sealed base digest
-            "7779477ee36e9e41cc702649f6a1b3093521932f39fa9bab4d81962c18e112a0",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "abf7a98e9cb9aa0b97ceda0187a0620c30f9eecb93111fa1e92e62dd86c5b6ea",  # pragma: allowlist secret -- sealed base digest
-            "864ac2748c0a21d9b98cc0ddf871fd7335377498d7e554470a9c1a1863e04fdf",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "3271e0c9e4cd6698a40736a49334c1186fb958106b62dc1070c520752c850c99",  # pragma: allowlist secret -- sealed base digest
-            "abf7a98e9cb9aa0b97ceda0187a0620c30f9eecb93111fa1e92e62dd86c5b6ea",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "3271e0c9e4cd6698a40736a49334c1186fb958106b62dc1070c520752c850c99",  # pragma: allowlist secret -- sealed base digest
-            "3271e0c9e4cd6698a40736a49334c1186fb958106b62dc1070c520752c850c99",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "b51a591707de24b5cf2f2af347d9f0affa157cb1952b4da2f16e403ffe641d97",  # pragma: allowlist secret -- sealed base digest
-            "3271e0c9e4cd6698a40736a49334c1186fb958106b62dc1070c520752c850c99",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0006-unroutable-reference-profile-retirement.md": (
-        (
-            "18f5c3088eed3d4e21839a73235e6b7ce572174248517c7822426b9e26bfe2e7",  # pragma: allowlist secret -- sealed base digest
-            "36a17557ddbd1afa7e25fc104b11bbc9d46eacddc00eb5928163150244a25ba7",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "316bb28ec68e3850a0bd3c3e6fc345e8b956b923062ade892b3334d54b245793",  # pragma: allowlist secret -- sealed base digest
-            "36a17557ddbd1afa7e25fc104b11bbc9d46eacddc00eb5928163150244a25ba7",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0007-agent-progress-ledger-retirement.md": (
-        (
-            "3e40c188101b9337fe6a4d385eba45aa07dedf4e948403f557e95746795618d7",  # pragma: allowlist secret -- sealed base digest
-            "3f4e86833f3b22f891c6ca21ec57467225d697e83d7cb2b97da34c3bd7347055",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "728eb9241d6a76280b597ac9007c6cc278136e4038531b90c818d33978866631",  # pragma: allowlist secret -- sealed base digest
-            "3f4e86833f3b22f891c6ca21ec57467225d697e83d7cb2b97da34c3bd7347055",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0008-progress-append-form-retirement.md": (
-        (
-            "33ec2a510743857b5591d12334f7192ef35287446693596f8e7666da11a24ca4",  # pragma: allowlist secret -- sealed base digest
-            "385fc26a65ae0a13c1764f433a524b789a75ceb28cdca968bc2254fe6bb05925",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "bb5f0db3d694d8aa985598f64d0606fa0998bbf001f8f7e024df09bbc4acfc70",  # pragma: allowlist secret -- sealed base digest
-            "385fc26a65ae0a13c1764f433a524b789a75ceb28cdca968bc2254fe6bb05925",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0009-governance-memory-retirement.md": (
-        (
-            "108ebf54112ec1a6467b8141b9136dd13b6bc72dbd0f56e39b9bf62adc1086eb",  # pragma: allowlist secret -- sealed base digest
-            "355324d455205d9840c6475f635b5717fdaba3a32541be8fe894b367f3cd27b3",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "6ccca3f7aec2a5395194ba7523f309107b7ef3659595f1e6fa4142f18d4d3433",  # pragma: allowlist secret -- sealed base digest
-            "355324d455205d9840c6475f635b5717fdaba3a32541be8fe894b367f3cd27b3",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-}
-
-
-# A second declared re-seal: the shared frontmatter key set gave every profile
-# the same `version` and `layer` keys, and the archive family's profile identity
-# became `archive/migration`. Sealed Migrations stay byte-immutable against every
-# other change; only these exact reviewed base -> proposed byte pairs are
-# admitted, once.
-_MIGRATION_SHARED_KEY_RESEAL: dict[str, tuple[tuple[str, str], ...]] = {
-    "docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md": (
-        (
-            "7d5e02139b32b14b0b32e17f8b53f01757c54584e597de331808276dbf4ad739",  # pragma: allowlist secret -- sealed base digest
-            "bbc0620bd30c2f870aa6f396ba9f08ac09ba77534ccc783d6e7b73c2b10c4df3",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md": (
-        (
-            "847b8dab8f86b0b16b47decbf59dbf355f2fbae2869582626c43d949f61dfdce",  # pragma: allowlist secret -- sealed base digest
-            "2cac1634348c9efa985099bb3a2d736609e79849e3aa3d978a8f2a6858a2a45a",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0003-agent-governance-control-plane-consolidation.md": (
-        (
-            "67ab2340b257e3dee0bca1a5d3bf757038082e2ffec919bece5d977d5eb919fd",  # pragma: allowlist secret -- sealed base digest
-            "7baa2a9b2682313d9e8cfc4d3504db14b4985f780f85ff673a4bf535ce4c755e",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0004-document-authority-convergence.md": (
-        (
-            "870aa210464f9059a4760411d3f8261ab14ae637f0719bd3355b59dd984634c6",  # pragma: allowlist secret -- sealed base digest
-            "13ddbddac9c5ce8b50fbab900da20d43d29770113e7c2292db81799df6566b33",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0005-codex-claude-agent-governance-convergence.md": (
-        (
-            "3271e0c9e4cd6698a40736a49334c1186fb958106b62dc1070c520752c850c99",  # pragma: allowlist secret -- sealed base digest
-            "628753b0544558b5abd6863da3adf33f9cede484fd36cdce3a8a02330ed42f99",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0006-unroutable-reference-profile-retirement.md": (
-        (
-            "36a17557ddbd1afa7e25fc104b11bbc9d46eacddc00eb5928163150244a25ba7",  # pragma: allowlist secret -- sealed base digest
-            "403d318b65732ee70afbe63bf1311d5628145d87e10e2b2cab4c997e06d1548b",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0007-agent-progress-ledger-retirement.md": (
-        (
-            "3f4e86833f3b22f891c6ca21ec57467225d697e83d7cb2b97da34c3bd7347055",  # pragma: allowlist secret -- sealed base digest
-            "ba034edf349fb9f829d7b2429eb8c1eb02c51d8ee063de8286bb3172497b2f38",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0008-progress-append-form-retirement.md": (
-        (
-            "385fc26a65ae0a13c1764f433a524b789a75ceb28cdca968bc2254fe6bb05925",  # pragma: allowlist secret -- sealed base digest
-            "1dc87b772b16b466973f5b8c4fc2d915245bfc8772090f2d6fe3a770555725eb",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-    "docs/98.archive/migrations/0009-governance-memory-retirement.md": (
-        (
-            "355324d455205d9840c6475f635b5717fdaba3a32541be8fe894b367f3cd27b3",  # pragma: allowlist secret -- sealed base digest
-            "41f1d334ab613c5e118b83190c413765bb6c26a278b26d916b35ef0be26b3352",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-}
-
-
-# A historical-consumer declaration covers its paths by byte identity, so a
-# reviewed change to a declared document invalidates the coverage until the
-# declaration names a commit carrying the new bytes.  A consumer identity may
-# belong to exactly one sealed record, so the re-pin has to happen inside the
-# record that already owns it rather than in a newer one.
-_MIGRATION_CONSUMER_REPIN_RESEAL: dict[str, tuple[tuple[str, str], ...]] = {
-    "docs/98.archive/migrations/0005-codex-claude-agent-governance-convergence.md": (
-        (
-            "628753b0544558b5abd6863da3adf33f9cede484fd36cdce3a8a02330ed42f99",  # pragma: allowlist secret -- sealed base digest
-            "fa28fe51353f0cd4ad2611592707dfd42415296cabd56f5a3b727acc9deed0b3",  # pragma: allowlist secret -- re-sealed digest
-        ),
-        (
-            "fa28fe51353f0cd4ad2611592707dfd42415296cabd56f5a3b727acc9deed0b3",  # pragma: allowlist secret -- sealed base digest
-            "417f6034f225f7fa73f4ef3f6c72a583f2a2a872ed8321fbdc20a31644760ff1",  # pragma: allowlist secret -- re-sealed digest
-        ),
-    ),
-}
-
-
-def _is_declared_reseal(path: PurePosixPath, base: str, proposed: str | None) -> bool:
-    """Admit only a reviewed byte pair declared for one sealed record change."""
-
-    key = path.as_posix()
-    pins = (
-        *_MIGRATION_DOMAIN_KEY_RESEAL.get(key, ()),
-        *_MIGRATION_SHARED_KEY_RESEAL.get(key, ()),
-        *_MIGRATION_CONSUMER_REPIN_RESEAL.get(key, ()),
-    )
-    return proposed is not None and (base, proposed) in pins
-
-
-# ADR-0032's generation retained a document only under `completed/`; its
-# `superseded/` and `tombstones/` held sealed records and `migrations/` held the
-# ledgers. A frozen ledger row is replayed under that generation, so this names
-# the frozen generation rather than the current classes, which the registry's
-# `retention_classes` owns under ADR-0038.
-FROZEN_GENERATION_RETENTION_CLASSES = frozenset({"completed"})
-
-
-def _is_sealed_record_path(path: PurePosixPath) -> bool:
-    """Report whether a path names a sealed record rather than another artifact.
-
-    `migrations/` holds the ledgers that prove the moves and `completed/` holds
-    retained documents, which are not records at all. Neither is a record whose
-    directory a relocation may decide.
-    """
-
-    parts = path.parts
-    return (
-        len(parts) > 3
-        and parts[:2] == ("docs", "98.archive")
-        and parts[2] not in {"migrations", *FROZEN_GENERATION_RETENTION_CLASSES}
-    )
-
-
-def _retention_rehome_target(
-    source: PurePosixPath, target: PurePosixPath
-) -> str | None:
-    """Return the retention class when `target` mirrors `source` exactly.
-
-    A retention move relocates a governed document into
-    `docs/98.archive/<class>/<its own stage path>` and nowhere else. Proving
-    the mirror rather than accepting any Stage 98 destination keeps a ledger
-    row from admitting an arbitrary relocation under a retention label.
-    """
-
-    parts = target.parts
-    if len(parts) < 4 or parts[:2] != ("docs", "98.archive"):
-        return None
-    retention_class = parts[2]
-    if retention_class not in FROZEN_GENERATION_RETENTION_CLASSES:
-        return None
-    if parts[3:] != source.parts[1:]:
-        return None
-    return retention_class
-
-
-def _envelope_object(
-    root: Path, commit: str, path: PurePosixPath, base_commit: str
-) -> str | None:
-    """Return the object a Retention Envelope names when the base can reach it."""
-
-    try:
-        _run_git(root, ("merge-base", "--is-ancestor", commit, base_commit))
-        raw = _run_git(
-            root,
-            (
-                "rev-parse",
-                "--verify",
-                "--end-of-options",
-                f"{commit}:{path.as_posix()}",
-            ),
-        )
-    except InvocationError:
-        return None
-    value = raw.decode("ascii", errors="ignore").strip()
-    return value if OBJECT_ID.fullmatch(value) is not None else None
-
-
-def _scope_migration_moves(
-    registry: Registry,
-    metadata: Mapping[str, object],
-    base_blobs: Mapping[PurePosixPath, str],
-    base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
-    proposed_snapshot: Mapping[PurePosixPath, LifecycleDocument],
-    base_texts: Mapping[PurePosixPath, str],
-    proposed_texts: Mapping[PurePosixPath, str],
-    other_moves: Mapping[PurePosixPath, PurePosixPath],
-) -> tuple[set[tuple[PurePosixPath, PurePosixPath]], list[str]]:
-    """Pair each document leaving a moved scope with its owner under the new root.
-
-    A moved document keeps its state and identity, and its body differs from
-    the source by relative link prefixes alone."""
-
-    scope = canonical_repository_path(metadata.get("moved_scope"))
-    owner = canonical_repository_path(metadata.get("current_owner"))
-    if scope is None or owner is None or scope == owner:
-        return set(), ["moved scope and current owner are not two canonical paths"]
-    profiles = {profile.profile_id: profile for profile in registry.profiles}
-    moves: set[tuple[PurePosixPath, PurePosixPath]] = set()
-    gaps: list[str] = []
-    for source in sorted(base_blobs, key=PurePosixPath.as_posix):
-        if (
-            source != scope and scope not in source.parents
-        ) or source in proposed_snapshot:
-            continue
-        target = owner if source == scope else owner / source.relative_to(scope)
-        before, after = base_snapshot.get(source), proposed_snapshot.get(target)
-        before_profile = profiles.get(before.profile_id) if before else None
-        after_profile = profiles.get(after.profile_id) if after else None
-        domain = before_profile.lifecycle_domain if before_profile else None
-        if (
-            target in base_blobs
-            or before is None
-            or after is None
-            or before.state_issue
-            or after.state_issue
-            or domain is None
-            or before.status is None
-            or domain.validation_class(before.status) != "current"
-            or after.status != before.status
-            or after_profile is None
-            or after_profile.lifecycle_domain is None
-            or after_profile.lifecycle_domain.family != domain.family
-            or after.artifact_id != before.artifact_id
-        ):
-            gaps.append(f"moved document keeps no current owner: {source.as_posix()}")
-            continue
-        moves.add((source, target))
-    moved = {**other_moves, **dict(moves)}
-    for source, target in sorted(moves, key=lambda pair: pair[0].as_posix()):
-        if link_resolved_text(base_texts[source], source, moved) != link_resolved_text(
-            proposed_texts[target], target
-        ):
-            gaps.append(
-                "moved document differs beyond relative link rebasing: "
-                + source.as_posix()
-            )
-    if not moves and not gaps:
-        gaps.append("moved scope names no document this change moves")
-    return moves, gaps
-
-
-def _proposed_entries(
-    root: Path, path: PurePosixPath, proposed_commit: str | None
-) -> tuple[UnitEntry, ...] | None:
-    """Read a proposal's entries from its commit, or from the index when staged."""
-
-    if proposed_commit is None:
-        return index_entries(root, path)
-    return commit_entries(root, proposed_commit, path)
-
-
-def _identity_moves(
-    registry: Registry,
-    base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
-    proposed_snapshot: Mapping[PurePosixPath, LifecycleDocument],
-) -> frozenset[ArtifactIdentityLineage]:
-    """Pair a document leaving an active stage with the one that keeps its identity.
-
-    ADR-0039 tracks such a move by identity lineage without a Stage 98 record:
-    both paths lie outside Stage 98, the identity leaves one path and arrives at
-    one path, and the family and state are unchanged."""
-
-    families = {
-        profile.profile_id: profile.lifecycle_domain.family
-        for profile in registry.profiles
-        if profile.lifecycle_domain is not None
-    }
-
-    def by_identity(
-        snapshot: Mapping[PurePosixPath, LifecycleDocument],
-        other: Mapping[PurePosixPath, LifecycleDocument],
-    ) -> dict[str, list[PurePosixPath]]:
-        grouped: dict[str, list[PurePosixPath]] = {}
-        for path, document in snapshot.items():
-            if (
-                path in other
-                or path.parts[:2] == DISPOSITION_ARCHIVE_INDEX.parts[:2]
-                or document.artifact_id is None
-                or document.state_issue
-            ):
-                continue
-            grouped.setdefault(document.artifact_id, []).append(path)
-        return grouped
-
-    added = by_identity(proposed_snapshot, base_snapshot)
-    lineages: set[ArtifactIdentityLineage] = set()
-    for artifact_id, sources in by_identity(base_snapshot, proposed_snapshot).items():
-        targets = added.get(artifact_id, [])
-        if len(sources) != 1 or len(targets) != 1:
-            continue
-        before, after = base_snapshot[sources[0]], proposed_snapshot[targets[0]]
-        family = families.get(before.profile_id)
-        if (
-            family is None
-            or family != families.get(after.profile_id)
-            or before.status != after.status
-        ):
-            continue
-        lineages.add(ArtifactIdentityLineage(artifact_id, sources[0], targets[0]))
-    return frozenset(lineages)
-
-
-def _unit_state_gaps(
-    registry: Registry,
-    source: PurePosixPath,
-    retention: RetentionClass,
-    unit: RetentionUnit | None,
-    base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
-    *,
-    approved_completion: bool = False,
-) -> list[str]:
-    """Admit a unit by its anchor's state; every other member is terminal.
-
-    A member the unit names in `member_admitted_states`, such as a published
-    Postmortem, is admitted by those states instead. A member with no lifecycle
-    holds no state to judge."""
-
-    anchor = source / unit.anchor if unit is not None else source
-    before = base_snapshot.get(anchor)
-    gaps: list[str] = []
-    if (
-        before is None
-        or before.state_issue
-        or (
-            before.status not in retention.admitted_states
-            and not (
-                approved_completion
-                and unit is not None
-                and unit.anchor in unit.completed_authority_members
-                and before.status == "approved"
-            )
-        )
-    ):
-        gaps.append(f"{retention.name}/ does not admit the anchor state")
-    if unit is None:
-        return gaps
-    gaps.extend(
-        f"required member is absent: {name}"
-        for name in unit.required_members
-        if source / name not in base_snapshot
-    )
-    admitted = dict(unit.member_admitted_states)
-    domains = {
-        profile.profile_id: profile.lifecycle_domain for profile in registry.profiles
-    }
-    for path in sorted(base_snapshot, key=PurePosixPath.as_posix):
-        if path == anchor or source not in path.parents:
-            continue
-        document, name = base_snapshot[path], path.relative_to(source).as_posix()
-        states, domain = admitted.get(name), domains.get(document.profile_id)
-        if (
-            approved_completion
-            and name in unit.completed_authority_members
-            and document.status == "approved"
-            and document.profile_id == "sdlc/plan"
-        ):
-            continue
-        if states is None and domain is None:
-            continue
-        if (
-            document.state_issue
-            or document.status is None
-            or (
-                document.status not in states
-                if states is not None
-                else domain is None
-                or domain.validation_class(document.status) != "terminal"
-            )
-        ):
-            gaps.append(f"member state is not admitted: {name}")
-    return gaps
-
-
-def _retention_gaps(
-    root: Path,
-    registry: Registry,
-    record: PurePosixPath,
-    original_path: PurePosixPath,
-    retention: RetentionClass,
-    unit: RetentionUnit | None,
-    *,
-    named_object: str | None,
-    base_commit: str,
-    proposed_commit: str | None,
-    base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
-    base_texts: Mapping[PurePosixPath, str],
-    proposed_snapshot: Mapping[PurePosixPath, LifecycleDocument],
-) -> tuple[list[str], tuple[tuple[PurePosixPath, PurePosixPath], ...]]:
-    """Prove a retained unit is its source Git object, unchanged, links included.
-
-    Returns the gaps and the document moves the retention makes. A document is a
-    blob unit; a spec package or Incident bundle is a tree unit, and a member of
-    one is never retained alone."""
-
-    source = retention_source_path(record)
-    gaps: list[str] = []
-    if original_path != source:
-        gaps.append("Retention Envelope does not name the mirrored source")
-    if unit is None and enclosing_unit(registry, source) is not None:
-        gaps.append("a unit member is retained with its unit, never alone")
-    base_object = _envelope_object(root, base_commit, source, base_commit)
-    expected = "tree" if unit is not None else "blob"
-    if base_object is None:
-        gaps.append("retained source is absent from the comparison base")
-    elif object_type(root, base_commit, source) != expected:
-        gaps.append(f"retained source is not one {expected}")
-    elif named_object is not None and named_object != base_object:
-        gaps.append("Retention Envelope object differs from the base source")
-    if _proposed_entries(root, source, proposed_commit) != ():
-        gaps.append("retained source remains in the proposal")
-    source_entries = commit_entries(root, base_commit, source)
-    if (
-        not source_entries
-        or _proposed_entries(root, record, proposed_commit) != source_entries
-    ):
-        gaps.append("retained unit differs from its source in path, mode, or bytes")
-    approved_completion = False
-    anchor = source / "spec.md"
-    plan_path = source / "plan.md"
-    if (
-        retention.name == "completed"
-        and unit is not None
-        and unit.name == "spec-package"
-        and set(unit.completed_authority_members) == {"spec.md", "plan.md"}
-        and base_snapshot.get(anchor) is not None
-        and base_snapshot[anchor].status == "approved"
-        and base_snapshot.get(plan_path) is not None
-        and base_snapshot[plan_path].status == "approved"
-    ):
-        schema_path = PurePosixPath(
-            "docs/99.templates/contracts/frontmatter.schema.json"
-        )
-        schema_oid = _tree_blob_oid(root, base_commit, schema_path)
-        schema_text = _blob_text(root, schema_oid, schema_path) if schema_oid else None
-        if schema_text is None:
-            gaps.append("approved source package lacks its frontmatter schema")
-        else:
-            try:
-                schema = json.loads(schema_text, object_pairs_hook=_unique_json_object)
-                completion = _completion_document_diagnostics(
-                    root,
-                    registry,
-                    (anchor,),
-                    base_snapshot,
-                    base_texts,
-                    schema,
-                    base_mode="explicit-ref",
-                )
-            except (TypeError, ValueError, KeyError) as error:
-                gaps.append(f"approved source completion could not be read: {error}")
-            else:
-                approved_completion = not completion
-                gaps.extend(
-                    f"approved source completion: {item.rule_id} {item.path.as_posix()}"
-                    for item in completion
-                )
-    gaps.extend(
-        _unit_state_gaps(
-            registry,
-            source,
-            retention,
-            unit,
-            base_snapshot,
-            approved_completion=approved_completion,
-        )
-    )
-    pairs = tuple(
-        (path, record / path.relative_to(source))
-        for path in sorted(base_snapshot, key=PurePosixPath.as_posix)
-        if path == source or source in path.parents
-    )
-    for before_path, after_path in pairs:
-        before, after = base_snapshot[before_path], proposed_snapshot.get(after_path)
-        if after is None or (before.profile_id, before.status, before.artifact_id) != (
-            after.profile_id,
-            after.status,
-            after.artifact_id,
-        ):
-            gaps.append("retained body changed its profile, state, or identity")
-            break
-    return gaps, pairs
-
-
-def _assessment_events(
-    root: Path,
-    registry: Registry,
-    base_texts: Mapping[PurePosixPath, str],
-    proposed_texts: Mapping[PurePosixPath, str],
-    proposed_rows: Mapping[PurePosixPath, object],
-    proposed_snapshot: Mapping[PurePosixPath, LifecycleDocument],
-    proposed_commit: str | None,
-) -> tuple[frozenset[PurePosixPath], list[str]]:
-    """Judge the Retention Assessment table and return the units that left.
-
-    ADR-0040 admits one change to a retained unit: an approved removal of the
-    whole unit, recorded as a removed availability with a current Decision and
-    no Hold. A row never leaves the table, and a removed unit never returns.
-    Only a unit whose row passes every check is returned as removed."""
-
-    contract = registry.archive_assessment
-    if contract is None:
-        return frozenset(), []
-    index = DISPOSITION_ARCHIVE_INDEX
-    proposed, errors = parse_assessment(registry, proposed_texts.get(index, ""))
-    base, _base_errors = parse_assessment(registry, base_texts.get(index, ""))
-    gaps = [f"{code}: {path}" for code, path in errors]
-
-    def present(record: PurePosixPath) -> bool:
-        # An unreadable listing is not proof of absence.
-        return _proposed_entries(root, record, proposed_commit) != ()
-
-    def profile_of(path: PurePosixPath) -> str | None:
-        document = proposed_snapshot.get(path)
-        return document.profile_id if document is not None else None
-
-    judged = assessment_diagnostics(
-        registry, proposed, proposed_rows, present=present, profile_of=profile_of
-    )
-    gaps.extend(f"{code}: {path}" for code, path in judged)
-    faulty = {PurePosixPath(path) for _code, path in judged}
-    for record, before in sorted(base.items(), key=lambda item: item[0].as_posix()):
-        after = proposed.get(record)
-        if after is None:
-            gaps.append(f"an assessment row left: {record.as_posix()}")
-            faulty.add(record)
-        elif (
-            before.availability in contract.removed_availabilities
-            and after.availability not in contract.removed_availabilities
-        ):
-            gaps.append(f"a removed unit returned: {record.as_posix()}")
-            faulty.add(record)
-    removed = frozenset(
-        record
-        for record, row in proposed.items()
-        if row.availability in contract.removed_availabilities
-        and record not in faulty
-        and not errors
-    )
-    return removed, gaps
-
-
-def _disposition_lifecycle_events(
-    root: Path,
-    registry: Registry,
-    base_commit: str,
-    base_blobs: Mapping[PurePosixPath, str],
-    base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
-    base_texts: Mapping[PurePosixPath, str],
-    proposed_snapshot: Mapping[PurePosixPath, LifecycleDocument],
-    proposed_texts: Mapping[PurePosixPath, str],
-    *,
-    mode: str,
-    proposed_commit: str | None = None,
-) -> tuple[MigrationLifecycleEvents, tuple[LifecycleDiagnostic, ...]]:
-    """Admit ADR-0039 dispositions from the catalog's one Retention Envelope.
-
-    A retained unit is proved by a new catalog row whose `<commit>:<original
-    path>` names the object the comparison base holds, and the retained path
-    holds that object entry for entry, links included; its anchor's state
-    admits the class. A scope migration is proved by a new body-less record the
-    catalog names. A document moving between active stages with its identity,
-    family, and state needs no record. No row carries a digest, a blob pin, or a
-    path ledger; Git holds the bytes.
-    """
-
-    index = DISPOSITION_ARCHIVE_INDEX
-    proposed_rows, catalog_errors = parse_catalog(proposed_texts.get(index, ""))
-    base_rows, _ = parse_catalog(base_texts.get(index, ""))
-
-    def failure(path: PurePosixPath, gap: str) -> LifecycleDiagnostic:
-        document = proposed_snapshot.get(path)
-        return LifecycleDiagnostic(
-            severity="FAIL",
-            rule_id="LIFECYCLE-EVIDENCE",
-            path=path,
-            profile=document.profile_id if document is not None else "",
-            expected_transition="one ADR-0038 disposition proved by its Retention Envelope",
-            observed_transition="disposition is not proved",
-            base_mode=mode,  # type: ignore[arg-type]
-            evidence_gap=gap,
-        )
-
-    diagnostics = [failure(index, code) for code in catalog_errors]
-    diagnostics.extend(
-        failure(index, code)
-        for code, _path in historical_catalog_diagnostics(
-            root,
-            registry,
-            proposed_texts.get(index, ""),
-            proposed_commit or base_commit,
-        )
-    )
-    if any(proposed_rows.get(path) != row for path, row in base_rows.items()):
-        diagnostics.append(failure(index, "an existing catalog row changed or left"))
-    removed, assessment_gaps = _assessment_events(
-        root,
-        registry,
-        base_texts,
-        proposed_texts,
-        proposed_rows,
-        proposed_snapshot,
-        proposed_commit,
-    )
-    diagnostics.extend(failure(index, gap) for gap in assessment_gaps)
-
-    def removed_whole(path: PurePosixPath) -> bool:
-        return any(record == path or record in path.parents for record in removed)
-
-    # Retention follows the profile, and a frozen body is immutable: once a
-    # body or route record sits in Stage 98, no later change rewrites or
-    # removes it, whether its catalog row or a frozen ledger proved it.
-    for path in sorted(base_texts, key=PurePosixPath.as_posix):
-        if path.parts[:2] != DISPOSITION_ARCHIVE_INDEX.parts[:2]:
-            continue
-        if proposed_texts.get(path) == base_texts[path]:
-            continue
-        if path not in proposed_texts and removed_whole(path):
-            continue
-        document = base_snapshot.get(path)
-        if retention_class_of(registry, path) is not None or (
-            document is not None and document.profile_id in ROUTE_DISPOSITION_PROFILES
-        ):
-            diagnostics.append(
-                failure(path, "a retained body or route record changed or left")
-            )
-    # A retained unit is frozen entry for entry, so a file that no Markdown
-    # snapshot sees still cannot be added, removed, or rewritten beneath it.
-    for record in sorted(base_rows, key=PurePosixPath.as_posix):
-        unit = retained_unit_of(registry, record)
-        if unit is None:
-            continue
-        frozen = commit_entries(root, base_commit, record)
-        proposed_entries = _proposed_entries(root, record, proposed_commit)
-        if record in removed and proposed_entries == ():
-            continue
-        if frozen is None or frozen != proposed_entries:
-            diagnostics.append(
-                failure(record / unit[0].anchor, "a retained unit changed or left")
-            )
-    archive_rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
-    lineages = set(_identity_moves(registry, base_snapshot, proposed_snapshot))
-    current_rehomes = {(item.source_path, item.target_path) for item in lineages}
-    owner: ModuleType | None = None
-    # Bodies retained together may link each other, so their links are compared
-    # through the whole change's moves rather than one pair at a time.
-    retention_moves = {
-        retention_source_path(record): record
-        for record, row in proposed_rows.items()
-        if base_rows.get(record) != row
-        and retention_class_of(registry, record) is not None
-    }
-    for record, row in sorted(
-        proposed_rows.items(), key=lambda item: item[0].as_posix()
-    ):
-        if base_rows.get(record) == row:
-            continue
-        envelope = row.envelope
-        unit = retained_unit_of(registry, record)
-        retention = (
-            unit[1] if unit is not None else retention_class_of(registry, record)
-        )
-        report = record / unit[0].anchor if unit is not None else record
-        gaps: list[str] = []
-        if report in base_blobs or report not in proposed_snapshot:
-            gaps.append("catalog row does not name a record this change creates")
-        named_object = _envelope_object(
-            root, envelope.commit, envelope.original_path, base_commit
-        )
-        if named_object is None:
-            gaps.append(
-                "Retention Envelope names no object the comparison base reaches"
-            )
-        if retention is not None:
-            retention_gaps, pairs = _retention_gaps(
-                root,
-                registry,
-                record,
-                envelope.original_path,
-                retention,
-                unit[0] if unit is not None else None,
-                named_object=named_object,
-                base_commit=base_commit,
-                proposed_commit=proposed_commit,
-                base_snapshot=base_snapshot,
-                base_texts=base_texts,
-                proposed_snapshot=proposed_snapshot,
-            )
-            gaps.extend(retention_gaps)
-            if not gaps:
-                owner = owner or _load_canonical_markdown_module()
-                gaps.extend(
-                    f"canonical retained document form: {target.as_posix()}"
-                    for _source, target in pairs
-                    if owner.validate_document_text(
-                        proposed_texts[target],
-                        target,
-                        classify_path(registry, target),
-                        "strict",
-                    )
-                )
-            if not gaps:
-                archive_rehomes.update(pairs)
-                lineages.update(
-                    ArtifactIdentityLineage(artifact_id, source, target)
-                    for source, target in pairs
-                    if (artifact_id := base_snapshot[source].artifact_id) is not None
-                )
-        else:
-            document = proposed_snapshot.get(record)
-            if (
-                document is None
-                or document.profile_id not in ROUTE_DISPOSITION_PROFILES
-            ):
-                gaps.append("catalog row names no ADR-0038 disposition")
-            else:
-                metadata = frontmatter_mapping(proposed_texts[record])
-                key = (
-                    "moved_scope"
-                    if document.profile_id == "archive/scope-migration"
-                    else "retired_route"
-                )
-                if metadata.get(key) != envelope.original_path.as_posix():
-                    gaps.append(f"Retention Envelope does not name the record's {key}")
-                base_object = _envelope_object(
-                    root, base_commit, envelope.original_path, base_commit
-                )
-                if (
-                    document.profile_id == "archive/scope-migration"
-                    and base_object is None
-                ):
-                    gaps.append("moved scope is absent from the comparison base")
-                elif (
-                    base_object is not None
-                    and named_object is not None
-                    and named_object != base_object
-                ):
-                    gaps.append("Retention Envelope object differs from the base route")
-                if not gaps and document.profile_id == "archive/scope-migration":
-                    moves, move_gaps = _scope_migration_moves(
-                        registry,
-                        metadata,
-                        base_blobs,
-                        base_snapshot,
-                        proposed_snapshot,
-                        base_texts,
-                        proposed_texts,
-                        retention_moves,
-                    )
-                    gaps.extend(move_gaps)
-                    if not gaps:
-                        current_rehomes.update(moves)
-                        lineages.update(
-                            ArtifactIdentityLineage(
-                                base_snapshot[source].artifact_id, source, target
-                            )
-                            for source, target in moves
-                            if base_snapshot[source].artifact_id is not None
-                        )
-        if gaps:
-            diagnostics.append(
-                failure(
-                    report if report in proposed_snapshot else index, "; ".join(gaps)
-                )
-            )
-    return (
-        MigrationLifecycleEvents(
-            current_rehomes=frozenset(current_rehomes),
-            archive_rehomes=frozenset(archive_rehomes),
-            identity_lineages=frozenset(lineages),
-        ),
-        tuple(diagnostics),
-    )
-
-
-def _migration_lifecycle_events(
-    root: Path,
-    registry: Registry,
-    base_blobs: Mapping[PurePosixPath, str],
-    base_documents: Mapping[PurePosixPath, LifecycleDocument],
-    base_texts: Mapping[PurePosixPath, str],
-    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
-    proposed_texts: Mapping[PurePosixPath, str],
-    *,
-    proposed_commit: str | None,
-    mode: str,
-) -> tuple[MigrationLifecycleEvents, tuple[LifecycleDiagnostic, ...]]:
-    """Resolve exact creation/deletion events through the shared recovery owner."""
-
-    records = {
-        path.as_posix(): proposed_texts[path].encode("utf-8")
-        for path, document in proposed_documents.items()
-        if generic_migration_id(path.as_posix()) is not None
-        and document.profile_id == "archive/migration"
-        and document.status == "sealed"
-    }
-    # A declared archive rehome is reviewed on its own evidence, so it survives
-    # an unrelated migration-proof outcome on every return path below.
-    archive_rehomes: frozenset[tuple[PurePosixPath, PurePosixPath]] = frozenset()
-
-    def row_identity_lineages(
-        rows: Sequence[Mapping[str, object]],
-    ) -> set[ArtifactIdentityLineage]:
-        return {
-            ArtifactIdentityLineage(
-                str(row["artifact_id"]),
-                PurePosixPath(str(row["legacy_path"])),
-                PurePosixPath(str(row["stable_path"])),
-            )
-            for row in rows
-            if row.get("action") == "moved"
-            and isinstance(row.get("artifact_id"), str)
-            and isinstance(row.get("legacy_path"), str)
-            and isinstance(row.get("stable_path"), str)
-        }
-
-    identity_lineages: set[ArtifactIdentityLineage] = set()
-
-    def preserve_document_identity(
-        source: PurePosixPath, target: PurePosixPath
-    ) -> None:
-        before = base_documents.get(source)
-        after = proposed_documents.get(target)
-        if (
-            before is not None
-            and after is not None
-            and before.artifact_id is not None
-            and before.artifact_id == after.artifact_id
-        ):
-            identity_lineages.add(
-                ArtifactIdentityLineage(before.artifact_id, source, target)
-            )
-
-    for path, document in proposed_documents.items():
-        if (
-            document.profile_id != "archive/migration"
-            or document.status != "sealed"
-            or path.as_posix() in records
-        ):
-            continue
-        try:
-            identity_lineages.update(
-                row_identity_lineages(
-                    parse_pinned_migration_control(
-                        path.as_posix(), proposed_texts[path].encode("utf-8")
-                    )
-                )
-            )
-        except ArchiveContractError:
-            continue
-    if not records:
-        return MigrationLifecycleEvents(
-            archive_rehomes=archive_rehomes,
-            identity_lineages=frozenset(identity_lineages),
-        ), ()
-
-    def failure(path: PurePosixPath, gap: str) -> LifecycleDiagnostic:
-        return LifecycleDiagnostic(
-            severity="FAIL",
-            rule_id="LIFECYCLE-EVIDENCE",
-            path=path,
-            profile=proposed_documents[path].profile_id
-            if path in proposed_documents
-            else "",
-            expected_transition="exact proposed Migration recovery and document proof",
-            observed_transition="Migration event is not proved",
-            base_mode=mode,  # type: ignore[arg-type]
-            evidence_gap=gap,
-        )
-
-    try:
-        proof = validate_migration_records(
-            root,
-            records,
-            proposed_commit=proposed_commit,
-            registry=registry,
-        )
-    except ArchiveContractError as exc:
-        return MigrationLifecycleEvents(archive_rehomes=archive_rehomes), (
-            failure(PurePosixPath(sorted(records)[0]), exc.code),
-        )
-
-    for path, content in records.items():
-        rows, _ = parse_migration_control(path, content)
-        identity_lineages.update(row_identity_lineages(rows))
-
-    removals: set[PurePosixPath] = set()
-    rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
-    form_rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
-    retention_rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
-    diagnostics: list[LifecycleDiagnostic] = []
-    owner = _load_canonical_markdown_module()
-    for source, disposition in proof.dispositions.items():
-        source_path = PurePosixPath(source)
-        # Recovery can also describe earlier cutovers. Only this base's exact
-        # source deletion is an event in the current comparison.
-        if (
-            base_blobs.get(source_path) != disposition.source_blob
-            or source_path in proposed_documents
-        ):
-            continue
-        removals.add(source_path)
-        if disposition.action not in {"moved", "merged", "replaced"}:
-            continue
-        target = PurePosixPath(proof.targets[source])
-        if target in base_blobs:
-            continue
-        # A form carries no lifecycle state, so the current-document rule below
-        # can never reach it and its tree is not the governance tree. A `moved`
-        # row is byte-identical, so a reviewed move that lands on the template
-        # route the registry declares is the whole of the event.
-        if disposition.action == "moved":
-            try:
-                assert proof.proposed_registry is not None
-                moved_profile = classify_path(registry, target)
-                moved_snapshot = classify_path(proof.proposed_registry, target)
-            except DocumentContractError:
-                diagnostics.append(failure(target, "proposed target registry route"))
-                continue
-            if (
-                moved_profile.mode == "template"
-                and moved_snapshot.profile_id == moved_profile.profile_id
-            ):
-                form_rehomes.add((source_path, target))
-                continue
-            if _is_sealed_record_path(source_path) and _is_sealed_record_path(target):
-                # A reviewed record relocation. The directory holding a sealed
-                # record is a claim about why its origin ended, and correcting
-                # that claim moves the record without changing a byte. The
-                # envelope never names the record's own path, so the row is a
-                # true `moved` and byte identity is proved by the immutability
-                # gate. What is left to check here is that both ends are still
-                # record routes: a move that lands a record outside the record
-                # namespace is not a relocation.
-                if (
-                    moved_profile.profile_id != ARCHIVE_PROFILE
-                    or moved_snapshot.profile_id != ARCHIVE_PROFILE
-                    or classify_path(registry, source_path).profile_id
-                    != ARCHIVE_PROFILE
-                ):
-                    diagnostics.append(failure(target, "relocated record route"))
-                    continue
-                archive_rehomes = archive_rehomes | {(source_path, target)}
-                preserve_document_identity(source_path, target)
-                continue
-        retention_class = _retention_rehome_target(source_path, target)
-        if retention_class is not None:
-            # A reviewed retention move. The row retires a terminal governed
-            # document at its stage path and names the retained copy under the
-            # mirrored retention tree. That copy is the same document with its
-            # relative link prefixes re-based, so the row is `replaced` rather
-            # than `moved` and byte identity is not the retention invariant.
-            # Git still recovers the exact source bytes through this row's own
-            # `source_commit` and `source_blob`.
-            source_document = base_documents.get(source_path)
-            retained = proposed_documents.get(target)
-            if (
-                source_document is None
-                or retained is None
-                or source_document.state_issue
-                or source_document.status
-                not in {
-                    item.name: item.admitted_states
-                    for item in registry.retention_classes
-                }.get(retention_class, frozenset())
-            ):
-                diagnostics.append(failure(target, "retention source state"))
-                continue
-            try:
-                source_route = classify_path(registry, source_path)
-                retained_route = classify_path(registry, target)
-            except DocumentContractError:
-                diagnostics.append(failure(target, "proposed target registry route"))
-                continue
-            if source_route.profile_id != retained_route.profile_id:
-                diagnostics.append(failure(target, "retained document form differs"))
-                continue
-            if owner.validate_document_text(
-                proposed_texts[target], target, retained_route, "strict"
-            ):
-                diagnostics.append(failure(target, "canonical retained document form"))
-                continue
-            retention_rehomes.add((source_path, target))
-            preserve_document_identity(source_path, target)
-            continue
-        if target.parts[0] != ".agents" and target not in {
-            PurePosixPath(".claude/provider.md"),
-            PurePosixPath(".codex/provider.md"),
-        }:
-            continue
-        before, after = base_documents.get(source_path), proposed_documents.get(target)
-        if before is None or after is None or after.state_issue:
-            continue
-        try:
-            after_profile = classify_path(registry, target)
-            assert proof.proposed_registry is not None
-            snapshot_profile = classify_path(proof.proposed_registry, target)
-            if (
-                before.profile_id == "unclassified"
-                and source_path.parts[:2] == ("docs", "00.agent-governance")
-                and after_profile.lifecycle_domain is not None
-            ):
-                # The proof above binds this deleted source to its exact base
-                # blob. Recover only unchanged semantic metadata through the
-                # current target profile; never restore a retired path route.
-                source_text = base_texts[source_path]
-                before = replace(
-                    document_from_text(registry, target, source_text), path=source_path
-                )
-                before_profile = after_profile
-                if owner.validate_document_text(
-                    source_text, target, before_profile, "strict"
-                ):
-                    diagnostics.append(
-                        failure(target, "canonical retired source document form")
-                    )
-                    continue
-            else:
-                if before.state_issue:
-                    continue
-                before_profile = classify_path(registry, source_path)
-        except DocumentContractError:
-            diagnostics.append(failure(target, "proposed target registry route"))
-            continue
-        if before.state_issue:
-            continue
-        if (
-            snapshot_profile.profile_id != after_profile.profile_id
-            or snapshot_profile.mode != after_profile.mode
-            or snapshot_profile.lifecycle_domain != after_profile.lifecycle_domain
-        ):
-            diagnostics.append(
-                failure(target, "proposed target profile or lifecycle domain differs")
-            )
-            continue
-        before_domain, after_domain = (
-            before_profile.lifecycle_domain,
-            after_profile.lifecycle_domain,
-        )
-        if (
-            before_domain is None
-            or before.status is None
-            or before_domain.validation_class(before.status) != "current"
-        ):
-            continue
-        if owner.validate_document_text(
-            proposed_texts[target], target, after_profile, "strict"
-        ) or owner.validate_document_text(
-            proposed_texts[target], target, snapshot_profile, "strict"
-        ):
-            diagnostics.append(
-                failure(target, "canonical proposed target document form")
-            )
-            continue
-        if (
-            after_domain is not None
-            and after_domain.family == before_domain.family
-            and before.status == after.status == "active"
-            and after_domain.validation_class(after.status) == "current"
-        ):
-            rehomes.add((source_path, target))
-    events = MigrationLifecycleEvents(
-        publications=frozenset(
-            PurePosixPath(path)
-            for path in proof.records
-            if PurePosixPath(path) not in base_blobs
-        ),
-        source_removals=frozenset(removals),
-        current_rehomes=frozenset(rehomes),
-        form_rehomes=frozenset(form_rehomes),
-        archive_rehomes=archive_rehomes | frozenset(retention_rehomes),
-        identity_lineages=frozenset(identity_lineages),
-    )
-    return events, tuple(diagnostics)
-
-
 def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
     result: dict[str, object] = {}
     for key, value in pairs:
@@ -2394,7 +599,7 @@ def _registry_blob(
     root: Path,
     oid: str | None,
 ) -> Mapping[str, object]:
-    text = _blob_text(root, oid, RETIRED_REGISTRY_PATH)
+    text = _blob_text(root, oid, PurePosixPath(CURRENT_REGISTRY_PATH))
     if text is None:
         raise InvocationError("comparison snapshot lacks the document registry")
     try:
@@ -2406,189 +611,11 @@ def _registry_blob(
     return MappingProxyType(loaded)
 
 
-def _classification_registry(
-    current_registry: Registry,
-    raw_registry: Mapping[str, object],
-) -> Registry:
-    """Project snapshot-owned routes and IDs onto immutable lifecycle profiles."""
-
-    raw_profiles = raw_registry.get("profiles")
-    schema_version = raw_registry.get("schema_version")
-    if schema_version is None:
-        schema_version = raw_registry.get("schemaVersion")
-    if not isinstance(raw_profiles, list) or type(schema_version) is not int:
-        raise InvocationError("comparison registry profile projection is malformed")
-    current_profiles = {
-        profile.profile_id: profile for profile in current_registry.profiles
-    }
-    aliases = {
-        LEGACY_ARCHIVE_PROFILE: ARCHIVE_PROFILE,
-        LEGACY_ARCHIVE_TEMPLATE_PROFILE: ARCHIVE_TEMPLATE_PROFILE,
-        "sdlc/ard": "sdlc/architecture-description",  # Retired WORK-105 comparison alias.
-        # Retired by the family/kind profile rename. A base-commit registry
-        # still projects onto the current lifecycle contract through these.
-        "sdlc/ad": "sdlc/architecture-description",
-        "sdlc/adr": "sdlc/architecture-decision",
-        "sdlc/requirement-package": "sdlc/requirement",
-        "sdlc/guide": "operation/guide",
-        "sdlc/policy": "operation/policy",
-        "sdlc/runbook": "operation/runbook",
-        "sdlc/incident": "operation/incident",
-        "sdlc/postmortem": "operation/postmortem",
-        "content/audit-reference": "reference/audit",
-        "content/research-reference": "reference/research",
-        "content/data-reference": "reference/data",
-        "content/archive": ARCHIVE_PROFILE,
-        "content/archive-migration": "archive/migration",
-        "governance/reference": "governance/rule",
-        "template/sdlc/ad": "common/template-sdlc-architecture-description",
-        "template/sdlc/adr": "common/template-sdlc-architecture-decision",
-        "common/template-sdlc-requirement-package": "common/template-sdlc-requirement",
-        "template/sdlc/guide": "common/template-operation-guide",
-        "template/sdlc/policy": "common/template-operation-policy",
-        "template/sdlc/runbook": "common/template-operation-runbook",
-        "template/sdlc/incident": "common/template-operation-incident",
-        "template/sdlc/postmortem": "common/template-operation-postmortem",
-        "template/content/audit-reference": "common/template-reference-audit",
-        "template/content/research-reference": "common/template-reference-research",
-        "template/content/data-reference": "common/template-reference-data",
-        "template/content/archive": ARCHIVE_TEMPLATE_PROFILE,
-        "template/content/archive-migration": "common/template-archive-migration",
-        "template/governance/reference": "common/template-governance-rule",
-        "template/common/local-agent-asset": "common/local-agent-asset",
-        "template/sdlc/ard": "common/template-sdlc-architecture-description",  # Retired comparison alias.
-        "sdlc/prd": "sdlc/requirement",  # Retired WP-004B alias.
-        "sdlc/srs": "sdlc/requirement",  # Retired WP-004B alias.
-        "sdlc/interface": "sdlc/requirement",  # Retired WP-004B alias.
-        "sdlc/api-spec": "sdlc/requirement",  # Retired comparison alias.
-        "sdlc/agent-design": "sdlc/spec",  # Retired WP-004C alias.
-        "sdlc/tests": "sdlc/spec",  # Retired WP-004C alias.
-        "governance/template-support": "governance/rule",  # Retired WP-004C alias.
-        "template/sdlc/api-spec": "common/template-sdlc-requirement",  # Retired alias.
-        "template/sdlc/prd": "common/template-sdlc-requirement",  # Retired WP-004C alias.
-        "template/sdlc/srs": "common/template-sdlc-requirement",  # Retired WP-004C alias.
-        "template/sdlc/interface": "common/template-sdlc-requirement",  # Retired WP-004C alias.
-        "template/sdlc/agent-design": "common/template-sdlc-spec",  # Retired WP-004C alias.
-        "template/sdlc/tests": "common/template-sdlc-spec",  # Retired WP-004C alias.
-        "template/governance/template-support": "common/template-governance-rule",  # Retired WP-004C alias.
-    }
-    projected: list[DocumentProfile] = []
-    for raw_profile in raw_profiles:
-        if not isinstance(raw_profile, dict):
-            raise InvocationError("comparison registry contains a non-object profile")
-        profile_id = raw_profile.get("id")
-        if not isinstance(profile_id, str):
-            raise InvocationError("comparison registry profile shape is malformed")
-        source = current_profiles.get(aliases.get(profile_id, profile_id))
-        if source is None:
-            raise InvocationError(
-                "comparison registry profile has no current lifecycle projection"
-            )
-
-        raw_lifecycle = raw_profile.get("lifecycle")
-        raw_mode = raw_profile.get("mode")
-        if schema_version in {9, 10}:
-            path_pattern = raw_profile.get("path_pattern")
-            raw_routes = (
-                [{"kind": "regex", "value": path_pattern}]
-                if isinstance(path_pattern, str)
-                else None
-            )
-            raw_status_domain = (
-                raw_lifecycle.get("status_domain")
-                if isinstance(raw_lifecycle, dict)
-                else list(source.status_domain)
-            )
-        else:
-            raw_routes = raw_profile.get("routes")
-            if raw_routes is None and isinstance(raw_profile.get("pathPattern"), str):
-                raw_routes = [{"kind": "regex", "value": raw_profile["pathPattern"]}]
-            raw_status_domain = raw_profile.get("statusDomain")
-            if raw_status_domain is None and isinstance(raw_lifecycle, dict):
-                raw_status_domain = raw_lifecycle.get("statusDomain")
-
-        if (
-            not isinstance(raw_routes, list)
-            or not isinstance(raw_status_domain, list)
-            or not all(isinstance(state, str) for state in raw_status_domain)
-            or not isinstance(raw_mode, str)
-        ):
-            raise InvocationError("comparison registry profile shape is malformed")
-        routes: list[Route] = []
-        for raw_route in raw_routes:
-            if not isinstance(raw_route, dict):
-                raise InvocationError("comparison registry route is malformed")
-            kind = raw_route.get("kind")
-            value = raw_route.get("value")
-            if kind not in {"exact", "regex"} or not isinstance(value, str):
-                raise InvocationError("comparison registry route is malformed")
-            routes.append(Route(kind=kind, value=value))  # type: ignore[arg-type]
-        projected.append(
-            replace(
-                source,
-                profile_id=profile_id,
-                routes=tuple(routes),
-                status_domain=tuple(raw_status_domain),
-                mode=raw_mode,  # type: ignore[arg-type]
-            )
-        )
-    return replace(
-        current_registry,
-        schema_version=schema_version,
-        profiles=tuple(projected),
-    )
-
-
-def _legacy_completion_generation(root: Path, commit: str) -> bool:
-    """Admit old `done` only when that commit's registry owned that spelling."""
-
-    path = PurePosixPath(CURRENT_REGISTRY_PATH)
-    oid = _tree_blob_oid(root, commit, path)
-    if oid is None:
-        return False
-    text = _blob_text(root, oid, path)
-    if text is None:
-        return False
-    try:
-        raw = json.loads(text)
-    except (TypeError, ValueError):
-        return False
-    if not isinstance(raw, dict):
-        return False
-    profiles = raw.get("profiles")
-    domains = raw.get("lifecycle_domains")
-    if not isinstance(profiles, list) or not isinstance(domains, list):
-        return False
-    profile_states = {
-        item.get("id"): item.get("lifecycle", {}).get("status_domain")
-        for item in profiles
-        if isinstance(item, dict) and isinstance(item.get("lifecycle"), dict)
-    }
-    domain_states = {
-        item.get("family"): item.get("states")
-        for item in domains
-        if isinstance(item, dict)
-    }
-    return all(
-        isinstance(profile_states.get(profile_id), list)
-        and "done" in profile_states[profile_id]
-        and "completed" not in profile_states[profile_id]
-        for profile_id in ("sdlc/spec", "sdlc/plan", "sdlc/task")
-    ) and all(
-        isinstance(domain_states.get(family), dict)
-        and domain_states[family].get("done") == "terminal"
-        and "completed" not in domain_states[family]
-        for family in ("spec-plan", "task")
-    )
-
-
 def _snapshot_projection(
     root: Path,
     registry: Registry,
     blobs: Mapping[PurePosixPath, str],
     *,
-    historical: bool = False,
-    legacy_completion: bool = False,
     reused_texts: Mapping[PurePosixPath, str] | None = None,
 ) -> tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]]:
     documents: dict[PurePosixPath, LifecycleDocument] = {}
@@ -2616,8 +643,6 @@ def _snapshot_projection(
                 registry,
                 path,
                 text,
-                retired_types=RETIRED_DOCUMENT_TYPES if historical else None,
-                legacy_completion=legacy_completion,
             )
         except DocumentContractError:
             documents[path] = LifecycleDocument(
@@ -2634,38 +659,6 @@ def _body_text(text: str) -> str:
         return text
     closing = text.find("\n---\n", 4)
     return text if closing < 0 else text[closing + 5 :]
-
-
-def _work105_predecessor_unresolved_links(
-    *,
-    path: PurePosixPath,
-    base_document: LifecycleDocument | None,
-    proposed_document: LifecycleDocument,
-    base_text: str,
-    proposed_text: str,
-    relationship_links: tuple[PurePosixPath, ...],
-    unresolved_links: tuple[PurePosixPath, ...],
-    body_table_links: tuple[PurePosixPath, ...],
-) -> tuple[PurePosixPath, ...]:
-    """Admit only WORK-105's blob-pinned reciprocal predecessor evidence."""
-
-    exact_document = LifecycleDocument(
-        WORK105_ADR0023_PATH, "sdlc/architecture-decision", "accepted"
-    )
-    exact = (
-        path == WORK105_ADR0023_PATH
-        and base_document == exact_document
-        and proposed_document == exact_document
-        and hashlib.sha256(base_text.encode("utf-8")).hexdigest()
-        == WORK105_ADR0023_BASE_SHA256
-        and hashlib.sha256(proposed_text.encode("utf-8")).hexdigest()
-        == WORK105_ADR0023_PROPOSED_SHA256
-        and proposed_text.count(WORK105_ADR0023_RECIPROCAL_ROW) == 1
-        and WORK105_ADR0024_PATH in relationship_links
-        and WORK105_ADR0024_PATH in body_table_links
-        and unresolved_links == (WORK105_LEGACY_AD0011_PATH,)
-    )
-    return () if exact else unresolved_links
 
 
 def _local_plan_task_contract_issues(
@@ -2752,7 +745,7 @@ def _local_plan_task_contract_issues(
         if (
             plan.profile_id != "sdlc/plan"
             or path.parts[:2] != ("docs", "03.specs")
-            or plan.status in {"cancelled", "superseded"}
+            or plan.status == "cancelled"
             or base_texts.get(path) == proposed_texts[path]
         ):
             continue
@@ -2911,8 +904,6 @@ def _evidence_context(
     proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
     base_texts: Mapping[PurePosixPath, str],
     proposed_texts: Mapping[PurePosixPath, str],
-    *,
-    root: Path | None = None,
 ) -> LifecycleEvidenceContext:
     profile_map = {profile.profile_id: profile for profile in registry.profiles}
     snapshot_profiles = MappingProxyType(
@@ -2924,7 +915,6 @@ def _evidence_context(
     base_task_evidence_rows: dict[
         PurePosixPath, tuple[tuple[tuple[str, str], ...], ...]
     ] = {}
-    baseline_task_paths: set[PurePosixPath] = set()
     for path, document in base_documents.items():
         profile = profile_map.get(document.profile_id)
         if (
@@ -2942,14 +932,8 @@ def _evidence_context(
                 base_task_evidence_rows[path] = tuple(
                     tuple(row.items()) for row in evidence
                 )
-            if root is not None and task_baseline_bytes_match(
-                root, path, base_texts[path]
-            ):
-                baseline_task_paths.add(path)
     for path, document in proposed_documents.items():
         profile = profile_map.get(document.profile_id)
-        if profile is not None and root is not None:
-            profile = legacy_task_profile(root, path, proposed_texts[path], profile)
         if profile is None or profile.body_contract is None:
             views[path] = LifecycleEvidenceDocument(
                 document=document,
@@ -2967,18 +951,8 @@ def _evidence_context(
             proposed_texts[path],
             profile,
             snapshot_profiles,
-            registry_generation=registry.schema_version,
         )
-        unresolved_links = _work105_predecessor_unresolved_links(
-            path=path,
-            base_document=base_documents.get(path),
-            proposed_document=document,
-            base_text=base_texts.get(path, ""),
-            proposed_text=proposed_texts[path],
-            relationship_links=rendered.relationship_links,
-            unresolved_links=rendered.unresolved_relationship_links,
-            body_table_links=rendered.body_table_links,
-        )
+        unresolved_links = rendered.unresolved_relationship_links
         views[path] = LifecycleEvidenceDocument(
             document=document,
             all_local_links=rendered.all_local_links,
@@ -3000,23 +974,11 @@ def _evidence_context(
             ),
         )
 
-    task_ids = {
-        doc.artifact_id: path
-        for path, doc in proposed_documents.items()
-        if doc.profile_id == "sdlc/task" and doc.artifact_id
-    }
     task_contract = profile_map.get("sdlc/task")
-    modern_task = (
-        task_contract is not None
-        and task_contract.body_contract is not None
-        and task_contract.body_contract.task_execution is not None
-        and task_contract.body_contract.task_execution.criterion_acceptance_section
-    )
     for path, view in tuple(views.items()):
         if (
-            not modern_task
-            or view.document.profile_id != "sdlc/task"
-            or view.document.status not in {"cancelled", "superseded"}
+            view.document.profile_id != "sdlc/task"
+            or view.document.status != "cancelled"
         ):
             continue
         try:
@@ -3048,19 +1010,6 @@ def _evidence_context(
                 allocations.setdefault(criterion, set()).update(
                     target for target in targets if target is not None
                 )
-        successor_id = metadata.get("superseded_by")
-        successor = (
-            task_ids.get(successor_id) if isinstance(successor_id, str) else None
-        )
-        reciprocal = False
-        if successor is not None and successor.parent == path.parent:
-            try:
-                successor_metadata = frontmatter_mapping(proposed_texts[successor])
-            except (ValueError, TypeError):
-                successor_metadata = {}
-            reciprocal = (
-                successor_metadata.get("supersedes") == view.document.artifact_id
-            )
         plan_successors = {
             criterion: allocations.get(criterion, set()) - {path}
             for criterion in criteria
@@ -3069,108 +1018,85 @@ def _evidence_context(
             path not in allocations.get(criterion, set()) and plan_successors[criterion]
             for criterion in criteria
         )
-        if view.document.status == "superseded":
-            valid = bool(
-                view.body_contract_valid
-                and reciprocal
-                and plan_handoff
-                and all(
-                    successor in candidates for candidates in plan_successors.values()
-                )
-            )
-            if valid and successor is not None:
-                views[path] = replace(
-                    view,
-                    relationship_links=(*view.relationship_links, successor),
-                )
-                successor_view = views[successor]
-                views[successor] = replace(
-                    successor_view,
-                    relationship_links=(*successor_view.relationship_links, path),
-                )
-        else:
-            cancellation = metadata.get("cancellation")
-            authorization = (
-                cancellation.get("authorization_ref")
-                if isinstance(cancellation, dict)
-                else None
-            )
-            disposition = (
-                cancellation.get("criteria_disposition")
-                if isinstance(cancellation, dict)
-                else None
-            )
-            plan_authorized = bool(
-                plan_handoff and plan is not None and authorization == plan.artifact_id
-            )
-            spec_path = path.parent.parent / "spec.md"
-            spec = proposed_documents.get(spec_path)
-            try:
-                spec_metadata = frontmatter_mapping(proposed_texts[spec_path])
-            except (KeyError, ValueError, TypeError):
-                spec_metadata = {}
-            spec_cancellation = spec_metadata.get("cancellation")
+        cancellation = metadata.get("cancellation")
+        authorization = (
+            cancellation.get("authorization_ref")
+            if isinstance(cancellation, dict)
+            else None
+        )
+        disposition = (
+            cancellation.get("criteria_disposition")
+            if isinstance(cancellation, dict)
+            else None
+        )
+        plan_authorized = bool(
+            plan_handoff and plan is not None and authorization == plan.artifact_id
+        )
+        spec_path = path.parent.parent / "spec.md"
+        spec = proposed_documents.get(spec_path)
+        try:
+            spec_metadata = frontmatter_mapping(proposed_texts[spec_path])
+        except (KeyError, ValueError, TypeError):
+            spec_metadata = {}
+        spec_cancellation = spec_metadata.get("cancellation")
 
-            def named_criteria(value: object) -> frozenset[str]:
-                if not isinstance(value, str):
-                    return frozenset()
-                return frozenset(
-                    re.findall(
-                        r"(?<![\w-])VAL-[A-Z0-9-]+-[0-9]{3}(?![\w-])",
-                        value,
-                    )
+        def named_criteria(value: object) -> frozenset[str]:
+            if not isinstance(value, str):
+                return frozenset()
+            return frozenset(
+                re.findall(
+                    r"(?<![\w-])VAL-[A-Z0-9-]+-[0-9]{3}(?![\w-])",
+                    value,
                 )
+            )
 
-            def concrete(value: object) -> bool:
-                return (
-                    isinstance(value, str)
-                    and bool(value.strip())
-                    and value.strip().casefold()
-                    not in {"tbd", "todo", "pending", "n/a", "na", "none"}
-                )
+        def concrete(value: object) -> bool:
+            return (
+                isinstance(value, str)
+                and bool(value.strip())
+                and value.strip().casefold()
+                not in {"tbd", "todo", "pending", "n/a", "na", "none"}
+            )
 
-            scope_authorized = bool(
-                spec is not None
-                and spec.status == "cancelled"
-                and authorization == spec.artifact_id
-                and isinstance(spec_cancellation, dict)
-                and criteria <= named_criteria(disposition)
+        scope_authorized = bool(
+            spec is not None
+            and spec.status == "cancelled"
+            and authorization == spec.artifact_id
+            and isinstance(spec_cancellation, dict)
+            and criteria <= named_criteria(disposition)
+        )
+        acceptance_rows = (
+            adapter.task_acceptance_rows(
+                proposed_texts[path], task_contract.body_contract.task_execution
             )
-            acceptance_rows = (
-                adapter.task_acceptance_rows(
-                    proposed_texts[path], task_contract.body_contract.task_execution
-                )
-                if task_contract is not None
-                and task_contract.body_contract is not None
-                and task_contract.body_contract.task_execution is not None
-                else None
+            if task_contract is not None
+            and task_contract.body_contract is not None
+            and task_contract.body_contract.task_execution is not None
+            else None
+        )
+        waived = {
+            criterion
+            for row in acceptance_rows or ()
+            if row["Acceptance"].strip() == "not-required"
+            for criterion in (task_criterion_ids(row["Criterion"]) or ())
+        }
+        waiver_authorized = bool(
+            scope_authorized
+            and waived
+            and isinstance(spec_cancellation, dict)
+            and waived <= named_criteria(spec_cancellation.get("criteria_disposition"))
+            and all(
+                concrete(spec_cancellation.get(key))
+                for key in ("reason", "authorization_ref")
             )
-            waived = {
-                criterion
-                for row in acceptance_rows or ()
-                if row["Acceptance"].strip() == "not-required"
-                for criterion in (task_criterion_ids(row["Criterion"]) or ())
-            }
-            waiver_authorized = bool(
-                scope_authorized
-                and waived
-                and isinstance(spec_cancellation, dict)
-                and waived
-                <= named_criteria(spec_cancellation.get("criteria_disposition"))
-                and all(
-                    concrete(spec_cancellation.get(key))
-                    for key in ("reason", "authorization_ref")
-                )
-            )
-            valid = bool(
-                view.body_contract_valid
-                and isinstance(cancellation, dict)
-                and concrete(cancellation.get("reason"))
-                and concrete(disposition)
-                and (
-                    waiver_authorized if waived else plan_authorized or scope_authorized
-                )
-            )
+        )
+        valid = bool(
+            view.body_contract_valid
+            and isinstance(cancellation, dict)
+            and concrete(cancellation.get("reason"))
+            and concrete(disposition)
+            and (waiver_authorized if waived else plan_authorized or scope_authorized)
+        )
         views[path] = replace(views[path], task_disposition_valid=valid)
 
     common = set(base_documents) & set(proposed_documents)
@@ -3186,35 +1112,6 @@ def _evidence_context(
         if _body_text(base_texts[path]) != _body_text(proposed_texts[path])
     )
     created = frozenset(set(proposed_documents) - set(base_documents))
-    task_plan_criteria: dict[PurePosixPath, set[str]] = {}
-    task_spec_criteria: dict[PurePosixPath, frozenset[str]] = {}
-    for plan_path, plan_doc in proposed_documents.items():
-        if not modern_task or plan_doc.profile_id != "sdlc/plan":
-            continue
-        plan_profile = profile_map["sdlc/plan"]
-        for row in (
-            adapter._body_contract_rows(proposed_texts[plan_path], plan_profile) or ()
-        ):
-            criteria = task_criterion_ids(row["Criteria"]) or ()
-            for link in adapter._extract_links(
-                row["Task"], definitions_text=proposed_texts[plan_path]
-            ):
-                _, target = adapter._local_destination(plan_path, link)
-                if (
-                    target in proposed_documents
-                    and proposed_documents[target].profile_id == "sdlc/task"
-                ):
-                    task_plan_criteria.setdefault(target, set()).update(criteria)
-    for task_path, task_doc in proposed_documents.items():
-        if not modern_task or task_doc.profile_id != "sdlc/task":
-            continue
-        spec_path = task_path.parent.parent / "spec.md"
-        spec_view = views.get(spec_path)
-        task_spec_criteria[task_path] = frozenset(
-            row["Spec criterion"].strip()
-            for cells in (spec_view.body_rows if spec_view is not None else ())
-            if (row := dict(cells)).get("Spec criterion")
-        )
     return LifecycleEvidenceContext(
         base_documents=base_documents,
         proposed_documents=MappingProxyType(views),
@@ -3228,11 +1125,6 @@ def _evidence_context(
         created_paths=created,
         base_task_rows=MappingProxyType(base_task_rows),
         base_task_evidence_rows=MappingProxyType(base_task_evidence_rows),
-        baseline_task_paths=frozenset(baseline_task_paths),
-        task_plan_criteria=MappingProxyType(
-            {path: frozenset(criteria) for path, criteria in task_plan_criteria.items()}
-        ),
-        task_spec_criteria=MappingProxyType(task_spec_criteria),
         local_contract_issues=_local_plan_task_contract_issues(
             registry, base_documents, proposed_documents, base_texts, proposed_texts
         ),
@@ -3283,7 +1175,6 @@ def _comparison_documents(
     *,
     base_oid: Callable[[PurePosixPath], str | None],
     proposed_oid: Callable[[PurePosixPath], str | None],
-    base_legacy_completion: bool = False,
 ) -> tuple[
     Mapping[PurePosixPath, LifecycleDocument],
     Mapping[PurePosixPath, LifecycleDocument],
@@ -3294,11 +1185,7 @@ def _comparison_documents(
     renames: list[LifecycleRename] = []
 
     def load(
-        registry: Registry,
-        path: PurePosixPath,
-        oid: str | None,
-        *,
-        historical: bool = False,
+        registry: Registry, path: PurePosixPath, oid: str | None
     ) -> LifecycleDocument | None:
         try:
             opaque = is_opaque_evaluation_output(registry, path)
@@ -3310,13 +1197,7 @@ def _comparison_documents(
         if text is None:
             return None
         try:
-            return document_from_text(
-                registry,
-                path,
-                text,
-                retired_types=RETIRED_DOCUMENT_TYPES if historical else None,
-                legacy_completion=base_legacy_completion if historical else False,
-            )
+            return document_from_text(registry, path, text)
         except DocumentContractError:
             return LifecycleDocument(
                 path=path,
@@ -3328,12 +1209,7 @@ def _comparison_documents(
     for change in changes:
         if change.kind == "R":
             assert change.old_path is not None
-            base = load(
-                base_registry,
-                change.old_path,
-                base_oid(change.old_path),
-                historical=True,
-            )
+            base = load(base_registry, change.old_path, base_oid(change.old_path))
             proposed = load(proposed_registry, change.path, proposed_oid(change.path))
             if base is None or proposed is None:
                 raise InvocationError("exact rename lacks a base or proposed blob")
@@ -3346,16 +1222,12 @@ def _comparison_documents(
                 raise InvocationError(f"added path lacks proposed blob: {change.path}")
             proposed_documents[change.path] = proposed
         elif change.kind == "D":
-            base = load(
-                base_registry, change.path, base_oid(change.path), historical=True
-            )
+            base = load(base_registry, change.path, base_oid(change.path))
             if base is None:
                 raise InvocationError(f"deleted path lacks base blob: {change.path}")
             base_documents[change.path] = base
         else:
-            base = load(
-                base_registry, change.path, base_oid(change.path), historical=True
-            )
+            base = load(base_registry, change.path, base_oid(change.path))
             proposed = load(proposed_registry, change.path, proposed_oid(change.path))
             if base is None or proposed is None:
                 raise InvocationError(
@@ -3681,7 +1553,6 @@ class _CumulativeHistoryCache:
     seed_blobs: Mapping[PurePosixPath, str] | None = None
     seed_documents: Mapping[PurePosixPath, LifecycleDocument] | None = None
     seed_texts: Mapping[PurePosixPath, str] | None = None
-    seed_legacy_completion: bool | None = None
     seed_registry: Registry | None = None
     snapshots: OrderedDict[
         str,
@@ -3695,12 +1566,14 @@ class _CumulativeHistoryCache:
     )
 
     def registry_at(self, commit: str) -> Registry:
-        """Preserve modern generations at each exact history event."""
-        if self.registry.migration_admission is None:
-            return self.registry
+        """Classify each history event with the registry that commit carried.
+
+        A historical registry still carrying keys the current schema retired
+        loads unchanged, because the typed reader takes only the fields it owns.
+        """
         oid = _tree_blob_oid(self.root, commit, CURRENT_REGISTRY_PATH)
         raw = _registry_blob(self.root, oid) if oid is not None else {}
-        if raw.get("schema_version") not in {9, 10}:
+        if raw.get("schema_version") != 10:
             return self.registry
         try:
             return _typed_registry_from_mapping(raw)
@@ -3725,16 +1598,10 @@ class _CumulativeHistoryCache:
             self.seed_blobs is not None
             and self.seed_documents is not None
             and self.seed_texts is not None
-            and self.seed_legacy_completion is not None
-        )
-        legacy_completion = (
-            _legacy_completion_generation(self.root, commit) if has_seed else None
         )
         reproject_seed = has_seed and self.seed_registry is not None
         reuse_seed = reproject_seed or (
-            has_seed
-            and self.seed_legacy_completion == legacy_completion
-            and own_registry.schema_version == self.registry.schema_version
+            has_seed and own_registry.schema_version == self.registry.schema_version
         )
         changed_blobs = (
             {
@@ -3761,14 +1628,10 @@ class _CumulativeHistoryCache:
                     del self.evidence[key]
         if self.cached_snapshot_bytes + size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES:
             raise _CumulativeHistoryBudgetExceeded
-        if legacy_completion is None:
-            legacy_completion = _legacy_completion_generation(self.root, commit)
         changed_documents, changed_texts = _snapshot_projection(
             self.root,
             own_registry,
             blobs if reproject_seed else changed_blobs,
-            historical=True,
-            legacy_completion=legacy_completion,
             **(
                 {
                     "reused_texts": {
@@ -3824,7 +1687,6 @@ class _CumulativeHistoryCache:
                 proposed_snapshot,
                 base_texts,
                 proposed_texts,
-                root=self.root,
             )
         return self.evidence[key]
 
@@ -3883,23 +1745,13 @@ def _history_event_diagnostics(
     base_documents = {} if before is None else {path: before}
     event_registry = cache.registry_at(commit)
     base_registry = cache.registry_at(parent)
-    admission = (
-        _generation_admission_paths(
-            event_registry,
-            base_registry,
-            cache._snapshot(parent)[0],
-            cache._snapshot(commit)[0],
-        )
-        if (base_registry.schema_version, event_registry.schema_version) == (9, 10)
-        else frozenset()
-    )
     task_binding = after.profile_id == "sdlc/task" and _committed_task_binding(
         root, commit
     )
     if cache.seed_blobs is not None and cache.seed_registry is None:
         # Ordinary initial/forward edges need no cross-document body evidence.
-        # Terminal supersession and archive events retain the full-snapshot path.
-        if after.status == "superseded" or after.profile_id.startswith("archive/"):
+        # Terminal supersession events retain the full-snapshot path.
+        if after.status == "superseded":
             raise InvocationError("staged cumulative edge needs full evidence")
         parent_documents = cache._snapshot(parent)[0]
         commit_documents = cache._snapshot(commit)[0]
@@ -3917,7 +1769,6 @@ def _history_event_diagnostics(
                 evidence_context=cache.evidence_context(parent, commit),
                 enforce_task_execution=True,
                 base_registry=base_registry,
-                generation_admissions=admission,
             )
         return compare_lifecycle(
             event_registry,
@@ -3925,7 +1776,6 @@ def _history_event_diagnostics(
             {path: after},
             base_mode="explicit-ref",
             base_registry=base_registry,
-            generation_admissions=admission,
         )
     return compare_lifecycle(
         event_registry,
@@ -3935,7 +1785,6 @@ def _history_event_diagnostics(
         evidence_context=cache.evidence_context(parent, commit),
         enforce_task_execution=task_binding,
         base_registry=base_registry,
-        generation_admissions=admission,
     )
 
 
@@ -4172,42 +2021,12 @@ def _admit_cumulative_create_diagnostics(
         seed_blobs=base_blobs if base_snapshot is not None else None,
         seed_documents=base_snapshot,
         seed_texts=base_texts,
-        seed_legacy_completion=(
-            _legacy_completion_generation(root, base_commit)
-            if base_snapshot is not None
-            else None
-        ),
         seed_registry=base_registry if mode != "staged" else None,
     )
     remaining_events = [CUMULATIVE_HISTORY_MAX_CANDIDATE_EVENTS]
     admitted_indices: set[int] = set()
     proved_paths: set[PurePosixPath] = set()
-    generation_copy_paths: set[PurePosixPath] = set()
-    generation_copy_blobs: dict[PurePosixPath, str] = {}
     try:
-        if mode != "staged" and registry.migration_admission is not None:
-            parent = history_base
-            for commit in history:
-                before_registry = cache.registry_at(parent)
-                after_registry = cache.registry_at(commit)
-                if (before_registry.schema_version, after_registry.schema_version) == (
-                    9,
-                    10,
-                ):
-                    admitted = _generation_admission_paths(
-                        after_registry,
-                        before_registry,
-                        cache._snapshot(parent)[0],
-                        cache._snapshot(commit)[0],
-                    )
-                    generation_copy_paths.update(admitted)
-                    commit_blobs = _tree_blob_map(root, commit)
-                    generation_copy_blobs.update(
-                        (path, commit_blobs[path])
-                        for path in admitted
-                        if path in commit_blobs
-                    )
-                parent = commit
         for index, diagnostic in candidates:
             if diagnostic.path in proved_paths:
                 continue
@@ -4221,43 +2040,18 @@ def _admit_cumulative_create_diagnostics(
                 commits=history,
                 cache=cache,
                 allow_merge_create=mode == "staged",
-                allow_distinct_artifact_copy=mode == "staged"
-                or diagnostic.path in generation_copy_paths,
+                allow_distinct_artifact_copy=mode == "staged",
                 remaining_events=remaining_events,
             ):
                 admitted_indices.add(index)
                 proved_paths.add(diagnostic.path)
     except _CumulativeHistoryBudgetExceeded:
         return tuple(diagnostics)
-    # New-work guards do not apply to unchanged sanctioned generation bytes.
-    # ponytail: only reached when a create candidate exists in the range.
-    boundary_paths = {
-        path
-        for path in generation_copy_paths
-        if proposed_blobs.get(path) == generation_copy_blobs.get(path)
-    }
     return tuple(
         diagnostic
         for index, diagnostic in enumerate(diagnostics)
         if index not in admitted_indices
-        and not (
-            diagnostic.path in boundary_paths
-            and diagnostic.evidence_gap == LOCAL_CONTRACT_EVIDENCE_GAP
-        )
     )
-
-
-def _generation_admission_paths(
-    registry: Registry,
-    base_registry: Registry,
-    before: Mapping[PurePosixPath, LifecycleDocument],
-    after: Mapping[PurePosixPath, LifecycleDocument],
-) -> frozenset[PurePosixPath]:
-    """Keep CLI error semantics around the shared finite admission judge."""
-    try:
-        return generation_admission_paths(registry, base_registry, before, after)
-    except ValueError as error:
-        raise InvocationError(str(error)) from error
 
 
 def _evaluate_comparison(
@@ -4297,87 +2091,11 @@ def _evaluate_comparison(
         proposed_blobs = _tree_blob_map(root, proposed_commit)
         changes = _tree_changes(root, base_commit, proposed_commit)
 
+    # The comparison base is classified with the current registry. A historical
+    # registry is never parsed, so keys it carries that the current schema
+    # retired cannot fail base loading.
     base_classification_registry = registry
     proposed_classification_registry = registry
-    generation_migration = False
-    base_registry_oid = _tree_blob_oid(root, base_commit, CURRENT_REGISTRY_PATH)
-    raw_base = (
-        _registry_blob(root, base_registry_oid)
-        if registry.migration_admission is not None and base_registry_oid is not None
-        else {}
-    )
-    if (
-        registry.migration_admission is not None
-        and raw_base.get("schema_version") == 9
-        and registry.schema_version == 10
-    ):
-        proposed_registry_text = (
-            staged_authority_bytes(root, PurePosixPath(CURRENT_REGISTRY_PATH)).decode(
-                "utf-8"
-            )
-            if mode == "staged"
-            else _blob_text(
-                root,
-                _tree_blob_oid(root, proposed_commit, CURRENT_REGISTRY_PATH),
-                PurePosixPath(CURRENT_REGISTRY_PATH),
-            )
-        )
-        raw_proposed = json.loads(
-            proposed_registry_text or "null", object_pairs_hook=_unique_json_object
-        )
-        if (
-            not isinstance(raw_proposed, dict)
-            or raw_proposed.get("schema_version") != 10
-            or raw_proposed.get("migration_admission")
-            != dict(registry.migration_admission)
-        ):
-            raise InvocationError(
-                "generation migration declaration differs from the proposed registry"
-            )
-        try:
-            base_classification_registry = _typed_registry_from_mapping(raw_base)
-        except (KeyError, TypeError, ValueError, re.error) as exc:
-            raise InvocationError(
-                "generation migration base registry is malformed"
-            ) from exc
-        generation_migration = True
-    migration_immutability = _migration_immutability_diagnostics(
-        root,
-        registry,
-        base_blobs,
-        proposed_blobs,
-        mode=mode,
-    )
-    if migration_immutability:
-        return migration_immutability
-    work054_wp003_consumed_paths = finite_work054_wp003_agent_governance_paths(
-        root=root,
-        mode=mode,
-        base_commit=base_commit,
-        base_blobs=base_blobs,
-        proposed_blobs=proposed_blobs,
-    )
-    wp004c_mig0004_consumed_paths = _wp004c_mig0004_paths(
-        root=root,
-        mode=mode,
-        base_commit=base_commit,
-        base_blobs=base_blobs,
-        proposed_blobs=proposed_blobs,
-    )
-    archive_rehome_consumed_paths = sealed_record_relocation_paths(
-        root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
-    )
-
-    immutability_diagnostics = _archive_immutability_diagnostics(
-        root,
-        base_classification_registry,
-        base_blobs,
-        proposed_blobs,
-        mode=mode,
-        admitted_rehome_paths=archive_rehome_consumed_paths,
-    )
-    if immutability_diagnostics:
-        return immutability_diagnostics
 
     def base_oid(path: PurePosixPath) -> str | None:
         return base_blobs.get(path)
@@ -4391,7 +2109,6 @@ def _evaluate_comparison(
         base_oid=base_oid,
         proposed_oid=proposed_oid,
     )
-    base_legacy_completion = _legacy_completion_generation(root, base_commit)
     base_documents, proposed_documents, renames = _comparison_documents(
         root,
         base_classification_registry,
@@ -4399,100 +2116,35 @@ def _evaluate_comparison(
         selected,
         base_oid=base_oid,
         proposed_oid=proposed_oid,
-        base_legacy_completion=base_legacy_completion,
     )
     base_snapshot, base_texts = _snapshot_projection(
-        root,
-        base_classification_registry,
-        base_blobs,
-        historical=True,
-        legacy_completion=base_legacy_completion,
+        root, base_classification_registry, base_blobs
     )
     proposed_snapshot, proposed_texts = _snapshot_projection(
         root, proposed_classification_registry, proposed_blobs
     )
-    generation_admissions = (
-        _generation_admission_paths(
-            registry, base_classification_registry, base_snapshot, proposed_snapshot
-        )
-        if generation_migration
-        else frozenset()
-    )
-    migration_events, migration_diagnostics = _migration_lifecycle_events(
-        root,
-        registry,
-        base_blobs,
-        base_snapshot,
-        base_texts,
-        proposed_snapshot,
-        proposed_texts,
-        proposed_commit=proposed_commit,
-        mode=mode,
-    )
-    disposition_events, disposition_diagnostics = _disposition_lifecycle_events(
-        root,
-        registry,
-        base_commit,
-        base_blobs,
-        base_snapshot,
-        base_texts,
-        proposed_snapshot,
-        proposed_texts,
-        mode=mode,
-        proposed_commit=proposed_commit,
-    )
-    migration_events = replace(
-        migration_events,
-        current_rehomes=migration_events.current_rehomes
-        | disposition_events.current_rehomes,
-        archive_rehomes=migration_events.archive_rehomes
-        | disposition_events.archive_rehomes,
-        identity_lineages=migration_events.identity_lineages
-        | disposition_events.identity_lineages,
-    )
-    migration_diagnostics = migration_diagnostics + disposition_diagnostics
     evidence_context = evidence_context_factory(
         proposed_classification_registry,
         base_snapshot,
         proposed_snapshot,
         base_texts,
         proposed_texts,
-        **({"root": root} if evidence_context_factory is _evidence_context else {}),
     )
-    legacy_consumed_paths = (
-        work054_wp003_consumed_paths
-        | archive_rehome_consumed_paths
-        | wp004c_mig0004_consumed_paths
-    )
-
-    def consume_finite_cutover(
-        diagnostics: Sequence[LifecycleDiagnostic],
-    ) -> tuple[LifecycleDiagnostic, ...]:
-        return tuple(
-            diagnostic
-            for diagnostic in diagnostics
-            if diagnostic.path not in legacy_consumed_paths
-        )
-
-    diagnostics = consume_finite_cutover(
-        compare_lifecycle(
-            proposed_classification_registry,
-            base_documents,
-            proposed_documents,
-            renames=renames,
-            base_mode=mode,  # type: ignore[arg-type]
-            evidence_context=evidence_context,
-            migration_events=migration_events,
-            enforce_task_execution=True,
-            base_registry=base_classification_registry,
-            generation_admissions=generation_admissions,
-        )
+    diagnostics = compare_lifecycle(
+        proposed_classification_registry,
+        base_documents,
+        proposed_documents,
+        renames=renames,
+        base_mode=mode,  # type: ignore[arg-type]
+        evidence_context=evidence_context,
+        enforce_task_execution=True,
+        base_registry=base_classification_registry,
     )
     diagnostics += validate_current_task_evidence(
         evidence_context,
         base_mode=mode,  # type: ignore[arg-type]
     )
-    return migration_diagnostics + _admit_cumulative_create_diagnostics(
+    return _admit_cumulative_create_diagnostics(
         diagnostics,
         root=root,
         registry=proposed_classification_registry,
@@ -4530,7 +2182,7 @@ def _evaluate_snapshot(
     documents = {
         path: document_from_text(registry, path, text) for path, text in texts.items()
     }
-    context = _evidence_context(registry, {}, documents, {}, texts, root=root)
+    context = _evidence_context(registry, {}, documents, {}, texts)
     return validate_snapshot_documents(registry, tuple(documents.values())) + (
         validate_current_task_evidence(context, base_mode="explicit-ref")
     )
@@ -4574,7 +2226,7 @@ def _completion_document_diagnostics(
     *,
     base_mode: str,
 ) -> tuple[LifecycleDiagnostic, ...]:
-    """Judge one immutable package snapshot for index completion or retention."""
+    """Judge one immutable package snapshot for index completion."""
 
     owner = _load_canonical_markdown_module()
     profiles = {profile.profile_id: profile for profile in registry.profiles}
@@ -4604,7 +2256,6 @@ def _completion_document_diagnostics(
         profile = profiles.get(document.profile_id) if document else None
         if profile is None:
             return None
-        profile = legacy_task_profile(root, path, texts[path], profile)
         return adapter._body_contract_rows(texts[path], profile)
 
     def linked_target(path: PurePosixPath, cell: str) -> PurePosixPath | None:
@@ -4638,9 +2289,7 @@ def _completion_document_diagnostics(
                 for finding in owner.validate_document_text(
                     texts[path],
                     path,
-                    legacy_task_profile(
-                        root, path, texts[path], profiles[document.profile_id]
-                    ),
+                    profiles[document.profile_id],
                     "strict",
                     frontmatter_schema=schema,
                 ):
@@ -4771,10 +2420,10 @@ def _completion_document_diagnostics(
                     prior_text = _blob_text(root, prior_oid, current_path)
                     baseline_texts[current_path] = prior_text
                     baseline_documents[current_path] = document_from_text(
-                        registry, current_path, prior_text, legacy_completion=True
+                        registry, current_path, prior_text
                     )
         context = _evidence_context(
-            registry, baseline_documents, documents, baseline_texts, texts, root=root
+            registry, baseline_documents, documents, baseline_texts, texts
         )
         for diagnostic in validate_current_task_evidence(
             context, base_mode="explicit-ref"
@@ -4825,53 +2474,36 @@ def _completion_document_diagnostics(
                         "direct indexed parent identity differs from the package path",
                     )
             entries = rows(task_path)
-            task_profile = legacy_task_profile(
-                root, task_path, texts[task_path], profiles["sdlc/task"]
-            )
-            binding = task_profile.body_contract.task_execution  # type: ignore[union-attr]
+            binding = profiles["sdlc/task"].body_contract.task_execution  # type: ignore[union-attr]
             if not entries or binding is None:
                 fail(task_path, "COMPLETION-TASK", "bound Task rows missing")
                 continue
             state = documents[task_path].status or ""
             for rule, detail in task_execution_issues(entries, state, binding):
                 fail(task_path, rule, detail)
-            if binding.criterion_acceptance_section:
-                evidence = adapter.task_evidence_rows(texts[task_path], binding)
-                decisions = adapter.task_acceptance_rows(texts[task_path], binding)
-                if evidence is None or decisions is None:
-                    fail(
-                        task_path,
-                        "COMPLETION-ACCEPTANCE",
-                        "bound evidence or criterion verdict table missing",
-                    )
-                else:
-                    for rule, detail in task_contract_issues(
-                        entries, evidence, decisions, state, binding
-                    ):
-                        fail(task_path, rule, detail)
-                    for decision in decisions:
-                        criterion_ids = task_criterion_ids(decision["Criterion"])
-                        if (
-                            criterion_ids
-                            and (criterion_ids[0], task_path) in assignments
-                        ):
-                            modern_origins.setdefault(criterion_ids[0], []).append(
+            evidence = adapter.task_evidence_rows(texts[task_path], binding)
+            decisions = adapter.task_acceptance_rows(texts[task_path], binding)
+            if evidence is None or decisions is None:
+                fail(
+                    task_path,
+                    "COMPLETION-ACCEPTANCE",
+                    "bound evidence or criterion verdict table missing",
+                )
+            else:
+                for rule, detail in task_contract_issues(
+                    entries, evidence, decisions, state, binding
+                ):
+                    fail(task_path, rule, detail)
+                for decision in decisions:
+                    criterion_ids = task_criterion_ids(decision["Criterion"])
+                    if criterion_ids and (criterion_ids[0], task_path) in assignments:
+                        modern_origins.setdefault(criterion_ids[0], []).append(
+                            task_path
+                        )
+                        if decision["Acceptance"].strip() == "accepted":
+                            accepted_origins.setdefault(criterion_ids[0], []).append(
                                 task_path
                             )
-                            if decision["Acceptance"].strip() == "accepted":
-                                accepted_origins.setdefault(
-                                    criterion_ids[0], []
-                                ).append(task_path)
-            else:
-                for entry in entries:
-                    if entry.get("Acceptance", "").strip() == "accepted":
-                        for criterion in (
-                            task_criterion_ids(entry["Upstream criterion"]) or ()
-                        ):
-                            if (criterion, task_path) in assignments:
-                                accepted_origins.setdefault(criterion, []).append(
-                                    task_path
-                                )
             for entry in entries:
                 criterion_ids = task_criterion_ids(entry["Upstream criterion"])
                 if criterion_ids is None:
@@ -4900,7 +2532,7 @@ def _completion_document_diagnostics(
                             task_pairs.setdefault((criterion, task_path), []).append(
                                 entry
                             )
-                        elif state not in {"cancelled", "superseded"}:
+                        elif state != "cancelled":
                             fail(
                                 task_path,
                                 "COMPLETION-TRACE",

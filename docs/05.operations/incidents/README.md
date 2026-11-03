@@ -11,9 +11,6 @@ layer: "operations"
 
 > 사고 사실 기록과 postmortem을 보관하는 incident stage다.
 
-> [!NOTE]
-> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../../.agents/README.md)를 따른다.
-
 ## Overview
 
 이 경로는 사고 사실 기록과 사고 후 회고를 보관하는 canonical stage다.
@@ -42,7 +39,6 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 - Operators
 - Incident Commanders
 - Platform Engineers
-- AI Agents
 
 ## Scope
 
@@ -72,10 +68,10 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 ## Usage
 
 1. 대응 중에는 [incident.template.md](../../99.templates/templates/operations/incident.template.md)로 사실 기록을 시작한다.
-2. Incident Record는 `<year>/inc-####-<slug>/incident.md`로 작성하고 frontmatter `artifact_id`를 `INC-<YYYY>-<DDDD>`와 일치시킨다.
-3. Incident status는 `open → mitigated → resolved → closed` 순서를 따르고, 역할·다음 checkpoint·종료 근거를 함께 갱신한다.
-4. 사고 종료 후 구조 분석이 필요하면 [postmortem.template.md](../../99.templates/templates/operations/postmortem.template.md)를 사용하고 `artifact_id`를 `POSTMORTEM-<YYYY>-<DDDD>`로 기록한다.
-5. Postmortem status는 `draft → published → superseded`를 따르며 action closure evidence 없이 완료를 선언하지 않는다.
+2. Incident Record는 `<year>/inc-####-<slug>/incident.md`로 작성하고 frontmatter `artifact_id`를 `inc-<NNNN>-<NNNN>` 형식으로 기록한다.
+3. Incident status는 `detected → investigating → mitigated → resolved` 순서를 따르고, 역할·다음 checkpoint·종료 근거를 함께 갱신한다.
+4. 사고 종료 후 구조 분석이 필요하면 [postmortem.template.md](../../99.templates/templates/operations/postmortem.template.md)를 사용하고 `artifact_id`를 `inc-<NNNN>-<NNNN>-PM` 형식으로 기록한다.
+5. Postmortem status는 `draft → in-review → published`를 따르며 action closure evidence 없이 완료를 선언하지 않는다.
 6. Runbook/Policy/ADR/Spec 링크를 남겨 재발 방지 액션을 추적한다.
 7. 비밀 값, 토큰, 개인 식별 정보는 사고 기록에 직접 남기지 않는다.
 8. 사고가 없는 상태에서는 README만 유지하고 빈 placeholder 파일을 만들지 않는다.

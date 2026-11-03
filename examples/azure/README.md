@@ -35,6 +35,7 @@ Kubernetes 파일이 직접 소유한다. 매개변수는 검토된 인터페이
 | --- | --- | --- |
 | [`infrastructure/`](infrastructure/) | AKS, AGC, 네트워크, 데이터베이스, 캐시 Bicep 예시 | 실행 가능한 참조 자산. provider 입력값과 승인은 이 저장소 밖에 있다. |
 | [`gitops/`](gitops/) | Managed Identity, Gateway API, secret provider 플랫폼 예시 | 실행 가능한 참조 자산. 로컬 ArgoCD 트리가 reconcile하지 않는다. |
+| [`AGENTS.md`](AGENTS.md) | 이 폴더의 에이전트 지시 | 부트스트랩이나 실행 자산이 아니다. |
 | [`kubernetes/`](kubernetes/) | Workload Identity, 외부 서비스, 애플리케이션 manifest 예시 | 실행 가능한 참조 자산. 소유자가 있는 desired-state 트리로 올리기 전에 검증한다. |
 
 ## Usage

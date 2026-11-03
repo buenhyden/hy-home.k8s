@@ -1,108 +1,29 @@
 #!/usr/bin/env python3
-"""Validate repository-local links, indexes, current owners, and migration ledger."""
+"""Validate repository-local links, indexes, and current owners."""
 
 from __future__ import annotations
 
 import argparse
 import bisect
 import collections
-import hashlib
 import html
 import json
 import os
 import posixpath
 import re
 import stat
-import subprocess
 import sys
 import unicodedata
 from dataclasses import dataclass, field as dataclass_field
 from functools import lru_cache
 from pathlib import Path
 from pathlib import PurePosixPath
-from types import MappingProxyType
 from typing import Any, Callable, Iterable, Mapping, Sequence
 from urllib.parse import unquote, urlsplit
 
 import yaml
 
-try:
-    from archive_recovery import (
-        ArchiveContractError,
-        WORK107_LEGACY_ARCHIVE_COMMIT,
-        WORK107_LEGACY_INDEX_OVERVIEW,
-        WORK107_MIGRATION_PATH,
-        WORK107_STABLE_INDEX_OVERVIEW,
-        parse_pinned_work107_migration_document,
-        parse_archive_envelope,
-        read_commit_path_blob,
-        recover_work107_legacy_envelope,
-    )
-except ModuleNotFoundError:  # Imported as a repository-root test module.
-    from scripts.archive_recovery import (
-        ArchiveContractError,
-        WORK107_LEGACY_ARCHIVE_COMMIT,
-        WORK107_LEGACY_INDEX_OVERVIEW,
-        WORK107_MIGRATION_PATH,
-        WORK107_STABLE_INDEX_OVERVIEW,
-        parse_pinned_work107_migration_document,
-        parse_archive_envelope,
-        read_commit_path_blob,
-        recover_work107_legacy_envelope,
-    )
-
-try:
-    from archive_validation import (
-        MigrationProof,
-        validate_pinned_migration_recovery,
-        repository_migration_proof,
-        compose_migration_targets,
-        MigrationDeclaration,
-        ArchiveRecord,
-        project_migration_declaration_fields,
-        validate_archive_records,
-        generic_migration_id,
-        relocated_stable_archive_paths,
-        apply_stable_archive_relocations,
-    )
-except ModuleNotFoundError:  # Imported as a repository-root test module.
-    from scripts.archive_validation import (
-        MigrationProof,
-        validate_pinned_migration_recovery,
-        repository_migration_proof,
-        compose_migration_targets,
-        MigrationDeclaration,
-        ArchiveRecord,
-        project_migration_declaration_fields,
-        validate_archive_records,
-        generic_migration_id,
-        relocated_stable_archive_paths,
-        apply_stable_archive_relocations,
-    )
-
-try:
-    from archive_dispositions import (
-        citation_decision,
-        frontmatter_mapping,
-        parse_assessment,
-        parse_catalog,
-        removed_records,
-        retention_class_of,
-        retention_source_path,
-    )
-except ModuleNotFoundError:  # Imported as a repository-root test module.
-    from scripts.archive_dispositions import (
-        citation_decision,
-        frontmatter_mapping,
-        parse_assessment,
-        parse_catalog,
-        removed_records,
-        retention_class_of,
-        retention_source_path,
-    )
-
 from document_contracts import (
-    DOCUMENT_TEXT_MAX_BYTES,
     Diagnostic,
     DocumentContractError,
     DocumentProfile,
@@ -121,243 +42,36 @@ from document_contracts import (
     validated_changed_paths,
     task_execution_issues,
     task_status,
-    task_evidence_issues,
     task_contract_issues,
     direct_parent,
     MARKDOWN_TEMPLATE_PLACEHOLDER,
 )
 
-_UNSET = object()
-DEBT_PATH = Path("tests/fixtures/document-contracts/semantic-compatibility-debt.json")
+
+def frontmatter_mapping(text: str) -> Mapping[str, object]:
+    """Read YAML frontmatter; malformed input names nothing."""
+
+    if not text.startswith("---\n"):
+        return {}
+    closing = text.find("\n---\n", 4)
+    if closing < 0:
+        return {}
+    try:
+        loaded = yaml.safe_load(text[4:closing])
+    except yaml.YAMLError:
+        return {}
+    return loaded if isinstance(loaded, dict) else {}
+
+
 # A file outside `docs/` names a numbered stage document in plain text
 # instead of linking it, and reaches the tree through the documentation hub.
 # The hub is the one entry point consumers depend on, so a stage can be
 # reorganized without rewriting every implementation README that only needed
 # to say which document owns a subject. Links inside `docs/` keep their own
 # contracts, and a machine reference a program opens is not a link.
-NUMBERED_STAGE_TARGET = re.compile(r"^docs/(?:0[1235]|90|98|99)\.")
-WORK109_MIGRATION_PATH = PurePosixPath(
-    "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
-)
-WORK054_MIGRATION_PATH = PurePosixPath(
-    "docs/98.archive/migrations/0003-agent-governance-control-plane-consolidation.md"
-)
-WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
-    "docs/98.archive/migrations/0004-document-authority-convergence.md"
-)
-ARCHIVE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
-WORK109_SOURCE_COMMIT = (
-    "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
-)
-WORK109_LEDGER_MARKER = "<!-- archive-migration-ledger:v1 format=json -->"
-WORK109_LEDGER_FIELDS = (
-    "legacy_path",
-    "stable_path",
-    "artifact_id",
-    "action",
-    "replacement",
-    "source_commit",
-    "source_blob",
-    "content_sha256",
-    "reason",
-)
-WORK109_REPLACEMENTS = {
-    PurePosixPath("docs/04.execution/README.md"): PurePosixPath(
-        "docs/03.specs/README.md"
-    ),
-    PurePosixPath("docs/04.execution/plans/README.md"): PurePosixPath(
-        "docs/99.templates/templates/sdlc/execution/plan.template.md"
-    ),
-    PurePosixPath("docs/04.execution/tasks/README.md"): PurePosixPath(
-        "docs/99.templates/templates/sdlc/execution/task.template.md"
-    ),
-}
-WORK109_MERGES = {
-    PurePosixPath(
-        "docs/00.agent-governance/rules/document-stage-routing.md"
-    ): PurePosixPath("docs/00.agent-governance/rules/document-authoring.md"),
-    PurePosixPath(
-        "docs/00.agent-governance/rules/documentation-protocol.md"
-    ): PurePosixPath("docs/00.agent-governance/rules/document-authoring.md"),
-    PurePosixPath(
-        "docs/00.agent-governance/rules/stage-authoring-matrix.md"
-    ): PurePosixPath("docs/00.agent-governance/rules/document-authoring.md"),
-    PurePosixPath("docs/00.agent-governance/rules/stage-checklists.md"): PurePosixPath(
-        "docs/00.agent-governance/rules/document-authoring.md"
-    ),
-    PurePosixPath(
-        "docs/99.templates/support/common-documentation-governance.md"
-    ): PurePosixPath("docs/99.templates/support/document-lifecycle.md"),
-    PurePosixPath("docs/99.templates/support/documentation-contract.md"): PurePosixPath(
-        "docs/99.templates/support/document-contract.md"
-    ),
-    PurePosixPath("docs/99.templates/support/frontmatter-schema.md"): PurePosixPath(
-        "docs/99.templates/support/document-contract.md"
-    ),
-    PurePosixPath("docs/99.templates/support/legacy-cleanup-rules.md"): PurePosixPath(
-        "docs/99.templates/support/document-lifecycle.md"
-    ),
-    PurePosixPath("docs/99.templates/support/sdlc-governance.md"): PurePosixPath(
-        "docs/99.templates/support/document-lifecycle.md"
-    ),
-    PurePosixPath("docs/99.templates/support/template-routing.md"): PurePosixPath(
-        "docs/99.templates/support/document-contract.md"
-    ),
-}
-WORK105_HISTORY_SOURCE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
-WORK105_COMPLETED_HISTORY_ARD_TARGETS = frozenset(
-    PurePosixPath(path)
-    for path in (
-        "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
-        "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
-        "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
-        "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
-        "docs/02.architecture/requirements/0008-workspace-document-assurance-operating-model.md",
-        "docs/02.architecture/requirements/0009-document-lifecycle-evidence-operating-model.md",
-        "docs/02.architecture/requirements/0010-repository-delivery-evidence-architecture.md",
-        "docs/02.architecture/requirements/0011-document-taxonomy-consolidation-architecture.md",
-    )
-)
-WORK105_IMMUTABLE_HISTORY_ARD_TARGETS = WORK105_COMPLETED_HISTORY_ARD_TARGETS | {
-    PurePosixPath("docs/02.architecture/requirements/README.md")
-}
-WORK105_ACCEPTED_HISTORY_ADR_PATHS = frozenset(
-    PurePosixPath(f"docs/02.architecture/decisions/{name}.md")
-    for name in (
-        "0002-argocd-helm-and-gitops-model",
-        "0003-eso-vault-k8s-auth",
-        "0006-cert-manager-mkcert-ca-issuer",
-        "0008-istio-install-and-ingress-coexist",
-        "0009-kiali-external-observability",
-        "0011-argo-rollouts-progressive-delivery",
-        "0012-argo-notifications-slack",
-        "0013-stage-00-canonical-adapter-model",
-        "0014-current-local-gitops-platform-contract",
-        "0015-declarative-document-contract-registry",
-        "0016-program-to-tranche-document-lineage",
-        "0017-program-follow-up-lineage-semantics",
-        "0018-full-body-archive-record-and-retention",
-        "0019-provider-native-agent-harness-and-loop-model",
-        "0020-document-lifecycle-program-closure-evidence",
-        "0021-canonical-surface-routing-and-evidence-depth",
-        "0022-direct-approval-standalone-execution-lineage",
-        "0023-work-unit-document-taxonomy-and-governance-authority",
-    )
-)
-WORK105_AMENDED_ACCEPTED_ADR_SHA256 = {
-    PurePosixPath(
-        "docs/02.architecture/decisions/0018-full-body-archive-record-and-retention.md"
-    ): "e4b718b76b87157be60e824e4c8aaada01af220ebb1b3f43b04d36b1b5110285",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md"
-    ): "717714ce153cbd75ca5a77beb42a24cd1b146f25b1112d492e30d9fd214348d5",  # pragma: allowlist secret
-}
+NUMBERED_STAGE_TARGET = re.compile(r"^docs/(?:0[1235]|90|99)\.")
 
-
-@lru_cache(maxsize=4)
-def _validated_work107_stable_archive_rows(
-    content: bytes,
-) -> tuple[dict[str, object], ...]:
-    try:
-        return parse_pinned_work107_migration_document(content)
-    except (
-        ArchiveContractError,
-        DocumentContractError,
-        OSError,
-        UnicodeError,
-        ValueError,
-    ):
-        return ()
-
-
-def _work107_stable_archive_rows(context: "Context") -> tuple[dict[str, object], ...]:
-    """Load only the exact reviewed WORK-107 migration ledger from the candidate."""
-
-    path = PurePosixPath(WORK107_MIGRATION_PATH)
-    text = context.texts.get(path)
-    if text is None:
-        return ()
-    content = text.encode("utf-8")
-    rows = _validated_work107_stable_archive_rows(
-        content,
-    )
-    if not rows:
-        return ()
-    try:
-        relocations = relocated_stable_archive_paths(
-            _sealed_generic_ledger_texts(context),
-            tuple(str(row["stable_path"]) for row in rows),
-        )
-    except ArchiveContractError:
-        return ()
-    return apply_stable_archive_relocations(rows, relocations)
-
-
-def _sealed_generic_ledger_texts(context: "Context") -> tuple[tuple[str, bytes], ...]:
-    """Read every generic migration ledger the candidate already carries."""
-
-    ledgers: list[tuple[str, bytes]] = []
-    for path in sorted(context.texts):
-        posix = path.as_posix()
-        if generic_migration_id(posix) is None:
-            continue
-        ledgers.append((posix, context.texts[path].encode("utf-8")))
-    return tuple(ledgers)
-
-
-def _work107_stable_archive_aliases(
-    context: "Context",
-) -> dict[PurePosixPath, PurePosixPath]:
-    rows = _work107_stable_archive_rows(context)
-    aliases = {
-        PurePosixPath(str(row["legacy_path"])): PurePosixPath(str(row["stable_path"]))
-        for row in rows
-    }
-    return (
-        aliases
-        if rows
-        and len(aliases) == len(rows)
-        and len(set(aliases.values())) == len(rows)
-        else {}
-    )
-
-
-def _work107_stable_archive_index_source(
-    context: "Context",
-    source: PurePosixPath,
-) -> bool:
-    """Prove the Stage 98 index is the reviewed overview/link projection."""
-
-    if source != ARCHIVE_INDEX_PATH or source not in context.texts:
-        return False
-    rows = _work107_stable_archive_rows(context)
-    if not rows:
-        return False
-    try:
-        legacy = read_commit_path_blob(
-            context.root,
-            WORK107_LEGACY_ARCHIVE_COMMIT,
-            Path(source.as_posix()),
-        ).decode("utf-8")
-    except (ArchiveContractError, UnicodeDecodeError):
-        return False
-    if legacy.count(WORK107_LEGACY_INDEX_OVERVIEW) != 1:
-        return False
-    projected = legacy.replace(
-        WORK107_LEGACY_INDEX_OVERVIEW,
-        WORK107_STABLE_INDEX_OVERVIEW,
-        1,
-    )
-    for row in rows:
-        old = str(row["legacy_path"]).removeprefix("docs/98.archive/")
-        new = str(row["stable_path"]).removeprefix("docs/98.archive/")
-        reviewed = f"[`{old}`](./{old})"
-        stable = f"[`{new}`](./{new})"
-        if projected.count(reviewed) != 1:
-            return False
-        projected = projected.replace(reviewed, stable, 1)
-    return projected == context.texts[source]
-
+ARCHIVE_ROOT = PurePosixPath("docs/98.archive")
 
 OWNER = "cross-document-validator"
 OWNER_EXCLUSIONS = (
@@ -368,19 +82,6 @@ OWNER_EXCLUSIONS = (
     re.compile(r"^examples/(?:aws|azure)/docs/"),
 )
 RETIRED_REFERENCE_ALIASES = {
-    PurePosixPath(
-        "docs/00.agent-governance/contracts/agent-role-semantics.json"
-    ): PurePosixPath(".agents/roles/registry.json"),
-    PurePosixPath(
-        "docs/00.agent-governance/contracts/agent-role-semantics.schema.json"
-    ): PurePosixPath(".agents/roles/registry.schema.json"),
-    PurePosixPath("scripts/validate-agent-role-semantics.py"): PurePosixPath(
-        "scripts/validate-agent-governance.py"
-    ),
-    PurePosixPath("tests/fixtures/agent-role-semantics.json"): PurePosixPath(
-        ".agents/roles/registry.json"
-    ),
-    PurePosixPath(".github/ABOUT.md"): PurePosixPath(".github/repository-surface.md"),
     PurePosixPath(".github/README.md"): PurePosixPath(".github/repository-surface.md"),
 }
 
@@ -404,23 +105,10 @@ class Context:
     governance_current_paths: tuple[PurePosixPath, ...]
     governance_current_states: tuple[str, ...]
     tracked_regular_paths: frozenset[PurePosixPath]
-    route_state: str = "legacy"
-    work105_history_base_commit: str = WORK105_HISTORY_SOURCE_COMMIT
-    document_registry: Registry | None = None
-    raw_schema: object = _UNSET
-    read_current_bytes: Callable[[str, int], bytes] | None = None
     tracked_modes: Mapping[PurePosixPath, str] | None = None
     readme_navigation: Any = None
     current_registry: Registry | None = None
     current_inventory: TargetInventory | None = None
-
-
-@dataclass(frozen=True, order=True)
-class ArchiveTransitionEdge:
-    """One immutable move-current link deferred until WDTC-104."""
-
-    source: PurePosixPath
-    target: PurePosixPath
 
 
 @dataclass(frozen=True)
@@ -775,48 +463,12 @@ def _terminal_governance_current_owners(
     return current, allowed_states
 
 
-def _held_context_inputs(
-    registry: Registry | None,
-    raw_schema: object,
-    read_current_bytes: Callable[[str, int], bytes] | None,
-) -> bool:
-    if registry is None and raw_schema is _UNSET and read_current_bytes is None:
-        return False
-    if (
-        not isinstance(registry, Registry)
-        or not isinstance(raw_schema, dict)
-        or not callable(read_current_bytes)
-    ):
-        raise ConfigurationError("held historical inputs are incomplete")
-    return True
-
-
-def _held_context_bytes(
-    read_current_bytes: Callable[[str, int], bytes],
-    path: PurePosixPath,
-    max_bytes: int,
-) -> bytes:
-    payload = read_current_bytes(path.as_posix(), max_bytes)
-    if type(payload) is not bytes or len(payload) > max_bytes:
-        raise ConfigurationError("held historical bytes are invalid or oversized")
-    return payload
-
-
 def _build_context(
     root: Path,
     include_paths: tuple[PurePosixPath, ...] = (),
-    *,
-    registry: Registry | None = None,
-    raw_schema: object = _UNSET,
-    read_current_bytes: Callable[[str, int], bytes] | None = None,
-    read_symlink: Callable[[str], str] | None = None,
 ) -> Context:
     root = root.absolute()
-    held = _held_context_inputs(registry, raw_schema, read_current_bytes)
-    if (held and not callable(read_symlink)) or (not held and read_symlink is not None):
-        raise ConfigurationError("held historical symlink inputs are incomplete")
-    if not held:
-        registry = load_registry(root)
+    registry = load_registry(root)
     inventory = enumerate_target_markdown(root, include_paths=include_paths)
     profiles: dict[PurePosixPath, ProfileView] = {}
     texts: dict[PurePosixPath, str] = {}
@@ -825,33 +477,16 @@ def _build_context(
         profile = classify_path(registry, path)
         profiles[path] = _profile_view(profile)
         if is_opaque_evaluation_output(registry, path):
-            if held:
-                assert read_current_bytes is not None
-                _held_context_bytes(read_current_bytes, path, DOCUMENT_TEXT_MAX_BYTES)
-            else:
-                verify_opaque_evaluation_output(root, path)
+            verify_opaque_evaluation_output(root, path)
             texts[path] = ""
             metadata[path] = {}
             continue
-        if held:
-            assert read_current_bytes is not None
-            try:
-                text = _held_context_bytes(
-                    read_current_bytes, path, DOCUMENT_TEXT_MAX_BYTES
-                ).decode("utf-8", errors="strict")
-            except UnicodeError as exc:
-                raise ConfigurationError("held historical text is not UTF-8") from exc
-        else:
-            text = read_repository_text(root, path)
+        text = read_repository_text(root, path)
         texts[path] = text
         metadata[path] = frontmatter_mapping(text)
     adapters: dict[PurePosixPath, PurePosixPath] = {}
     for adapter in inventory.current_symlink_paths:
-        raw_target = (
-            read_symlink(adapter.as_posix()) if held else os.readlink(root / adapter)
-        )
-        if not isinstance(raw_target, str):
-            raise ConfigurationError("held historical symlink target is invalid")
+        raw_target = os.readlink(root / adapter)
         normalized = posixpath.normpath(
             posixpath.join(adapter.parent.as_posix(), raw_target)
         )
@@ -893,10 +528,6 @@ def _build_context(
         governance_current_paths,
         governance_current_states,
         tracked_regular_paths,
-        getattr(registry, "route_state", "terminal"),
-        document_registry=registry if held else None,
-        raw_schema=raw_schema,
-        read_current_bytes=read_current_bytes,
         tracked_modes=tracked_modes,
         readme_navigation=getattr(registry, "readme_navigation", None),
         current_registry=registry,
@@ -2433,769 +2064,6 @@ def _path_exists_without_dereference(
     return True
 
 
-_SEALED_STAGE03_IDENTITY = re.compile(r"^(?:PLAN|TASK)-([0-9]{4})$")
-
-
-def _current_stage03_identity(artifact_id: str) -> str:
-    """Project a sealed Stage 03 ledger identity onto its current form.
-
-    A sealed Migration records the identity a document carried when it moved.
-    Stage 03 later re-formed Plan and Task identity to name the parent Spec, so
-    the ledger keeps its historical value and the comparison projects it
-    forward. Any other identity is returned unchanged.
-    """
-
-    match = _SEALED_STAGE03_IDENTITY.fullmatch(artifact_id)
-    if match is None:
-        return artifact_id
-    package = match.group(1)
-    kind = "PLAN" if artifact_id.startswith("PLAN-") else "TSK"
-    return f"SPEC-{package}-{kind}-0001"
-
-
-def _work109_expected_stable_path(
-    legacy: PurePosixPath,
-) -> PurePosixPath | None:
-    """Return the sole four-digit active route admitted for one legacy path."""
-
-    value = legacy.as_posix()
-    requirement = re.fullmatch(
-        r"docs/01\.requirements/(?P<id>[0-9]{3})(?P<tail>-[a-z0-9]+(?:-[a-z0-9]+)*\.md)",
-        value,
-    )
-    if requirement is not None:
-        return PurePosixPath(
-            "docs/01.requirements/"
-            f"{int(requirement.group('id')):04d}{requirement.group('tail')}"
-        )
-    work_unit = re.fullmatch(
-        r"docs/03\.specs/(?P<id>[0-9]{3})"
-        r"(?P<tail>-[a-z0-9]+(?:-[a-z0-9]+)*/"
-        r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*\.md)",
-        value,
-    )
-    if work_unit is not None:
-        return PurePosixPath(
-            f"docs/03.specs/{int(work_unit.group('id')):04d}{work_unit.group('tail')}"
-        )
-    return None
-
-
-@lru_cache(maxsize=8)
-def _commit_path_evidence(
-    root_value: str,
-    commit: str,
-    paths: tuple[str, ...],
-) -> tuple[tuple[str, str], ...]:
-    """Read immutable Git provenance once per exact commit/path projection."""
-
-    if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
-        raise ValueError("commit evidence differs")
-    requests: list[str] = []
-    for value in paths:
-        path = PurePosixPath(value)
-        if (
-            path.as_posix() != value
-            or path.is_absolute()
-            or ".." in path.parts
-            or "\n" in value
-            or "\r" in value
-        ):
-            raise ValueError("commit path evidence differs")
-        requests.append(f"{commit}:{value}")
-    completed = subprocess.run(
-        ["git", "cat-file", "--batch"],
-        cwd=Path(root_value),
-        input=("\n".join(requests) + "\n").encode("utf-8"),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=False,
-        timeout=30,
-    )
-    if completed.returncode != 0 or completed.stderr:
-        raise ValueError("commit evidence differs")
-    output = completed.stdout
-    cursor = 0
-    evidence: list[tuple[str, str]] = []
-    for _ in requests:
-        header_end = output.find(b"\n", cursor)
-        if header_end < 0:
-            raise ValueError("commit evidence differs")
-        header = output[cursor:header_end].decode("ascii", "strict").split()
-        if (
-            len(header) != 3
-            or re.fullmatch(r"[0-9a-f]{40}", header[0]) is None
-            or header[1] != "blob"
-            or not header[2].isdigit()
-        ):
-            raise ValueError("commit evidence differs")
-        size = int(header[2])
-        start = header_end + 1
-        end = start + size
-        if end >= len(output) or output[end : end + 1] != b"\n":
-            raise ValueError("commit evidence differs")
-        payload = output[start:end]
-        evidence.append((header[0], hashlib.sha256(payload).hexdigest()))
-        cursor = end + 1
-    if cursor != len(output):
-        raise ValueError("commit evidence differs")
-    return tuple(evidence)
-
-
-def _sealed_endpoint_resolves(context: Context, terminal: PurePosixPath) -> bool:
-    """Report whether a sealed migration row still names a current owner.
-
-    A sealed row records one historical transition.  It is not a standing claim
-    that its endpoint must stay in the tree: a later cycle may remove the
-    document the row moved, with or without a successor row for it to name.
-    When that happens the row composes no current owner, so the edge drops and
-    a document that still names the legacy path fails as `LINK-BROKEN` at its
-    own line instead of aborting the whole run as a configuration error.
-
-    Ledger coverage is proved separately from this resolution, so a dropped
-    edge never weakens the row-count and row-identity proofs a ledger owns.
-    """
-
-    return terminal in context.tracked_regular_paths and (
-        _path_exists_without_dereference(
-            context.root, terminal, context.adapter_targets
-        )
-    )
-
-
-def _work109_migration_projection(
-    context: Context,
-) -> tuple[
-    dict[PurePosixPath, PurePosixPath],
-    dict[PurePosixPath, PurePosixPath],
-    dict[PurePosixPath, PurePosixPath],
-]:
-    """Validate MIG-0002 and return its exact move/replace/merge maps."""
-
-    if (
-        WORK109_MIGRATION_PATH not in context.paths
-        or WORK109_MIGRATION_PATH not in context.tracked_regular_paths
-    ):
-        raise ConfigurationError("WORK-109 migration ledger is unavailable")
-    metadata = context.metadata.get(WORK109_MIGRATION_PATH, {})
-    if (
-        metadata.get("artifact_id") != "MIG-0002"
-        or metadata.get("status") != "accepted"
-    ):
-        raise ConfigurationError("WORK-109 migration ledger identity differs")
-    text = context.texts.get(WORK109_MIGRATION_PATH)
-    marker = f"{WORK109_LEDGER_MARKER}\n\n```json\n"
-    if text is None or text.count(marker) != 1:
-        raise ConfigurationError("WORK-109 migration ledger contract differs")
-    prefix, remainder = text.split(marker, 1)
-    if not prefix or remainder.count("\n```") != 1:
-        raise ConfigurationError("WORK-109 migration ledger contract differs")
-    raw, suffix = remainder.split("\n```", 1)
-    if not suffix.startswith("\n"):
-        raise ConfigurationError("WORK-109 migration ledger contract differs")
-    try:
-        rows = json.loads(raw)
-    except (json.JSONDecodeError, UnicodeError) as exc:
-        raise ConfigurationError("WORK-109 migration ledger contract differs") from exc
-    if not isinstance(rows, list) or len(rows) != 154:
-        raise ConfigurationError("WORK-109 migration ledger row count differs")
-    legacy_values = [
-        row.get("legacy_path") if isinstance(row, Mapping) else None for row in rows
-    ]
-    if (
-        any(not isinstance(value, str) for value in legacy_values)
-        or legacy_values != sorted(legacy_values)
-        or len(set(legacy_values)) != len(legacy_values)
-    ):
-        raise ConfigurationError("WORK-109 migration ledger order differs")
-    try:
-        source_evidence = _commit_path_evidence(
-            str(context.root.absolute()),
-            WORK109_SOURCE_COMMIT,
-            tuple(legacy_values),
-        )
-    except ValueError:
-        raise ConfigurationError("WORK-109 migration ledger source differs") from None
-
-    wp004b_targets = _work054_wp004b_targets(context)
-    successors = _generic_migration_targets(context)
-    aliases: dict[PurePosixPath, PurePosixPath] = {}
-    replacements: dict[PurePosixPath, PurePosixPath] = {}
-    merges: dict[PurePosixPath, PurePosixPath] = {}
-    stable_paths: set[PurePosixPath] = set()
-    pre_cutover_stable_paths: set[PurePosixPath] = set()
-    sealed_rows: dict[str, set[PurePosixPath]] = {}
-    vacated_moves: set[PurePosixPath] = set()
-    for row, (source_blob, content_sha256) in zip(
-        rows,
-        source_evidence,
-        strict=True,
-    ):
-        if (
-            not isinstance(row, Mapping)
-            or tuple(row) != WORK109_LEDGER_FIELDS
-            or row.get("source_commit") != WORK109_SOURCE_COMMIT
-            or not isinstance(row.get("source_blob"), str)
-            or re.fullmatch(r"[0-9a-f]{40}", row["source_blob"]) is None
-            or not isinstance(row.get("content_sha256"), str)
-            or re.fullmatch(r"[0-9a-f]{64}", row["content_sha256"]) is None
-            or not isinstance(row.get("reason"), str)
-            or not row["reason"].strip()
-        ):
-            raise ConfigurationError("WORK-109 migration ledger entry differs")
-        legacy_value = row["legacy_path"]
-        if not isinstance(legacy_value, str):
-            raise ConfigurationError("WORK-109 migration ledger path differs")
-        legacy = PurePosixPath(legacy_value)
-        if (
-            legacy.as_posix() != legacy_value
-            or legacy.is_absolute()
-            or ".." in legacy.parts
-        ):
-            raise ConfigurationError("WORK-109 migration ledger path differs")
-        if source_blob != row["source_blob"] or content_sha256 != row["content_sha256"]:
-            raise ConfigurationError("WORK-109 migration ledger source differs")
-
-        if row.get("action") == "moved":
-            stable_value = row.get("stable_path")
-            artifact_id = row.get("artifact_id")
-            expected = _work109_expected_stable_path(legacy)
-            has_wp004b_cutover = expected in wp004b_targets
-            current_target = (
-                wp004b_targets.get(expected) if expected is not None else None
-            )
-            if current_target is None:
-                current_target = expected
-            current_target = successors.get(current_target, current_target)
-            if (
-                not isinstance(stable_value, str)
-                or expected is None
-                or stable_value != expected.as_posix()
-                or row.get("replacement") is not None
-                or not isinstance(artifact_id, str)
-                or expected in pre_cutover_stable_paths
-            ):
-                raise ConfigurationError(
-                    f"WORK-109 migration ledger target differs: {legacy.as_posix()}"
-                )
-            # The row is proved before it is resolved.  This set counts the
-            # sealed rows, so a vacated endpoint costs the ledger no coverage.
-            pre_cutover_stable_paths.add(expected)
-            if not _sealed_endpoint_resolves(context, current_target):
-                vacated_moves.add(legacy)
-                continue
-            # The identity belongs to whichever document now owns the edge.
-            # `expected` is the path the sealed row named; a later retention or
-            # migration row may have moved that document, and `current_target`
-            # is where it resolved.
-            declared_identity = context.metadata.get(current_target, {}).get(
-                "artifact_id"
-            )
-            if not has_wp004b_cutover and (
-                declared_identity != _current_stage03_identity(artifact_id)
-            ):
-                raise ConfigurationError(
-                    f"WORK-109 migration ledger target differs: {legacy.as_posix()}"
-                )
-            aliases[legacy] = current_target
-            stable_paths.add(current_target)
-            continue
-
-        action = row.get("action")
-        replacement_value = row.get("replacement")
-        expected_map = WORK109_REPLACEMENTS if action == "replaced" else WORK109_MERGES
-        expected_replacement = expected_map.get(legacy)
-        current_replacement = (
-            wp004b_targets.get(expected_replacement)
-            if expected_replacement is not None
-            else None
-        )
-        if current_replacement is None:
-            current_replacement = expected_replacement
-        current_replacement = successors.get(current_replacement, current_replacement)
-        if (
-            action not in {"replaced", "merged"}
-            or row.get("stable_path") is not None
-            or row.get("artifact_id") is not None
-            or not isinstance(replacement_value, str)
-            or expected_replacement is None
-            or replacement_value != expected_replacement.as_posix()
-        ):
-            raise ConfigurationError("WORK-109 migration ledger replacement differs")
-        sealed_rows.setdefault(action, set()).add(legacy)
-        if not _sealed_endpoint_resolves(context, current_replacement):
-            continue
-        if action == "replaced":
-            replacements[legacy] = current_replacement
-        else:
-            merges[legacy] = current_replacement
-
-    if sealed_rows.get("replaced", set()) != set(
-        WORK109_REPLACEMENTS
-    ) or sealed_rows.get("merged", set()) != set(WORK109_MERGES):
-        raise ConfigurationError("WORK-109 migration ledger coverage differs")
-    return aliases, replacements, merges, frozenset(vacated_moves)
-
-
-def _work054_wp004b_targets(
-    context: Context,
-) -> dict[PurePosixPath, PurePosixPath]:
-    """Return terminal targets from MIG-0004's row-level recovery proof."""
-
-    if (
-        WORK054_WP004B_MIGRATION_PATH not in context.paths
-        or WORK054_WP004B_MIGRATION_PATH not in context.tracked_regular_paths
-    ):
-        raise ConfigurationError("WORK-054 WP-004B migration ledger is unavailable")
-    text = context.texts.get(WORK054_WP004B_MIGRATION_PATH)
-    if text is None:
-        raise ConfigurationError("WORK-054 WP-004B migration ledger differs")
-    try:
-        rows = validate_pinned_migration_recovery(
-            context.root,
-            WORK054_WP004B_MIGRATION_PATH.as_posix(),
-            text.encode("utf-8"),
-        )
-    except (ArchiveContractError, OSError, UnicodeError, ValueError) as exc:
-        raise ConfigurationError(
-            "WORK-054 WP-004B migration recovery proof differs"
-        ) from exc
-    successors = _generic_migration_targets(context)
-    targets: dict[PurePosixPath, PurePosixPath] = {}
-    dropped: set[PurePosixPath] = set()
-    for row in rows:
-        action = row.get("action")
-        legacy_value = row.get("legacy_path")
-        target_value = (
-            row.get("stable_path") if action == "moved" else row.get("replacement")
-        )
-        if not isinstance(legacy_value, str) or not isinstance(target_value, str):
-            raise ConfigurationError("WORK-054 WP-004B migration row differs")
-        legacy = PurePosixPath(legacy_value)
-        target = PurePosixPath(target_value)
-        if (
-            legacy.as_posix() != legacy_value
-            or target.as_posix() != target_value
-            or legacy.is_absolute()
-            or target.is_absolute()
-            or ".." in legacy.parts
-            or ".." in target.parts
-            or legacy in targets
-            or legacy in dropped
-        ):
-            raise ConfigurationError("WORK-054 WP-004B migration target differs")
-        # A later sealed row may retire this edge's endpoint in turn, and the
-        # pinned MIG-0004 rows cannot name a successor that did not exist when
-        # they were sealed.  A deleted endpoint composes to the Archive index.
-        terminal = successors.get(target, target)
-        if not _sealed_endpoint_resolves(context, terminal):
-            dropped.add(legacy)
-            continue
-        targets[legacy] = terminal
-    return targets
-
-
-def _work109_four_digit_aliases(
-    context: Context,
-) -> tuple[dict[PurePosixPath, PurePosixPath], frozenset[PurePosixPath]]:
-    """Return the exact active-route moves and the rows whose endpoint is gone.
-
-    The second element names the sealed moves that resolve to no current owner,
-    so a consumer can tell a vacated endpoint from a ledger that never sealed
-    the row at all.
-    """
-
-    aliases, _, _, vacated = _work109_migration_projection(context)
-    return aliases, vacated
-
-
-def _context_migration_proof(context: Context) -> MigrationProof:
-    registry = getattr(context, "document_registry", None)
-    raw_schema = getattr(context, "raw_schema", _UNSET)
-    read_current_bytes = getattr(context, "read_current_bytes", None)
-    try:
-        if _held_context_inputs(registry, raw_schema, read_current_bytes):
-            return repository_migration_proof(
-                context.root,
-                registry=registry,
-                raw_schema=raw_schema,
-                read_current_bytes=read_current_bytes,
-            )
-        return repository_migration_proof(context.root)
-    except (ArchiveContractError, OSError, ValueError) as exc:
-        raise ConfigurationError("generic migration recovery proof differs") from exc
-
-
-def _retention_catalog_targets(
-    context: Context,
-) -> dict[PurePosixPath, PurePosixPath]:
-    """Return the moves an approved retention recorded outside any ledger.
-
-    ADR-0039 retains a finished unit by moving it into Stage 98 byte for byte
-    and recording the move as one Retention Catalog row. The document is not
-    removed, so a sealed row whose endpoint was retained still names a current
-    owner; it just lives at the retained path now. A row names one unit, so a
-    package row names the directory and a member resolves through containment.
-    """
-
-    index_text = context.texts.get(ARCHIVE_INDEX_PATH)
-    if index_text is None:
-        try:
-            index_text = (context.root / ARCHIVE_INDEX_PATH).read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
-            return {}
-    rows, errors = parse_catalog(index_text)
-    if errors:
-        return {}
-    moves: dict[PurePosixPath, PurePosixPath] = {}
-    for record, row in rows.items():
-        origin = row.envelope.original_path
-        moves[origin] = record
-        # Retention is exact, so the retained tree holds the same entries the
-        # origin held. Expanding them keeps a member of a retained package
-        # resolvable through the same successor lookup a single document uses.
-        directory = context.root / record
-        if not directory.is_dir():
-            continue
-        for member in sorted(directory.rglob("*")):
-            if not member.is_file():
-                continue
-            relative = member.relative_to(directory).as_posix()
-            moves[origin / relative] = record / relative
-    return moves
-
-
-def _generic_migration_targets(context: Context) -> dict[PurePosixPath, PurePosixPath]:
-    proof = _context_migration_proof(context)
-    targets = {
-        PurePosixPath(source): PurePosixPath(target)
-        for source, target in proof.targets.items()
-    }
-    for source, record in _retention_catalog_targets(context).items():
-        targets.setdefault(source, record)
-    # A sealed row names the successor that was current when the row was
-    # sealed, and a later cycle may have moved that successor in turn: a
-    # retired router becomes a plan, and an approved retention then moves the
-    # plan into Stage 98. Each consumer asks this map once, so the walk ends
-    # here. A path already seen stops the walk, so a cycle resolves to itself
-    # rather than looping.
-    resolved: dict[PurePosixPath, PurePosixPath] = {}
-    for source in targets:
-        seen = {source}
-        terminal = targets[source]
-        while terminal in targets and terminal not in seen:
-            seen.add(terminal)
-            terminal = targets[terminal]
-        resolved[source] = terminal
-    return resolved
-
-
-def _work054_wp003_owner_merges(
-    context: Context,
-) -> dict[PurePosixPath, PurePosixPath]:
-    """Use the recovery owner for MIG-0003 source proof, not another parser."""
-
-    if (
-        WORK054_MIGRATION_PATH not in context.paths
-        or WORK054_MIGRATION_PATH not in context.tracked_regular_paths
-    ):
-        raise ConfigurationError("WORK-054 WP-003 migration ledger is unavailable")
-    text = context.texts.get(WORK054_MIGRATION_PATH)
-    if text is None:
-        raise ConfigurationError("WORK-054 WP-003 migration ledger is unavailable")
-    try:
-        rows = validate_pinned_migration_recovery(
-            context.root, WORK054_MIGRATION_PATH.as_posix(), text.encode("utf-8")
-        )
-    except (ArchiveContractError, OSError, ValueError) as exc:
-        raise ConfigurationError("WORK-054 WP-003 recovery proof differs") from exc
-    successors = _generic_migration_targets(context)
-    result: dict[PurePosixPath, PurePosixPath] = {}
-    for row in rows:
-        legacy = PurePosixPath(str(row["legacy_path"]))
-        replacement = PurePosixPath(str(row["replacement"]))
-        terminal = successors.get(replacement, replacement)
-        if (
-            terminal not in context.tracked_regular_paths
-            or not _path_exists_without_dereference(
-                context.root, terminal, context.adapter_targets
-            )
-        ):
-            raise ConfigurationError("WORK-054 WP-003 migration target differs")
-        result[legacy] = terminal
-    return result
-
-
-@dataclass(frozen=True)
-class ArchivePayloadProof:
-    """One Archive-owned payload removed from instruction scanning only."""
-
-    input_bytes: bytes = dataclass_field(repr=False)
-    remaining_text: str = dataclass_field(repr=False)
-
-
-@dataclass(frozen=True)
-class HistoricalMigrationProof:
-    """Exact historical bytes and terminal dispositions; never a status waiver."""
-
-    terminal_targets: Mapping[str, str]
-    consumers: Mapping[str, bytes] = dataclass_field(repr=False)
-    rendered_dispositions: Mapping[tuple[str, str], str]
-    literal_dispositions: Mapping[tuple[str, str], str] = dataclass_field(
-        default_factory=dict
-    )
-    document_registry: Registry | None = None
-    declarations: Mapping[str, MigrationDeclaration] = dataclass_field(
-        default_factory=dict
-    )
-    archive_payloads: Mapping[str, ArchivePayloadProof] = dataclass_field(
-        default_factory=dict
-    )
-
-
-def repository_historical_migration_proof(
-    root: Path,
-    *,
-    registry: Registry | None = None,
-    raw_schema: object = _UNSET,
-    read_current_bytes: Callable[[str, int], bytes] | None = None,
-    read_symlink: Callable[[str], str] | None = None,
-) -> HistoricalMigrationProof:
-    """Expose the existing link owner's verified historical interpretations."""
-
-    if (
-        registry is None
-        and raw_schema is _UNSET
-        and read_current_bytes is None
-        and read_symlink is None
-    ):
-        context = _build_context(root)
-    else:
-        context = _build_context(
-            root,
-            registry=registry,
-            raw_schema=raw_schema,
-            read_current_bytes=read_current_bytes,
-            read_symlink=read_symlink,
-        )
-    return _historical_migration_proof(context)
-
-
-def _historical_migration_proof(context: Context) -> HistoricalMigrationProof:
-    proof = _context_migration_proof(context)
-    generic_targets = {
-        PurePosixPath(source): PurePosixPath(target)
-        for source, target in proof.targets.items()
-    }
-    aliases, replacements, work109_merges, _ = _work109_migration_projection(context)
-    archive_aliases = _work107_stable_archive_aliases(context)
-    if PurePosixPath(WORK107_MIGRATION_PATH) in context.paths and not archive_aliases:
-        raise ConfigurationError("historical archive migration proof differs")
-    migration_projections = (
-        aliases,
-        replacements,
-        work109_merges,
-        archive_aliases,
-        _work054_wp003_owner_merges(context),
-        _work054_wp004b_targets(context),
-        generic_targets,
-    )
-    try:
-        composed = compose_migration_targets(
-            tuple(
-                {
-                    source.as_posix(): target.as_posix()
-                    for source, target in projection.items()
-                }
-                for projection in migration_projections
-            )
-        )
-    except ArchiveContractError as exc:
-        raise ConfigurationError("historical migration composition differs") from exc
-    redirects = dict(composed)
-    # These older unique cutovers are not Migration rows. Their current
-    # successors still require a tracked regular artifact, not a status label.
-    for source, target in RETIRED_REFERENCE_ALIASES.items():
-        terminal = redirects.get(target.as_posix(), target.as_posix())
-        if PurePosixPath(terminal) in context.tracked_regular_paths:
-            redirects[source.as_posix()] = terminal
-
-    declarations = dict(proof.declarations)
-    # Each old ledger's complete owner proof ran above. This view removes only
-    # typed path fields; no old or new ledger receives a whole-document waiver.
-    for record in (
-        PurePosixPath(WORK107_MIGRATION_PATH),
-        WORK109_MIGRATION_PATH,
-        WORK054_MIGRATION_PATH,
-        WORK054_WP004B_MIGRATION_PATH,
-    ):
-        if record in context.paths:
-            declarations[record.as_posix()] = project_migration_declaration_fields(
-                context.texts[record].encode("utf-8"), redirects
-            )
-
-    # The generic proof already validates each consumer from its reviewed Git
-    # commit. Active document currentness belongs to the current-path validators,
-    # so historical link composition never requires matching worktree bytes.
-    consumers = dict(proof.consumers)
-
-    edges: dict[tuple[str, str], str] = {}
-    literals: dict[tuple[str, str], str] = {}
-    for name, raw in consumers.items():
-        source = PurePosixPath(name)
-        for link in rendered_local_links(raw.decode("utf-8", "strict"), source):
-            if link.kind != "local" or link.target is None:
-                continue
-            target = link.target.as_posix()
-            terminal = redirects.get(target)
-            if terminal is None or _path_exists_without_dereference(
-                context.root, link.target, context.adapter_targets
-            ):
-                continue
-            if (
-                PurePosixPath(terminal) not in context.tracked_regular_paths
-                or not _path_exists_without_dereference(
-                    context.root, PurePosixPath(terminal), context.adapter_targets
-                )
-            ):
-                raise ConfigurationError("historical replacement is unavailable")
-            edges[(name, target)] = terminal
-        for (owner, target), disposition in getattr(proof, "references", {}).items():
-            if owner != name:
-                continue
-            if disposition.kind == "literal-path":
-                literals[owner, target] = disposition.terminal_path
-            elif disposition.kind == "symlink-view" and target in {
-                link.target.as_posix()
-                for link in rendered_local_links(raw.decode("utf-8", "strict"), source)
-                if link.kind == "local" and link.target is not None
-            }:
-                existing = edges.get((owner, target))
-                if existing is not None and existing != disposition.terminal_path:
-                    raise ConfigurationError(
-                        "historical view disposition conflicts with existing owner"
-                    )
-                edges[owner, target] = disposition.terminal_path
-        if (
-            name in proof.consumers
-            and not any(owner == name for owner, _ in edges)
-            and not any(owner == name for owner, _ in literals)
-        ):
-            raise ConfigurationError(
-                "historical migration consumer has no reviewed disposition"
-            )
-    archive_payloads = _archive_payload_proofs(context)
-    return HistoricalMigrationProof(
-        MappingProxyType(redirects),
-        MappingProxyType(consumers),
-        MappingProxyType(edges),
-        MappingProxyType(literals),
-        proof.proposed_registry,
-        MappingProxyType(declarations),
-        archive_payloads,
-    )
-
-
-def _archive_payload_proofs(
-    context: Context,
-) -> Mapping[str, ArchivePayloadProof]:
-    """Prove stable Archive payloads without reopening the held candidates."""
-
-    rows = _work107_stable_archive_rows(context)
-    stable_paths = frozenset(str(row["stable_path"]) for row in rows)
-    records_by_path = {
-        path.as_posix(): ArchiveRecord(path.as_posix(), text.encode("utf-8"))
-        for path in context.paths
-        if path in context.tracked_regular_paths
-        and path in context.profiles
-        and context.profiles[path].profile_id == "archive/tombstone"
-        and (text := context.texts.get(path)) is not None
-    }
-    report = validate_archive_records(
-        context.root,
-        tuple(records_by_path.values()),
-        stable_archive_paths=stable_paths,
-    )
-    if not report.valid:
-        raise ConfigurationError("historical archive owner validation failed")
-
-    proofs: dict[str, ArchivePayloadProof] = {}
-    rows_by_stable_path = {str(row["stable_path"]): row for row in rows}
-    for archive_path, record in sorted(records_by_path.items()):
-        try:
-            parsed = parse_archive_envelope(record.content)
-        except ArchiveContractError as exc:
-            raise ConfigurationError("historical archive input differs") from exc
-        if archive_path in stable_paths:
-            try:
-                historical = recover_work107_legacy_envelope(
-                    context.root, rows_by_stable_path[archive_path]
-                )
-            except ArchiveContractError as exc:
-                raise ConfigurationError(
-                    "historical archive provenance differs"
-                ) from exc
-            if (
-                parsed.metadata.get("original_path")
-                != historical.metadata.get("original_path")
-                or parsed.metadata.get("source_commit")
-                != historical.metadata.get("source_commit")
-                or parsed.metadata.get("source_blob")
-                != historical.metadata.get("source_blob")
-                or parsed.metadata.get("content_sha256")
-                != historical.metadata.get("content_sha256")
-                or parsed.payload != historical.payload
-            ):
-                raise ConfigurationError("historical archive provenance differs")
-        remaining = record.content[: len(record.content) - len(parsed.payload)]
-        try:
-            remaining_text = remaining.decode("utf-8", errors="strict")
-        except UnicodeError as exc:
-            raise ConfigurationError("historical archive input differs") from exc
-        proofs[archive_path] = ArchivePayloadProof(record.content, remaining_text)
-    return MappingProxyType(proofs)
-
-
-def _reviewed_work054_historical_owner_edges(
-    context: Context,
-) -> dict[ArchiveTransitionEdge, PurePosixPath]:
-    proof = _historical_migration_proof(context)
-    return {
-        ArchiveTransitionEdge(
-            PurePosixPath(source), PurePosixPath(target)
-        ): PurePosixPath(terminal)
-        for (source, target), terminal in proof.rendered_dispositions.items()
-    }
-
-
-def _archive_boundary_diagnostic(
-    source: PurePosixPath,
-    profile: str,
-    target: PurePosixPath,
-    assessments: Mapping[PurePosixPath, Any] | None = None,
-) -> Diagnostic | None:
-    """Decide a link into Stage 98 from the registry's ordered citation table.
-
-    The table admits the archive index, historical links written inside Stage 98,
-    retained `completed/` and `resolved/` bodies, and, for an Incident or its
-    Postmortem, any retained body as evidence. Route and sealed records are
-    reached through the index by every source, so the exemption stays bound to
-    what a document is rather than to where it sits."""
-
-    decision = citation_decision(
-        _repository_registry(), source, profile, target, assessments=assessments
-    )
-    if decision is None or decision.admitted:
-        return None
-    return _diag(
-        "LINK-ARCHIVE-BYPASS",
-        source,
-        profile,
-        "archive index boundary",
-        "direct archive target",
-    )
-
-
 def _stage_boundary_diagnostic(
     source: PurePosixPath, profile: str, target: PurePosixPath
 ) -> Diagnostic | None:
@@ -3355,13 +2223,6 @@ _STAGE_PATH_TOKEN = re.compile(r"docs/[0-9]{2}\.[A-Za-z][^\s`\"'()\[\],;]*")
 _PATH_PATTERN_META = frozenset(".^$*+?()[]{}|\\")
 
 
-@lru_cache(maxsize=1)
-def _repository_registry() -> Registry:
-    """Load the repository registry the citation table is read from, once."""
-
-    return load_registry(Path(__file__).resolve().parents[1])
-
-
 def _leading_alternation(body: str) -> tuple[tuple[str, ...], str] | None:
     """Split a pattern that opens on one `(?:a|b)` group into branches and tail."""
 
@@ -3393,19 +2254,13 @@ def _leading_alternation(body: str) -> tuple[tuple[str, ...], str] | None:
 def _fixed_directory_prefixes(pattern: str) -> tuple[str, ...]:
     """Return one literal directory per root a pattern's leading group names.
 
-    ADR-0038 gives most profiles an active root and mirrored Stage 98 roots in
-    one pattern. Each branch still opens on a literal directory, so each branch
-    contributes the prefix it would contribute alone."""
+    A pattern may open on one group of alternative roots. Each branch still
+    opens on a literal directory, so each branch contributes the prefix it would
+    contribute alone."""
 
     body = pattern[1:] if pattern.startswith("^") else pattern
     split = _leading_alternation(body)
-    if split is None or any(
-        "98\\.archive/" in branch and "completed" in branch for branch in split[0]
-    ):
-        # ADR-0032's `completed/` mirror already opened the Stage 03 patterns
-        # on a branch, so their grammar was never governed and the root README
-        # documents the package grammar under that reading. ADR-0038 keeps the
-        # coverage where it was rather than widening it as a side effect.
+    if split is None:
         return (_fixed_directory_prefix(pattern),)
     branches, tail = split
     return tuple(_fixed_directory_prefix(branch + tail) for branch in branches)
@@ -3480,14 +2335,27 @@ def _stage_grammar_diagnostics(
     return diagnostics
 
 
+def _retired_reference_link(context: Context, target: PurePosixPath) -> bool:
+    """Admit a link to a retired path that declares an existing successor.
+
+    `RETIRED_REFERENCE_ALIASES` records renamed paths. A terminal Stage 90
+    document still names the path it observed, and rewriting it to follow the
+    rename is what the lifecycle policy forbids. The declared successor must
+    itself exist, so a retired alias cannot admit a link whose destination has
+    since disappeared.
+    """
+
+    successor = RETIRED_REFERENCE_ALIASES.get(target)
+    if successor is None:
+        return False
+    return _path_exists_without_dereference(
+        context.root, successor, context.adapter_targets
+    )
+
+
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
-    reviewed_work054_owner_edges = _reviewed_work054_historical_owner_edges(context)
-    registry = (
-        context.document_registry
-        or context.current_registry
-        or load_registry(context.root)
-    )
+    registry = context.current_registry or load_registry(context.root)
     stage_prefixes = _stage_document_prefixes(registry)
 
     def stage_target_exists(target: str) -> bool:
@@ -3497,18 +2365,6 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
 
     for source in context.paths:
         profile = context.profiles[source].profile_id
-        if profile == "archive/tombstone":
-            # ArchiveEnvelope.v1 payload links are historical evidence. Their
-            # authority is resolved against source_commit/original_path by the
-            # archive validator, never against the current worktree.
-            continue
-        if retention_class_of(registry, source) is not None:
-            # A retained document is terminal work, and its links are the
-            # historical evidence of what it cited when it was finished. A
-            # frozen ledger row or a Retention Catalog envelope names the origin
-            # path and commit that resolve them, so they are read the same way a
-            # record's links are rather than as current coupling.
-            continue
         diagnostics.extend(
             _stage_reference_diagnostics(source, profile, context.texts[source])
         )
@@ -3539,27 +2395,12 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                 )
                 continue
             assert target is not None
+            if target.is_relative_to(ARCHIVE_ROOT):
+                continue  # ADR-0053: the archive and links into it are unchecked.
             if not _path_exists_without_dereference(
                 context.root, target, context.adapter_targets
             ):
-                if (
-                    ArchiveTransitionEdge(source, target)
-                    in reviewed_work054_owner_edges
-                ):
-                    continue
-                if _work105_immutable_history_ard_link(context, source, target):
-                    continue
-                if _work105_accepted_history_ard_link(context, source, target):
-                    continue
-                if _work105_completed_history_ard_link(context, source, target):
-                    continue
-                if _migrated_directory_link(context, source, target):
-                    continue
                 if _retired_reference_link(context, target):
-                    continue
-                if _catalog_retained_link(context, source, target):
-                    continue
-                if _removed_unit_catalog_link(context, source, target):
                     continue
                 diagnostics.append(
                     _diag(
@@ -3571,11 +2412,6 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                     )
                 )
                 continue
-            archive = _archive_boundary_diagnostic(
-                source, profile, target, _archive_assessments(context)
-            )
-            if archive is not None:
-                diagnostics.append(archive)
             boundary = _stage_boundary_diagnostic(source, profile, target)
             if boundary is not None:
                 diagnostics.append(boundary)
@@ -3830,36 +2666,14 @@ def _body_contract_rows(
 def task_base_rows(
     text: str, profile: DocumentProfile
 ) -> tuple[tuple[tuple[str, str], ...], ...]:
-    """Read current Task rows, or a recognizable pre-binding seven-column base."""
+    """Read current Task rows."""
 
     contract = profile.body_contract
     if contract is None or contract.task_execution is None:
         return ()
     rows = _body_contract_rows(text, profile)
     if rows is None:
-        section = _exact_heading_section(text, "## Task Table")
-        table = _first_visible_table(section or "")
-        legacy_columns = (
-            "ID",
-            "Upstream criterion",
-            "Work item",
-            "Owner",
-            "Status",
-            "Result",
-            "Evidence",
-        )
-        previous_columns = legacy_columns[:-1] + ("Acceptance", "Evidence")
-        if table is None or tuple(table[0]) not in {
-            contract.required_columns,
-            legacy_columns,
-            previous_columns,
-        }:
-            return ()
-        header, cells = table
-        rows = [
-            dict(zip(header, (row + [""] * len(header))[: len(header)], strict=True))
-            for row in cells
-        ]
+        return ()
     return tuple(tuple(row.items()) for row in rows)
 
 
@@ -3902,7 +2716,7 @@ def task_evidence_rows(text: str, binding: object) -> list[dict[str, str]] | Non
 
 
 def task_base_evidence_rows(text: str) -> list[dict[str, str]] | None:
-    """Read historical or current Task evidence without changing its cells."""
+    """Read Task evidence without changing its cells."""
 
     section = _exact_heading_section(text, "## Task Evidence")
     table = _first_visible_table(section or "")
@@ -3921,8 +2735,6 @@ def lifecycle_markdown_evidence(
     text: str,
     profile: DocumentProfile,
     snapshot_profiles: Mapping[PurePosixPath, str],
-    *,
-    registry_generation: int | None = None,
 ) -> LifecycleMarkdownEvidence:
     """Return lifecycle evidence without reading the filesystem.
 
@@ -4028,17 +2840,6 @@ def lifecycle_markdown_evidence(
                         is None
                     ):
                         body_contract_valid = False
-            if (
-                contract.task_execution is not None
-                and not contract.task_execution.criterion_acceptance_section
-                and task_execution_issues(
-                    rows,
-                    document_status,
-                    contract.task_execution,
-                    template=profile.mode == "template",
-                )
-            ):
-                body_contract_valid = False
             binding = contract.task_execution
             if binding is not None and binding.evidence_section:
                 evidence_section = _exact_heading_section(
@@ -4059,13 +2860,10 @@ def lifecycle_markdown_evidence(
                         dict(zip(evidence_table[0], row, strict=True))
                         for row in evidence_table[1]
                     ]
-                    if binding.criterion_acceptance_section:
-                        decision_rows = task_acceptance_rows(text, binding)
-                        if decision_rows is None or task_contract_issues(
-                            rows, evidence_rows, decision_rows, document_status, binding
-                        ):
-                            body_contract_valid = False
-                    elif task_evidence_issues(evidence_rows, binding):
+                    decision_rows = task_acceptance_rows(text, binding)
+                    if decision_rows is None or task_contract_issues(
+                        rows, evidence_rows, decision_rows, document_status, binding
+                    ):
                         body_contract_valid = False
             link_columns = (
                 (contract.source_link_column, contract.allowed_source_profile_ids),
@@ -4122,20 +2920,6 @@ def lifecycle_markdown_evidence(
                 or all(row["Status"].strip() == "completed" for row in parsed_rows)
             )
         )
-        if (
-            registry_generation == 9
-            and binding is None
-            and profile.body_contract is not None
-            and profile.body_contract.section == "Traceability"
-            and profile.body_contract.table_heading == "Lifecycle Traceability"
-            and profile.body_contract.required_columns
-            == ("Criterion / work item", "Result", "Evidence")
-            and profile.body_contract.enforced_statuses
-            == ("queued", "in-progress", "blocked")
-        ):
-            # This exact historical contract did not bind terminal Task rows.
-            # Generation 10 still requires its execution and evidence tables.
-            task_terminal_valid = True
 
     return LifecycleMarkdownEvidence(
         path=path,
@@ -4154,43 +2938,9 @@ def _links_back_to(
     context: Context,
     owner: PurePosixPath,
     expected: PurePosixPath,
-    *,
-    registry: Registry | None = None,
 ) -> bool:
-    origin = owner
-    registry = (
-        registry
-        or context.document_registry
-        or context.current_registry
-        or load_registry(context.root)
-    )
-    if registry is not None and retention_class_of(registry, owner) is not None:
-        rows, errors = parse_catalog(context.texts.get(ARCHIVE_INDEX_PATH, ""))
-        enclosing = [
-            row for path, row in rows.items() if path == owner or path in owner.parents
-        ]
-        if errors or len(enclosing) != 1:
-            return False
-        row = enclosing[0]
-        origin = row.envelope.original_path / owner.relative_to(row.record_path)
-        if origin != retention_source_path(owner):
-            return False
-        try:
-            original = _run_git(
-                context.root,
-                (
-                    "--no-replace-objects",
-                    "cat-file",
-                    "blob",
-                    f"{row.envelope.commit}:{origin.as_posix()}",
-                ),
-            )
-        except (OSError, ValueError, subprocess.SubprocessError):
-            return False
-        if original != context.texts[owner].encode("utf-8"):
-            return False
     for raw_link in _extract_links(context.texts[owner]):
-        kind, target = _local_destination(origin, raw_link)
+        kind, target = _local_destination(owner, raw_link)
         if kind in {"local", "anchor"} and target == expected:
             return True
     return False
@@ -4742,18 +3492,12 @@ def _rendered_markdown(text: str) -> str:
     return _join_rendered_container_lines(_rendered_container_lines(text))
 
 
-# A declared Spec may have been retained under ADR-0032, so the decision can
-# name it either at its Stage 03 path or at its retention path. The identity
-# the roster compares is the four-digit Spec number, which the move preserves.
-
-
 def _body_contract_link_diagnostics(
     context: Context,
     profiles_by_id: dict[str, DocumentProfile],
     body_contracts: str,
     path_prefixes: tuple[PurePosixPath, ...] = (),
     *,
-    registry: Registry | None = None,
     selected_paths: frozenset[PurePosixPath] | None = None,
 ) -> list[Diagnostic]:
     """Validate registry-owned relationship cells and reciprocal evidence."""
@@ -4827,6 +3571,8 @@ def _body_contract_link_diagnostics(
                     continue
                 for raw_link in raw_links:
                     kind, target = _local_destination(path, raw_link)
+                    if kind == "local" and target.is_relative_to(ARCHIVE_ROOT):
+                        continue  # ADR-0053: links into the archive are unchecked.
                     if kind not in {"local", "anchor"} or target not in known_paths:
                         diagnostics.append(
                             _diag(
@@ -4867,7 +3613,7 @@ def _body_contract_link_diagnostics(
                     if (
                         contract.reciprocal_evidence
                         and reciprocal_in_scope
-                        and not _links_back_to(context, target, path, registry=registry)
+                        and not _links_back_to(context, target, path)
                     ):
                         diagnostics.append(
                             _diag(
@@ -4886,21 +3632,14 @@ def _owner_candidate(context: Context, path: PurePosixPath) -> bool:
     status = str(context.metadata[path].get("status", "")).casefold()
     if profile.mode != "authored" or profile.profile_class in {"readme", "exception"}:
         return False
-    if profile.profile_id == "archive/tombstone" or status not in {
-        "active",
-        "accepted",
-    }:
+    if status not in {"active", "accepted"}:
         return False
     return not any(pattern.match(path.as_posix()) for pattern in OWNER_EXCLUSIONS)
 
 
 def _traceability_lineage(context: Context, path: PurePosixPath) -> str:
     visible = _visible_markdown(context.texts[path])
-    registry = (
-        context.document_registry
-        or context.current_registry
-        or load_registry(context.root)
-    )
+    registry = context.current_registry or load_registry(context.root)
     profile_id = context.profiles[path].profile_id
     profile = next(
         (item for item in registry.profiles if item.profile_id == profile_id), None
@@ -4934,8 +3673,6 @@ def _traceability_lineage(context: Context, path: PurePosixPath) -> str:
         raw = path.stem
     elif re.fullmatch(r"docs/03\.specs/[^/]+/spec\.md", value):
         raw = path.parent.name
-    elif re.fullmatch(r"docs/04\.execution/(?:plans|tasks)/[^/]+\.md", value):
-        raw = re.sub(r"^\d{4}-\d{2}-\d{2}-", "", path.stem)
     else:
         raw = value.removesuffix(".md")
     return _normalize_component(raw)
@@ -5408,353 +4145,6 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
     return diagnostics
 
 
-def _archive_index_text(context: Context) -> str | None:
-    text = context.texts.get(ARCHIVE_INDEX_PATH)
-    if text is not None:
-        return text
-    try:
-        return (context.root / ARCHIVE_INDEX_PATH).read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError):
-        return None
-
-
-def _archive_assessments(context: Context) -> Mapping[PurePosixPath, Any]:
-    """Return the Retention Assessment rows the citation table judges with.
-
-    A malformed table yields no rows here; the lifecycle gate reports it."""
-
-    registry = _repository_registry()
-    text = _archive_index_text(context)
-    if text is None or registry.archive_assessment is None:
-        return {}
-    rows, errors = parse_assessment(registry, text)
-    return {} if errors else rows
-
-
-def _removed_unit_catalog_link(
-    context: Context, source: PurePosixPath, target: PurePosixPath
-) -> bool:
-    """Admit the Archive index's own catalog link to a unit that left the tree.
-
-    ADR-0040 keeps a removed unit's catalog row unchanged, so the row still
-    links the record Git recovers. Only the index gets this admission, and only
-    for a record its assessment table names as removed."""
-
-    if source != ARCHIVE_INDEX_PATH:
-        return False
-    text = _archive_index_text(context)
-    if text is None:
-        return False
-    removed = removed_records(
-        _repository_registry(),
-        text,
-        exists=lambda path: _path_exists_without_dereference(
-            context.root, path, context.adapter_targets
-        ),
-    )
-    return any(target == record or record in target.parents for record in removed)
-
-
-def _catalog_retained_link(
-    context: Context, source: PurePosixPath, target: PurePosixPath
-) -> bool:
-    """Admit a frozen Stage 98 link to a source a Retention Catalog row retained.
-
-    Frozen records and ledgers cannot be rewritten, so a link they hold to a
-    document that later left its stage is historical evidence. The link is
-    proved rather than waived: a catalog row names that original path in its
-    Retention Envelope, and the record the row names is a tracked regular path.
-    A current document gets no such admission; it cites the successor or the
-    current route instead.
-    """
-
-    if not source.is_relative_to(ARCHIVE_INDEX_PATH.parent):
-        return False
-    source_profile = context.profiles.get(source)
-    if source_profile is None or source_profile.profile_id not in {
-        "archive/migration",
-        "archive/tombstone",
-    }:
-        # Only the frozen generation holds links nobody may rewrite. A route
-        # record or index written under ADR-0038 follows the citation rule.
-        return False
-    index_text = context.texts.get(ARCHIVE_INDEX_PATH)
-    if index_text is None:
-        try:
-            index_text = (context.root / ARCHIVE_INDEX_PATH).read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
-            return False
-    rows, errors = parse_catalog(index_text)
-    if errors:
-        return False
-    return any(
-        row.envelope.original_path == target
-        and _path_exists_without_dereference(
-            context.root, record, context.adapter_targets
-        )
-        for record, row in rows.items()
-    )
-
-
-def _retired_reference_link(context: Context, target: PurePosixPath) -> bool:
-    """Admit a link to a retired path that declares an existing successor.
-
-    `RETIRED_REFERENCE_ALIASES` records the cutovers that never became
-    migration rows. A document sealed before such a cutover still names the
-    path it observed, and rewriting that document to follow the rename is what
-    the lifecycle policy forbids for terminal Stage 90 and Stage 98 evidence.
-    The link is proved rather than waived: the declared successor must itself
-    be a tracked regular path, so a retired alias cannot admit a link whose
-    destination has since disappeared.
-    """
-
-    successor = RETIRED_REFERENCE_ALIASES.get(target)
-    if successor is None:
-        return False
-    return _path_exists_without_dereference(
-        context.root, successor, context.adapter_targets
-    )
-
-
-def _migrated_directory_link(
-    context: Context,
-    source: PurePosixPath,
-    target: PurePosixPath,
-) -> bool:
-    """Admit a removed directory whose every held file moved to a proved owner.
-
-    The migration ledger is file-scoped: every row carries a source blob, so a
-    directory can never own a row of its own. A historical document may still
-    link the directory it observed. Such a link is proved, not waived, when the
-    directory is gone, its files are dispositioned from one sealed commit, and
-    each of those files resolves to a different current tracked owner.
-    """
-
-    posix = target.as_posix()
-    prefix = posix + "/"
-    proof = _context_migration_proof(context)
-    commits = {
-        disposition.source_commit
-        for path, disposition in proof.dispositions.items()
-        if path.startswith(prefix)
-    }
-    if len(commits) != 1:
-        return False
-    (commit,) = commits
-    try:
-        tree = _run_git(
-            context.root, ("ls-tree", "-d", "--name-only", "-z", commit, "--", posix)
-        )
-        listing = _run_git(
-            context.root, ("ls-tree", "-r", "--name-only", "-z", commit, "--", posix)
-        )
-    except (OSError, ValueError, subprocess.SubprocessError):
-        return False
-    if not [entry for entry in tree.split(b"\0") if entry]:
-        return False
-    held = [entry.decode("utf-8") for entry in listing.split(b"\0") if entry]
-    if not held:
-        return False
-    for entry in held:
-        owner = proof.targets.get(entry)
-        if owner is None or owner == entry:
-            return False
-        if PurePosixPath(owner) not in context.tracked_regular_paths:
-            return False
-    return True
-
-
-def _work105_accepted_history_source(
-    context: Context,
-    source: PurePosixPath,
-) -> bool:
-    """Return true only for the exact reviewed accepted-ADR history corpus."""
-
-    if (
-        source not in WORK105_ACCEPTED_HISTORY_ADR_PATHS
-        or context.metadata.get(source, {}).get("status") != "accepted"
-        or source not in context.texts
-    ):
-        return False
-    source_bytes = context.texts[source].encode("utf-8")
-    projected = _work108_without_history_artifact_id(source, source_bytes)
-    if projected is not None:
-        source_bytes = projected
-    amended_digest = WORK105_AMENDED_ACCEPTED_ADR_SHA256.get(source)
-    if amended_digest is not None:
-        return hashlib.sha256(source_bytes).hexdigest() == amended_digest
-    try:
-        pinned = read_commit_path_blob(
-            context.root,
-            context.work105_history_base_commit,
-            Path(source.as_posix()),
-        )
-    except ArchiveContractError:
-        return False
-    return source_bytes == pinned
-
-
-def _work108_without_history_artifact_id(
-    path: PurePosixPath, raw: bytes
-) -> bytes | None:
-    canonical = path.as_posix()
-    decision = re.fullmatch(
-        r"docs/02\.architecture/decisions/(?P<id>[0-9]{4})-[a-z0-9]+"
-        r"(?:-[a-z0-9]+)*\.md",
-        canonical,
-    )
-    stage03 = re.fullmatch(
-        r"docs/03\.specs/(?P<id>[0-9]{3})-[a-z0-9]+(?:-[a-z0-9]+)*/"
-        r"(?P<leaf>spec|plan|tasks)\.md",
-        canonical,
-    )
-    if decision is not None:
-        expected_id = f"ADR-{decision.group('id')}"
-    elif stage03 is not None:
-        prefix = {"spec": "SPEC", "plan": "PLAN", "tasks": "TASK"}[
-            stage03.group("leaf")
-        ]
-        expected_id = f"{prefix}-{stage03.group('id')}"
-    else:
-        return None
-    expected = f'artifact_id: "{expected_id}"'.encode("ascii")
-    lines = raw.splitlines(keepends=True)
-    if not lines or lines[0].rstrip(b"\r\n") != b"---":
-        return None
-    try:
-        frontmatter_end = next(
-            index
-            for index, line in enumerate(lines[1:], 1)
-            if line.rstrip(b"\r\n") == b"---"
-        )
-    except StopIteration:
-        return None
-    matches = [
-        index
-        for index, line in enumerate(lines[:frontmatter_end])
-        if line.rstrip(b"\r\n") == expected
-    ]
-    if len(matches) != 1 or matches[0] == 0:
-        return None
-    index = matches[0]
-    if not lines[index - 1].startswith(b"updated:"):
-        return None
-    return b"".join(lines[:index] + lines[index + 1 :])
-
-
-def _work105_accepted_history_ard_link(
-    context: Context,
-    source: PurePosixPath,
-    target: PurePosixPath,
-) -> bool:
-    """Admit reviewed accepted-ADR links to the exact retired ARD corpus."""
-
-    return (
-        target in WORK105_COMPLETED_HISTORY_ARD_TARGETS
-        and _work105_accepted_history_source(context, source)
-    )
-
-
-def _work105_completed_history_ard_link(
-    context: Context,
-    source: PurePosixPath,
-    target: PurePosixPath,
-) -> bool:
-    """Admit only exact pinned-base done-document links to the eight retired ARDs."""
-
-    if (
-        target not in WORK105_COMPLETED_HISTORY_ARD_TARGETS
-        or source not in context.tracked_regular_paths
-        or context.metadata.get(source, {}).get("status") != "done"
-        or source not in context.texts
-    ):
-        return False
-    try:
-        source_bytes = read_commit_path_blob(
-            context.root,
-            context.work105_history_base_commit,
-            Path(source.as_posix()),
-        )
-    except ArchiveContractError:
-        return False
-    current = context.texts[source].encode("utf-8")
-    projected = _work108_without_history_artifact_id(source, current)
-    return source_bytes == (projected if projected is not None else current)
-
-
-def _work105_immutable_history_ard_link(
-    context: Context,
-    source: PurePosixPath,
-    target: PurePosixPath,
-) -> bool:
-    """Preserve exact pinned Stage 90/98 links without rewriting history."""
-
-    if (
-        not any(
-            source.is_relative_to(root)
-            for root in (
-                PurePosixPath("docs/90.references"),
-                PurePosixPath("docs/98.archive"),
-            )
-        )
-        or target not in WORK105_IMMUTABLE_HISTORY_ARD_TARGETS
-        or source not in context.texts
-    ):
-        return False
-    if source == ARCHIVE_INDEX_PATH and _work107_stable_archive_index_source(
-        context, source
-    ):
-        return True
-    try:
-        source_bytes = read_commit_path_blob(
-            context.root,
-            context.work105_history_base_commit,
-            Path(source.as_posix()),
-        )
-    except ArchiveContractError:
-        return False
-    return source_bytes == context.texts[source].encode("utf-8")
-
-
-def _load_debt(
-    root: Path,
-    raw: Any | None = None,
-    *,
-    mode: str = "strict",
-) -> dict[str, Any]:
-    """Require the canonical retired semantic-debt source state."""
-
-    if mode not in {"compatibility", "strict"}:
-        raise ConfigurationError("mode must be compatibility or strict")
-    if raw is not None or (root / DEBT_PATH).exists():
-        raise ConfigurationError(
-            "DEBT-SOURCE-REINTRODUCED: semantic compatibility debt must remain absent"
-        )
-    if mode == "compatibility":
-        raise ConfigurationError(
-            "DEBT-SOURCE-MISSING: semantic compatibility debt is retired"
-        )
-    return {
-        "schemaVersion": 1,
-        "owner": "Spec 030",
-        "growthAllowed": False,
-        "items": [],
-    }
-
-
-def _apply_debt(
-    root: Path,
-    diagnostics: Iterable[Diagnostic],
-    mode: str,
-    contract: Any | None = None,
-) -> list[tuple[str, Diagnostic]]:
-    _load_debt(root, contract, mode=mode)
-    return [
-        ("FAIL", diagnostic)
-        for diagnostic in sorted(diagnostics, key=diagnostic_sort_key)
-    ]
-
-
 def _body_link_scope(
     context: Context,
     changed_paths: Sequence[str],
@@ -5790,7 +4180,6 @@ def _body_link_scope(
 
 def _raw_diagnostics(
     context: Context,
-    registry: Registry,
     profiles_by_id: dict[str, DocumentProfile],
     body_contracts: str = "registry",
     body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
@@ -5822,7 +4211,6 @@ def _raw_diagnostics(
             profiles_by_id,
             body_contracts,
             body_contract_path_prefixes,
-            registry=registry,
             selected_paths=selected_body_paths,
         )
     )
@@ -5864,7 +4252,6 @@ def _diagnostic_json(outcome: str, diagnostic: Diagnostic) -> dict[str, Any]:
         "expected": diagnostic.expected,
         "actual": diagnostic.actual,
         "owner": diagnostic.owner,
-        "debtToken": "",
     }
 
 
@@ -6013,13 +4400,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         diagnostics = _raw_diagnostics(
             context,
-            registry,
             profiles_by_id,
             args.body_contracts,
             tuple(args.body_contract_path_prefix),
             selected_body_paths=selected_body_paths,
         )
-        rows = _apply_debt(context.root, diagnostics, args.mode)
+        rows = [("FAIL", item) for item in sorted(diagnostics, key=diagnostic_sort_key)]
         if args.format == "json":
             print(
                 json.dumps(

@@ -74,12 +74,12 @@ is unchanged.
 - [ADR-0012](./0012-argo-notifications-slack.md) — Rollouts event notifications
 - [PRD](../../01.requirements/0001-argo-rollouts-progressive-delivery.md)
 - [ARD](../descriptions/0004-argo-rollouts-progressive-delivery.md)
-- [Spec](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
-- [Plan](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
-- [Task](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
+- Spec
+- Plan
+- Task
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Architecture owner](../descriptions/0004-argo-rollouts-progressive-delivery.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | [Completed implementation evidence](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| [Architecture owner](../descriptions/0004-argo-rollouts-progressive-delivery.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | Completed implementation evidence |

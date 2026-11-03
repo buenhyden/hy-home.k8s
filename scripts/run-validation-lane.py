@@ -1632,13 +1632,7 @@ def validator_argv(
     if path_input == "include-existing-markdown-and-changed":
         for raw_path in paths:
             contract_module.normalize_path(raw_path)
-    include_candidates = list(paths)
-
-    archive_form = "docs/99.templates/templates/archive/tombstone.template.md"
-    if (root / archive_form).is_file() and archive_form not in include_candidates:
-        include_candidates.append(archive_form)
-
-    for raw_path in include_candidates:
+    for raw_path in paths:
         if not raw_path.endswith(".md"):
             continue
         target = root.joinpath(*PurePosixPath(raw_path).parts)

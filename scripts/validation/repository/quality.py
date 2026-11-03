@@ -228,6 +228,20 @@ def visible_markdown_lines(markdown: str) -> list[tuple[int, str]]:
     return visible_lines
 
 
+def agents_router_gaps(tracked) -> list[str]:
+    """Return the human router each folder AGENTS.md lacks beside it."""
+
+    gaps = []
+    for path in sorted(tracked):
+        if pathlib.PurePosixPath(path).name != "AGENTS.md" or "/" not in path:
+            continue
+        folder = path.rsplit("/", 1)[0]
+        router = "repository-surface.md" if folder == ".github" else "README.md"
+        if f"{folder}/{router}" not in tracked:
+            gaps.append(f"{folder}/{router}")
+    return gaps
+
+
 def rel(path: pathlib.Path) -> str:
     return str(path.relative_to(root))
 
@@ -295,6 +309,9 @@ try:
 except Exception as exc:
     fail(f"git ls-files failed: {exc}")
 
+for missing_router in agents_router_gaps(tracked):
+    fail(f"folder AGENTS.md needs its human router {missing_router}")
+
 for tracked_path in sorted(tracked):
     if re.fullmatch(r"\.claude/[^/]+\.local\.md", tracked_path):
         fail(
@@ -313,7 +330,7 @@ for tracked_path in sorted(tracked):
 requirements_stage = root / "docs/01.requirements"
 if requirements_stage.exists():
     for requirement_doc in sorted(requirements_stage.glob("*.md")):
-        if requirement_doc.name == "README.md":
+        if requirement_doc.name in {"README.md", "AGENTS.md"}:
             continue
         if re.fullmatch(r"\d{4}-\d{2}-\d{2}-.+\.md", requirement_doc.name):
             fail(
@@ -329,7 +346,7 @@ if requirements_stage.exists():
 specs_stage = root / "docs/03.specs"
 if specs_stage.exists():
     for spec_entry in sorted(specs_stage.iterdir()):
-        if spec_entry.name == "README.md":
+        if spec_entry.name in {"README.md", "AGENTS.md"}:
             continue
         if spec_entry.is_dir():
             if not re.fullmatch(r"\d{4}-.+", spec_entry.name):
@@ -340,7 +357,8 @@ if specs_stage.exists():
             continue
         if spec_entry.is_file():
             fail(
-                f"docs/03.specs may contain only README.md and numbered Spec folders: {rel(spec_entry)}"
+                "docs/03.specs may contain only README.md, AGENTS.md and numbered "
+                f"Spec folders: {rel(spec_entry)}"
             )
 
 env_ignore_check = subprocess.run(
@@ -889,7 +907,8 @@ command_boundary_rules = [
     (
         "kubeconfig mutation",
         re.compile(
-            r"\b(?:aws\s+eks\s+update-kubeconfig|az\s+aks\s+get-credentials|kubectl\s+config)\b"
+            r"\b(?:aws\s+eks\s+update-kubeconfig|az\s+aks\s+get-credentials"
+            r"|kubectl\s+config\s+(?:set(?:-[a-z]+)?|unset|use-context|delete-[a-z]+|rename-context))\b"
         ),
         ["--kubeconfig", "--file", "temporary kubeconfig", "임시 kubeconfig"],
     ),

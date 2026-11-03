@@ -131,17 +131,6 @@ def main_checkout() -> Path:
 class PreEditAcceptanceTest(unittest.TestCase):
     """Paths inside this repository are accepted and resolved to their own root."""
 
-    def test_retired_governance_root_is_rejected(self):
-        for path in (
-            "docs/00.agent-governance/README.md",
-            "docs/00.agent-governance/roles/registry.json",
-        ):
-            with self.subTest(path=path):
-                result = run_hook(scalar_payload(path), ROOT)
-                self.assertEqual(result.returncode, 2, result.stderr)
-                self.assertIn("HOOK-PATH-RETIRED", result.stderr)
-                self.assertIn(".agents/", result.stderr)
-
     def test_common_governance_path_is_accepted_without_qa(self):
         result = run_hook(scalar_payload(".agents/governance/quality.md"), ROOT)
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -196,6 +185,13 @@ class PreEditAcceptanceTest(unittest.TestCase):
         result = run_hook(scalar_payload(str(target)), ROOT)
 
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_unvalidated_archive_path_needs_no_profile(self):
+        for target in ("docs/98.archive/README.md", "docs/98.archive/completed/x.md"):
+            result = run_hook(scalar_payload(target), ROOT)
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertNotIn("HOOK-DOC-ROUTE", result.stderr)
 
     def test_terminal_requirement_route_is_selected_from_registry(self):
         target = "docs/01.requirements/9999-example-feature.md"
@@ -284,27 +280,6 @@ class PreEditRejectionTest(unittest.TestCase):
 
         self.assert_rejected(payload, "HOOK-PATH-ROOT", project_dir=main_checkout())
 
-    def test_every_retired_standalone_form_is_rejected_with_terminal_owner(self):
-        cases = (
-            ("docs/01.requirements/prd-example-feature.md", "sdlc/requirement"),
-            ("docs/01.requirements/srs-example-feature.md", "sdlc/requirement"),
-            ("docs/01.requirements/ifc-example-feature.md", "sdlc/requirement"),
-            (
-                "docs/01.requirements/interface-example-feature.md",
-                "sdlc/requirement",
-            ),
-            ("docs/03.specs/9999-example-feature/design.md", "sdlc/spec"),
-            ("docs/03.specs/9999-example-feature/tests.md", "sdlc/spec"),
-            ("docs/03.specs/9999-example-feature/agent-design.md", "sdlc/spec"),
-            ("docs/03.specs/9999-example-feature/tasks.md", "sdlc/task"),
-        )
-        for path, owner in cases:
-            with self.subTest(path=path):
-                result = run_hook(scalar_payload(path), ROOT)
-                self.assertEqual(result.returncode, 2, result.stdout)
-                self.assertIn("HOOK-DOC-RETIRED", result.stderr)
-                self.assertIn(owner, result.stderr)
-
     def test_registry_template_parent_symlink_is_rejected(self):
         import json
 
@@ -321,7 +296,7 @@ class PreEditRejectionTest(unittest.TestCase):
             (registry_dir / "registry.json").write_text(
                 json.dumps(
                     {
-                        "schema_version": 9,
+                        "schema_version": 10,
                         "profiles": [
                             {
                                 "id": "sdlc/requirement",
@@ -347,6 +322,22 @@ class PreEditRejectionTest(unittest.TestCase):
         self.assertEqual(result.returncode, 2, result.stdout)
         self.assertIn("HOOK-DOC-TEMPLATE", result.stderr)
         self.assertIn("symlink component", result.stderr)
+
+    def test_registry_of_another_schema_generation_is_rejected(self):
+        import json
+
+        with tempfile.TemporaryDirectory() as directory:
+            project = Path(directory) / "repository"
+            (project / "docs/99.templates").mkdir(parents=True)
+            (project / "docs/99.templates/registry.json").write_text(
+                json.dumps({"schema_version": 9, "profiles": []}), encoding="utf-8"
+            )
+            result = run_hook(
+                scalar_payload("docs/01.requirements/9999-example-feature.md"),
+                project,
+            )
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("schema_version must be 10", result.stderr)
 
     def test_registry_parent_symlink_is_rejected(self):
         import json
@@ -807,14 +798,6 @@ class CodexPayloadTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("systemMessage", result.stdout)
 
-    def test_apply_patch_on_the_retired_authority_root_fails_closed(self):
-        payload = '{"tool_name":"apply_patch",%s}' % (
-            '"tool_input":{"file_path":"docs/00.agent-governance/x.md"}'
-        )
-        result = run_hook_without_project_dir(payload, ROOT)
-        self.assertEqual(result.returncode, 2)
-        self.assertIn("HOOK-PATH-RETIRED", result.stderr)
-
     def test_apply_patch_outside_the_repository_fails_closed(self):
         payload = '{"tool_name":"apply_patch","tool_input":{"file_path":"/etc/passwd"}}'
         result = run_hook_without_project_dir(payload, ROOT)
@@ -855,13 +838,13 @@ class ProviderScopedEnvironmentTests(unittest.TestCase):
         )
 
     def test_claude_payload_variable_is_read_only_for_claude(self):
-        retired = '{"tool_input":{"file_path":"docs/00.agent-governance/x.md"}}'
+        outside = '{"tool_input":{"file_path":"/etc/passwd"}}'
 
-        claude = self.run_guard("claude", "", {"CLAUDE_TOOL_INPUT": retired})
-        codex = self.run_guard("codex", "", {"CLAUDE_TOOL_INPUT": retired})
+        claude = self.run_guard("claude", "", {"CLAUDE_TOOL_INPUT": outside})
+        codex = self.run_guard("codex", "", {"CLAUDE_TOOL_INPUT": outside})
 
         self.assertEqual(claude.returncode, 2)
-        self.assertIn("HOOK-PATH-RETIRED", claude.stderr)
+        self.assertNotEqual(claude.stderr.strip(), "")
         self.assertEqual(codex.returncode, 0)
 
     def test_claude_path_variable_is_read_only_for_claude(self):

@@ -73,6 +73,11 @@ Docker Traefik proxies `kiali.hy-k8s.home.arpa` to the k3d ingress.
 
 ## Traceability
 
+**Current-state clarification (2026-11-03).** The ingress controller named
+here as `ingress-nginx` is the Traefik ingress controller under
+[ADR-0050](./0050-ingress-nginx-replacement-with-traefik.md). The Kiali
+hostname and the external observability boundary are unchanged.
+
 **Current-state clarification (2026-10-03).**
 [ADR-0037](0037-kiali-operator-installation.md) is accepted for the Kiali Operator
 installation and replaces only this record's install-mode/version clauses and
@@ -106,7 +111,7 @@ external-observability boundary itself is unchanged.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **ARD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
-- **Spec**: [`../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md`](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)
+- **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 - **Related ADR**: [`./0008-istio-install-and-ingress-coexist.md`](./0008-istio-install-and-ingress-coexist.md)
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)
 
@@ -114,4 +119,4 @@ external-observability boundary itself is unchanged.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | [Completed implementation evidence](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
+| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | Completed implementation evidence |

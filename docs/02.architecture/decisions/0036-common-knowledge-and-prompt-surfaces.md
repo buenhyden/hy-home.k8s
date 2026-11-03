@@ -49,7 +49,7 @@ The retired memory structure is a separate matter. It was retired under Spec
 0054 and Spec 0065 because a generated progress ledger competed with the owning
 Spec Task for the same authority. Nothing in this decision reopens it, and the
 governance validator continues to fail closed if that surface reappears. The
-Git-ignored runtime store that SPEC-0109 added later lives outside `.agents/`,
+Git-ignored runtime store (`scripts/workspace_memory.py`) added later lives outside `.agents/`,
 holds decision context only and is not that retired structure.
 
 ## Decision
@@ -131,13 +131,10 @@ other three keep that decision's answer and its reasoning.
 
 This decision supersedes ADR-0035,
 whose body stays intact as evidence of the decision taken at that time.
-SPEC-0075
-recorded the acceptance criteria, the ordered work and the execution evidence
-for the two adopted surfaces; its package is recovered from Git through the
-Retention Catalog in the [Archive index](../../98.archive/README.md).
+N/A — SPEC-0075 left the tree; Git history recovers it.
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| ADR-0035 | Revises the unadopted-directory clause to adopt a knowledge and a prompt surface; preserves the authority-location, skill-routing, gateway, preservation and validation clauses | SPEC-0075 |
+| ADR-0035 | Revises the unadopted-directory clause to adopt a knowledge and a prompt surface; preserves the authority-location, skill-routing, gateway, preservation and validation clauses | N/A — SPEC-0075 left the tree; Git history recovers it |

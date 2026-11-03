@@ -112,13 +112,6 @@ class ClassifyTests(unittest.TestCase):
         )
 
     def test_unchecked_documents(self):
-        self.assertIsNone(self.kind("docs/98.archive/retired/x.md"))
-        self.assertEqual(
-            self.kind(
-                "docs/98.archive/README.md", "common/readme-stage-index", "router"
-            ),
-            "korean-first",
-        )
         self.assertIsNone(self.kind("docs/03.specs/x/spec.md", terminal=True))
         self.assertIsNone(self.kind("AGENTS.md", "common/root-provider-shim", "native"))
         self.assertIsNone(self.kind("t.md", "common/template-x", "template", None))

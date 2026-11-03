@@ -214,12 +214,12 @@ kubectl -n headlamp rollout restart deployment headlamp
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
-- **Rollouts Spec**: `SPEC-0004` (retained; reach it through the Archive index)
-- **Notifications Spec**: `SPEC-0005` (retained; reach it through the Archive index)
+- **Rollouts Spec**: `SPEC-0004` (recovered from Git history)
+- **Notifications Spec**: `SPEC-0005` (recovered from Git history)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| N/A — SPEC-0004 is retained in `completed/` under ADR-0040 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Rollouts controller, CRDs, dashboard, promotion, analysis, or workload rollback needs bootstrap, diagnosis, or verification. | Platform operator records controller/CRD/Rollout/dashboard evidence and owns approved promotion or workload rollback. |
-| N/A — SPEC-0005 is retained in `completed/` under ADR-0040 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Notifications delivery or the ESO-backed Slack secret is missing or degraded without exposing credential values. | Platform operator records controller, ConfigMap, ExternalSecret, and redacted send/error evidence; secret owner restores the Vault input. |
+| N/A — SPEC-0004 left the tree and is recovered from Git history, so no eligible upstream document carries a reciprocal link | Rollouts controller, CRDs, dashboard, promotion, analysis, or workload rollback needs bootstrap, diagnosis, or verification. | Platform operator records controller/CRD/Rollout/dashboard evidence and owns approved promotion or workload rollback. |
+| N/A — SPEC-0005 left the tree and is recovered from Git history, so no eligible upstream document carries a reciprocal link | Notifications delivery or the ESO-backed Slack secret is missing or degraded without exposing credential values. | Platform operator records controller, ConfigMap, ExternalSecret, and redacted send/error evidence; secret owner restores the Vault input. |

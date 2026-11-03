@@ -64,12 +64,12 @@ Slack token bootstrap is performed only as a human-approved external OpenBao tas
 - [ADR-0041](./0041-openbao-secret-backend.md) — ESO/OpenBao secret management pattern
 - [PRD](../../01.requirements/0002-argo-notifications-slack.md)
 - [ARD](../descriptions/0005-argo-notifications-slack.md)
-- [Spec](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md)
-- [Plan](../../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md)
-- [Task](../../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md)
+- Spec
+- Plan
+- Task
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Architecture owner](../descriptions/0005-argo-notifications-slack.md) | N/A — first decision; no whole-document supersession | [Completed implementation evidence](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| [Architecture owner](../descriptions/0005-argo-notifications-slack.md) | N/A — first decision; no whole-document supersession | Completed implementation evidence |

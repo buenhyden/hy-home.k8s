@@ -33,7 +33,7 @@ model, effort, native 도구, 역할별 예외를 소유하고 중립 registry�
 - [provider.md](provider.md): provider별 적재·지원 계약.
 - `settings.json`: 현재 권한(allow, ask, deny), bypass 모드 비활성화, 등록된
   사전 동작 hook, native 자동 memory 비활성화(`autoMemoryEnabled: false`).
-  권한 범위와 남은 한계는 [provider.md](provider.md)와 SPEC-0114가 소유한다.
+  권한 범위와 남은 한계는 [provider.md](provider.md)가 소유한다.
 - `hooks/k8s-pre-edit.sh`: shell과 구조화 파일 도구에 대한 동기식 쓰기
   경계의 Claude adapter. 자기 provider 이름을 붙여 payload를 넘길 뿐이고,
   경계 자체는 `scripts/provider_write_guard.py`가 소유한다. provider마다 자기
@@ -46,9 +46,9 @@ model, effort, native 도구, 역할별 예외를 소유하고 중립 registry�
 
 ## Usage
 
-[provider baseline](CLAUDE.md)을 읽은 뒤 선택한 공통 역할과 그 역할에 필요한
-절차를 읽는다. 공통 skill은 명시적으로만 호출하며 추가 도구나 승인을 주지
-않는다. 절차는 `.agents/skills/`에서 한 번만 고친다. 개인 로컬 설정과 memory는
+Claude 세션은 [provider baseline](CLAUDE.md)에서 시작해 선택된 공통 역할과
+그 역할에 필요한 절차를 적용한다. 공통 skill은 명시적으로만 호출되며 추가
+도구나 승인을 주지 않는다. 절차의 원본은 `.agents/skills/` 한 곳이다. 개인 로컬 설정과 memory는
 공통 정책이 아니며, 재사용할 맥락은 공유 workspace memory store에 둔다.
 
 ## Verification
@@ -56,8 +56,8 @@ model, effort, native 도구, 역할별 예외를 소유하고 중립 registry�
 `python3 scripts/validate-agent-governance.py --root .`는 registry,
 binding 표 문법, 정확한 역할·skill 참조, 링크 경계, 중립 상한 권한 일치를
 검사한다. affected와 staged gate는 현재 validation registry에서 실제 입력에
-맞게 고른다. 퇴역한 full/ci sweep은 완료 명령이 아니다. 실제 native 적재,
-호출, hook 이벤트는 승인된 새 세션에서 따로 근거를 얻어야 한다.
+맞게 선택된다. 퇴역한 full/ci sweep은 완료 명령이 아니다. 실제 native 적재,
+호출, hook 이벤트는 승인된 새 세션에서 따로 얻는 근거다.
 
 ## Related Documents
 

@@ -38,10 +38,6 @@ MARKDOWN = load_module(
     "artifact_identity_markdown", SCRIPTS / "validate-markdown-profiles.py"
 )
 LIFECYCLE = importlib.import_module("document_lifecycle")
-LIFECYCLE_VALIDATOR = load_module(
-    "artifact_identity_lifecycle_validator",
-    SCRIPTS / "validate-document-lifecycle.py",
-)
 
 
 class PathArtifactIdentityTest(unittest.TestCase):
@@ -65,7 +61,7 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 "ADR-0072",
             ),
             "sdlc/spec": (
-                "docs/98.archive/completed/03.specs/0072-example/spec.md",
+                "docs/03.specs/0072-example/spec.md",
                 "SPEC-0072",
             ),
             "sdlc/plan": (
@@ -120,14 +116,6 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 "docs/90.references/data/0072-example/README.md",
                 "DATA-0072",
             ),
-            "archive/scope-migration": (
-                "docs/98.archive/migrations/0072-example.md",
-                "MIG-0072",
-            ),
-            "archive/route": (
-                "docs/98.archive/tombstones/0072-example.md",
-                "TOMB-0072",
-            ),
         }
 
         cls.pattern_owned = frozenset(
@@ -135,7 +123,6 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 "reference/audit-pack",
                 "reference/research-pack",
                 "reference/data-pack",
-                "archive/route",
             }
         )
 
@@ -147,10 +134,7 @@ class PathArtifactIdentityTest(unittest.TestCase):
             for profile in self.registry.profiles
             if profile.mode == "authored" and profile.artifact_id_pattern is not None
         }
-        self.assertEqual(
-            set(self.cases) - {"archive/scope-migration", "archive/route"},
-            authored,
-        )
+        self.assertEqual(set(self.cases), authored)
         for profile_id, (raw_path, expected) in self.cases.items():
             with self.subTest(profile=profile_id):
                 profile = self.profiles[profile_id]
@@ -214,30 +198,18 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 )
                 self.assertIn(expected, diagnostics[0].expected)
 
-    def test_template_placeholders_and_tombstone_payload_ids_are_not_current_ids(
-        self,
-    ) -> None:
+    def test_template_placeholders_are_not_current_ids(self) -> None:
         template_profile = self.profiles["common/template-sdlc-spec"]
         template_path = template_profile.template
         self.assertIsNotNone(template_path)
         template_text = (ROOT / template_path).read_text(encoding="utf-8")
-        tombstone_path = PurePosixPath(
-            "docs/98.archive/superseded/01.requirements/"
-            "0007-repository-delivery-and-platform-assurance.md"
-        )
-        tombstone_profile = MARKDOWN.classify_path(self.registry, tombstone_path)
-        tombstone_text = (ROOT / tombstone_path).read_text(encoding="utf-8")
         identities = MARKDOWN.current_artifact_identities(
             (
                 (template_path, template_profile, template_text),
                 (template_path, template_profile, template_text),
-                (tombstone_path, tombstone_profile, tombstone_text),
             )
         )
-        self.assertEqual(
-            identities,
-            ((tombstone_path, "tomb-REQ-0007"),),
-        )
+        self.assertEqual(identities, ())
 
     def test_partial_include_still_detects_duplicate_current_id(self) -> None:
         with tempfile.TemporaryDirectory(prefix="artifact-identity-") as temporary:
@@ -267,167 +239,32 @@ class PathArtifactIdentityTest(unittest.TestCase):
 
 
 class RetiredArtifactIdentityTest(unittest.TestCase):
-    def document(
-        self,
-        path: str,
-        artifact_id: str | None,
-        *,
-        profile: str = "sdlc/architecture-decision",
-        original_artifact_id: str | None = None,
-        original_path: str | None = None,
-        replacement: str | None = None,
-    ):
+    @staticmethod
+    def document(path: str, artifact_id: str | None):
         return LIFECYCLE.LifecycleDocument(
             path=PurePosixPath(path),
-            profile_id=profile,
-            status=(
-                "archived"
-                if profile == "archive/tombstone"
-                else "sealed"
-                if profile == "archive/migration"
-                else "accepted"
-            ),
+            profile_id="sdlc/architecture-decision",
+            status="accepted",
             artifact_id=artifact_id,
-            original_artifact_id=original_artifact_id,
-            original_path=None
-            if original_path is None
-            else PurePosixPath(original_path),
-            replacement=None if replacement is None else PurePosixPath(replacement),
-        )
-
-    def diagnostics(self, base, proposed, lineages=()):
-        return LIFECYCLE.artifact_identity_reuse_diagnostics(
-            base,
-            proposed,
-            identity_lineages=frozenset(lineages),
-            base_mode="staged",
         )
 
     def test_unrelated_new_path_cannot_reuse_base_identity(self) -> None:
         old = self.document("docs/02.architecture/decisions/0072-old.md", "ADR-0072")
         new = self.document("docs/02.architecture/decisions/0072-new.md", "ADR-0072")
-        diagnostics = self.diagnostics({old.path: old}, {new.path: new})
+        diagnostics = LIFECYCLE.artifact_identity_reuse_diagnostics(
+            {old.path: old}, {new.path: new}, base_mode="staged"
+        )
         self.assertEqual(
             [item.rule_id for item in diagnostics], ["LIFECYCLE-IDENTITY-REUSE"]
-        )
-
-    def test_verified_move_preserves_same_document_identity(self) -> None:
-        old = self.document("docs/02.architecture/decisions/0072-old.md", "ADR-0072")
-        new = self.document("docs/02.architecture/decisions/0072-new.md", "ADR-0072")
-        lineage = LIFECYCLE.ArtifactIdentityLineage("ADR-0072", old.path, new.path)
-        self.assertEqual(
-            self.diagnostics({old.path: old}, {new.path: new}, (lineage,)), ()
-        )
-
-    def test_tombstone_original_id_is_reserved_but_outer_id_is_distinct(self) -> None:
-        source = "docs/02.architecture/decisions/0072-old.md"
-        target = "docs/02.architecture/decisions/0072-replacement.md"
-        tombstone = self.document(
-            "docs/98.archive/superseded/02.architecture/decisions/0072-old.md",
-            "tomb-ADR-0072",
-            profile="archive/tombstone",
-            original_artifact_id="ADR-0072",
-            original_path=source,
-            replacement=target,
-        )
-        unrelated = self.document(
-            "docs/02.architecture/decisions/0072-unrelated.md", "ADR-0072"
-        )
-        replacement = self.document(target, "ADR-0072")
-        self.assertEqual(
-            [
-                item.rule_id
-                for item in self.diagnostics(
-                    {},
-                    {
-                        tombstone.path: tombstone,
-                        unrelated.path: unrelated,
-                    },
-                )
-            ],
-            ["LIFECYCLE-IDENTITY-REUSE"],
-        )
-        self.assertEqual(
-            self.diagnostics(
-                {}, {tombstone.path: tombstone, replacement.path: replacement}
-            ),
-            (),
-        )
-
-    def test_verified_sealed_rows_reserve_sources_and_only_allow_exact_targets(
-        self,
-    ) -> None:
-        migration_path = PurePosixPath(
-            "docs/98.archive/migrations/0004-document-authority-convergence.md"
-        )
-        migration_text = (ROOT / migration_path).read_text(encoding="utf-8")
-        migration = self.document(
-            migration_path.as_posix(),
-            "MIG-0004",
-            profile="archive/migration",
-        )
-        events, diagnostics = LIFECYCLE_VALIDATOR._migration_lifecycle_events(
-            ROOT,
-            MARKDOWN.load_registry(ROOT),
-            {},
-            {},
-            {},
-            {migration_path: migration},
-            {migration_path: migration_text},
-            proposed_commit=None,
-            mode="staged",
-        )
-        self.assertEqual(diagnostics, ())
-        rows = LIFECYCLE_VALIDATOR.parse_pinned_migration_control(
-            migration_path.as_posix(), migration_text.encode("utf-8")
-        )
-        expected_lineages = {
-            LIFECYCLE.ArtifactIdentityLineage(
-                str(row["artifact_id"]),
-                PurePosixPath(str(row["legacy_path"])),
-                PurePosixPath(str(row["stable_path"])),
-            )
-            for row in rows
-            if row["action"] == "moved" and row["artifact_id"] is not None
-        }
-        self.assertTrue(any(row["artifact_id"] is None for row in rows))
-        self.assertEqual(events.identity_lineages, expected_lineages)
-
-        lineage = min(events.identity_lineages)
-        exact_target = self.document(
-            lineage.target_path.as_posix(), lineage.artifact_id
-        )
-        unrelated_target = self.document(
-            "docs/02.architecture/decisions/9999-unrelated.md",
-            lineage.artifact_id,
-        )
-        self.assertEqual(
-            self.diagnostics(
-                {}, {exact_target.path: exact_target}, events.identity_lineages
-            ),
-            (),
-        )
-        self.assertEqual(
-            [
-                item.rule_id
-                for item in self.diagnostics(
-                    {},
-                    {unrelated_target.path: unrelated_target},
-                    events.identity_lineages,
-                )
-            ],
-            ["LIFECYCLE-IDENTITY-REUSE"],
         )
 
 
 class ScopedDocumentMetadataTests(unittest.TestCase):
     def test_scoped_cli_keeps_global_duplicate_identity_and_pending_census(self):
-        unrelated = PurePosixPath(
-            "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md"
-        )
+        unrelated = PurePosixPath("docs/03.specs/0140-archive-check-removal/plan.md")
         selected = (
-            "docs/03.specs/0107-local-qa-and-release/tasks/"
-            "tsk-0003-purpose-qa-and-ci.md"
+            "docs/03.specs/0140-archive-check-removal/tasks/"
+            "tsk-0001-archive-check-removal.md"
         )
         source_registry = MARKDOWN.load_registry(ROOT)
         language = dataclasses.replace(
@@ -441,7 +278,7 @@ class ScopedDocumentMetadataTests(unittest.TestCase):
             text = original_read(root, path)
             if path == unrelated:
                 return text.replace(
-                    'artifact_id: "SPEC-0106"', 'artifact_id: "SPEC-0107"', 1
+                    'artifact_id: "SPEC-0140-PLAN-0001"', 'artifact_id: "SPEC-0140"', 1
                 )
             return text
 
@@ -486,7 +323,7 @@ class ScopedDocumentMetadataTests(unittest.TestCase):
 
     def test_unselected_body_is_skipped_but_malformed_frontmatter_still_fails(self):
         path = PurePosixPath(
-            "docs/03.specs/0107-local-qa-and-release/tasks/tsk-0003-purpose-qa-and-ci.md"
+            "docs/03.specs/0140-archive-check-removal/tasks/tsk-0001-archive-check-removal.md"
         )
         registry = MARKDOWN.load_registry(ROOT)
         profile = MARKDOWN.classify_path(registry, path)

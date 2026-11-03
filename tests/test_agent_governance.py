@@ -1,4 +1,4 @@
-"""Common authority cutover and native adapter negative contracts."""
+"""Common authority and native adapter negative contracts."""
 
 from __future__ import annotations
 
@@ -143,150 +143,6 @@ class NativeBoundaryTests(unittest.TestCase):
 
     def test_minimal_valid_fixture(self):
         self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
-
-    def test_cli_snapshots_unstaged_owners_without_changing_original_index(self):
-        import io
-        import os
-        import subprocess
-        import sys
-        from contextlib import redirect_stdout
-        from unittest import mock
-
-        sys.path.insert(0, str(ROOT / "scripts"))
-        self.addCleanup(sys.path.remove, str(ROOT / "scripts"))
-        import agent_governance_consumers
-
-        def git(*arguments):
-            return subprocess.run(
-                ["/usr/bin/git", "-c", "core.hooksPath=/dev/null", *arguments],
-                cwd=self.root,
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                env={
-                    "HOME": "/dev/null",
-                    "GIT_CONFIG_NOSYSTEM": "1",
-                    "GIT_CONFIG_GLOBAL": "/dev/null",
-                    "LC_ALL": "C",
-                },
-            ).stdout
-
-        git("init", "--quiet")
-        git("add", "RTK.md")
-        git(
-            "-c",
-            "user.name=Fixture",
-            "-c",
-            "user.email=fixture@example.invalid",
-            "commit",
-            "--quiet",
-            "-m",
-            "fixture",
-        )
-        before = (self.root / ".git/index").read_bytes()
-        head = git("rev-parse", "HEAD")
-        observed = []
-
-        def consumer(snapshot):
-            self.assertNotEqual(snapshot, self.root)
-            files = subprocess.run(
-                ["/usr/bin/git", "ls-files", "-z"],
-                cwd=snapshot,
-                check=True,
-                stdout=subprocess.PIPE,
-            ).stdout.split(b"\0")
-            self.assertIn(b".agents/roles/registry.json", files)
-            observed.append(snapshot)
-            return {}
-
-        output = io.StringIO()
-        with (
-            mock.patch.object(
-                agent_governance_consumers, "validate_repository", side_effect=consumer
-            ),
-            redirect_stdout(output),
-        ):
-            self.assertEqual(self.validator.main(["--root", os.fspath(self.root)]), 0)
-        self.assertEqual(len(observed), 1)
-        self.assertIn("working-tree snapshot", output.getvalue())
-        self.assertEqual((self.root / ".git/index").read_bytes(), before)
-        self.assertEqual(git("rev-parse", "HEAD"), head)
-
-    def test_cli_uses_clean_index_without_a_nested_snapshot(self):
-        import io
-        import os
-        import sys
-        from contextlib import redirect_stdout
-        from unittest import mock
-
-        sys.path.insert(0, str(ROOT / "scripts"))
-        self.addCleanup(sys.path.remove, str(ROOT / "scripts"))
-        import agent_governance_consumers
-        import qa
-
-        with (
-            mock.patch.object(qa, "git", return_value=b""),
-            mock.patch.object(
-                qa, "repository_snapshot", side_effect=AssertionError("nested snapshot")
-            ),
-            mock.patch.object(
-                agent_governance_consumers, "validate_repository", return_value={}
-            ) as consumer,
-            redirect_stdout(io.StringIO()) as output,
-        ):
-            self.assertEqual(self.validator.main(["--root", os.fspath(self.root)]), 0)
-        consumer.assert_called_once_with(self.root)
-        self.assertIn("current indexed tree", output.getvalue())
-
-    def test_cli_snapshot_failure_has_no_direct_fallback(self):
-        import io
-        import os
-        import sys
-        from contextlib import redirect_stderr
-        from unittest import mock
-
-        sys.path.insert(0, str(ROOT / "scripts"))
-        self.addCleanup(sys.path.remove, str(ROOT / "scripts"))
-        import qa
-
-        with (
-            mock.patch.object(qa, "git", return_value=b"changed\0"),
-            mock.patch.object(
-                qa,
-                "repository_snapshot",
-                side_effect=ValueError("synthetic-private-payload"),
-            ),
-            mock.patch.object(
-                self.validator,
-                "validate_registry",
-                side_effect=AssertionError("fallback"),
-            ),
-            redirect_stderr(io.StringIO()) as errors,
-        ):
-            self.assertEqual(self.validator.main(["--root", os.fspath(self.root)]), 2)
-        self.assertNotIn("synthetic-private-payload", errors.getvalue())
-        self.assertIn("AGENT-REGISTRY-INPUT", errors.getvalue())
-
-    def test_old_root_recreation_rejects_any_node_without_read(self):
-        import os
-
-        path = self.root / "docs/00.agent-governance"
-        path.parent.mkdir(exist_ok=True)
-        for kind in ("directory", "symlink", "file", "fifo"):
-            with self.subTest(kind=kind):
-                if kind == "directory":
-                    path.mkdir()
-                elif kind == "symlink":
-                    path.symlink_to("synthetic-private-payload")
-                elif kind == "file":
-                    path.write_text("synthetic-private-payload")
-                else:
-                    os.mkfifo(path)
-                self.assert_rejected("AGENT-GOVERNANCE-RETIRED")
-                if kind == "directory":
-                    path.rmdir()
-                else:
-                    path.unlink()
 
     def test_missing_source_and_orphan_projection_reject(self):
         source = self.root / self.registry["roles"][0]["projections"]["neutral"]
@@ -991,19 +847,8 @@ class NativeBoundaryTests(unittest.TestCase):
         path.write_text(path.read_text().replace("- `RTK.md`\n", ""))
         self.assert_rejected("AGENT-NATIVE-REFERENCE")
 
-    def test_current_common_source_cannot_reintroduce_old_dependency(self):
-        path = self.root / ".codex/provider.md"
-        path.write_text(path.read_text() + "Read `.agents/registry.json`.\n")
-        with self.assertRaises(self.validator.HarnessError):
-            self.validator.validate_current_sources(self.root)
-
     def test_codex_native_hooks_are_a_supported_surface(self):
-        """`.codex/hooks.json` is current native configuration, not residue.
-
-        The surface was retired while the installed client had no hook
-        support. That client now ships one, so the guard is registered
-        rather than denied.
-        """
+        """`.codex/hooks.json` is current native configuration."""
         import json
 
         path = self.root / ".codex/hooks.json"
@@ -1071,49 +916,6 @@ class NativeBoundaryTests(unittest.TestCase):
                 continue
             name = assignment.split("=", 1)[0]
             self.assertIn(name, script, f"{name} is passed to the guard but never read")
-
-
-class RetiredSurfaceTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        from tests.test_validate_agent_registry import load_validator
-
-        cls.validator = load_validator()
-
-    def test_old_root_and_duplicate_owners_reject_without_reading(self):
-        import os
-        import tempfile
-
-        for relative in (
-            "docs/00.agent-governance",
-            ".agents/memory",
-            ".agents/rules",
-            ".agents/agents",
-            ".agents/registry.json",
-            ".agents/registry.schema.json",
-            ".agents/hooks",
-            ".agents/providers",
-        ):
-            for kind in ("directory", "symlink", "file", "fifo"):
-                with (
-                    self.subTest(path=relative, kind=kind),
-                    tempfile.TemporaryDirectory() as directory,
-                ):
-                    root = Path(directory)
-                    path = root / relative
-                    path.parent.mkdir(parents=True, exist_ok=True)
-                    if kind == "directory":
-                        path.mkdir()
-                    elif kind == "symlink":
-                        path.symlink_to("synthetic-private-payload")
-                    elif kind == "file":
-                        path.write_text("synthetic-private-payload")
-                    else:
-                        os.mkfifo(path)
-                    with self.assertRaises(self.validator.HarnessError) as raised:
-                        self.validator.validate_absent_surfaces(root)
-                    self.assertEqual(raised.exception.code, "AGENT-GOVERNANCE-RETIRED")
-                    self.assertNotIn("synthetic-private-payload", str(raised.exception))
 
 
 class ReadOnlyShellScopeTests(unittest.TestCase):

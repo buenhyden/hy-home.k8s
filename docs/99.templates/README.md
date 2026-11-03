@@ -1,18 +1,15 @@
 ---
 title: "99.templates"
-version: "0.16.0"
+version: "0.16.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-11-03"
 layer: "templates"
 ---
 # 99.templates
 
 > repo-authored 문서와 README가 시작해야 하는 canonical template stage다.
-
-> [!NOTE]
-> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../.agents/README.md)를 따른다.
 
 ## Overview
 
@@ -30,39 +27,8 @@ Skill을 포함한 67개 저장소 상대 경로다. digest는 중복 없는 경
 순서로 정렬하고 각 경로 bytes·NUL·해당 Git blob 원문 bytes를 SHA-256에
 차례로 넣어 계산한다. blob 뒤에는 별도 NUL을 넣지 않는다.
 
-검토용 `3.0.0-draft.8` 묶음의 실제 정상 commit은
-`bc5b70556c57198768119f94c287f93c87964482`이고, 그 원본 blob digest는
-Registry의 `sha256:aa2523943e35908ba24e4e415793f7aa8099de247aa3628ec1678cd6c91725ee`다.
-별도 인증된 buenhyden 결정 `call_415633a444f34091860dcb4b8700431d/0`은
-바로 이 commit·digest를 최종 `WGOV-CORE / 3.0.0`으로 승인했다. commit과
-digest만으로 승인을 추론하지 않으며, 이 결정 참조가 판본 승인 근거다.
-Project-Template native commit/정적 리뷰 통과는 그 원본 입력에 한정된다.
-현재 k8s 작업에서는 원본 commit의 Git blob 67개를 독립적으로 읽어 같은
-경로 정렬·NUL·원문 byte 절차로 digest를 재계산해 일치함을 확인했다.
-이 원본 인증의 근거는 [현재 잔여 통제 Task](../03.specs/0115-r10-local-remediation/tasks/tsk-0005-r13-residual-controls.md)의
-EVD-001이며, 지역 채택이나 다른 저장소의 적용 증거가 아니다.
-
-Registry의 `stage: adopted`는 이 저장소의 지역 adapter 선언이다. 공동
-owner의 원본 판본 승인과는 별도이며, Registry 값만으로 지역 수용 완료를
-주장하지 않는다. 지역 수용의 근거는 [현재 잔여 통제 Task](../03.specs/0115-r10-local-remediation/tasks/tsk-0005-r13-residual-controls.md)의
-EVD-038 통합 staged QA, EVD-024·025의 독립 검토, 그리고 2026-10-16 buenhyden의 수용
-판정(EVD-039)이다.
-Project-Template의 P06 Git 소비자는 별도 commit
-`10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`에서 관측했다. 이전 k8s C07
-Commitizen 문법 차이는 이번 지역 수정에서 원래 네 문장 재비교와 집중
-회귀가 통과했다. 생성 메시지의 정확한 예외 형태, release parser와 PR
-제목의 로컬 정적 경계도 확인했다. 수정된 21개 경로는 선택된 19개
-검사를 모두 통과했고, 실제 commit 메시지의 고정 Commitizen·지역 형태
-검사와 독립 소스 검토를 거쳐 `2a99a8bb25e4ffd521af89a3cf4e9dd7d66288bc`로
-정상 commit된 뒤 동일 tree로 지역 `main`에 통합됐다. 이는 C07 지역
-구현과 로컬 전달의 근거이며 공통 계약 전체의 지역 채택 판정은 아니다.
-PR 제목의 GitHub Actions 실제 실행이나 PR SHA 결과는 관측하지 않았다.
-다른 세 저장소와
-네 저장소 공동 채택은 각자의 실제 adapter·
-승인판본 적용 근거가 생긴 뒤 별도로 기록한다. Kubernetes의 Task 상태
-요약·후속 Task로 의무를 이관하는 `superseded`·과거 완료 부모, 문서 언어와
-native 문법, Task와 저장소의 권한을 대체하지 않는 자문용 공유 workspace
-memory는 명시된 지역 차이이며 별도 공동 정본을 뜻하지 않는다.
+공동 승인 `approval_ref`는 Registry `shared_contract`가 소유하며, 이전 검증 근거는
+Git history에서 복구한다.
 
 현행 지역 언어 확장에서는 `.agents/` governed Markdown에 새로
 쓰는 설명을 한국어로 작성하며 기존 영어 본문도 유효하다. Registry가 요구하는
@@ -74,17 +40,6 @@ JSON·YAML 등 비 Markdown 파일과 `.codex/`·`.claude/`의 native 문서는
 복사해 작성한 `.agents/` 본문의 새 설명에 위 지역 규칙을 적용한다. 이 확장
 하나만으로 승인된 WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 
-`WGOV-CORE / 3.0.0`에 대한 네 주장은 근거와 상태가 서로 다르며, 하나의
-근거로 다른 주장을 대신하지 않는다. 근거 Task는 SPEC-0105의
-`tasks/tsk-0004-current-contract-review.md`다.
-
-| 주장 | 현재 상태 | 근거 |
-| --- | --- | --- |
-| 공동 승인 | 확인됨 | Registry `approval_ref`와 Task EVD-033의 결정 원문 |
-| 원본 검증 | 현재 k8s 작업에서 원본 commit의 67개 Git blob으로 digest를 독립 재계산해 일치함을 확인했다 | [잔여 통제 Task](../03.specs/0115-r10-local-remediation/tasks/tsk-0005-r13-residual-controls.md)의 EVD-001. 앞선 [Task](../03.specs/0105-authority-and-safe-authoring/tasks/tsk-0004-current-contract-review.md)의 EVD-032 원자료는 당시 Git이 무시하는 `_workspace/residual-controls/`에 있었으며 2026-10-15 checkout에서 접근되지 않았다. 현재 검증은 별도 로컬 Git 원본 객체에 근거한다 |
-| 지역 수용 | C07 범위는 완료됐다. C04·C08 문서 의미 검토는 통과했으며, 공통 core 전체의 통합 검사와 기준 수용 판정은 진행 중이다 | [잔여 통제 Task](../03.specs/0115-r10-local-remediation/tasks/tsk-0005-r13-residual-controls.md)의 EVD-002·EVD-023과 기준 수용 표 |
-| 네 저장소 공동 채택 | 근거 없음, 관측하지 않았다 | 다른 세 저장소의 adapter·적용 근거가 기록되기 전까지 주장하지 않는다 |
-
 ## Scope
 
 ### Responsibility Boundary
@@ -94,7 +49,7 @@ JSON·YAML 등 비 Markdown 파일과 `.codex/`·`.claude/`의 native 문서는
 | Machine contract | 경로를 정확히 하나의 profile과 form으로 분류하고 lifecycle edge를 검증한다. | [Document Profile Registry](./registry.json)와 [`contracts/`](./contracts/)의 두 schema |
 | Human guidance | profile을 고르고 안전하게 작성·검증·복구하는 방법을 설명하며 machine authority가 아니다. | 이 README |
 | Forms | 작성자가 복사한 뒤 topic-specific 사실과 증거로 채우는 최소 구조를 제공한다. | [`templates/`](#physical-form-inventory) |
-| Authored documents | 요구, 결정, 명세, 실행, 운영, 참조, 보존 증거를 소유한다. | `docs/01.requirements`부터 `docs/05.operations`, `docs/90.references`, `docs/98.archive` |
+| Authored documents | 요구, 결정, 명세, 실행, 운영, 참조를 소유한다. | `docs/01.requirements`부터 `docs/05.operations`, `docs/90.references` |
 
 이 stage는 실제 PRD, AD, ADR, Spec, Plan, Task, 운영 기록이나 기능별 구현
 계약을 소유하지 않는다. Form에는 재사용 가능한 구조만 두고, 공통 규칙은 이 README
@@ -113,8 +68,10 @@ form 경로의 대응은 Registry만 소유한다.
   `Overview`/`Scope`/`Structure`/`Usage`/`Related Documents` core without a
   separate artifact identity. Path-specific registry profiles still choose the
   repository, stage, collection, implementation, and workspace forms and any
-  optional module. The current Archive catalog has its own `archive/catalog`
-  type and retains the catalog tables.
+  optional module. A README addresses human readers only. Agent instructions
+  for a folder live in its `AGENTS.md`, a native `common/folder-agents-guide`
+  file with no frontmatter and no form; the root `AGENTS.md` and `CLAUDE.md`
+  stay `common/root-provider-shim` gateways.
 - **Governance forms** (`governance/`): 공통 SDLC 계약, provider note, 역할,
   정책, 워크플로, 지식 지도, 프롬프트 계약에 `contract`, `provider`, `role`,
   `rule`, `skill`, `knowledge`, `prompt` form이 대응한다. 공통 소유자는
@@ -155,9 +112,6 @@ form 경로의 대응은 Registry만 소유한다.
   `####-<slug>/README.md`는 `reference/audit-pack`·`reference/data-pack`·`reference/research-pack` form을,
   pack member `####-<slug>/m####-<slug>.md`는 같은 family의
   `audit-reference`·`data-reference`·`research-reference` form을 사용한다.
-- **Archive forms** (`archive/`): route disposition인 `route-tombstone`과
-  `scope-migration`, 그리고 동결 generation의 `migration` 원장과 `tombstone` record.
-  보존 단위에는 form이 없다. retention class는 원본 Git object를 그대로 옮긴다.
 - **Runtime forms** (`runtime/`): provider가 직접 읽는 binding만 담는다.
   Claude는 `claude-agent.template.md`와 `claude-command.template.md`, Codex는
   `codex-agent.template.toml`이며 이 form들은 provider 소유
@@ -194,6 +148,7 @@ Stage 90 collection contract가 요구하는 audit/data collection·pack 경로�
 | [contracts/](./contracts/) | 기계 계약과 그 schema |
 | [templates/](./templates/) | 복사해서 쓰는 form catalog |
 | [registry.json](./registry.json) | Document Profile Registry |
+| [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 
 이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
 [form catalog](./templates/README.md)가 소유한다.
@@ -212,8 +167,8 @@ Stage 90 collection contract가 요구하는 audit/data collection·pack 경로�
 4. **Validate**: registry, Markdown profile, link/owner 검증과 repository quality
    gate를 실행하고 repo-static 결과와 remote/live 결과를 구분해 기록한다.
 
-Template 선택은 Registry profile ID를 따른다. lifecycle, supersession,
-retention, Archive 의무는 `.agents/governance`가 설명하고 정확한 machine 값은
+Template 선택은 Registry profile ID를 따른다. lifecycle, supersession
+의무는 `.agents/governance`가 설명하고 정확한 machine 값은
 Registry가 소유한다. Governed README도 공통 envelope를 사용하지만
 "artifact_id"와 lifecycle binding은 없으며, "status: active"는 router
 constant다. Template은 실제 destination path를 hardcode하지 않는다.
@@ -268,8 +223,10 @@ frontmatter `status`는 생략한다. validator와 lifecycle reader는 행 상�
 다중 행 Task는 그 값이 행 파생 값과 같아야 하며, 과거 기록은 다시 쓰지 않는다.
 현재 열 형식의 표를 읽을 수 없으면 요약을 파생하지 않고 상태 누락으로
 실패한다. `ready`는 실행 준비이지 별도 승인 단계가
-아니다. `superseded`는 실제 후속 Task의 Plan 배정과 남은 기준의 귀속이 확인된 경우에만
-사용하며, 상태만 바꿔 미완료 기준이나 실패를 지우지 않는다.
+아니다. Stage 01·02·03 문서에는 `superseded`·`retired`·`deprecated` 상태와
+이전 양식이 없다. 대체·철회된 문서와 완료된 Spec Package는 소유 현행 문서의
+`Archived Lineage` 표에 요약한 뒤 같은 변경에서 삭제하며, 후속 문서는 `supersedes`와
+Traceability에 이전 문서를 적는다. 정본은 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)다.
 Result, Criterion Acceptance, Task Evidence와 실제 승인 사실은 관측에 따라
 별도로 작성한다.
 
@@ -287,7 +244,7 @@ Result, Criterion Acceptance, Task Evidence와 실제 승인 사실은 관측에
 `Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`도 이 지역 adapter의 좁은 확장이다. 범위를 정한
 현행 사용자 지시, 실제 묶음 리뷰와 승인이 기록된 Spec·Plan은 `draft`에서
 `approved`로 직접 전이할 수 있다. 새 Spec·Plan의 최초 Git 기록은 계속
-`draft`이며, `approved`는 실행 완료나 Task 기준 수용 또는 Archive 적격을
+`draft`이며, `approved`는 실행 완료나 Task 기준 수용을
 뜻하지 않는다. 관측하지 않은 중간 상태의 commit을 만들어 전이를 꾸미지
 않는다. 이 지역 규칙 하나만으로 WGOV-CORE 3.0.0의 새 판본 승인이나 지역
 전체 채택을 뜻하지 않으며, 후속 전이와 증거 검증은 그대로 유지한다.
@@ -323,23 +280,8 @@ identity는 Registry contract version과 Git history가 소유한다.
 README router에는 stable "artifact_id"가 없으며 reference pack anchor는
 기존 AUD/RES/DATA identity와 게시 생명주기를 유지한다. governance에는 기존
 optional identity만 보존한다.
-"archive/tombstone"은 sealed envelope provenance key를 추가로 가진다.
-현재 "archive/route"와 "archive/scope-migration" profile은 같은
-"archive/route" type과 draft/sealed를 투영하며 본문 없이 각 route key만 가진다.
-Registry의 "retention_classes"는 Stage 98 retention class마다 본문이 명명하는 대상과
-허용하는 anchor 종단 상태를 묶는다. "retention_units"는 spec package와 Incident bundle을
-보존 단위로, "retention_modes"는 profile마다 쓸 수 있는 보존 방식을, "archive_citation"은
-Stage 98 인용을 판정하는 순서 있는 표를, "legacy_rebased_retained_paths"는 ADR-0038이
-상대 링크를 재기준해 보존한 16개 본문을 선언한다.
-
-현재 Registry의 `spec-package`에만 적용되는 `completed_authority_members`는
-`approved` Spec·Plan을 `completed/` 보존 후보로 볼 때 원본 비교 기준 Git tree의
-두 권한 문서가 모두 `approved`이고, 같은 원본 package의 Task 완료·Plan 배정·
-기준별 단일 `accepted`·필수 실패 해소·지속 의미 owner가 확인되도록 한다.
-`approved` 표기만으로 보관하지 않으며 다른 보존 단위의 종단 상태를 완화하지
-않는다. 지속 의미의 실제 승격, 현재 소비자 처분, 별도 보관 승인과 Retention
-Envelope의 원본 path·mode·bytes 동일성도 필요하다. 검증기의 구조 PASS가
-승인자나 운영 사실을 인증하지 않으며, 이 안내는 보관 이동을 실행하지 않는다.
+Stage 98(`docs/98.archive/`)에는 profile과 form이 없다. 그 경로는 문서
+inventory 밖이며 검증하지 않는다.
 
 ## Related Documents
 
