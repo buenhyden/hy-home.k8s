@@ -22,10 +22,15 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 
 ## Rules
 
-1. Keep workflow permissions least-privilege, pin every action to a full commit SHA, and keep `persist-credentials: false`.
-2. Do not add hosted full QA, deployment or publication jobs; local QA and `scripts/release.py` own those.
-3. Change `requirements/ci-validation.txt` only with hashes and run the CI Python contract.
-4. Do not change remote settings, rulesets or secrets; document the intended state for the operator.
+1. Give `GITHUB_TOKEN` least privilege: `contents: read` at workflow level, and only the job-level permission a step needs.
+2. Pin every Action to a full commit SHA, and use only Actions registered in the repository allowlist (`.github/rulesets/main-protection.md`); register a new one there and in the remote setting in the same change.
+3. Leave no credential behind: keep `persist-credentials: false` and never write a token to disk or to an artifact.
+4. Never print a secret or token to the log, and mask any derived sensitive value.
+5. Treat PR titles, bodies, branch names and commit messages as untrusted input: pass them through `env:` and quote them; never interpolate `${{ }}` expressions into `run:` scripts.
+6. A `pull_request_target` or other privileged workflow must never check out, build or run the candidate's code; it may read the diff only as data.
+7. Do not add hosted full QA, deployment or publication jobs; local QA and `scripts/release.py` own those.
+8. Change `requirements/ci-validation.txt` only with hashes and run the CI Python contract.
+9. Do not change remote settings, rulesets or secrets; document the intended state for the operator.
 
 ## Checks
 

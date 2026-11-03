@@ -31,11 +31,26 @@ that a setting is in force; only a dated authenticated read-back is.
   `15368` on a pull request; the former checks branch metadata and the latter
   checks selected style. Their separate required results carry the style
   failure to the merge decision.
-- Do not enforce squash/rebase-only or linear-history settings that would
-  discard referenced objects, so delivered history can keep them.
+- Allow merge commits only: squash and rebase merges are disabled at the
+  repository level, and linear history is not required, so a merge keeps
+  every commit a Task references.
+- Protect `main` with classic branch protection, not a ruleset. Rulesets are
+  used only for tags (`immutable-main-sha-tags`, `immutable-semver-tags`,
+  `publisher-only-main-sha-tag-creation`, `publisher-only-semver-tag-creation`),
+  which branch protection cannot cover.
 - Keep `enforce_admins` enabled, so the owner also uses a pull request and the
   required checks for `main`. A recovery exception requires its own reviewed
   operator decision and remote read-back; this document grants no bypass.
+
+## Pull Request Completion
+
+A pull request completes only when all three hold: the required checks pass,
+the required review approval is met (zero approvals, no CODEOWNERS review) and
+the review of the final diff in a new context separated from the authoring
+context reports no `BLOCK` finding. The missing second reviewer is offset by
+those required checks, that separated review and the owner merging
+personally. Automated checks, Apps and signatures never replace the owner's
+approval.
 
 Branch, merge, finish and recovery rules themselves are owned by
 `.agents/governance/git.md`. This file records only the remote settings that
@@ -43,8 +58,13 @@ support them.
 
 ## Repository Actions Policy Target
 
-Keep Actions enabled, `allowed_actions: all`, default workflow token
-permissions at `read`, and PR creation/approval by Actions disabled. Require
+Keep Actions enabled, default workflow token permissions at `read`, and PR
+creation/approval by Actions disabled. Run only registered Actions:
+`allowed_actions: selected`, with GitHub-owned and verified creators not
+allowed by default and these patterns registered: `actions/checkout@*`,
+`actions/setup-python@*`, `actions/labeler@*` and
+`actions/first-interaction@*`. A change that adds an Action registers its
+pattern in the remote setting and in this list in the same change. Require
 `sha_pinning_required: true` at the repository setting while every external
 `uses:` reference in tracked workflows remains a full commit SHA. Hosted
 compatibility for the next PR still needs that PR's exact SHA and run result.
@@ -64,6 +84,10 @@ check reopened that required-check forgery risk; the CI and security operator
 owns it as HIGH, together with the PR-editable workflow body as MEDIUM.
 SPEC-0115 Task 0005 first recorded the latter; that package left the tree and
 Git history recovers it.
+
+Read back 2026-11-04 after the operator's change: merge commits only
+(`allow_squash_merge` and `allow_rebase_merge` false), `allowed_actions:
+selected` with the four patterns above, `sha_pinning_required: true`.
 
 On 2026-11-04 the operator accepted that HIGH risk for this single-owner
 repository. A forged check needs a workflow of the author's own to run here.
