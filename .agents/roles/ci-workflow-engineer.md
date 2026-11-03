@@ -48,7 +48,7 @@ templates need to change.
 
 ### Inputs
 
-- The affected workflow files, the branch ruleset, the validation-surface contract, and the hosted-surface note under `.github/`.
+- The affected workflow files, the main protection record (`.github/rulesets/main-protection.md`), the validation-surface contract, and the hosted-surface note under `.github/`.
 
 ### Outputs
 
