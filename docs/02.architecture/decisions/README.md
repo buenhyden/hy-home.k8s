@@ -77,6 +77,7 @@ layer: "architecture"
 |   [`./0050-ingress-nginx-replacement-with-traefik.md`](./0050-ingress-nginx-replacement-with-traefik.md) | 은퇴한 ingress-nginx를 Traefik ingress-nginx provider로 교체 |
 |   [`./0051-istio-supported-release-upgrade.md`](./0051-istio-supported-release-upgrade.md) | Istio 1.25.2를 지원 release 1.31로 재구축 upgrade |
 |   [`./0052-single-main-trunk-branch-strategy.md`](./0052-single-main-trunk-branch-strategy.md) | `main` 하나만 장기 branch로 두고 짧은 feature branch로 통합 |
+|   [`./0053-unvalidated-archive.md`](./0053-unvalidated-archive.md) | `docs/98.archive`를 검증하지 않고 Git history로만 복구 |
 
 ## Usage
 
