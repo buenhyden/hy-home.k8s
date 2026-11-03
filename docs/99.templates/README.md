@@ -148,6 +148,7 @@ Stage 90 collection contract가 요구하는 audit/data collection·pack 경로�
 | [contracts/](./contracts/) | 기계 계약과 그 schema |
 | [templates/](./templates/) | 복사해서 쓰는 form catalog |
 | [registry.json](./registry.json) | Document Profile Registry |
+| [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 
 이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
 [form catalog](./templates/README.md)가 소유한다.

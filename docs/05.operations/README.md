@@ -114,6 +114,7 @@ ADR, profile, lifecycle, template을 함께 검토한다.
 ├── policies/
 ├── runbooks/
 ├── incidents/
+├── AGENTS.md
 └── README.md
 ```
 
@@ -123,6 +124,7 @@ ADR, profile, lifecycle, template을 함께 검토한다.
 | [policies/](./policies/) | 공유 운영 정책과 표준 |
 | [runbooks/](./runbooks/) | 실행 가능한 운영 절차 |
 | [incidents/](./incidents/) | 사고 기록과 사후 분석 |
+| [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 
 ## Usage
 

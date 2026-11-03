@@ -287,6 +287,22 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             "authored-documents",
         )
 
+    def test_stage_agents_guides_use_one_surface(self) -> None:
+        for stage in (
+            "01.requirements",
+            "02.architecture",
+            "03.specs",
+            "05.operations",
+            "90.references",
+            "99.templates",
+        ):
+            path = f"docs/{stage}/AGENTS.md"
+            self.assertEqual(
+                self.validator.classify_path(self.contract, path)["id"],
+                "folder-agents-guides",
+                path,
+            )
+
     def test_release_tooling_keeps_its_direct_contract_checks(self) -> None:
         for path in (
             "scripts/release.py",

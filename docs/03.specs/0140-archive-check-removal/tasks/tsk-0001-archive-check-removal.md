@@ -55,6 +55,10 @@ delete the archived files and keep the README and structure. It executes
   `docs/05.operations` and `docs/99.templates` for text that differs from or
   conflicts with the current implementation, and correct and complete it.
 - Approval (2026-11-03): the operator accepted ADR-0048.
+- Follow-up (2026-11-03): each of `docs/01.requirements`,
+  `docs/02.architecture`, `docs/03.specs`, `docs/05.operations`,
+  `docs/90.references` and `docs/99.templates` holds an `AGENTS.md` written
+  for that folder's purpose and role in the `AGENTS.md` form.
 - Start: main `69445fca`, branch `refactor/archive-check-removal`.
 - Hosted CI (`.github/workflows/ci.yml`) already ran no archive check; the
   checks lived in the local QA registry and the document validators.

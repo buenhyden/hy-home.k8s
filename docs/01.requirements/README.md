@@ -61,6 +61,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 |   [REQ-0002](./0002-argo-notifications-slack.md) | Argo Notifications Slack 알림 요구 |
 |   [REQ-0003](./0003-workspace-agent-governance-platform.md) | Agent·문서 거버넌스와 검증·승인 요구 |
 |   [REQ-0004](./0004-current-local-gitops-platform.md) | 로컬 플랫폼과 delivery assurance 요구 |
+| [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 
 ## Usage
 

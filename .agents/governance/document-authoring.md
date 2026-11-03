@@ -115,12 +115,15 @@ express ownership, not a one-way waterfall.
      area that has its own agent responsibilities (a registry role works
      there) and rules an agent must follow that common policy and the parent
      `AGENTS.md` do not already state: forbidden live actions, ownership
-     boundaries, required checks. Today: `docs/`, `gitops/`,
-     `infrastructure/`, `policy/`, `scripts/`, `tests/`, `.github/`,
-     `examples/` and `examples/azure/`, whose single file also carries the
-     rules of its subfolders.
+     boundaries, required checks. Today: `docs/` and each of its stages
+     `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`,
+     `docs/05.operations/`, `docs/90.references/` and `docs/99.templates/`,
+     plus `gitops/`, `infrastructure/`, `policy/`, `scripts/`, `tests/`,
+     `.github/`, `examples/` and `examples/azure/`, whose single file also
+     carries the rules of its subfolders.
    - **README.md only** when the folder is navigation or a collection inside
-     an area whose parent `AGENTS.md` already covers it (the `docs/` stages,
+     an area whose parent `AGENTS.md` already covers it (the collections
+     inside a `docs/` stage, the unvalidated `docs/98.archive/`,
      `gitops/platform/`, `examples/aws/`, the `examples/azure/` subfolders), when it is a governance or provider
      surface whose gateway and provider notes are the agent instructions
      (`.agents/`, `.claude/`, `.codex/`), when its tracked files are fixed by

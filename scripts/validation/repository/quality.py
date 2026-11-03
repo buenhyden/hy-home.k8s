@@ -330,7 +330,7 @@ for tracked_path in sorted(tracked):
 requirements_stage = root / "docs/01.requirements"
 if requirements_stage.exists():
     for requirement_doc in sorted(requirements_stage.glob("*.md")):
-        if requirement_doc.name == "README.md":
+        if requirement_doc.name in {"README.md", "AGENTS.md"}:
             continue
         if re.fullmatch(r"\d{4}-\d{2}-\d{2}-.+\.md", requirement_doc.name):
             fail(
@@ -346,7 +346,7 @@ if requirements_stage.exists():
 specs_stage = root / "docs/03.specs"
 if specs_stage.exists():
     for spec_entry in sorted(specs_stage.iterdir()):
-        if spec_entry.name == "README.md":
+        if spec_entry.name in {"README.md", "AGENTS.md"}:
             continue
         if spec_entry.is_dir():
             if not re.fullmatch(r"\d{4}-.+", spec_entry.name):
@@ -357,7 +357,8 @@ if specs_stage.exists():
             continue
         if spec_entry.is_file():
             fail(
-                f"docs/03.specs may contain only README.md and numbered Spec folders: {rel(spec_entry)}"
+                "docs/03.specs may contain only README.md, AGENTS.md and numbered "
+                f"Spec folders: {rel(spec_entry)}"
             )
 
 env_ignore_check = subprocess.run(

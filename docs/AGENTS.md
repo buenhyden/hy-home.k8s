@@ -1,8 +1,9 @@
 # AGENTS.md
 
-Agent instructions for `docs/` and every stage below it. The READMEs in this
-tree are for human readers; these rules are for AI agents. The repository root
-gateway (`AGENTS.md` or `CLAUDE.md`) and `.agents/governance/` still apply.
+Agent instructions for `docs/` and every stage below it; each stage adds its
+own `AGENTS.md`. The READMEs in this tree are for human readers; these rules
+are for AI agents. The repository root gateway (`AGENTS.md` or `CLAUDE.md`)
+and `.agents/governance/` still apply.
 
 ## Purpose
 
@@ -47,10 +48,11 @@ skill. A documentation change request follows the
 5. Treat `docs/98.archive/` as unvalidated history. Never use it as current
    authority or design input; link the current owner instead.
 6. Do not rewrite completed Task evidence to satisfy a later form.
-7. In Stage 05, by default limit agent work to Git file edits, review,
-   ArgoCD reconciliation planning and evidence organization. A command
-   boundary marker in an operations document never grants execution
-   authority.
+7. Each stage has its own `AGENTS.md` with the stage's profiles, states and
+   rules: [01](01.requirements/AGENTS.md), [02](02.architecture/AGENTS.md),
+   [03](03.specs/AGENTS.md), [05](05.operations/AGENTS.md),
+   [90](90.references/AGENTS.md) and [99](99.templates/AGENTS.md). Read the
+   one for the stage you change; `docs/98.archive/` has none.
 8. After a change, run the strict document checks:
    `python3 scripts/validate-document-contract-registry.py --root . --mode strict`,
    `python3 scripts/validate-markdown-profiles.py --root . --mode strict`,

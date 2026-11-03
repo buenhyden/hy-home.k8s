@@ -50,6 +50,7 @@ docs/90.references/
 ├── audits/
 ├── data/
 ├── research/
+├── AGENTS.md
 └── README.md
 ```
 
@@ -58,6 +59,7 @@ docs/90.references/
 | [audits/](./audits/) | 감사 pack collection |
 | [data/](./data/) | 데이터 pack collection |
 | [research/](./research/) | 외부 조사 pack collection |
+| [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 
 세 collection은 동일한 3단 구조를 따른다: collection router `README.md`,
 pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<slug>.md`.

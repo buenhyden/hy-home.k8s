@@ -969,7 +969,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!docs/99\\.templates/(?:registry\\.json$|contracts/.*\\.json$))docs/99\\.templates/.*$"
+          "value": "^(?!.*(?:^|/)(?:README|AGENTS)\\.md$)(?!docs/99\\.templates/(?:registry\\.json$|contracts/.*\\.json$))docs/99\\.templates/.*$"
         }
       ],
       "validators": [
@@ -1078,7 +1078,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)docs/(?:README\\.md|01\\.requirements/.*|02\\.architecture/.*|03\\.specs/.*|04\\.execution/.*|05\\.operations/.*|90\\.references/.*)$"
+          "value": "^(?!.*(?:^|/)(?:README|AGENTS)\\.md$)docs/(?:README\\.md|01\\.requirements/.*|02\\.architecture/.*|03\\.specs/.*|05\\.operations/.*|90\\.references/.*)$"
         },
         {
           "kind": "exact",
