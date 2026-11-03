@@ -7,11 +7,12 @@ import json
 import re
 import sys
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
+FIXTURE = ROOT / "tests/fixtures/completion-package.json"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 SPEC = importlib.util.spec_from_file_location(
@@ -32,19 +33,18 @@ class CompletionDiagnosticsTest(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.registry = load_registry(ROOT)
         blobs = VALIDATOR._index_blob_map(ROOT)
-        cls.documents, cls.texts = VALIDATOR._snapshot_projection(
-            ROOT, cls.registry, blobs
+        documents, texts = VALIDATOR._snapshot_projection(ROOT, cls.registry, blobs)
+        cls.documents, cls.texts = dict(documents), dict(texts)
+        # A completed package leaves the tree, so a fixed accepted package is
+        # injected instead of depending on whichever package is current.
+        fixture = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        for raw, text in fixture.items():
+            path = PurePosixPath(raw)
+            cls.texts[path] = text
+            cls.documents[path] = VALIDATOR.document_from_text(cls.registry, path, text)
+        cls.spec = next(
+            path for path in map(PurePosixPath, fixture) if path.name == "spec.md"
         )
-        specs = sorted(
-            path
-            for path, document in cls.documents.items()
-            if path.parts[:2] == ("docs", "03.specs")
-            and path.name == "spec.md"
-            and document.profile_id == "sdlc/spec"
-        )
-        if not specs:
-            raise unittest.SkipTest("no current Spec package in the index")
-        cls.spec = specs[0]
         schema_path = ROOT / "docs/99.templates/contracts/frontmatter.schema.json"
         cls.schema = json.loads(schema_path.read_text(encoding="utf-8"))
 
@@ -64,6 +64,12 @@ class CompletionDiagnosticsTest(unittest.TestCase):
         documents = {p: d for p, d in self.documents.items() if keep(p)}
         texts = {p: t for p, t in self.texts.items() if keep(p)}
         return documents, texts
+
+    def test_complete_fixture_package_passes(self):
+        self.assertFalse(
+            self.rules(self.documents, self.texts)
+            & {"COMPLETION-PLAN", "COMPLETION-TASK", "COMPLETION-CRITERIA"}
+        )
 
     def test_missing_plan_is_rejected(self):
         plan = self.spec.parent / "plan.md"

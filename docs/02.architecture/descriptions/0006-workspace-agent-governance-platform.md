@@ -415,7 +415,7 @@ historical evidence rather than parallel operating instructions.
 - **Current decision**: [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md)
 - **Local QA and release decision**: [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md)
 - **Local QA and release implementation**: `scripts/qa.py` and `scripts/release.py`
-- **Spec**: N/A — earlier Spec packages left the tree; Git history recovers them (see Archived Lineage). The current Spec is [SPEC-0140](../../03.specs/0140-archive-check-removal/spec.md).
+- **Spec**: N/A — earlier Spec packages left the tree; Git history recovers them (see Archived Lineage). SPEC-0140, the last one, completed on 2026-11-03.
 - **Historical decisions**: [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md); earlier ADRs are in Archived Lineage
 
 The prior architecture narrative is recoverable from this same path at commit

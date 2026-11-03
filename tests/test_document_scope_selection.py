@@ -334,7 +334,7 @@ class DocumentContentClosureTests(unittest.TestCase):
                 )
 
     def test_ordinary_document_limits_body_to_current_changed_path(self) -> None:
-        selected = "docs/03.specs/0140-archive-check-removal/tasks/tsk-0001-archive-check-removal.md"
+        selected = "docs/01.requirements/0003-workspace-agent-governance-platform.md"
         scope = DOCUMENTS.scoped_document_content_paths(
             self.registry, (selected,), self.current
         )

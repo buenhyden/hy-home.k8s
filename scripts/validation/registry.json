@@ -1291,6 +1291,10 @@
         },
         {
           "kind": "exact",
+          "value": "tests/fixtures/completion-package.json"
+        },
+        {
+          "kind": "exact",
           "value": "tests/git_fixture.py"
         },
         {
@@ -2034,7 +2038,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/test_[^/]*\\.py$)(?!tests/(?:fixtures/validation-surfaces\\.json|affected_surface_mutations\\.py)$)(?!tests/(?:fixtures/github-actions-security\\.json|(?:git_fixture|gitops_change_set_cases|vault_eso_contract_cases)\\.py)$)tests/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/test_[^/]*\\.py$)(?!tests/(?:fixtures/(?:validation-surfaces|completion-package)\\.json|affected_surface_mutations\\.py)$)(?!tests/(?:fixtures/github-actions-security\\.json|(?:git_fixture|gitops_change_set_cases|vault_eso_contract_cases)\\.py)$)tests/.*$"
         }
       ],
       "validators": [
