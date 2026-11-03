@@ -51,7 +51,7 @@ second policy or role roster.
    generator and record tool limitations.
 6. Run the relevant link/owner, registry, Markdown, or generated-index checks.
 7. Report exact source, target, finding, and minimal repair. Make changes only
-   when authorized; preserve sealed or completed evidence and route historical
+   when authorized; preserve completed evidence and route historical
    path disposition to its owning Task.
 
 ## Outputs

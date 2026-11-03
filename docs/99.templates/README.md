@@ -27,38 +27,8 @@ Skill을 포함한 67개 저장소 상대 경로다. digest는 중복 없는 경
 순서로 정렬하고 각 경로 bytes·NUL·해당 Git blob 원문 bytes를 SHA-256에
 차례로 넣어 계산한다. blob 뒤에는 별도 NUL을 넣지 않는다.
 
-검토용 `3.0.0-draft.8` 묶음의 실제 정상 commit은
-`bc5b70556c57198768119f94c287f93c87964482`이고, 그 원본 blob digest는
-Registry의 `sha256:aa2523943e35908ba24e4e415793f7aa8099de247aa3628ec1678cd6c91725ee`다.
-별도 인증된 buenhyden 결정 `call_415633a444f34091860dcb4b8700431d/0`은
-바로 이 commit·digest를 최종 `WGOV-CORE / 3.0.0`으로 승인했다. commit과
-digest만으로 승인을 추론하지 않으며, 이 결정 참조가 판본 승인 근거다.
-Project-Template native commit/정적 리뷰 통과는 그 원본 입력에 한정된다.
-현재 k8s 작업에서는 원본 commit의 Git blob 67개를 독립적으로 읽어 같은
-경로 정렬·NUL·원문 byte 절차로 digest를 재계산해 일치함을 확인했다.
-이 원본 인증의 근거는 SPEC-0115 잔여 통제 Task의
-EVD-001이며, 지역 채택이나 다른 저장소의 적용 증거가 아니다.
-
-Registry의 `stage: adopted`는 이 저장소의 지역 adapter 선언이다. 공동
-owner의 원본 판본 승인과는 별도이며, Registry 값만으로 지역 수용 완료를
-주장하지 않는다. 지역 수용의 근거는 SPEC-0115 잔여 통제 Task의
-EVD-038 통합 staged QA, EVD-024·025의 독립 검토, 그리고 2026-10-16 buenhyden의 수용
-판정(EVD-039)이다.
-Project-Template의 P06 Git 소비자는 별도 commit
-`10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`에서 관측했다. 이전 k8s C07
-Commitizen 문법 차이는 이번 지역 수정에서 원래 네 문장 재비교와 집중
-회귀가 통과했다. 생성 메시지의 정확한 예외 형태, release parser와 PR
-제목의 로컬 정적 경계도 확인했다. 수정된 21개 경로는 선택된 19개
-검사를 모두 통과했고, 실제 commit 메시지의 고정 Commitizen·지역 형태
-검사와 독립 소스 검토를 거쳐 `2a99a8bb25e4ffd521af89a3cf4e9dd7d66288bc`로
-정상 commit된 뒤 동일 tree로 지역 `main`에 통합됐다. 이는 C07 지역
-구현과 로컬 전달의 근거이며 공통 계약 전체의 지역 채택 판정은 아니다.
-PR 제목의 GitHub Actions 실제 실행이나 PR SHA 결과는 관측하지 않았다.
-다른 세 저장소와
-네 저장소 공동 채택은 각자의 실제 adapter·
-승인판본 적용 근거가 생긴 뒤 별도로 기록한다. Kubernetes의 Task 상태
-요약, 문서 언어와 native 문법, Task와 저장소의 권한을 대체하지 않는 자문용 공유 workspace
-memory는 명시된 지역 차이이며 별도 공동 정본을 뜻하지 않는다.
+공동 승인 `approval_ref`는 Registry `shared_contract`가 소유하며, 이전 검증 근거는
+Git history에서 복구한다.
 
 현행 지역 언어 확장에서는 `.agents/` governed Markdown에 새로
 쓰는 설명을 한국어로 작성하며 기존 영어 본문도 유효하다. Registry가 요구하는
@@ -69,17 +39,6 @@ JSON·YAML 등 비 Markdown 파일과 `.codex/`·`.claude/`의 native 문서는
 공통 Governance form의 기계 field·heading과 영어 author prompt는 유지하고,
 복사해 작성한 `.agents/` 본문의 새 설명에 위 지역 규칙을 적용한다. 이 확장
 하나만으로 승인된 WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
-
-`WGOV-CORE / 3.0.0`에 대한 네 주장은 근거와 상태가 서로 다르며, 하나의
-근거로 다른 주장을 대신하지 않는다. 근거 Task는 SPEC-0105의
-`tasks/tsk-0004-current-contract-review.md`다.
-
-| 주장 | 현재 상태 | 근거 |
-| --- | --- | --- |
-| 공동 승인 | 확인됨 | Registry `approval_ref`와 Task EVD-033의 결정 원문 |
-| 원본 검증 | 현재 k8s 작업에서 원본 commit의 67개 Git blob으로 digest를 독립 재계산해 일치함을 확인했다 | SPEC-0115 잔여 통제 Task의 EVD-001. 앞선 SPEC-0105 Task 0004의 EVD-032 원자료는 당시 Git이 무시하는 `_workspace/residual-controls/`에 있었으며 2026-10-15 checkout에서 접근되지 않았다. 현재 검증은 별도 로컬 Git 원본 객체에 근거한다 |
-| 지역 수용 | C07 범위는 완료됐다. C04·C08 문서 의미 검토는 통과했으며, 공통 core 전체의 통합 검사와 기준 수용 판정은 진행 중이다 | SPEC-0115 잔여 통제 Task의 EVD-002·EVD-023과 기준 수용 표 |
-| 네 저장소 공동 채택 | 근거 없음, 관측하지 않았다 | 다른 세 저장소의 adapter·적용 근거가 기록되기 전까지 주장하지 않는다 |
 
 ## Scope
 

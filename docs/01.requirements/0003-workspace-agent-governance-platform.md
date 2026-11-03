@@ -19,10 +19,7 @@ This document owns the current user requirements for agent execution and documen
 [Stage 99](../99.templates/README.md) owns document form. Common governance and
 the [validation registry](../../scripts/validation/registry.json) own current
 execution and QA contracts. [ADR-0036](../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md)
-records durable decisions; SPEC-0072
-preserves historical implementation evidence. SPEC-0105
-owns the scoped common authority and safe-authoring change;
-the completed document convergence is recorded by Spec 0054, whose remaining Stage 03 dispositions transferred to SPEC-0083 and SPEC-0084. Current ownerless obligations remain identified below rather than assigned to that completed package.
+records the durable governance decisions. The earlier Spec packages are deleted; the Archived Lineage table below summarizes them and Git history recovers them.
 This Requirement is not a copy of the implementation inventory, the provider roster, or a one-off migration plan.
 
 ## Vision
@@ -45,7 +42,7 @@ A static declaration must not be mistaken for runtime evidence, and past program
 
 - A worker finds the role, skill, and approval owner in the current Registry and execution policy.
 - A failed task stops and resumes safely after a checkpoint without sensitive data and a bounded retry.
-- A document changer hands over current consumers and preserves decision history and sealed evidence.
+- A document changer hands over current consumers and preserves decision history.
 - A reviewer separates local static results from external observation and links unfinished work to the next Task.
 
 ## Functional Requirements
@@ -66,19 +63,19 @@ A static declaration must not be mistaken for runtime evidence, and past program
 - **REQ-0003-FR-0015**: A document disposition must first hand over its unique current meaning and consumers, preserve observed facts and original Git recovery, and then proceed within a reviewed scope.
 - **REQ-0003-FR-0016**: Affected-path, lane, and argv routing must have one machine owner. A logical check executes once per identical bytes, configuration, tool identity, scope, mode and trust; validators with distinct failure meanings remain separate, and stages select rather than duplicate those checks.
 - **REQ-0003-FR-0017**: This public repository performs purpose, unit and document-content QA locally. Hosted CI checks branch and delivery metadata with a fail-closed verdict and runs only the selected shared style rule as a distinct PR final defense on its own merge SHA/run, plus, when a PR changes `.github/requirements/`, the reviewed base's CI lock contract on the PR files, because a bot-authored lock update never passes local staged QA; it does not rerun or certify local purpose QA. Hosted jobs use least privilege and immutable external Action identifiers and produce no artifact under the current contract. A future artifact uploader must define its purpose, inputs, trust boundary, retention budget and validation owner in its introduction contract, with validation of those declared constraints. Local validation is never reported as a hosted result; historical unrun hosted full QA remains `NOT_RUN` evidence, not a current gate. A deployment style check requires an actual deployment workflow and observed run.
-- **REQ-0003-FR-0018**: Changes must be delivered as logical commits with independent review, exact-index validation, required lint and format on the final local index immediately before commit, and reversible boundaries. Select affected purpose gates and named behavior, Archive and security unit regressions after tool and budget preflight. Retire the long local full/ci sweep and blanket unit discovery from completion, including global QA changes; an explicit audit selects bounded named checks for its purpose rather than reintroducing the sweep.
+- **REQ-0003-FR-0018**: Changes must be delivered as logical commits with independent review, exact-index validation, required lint and format on the final local index immediately before commit, and reversible boundaries. Select affected purpose gates and named behavior and security unit regressions after tool and budget preflight. Retire the long local full/ci sweep and blanket unit discovery from completion, including global QA changes; an explicit audit selects bounded named checks for its purpose rather than reintroducing the sweep.
 - **REQ-0003-FR-0019**: The package-local Plan/Task owns execution state and order, and must not distort the original tranche, follow-up, and succession history or copy it into a permanent central roster.
-- **REQ-0003-FR-0020**: Completed packages, documents superseded by a successor, documents withdrawn without a successor, and closed incident records must be told apart by their actual lifecycle and kept with their whole body; a retired route or a moved scope must name its current owner without a body. Git history handles original recovery, with no second recovery ledger, and frozen sealed bodies and their provenance are not rewritten. The current evidential value of a retained copy is judged by an appraisal kept separate from the original text; only an approved unit whose retention need, consumers, and retention obligations are resolved is removed whole from the current tree, while its catalog identity and Git recovery remain. ADRs are no exception, and a retained copy cannot become current authority or input for reactivation.
+- **REQ-0003-FR-0020**: A document that is no longer current must leave its active stage, by deletion or by a move into `docs/98.archive/`, and Git history alone recovers it, with no recovery ledger, catalog or migration record. `docs/98.archive/` keeps only its README and directory structure and is not validated. ADRs are no exception, and an archived copy cannot become current authority.
 - **REQ-0003-FR-0021**: Audit, research, data, generated output, and learning material must state their basis, observation time, and owner, and must not substitute for current policy or execution approval.
-- **REQ-0003-FR-0022**: Scratch and checkpoints must stay bounded, secret-free temporary state, and durable execution evidence must be left in the Task. The removed shared progress ledger is not restored as a new current owner. The SPEC-0109 shared workspace memory store may retain revised decision context across sessions and providers; it is never Task status, evidence, approval or acceptance, and it is not that ledger.
+- **REQ-0003-FR-0022**: Scratch and checkpoints must stay bounded, secret-free temporary state, and durable execution evidence must be left in the Task. The removed shared progress ledger is not restored as a new current owner. The shared workspace memory store (`scripts/workspace_memory.py`) may retain revised decision context across sessions and providers; it is never Task status, evidence, approval or acceptance, and it is not that ledger.
 - **REQ-0003-FR-0023**: Stable document identities and semantic filenames must be kept, and the identity rules, uniqueness, and path correspondence of mandatory/excluded profiles must be validated. Identifiers in existing decision history are not reassigned.
 - **REQ-0003-FR-0024**: A compatibility layer, wrapper, or script must be kept only while it has a real consumer and a unique rule or negative fixture, and must be removed after succession evidence and consumer-zero.
 - **REQ-0003-FR-0025**: The agent system's risk, tool/data trust, oversight, stop, approval, trace, evaluation, and component provenance obligations must be implemented and validated in the current `.agents/roles/` Registry and `.agents/governance/` owners. A static declaration does not prove runtime enforcement.
 - **REQ-0003-FR-0026**: Repository-declared, provider-runtime, hosted-CI, and approved remote/live evidence must be kept apart and must not be promoted into one another without observation.
-- **REQ-0003-FR-0027**: Lifecycle validation must judge profile, state, and allowed edges, while ordinary body corrections and consumer succession are judged by semantic/link validation and reviewed Git recovery. Integrity checks of the sealed Archive stay separate.
+- **REQ-0003-FR-0027**: Lifecycle validation must judge profile, state, and allowed edges, while ordinary body corrections and consumer succession are judged by semantic/link validation and reviewed Git recovery.
 - **REQ-0003-FR-0028**: Malformed input, a missing tool, fallbacks, risky paths, and forbidden actions must have deterministic direct negative tests, and a required-tool failure must not be hidden as a diagnostic SKIP.
 - **REQ-0003-FR-0029**: One producer must prepare a SemVer GitHub Release and tag from a reviewed main release-preparation PR whose canonical `CHANGELOG.md` entry describes integrated changes. A released public compatibility contract covers supported CLI/options, JSON schemas, document profiles/frontmatter, GitOps desired state and external-service interfaces; breaking, additive compatible and compatible corrective changes advance major, minor and patch respectively after 1.0. For an initial 0.y release, the operator selects and records the first version and its compatibility promise. Retries never move a tag, a development push creates no release, an unsuccessful validation cannot publish, and publication repeats no QA. Existing `main-<full commit SHA>` tags remain untouched as history. If immutable Releases are enabled, required assets are attached to the draft before publication. A release is repository contract history, not runtime certification.
-- **REQ-0003-FR-0030**: CI/QA/validation scripts, invoked or discovered tests, and `.github/` surfaces must be traced to active consumers, unique rules, triggers, permissions and current repository purpose. Proven one-off, legacy, deprecated, duplicate, conflicting or excessive execution is retired only after ongoing coverage transfers, callers and registration are removed, dedicated helpers/fixtures/tests lose their consumers, and necessary results remain at the existing evidence owner. General Archive integrity remains separate from past cutover proof; distinct security, document and GitOps failure meanings stay covered. Small changes must not trigger broad repeat work at later delivery stages.
+- **REQ-0003-FR-0030**: CI/QA/validation scripts, invoked or discovered tests, and `.github/` surfaces must be traced to active consumers, unique rules, triggers, permissions and current repository purpose. Proven one-off, legacy, deprecated, duplicate, conflicting or excessive execution is retired only after ongoing coverage transfers, callers and registration are removed, dedicated helpers/fixtures/tests lose their consumers, and necessary results remain at the existing evidence owner. Distinct security, document and GitOps failure meanings stay covered. Small changes must not trigger broad repeat work at later delivery stages.
 - **REQ-0003-FR-0031**: Skill evaluation must retain the same task and conditions, actual outputs without and with the Skill, scoring criteria, scores and one representative aggregate owner. Scores must identify evidence granularity, trial count, result signals, grader and criterion IDs, partial-score rationale and human-calibration state. Only actual evaluation cycles update outputs, scores and aggregates; an aggregate requires its task, complete paired outputs and score. Preserve original observed bytes and distinguish incomplete evidence from measured results. Representative evaluations establish only their declared scope, not the full Skill roster, native selection, command execution, approval or runtime enforcement. Retiring a recurring grader must preserve this evidence capacity and its canonical forms without making grading a recurring repository QA requirement.
 - **REQ-0003-NFR-0001**: Roster and adapter counts must be derived from the current Registry, and role and surface admission and model fitness must be justified by local need, least privilege, and evaluation evidence.
 - **REQ-0003-NFR-0002**: Targeted named unit and purpose checks, affected, staged and formatter/diff validation must cover applicable contracts at their appropriate input and stage without a blanket discovery or retired full/ci sweep. Record each result, input snapshot, tool and mode; reuse is admitted only for proven identical inputs and never across local, hosted or live trust lanes.
@@ -104,10 +101,10 @@ are not reported as PASS without their observation, and each limitation has an o
 - **Acceptance criterion 08**: Consistency of the machine schema, metadata, and projections is validated.
 - **Acceptance criterion 09**: Recovery fixtures validate retry, stop, checkpoint, compaction, and resume, and the exclusion of sensitive data.
 - **Acceptance criterion 10**: Evidence for role input/output, permission, stop, handoff, evaluation and model fitness names its observed scope and gaps. A representative paired Skill evaluation retains task, both outputs, score and aggregate relationships without claiming coverage of unmeasured roles, Skills or runtime behavior.
-- **Acceptance criterion 11**: Results of applicable focused named behavior/Archive/security, affected, exact-index and formatter/diff checks are traceable by actual input; hosted branch metadata and selected PR style have distinct SHA/run results, and historical unrun full QA remains separate. The same leaf is not repeated through commit, push, merge and postmerge solely because the delivery stage changed.
+- **Acceptance criterion 11**: Results of applicable focused named behavior/security, affected, exact-index and formatter/diff checks are traceable by actual input; hosted branch metadata and selected PR style have distinct SHA/run results, and historical unrun full QA remains separate. The same leaf is not repeated through commit, push, merge and postmerge solely because the delivery stage changed.
 - **Acceptance criterion 12**: Current surfaces carry no duplicate authority, stale claim, or orphan consumer, and actual runtime limits are preserved.
 - **Acceptance criterion 13**: A main release-preparation PR supplies a reviewed `CHANGELOG.md` entry and one SemVer tag/Release producer; development pushes create none, existing SHA tags are preserved, duplicate notifications do not move a tag, and failed checks do not publish.
-- **Acceptance criterion 14**: The active script, test and `.github/` graph has no proven one-off or duplicate execution after consumer succession, while distinct security, document, Archive integrity and repository-purpose checks remain covered. Issues express requests, the Spec contract, Task execution and Project a view without copied or bidirectionally overwritten state.
+- **Acceptance criterion 14**: The active script, test and `.github/` graph has no proven one-off or duplicate execution after consumer succession, while distinct security, document and repository-purpose checks remain covered. Issues express requests, the Spec contract, Task execution and Project a view without copied or bidirectionally overwritten state.
 
 ## Scope and Non-goals
 
@@ -121,7 +118,7 @@ The relevant owners update concrete provider/model availability and authenticati
 This document does not separately pin the number of roles or providers, retry constants, or validator argv.
 It follows the current boundaries of [ADR-0030](../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md),
 [ADR-0031](../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md), and
-ADR-0040.
+[ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md).
 - Model availability, effort enums, CLI schemas, and authentication change. A concrete value must be proven together by the
   official source at the reference time and an authenticated canary; inferring from names is forbidden.
 - Native Claude/Codex format support is not equated with an account's actual execution permission.
@@ -129,8 +126,7 @@ ADR-0040.
   evidence lane and records only secret-free results.
 - The Task and Git own work, validation, and handoff. No separate automatic checkpoint file is made mandatory,
   and credentials or full transcripts are not stored.
-- ADR-0019 and ADR-0013 are superseded historical decisions that preserve predecessor execution and the
-  external-lane limitation. ADR-0036 and SPEC-0072 own the current governance location and the QA/CD boundary. ADR-0034 is a superseded decision that passed that boundary to ADR-0035, and ADR-0035 passed it to ADR-0036.
+- ADR-0036 and `scripts/validation/registry.json` own the current governance location and the QA/CD boundary. Earlier ADRs are summarized in the AD-0006 [Archived Lineage](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md#archived-lineage).
 
 ### Agent execution and approval requirements
 
@@ -141,167 +137,51 @@ ADR-0040.
 
 ### Unfinished execution and original lineage
 
-Spec 0054 closed as `done` through WP-013 and TSK-0013 and is kept in `98.archive/completed/`.
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 (SPEC-0089); its package left the current tree under SPEC-0131 and is not cited (SPEC-0090). Its retired design is not current authority. SPEC-0104 delivered the scoped repository-static render, built-in schema, per-target evidence, and ingress/GVK checks for REQ-0004-FR-0008 and FR-0010. Custom CRD schema, generated output, and live observations remain explicit DEFER under the owners in [REQ-0004](./0004-current-local-gitops-platform.md); other withdrawn work is not declared complete.
-Specs 0047, 0048, 0050, and 0051 were withdrawn without successors and are not cited
-(SPEC-0087); their packages left the current tree under SPEC-0122 and SPEC-0131.
-[REQ-0004](./0004-current-local-gitops-platform.md) co-owns the platform-specific obligations.
-
-The original REQ-0005/0006 were superseded by REQ-0008. Their current meaning passes back to this document,
-but that does not mean the original decisions were written for REQ-0003. Past fixed tranche/corpus counts,
-Spec 033's follow-up distinction, and the ARD→AD identity conversion are history, not current roster rules.
-REQ-0006's Plan/Task-only retention and REQ-0008's ban on every Stage 98 link are superseded by ADR-0038's dispositions and ADR-0039's ordered citation table. Sealed records remain outside current authority.
-
-Current governance and QA implementation is owned by
-SPEC-0072.
-Provider-native execution scope, capability-to-model binding, and write-path
-guard parity are owned by
-SPEC-0073.
-Shared write-guard ownership, patch-envelope parsing, and enforcement
-honesty are owned by
-SPEC-0074.
-Common knowledge and prompt surfaces and their document contracts are
-owned by
-SPEC-0075.
-Responsibility-boundary coverage, the roles that close it, and routing
-completeness are owned by
-SPEC-0076.
-Retirement of unreachable validation code, absent-subject assertions, and
-same-snapshot duplicate gate execution is owned by
-SPEC-0077.
-Reconciliation of document statements that drifted from the implementation,
-and of Stage 03 lifecycle state that lagged completed work, is owned by
-SPEC-0078.
-The six-disposition Archive stage, its derived citation rule, and the move of
-the registry routes, archive forms, and validators to that model are owned by
-SPEC-0079.
-The first disposition under that model, which retains ADR-0032 and resolves
-frozen Stage 98 links to a retained source, is owned by
-SPEC-0080.
-Retaining the fifteen remaining superseded decisions is owned by
-SPEC-0081.
-The unit archive retention contract that ADR-0039 adopts, its cutover, and the
-first exact disposition are owned by
-SPEC-0082.
-Retaining the ten finished Stage 03 packages under that contract, and
-recording why the two superseded proposals cannot follow, is owned by
-SPEC-0083.
-Closing the Stage 03 backlog those rounds left, including the two registry gaps
-that blocked two of its dispositions, is owned by
-SPEC-0084.
-The archive reappraisal and verifiable-source contract that ADR-0040 proposes,
-its cutover, the index navigation corrections, and the ordered lifecycle and
-result vocabulary work are owned by
-SPEC-0085.
-The operator-authorized native-runtime observation of Claude and Codex that
-SPEC-0072 left open is owned by
-SPEC-0086.
-Retaining the seven terminal Stage 03 packages that SPEC-0084 left in place is
-owned by
-SPEC-0087.
-Converging Operations document ownership, disposing of Stage 98 Operations
-residue, and removing dead or duplicate validation logic is owned by
-SPEC-0088.
-Resolving the conflicts SPEC-0088 deferred and withdrawing open packages that
-contradict current authority is owned by
-SPEC-0089.
-Retaining the withdrawn SPEC-0049 package in `retired/` was owned by
-SPEC-0090; the package later left the current tree under SPEC-0131.
-Constraining every README to its direct children under one registry
-navigation contract is owned by
-SPEC-0091.
-Stating each document's language in one registry contract is owned by
-SPEC-0093.
-Retaining the eight finished packages SPEC-0072, SPEC-0085, and SPEC-0087
-through SPEC-0093 is owned by
-SPEC-0094.
-Retaining SPEC-0086 and SPEC-0094 after they closed is owned by
-SPEC-0095.
-Rebinding the Codex `top` and `worker` model tiers is owned by
-SPEC-0096.
-Binding the Claude role models and reasoning effort is owned by
-SPEC-0097.
-Granting search to every Claude role and retaining SPEC-0095 through
-SPEC-0097 is owned by
-SPEC-0098.
-Retaining SPEC-0098 through SPEC-0100 after they closed is owned by
-SPEC-0101.
-SPEC-0073, SPEC-0074, SPEC-0077, SPEC-0078, SPEC-0079, SPEC-0081, SPEC-0088,
-SPEC-0089, SPEC-0090, SPEC-0094, SPEC-0100 and SPEC-0101 left the current
-tree under SPEC-0130;
-each body is recovered from Git history.
-SPEC-0049, SPEC-0050, SPEC-0075, SPEC-0076, SPEC-0083, SPEC-0084, SPEC-0086,
-SPEC-0087, SPEC-0096 and SPEC-0097 left the current tree under
-SPEC-0131 and are
-recovered the same way.
-SPEC-0062, SPEC-0082, SPEC-0085, SPEC-0091, SPEC-0093, SPEC-0095, SPEC-0098,
-SPEC-0099 and SPEC-0102 left the current tree under
-SPEC-0132 and
-are recovered the same way.
-SPEC-0080 left the current tree under
-SPEC-0134 and is recovered the
-same way.
+Withdrawn and completed packages SPEC-0049 through SPEC-0139 were deleted. Git history recovers them (`git show 69445fca:<path>`), and the [Archived Lineage](#archived-lineage) table summarizes them. Their retired designs are not current authority, and withdrawn work is not declared complete. REQ-0005, REQ-0006 and REQ-0008 were merged into this document; the [Reviewed member-ID transfer](#reviewed-member-id-transfer) table maps their member IDs. Custom CRD schema, generated output and live observations remain explicit DEFER under the owners in [REQ-0004](./0004-current-local-gitops-platform.md), which co-owns the platform-specific obligations.
 
 ## Traceability
 
-SPEC-0102 is the completed agent-contract work unit. The completed SPEC-0103 records QA evidence-reuse behavior for REQ-0003-FR-0016/0017/0018/0026/0028/0029/0030 and REQ-0003-NFR-0002/0004; this reciprocal link grants no Plan or implementation approval.
-
-SPEC-0107 is the current
-local-QA and release contract for REQ-0003-FR-0001/0005/0016/0017/0018/0024/0026/0027/0029/0030,
-REQ-0003-NFR-0002/0003 and REQ-0003-IF-0001. It is completed and records
-succession from the historical SPEC-0103 result; implementation and
-acceptance evidence remain with its Task rather than this Requirement Package.
-
-Later current packages trace here as well: SPEC-0108 (Task status derivation
-and provider boundaries) for REQ-0003-FR-0007/0012/0014/0019/0024/0026;
-SPEC-0109 (shared workspace memory) for REQ-0003-FR-0022/0026; SPEC-0110
-(provider README language and QA tool diagnostics) for
-REQ-0003-FR-0014/0028/0030; SPEC-0111 and SPEC-0112 (lifecycle test
-fixtures) for REQ-0003-FR-0028; and SPEC-0113 (document sync and remaining
-v9 gaps) for REQ-0003-FR-0002/0014/0017/0026/0028 and REQ-0003-IF-0001.
-Their links sit in the table below; acceptance stays with each Task.
-
-Archive lifecycle conformance for REQ-0003-FR-0020 and REQ-0003-NFR-0002 was delivered by SPEC-0100; its state-vocabulary proposal does not alter these requirements.
+The only current Spec is [SPEC-0140](../03.specs/0140-archive-check-removal/spec.md). Earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
 
 ### Lifecycle Traceability
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-0003-FR-0012 | A single document machine owner must define document routes, profiles, metadata, form, and lifecycle edges, and prose policy must live only with its responsibility owner. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0108, [SPEC-0140](../03.specs/0140-archive-check-removal/spec.md) |
+| REQ-0003-FR-0012 | A single document machine owner must define document routes, profiles, metadata, form, and lifecycle edges, and prose policy must live only with its responsibility owner. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0140](../03.specs/0140-archive-check-removal/spec.md) |
 | REQ-0003-FR-0013 | Each physical document form must map to exactly one profile, and its template and validator must agree. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0014 | Requirements, Architecture, Spec/Plan/Task, operations documents, References, and READMEs must each keep their purpose and must not copy execution detail or unobserved operational evidence into higher documents. Stage 05 keeps its position, and this convergence creates no Release family. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0108, SPEC-0110, SPEC-0113, SPEC-0126, SPEC-0128, SPEC-0129, SPEC-0133 |
+| REQ-0003-FR-0014 | Requirements, Architecture, Spec/Plan/Task, operations documents, References, and READMEs must each keep their purpose and must not copy execution detail or unobserved operational evidence into higher documents. Stage 05 keeps its position, and this convergence creates no Release family. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0015 | A document disposition must first hand over its unique current meaning and consumers, preserve observed facts and original Git recovery, and then proceed within a reviewed scope. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0016 | One machine route selects each applicable leaf once per identical input, configuration, tool, mode and trust while independent validator failure meanings remain distinct. | N/A — SPEC-0117, SPEC-0118, SPEC-0120 left the tree; Git history recovers them |
 | REQ-0003-FR-0017 | Public-repository purpose QA runs locally; hosted branch metadata and PR style have distinct observed inputs and never certify local QA. | N/A — SPEC-0113, SPEC-0115, SPEC-0123 left the tree; Git history recovers them |
-| REQ-0003-FR-0018 | Logical commits get independent review, exact-index and pre-commit style checks; named purpose/unit gates replace retired full/ci and blanket discovery. | SPEC-0116, SPEC-0117, SPEC-0118, SPEC-0120, SPEC-0125, SPEC-0126, SPEC-0127, SPEC-0128, SPEC-0129, SPEC-0133, SPEC-0135, SPEC-0138, SPEC-0139, [SPEC-0140](../03.specs/0140-archive-check-removal/spec.md) |
-| REQ-0003-FR-0019 | The package-local Plan/Task owns execution state and order, and must not distort the original tranche, follow-up, and succession history or copy it into a permanent central roster. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0108, SPEC-0125 |
+| REQ-0003-FR-0018 | Logical commits get independent review, exact-index and pre-commit style checks; named purpose/unit gates replace retired full/ci and blanket discovery. | [SPEC-0140](../03.specs/0140-archive-check-removal/spec.md) |
+| REQ-0003-FR-0019 | The package-local Plan/Task owns execution state and order, and must not distort the original tranche, follow-up, and succession history or copy it into a permanent central roster. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0020 | A document that is no longer current leaves its active stage, by deletion or by a move into `docs/98.archive/`, and Git history alone recovers it, with no recovery ledger, catalog or migration record. `docs/98.archive/` keeps only its README and directory structure and is not validated. ADRs are no exception, and an archived copy cannot become current authority. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0140](../03.specs/0140-archive-check-removal/spec.md) |
-| REQ-0003-FR-0021 | Audit, research, data, generated output, and learning material must state their basis, observation time, and owner, and must not substitute for current policy or execution approval. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0124, SPEC-0129, SPEC-0133, SPEC-0135, SPEC-0138, SPEC-0139 |
-| REQ-0003-FR-0022 | Scratch and checkpoints must stay bounded, secret-free temporary state, and durable execution evidence must be left in the Task. The removed shared progress ledger is not restored as a new current owner. The SPEC-0109 shared workspace memory store may retain revised decision context across sessions and providers; it is never Task status, evidence, approval or acceptance, and it is not that ledger. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0109, SPEC-0115, SPEC-0125 |
-| REQ-0003-FR-0023 | Stable document identities and semantic filenames must be kept, and the identity rules, uniqueness, and path correspondence of mandatory/excluded profiles must be validated. Identifiers in existing decision history are not reassigned. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0127 |
-| REQ-0003-FR-0024 | A compatibility layer, wrapper, or script must be kept only while it has a real consumer and a unique rule or negative fixture, and must be removed after succession evidence and consumer-zero. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0108, SPEC-0122, SPEC-0130, SPEC-0131, SPEC-0132, SPEC-0134 |
-| REQ-0003-FR-0025 | The agent system's risk, tool/data trust, oversight, stop, approval, trace, evaluation, and component provenance obligations must be implemented and validated in the current `.agents/roles/` Registry and `.agents/governance/` owners. A static declaration does not prove runtime enforcement. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0114 |
-| REQ-0003-FR-0026 | Repository-declared, provider-runtime, hosted-CI, and approved remote/live evidence must be kept apart and must not be promoted into one another without observation. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0108, SPEC-0109, SPEC-0113, SPEC-0114, SPEC-0115, SPEC-0116 |
-| REQ-0003-FR-0027 | Lifecycle validation must judge profile, state, and allowed edges, while ordinary body corrections and consumer succession are judged by semantic/link validation and reviewed Git recovery. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0115, SPEC-0122, SPEC-0130, SPEC-0131, SPEC-0132, SPEC-0134, SPEC-0127, SPEC-0128, [SPEC-0140](../03.specs/0140-archive-check-removal/spec.md) |
-| REQ-0003-FR-0028 | Malformed input, a missing tool, fallbacks, risky paths, and forbidden actions must have deterministic direct negative tests, and a required-tool failure must not be hidden as a diagnostic SKIP. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0110, SPEC-0111, SPEC-0112, SPEC-0113, SPEC-0114 |
+| REQ-0003-FR-0021 | Audit, research, data, generated output, and learning material must state their basis, observation time, and owner, and must not substitute for current policy or execution approval. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0022 | Scratch and checkpoints must stay bounded, secret-free temporary state, and durable execution evidence must be left in the Task. The removed shared progress ledger is not restored as a new current owner. The shared workspace memory store may retain revised decision context across sessions and providers; it is never Task status, evidence, approval or acceptance, and it is not that ledger. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0023 | Stable document identities and semantic filenames must be kept, and the identity rules, uniqueness, and path correspondence of mandatory/excluded profiles must be validated. Identifiers in existing decision history are not reassigned. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0024 | A compatibility layer, wrapper, or script must be kept only while it has a real consumer and a unique rule or negative fixture, and must be removed after succession evidence and consumer-zero. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0025 | The agent system's risk, tool/data trust, oversight, stop, approval, trace, evaluation, and component provenance obligations must be implemented and validated in the current `.agents/roles/` Registry and `.agents/governance/` owners. A static declaration does not prove runtime enforcement. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0026 | Repository-declared, provider-runtime, hosted-CI, and approved remote/live evidence must be kept apart and must not be promoted into one another without observation. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0027 | Lifecycle validation must judge profile, state, and allowed edges, while ordinary body corrections and consumer succession are judged by semantic/link validation and reviewed Git recovery. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0140](../03.specs/0140-archive-check-removal/spec.md) |
+| REQ-0003-FR-0028 | Malformed input, a missing tool, fallbacks, risky paths, and forbidden actions must have deterministic direct negative tests, and a required-tool failure must not be hidden as a diagnostic SKIP. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0029 | A reviewed main release-preparation PR controls canonical changelog and a single SemVer tag/Release producer; historical SHA tags are preserved. Actual publication needs separate observation. | N/A — SPEC-0136, SPEC-0137 left the tree; Git history recovers them |
-| REQ-0003-FR-0030 | Active scripts, tests and hosted surfaces are retired only after ongoing coverage and consumers transfer, with distinct failure meanings preserved. | SPEC-0110, [SPEC-0140](../03.specs/0140-archive-check-removal/spec.md) |
+| REQ-0003-FR-0030 | Active scripts, tests and hosted surfaces are retired only after ongoing coverage and consumers transfer, with distinct failure meanings preserved. | [SPEC-0140](../03.specs/0140-archive-check-removal/spec.md) |
 | REQ-0003-FR-0031 | Representative Skill comparisons retain actual paired outputs, scoped scoring and one aggregate owner; canonical evidence forms neither rerun grading nor establish native behavior. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0001 | The common governance and owner graph validate as a single current source. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0002 | Provider gateways keep the thin adapter boundary. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0113 |
+| REQ-0003-FR-0002 | Provider gateways keep the thin adapter boundary. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0003 | Skill provenance and missing gaps are machine-validated. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0004 | Every strategy axis and scope owner can be found. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0005 | A repo-changing handoff leaves its evidence and limitations. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0006 | Template, profile, and cross-link checks pass. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0115 |
-| REQ-0003-FR-0007 | No GitOps, secret, privilege, or external-action guardrail is violated. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0108, SPEC-0114, SPEC-0116 |
-| REQ-0003-FR-0008 | Registry-admitted surfaces carry native claims separate from the common semantics. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0114 |
+| REQ-0003-FR-0006 | Template, profile, and cross-link checks pass. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0007 | No GitOps, secret, privilege, or external-action guardrail is violated. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0008 | Registry-admitted surfaces carry native claims separate from the common semantics. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0009 | Schema, model, effort, MCP, and each admitted provider's independent canary record are validated. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0010 | The machine harness contract/schema validates every role and adapter. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0011 | The bounded runner's timeout, output, child cleanup, and no-progress handoff are validated by Task evidence. | N/A — SPEC-0072 left the tree; Git history recovers it |
 | REQ-0003-NFR-0001 | Registry-derived role/adapter parity and eval/model fitness are validated. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-NFR-0002 | Local selected checks retain exact input/mode boundaries and hosted evidence remains separate. | N/A — SPEC-0107 left the tree; Git history recovers it |
 | REQ-0003-NFR-0003 | Dated primary sources are mapped to claims, applicable scope, local decisions and Task evidence. | N/A — SPEC-0107 left the tree; Git history recovers it |
-| REQ-0003-IF-0001 | No legacy or orphan current owner remains on an active surface. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0113 |
+| REQ-0003-IF-0001 | No legacy or orphan current owner remains on an active surface. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-IF-0002 | An external role idea is admitted only after it passes a local gap and an eval. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 01 remains acceptance-only | The common `.agents/` owner graph links without contradiction. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 02 remains acceptance-only | A reciprocal Requirement Package→AD→ADR→Spec→Plan/Task chain exists. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
@@ -389,8 +269,8 @@ The table below records the succession of current meaning. Earlier member IDs ar
 | REQ-0007-NFR-0002 | REQ-0003-FR-0014 |
 
 - Current architecture: [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md).
-- Current integration: Spec 0054 and its package-local Plan/Tasks.
-- Original decision bodies remain in the [decision log](../02.architecture/decisions/README.md); recovery is indexed in [Stage 98](../98.archive/README.md).
+- Current integration: [SPEC-0140](../03.specs/0140-archive-check-removal/spec.md).
+- Original decision bodies remain in the [decision log](../02.architecture/decisions/README.md); recovery is by Git history (`git show <commit>:<path>`), with summaries in [Archived Lineage](#archived-lineage).
 
 ### Archived Lineage
 

@@ -54,9 +54,8 @@ canonical owners before using remembered paths, results, or approvals.
   profile contract.
 - Do not read or store credentials, secret values, auth configuration, shell
   history, environment dumps, raw prompts, or complete provider transcripts.
-- The `memory/progress.md` ledger is retired under Spec 0054 WP-012 and the
-  `memory/` directory under Spec 0065; their bytes are recoverable from Git
-  through `MIG-0007` and `MIG-0009`, and neither is restored. Progress and task
+- The `memory/progress.md` ledger and the `memory/` directory are retired and
+  neither is restored; Git history recovers their bytes. Progress and task
   status belong to the owning Spec Task, and durable knowledge stays with the
   responsible policy, skill, operating document, or reference owner. `.agents/knowledge/` maps those owners
   without restating them; it is a pointer surface, never a second store of
@@ -67,7 +66,8 @@ canonical owners before using remembered paths, results, or approvals.
 
 ### Shared workspace memory store
 
-SPEC-0109 (recovered from Git history) defined one store that Claude and Codex sessions both read and write:
+SPEC-0109 (Git history: package `0109-shared-workspace-memory` under
+`docs/03.specs/` at commit `69445fca`) defined one store that Claude and Codex sessions both read and write:
 `.workspace-memory/memory.sqlite3` at the main worktree root, resolved from the
 Git common directory so every linked worktree reaches the same file. It is
 Git-ignored runtime data. Use `scripts/workspace_memory.py`; run `init` once,

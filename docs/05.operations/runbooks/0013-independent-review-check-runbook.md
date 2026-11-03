@@ -15,9 +15,9 @@ artifact_id: "RUN-0013"
 
 이 Runbook은 `main` 대상 PR마다 로컬 독립 리뷰를 수행하고 그 판정을 리뷰
 전용 GitHub App의 `independent-review` check run으로 게시하는 절차다.
-`main` 보호가 이 check를 해당 App ID로 요구하게 되면(SPEC-0116 WORK-004),
+`main` 보호가 이 check를 해당 App ID로 요구하게 되면(`main` 보호 ruleset),
 PR이 workflow를 고쳐도 이 결과를 만들 수 없다. 계약은
-SPEC-0116이
+[main 보호 ruleset](../../../.github/rulesets/main-protection.md)이
 소유한다. AI 모델 API는 호출하지 않는다.
 
 - **Type**: PR merge gate publication
@@ -29,8 +29,8 @@ SPEC-0116이
 
 `main` 대상 PR을 병합하려 하거나 그 PR에 새 commit이 push된 경우 사용한다.
 
-- 리뷰 App은 App ID `5341483`이다. 다른 App으로 바꾸려면 SPEC-0116 갱신과
-  `main` 보호 규칙 변경이 함께 필요하다.
+- 리뷰 App은 App ID `5341483`이다. 다른 App으로 바꾸려면
+  [main 보호 ruleset](../../../.github/rulesets/main-protection.md) 갱신이 필요하다.
 - 리뷰 App이 이 저장소에만 설치되어 있고 권한은 `Checks: write`,
   `Pull requests: read`, `Metadata: read`뿐이다. webhook은 비활성이다.
 - 개인 키는 저장소 밖(예: `~/.config/hy-home-review/app.pem`)에 mode
@@ -47,9 +47,7 @@ SPEC-0116이
   저장소 밖 임시 파일을 만들어 쓰고, 게시 후 `rm -- "$PUBLISHER"`로 지운다. `REVIEW_APP_ID`와
   `REVIEW_APP_KEY_FILE`은 게시 명령에만 지정한다. PR worktree의
   `scripts/independent_review.py`는 실행하지 않는다. PR이 publisher를 바꾸면
-  운영자가 그 diff를 직접 읽은 뒤에만 게시한다. SPEC-0116 자신의 PR #152만
-  독립 리뷰된 branch commit의 사본을 쓰는 일회성 예외이며, 그 사본은 SPEC-0116
-  Task EVD-016의 commit `6907f0d0`과 blob `0ad8bf05`로 고정했다.
+  운영자가 그 diff를 직접 읽은 뒤에만 게시한다. 과거 일회성 예외는 Git history에 있다.
 
 PR 작성 세션이 직접 리뷰하거나, head가 확정되지 않았거나, 키 위치가
 불확실하면 멈춘다.

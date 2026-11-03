@@ -30,6 +30,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 - `CODEOWNERS` - 경로별 리뷰 소유권
 - `dependabot.yml`과 `labeler.yml` - 의존성·경로 label 설정
 - `SECURITY.md` - 취약점 신고 안내
+- `AGENTS.md` - 이 폴더의 에이전트 지시
 
 ## Usage
 

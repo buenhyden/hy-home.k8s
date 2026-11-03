@@ -59,7 +59,7 @@ target version instead of being upgraded in place.
   a later option.
 - Negative: the rebuild discards cluster state that the repository does not
   declare. Values or CRD changes across six minor versions may need
-  repository edits. The rebuild is planned after the SPEC-0121 ingress
+  repository edits. The rebuild is planned after the ingress
   cutover, so that the cutover is verified once, on the current cluster.
 - Operational: the rebuild is a live change and needs operator approval
   when it runs. Keep the version pinned and track Istio's support window.

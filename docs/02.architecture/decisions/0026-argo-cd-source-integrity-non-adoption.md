@@ -151,7 +151,7 @@ orthogonal.
 
 | Decision lineage                                | Replacement relation                                                                             | Affected Spec                                                           |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| Direct human approval recorded in the Spec body | N/A — first non-adoption decision over a fired research refresh trigger; supersedes no prior ADR | Spec 0060 |
+| Direct human approval recorded in the Spec body | N/A — first non-adoption decision over a fired research refresh trigger; supersedes no prior ADR | N/A — SPEC-0060 left the tree; Git history recovers it |
 
 ### Related Documents
 

@@ -176,11 +176,11 @@ retain approval, evidence-depth and negative-test boundaries.
 the current platform. Implementing the approved amendment requires updating
 that view and the current ownership contracts together. SPEC-0102 supplied
 change-specific behavior, and its approved Plan and Tasks recorded execution
-order and evidence. The pending persisted acceptance transition and approved
-decision claim no completed migration or implemented acceptance criterion.
+order and evidence. This decision is accepted (approved 2026-09-29) and claims no completed
+migration or implemented acceptance criterion beyond the current owners.
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0036](0036-common-knowledge-and-prompt-surfaces.md) | User-approved scoped amendment for skill resources, knowledge facts and evaluation ownership, adding current-authority boundaries; ADR-0036 remains accepted for unchanged clauses, with no whole-document supersession | SPEC-0102 |
+| [ADR-0036](0036-common-knowledge-and-prompt-surfaces.md) | User-approved scoped amendment for skill resources, knowledge facts and evaluation ownership, adding current-authority boundaries; ADR-0036 remains accepted for unchanged clauses, with no whole-document supersession | N/A — SPEC-0102 left the tree; Git history recovers it |

@@ -103,4 +103,4 @@ reopened.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| N/A — first branch-strategy decision; ADR-0029 and ADR-0048 constrain it as stated in Context | Supersedes no decision | SPEC-0127 |
+| N/A — first branch-strategy decision; ADR-0029 and ADR-0048 constrain it as stated in Context | Supersedes no decision | N/A — SPEC-0127 left the tree; Git history recovers it |

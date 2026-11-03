@@ -49,6 +49,12 @@ delete the archived files and keep the README and structure. It executes
   `docs/03.specs/`.
 - Follow-up (2026-11-03): the operator chose logical commits, a pushed branch
   and a pull request; merge waits for a separate request.
+- Follow-up (2026-11-03): after completion, check every README.md and
+  AGENTS.md, the subfolders of `.agents`, `.claude` and `.codex`, and the
+  subfolders of `docs/01.requirements`, `docs/02.architecture`,
+  `docs/05.operations` and `docs/99.templates` for text that differs from or
+  conflicts with the current implementation, and correct and complete it.
+- Approval (2026-11-03): the operator accepted ADR-0048.
 - Start: main `69445fca`, branch `refactor/archive-check-removal`.
 - Hosted CI (`.github/workflows/ci.yml`) already ran no archive check; the
   checks lived in the local QA registry and the document validators.
@@ -88,11 +94,13 @@ delete the archived files and keep the README and structure. It executes
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: `scripts/`, `tests/`, `docs/99.templates/`,
-  `docs/98.archive/`, `.pre-commit-config.yaml`, `.markdownlint-cli2.yaml`,
+  `docs/98.archive/`, `.pre-commit-config.yaml`, `.secrets.baseline`,
+  `.markdownlint-cli2.yaml`,
   `.agents/`, `.claude/`, `.codex/`, governance READMEs, REQ-0003, ADR-0040,
   ADR-0053, current documents that link into the archive, READMEs and folder
   `AGENTS.md` files, Stage 01 and 02 documents that receive archived
-  lineage, completed Spec packages in `docs/03.specs/`, and this package.
+  lineage, Stage 01, 02, 05 and 90 documents whose text describes the removed
+  model, completed Spec packages in `docs/03.specs/`, and this package.
 - **Forbidden Paths**: `.github/workflows/`, cluster objects, secrets and
   other repositories.
 - **Approval Required**: the operator's requests above. Commit, push, pull

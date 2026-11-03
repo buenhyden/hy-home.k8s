@@ -55,6 +55,10 @@ updated: "2026-10-07"
 | Repository purpose | GitOps, Kubernetes, Docker, project-template, web and Vault/ESO interfaces actually present in this repository |
 | Supply chain and hooks | GitHub workflow identity/permissions, secret handling, local hook and commit-message boundaries |
 
+### Folder files
+
+`AGENTS.md`는 이 폴더의 에이전트 지시이며 테스트나 fixture가 아니다.
+
 ### Shared helper modules
 
 | Module | 책임 |
@@ -146,5 +150,5 @@ method 목록은 관찰 결과일 뿐 거버넌스가 아니다.
 - Validation ownership ADR (`docs/02.architecture/decisions/README.md`)
 
 위의 승인된 결정이 검증 책임의 현재 owner다. 그 결정을 처음 실행한 완료 Spec과
-Task는 봉인된 증거이며 archive index로 계속 찾아갈 수 있다. 그 문서들은 한 번
-실행한 일을 기록할 뿐, 지금 유효한 규칙을 다시 선언하는 문서가 아니다.
+Task는 삭제되었고 Git history에서 복구한다. 그 문서들은 한 번 실행한 일을
+기록할 뿐 지금 유효한 규칙을 다시 선언하지 않는다.

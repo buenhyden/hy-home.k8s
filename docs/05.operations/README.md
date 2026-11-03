@@ -38,8 +38,7 @@ layer: "operations"
 ### Language Boundary
 
 운영 문서는 사람이 읽고 실행하는 문서이므로 한국어를 기본으로 한다. 다만
-자동화가 직접 따라야 하는 `AI Agent Requirements`, `Agent Execution Notes`,
-tool/prompt contract, hook/validator contract 같은 섹션은 영어로 둔다. live
+tool/prompt contract, hook/validator contract 같은 기계 계약 섹션은 영어로 둔다. live
 cluster, Vault, secret, ArgoCD 같은 고위험 명령의 실행 경계는 언어와
 무관하게 아래 Operations Mutation Boundary를 따른다.
 
@@ -73,8 +72,7 @@ repository quality validator의 command boundary 규칙이며, 해당 변경에
 [POL-0001](./policies/0001-k8s-gitops-operations-policy.md#exceptions-and-escalation)이
 소유한다. 공통 승인 원본 확인과 저술/실행 권한은
 [Approval and Safety](../../.agents/governance/approval-and-safety.md)가 소유한다.
-marker는 실행 권한을 부여하지 않으며, AI Agent는 기본적으로 Git
-파일 수정, 리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.
+marker는 실행 권한을 부여하지 않는다.
 
 ### Stage Readers
 
@@ -132,7 +130,7 @@ ADR, profile, lifecycle, template을 함께 검토한다.
 2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/<year>/inc-####-<slug>/` 폴더를 만든다. Incident와 Postmortem은 같은 폴더에서 각각 `incident.md`와 `postmortem.md`를 사용한다.
 3. live cluster mutation 예시는 승인 조건, bootstrap-only 예외, break-glass 문맥 없이 추가하지 않는다.
 4. 운영 문서가 현재 `bootstrap-local.sh`, `gitops/platform/external-services`, 정적 검증 계약과 충돌하지 않게 유지한다.
-5. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)의 Stage 98 disposition으로 보낸다. 현재 문서는 대체된 본문 대신 후속 문서를 인용한다.
+5. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)에 따라 처분한다. 현재 문서는 대체된 본문 대신 후속 문서를 인용한다.
 
 ### Relative Link Rules
 

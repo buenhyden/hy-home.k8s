@@ -58,9 +58,8 @@ requires reproducible desired state (FR-0001), explicit external data
 interfaces (FR-0003), currently supported UI claims (FR-0004), validation
 depth and truthful live evidence (FR-0008), fail-closed source references
 (FR-0010), and no secret values in Git or logs (NFR-0002). The existing
-observation and local change are owned by
-SPEC-0106,
-WORK-019 and its Task. External Docker runtime and credentials remain outside
+observation and local change were recorded in SPEC-0106
+(N/A — it left the tree; Git history recovers it). External Docker runtime and credentials remain outside
 this repository.
 
 ## Decision
@@ -153,9 +152,7 @@ neither whole document is superseded or archived by this scoped ADR.
 - **Requirement:** [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md),
   FR-0001/0003/0004/0008/0010 and NFR-0002.
 - **Architecture:** [AD-0007](../descriptions/0007-current-local-gitops-platform.md).
-- **Specification and execution:** SPEC-0106,
-  Plan WORK-019,
-  Task0019.
+- **Specification and execution:** N/A — SPEC-0106 left the tree; Git history recovers it.
 - **Operations:** [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md),
   [POL-0007](../../05.operations/policies/0007-app-gitops-onboarding-policy.md),
   [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md).

@@ -12,7 +12,7 @@ updated: "2026-10-27"
 
 ## Overview
 
-Archive 처분 단위 dry-run, route·소비자 인벤토리, 요구사항 대조표처럼 결정에 앞서 만드는 분석 자료를 둔다.
+문서 삭제·이관 dry-run, route·소비자 인벤토리, 요구사항 대조표처럼 결정에 앞서 만드는 분석 자료를 둔다.
 
 이 README만 추적한다. 나머지 하위 항목은 ignore되며 Git에 force-add하지 않는다.
 

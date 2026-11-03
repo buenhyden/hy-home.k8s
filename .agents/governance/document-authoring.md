@@ -150,13 +150,13 @@ express ownership, not a one-way waterfall.
     finding with its source. A
     collection with a missing level pushes one of those three jobs onto a
     document that does not own it.
-12. Treat a sealed retirement as retiring a document, not a location. A
-    reviewed, tracked document may later occupy a retired path; never restore
-    the retired bytes there.
+12. Treat a retirement as retiring a document, not a location. A reviewed,
+    tracked document may later occupy a retired path; never restore the
+    retired bytes there.
 13. Preserve accepted decisions and completed evidence. Use successors,
-    reciprocal lifecycle relationships, and the one Git object a Stage 98
-    Retention Envelope names rather than rewriting history, leaving redirects,
-    or keeping a second recovery ledger.
+    reciprocal lifecycle relationships and the Archived Lineage summary in the
+    owning current document; recover removed bytes from Git history rather than
+    rewriting history, leaving redirects, or keeping a second recovery ledger.
 14. Run the checks selected by the affected paths and record evidence in the
     owning Task using [quality policy](quality.md).
 

@@ -43,8 +43,7 @@ each copy.
 
 The proposal is judged by the document contract registry and the markdown
 profile validator on the target path, and by link and owner validation when it
-changes a route. Sealed and completed records are not rewritten to match a new
-form.
+changes a route. Completed records are not rewritten to match a new form.
 
 ## Refusal Conditions
 

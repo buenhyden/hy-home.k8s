@@ -177,9 +177,16 @@ the byte-level historical evidence the Archive contract exists to preserve.
 
 ## Traceability
 
+__Current-state clarification (2026-11-03).__ Under
+[ADR-0053](./0053-unvalidated-archive.md) the archive is unvalidated: no archive validators, frozen-generation exemptions, migration proofs, tombstones or archive index exist, and the Retention Catalog and Envelope no longer apply.
+Superseded ADRs are summarized in the Archived Lineage table of
+[AD-0006](../descriptions/0006-workspace-agent-governance-platform.md#archived-lineage)
+and deleted; Git history recovers them. The Spec packages named here left the
+tree and are recovered the same way.
+
 __Current-state clarification (2026-10-05).__ The approved local
 SPEC-0106
-extends the existing Registry to generation 10 for the current lifecycle,
+(N/A — it left the tree; Git history recovers it) extended the existing Registry to generation 10 for the current lifecycle,
 parent, Task evidence, native Skill and navigation contract. The version-9
 reader/type clauses above describe this decision's adopted generation, not
 the current runtime contract. Current declarations remain at Stage 99;
@@ -197,7 +204,7 @@ Stage 99 Registry version 9 contract this decision adopted is unchanged.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| ADR-0015, [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md), and [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment of README envelope and public Registry-shape clauses; no full supersession | Spec 0054 |
+| ADR-0015, [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md), and [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment of README envelope and public Registry-shape clauses; no full supersession | N/A — SPEC-0054 left the tree; Git history recovers it |
 
 ### Implementation Traceability
 
@@ -207,5 +214,5 @@ Stage 99 Registry version 9 contract this decision adopted is unchanged.
 | Frontmatter value grammar and canonical quoting | "contracts/frontmatter.schema.json" and Markdown validator | positive corpus plus "FM-QUOTE" negative test |
 | Template binding and placeholder grammar | Registry and "templates/" | parity, orphan, duplicate, and residue tests |
 | Router envelopes and active-document migration | Registry-selected current Markdown corpus | strict Markdown and link/owner validation |
-| Frozen historical generation | Stage 98 and Archive validators | zero Archive payload diff and bounded recovery tests |
-| Execution evidence | Task SPEC-0054-TSK-0013 | gap matrix, commands, results, and limitations |
+| Frozen historical generation | N/A — no archive validator exists ([ADR-0053](./0053-unvalidated-archive.md)) | Git history recovery |
+| Execution evidence | N/A — Task SPEC-0054-TSK-0013 left the tree; Git history recovers it | gap matrix, commands, results, and limitations |

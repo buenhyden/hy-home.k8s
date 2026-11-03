@@ -29,8 +29,8 @@ Work begins with repository evidence and a testable Requirement Package or a
 directly approved package-local work unit. Architecture Descriptions record
 current structure; ADRs record durable choices. A Stage 03 work unit owns its
 Spec, Plan, and independently reviewable Tasks. Stable operating knowledge
-moves to Stage 05, reusable evidence to Stage 90, and historical recovery
-evidence to Stage 98.
+moves to Stage 05, and reusable evidence to Stage 90; Git history owns
+historical recovery, and Stage 98 is an unvalidated holding area.
 
 The common flow is Clarify → Spec → Plan → Tasks → cross-artifact analysis →
 Implement → Verify → promote durable meaning → Complete or Archive. GitHub
@@ -54,8 +54,10 @@ lineage, and Google SRE informs factual incidents and blameless postmortems.
    table owns each criterion verdict.
 4. Promote stable operator controls to Guide, Policy, or Runbook owners and
    preserve incident learning in Incident and Postmortem records.
-5. Supersede, retire, withdraw, or seal documents only through registry-owned
-   lifecycle edges and the applicable reciprocal or recovery evidence.
+5. Replace or withdraw a Stage 01, 02 or 03 document by summarizing it in the
+   owning current document's Archived Lineage table and deleting it; supersede
+   or retire other documents only through registry-owned lifecycle edges and
+   their reciprocal links.
 6. Keep release procedure in a Runbook when one is needed, local execution
    evidence in Tasks and Git, the committed main `CHANGELOG.md` as release
    history, and tag, GitHub Release, hosted, provider or live evidence in its
@@ -91,7 +93,7 @@ technical-design artifact.
 | Need to design | Requirement or direct scoped request; structural views or decision only when boundaries change | Request owner approves scope; design approval when required | Clarify an unresolved boundary before dependent implementation |
 | Design to execution | Reviewed and approved change contract and ordered Plan; Task records work and checks | Reuse valid approval for the same scope; never infer approval from a checkbox or `ready` Task | Re-review affected authority when scope or evidence contradicts it; preserve unrelated work |
 | Execution to handoff | Reviewed final bytes, resolved required checks, accepted criteria and Task handoff; scoped Git commit only when authorized | Local, index, hosted, provider, and live evidence remain distinct | Unresolved required checks block completion; missing external permission is DEFER |
-| Handoff to operations or retention | Stable operating knowledge or terminal work record | Promote only durable meaning; apply Stage 99 lifecycle and recovery contracts | Keep failures factual; use Git recovery rather than a second active owner |
+| Handoff to operations or retention | Stable operating knowledge or terminal work record | Promote only durable meaning; apply the Stage 99 lifecycle contract; recover removed documents from Git history | Keep failures factual; use Git recovery rather than a second active owner |
 
 ### Change kinds
 

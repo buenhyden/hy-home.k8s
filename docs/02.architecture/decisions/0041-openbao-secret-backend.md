@@ -110,7 +110,7 @@ secret backend and the ESO integration are unchanged.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
-- **Spec**: `../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md`
+- **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)
 - **Operations Policy**: [`../../05.operations/policies/0001-k8s-gitops-operations-policy.md`](../../05.operations/policies/0001-k8s-gitops-operations-policy.md)
 
@@ -118,4 +118,4 @@ secret backend and the ESO integration are unchanged.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| ADR-0003 | Supersedes ADR-0003; the ESO and Kubernetes Auth pattern carries over | SPEC-0008 |
+| ADR-0003 | Supersedes ADR-0003; the ESO and Kubernetes Auth pattern carries over | N/A — SPEC-0008 left the tree; Git history recovers it |

@@ -56,7 +56,9 @@ metadata; static parity never proves discovery, model resolution, or execution.
   style check on PR inputs. When a PR changes `.github/requirements/`, the
   style job also runs the reviewed base's CI Python contract check against the
   PR files, because a bot-authored lock update never passes local staged QA
-  (SPEC-0123). A deployment style route applies only if a real
+  (SPEC-0123; Git history: package `0123-hosted-lock-check` under
+  `docs/03.specs/` at commit `69445fca`). A
+  deployment style route applies only if a real
   deployment workflow exists. Hosted automation does not run local full, unit or
   document-content QA. A hosted result reports only what its jobs actually
   observed; old full-QA `NOT_RUN` records remain historical, never a current
@@ -317,8 +319,8 @@ one. Neither field grants authority, and a stale record never widens it.
 ### Supply-chain identity
 
 Retain immutable identities where byte identity is the security contract:
-pinned external Actions/hooks, resolved dependency artifacts, sealed evidence,
-or Git-backed recovery objects. Their owning contract records purpose and
+pinned external Actions/hooks, resolved dependency artifacts, or Git-backed
+recovery objects. Their owning contract records purpose and
 refresh/recovery procedure. Branch HEADs, current docs, local validators, and
 inventory counts are not policy pins.
 

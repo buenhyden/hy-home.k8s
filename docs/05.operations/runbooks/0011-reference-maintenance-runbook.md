@@ -59,16 +59,15 @@ artifact_id: "RUN-0011"
    갱신한다. 빈 category나 redirect 문서는 만들지 않는다.
 6. 종료 대상의 current consumer를 canonical owner 또는 직접 저장소 소스로
    전환한 뒤
-   [Document Lifecycle Policy](../../../.agents/governance/document-lifecycle.md)의
-   Stage 98 disposition과 Archive 인용 규칙을 따른다. disposition 승인은
-   owning Task에 기록한다.
+   [Document Lifecycle Policy](../../../.agents/governance/document-lifecycle.md)에
+   따라 문서를 `docs/98.archive/`의 처분 디렉터리로 옮기거나 삭제한다. 원문은
+   Git history로 복구하며, 처분 승인은 owning Task에 기록한다.
 
 ## Verification
 
 현재 QA 실행 registry가 변경 경로에 맞춰 gate를 선택한다. 작업 트리의
 `quick`은 선택된 입력의 미리보기이며, commit 직전에는 최종 Git index를
-대상으로 `staged`를 한 번 수행한다. Stage 98 처분이 있으면 승인과
-consumer 대조를 먼저 끝내고 선택된 Archive 고유 검사를 결과에 포함한다.
+대상으로 `staged`를 한 번 수행한다.
 수동으로 모든 현행 문서의 strict 검사를 상시 반복하지 않는다.
 
 ```bash
@@ -84,10 +83,9 @@ python3 scripts/qa.py staged
 
 - [ ] Reference가 공통 거버넌스나 현재 Stage 01/02/03/05 owner를 대체하지 않는다.
 - [ ] 모든 pack 경로가 category별 `####-<slug>/` 규칙과 일치하는 template을 사용한다.
-- [ ] 종료 대상의 current consumer가 0이고 Stage 98 disposition 승인이 기록되어 있다.
+- [ ] 종료 대상의 current consumer가 0이고 처분 승인이 기록되어 있다.
 - [ ] 보존 자료의 출처·확인일·freshness trigger가 명시되어 있다.
 - [ ] 현재 동작과 버전은 Stage 01/02 및 직접 구현 소스와 일치한다.
-- [ ] 현재 Stage 문서의 Stage 98 링크가 `archive_citation` 판정을 통과한다.
 
 - changed-path 목록과 reviewed diff
 - category 및 Stage router
@@ -102,8 +100,8 @@ python3 scripts/qa.py staged
 
 - 잘못된 분류는 redirect를 만들지 않고, 동일 변경을 revert하거나 canonical
   owner에 새 수정으로 바로잡는다.
-- 보존된 본문은 Stage 98 Retention Envelope가 명명하는 Git object로 복구하며,
-  현재 Stage에 되살리기 전 고유 목적과 consumer를 다시 검토한다.
+- 종료된 본문은 `git show <commit>:<path>`로 복구하며, 현재 Stage에 되살리기
+  전 고유 목적과 consumer를 다시 검토한다.
 - validator 실패 시 실패한 owner/router/link만 수정하고 무관한 문서를
   일괄 재생성하지 않는다.
 
@@ -123,4 +121,4 @@ python3 scripts/qa.py staged
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| N/A — Spec 0054, retained with its package by SPEC-0087, applied `.agents/governance/document-authoring.md` and selects a bounded Stage 90 reference or the canonical common-governance or Stage 01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; the Stage 98 disposition and its Retention Envelope own retired bodies. |
+| N/A — Spec 0054 left the tree; Git history recovers it. It applied `.agents/governance/document-authoring.md` and selects a bounded Stage 90 reference or the canonical common-governance or Stage 01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; Git history recovers retired bodies. |

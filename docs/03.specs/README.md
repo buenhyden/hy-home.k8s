@@ -22,8 +22,7 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 유효성을 뜻하며 구현 완료나 기준 수용의 표지가 아니다. Task의 실행 상태,
 검사 사실과 기준별 단일 수용 판정이 실제 완료를 증명한다. `ready` Task는
 실행 준비 상태이지 승인이나 실제 착수의 증거가 아니다. 기존 완료
-Spec·Plan·Task는 당시의 `completed` 상태와 근거를 보존하고, Stage 98의
-동결된 `done` 기록도 원문 그대로 읽는다. 끝난 package는 완료 즉시 이 stage에서 삭제하고, 그 요약은 해당 Requirement
+Spec·Plan·Task는 당시의 `completed` 상태와 근거를 보존한다. 끝난 package는 완료 즉시 이 stage에서 삭제하고, 그 요약은 해당 Requirement
 Package의 `Traceability` 아래 `Archived Lineage` 표에 남긴다. 원본은 Git
 history가 복구한다([ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md)).
 
@@ -83,7 +82,7 @@ Git history에서 복구한다([Archive 안내](../98.archive/README.md#usage)).
 2. 새 Spec은 `../99.templates/templates/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<####-slug>/spec.md`다.
 3. 변경 한정 설계와 수용 기준은 `spec.md`, 실행 순서·위험·예정 검증·rollback은 `plan.md`, 실제 실행·검사 사실·기준별 수용 판정은 package-local Task record가 소유한다. 범위나 근거가 승인 계약을 바꾸면 영향을 받는 Spec·Plan을 재검토한다. 실행 가능한 API 계약은 해당 Spec Package가 소유한다.
 4. 장기 구조는 Stage 02 Architecture Description으로, 중요한 장기 결정은 ADR로 승격한다. 폐기된 Stage 04 경로는 새 문서에서 사용하지 않는다.
-5. 종단 처분은 Stage 98 disposition이 기록한다. 끝난 package는 consumer-zero 뒤 삭제하고 Requirement Package의 `Archived Lineage` 표에 요약하며, 대체되거나 후속 없이 철회된 단독 문서는 `superseded/` 또는 `retired/`에 본문 그대로 보존한다. 경로 이동은 본문 없는 `migrations/`가 현재 owner를 명명한다(ADR-0040). 원본 바이트는 Git history가 복구한다.
+5. 끝난 package는 지속 계약을 현재 소유 문서로 승격한 뒤 삭제하고 Requirement의 `Archived Lineage` 표에 요약한다. 대체되거나 철회된 단독 문서도 소유 문서의 `Archived Lineage` 표에 요약한 뒤 삭제하며 별도 기록이나 migration을 만들지 않는다([ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md)). 원본은 Git history가 복구한다.
 
 ### Relative Link Rules
 

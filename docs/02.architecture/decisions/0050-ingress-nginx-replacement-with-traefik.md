@@ -54,7 +54,7 @@ redirects. Gateway API is deferred until the Istio upgrade in
   requires the Istio upgrade first, because 1.25.2 is end of life and outside
   its supported Kubernetes range. It also requires rewriting every route,
   replacing the canary mechanism and adding a new validator.
-- SPEC-0119 moved the
+- A completed change (Git history) moved the
   validator's controller identity into one `CONTROLLER` declaration, so
   swapping controllers no longer means rewriting QA.
 
@@ -82,8 +82,7 @@ redirects. Gateway API is deferred until the Istio upgrade in
     with ingress-nginx until the cutover.
   - At the cutover, the ingress-nginx Service is pruned before the Traefik
     Service can take the NodePorts and the address, so a short outage is
-    expected. SPEC-0121
-    owns the order.
+    expected. The cutover order is recorded in Git history.
   - The apex redirect Ingresses in
     `gitops/platform/ingress-routes/apex-redirects.yaml` live in the
     `ingress-nginx` namespace and use Service `ingress-nginx-controller` as
@@ -166,5 +165,5 @@ The research behind this decision was read on 2026-10-16. Sources:
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0043](./0043-dedicated-k8s-ingress-router.md) | Replaces only its non-goal that excludes replacing the ingress controller, and its naming of ingress-nginx as the controller. Preserves the dedicated address, NodePort, host and apex redirect contract | SPEC-0121 |
+| [ADR-0043](./0043-dedicated-k8s-ingress-router.md) | Replaces only its non-goal that excludes replacing the ingress controller, and its naming of ingress-nginx as the controller. Preserves the dedicated address, NodePort, host and apex redirect contract | N/A — SPEC-0121 left the tree; Git history recovers it |
 | [ADR-0051](./0051-istio-supported-release-upgrade.md) | Not replaced. Gateway API adoption is deferred to a decision after that upgrade | N/A — no Spec implements the deferral |

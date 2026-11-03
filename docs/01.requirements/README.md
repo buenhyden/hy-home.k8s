@@ -87,24 +87,22 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 - AD와 Spec은 `REQ-####-(FR|NFR|IF)-####` 전체 요구 ID를 추적한다.
 - Agent 기능인 경우 사용 시나리오, 허용/금지 행동, human-in-the-loop 요구를 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
 - 후속 AD/ADR/Spec이 아직 없으면 없는 링크를 만들지 않고, 문서 인덱스와 Requirement Package의 `Related Documents`에 후속 갭으로 표시한다.
-- 현재 구현과 맞지 않는 변경 한정 실행 계약을 Stage 01에 보존하지 않는다. 필요한 이전 경로 증거는 Stage 98 중앙 인덱스를 통해 조회한다.
+- 현재 구현과 맞지 않는 변경 한정 실행 계약을 Stage 01에 보존하지 않는다. 대체·완료된 문서는 Architecture Description의 Archived Lineage 표에 요약하고 삭제하며, 원본은 Git history로 복구한다.
 
 ### 요구사항 읽는 순서
 
 1. 현재 로컬 GitOps 플랫폼 기준은 [`0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md)와 `gitops/**`, `infrastructure/**`, `scripts/**` 정적 검증 증적이 소유한다.
-2. `active` 문서는 현재 요구 권위다. downstream AD/ADR/Spec과 구현 증적을 함께 확인한다.
-3. `draft` 문서는 아직 현재 요구 권위가 아닌 초안이다. 구현은 승인된 downstream Spec과 Plan이 있어야 시작한다.
-4. 과거 문서가 필요한 경우 Git history에서 복구한다(`git show <commit>:<path>`). [`../98.archive/README.md`](../98.archive/README.md)가 방법을 안내한다.
+2. `approved` 문서는 현재 요구 권위다. downstream AD/ADR/Spec과 구현 증적을 함께 확인한다.
+3. `draft`·`in-review` 문서는 아직 현재 요구 권위가 아닌 초안이다. 구현은 승인된 downstream Spec과 Plan이 있어야 시작한다.
+4. 과거 문서가 필요한 경우 Git history에서 복구한다(`git show <commit>:<path>`). 대체·완료된 문서는 AD의 Archived Lineage 표에 요약된다([ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md)).
 
 ### 상태 해석
 
 | 상태 | 의미 | 작업 기준 |
 | --- | --- | --- |
 | `draft` | 검토 중이며 아직 현재 권위가 아닌 요구 초안 | 구현 시작 전 승인과 downstream Spec/Plan 갭을 해소한다. |
-| `active` | 현재 solution-independent 요구 권위 | 관련 AD/ADR/Spec과 current 구현 증적을 함께 확인한다. |
-| `superseded` | 새 Requirement Package가 대체한 이전 권위 | 원래 supersession을 보존한다. 현재 의미·소비자 승계 후 ADR-0040에 따라 `98.archive/superseded/`에 본문 그대로 보존할 수 있다. |
-| `retired` | 대체 없이 의도적으로 종료한 요구 | 종료 사유와 마지막 추적 대상을 남기고 신규 구현의 권위로 사용하지 않는다. |
-| `withdrawn` | 승인 전에 철회한 요구 | 철회 사유를 남기고 downstream 구현을 시작하지 않는다. |
+| `in-review` | 검토 중인 요구 | 승인 전까지 현재 권위로 사용하지 않는다. |
+| `approved` | 현재 solution-independent 요구 권위 | 관련 AD/ADR/Spec과 current 구현 증적을 함께 확인한다. |
 
 ### 예시
 

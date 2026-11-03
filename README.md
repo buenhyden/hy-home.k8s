@@ -189,7 +189,7 @@ cd hy-home.k8s
 README는 사람을 위한 안내이고, `AGENTS.md`는 AI 에이전트를 위한 지시다.
 `AGENTS.md`는 README마다 두지 않고, 고유한 에이전트 책임과 규칙이 있는 작업
 영역의 루트(`docs/`, `gitops/`, `infrastructure/`, `policy/`, `scripts/`,
-`tests/`, `.github/`, `examples/`)에만 README와 함께 두며 하위 폴더에 적용된다.
+`tests/`, `.github/`, `examples/`, `examples/azure/`)에만 README와 함께 두며 하위 폴더에 적용된다.
 나머지 폴더는 README만 둔다. 판정 규칙은
 [문서 작성 정책](.agents/governance/document-authoring.md)이 소유한다. 에이전트의 역할과 절차는 [공통 거버넌스](.agents/README.md)에 있다.
 문서 작성·링크·언어 기준과 에이전트 실행·승인·Git 절차는
@@ -225,7 +225,7 @@ outside-doc 참조 경계는 문서 저술 정책이
 - [`./.github/repository-surface.md`](./.github/repository-surface.md)
 
 로컬 검증은 공통 QA 진입점을 사용한다. `quick`은 변경 범위, `staged`는
-정확한 Git index를 검사한다. 필요한 동작·Archive·보안 단위 검사와 목적
+정확한 Git index를 검사한다. 필요한 동작·보안 단위 검사와 목적
 gate를 현재 Registry에서 선택한다. 긴 `full`/`ci` 일괄 검사와 blanket unit
 discovery는 현재 완료 조건이 아니다. GitHub Actions의 `ci-summary`는 PR branch metadata와 신뢰된 base의
 `.cz.toml`을 읽는 title 문법을 검사하고, `style-pr`은 선택된 style을
@@ -256,6 +256,6 @@ Cloud 예시의 정확한 버전 기준은 [`examples/`](./examples/) 아래 각
 - [에이전트 실행 거버넌스](.agents/README.md)
 - [문서 저술 정책](.agents/governance/document-authoring.md)
 - 현재 로컬 GitOps 플랫폼 요구사항 (`docs/01.requirements/README.md`)
-- 현재 로컬 GitOps 플랫폼 Spec (`docs/03.specs/README.md`)
+- Stage 03 Spec 안내 (`docs/03.specs/README.md`)
 - ArgoCD 플랫폼 부트스트랩 Runbook (`docs/05.operations/runbooks/README.md`)
 - [저장소 스크립트 인덱스](./scripts/README.md)

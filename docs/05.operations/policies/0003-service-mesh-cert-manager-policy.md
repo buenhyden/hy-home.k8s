@@ -112,7 +112,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - **ADR-0009**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Platform Policy**: [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)
-- **Current control review**: SPEC-0106 P08 Task0018 compares this policy with the current istiod source and records the local review result. It is not the original promotion approval or live adoption evidence.
+- **Current control review**: A past SPEC-0106 review (Git history) compared this policy with the istiod source. It is not the original promotion approval or live adoption evidence.
 
 ### Lifecycle Traceability
 

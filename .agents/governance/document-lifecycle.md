@@ -12,7 +12,7 @@ updated: "2026-11-03"
 ## Overview
 
 This policy governs document promotion, blocking, supersession, retirement,
-withdrawal, sealing, and historical recovery across the repository.
+withdrawal, and historical recovery across the repository.
 
 ## Authority Boundary
 
@@ -128,9 +128,11 @@ evidence is not rewritten to satisfy a later profile.
   do not own a destination path.
 - Material Stage 99 index/worktree drift fails staged validation; the staged
   registry is the commit claim.
-- A governed document that is no longer current leaves its stage. It may move
-  under a `docs/98.archive/` disposition directory or be deleted; in both cases
-  Git history is its record, recovered with `git show <commit>:<path>`.
+- A governed document that is no longer current leaves its stage. Stage 01,
+  02 and 03 documents are deleted after their Archived Lineage summary; another
+  stage may delete it or move it under a `docs/98.archive/` disposition
+  directory. In every case Git history is its record, recovered with
+  `git show <commit>:<path>`.
   Stage 99 forms leave through Git history only, and a stage or collection
   index is retained in place.
 - `docs/98.archive/` is unvalidated history. It is outside the document

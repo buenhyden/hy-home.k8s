@@ -56,6 +56,7 @@ updated: "2026-10-05"
 | Path | Purpose |
 | --- | --- |
 | [conftest/](./conftest/) | `package main`의 deny 규칙 본문(kubernetes.rego)과 각 규칙이 여전히 발화하는지 증명하는 Rego 테스트(kubernetes_test.rego) |
+| [AGENTS.md](./AGENTS.md) | 이 폴더의 에이전트 지시. 정책 규칙이 아니다. |
 
 현재 강제되는 규칙:
 

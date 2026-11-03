@@ -73,7 +73,7 @@ so ADR-0009's install-mode clauses describe a state the tree no longer has.
 
 ## Traceability
 
-The request owner authorized reviewing SPEC-0008 against implementation and
+The request owner authorized reviewing the platform Spec (SPEC-0008, since deleted; Git history recovers it) against implementation and
 selecting the standards-aligned contract on 2026-10-03. This accepts the bounded
 installation amendment with its documented controller/CRD trade-off. It does not
 supersede ADR-0009 as a whole or claim a new deployment or live verification.
@@ -85,7 +85,7 @@ The endpoint and browser-route decisions remain with
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0009](0009-kiali-external-observability.md) | Replaces only the install-mode/version clauses and operator non-goal; ADR-0009 stays accepted for its remaining boundaries, with no whole-document supersession | SPEC-0008 |
+| [ADR-0009](0009-kiali-external-observability.md) | Replaces only the install-mode/version clauses and operator non-goal; ADR-0009 stays accepted for its remaining boundaries, with no whole-document supersession | N/A — SPEC-0008 left the tree; Git history recovers it |
 
 - **Requirement**: [REQ-0004-FR-0004 and REQ-0004-NFR-0001](../../01.requirements/0004-current-local-gitops-platform.md)
 - **Current architecture**: [AD-0007](../descriptions/0007-current-local-gitops-platform.md)
