@@ -261,11 +261,10 @@ class RetiredArtifactIdentityTest(unittest.TestCase):
 
 class ScopedDocumentMetadataTests(unittest.TestCase):
     def test_scoped_cli_keeps_global_duplicate_identity_and_pending_census(self):
-        unrelated = PurePosixPath("docs/03.specs/0140-archive-check-removal/plan.md")
-        selected = (
-            "docs/03.specs/0140-archive-check-removal/tasks/"
-            "tsk-0001-archive-check-removal.md"
+        unrelated = PurePosixPath(
+            "docs/01.requirements/0004-current-local-gitops-platform.md"
         )
+        selected = "docs/01.requirements/0003-workspace-agent-governance-platform.md"
         source_registry = MARKDOWN.load_registry(ROOT)
         language = dataclasses.replace(
             source_registry.document_language,
@@ -278,7 +277,7 @@ class ScopedDocumentMetadataTests(unittest.TestCase):
             text = original_read(root, path)
             if path == unrelated:
                 return text.replace(
-                    'artifact_id: "SPEC-0140-PLAN-0001"', 'artifact_id: "SPEC-0140"', 1
+                    'artifact_id: "REQ-0004"', 'artifact_id: "REQ-0003"', 1
                 )
             return text
 
@@ -323,13 +322,13 @@ class ScopedDocumentMetadataTests(unittest.TestCase):
 
     def test_unselected_body_is_skipped_but_malformed_frontmatter_still_fails(self):
         path = PurePosixPath(
-            "docs/03.specs/0140-archive-check-removal/tasks/tsk-0001-archive-check-removal.md"
+            "docs/01.requirements/0003-workspace-agent-governance-platform.md"
         )
         registry = MARKDOWN.load_registry(ROOT)
         profile = MARKDOWN.classify_path(registry, path)
         source = (ROOT / path).read_text(encoding="utf-8")
-        self.assertIn("## Task Evidence", source)
-        broken = source.replace("## Task Evidence", "## Missing Evidence", 1)
+        self.assertIn("## Traceability", source)
+        broken = source.replace("## Traceability", "## Missing Traceability", 1)
         broken = broken.replace('owner: "platform"', "owner: 3", 1)
         full = MARKDOWN.validate_document_text(
             broken, path, profile, "strict", today=dt.date(2026, 10, 9)
@@ -342,10 +341,10 @@ class ScopedDocumentMetadataTests(unittest.TestCase):
             today=dt.date(2026, 10, 9),
             include_body=False,
         )
-        self.assertIn("TASK-EVIDENCE-COLUMNS", {item.rule_id for item in full})
+        self.assertIn("BODY-HEADING-REQUIRED", {item.rule_id for item in full})
         self.assertIn("FM-OWNER", {item.rule_id for item in metadata_only})
         self.assertNotIn(
-            "TASK-EVIDENCE-COLUMNS", {item.rule_id for item in metadata_only}
+            "BODY-HEADING-REQUIRED", {item.rule_id for item in metadata_only}
         )
 
 

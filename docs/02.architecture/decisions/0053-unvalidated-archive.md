@@ -80,4 +80,4 @@ README and structure.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| ADR-0040 | Supersedes ADR-0040, removed from the decision log and summarized in AD-0006 Archived Lineage; no retention unit, catalog or citation table carries forward | [SPEC-0140](../../03.specs/0140-archive-check-removal/spec.md) |
+| ADR-0040 | Supersedes ADR-0040, removed from the decision log and summarized in AD-0006 Archived Lineage; no retention unit, catalog or citation table carries forward | N/A — SPEC-0140 left the tree; Git history recovers it |

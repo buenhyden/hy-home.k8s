@@ -11,7 +11,7 @@
 formatter와 Markdown lint도 이 경로를 제외한다.
 
 예전에 보관하던 본문, tombstone, migration 원장과 Retention Catalog는
-[SPEC-0140](../03.specs/0140-archive-check-removal/spec.md)에서 삭제했다. 원본은
+SPEC-0140에서 삭제했다. 원본은
 Git history가 복구하고, 각 문서의 요약은 그 주제를 소유한 현재
 `docs/01.requirements/`·`docs/02.architecture/` 문서의 `Traceability` 아래
 `Archived Lineage` 표에 있다.
