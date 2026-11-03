@@ -52,8 +52,9 @@ selected local purpose checks and exact-index staged result on their actual
 inputs. Link both hosted `ci-summary` and `style-pr` results with each PR SHA
 and run identity when observed. Static workflow configuration and local title/commit
 boundary tests do not establish a hosted result; unobserved hosted checks remain
-`NOT_RUN`. Title validation does not validate the exact final squash commit
-message; use both local message checks under the Git policy for that message.
+`NOT_RUN`. Only merge commits are allowed. Title validation does not validate
+the merge commit message; use both local message checks under the Git policy
+for that message.
 This workflow does not run local purpose or
 document-content QA. Live evidence remains `DEFER` without direct observation
 and a named next owner.

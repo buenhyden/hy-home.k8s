@@ -54,7 +54,7 @@ The draft is judged by Commitizen using [`.cz.toml`](../../.cz.toml).
 Generation is not validation. Selected staged file QA checks the exact index;
 the separate paired commit-msg checks validate the actual candidate message. A PR
 title or hosted `style-pr` result is no substitute for that check, including
-when a squash message is proposed. Follow
+for a merge commit message. Follow
 the [Git policy](../governance/git.md)
 for validating the actual candidate message and observing active hooks;
 workstation configuration is Task evidence, never a shared policy assumption.

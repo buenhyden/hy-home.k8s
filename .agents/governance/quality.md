@@ -149,7 +149,7 @@ Routine repository meaning checks previously repeated by a human use both
 applicable automated checks and an independent read-only agent review. This
 includes acceptance/implementation alignment, document completion or
 supersession, ownership, and consistency with current contracts. When both
-parts pass with no unresolved finding, do not request another human semantic
+parts pass with no unresolved `BLOCK` finding, do not request another human semantic
 confirmation for the same scope and evidence snapshot.
 
 - Run the applicable checks selected by the validation registry. Automation
@@ -249,9 +249,9 @@ above.
 | Routine editing | Run focused behavior checks and selected affected `quick` checks over changed working-tree bytes. |
 | Local commit | Review the logical index, run selected exact-index `staged` QA, required lint and format checks on the final index immediately before commit, and actual commit-message validation, then commit with active hooks. An identical hook leaf already run over the same index must not be invoked a second time manually. |
 | Feature push | Preserve checked commit evidence and observed push result; pushing adds no QA leaf for unchanged inputs. |
-| Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. A pull request completes only when the required checks pass, the required review approval is met (currently zero approvals) and the new-context review of the final diff reports no `BLOCK` finding. The owner merges it personally with a merge commit; automated checks, Apps and signatures never stand in for the owner's approval. |
+| Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. A pull request completes only when the required checks pass, the review requirement is met (no approving review is required, count 0) and the new-context review of the final diff reports no `BLOCK` finding. The repository owner merges it, or explicitly directs its merge, with a merge commit; automated checks, Apps and signatures never stand in for the owner's approval. |
 | Deployment | If a deployment workflow exists, observe its selected style check at the actual deployment SHA/run before deployment. Without such a workflow or run, retain `NOT_RUN` or `DEFER` for that lane; repository files alone cannot certify deployment. |
-| Main integration | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an identical fast-forward needs no repeat. Record the actual merge and any remote required-check result separately. |
+| Main integration | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an unchanged merge candidate needs no repeat. Record the actual merge and any remote required-check result separately. |
 | Local handoff | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing security guarantees. No session timebox or reserve approval is required. Do not select blanket discovery or a retired full/ci sweep merely to close the task. |
 
 The registry selects gates within a profile. Reuse only a successful result for
