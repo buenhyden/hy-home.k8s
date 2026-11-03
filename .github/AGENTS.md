@@ -23,7 +23,7 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 ## Rules
 
 1. Give `GITHUB_TOKEN` least privilege: `contents: read` at workflow level, and only the job-level permission a step needs.
-2. Pin every Action to a full commit SHA, and use only Actions registered in the repository allowlist (`.github/rulesets/main-protection.md`); register a new one there and in the remote setting in the same change.
+2. Pin every Action to a full commit SHA, and use only Actions registered in the allowlist recorded in `.github/rulesets/main-protection.md`. To add one, ask the operator to register its pattern in the remote setting before the pull request runs, and list it in `main-protection.md` in the same change.
 3. Leave no credential behind: keep `persist-credentials: false` and never write a token to disk or to an artifact.
 4. Never print a secret or token to the log, and mask any derived sensitive value.
 5. Treat PR titles, bodies, branch names and commit messages as untrusted input: pass them through `env:` and quote them; never interpolate `${{ }}` expressions into `run:` scripts.

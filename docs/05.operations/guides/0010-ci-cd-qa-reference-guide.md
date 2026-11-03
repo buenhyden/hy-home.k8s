@@ -71,7 +71,7 @@ source이며, job과 required check의 현재 구성은
 - 로컬 정적 검증: checkout에 있는 파일과 도구의 계약을 확인한다.
 - 호스팅 CI: event와 PR branch·trusted-base title metadata, 선택된 PR style의
   적용 가능한 결과를 각자의 SHA/run에서만 확인한다. title에는 생성 메시지
-  예외가 없고, 최종 squash 메시지는 별도 로컬 검증 대상이다. 정적 설정과
+  예외가 없고, merge commit만 허용되며 그 메시지는 별도 로컬 검증 대상이다. 정적 설정과
   로컬 title 회귀가 통과해도 실제 hosted 결과가 없으면 `NOT_RUN`이다.
 - 런타임 검증: 승인된 운영자가 실제 cluster/service 상태를 확인한다.
 

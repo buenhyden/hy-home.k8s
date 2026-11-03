@@ -42,16 +42,6 @@ that a setting is in force; only a dated authenticated read-back is.
   required checks for `main`. A recovery exception requires its own reviewed
   operator decision and remote read-back; this document grants no bypass.
 
-## Pull Request Completion
-
-A pull request completes only when all three hold: the required checks pass,
-the required review approval is met (zero approvals, no CODEOWNERS review) and
-the review of the final diff in a new context separated from the authoring
-context reports no `BLOCK` finding. The missing second reviewer is offset by
-those required checks, that separated review and the owner merging
-personally. Automated checks, Apps and signatures never replace the owner's
-approval.
-
 Branch, merge, finish and recovery rules themselves are owned by
 `.agents/governance/git.md`. This file records only the remote settings that
 support them.
@@ -152,6 +142,8 @@ this repository:
 - `gh api repos/buenhyden/hy-home.k8s/branches/main/protection`
 - `gh api repos/buenhyden/hy-home.k8s/actions/permissions`
 - `gh api repos/buenhyden/hy-home.k8s/actions/permissions/workflow`
+- `gh api repos/buenhyden/hy-home.k8s/actions/permissions/selected-actions`
+- `gh api repos/buenhyden/hy-home.k8s --jq '{allow_merge_commit,allow_squash_merge,allow_rebase_merge}'`
 
 Every dated read-back is point-in-time evidence, not a perpetual guarantee.
 Any later claim of remote enforcement requires a new authenticated read-back;
