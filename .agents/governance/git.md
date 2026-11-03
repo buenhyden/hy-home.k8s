@@ -76,16 +76,17 @@ replay them. The hosted `ci-summary` job owns the PR branch and commit-metadata 
 the hosted PR style job owns only its selected style verdict. Each observed
 result has its own SHA and trust boundary and never stands in for local purpose,
 unit or document-content checks. Every change to `main` arrives by pull
-request; direct and force pushes are blocked. A pull request completes only
-when the required checks pass, the review requirement is met (no approving review
-is required, count 0, and no CODEOWNERS review, because a sole owner cannot
-approve their own pull request) and the new-context review of the final diff
-reports no `BLOCK` finding ([semantic review](quality.md#semantic-review)).
+request; the intended protection blocks direct and force pushes. A pull
+request completes only when the required checks pass, the review requirement
+is met (no approving review is required, count 0, and no CODEOWNERS review,
+because a sole owner cannot approve their own pull request) and the
+new-context review of the final diff reports no `BLOCK` finding
+([semantic review](quality.md#semantic-review)).
 The repository owner (`@buenhyden`) merges the pull request, or explicitly
 directs its merge, using a merge commit only, so the commits a Task cites stay
 reachable; an administrator bypass (`--admin`) is never used. The intended
 repository merge setting is recorded in `.github/rulesets/main-protection.md`.
-Required checks, the separated review and the owner's merge or explicit merge
+Required checks, the new-context review and the owner's merge or explicit merge
 direction together offset the missing second reviewer; no automated check, App
 or signature replaces the owner's approval. A deployment style result requires
 an actual deployment workflow and run; absent that input, keep it unobserved.
@@ -155,9 +156,8 @@ merge commit까지 검사한다. PR event의 정확한 base·head·merge SHA와 
 관측하기 전 hosted 결과는 `NOT_RUN`이다. 문법 검사는 Git 생성 여부, 출처,
 승인 또는 merge 권한을 인증하지 않는다. merge는 merge commit만 쓰며, 의도한
 저장소 설정은 `.github/rulesets/main-protection.md`가 기록한다. PR title과
-선택된 style 결과는
-merge commit message를 검증하지 않으므로, remote merge 전에 생성될 merge
-message를 두 local message 검사로 확인한다.
+선택된 style 결과는 merge commit message를 검증하지 않으므로, remote merge
+전에 생성될 merge message를 두 local message 검사로 확인한다.
 
 Selected local file checks do not validate a commit message. Inspect the
 effective `core.hooksPath` source and

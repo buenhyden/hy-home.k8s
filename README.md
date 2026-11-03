@@ -97,7 +97,7 @@ hy-home.k8s/
 - `policy/` - 추적된 Kubernetes 매니페스트에 적용하는 Conftest/Rego deny 규칙
 - `secrets/` - 로컬 인증서 배치 경로. 키 자료는 추적하지 않는다
 - `_workspace/` - 비밀값을 담지 않는 임시 분석·진단 경계. 자신과 하위 디렉터리의 README 7개만 추적한다
-- `.github/` - `main` PR flow용 CI workflow, PR/issue intake, CODEOWNERS, labeler, dependabot, ruleset 기록, SECURITY 안내 (zizmor hook은 `.pre-commit-config.yaml`)
+- `.github/` - `main` PR flow용 CI workflow, PR/issue intake, CODEOWNERS, labeler, dependabot, main 보호 설정 기록, SECURITY 안내 (zizmor hook은 `.pre-commit-config.yaml`)
 - `.agents/` - 공급자 중립 역할·스킬·평가 하니스와 registry. Codex/Claude projection의 공통 의미를 소유하며 native 실행을 증명하지 않는다.
 - `.claude/` - 추적되는 Claude project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
 - `.codex/` - 추적되는 Codex project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
