@@ -28,11 +28,11 @@ REGISTRY_PATH = PurePosixPath(".agents/roles/registry.json")
 REGISTRY_SCHEMA_PATH = PurePosixPath(".agents/roles/registry.schema.json")
 REGISTRY_PROVIDER_IDS = ("claude", "codex")
 CODEX_CONFIG_PATH = ".codex/config.toml"
-# SPEC-0114: the reviewed Codex execpolicy file. A digest keeps it exact the
-# way the config and Claude permission lists are exact; a reviewed edit
-# updates this value together with the file.
+# The reviewed Codex execpolicy file (SPEC-0114, Git history). A digest keeps
+# it exact the way the config and Claude permission lists are exact; a
+# reviewed edit updates this value together with the file.
 CODEX_RULES_PATH = ".codex/rules/default.rules"
-CODEX_RULES_SHA256 = "79f1be94f8d76ce246e0c790d96009529330df875add78a8575e876d47739dc3"  # pragma: allowlist secret
+CODEX_RULES_SHA256 = "ab905c123043f96068c6d6f4ec66e04ac3dd1bbfc6f43b58e854f023b17aab7b"  # pragma: allowlist secret
 CODEX_CONFIG = {
     "approval_policy": "on-request",
     "sandbox_mode": "workspace-write",
@@ -88,11 +88,11 @@ CLAUDE_ALLOWED_PERMISSIONS = (
     "Bash(gh run view *)",
     "Bash(gh run list *)",
 )
-# SPEC-0114: merges and pull requests run without a native prompt because an
-# operator request is their approval; force, delete, mirror and admin forms
-# stay denied below. Raw API calls, `git -C` and every push keep a prompt
-# because a prefix rule cannot see their effect; a refspec deletion such as
-# `origin :branch` has no expressible deny pattern.
+# SPEC-0114 (Git history): merges and pull requests run without a native
+# prompt because an operator request is their approval; force, delete, mirror
+# and admin forms stay denied below. Raw API calls, `git -C` and every push
+# keep a prompt because a prefix rule cannot see their effect; a refspec
+# deletion such as `origin :branch` has no expressible deny pattern.
 CLAUDE_ASK_PERMISSIONS = (
     "Bash(gh api *)",
     "Bash(git -C *)",

@@ -1,9 +1,9 @@
-# Project Codex execpolicy rules (SPEC-0114).
+# Project Codex execpolicy rules (SPEC-0114; Git history recovers it).
 # These forbid the command families that `.claude/settings.json` denies.
 # A rule matches an exact argv prefix, so a form whose dangerous token sits
 # behind an option it cannot predict (for example `kubectl -n x delete`) is
 # not covered here; the workspace sandbox and the approval policy remain the
-# primary Codex controls, and SPEC-0114 records these limits as residual risk.
+# primary Codex controls, and `.codex/provider.md` records these limits.
 
 # Secret output.
 prefix_rule(pattern = ["gh", "auth", "token"], decision = "forbidden", justification = "prints a GitHub token")

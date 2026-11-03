@@ -270,9 +270,9 @@ jobs:
           --paths-file "$RUNNER_TEMP/pr-style-paths.z" --delimiter nul
           --expected-base-sha "$BASE_SHA"
       # A Dependabot lock pull request never passes local staged QA. Check the
-      # candidate lock with the reviewed base's validator (SPEC-0123). The
-      # unfiltered list also catches a deleted or retyped lock, and a failed
-      # git diff stops the job instead of skipping the check.
+      # candidate lock with the reviewed base's validator (SPEC-0123, now in
+      # Git history). The unfiltered list also catches a deleted or retyped
+      # lock, and a failed git diff stops the job instead of skipping the check.
       - name: Validate a changed CI lock
         working-directory: candidate
         run: |
