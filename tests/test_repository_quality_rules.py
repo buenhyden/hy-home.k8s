@@ -460,6 +460,28 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         self.assertFalse(record("docs/05.operations/runbooks/0001-x.md", row))
         self.assertFalse(record("docs/03.specs/0118-qa-phase-two/spec.md", row))
 
+    def test_kubeconfig_rule_flags_only_mutating_config_commands(self):
+        rule = next(
+            entry
+            for entry in self.rules["command_boundary_rules"]
+            if entry[0] == "kubeconfig mutation"
+        )
+        pattern = rule[1]
+        for command in (
+            "kubectl config use-context prod",
+            "kubectl config set-context dev",
+            "kubectl config delete-context old",
+            "kubectl config set users.x.token y",
+            "aws eks update-kubeconfig --name c",
+        ):
+            self.assertIsNotNone(pattern.search(command), command)
+        for command in (
+            "kubectl config current-context",
+            "kubectl config get-contexts",
+            "kubectl config view --minify",
+        ):
+            self.assertIsNone(pattern.search(command), command)
+
     def test_prohibited_prose_does_not_hide_other_live_commands(self):
         decide = self.rules["is_unmarked_command"]
         label, pattern, markers = self.rules["command_boundary_rules"][0]

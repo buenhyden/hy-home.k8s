@@ -889,7 +889,8 @@ command_boundary_rules = [
     (
         "kubeconfig mutation",
         re.compile(
-            r"\b(?:aws\s+eks\s+update-kubeconfig|az\s+aks\s+get-credentials|kubectl\s+config)\b"
+            r"\b(?:aws\s+eks\s+update-kubeconfig|az\s+aks\s+get-credentials"
+            r"|kubectl\s+config\s+(?:set(?:-[a-z]+)?|unset|use-context|delete-[a-z]+|rename-context))\b"
         ),
         ["--kubeconfig", "--file", "temporary kubeconfig", "임시 kubeconfig"],
     ),
