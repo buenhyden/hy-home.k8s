@@ -56,7 +56,7 @@ hy-home.k8s/
 ├── _workspace/            # Temporary non-secret scratch boundary; only its seven READMEs are tracked
 ├── policy/                # Kubernetes 매니페스트에 적용하는 Conftest/Rego 정책 규칙
 ├── secrets/               # 로컬 인증서 등 민감 파일 저장 경로
-├── .github/               # Workflows, PR/issue templates, CODEOWNERS, labeler, dependabot, rulesets
+├── .github/               # Workflows, PR/issue templates, CODEOWNERS, labeler, dependabot, main 보호 설정 기록
 ├── .agents/               # 공급자 중립 역할·스킬 registry와 공유 자산
 ├── .claude/               # Claude native 투영과 권한·훅 선언
 ├── .codex/                # Codex native 투영과 로컬 베이스라인
