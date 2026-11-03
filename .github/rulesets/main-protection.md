@@ -65,6 +65,18 @@ owns it as HIGH, together with the PR-editable workflow body as MEDIUM.
 SPEC-0115 Task 0005 first recorded the latter; that package left the tree and
 Git history recovers it.
 
+On 2026-11-04 the operator accepted that HIGH risk for this single-owner
+repository. A forged check needs a workflow of the author's own to run here.
+Accounts with write access can already change far more, and a fork pull
+request's workflows wait for approval because the fork contributor approval
+policy is `all_external_contributors` (read back 2026-11-04, together with a
+`read` default token, no Actions review approval and required SHA pinning).
+A base-branch `pull_request_target` check was rejected: every Actions job
+reports as App `15368`, so a pull request can still post a job under the same
+name. Required code-owner review was rejected because a sole owner cannot
+approve their own pull requests. Revisit this decision when a second
+maintainer or untrusted writer joins, or if the fork approval policy changes.
+
 ## Required Status Checks
 
 The target requires two separate checks.
