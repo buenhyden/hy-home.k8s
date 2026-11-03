@@ -132,5 +132,19 @@ delete the archived files and keep the README and structure. It executes
   baseline line moved one commit ahead of the profile removal.
 - Residual risk: the cancelled-Task `not-required` waiver lost its direct
   regression test, and native runtime behavior was not observed.
-- Pending: WORK-003 independent review and hosted checks on the pull request,
-  then operator acceptance of every criterion.
+- An in-session review of `13f6115c` reported no blocking issue; its two
+  medium and actionable low findings are fixed in `6275f513`. It is not the
+  independent review.
+- The RUN-0013 independent review of PR #197 head `1a0148bd` from a separate
+  session returned `approve` with one medium and two low findings and was
+  not published. This change fixes the medium finding (stale SPEC-0115 and
+  SPEC-0116 owners in `.github/rulesets/main-protection.md`) and the
+  `.gitignore` comment, so the final head needs a new review.
+- Residual risk accepted under ADR-0053: no hook or validator stops a write
+  under `docs/98.archive/` or a recreated `docs/00.agent-governance/`
+  Markdown file; non-Markdown paths there still fail surface selection.
+- Left as is: the SPEC-0123 comment in `.github/workflows/ci.yml` is outside
+  the allowed paths, and `.codex/rules/default.rules` is digest-pinned by
+  the agent-governance validator.
+- Pending: WORK-003 independent review published on the final pull request
+  head and its hosted checks, then operator acceptance of every criterion.

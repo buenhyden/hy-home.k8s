@@ -62,13 +62,16 @@ PR-editable `pull_request` workflow, its shell steps, or required job names.
 The repository's default read token is not a hard ceiling on workflow-defined
 permissions. Required-check forgery is closed by the `independent-review`
 requirement above; the PR-editable workflow body is a separate MEDIUM risk owned
-by the CI and security operator (SPEC-0115 Task 0005).
+by the CI and security operator. SPEC-0115 Task 0005 first recorded it; that
+package left the tree and Git history recovers it.
 
 ## Required Status Checks
 
 The target requires three separate checks.
 `.github/workflows/ci.yml` owns the two Actions job identities and
-`.github/repository-surface.md` explains their roles; SPEC-0116 owns the third.
+`.github/repository-surface.md` explains their roles. The independent review
+runbook RUN-0013 in `docs/05.operations/runbooks/` owns the third; SPEC-0116,
+which introduced it, left the tree and Git history recovers it.
 
 - `ci-summary` (App `15368`)
 - `style-pr` (App `15368`)
