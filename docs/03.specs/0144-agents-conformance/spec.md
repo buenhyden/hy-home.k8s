@@ -1,8 +1,8 @@
 ---
 title: "Agent Surface Conformance"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-11-06"
 layer: "specs"

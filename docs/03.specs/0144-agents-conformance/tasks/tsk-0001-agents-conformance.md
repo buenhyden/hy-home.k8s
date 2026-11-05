@@ -1,6 +1,6 @@
 ---
 title: "Agent Surface Conformance"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -24,6 +24,9 @@ workspace. It executes [SPEC-0144](../spec.md) through
   duplication.
 - Operator choices (2026-11-06): the correctness-and-code scope; bind
   `ops-runbook` to `doc-writer`; remove only the unread schema field.
+- Approval (2026-11-06): the operator approved SPEC-0144 and its Plan after
+  review of the draft in `d541fb8a`, and asked for a pull request and merge;
+  that choice also accepts the criteria once their evidence passes.
 - Start: branch `docs/agents-conformance` from `main` at `75ba7b04`.
 
 ## Task Table
@@ -32,10 +35,10 @@ workspace. It executes [SPEC-0144](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AGC-004](../spec.md#success-criteria--verification-plan) | Code, registry and schema changes | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-AGC-001](../spec.md#success-criteria--verification-plan) | Governance files | platform | draft | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-AGC-002](../spec.md#success-criteria--verification-plan) | Roles and skills | platform | draft | NOT_RUN | EVD-003 |
-| WORK-004 | [VAL-AGC-003](../spec.md#success-criteria--verification-plan) | README, knowledge, prompts, workflows, evaluations | platform | draft | NOT_RUN | EVD-004 |
+| WORK-001 | [VAL-AGC-004](../spec.md#success-criteria--verification-plan) | Code, registry and schema changes | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-AGC-001](../spec.md#success-criteria--verification-plan) | Governance files | platform | ready | NOT_RUN | EVD-002 |
+| WORK-003 | [VAL-AGC-002](../spec.md#success-criteria--verification-plan) | Roles and skills | platform | ready | NOT_RUN | EVD-003 |
+| WORK-004 | [VAL-AGC-003](../spec.md#success-criteria--verification-plan) | README, knowledge, prompts, workflows, evaluations | platform | ready | NOT_RUN | EVD-004 |
 
 ## Task Evidence
 
