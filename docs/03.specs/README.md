@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.21.3"
+version: "0.22.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -21,10 +21,8 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 검증을 소유한다. 새 Spec·Plan의 `approved`는 검토된 계약의 현재 권한과
 유효성을 뜻하며 구현 완료나 기준 수용의 표지가 아니다. Task의 실행 상태,
 검사 사실과 기준별 단일 수용 판정이 실제 완료를 증명한다. `ready` Task는
-실행 준비 상태이지 승인이나 실제 착수의 증거가 아니다. 기존 완료
-Spec·Plan·Task는 당시의 `completed` 상태와 근거를 보존한다. 끝난 package는 완료 즉시 이 stage에서 삭제하고, 그 요약은 해당 Requirement
-Package의 `Traceability` 아래 `Archived Lineage` 표에 남긴다. 원본은 Git
-history가 복구한다([ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md)).
+실행 준비 상태이지 승인이나 실제 착수의 증거가 아니다. package는 변경이
+열려 있는 동안만 이 stage에 있다.
 
 ### Stage Readers
 
@@ -61,10 +59,7 @@ history가 복구한다([ADR-0053](../02.architecture/decisions/0053-unvalidated
 소유한다. 이 README는 package 폴더까지만 안내하며, 각 package의 상태와
 날짜는 그 package의 `spec.md` frontmatter가 소유한다.
 
-package는 폐기·완료·중복·상충이 증명되고 lifecycle 정규화, consumer 전환,
-Git 복구가 끝난 뒤에만 현재 트리를 떠나며, 완료된 package는 삭제되고 그 요약은
-해당 Requirement Package의 `Archived Lineage` 표가 보존한다
-([Archive](../98.archive/README.md)). 아래 목록은 시점 목록이며 고정 roster나 개수 불변식이 아니다.
+아래 목록은 시점 목록이며 고정 roster나 개수 불변식이 아니다.
 
 ```text
 03.specs/
@@ -76,17 +71,15 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나며, 완료된 package는 
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다.
 
-마지막으로 완료된 SPEC-0143과 그 이전 governance package는
-[REQ-0003 Archived Lineage](../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage)가,
-SPEC-0141은 [REQ-0002 Archived Lineage](../01.requirements/0002-argo-notifications-slack.md#archived-lineage)가 요약한다.
-SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
-Git history에서 복구한다([Archive 안내](../98.archive/README.md#usage)).
+완료된 package는 그 Requirement Package의 `Archived Lineage` 표가 요약한다.
+최근 것은 SPEC-0143([REQ-0003](../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage))과
+SPEC-0141([REQ-0002](../01.requirements/0002-argo-notifications-slack.md#archived-lineage))이다.
 
 ## Usage
 
 1. 관련 Requirement Package, AD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
 2. 새 Spec은 `../99.templates/templates/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<####-slug>/spec.md`다.
-3. 변경 한정 설계와 수용 기준은 `spec.md`, 실행 순서·위험·예정 검증·rollback은 `plan.md`, 실제 실행·검사 사실·기준별 수용 판정은 package-local Task record가 소유한다. 범위나 근거가 승인 계약을 바꾸면 영향을 받는 Spec·Plan을 재검토한다. 실행 가능한 API 계약은 해당 Spec Package가 소유한다.
+3. 변경 한정 설계와 수용 기준은 `spec.md`, 실행 순서·위험·예정 검증·rollback은 `plan.md`, 실제 실행·검사 사실·기준별 수용 판정은 package-local Task record가 소유한다. 범위나 근거가 승인 계약을 바꾸면 영향을 받는 Spec·Plan을 재검토한다.
 4. 장기 구조는 Stage 02 Architecture Description으로, 중요한 장기 결정은 ADR로 승격한다. 폐기된 Stage 04 경로는 새 문서에서 사용하지 않는다.
 5. 끝난 package는 지속 계약을 현재 소유 문서로 승격한 뒤 삭제하고 Requirement의 `Archived Lineage` 표에 요약한다. 대체되거나 철회된 단독 문서도 소유 문서의 `Archived Lineage` 표에 요약한 뒤 삭제하며 별도 기록이나 migration을 만들지 않는다([ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md)). 원본은 Git history가 복구한다.
 
@@ -97,7 +90,6 @@ Git history에서 복구한다([Archive 안내](../98.archive/README.md#usage)).
 - 상위 문서는 `../`로 시작하는 상대 경로를 사용한다.
 - 같은 stage의 package는 `./<####-numbering>-<feature-id>/` 폴더로 연결한다.
 - 실행 문서는 같은 work-unit의 `plan.md`와 `tasks/tsk-####-<slug>.md`, 운영 문서는 `../05.operations/`로 연결한다.
-- feature-local helper 문서 링크는 `docs/03.specs/<####-numbering>-<feature-id>/` 안의 최종 파일 위치 기준으로 다시 계산한다.
 
 ### Spec Authoring Rules
 
@@ -107,11 +99,11 @@ Git history에서 복구한다([Archive 안내](../98.archive/README.md#usage)).
 4. 실행 가능한 인터페이스 계약은 실제 구현 소유 경로에 두고 Spec에서 그 owner와 검증을 추적한다.
 5. Agent 변경은 목표·동작·경계·실패 조건을 Spec에, 구현 순서와 rollback을 Plan에 기록한다.
 6. Feature-local Task records가 해당 work-unit의 실행과 evidence를 소유한다. Validator의 독립 실행 테스트와 fixture는 top-level `tests/`와 `tests/fixtures/` 아래에 두고, production module은 이를 import하거나 runtime data로 읽지 않는다. `validation/tests/` 또는 Spec-package-local test control plane은 만들지 않는다.
-7. `Related Inputs`는 upstream 요약이고, `Related Documents`는 Requirement Package/AD/ADR와 Plan/Task/Operations 링크를 함께 담는다.
+7. Spec의 `Traceability` 표는 Requirement ID를 기준에 잇고, Plan의 `Work Breakdown` 표는 각 work unit을 Task에 잇는다.
 
 ### Helper Templates
 
-아래 템플릿은 `docs/03.specs/<####-slug>/` 패키지와 해당 Spec이 소유하는 실행 가능 인터페이스 계약에 사용한다.
+아래 템플릿은 `docs/03.specs/<####-slug>/` package의 Spec, Plan, Task에 사용한다.
 
 - `../99.templates/templates/specs/spec.template.md`
 - `../99.templates/templates/specs/plan.template.md`
