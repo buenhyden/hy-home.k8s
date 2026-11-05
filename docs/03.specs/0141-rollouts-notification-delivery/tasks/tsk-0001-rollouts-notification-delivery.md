@@ -1,9 +1,9 @@
 ---
 title: "Rollouts Notification Delivery"
-version: "0.3.0"
+version: "0.3.1"
 type: "sdlc/task"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-06"
 layer: "specs"
 artifact_id: "SPEC-0141-TSK-0001"
 parent_ids: ["SPEC-0141-PLAN-0001"]
@@ -59,6 +59,7 @@ channel through the Rollouts notification engine. It executes
 | EVD-009 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | WORK-001 | `bash scripts/validate-infrastructure-contracts.sh` after adding trigger and template assertions | Working tree on `e6c4c065` | FAIL | Local run, 2026-11-05T13:20Z, exit 1: `pattern not found ... trigger\.on-rollout-completed`, as expected | no | none |
 | EVD-010 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | WORK-001 | `bash scripts/validate-infrastructure-contracts.sh` and `helm template` (v3.22.0) of `argo-rollouts` 2.40.9 | Working tree on `e6c4c065` with the triggers and templates | PASS | Local run, exit 0; the rendered ConfigMap holds `service.slack`, `subscriptions`, both `trigger.on-rollout-*` and both `template.rollout-*` keys; `shellcheck` clean | yes | none |
 | EVD-011 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent review of the implementing change | Commit `d708b826` | PASS | gitops-reviewer re-review: both triggers map to the `RolloutCompleted` and `RolloutAborted` event reasons, the templates use only fields of the Rollouts context, the attachments JSON is valid, and the rendered ConfigMap sends both events; two wording defects fixed in the closing change | yes | EVD-008 |
+| EVD-012 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | WORK-003 | Operator Slack observation | `main` at `04e23039` (PR #207 merged 2026-11-05T15:41Z), context `k3d-hyhome` | DEFER | 2026-11-05T15:43Z read-only `kubectl`: Argo CD Applications `platform-rollouts` and `platform-eso-config` report sync `Unknown` with `ComparisonError`; the repo server cannot resolve `github.com` or fetch the `argo-helm` chart (`lookup github.com on 10.43.0.10:53: server misbehaving`); CoreDNS forwards to the node `/etc/resolv.conf` while the host resolves `github.com`; the change is not deployed, so no Rollouts message can be sent. Resume after cluster DNS egress is restored and Argo CD syncs; next owner: operator | yes | none |
 
 ## Criterion Acceptance
 
@@ -67,7 +68,7 @@ channel through the Rollouts notification engine. It executes
 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-011 | Operator accepted on 2026-11-06 | platform |
 | [VAL-RND-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-004, EVD-005 | Operator accepted on 2026-11-06 | platform |
 | [VAL-RND-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-007 | Operator accepted on 2026-11-06 | platform |
-| [VAL-RND-004](../spec.md#success-criteria--verification-plan) | pending | none | After sync, confirm the OpenBao entry holds `slack_token` and observe a Rollouts message (RUN-0004 Procedure 3) | operator |
+| [VAL-RND-004](../spec.md#success-criteria--verification-plan) | pending | none | Restore cluster DNS egress (EVD-012), let Argo CD sync, confirm the OpenBao entry holds `slack_token` and observe a Rollouts message (RUN-0004 Procedure 3) | operator |
 
 ## Approval and Safety Boundaries
 
@@ -94,7 +95,10 @@ channel through the Rollouts notification engine. It executes
   changed first and failed on the old manifests (EVD-004).
 - Acceptance: the operator accepted VAL-RND-001 to VAL-RND-003 on
   2026-11-06; VAL-RND-004 waits for the live observation.
-- Live lane: not run. Delivery needs Argo CD to sync the change and the
+- Live lane: DEFER (EVD-012). PR #207 merged, but cluster DNS egress fails,
+  so Argo CD cannot sync the change; the operator restores DNS before the
+  observation.
+- Live lane before the merge: not run. Delivery needs Argo CD to sync the change and the
   OpenBao `platform/notifications` entry to hold `slack_token`; the operator
   owns VAL-RND-004.
 - Review: EVD-008 found that the first change sent nothing because the
