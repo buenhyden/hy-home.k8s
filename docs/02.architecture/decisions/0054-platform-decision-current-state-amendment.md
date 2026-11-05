@@ -1,6 +1,6 @@
 ---
 title: "Platform Decision Current-State Amendment"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -138,7 +138,10 @@ this record.
 `on-rollout-completed` and `on-rollout-aborted` triggers "built-in". The
 Rollouts controller ships no triggers or templates; SPEC-0141 defines both
 triggers and their templates in the Rollouts chart values after the upstream
-`manifests/notifications` catalog. The decision is otherwise unchanged.
+`manifests/notifications` catalog. The Context bullet on
+`notifications.enabled: false` describes the state when this decision was
+made, and the Non-goal "custom Rollouts notification templates" excludes
+templates beyond those two catalog pairs. The decision is otherwise unchanged.
 
 - **Requirement**: [REQ-0001](../../01.requirements/0001-argo-rollouts-progressive-delivery.md)
   IF-0002; [REQ-0002](../../01.requirements/0002-argo-notifications-slack.md)

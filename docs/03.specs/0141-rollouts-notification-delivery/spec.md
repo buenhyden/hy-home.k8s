@@ -1,6 +1,6 @@
 ---
 title: "Rollouts Notification Delivery"
-version: "0.1.1"
+version: "0.1.2"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -35,7 +35,8 @@ The [Plan](plan.md) orders the work and
   - REQ-0002, AD-0005, ADR-0012 and the operations runbook text that states
     the current delivery path.
 - Non-goals:
-  - custom Rollouts templates, per-Rollout routing or other Rollouts events;
+  - templates or triggers beyond the completion and abort pairs taken from
+    the upstream catalog, per-Rollout routing, or other Rollouts events;
   - writing the OpenBao entry, reading the token, or any live cluster action;
   - changing the ArgoCD Notifications application triggers or subscriptions.
 

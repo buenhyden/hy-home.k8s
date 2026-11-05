@@ -37,8 +37,8 @@ channel through the Rollouts notification engine. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RND-001](../spec.md#success-criteria--verification-plan), [VAL-RND-002](../spec.md#success-criteria--verification-plan) | Validator assertions, Rollouts values, ExternalSecret, ArgoCD ConfigMap | platform | in-progress | FAIL | EVD-004, EVD-005, EVD-006, EVD-008, EVD-009, EVD-010 |
-| WORK-002 | [VAL-RND-003](../spec.md#success-criteria--verification-plan) | REQ-0002, AD-0005, ADR-0012 and runbook text | platform | in-progress | PASS | EVD-007 |
+| WORK-001 | [VAL-RND-001](../spec.md#success-criteria--verification-plan), [VAL-RND-002](../spec.md#success-criteria--verification-plan) | Validator assertions, Rollouts values, ExternalSecret, ArgoCD ConfigMap | platform | completed | PASS | EVD-004, EVD-005, EVD-006, EVD-008, EVD-009, EVD-010, EVD-011 |
+| WORK-002 | [VAL-RND-003](../spec.md#success-criteria--verification-plan) | REQ-0002, AD-0005, ADR-0012 and runbook text | platform | completed | PASS | EVD-007 |
 | WORK-003 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | Operator live observation | operator | ready | NOT_RUN | EVD-003 |
 
 ## Task Evidence
@@ -55,12 +55,13 @@ channel through the Rollouts notification engine. It executes
 | EVD-008 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent review of the implementing change | Commit `e6c4c065` | FAIL | gitops-reviewer report: the Rollouts controller ships no triggers or templates, so with only `notifiers` and `subscriptions` nothing is sent; EVD-005 and EVD-006 prove the static contract and render only, not delivery | yes | none |
 | EVD-009 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | WORK-001 | `bash scripts/validate-infrastructure-contracts.sh` after adding trigger and template assertions | Working tree on `e6c4c065` | FAIL | Local run, 2026-11-05T13:20Z, exit 1: `pattern not found ... trigger\.on-rollout-completed`, as expected | no | none |
 | EVD-010 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | WORK-001 | `bash scripts/validate-infrastructure-contracts.sh` and `helm template` (v3.22.0) of `argo-rollouts` 2.40.9 | Working tree on `e6c4c065` with the triggers and templates | PASS | Local run, exit 0; the rendered ConfigMap holds `service.slack`, `subscriptions`, both `trigger.on-rollout-*` and both `template.rollout-*` keys; `shellcheck` clean | yes | none |
+| EVD-011 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent review of the implementing change | Commit `d708b826` | PASS | gitops-reviewer re-review: both triggers map to the `RolloutCompleted` and `RolloutAborted` event reasons, the templates use only fields of the Rollouts context, the attachments JSON is valid, and the rendered ConfigMap sends both events; two wording defects fixed in the closing change | yes | EVD-008 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RND-001](../spec.md#success-criteria--verification-plan) | pending | EVD-008, EVD-010 | Re-review of the fix must resolve EVD-008 | platform |
+| [VAL-RND-001](../spec.md#success-criteria--verification-plan) | pending | EVD-010, EVD-011 | Operator decision on PASS evidence | operator |
 | [VAL-RND-002](../spec.md#success-criteria--verification-plan) | pending | EVD-004, EVD-005 | Operator decision on PASS evidence | operator |
 | [VAL-RND-003](../spec.md#success-criteria--verification-plan) | pending | EVD-007 | Operator decision on PASS evidence | operator |
 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | pending | none | After sync, confirm the OpenBao entry holds `slack_token` and observe a Rollouts message (RUN-0004 Procedure 3) | operator |
@@ -93,6 +94,6 @@ channel through the Rollouts notification engine. It executes
   owns VAL-RND-004.
 - Review: EVD-008 found that the first change sent nothing because the
   controller has no default triggers or templates; the fix defines both
-  (EVD-010) and waits for re-review.
+  (EVD-010), and the re-review passed (EVD-011).
 - Residual risk: delivery is proven only by the operator's live observation.
 - Rollback: revert the implementing commit.
