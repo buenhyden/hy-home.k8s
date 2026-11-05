@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.3.0"
+version: "1.3.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-06"
 layer: "operations"
 artifact_id: "RUN-0004"
 ---
@@ -237,7 +237,7 @@ kubectl -n headlamp rollout restart deployment headlamp
 - **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
 - **ADR-0054**: [`../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md`](../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md)
-- **Rollouts notification delivery**: [SPEC-0141](../../03.specs/0141-rollouts-notification-delivery/spec.md) (open package)
+- **Rollouts notification delivery**: SPEC-0141 (left the tree; Git history recovers it)
 - **Earlier Specs**: SPEC-0004 and SPEC-0005 (left the tree; Git history recovers them)
 
 ### Lifecycle Traceability

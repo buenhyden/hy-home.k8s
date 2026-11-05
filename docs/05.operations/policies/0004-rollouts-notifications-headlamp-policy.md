@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.3.0"
+version: "1.3.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-06"
 layer: "operations"
 artifact_id: "POL-0004"
 ---
@@ -107,7 +107,7 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 - **ADR-0054**: [`../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md`](../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md)
 - **Rollouts Spec**: SPEC-0004 (left the tree; Git history recovers it)
 - **Notifications Spec**: SPEC-0005 (left the tree; Git history recovers it)
-- **Rollouts notification delivery**: [SPEC-0141](../../03.specs/0141-rollouts-notification-delivery/spec.md)
+- **Rollouts notification delivery**: SPEC-0141 (left the tree; Git history recovers it)
 - **Runbook**: [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)
 
 ### Lifecycle Traceability
