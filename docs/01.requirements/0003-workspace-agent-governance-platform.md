@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "2.3.1"
+version: "2.3.2"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-06"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -146,7 +146,7 @@ Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git
 
 ## Traceability
 
-[SPEC-0142](../03.specs/0142-stage99-contract-cleanup/spec.md) (Stage 99 contract cleanup) is the open governance package. SPEC-0140, the last completed one, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
+No governance Spec package is open. SPEC-0142 and SPEC-0140, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
 
 ### Lifecycle Traceability
 
@@ -375,3 +375,4 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0138 | completed spec | Recorded the operator's remaining survey decisions: four independent repositories (CR-03.06, CR-03.07, CR-08.01), no GitHub Projects for status (CR-14.03), SPEC-0103 `usable` for good and a read-only live check for CR-09.04. No durable contract introduced. | `docs/03.specs/0138-remaining-decisions-closeout/` |
 | SPEC-0139 | completed spec | Recorded the root cause, recovery and a fresh live observation of the `vault-backend` ClusterSecretStore failure, closing CR-09.04. No durable contract introduced. | `docs/03.specs/0139-cr-09-04-recovery/` |
 | SPEC-0140 | completed spec | Removed every archive and migration check and the archived files (ADR-0053), deleted legacy and one-time QA code and completed packages SPEC-0105 to SPEC-0139, refused superseded, retired and deprecated states in Stages 01 to 03, and split README (human) from folder AGENTS.md (agent). All five criteria accepted on 2026-11-03; durable contracts promoted to document lifecycle and document authoring policy. Recover with `git show a9e3a87b:<path>`. | `docs/03.specs/0140-archive-check-removal/` |
+| SPEC-0142 | completed spec | Removed stale Stage 99 contract entries: the retired Stage 00 Plan promotion owner, the ADR form's self-ID supersession cell, the unused profile modes `evidence` and `generated`, the unreferenced `requirementMemberId` definition and the unused `Agent Harness Requirements` language entry, and corrected the Stage 99 README and AGENTS prose. All four criteria accepted on 2026-11-06; the durable contract is in document lifecycle policy. Recover with `git show b712372b:<path>`. | `docs/03.specs/0142-stage99-contract-cleanup/` |
