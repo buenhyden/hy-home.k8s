@@ -1,10 +1,10 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.2.2"
+version: "1.2.3"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-03"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "POL-0003"
 ---
@@ -97,7 +97,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - cert-manager/Istio/Kiali 변경 후 관련 GitOps manifest와 runbook의 계약 값이 일치하는지 확인한다.
 
 - 플랫폼 컴포넌트 버전 변경 시마다 검토한다.
-- cert-manager, Istio, Kiali 관련 ADR/Spec 변경 시 같은 PR에서 검토한다.
+- cert-manager, Istio, Kiali 관련 ADR 변경 시 같은 변경에서 검토한다.
 - CA·TLS와 외부 Kiali 연결의 제품 측정 기준은
   [REQ-0004의 Secret TLS 복구](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-secret-tls-recovery)와
   [외부 인터페이스](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-external-interface)에
@@ -112,7 +112,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - **ADR-0009**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Platform Policy**: [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)
-- **Current control review**: A past SPEC-0106 review (Git history) compared this policy with the istiod source. It is not the original promotion approval or live adoption evidence.
+- **Current control review**: SPEC-0106 (left the tree; Git history recovers it)의 과거 review는 이 정책을 istiod source와 비교했다. 원래 promotion 승인이나 live 도입 증적이 아니다.
 
 ### Lifecycle Traceability
 

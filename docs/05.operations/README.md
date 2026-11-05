@@ -1,10 +1,10 @@
 ---
 title: "05.operations"
-version: "0.4.0"
+version: "0.5.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "operations"
 ---
 # 05.operations
@@ -39,7 +39,7 @@ layer: "operations"
 
 운영 문서는 사람이 읽고 실행하는 문서이므로 한국어를 기본으로 한다. 다만
 tool/prompt contract, hook/validator contract 같은 기계 계약 섹션은 영어로 둔다. live
-cluster, Vault, secret, ArgoCD 같은 고위험 명령의 실행 경계는 언어와
+cluster, OpenBao, secret, ArgoCD 같은 고위험 명령의 실행 경계는 언어와
 무관하게 아래 Operations Mutation Boundary를 따른다.
 
 ### Operations Mutation Boundary
@@ -131,7 +131,7 @@ ADR, profile, lifecycle, template을 함께 검토한다.
 1. 안정 상태 설명은 `guides/`, 준수해야 할 경계는 `policies/`, 실행 절차는 `runbooks/`, 사고 기록은 `incidents/`로 분리한다.
 2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/<year>/inc-####-<slug>/` 폴더를 만든다. Incident와 Postmortem은 같은 폴더에서 각각 `incident.md`와 `postmortem.md`를 사용한다.
 3. live cluster mutation 예시는 승인 조건, bootstrap-only 예외, break-glass 문맥 없이 추가하지 않는다.
-4. 운영 문서가 현재 `bootstrap-local.sh`, `gitops/platform/external-services`, 정적 검증 계약과 충돌하지 않게 유지한다.
+4. 운영 문서가 현재 `infrastructure/bootstrap-local.sh`, `gitops/platform/external-services`, 정적 검증 계약과 충돌하지 않게 유지한다.
 5. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)에 따라 처분한다. 현재 문서는 대체된 본문 대신 후속 문서를 인용한다.
 
 ### Relative Link Rules

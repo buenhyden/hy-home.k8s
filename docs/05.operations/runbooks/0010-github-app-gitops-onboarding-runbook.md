@@ -1,10 +1,10 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.2.2"
+version: "1.2.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "RUN-0010"
 ---
@@ -16,13 +16,15 @@ artifact_id: "RUN-0010"
 이 런북은 GitHub 레포 기반 애플리케이션을 `hy-home.k8s` 클러스터에 GitOps 방식으로 온보딩하는
 단계별 운영 절차를 제공한다. `examples/sample-app/`은 최소 온보딩 템플릿이고,
 `gitops/workloads/adminer/`는 stable/canary Service와 Istio routing까지 포함한 현재 active reference다.
+플랫폼은 promotion 방식을 강제하지 않으며(REQ-0001-IF-0002, ADR-0054), 두 예시 모두 분석과
+시간 기반 pause를 가진 canary Rollout이다.
 
 ## Trigger and Preconditions
 
 - GitHub Container Registry(ghcr.io) 이미지를 클러스터에 처음 배포할 때
 - `gitops/workloads/`에 신규 workload 디렉토리를 추가할 때
 - canary 배포 실패 후 rollback 및 재배포가 필요할 때
-- Vault 시크릿 연동 초기 설정이 필요할 때
+- OpenBao 시크릿 연동 초기 설정이 필요할 때
 
 ---
 
@@ -35,8 +37,8 @@ kubectl -n argocd get applicationset apps-generator
 # apps namespace 라벨 확인 (istio-injection 포함)
 kubectl get namespace apps --show-labels
 
-# PeerAuthentication STRICT 확인
-kubectl get peerauthentication -n apps default
+# PeerAuthentication 확인 (workload별 manifest가 소유, 예: adminer)
+kubectl get peerauthentication -n apps
 
 # Argo Rollouts 컨트롤러 확인
 kubectl -n argo-rollouts get pods | grep argo-rollouts
@@ -180,8 +182,8 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 
 ### Procedure 3: canary 배포 업데이트 (이미지 버전 갱신)
 
-이 이미지 변경도 `main` merge 직후 자동으로 canary가 시작될 수 있다.
-운영자는 merge 전에 이미지·분석·롤백 범위와 배포 권한을 확인한다.
+이 이미지 변경도 1-3의 자동 reconciliation 경계를 따른다. merge 직후 canary가
+시작될 수 있으므로 merge 전에 이미지·분석·롤백 범위를 확인한다.
 
 ```bash
 NEW_TAG=v1.1.0
@@ -213,16 +215,16 @@ AnalysisTemplate 실패나 수동 중단이 필요하면 이후 배포를 멈추
 
 ---
 
-### Procedure 5: Vault 시크릿 연동 추가
+### Procedure 5: OpenBao 시크릿 연동 추가
 
-애플리케이션 시크릿이 필요하면 승인된 Vault operator가 저장소 transcript
+애플리케이션 시크릿이 필요하면 승인된 OpenBao operator가 저장소 transcript
 밖의 비밀 채널에서 `secret/apps/${APP}/config`를 생성한다. 이 Runbook은
-값, login, Vault write 또는 policy write 명령을 기록하지 않는다.
+값, login, OpenBao write 또는 policy write 명령을 기록하지 않는다.
 
 Git 변경에서 `external-secret.yaml`을 활성화하고 Rollout의 `envFrom`을
-연결한다. Vault 경로와 `remoteRef.key` 규칙은
+연결한다. OpenBao 경로와 `remoteRef.key` 규칙은
 [POL-0007](../policies/0007-app-gitops-onboarding-policy.md)의 3-3 시크릿 관리
-표가 소유한다. 승인된 operator가 Vault policy를 별도 절차로 갱신한 뒤 다음
+표가 소유한다. 승인된 operator가 OpenBao policy를 별도 절차로 갱신한 뒤 다음
 read-only 상태만 확인한다.
 
 ```bash
@@ -269,9 +271,9 @@ kubectl argo rollouts get rollout ${APP} -n apps
 ```
 
 GitOps manifest 수정이 필요하면 이미지 태그 또는 설정을 수정한다.
-수정 PR의 merge 전 자동 배포·prune 영향을 재평가하고 승인받는다. merge
-뒤에는 자동 reconciliation 결과를 확인하며, 수동 sync가 별도로 필요한
-경우에만 위의 승인된 재조정 경계를 따른다.
+수정 PR도 1-3의 merge 전 검토와 자동 reconciliation 경계를 따른다. Rollout abort와
+완료는 Argo Rollouts 컨트롤러의 알림 엔진이 `slack:hy-home-alerts`로 보낸다
+(ADR-0054, SPEC-0141).
 
 ### ArgoCD Application이 생성되지 않는 경우
 
@@ -334,7 +336,7 @@ kubectl apply -f gitops/clusters/local/appproject-apps.yaml
 ## Related Documents
 
 - **Operations 정책**: [`../policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
-- **ESO/Vault Recovery**: [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)
+- **ESO/OpenBao Recovery**: [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)
 - **예시 템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app)
 - [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer) — fuller active reference pattern
 

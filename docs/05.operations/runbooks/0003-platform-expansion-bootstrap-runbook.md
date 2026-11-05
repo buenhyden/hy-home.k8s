@@ -1,10 +1,10 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.2.1"
+version: "1.3.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "RUN-0003"
 ---
@@ -13,9 +13,9 @@ artifact_id: "RUN-0003"
 
 ## Purpose
 
-이 런북은 기본 플랫폼 위에 추가된 cert-manager, Istio, Kiali를 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다.
+이 런북은 기본 플랫폼 위에 추가된 cert-manager, Istio(현재 1.25.2), Kiali를 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다. Ingress controller는 Traefik이며 Istio 업그레이드(ADR-0051)는 아직 실행되지 않았다.
 
-기본 플랫폼 부트스트랩(`infrastructure/bootstrap-local.sh`, ArgoCD, ESO/Vault,
+기본 플랫폼 부트스트랩(`infrastructure/bootstrap-local.sh`, ArgoCD, ESO/OpenBao,
 외부 서비스 endpoint)은 [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md),
 Headlamp 검증·복구는 [RUN-0004](./0004-rollouts-notifications-headlamp-runbook.md),
 Kiali와 외부 observability 연결 복구는
@@ -36,7 +36,7 @@ Kiali와 외부 observability 연결 복구는
 - [ ] `secrets/certs/rootCA.pem` 존재 (cert-manager용)
 - [ ] `secrets/certs/rootCA-key.pem` 존재 (ClusterIssuer CA key)
 - [ ] `rootCA.pem`이 로컬 신뢰 저장소에 등록됨
-- [ ] Prometheus API (Kiali): `https://prometheus.hy.home.arpa/api/v1/status/buildinfo`가 인증 없이 `401`
+- [ ] Prometheus API (Kiali): `https://prometheus.hy.home.arpa/api/v1/status/buildinfo`가 인증 없이 `401`(Basic Auth, ADR-0046)
 - [ ] Tempo 연결 (트레이싱): `nc -z 192.168.0.13 3200`
 - [ ] Istio trace용 Alloy OTLP 연결: `nc -z 192.168.0.13 4317`
 - [ ] Grafana (Kiali용): `https://grafana.hy.home.arpa/api/health`가 `200`
@@ -75,11 +75,7 @@ Kiali와 외부 observability 연결 복구는
    kubectl -n istio-system logs deploy/kiali | grep -i prometheus | tail -5
    ```
 
-5. 전체 정적 계약 검증
-
-   ```bash
-   ./scripts/validate-infrastructure-contracts.sh
-   ```
+5. 아래 Verification의 정적 계약과 런타임 검사를 실행한다.
 
 ## Verification
 

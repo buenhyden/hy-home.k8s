@@ -1,10 +1,10 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.2.0"
+version: "1.2.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "RUN-0011"
 ---
@@ -46,6 +46,7 @@ artifact_id: "RUN-0011"
      [Research Pack Template](../../99.templates/templates/references/research-pack.template.md)을 사용한다.
    - 네 자리 번호는 category 안에서 고유해야 하고 slug는 날짜가 아닌 의미
      기반 kebab-case여야 한다. 관찰일은 본문 metadata에 둔다.
+   pack은 router `####-<slug>/README.md`와 member `m####-<slug>.md`로 구성한다.
 3. 현재 동작 또는 버전 사실은 매니페스트, 설정, workflow, lock, 코드와
    Stage 01/02 설명을 먼저 갱신한다. Reference를 실행 입력이나 mirror로
    만들지 않는다.
@@ -54,14 +55,20 @@ artifact_id: "RUN-0011"
    [Data Reference](../../99.templates/templates/references/data.template.md),
    [Research Reference](../../99.templates/templates/references/research.template.md)
    template을 사용하고 provenance, observation date, authority boundary,
-   freshness trigger를 작성한다.
-5. category router와 `docs/90.references/README.md`를 같은 변경에서
-   갱신한다. 빈 category나 redirect 문서는 만들지 않는다.
+   freshness trigger를 작성한다. 각 주장에 출처, 관찰일, 검증 상태를 남기고
+   공식·1차 출처를 우선한다. 게시된 member는 이후 이름·형식 변경에 맞춰
+   고치지 않고 새 member나 날짜가 있는 addendum으로 보완한다.
+5. pack router가 member를 정확히 나열하게 하고, category router와
+   `docs/90.references/README.md`를 같은 변경에서 갱신한다. pack README는 member
+   변경과 함께 stage한다(registry 검사가 staged와 worktree의 pack 집합을 비교한다).
+   Stage 90 주장을 요구·결정·정책으로 제시하지 않고, 채택하는 Stage 01/02/05
+   owner를 링크한다. 빈 category나 redirect 문서는 만들지 않는다.
 6. 종료 대상의 current consumer를 canonical owner 또는 직접 저장소 소스로
    전환한 뒤
    [Document Lifecycle Policy](../../../.agents/governance/document-lifecycle.md)에
-   따라 문서를 `docs/98.archive/`의 처분 디렉터리로 옮기거나 삭제한다. 원문은
-   Git history로 복구하며, 처분 승인은 owning Task에 기록한다.
+   따라 문서를 `docs/98.archive/`의 처분 디렉터리로 옮기거나 삭제한다. archive는
+   검증 대상이 아니며(ADR-0053), 현재 문서는 archive 파일이 아니라 현재 owner를
+   링크한다. 원문은 Git history로 복구하며, 처분 승인은 owning Task에 기록한다.
 
 ## Verification
 
@@ -72,6 +79,7 @@ artifact_id: "RUN-0011"
 
 ```bash
 python3 scripts/qa.py quick
+python3 scripts/validate-document-contract-registry.py --root . --mode strict
 git diff --check
 ```
 
@@ -107,6 +115,7 @@ python3 scripts/qa.py staged
 
 ## Related Documents
 
+- Stage 90 agent instructions: `docs/90.references/AGENTS.md`
 - Stage 90 router: `docs/90.references/README.md`
 - Research collection: `docs/90.references/research/README.md`
 - [Audit Pack Template](../../99.templates/templates/references/audit-pack.template.md)
@@ -121,4 +130,4 @@ python3 scripts/qa.py staged
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| N/A — Spec 0054 left the tree; Git history recovers it. It applied `.agents/governance/document-authoring.md` and selects a bounded Stage 90 reference or the canonical common-governance or Stage 01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; Git history recovers retired bodies. |
+| N/A — SPEC-0054 (left the tree; Git history recovers it). It applied `.agents/governance/document-authoring.md` and selects a bounded Stage 90 reference or the canonical common-governance or Stage 01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; Git history recovers retired bodies. |

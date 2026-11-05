@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD 메트릭 Prometheus 수집 복구 Runbook"
-version: "2.3.0"
+version: "2.3.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "RUN-0008"
 ---
