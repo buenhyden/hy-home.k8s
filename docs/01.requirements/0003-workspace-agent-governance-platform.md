@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "2.3.0"
+version: "2.3.1"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -146,7 +146,7 @@ Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git
 
 ## Traceability
 
-No Spec package is current. SPEC-0140, the last completed one, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
+[SPEC-0142](../03.specs/0142-stage99-contract-cleanup/spec.md) (Stage 99 contract cleanup) is the open governance package. SPEC-0140, the last completed one, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
 
 ### Lifecycle Traceability
 

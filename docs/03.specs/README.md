@@ -69,11 +69,12 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나며, 완료된 package는 
 ```text
 03.specs/
 ├── 0141-rollouts-notification-delivery/
+├── 0142-stage99-contract-cleanup/
 ├── AGENTS.md
 └── README.md
 ```
 
-현재 열린 package: [SPEC-0141 Rollouts Notification Delivery](./0141-rollouts-notification-delivery/).
+현재 열린 package: [SPEC-0141 Rollouts Notification Delivery](./0141-rollouts-notification-delivery/), [SPEC-0142 Stage 99 Contract Cleanup](./0142-stage99-contract-cleanup/).
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다.
 
