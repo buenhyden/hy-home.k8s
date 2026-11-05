@@ -1,10 +1,10 @@
 ---
 title: "Archive Retention and Provenance Research Pack"
-version: "0.1.2"
+version: "0.1.3"
 type: "reference/research-pack"
 status: "in-review"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-05"
 artifact_id: "RES-0002"
 ---
 
@@ -12,9 +12,10 @@ artifact_id: "RES-0002"
 
 ## Overview
 
-이 pack은 삭제된 ADR-0039(Git history에서 복구)가 다룬 Stage 98 보존·인용 문제의
-외부 증거를 기록한다. 현재 Stage 98 결정은
-[ADR-0053](../../../02.architecture/decisions/0053-unvalidated-archive.md)이 소유한다.
+이 pack은 ADR-0039와 ADR-0040이 다룬 Stage 98 보존·인용 문제의 외부 증거를
+기록한다. 두 ADR은 tree를 떠났으며 Git history로 복구한다. 현재 Stage 98 결정은
+[ADR-0053](../../../02.architecture/decisions/0053-unvalidated-archive.md)이 소유하며,
+Stage 98은 검증 대상이 아니고 Git history가 유일한 복구 경로다.
 Git이 객체에 이름을 붙이고 보관하는 방식, 대체된 결정과 incident 기록을 보관하는
 방식, 공개 URL 이동을 알리는 방식, schema annotation이 검증과 어떻게 다른지가
 여기에 해당한다. 날짜가 붙은 서술 증거이며 정책이 아니다.
@@ -66,5 +67,6 @@ cluster 상태를 입증하지 않으며 여기서 인용했다고 해서 그 �
 
 - [Research collection](../README.md)
 - [ADR-0053](../../../02.architecture/decisions/0053-unvalidated-archive.md)
-- 삭제된 ADR-0039와 Spec 0082는 Git history에서 복구한다. 예:
-  `git show 69445fca:docs/02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md`
+- ADR-0039, ADR-0040과 Spec 0082는 tree를 떠났으며 Git history가 복구한다. 예:
+  `git show 69445fca:docs/02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md`,
+  `git show dcbbf84a^:docs/02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md`

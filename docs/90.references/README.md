@@ -1,10 +1,10 @@
 ---
 title: "90.references"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "references"
 ---
 # 90.references
@@ -87,7 +87,7 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
    [Data Reference](../99.templates/templates/references/data.template.md),
    [Research Reference](../99.templates/templates/references/research.template.md)
    template을 사용한다. 관찰일은 frontmatter 또는 source metadata에만 둔다.
-5. 이 router와 category router를 같은 변경에서 갱신한다.
+5. 이 router와 category router를 같은 변경에서 갱신한다. 삭제된 자료는 tree를 떠난 것이며 Git history가 복구한다.
 6. 참조 자료를 실행 입력이나 중복 control plane으로 사용하지 않는다.
 7. 다음 최소 검증을 실행한다.
 
