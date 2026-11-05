@@ -1,10 +1,10 @@
 ---
 title: "Kiali with External Observability Stack"
-version: "1.0.3"
+version: "1.0.4"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0009"
 ---
@@ -109,7 +109,7 @@ decision no longer describe the implementation. Since commit `b54655ad`
 external-observability boundary itself is unchanged.
 [ADR-0037](0037-kiali-operator-installation.md) proposes the successor decision.
 
-- **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Requirement**: [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) — REQ-0004-FR-0003, REQ-0004-FR-0004, REQ-0004-NFR-0001
 - **ARD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 - **Related ADR**: [`./0008-istio-install-and-ingress-coexist.md`](./0008-istio-install-and-ingress-coexist.md)
@@ -119,4 +119,4 @@ external-observability boundary itself is unchanged.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | Completed implementation evidence |
+| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | [ADR-0037](0037-kiali-operator-installation.md) replaces the install-mode/version clauses and operator non-goal; no whole-document supersession, and scoped current-state clarifications above remain preserved | N/A — SPEC-0008 left the tree; Git history recovers it |

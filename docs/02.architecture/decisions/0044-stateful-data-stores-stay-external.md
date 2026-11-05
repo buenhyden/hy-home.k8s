@@ -1,10 +1,10 @@
 ---
 title: "Stateful Data Stores Stay Outside the Cluster"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0044"
 ---
@@ -89,13 +89,16 @@ The state of the two workspaces as of 2026-09-23:
 
 ## Traceability
 
-**Current-state clarification (2026-09-23).** The endpoints
-above move from container addresses to host-published ports on
-`192.168.0.13` under [ADR-0046](./0046-external-services-over-host-addresses.md): `mng-valkey` at `26379`
-and `pg-router` at `15432/15433`. The bootstrap no longer requires
-`pg-router`. The placement decision is unchanged.
+**Current-state clarification (2026-11-05).** The Valkey endpoint above moves
+from a container address to the host-published port `192.168.0.13:26379` under
+[ADR-0046](./0046-external-services-over-host-addresses.md). The
+`pg-router` K8s PostgreSQL route is retired by
+[ADR-0049](./0049-external-data-service-contract-alignment.md); no PostgreSQL
+K8s interface is declared, and the operator checks only `mng-valkey` before
+bootstrap and live validation. External placement of the stateful stores is
+unchanged.
 
-- **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Requirement**: [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) — REQ-0004-FR-0003
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)

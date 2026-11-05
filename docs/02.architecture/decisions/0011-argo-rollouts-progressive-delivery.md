@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts for Progressive Delivery"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0011"
 ---
@@ -44,7 +44,6 @@ Accepted — 2026-03-30
 ## Consequences
 
 - The `argo-rollouts` namespace is added
-- The `argoproj.github.io/argo-helm` repo and the `argo-rollouts` namespace are added to the AppProject
 - AppProject `platform` allows the Rollouts chart repo and the `argo-rollouts` namespace, and the AppProject `apps` namespaceResourceWhitelist allows `Rollout` and `AnalysisTemplate` for workload consumption
 - The external Traefik artifact `rollouts-k3d.yaml` is required
 - App teams must convert `Deployment` manifests to `Rollout` (in the apps namespaces)
@@ -59,6 +58,17 @@ Accepted — 2026-03-30
 
 ## Traceability
 
+**Current-state clarification (2026-11-05).** Analysis queries now reach the
+external Prometheus by the gateway hostname `https://prometheus.hy.home.arpa`
+under [ADR-0046](./0046-external-services-over-host-addresses.md), replacing the
+host address named in the 2026-09-23 note below; the controller's own metrics
+are scraped by in-cluster Alloy under
+[ADR-0045](./0045-in-cluster-telemetry-collection.md). The Non-goal
+"manual promotion is the default" is not the current platform default: the
+platform imposes no promotion mode ([REQ-0001-IF-0002](../../01.requirements/0001-argo-rollouts-progressive-delivery.md)), and each app picks
+manual or check-gated timed steps in its own Rollout. The operator-approved
+[ADR-0054](./0054-platform-decision-current-state-amendment.md) (clause 1) replaces that Non-goal. The rest of this decision is unchanged.
+
 **Current-state clarification (2026-09-23).** The external
 Prometheus is reached through the host address `192.168.0.13` under
 [ADR-0046](./0046-external-services-over-host-addresses.md), not `172.18.0.10`. The rest of this decision is
@@ -72,14 +82,12 @@ is unchanged.
 
 - [ADR-0002](./0002-argocd-helm-and-gitops-model.md) — ArgoCD GitOps model
 - [ADR-0012](./0012-argo-notifications-slack.md) — Rollouts event notifications
-- [PRD](../../01.requirements/0001-argo-rollouts-progressive-delivery.md)
+- **Requirement**: [REQ-0001](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) — REQ-0001-FR-0001, REQ-0001-FR-0002, REQ-0001-FR-0003, REQ-0001-IF-0001, REQ-0001-IF-0002, REQ-0001-IF-0003
 - [ARD](../descriptions/0004-argo-rollouts-progressive-delivery.md)
-- Spec
-- Plan
-- Task
+- **Spec**: N/A — SPEC-0004 left the tree; Git history recovers it
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Architecture owner](../descriptions/0004-argo-rollouts-progressive-delivery.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | Completed implementation evidence |
+| [Architecture owner](../descriptions/0004-argo-rollouts-progressive-delivery.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | N/A — SPEC-0004 left the tree; Git history recovers it |

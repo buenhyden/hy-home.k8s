@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Contract"
-version: "1.0.5"
+version: "1.0.6"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0014"
 ---
@@ -65,6 +65,17 @@ Several older documents described replaced endpoints or removed UI resources. Ac
 
 ## Traceability
 
+**Current-state clarification (2026-11-05).** The `vault-external` identifier
+in the last 2026-09-23 note below was retired under
+[ADR-0046](./0046-external-services-over-host-addresses.md); OpenBao,
+Prometheus and Grafana are reached through HTTPS gateway names on
+`192.168.0.13:443`, and Loki, Tempo, Alloy OTLP and management Valkey through
+`Service` and `EndpointSlice` resources to host-published ports. The ingress
+controller in the Decision's active scope is Traefik under
+[ADR-0050](./0050-ingress-nginx-replacement-with-traefik.md), which replaced
+ingress-nginx; the IngressClass `nginx` remains. The platform baseline is
+unchanged. The operator reviewed and approved the 2026-11-03 Decision wording; [ADR-0054](./0054-platform-decision-current-state-amendment.md) (clause 3) accepts it and replaces the Vault and PRD/ARD names.
+
 **Current-state clarification (2026-11-03).** Under
 [ADR-0053](./0053-unvalidated-archive.md) there are no tombstones and no archive
 index. The archive wording in this decision is superseded by that rule: deleted
@@ -107,8 +118,8 @@ by the archive index and Tombstones. The document chain is now named
 Requirement, Architecture Description and Spec rather than PRD, ARD and Spec.
 The platform baseline this decision records is unchanged.
 
-- **PRD**: [../../01.requirements/0004-current-local-gitops-platform.md](../../01.requirements/0004-current-local-gitops-platform.md)
-- **ARD**: [../descriptions/0007-current-local-gitops-platform.md](../descriptions/0007-current-local-gitops-platform.md)
+- **Requirement**: [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) — REQ-0004-FR-0001, REQ-0004-FR-0002, REQ-0004-IF-0001
+- **AD**: [../descriptions/0007-current-local-gitops-platform.md](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 
 ### Lifecycle Traceability

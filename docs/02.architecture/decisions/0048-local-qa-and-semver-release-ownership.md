@@ -1,10 +1,10 @@
 ---
 title: "Local QA and SemVer Release Ownership"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-11-03"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0048"
 ---
@@ -238,6 +238,17 @@ REQ-0003-IF-0001 in [REQ-0003](../../01.requirements/0003-workspace-agent-govern
 the structural view. SPEC-0107 owned behavior, acceptance and implementation
 and left the tree; Git history recovers it.
 
+**Current-state clarification (2026-11-05).** Under
+[ADR-0053](./0053-unvalidated-archive.md) the archive is unvalidated, so the
+clause that recurring Archive checks "retain safe-path, integrity and
+source-recovery contracts" and the historical-reader retention it describes are
+no longer current; ADR-0053 supersedes only ADR-0040, and the operator-approved
+[ADR-0055](./0055-governance-decision-current-state-amendment.md) (clauses 1 and 6) replaces this clause. The evaluation
+runner that [ADR-0047](./0047-agent-contract-and-resource-ownership.md)
+assigned to `.agents/evaluations/` is retired here, as the lineage table
+records. Vault in the Non-goals now means the OpenBao
+backend ([ADR-0041](./0041-openbao-secret-backend.md)).
+
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
@@ -245,3 +256,4 @@ and left the tree; Git history recovers it.
 | [ADR-0031](0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment: local QA selection and delivery replace the CI-projection obligation; the single validation registry and remaining ownership contracts continue | N/A — SPEC-0107 left the tree; Git history recovers it |
 | [ADR-0036](0036-common-knowledge-and-prompt-surfaces.md) | Scoped amendment: local validation and explicit release ownership; common governance and provider boundaries continue | N/A — SPEC-0107 left the tree; Git history recovers it |
 | [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) | Updated structural view; no whole-document supersession | N/A — SPEC-0107 left the tree; Git history recovers it |
+| [ADR-0047](0047-agent-contract-and-resource-ownership.md) | Scoped amendment: the exclusive evaluation runner it assigned to `.agents/evaluations/` is retired; the evidence domain and its forms continue | N/A — SPEC-0107 left the tree; Git history recovers it |

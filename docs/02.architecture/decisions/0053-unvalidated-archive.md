@@ -1,10 +1,10 @@
 ---
 title: "Unvalidated Archive"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-11-03"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0053"
 supersedes: "ADR-0040"
@@ -75,6 +75,13 @@ README and structure.
   asked to keep only the README and structure.
 
 ## Traceability
+
+Requirement: REQ-0003-FR-0020 in
+[REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md).
+
+**Current-state clarification (2026-11-05).** `docs/98.archive/README.md` is
+still formatted and linted as the stage index; the operator-approved
+[ADR-0055](./0055-governance-decision-current-state-amendment.md) (clause 7) narrows the Decision's lint exclusion to the other files.
 
 ### Lifecycle Traceability
 

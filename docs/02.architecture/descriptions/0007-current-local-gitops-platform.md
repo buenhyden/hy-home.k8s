@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.8.5"
+version: "1.8.6"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-03"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -15,8 +15,7 @@ artifact_id: "AD-0007"
 
 This document defines the reference architecture of the currently implemented local GitOps platform.
 Current structure is described from GitOps desired state and static contract evidence.
-This AD owns the durable platform view; the earlier implementing Spec left the tree
-(Git history recovers it). Operating controls and procedures remain
+This AD owns the durable platform view. Operating controls and procedures remain
 with the Stage 05 owners below, and later changes use their own scoped work units.
 
 ### Current architecture summary
@@ -58,8 +57,7 @@ The in-review [REQ-0004](../../01.requirements/0004-current-local-gitops-platfor
 owns each scenario's measure, unit, environment, sample, and threshold or named
 gap. This view identifies the current implementation path and the evidence
 boundary; it does not promote a configured check or repository-static result
-into an observed service-level result. VAL-P08-018
-owns this change's local review, not future operator observations.
+into an observed service-level result.
 
 | Requirement scenario | Architecture source and response | Evidence boundary and operating owner |
 | --- | --- | --- |
@@ -110,7 +108,7 @@ flowchart LR
   S1 -->|"pulls main and reconciles"| E1
   S1 -->|"pulls pinned charts and container images"| E2
   S1 -->|"reads secrets, uses cache, queries and ships telemetry"| E3
-  S1 -->|"sends sync notifications"| E4
+  S1 -->|"sends deploy, sync-failure and health-degraded notifications (Slack app token)"| E4
 ```
 
 **Containers inside S1.** Argo CD (C1) applies the manifests of every other
@@ -161,7 +159,7 @@ flowchart LR
 | C4 | External Secrets Operator | Syncs secrets from OpenBao through `vault-backend` | External Secrets chart, `external-secrets` | [ESO](../../../gitops/platform/eso/) |
 | C5 | Istio istiod and CNI | Mesh control plane for the `traefik` and `apps` namespaces; trace provider `alloy-external:4317` | Istio charts, `istio-system` | [istiod](../../../gitops/apps/root/platform-istiod-app.yaml) |
 | C6 | Kiali | Mesh UI backed by the external Prometheus, Grafana and Tempo | Kiali operator, `istio-system` | [Application](../../../gitops/apps/root/platform-kiali-app.yaml), [Kiali](../../../gitops/platform/kiali/) |
-| C7 | Argo Rollouts | Canary steps with Istio traffic routing and Prometheus analysis | Argo Rollouts chart, `argo-rollouts` | [Application](../../../gitops/apps/root/platform-rollouts-app.yaml) |
+| C7 | Argo Rollouts | Canary steps with Istio traffic routing and Prometheus analysis; its chart notifications are disabled, so `rollout-*` triggers are not delivered | Argo Rollouts chart, `argo-rollouts` | [Application](../../../gitops/apps/root/platform-rollouts-app.yaml) |
 | C8 | Headlamp | Cluster UI | Headlamp chart, `headlamp` | [Headlamp](../../../gitops/platform/headlamp/) |
 | C9 | Alloy and kube-state-metrics | Collect metrics and logs and send them to the external backend | Kustomize manifests, `monitoring` | [monitoring](../../../gitops/platform/monitoring/) |
 | C10 | Workloads | Application workloads onboarded by the ApplicationSet, currently Adminer | Kustomize per workload, `apps` | [workloads](../../../gitops/workloads/) |
@@ -173,7 +171,7 @@ flowchart LR
 | Reconciliation and permissions | [Cluster declarations](../../../gitops/clusters/local/) own the root Application, AppProjects and workload ApplicationSet; the root targets `gitops/apps/root`, and the ApplicationSet scans `gitops/workloads/*`. [Platform Applications](../../../gitops/apps/root/) and [namespace declarations](../../../gitops/platform/namespaces/) own platform desired state. | [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md), [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md) |
 | Host and browser entry | [k3d config](../../../infrastructure/k3d/k3d-cluster.yaml) binds the API to `192.168.0.13:6550` and serverlb to `192.168.0.14:80/443`, forwarding to Traefik NodePorts `30080/30443` (Service `traefik/traefik`, MetalLB `172.18.0.240`; [ADR-0050](../decisions/0050-ingress-nginx-replacement-with-traefik.md)). k8s hosts use `<name>.hy-k8s.home.arpa` (`argo` for ArgoCD); [apex redirects](../../../gitops/platform/ingress-routes/) send `hy-k8s.home.arpa/<name>` to the HTTPS subdomain with 301. The external Traefik carries no k8s route (ADR-0042, ADR-0043, ADR-0046). | [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md); operator owns host addresses and name resolution |
 | External secrets | [ESO configuration](../../../gitops/platform/eso/) uses the `vault-backend` store and Vault API provider to reach external OpenBao at `https://openbao.hy.home.arpa` with a pinned CA. Bootstrap owns the CoreDNS host mapping and CA distribution; secret values stay outside Git (ADR-0041, ADR-0046). | [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md), [RUN-0002](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md) |
-| External data services | [Service and EndpointSlice manifests](../../../gitops/platform/external-services/) retain only the required management Valkey interface `valkey-external:6379` → host `192.168.0.13:26379` for ArgoCD. The external `hy-home.docker` source publishes `mng-pg` at `127.0.0.1:25432` and `dev-pg` at `127.0.0.1:25433`; `dev-valkey` exposes `6379` only in `dev_data_net`. No PostgreSQL or development Valkey K8s Service/EndpointSlice or LAN endpoint is declared. The former `postgres-ha`/`pg-router` write/read routes are retired from this repository; Valkey cluster had no K8s consumer. Earlier live samples refer to their dated source. Adminer has no default database server in current local source. A future K8s-to-PostgreSQL path requires a separately reviewed connection, policy and secret design; loopback TCP and container health do not establish that path. [ADR-0049](../decisions/0049-external-data-service-contract-alignment.md) is the accepted scoped amendment; its acceptance does not establish live reconciliation or database reachability. | [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md), [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md); external workspace owns data runtime and backups |
+| External data services | [Service and EndpointSlice manifests](../../../gitops/platform/external-services/) declare only the management Valkey interface `valkey-external:6379` → host `192.168.0.13:26379` for ArgoCD. PostgreSQL and development Valkey have no K8s interface, and the retired `postgres-ha`/`pg-router` routes stay retired. A future K8s-to-PostgreSQL path needs a separately reviewed connection, policy and secret design. [ADR-0049](../decisions/0049-external-data-service-contract-alignment.md) owns the port and loopback detail; its acceptance does not establish live reconciliation or database reachability. | [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md), [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md); external workspace owns data runtime and backups |
 | Telemetry and service UIs | [Alloy](../../../gitops/platform/monitoring/), [Kiali](../../../gitops/apps/root/platform-kiali-app.yaml) and [Rollouts](../../../gitops/apps/root/platform-rollouts-app.yaml) use the external observability backend. Prometheus and Grafana use HTTPS gateway names, authentication and CA verification; Loki, Tempo and Alloy OTLP retain Service/EndpointSlice interfaces. Metrics collection stays in-cluster; storage stays external (ADR-0037, ADR-0045, ADR-0046). | [RUN-0009](../../05.operations/runbooks/0009-k8s-observability-runbook.md), [POL-0003](../../05.operations/policies/0003-service-mesh-cert-manager-policy.md) |
 
 The executable sources own exact values and versions. These boundaries and the
@@ -243,7 +241,7 @@ The Istio CNI manifest is desired state and proves no actual admission or networ
 
 ### Implementation owners and remaining boundaries
 
-The repository checks structure, Kubernetes YAML, required policy tools, secret handling and the Vault/ESO boundaries, with offline render/built-in schema checks, per-target depth/tool-version/fallback results and ingress/resource-kind reference integrity for REQ-0004-FR-0008 and REQ-0004-FR-0010. This AD and ADR-0043 retain the current ingress architecture. Custom-CRD-schema, generated-output and live-observation checks are reported as DEFER with their owners. Earlier assurance Specs were withdrawn without successors and deleted; Git history recovers them. Their scope currently has no implementation owner, and this AD's succession does not mean any tranche is complete.
+The repository checks structure, Kubernetes YAML, required policy tools, secret handling and the Vault/ESO boundaries, with offline render/built-in schema checks, per-target depth/tool-version/fallback results and ingress/resource-kind reference integrity for REQ-0004-FR-0008 and REQ-0004-FR-0010. This AD and ADR-0043 retain the current ingress architecture. Custom-CRD-schema, generated-output and live-observation checks are reported as DEFER with their owners. SPEC-0104 (completed, left the tree) delivered the static validation layers. Specs 0047, 0048, 0050 and 0051 were retired without successors and left the tree; Git history recovers them. Their scope has no implementation owner, and this AD's succession does not mean any tranche is complete.
 
 ## Data Architecture
 
@@ -294,7 +292,7 @@ The repository checks structure, Kubernetes YAML, required policy tools, secret 
 
 ### Lifecycle Traceability
 
-ADR links identify durable decisions. The earlier implementing Spec left the tree and does not own the current architecture.
+ADR links identify durable decisions; a Spec that left the tree does not own the current architecture.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
@@ -345,16 +343,15 @@ lives; nothing is copied between this description, the ADRs and REQ-0004.
 | REQ-0004-FR-0011 | Ordered review/rollback boundaries and local-only integration | None; N/A — Spec 0051 left the tree; Git history recovers it |
 | REQ-0004-FR-0012, REQ-0004-FR-0013 | Direct executable-source versions and self-source/external-source distinction | Executable manifests and ADR-0029 |
 
-Original AD-0010 and REQ-0007 program identity remain historical lineage. These current boundaries
-do not rewrite which description the original ADRs served; superseded bodies are summarized in Archived Lineage and deleted.
 
 - **Requirement**: [../../01.requirements/0004-current-local-gitops-platform.md](../../01.requirements/0004-current-local-gitops-platform.md)
 - **Implementation evidence**: N/A — SPEC-0008 left the tree; Git history recovers it; current structure is owned here, operating controls by the named Stage 05 documents.
 - **ADR**: [../decisions/0014-current-local-gitops-platform-contract.md](../decisions/0014-current-local-gitops-platform-contract.md)
+- **Current-state amendment**: [ADR-0054](../decisions/0054-platform-decision-current-state-amendment.md) replaces the platform ADR clauses that no longer match the repository
 
 ### Archived Lineage
 
-These documents were deleted from `docs/98.archive/` under SPEC-0140 and are recovered with `git show 69445fca:<path>`.
+These documents were deleted from `docs/98.archive/` under SPEC-0140 and are recovered with `git show 69445fca:<path>`; ADR-0003 and ADR-0027 were removed earlier and are recovered from `fe3bd418^`.
 
 | Source | Kind | Summary | Original path |
 | --- | --- | --- | --- |
@@ -367,3 +364,5 @@ These documents were deleted from `docs/98.archive/` under SPEC-0140 and are rec
 | ADR-0007 | superseded decision | Installed Kubernetes Dashboard v3 through Helm, exposed through ingress-nginx and cert-manager at `k8s-dashboard.127.0.0.1.nip.io`. Superseded on 2026-05-09 by Headlamp; replaced by ADR-0014. | `docs/98.archive/superseded/02.architecture/0007-kubernetes-dashboard-v3.md` |
 | ADR-0010 | superseded decision | Removed Kubernetes Dashboard v3 in favor of Headlamp (lighter RBAC-based authentication, plugins, simpler deployment). Replaced by ADR-0014, which owns the current Headlamp contract. | `docs/98.archive/superseded/02.architecture/0010-headlamp-replaces-dashboard.md` |
 | AD-0010 | superseded architecture | Repository Delivery Evidence Architecture: a repository-static assurance control plane (routing, projection, validation depth, evidence classification, review, rollback) for the delivery and platform surfaces of PRD-0007, tied to ADR-0021. Replaced by AD-0007. | `docs/98.archive/superseded/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md` |
+| ADR-0003 | superseded decision | Chose External Secrets Operator with Vault Kubernetes Auth for runtime secrets: namespace/path least-privilege policies, no secret values in Git. Superseded by ADR-0041, which keeps the ESO and Kubernetes Auth pattern on an OpenBao backend. | `docs/98.archive/superseded/02.architecture/decisions/0003-eso-vault-k8s-auth.md` (recover with `git show fe3bd418^:<path>`) |
+| ADR-0027 | superseded decision | Declined Pod Security Admission until the Istio CNI node agent removed the need for privileged init containers, and recorded the prerequisite ordering. Superseded by ADR-0028 after that condition fired. | `docs/98.archive/superseded/02.architecture/decisions/0027-pod-security-standards-staged-adoption.md` (recover with `git show fe3bd418^:<path>`) |

@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD Helm Install with App-of-Apps and ApplicationSet"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0002"
 ---
@@ -57,7 +57,7 @@ Given the external Valkey backend settings, version upgrades, and declarative re
 
 ## Traceability
 
-- **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Requirement**: [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) — REQ-0004-FR-0001, REQ-0004-FR-0002
 - **ARD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)
@@ -66,4 +66,4 @@ Given the external Valkey backend settings, version upgrades, and declarative re
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — first decision; no whole-document supersession | Completed implementation evidence |
+| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — first decision; no whole-document supersession | N/A — SPEC-0008 left the tree; Git history recovers it |

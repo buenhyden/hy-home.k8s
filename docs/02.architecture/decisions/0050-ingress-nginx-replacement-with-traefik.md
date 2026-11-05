@@ -1,10 +1,10 @@
 ---
 title: "Ingress-NGINX Replacement with Traefik"
-version: "1.1.1"
+version: "1.2.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-11-03"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0050"
 ---
@@ -152,7 +152,23 @@ redirects. Gateway API is deferred until the Istio upgrade in
 The operator accepted Option B (Traefik provider) on 2026-10-16, after a
 comparison with Istio Gateway API.
 
+**Current-state clarification (2026-11-05).** The cutover is complete (SPEC-0121,
+left the tree; Git history recovers it). The ingress-nginx Application and
+namespace are removed, so the interim 4.15.1 step and the side-by-side plan above
+are history. The Traefik Application runs chart 42.1.3 with NodePorts
+`30080/30443` and the MetalLB address `172.18.0.240`; the apex redirects live in
+the `traefik` namespace; and `CONTROLLER` in the ingress validator names Traefik.
+Deviation: the Application also enables the `file` provider for one HSTS
+middleware applied to `websecure`, although the Decision enables only
+`kubernetesIngressNGINX`. The operator-approved
+[ADR-0054](./0054-platform-decision-current-state-amendment.md) (clause 6) admits that static middleware-only provider.
+
+- **Requirement**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+  (REQ-0004-FR-0004, REQ-0004-FR-0010, REQ-0004-NFR-0001)
+- **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
+
 The research behind this decision was read on 2026-10-16. Sources:
+
 - the ingress-nginx retirement statement and repository archive notice;
 - the Traefik Kubernetes Ingress-NGINX provider and annotation-support
   documentation;

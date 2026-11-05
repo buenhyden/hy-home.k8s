@@ -1,10 +1,10 @@
 ---
 title: "Single Main Trunk Branch Strategy"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-11-03"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0052"
 ---
@@ -25,13 +25,14 @@ On 2026-10-27 the only long-lived branch on GitHub is `main`; the others
 are open feature branches. Each Spec package is
 developed on an owned feature branch, often in a linked worktree, and merged
 when `ci-summary`, `style-pr` and `independent-review` pass
-([Git policy](../../../.agents/governance/git.md)). One operator works with
+([main protection record](../../../.github/rulesets/main-protection.md) and
+[Git policy](../../../.agents/governance/git.md)). One operator works with
 agents as additional concurrent writers.
 
 Three facts bound the choice:
 
-- **Deployment follows `main`.** Twelve Argo CD declarations track
-  `targetRevision: main` with automated sync, so a merge to `main` is the
+- **Deployment follows `main`.** Thirteen declarations, including the ApplicationSet's generator
+  revision, track `main` with automated sync, so a merge to `main` is the
   deployment ([ADR-0029](0029-mutable-target-revision-retention.md)). A
   separate integration branch would either deploy nothing or need its own
   cluster.
@@ -98,6 +99,11 @@ reopened.
   feature branches carry the Spec and Task evidence.
 
 ## Traceability
+
+The decision traces to the delivery requirements
+[REQ-0003-FR-0004 and REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md)
+and the revision policy
+[REQ-0004-FR-0013](../../01.requirements/0004-current-local-gitops-platform.md).
 
 ### Lifecycle Traceability
 

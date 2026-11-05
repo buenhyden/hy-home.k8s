@@ -1,10 +1,10 @@
 ---
 title: "02.architecture/descriptions (AD)"
-version: "0.6.1"
+version: "0.6.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-05"
 layer: "architecture"
 ---
 # 02.architecture/descriptions (AD)
@@ -47,7 +47,7 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 | Path | Purpose |
 | --- | --- |
 | [AD-0004](./0004-argo-rollouts-progressive-delivery.md) | Argo Rollouts 점진적 배포 구조. Argo Rollouts 구조의 소유자다. |
-| [AD-0005](./0005-argo-notifications-slack.md) | ArgoCD Notifications와 Vault/ESO credential 경계. Notifications 구조의 소유자다. |
+| [AD-0005](./0005-argo-notifications-slack.md) | ArgoCD Notifications와 OpenBao/ESO credential 경계. Notifications 구조의 소유자다. |
 | [AD-0006](./0006-workspace-agent-governance-platform.md) | 공통 거버넌스 구조의 현재 소유자다. 이전 Spec package는 삭제되었고 Archived Lineage가 요약한다. |
 | [AD-0007](./0007-current-local-gitops-platform.md) | 로컬 GitOps 구조의 현재 소유자이며, 실행 가능한 desired state와 검증기가 구체적인 구현 계약을 소유한다. |
 

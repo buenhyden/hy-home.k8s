@@ -1,10 +1,10 @@
 ---
 title: "Istio Default Profile with ingress-nginx Coexistence"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0008"
 ---
@@ -72,6 +72,16 @@ The Istio IngressGateway must coexist with ingress-nginx without port conflicts.
 
 ## Traceability
 
+**Current-state clarification (2026-11-05).** The Decision's "WSL2 resource
+budget" no longer names the host: the platform runs on a Linux server under
+[ADR-0042](./0042-linux-server-single-host-baseline.md), and the `istiod` requests
+keep their meaning as a minimal-footprint limit. Namespace injection is now:
+the ingress controller namespace `traefik`
+([`namespace-traefik.yaml`](../../../gitops/platform/namespaces/namespace-traefik.yaml))
+carries `istio-injection: enabled`; `argo-rollouts` and `istio-system` carry no
+injection label, and `monitoring` is explicitly `disabled`. The manifest named
+in the 2026-09-14 note no longer exists.
+
 **Current-state clarification (2026-10-27).** The ingress controller is now Traefik, not ingress-nginx, per [ADR-0050](./0050-ingress-nginx-replacement-with-traefik.md). The `ingress-nginx` namespace and Application named here are removed; the Decision text above is preserved as history.
 
 **Current-state clarification (2026-09-14).** Two parts of the Decision no
@@ -84,7 +94,7 @@ IngressGateway stays disabled because no gateway is declared; the
 `gateways.istio-ingressgateway.enabled: false` value is not set explicitly in the
 Application values.
 
-- **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Requirement**: [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) — REQ-0004-FR-0002, REQ-0004-NFR-0001
 - **ARD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 - **Related ADR**: [`./0009-kiali-external-observability.md`](./0009-kiali-external-observability.md)
@@ -93,4 +103,4 @@ Application values.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | Completed implementation evidence |
+| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | N/A — SPEC-0008 left the tree; Git history recovers it |

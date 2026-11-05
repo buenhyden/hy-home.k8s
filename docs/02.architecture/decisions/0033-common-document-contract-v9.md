@@ -1,10 +1,10 @@
 ---
 title: "Common Document Contract v9 and Governed Router Envelopes"
-version: "1.0.4"
+version: "1.0.5"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-11-03"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0033"
 ---
@@ -16,7 +16,7 @@ artifact_id: "ADR-0033"
 Adopt one public Stage 99 document-contract model with snake_case fields,
 governed identity-free README envelopes, profile-bound templates, and
 generation-aware Archive validation. This decision is a scoped amendment to
-the README and Registry-shape clauses of ADR-0015 and ADR-0031; their
+the README and Registry-shape clauses of ADR-0015 (left the tree; Git history recovers it) and ADR-0031; their
 single-authority, current-corpus, and package-local execution principles remain
 in force.
 
@@ -177,6 +177,22 @@ the byte-level historical evidence the Archive contract exists to preserve.
 
 ## Traceability
 
+__Current-state clarification (2026-11-05).__ The generation-aware Archive
+validation, the v7/v8 historical-reader branch and the Archive-bound "evidence"
+mode and "archive" family named above are retired under
+[ADR-0053](./0053-unvalidated-archive.md). The Non-goal "does not add a Release
+Record, CHANGELOG owner, deployment procedure, or hosted evidence claim" and the
+Decision's external-release-evidence mode, under which tags remain external, are
+no longer current:
+[ADR-0048](./0048-local-qa-and-semver-release-ownership.md) makes `CHANGELOG.md`
+and `scripts/release.py` the committed release owner. The current Registry is
+`schema_version` 10 with the top-level keys `$schema`, `$id`, `schema_version`,
+`profiles`, `lifecycle_domains`, `readme_navigation`, `document_language` and
+`shared_contract`; the profile families are `common`, `evaluation`,
+`governance`, `operation`, `reference` and `sdlc`; the modes are `authored`,
+`router`, `template`, `native` and `non-target`. The 2026-09-14 note's
+"version 9 contract ... unchanged" is superseded by that generation 10. The operator-approved [ADR-0055](./0055-governance-decision-current-state-amendment.md) (clauses 1, 3 and 4) records these replacements.
+
 __Current-state clarification (2026-11-03).__ Under
 [ADR-0053](./0053-unvalidated-archive.md) the archive is unvalidated: no archive validators, frozen-generation exemptions, migration proofs, tombstones or archive index exist, and the Retention Catalog and Envelope no longer apply.
 Superseded ADRs are summarized in the Archived Lineage table of
@@ -200,11 +216,13 @@ that authority now sits in `.agents/governance/`; the agent role registry named
 as `.agents/registry.json` is `.agents/roles/registry.json` (ADR-0036). The
 Stage 99 Registry version 9 contract this decision adopted is unchanged.
 
+- __Requirement__: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) — REQ-0003-FR-0006, REQ-0003-FR-0012, REQ-0003-FR-0013, REQ-0003-FR-0014, REQ-0003-FR-0023
+
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| ADR-0015, [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md), and [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment of README envelope and public Registry-shape clauses; no full supersession | N/A — SPEC-0054 left the tree; Git history recovers it |
+| ADR-0015 (left the tree), [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md), and [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment of README envelope and public Registry-shape clauses; no full supersession | N/A — SPEC-0054 left the tree; Git history recovers it |
 
 ### Implementation Traceability
 

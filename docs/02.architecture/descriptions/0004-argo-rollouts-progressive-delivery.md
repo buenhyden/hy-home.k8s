@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts Progressive Delivery Architecture Description"
-version: "1.0.5"
+version: "1.1.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "AD-0004"
 ---
@@ -19,7 +19,7 @@ The GitOps resources already exist in the repository, so this AD is not a future
 ### Current architecture summary
 
 Argo Rollouts provides the controller and dashboard in the `argo-rollouts` namespace and lets application teams run progressive delivery by combining `Rollout`, `AnalysisTemplate`, Istio routing, Traefik, and cert-manager TLS.
-The platform owns the controller install, dashboard access, AppProject permissions, observability exposure, and the safe manual promotion boundary.
+The platform owns the controller install, dashboard access, AppProject permissions, observability exposure, and a default that imposes no promotion mode, with failure safety through an approved `AnalysisTemplate`.
 
 ## Boundaries & Non-goals
 
@@ -28,29 +28,31 @@ The platform owns the controller install, dashboard access, AppProject permissio
   - The `argo-rollouts` namespace and the controller/dashboard runtime boundary
   - The AppProject allow-list and the boundary for using Rollouts in the `apps` namespaces
   - The Rollouts Dashboard access path `rollouts.hy-k8s.home.arpa`
-  - Exposing controller metrics for Prometheus to collect
+  - Controller metrics endpoint that in-cluster Alloy scrapes and remote-writes to the external Prometheus
 - **Consumes**:
   - ArgoCD App-of-Apps reconciliation
   - Traefik and the cert-manager `mkcert-ca-issuer`
-  - The external Prometheus and observability stack
+  - The external Prometheus and observability stack (analysis queries use `https://prometheus.hy.home.arpa`, [ADR-0046](../decisions/0046-external-services-over-host-addresses.md))
   - Per-application Rollout manifests
 - **Does Not Own**:
   - Choosing an individual application's delivery strategy
   - Application image build and release policy
   - Slack notification templates and credential management
 - **Non-goals**:
-  - Forcing automatic promotion by default
+  - Forcing automatic promotion by default (the platform imposes no promotion mode; see [REQ-0001-IF-0002](../../01.requirements/0001-argo-rollouts-progressive-delivery.md))
   - Multi-cluster Rollouts
   - Standardizing per-app Analysis metrics
 
 ## Quality Attributes
 
-- **Performance**: the controller and dashboard pin their requests/limits so they run within the single-host k3d resource budget.
-- **Security**: Rollouts CRDs and namespace permissions are limited by the AppProject allow-list.
-- **Reliability**: the `platform-rollouts` Application owns the GitOps source and uses retries and self-heal.
-- **Scalability**: the controller stays shared across the platform, and per-app rollout scaling is separated into the workload contract of the `apps` namespaces.
-- **Observability**: controller metrics are exposed through a NodePort and the Prometheus scrape contract.
-- **Operability**: the dashboard, CLI, and runbook checks confirm the progress, promotion, abort, and rollback paths.
+| Quality attribute | Stimulus | Environment | Response | Measure |
+| --- | --- | --- | --- | --- |
+| Performance | The controller and dashboard start | Single-host k3d cluster | Requests and limits stay pinned | Both Deployments declare requests and limits in the chart values |
+| Security | An app Application requests Rollouts CRDs or a namespace | AppProject `platform` and `apps` | Only allow-listed kinds, repo and namespaces reconcile | A resource outside the allow-list is rejected by ArgoCD |
+| Reliability | The `platform-rollouts` source drifts or a sync fails | ArgoCD reconciliation | Retry and self-heal restore the declared state | The Application returns to Synced and Healthy |
+| Scalability | More apps adopt Rollouts | Shared controller, per-app Rollouts in `apps` namespaces | Per-app scaling stays in the workload contract | No controller change per adopting app |
+| Observability | An operator inspects controller metrics | In-cluster Alloy scraping `argo-rollouts:8090` with remote-write to the external Prometheus | Controller metrics reach the external Prometheus | The controller target is up in Prometheus |
+| Operability | An operator checks progress, promotion, abort or rollback | Dashboard, CLI and runbook | The path is available without platform changes | Each path is listed in the runbook checks |
 
 ## System Overview & Context
 
@@ -69,10 +71,9 @@ The platform owns the controller install, dashboard access, AppProject permissio
   - `VirtualService` / `DestinationRule`: Istio routing for mesh-aware workloads.
 - **Storage Strategy**:
   - Rollouts state is Kubernetes API state. No separate database is introduced.
-  - Controller metrics are exposed for external Prometheus scraping.
+  - Controller metrics are scraped in-cluster by Alloy ([ADR-0045](../decisions/0045-in-cluster-telemetry-collection.md)) and remote-written to the external Prometheus; no metrics NodePort remains.
 - **Data Boundaries**:
-  - No credentials are introduced by Rollouts itself.
-  - Notifications are intentionally handled by ArgoCD Notifications, not Rollouts chart notifications.
+  - No credentials are introduced by Rollouts itself; the reference analysis consumes the ESO-synced `prometheus-api-auth` Secret and the `hy-home-root-ca` ConfigMap from the app namespace.
 
 ## Infrastructure & Deployment
 
@@ -94,8 +95,8 @@ The platform owns the controller install, dashboard access, AppProject permissio
 
 - **Model/Provider Strategy**: Agents may update docs and manifests only through repo-backed GitOps flow.
 - **Tooling Boundary**: Direct `kubectl apply` or live promotion is not allowed without explicit human approval.
-- **Memory & Context Strategy**: durable change evidence stays in the package-local Task, and common policy refers to `.agents/governance/`.
-- **Guardrail Boundary**: Agents must distinguish Rollouts chart `notifications.enabled: false` from ArgoCD Notifications.
+- **Memory & Context Strategy**: durable change evidence stays in Git history and the owning Requirement's Archived Lineage, and common policy refers to `.agents/governance/`.
+- **Guardrail Boundary**: Rollouts chart notifications stay disabled (`notifications.enabled: false`); notifications are ArgoCD Notifications, owned by [AD-0005](./0005-argo-notifications-slack.md).
 - **Latency / Cost Budget**: Not applicable.
 
 ## Traceability
@@ -108,13 +109,14 @@ The platform owns the controller install, dashboard access, AppProject permissio
 | [REQ-0001-FR-0002](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | The Dashboard TLS boundary through the Traefik ingress controller ([ADR-0050](../decisions/0050-ingress-nginx-replacement-with-traefik.md)) and cert-manager | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) |
 | [REQ-0001-FR-0003](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | The external Prometheus observability boundary of controller metrics | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) |
 | [REQ-0001-IF-0001](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | The AppProject allow-list and ArgoCD health tracking boundary | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) |
-| [REQ-0001-IF-0002](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | The manual promotion default and failure safety through an approved AnalysisTemplate | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) |
+| [REQ-0001-IF-0002](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | A default that imposes no promotion mode, and failure safety through an approved AnalysisTemplate | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) |
 | [REQ-0001-IF-0003](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | The route boundary between the k8s router and the cluster ingress | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) |
 | N/A — [Acceptance criterion 01](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) remains package-owned | Operational evidence of controller Deployment availability | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) |
 | N/A — [Acceptance criterion 02](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) remains package-owned | The live evidence boundary of the Dashboard HTTPS response and progress display | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) |
 | N/A — [Acceptance criterion 03](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) remains package-owned | Reconciliation evidence of the ArgoCD Rollout health state | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) |
 | N/A — [Acceptance criterion 04](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) remains package-owned | The validation boundary that separates repo-static gates from runtime checks | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) |
 
-- **PRD**: [`../../01.requirements/0001-argo-rollouts-progressive-delivery.md`](../../01.requirements/0001-argo-rollouts-progressive-delivery.md)
+- **Requirement**: [`../../01.requirements/0001-argo-rollouts-progressive-delivery.md`](../../01.requirements/0001-argo-rollouts-progressive-delivery.md)
 - **Spec**: N/A — SPEC-0004 left the tree; Git history recovers it ([REQ-0001 Archived Lineage](../../01.requirements/0001-argo-rollouts-progressive-delivery.md#archived-lineage))
 - **ADR**: [`../decisions/0011-argo-rollouts-progressive-delivery.md`](../decisions/0011-argo-rollouts-progressive-delivery.md)
+- **ADR**: [`../decisions/0054-platform-decision-current-state-amendment.md`](../decisions/0054-platform-decision-current-state-amendment.md) — current promotion-mode clause

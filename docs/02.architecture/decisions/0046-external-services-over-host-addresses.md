@@ -1,10 +1,10 @@
 ---
 title: "External Services Reached Through Host-Published Addresses"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0046"
 ---
@@ -115,6 +115,12 @@ The state as of 2026-09-23:
 
 ## Traceability
 
+**Current-state clarification (2026-11-05).** The PostgreSQL route
+(`pg-router`, `15432/15433`) and the PostgreSQL bootstrap warning above are
+retired by [ADR-0049](./0049-external-data-service-contract-alignment.md);
+`mng-pg` and `dev-pg` are host-loopback only and no PostgreSQL K8s interface is
+declared. The Valkey and observability clauses are unchanged.
+
 **Current-state clarification (2026-09-23).** The external workspace chose
 not to publish Prometheus `9090` or Grafana `3000` on the host. Prometheus
 exposes only its HTTP API through the external Traefik at
@@ -134,7 +140,7 @@ Kiali and the Rollouts controller call those names directly:
 
 Every other clause of this decision is unchanged.
 
-- **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Requirement**: [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) — REQ-0004-FR-0003, REQ-0004-FR-0010
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 - **Related ADR**: [`./0041-openbao-secret-backend.md`](./0041-openbao-secret-backend.md)

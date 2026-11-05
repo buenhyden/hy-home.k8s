@@ -1,10 +1,10 @@
 ---
 title: "cert-manager with mkcert CA as ClusterIssuer"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0006"
 ---
@@ -74,7 +74,7 @@ adminer obtain TLS through the cert-manager ingress-shim annotation
 `cert-manager.io/cluster-issuer: mkcert-ca-issuer` on each Ingress, which keeps
 the mkcert `ClusterIssuer` boundary this decision chose.
 
-- **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Requirement**: [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) — REQ-0004-FR-0001, REQ-0004-NFR-0001
 - **ARD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)
@@ -84,4 +84,4 @@ the mkcert `ClusterIssuer` boundary this decision chose.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | Completed implementation evidence |
+| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | N/A — SPEC-0008 left the tree; Git history recovers it |
