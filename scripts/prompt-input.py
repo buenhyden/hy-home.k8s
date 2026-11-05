@@ -42,12 +42,23 @@ ALLOWED_COMMANDS = frozenset(
         ("git", "diff", "--cached", "--name-only"),
         ("git", "diff", "--check"),
         ("git", "log", "--oneline", "-20"),
-        ("git", "ls-files", "docs/**/README.md", ".agents/**/*.md"),
+        (
+            "git",
+            "ls-files",
+            "docs/README.md",
+            "docs/**/README.md",
+            ".agents/*.md",
+            ".agents/**/*.md",
+        ),
         ("git", "rev-parse", "HEAD"),
         ("git", "rev-parse", "--abbrev-ref", "HEAD"),
         ("git", "status", "--porcelain"),
     }
 )
+
+# `git diff --check` exits 2 when it finds whitespace errors; that listing is
+# the input the contract asks for, not a failure.
+ACCEPTED_EXIT_CODES = {("git", "diff", "--check"): frozenset({0, 2})}
 
 EXIT_OK = 0
 EXIT_CONTRACT = 2
@@ -174,7 +185,7 @@ def run_input(root: Path, name: str, argv: Sequence[str]) -> str:
         raise PromptInputError(
             "PROMPT-INPUT-FAILED", f"{name}: input unavailable; no draft"
         ) from exc
-    if completed.returncode != 0:
+    if completed.returncode not in ACCEPTED_EXIT_CODES.get(tuple(argv), {0}):
         raise PromptInputError(
             "PROMPT-INPUT-FAILED",
             f"{name}: command exited {completed.returncode}; no draft",

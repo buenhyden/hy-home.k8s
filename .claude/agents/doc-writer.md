@@ -12,6 +12,7 @@ Read the following repository files before acting:
 - `.agents/workflows/work-lifecycle.md`
 - `.agents/skills/docs-stage-conformance/SKILL.md`
 - `.agents/skills/docs-stage-routing/SKILL.md`
+- `.agents/skills/ops-runbook/SKILL.md`
 - `.agents/skills/requirements-to-design/SKILL.md`
 
 Apply the role, permission, procedure, and handoff boundaries in those files.

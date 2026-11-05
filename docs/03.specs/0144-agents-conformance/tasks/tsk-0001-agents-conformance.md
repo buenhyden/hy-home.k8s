@@ -1,6 +1,6 @@
 ---
 title: "Agent Surface Conformance"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -35,7 +35,7 @@ workspace. It executes [SPEC-0144](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AGC-004](../spec.md#success-criteria--verification-plan) | Code, registry and schema changes | platform | ready | NOT_RUN | EVD-001 |
+| WORK-001 | [VAL-AGC-004](../spec.md#success-criteria--verification-plan) | Code, registry and schema changes | platform | in-progress | PASS | EVD-005, EVD-006, EVD-007 |
 | WORK-002 | [VAL-AGC-001](../spec.md#success-criteria--verification-plan) | Governance files | platform | ready | NOT_RUN | EVD-002 |
 | WORK-003 | [VAL-AGC-002](../spec.md#success-criteria--verification-plan) | Roles and skills | platform | ready | NOT_RUN | EVD-003 |
 | WORK-004 | [VAL-AGC-003](../spec.md#success-criteria--verification-plan) | README, knowledge, prompts, workflows, evaluations | platform | ready | NOT_RUN | EVD-004 |
@@ -48,6 +48,9 @@ workspace. It executes [SPEC-0144](../spec.md) through
 | EVD-002 | [VAL-AGC-001](../spec.md#success-criteria--verification-plan) | WORK-002 | Strict document checks | Pending | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-AGC-002](../spec.md#success-criteria--verification-plan) | WORK-003 | Strict document checks and agent-governance validator | Pending | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-AGC-003](../spec.md#success-criteria--verification-plan) | WORK-004 | Strict document checks | Pending | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-AGC-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Regression tests and agent-governance validator | Working tree on `c8f2ddba` with the new tests and the old code | FAIL | Local run, 2026-11-05T23:48Z: `test_change_review_reports_whitespace_errors_instead_of_aborting` raises `PROMPT-INPUT-FAILED: Whitespace check: command exited 2`; `test_doc_update_owner_candidates_include_the_root_routers` misses `docs/README.md`; at 23:49Z `test_every_registered_skill_has_a_binding_role` reports `ops-runbook` unbound and `test_permission_class_carries_no_unread_approval_flag` fails with `AGENT-REGISTRY-SCHEMA` | no | none |
+| EVD-006 | [VAL-AGC-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Regression tests and agent-governance validator | Working tree on `c8f2ddba` with the change | PASS | Local run, 2026-11-05T23:49Z: `tests.test_prompt_input` and `tests.test_validate_agent_registry` 50 tests OK; `tests.test_agent_governance` 61 tests OK; `validate-agent-governance.py` PASS (roles=17, skills=17, projections=51) | yes | EVD-001 |
+| EVD-007 | [VAL-AGC-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Changed surfaces | Working tree on `c8f2ddba` | PASS | `prompt-input.py` accepts exit 2 only for `git diff --check` and its allowlist gains `docs/README.md` and `.agents/*.md`, with the `doc-update` contract row changed to match; `doc-writer` binds `ops-runbook` in the registry and both projections; `external_writes_require_approval` is gone from the schema and the four registry rows | no | none |
 
 ## Criterion Acceptance
 

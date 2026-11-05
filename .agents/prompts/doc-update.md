@@ -27,7 +27,7 @@ them; it defines no form and overrides no profile.
 | --- | --- | --- |
 | Changed path set | `git status --porcelain` | Identifies which owners the change touches |
 | Local difference | `git diff` | Shows what statement became untrue |
-| Owner candidates | `git ls-files 'docs/**/README.md' '.agents/**/*.md'` | Supplies the routers that name canonical owners |
+| Owner candidates | `git ls-files docs/README.md 'docs/**/README.md' '.agents/*.md' '.agents/**/*.md'` | Supplies the routers that name canonical owners |
 
 The subject input is `Changed path set`. When it is empty the contract
 refuses, because no statement has changed owner.

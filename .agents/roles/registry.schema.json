@@ -117,8 +117,7 @@
       "required": [
         "id",
         "allows_mutation",
-        "allows_delegation",
-        "external_writes_require_approval"
+        "allows_delegation"
       ],
       "properties": {
         "id": {
@@ -134,9 +133,6 @@
         },
         "allows_delegation": {
           "type": "boolean"
-        },
-        "external_writes_require_approval": {
-          "const": true
         }
       }
     },
