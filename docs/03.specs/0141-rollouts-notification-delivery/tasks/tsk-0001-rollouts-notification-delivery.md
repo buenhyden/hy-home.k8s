@@ -1,6 +1,6 @@
 ---
 title: "Rollouts Notification Delivery"
-version: "0.4.0"
+version: "0.4.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -33,6 +33,9 @@ channel through the Rollouts notification engine. It executes
 - Acceptance (2026-11-06): the operator accepted VAL-RND-001 to VAL-RND-003
   and asked to observe the live Slack delivery, which needs the change on
   `main` first.
+- Acceptance (2026-11-06): the operator's instruction to record VAL-RND-004
+  as accepted once a message arrives, and their report of the 7:59 AM
+  message, accept VAL-RND-004.
 
 ## Task Table
 
@@ -42,7 +45,7 @@ channel through the Rollouts notification engine. It executes
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-RND-001](../spec.md#success-criteria--verification-plan), [VAL-RND-002](../spec.md#success-criteria--verification-plan) | Validator assertions, Rollouts values, ExternalSecret, ArgoCD ConfigMap | platform | completed | PASS | EVD-004, EVD-005, EVD-006, EVD-008, EVD-009, EVD-010, EVD-011 |
 | WORK-002 | [VAL-RND-003](../spec.md#success-criteria--verification-plan) | REQ-0002, AD-0005, ADR-0012 and runbook text | platform | completed | PASS | EVD-007 |
-| WORK-003 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | Operator live observation | operator | in-progress | PASS | EVD-016 |
+| WORK-003 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | Operator live observation | operator | completed | PASS | EVD-016 |
 
 ## Task Evidence
 
@@ -72,7 +75,7 @@ channel through the Rollouts notification engine. It executes
 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-011 | Operator accepted on 2026-11-06 | platform |
 | [VAL-RND-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-004, EVD-005 | Operator accepted on 2026-11-06 | platform |
 | [VAL-RND-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-007 | Operator accepted on 2026-11-06 | platform |
-| [VAL-RND-004](../spec.md#success-criteria--verification-plan) | pending | EVD-016 | Operator acceptance of EVD-016 | operator |
+| [VAL-RND-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-016 | Operator observed the message and accepted on 2026-11-06 | operator |
 
 ## Approval and Safety Boundaries
 
@@ -97,8 +100,8 @@ channel through the Rollouts notification engine. It executes
 
 - Repository-static lanes: PASS (EVD-005 to EVD-007). The validator was
   changed first and failed on the old manifests (EVD-004).
-- Acceptance: the operator accepted VAL-RND-001 to VAL-RND-003 on
-  2026-11-06; VAL-RND-004 awaits the operator's acceptance of EVD-016.
+- Acceptance: the operator accepted VAL-RND-001 to VAL-RND-004 on
+  2026-11-06.
 - Live lane: PASS (EVD-016). Earlier attempts were blocked by node DNS,
   the sealed OpenBao, an invalid Slack token and the bot's missing channel
   membership (EVD-012 to EVD-015); the operator cleared each one.
