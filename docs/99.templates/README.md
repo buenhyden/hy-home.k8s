@@ -241,7 +241,6 @@ Result, Criterion Acceptance, Task Evidence와 실제 승인 사실은 관측에
 
 ### Spec·Plan Direct Approval
 
-
 `Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`도 이 지역 adapter의 좁은 확장이다. 범위를 정한
 현행 사용자 지시, 실제 묶음 리뷰와 승인이 기록된 Spec·Plan은 `draft`에서
 `approved`로 직접 전이할 수 있다. 새 Spec·Plan의 최초 Git 기록은 계속

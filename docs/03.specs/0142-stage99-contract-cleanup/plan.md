@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Contract Cleanup Plan"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/plan"
 status: "approved"
 owner: "platform"
@@ -57,8 +57,8 @@ strict document checks and `python3 scripts/qa.py staged` on each commit.
 
 ## Risks & Mitigations
 
-- A test fixture may still use mode `evidence`; the document suite run before
-  and after shows it, and the fixture changes with the code.
+- A test fixture could have used mode `evidence`; the 2026-11-05 search
+  found none, and the document suite passed before and after.
 - The comparison base holds the old registry; the staged lifecycle check is
   run before each commit.
 

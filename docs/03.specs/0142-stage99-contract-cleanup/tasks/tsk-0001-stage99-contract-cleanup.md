@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Contract Cleanup"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-05"
@@ -56,15 +56,16 @@ executes [SPEC-0142](../spec.md) through [WORK-001–004](../plan.md#work-breakd
 | EVD-009 | [VAL-S99-003](../spec.md#success-criteria--verification-plan) | WORK-003 | `python3 -m unittest tests.test_document_terminal_contract -k five_current_modes` before the code change | Working tree on `38ed864f` with the new test | FAIL | 2026-11-05T14:56Z, schema accepted modes `evidence` and `generated`, as expected | no | none |
 | EVD-010 | [VAL-S99-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Schema regression test and code search | Staged change on `38ed864f` | PASS | 2026-11-05T14:56Z, `tests.test_document_terminal_contract` 34 tests OK; registry strict PASS; no live `evidence`/`generated` mode, `requirementMemberId` or `Agent Harness Requirements`; the baselined finding stays at registry line 5847 | yes | EVD-003 |
 | EVD-011 | [VAL-S99-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Document contract suite and strict document checks | Staged change on `38ed864f` | PASS | 2026-11-05T15:07Z, document suite 281 tests OK; registry, Markdown-profile, link and lifecycle strict PASS; `python3 scripts/qa.py staged` 12 gates PASS after `ruff format` | yes | EVD-004 |
+| EVD-012 | [VAL-S99-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Independent review of the implementing change | Commit `7ca21393` | PASS | code-reviewer: both new tests fail when their change is reverted; the lifecycle check passes over `HEAD~1..HEAD`; no reader of the removed values remains; the baselined finding stays at line 5847; a doubled blank line in the README and a stale Plan risk sentence are fixed in the closing change | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-S99-001](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-001 | platform |
-| [VAL-S99-002](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-002 | platform |
-| [VAL-S99-003](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-003 | platform |
-| [VAL-S99-004](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-004 | platform |
+| [VAL-S99-001](../spec.md#success-criteria--verification-plan) | pending | EVD-006 | Operator decision on PASS evidence | operator |
+| [VAL-S99-002](../spec.md#success-criteria--verification-plan) | pending | EVD-008 | Operator decision on PASS evidence | operator |
+| [VAL-S99-003](../spec.md#success-criteria--verification-plan) | pending | EVD-010 | Operator decision on PASS evidence | operator |
+| [VAL-S99-004](../spec.md#success-criteria--verification-plan) | pending | EVD-011, EVD-012 | Operator decision on PASS evidence | operator |
 
 ## Approval and Safety Boundaries
 
@@ -85,4 +86,12 @@ executes [SPEC-0142](../spec.md) through [WORK-001–004](../plan.md#work-breakd
 
 ## Verification Summary
 
-Not run yet.
+- Repository-static lanes: PASS (EVD-006, EVD-008, EVD-010, EVD-011); each
+  regression failed before its change (EVD-005, EVD-009).
+- Review: EVD-012 passed; its two cosmetic findings are fixed. The rows stay
+  `in-progress` until the operator accepts the criteria (Stage 03 rule 6).
+- Follow-up outside this scope: the `Literal` in `scripts/document_contracts.py`
+  and two checks in `scripts/validate-markdown-profiles.py` still name the
+  modes `frontmatter-free` and `classification-only`, which no profile or
+  schema allows.
+- Rollback: revert `7ca21393` and the closing change.
