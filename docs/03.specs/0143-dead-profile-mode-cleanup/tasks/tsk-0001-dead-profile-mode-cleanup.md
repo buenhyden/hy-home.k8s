@@ -1,6 +1,6 @@
 ---
 title: "Dead Profile Mode Cleanup"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -31,8 +31,8 @@ the validator branches that only they reach. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-DPM-001](../spec.md#success-criteria--verification-plan) | Type regression test and narrowed `Literal` types | platform | ready | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-DPM-002](../spec.md#success-criteria--verification-plan) | Unreachable branches and helper code | platform | ready | NOT_RUN | EVD-002 |
+| WORK-001 | [VAL-DPM-001](../spec.md#success-criteria--verification-plan) | Type regression test and narrowed `Literal` types | platform | in-progress | PASS | EVD-003, EVD-004 |
+| WORK-002 | [VAL-DPM-002](../spec.md#success-criteria--verification-plan) | Unreachable branches and helper code | platform | in-progress | PASS | EVD-005, EVD-006 |
 
 ## Task Evidence
 
@@ -40,6 +40,10 @@ the validator branches that only they reach. It executes
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-DPM-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Type regression test | Pending | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-DPM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Code search, document suite, strict document checks and repository quality check | Pending | NOT_RUN | Pending | yes | none |
+| EVD-003 | [VAL-DPM-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Type regression test | New test copied onto a detached worktree of `5af1f081` with the old scripts | FAIL | Local run, 2026-11-05T17:14Z: `test_typed_modes_match_the_schema_and_loader` fails with `'frontmatter-free'` and `'classification-only'` outside the schema enum, as expected | no | none |
+| EVD-004 | [VAL-DPM-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Type regression test | Working tree on `5af1f081` with the change | PASS | Local run, 2026-11-05T17:15Z: the test passes; after the review the frontmatter half derives its expected set from the schema enum and the loader mapping, and the module's 35 tests pass | yes | EVD-001 |
+| EVD-005 | [VAL-DPM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Independent review of the implementing change | Working tree on `5af1f081` | PASS | code-reviewer report: no removed branch was reachable (only `scripts/document_contracts.py` builds `DocumentProfile` and `FrontmatterContract`, the schema and loader admit none of the removed values); the GitHub-native `FM-FORBIDDEN` diagnostic keeps its rule, text and owner; one advisory on the test's frontmatter half was applied | yes | none |
+| EVD-006 | [VAL-DPM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Code search, document suite, strict document checks and repository quality check | Working tree on `5af1f081` with the change | PASS | Local run, 2026-11-05T17:15Z: `git grep` finds no `frontmatter-free` or `classification-only` mode and no frontmatter `not-applicable` in the three scripts (one unrelated message wording remains in `quality.py`); `run-contract-tests.py --suite document` 282 tests PASS; strict registry, profile, link and lifecycle checks PASS; `quality.py` PASS; `ruff` clean | yes | EVD-002 |
 
 ## Criterion Acceptance
 
@@ -68,4 +72,10 @@ the validator branches that only they reach. It executes
 
 ## Verification Summary
 
-Not run yet.
+- The type regression failed on the old scripts (EVD-003) and passes with
+  the change (EVD-004).
+- The code search, document suite, strict document checks and repository
+  quality check pass (EVD-006); the independent review found no reachable
+  removed branch (EVD-005).
+- Live lane: not applicable.
+- Rollback: revert the implementing commit.

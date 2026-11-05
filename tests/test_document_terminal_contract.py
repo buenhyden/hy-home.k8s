@@ -11,7 +11,7 @@ import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path, PurePosixPath
-from typing import Any
+from typing import Any, get_args, get_type_hints
 from unittest import mock
 
 from jsonschema import Draft202012Validator
@@ -154,6 +154,25 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                     authority.AuthorityError, "REGISTRY_PROFILE_MODE"
                 ):
                     authority.validate_registry_authority(mutated)
+
+    def test_typed_modes_match_the_schema_and_loader(self) -> None:
+        contracts = load_document_contracts()
+        schema = json.loads(PROFILE_SCHEMA_PATH.read_text(encoding="utf-8"))
+        profile_modes = schema["properties"]["profiles"]["items"]["properties"]["mode"][
+            "enum"
+        ]
+        hints = get_type_hints(contracts.DocumentProfile)
+        self.assertEqual(set(get_args(hints["mode"])), set(profile_modes))
+        # The loader keeps `required` and maps every other schema value to `forbidden`.
+        frontmatter_modes = schema["properties"]["profiles"]["items"]["properties"][
+            "frontmatter"
+        ]["properties"]["mode"]["enum"]
+        loaded = {
+            "required" if mode == "required" else "forbidden"
+            for mode in frontmatter_modes
+        }
+        hints = get_type_hints(contracts.FrontmatterContract)
+        self.assertEqual(set(get_args(hints["mode"])), loaded)
 
     def test_stage99_support_prose_cannot_be_a_machine_owner(self) -> None:
         authority = load_document_authority()
