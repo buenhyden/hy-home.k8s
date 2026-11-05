@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.3.1"
+version: "1.4.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "RUN-0001"
 ---
@@ -15,7 +15,8 @@ artifact_id: "RUN-0001"
 
 이 런북은 Linux server 기반 GitOps 플랫폼을 즉시 실행 가능한 체크리스트 순서로 부트스트랩하고, 오류 시그니처별 복구 절차를 제공한다.
 
-클러스터 구성, ArgoCD 설치, ESO/Vault 연동, 필수 management Valkey
+k3d 클러스터(`hyhome`, server 1 / agent 3, context `k3d-hyhome`) 구성, ArgoCD
+설치, ESO/OpenBao 연동, 필수 management Valkey
 (`valkey-external:6379` → host `26379`) 확인을 수행한다. Management와
 development PostgreSQL은 별도의 host-loopback 선택 점검 대상이며 현재
 K8s DB endpoint가 아니다.
@@ -37,33 +38,32 @@ K8s DB endpoint가 아니다.
 - [ ] Linux server host의 native Docker Engine 정상 상태 (`docker context show`가 `default`)
 - [ ] bootstrap 필수 CLI(`k3d`, `kubectl`, `helm`, `docker`, `curl`, `jq`, `openssl`, `rg`) 설치; `argocd` CLI는 운영 확인용
 - [ ] `fs.inotify.max_user_instances` 512 이상 (bootstrap이 미달 시 중단)
-- [ ] 외부 서비스 런타임은 별도 워크스페이스(repo)에서 기동됨 (`openbao`, `openbao-agent`, `mng-valkey`). Cluster는 management Valkey의 host `192.168.0.13:26379`에 닿는다. 외부 `mng-pg`와 `dev-pg`의 기본 host publish는 각각 `127.0.0.1:25432`와 `127.0.0.1:25433`이고, `dev-valkey`는 Docker `dev_data_net` 안에서만 `6379`를 expose한다. 이 셋은 현재 K8s endpoint가 아니다. 과거 `postgres-ha`/`pg-router`와 Valkey cluster 절차는 현행 bootstrap 대상이 아니다
+- [ ] 외부 서비스 런타임은 별도 워크스페이스(repo)에서 기동됨 (`openbao`, `openbao-agent`, `mng-valkey`). Cluster는 management Valkey의 host `192.168.0.13:26379`에 닿는다(bootstrap이 이 도달성을 필수로 검사한다). 외부 `mng-pg`와 `dev-pg`의 기본 host publish는 각각 `127.0.0.1:25432`와 `127.0.0.1:25433`이고, `dev-valkey`는 Docker `dev_data_net` 안에서만 `6379`를 expose한다. 이 셋은 현재 K8s endpoint가 아니다. 과거 `postgres-ha`/`pg-router`와 Valkey cluster 절차는 현행 bootstrap 대상이 아니다
 - [ ] k8s router 주소 `192.168.0.14`가 host에 할당되어 있고, 외부 Traefik이 모든 주소의 80/443을 점유하지 않음 (ADR-0043)
-- [ ] Valkey `192.168.0.13:26379` 접근 가능
-- [ ] (host의 해당 Docker 서비스가 필요한 경우) `mng-pg` `127.0.0.1:25432`, `dev-pg` `127.0.0.1:25433`를 각 서비스 owner가 선택적으로 점검한다. 이 localhost 결과를 K8s DB 접속으로 해석하지 않는다
-- [ ] k3d API가 `192.168.0.13:6550`에 bind되고 인증서 SAN에 그 주소가 있음. 이전 설정(`0.0.0.0`)으로 만든 cluster는 재생성한다
-- [ ] OpenBao Kubernetes auth `kubernetes_host`가 `https://192.168.0.13:6550`
+- [ ] (선택) `mng-pg` `127.0.0.1:25432`, `dev-pg` `127.0.0.1:25433`는 각 서비스 owner가 점검한다(bootstrap은 경고만 낸다). 이 localhost 결과를 K8s DB 접속으로 해석하지 않는다
+- [ ] k3d API가 `192.168.0.13:6550`에 bind되고 인증서 SAN에 그 주소가 있음(`infrastructure/k3d/k3d-cluster.yaml`). 이전 설정(`0.0.0.0`)으로 만든 cluster는 재생성한다. OpenBao Kubernetes auth `kubernetes_host`도 `https://192.168.0.13:6550`
 - [ ] OpenBao(`https://openbao.hy.home.arpa`, Vault API 호환) 접근 가능 및 unseal 상태
 - [ ] 읽기 가능한 `VAULT_CA_FILE`과 대화형 `/dev/tty` 준비
-- [ ] 외부 Vault의 `eso-read-platform` role에 `bound_audiences=vault` 설정
+- [ ] OpenBao의 `eso-read-platform` role에 `bound_audiences=vault` 설정(ESO ServiceAccount token은 `vault`와 API server audience를 함께 요청한다)
+- [ ] OpenBao policy가 `infrastructure/vault/policies/eso-read.hcl`의 경로(`platform/argocd`, `platform/notifications`, `platform/prometheus-api`, `platform/grafana-api`)를 읽기 허용
 - [ ] `secrets/certs/cert.pem`, `secrets/certs/key.pem` 존재 및 ArgoCD host SAN 포함
 - [ ] `secret/platform/argocd.valkey_password` 존재
 
-1. 외부 런타임 연결성 및 Vault 상태를 점검한다.
+1. 외부 런타임 연결성 및 OpenBao 상태를 점검한다.
 
    ```bash
    nc -z 192.168.0.13 26379
    # 해당 Docker 서비스의 host-loopback 준비를 선택 점검할 때만:
    # nc -z 127.0.0.1 25432 && nc -z 127.0.0.1 25433
+   # 기존 cluster를 재사용할 때만(최초 실행에는 4단계 전까지 cluster가 없다):
    echo | openssl s_client -connect 192.168.0.13:6550 2>/dev/null |
      openssl x509 -noout -ext subjectAltName | rg '192\.168\.0\.13'
-   VAULT_CA_FILE=secrets/certs/rootCA.pem
-   curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
+   curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
      -o /dev/null -w '%{http_code}\n' \
      https://openbao.hy.home.arpa/v1/sys/health
    ```
 
-2. 저장소의 Vault/ESO 계약을 값 조회 없이 정적으로 검증한다.
+2. 저장소의 OpenBao/ESO 계약을 값 조회 없이 정적으로 검증한다.
 
    ```bash
    python3 scripts/validate-vault-eso-contracts.py --root .
@@ -78,16 +78,19 @@ K8s DB endpoint가 아니다.
      rg 'argo\.hy-k8s\.home\.arpa|\*\.hy-k8s\.home\.arpa'
    ```
 
-4. 부트스트랩 스크립트를 실행한다.
+4. 부트스트랩 스크립트를 실행한다. 이 스크립트는 클러스터 생성, MetalLB·ArgoCD
+   Helm 설치, namespace·Secret·ConfigMap 생성과 GitOps 루트 리소스 적용을 수행하는
+   bootstrap-only 단계이며, ArgoCD가 클러스터를 소유한 뒤의 정상 변경 경로가 아니다.
 
    ```bash
+   # bootstrap-only, operator-approved
    export VAULT_CA_FILE="$PWD/secrets/certs/rootCA.pem"
    ./infrastructure/bootstrap-local.sh
    ```
 
    스크립트는 토큰을 환경 변수나 명령 인자로 받지 않고 `/dev/tty`에서
    표시 없이 직접 입력받는다. `VAULT_ADDR`는 HTTPS여야 하고 CA 파일은
-   읽을 수 있어야 하며, 비대화형 또는 인증서 검증 생략 fallback은 없다.
+   읽을 수 있어야 하며(기본값 `secrets/certs/rootCA.pem`), 비대화형 또는 인증서 검증 생략 fallback은 없다.
 
 5. Bootstrap 결과로 생성되는 ingress TLS secret을 확인한다.
 
@@ -103,7 +106,7 @@ K8s DB endpoint가 아니다.
    kubectl -n argocd get applications,applicationsets
    ```
 
-7. ESO 및 Vault 기반 비밀 동기화를 확인한다.
+7. ESO 및 OpenBao 기반 비밀 동기화를 확인한다.
 
    ```bash
    kubectl -n external-secrets get pods
@@ -117,7 +120,11 @@ K8s DB endpoint가 아니다.
    kubectl -n platform get svc valkey-external -o yaml
    ```
 
-9. 필수 management Valkey 경로를 클러스터 내부에서 확인한다. localhost에
+   `gitops/platform/external-services`는 `valkey-external` 외에 Loki, Tempo,
+   Alloy OTLP Service/EndpointSlice를 포함한다. PostgreSQL 항목은 없다.
+
+9. 필수 management Valkey 경로를 클러스터 내부에서 확인한다(operator-approved
+   일회성 probe Pod). localhost에
    게시된 `mng-pg`/`dev-pg`나 Docker 내부 `dev-valkey`로 이 검사를 바꿔
    실행하지 않는다. 현재 PostgreSQL용 K8s Service가 없으므로 여기서
    DB 접속 검사를 시도하지 않는다.
@@ -131,6 +138,7 @@ K8s DB endpoint가 아니다.
 10. ArgoCD 접속 후 프로젝트 경계와 앱 상태를 확인한다.
 
     ```bash
+    # operator-approved
     argocd login argo.hy-k8s.home.arpa --grpc-web
     argocd proj list
     argocd app list
@@ -140,6 +148,7 @@ K8s DB endpoint가 아니다.
 
 - [ ] `kubectl get nodes`에서 4개 노드 Ready 확인
 - [ ] `kubectl -n argocd get pods` 정상
+- [ ] `kubectl -n traefik get pods,svc` 정상(Traefik NodePort 30080/30443, MetalLB `172.18.0.240`); ingress controller는 Traefik이다
 - [ ] `kubectl get svc,endpointslice -A | rg 'valkey-external'`에서 management
       Valkey만 현행 데이터 서비스 interface로 확인
 - [ ] `kubectl -n external-secrets get externalsecret,secretstore,clustersecretstore`
@@ -154,9 +163,9 @@ K8s DB endpoint가 아니다.
 
 | 에러 시그니처                                                                      | 진단 포인트                                  | 즉시 조치                                                      | 재검증                                                                                    |
 | ---------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `vault is sealed (status=503)`                                                     | Vault health code가 503                      | Vault unseal 수행 후 health 재확인                             | CA 검증을 사용하는 HTTPS health 요청                                                        |
+| `vault is sealed (status=503)`                                                     | OpenBao health code가 503                    | OpenBao unseal 수행 후 health 재확인                           | CA 검증을 사용하는 HTTPS health 요청                                                        |
 | bootstrap `[2/11]` 단계가 `jq` 오류로 중단                                          | `platform/argocd`의 `valkey_password` 누락 또는 토큰 권한 부족 | OpenBao 운영자가 경로·키·정책을 확인한다                      | bootstrap 재실행                                                                          |
-| `WRONGPASS invalid username-password pair`                                         | ArgoCD secret과 Vault 값 불일치              | ExternalSecret 재조정 대기, 지속되면 [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md) | `kubectl -n argocd get externalsecret argocd-external-valkey` + ArgoCD 로그              |
+| `WRONGPASS invalid username-password pair`                                         | ArgoCD secret과 OpenBao 값 불일치            | ExternalSecret 재조정 대기, 지속되면 [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md) | `kubectl -n argocd get externalsecret argocd-external-valkey` + ArgoCD 로그              |
 | `app path does not exist` (`root-platform`)                                        | `spec.source.path`와 원격 브랜치 구조 불일치 | `gitops/apps/root` 경로 확인 후 앱 재동기화                    | 절차 6의 `spec.source.path`·`spec.source.targetRevision` 정확한 값 비교 재실행              |
 
 ## Recovery and Escalation
@@ -164,11 +173,12 @@ K8s DB endpoint가 아니다.
 - [ ] ArgoCD app을 이전 리비전으로 rollback
 
   ```bash
+  # operator-approved
   argocd app history root-platform
   argocd app rollback root-platform <history-id>
   ```
 
-- [ ] Vault 값을 명령 인자나 환경 변수로 브리지하지 않는다. 외부 Vault의
+- [ ] OpenBao 값을 명령 인자나 환경 변수로 브리지하지 않는다. OpenBao의
       경로/정책과 ESO readiness를 복구한 뒤 ExternalSecret 재조정을 기다리고,
       필요하면 위의 대화형 CA 검증 부트스트랩을 다시 실행한다.
 
@@ -226,4 +236,4 @@ reconciliation이다.
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| N/A — SPEC-0008 is historical promotion evidence that Git history recovers | A new or rebuilt local cluster needs the current ArgoCD, ESO/Vault, TLS, and external-service contracts established and checked. | Platform operator captures bootstrap, ArgoCD/ESO, endpoint, and connectivity evidence and owns bounded ArgoCD rollback or configuration recovery. |
+| N/A — SPEC-0008 is historical promotion evidence that Git history recovers | A new or rebuilt local cluster needs the current ArgoCD, ESO/OpenBao, TLS, and external-service contracts established and checked. | Platform operator captures bootstrap, ArgoCD/ESO, endpoint, and connectivity evidence and owns bounded ArgoCD rollback or configuration recovery. |

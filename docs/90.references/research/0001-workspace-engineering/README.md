@@ -1,10 +1,10 @@
 ---
 title: "Workspace Engineering Research Pack"
-version: "0.3.0"
+version: "0.3.1"
 type: "reference/research-pack"
 status: "in-review"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 artifact_id: "RES-0001"
 ---
 # Workspace Engineering Research Pack
@@ -81,6 +81,7 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 | [Memory management](m0011-agent-memory-tiers-and-management.md) | 단기·장기·도메인 기억, 수명·승격·정정·삭제·복구 |
 | [Source coverage](m0012-source-coverage.md) | 원 요청·requirement·claim·source 대응, 갱신·이관 처분과 역사적 증거 |
 | [Scope application index](m0013-scope-application-index.md) | 외부 근거를 scope별 후속 조사 질문·selector·합격 기준·승인 경계에 연결 |
+| [Current-state addendum 2026-11-05](m0014-current-state-addendum-2026-11-05.md) | 게시된 m0001~m0012의 저장소 지역 주장 중 현재와 다른 항목, 멤버 내부 상충·중복의 최신 판정 |
 
 ## Usage
 
@@ -109,7 +110,7 @@ provider discovery·model resolution·hook 실행, hosted CI와 live cluster 효
 
 문서 검증은 변경 문서의 repository-static QA만 입증한다. 연구 발견과 조건부
 제안은 활성 정책, 구현 계약, 실행 승인이나 도구 도입 결정으로 승격되지 않는다.
-현재 로컬 권한은 공통 거버넌스와 각 stage의 정본 owner가 소유한다.
+현재 로컬 권한은 공통 거버넌스와 각 stage의 정본 owner가 소유한다. 2026-11-05 기준 이 pack 안의 과거 로컬 경로·Spec·scope 문서 언급은 그 관찰일의 증거이며, tree를 떠난 문서는 Git history가 복구한다.
 
 ## Related Documents
 

@@ -1,10 +1,10 @@
 ---
 title: "Argo CD Source Integrity Non-adoption"
-version: "1.0.1"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0026"
 ---
@@ -141,6 +141,18 @@ of the prior cycle stops structurally unreachable rows from being re-tested.
 
 ## Traceability
 
+**Current-state clarification (2026-11-05).** Thirteen declarations now track
+`targetRevision: main`: eleven `gitops/apps/root/*.yaml` Applications plus
+`root-application.yaml` and `applicationset-apps.yaml`. The decision covers every
+self-referencing declaration, so the "ten" and "twelve" counts in the text above
+are history. [ADR-0029](./0029-mutable-target-revision-retention.md) later
+declined commit-SHA pinning, so no preferred control is pending and the identity
+gap stays recorded and open; [ADR-0054](./0054-platform-decision-current-state-amendment.md) (clause 4) records that replacement.
+
+- **Requirement**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+  (REQ-0004-NFR-0003, REQ-0004-FR-0013)
+- **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
+
 Reversal condition: reopen this decision when Source Integrity covers Helm chart
 provenance or OCI image signatures, when a warn-only or audit mode is documented,
 or when this repository adopts commit signing for an independent reason. Adopting
@@ -155,5 +167,5 @@ orthogonal.
 
 ### Related Documents
 
-- ADR 0022 — direct-approval standalone execution lineage
+- ADR-0022 — direct-approval standalone execution lineage (left the tree; Git history recovers it)
 - [Kubernetes, infrastructure, and security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md)

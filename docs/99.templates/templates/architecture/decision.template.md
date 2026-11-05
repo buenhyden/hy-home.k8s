@@ -44,4 +44,4 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| Architecture owner | Supersedes {{ARTIFACT_ID}} or N/A — first decision | Specification owner |
+| Architecture owner | Supersedes {{PREDECESSOR_ADR_ID}} or N/A — first decision | {{AFFECTED_SPEC_LINK}} or N/A — SPEC-xxxx left the tree; Git history recovers it |

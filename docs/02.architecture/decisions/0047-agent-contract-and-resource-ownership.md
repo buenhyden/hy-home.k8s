@@ -1,10 +1,10 @@
 ---
 title: "Agent Contract and Resource Ownership"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0047"
 ---
@@ -176,8 +176,20 @@ retain approval, evidence-depth and negative-test boundaries.
 the current platform. Implementing the approved amendment requires updating
 that view and the current ownership contracts together. SPEC-0102 supplied
 change-specific behavior, and its approved Plan and Tasks recorded execution
-order and evidence. This decision is accepted (approved 2026-09-29) and claims no completed
-migration or implemented acceptance criterion beyond the current owners.
+order and evidence. This decision was accepted on 2026-09-29.
+
+**Current-state clarification (2026-11-05).** The migration this record
+describes as pending is implemented; the current owners are
+`scripts/validate-knowledge-surface.py`, the domain-fact fields in
+`.agents/knowledge/domains.md`, and the skill-owned validator
+`.agents/skills/external-service-contract-audit/scripts/validate-service-endpoints.py`.
+The clause giving `.agents/evaluations/` an "exclusive runner" is no longer
+current: [ADR-0048](./0048-local-qa-and-semver-release-ownership.md) retired
+that runner, and the package now holds `harnesses/`, `templates/`,
+`README.md` and `results.md`. The ADR-0048 Lifecycle Traceability records this lineage.
+The operator-approved [ADR-0055](./0055-governance-decision-current-state-amendment.md) (clauses 5-6)
+replaces the evaluation-ownership clause. Vault in the Non-goals now means the OpenBao backend
+([ADR-0041](./0041-openbao-secret-backend.md)).
 
 ### Lifecycle Traceability
 

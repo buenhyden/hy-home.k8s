@@ -1,10 +1,10 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.4.1"
+version: "1.5.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "POL-0001"
 ---
@@ -21,8 +21,8 @@ artifact_id: "POL-0001"
 ## Scope
 
 - k3d cluster와 ArgoCD pull 기반 GitOps 운영
-- ESO와 외부 Vault의 시크릿 경계
-- 외부 PostgreSQL·Valkey·Vault 서비스 인터페이스와 management/development 경계
+- ESO와 외부 OpenBao의 시크릿 경계
+- 외부 PostgreSQL·Valkey·OpenBao 서비스 인터페이스와 management/development 경계
 - Traefik, k8s 전용 router, AppProject, NetworkPolicy 통제
 - repository 정적 검증과 승인된 runtime 검증의 증적 경계
 
@@ -37,7 +37,7 @@ artifact_id: "POL-0001"
 | Role | Responsibility | Escalation owner |
 | --- | --- | --- |
 | Platform Owner | GitOps desired state, external endpoint, runtime baseline을 승인한다. | Workspace Owner |
-| Security Reviewer | Vault, RBAC, NetworkPolicy, 예외의 최소권한을 검토한다. | Workspace Owner |
+| Security Reviewer | OpenBao, RBAC, NetworkPolicy, 예외의 최소권한을 검토한다. | Workspace Owner |
 | Change author | 정적 검증과 필요한 승인·runtime 증적을 handoff한다. | Platform Owner |
 
 ### Control Register
@@ -46,8 +46,8 @@ artifact_id: "POL-0001"
 | --- | --- | --- | --- |
 | PLAT-001 topology | Platform Owner | `infrastructure/k3d/k3d-cluster.yaml` | `servers: 1`, `agents: 3`; inotify preflight `>= 512` |
 | PLAT-002 external desired state | Platform Owner | `gitops/platform/external-services/*.yaml` | reviewed Service/EndpointSlice definitions |
-| PLAT-003 secret boundary | Security Reviewer | Vault, ESO, secret scanners | no plaintext secret; approved Vault/ESO health evidence |
-| PLAT-004 ingress and TLS | Platform Owner | Traefik, k8s router, ArgoCD ingress | host, TLS secret, router bind and redirect agreement |
+| PLAT-003 secret boundary | Security Reviewer | OpenBao, ESO, secret scanners | no plaintext secret; approved OpenBao/ESO health evidence |
+| PLAT-004 ingress and TLS | Platform Owner | Traefik (`nginx` IngressClass), k8s router, ArgoCD ingress | host, TLS secret, router bind and redirect agreement |
 | PLAT-005 least privilege | Security Reviewer | AppProject, RBAC, NetworkPolicy | wildcard absence and destination/egress review |
 | PLAT-006 validation | Change author | local validators and GitHub Actions | static PASS plus separately approved runtime evidence when required |
 
@@ -64,18 +64,20 @@ artifact_id: "POL-0001"
 - 외부 Docker workspace의 `mng-pg`는 기본 `127.0.0.1:25432`, `dev-pg`는
   기본 `127.0.0.1:25433`으로 host에 게시한다. `dev-valkey`는 Docker
   `dev_data_net` 내부 `6379`만 expose하고 host publish가 없다. 이 세
-  인터페이스는 현재 K8s EndpointSlice 대상이 아니다. PostgreSQL localhost publish를 LAN 또는
-  K8s가 직접 접근할 수 있다고 간주하거나 임의로 재지정하지 않는다.
+  인터페이스는 K8s Service/EndpointSlice 대상이 아니다
+  ([ADR-0049](../../02.architecture/decisions/0049-external-data-service-contract-alignment.md)).
+  PostgreSQL localhost publish를 LAN 또는 K8s가 직접 접근할 수 있다고
+  간주하거나 임의로 재지정하지 않는다.
   현재 Adminer는 기본 DB 서버를 지정하지 않는다. K8s에서 관리/개발 PG를
   사용하려면 별도 연결·NetworkPolicy·Secret 설계와 승인이 필요하다.
-- Vault는 시크릿의 단일 소스이며 문서, manifest, Git history에 평문 토큰,
-  비밀번호, API key를 저장하지 않는다.
-- 시크릿 backend는 Vault API 호환 OpenBao이며, Kubernetes 식별자
-  `vault-backend`와 ESO `vault` provider를 유지한다.
+- OpenBao([ADR-0041](../../02.architecture/decisions/0041-openbao-secret-backend.md))는
+  시크릿의 단일 소스이며 문서, manifest, Git history에 평문 토큰, 비밀번호,
+  API key를 저장하지 않는다. Kubernetes 식별자 `ClusterSecretStore`
+  `vault-backend`와 ESO `vault` provider 이름은 유지한다.
 - 호스트와 cluster 내부 ESO 모두 `https://openbao.hy.home.arpa`를 쓴다.
   cluster 안의 이름 해석은 CoreDNS custom zone이, 인증서 검증은
   `external-secrets/openbao-ca` ConfigMap이 맡는다.
-- Vault Kubernetes auth는 현재 API endpoint와 reviewer JWT/CA 경계를
+- OpenBao Kubernetes auth는 현재 API endpoint, CA와 ESO token audience 경계를
   소유 Runbook의 검증 대상으로 유지한다.
 - ArgoCD host는 `argo.hy-k8s.home.arpa`, TLS secret은 `argocd-local-tls`다.
 - k8s 플랫폼 UI와 앱은 `<name>.hy-k8s.home.arpa`로만 노출하고, k8s 전용
@@ -128,10 +130,10 @@ desired state와 맞추고 승인·검증 증적을 남긴다. 예외는 만료 
 | --- | --- | --- |
 | Bootstrap and GitOps root | source path, revision, AppProject가 current Git 계약과 일치 | [RUN-0001](../runbooks/0001-argocd-platform-bootstrap-runbook.md) |
 | External endpoints | Service/EndpointSlice 이름, IP, 포트가 reviewed desired state와 일치 | [RUN-0001](../runbooks/0001-argocd-platform-bootstrap-runbook.md) |
-| Vault and ESO recovery | auth, network, ExternalSecret 상태와 plaintext 부재 | [RUN-0002](../runbooks/0002-argocd-eso-vault-recovery-runbook.md) |
+| OpenBao and ESO recovery | auth, network, ExternalSecret 상태와 plaintext 부재 | [RUN-0002](../runbooks/0002-argocd-eso-vault-recovery-runbook.md) |
 | Static controls | affected validators와 hosted CI 결과; runtime claim과 분리 | [GDE-0010](../guides/0010-ci-cd-qa-reference-guide.md) |
 
-월 1회 또는 topology, external endpoint, Vault auth, ingress/TLS, AppProject,
+월 1회 또는 topology, external endpoint, OpenBao auth, ingress/TLS, AppProject,
 NetworkPolicy, CI workflow 계약이 바뀔 때 즉시 검토한다. 고정된 job 수나
 문서 수가 아니라 현재 source와 semantic contract를 검토한다.
 제품 품질의 표본·계산식·판정 목표는
@@ -145,12 +147,12 @@ NetworkPolicy, CI workflow 계약이 바뀔 때 즉시 검토한다. 고정된 j
 
 - [AD-0007 Current Local GitOps Platform](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [Platform Bootstrap Runbook](../runbooks/0001-argocd-platform-bootstrap-runbook.md)
-- [ArgoCD/ESO/Vault Recovery Runbook](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+- [ESO Recovery Runbook (RUN-0002)](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 
 ### Lifecycle Traceability
 
-완료된 SPEC-0008은 초기 구현 증적이며, 현재 플랫폼 구조는 위 AD-0007이 소유한다.
+SPEC-0008은 초기 구현 증적이며 트리를 떠났다(Git history로 복구). 현재 플랫폼 구조는 위 AD-0007이 소유한다.
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — SPEC-0008 is historical promotion evidence that Git history recovers | Platform Owner; Security Reviewer for secrets and exceptions | k3d topology, GitOps desired state, Vault/ESO, ingress, AppProject, NetworkPolicy, static and approved runtime evidence |
+| N/A — SPEC-0008 left the tree; Git history recovers it | Platform Owner; Security Reviewer for secrets and exceptions | k3d topology, GitOps desired state, OpenBao/ESO, ingress, AppProject, NetworkPolicy, static and approved runtime evidence |

@@ -1,10 +1,10 @@
 ---
 title: "Common Knowledge and Prompt Surfaces"
-version: "1.0.5"
+version: "1.0.6"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0036"
 supersedes: "ADR-0035"
@@ -21,6 +21,18 @@ restating them here so this decision stands alone rather than by reference.
 Acceptance records the durable choice; it does not establish native discovery,
 permission enforcement, model resolution or hook delivery, which remain
 separately observable evidence.
+
+**Current-state clarification (2026-11-05).** The Decision below records what
+was decided and is not amended. Current ownership differs from the 2026-09-09 note below.
+Evaluation evidence is owned by `.agents/evaluations/`
+([ADR-0047](./0047-agent-contract-and-resource-ownership.md) clause 5,
+[ADR-0048](./0048-local-qa-and-semver-release-ownership.md)); root `evals/` and
+its runner `scripts/run-agent-evaluations.py` were retired under SPEC-0107, and
+`scripts/validation/registry.json` owns gate selection. Decision 3 and the
+Consequences, which leave an evaluation directory unadopted, therefore no
+longer describe the repository; the operator-approved
+[ADR-0055](./0055-governance-decision-current-state-amendment.md) (clauses 5-6) replaces them. The Non-goals' "Vault" operation is OpenBao
+([ADR-0041](./0041-openbao-secret-backend.md)).
 
 **Current ownership clarification (2026-09-09).** The accepted decision below
 remains the historical record of what was decided. Root `evals/` now holds
@@ -46,10 +58,11 @@ forbids a directory the repository requires is the kind of stale clause the
 document contract exists to catch.
 
 The retired memory structure is a separate matter. It was retired under Spec
-0054 and Spec 0065 because a generated progress ledger competed with the owning
+0054 and Spec 0065 (SPEC-0054 and SPEC-0065 left the tree; Git history recovers
+them) because a generated progress ledger competed with the owning
 Spec Task for the same authority. Nothing in this decision reopens it, and the
 governance validator continues to fail closed if that surface reappears. The
-Git-ignored runtime store (`scripts/workspace_memory.py`) added later lives outside `.agents/`,
+Git-ignored runtime store `.workspace-memory/` (managed by `scripts/workspace_memory.py`), added later, lives outside `.agents/`,
 holds decision context only and is not that retired structure.
 
 ## Decision
@@ -129,9 +142,10 @@ other three keep that decision's answer and its reasoning.
 
 ## Traceability
 
-This decision supersedes ADR-0035,
-whose body stays intact as evidence of the decision taken at that time.
-N/A — SPEC-0075 left the tree; Git history recovers it.
+Requirements: REQ-0003-FR-0001, REQ-0003-FR-0002 and REQ-0003-FR-0003 in
+[REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md).
+This decision supersedes ADR-0035, whose body left the tree; Git history
+recovers it (see the Archived Lineage table in AD-0006).
 
 ### Lifecycle Traceability
 

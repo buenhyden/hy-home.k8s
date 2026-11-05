@@ -1,10 +1,10 @@
 ---
 title: "Pod Security Admission Per-namespace Adoption"
-version: "1.0.3"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0028"
 supersedes: "ADR-0027"
@@ -178,6 +178,15 @@ channel useful.
 
 ## Traceability
 
+**Current-state clarification (2026-11-05).** The injected namespaces are `apps`
+and `traefik`, both `baseline` at `audit` and `warn` with Istio injection. The
+pod-level `RuntimeDefault` seccomp profile trigger is met in `apps` by the
+`adminer` Rollout's pod `securityContext` and in `traefik` by the Traefik
+chart's pod `securityContext` (see `platform-traefik-app.yaml`). The reversal
+condition below therefore reads: reopen when the Baseline warning channel on
+`apps` and `traefik` is observed clean, which unblocks `enforce: baseline`
+there. The `audit`-only count is five, as noted on 2026-09-14.
+
 **Current-state clarification (2026-10-27).** The `ingress-nginx` namespace named in this record is removed; the ingress controller is Traefik in the `traefik` namespace per [ADR-0050](./0050-ingress-nginx-replacement-with-traefik.md). The decision text below is preserved as history.
 
 **Current-state clarification (2026-09-14).** After the argocd amendment the
@@ -194,6 +203,10 @@ there; when the pod-level `seccompProfile` is added to those workloads, which
 unblocks Restricted; or when a chart upgrade regresses one of the `audit`-only
 namespaces, which is the event those labels exist to surface.
 
+- **Requirement**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+  (REQ-0004-FR-0014)
+- **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
+
 ### Lifecycle Traceability
 
 | Decision lineage                                                                    | Replacement relation                                                                                  | Affected Spec                                            |
@@ -202,6 +215,6 @@ namespaces, which is the event those labels exist to surface.
 
 ### Related Documents
 
-- ADR-0027 — Pod Security Standards staged adoption
+- ADR-0027 — Pod Security Standards staged adoption (left the tree; Git history recovers it)
 - [Kubernetes infrastructure and security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md)
 - [Istio CNI application](../../../gitops/apps/root/platform-istio-cni-app.yaml)

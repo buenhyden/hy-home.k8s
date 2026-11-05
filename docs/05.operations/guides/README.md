@@ -1,10 +1,10 @@
 ---
 title: "05.operations/guides"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "operations"
 ---
 # 05.operations/guides
@@ -75,7 +75,7 @@ layer: "operations"
 
 Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 
-- upstream 요구사항/아키텍처/스펙: PRD, AD, ADR, Spec, Plan
+- upstream 요구사항/아키텍처/스펙: Requirement, AD, ADR, Spec, Plan
 - sibling 운영 문서: 관련 Policy, Runbook, Incident 경로
 - 하위 실행 증적: Task 또는 validation guide
 
@@ -94,7 +94,7 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - [05.operations/policies](../policies/README.md)
 - [05.operations/runbooks](../runbooks/README.md)
 - [05.operations/incidents](../incidents/README.md)
-- [PRD](../../01.requirements/0004-current-local-gitops-platform.md)
+- [Requirement](../../01.requirements/0004-current-local-gitops-platform.md)
 - [AD](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [Guide Template](../../99.templates/templates/operations/guide.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)

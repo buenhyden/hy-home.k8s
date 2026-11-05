@@ -693,12 +693,10 @@ class DocumentProfile:
         "authored",
         "router",
         "template",
-        "evidence",
         "native",
         "non-target",
         "frontmatter-free",
         "classification-only",
-        "generated",
     ]
     source_profile_ids: tuple[str, ...]
     placeholder_policy: Literal["forbidden", "template-only"]

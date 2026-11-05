@@ -186,7 +186,27 @@ require_pattern 'targetRevision:\s*2\.40\.9' "$ROLLOUTS_APP"
 require_pattern 'namespace:\s*argo-rollouts' "$ROLLOUTS_APP"
 require_pattern 'rollouts\.hy-k8s\.home\.arpa' "$ROLLOUTS_APP"
 require_pattern 'secretName:\s*rollouts-dashboard-tls' "$ROLLOUTS_APP"
-require_multiline_pattern 'notifications:\n([[:space:]].*\n)*[[:space:]]+enabled:\s*false' "$ROLLOUTS_APP"
+# Rollouts events go through the Rollouts controller's own notification
+# engine (ADR-0054 clause 2); ArgoCD Notifications evaluates Applications only.
+ROLLOUTS_NOTIFICATION_SECRET="$ROOT_DIR/gitops/platform/eso/rollouts-notification-secret.yaml"
+require_file "$ROLLOUTS_NOTIFICATION_SECRET"
+require_multiline_pattern "notifiers:\\n[[:space:]]+service\\.slack:\\s*\\|\\n[[:space:]]+token:\\s*\\\$slack-token" "$ROLLOUTS_APP"
+require_multiline_pattern 'subscriptions:\n([[:space:]].*\n)*[[:space:]]+-\s*slack:hy-home-alerts' "$ROLLOUTS_APP"
+require_pattern '-\s*on-rollout-completed' "$ROLLOUTS_APP"
+require_pattern '-\s*on-rollout-aborted' "$ROLLOUTS_APP"
+# The controller ships no built-in triggers or templates; without these keys it sends nothing.
+for key in trigger.on-rollout-completed trigger.on-rollout-aborted template.rollout-completed template.rollout-aborted; do
+  require_pattern "^\\s*${key//./\\.}:\\s*\\|" "$ROLLOUTS_APP"
+done
+require_pattern 'rollouts-notification-secret\.yaml' "$ROOT_DIR/gitops/platform/eso/kustomization.yaml"
+require_pattern 'kind:\s*ExternalSecret' "$ROLLOUTS_NOTIFICATION_SECRET"
+require_pattern 'namespace:\s*argo-rollouts' "$ROLLOUTS_NOTIFICATION_SECRET"
+require_pattern 'name:\s*vault-backend' "$ROLLOUTS_NOTIFICATION_SECRET"
+require_pattern 'name:\s*argo-rollouts-notification-secret' "$ROLLOUTS_NOTIFICATION_SECRET"
+require_pattern 'app\.kubernetes\.io/component:\s*rollouts-controller' "$ROLLOUTS_NOTIFICATION_SECRET"
+require_pattern 'secretKey:\s*slack-token' "$ROLLOUTS_NOTIFICATION_SECRET"
+require_pattern 'key:\s*platform/notifications' "$ROLLOUTS_NOTIFICATION_SECRET"
+require_pattern 'property:\s*slack_token' "$ROLLOUTS_NOTIFICATION_SECRET"
 
 # No workload reads postgres-app-secret and OpenBao has no platform/postgres-app
 # entry (RUN-0096 adds the KV only when an app uses it). Restore it with a consumer.
@@ -202,7 +222,9 @@ require_pattern 'service\.slack:' "$ARGOCD_NOTIFICATIONS_CM"
 require_pattern "token:\\s*\\\$slack-token" "$ARGOCD_NOTIFICATIONS_CM"
 require_pattern 'template\.app-health-degraded:' "$ARGOCD_NOTIFICATIONS_CM"
 require_pattern 'template\.app-sync-failed:' "$ARGOCD_NOTIFICATIONS_CM"
-require_pattern 'template\.rollout-completed:' "$ARGOCD_NOTIFICATIONS_CM"
+# The ArgoCD controller never evaluates Rollout objects, so rollout-* keys here are dead.
+! grep -Pq '^\s*(template|trigger)\.(on-)?rollout-' "$ARGOCD_NOTIFICATIONS_CM" ||
+  fail 'rollout-* notifications belong to the Rollouts notification engine, not argocd-notifications-cm'
 require_pattern 'trigger\.on-health-degraded:' "$ARGOCD_NOTIFICATIONS_CM"
 require_pattern 'trigger\.on-sync-failed:' "$ARGOCD_NOTIFICATIONS_CM"
 require_pattern 'defaultTriggers:' "$ARGOCD_NOTIFICATIONS_CM"

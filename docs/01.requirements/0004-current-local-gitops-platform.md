@@ -1,10 +1,10 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "1.2.9"
+version: "1.4.0"
 type: "sdlc/requirement"
-status: "in-review"
+status: "approved"
 owner: "platform"
-updated: "2026-11-03"
+updated: "2026-11-05"
 layer: "requirements"
 artifact_id: "REQ-0004"
 ---
@@ -41,30 +41,32 @@ security level as supported. The existence of static configuration must be kept 
 
 ## Functional Requirements
 
-- **REQ-0004-FR-0001**: The local platform's desired state must be declared reproducibly in the repository, with its ownership boundaries kept distinct.
-- **REQ-0004-FR-0002**: The reconciliation, ownership, and permission boundaries of platform components and user workloads must be separated.
-- **REQ-0004-FR-0003**: Connections to external secret, data, and observability services must be expressed as explicit service interfaces and kept distinct from creating the external runtime.
-- **REQ-0004-FR-0004**: Operators must be able to reach the currently supported cluster UIs, and a removed UI must not be presented as the current implementation.
-- **REQ-0004-FR-0005**: Each tracked surface in a change's scope must be classified as changed, unchanged with a reason, or DEFER with an owner and a retry condition.
-- **REQ-0004-FR-0006**: Resumed, recovered, and uncommitted changes must be adopted or excluded according to their semantic owner, and a temporary branch, stash, or generated identity must not be fixed as current authority.
-- **REQ-0004-FR-0007**: GitHub's label and code ownership projections must match the single affected-path owner, and missing, duplicate, or ambiguous routing must be validated.
-- **REQ-0004-FR-0008**: Platform validation results must distinguish the depth (syntax, render, schema/policy, product semantic, and live observation) and the tool, fallback, lane, and result.
-- **REQ-0004-FR-0009**: An executable cloud example must carry guidance beside the example and provider-native static validation, and must be verifiable without credentials or apply/deploy.
-- **REQ-0004-FR-0010**: Ingress references, resource kinds, GitOps structure, policy, secret sync, and explicit local-only transport exceptions must be checked fail-closed.
-- **REQ-0004-FR-0011**: Platform assurance work must proceed in ordered per-package review, validation, and rollback units and must prove the final local-only integration.
-- **REQ-0004-FR-0012**: Exact infrastructure, workflow, dependency, and example versions must be confirmed from the executable source or a reviewed lock, and a Reference mirror must not be required as an execution precondition.
-- **REQ-0004-FR-0013**: The revision policy of the repository's own continuously reconciled source must be kept distinct from that of external release sources, and revisited when multiple operators or environments, or history rewriting, are introduced.
-- **REQ-0004-FR-0014**: The Pod security enforcement level must be proportional to the workload evidence the repository owns and validates statically. Chart, injection, and runtime uncertainty is separated as audit/warn, and CNI desired state is not promoted to live evidence.
-- **REQ-0004-NFR-0001**: The local platform must provide the current integration scope of certificates, ingress, service mesh, observability UIs, progressive delivery, notifications, monitoring, and external secret integration.
-- **REQ-0004-NFR-0002**: Secret values, tokens, and private keys must not be recorded in Git, documents, or logs.
-- **REQ-0004-NFR-0003**: Image and artifact assurance must stay fail-closed without an unvalidated blanket digest conversion, and follow-on provenance obligations must be stated with a consumer, owner, and trigger.
-- **REQ-0004-IF-0001**: Historical records must be kept apart from current execution authority; a deleted or archived document is never used as current implementation guidance.
+| Requirement ID | Requirement | Priority | Verification intent |
+| --- | --- | --- | --- |
+| REQ-0004-FR-0001 | The local platform's desired state must be declared reproducibly in the repository, with its ownership boundaries kept distinct. | Must | Acceptance criteria 01 and 03; quality scenario GitOps reproducibility. |
+| REQ-0004-FR-0002 | The reconciliation, ownership, and permission boundaries of platform components and user workloads must be separated. | Must | Acceptance criterion 02. |
+| REQ-0004-FR-0003 | Connections to external secret, data, and observability services must be expressed as explicit service interfaces and kept distinct from creating the external runtime. | Must | Quality scenarios External interface and Secret TLS recovery. |
+| REQ-0004-FR-0004 | Operators must be able to reach the currently supported cluster UIs, and a removed UI must not be presented as the current implementation. | Must | Acceptance criterion 04; each UI route in the AD-0007 ingress owner resolves in the desired state. |
+| REQ-0004-FR-0005 | Each tracked surface in a change's scope must be classified as changed, unchanged with a reason, or DEFER with an owner and a retry condition. | Must | Each change record classifies every in-scope surface. |
+| REQ-0004-FR-0006 | Resumed, recovered, and uncommitted changes must be adopted or excluded according to their semantic owner, and a temporary branch, stash, or generated identity must not be fixed as current authority. | Must | Review of the change record shows each resumed change adopted or excluded by owner. |
+| REQ-0004-FR-0007 | GitHub's label and code ownership projections must match the single affected-path owner, and missing, duplicate, or ambiguous routing must be validated. | Must | The label and code-owner validator reports no missing, duplicate or ambiguous route. |
+| REQ-0004-FR-0008 | Platform validation results must distinguish the depth (syntax, render, schema/policy, product semantic, and live observation) and the tool, fallback, lane, and result. | Must | Validation output records depth, tool, fallback, lane and result. |
+| REQ-0004-FR-0009 | An executable cloud example must carry guidance beside the example and provider-native static validation, and must be verifiable without credentials or apply/deploy. | Must | Example static validation passes without credentials or apply. |
+| REQ-0004-FR-0010 | Ingress references, resource kinds, GitOps structure, policy, secret sync, and explicit local-only transport exceptions must be checked fail-closed. | Must | The fail-closed platform validators PASS; quality scenario Workload onboarding. |
+| REQ-0004-FR-0011 | Platform assurance work must proceed in ordered per-package review, validation, and rollback units and must prove the final local-only integration. | Must | Each assurance package records review, validation and rollback before integration. |
+| REQ-0004-FR-0012 | Exact infrastructure, workflow, dependency, and example versions must be confirmed from the executable source or a reviewed lock, and a Reference mirror must not be required as an execution precondition. | Must | Version checks read the executable source or reviewed lock. |
+| REQ-0004-FR-0013 | The revision policy of the repository's own continuously reconciled source must be kept distinct from that of external release sources, and revisited when multiple operators or environments, or history rewriting, are introduced. | Must | The self-source revision rule differs from the external release pin rule and names its revisit triggers. |
+| REQ-0004-FR-0014 | The Pod security enforcement level must be proportional to the workload evidence the repository owns and validates statically. Chart, injection, and runtime uncertainty is separated as audit/warn, and CNI desired state is not promoted to live evidence. | Must | Namespace Pod Security labels match the statically owned workload evidence. |
+| REQ-0004-NFR-0001 | The local platform must provide the current integration scope of certificates, ingress, service mesh, observability UIs, progressive delivery, notifications, monitoring, and external secret integration. | Must | Acceptance criterion 01; quality scenarios Telemetry and Single-host recovery. |
+| REQ-0004-NFR-0002 | Secret values, tokens, and private keys must not be recorded in Git, documents, or logs. | Must | Secret scanning finds no value in Git; quality scenario Secret TLS recovery. |
+| REQ-0004-NFR-0003 | Image and artifact assurance must stay fail-closed without an unvalidated blanket digest conversion, and follow-on provenance obligations must be stated with a consumer, owner, and trigger. | Must | Image checks fail closed and each provenance follow-up names consumer, owner and trigger. |
+| REQ-0004-IF-0001 | Historical records must be kept apart from current execution authority; a deleted or archived document is never used as current implementation guidance. | Must | Acceptance criterion 04. |
 
 ## Success / Acceptance Criteria
 
 The current desired-state structure, Kubernetes syntax, and product static contract must pass their validators.
 Delivery assurance must leave a classification, validation depth, result, and limits for every in-scope surface,
-and does not substitute a static PASS for unobserved remote or runtime state. The per-member trace below routes current architecture to AD-0007 and implementation checks to executable validators.
+and does not substitute a static PASS for unobserved remote or runtime state. The per-member trace below states each acceptance condition and routes current architecture to AD-0007.
 
 - **Acceptance criterion 01**: Validate the current platform product static contract.
 - **Acceptance criterion 02**: Validate the GitOps ownership and reconciliation boundaries of root, platform, and workload.
@@ -74,8 +76,8 @@ and does not substitute a static PASS for unobserved remote or runtime state. Th
 
 ### Product quality measurement boundary
 
-The following scenarios are proposed product acceptance inputs while this
-Requirement remains `in-review`. A target is a decision threshold, not an
+The following scenarios are the product acceptance inputs the operator
+approved with this Requirement on 2026-11-05; a TBD threshold stays open. A target is a decision threshold, not an
 observed result. The public overviews of [ISO/IEC 25010:2023](https://www.iso.org/standard/78176.html),
 [ISO/IEC 25023:2016](https://www.iso.org/standard/35747.html) and
 [ISO/IEC 25030:2019](https://www.iso.org/standard/72116.html) inform the
@@ -120,8 +122,9 @@ This scenario refines REQ-0004-FR-0003 and NFR-0002.
 ### Quality scenario: External interface
 
 When a declared external endpoint changes, the Platform Owner compares the
-Service/EndpointSlice name, address, port and protocol tuple with the
-reviewed desired-state interface. The static metric is
+Service/EndpointSlice name, address, port and protocol tuple, or for a
+gateway-routed service (OpenBao, Prometheus, Grafana) the declared host,
+port and CA, with the reviewed desired-state interface. The static metric is
 **100 × matching required tuples / selected required tuples** (percent); the proposed threshold is
 **100% of the selected required tuples**, with the selected target and
 revision as the sampling frame. A selection with no required tuple is
@@ -140,8 +143,8 @@ five declared ArgoCD component targets and `argocd_app_info` with the
 healthy declared ArgoCD targets (`up == 1`, targets) and present
 `argocd_app_info` series (series); the local operational decision targets
 are **five of five declared components** and **at least one labelled
-application series**. The five component names and ports are the
-`platform_pods` selector in `gitops/platform/monitoring/alloy-k8s-logs.yaml`;
+application series**. The five ArgoCD component names and ports are part of the
+`platform_pods` selector (which also selects argo-rollouts) in `gitops/platform/monitoring/alloy-k8s-logs.yaml`;
 `prometheus.remote_write.external_prometheus` supplies the cluster label.
 The sample is one recorded query set for the named cluster, external
 Prometheus and post-reconciliation time window, repeated
@@ -199,7 +202,7 @@ Reading secrets, pushing, cloud work, and live mutation each need separate appro
 
 ### Delivery assurance coverage and limits
 
-The repository checks structure, Kubernetes YAML, required policy tools, secret handling, Vault/ESO boundaries and product semantics. [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and `gitops/platform/ingress-routes/` own the current ingress architecture and desired state. The earlier assurance Specs were withdrawn without successors and deleted; Git history recovers them, and their scope currently has no implementation owner. The original REQ-0007 program history is kept; its current platform meaning passes to this document and its common routing, approval, and QA meaning to REQ-0003. This succession does not declare any tranche complete.
+The repository checks structure, Kubernetes YAML, required policy tools, secret handling, the ESO/OpenBao boundary (the `vault-backend` ClusterSecretStore uses the Vault-API provider against OpenBao, ADR-0041) and product semantics. [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md), ADR-0043 and ADR-0050 own the current ingress architecture; `gitops/apps/root/platform-traefik-app.yaml` and `gitops/platform/ingress-routes/` own its desired state. SPEC-0104 closed the repository-static assurance of FR-0008 and FR-0010; the remaining custom CRD schema, generated-output and live-observation work has no active Spec and stays DEFER under the owners in the trace below. Git history recovers the withdrawn assurance Specs. The original REQ-0007 program history is kept; its current platform meaning passes to this document and its common routing, approval, and QA meaning to REQ-0003. This succession does not declare any tranche complete.
 
 ## Traceability
 
@@ -207,24 +210,24 @@ The repository checks structure, Kubernetes YAML, required policy tools, secret 
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-0004-FR-0001 | The local platform's desired state must be declared reproducibly in the repository, with its ownership boundaries kept distinct. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0002 | The reconciliation, ownership, and permission boundaries of platform components and user workloads must be separated. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0003 | Connections to external secret, data, and observability services must be expressed as explicit service interfaces and kept distinct from creating the external runtime. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0004 | Operators must be able to reach the currently supported cluster UIs, and a removed UI must not be presented as the current implementation. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0005 | Each tracked surface in a change's scope must be classified as changed, unchanged with a reason, or DEFER with an owner and a retry condition. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0006 | Resumed, recovered, and uncommitted changes must be adopted or excluded according to their semantic owner, and a temporary branch, stash, or generated identity must not be fixed as current authority. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0007 | GitHub's label and code ownership projections must match the single affected-path owner, and missing, duplicate, or ambiguous routing must be validated. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0008 | Platform validation results must distinguish the depth (syntax, render, schema/policy, product semantic, and live observation) and the tool, fallback, lane, and result. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md); custom CRD schemas and live observation remain DEFER with owners above |
-| REQ-0004-FR-0009 | An executable cloud example must carry guidance beside the example and provider-native static validation, and must be verifiable without credentials or apply/deploy. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0010 | Ingress references, resource kinds, GitOps structure, policy, secret sync, and explicit local-only transport exceptions must be checked fail-closed. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md); generated and live outputs remain DEFER with owner above |
-| REQ-0004-FR-0011 | Platform assurance work must proceed in ordered per-package review, validation, and rollback units and must prove the final local-only integration. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0012 | Exact infrastructure, workflow, dependency, and example versions must be confirmed from the executable source or a reviewed lock, and a Reference mirror must not be required as an execution precondition. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0013 | The revision policy of the repository's own continuously reconciled source must be kept distinct from that of external release sources, and revisited when multiple operators or environments, or history rewriting, are introduced. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0014 | The Pod security enforcement level must be proportional to the workload evidence the repository owns and validates statically. Chart, injection, and runtime uncertainty is separated as audit/warn, and CNI desired state is not promoted to live evidence. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-NFR-0001 | The local platform must provide the current integration scope of certificates, ingress, service mesh, observability UIs, progressive delivery, notifications, monitoring, and external secret integration. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-NFR-0002 | Secret values, tokens, and private keys must not be recorded in Git, documents, or logs. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-NFR-0003 | Image and artifact assurance must stay fail-closed without an unvalidated blanket digest conversion, and follow-on provenance obligations must be stated with a consumer, owner, and trigger. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-IF-0001 | Historical records must be kept apart from current execution authority; a deleted or archived document is never used as current implementation guidance. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0001 | The selected root/platform/workload targets render at a reviewed revision (100% of selected targets). | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0002 | Static validation shows platform components and user workloads reconciled through separate projects with distinct destination and resource permissions. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0003 | Every declared external interface tuple or gateway host/port/CA matches the reviewed desired state. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0004 | Only the currently supported UIs have routes; no removed UI is described as current. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0005 | Every in-scope surface carries changed, unchanged-with-reason, or DEFER-with-owner-and-trigger. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0006 | No temporary branch, stash or generated identity is recorded as current authority. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0007 | The label and code-owner projections route each affected path to exactly one owner. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0008 | Each platform validation result names its depth, tool, fallback, lane and result. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md); custom CRD schemas and live observation remain DEFER with owners above |
+| REQ-0004-FR-0009 | Each cloud example passes provider-native static validation with no credentials and no apply. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0010 | The ingress, resource-kind, GitOps, policy, secret-sync and transport checks fail closed and PASS. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md); generated and live outputs remain DEFER with owner above |
+| REQ-0004-FR-0011 | The final local-only integration is proven after per-package review, validation and rollback. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0012 | Every pinned version is read from the executable source or a reviewed lock. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0013 | The self-source and external release revision rules are recorded separately with revisit triggers. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0014 | Enforced namespaces hold only statically validated workloads; the rest stay audit/warn. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-NFR-0001 | The listed integrations are declared in the desired state and pass the product static contract. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-NFR-0002 | No secret value, token or private key is found in Git, documents or logs. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-NFR-0003 | No blanket digest conversion is made, and each provenance follow-up names consumer, owner and trigger. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-IF-0001 | Current documents link current owners only; no deleted or archived document is cited as guidance. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
 
 ### Reviewed member-ID transfer
 
@@ -248,7 +251,7 @@ The table below records the succession of current meaning. Earlier member IDs ar
 | REQ-0007-NFR-0001 | REQ-0004-NFR-0003 |
 | REQ-0007-NFR-0002 | REQ-0003-FR-0014 |
 
-REQ-0004-FR-0009 also inherits REQ-0005-FR-0006's requirement that examples sit beside their executable sources.
+REQ-0004-FR-0009 also inherits the requirement of the former REQ-0005-FR-0006 (REQ-0005 was merged into REQ-0003; see its member-ID transfer and Archived Lineage) that examples sit beside their executable sources.
 
 - Current architecture: [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md).
 - Current desired state and validation: `gitops/`, `infrastructure/`, and `scripts/` as routed by [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md).

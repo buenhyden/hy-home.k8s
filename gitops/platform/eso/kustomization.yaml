@@ -4,5 +4,6 @@ resources:
   - vault-token-reviewer-binding.yaml
   - vault-secret-store.yaml
   - prometheus-api-auth-secret.yaml
+  - rollouts-notification-secret.yaml
 # postgres-app-secret was removed: no workload read it and OpenBao has no
 # platform/postgres-app entry. Restore it from Git history with its first consumer.

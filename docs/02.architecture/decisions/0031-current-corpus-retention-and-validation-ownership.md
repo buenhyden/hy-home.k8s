@@ -1,10 +1,10 @@
 ---
 title: "Current Corpus Retention and Validation Ownership"
-version: "1.0.4"
+version: "1.0.5"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0031"
 supersedes: ["ADR-0016", "ADR-0017", "ADR-0020", "ADR-0021", "ADR-0022"]
@@ -20,14 +20,9 @@ authority in the active corpus; moves validation routing out of human
 governance; removes execution-instance rosters and mutable branch identity
 from permanent contracts; and makes Git the default terminal-history owner.
 
-This decision is the successor to ADR-0016, ADR-0017,
-ADR-0020, ADR-0021, and ADR-0022. Their decision bodies remain in the Stage 02
-decision log. The acceptance transaction changes each predecessor from
-`accepted` to `superseded`, adds this ADR's `supersedes` relation, adds each
-predecessor's reciprocal `superseded_by: ADR-0031`, and updates the Decisions
-README state and explanation. The acceptance transaction changed those
-predecessor states and reciprocal links atomically. It also makes exactly two
-scoped amendments to ADR-0030: validator tests and fixtures remain under top-level
+This decision is the successor to ADR-0016, ADR-0017, ADR-0020, ADR-0021, and
+ADR-0022 (deleted; Git history recovers them). It also makes exactly two scoped
+amendments to ADR-0030: validator tests and fixtures remain under top-level
 `tests/` rather than `validation/tests/`, and module review follows
 responsibility and risk rather than a mandatory above-800-line exception.
 These are scoped normative amendments, not an ADR lifecycle supersession:
@@ -274,6 +269,17 @@ byte identity is meaningful.
 
 ## Traceability
 
+**Current-state clarification (2026-11-05).** The clauses that keep Stage 98
+"under its bounded Archive validator" and give retained records "bounded safety
+and readability checks" are no longer current under ADR-0053. The clauses that
+accepted and superseded ADRs "remain in Stage 02" and that predecessor bodies
+"remain in the Stage 02 decision log" are also no longer current, and the
+acceptance-transaction text below (predecessor `superseded` states and
+`superseded_by` links) is historical: ADR-0016, ADR-0017, ADR-0020, ADR-0021 and
+ADR-0022 have left the tree. The registry key written `lifecycleDomains` in the
+Decision is `lifecycle_domains`. The operator-approved
+[ADR-0055](./0055-governance-decision-current-state-amendment.md) (clauses 1-3) replaces these clauses.
+
 **Current-state clarification (2026-11-03).** Under
 [ADR-0053](./0053-unvalidated-archive.md) the archive is unvalidated: no archive validators, frozen-generation exemptions, migration proofs, tombstones or archive index exist, and the Retention Catalog and Envelope no longer apply.
 Superseded ADRs are summarized in the Archived Lineage table of
@@ -324,6 +330,8 @@ ADR-0030's other single-owner, minimal-current-corpus, consumer-first deletion,
 immutable external dependency, and Git-recovery principles while defining the
 narrower validation-routing and execution-instance boundaries needed by Specs
 0054 and 0066.
+
+- **Requirement**: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) — REQ-0003-FR-0010, REQ-0003-FR-0012, REQ-0003-FR-0015, REQ-0003-FR-0016, REQ-0003-FR-0020, REQ-0003-FR-0024
 
 ### Lifecycle Traceability
 

@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.4.0"
+version: "2.4.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-03"
+updated: "2026-11-05"
 ---
 
 # Document Lifecycle Policy
@@ -43,7 +43,7 @@ evidence is not rewritten to satisfy a later profile.
   `Global Constraints`에서 연결하고 추가 실행 제약만 적으며, 단일 `Promotion`
   기록 경로를 둔다. 진행 중인 계획은 승격 예정 대상을 승인이나 완료 증거로 쓰지 않는다.
   Spec Package의 완료를 수용할 때에는 Plan의 `Promotion` 기록이 모든 지속 계약을
-  현재 Stage 00·01·02·05 소유 문서의 상대 링크와 그 안의 구체적 위치에 연결해야
+  현재 `.agents/` 거버넌스 또는 Stage 01·02·05 소유 문서의 상대 링크와 그 안의 구체적 위치에 연결해야
   한다. 지속 계약이 없으면 `none | none | No durable contract was introduced`
   한 행만 명시한다. Registry가 구현하는 형식은
   Stage 99 자체를 별도 현행 정책으로 지목하지 않고 해당 형식을 위임한 현행 규칙을

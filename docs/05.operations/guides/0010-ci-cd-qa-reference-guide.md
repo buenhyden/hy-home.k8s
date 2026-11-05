@@ -1,10 +1,10 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.5.0"
+version: "1.6.0"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "GDE-0010"
 ---
@@ -15,7 +15,9 @@ artifact_id: "GDE-0010"
 
 이 가이드는 변경 작성자가 로컬 정적 검증, GitHub Actions PR branch·title metadata와 별도 style,
 승인된 런타임 검증을 서로 다른 증적 등급으로 해석하도록 돕는다. 실행 순서나
-복구 절차를 복제하지 않고, 현재 검증 진입점과 증적의 한계를 안내한다.
+복구 절차를 복제하지 않고, 현재 검증 진입점과 증적의 한계를 안내한다. 목적 QA는
+로컬 QA가 소유하고 호스팅 CI는 branch·title metadata와 선택된 style만 확인한다는
+결정은 [ADR-0048](../../02.architecture/decisions/0048-local-qa-and-semver-release-ownership.md)이 소유한다.
 
 ## Audience and Goal
 
@@ -62,7 +64,12 @@ artifact_id: "GDE-0010"
 `.github/workflows/ci.yml`이 job 이름, 의존 관계, 실행 조건의 canonical
 source이며, job과 required check의 현재 구성은
 [GitHub Configuration Hub](../../../.github/repository-surface.md)가 설명한다.
-호스팅 workflow는 로컬 QA를 다시 실행하거나 PASS로 대리하지 않는다.
+`main` 보호가 요구하는 check는 `ci-summary`와 PR 전용 `style-pr` 두 개이며,
+`independent-review`는 2026-11-03에 제거되었다. 의도한 원격 설정과 읽기 확인
+경계는 [main 보호 기록](../../../.github/rulesets/main-protection.md)이 소유한다.
+`main` 하나의 trunk와 짧은 feature branch 전략은
+[ADR-0052](../../02.architecture/decisions/0052-single-main-trunk-branch-strategy.md)가
+소유한다. 호스팅 workflow는 로컬 QA를 다시 실행하거나 PASS로 대리하지 않는다.
 이 문서는 job 목록을 복제하지 않는다. 로컬 성공은 호스팅 환경의
 권한·event·required-check 상태까지 증명하지 않는다.
 
@@ -87,15 +94,18 @@ handoff 기록 항목은
 [Quality Policy](../../../.agents/governance/quality.md)의 handoff evidence
 contract가 소유한다. 이 문서는 그 항목을 줄여 옮기지 않는다.
 브랜치 SHA나 고정된 문서 수를 별도의 운영 진실로 복제하지 않는다.
+릴리스는 `CHANGELOG.md`와 `scripts/release.py`가 만들며, 절차는
+[Release Preparation Runbook](../runbooks/0012-main-release-preparation-runbook.md)이 소유한다.
 
 ### 5. 규칙별 실행 소유자와 메시지 검증을 구분한다
 
 | 규칙 | 실행 소유자 | 유지되는 경계 |
 | --- | --- | --- |
-| 파일 형식·lint | native 도구 설정과 최종 local index의 선택된 pre-commit style gate; 별도 PR style job은 다른 merge 입력 | 로컬 커밋 직전에 확인하고 동일 local leaf는 한 번만 실행한다. formatter의 snapshot 변경은 실패로 기록한다 |
+| 파일 형식·lint | native 도구 설정과 최종 local index의 `python3 scripts/qa.py staged`(pre-commit 단계, `.pre-commit-config.yaml`의 `staged-qa`); 별도 PR `style-pr` job은 다른 merge 입력 | 로컬 커밋 직전에 확인하고 동일 local leaf는 한 번만 실행한다. formatter의 snapshot 변경은 실패로 기록한다. 외부 파일 hook은 manual 단계로만 둔다 |
 | GitHub Actions 보안 | zizmor와 repository Actions validator | 서로 다른 규칙을 유지한다. validator는 `unpinned-uses` 억제를 금지한다 |
 | secret 검사 | snapshot Gitleaks, native staged Gitleaks, detect-secrets와 domain/history validator | 입력과 위협 모델이 다르므로 이름만으로 합치지 않는다 |
-| 커밋 메시지 | `.cz.toml`과 Commitizen commit-msg stage | 선택된 파일 검사는 메시지 검증을 대신하지 않는다 |
+| 커밋 메시지 | `.cz.toml`, Commitizen commit-msg stage와 `scripts/commit-message-exceptions.py` | 선택된 파일 검사는 메시지 검증을 대신하지 않는다 |
+| Git hook 연결 | `scripts/githooks/`의 `pre-commit`·`commit-msg`·`pre-push` 진입점이 `chained-hook.sh`로 전역 hook과 워크스페이스 hook을 순서대로 실행 | 첫 비정상 종료가 체인을 끝내고 그대로 반환된다. 저장소의 `core.hooksPath` 설정 여부는 로컬 환경 증적이다 |
 
 도구별 규칙 소유와 suppression 기준은
 [Formatting and Linting Policy](../../../.agents/governance/formatting-and-linting.md),
@@ -110,7 +120,7 @@ hook 연결과 커밋 메시지 검증 절차는
 - 퇴역한 full/ci의 과거 `NOT_RUN`은 해당 입력의 역사로 보존한다. 현재 선택된
   필수 검사가 미실행이면 그 검사에 `NOT_RUN`과 다음 owner를 기록한다.
   `NOT_APPLICABLE`는 검사 대상이 없을 때만 사용한다.
-- live cluster, Vault, 외부 API 검증은 정적 QA의 기본 범위로 확장하지 않는다.
+- live cluster, OpenBao, 외부 API 검증은 정적 QA의 기본 범위로 확장하지 않는다.
 - 퇴역 문서의 경로를 redirect 문서로 유지하지 않고 현재 owner로 소비자를
   직접 연결한다.
 
@@ -120,6 +130,9 @@ hook 연결과 커밋 메시지 검증 절차는
 - [Agent Execution Policy](../../../.agents/governance/agent-execution.md)
 - [Scripts Router](../../../scripts/README.md)
 - [Release Preparation Runbook](../runbooks/0012-main-release-preparation-runbook.md)
+- [ADR-0048](../../02.architecture/decisions/0048-local-qa-and-semver-release-ownership.md)
+- [ADR-0052](../../02.architecture/decisions/0052-single-main-trunk-branch-strategy.md)
+- [Main Protection Record](../../../.github/rulesets/main-protection.md)
 - [Reference Maintenance Runbook](../runbooks/0011-reference-maintenance-runbook.md)
 
 ### Lifecycle Traceability

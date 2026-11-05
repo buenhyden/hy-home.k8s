@@ -1,10 +1,10 @@
 ---
 title: "OpenBao as the Runtime Secret Backend"
-version: "1.0.1"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0041"
 supersedes: "ADR-0003"
@@ -78,7 +78,8 @@ ClusterSecretStore work unchanged.
     provider choice must be reconsidered.
 - **Operational**:
   - The external operator keeps OpenBao's Kubernetes auth `kubernetes_host`,
-    reviewer JWT/CA, and role settings aligned with this contract. The
+    CA, and role settings aligned with this contract; OpenBao uses no reviewer
+    JWT, and ESO's token is used for TokenReview. The
     repository's static PASS does not prove this.
 
 ## Alternatives
@@ -102,13 +103,23 @@ ClusterSecretStore work unchanged.
 
 ## Traceability
 
+**Current-state clarification (2026-11-05).** The `vault-external` Service and
+its HTTP exception are gone, so the non-goal on TLS no longer applies. The
+ClusterSecretStore uses `https://openbao.hy.home.arpa` with the `openbao-ca` CA
+provider, and ESO egress allows `192.168.0.13/32:443`. OpenBao uses no reviewer
+JWT (`disable_local_ca_jwt`), so ESO's own token goes to TokenReview and the
+ServiceAccount token requests both the `vault` audience and the API-server
+audience, not `vault` alone. Only the ADR-0046 clarification above and this note
+describe the current path. The operator-approved [ADR-0054](./0054-platform-decision-current-state-amendment.md) (clause 5) replaces the HTTP transport, TLS Non-goal and audience clauses.
+
 **Current-state clarification (2026-09-23).** The cluster-internal
 `vault-external` HTTP path at `172.18.0.17:8200` is replaced under
 [ADR-0046](./0046-external-services-over-host-addresses.md): ESO reaches `https://openbao.hy.home.arpa`
 through the external Traefik and pins the mkcert root CA. OpenBao as the
 secret backend and the ESO integration are unchanged.
 
-- **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Requirement**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+  (REQ-0004-FR-0003, REQ-0004-NFR-0002)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)

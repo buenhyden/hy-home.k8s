@@ -100,10 +100,6 @@
       "type": "string",
       "pattern": "^(?:(?:REQ|AD|ADR|SPEC|GDE|POL|RUN|AUD|RES|DATA)-[0-9]{4}|SPEC-[0-9]{4}-(?:PLAN|TSK)-[0-9]{4}|(?:AUD|RES|DATA)-[0-9]{4}-m[0-9]{4}|inc-[0-9]{4}-[0-9]{4}(?:-PM)?)$"
     },
-    "requirementMemberId": {
-      "type": "string",
-      "pattern": "^REQ-[0-9]{4}-(?:FR|NFR|IF)-[0-9]{4}$"
-    },
     "artifactIdReference": {
       "description": "One artifact identity, or an ordered set of them.",
       "oneOf": [

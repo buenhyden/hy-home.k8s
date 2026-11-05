@@ -142,6 +142,19 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             any(error.validator == "additionalProperties" for error in errors)
         )
 
+    def test_profile_mode_is_one_of_the_five_current_modes(self) -> None:
+        schema = json.loads(PROFILE_SCHEMA_PATH.read_text(encoding="utf-8"))
+        authority = load_document_authority()
+        for retired in ("evidence", "generated"):
+            mutated = clone_registry(self.registry)
+            mutated["profiles"][0]["mode"] = retired
+            with self.subTest(mode=retired):
+                self.assertTrue(list(Draft202012Validator(schema).iter_errors(mutated)))
+                with self.assertRaisesRegex(
+                    authority.AuthorityError, "REGISTRY_PROFILE_MODE"
+                ):
+                    authority.validate_registry_authority(mutated)
+
     def test_stage99_support_prose_cannot_be_a_machine_owner(self) -> None:
         authority = load_document_authority()
         registry = json.loads(json.dumps(self.registry))

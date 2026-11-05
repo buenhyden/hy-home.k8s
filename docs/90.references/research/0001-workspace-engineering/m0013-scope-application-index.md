@@ -1,10 +1,10 @@
 ---
 title: "Reference: Scope Application Index"
-version: "1.2.0"
+version: "1.3.0"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-11-05"
 layer: "references"
 artifact_id: "RES-0001-m0013"
 ---
@@ -170,8 +170,11 @@ All following dated scope/queue/path/status observations are historical only. Th
 
 #### Historical framing and authority
 
-`docs/00.agent-governance/scopes/` remains the authoritative owner of scope
-membership, file ownership, and write permission. This index cannot create a
+As of the 2026-08-14 observation, `docs/00.agent-governance/scopes/` owned
+scope membership, file ownership, and write permission. On 2026-11-05 that
+directory has left the tree (Git history recovers it); the current owners are
+the [role registry](../../../../.agents/roles/registry.json) and
+[roles README](../../../../.agents/roles/README.md). This index cannot create a
 scope, widen a scope, assign an owner, or promote a research finding into
 policy. A requirement appearing in a scope row means the research touched a path
 that the scope already owns; it does not mean the scope acquired new authority.
@@ -182,9 +185,10 @@ scope registry. It is not an instruction to add the path, and adopting or
 deliberately declining any such path is a `meta` scope decision that requires
 human approval.
 
-No status in this index may differ from the pack README's
-[Requirement Coverage Matrix](README.md). Where the two disagree, the README is
-correct and this index is stale.
+Request and claim coverage is owned by
+[m0012](m0012-source-coverage.md#requirement-coverage-matrix), not by the pack
+README (which no longer carries a matrix). No status in this index may differ
+from m0012; where they disagree, m0012 is correct and this index is stale.
 
 Its base map covers `REQ-WERPC-001`–`REQ-WERPC-033` and the ten governance
 scopes as they stood on 2026-08-14. The 2026-08-28 pack-level addendum also
@@ -242,7 +246,10 @@ match, `meta.md` for `.agents/skills/**`.
 | `.pre-commit-config.yaml`   | `REQ-WERPC-024`                                   | Named as a QA canonical owner. `qa` owns `scripts/validate-*.py` and `contracts/**`, not this file                                                                 |
 | `policy/` (repository root) | `REQ-WERPC-025`                                   | Distinct from `docs/05.operations/policies/**`, which `infra` and `ops` do own. The root `policy/` tree is unlisted                                                |
 
-This is a scope-registration observation only. It does not establish that any of
+This is a scope-registration observation only. Dated note 2026-11-05: the table
+records 2026-08-14; the scope documents it searched have left the tree, and no
+top-level `traefik/` tree exists (Traefik is delivered by
+`gitops/apps/root/platform-traefik-app.yaml`). It does not establish that any of
 these paths is unprotected in practice, because branch protection, CODEOWNERS,
 approval boundaries, and hooks are separate controls that this index did not
 examine. Whether each path should be adopted by an existing scope, split across
@@ -393,7 +400,8 @@ The closed incremental ledger now extends through `SRC-WERPC-115` and
 `CLM-WERPC-014-11`. It changes no requirement status or evidence-class
 promotion. This projection routes the new claims without editing the frozen
 pack README or the two frozen SDLC/documentation topical owners. Those owner
-body and path changes remain with the queued Spec 0054 Stage 90 work packages.
+body and path changes were left with the then-queued Spec 0054 Stage 90 work
+packages (Spec 0054 has left the tree; Git history recovers it).
 
 | Scope | Claim IDs | Materialized owner | Retained boundary |
 | --- | --- | --- | --- |
@@ -407,18 +415,15 @@ body and path changes remain with the queued Spec 0054 Stage 90 work packages.
 | memory and LLM-WIKI | `CLM-WERPC-014-09`, `CLM-WERPC-014-11` | [Memory tiers](m0011-agent-memory-tiers-and-management.md#2026-08-23-provider-memory-gap-increment), [LLM-WIKI](m0006-llm-wiki-and-knowledge-routing.md#2026-08-20-full-corpus-reverification) | Provider memory is auxiliary and no external source defines the workspace taxonomy; retrieval effectiveness, retention/deletion, promotion, and secure erasure remain `DEFER`. |
 | AI agents and agency-agents | `CLM-WERPC-014-10` | [AI agents](m0009-ai-agents-and-agency-agents.md#2026-08-20-full-corpus-reverification) | Upstream is unchanged after the retained baseline; direct import, provider parity, evaluation, model fitness, and admission remain unproven. |
 
-The pack README remains byte-identical to its reviewed transition successor.
-This is intentional transition compliance, not a missing source or claim: the
-source ledger is the closed evidence owner for this increment, and this scope
-index is its cross-scope router until Spec 0054 performs the atomic Stage 90
-owner and consumer cutover.
-
-The ignored Spec 0062 task checker remains frozen to the earlier allocation
-ending at `SRC-WERPC-091` and `CLM-WERPC-013-06`; when applied to this later
-increment it fails closed with `ERROR INTEGRATION_LEDGER_LEGACY`. That result is
-an expected legacy-allocation boundary, not a passing validation. This work does
-not widen the ignored checker or revive the legacy `tasks.md` control plane;
-Spec 0054 owns the terminal Task registry and validator/command cutover.
+As of 2026-08-23 the pack README was left byte-identical to its reviewed
+transition successor, with the source ledger as the closed evidence owner for
+this increment and this scope index as its cross-scope router until Spec 0054
+performed the atomic Stage 90 owner and consumer cutover. On 2026-11-05 Spec
+0054, Spec 0062, the ignored task checker (frozen to the allocation ending at
+`SRC-WERPC-091` and `CLM-WERPC-013-06`, failing closed with
+`ERROR INTEGRATION_LEDGER_LEGACY`) and the legacy `tasks.md` control plane have
+left the tree; Git history recovers them. That checker result was an expected
+legacy-allocation boundary, never a passing validation.
 
 #### 2026-08-28 closed full-scope revalidation
 
@@ -449,7 +454,8 @@ This is a closed incremental finding ledger, not a claim that every retained
 their named reopen conditions remain unchanged. No new research directory,
 duplicate report, one-time artifact, transitional topology, or legacy checker
 expansion was created. The pack README and frozen SDLC/documentation owner
-bodies remain byte-unmodified for the queued Spec 0054 Stage 90 cutover.
+bodies were left byte-unmodified on 2026-08-28 for the then-queued Spec 0054
+Stage 90 cutover (Spec 0054 has since left the tree; Git history recovers it).
 
 #### 2026-09-05 external-only scope revalidation
 
@@ -491,7 +497,7 @@ workspace-observation cycle, not from this record.
 
 ## Review and Freshness
 
-Updated 2026-09-27 from directly read external evidence. Recheck a question before approved work when its source/version, account/product surface, document contract, environment, acceptance criteria or risk changes. No row establishes current implementation. Historical scope maps are preserved for their recorded dates and are not the current governance registry. Detailed question ownership stays here; topical reports link it, and README remains navigation.
+Updated 2026-09-27 from directly read external evidence; 2026-11-05 edits only correct local-path and lifecycle statements and add no external observation. Recheck a question before approved work when its source/version, account/product surface, document contract, environment, acceptance criteria or risk changes. No row establishes current implementation. Historical scope maps are preserved for their recorded dates and are not the current governance registry. Detailed question ownership stays here; topical reports link it, and README remains navigation.
 
 ## Related Documents
 

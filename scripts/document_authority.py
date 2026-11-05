@@ -56,9 +56,7 @@ PROFILE_KEYS = frozenset(
 DOCUMENT_FAMILIES = frozenset(
     {"common", "governance", "sdlc", "operation", "reference", "evaluation"}
 )
-PROFILE_MODES = frozenset(
-    {"authored", "router", "template", "evidence", "native", "non-target"}
-)
+PROFILE_MODES = frozenset({"authored", "router", "template", "native", "non-target"})
 AGENT_MACHINE_FIELDS = frozenset(
     {
         "agentRoster",

@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.2.1"
+version: "1.3.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "POL-0004"
 ---
@@ -19,12 +19,13 @@ artifact_id: "POL-0004"
 
 - Argo Rollouts — `argo-rollouts` namespace
 - Argo Notifications (ArgoCD 내장 컨트롤러) — `argocd` namespace
+- Rollouts 알림 (Argo Rollouts 컨트롤러 자체 notification engine) — `argo-rollouts` namespace
 - Headlamp — `headlamp` namespace
 
 chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이 정책은
 버전을 복제하지 않는다.
 
-- **Systems**: `gitops/apps/root/platform-rollouts-app.yaml`, `gitops/apps/root/platform-headlamp-app.yaml`, `gitops/platform/argocd/argocd-notifications-*`
+- **Systems**: `gitops/apps/root/platform-rollouts-app.yaml`, `gitops/apps/root/platform-headlamp-app.yaml`, `gitops/platform/argocd/argocd-notifications-*`, `gitops/platform/eso/rollouts-notification-secret.yaml`
 - **Agents**: 운영 자동화 에이전트
 - **Environments**: Linux server local cluster
 
@@ -38,7 +39,8 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
   - canary 단계는 AnalysisTemplate으로 gate한다. 단계 사이 pause는 앱별로 timed pause(`pause: {duration: ...}`) 또는 수동 pause(`pause: {}`)를 선택하며, 플랫폼이 자동 promotion을 강제하지 않는다 (ADR-0011)
   - Analysis 결과 무시(`skipAnalysis: true`)는 플랫폼 오너 승인 필요
   - CRD 설치: `installCRDs: true` 유지
-  - Rollouts Dashboard는 `rollouts.hy-k8s.home.arpa` + Traefik + TLS 유지
+  - Rollouts Dashboard는 `rollouts.hy-k8s.home.arpa` + Traefik(`nginx` IngressClass) + TLS(`rollouts-dashboard-tls`) 유지
+  - 완료·중단 알림은 Rollouts 컨트롤러의 notification engine이 보낸다([ADR-0054](../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md) 조항 2). `platform-rollouts-app.yaml` chart values가 `service.slack`, `trigger.on-rollout-completed`/`on-rollout-aborted`, 대응 template과 `slack:hy-home-alerts` 구독을 소유하며, 이 알림에 ArgoCD Notifications 컨트롤러를 쓰지 않는다
 - **Allowed**:
   - 수동 Rollout promotion은 [Rollouts/Notifications/Headlamp 런북](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)의 승인/증적 절차로 실행
   - canary/blue-green 전략 선택
@@ -50,16 +52,17 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 ### Argo Notifications
 
 - **Required**:
-  - Slack token: Vault `secret/platform/notifications.slack_token` → ESO → `argocd-notifications-secret`
+  - Slack app token(`service.slack`의 `$slack-token`): OpenBao `platform/notifications` 속성 `slack_token` → ESO → `argocd/argocd-notifications-secret`. Rollouts 컨트롤러는 같은 OpenBao 항목을 `gitops/platform/eso/rollouts-notification-secret.yaml`의 ExternalSecret으로 받아 `argo-rollouts/argo-rollouts-notification-secret`에 둔다
   - templates/triggers: `argocd-notifications-cm` (GitOps 관리)
-  - `defaultTriggers`: `on-health-degraded`, `on-sync-failed`; 기본 수신자
-    `slack:hy-home-alerts` 구독은 `argocd-notifications-cm`이 소유한다
+  - `defaultTriggers`: `on-health-degraded`, `on-sync-failed`; `subscriptions`는
+    `on-health-degraded`, `on-sync-failed`, `on-deployed`를
+    `slack:hy-home-alerts`로 보내며 `argocd-notifications-cm`이 소유한다
   - 앱별 opt-in: annotation `notifications.argoproj.io/subscribe.<trigger>.slack: <channel>`
 - **Allowed**:
   - 앱 annotation으로 개별 채널 지정
   - template 추가 (GitOps PR 통해)
 - **Disallowed**:
-  - `argocd-notifications-secret`에 webhook URL 평문 커밋
+  - `argocd-notifications-secret`과 `argo-rollouts-notification-secret`에 Slack token 평문 커밋
   - ArgoCD chart의 notifications controller 비활성화(`notifications.enabled: false`) 임의 적용 (Rollouts chart의 별도 값과 무관)
 
 ### Headlamp
@@ -85,7 +88,7 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
 | Argo Rollouts | Controller/dashboard pods are running and Rollout CRDs/list output is available | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
-| Argo Notifications | Controller is running, ESO-backed secret exists, and Slack send/error logs are reviewed without committing token values | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
+| Argo Notifications | ArgoCD and Rollouts controllers are running, both ESO-backed secrets exist, and Slack send/error logs are reviewed without committing token values | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
 | Headlamp and k8s router | Headlamp pods/ingress/TLS are healthy and `headlamp`/`rollouts` hostnames return expected HTTP status through the k8s router | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
 
 - 운영 변경 시 즉시
@@ -101,8 +104,10 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
-- **Rollouts Spec**: `SPEC-0004` (recovered from Git history)
-- **Notifications Spec**: `SPEC-0005` (recovered from Git history)
+- **ADR-0054**: [`../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md`](../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md)
+- **Rollouts Spec**: SPEC-0004 (left the tree; Git history recovers it)
+- **Notifications Spec**: SPEC-0005 (left the tree; Git history recovers it)
+- **Rollouts notification delivery**: [SPEC-0141](../../03.specs/0141-rollouts-notification-delivery/spec.md)
 - **Runbook**: [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)
 
 ### Lifecycle Traceability
@@ -110,4 +115,4 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
 | N/A — SPEC-0004 left the tree and is recovered from Git history, so no eligible upstream document carries a reciprocal link | Platform Owner for promotion approval, analysis exceptions, CRDs, dashboard, and rollback evidence | Argo Rollouts chart values, Rollout resources, AnalysisTemplate review, dashboard ingress/TLS, and runbook evidence |
-| N/A — SPEC-0005 left the tree and is recovered from Git history, so no eligible upstream document carries a reciprocal link | Platform Owner for subscription policy; secret owner for the Slack credential path | Vault-to-ESO secret contract, notifications ConfigMap and annotations, controller logs, and plaintext-secret gates |
+| N/A — SPEC-0005 left the tree and is recovered from Git history, so no eligible upstream document carries a reciprocal link | Platform Owner for subscription policy; secret owner for the Slack credential path | OpenBao-to-ESO secret contract, ArgoCD notifications ConfigMap and annotations, Rollouts controller notification values, controller logs, and plaintext-secret gates |

@@ -81,8 +81,57 @@ spec:
             limits:
               cpu: 200m
               memory: 128Mi
+        # Rollouts events are sent by this controller's own notification
+        # engine (ADR-0054 clause 2). The controller ships no triggers or
+        # templates, so the two below follow the upstream
+        # manifests/notifications catalog. argo-rollouts-notification-secret
+        # comes from the ExternalSecret in gitops/platform/eso/.
         notifications:
-          enabled: false
+          notifiers:
+            service.slack: |
+              token: $slack-token
+          templates:
+            template.rollout-completed: |
+              message: Rollout {{.rollout.metadata.name}} has been completed.
+              slack:
+                attachments: |
+                  [{
+                    "title": "Rollout {{.rollout.metadata.name}} completed",
+                    "color": "#18be52",
+                    "fields": [{
+                      "title": "Namespace",
+                      "value": "{{.rollout.metadata.namespace}}",
+                      "short": true
+                    }, {
+                      "title": "Image",
+                      "value": "{{(index .rollout.spec.template.spec.containers 0).image}}",
+                      "short": true
+                    }]
+                  }]
+            template.rollout-aborted: |
+              message: Rollout {{.rollout.metadata.name}} has been aborted.
+              slack:
+                attachments: |
+                  [{
+                    "title": "Rollout {{.rollout.metadata.name}} aborted",
+                    "color": "#e96d76",
+                    "fields": [{
+                      "title": "Namespace",
+                      "value": "{{.rollout.metadata.namespace}}",
+                      "short": true
+                    }]
+                  }]
+          triggers:
+            trigger.on-rollout-completed: |
+              - send: [rollout-completed]
+            trigger.on-rollout-aborted: |
+              - send: [rollout-aborted]
+          subscriptions:
+            - recipients:
+                - slack:hy-home-alerts
+              triggers:
+                - on-rollout-completed
+                - on-rollout-aborted
         serviceAccount:
           create: true
           name: argo-rollouts

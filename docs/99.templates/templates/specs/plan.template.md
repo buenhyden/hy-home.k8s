@@ -59,7 +59,7 @@ parent_ids: ["{{PARENT_ID}}"]
 ## Promotion
 
 <!-- Author prompt: Use this section as the sole durable-contract promotion receipt for this Plan. -->
-<!-- Author prompt: Name each lasting contract and one current Stage 00, 01, 02, or 05 authority. -->
+<!-- Author prompt: Name each lasting contract and one current `.agents/` governance, or Stage 01, 02, or 05 authority. -->
 <!-- Author prompt: Link that authority with one relative Markdown link and give its concrete section or member. -->
 <!-- Author prompt: For a Registry-realized contract, link the current rule that delegates mechanics to Stage 99. -->
 <!-- Author prompt: If nothing durable is promoted, use only the row `none | none | No durable contract was introduced`. -->

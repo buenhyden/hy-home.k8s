@@ -1,10 +1,10 @@
 ---
 title: "In-Cluster Telemetry Collection with an External Backend"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0045"
 ---
@@ -101,6 +101,14 @@ The state as of 2026-09-23:
 
 ## Traceability
 
+**Current-state clarification (2026-09-24).** The follow-up trace path is now
+in place. Istio sidecars send traces over OTLP to `alloy-external`
+(`192.168.0.13:4317`) through the mesh-wide `defaultProviders.tracing` setting
+in the istiod `meshConfig`, at 10% sampling, and the `apps` egress policy
+allows that port. The external Alloy's home configuration receives OTLP and
+forwards it to Tempo (`hy-home.docker`). The rest of this decision is
+unchanged.
+
 **Current-state clarification (2026-09-23).** Alloy remote-writes to
 `https://prometheus.hy.home.arpa/api/v1/write` through the external Traefik with
 Basic Auth instead of the retired `prometheus-external` Service, under
@@ -113,15 +121,8 @@ the external workspace removed their static scrape jobs
 [ADR-0046](./0046-external-services-over-host-addresses.md). The rest of this
 decision is unchanged.
 
-**Current-state clarification (2026-09-24).** The follow-up trace path is now
-in place. Istio sidecars send traces over OTLP to `alloy-external`
-(`192.168.0.13:4317`) through the mesh-wide `defaultProviders.tracing` setting
-in the istiod `meshConfig`, at 10% sampling, and the `apps` egress policy
-allows that port. The external Alloy's home configuration receives OTLP and
-forwards it to Tempo (`hy-home.docker`). The rest of this decision is
-unchanged.
-
-- **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Requirement**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+  (REQ-0004-FR-0003, REQ-0004-NFR-0001)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 - **Related ADR**: [`./0044-stateful-data-stores-stay-external.md`](./0044-stateful-data-stores-stay-external.md)

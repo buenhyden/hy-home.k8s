@@ -1,10 +1,10 @@
 ---
 title: "Authority-First SDLC and Agent Governance Convergence"
-version: "1.0.5"
+version: "1.0.6"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0030"
 supersedes: ["ADR-0013", "ADR-0015", "ADR-0018", "ADR-0019", "ADR-0023", "ADR-0024", "ADR-0025"]
@@ -313,6 +313,16 @@ have different lifecycle and review responsibilities even when co-located.
 
 ## Traceability
 
+**Current-state clarification (2026-11-05).** The Decision's Stage 98 "minimal
+Git-backed lookup layer" clause and its recovery-identity rules are no longer
+current; ADR-0053 and the current `docs/98.archive/` README govern. The clause
+"superseded ADRs remain in Stage 02 and link reciprocally" and the
+`superseded_by` field are likewise no longer current, and MIG-0002 also left the
+tree. The registry has no `superseded` state; replacement is recorded by
+`supersedes` and the AD Archived Lineage table, which corrects the statement
+below that the registry does not yet admit it. The operator-approved
+[ADR-0055](./0055-governance-decision-current-state-amendment.md) (clauses 1-2) replaces these clauses.
+
 **Current-state clarification (2026-11-03).** Under
 [ADR-0053](./0053-unvalidated-archive.md) the archive is unvalidated: no archive validators, frozen-generation exemptions, migration proofs, tombstones or archive index exist, and the Retention Catalog and Envelope no longer apply.
 Superseded ADRs are summarized in the Archived Lineage table of
@@ -358,6 +368,8 @@ successor relations here and in the decision index without mutating closed
 predecessor evidence. WP-004 activates document-lifecycle representation and
 its document predecessors atomically; WP-003 does the same for ADR-0019 after
 the Stage 99 foundation is active.
+
+- **Requirement**: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) — REQ-0003-FR-0001, REQ-0003-FR-0010, REQ-0003-FR-0012, REQ-0003-FR-0013, REQ-0003-FR-0014, REQ-0003-FR-0015, REQ-0003-FR-0020, REQ-0003-FR-0023
 
 ### Lifecycle Traceability
 

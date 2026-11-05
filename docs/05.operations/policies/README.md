@@ -1,10 +1,10 @@
 ---
 title: "05.operations/policies"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "operations"
 ---
 # 05.operations/policies
@@ -14,7 +14,7 @@ layer: "operations"
 ## Overview
 
 이 경로는 플랫폼 운영 정책의 단일 기준점이다.
-외부 서비스 런타임 분리, Vault 단일 소스, GitOps 경로/브랜치 게이트, 포트 계약 준수 같은 운영 규칙을 문서화한다.
+외부 서비스 런타임 분리, OpenBao 단일 소스, GitOps 경로/브랜치 게이트, 포트 계약 준수 같은 운영 규칙을 문서화한다.
 
 정책 문서는 “무엇이 허용되고 금지되는가”와 “어떤 증적이 필요한가”를 정의한다.
 명령 순서, 반복 실행 체크리스트, bootstrap/break-glass 절차, 복구 절차는 [runbooks](../runbooks/README.md), 배경과 온보딩 설명은 [guides](../guides/README.md), 정책 위반이나 장애 기록은 [incidents](../incidents/README.md)로 보낸다.
@@ -60,8 +60,8 @@ layer: "operations"
 | [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 로컬 multi-node/GitOps/OpenBao/ingress·k8s router/최소권한 통합 정책과 공통 live 변경 예외 |
 | [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md) | cert-manager/Istio/Kiali 운영 통제 정책 |
 | [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md) | Argo Rollouts/Notifications/Headlamp 운영 통제 정책 |
-| [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | 메트릭·로그·Grafana·NodePort·AppProject 통합 정책 |
-| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/Vault 기반 앱 온보딩 정책 |
+| [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | 메트릭·로그·Grafana·AppProject 통합 정책(Alloy remote-write, 은퇴한 metrics NodePort 포함) |
+| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/OpenBao 기반 앱 온보딩 정책 |
 
 ## Usage
 

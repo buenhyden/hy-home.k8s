@@ -1,10 +1,10 @@
 ---
 title: "Linux Server Single-Host Baseline"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0042"
 ---
@@ -23,9 +23,10 @@ ADR-0014 unchanged.
 
 The platform runs on a single Linux server, not on WSL2 over Windows. The
 host is Ubuntu 24.04 LTS, runs Docker Engine as a native daemon, and its Docker
-context is `default`. The k3d cluster `k3d-hyhome` and the containers of the
-external services workspace (`hy-home.docker`) share the host's Docker network
-`k3d-hyhome`.
+context is `default`. The k3d cluster `hyhome` and the containers of the
+external services workspace (`hy-home.docker`) shared the host's Docker network
+`k3d-hyhome`; the external containers have since left it (see the clarification
+in Traceability).
 
 Yet ADR-0014, the Architecture Description, the Stage 05 documents, the
 infrastructure README, and the static validators still assume a WSL2 shell,
@@ -91,13 +92,21 @@ boundary into a failure boundary.
 
 ## Traceability
 
+**Current-state clarification (2026-11-05).** The LoadBalancer `172.18.0.240`
+named in the Decision now belongs to Service `traefik/traefik` under
+[ADR-0050](./0050-ingress-nginx-replacement-with-traefik.md); browser entry is
+the dedicated router `192.168.0.14` ([ADR-0043](./0043-dedicated-k8s-ingress-router.md)).
+The external services workspace's containers left `k3d-hyhome` under
+[ADR-0046](./0046-external-services-over-host-addresses.md). The cluster is
+named `hyhome`; `k3d-hyhome` is its network and context.
+
 **Current-state clarification (2026-09-23).** The host names k8s serves are
 `hy-k8s.home.arpa`, not `hy.home.arpa`, and use a dedicated entry point
 ([ADR-0043](./0043-dedicated-k8s-ingress-router.md)). `hy.home.arpa` remains
 only for the external services workspace's host names. The rest of the host
 clause is unchanged.
 
-- **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Requirement**: [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) — REQ-0004-FR-0001, REQ-0004-NFR-0001
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)

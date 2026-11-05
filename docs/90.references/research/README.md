@@ -1,10 +1,10 @@
 ---
 title: "90.references/research"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "references"
 ---
 # 90.references/research
@@ -46,7 +46,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 
 - 활성 거버넌스 정책이나 provider 실행 규칙
 - runtime roster 변경, hook 연결, 권한 변경
-- live k3d, ArgoCD, Vault, ESO, Kubernetes, cloud, provider runtime, secret 검사
+- live k3d, ArgoCD, OpenBao, ESO, Kubernetes, cloud, provider runtime, secret 검사
 - 운영 runbook, release gate, 배포 승인, incident 대응
 - 생성되었거나 병행 관리되는 `docs/superpowers/**` 내용
 
@@ -78,16 +78,16 @@ registry가 요구하는 `m####-` identity prefix 뒤에 의미 있는 주제 �
 
 ## Usage
 
-1. research pack 자료를 추가하거나 바꾸기 전에 상위 spec, plan, task를 읽는다.
+1. research pack 자료를 추가하거나 바꾸기 전에 해당 Spec 패키지(`docs/03.specs/`)가 있으면 그 Plan과 Task를 읽는다.
 2. pack README는
    [research-pack.template.md](../../99.templates/templates/references/research-pack.template.md)로,
    작성하는 보고서는
    [research.template.md](../../99.templates/templates/references/research.template.md)로 만든다.
-3. 출처 주장은 사실대로, 날짜와 함께 적고 `Source checked`, `Sources`, `Review and Freshness`로 범위를 명시한다.
+3. 출처 주장은 사실대로, 날짜와 함께 적고 `Claim-Source Matrix`, `Sources`, `Review and Freshness`로 범위를 명시한다.
 4. market scan 자료보다 공식 문서와 저장소 근거 증거를 우선한다.
 5. market 발견은 비권위 자료로 표시하고, 공식 출처나 저장소 근거를 뒤집는 데 쓰지 않는다.
 6. 활성 정책, 구현 계약, runbook, task 증거는 여기서 다시 정의하지 말고 각 정본 소유자에게 돌려보낸다.
-7. research pack 구조나 검증 증거가 바뀌면 이 README, 상위 [90.references README](../README.md), task 기록을 함께 갱신한다.
+7. research pack 구조나 검증 증거가 바뀌면 이 README와 상위 [90.references README](../README.md)를 함께 갱신한다. 검증 증거는 활성 Task가 있으면 그 Task에 기록한다.
 
 ### Relative Link Rules
 

@@ -1,23 +1,24 @@
 ---
-title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.4.4"
+title: "ArgoCD ESO OpenBao Recovery Runbook"
+version: "1.5.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "RUN-0002"
 ---
 
-# ArgoCD ESO Vault Recovery Runbook
+# ArgoCD ESO OpenBao Recovery Runbook
 
 ## Purpose
 
-외부 secret backend는 Vault API 호환 OpenBao다. ESO는 외부 Traefik 뒤의
+외부 secret backend는 OpenBao(ADR-0041)이며 Vault API 호환이다. 파일명과
+`vault-*` 식별자는 호환성 때문에 유지한다. ESO는 외부 Traefik 뒤의
 `https://openbao.hy.home.arpa`(host `192.168.0.13:443`)로 닿는다. cluster
 안에서 그 이름은 CoreDNS custom zone(`kube-system/coredns-custom`)이 host
 주소로 풀고, ESO는 `external-secrets/openbao-ca` ConfigMap의 mkcert root CA로
-인증서를 검증한다(ADR-0046). `vault-backend`와 ESO `vault` provider는 기존
+인증서를 검증한다(ADR-0046). `ClusterSecretStore/vault-backend`와 ESO `vault` provider는 기존
 Kubernetes 식별자로 유지한다.
 
 이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 OpenBao
@@ -47,8 +48,9 @@ ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
 - [ ] `kubectl` 컨텍스트 확인
 - [ ] 평문 시크릿/토큰 출력 금지
 - [ ] 복구 전 상태 스냅샷 수집
-- [ ] 외부 OpenBao의 `eso-read-platform` role에 `bound_audiences=vault` 설정 확인
+- [ ] 외부 OpenBao의 `eso-read-platform` role에 `bound_audiences=vault` 설정 확인(ESO token은 `vault`와 API server audience를 함께 요청한다)
 - [ ] OpenBao Kubernetes auth `kubernetes_host`가 `https://192.168.0.13:6550`
+- [ ] OpenBao policy가 `infrastructure/vault/policies/eso-read.hcl`의 경로만 읽기 허용
 
 1. 사전 스냅샷을 저장한다.
 
@@ -114,7 +116,7 @@ ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
      --dry-run=client -o yaml | kubectl apply -f -
    ```
 
-   > **참고**: OpenBao Kubernetes auth `kubernetes_host`는 `https://192.168.0.13:6550`이다. k3d API는 그 주소에만 bind하고 인증서 SAN에 그 주소를 둔다(`infrastructure/k3d/k3d-cluster.yaml`). cluster를 재생성하면 CA가 바뀌므로 OpenBao 운영자는 `kubernetes_ca_cert`를 새 CA로 갱신한다.
+   > **참고**: k3d API는 `kubernetes_host` 주소에만 bind하고 인증서 SAN에 그 주소를 둔다(`infrastructure/k3d/k3d-cluster.yaml`). cluster를 재생성하면 CA가 바뀌므로 OpenBao 운영자는 `kubernetes_ca_cert`를 새 CA로 갱신한다.
 
 5. Store/ExternalSecret/ArgoCD 상태를 재평가한다.
 
@@ -204,13 +206,13 @@ kubectl -n kube-system rollout restart deployment/coredns
 
 ### Troubleshooting Signatures
 
-- `no such host` for `openbao.hy.home.arpa`: CoreDNS custom zone missing or not loaded
-- `x509: certificate signed by unknown authority`: `openbao-ca` ConfigMap missing or stale
-- `connection refused` on `192.168.0.13:443`: external Traefik not bound to the host address
-- `InvalidProviderConfig` in ESO controller logs
-- `403 permission denied` on `auth/kubernetes/login` although `kubernetes_host` and the CA are current: the ESO token lacks the API server audience. OpenBao has no reviewer JWT, so it sends that token to TokenReview as its own credential, and the API server answers `401` to a token scoped only to `vault`. `vault-backend` keeps both audiences (`vault`, `https://kubernetes.default.svc.cluster.local`).
+- `openbao.hy.home.arpa`에 대한 `no such host`: CoreDNS custom zone이 없거나 로드되지 않았다.
+- `x509: certificate signed by unknown authority`: `openbao-ca` ConfigMap이 없거나 오래되었다.
+- `192.168.0.13:443`에 대한 `connection refused`: 외부 Traefik이 host 주소에 bind되지 않았다.
+- ESO controller 로그의 `InvalidProviderConfig`
+- `kubernetes_host`와 CA가 최신인데도 `auth/kubernetes/login`이 `403 permission denied`: ESO token에 API server audience가 없다. OpenBao에는 reviewer JWT가 없어 그 token을 자기 credential로 TokenReview에 보내고, API server는 `vault`만 가진 token에 `401`을 돌려준다. `vault-backend`는 `gitops/platform/eso/vault-secret-store.yaml`에서 두 audience(`vault`, `https://kubernetes.default.svc.cluster.local`)를 모두 유지한다.
 - `argocd-external-valkey SecretSyncedError`
-- TLS handshake error due to SAN mismatch (`cert.pem`)
+- `cert.pem` SAN 불일치로 인한 TLS handshake 오류
 
 ### SAN mismatch remediation
 

@@ -1,10 +1,10 @@
 ---
 title: "Istio Supported Release Upgrade"
-version: "1.0.1"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-20"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0051"
 ---
@@ -14,7 +14,7 @@ artifact_id: "ADR-0051"
 ## Overview
 
 This decision moves Istio `base`, `cni` and `istiod` from 1.25.2 to the
-supported 1.31 line (1.31.2 or later). The local cluster is rebuilt at the
+supported 1.31 line (1.31.2 or later). The local cluster will be rebuilt at the
 target version instead of being upgraded in place.
 
 ## Context
@@ -59,8 +59,8 @@ target version instead of being upgraded in place.
   a later option.
 - Negative: the rebuild discards cluster state that the repository does not
   declare. Values or CRD changes across six minor versions may need
-  repository edits. The rebuild is planned after the ingress
-  cutover, so that the cutover is verified once, on the current cluster.
+  repository edits. The ingress cutover is complete, so the rebuild is the
+  next step.
 - Operational: the rebuild is a live change and needs operator approval
   when it runs. Keep the version pinned and track Istio's support window.
 
@@ -81,9 +81,16 @@ The research for this decision was read on 2026-10-16 from the Istio supported
 releases, upgrade and security pages. The operator chose the rebuild method on
 2026-10-20.
 
+**Current-state clarification (2026-11-05).** The rebuild has not run: base, cni
+and istiod all still pin 1.25.2.
+
+- **Requirement**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+  (REQ-0004-NFR-0001, REQ-0004-FR-0012)
+- **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
+
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0008](./0008-istio-install-and-ingress-coexist.md) | Not replaced. It keeps the Istio ingress gateway disabled; only the version changes | N/A — the upgrade Spec follows the method decision |
+| [ADR-0008](./0008-istio-install-and-ingress-coexist.md) | Not replaced. It keeps the Istio ingress gateway disabled; only the version changes | N/A — no upgrade Spec exists yet |
 | [ADR-0050](./0050-ingress-nginx-replacement-with-traefik.md) | Not replaced. It defers Gateway API until after this upgrade | N/A — no Spec implements the deferral |

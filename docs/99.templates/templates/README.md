@@ -1,10 +1,10 @@
 ---
 title: "99.templates/templates"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "templates"
 ---
 # 99.templates/templates
@@ -56,6 +56,8 @@ profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
 3. 새 form은 Registry의 "template_source"와
    "relationships.source_profile_ids"에 명시적으로 연결한다. source가 없는
    required form, 소유 profile이 없는 form, 암묵적 공유 form은 계약 위반이다.
+   native Codex TOML을 제외한 각 form에는 `mode: template`인 `common/template-*`
+   profile이 하나씩 있으며, 그 profile이 원본 profile을 source로 가리킨다.
 4. 확장자는 그 form을 읽는 런타임이 읽는 확장자를 쓴다.
 
 ## Related Documents

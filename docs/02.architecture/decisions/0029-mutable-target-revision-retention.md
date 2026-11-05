@@ -1,10 +1,10 @@
 ---
 title: "Mutable Target Revision Retention"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-08-18"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0029"
 ---
@@ -125,6 +125,16 @@ independently, so pinning the root changes nothing about what the children
 deploy.
 
 ## Traceability
+
+**Current-state clarification (2026-11-05).** Thirteen declarations now track
+`targetRevision: main` (eleven `gitops/apps/root/*.yaml` Applications plus
+`root-application.yaml` and `applicationset-apps.yaml`), not twelve. The decision
+covers every self-referencing declaration, so the "twelve" counts above are
+history. The operator reviewed this decision on 2026-11-05: it replaces only ADR-0026's preferred-control clause, so it carries no `supersedes`; [ADR-0054](./0054-platform-decision-current-state-amendment.md) (clause 4) records that replacement.
+
+- **Requirement**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+  (REQ-0004-FR-0012, REQ-0004-FR-0013)
+- **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 
 Reversal condition: reopen this decision when a second operator or a second
 environment is added, when any workflow that can rewrite `main` is introduced,

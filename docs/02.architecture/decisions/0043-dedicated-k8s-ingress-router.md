@@ -1,10 +1,10 @@
 ---
 title: "Dedicated Kubernetes Ingress Router on hy-k8s.home.arpa"
-version: "1.0.1"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0043"
 ---
@@ -114,9 +114,10 @@ host names.
 
 ## Traceability
 
-**Current-state clarification (2026-10-27).** The k8s router's backend controller is now Traefik (Service `traefik/traefik`, MetalLB `172.18.0.240`, NodePorts `30080/30443`) per [ADR-0050](./0050-ingress-nginx-replacement-with-traefik.md). The router contract for clients is unchanged; the ingress-nginx wording below is preserved as history.
+**Current-state clarification (2026-10-27).** The k8s router's backend controller is now Traefik (Service `traefik/traefik`, MetalLB `172.18.0.240`, NodePorts `30080/30443`) per [ADR-0050](./0050-ingress-nginx-replacement-with-traefik.md). The router contract for clients is unchanged; the ingress-nginx wording below is preserved as history. The controller-replacement non-goal is replaced by ADR-0050; Gateway API remains a non-goal.
 
-- **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Requirement**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
+  (REQ-0004-FR-0004, REQ-0004-FR-0010)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: N/A — SPEC-0008 left the tree; Git history recovers it ([REQ-0004 Archived Lineage](../../01.requirements/0004-current-local-gitops-platform.md#archived-lineage))
 - **Related ADR**: [`./0042-linux-server-single-host-baseline.md`](./0042-linux-server-single-host-baseline.md)

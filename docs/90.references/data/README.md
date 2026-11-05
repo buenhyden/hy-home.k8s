@@ -1,10 +1,10 @@
 ---
 title: "90.references/data"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "references"
 ---
 # 90.references/data
@@ -45,7 +45,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 
 - 활성 거버넌스 정책이나 provider 실행 규칙
 - runtime roster 변경, hook 연결, 권한 변경
-- live k3d, ArgoCD, Vault, ESO, Kubernetes, cloud, provider runtime, secret 검사
+- live k3d, ArgoCD, OpenBao, ESO, Kubernetes, cloud, provider runtime, secret 검사
 - secret 값, credential, 가리지 않은 민감 기록
 - 운영 runbook, release gate, 배포 승인, incident 대응
 
@@ -61,7 +61,7 @@ data/
 
 ## Usage
 
-1. data pack 자료를 추가하거나 바꾸기 전에 상위 spec, plan, task를 읽는다.
+1. data pack 자료를 추가하거나 바꾸기 전에 해당 Spec 패키지(`docs/03.specs/`)가 있으면 그 Plan과 Task를 읽는다.
 2. `data/####-<slug>/README.md`는
    [data-pack.template.md](../../99.templates/templates/references/data-pack.template.md)로 만들고,
    작성하는 dataset는 `data/####-<slug>/m####-<slug>.md` 경로에
@@ -70,7 +70,7 @@ data/
    `DATA-####-m####` artifact identity를 붙인다.
 4. 모든 스냅샷에 수집 날짜, 방법, 보존 경계를 기록하고 secret 값은 절대 저장하지 않는다.
 5. 활성 정책, 구현 계약, runbook, task 증거는 여기서 다시 정의하지 말고 각 정본 소유자에게 돌려보낸다.
-6. data pack 구조나 검증 증거가 바뀌면 이 README, 상위 [90.references README](../README.md), task 기록을 함께 갱신한다.
+6. data pack 구조나 검증 증거가 바뀌면 이 README와 상위 [90.references README](../README.md)를 함께 갱신한다. 검증 증거는 활성 Task가 있으면 그 Task에 기록한다.
 
 ### Relative Link Rules
 

@@ -1,10 +1,10 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.3.1"
+version: "1.3.2"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-15"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "POL-0005"
 ---
@@ -46,8 +46,8 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 | OBS-002 ArgoCD metrics | Observability Owner | in-cluster Alloy `platform_pods` relabel for ArgoCD components | `argocd_app_info{cluster="k3d-hyhome"}` in the external Prometheus |
 | OBS-003 cluster metrics | Observability Owner | in-cluster Alloy scrape of istiod, argo-rollouts, kube-state-metrics, kubelet, cAdvisor | `up{cluster="k3d-hyhome"}` by job and `app` |
 | OBS-004 logs and rules | Observability Owner | Alloy deployment; external Prometheus rule config | Ready `{cluster="k3d-hyhome"}` streams; external rule groups when the external workspace defines them |
-| OBS-006 in-cluster metric collection | Observability Owner | in-cluster Alloy `prometheus.remote_write` to `https://prometheus.hy.home.arpa/api/v1/write` through the external Traefik with Basic Auth (`monitoring/prometheus-api-auth`) and the `hy-home-root-ca` gateway CA, and `monitoring` egress to host `192.168.0.13:443` (ADR-0046) | `cluster="k3d-hyhome"` series for jobs `kubernetes-pods`, `kubelet`, `cadvisor` in the external Prometheus |
 | OBS-005 access | Platform Owner | Grafana service account role and AppProject destinations | Viewer-only token and monitoring destination |
+| OBS-006 in-cluster metric collection | Observability Owner | in-cluster Alloy `prometheus.remote_write` to `https://prometheus.hy.home.arpa/api/v1/write` through the external Traefik with Basic Auth (`monitoring/prometheus-api-auth`) and the `hy-home-root-ca` gateway CA, and `monitoring` egress to host `192.168.0.13:443` (ADR-0046) | `cluster="k3d-hyhome"` series for jobs `kubernetes-pods`, `kubelet`, `cadvisor` in the external Prometheus |
 
 ### Service Port Naming
 
@@ -63,7 +63,7 @@ k8s 메트릭의 기준 수집 경로는 cluster 안 Alloy다
 Alloy는 pod IP와 API server proxy로 scrape하고 외부 Prometheus에 remote
 write한다. 저장, 조회, alert rule은 외부 workspace가 소유한다. 외부
 Prometheus의 NodePort static scrape와 metrics NodePort Service(`30082-30092`)는
-폐지되었다. 그 target 주소 `172.18.0.2`는 외부 Traefik이었다.
+폐지되었다.
 `scripts/validate-infrastructure-contracts.sh`는 `gitops/platform`에 NodePort
 Service가 다시 생기면 실패한다. 수집을 위해 과도한 kubeconfig 권한을 외부에
 부여하지 않는다.

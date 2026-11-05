@@ -1,10 +1,10 @@
 ---
 title: "90.references/audits"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-05"
 layer: "references"
 ---
 # 90.references/audits
@@ -45,7 +45,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 
 - 활성 거버넌스 정책이나 provider 실행 규칙
 - runtime roster 변경, hook 연결, 권한 변경
-- live k3d, ArgoCD, Vault, ESO, Kubernetes, cloud, provider runtime, secret 검사
+- live k3d, ArgoCD, OpenBao, ESO, Kubernetes, cloud, provider runtime, secret 검사
 - 운영 runbook, release gate, 배포 승인, incident 대응
 - 생성되었거나 병행 관리되는 `docs/superpowers/**` 내용
 
@@ -61,7 +61,7 @@ audits/
 
 ## Usage
 
-1. audit pack 자료를 추가하거나 바꾸기 전에 상위 spec, plan, task를 읽는다.
+1. audit pack 자료를 추가하거나 바꾸기 전에 해당 Spec 패키지(`docs/03.specs/`)가 있으면 그 Plan과 Task를 읽는다.
 2. `audits/####-<slug>/README.md`는
    [audit-pack.template.md](../../99.templates/templates/references/audit-pack.template.md)로 만들고,
    작성하는 보고서는 `audits/####-<slug>/m####-<slug>.md` 경로에
@@ -70,7 +70,7 @@ audits/
    `AUD-####-m####` artifact identity를 붙인다.
 4. 발견 사항은 사실대로 날짜와 함께 적고 관찰 근거의 범위를 명시한다.
 5. 활성 정책, 구현 계약, runbook, task 증거는 여기서 다시 정의하지 말고 각 정본 소유자에게 돌려보낸다.
-6. audit pack 구조나 검증 증거가 바뀌면 이 README, 상위 [90.references README](../README.md), task 기록을 함께 갱신한다.
+6. audit pack 구조나 검증 증거가 바뀌면 이 README와 상위 [90.references README](../README.md)를 함께 갱신한다. 검증 증거는 활성 Task가 있으면 그 Task에 기록한다.
 
 ### Relative Link Rules
 

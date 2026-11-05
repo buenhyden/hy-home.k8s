@@ -1,10 +1,10 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.3.2"
+version: "1.4.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "POL-0007"
 ---
@@ -21,8 +21,6 @@ artifact_id: "POL-0007"
 이 정책은 현재 앱 온보딩의 기준 계약이다. 실행 순서와 검증·복구 절차는
 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 담당한다.
 
-`운영 정책 — Linux server k3d/k3s GitOps 앱 온보딩`
-
 ## Scope
 
 - `apps` namespace에 배포되는 신규 애플리케이션 workload
@@ -35,8 +33,7 @@ artifact_id: "POL-0007"
 
 ## Controls
 
-세부 통제는 아래 1-4장에 정의한다. 모든 신규 앱은 Rollout, AnalysisTemplate, 명시적 ingress/TLS, GitOps PR flow, secret/Vault 경계를 따라야 한다.
-구체적인 manifest 작성 순서와 검증 명령은 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 소유한다.
+세부 통제는 아래 1-5장에 정의한다. 모든 신규 앱은 Rollout, AnalysisTemplate, 명시적 ingress/TLS, GitOps PR flow, secret/OpenBao 경계를 따라야 한다.
 
 ---
 
@@ -59,7 +56,7 @@ Deployment는 현재 `appproject-apps` namespaceResourceWhitelist에 포함되�
 - **Prometheus 주소**: `https://prometheus.hy.home.arpa`. `Authorization` header는
   `args`의 `secretKeyRef`로 platform 소유 `apps/prometheus-api-auth` Secret에서 읽는다(ADR-0046).
 - **기본 측정 지표**: `kube_pod_container_status_restarts_total` (컨테이너 재시작 횟수)
-- **측정 주기**: 30s, failureLimit: 1
+- **측정 주기**: 30s, `count: 4`(유한한 canary step 측정), failureLimit: 1
 - **Required evidence**: `analysis-template.yaml`이 Rollout canary 단계에서 참조된다.
 
 ### 1-3. 이미지 태그
@@ -127,10 +124,10 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 | 항목            | 정책                                                 |
 | --------------- | ---------------------------------------------------- |
-| 시크릿 저장     | Vault (`secret/apps/<appname>/config`)               |
+| 시크릿 저장     | OpenBao (`secret/apps/<appname>/config`)             |
 | k8s Secret 생성 | ExternalSecret(ESO)만 사용, 직접 Secret 생성 금지    |
 | 환경변수        | `envFrom.secretRef` 사용 (개별 `env.valueFrom` 지양) |
-| Vault 경로 규칙 | `secret/apps/<appname>/config`                       |
+| OpenBao 경로 규칙 | `secret/apps/<appname>/config`                     |
 | ESO remoteRef   | `apps/<appname>/config` (`secret` mount prefix 제외) |
 
 ---
@@ -141,7 +138,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 `gitops/workloads/<appname>/`는 `apps-generator` 자동 감지 경로다.
 필수 파일은 `kustomization.yaml`, `rollout.yaml`, `service.yaml`, `ingress.yaml`, `analysis-template.yaml`이다.
-`external-secret.yaml`은 Vault/ESO 연동이 필요한 경우에만 추가한다.
+`external-secret.yaml`은 OpenBao/ESO 연동이 필요한 경우에만 추가한다.
 
 ### 4-2. 네이밍 규칙
 
@@ -150,12 +147,12 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 | `<appname>` | 소문자, 하이픈 구분            | `my-api`                    |
 | 도메인      | `<appname>.hy-k8s.home.arpa`   | `my-api.hy-k8s.home.arpa`   |
 | TLS Secret  | `<appname>-tls`                | `my-api-tls`                |
-| Vault 경로  | `secret/apps/<appname>/config` | `secret/apps/my-api/config` |
+| OpenBao 경로 | `secret/apps/<appname>/config` | `secret/apps/my-api/config` |
 | ESO key     | `apps/<appname>/config`        | `apps/my-api/config`        |
 
 ### 4-3. 금지 사항
 
-- `kubectl apply`로 직접 클러스터 변경 (human-approved AppProject bootstrap/break-glass 제외)
+- `kubectl apply`로 직접 클러스터 변경 (operator-approved AppProject bootstrap/break-glass 제외)
 - `latest` 태그 이미지 사용
 - Git 없이 ArgoCD UI에서만 변경
 - `namespace: default` 사용 (반드시 `apps` 또는 플랫폼 지정 namespace)
@@ -172,15 +169,15 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 | GitOps manifests   | `rollout.yaml`, `service.yaml`, `ingress.yaml`, `analysis-template.yaml`, `kustomization.yaml`이 필수 계약을 만족함 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 | Network/TLS        | `http-` port naming, `ingressClassName=nginx`, `mkcert-ca-issuer`, hy-k8s.home.arpa hostname이 적용됨                         | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 | External routing   | 앱 host가 k8s router로 해석되고, apex path가 필요하면 redirect Ingress가 추가됨                                     | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
-| Secret handling    | 필요한 경우 Vault/ESO를 사용하고 plaintext Kubernetes Secret manifest가 없음                                        | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| Secret handling    | 필요한 경우 OpenBao/ESO를 사용하고 plaintext Kubernetes Secret manifest가 없음                                        | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 | Runtime health     | 명명된 앱의 ArgoCD Application, Rollout, 실제 Pod ready/desired 수, Ingress/TLS 접근 증적이 남음                         | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 
 ---
 
 ## Exceptions and Escalation
 
-- `kubectl apply` 또는 AppProject live 반영은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions-and-escalation)의 human-approved bootstrap/break-glass 공통 예외를 따른다.
-- ExternalSecret이 필요 없는 앱은 Vault 연동 파일을 생략할 수 있지만, plaintext Kubernetes Secret manifest는 허용하지 않는다.
+- `kubectl apply` 또는 AppProject live 반영은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions-and-escalation)의 operator-approved bootstrap/break-glass 공통 예외를 따른다.
+- ExternalSecret이 필요 없는 앱은 OpenBao 연동 파일을 생략할 수 있지만, plaintext Kubernetes Secret manifest는 허용하지 않는다.
 
 ## Verification and Review
 
@@ -189,7 +186,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 - 실행 가능한 검증 명령과 실패 시 복구 절차는 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)을 따른다.
 
 - 새 앱 온보딩 또는 `examples/sample-app/` 변경 시마다 검토한다.
-- Rollouts, Istio, cert-manager, Vault/ESO 계약 변경 시 관련 policy/runbook과 함께 검토한다.
+- Rollouts, Istio, cert-manager, OpenBao/ESO 계약 변경 시 관련 policy/runbook과 함께 검토한다.
 - [REQ-0004 workload 온보딩 시나리오](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-workload-onboarding)가
   적용 가능한 정적 통제의 판정식·표본·목표와 운영 관측의 별도 결정을 소유한다.
   이 정책의 adminer 분석 주기와 canary 설정은 현재 구성 예시이며 새 앱의
@@ -207,4 +204,4 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — the app-onboarding policy is promoted from the current sample/adminer patterns and operations workflow, with no eligible upstream document carrying a reciprocal policy link | Platform Owner for workload admission and AppProject exceptions; application owner for image, rollout, and runtime evidence | required Rollout/AnalysisTemplate manifests, fixed image tags, ingress/TLS and Istio contracts, Vault/ESO boundary, PR review, and GitOps/manifest/secret validation gates |
+| N/A — the app-onboarding policy is promoted from the current sample/adminer patterns and operations workflow, with no eligible upstream document carrying a reciprocal policy link | Platform Owner for workload admission and AppProject exceptions; application owner for image, rollout, and runtime evidence | required Rollout/AnalysisTemplate manifests, fixed image tags, ingress/TLS and Istio contracts, OpenBao/ESO boundary, PR review, and GitOps/manifest/secret validation gates |

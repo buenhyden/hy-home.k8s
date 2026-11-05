@@ -1,10 +1,10 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "2.1.1"
+version: "2.1.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "RUN-0007"
 ---

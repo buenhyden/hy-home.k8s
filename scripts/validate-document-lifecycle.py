@@ -720,7 +720,6 @@ def _local_plan_task_contract_issues(
             if kind not in {"local", "anchor"} or target is None:
                 return False
             current_owner = target.parts[:1] == (".agents",) or target.parts[:2] in {
-                ("docs", "00.agent-governance"),
                 ("docs", "01.requirements"),
                 ("docs", "02.architecture"),
                 ("docs", "05.operations"),
@@ -781,7 +780,7 @@ def _local_plan_task_contract_issues(
                 path,
                 "sdlc/plan",
                 "PLAN-PROMOTION",
-                "one Promotion table with a current Stage 00/01/02/05 owner or explicit none",
+                "one Promotion table with a current .agents/ or Stage 01/02/05 owner or explicit none",
                 "changed Plan has no valid durable-owner receipt",
             )
 

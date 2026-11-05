@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.21.2"
+version: "0.21.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-03"
+updated: "2026-11-06"
 layer: "specs"
 ---
 # 03.specs
@@ -68,9 +68,12 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나며, 완료된 package는 
 
 ```text
 03.specs/
+├── 0141-rollouts-notification-delivery/
 ├── AGENTS.md
 └── README.md
 ```
+
+현재 열린 package: [SPEC-0141 Rollouts Notification Delivery](./0141-rollouts-notification-delivery/).
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다.
 

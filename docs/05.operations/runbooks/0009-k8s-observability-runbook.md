@@ -1,10 +1,10 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.4.0"
+version: "2.4.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "RUN-0009"
 ---
@@ -37,7 +37,7 @@ Prometheus의 NodePort static scrape는 폐지되었다.
 
 주된 장애 원인:
 
-1. **remote write 실패**: 자격 증명이 외부 Traefik의 Basic Auth(`INFRA-007`)와
+1. **remote write 실패**: 자격 증명이 외부 Traefik의 Basic Auth와
    맞지 않거나(401), 이름 해석·CA가 어긋나거나(`no such host`, `x509`), remote
    write receiver가 꺼져 있다(404).
 2. **alloy-k8s-logs CrashLoop**: `readOnlyRootFilesystem` + storage 경로
@@ -199,7 +199,7 @@ kubectl -n monitoring get networkpolicy allow-egress-monitoring -o yaml | rg -A8
 - route가 응답하지 않으면 외부 workspace의 Traefik `prometheus-api` router 문제다.
   이 저장소에서 고칠 수 없다.
 - Alloy 로그의 remote write가 `401`이면 OpenBao `platform/prometheus-api`와 외부
-  workspace의 Basic Auth(`INFRA-007`)가 어긋난 것이다. 외부 workspace가 값을 맞춘다.
+  workspace의 Basic Auth가 어긋난 것이다. 외부 workspace가 값을 맞춘다.
 - `404`면 `--web.enable-remote-write-receiver`가 꺼져 있다. 외부 workspace가 소유한다.
 - `no such host`, `x509`면 [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md)의
   Procedure 4단계로 `coredns-custom`이나 `hy-home-root-ca`를 재적용한다.
@@ -267,18 +267,6 @@ curl -s -G "http://192.168.0.13:3100/loki/api/v1/query_range" \
 - Monitoring manifest changes should be reverted through GitOps if relabel, remote write, or egress changes regress collection.
 - External Prometheus, Loki, dashboard, and alert rule changes are reverted in the owning external workspace.
 - AppProject destination changes require reviewed GitOps updates; direct cluster edits remain bootstrap/break-glass only.
-
-### Troubleshooting
-
-| 증상 | 원인 | 조치 |
-| --- | --- | --- |
-| platform-monitoring InvalidSpecError | AppProject에 monitoring namespace 미포함 | Git 파일 확인 후 human-approved bootstrap/break-glass로 AppProject 반영 |
-| Alloy 로그에 remote write `401` | Basic Auth 자격 증명 불일치 | OpenBao `platform/prometheus-api`와 외부 `INFRA-007` 대조 (Procedure 4) |
-| `no such host` / `x509` | CoreDNS custom zone 또는 CA ConfigMap 누락 | Procedure 4, [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md) 4단계 |
-| remote write `404` | remote write receiver 꺼짐 | 외부 workspace가 flag 복구 |
-| `kubelet`/`cadvisor` job 없음 | `nodes/proxy` 권한 또는 API egress 누락 | Procedure 3-2, egress `6443` 확인 |
-| ArgoCD component만 빠짐 | chart 변경으로 label/port 불일치 | [RUN-0008](./0008-argocd-metrics-prometheus-runbook.md) |
-| Loki에 k8s 로그 없음 | alloy 미실행 또는 loki-external 연결 실패 | Procedure 3, 4 |
 
 ---
 
