@@ -1,6 +1,6 @@
 ---
 title: "Dead Profile Mode Cleanup"
-version: "0.2.0"
+version: "0.2.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -31,8 +31,8 @@ the validator branches that only they reach. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-DPM-001](../spec.md#success-criteria--verification-plan) | Type regression test and narrowed `Literal` types | platform | in-progress | PASS | EVD-003, EVD-004 |
-| WORK-002 | [VAL-DPM-002](../spec.md#success-criteria--verification-plan) | Unreachable branches and helper code | platform | in-progress | PASS | EVD-005, EVD-006 |
+| WORK-001 | [VAL-DPM-001](../spec.md#success-criteria--verification-plan) | Type regression test and narrowed `Literal` types | platform | completed | PASS | EVD-003, EVD-004 |
+| WORK-002 | [VAL-DPM-002](../spec.md#success-criteria--verification-plan) | Unreachable branches and helper code | platform | completed | PASS | EVD-005, EVD-006 |
 
 ## Task Evidence
 
@@ -49,8 +49,8 @@ the validator branches that only they reach. It executes
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-DPM-001](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-001 | platform |
-| [VAL-DPM-002](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-002 | platform |
+| [VAL-DPM-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-003, EVD-004 | Operator accepted on 2026-11-06 | platform |
+| [VAL-DPM-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-006 | Operator accepted on 2026-11-06 | platform |
 
 ## Approval and Safety Boundaries
 
