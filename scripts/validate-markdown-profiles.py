@@ -1020,8 +1020,6 @@ def _frontmatter_value_style_diagnostics(
 ) -> list[Diagnostic]:
     """Require canonical JSON-style quoting in current-generation metadata."""
 
-    if profile.mode == "evidence":
-        return []
     lines = text.splitlines()
     try:
         closing_delimiter = lines.index("---", 1)
@@ -1469,7 +1467,7 @@ def _frontmatter_body(
         )
     else:
         present_order = tuple(key for key in contract.order if key in data)
-        if profile.mode != "evidence" and tuple(keys) != present_order:
+        if tuple(keys) != present_order:
             diagnostics.append(
                 _diagnostic(
                     "FM-KEY-ORDER",

@@ -5833,8 +5833,7 @@
     ],
     "english_sections": [
       "AI Agent Requirements",
-      "Agent Execution Notes",
-      "Agent Harness Requirements"
+      "Agent Execution Notes"
     ],
     "min_latin_words": 8,
     "pending_paths": []

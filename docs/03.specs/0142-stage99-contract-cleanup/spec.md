@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Contract Cleanup"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -49,9 +49,11 @@ changes. The [Plan](plan.md) orders the work and
 - A Plan Promotion row may name an owner under `.agents/`,
   `docs/01.requirements/`, `docs/02.architecture/` or `docs/05.operations/`;
   a target under `docs/00.agent-governance/` is refused.
-- The ADR form's Replacement relation and Affected Spec cells are author
-  prompts that ask for the predecessor ADR ID and, for a deleted Spec, the
-  form `N/A — SPEC-xxxx left the tree; Git history recovers it`.
+- The ADR form's Replacement relation and Affected Spec cells are visible
+  placeholders (`{{PREDECESSOR_ADR_ID}}`, `{{AFFECTED_SPEC_LINK}}`) that ask for
+  the predecessor ADR ID and, for a deleted Spec, the form
+  `N/A — SPEC-xxxx left the tree; Git history recovers it`; a table cell
+  holding only an HTML comment is refused by the body-contract check.
 - A profile mode is one of `authored`, `router`, `template`, `native` and
   `non-target`; the schema refuses any other value.
 - The schemas and registry carry no definition or entry without a consumer.

@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.16.2"
+version: "0.16.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-03"
+updated: "2026-11-05"
 layer: "templates"
 ---
 # 99.templates
@@ -22,8 +22,9 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 Registry의 `shared_contract`는 buenhyden이 정확한 원본에 대해 승인한
 `WGOV-CORE / 3.0.0`과 이 저장소의 지역 adapter를 식별한다. 공동
 정본의 입구는 Project-Template의 기존 `.agents/governance/standards.md`다.
-그 소스 묶음은 Stage 00·99, QA·Git·harness·모델·환경 정책, handoff prompt와
-Skill을 포함한 67개 저장소 상대 경로다. digest는 중복 없는 경로를 UTF-8
+그 소스 묶음은 Project-Template 원본의 Stage 00·99, QA·Git·harness·모델·환경
+정책, handoff prompt와 Skill을 포함한 67개 저장소 상대 경로다. 이 저장소에는
+Stage 00이 없으며 그 지역 소유자는 `.agents/`다. digest는 중복 없는 경로를 UTF-8
 순서로 정렬하고 각 경로 bytes·NUL·해당 Git blob 원문 bytes를 SHA-256에
 차례로 넣어 계산한다. blob 뒤에는 별도 NUL을 넣지 않는다.
 
@@ -37,8 +38,9 @@ JSON·YAML 등 비 Markdown 파일과 `.codex/`·`.claude/`의 native 문서는
 영어 전용이다. README는 해당 navigation profile을 따른다.
 `docs/01.requirements`~`docs/03.specs`의 non-README 본문은 계속 영어다.
 공통 Governance form의 기계 field·heading과 영어 author prompt는 유지하고,
-복사해 작성한 `.agents/` 본문의 새 설명에 위 지역 규칙을 적용한다. 이 확장
-하나만으로 승인된 WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
+복사해 작성한 `.agents/` 본문의 새 설명에 위 지역 규칙을 적용한다. 이 언어
+확장과 아래의 Task 최초 기록·Spec/Plan 직접 전이 확장은 각각 하나만으로 승인된
+WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 
 ## Scope
 
@@ -63,15 +65,15 @@ profile family를 정의하지 않는다. 예를 들어 `templates/specs/plan.te
 그 경로를 유지하면서 `sdlc/plan` profile의 form으로 연결된다. 정확한 profile ID와
 form 경로의 대응은 Registry만 소유한다.
 
-- **Common forms** (`common/`): governed navigation READMEs share the ordered
-  six-key envelope, `type: "common/readme"`, `status: "active"`, and the
-  `Overview`/`Scope`/`Structure`/`Usage`/`Related Documents` core without a
-  separate artifact identity. Path-specific registry profiles still choose the
-  repository, stage, collection, implementation, and workspace forms and any
-  optional module. A README addresses human readers only. Agent instructions
-  for a folder live in its `AGENTS.md`, a native `common/folder-agents-guide`
-  file with no frontmatter and no form; the root `AGENTS.md` and `CLAUDE.md`
-  stay `common/root-provider-shim` gateways.
+- **Common forms** (`common/`): governed navigation README는 순서가 고정된
+  여섯 key 봉투와 `type: "common/readme"`, `status: "active"`, 별도 artifact
+  identity 없는 `Overview`/`Scope`/`Structure`/`Usage`/`Related Documents` core를
+  공유한다. 저장소·stage·collection·implementation·workspace form과 선택 module은
+  경로별 Registry profile이 고른다. stage·collection index form은 `updated` 뒤에
+  `layer`를 더한다. README는 사람 독자만을 대상으로 한다. 폴더의 agent 지시는 그
+  폴더의 `AGENTS.md`에 두며, 이는 frontmatter와 form이 없는 native
+  `common/folder-agents-guide` 파일이다. 루트 `AGENTS.md`와 `CLAUDE.md`는
+  `common/root-provider-shim` gateway로 유지한다.
 - **Governance forms** (`governance/`): 공통 SDLC 계약, provider note, 역할,
   정책, 워크플로, 지식 지도, 프롬프트 계약에 `contract`, `provider`, `role`,
   `rule`, `skill`, `knowledge`, `prompt` form이 대응한다. 공통 소유자는
@@ -111,13 +113,14 @@ form 경로의 대응은 Registry만 소유한다.
   `common/readme` type으로, pack anchor
   `####-<slug>/README.md`는 `reference/audit-pack`·`reference/data-pack`·`reference/research-pack` form을,
   pack member `####-<slug>/m####-<slug>.md`는 같은 family의
-  `audit-reference`·`data-reference`·`research-reference` form을 사용한다.
+  `reference/audit`·`reference/data`·`reference/research` form을 사용한다.
 - **Runtime forms** (`runtime/`): provider가 직접 읽는 binding만 담는다.
   Claude는 `claude-agent.template.md`와 `claude-command.template.md`, Codex는
   `codex-agent.template.toml`이며 이 form들은 provider 소유
-  key(`name`/`description`/`model`/`model_reasoning_effort`/`tools`,
-  command는 `description`/`argument-hint`/`allowed-tools`)만 가지고 guided 문서
-  key는 갖지 않는다. `.claude/commands/*.md`는
+  key만 가지고 guided 문서 key는 갖지 않는다. Claude agent는
+  `name`/`description`/`model`/`effort`/`tools`, Codex agent는
+  `name`/`description`/`model`/`model_reasoning_effort`/`sandbox_mode`/`developer_instructions`,
+  command는 `description`/`argument-hint`/`allowed-tools`다. `.claude/commands/*.md`는
   `common/provider-native-command`로 분류하며 `.agents/prompts/`의 계약을
   호출하는 진입점일 뿐 계약 자체를 소유하지 않는다.
   `.agents/skills/<id>/SKILL.md`는 `common/native-skill-package` native
@@ -187,11 +190,8 @@ Registry의 두 절은 과거 profile 호환을 위해 optional로 등록하고,
 작성·완료 의무는 lifecycle reader가 선택한 입력에 대해 검사한다. Stage 99
 형식 구현은 해당 형식을 위임하는 현행 정책 소유자를 가리킨다.
 
-Plan은 `Work Unit | Criteria | Work | Dependencies | Task | Verification`을,
-Task Table은 `ID | Upstream criterion | Work item | Owner | Status | Result | Evidence`를,
-Criterion Acceptance는 `Criterion | Acceptance | Evidence | Disposition | Current owner`를,
-Task Evidence는 `Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves`를
-사용한다. 수용 값은 `pending`·`accepted`·`rejected`·`not-required`다.
+Plan, Task Table, Criterion Acceptance, Task Evidence 표의 열 이름과 순서, 수용
+값 집합은 Registry의 `body_contract`가 소유하며 이 README는 복제하지 않는다.
 `not-required`는 취소된 Task와 같은 package의 취소된 Spec에서 해당 기준의
 실제 범위 변경과 승인 근거를 확인한 때만 쓴다. 두 취소 처분 모두 정확한
 기준 ID를 명시하고 Task의 승인 참조는 해당 Spec 결정을 가리킨다. 후속
@@ -207,8 +207,7 @@ PASS로 미해소 필수 결과를 숨기지 않는다. 완료 인계는 필수 
 배정, 실제 Task 완료, 구체적 PASS 증거, 단일 `accepted` 판정과 지속
 의미의 현재 owner를 함께 확인한다. QA 결과, 기준 수용, 원본 승인,
 통합과 보관은 서로의 대체값이 아니다. 취소·대체는 남은 필수 기준의
-후속 Task의 Plan 배정을 명시한다. 기준 면제는 위의 Spec·Task 취소와
-기준별 승인 근거가 있을 때만 기록하며, 관측 결과는 보존한다.
+후속 Task의 Plan 배정을 명시하고, 관측 결과를 보존한다.
 관측된 `FAIL`은 `PASS`처럼 구체적인 Check·Input·Location을 적는다.
 `NOT_RUN`·`DEFER`에는 아직 실제 결과 위치가 없으면 `Pending`을 쓸 수
 있지만 사유와 다음 owner를 남긴다.
@@ -225,8 +224,8 @@ frontmatter `status`는 생략한다. validator와 lifecycle reader는 행 상�
 실패한다. `ready`는 실행 준비이지 별도 승인 단계가
 아니다. Stage 01·02·03 문서에는 `superseded`·`retired`·`deprecated` 상태와
 이전 양식이 없다. 대체·철회된 문서와 완료된 Spec Package는 소유 현행 문서의
-`Archived Lineage` 표에 요약한 뒤 같은 변경에서 삭제하며, 후속 문서는 `supersedes`와
-Traceability에 이전 문서를 적는다. 정본은 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)다.
+`Archived Lineage` 표에 요약한 뒤 같은 변경에서 삭제하며, 후속 문서는 profile이 허용하는 곳에서
+`supersedes`와 Traceability에 이전 문서를 적는다. 정본은 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)다.
 Result, Criterion Acceptance, Task Evidence와 실제 승인 사실은 관측에 따라
 별도로 작성한다.
 
@@ -238,16 +237,16 @@ Result, Criterion Acceptance, Task Evidence와 실제 승인 사실은 관측에
 준비 완료가 필요하며, `blocked`에는 원인·재개 조건·다음 owner가 필요하다.
 `completed` 등 종단 상태로 새 Task를 만들 수 없고, 이후 전이·기준 수용·
 필수 증거 규칙은 그대로 적용된다. 최초 `draft` commit을 합성하지 않는다.
-이는 Registry `shared_contract.extensions`에 명시된 지역 확장이다. 이 규칙
-하나만으로 승인된 WGOV-CORE 3.0.0의 새 의미나 전체 지역 채택을 판정하지 않는다.
+이는 Registry `shared_contract.extensions`에 명시된 지역 확장이다.
+
+### Spec·Plan Direct Approval
+
 
 `Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`도 이 지역 adapter의 좁은 확장이다. 범위를 정한
 현행 사용자 지시, 실제 묶음 리뷰와 승인이 기록된 Spec·Plan은 `draft`에서
 `approved`로 직접 전이할 수 있다. 새 Spec·Plan의 최초 Git 기록은 계속
-`draft`이며, `approved`는 실행 완료나 Task 기준 수용을
-뜻하지 않는다. 관측하지 않은 중간 상태의 commit을 만들어 전이를 꾸미지
-않는다. 이 지역 규칙 하나만으로 WGOV-CORE 3.0.0의 새 판본 승인이나 지역
-전체 채택을 뜻하지 않으며, 후속 전이와 증거 검증은 그대로 유지한다.
+`draft`이며, 관측하지 않은 중간 상태의 commit을 만들어 전이를 꾸미지 않는다.
+후속 전이와 증거 검증은 그대로 유지한다.
 
 ### Shared Frontmatter Grammar
 
@@ -264,7 +263,7 @@ supersession, provenance key는 선택된 profile의 order에만 따라 나타�
 | "status" | 항상 | profile lifecycle subset 또는 router constant | profile literal |
 | "owner" | 항상 | 책임 소유자 | "&#123;&#123;OWNER&#125;&#125;" |
 | "updated" | 항상 | ISO date | "&#123;&#123;UPDATED&#125;&#125;" |
-| "layer" | profile이 stage/router layer를 소유할 때 | 숫자 접두어 없는 stage slug | profile literal |
+| "layer" | profile이 stage/router layer를 소유할 때 | 숫자 접두어 없는 stage slug | profile literal; stage-index·collection-index README form은 "&#123;&#123;LAYER&#125;&#125;" |
 | "artifact_id" | stable identity profile만 | "artifact_id_pattern" | "&#123;&#123;ARTIFACT_ID&#125;&#125;" |
 
 값의 scalar/array 문법은

@@ -24,7 +24,11 @@ from document_contracts import (  # noqa: E402
     task_contract_issues,
     task_execution_issues,
 )
-from document_lifecycle import compare_lifecycle, document_from_text  # noqa: E402
+from document_lifecycle import (  # noqa: E402
+    LifecycleDocument,
+    compare_lifecycle,
+    document_from_text,
+)
 
 
 def load_script(name: str, filename: str):
@@ -877,14 +881,16 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         *,
         base: dict[PurePosixPath, str] | None = None,
         proposed: dict[PurePosixPath, str],
+        classified: dict[PurePosixPath, LifecycleDocument] | None = None,
     ) -> set[str]:
         before = base or {}
+        fixed = classified or {}
         base_docs = {
-            path: document_from_text(self.registry, path, text)
+            path: fixed.get(path) or document_from_text(self.registry, path, text)
             for path, text in before.items()
         }
         proposed_docs = {
-            path: document_from_text(self.registry, path, text)
+            path: fixed.get(path) or document_from_text(self.registry, path, text)
             for path, text in proposed.items()
         }
         context = LIFECYCLE_CLI._evidence_context(
@@ -1014,6 +1020,32 @@ class AdoptedExecutionParentTests(unittest.TestCase):
                     "PLAN-PROMOTION",
                     self.rules(base=base, proposed={**base, self.plan: bad}),
                 )
+
+    def test_promotion_refuses_retired_stage_00_owner(self) -> None:
+        # No profile covers docs/00.agent-governance, so classify the owner by hand
+        # as an approved document and show the owner path alone is refused.
+        owner_path = PurePosixPath("docs/00.agent-governance/policies/quality.md")
+        owner = LifecycleDocument(
+            path=owner_path,
+            profile_id="governance/contract",
+            status="active",
+        )
+        plan = self.plan_text()
+        retired = plan.replace(
+            "| none | none | No durable contract was introduced |",
+            "| Lifecycle contract | "
+            "[retired owner](../../../docs/00.agent-governance/policies/quality.md) "
+            "| `Current Contract` |",
+        )
+        base = {self.spec: self.spec_text(), self.plan: plan, owner_path: "# owner\n"}
+        self.assertIn(
+            "PLAN-PROMOTION",
+            self.rules(
+                base=base,
+                proposed={**base, self.plan: retired},
+                classified={owner_path: owner},
+            ),
+        )
 
     def test_active_task_needs_approved_typed_parents(self) -> None:
         spec = self.spec_text()

@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Contract Cleanup"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-05"
@@ -27,6 +27,8 @@ executes [SPEC-0142](../spec.md) through [WORK-001–004](../plan.md#work-breakd
 - Approval (2026-11-05): the operator's choice of the low-risk cleanup scope
   approves SPEC-0142 and its Plan after review of the draft in `6442183c`. It
   authorizes the repository change only.
+- Correction (2026-11-05): the ADR form uses visible placeholders instead
+  of comment-only cells (EVD-007); the Spec's Contracts state it.
 
 ## Task Table
 
@@ -34,10 +36,10 @@ executes [SPEC-0142](../spec.md) through [WORK-001–004](../plan.md#work-breakd
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-S99-001](../spec.md#success-criteria--verification-plan) | Stage 00 promotion target and wording | platform | ready | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-S99-002](../spec.md#success-criteria--verification-plan) | ADR form trace cells | platform | ready | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-S99-003](../spec.md#success-criteria--verification-plan) | Unused modes, branches, definition and language entry | platform | ready | NOT_RUN | EVD-003 |
-| WORK-004 | [VAL-S99-004](../spec.md#success-criteria--verification-plan) | Stage 99 README and AGENTS prose | platform | ready | NOT_RUN | EVD-004 |
+| WORK-001 | [VAL-S99-001](../spec.md#success-criteria--verification-plan) | Stage 00 promotion target and wording | platform | in-progress | PASS | EVD-005, EVD-006 |
+| WORK-002 | [VAL-S99-002](../spec.md#success-criteria--verification-plan) | ADR form trace cells | platform | in-progress | PASS | EVD-007, EVD-008 |
+| WORK-003 | [VAL-S99-003](../spec.md#success-criteria--verification-plan) | Unused modes, branches, definition and language entry | platform | in-progress | PASS | EVD-009, EVD-010 |
+| WORK-004 | [VAL-S99-004](../spec.md#success-criteria--verification-plan) | Stage 99 README and AGENTS prose | platform | in-progress | PASS | EVD-011 |
 
 ## Task Evidence
 
@@ -47,6 +49,13 @@ executes [SPEC-0142](../spec.md) through [WORK-001–004](../plan.md#work-breakd
 | EVD-002 | [VAL-S99-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Template and profile checks | Pending | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-S99-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Schema regression test and code search | Pending | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-S99-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Document contract suite and strict document checks | Pending | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-S99-001](../spec.md#success-criteria--verification-plan) | WORK-001 | `python3 -m unittest tests.test_task_execution_contract -k retired_stage_00` before the code change | Working tree on `38ed864f` with the new test | FAIL | 2026-11-05T14:53Z, `AssertionError: 'PLAN-PROMOTION' not found in set()`, as expected | no | none |
+| EVD-006 | [VAL-S99-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Lifecycle regression test | Staged change on `38ed864f` | PASS | 2026-11-05T14:53Z, `tests.test_task_execution_contract` 30 tests OK; the Plan form and governance text name `.agents/` and Stages 01, 02 and 05 | yes | EVD-001 |
+| EVD-007 | [VAL-S99-002](../spec.md#success-criteria--verification-plan) | WORK-002 | `validate-markdown-profiles.py --mode strict` with comment-only cells | Working tree on `38ed864f` | FAIL | 2026-11-05T14:53Z, `BODY-CONTRACT-CELL` for `Affected Spec` and `Replacement relation`; visible placeholders were used instead | no | none |
+| EVD-008 | [VAL-S99-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Template and profile checks | Staged change on `38ed864f` | PASS | 2026-11-05T14:55Z, strict Markdown-profile and link checks PASS with the placeholder cells | yes | EVD-002 |
+| EVD-009 | [VAL-S99-003](../spec.md#success-criteria--verification-plan) | WORK-003 | `python3 -m unittest tests.test_document_terminal_contract -k five_current_modes` before the code change | Working tree on `38ed864f` with the new test | FAIL | 2026-11-05T14:56Z, schema accepted modes `evidence` and `generated`, as expected | no | none |
+| EVD-010 | [VAL-S99-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Schema regression test and code search | Staged change on `38ed864f` | PASS | 2026-11-05T14:56Z, `tests.test_document_terminal_contract` 34 tests OK; registry strict PASS; no live `evidence`/`generated` mode, `requirementMemberId` or `Agent Harness Requirements`; the baselined finding stays at registry line 5847 | yes | EVD-003 |
+| EVD-011 | [VAL-S99-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Document contract suite and strict document checks | Staged change on `38ed864f` | PASS | 2026-11-05T15:07Z, document suite 281 tests OK; registry, Markdown-profile, link and lifecycle strict PASS; `python3 scripts/qa.py staged` 12 gates PASS after `ruff format` | yes | EVD-004 |
 
 ## Criterion Acceptance
 

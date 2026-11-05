@@ -28,7 +28,7 @@ sections, lifecycle and relationships; `contracts/` holds the JSON Schemas;
 2. Every `template_source` must exist and every form must be referenced by a
    profile. Add or remove a form together with its profile.
 3. Keep forms free of real values: placeholders stay placeholders and
-   templates leave `artifact_id` empty.
+   templates keep the `{{ARTIFACT_ID}}` placeholder.
 4. A state or field removed from a profile must also leave the templates,
    schemas and the policy that described it.
 5. `docs/98.archive/**` has no profile; do not add one.

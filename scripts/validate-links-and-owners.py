@@ -2295,7 +2295,7 @@ def _stage_document_prefixes(registry: Registry) -> frozenset[str]:
     return frozenset(
         prefix
         for profile in registry.profiles
-        if profile.mode in {"authored", "evidence"}
+        if profile.mode == "authored"
         for prefix in _fixed_directory_prefixes(profile.path_pattern)
         if prefix.startswith("docs/")
     )
