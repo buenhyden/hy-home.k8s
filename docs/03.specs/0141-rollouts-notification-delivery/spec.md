@@ -1,6 +1,6 @@
 ---
 title: "Rollouts Notification Delivery"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -44,8 +44,11 @@ The [Plan](plan.md) orders the work and
 - The Rollouts chart renders `argo-rollouts-notification-configmap` with
   `service.slack` (`token: $slack-token`) and one default subscription that
   sends `on-rollout-completed` and `on-rollout-aborted` to
-  `slack:hy-home-alerts`. The engine's built-in templates and triggers serve
-  both events.
+  `slack:hy-home-alerts`. The controller ships no triggers or templates, so
+  the chart values also define `trigger.on-rollout-completed`,
+  `trigger.on-rollout-aborted`, `template.rollout-completed` and
+  `template.rollout-aborted` after the upstream `manifests/notifications`
+  catalog.
 - `argo-rollouts/argo-rollouts-notification-secret` is created only by an
   ExternalSecret from the `vault-backend` ClusterSecretStore, key
   `platform/notifications`, property `slack_token`, target key `slack-token`,
@@ -59,7 +62,8 @@ The [Plan](plan.md) orders the work and
 
 The Rollouts controller already runs the notifications engine; it reads the
 chart-managed ConfigMap and the named Secret in its own namespace. Moving the
-configuration there needs no new component. The existing OpenBao policy
+configuration there needs no new component, but every trigger and template
+must be defined in that ConfigMap; the engine has no defaults. The existing OpenBao policy
 `eso-read` already allows `secret/data/platform/notifications`, so the
 ExternalSecret reuses the same credential as ArgoCD Notifications.
 

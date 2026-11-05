@@ -1,6 +1,6 @@
 ---
 title: "Argo Notifications Slack Architecture Description"
-version: "1.1.1"
+version: "1.1.2"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -31,7 +31,7 @@ Notification templates, triggers, `service.slack` (token `$slack-token`), `defau
 - **Consumes**:
   - The External Secrets Operator and OpenBao (KV v2 `secret`, key `platform/notifications`, property `slack_token`) through the `vault-backend` Vault-API ClusterSecretStore ([ADR-0041](../decisions/0041-openbao-secret-backend.md))
   - ArgoCD application status events
-  - Rollouts events, sent by the Argo Rollouts controller's own notification engine with its built-in `on-rollout-completed` and `on-rollout-aborted` triggers, the same OpenBao credential through `argo-rollouts-notification-secret`, and the shared channel ([ADR-0054](../decisions/0054-platform-decision-current-state-amendment.md) clause 2)
+  - Rollouts events, sent by the Argo Rollouts controller's own notification engine with the `on-rollout-completed` and `on-rollout-aborted` triggers and templates defined in the Rollouts chart values, the same OpenBao credential through `argo-rollouts-notification-secret`, and the shared channel ([ADR-0054](../decisions/0054-platform-decision-current-state-amendment.md) clause 2)
   - Slack workspace token/channel permission
 - **Does Not Own**:
   - Creating the Slack workspace or channels

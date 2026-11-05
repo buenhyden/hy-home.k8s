@@ -1,6 +1,6 @@
 ---
 title: "Platform Decision Current-State Amendment"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -133,6 +133,12 @@ clause with the source named in Context.
 The amendment applies only to the clauses named in the Decision. The amended
 ADRs keep their original bodies, and their 2026-11-05 clarifications refer to
 this record.
+
+**Current-state clarification (2026-11-05).** Clause 2 calls the
+`on-rollout-completed` and `on-rollout-aborted` triggers "built-in". The
+Rollouts controller ships no triggers or templates; SPEC-0141 defines both
+triggers and their templates in the Rollouts chart values after the upstream
+`manifests/notifications` catalog. The decision is otherwise unchanged.
 
 - **Requirement**: [REQ-0001](../../01.requirements/0001-argo-rollouts-progressive-delivery.md)
   IF-0002; [REQ-0002](../../01.requirements/0002-argo-notifications-slack.md)

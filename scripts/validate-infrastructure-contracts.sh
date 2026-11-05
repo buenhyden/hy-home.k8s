@@ -194,6 +194,10 @@ require_multiline_pattern "notifiers:\\n[[:space:]]+service\\.slack:\\s*\\|\\n[[
 require_multiline_pattern 'subscriptions:\n([[:space:]].*\n)*[[:space:]]+-\s*slack:hy-home-alerts' "$ROLLOUTS_APP"
 require_pattern '-\s*on-rollout-completed' "$ROLLOUTS_APP"
 require_pattern '-\s*on-rollout-aborted' "$ROLLOUTS_APP"
+# The controller ships no built-in triggers or templates; without these keys it sends nothing.
+for key in trigger.on-rollout-completed trigger.on-rollout-aborted template.rollout-completed template.rollout-aborted; do
+  require_pattern "^\\s*${key//./\\.}:\\s*\\|" "$ROLLOUTS_APP"
+done
 require_pattern 'rollouts-notification-secret\.yaml' "$ROOT_DIR/gitops/platform/eso/kustomization.yaml"
 require_pattern 'kind:\s*ExternalSecret' "$ROLLOUTS_NOTIFICATION_SECRET"
 require_pattern 'namespace:\s*argo-rollouts' "$ROLLOUTS_NOTIFICATION_SECRET"

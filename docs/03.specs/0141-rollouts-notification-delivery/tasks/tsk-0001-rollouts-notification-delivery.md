@@ -28,6 +28,8 @@ channel through the Rollouts notification engine. It executes
 - Approval (2026-11-05): the operator's request to handle the open
   Rollouts delivery item approves SPEC-0141 and its Plan after review of the
   draft in `401c5e72`. It authorizes the repository change only.
+- Correction (2026-11-05): after EVD-008, the Spec's Contracts and Core
+  Design now state that the chart values define both triggers and templates.
 
 ## Task Table
 
@@ -35,7 +37,7 @@ channel through the Rollouts notification engine. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RND-001](../spec.md#success-criteria--verification-plan), [VAL-RND-002](../spec.md#success-criteria--verification-plan) | Validator assertions, Rollouts values, ExternalSecret, ArgoCD ConfigMap | platform | in-progress | PASS | EVD-004, EVD-005, EVD-006 |
+| WORK-001 | [VAL-RND-001](../spec.md#success-criteria--verification-plan), [VAL-RND-002](../spec.md#success-criteria--verification-plan) | Validator assertions, Rollouts values, ExternalSecret, ArgoCD ConfigMap | platform | in-progress | FAIL | EVD-004, EVD-005, EVD-006, EVD-008, EVD-009, EVD-010 |
 | WORK-002 | [VAL-RND-003](../spec.md#success-criteria--verification-plan) | REQ-0002, AD-0005, ADR-0012 and runbook text | platform | in-progress | PASS | EVD-007 |
 | WORK-003 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | Operator live observation | operator | ready | NOT_RUN | EVD-003 |
 
@@ -50,12 +52,15 @@ channel through the Rollouts notification engine. It executes
 | EVD-005 | [VAL-RND-001](../spec.md#success-criteria--verification-plan), [VAL-RND-002](../spec.md#success-criteria--verification-plan) | WORK-001 | `bash scripts/validate-infrastructure-contracts.sh` before and after; `helm template` | Working tree on `6793346c` with the new manifests | PASS | Local run, exit 0; negative probes (a `trigger.on-rollout-aborted` key in `argocd-notifications-cm`, a changed `$slack-token` reference) each exit 1; `shellcheck` 0.9.0 clean; `helm template` v3.22.0 renders the values as EVD-006 records | yes | EVD-001 |
 | EVD-006 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | WORK-001 | `helm template` (v3.22.0) of `argo-rollouts` 2.40.9 with the Application values; `kubectl kustomize` of `gitops/platform/eso` and `gitops/platform/argocd` | Working tree on `6793346c` | PASS | Local run; `argo-rollouts-notification-configmap` renders `service.slack` (`token: $slack-token`) and one subscription of `on-rollout-completed` and `on-rollout-aborted` to `slack:hy-home-alerts`; both kustomizations build | yes | none |
 | EVD-007 | [VAL-RND-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Strict document checks | Staged index on `6793346c` | PASS | Local run, every gate PASS; platform-assurance-depth keeps its usual CRD-schema and live-observation DEFER rows; `python3 scripts/qa.py staged` with the validation venv from `.github/requirements/ci-validation.txt` | yes | EVD-002 |
+| EVD-008 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent review of the implementing change | Commit `e6c4c065` | FAIL | gitops-reviewer report: the Rollouts controller ships no triggers or templates, so with only `notifiers` and `subscriptions` nothing is sent; EVD-005 and EVD-006 prove the static contract and render only, not delivery | yes | none |
+| EVD-009 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | WORK-001 | `bash scripts/validate-infrastructure-contracts.sh` after adding trigger and template assertions | Working tree on `e6c4c065` | FAIL | Local run, 2026-11-05T13:20Z, exit 1: `pattern not found ... trigger\.on-rollout-completed`, as expected | no | none |
+| EVD-010 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | WORK-001 | `bash scripts/validate-infrastructure-contracts.sh` and `helm template` (v3.22.0) of `argo-rollouts` 2.40.9 | Working tree on `e6c4c065` with the triggers and templates | PASS | Local run, exit 0; the rendered ConfigMap holds `service.slack`, `subscriptions`, both `trigger.on-rollout-*` and both `template.rollout-*` keys; `shellcheck` clean | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RND-001](../spec.md#success-criteria--verification-plan) | pending | EVD-005, EVD-006 | Operator decision on PASS evidence | operator |
+| [VAL-RND-001](../spec.md#success-criteria--verification-plan) | pending | EVD-008, EVD-010 | Re-review of the fix must resolve EVD-008 | platform |
 | [VAL-RND-002](../spec.md#success-criteria--verification-plan) | pending | EVD-004, EVD-005 | Operator decision on PASS evidence | operator |
 | [VAL-RND-003](../spec.md#success-criteria--verification-plan) | pending | EVD-007 | Operator decision on PASS evidence | operator |
 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | pending | none | After sync, confirm the OpenBao entry holds `slack_token` and observe a Rollouts message (RUN-0004 Procedure 3) | operator |
@@ -86,7 +91,8 @@ channel through the Rollouts notification engine. It executes
 - Live lane: not run. Delivery needs Argo CD to sync the change and the
   OpenBao `platform/notifications` entry to hold `slack_token`; the operator
   owns VAL-RND-004.
-- Review: the independent review is recorded in the implementing change.
-- Residual risk: the built-in Rollouts templates replace the removed custom
-  Slack attachments, so the message layout differs from the ArgoCD ones.
+- Review: EVD-008 found that the first change sent nothing because the
+  controller has no default triggers or templates; the fix defines both
+  (EVD-010) and waits for re-review.
+- Residual risk: delivery is proven only by the operator's live observation.
 - Rollback: revert the implementing commit.
