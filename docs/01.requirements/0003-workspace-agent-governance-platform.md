@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "2.3.4"
+version: "2.3.5"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -146,7 +146,7 @@ Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git
 
 ## Traceability
 
-No governance Spec package is open. SPEC-0143 and SPEC-0142, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
+[SPEC-0144](../03.specs/0144-agents-conformance/spec.md) (agent surface conformance) is the open governance package. SPEC-0143 and SPEC-0142, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
 
 ### Lifecycle Traceability
 
