@@ -25,6 +25,9 @@ channel through the Rollouts notification engine. It executes
 - Decision: [ADR-0054](../../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md)
   clause 2, accepted in `ab5bcd66`.
 - Start: branch `docs/requirements-conformance` at `ab5bcd66`.
+- Approval (2026-11-05): the operator's request to handle the open
+  Rollouts delivery item approves SPEC-0141 and its Plan after review of the
+  draft in `401c5e72`. It authorizes the repository change only.
 
 ## Task Table
 
@@ -32,9 +35,9 @@ channel through the Rollouts notification engine. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RND-001](../spec.md#success-criteria--verification-plan), [VAL-RND-002](../spec.md#success-criteria--verification-plan) | Validator assertions, Rollouts values, ExternalSecret, ArgoCD ConfigMap | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-RND-003](../spec.md#success-criteria--verification-plan) | REQ-0002, AD-0005, ADR-0012 and runbook text | platform | draft | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | Operator live observation | operator | draft | NOT_RUN | EVD-003 |
+| WORK-001 | [VAL-RND-001](../spec.md#success-criteria--verification-plan), [VAL-RND-002](../spec.md#success-criteria--verification-plan) | Validator assertions, Rollouts values, ExternalSecret, ArgoCD ConfigMap | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-RND-003](../spec.md#success-criteria--verification-plan) | REQ-0002, AD-0005, ADR-0012 and runbook text | platform | ready | NOT_RUN | EVD-002 |
+| WORK-003 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | Operator live observation | operator | ready | NOT_RUN | EVD-003 |
 
 ## Task Evidence
 

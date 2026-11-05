@@ -2,7 +2,7 @@
 title: "Rollouts Notification Delivery"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-11-05"
 layer: "specs"
