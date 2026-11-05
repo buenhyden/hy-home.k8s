@@ -1,8 +1,8 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "1.3.0"
+version: "1.4.0"
 type: "sdlc/requirement"
-status: "in-review"
+status: "approved"
 owner: "platform"
 updated: "2026-11-05"
 layer: "requirements"
@@ -76,8 +76,8 @@ and does not substitute a static PASS for unobserved remote or runtime state. Th
 
 ### Product quality measurement boundary
 
-The following scenarios are proposed product acceptance inputs while this
-Requirement remains `in-review`. A target is a decision threshold, not an
+The following scenarios are the product acceptance inputs the operator
+approved with this Requirement on 2026-11-05; a TBD threshold stays open. A target is a decision threshold, not an
 observed result. The public overviews of [ISO/IEC 25010:2023](https://www.iso.org/standard/78176.html),
 [ISO/IEC 25023:2016](https://www.iso.org/standard/35747.html) and
 [ISO/IEC 25030:2019](https://www.iso.org/standard/72116.html) inform the

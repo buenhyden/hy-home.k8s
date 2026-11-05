@@ -1,8 +1,8 @@
 ---
 title: "Governance Decision Current-State Amendment"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-11-05"
 layer: "architecture"

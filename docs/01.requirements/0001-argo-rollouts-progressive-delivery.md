@@ -1,8 +1,8 @@
 ---
 title: "Argo Rollouts Progressive Delivery Requirement Package"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/requirement"
-status: "in-review"
+status: "approved"
 owner: "platform"
 updated: "2026-11-05"
 layer: "requirements"
@@ -17,7 +17,7 @@ This document defines the product requirements for introducing Argo Rollouts to 
 
 ### Current requirement status
 
-This `in-review` package is backfilled against the current contract and becomes current requirement authority on approval.
+This package is backfilled against the current contract; the operator approved it on 2026-11-05 as current requirement authority.
 The repository already declares the Rollouts controller and Dashboard, the AppProject scope, and one reference workload (`apps/adminer`) that uses a canary `Rollout` with a metric-based safety check; the operations runbook exists.
 SPEC-0004 completed the trace chain on 2026-05-18, and its package later left the tree under SPEC-0140 (see Archived Lineage).
 This document owns product intent and acceptance criteria; the linked downstream documents own the implementable contracts.

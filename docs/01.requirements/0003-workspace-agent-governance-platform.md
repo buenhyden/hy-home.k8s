@@ -1,8 +1,8 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "2.2.0"
+version: "2.3.0"
 type: "sdlc/requirement"
-status: "in-review"
+status: "approved"
 owner: "platform"
 updated: "2026-11-05"
 layer: "requirements"
@@ -13,7 +13,7 @@ artifact_id: "REQ-0003"
 
 ## Overview
 
-This `in-review` package states the user requirements for agent execution and document governance; it becomes current requirement authority on approval. The
+This package states the user requirements for agent execution and document governance; the operator approved it on 2026-11-05 as current requirement authority. The
 [common role registry](../../.agents/roles/registry.json) owns the machine truth of roles and skills,
 [Common governance](../../.agents/README.md) owns the human execution rules, and
 [Stage 99](../99.templates/README.md) owns document form. Common governance and

@@ -1,8 +1,8 @@
 ---
 title: "Argo Notifications Slack Requirement Package"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/requirement"
-status: "in-review"
+status: "approved"
 owner: "platform"
 updated: "2026-11-05"
 layer: "requirements"
@@ -17,7 +17,7 @@ This document defines the product requirements for enabling the ArgoCD Notificat
 
 ### Current requirement status
 
-This `in-review` package is backfilled against the current contract and becomes current requirement authority on approval.
+This package is backfilled against the current contract; the operator approved it on 2026-11-05 as current requirement authority.
 The ArgoCD Notifications values, ConfigMap, ExternalSecret, and operations documents already exist in the repository; SPEC-0005 completed the trace chain on 2026-05-18, and its package later left the tree under SPEC-0140 (see Archived Lineage).
 The credential comes from the OpenBao runtime secret backend (ADR-0041) through ESO.
 Rollouts completion and abort templates and triggers are declared, but the current implementation does not yet deliver Rollouts events: the ArgoCD Notifications controller evaluates Applications, and the Rollouts chart's own notification engine stays disabled. Acceptance criterion 05 therefore remains open.
