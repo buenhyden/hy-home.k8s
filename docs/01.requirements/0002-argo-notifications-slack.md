@@ -1,10 +1,10 @@
 ---
 title: "Argo Notifications Slack Requirement Package"
-version: "1.2.1"
+version: "1.2.2"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-06"
 layer: "requirements"
 artifact_id: "REQ-0002"
 ---
@@ -20,7 +20,7 @@ This document defines the product requirements for enabling the ArgoCD Notificat
 This package is backfilled against the current contract; the operator approved it on 2026-11-05 as current requirement authority.
 The ArgoCD Notifications values, ConfigMap, ExternalSecret, and operations documents already exist in the repository; SPEC-0005 completed the trace chain on 2026-05-18, and its package later left the tree under SPEC-0140 (see Archived Lineage).
 The credential comes from the OpenBao runtime secret backend (ADR-0041) through ESO.
-Rollouts completion and abort events are delivered by the Argo Rollouts controller's own notification engine, because the ArgoCD Notifications controller evaluates Applications only ([SPEC-0141](../03.specs/0141-rollouts-notification-delivery/spec.md), ADR-0054). Acceptance criterion 05 needs the operator's live observation.
+Rollouts completion and abort events are delivered by the Argo Rollouts controller's own notification engine, because the ArgoCD Notifications controller evaluates Applications only (SPEC-0141 in [Archived Lineage](#archived-lineage), ADR-0054). The operator observed a Rollouts completion message on 2026-11-06; acceptance criterion 05, an abort event, still needs the operator's live observation.
 This document owns the user value and security boundary of notifications; the linked downstream documents and operations runbooks own the Secret creation procedure and the manifest contract.
 
 ## Vision
@@ -113,8 +113,7 @@ This update does not claim to have observed runtime state or received live notif
 | N/A — Acceptance criterion 05 remains acceptance-only | A Rollouts abort event arrives in the approved Slack channel. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) |
 
 - **AD**: [`../02.architecture/descriptions/0005-argo-notifications-slack.md`](../02.architecture/descriptions/0005-argo-notifications-slack.md)
-- **Spec**: [SPEC-0141](../03.specs/0141-rollouts-notification-delivery/spec.md) — Rollouts notification delivery (open)
-- **Spec**: N/A — SPEC-0005 left the tree; Git history recovers it ([REQ-0002 Archived Lineage](./0002-argo-notifications-slack.md#archived-lineage))
+- **Spec**: N/A — SPEC-0141 and SPEC-0005 left the tree; Git history recovers them ([REQ-0002 Archived Lineage](./0002-argo-notifications-slack.md#archived-lineage))
 - **ADR**: [`../02.architecture/decisions/0012-argo-notifications-slack.md`](../02.architecture/decisions/0012-argo-notifications-slack.md)
 - **ADR**: [`../02.architecture/decisions/0041-openbao-secret-backend.md`](../02.architecture/decisions/0041-openbao-secret-backend.md)
 - **Requirement**: [`./0001-argo-rollouts-progressive-delivery.md`](./0001-argo-rollouts-progressive-delivery.md) — Rollouts event source
@@ -122,8 +121,9 @@ This update does not claim to have observed runtime state or received live notif
 
 ### Archived Lineage
 
-These documents were deleted from `docs/98.archive/` under SPEC-0140 and are recovered with `git show 69445fca:<path>`. Paths below are the archive paths at that commit; a completed Spec path is its package directory (`spec.md`, `plan.md`, `tasks/`).
+The SPEC-0005 documents were deleted from `docs/98.archive/` under SPEC-0140 and are recovered with `git show 69445fca:<path>`; SPEC-0141 names its own recovery commit. Paths below are the archive paths at that commit; a completed Spec path is its package directory (`spec.md`, `plan.md`, `tasks/`).
 
 | Source | Kind | Summary | Original path |
 | --- | --- | --- | --- |
 | SPEC-0005 | completed spec | Defined the repo-backed contract for Slack notifications through ArgoCD Notifications: Helm values, Notifications ConfigMap, Vault-backed ExternalSecret, default subscriptions and per-application opt-in annotations. Completed against the static contract; Slack token bootstrap, Vault writes and live sends stayed human-approved runtime validation. | `docs/98.archive/completed/03.specs/0005-argo-notifications-slack/` |
+| SPEC-0141 | completed spec | Delivered Argo Rollouts completion and abort events to `#hy-home-alerts` through the Rollouts controller's own notification engine: chart-defined Slack service, triggers, templates and subscription, a dedicated `argo-rollouts-notification-secret` ExternalSecret from OpenBao `platform/notifications`, and validator assertions. All four criteria accepted on 2026-11-06 after the operator observed a completion message; no durable contract beyond ADR-0054 clause 2. Recover with `git show fb8b978b:<path>`. | `docs/03.specs/0141-rollouts-notification-delivery/` |
