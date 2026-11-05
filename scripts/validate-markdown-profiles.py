@@ -199,21 +199,12 @@ def _native_surface_owner(
             "GitHub-native surface was claimed by document profile "
             f"{selected.profile_id}: {path.as_posix()}"
         )
-    try:
-        profile = classify_path(registry, path)
-    except DocumentContractError:
-        return None
-    if (
-        profile.mode == "classification-only"
-        and profile.frontmatter.mode == "not-applicable"
-    ):
-        return "registry-profile", profile
     return None
 
 
-def _is_native_candidate_path(registry: Any, path: PurePosixPath) -> bool:
+def _is_native_candidate_path(path: PurePosixPath) -> bool:
     parts = path.parts
-    if (
+    return (
         len(parts) == 3
         and parts[:2]
         in {
@@ -221,20 +212,6 @@ def _is_native_candidate_path(registry: Any, path: PurePosixPath) -> bool:
             (".github", "workflows"),
         }
         and path.suffix in {".yml", ".yaml"}
-    ):
-        return True
-    native_basenames = {
-        profile.template.name.replace(".template.", ".")
-        for profile in registry.profiles
-        if profile.template is not None
-        and profile.mode == "classification-only"
-        and profile.frontmatter.mode == "not-applicable"
-    }
-    return (
-        len(parts) >= 2
-        and parts[0] == "docs"
-        and parts[1] == "03.specs"
-        and path.name in native_basenames
     )
 
 
@@ -251,7 +228,7 @@ def _native_surface_diagnostics(
     )
     paths: set[PurePosixPath] = set()
     for path in indexed_paths:
-        if not _is_native_candidate_path(registry, path):
+        if not _is_native_candidate_path(path):
             continue
         if _native_surface_owner(registry, path) is None:
             raise ValueError(
@@ -274,34 +251,22 @@ def _native_surface_diagnostics(
         selection = _native_surface_owner(registry, path)
         if selection is None:
             raise ValueError(f"native ownership disappeared: {path.as_posix()}")
-        owner, profile = selection
+        owner, _ = selection
         source = read_repository_text(root, path)
         if not _has_exact_leading_sdlc_frontmatter(source):
             continue
-        if profile is None:
-            diagnostics.append(
-                Diagnostic(
-                    rule_id="FM-FORBIDDEN",
-                    path=path,
-                    profile=owner,
-                    expected=(
-                        "GitHub-native YAML without the five-key SDLC "
-                        "frontmatter envelope"
-                    ),
-                    actual="exact leading SDLC five-key block",
-                    owner=OWNER,
-                )
+        diagnostics.append(
+            Diagnostic(
+                rule_id="FM-FORBIDDEN",
+                path=path,
+                profile=owner,
+                expected=(
+                    "GitHub-native YAML without the five-key SDLC frontmatter envelope"
+                ),
+                actual="exact leading SDLC five-key block",
+                owner=OWNER,
             )
-        else:
-            diagnostics.append(
-                _diagnostic(
-                    "FM-FORBIDDEN",
-                    path,
-                    profile,
-                    "native syntax without the five-key SDLC frontmatter envelope",
-                    "exact leading SDLC five-key block",
-                )
-            )
+        )
     return diagnostics
 
 
@@ -1405,18 +1370,6 @@ def _frontmatter_body(
     frontmatter_schema: Mapping[str, Any] | None = None,
 ) -> str:
     contract = profile.frontmatter
-    if contract.mode == "not-applicable":
-        if _has_exact_leading_sdlc_frontmatter(text):
-            diagnostics.append(
-                _diagnostic(
-                    "FM-FORBIDDEN",
-                    path,
-                    profile,
-                    "native syntax without the five-key SDLC frontmatter envelope",
-                    "exact leading SDLC five-key block",
-                )
-            )
-        return text
     if contract.mode == "forbidden":
         if text.startswith("---\n"):
             rule = (
@@ -1578,12 +1531,6 @@ def _body_diagnostics(
     body: str,
 ) -> list[Diagnostic]:
     scan = scan_headings(body)
-    if (
-        profile.frontmatter.mode == "not-applicable"
-        and not profile.headings.required
-        and not profile.headings.allowed
-    ):
-        return []
     readme = profile.profile_class == "readme"
     diagnostics: list[Diagnostic] = []
     if scan.unclosed_fence:

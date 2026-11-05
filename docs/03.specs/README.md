@@ -77,7 +77,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나며, 완료된 package는 
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다.
 
-현재 진행 중인 package는 없다. 마지막으로 완료된 SPEC-0140은
+마지막으로 완료된 SPEC-0143과 그 이전 package는
 [REQ-0003 Archived Lineage](../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage)가 요약한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 Git history에서 복구한다([Archive 안내](../98.archive/README.md#usage)).

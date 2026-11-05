@@ -583,12 +583,6 @@ def canonical_markdown_owns_generic_residue(path: pathlib.Path) -> bool:
         return False
     if profile.placeholder_policy != "forbidden":
         return False
-    if (
-        profile.frontmatter.mode == "not-applicable"
-        and not profile.headings.required
-        and not profile.headings.allowed
-    ):
-        return False
     return bool(profile.headings.required or profile.headings.allowed)
 
 

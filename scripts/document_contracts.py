@@ -86,7 +86,7 @@ class Diagnostic:
 
 @dataclass(frozen=True)
 class FrontmatterContract:
-    mode: Literal["required", "forbidden", "not-applicable"]
+    mode: Literal["required", "forbidden"]
     required: tuple[str, ...]
     allowed: tuple[str, ...]
     order: tuple[str, ...]
@@ -695,8 +695,6 @@ class DocumentProfile:
         "template",
         "native",
         "non-target",
-        "frontmatter-free",
-        "classification-only",
     ]
     source_profile_ids: tuple[str, ...]
     placeholder_policy: Literal["forbidden", "template-only"]
