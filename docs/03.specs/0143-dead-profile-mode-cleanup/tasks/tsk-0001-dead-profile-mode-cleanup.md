@@ -1,6 +1,6 @@
 ---
 title: "Dead Profile Mode Cleanup"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -21,6 +21,8 @@ the validator branches that only they reach. It executes
 
 - Request (2026-11-06): clean up the dead modes, the follow-up SPEC-0142
   left.
+- Approval (2026-11-06): the operator approved SPEC-0143 and its Plan after
+  review of the draft in `efba0179`, and asked for a pull request and merge.
 - Start: branch `refactor/dead-profile-modes` from `main` at `0b00f3a3`.
 
 ## Task Table
@@ -29,8 +31,8 @@ the validator branches that only they reach. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-DPM-001](../spec.md#success-criteria--verification-plan) | Type regression test and narrowed `Literal` types | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-DPM-002](../spec.md#success-criteria--verification-plan) | Unreachable branches and helper code | platform | draft | NOT_RUN | EVD-002 |
+| WORK-001 | [VAL-DPM-001](../spec.md#success-criteria--verification-plan) | Type regression test and narrowed `Literal` types | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-DPM-002](../spec.md#success-criteria--verification-plan) | Unreachable branches and helper code | platform | ready | NOT_RUN | EVD-002 |
 
 ## Task Evidence
 
