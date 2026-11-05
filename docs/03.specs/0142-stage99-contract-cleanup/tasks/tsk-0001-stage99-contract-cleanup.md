@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Contract Cleanup"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-05"
@@ -29,6 +29,8 @@ executes [SPEC-0142](../spec.md) through [WORK-001–004](../plan.md#work-breakd
   authorizes the repository change only.
 - Correction (2026-11-05): the ADR form uses visible placeholders instead
   of comment-only cells (EVD-007); the Spec's Contracts state it.
+- Acceptance (2026-11-06): the operator accepted VAL-S99-001 to VAL-S99-004
+  and asked for a push and a pull request.
 
 ## Task Table
 
@@ -36,10 +38,10 @@ executes [SPEC-0142](../spec.md) through [WORK-001–004](../plan.md#work-breakd
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-S99-001](../spec.md#success-criteria--verification-plan) | Stage 00 promotion target and wording | platform | in-progress | PASS | EVD-005, EVD-006 |
-| WORK-002 | [VAL-S99-002](../spec.md#success-criteria--verification-plan) | ADR form trace cells | platform | in-progress | PASS | EVD-007, EVD-008 |
-| WORK-003 | [VAL-S99-003](../spec.md#success-criteria--verification-plan) | Unused modes, branches, definition and language entry | platform | in-progress | PASS | EVD-009, EVD-010 |
-| WORK-004 | [VAL-S99-004](../spec.md#success-criteria--verification-plan) | Stage 99 README and AGENTS prose | platform | in-progress | PASS | EVD-011 |
+| WORK-001 | [VAL-S99-001](../spec.md#success-criteria--verification-plan) | Stage 00 promotion target and wording | platform | completed | PASS | EVD-005, EVD-006 |
+| WORK-002 | [VAL-S99-002](../spec.md#success-criteria--verification-plan) | ADR form trace cells | platform | completed | PASS | EVD-007, EVD-008 |
+| WORK-003 | [VAL-S99-003](../spec.md#success-criteria--verification-plan) | Unused modes, branches, definition and language entry | platform | completed | PASS | EVD-009, EVD-010 |
+| WORK-004 | [VAL-S99-004](../spec.md#success-criteria--verification-plan) | Stage 99 README and AGENTS prose | platform | completed | PASS | EVD-011 |
 
 ## Task Evidence
 
@@ -62,10 +64,10 @@ executes [SPEC-0142](../spec.md) through [WORK-001–004](../plan.md#work-breakd
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-S99-001](../spec.md#success-criteria--verification-plan) | pending | EVD-006 | Operator decision on PASS evidence | operator |
-| [VAL-S99-002](../spec.md#success-criteria--verification-plan) | pending | EVD-008 | Operator decision on PASS evidence | operator |
-| [VAL-S99-003](../spec.md#success-criteria--verification-plan) | pending | EVD-010 | Operator decision on PASS evidence | operator |
-| [VAL-S99-004](../spec.md#success-criteria--verification-plan) | pending | EVD-011, EVD-012 | Operator decision on PASS evidence | operator |
+| [VAL-S99-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Operator accepted on 2026-11-06 | platform |
+| [VAL-S99-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Operator accepted on 2026-11-06 | platform |
+| [VAL-S99-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-010 | Operator accepted on 2026-11-06 | platform |
+| [VAL-S99-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-011, EVD-012 | Operator accepted on 2026-11-06 | platform |
 
 ## Approval and Safety Boundaries
 
@@ -88,8 +90,8 @@ executes [SPEC-0142](../spec.md) through [WORK-001–004](../plan.md#work-breakd
 
 - Repository-static lanes: PASS (EVD-006, EVD-008, EVD-010, EVD-011); each
   regression failed before its change (EVD-005, EVD-009).
-- Review: EVD-012 passed; its two cosmetic findings are fixed. The rows stay
-  `in-progress` until the operator accepts the criteria (Stage 03 rule 6).
+- Review: EVD-012 passed; its two cosmetic findings are fixed. The operator
+  accepted all four criteria on 2026-11-06.
 - Follow-up outside this scope: the `Literal` in `scripts/document_contracts.py`
   and two checks in `scripts/validate-markdown-profiles.py` still name the
   modes `frontmatter-free` and `classification-only`, which no profile or

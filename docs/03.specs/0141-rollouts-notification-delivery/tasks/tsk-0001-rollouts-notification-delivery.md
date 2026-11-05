@@ -1,6 +1,6 @@
 ---
 title: "Rollouts Notification Delivery"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-05"
@@ -30,6 +30,9 @@ channel through the Rollouts notification engine. It executes
   draft in `401c5e72`. It authorizes the repository change only.
 - Correction (2026-11-05): after EVD-008, the Spec's Contracts and Core
   Design now state that the chart values define both triggers and templates.
+- Acceptance (2026-11-06): the operator accepted VAL-RND-001 to VAL-RND-003
+  and asked to observe the live Slack delivery, which needs the change on
+  `main` first.
 
 ## Task Table
 
@@ -61,9 +64,9 @@ channel through the Rollouts notification engine. It executes
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RND-001](../spec.md#success-criteria--verification-plan) | pending | EVD-010, EVD-011 | Operator decision on PASS evidence | operator |
-| [VAL-RND-002](../spec.md#success-criteria--verification-plan) | pending | EVD-004, EVD-005 | Operator decision on PASS evidence | operator |
-| [VAL-RND-003](../spec.md#success-criteria--verification-plan) | pending | EVD-007 | Operator decision on PASS evidence | operator |
+| [VAL-RND-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-011 | Operator accepted on 2026-11-06 | platform |
+| [VAL-RND-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-004, EVD-005 | Operator accepted on 2026-11-06 | platform |
+| [VAL-RND-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-007 | Operator accepted on 2026-11-06 | platform |
 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | pending | none | After sync, confirm the OpenBao entry holds `slack_token` and observe a Rollouts message (RUN-0004 Procedure 3) | operator |
 
 ## Approval and Safety Boundaries
@@ -89,6 +92,8 @@ channel through the Rollouts notification engine. It executes
 
 - Repository-static lanes: PASS (EVD-005 to EVD-007). The validator was
   changed first and failed on the old manifests (EVD-004).
+- Acceptance: the operator accepted VAL-RND-001 to VAL-RND-003 on
+  2026-11-06; VAL-RND-004 waits for the live observation.
 - Live lane: not run. Delivery needs Argo CD to sync the change and the
   OpenBao `platform/notifications` entry to hold `slack_token`; the operator
   owns VAL-RND-004.
