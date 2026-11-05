@@ -24,6 +24,9 @@ executes [SPEC-0142](../spec.md) through [WORK-001–004](../plan.md#work-breakd
 - Operator choice (2026-11-05): commit the Stage 05 and Stage 90 work first
   (`c1bbde2e`, `90c15f94`) and take the low-risk cleanup scope.
 - Start: branch `docs/requirements-conformance` at `90c15f94`.
+- Approval (2026-11-05): the operator's choice of the low-risk cleanup scope
+  approves SPEC-0142 and its Plan after review of the draft in `6442183c`. It
+  authorizes the repository change only.
 
 ## Task Table
 
@@ -31,10 +34,10 @@ executes [SPEC-0142](../spec.md) through [WORK-001–004](../plan.md#work-breakd
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-S99-001](../spec.md#success-criteria--verification-plan) | Stage 00 promotion target and wording | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-S99-002](../spec.md#success-criteria--verification-plan) | ADR form trace cells | platform | draft | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-S99-003](../spec.md#success-criteria--verification-plan) | Unused modes, branches, definition and language entry | platform | draft | NOT_RUN | EVD-003 |
-| WORK-004 | [VAL-S99-004](../spec.md#success-criteria--verification-plan) | Stage 99 README and AGENTS prose | platform | draft | NOT_RUN | EVD-004 |
+| WORK-001 | [VAL-S99-001](../spec.md#success-criteria--verification-plan) | Stage 00 promotion target and wording | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-S99-002](../spec.md#success-criteria--verification-plan) | ADR form trace cells | platform | ready | NOT_RUN | EVD-002 |
+| WORK-003 | [VAL-S99-003](../spec.md#success-criteria--verification-plan) | Unused modes, branches, definition and language entry | platform | ready | NOT_RUN | EVD-003 |
+| WORK-004 | [VAL-S99-004](../spec.md#success-criteria--verification-plan) | Stage 99 README and AGENTS prose | platform | ready | NOT_RUN | EVD-004 |
 
 ## Task Evidence
 

@@ -2,7 +2,7 @@
 title: "Stage 99 Contract Cleanup Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-11-05"
 layer: "specs"
