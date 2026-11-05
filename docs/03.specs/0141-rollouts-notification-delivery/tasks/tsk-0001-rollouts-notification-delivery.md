@@ -1,6 +1,6 @@
 ---
 title: "Rollouts Notification Delivery"
-version: "0.3.1"
+version: "0.3.2"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -61,6 +61,7 @@ channel through the Rollouts notification engine. It executes
 | EVD-011 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent review of the implementing change | Commit `d708b826` | PASS | gitops-reviewer re-review: both triggers map to the `RolloutCompleted` and `RolloutAborted` event reasons, the templates use only fields of the Rollouts context, the attachments JSON is valid, and the rendered ConfigMap sends both events; two wording defects fixed in the closing change | yes | EVD-008 |
 | EVD-012 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | WORK-003 | Operator Slack observation | `main` at `04e23039` (PR #207 merged 2026-11-05T15:41Z), context `k3d-hyhome` | DEFER | 2026-11-05T15:43Z read-only `kubectl`: Argo CD Applications `platform-rollouts` and `platform-eso-config` report sync `Unknown` with `ComparisonError`; the repo server cannot resolve `github.com` or fetch the `argo-helm` chart (`lookup github.com on 10.43.0.10:53: server misbehaving`); CoreDNS forwards to the node `/etc/resolv.conf` while the host resolves `github.com`; the change is not deployed, so no Rollouts message can be sent. Resume after cluster DNS egress is restored and Argo CD syncs; next owner: operator | yes | none |
 | EVD-013 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | WORK-003 | Operator Slack observation | `main` at `04e23039`, context `k3d-hyhome`, after the operator restarted `k3d-hyhome-agent-0` | DEFER | 2026-11-05T16:01Z read-only `kubectl`: node DNS resolves `github.com` again; Argo CD synced `platform-rollouts` and `platform-eso-config`; `argo-rollouts-notification-configmap` holds `service.slack`, `subscriptions`, both `trigger.on-rollout-*` and both `template.rollout-*` keys. Delivery is still blocked: ClusterSecretStore `vault-backend` reports `Ready=False InvalidProviderConfig` since 2026-11-02T04:34Z, so every ExternalSecret, including `argo-rollouts-notification-secret`, reports `SecretSyncedError`. Resume after the store recovers (RUN-0002); next owner: operator | yes | none |
+| EVD-014 | [VAL-RND-004](../spec.md#success-criteria--verification-plan) | WORK-003 | Operator Slack observation | `main` at `c26f9b14`, context `k3d-hyhome`, after the operator unsealed OpenBao | DEFER | 2026-11-05T16:13Z: OpenBao had been sealed since its 2026-11-02T07:22Z restart, so the external Traefik dropped its route and the ESO login got a 404; after the operator unsealed it, `vault-backend` reports `Ready=True` and all seven ExternalSecrets, including `argo-rollouts-notification-secret`, report `SecretSynced`. 2026-11-05T16:20Z: the operator patched a test annotation onto the `apps/adminer` pod template; revision 6 passed its canary steps and analysis, and at 16:23:40Z the controller fired `on-rollout-completed` to `slack:hy-home-alerts`, but Slack rejected it with `invalid_auth`; `argocd-notifications-controller` reports the same `invalid_auth` with the same `platform/notifications` `slack_token`. The trigger, template and subscription work; the token is not valid. Resume after the operator replaces `slack_token` in OpenBao; next owner: operator | yes | none |
 
 ## Criterion Acceptance
 
@@ -69,7 +70,7 @@ channel through the Rollouts notification engine. It executes
 | [VAL-RND-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-011 | Operator accepted on 2026-11-06 | platform |
 | [VAL-RND-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-004, EVD-005 | Operator accepted on 2026-11-06 | platform |
 | [VAL-RND-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-007 | Operator accepted on 2026-11-06 | platform |
-| [VAL-RND-004](../spec.md#success-criteria--verification-plan) | pending | none | Recover the `vault-backend` ClusterSecretStore (EVD-013, RUN-0002), confirm `argo-rollouts-notification-secret` is Ready and observe a Rollouts message (RUN-0004 Procedure 3) | operator |
+| [VAL-RND-004](../spec.md#success-criteria--verification-plan) | pending | none | Replace the invalid Slack `slack_token` in OpenBao `platform/notifications` (EVD-014), then observe a Rollouts message (RUN-0004 Procedure 3) | operator |
 
 ## Approval and Safety Boundaries
 
@@ -96,13 +97,10 @@ channel through the Rollouts notification engine. It executes
   changed first and failed on the old manifests (EVD-004).
 - Acceptance: the operator accepted VAL-RND-001 to VAL-RND-003 on
   2026-11-06; VAL-RND-004 waits for the live observation.
-- Live lane: DEFER (EVD-012, EVD-013). After the operator restored node DNS,
-  Argo CD synced the change, but the `vault-backend` ClusterSecretStore has
-  been failing since 2026-11-02, so no Slack token reaches either
-  notification engine; RUN-0002 owns that recovery.
-- Live lane before the merge: not run. Delivery needs Argo CD to sync the change and the
-  OpenBao `platform/notifications` entry to hold `slack_token`; the operator
-  owns VAL-RND-004.
+- Live lane: DEFER (EVD-012 to EVD-014). Node DNS and the sealed OpenBao
+  were recovered; a test Rollout then fired `on-rollout-completed`, but
+  Slack rejected the shared `slack_token` with `invalid_auth`, as it does for
+  Argo CD Notifications. The operator owns replacing the token.
 - Review: EVD-008 found that the first change sent nothing because the
   controller has no default triggers or templates; the fix defines both
   (EVD-010), and the re-review passed (EVD-011).
