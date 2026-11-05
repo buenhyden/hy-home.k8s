@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts Progressive Delivery Architecture Description"
-version: "1.1.0"
+version: "1.1.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -96,7 +96,7 @@ The platform owns the controller install, dashboard access, AppProject permissio
 - **Model/Provider Strategy**: Agents may update docs and manifests only through repo-backed GitOps flow.
 - **Tooling Boundary**: Direct `kubectl apply` or live promotion is not allowed without explicit human approval.
 - **Memory & Context Strategy**: durable change evidence stays in Git history and the owning Requirement's Archived Lineage, and common policy refers to `.agents/governance/`.
-- **Guardrail Boundary**: Rollouts chart notifications stay disabled (`notifications.enabled: false`); notifications are ArgoCD Notifications, owned by [AD-0005](./0005-argo-notifications-slack.md).
+- **Guardrail Boundary**: the Rollouts controller sends only its completion and abort events to the shared Slack channel; the notification architecture is owned by [AD-0005](./0005-argo-notifications-slack.md).
 - **Latency / Cost Budget**: Not applicable.
 
 ## Traceability

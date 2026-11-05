@@ -63,38 +63,6 @@ data:
           }]
         }]
 
-  template.rollout-completed: |
-    slack:
-      attachments: |
-        [{
-          "title": "Rollout {{.rollout.metadata.name}} completed",
-          "title_link": "{{.context.argocdUrl}}",
-          "color": "#18be52",
-          "fields": [{
-            "title": "Namespace",
-            "value": "{{.rollout.metadata.namespace}}",
-            "short": true
-          }, {
-            "title": "Image",
-            "value": "{{(index .rollout.spec.template.spec.containers 0).image}}",
-            "short": true
-          }]
-        }]
-
-  template.rollout-aborted: |
-    slack:
-      attachments: |
-        [{
-          "title": "Rollout {{.rollout.metadata.name}} aborted",
-          "title_link": "{{.context.argocdUrl}}",
-          "color": "#e96d76",
-          "fields": [{
-            "title": "Namespace",
-            "value": "{{.rollout.metadata.namespace}}",
-            "short": true
-          }]
-        }]
-
   # ── Triggers ────────────────────────────────────────────────────────────
   trigger.on-deployed: |
     - description: Notify when app is successfully deployed
@@ -115,18 +83,6 @@ data:
         - app-sync-failed
       oncePer: app.status.operationState?.syncResult?.revision
       when: app.status.operationState.phase in ['Error', 'Failed']
-
-  trigger.on-rollout-completed: |
-    - description: Notify when rollout completes
-      send:
-        - rollout-completed
-      when: rollout.status.phase == 'Healthy'
-
-  trigger.on-rollout-aborted: |
-    - description: Notify when rollout is aborted
-      send:
-        - rollout-aborted
-      when: rollout.status.phase == 'Degraded'
 
   # ── Default subscriptions ─────────────────────────────────────────────
   defaultTriggers: |

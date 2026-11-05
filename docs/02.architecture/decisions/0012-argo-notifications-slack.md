@@ -64,9 +64,9 @@ Slack token bootstrap is performed only as a human-approved external OpenBao tas
 Decision. (1) The secret backend named as Vault is OpenBao, reached through the
 `vault-backend` ClusterSecretStore under [ADR-0041](./0041-openbao-secret-backend.md).
 (2) Slack authenticates with an app token (`service.slack`, token `$slack-token`),
-not a webhook. (3) Rollouts events are not delivered: the Rollouts chart's
-`notifications.enabled` stays `false`, so the `rollout-*` templates and triggers
-are declared only. (4) The implemented `subscriptions` block in
+not a webhook. (3) Rollouts events are not evaluated by the ArgoCD controller; the Argo
+Rollouts controller's own notification engine sends them under ADR-0054
+clause 2, and the `rollout-*` keys left this ConfigMap. (4) The implemented `subscriptions` block in
 [`argocd-notifications-cm.yaml`](../../../gitops/platform/argocd/argocd-notifications-cm.yaml)
 subscribes all apps to `on-health-degraded`, `on-sync-failed` and also
 `on-deployed` on `slack:hy-home-alerts`. The default subscription sending

@@ -1,6 +1,6 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.8.6"
+version: "1.8.7"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -159,7 +159,7 @@ flowchart LR
 | C4 | External Secrets Operator | Syncs secrets from OpenBao through `vault-backend` | External Secrets chart, `external-secrets` | [ESO](../../../gitops/platform/eso/) |
 | C5 | Istio istiod and CNI | Mesh control plane for the `traefik` and `apps` namespaces; trace provider `alloy-external:4317` | Istio charts, `istio-system` | [istiod](../../../gitops/apps/root/platform-istiod-app.yaml) |
 | C6 | Kiali | Mesh UI backed by the external Prometheus, Grafana and Tempo | Kiali operator, `istio-system` | [Application](../../../gitops/apps/root/platform-kiali-app.yaml), [Kiali](../../../gitops/platform/kiali/) |
-| C7 | Argo Rollouts | Canary steps with Istio traffic routing and Prometheus analysis; its chart notifications are disabled, so `rollout-*` triggers are not delivered | Argo Rollouts chart, `argo-rollouts` | [Application](../../../gitops/apps/root/platform-rollouts-app.yaml) |
+| C7 | Argo Rollouts | Canary steps with Istio traffic routing and Prometheus analysis; its own notification engine sends completion and abort events to the shared Slack channel | Argo Rollouts chart, `argo-rollouts` | [Application](../../../gitops/apps/root/platform-rollouts-app.yaml) |
 | C8 | Headlamp | Cluster UI | Headlamp chart, `headlamp` | [Headlamp](../../../gitops/platform/headlamp/) |
 | C9 | Alloy and kube-state-metrics | Collect metrics and logs and send them to the external backend | Kustomize manifests, `monitoring` | [monitoring](../../../gitops/platform/monitoring/) |
 | C10 | Workloads | Application workloads onboarded by the ApplicationSet, currently Adminer | Kustomize per workload, `apps` | [workloads](../../../gitops/workloads/) |

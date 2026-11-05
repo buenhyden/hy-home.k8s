@@ -1,6 +1,6 @@
 ---
 title: "Argo Notifications Slack Architecture Description"
-version: "1.1.0"
+version: "1.1.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -31,7 +31,7 @@ Notification templates, triggers, `service.slack` (token `$slack-token`), `defau
 - **Consumes**:
   - The External Secrets Operator and OpenBao (KV v2 `secret`, key `platform/notifications`, property `slack_token`) through the `vault-backend` Vault-API ClusterSecretStore ([ADR-0041](../decisions/0041-openbao-secret-backend.md))
   - ArgoCD application status events
-  - Rollouts event template context: the `rollout-*` triggers are declared but not delivered, because the Rollouts chart keeps `notifications.enabled: false`
+  - Rollouts events, sent by the Argo Rollouts controller's own notification engine with its built-in `on-rollout-completed` and `on-rollout-aborted` triggers, the same OpenBao credential through `argo-rollouts-notification-secret`, and the shared channel ([ADR-0054](../decisions/0054-platform-decision-current-state-amendment.md) clause 2)
   - Slack workspace token/channel permission
 - **Does Not Own**:
   - Creating the Slack workspace or channels
@@ -61,7 +61,7 @@ Notification templates, triggers, `service.slack` (token `$slack-token`), `defau
 - The ConfigMap and ExternalSecret are included through `gitops/platform/argocd/kustomization.yaml`.
 The current sources are the [Notifications ConfigMap](../../../gitops/platform/argocd/argocd-notifications-cm.yaml) and
 the [ExternalSecret reference](../../../gitops/platform/argocd/argocd-notifications-secret.yaml).
-ArgoCD Notifications is separate from the Rollouts Helm chart `notifications.enabled` setting, which remains disabled; a Rollouts event template therefore guarantees neither runtime event context nor delivery.
+ArgoCD Notifications evaluates Applications only, so Rollouts events are configured in the Rollouts chart's `notifications` values and the [Rollouts notification ExternalSecret](../../../gitops/platform/eso/rollouts-notification-secret.yaml), not in this ConfigMap.
 
 ## Data Architecture
 
@@ -115,7 +115,7 @@ ArgoCD Notifications is separate from the Rollouts Helm chart `notifications.ena
 | N/A — [Acceptance criterion 02](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Credential sync evidence from the ExternalSecret Ready state | [ADR 0012](../decisions/0012-argo-notifications-slack.md) |
 | N/A — [Acceptance criterion 03](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Human-approved live receipt evidence for sync failure notifications | [ADR 0012](../decisions/0012-argo-notifications-slack.md) |
 | N/A — [Acceptance criterion 04](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Human-approved live receipt evidence for health degraded notifications | [ADR 0012](../decisions/0012-argo-notifications-slack.md) |
-| N/A — [Acceptance criterion 05](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Open: Rollouts abort notifications are declared but not delivered while the Rollouts chart keeps `notifications.enabled: false` ([REQ-0002](../../01.requirements/0002-argo-notifications-slack.md)) | [ADR 0012](../decisions/0012-argo-notifications-slack.md) |
+| N/A — [Acceptance criterion 05](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Human-approved live receipt evidence for Rollouts abort notifications sent by the Rollouts notification engine ([REQ-0002](../../01.requirements/0002-argo-notifications-slack.md)) | [ADR 0012](../decisions/0012-argo-notifications-slack.md) |
 
 - **Requirement**: [`../../01.requirements/0002-argo-notifications-slack.md`](../../01.requirements/0002-argo-notifications-slack.md)
 - **Spec**: N/A — SPEC-0005 left the tree; Git history recovers it ([REQ-0002 Archived Lineage](../../01.requirements/0002-argo-notifications-slack.md#archived-lineage))

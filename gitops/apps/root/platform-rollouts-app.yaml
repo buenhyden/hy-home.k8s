@@ -81,8 +81,20 @@ spec:
             limits:
               cpu: 200m
               memory: 128Mi
+        # Rollouts events are sent by this controller's own notification
+        # engine with its built-in on-rollout-* triggers and templates
+        # (ADR-0054 clause 2). argo-rollouts-notification-secret comes from
+        # the ExternalSecret in gitops/platform/eso/.
         notifications:
-          enabled: false
+          notifiers:
+            service.slack: |
+              token: $slack-token
+          subscriptions:
+            - recipients:
+                - slack:hy-home-alerts
+              triggers:
+                - on-rollout-completed
+                - on-rollout-aborted
         serviceAccount:
           create: true
           name: argo-rollouts

@@ -1,6 +1,6 @@
 ---
 title: "Argo Notifications Slack Requirement Package"
-version: "1.2.0"
+version: "1.2.1"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -20,7 +20,7 @@ This document defines the product requirements for enabling the ArgoCD Notificat
 This package is backfilled against the current contract; the operator approved it on 2026-11-05 as current requirement authority.
 The ArgoCD Notifications values, ConfigMap, ExternalSecret, and operations documents already exist in the repository; SPEC-0005 completed the trace chain on 2026-05-18, and its package later left the tree under SPEC-0140 (see Archived Lineage).
 The credential comes from the OpenBao runtime secret backend (ADR-0041) through ESO.
-Rollouts completion and abort templates and triggers are declared, but the current implementation does not yet deliver Rollouts events: the ArgoCD Notifications controller evaluates Applications, and the Rollouts chart's own notification engine stays disabled. Acceptance criterion 05 therefore remains open.
+Rollouts completion and abort events are delivered by the Argo Rollouts controller's own notification engine, because the ArgoCD Notifications controller evaluates Applications only ([SPEC-0141](../03.specs/0141-rollouts-notification-delivery/spec.md), ADR-0054). Acceptance criterion 05 needs the operator's live observation.
 This document owns the user value and security boundary of notifications; the linked downstream documents and operations runbooks own the Secret creation procedure and the manifest contract.
 
 ## Vision
@@ -61,7 +61,7 @@ The repository has notification settings, but their presence alone does not guar
 - **Acceptance criterion 02**: An operator can check the sync state of the notification credential held in the runtime secret backend. Evidence: `argocd-notifications-secret` ExternalSecret `Ready=True`, synced from the OpenBao backend.
 - **Acceptance criterion 03**: An operator can notice a sync failure in Slack. Evidence: receipt of a sync failure event in Slack is confirmed.
 - **Acceptance criterion 04**: An operator can notice health degradation in Slack. Evidence: receipt of a health degraded event in Slack is confirmed.
-- **Acceptance criterion 05**: An operator can notice a Rollouts abort in Slack. Evidence: receipt of a Rollouts abort event in Slack is confirmed. Open: the current implementation has no Rollouts event delivery path.
+- **Acceptance criterion 05**: An operator can notice a Rollouts abort in Slack. Evidence: receipt of a Rollouts abort event in Slack is confirmed. The Rollouts notification engine sends it to the shared channel; live receipt is not yet observed.
 
 ## Scope and Non-goals
 
@@ -82,7 +82,7 @@ The repository has notification settings, but their presence alone does not guar
 - The notification credential must be prepared by a human-approved external bootstrap task.
 - Issuing the Slack Bot token and granting channel permissions needs the cooperation of the Slack workspace administrator.
 - Assumes ESO and the OpenBao backend are operating normally (depends on the current baseline Requirement and ADR-0041).
-- rollout-\* events need Argo Rollouts (REQ-0001) and a delivery path that evaluates `Rollout` objects; neither the ArgoCD Notifications controller nor the currently disabled Rollouts notification engine provides one today.
+- rollout-\* events need Argo Rollouts (REQ-0001); the Rollouts notification engine reads the same OpenBao credential through its own ExternalSecret in `argo-rollouts`.
 
 ### Agent execution and approval requirements
 

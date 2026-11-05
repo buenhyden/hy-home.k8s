@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.2.2"
+version: "1.2.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-05"
 layer: "operations"
 artifact_id: "RUN-0004"
 ---
@@ -74,6 +74,10 @@ kubectl -n argo-rollouts get pods
 # CRD 확인
 kubectl get crd | grep argoproj.io
 
+# Rollouts 알림 설정과 secret 확인 (Rollouts controller가 직접 보낸다)
+kubectl -n argo-rollouts get cm argo-rollouts-notification-configmap
+kubectl -n argo-rollouts get externalsecret argo-rollouts-notification-secret
+
 # 전체 Rollout 목록
 kubectl argo rollouts list rollouts --all-namespaces
 
@@ -132,6 +136,7 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 - [ ] `argocd-notifications-controller` Pod Running
 - [ ] `argocd-notifications-secret` ESO 동기화 완료
 - [ ] `argocd-notifications-cm` ConfigMap 존재
+- [ ] `argo-rollouts-notification-secret` ESO 동기화 완료
 - [ ] `headlamp` namespace에 Pod Running, Ingress Ready
 - [ ] `https://headlamp.hy-k8s.home.arpa/` → 200 응답
 - [ ] `https://rollouts.hy-k8s.home.arpa/` → 200 응답
