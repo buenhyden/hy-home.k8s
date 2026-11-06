@@ -78,14 +78,15 @@ when the guard output changes.
 
 | Remediation | Owner | Due or decision date |
 | --- | --- | --- |
-| F-08 and F-09: the guard supplies each target's folder `AGENTS.md` chain, root excluded, through `additionalContext`, once per session (SPEC-0149) | platform | Branch `feat/agents-md-hook-context`, 2026-11-06; acceptance pending |
+| F-08 and F-09: the guard supplies each target's folder `AGENTS.md` chain, root excluded, through `additionalContext`, once per session (SPEC-0149) | platform | Done 2026-11-06 under SPEC-0149; criteria accepted (REQ-0003 Archived Lineage) |
 | F-09 for reads: read-only tools are not hooked, so explicit reads stay required | operator | Accepted residual |
 | F-10: later changes to this pack go into a new dated member; m0001 is left as it now stands, because restoring its published bytes would restore links to a deleted package | platform | Decided 2026-11-06 |
 | F-06: repeat the Codex probe after the limit resets | operator | 2026-11-09 or later |
 
 ### Verification State
 
-Claude delivery and Codex delivery are recorded in the SPEC-0149 Task.
+Claude delivery and Codex delivery are recorded in the SPEC-0149 Task, recovered
+with `git show ea4e36be:docs/03.specs/0149-agents-md-hook-context/tasks/tsk-0001-agents-md-hook-context.md`.
 Codex delivery is unobserved until the usage limit resets; whether codex-cli
 0.166.0 accepts `hookSpecificOutput`, or rejects it together with the
 `systemMessage` beside it, is unverified. The once-per-session record does

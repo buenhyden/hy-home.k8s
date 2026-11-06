@@ -146,7 +146,8 @@ team document, not a special automatic entry filename.
   `systemMessage`, the exit-with-reason form and, since SPEC-0149,
   `hookSpecificOutput.additionalContext` carrying its guidance and each write
   target's folder `AGENTS.md` chain beyond the root-to-cwd chain Codex loads
-  itself. The current documentation lists `additionalContext` for
+  itself, once per session (on every call without a `session_id`; not again
+  after a context compaction). The current documentation lists `additionalContext` for
   `PreToolUse`, but the response contract observed above on 0.153.4 listed
   only three fields, and delivery on the installed 0.166.0 is unobserved (the
   2026-11-06 probe hit the usage limit). If the client rejects the field, it

@@ -75,8 +75,10 @@ invocation. The common procedure retains the selected role and user scope.
   present, Claude Code 2.1.319 reads no `AGENTS.md`, and the setting that loads
   both is ignored in project settings (observed 2026-11-06). The pre-action
   guard therefore returns each write target's folder `AGENTS.md` chain, root
-  excluded, as `hookSpecificOutput.additionalContext`, once per session;
-  `systemMessage` reaches only the user. Read-only tools are not hooked, so
+  excluded, as `hookSpecificOutput.additionalContext`, once per session (on
+  every call when the payload has no `session_id`; not again after a context
+  compaction, and an oversized file is only named); `systemMessage` reaches
+  only the user. Read-only tools are not hooked, so
   before reading or reviewing in a directory, still read each `AGENTS.md` from
   the root down to it explicitly, as
   [agent execution](../.agents/governance/agent-execution.md) requires.

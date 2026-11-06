@@ -44,7 +44,8 @@ generated navigation, external examples, or tool suggestions.
   Claude loads none while a `CLAUDE.md` exists. On every structured or patch
   write, and on a shell write target the guard recognizes, the shared guard
   `scripts/provider_write_guard.py` supplies the target's folder `AGENTS.md`
-  chain, root excluded, to the model once per session. Read-only work, a file
+  chain, root excluded, to the model once per session; delivery is observed on
+  Claude and unobserved on Codex (see the provider notes). Read-only work, a file
   the guard names as unread, and work after a context compaction still need
   the explicit read.
 - Use [work lifecycle](../workflows/work-lifecycle.md) for intake and completion,
