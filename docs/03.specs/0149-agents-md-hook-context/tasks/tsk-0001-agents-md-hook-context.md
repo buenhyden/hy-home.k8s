@@ -23,6 +23,7 @@ for both providers. It executes [SPEC-0149](../spec.md) through
   and proceed; each folder's `AGENTS.md` must be read by Codex and Claude.
 - Review (2026-11-06): the shared guard is the one owner that sees both
   providers' writes; nested `CLAUDE.md` and user settings were not chosen.
+- Approval (2026-11-06): the operator's request to review the hook supplement and proceed approves SPEC-0149 and its Plan, drafted in `80641719`; merge is separate and criterion acceptance stays the operator's.
 - Start: branch `feat/agents-md-hook-context` from `main` at `296e3379`.
 
 ## Task Table
@@ -31,9 +32,9 @@ for both providers. It executes [SPEC-0149](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | Guard chain and model-context output | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | Observed Claude delivery | platform | draft | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-HOOK-003](../spec.md#success-criteria--verification-plan) | Provider notes, policy and audit addendum | platform | draft | NOT_RUN | EVD-003 |
+| WORK-001 | [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | Guard chain and model-context output | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | Observed Claude delivery | platform | ready | NOT_RUN | EVD-002 |
+| WORK-003 | [VAL-HOOK-003](../spec.md#success-criteria--verification-plan) | Provider notes, policy and audit addendum | platform | ready | NOT_RUN | EVD-003 |
 
 ## Task Evidence
 
