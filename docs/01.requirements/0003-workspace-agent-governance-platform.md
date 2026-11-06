@@ -146,7 +146,7 @@ Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git
 
 ## Traceability
 
-No governance Spec package is open. SPEC-0150 and SPEC-0149, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
+The open governance Spec package is [SPEC-0151](../03.specs/0151-folder-claude-imports/spec.md). SPEC-0150 and SPEC-0149, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
 
 ### Lifecycle Traceability
 
