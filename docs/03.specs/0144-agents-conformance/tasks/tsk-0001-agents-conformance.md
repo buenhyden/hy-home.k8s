@@ -1,6 +1,6 @@
 ---
 title: "Agent Surface Conformance"
-version: "0.3.0"
+version: "0.3.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -35,10 +35,10 @@ workspace. It executes [SPEC-0144](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AGC-004](../spec.md#success-criteria--verification-plan) | Code, registry and schema changes | platform | in-progress | PASS | EVD-005, EVD-006, EVD-007 |
-| WORK-002 | [VAL-AGC-001](../spec.md#success-criteria--verification-plan) | Governance files | platform | in-progress | PASS | EVD-008, EVD-009, EVD-010, EVD-011 |
-| WORK-003 | [VAL-AGC-002](../spec.md#success-criteria--verification-plan) | Roles and skills | platform | in-progress | PASS | EVD-012 |
-| WORK-004 | [VAL-AGC-003](../spec.md#success-criteria--verification-plan) | README, knowledge, prompts, workflows, evaluations | platform | in-progress | PASS | EVD-013 |
+| WORK-001 | [VAL-AGC-004](../spec.md#success-criteria--verification-plan) | Code, registry and schema changes | platform | completed | PASS | EVD-005, EVD-006, EVD-007 |
+| WORK-002 | [VAL-AGC-001](../spec.md#success-criteria--verification-plan) | Governance files | platform | completed | PASS | EVD-008, EVD-009, EVD-010, EVD-011 |
+| WORK-003 | [VAL-AGC-002](../spec.md#success-criteria--verification-plan) | Roles and skills | platform | completed | PASS | EVD-012 |
+| WORK-004 | [VAL-AGC-003](../spec.md#success-criteria--verification-plan) | README, knowledge, prompts, workflows, evaluations | platform | completed | PASS | EVD-013 |
 
 ## Task Evidence
 
@@ -62,10 +62,10 @@ workspace. It executes [SPEC-0144](../spec.md) through
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-AGC-001](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-002 | platform |
-| [VAL-AGC-002](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-003 | platform |
-| [VAL-AGC-003](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-004 | platform |
-| [VAL-AGC-004](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-001 | platform |
+| [VAL-AGC-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-011 | Operator accepted on 2026-11-06 | platform |
+| [VAL-AGC-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-012 | Operator accepted on 2026-11-06 | platform |
+| [VAL-AGC-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-013 | Operator accepted on 2026-11-06 | platform |
+| [VAL-AGC-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Operator accepted on 2026-11-06 | platform |
 
 ## Approval and Safety Boundaries
 
