@@ -63,17 +63,16 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 
 ```text
 03.specs/
-├── 0145-agents-deferred-conformance/
 ├── AGENTS.md
 └── README.md
 ```
 
-현재 열린 package: [SPEC-0145 Agent Surface Deferred Conformance](./0145-agents-deferred-conformance/).
+현재 열린 package는 없다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다.
 
 완료된 package는 그 Requirement Package의 `Archived Lineage` 표가 요약한다.
-최근 것은 SPEC-0144와 SPEC-0143([REQ-0003](../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage))과
+최근 것은 SPEC-0145와 SPEC-0144([REQ-0003](../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage))과
 SPEC-0141([REQ-0002](../01.requirements/0002-argo-notifications-slack.md#archived-lineage))이다.
 
 ## Usage
