@@ -44,7 +44,8 @@ generated navigation, external examples, or tool suggestions.
   and the shared guard `scripts/provider_write_guard.py` supplies the rest of
   a write target's chain once per session (delivery unobserved on Codex).
   Claude loads a folder's `AGENTS.md` through the sibling `CLAUDE.md` that
-  imports it, with the result of its first read, write or edit there, so a
+  imports it, with the result of its first read, write or edit there (read
+  and write observed; edit per the documentation), so a
   first write in a folder precedes the text. On every write the guard also
   names the target's `AGENTS.md` paths before the call, and after a compaction or resume
   a Claude session-start hook asks for them to be read again. Each folder
