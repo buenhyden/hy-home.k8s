@@ -63,11 +63,12 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 
 ```text
 03.specs/
+├── 0145-agents-deferred-conformance/
 ├── AGENTS.md
 └── README.md
 ```
 
-현재 열린 package는 없다.
+현재 열린 package: [SPEC-0145 Agent Surface Deferred Conformance](./0145-agents-deferred-conformance/).
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다.
 
