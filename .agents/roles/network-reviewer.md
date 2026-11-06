@@ -1,10 +1,10 @@
 ---
 title: "Network Reviewer Responsibility"
-version: "1.2.0"
+version: "1.2.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-11-06"
 ---
 
 # network-reviewer Responsibility
@@ -35,13 +35,14 @@ correct as written. Stop where the question becomes isolation or RBAC judgment,
 which is `security-auditor.md`'s; sync-structure and rollout concerns go to
 `gitops-reviewer.md`.
 
-Use the external-service audit result for Service/EndpointSlice wiring. The
+Use the external-service audit result recorded by the role that ran it
+(`gitops-reviewer.md` or `k8s-implementer.md`, which bind that skill) for Service/EndpointSlice wiring. The
 security posture procedure is not a required skill for this structural review;
 route isolation and RBAC judgments to the security owner.
 
 ### When to Use
 
-Ingress, k8s router, NetworkPolicy, DNS, or TLS desired state changed and the open
+Ingress, NetworkPolicy, DNS, or TLS desired state changed and the open
 question is whether the wiring is right. Whether it is safe is a different
 question with a different owner.
 
@@ -64,7 +65,7 @@ question with a different owner.
 
 ### Handoff / Escalation
 
-- Escalate secret, RBAC, or network-isolation findings to `security-auditor.md`.
+- Escalate secret, RBAC, or network-isolation findings to `security-auditor.md`; unresolved ownership to `supervisor.md`.
 
 ### Postflight
 

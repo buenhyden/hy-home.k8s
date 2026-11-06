@@ -1,10 +1,10 @@
 ---
 title: "Observability Reviewer Responsibility"
-version: "1.3.0"
+version: "1.3.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-11-06"
 ---
 
 # observability-reviewer Responsibility
@@ -36,8 +36,8 @@ claim to cover, as written. Sync-structure and release concerns go to
 `security-auditor.md`'s judgment.
 
 Review runbook and alert coverage as evidence; authoring an operations runbook
-is a separate delegated responsibility. The authoring skill is not required
-for this read-only role.
+belongs to `doc-writer.md`, which binds the `ops-runbook` skill. That skill is
+not required for this read-only role.
 
 ### When to Use
 
@@ -56,13 +56,12 @@ coverage and wiring. Reading live telemetry is not this role.
 
 - No live cluster scraping, querying, or dashboard probing; manifest-static
   review only.
-- This role's shell exists only for read-only repository search, because
-  native Claude builds moved search from the `Grep` and `Glob` tools into Bash.
-  Its subject puts live telemetry closer to hand than any other review, and a
-  live reading answers a different question from the desired state under
-  review, so never use the shell to query a cluster, scrape an endpoint, or
-  probe a dashboard. This limit is policy: the write guard observes a shell
-  rather than stopping it, so no tool withholding enforces it.
+- The shell is for read-only repository search only (rationale in
+  [Claude provider notes](../../.claude/provider.md)). Its subject puts live
+  telemetry closer to hand than any other review, and a live reading answers a
+  different question from the desired state under review, so never use the
+  shell to query a cluster, scrape an endpoint, or probe a dashboard. This
+  limit is policy; no tool withholding enforces it.
 - Stop the review when a conclusion requires live cluster or dashboard access,
   exposes secret material, or crosses into security isolation judgment.
 
@@ -72,7 +71,7 @@ coverage and wiring. Reading live telemetry is not this role.
 
 ### Handoff / Escalation
 
-- Escalate GitOps sync-structure or release concerns to `gitops-reviewer.md`.
+- Escalate GitOps sync-structure or release concerns to `gitops-reviewer.md`; unresolved ownership to `supervisor.md`.
 
 ### Postflight
 

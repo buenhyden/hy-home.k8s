@@ -2,12 +2,12 @@
 name: "k8s-validate"
 description: "Use when validating Kubernetes manifests, GitOps structure, and secret-handling checks in this cluster repository."
 metadata:
-  title: "K8S Validate"
-  version: "1.0.1"
+  title: "K8s Validate"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-08"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -28,18 +28,22 @@ Define the validation sequence for manifest changes before GitOps review or merg
 
 ## Workflow Steps
 
-1. Run manifest YAML syntax validation for the changed scope. Where the
-   selected profile includes the registered platform assurance check, run its
-   offline Kustomize render and Kubernetes API-schema validation as a separate
-   depth. Quick and staged profiles retain their change-scoped checks; do not
-   treat a syntax pass as render or schema evidence.
-2. Run kube-linter where the selected profile reaches it. The pinned pre-commit
-   hook owns that tool and the change-scoped profiles do not run it, so a
-   change-scoped result covers syntax, structure and secrets but not lint.
-3. Run GitOps structure checks. Delegate selectorless cross-file Service and
+Run the checks through `python3 scripts/qa.py quick` or
+`python3 scripts/qa.py staged`, selected and bounded as
+[quality policy](../../governance/quality.md#validation-runner-envelope)
+defines; `python3 scripts/qa.py --list` shows what each profile reaches.
+
+1. Check manifest YAML syntax for the changed scope. Offline Kustomize render
+   and Kubernetes API-schema validation belong to the registered platform
+   assurance check and are a separate depth; a syntax pass is not render or
+   schema evidence.
+2. Check kube-linter. `staged` reaches it through `selected-nonstyle`; `quick`
+   does not, so a `quick` result covers syntax, structure and secrets but not
+   lint.
+3. Check GitOps structure checks. Delegate selectorless cross-file Service and
    EndpointSlice relationships to `external-service-contract-audit`; the central
    QA registry selects its dedicated checker.
-4. Run secret-handling checks.
+4. Check secret-handling.
 5. Report each selected target's actual depth, tool identity/version, fallback,
    lane, and result using the meanings quality policy owns. Name every check
    the selected profile did not reach, explicitly distinguish any unsupported
@@ -48,7 +52,8 @@ Define the validation sequence for manifest changes before GitOps review or merg
 
 ## Constraints
 
-- `.kube-linter.yaml` is the lint baseline.
+- `.kube-linter.yaml` is the lint baseline. An exclusion there waives a lint
+  rule, never a security finding; route the finding to `k8s-security-audit`.
 - Secret-handling violations are blocking.
 - API-schema coverage is limited to the built-in kinds and fixed offline source
   selected by the registered checker. An unavailable required tool or schema

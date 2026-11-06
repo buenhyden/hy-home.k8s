@@ -3,11 +3,11 @@ name: "workspace-harness-audit"
 description: "Use when auditing workspace-wide SDLC, agent governance, GitOps, scripts, and QA ownership against an approved request."
 metadata:
   title: "Workspace Harness Audit"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -70,7 +70,7 @@ unresolved item into the handoff by name.
 
 ## Boundaries
 
-- An audit request implies no live cluster, Vault, cloud, paid, credential, or
+- An audit request implies no live cluster, OpenBao, cloud, paid, credential, or
   remote action.
 - A finding about native provider behavior needs runtime evidence. Tracked
   configuration shows intent, never discovery or execution.

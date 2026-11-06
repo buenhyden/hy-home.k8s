@@ -3,11 +3,11 @@ name: "knowledge-map"
 description: "Use when auditing governance navigation, role/skill references, stage indexes, or current cross-links."
 metadata:
   title: "Knowledge Map"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -49,7 +49,7 @@ second policy or role roster.
    pipeline; do not hardcode a user-local installation or run an external
    pipeline implicitly. Refresh generated output only through its authorized
    generator and record tool limitations.
-6. Run the relevant link/owner, registry, Markdown, or generated-index checks.
+6. Run the relevant link/owner, registry, Markdown, and knowledge-surface checks.
 7. Report exact source, target, finding, and minimal repair. Make changes only
    when authorized; preserve completed evidence and route historical
    path disposition to its owning Task.

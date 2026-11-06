@@ -3,11 +3,11 @@ name: "deployment-strategies"
 description: "Use when comparing or designing Kubernetes and ArgoCD deployment strategies, including Blue-Green, Canary, Rolling update, rollback, zero-downtime deployment, progressive delivery, probes, and DORA metrics. Monitoring tool setup and actual CI pipeline configuration are outside this skill's scope."
 metadata:
   title: "Deployment Strategies"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -32,7 +32,8 @@ design the verification and reversal that make the choice safe to review.
    alone, and what a failure would cost. The answer decides the strategy, not
    the strategy's popularity.
 2. Read `references/strategies.md` and choose one. The comparison table
-   separates them by exactly the properties step 1 established.
+   separates them by downtime, risk, cost, and rollback speed, which map onto
+   the properties step 1 established.
 3. Read `references/verification.md` and design the verification half: which
    probes prove readiness, which conditions abort the rollout, and what reverses
    it. A strategy without a stated abort condition is a strategy that cannot

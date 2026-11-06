@@ -1,10 +1,10 @@
 ---
 title: "Approval and Safety Policy"
-version: "1.3.1"
+version: "1.3.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-11-06"
 ---
 
 # Approval and Safety Policy
@@ -78,12 +78,14 @@ interaction or native approval interface. Before a protected operation:
    expiry or revocation does not authorize the dependent action. Continue
    independent safe work and route the blocked action to the operator.
 
+Before a protected operation, the owning Task or incident also records rollback
+or backup and required evidence.
+
 Document validators check structure, relationships and recovery objects only.
-A record's existence, a Git object, lifecycle status, checkbox, historical quote,
-successful QA or reviewer verdict authenticates no approval. Historical
-approval is evidence of a past decision, never a reusable standing grant.
-The operator route does not relax a native restriction or delegate live/secret
-operations to a subagent.
+A Git object, lifecycle status, checkbox, historical quote, successful QA or
+reviewer verdict is no approval. Historical approval is evidence of a past
+decision, never a reusable standing grant. The operator route does not
+delegate live/secret operations to a subagent.
 
 ### Execution controls
 
@@ -97,8 +99,7 @@ operations to a subagent.
   evidence under a generic cleanup request.
 - ExternalSecret reviews use only secret references, mount, and property names,
   never their values. Follow existing isolation and AppProject controls.
-- GitHub Actions is repository QA/CI, not live deployment CD. Do not infer
-  runtime readiness from a successful static or hosted check.
+- GitHub Actions is repository QA/CI, not live deployment CD.
 - Write-path guards observe structured file tools, patch envelopes, and the
   obvious write targets of a shell command. A patch envelope's file headers
   reach the same evaluation a structured write reaches. A shell target does
@@ -111,8 +112,10 @@ operations to a subagent.
   On Codex the class binds an operating-system `read-only` sandbox, which is a
   real boundary. On Claude it withholds the structured write tools and, for a
   role whose skills require one, leaves a shell through which a write is
-  prohibited by policy and observed advisorily rather than prevented. A role
-  that needs no shell declares a narrowed native scope instead. This difference
+  prohibited by policy and observed advisorily rather than prevented. Every
+  Claude role carries `Bash` (SPEC-0098 in `.claude/provider.md`), and
+  `.claude/bindings.json` declares no narrower scope, so a read-only role
+  confines its shell to read-only repository search by policy. This difference
   is documented and accepted; do not describe it as parity, and do not report
   the weaker side's policy prohibition as an enforced control.
 - A neutral permission class sets the maximum reach. A provider binding may
@@ -124,17 +127,14 @@ operations to a subagent.
   reach is therefore its own read-only class rather than an exception on the
   ordinary one: the role that researches primary sources carries it, and no
   other read-only role gains it by default.
-- The owning Task or incident also records rollback or backup and required
-  evidence before an exception. Missing authority stops the protected operation
-  at its local draft, not independent approved authoring.
-- Safety denial is an authorization boundary. Cost, time and output limits
-  belong to [quality](quality.md#validation-runner-envelope) and the validation
-  runner; a technical resource limit is not secret/live approval or a new
-  business deadline, session timebox or validation-reserve permission. Resolve
-  required-check tools, environment, resources and authority during
-  work-lifecycle preflight.
-  Preserve failures and obtain necessary native permission for actual
-  resources without bypassing a guard or misreporting an unexecuted check.
+- Missing authority stops the protected operation at its local draft, not
+  independent approved authoring.
+- Safety denial is an authorization boundary. Cost, time and output limits,
+  and the rule that a technical resource limit is no secret/live approval,
+  business deadline, session timebox or validation reserve, belong to
+  [quality](quality.md#validation-runner-envelope). Preserve failures and
+  obtain necessary native permission for actual resources without bypassing a
+  guard or misreporting an unexecuted check.
 
 ## Validation and Refresh
 

@@ -1,10 +1,10 @@
 ---
 title: "Agent Evaluation Evidence"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-11-06"
 ---
 
 # Agent Evaluation Evidence
@@ -37,7 +37,7 @@ provider·native·runtime 주장은 원래 근거 소유자가 가진다.
 
 | Path | Purpose |
 | --- | --- |
-| [harnesses/](harnesses/) | 같은 작업에 맞춘 실행 입력과 관측된 원시 출력으로 안내한다. |
+| [harnesses/](harnesses/) | Trial Evidence: 같은 작업에 맞춘 실행 입력과 관측된 원시 출력으로 안내한다. |
 | [templates/](templates/) | Stage 99의 작업·점수·결과 양식으로 안내하며 그 권한을 복사하지 않는다. |
 | [results.md](results.md) | 완결된 실제 cycle이 받아들여졌을 때의 유일한 집계 소유자. 빈 상태에는 점수가 없다. |
 

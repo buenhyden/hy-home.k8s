@@ -1,10 +1,10 @@
 ---
 title: "Documentation Update Prompt Contract"
-version: "0.1.0"
+version: "0.1.1"
 type: "governance/prompt"
 status: "draft"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-11-06"
 ---
 
 # Documentation Update Prompt Contract
@@ -43,14 +43,17 @@ each copy.
 
 The proposal is judged by the document contract registry and the markdown
 profile validator on the target path, and by link and owner validation when it
-changes a route. Completed records are not rewritten to match a new form.
+changes a route. Retired subjects are not rewritten to match a new form.
 
 ## Refusal Conditions
 
+The builder enforces only the empty-subject refusal; the requesting agent
+enforces the remaining conditions below.
+
 - No owner can be resolved for the statement, which means the owner must be
   decided before the text is written.
-- The target is an archived file or a completed Task whose body is
-  historical evidence.
+- The target is a retired subject in an Archived Lineage row, a file under
+  unvalidated `docs/98.archive/`, or Git history, none of which is rewritten.
 - The proposal would create a second document stating the same contract.
 
 ## Related Documents

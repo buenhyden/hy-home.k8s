@@ -1,10 +1,10 @@
 ---
 title: "Commit Message Prompt Contract"
-version: "0.3.0"
+version: "0.3.1"
 type: "governance/prompt"
 status: "draft"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-11-06"
 ---
 
 # Commit Message Prompt Contract
@@ -38,7 +38,9 @@ refuses and no draft is produced.
 ## Output
 
 One Conventional Commit message: a `type(scope): summary` subject in the
-imperative, with optional scope. Use `type!:` or `type(scope)!:` only when the
+imperative, with optional scope. The type is one of the `.cz.toml`
+`schema_pattern` types: `feat`, `fix`, `refactor`, `style`, `docs`, `test`,
+`build`, `ci`, `perf`, `revert`, `chore`, `release`, `deps`. Use `type!:` or `type(scope)!:` only when the
 staged change actually breaks the public contract; a
 `BREAKING CHANGE:` or `BREAKING-CHANGE:` footer can describe that impact.
 Unicode subject text, type capitalization and final punctuation are allowed
@@ -60,6 +62,9 @@ for validating the actual candidate message and observing active hooks;
 workstation configuration is Task evidence, never a shared policy assumption.
 
 ## Refusal Conditions
+
+The builder enforces only the empty-subject refusal; the requesting agent
+enforces the remaining conditions below.
 
 - The staged difference is empty. No draft is produced, because a message
   describing nothing is worse than no message.

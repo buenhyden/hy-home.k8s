@@ -2,12 +2,12 @@
 name: "rca-methodology"
 description: "Use when performing root cause analysis with 5 Whys, Fishbone diagrams, Fault Tree Analysis, change analysis, incident cause analysis, or cognitive-bias checks. Timeline reconstruction and remediation planning are outside this skill's scope."
 metadata:
-  title: "Rca Methodology"
-  version: "1.0.0"
+  title: "RCA Methodology"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -37,10 +37,7 @@ captured evidence, and return the result in the structure this skill owns.
    than left to read as established.
 4. Run the cognitive-bias checklist before concluding. It exists because the
    first plausible cause is the one an analysis stops at.
-5. Return the result in the Output Format below. Where a durable record then
-   belongs is owned by the `incident-postmortem` skill and the Stage 99 profile
-   it names; this skill owns the technique and the structure, not the
-   destination.
+5. Return the result in the Output Format below.
 
 ## Reference Material
 
@@ -65,18 +62,14 @@ below, not the destination. Use this structure:
 
 ## Contributing Factors
 
-| Factor   | Category                         | Evidence                     |
-| -------- | -------------------------------- | ---------------------------- |
-| [Factor] | [Process/Tech/People/Monitoring] | [Log/event/metric reference] |
+| Factor   | Category                                           | Evidence                     |
+| -------- | -------------------------------------------------- | ---------------------------- |
+| [Factor] | [People/Process/Technology/Environment/Monitoring] | [Log/event/metric reference] |
 
-## 5 Whys Chain
+## Technique Trace
 
-Why 1: [Question] → [Answer]
-Why 2: [Question] → [Answer]
-Why 3: [Question] → [Answer]
-Why 4: [Question] → [Answer]
-Why 5: [Question] → [Answer]
-Root Cause: [Conclusion]
+[The steps of each technique applied (5 Whys chain, Fishbone categories, fault
+tree, or change table), each step citing its evidence, ending in the root cause]
 
 ## Bias Checks Performed
 

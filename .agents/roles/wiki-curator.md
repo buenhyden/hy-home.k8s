@@ -1,10 +1,10 @@
 ---
 title: "Wiki Curator Responsibility"
-version: "1.2.0"
+version: "1.2.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-11-06"
 ---
 
 # wiki-curator Responsibility
@@ -47,7 +47,7 @@ indexes. Producing the document the index points at is a different role.
 
 ### Inputs
 
-- Canonical owner paths, current taxonomy, generated-map contract, stale-link evidence, and delegated scope.
+- Canonical owner paths, current taxonomy, owner-map and stage README index rows, stale-link evidence, and delegated scope.
 
 ### Outputs
 
@@ -62,7 +62,7 @@ indexes. Producing the document the index points at is a different role.
 
 ### Capability and Evidence
 
-- Required evidence: identify each changed entrypoint, canonical owner target, stale-link result, and generated-index validation outcome.
+- Required evidence: identify each changed entrypoint, canonical owner target, stale-link result, and the link/owner and knowledge-surface validator results.
 
 ### Handoff / Escalation
 

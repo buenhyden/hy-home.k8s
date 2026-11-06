@@ -59,16 +59,20 @@ Unreachable    |                   No Secret sync mechanism in place
                                    DB connection errors not surfaced to dashboard
 ```
 
-### 6M Categories Applied to Kubernetes Incidents
+### Category Set
 
-| Traditional 6M | Kubernetes Application  | Investigation Items                                      |
-| -------------- | ----------------------- | -------------------------------------------------------- |
-| Man            | People/Team             | Runbook training, on-call handoff, review skips          |
-| Method         | Process                 | Deployment procedures, change management, approval gates |
-| Machine        | Infrastructure/Platform | Cluster version, node pressure, control-plane health     |
-| Material       | Manifests/Config        | Approved secret reference/rotation metadata, non-sensitive configuration, image tags            |
-| Measurement    | Observability           | Alerts, metrics, log coverage, tracing gaps              |
-| Environment    | Cluster Environment     | Namespace isolation, network policy, resource quotas     |
+The category set is defined here once and reused by `../SKILL.md` and
+`incident-postmortem`: People, Process, Technology, Environment, Monitoring.
+The traditional 6M headings fold into it as follows.
+
+| Traditional 6M | Category    | Investigation Items                                                           |
+| -------------- | ----------- | ----------------------------------------------------------------------------- |
+| Man            | People      | Runbook training, on-call handoff, review skips                               |
+| Method         | Process     | Deployment procedures, change management, approval gates                      |
+| Machine        | Technology  | Cluster version, node pressure, control-plane health                          |
+| Material       | Technology  | Approved secret reference/rotation metadata, non-sensitive config, image tags |
+| Measurement    | Monitoring  | Alerts, metrics, log coverage, tracing gaps                                   |
+| Environment    | Environment | Namespace isolation, network policy, resource quotas                          |
 
 ## 3. Fault Tree Analysis (FTA)
 

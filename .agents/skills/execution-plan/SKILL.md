@@ -3,11 +3,11 @@ name: "execution-plan"
 description: "Use when turning an approved Spec and architecture constraints into ordered, testable implementation work."
 metadata:
   title: "Execution Plan"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -31,7 +31,7 @@ using this procedure. Skill invocation does not authorize additional actions.
 3. For each unit identify acceptance, focused checks, risk, rollback,
    approvals, and external limitations. Do not hide unresolved work as done.
 4. Resolve profile `sdlc/plan` and its current template through the Stage 99
-   registry, then author the package's plan.md beside its Spec.
+   registry, then author the package's plan.md beside its Spec. A role without write permission returns the draft and routes the write to `doc-writer`.
 5. Link the ordered work to Task records and the package Spec/Plan. Execution
    state and evidence belong to those Tasks, not a separate progress ledger.
 6. Review the direction and ownership boundary with the user when the request
@@ -41,7 +41,7 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 Do not restate the template's heading inventory here or create standalone
 design/test authority. The Spec owns behavior; the Plan owns implementation
-order, verification, risk, and rollback. Use task-breakdown for executable units.
+order, verification, risk, and rollback. Use `task-breakdown` for executable units.
 
 ## Outputs
 

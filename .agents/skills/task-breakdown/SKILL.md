@@ -3,11 +3,11 @@ name: "task-breakdown"
 description: "Use when decomposing an approved implementation Plan into bounded executable Task records."
 metadata:
   title: "Task Breakdown"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -30,7 +30,7 @@ using this procedure. Skill invocation does not authorize additional actions.
    Never reuse a retired ID.
 4. Read the registry-selected `sdlc/task` template and create its Task record
    under the Spec package. Use its initial status and legal lifecycle rather
-   than a generic draft/completed convention.
+   than a generic draft/completed convention. A role without write permission returns the draft and routes the write to `doc-writer`.
 5. Link the Task, Plan, and Spec as required by their profiles.
 6. Keep status, validation evidence, review, rollback, residual risk, and next
    owner in that Task. Do not create a parallel monolithic task/progress record.

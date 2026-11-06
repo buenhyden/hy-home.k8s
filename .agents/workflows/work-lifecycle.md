@@ -1,10 +1,10 @@
 ---
 title: "Work Lifecycle"
-version: "2.1.0"
+version: "2.1.1"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-11-06"
 ---
 
 # Work Lifecycle
@@ -55,10 +55,11 @@ state on resume; historical progress and provider-local memory are auxiliary.
 ### Resume
 
 Apply the [context policy resume decision](../governance/context-and-memory.md#resume-decision)
-before dependent writes. Put worktree identity, relevant file hashes, current
-approval/revocation and writer ownership under the existing Task snapshot and
-approval fields. Carry command limits, partial output and known budget state
-under evidence limitations. On conflict, retain completed work and name the
+before dependent writes. Put worktree identity and relevant file hashes under
+Task Evidence, and current approval/revocation and writer ownership under
+Approval and Safety Boundaries. Carry command limits, partial output and known
+budget state with the lane results and limitations of the Verification Summary
+(the [handoff fields](../governance/quality.md#handoff-evidence-contract)). On conflict, retain completed work and name the
 next owner; refresh the affected evidence before resuming.
 
 ### Implementation

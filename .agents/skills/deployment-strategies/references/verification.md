@@ -9,11 +9,11 @@ verification half of a change; `../SKILL.md` owns when to reach for it.
 
 ### Three Probe Types
 
-| Probe         | Validates               | Endpoint   | Period          |
-| ------------- | ----------------------- | ---------- | --------------- |
-| **Liveness**  | Process still alive     | `/healthz` | 10 s            |
-| **Readiness** | Ready to serve traffic  | `/readyz`  | 5 s             |
-| **Startup**   | Initialization complete | `/healthz` | 1 s (max 300 s) |
+| Probe         | Validates               | Endpoint   | Period                |
+| ------------- | ----------------------- | ---------- | --------------------- |
+| **Liveness**  | Process still alive     | `/healthz` | 10 s                  |
+| **Readiness** | Ready to serve traffic  | `/readyz`  | 5 s                   |
+| **Startup**   | Initialization complete | `/healthz` | 10 s × 30 (max 300 s) |
 
 ### Kubernetes Probe Configuration
 

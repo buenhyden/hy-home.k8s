@@ -1,13 +1,13 @@
 ---
 name: "k8s-security-audit"
-description: "Use when auditing Kubernetes RBAC, NetworkPolicy gaps, Secret handling, container security context, image supply chain, CIS benchmark posture, or related cluster security hardening. Real-time intrusion detection and WAF configuration are outside this skill's scope."
+description: "Use when auditing Kubernetes RBAC, NetworkPolicy gaps, Secret handling, container security context, image supply chain, or related cluster security hardening. Real-time intrusion detection and WAF configuration are outside this skill's scope."
 metadata:
-  title: "K8S Security Audit"
-  version: "1.0.0"
+  title: "K8s Security Audit"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -75,13 +75,25 @@ anything.
 **Scope**: [namespace/cluster/path]
 **Date**: YYYY-MM-DD
 **Auditor**: security-auditor agent
-**Audit Type**: [RBAC / Network / Secrets / Full]
+**Audit Type**: [RBAC / NetworkPolicy / Secrets / Container Security Context / Image Supply Chain / Full]
 
 ## Executive Summary
 
 - **Overall Posture**: PASS / CONDITIONAL / BLOCK
 - **Critical findings**: N
 - **High findings**: N
+- **Medium findings**: N
+- **Low findings**: N
+
+## Dimension Results
+
+| Dimension                  | Audited | Findings |
+| -------------------------- | ------- | -------- |
+| RBAC                       | Y/N     | N        |
+| NetworkPolicy              | Y/N     | N        |
+| Secrets                    | Y/N     | N        |
+| Container security context | Y/N     | N        |
+| Image supply chain         | Y/N     | N        |
 
 ## Findings
 
@@ -98,6 +110,10 @@ anything.
 
 ...
 
+### LOW
+
+...
+
 ## Remediation Priority
 
 1. [Item] — by [date]
@@ -105,11 +121,19 @@ anything.
 
 ## Closing State
 
-| Level    | State recorded                                                          |
+| Level    | State recorded                                                           |
 | -------- | ------------------------------------------------------------------------ |
 | CRITICAL | Resolved, or unresolved and routed by name to whoever decides acceptance |
 | HIGH     | Remediation owner and target release, or explicitly unassigned           |
+| MEDIUM   | Owner and target sprint, or explicitly unassigned                        |
+| LOW      | Backlog entry, or explicitly untracked                                   |
 ```
+
+Overall Posture summarises the Closing State and is not an acceptance:
+**BLOCK** when any CRITICAL is unresolved; **CONDITIONAL** when no CRITICAL is
+unresolved but a HIGH has no recorded owner and target release; **PASS** when
+every CRITICAL is resolved and every HIGH has an owner and target release.
+A dimension not audited is stated in Dimension Results, never read as clean.
 
 State where each finding stands rather than ticking it off. Accepting an
 unresolved CRITICAL finding weakens security semantics, which

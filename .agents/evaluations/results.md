@@ -1,10 +1,10 @@
 ---
 title: "Agent Evaluation Results"
-version: "0.1.0"
+version: "0.1.1"
 type: "evaluation/results"
 status: "draft"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-11-06"
 ---
 
 # Evaluation Results
@@ -19,12 +19,18 @@ repository QA result.
 
 ## Pair Coverage
 
+| Cycle ID | Trial ID | Declared pairs | Complete pairs | Task | Score | Partial reason |
+| --- | --- | --- | --- | --- | --- | --- |
+
 No actual pair is recorded. Enter one row per admitted cycle only after its
 task, baseline output, with-skill output and score identify the same declared
 one-pair trial. Additional trials use distinct cycle IDs; incomplete attempts
 remain with their own evidence owners and are not counted as complete pairs.
 
 ## Aggregate
+
+| Scope | Actual pairs | Criterion ID | Baseline summary | With-skill summary | Calibration reference |
+| --- | --- | --- | --- | --- | --- |
 
 No denominator or score is reported. Aggregate only complete, declared cycles
 with an identified scorer, criterion IDs, score granularity and human
@@ -37,8 +43,6 @@ Historical synthetic fixtures and missing expectations are not observed
 paired outputs. The two user-provided Skill definitions are absent from this
 workspace. No paired session, skill loading, command execution, permission
 enforcement, score truth or human calibration was observed for this draft.
-The owning execution Task, reached through [Stage 03 Spec navigation](../../docs/03.specs/README.md),
-records the current static form work and its validation state separately.
 
 ## Related Documents
 

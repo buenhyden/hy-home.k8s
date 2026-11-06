@@ -1,10 +1,10 @@
 ---
 title: "Context and Memory Policy"
-version: "1.4.0"
+version: "1.4.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-15"
+updated: "2026-11-06"
 ---
 
 # Context and Memory Policy
@@ -29,16 +29,14 @@ execution authority.
 ## Governance Context
 
 Compaction and handoff can preserve useful summaries while also carrying stale
-assumptions. On resume, re-observe Git state, the active Task, and changed
-canonical owners before using remembered paths, results, or approvals.
+assumptions. Resume only through the [resume decision](#resume-decision).
 
 ## Current Contract
 
 - Keep working context bounded, factual, redacted, and scoped to one task.
   Record remaining acceptance criteria and next owner rather than raw sessions.
 - Promote recurring knowledge only after review into the appropriate policy,
-  skill, operating document, or reference record. Do not create a duplicate
-  current-state ledger.
+  skill, operating document, or reference record.
 - Durable knowledge about one domain — Kubernetes and GitOps desired state,
   networking, secret handling, observability — stays with that domain's
   operating or reference owner. Reach it through the stage index rather than
@@ -52,17 +50,18 @@ canonical owners before using remembered paths, results, or approvals.
   instead be kept in the shared workspace memory store below; durable policy
   and domain knowledge still refresh, supersede, or retire through their
   profile contract.
-- Do not read or store credentials, secret values, auth configuration, shell
-  history, environment dumps, raw prompts, or complete provider transcripts.
+- Do not read or store credentials, secret values, personal data, auth
+  configuration, shell history, environment dumps, raw prompts, or complete
+  provider transcripts, in the store or its metadata.
 - The `memory/progress.md` ledger and the `memory/` directory are retired and
   neither is restored; Git history recovers their bytes. Progress and task
   status belong to the owning Spec Task, and durable knowledge stays with the
   responsible policy, skill, operating document, or reference owner. `.agents/knowledge/` maps those owners
   without restating them; it is a pointer surface, never a second store of
   current state.
-- Ignored checkpoints are optional recovery aids. Static validation of a
-  synthetic checkpoint proves neither actual checkpoint execution nor provider
-  memory, hook, or compaction behavior.
+- A checkpoint is an optional, untracked human aid; no repository tool creates
+  one. Static validation of a synthetic checkpoint proves neither actual
+  checkpoint execution nor provider memory, hook, or compaction behavior.
 
 ### Shared workspace memory store
 
@@ -112,8 +111,7 @@ resuming. A separate Git directory layout is currently unsupported; it reports
   `memory.sqlite3-journal` beside the store, copy the backup over the store
   file and confirm `pragma integrity_check` returns `ok`; the restored store
   reads the same records.
-- Never store credentials, secret values, personal data or raw transcripts;
-  the store accepts only `public` or `internal` sensitivity.
+- The store accepts only `public` or `internal` sensitivity.
 - Native Claude and Codex memory stay disabled in project configuration, and
   their existing files are neither deleted nor imported.
 
@@ -133,7 +131,6 @@ at that owner. Expired or withdrawn observations are not reusable; remove their
 active metadata block or refresh it through owner review. A deleted or changed
 source invalidates its SHA-256 and every derived cache. Scope, authorization or
 expiry changes also invalidate caches even if the file hash is unchanged.
-Do not retain secret values, personal data or raw transcripts in metadata.
 The validator checks metadata, file identity and dates; it cannot authenticate
 an approval or infer whether a writer concealed sensitive content.
 
@@ -150,8 +147,8 @@ or missing approval, concurrent writer conflict, or partial subprocess result.
 Retain completed evidence, identify failed/DEFER lanes, remaining work, rollback
 and next owner, then refresh only invalidated evidence. Carry actual
 cancellation, observed provider request/resource limits and `Retry-After`
-with the affected handoff. Do not create an elapsed-time work deadline,
-shared worker allocation or reserve approval from a checkpoint; unknown
+with the affected handoff. Deadlines, worker allocations and reserve approvals are not created from a
+checkpoint (see [quality](quality.md#validation-runner-envelope)); unknown
 account limits remain unverified for the dependent provider request and do
 not block independent local work. A summary saying PASS does not waive this
 recheck. These are agent and operator obligations, not a claim of native
@@ -169,3 +166,4 @@ it. Use [quality policy](quality.md) for evidence and handoff classification.
 - [Document Lifecycle](document-lifecycle.md)
 - Archive Index (`docs/98.archive/README.md`)
 - [Approval and Safety](approval-and-safety.md)
+- [Quality Policy](quality.md)

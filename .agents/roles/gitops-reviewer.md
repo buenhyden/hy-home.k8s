@@ -1,10 +1,10 @@
 ---
 title: "Gitops Reviewer Responsibility"
-version: "1.1.0"
+version: "1.1.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-11-06"
 ---
 
 # gitops-reviewer Responsibility
@@ -59,7 +59,7 @@ will apply it the way the change intends.
 
 ### Handoff / Escalation
 
-- Escalate implementation tasks to `k8s-implementer.md`.
+- Escalate implementation tasks to `k8s-implementer.md`; unresolved ownership to `supervisor.md`.
 
 ### Postflight
 

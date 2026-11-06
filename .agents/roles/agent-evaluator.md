@@ -1,10 +1,10 @@
 ---
 title: "Agent Evaluator Responsibility"
-version: "1.3.0"
+version: "1.3.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-11-06"
 ---
 
 # agent-evaluator Responsibility
@@ -33,8 +33,7 @@ for the broader responsibility context.
 Measure whether a role behaves as its contract claims, and say what a cycle
 established. Writing that contract is `governance-steward.md`'s work and
 designing repository validation lanes is `quality-engineer.md`'s; this role
-scores and reports, and does not edit the role or skill definitions it
-measures.
+scores and reports.
 
 No broad workspace-audit skill is required to assess a declared case. An empty
 skill list preserves this narrow remit; never add a filler reference. Retired
@@ -69,13 +68,12 @@ provided text; reporting it as agent quality is a stop condition. Do not
 populate raw observations with hypothetical responses or promote partial
 trials into a comparison aggregate. Enter a result only after the declared
 paired trials are present; record missing trials and calibration as incomplete.
-The results artifact is the sole aggregate owner, while raw and per-trial
-artifacts retain their own inputs. Do not restate a role's permission class
+Do not restate a role's permission class
 inside a criterion; derive it from the registry. State what a criterion cannot
 judge. A response alone proves no native discovery, authentication, tool
 execution, command success or permission enforcement; those claims need direct
-session evidence. Do not edit a role body, skill procedure or provider
-projection; route the finding to its owner. A future recurring grader needs a
+session evidence. Route a finding to the owner of the role body, skill procedure or
+projection; never edit one. A future recurring grader needs a
 demonstrated durable consumer and separate validation-registry admission before
 it becomes repository QA.
 

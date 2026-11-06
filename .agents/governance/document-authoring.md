@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "3.3.0"
+version: "3.3.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-11-06"
 ---
 
 # Document Authoring Policy
@@ -38,8 +38,8 @@ express ownership, not a one-way waterfall.
    the governed envelope with an "active" routing constant, but have neither
    artifact identity nor lifecycle binding. Stable reference pack anchors keep
    their reference identity and publication lifecycle even when named README.md.
-4. Take the frontmatter key set and its order from the selected profile, and
-   each key's value grammar from the
+4. Take the frontmatter key set from the selected profile (the key order is
+   stated below), and each key's value grammar from the
    frontmatter schema (`docs/99.templates/contracts/frontmatter.schema.json`).
    Every string, date, version, and identity scalar uses double quotes. A
    "title" never repeats the document's "artifact_id": identity is already a
@@ -72,10 +72,10 @@ express ownership, not a one-way waterfall.
    criterion acceptance remain separate from that approval. Keep one Task
    Table with criterion links, row state, result and evidence. Its frontmatter status is
    the sole document status marker. For one row, author its state only in
-   frontmatter and use literal `frontmatter` in the row. For multiple rows,
-   author only row states; generate the required header summary with the
-   explicit Task status writer, never a second human-maintained state. The
-   read-only checker verifies that summary against Registry-bound rows.
+   frontmatter and use literal `frontmatter` in the row. For a multi-row Task,
+   author only row states and omit frontmatter `status`; the validators derive
+   the summary from the Registry-bound rows on each read (Stage 99 Task Status
+   Authoring), so no writer exists and no second human-maintained state is kept.
    Record each criterion's sole authored `pending`, `accepted`, `rejected`, or
    `not-required` disposition in the Task's Criterion Acceptance table, with
    evidence, disposition rationale and current owner. Neither the execution
@@ -198,8 +198,6 @@ heading은 등록된 문법을 유지한다. `.agents/`의 비 Markdown 파일�
 등록된 언어를 따르며, 생성된 현행 산출물을 손으로 고치거나 taxonomy 밖의
 저술 트리를 만들지 않는다.
 
-## Validation and Refresh
-
 Stage 99 Registry의 선택적 `shared_contract`는 승인된 공동 판본과 이 지역
 adapter를 식별한다. 고정된 원본 revision과 digest는 검토한 bytes를 가리키며,
 `approval_ref`는 별도 공동 결정을 기록한다. Registry의 stage 값은 지역
@@ -216,6 +214,20 @@ submodules in their relevant roles. Fill sections with concrete content; a
 heading, comment, placeholder or empty fence is no operating instruction.
 An inapplicable item states why and who owns the remaining boundary. A format
 check cannot authenticate a current operator, live service or approval.
+
+Joint edition decisions belong to the request owner `buenhyden`; current
+documentation, QA and operations owners review their scope. Verify an existing
+approved source when available; otherwise record that no prior joint approved
+edition was established and first establish one candidate with the same
+identity across adapters. Missing future commit, digest or approval fields
+never block authorized investigation, policy/consumer repair or independent
+local work. Record candidate preparation, final approval, local adoption and
+joint adoption separately in the current Task, and do not claim an unread
+adapter adopted an edition. Bind final approval to the reviewed edition's actual
+content, revision and digest only after its real decision, and do not create a
+competing normative core.
+
+## Validation and Refresh
 
 Run strict registry, Markdown-profile, link/owner, and lifecycle checks when
 their contracts are affected. A deletion or consolidation requires replacement

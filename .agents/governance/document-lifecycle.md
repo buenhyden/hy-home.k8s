@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.4.1"
+version: "2.4.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-06"
 ---
 
 # Document Lifecycle Policy
@@ -50,7 +50,8 @@ evidence is not rewritten to satisfy a later profile.
   지목한다. Task의 PASS나 부모의 `approved`만으로 이 승격을
   대신하지 않는다. 과거 Plan 원문은 새 기록을 위해 다시 쓰지 않는다.
 - A Task carries actual work state: `draft` is proposed, `ready` means the
-  approved inputs and execution prerequisites are assembled, `in-progress`
+  approved inputs and execution prerequisites are assembled (it is no new
+  approval or live-action permission), `in-progress`
   records started execution, and `blocked` names the obstacle and next owner.
   Resume requires evidence that the obstacle was resolved. `completed`
   requires completed work, applicable required checks, accepted criteria and
@@ -63,20 +64,17 @@ evidence is not rewritten to satisfy a later profile.
   no waiver. Active and completed Tasks cannot use that verdict.
   QA `NOT_APPLICABLE` describes a check without a target, not a criterion
   waiver.
-  `ready` is no new
-  approval or live-action permission.
 - For a newly recorded Task in this k8s regional adapter, the first Git
   version may carry an actual nonterminal `ready`, `in-progress` or `blocked`
   row when the current scoped user authorization and Task Inputs identify the
   owner, prerequisites and evidence of preparation, execution or obstacle.
-  `ready` still requires approved inputs and assembled prerequisites;
-  `blocked` names the cause, resume condition and next owner. A new terminal
-  Task is refused. Do not invent a draft-only commit to simulate an unobserved
+  A new terminal Task is refused. Do not invent a draft-only commit to simulate an unobserved
   transition. Later transitions, required evidence, criterion acceptance and
   protected-action approval remain unchanged. This is an explicit local
   `shared_contract.extensions` rule, not a new WGOV-CORE 3.0.0 edition
   or, by itself, proof of full regional adoption.
-- `Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`
+- The `shared_contract.extensions` entry `Local candidate Spec/Plan direct
+  draft-to-approved transition after actual batch review and approval`
   admits the direct edge for this k8s regional
   adapter when a scoped user request, actual batch review and approval are
   recorded. New Spec and Plan creation remains draft-only; approval means the
@@ -101,7 +99,8 @@ evidence is not rewritten to satisfy a later profile.
   their different role meanings; none is Task `completed`. A
   current Task keeps execution in one Task Table and one frontmatter status
   marker. For one row, the marker is the human source; for multiple rows, the
-  row states are the human source and an explicit writer generates the marker.
+  row states are the human source, frontmatter `status` is omitted and the
+  validators derive the summary from the rows.
   The Registry owns state/result values and summary binding; the lifecycle
   checker reads the Git index for completion handoff. Each assigned criterion
   has one authored verdict in Criterion Acceptance, and each factual Task
@@ -128,10 +127,9 @@ evidence is not rewritten to satisfy a later profile.
   do not own a destination path.
 - Material Stage 99 index/worktree drift fails staged validation; the staged
   registry is the commit claim.
-- A governed document that is no longer current leaves its stage. Stage 01,
-  02 and 03 documents are deleted after their Archived Lineage summary; another
-  stage may delete it or move it under a `docs/98.archive/` disposition
-  directory. In every case Git history is its record, recovered with
+- A governed document that is no longer current leaves its stage. A stage
+  other than 01, 02 or 03 may delete it or move it under a `docs/98.archive/`
+  disposition directory. In every case Git history is its record, recovered with
   `git show <commit>:<path>`.
   Stage 99 forms leave through Git history only, and a stage or collection
   index is retained in place.
@@ -139,8 +137,8 @@ evidence is not rewritten to satisfy a later profile.
   inventory: no profile, lifecycle, link, catalog, retention, citation or
   migration check reads it, and its files carry no envelope, digest or ledger.
   A change under it reruns only secret scanning. The directory keeps its README and disposition structure.
-- A current document links the current owner rather than an archived file.
-  A link into `docs/98.archive/` is not checked, not even for existence.
+  A current document links the current owner rather than an archived file; a
+  link into it is not checked, not even for existence.
 - A document that moves between active stages keeps no migration record.
 
 ## Validation and Refresh
@@ -154,7 +152,7 @@ changes.
 ## Related Documents
 
 - [Software Development Lifecycle](sdlc.md)
-- [Governance Hub](../README.md)
+- [Common Agent Governance](../README.md)
 - Document Profile Registry (`docs/99.templates/registry.json`)
 - [Document Authoring Policy](document-authoring.md)
 - Archive Stage (`docs/98.archive/README.md`)

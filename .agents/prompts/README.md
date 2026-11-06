@@ -1,10 +1,10 @@
 ---
 title: "Common Prompt Contracts"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-11-06"
 ---
 # Common Prompt Contracts
 
@@ -18,7 +18,7 @@ updated: "2026-10-13"
 ## Scope
 
 계약 식별자는 파일 이름(stem)이다. 각 계약은 필수 입력과 그것을 만드는 정확한
-읽기 전용 명령, 출력 형태, 만들어진 초안에 적용하는 검증, 거절 조건을 적는다.
+명령(`scripts/prompt-input.py`의 닫힌 `ALLOWED_COMMANDS` 목록에 있는 것), 출력 형태, 만들어진 초안에 적용하는 검증, 거절 조건을 적는다.
 권한이나 승인 경계는 적지 않으며, 그것은 agent registry와 승인 정책이 계속
 소유한다.
 
@@ -41,15 +41,19 @@ script는 선언된 입력을 모아 요청을 표준 출력으로 쓴다. model
 1. 계약을 추가하기 전에 [document authoring](../governance/document-authoring.md)을
    읽고 Stage 99 registry에서 prompt profile을 고른다.
 2. 식별자가 기존 skill 식별자나 command 진입점과 겹치지 않는지 확인한다.
-3. 입력으로는 읽기 전용 명령만 선언한다. 저장소에 쓰거나 Git 상태를 바꾸는
-   명령을 선언한 계약은 거부된다.
-4. 거절 조건을 명시한다. 거절 조건이 없는 계약은 입력이 비어 있을 때 아무것도
+3. 입력 명령은 `scripts/prompt-input.py`의 닫힌 `ALLOWED_COMMANDS` 목록에 있는
+   것만 선언한다. 목록에 없는 명령을 선언한 계약은 거부되며, 명령을 목록에
+   더하는 것은 검토를 거치는 script 변경이다.
+4. 거절 조건을 명시한다. builder는 주제 입력이 비어 있는 경우만 거부하고 나머지
+   조건은 요청하는 agent가 지킨다. 거절 조건이 없는 계약은 입력이 비어 있을 때 아무것도
    설명하지 않는 초안을 만든다.
-5. 새 계약은 위 Structure 목록에 모두 색인한다.
+5. 새 계약은 위 Structure 목록에 모두 색인하고, 같은 식별자로
+   `.claude/commands/<id>.md` 진입점을 하나 둔다([Claude adapter](../../.claude/README.md)).
+   진입점은 자체 계약을 갖지 않는다.
 
 ## Related Documents
 
-- [Governance Hub](../README.md)
+- [Common Agent Governance](../README.md)
 - [Quality and Evidence Policy](../governance/quality.md)
 - [Approval and Safety](../governance/approval-and-safety.md)
 - [Scripts](../../scripts/README.md)

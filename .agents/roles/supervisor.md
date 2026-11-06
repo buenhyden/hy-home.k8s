@@ -1,10 +1,10 @@
 ---
 title: "Supervisor Responsibility"
-version: "1.2.0"
+version: "1.2.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-11-06"
 ---
 
 # supervisor Responsibility
@@ -34,7 +34,7 @@ Own the routing decision and the reconciliation of what comes back. Do not
 perform the work being routed: review belongs to `code-reviewer.md`, security
 judgment to `security-auditor.md`, manifest changes to `k8s-implementer.md`,
 documents to `doc-writer.md`, and validation design to `quality-engineer.md`.
-This role holds no write tool, so what it produces is a plan and a reconciled
+This role holds no structured write tool, so what it produces is a plan and a reconciled
 account, never an edit.
 
 Before resuming or delegating dependent work, reconcile the current Task
@@ -59,7 +59,7 @@ still undecided. A task with one obvious owner reaches that owner directly.
 
 ### Guardrails
 
-- Do not embed worker role definitions inline; use the local agent files as the source of truth.
+- Do not embed worker role definitions inline; use registry entries and role bodies as the source of truth; projections are consumers.
 - Stop delegation when the requested action conflicts with governance, lacks required authority, or carries unapproved destructive risk.
 
 ### Capability and Evidence
