@@ -63,11 +63,12 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 
 ```text
 03.specs/
+├── 0150-stage90-published-freeze/
 ├── AGENTS.md
 └── README.md
 ```
 
-현재 열린 package는 없다.
+현재 열린 package는 [0150-stage90-published-freeze](./0150-stage90-published-freeze/) 하나다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다.
 
