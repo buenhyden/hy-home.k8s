@@ -22,11 +22,12 @@ found. It executes [SPEC-0146](../spec.md) through
 - Request (2026-11-06): audit the workspace engineering governance and apply
   the well-founded improvements directly, without remote Git, deployment or
   deletion.
-- Approval (2026-11-06): that request authorizes this scope. The lifecycle
-  gate requires the Spec and Plan to be created `draft` and approved in a
-  separate commit; no commit was requested, so both stay `draft` and the
-  approval commit is pending (audit D-2). Criterion acceptance stays the
-  operator's.
+- Approval (2026-11-06): the operator's reply approving the proposed commits approves SPEC-0146 and
+  its Plan, drafted in `f3d71d9a`, and the local commits; push and merge are
+  not approved. Criterion acceptance stays the operator's.
+- Environment (2026-11-06): the operator approved a scratch venv with the
+  hashed `.github/requirements/ci-validation.txt` pins, because no installed
+  interpreter had both `pre_commit` and `jsonschema` for the style gates.
 - Start: branch `docs/sdlc-cross-artifact-conformance` from `main` at
   `3ec90be8`, clean worktree.
 
@@ -36,9 +37,9 @@ found. It executes [SPEC-0146](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SDLC-001](../spec.md#success-criteria--verification-plan) | `sdlc.md` Cross-artifact conformance | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-SDLC-002](../spec.md#success-criteria--verification-plan) | Spec, Plan and ADR template prompts | platform | draft | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-SDLC-003](../spec.md#success-criteria--verification-plan) | Audit pack AUD-0001 | platform | draft | NOT_RUN | EVD-003 |
+| WORK-001 | [VAL-SDLC-001](../spec.md#success-criteria--verification-plan) | `sdlc.md` Cross-artifact conformance | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-SDLC-002](../spec.md#success-criteria--verification-plan) | Spec, Plan and ADR template prompts | platform | ready | NOT_RUN | EVD-002 |
+| WORK-003 | [VAL-SDLC-003](../spec.md#success-criteria--verification-plan) | Audit pack AUD-0001 | platform | ready | NOT_RUN | EVD-003 |
 
 ## Task Evidence
 
