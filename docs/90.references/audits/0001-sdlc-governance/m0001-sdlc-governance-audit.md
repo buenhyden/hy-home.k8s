@@ -92,18 +92,17 @@ changes. Current truth is owned by those files, not this report.
 
 | Remediation | Owner | Due or decision date |
 | --- | --- | --- |
-| F-01 to F-03: `sdlc.md` `Cross-artifact conformance`; Spec template prompts (SPEC-0146 WORK-001, WORK-002) | platform | Committed on branch 2026-11-06; checks PASS in the SPEC-0146 Task; criterion acceptance pending |
-| F-04: Plan template compliance-check prompt (WORK-002) | platform | Committed on branch 2026-11-06; checks PASS in the SPEC-0146 Task |
-| F-05: ADR template requirement prompt (WORK-002) | platform | Committed on branch 2026-11-06; checks PASS in the SPEC-0146 Task |
+| F-01 to F-03: `sdlc.md` `Cross-artifact conformance`; Spec template prompts (SPEC-0146 WORK-001, WORK-002) | platform | Done 2026-11-06 under SPEC-0146; criteria accepted (REQ-0003 Archived Lineage, recover with `git show ca3ead4c:<path>`) |
+| F-04: Plan template compliance-check prompt (WORK-002) | platform | Done 2026-11-06 under SPEC-0146 (REQ-0003 Archived Lineage) |
+| F-05: ADR template requirement prompt (WORK-002) | platform | Done 2026-11-06 under SPEC-0146 (REQ-0003 Archived Lineage) |
 | D-1: make the Spec → AD/ADR statement machine-checked | operator | Resolved 2026-11-06 by SPEC-0147: a required `Architecture` column in the Spec Lifecycle Traceability table; link-target and reciprocal checks were not added |
 | D-2: the lifecycle gate refuses creation in `approved` or `published`, so approval and publication are separate commits | operator | Resolved 2026-11-06: drafted `f3d71d9a`, approved `4fcdf22a` |
 | F-06: observe Codex loading in a Codex session | operator | Accepted deferral |
 | R-1: whether a Spec's `Architecture` cell names the right AD or ADR, and F-02 and F-03, stay reviewer-judged. A link-target check would need a second typed link column in the body-contract schema, and the content is semantic | operator | Decided 2026-11-06: no automation; the semantic review in `quality.md` is the control |
 | F-07: refuse a Task Table row whose ID is not a work-item ID or whose cell count differs from the header | operator | Open; needs its own Stage 03 package (executable behavior) |
 
-Existing documents are not rewritten: the prompts apply to documents created
-from the templates from now on, and the `sdlc.md` rules to packages opened
-from now on.
+Existing documents are not rewritten; the prompts reach documents through
+the templates, and `sdlc.md` scopes its rules by change kind.
 
 ### Verification State
 
