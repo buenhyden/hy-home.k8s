@@ -1,6 +1,6 @@
 ---
 title: "Agent Surface Deferred Conformance"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -19,6 +19,10 @@ through [WORK-001–004](../plan.md#work-breakdown).
 ## Inputs
 
 - Request (2026-11-06): handle the deferred items and finish.
+- Approval (2026-11-06): the operator's instruction to handle the deferred
+  items and finish approves SPEC-0145 and its Plan, drafted in `87e32afd`, and the
+  delivery through a pull request and merge; it also accepts the criteria once
+  their evidence passes.
 - Start: branch `docs/agents-deferred` from `main` at `18b76c17`.
 
 ## Task Table
@@ -27,10 +31,10 @@ through [WORK-001–004](../plan.md#work-breakdown).
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-DEF-003](../spec.md#success-criteria--verification-plan) | Derived projection fields | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-DEF-001](../spec.md#success-criteria--verification-plan) | Role-body shared sections | platform | draft | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-DEF-002](../spec.md#success-criteria--verification-plan) | Collection-index README subsections | platform | draft | NOT_RUN | EVD-003 |
-| WORK-004 | [VAL-DEF-004](../spec.md#success-criteria--verification-plan) | `sdlc.md` invariant, CIS numbers, sibling pin | platform | draft | NOT_RUN | EVD-004 |
+| WORK-001 | [VAL-DEF-003](../spec.md#success-criteria--verification-plan) | Derived projection fields | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-DEF-001](../spec.md#success-criteria--verification-plan) | Role-body shared sections | platform | ready | NOT_RUN | EVD-002 |
+| WORK-003 | [VAL-DEF-002](../spec.md#success-criteria--verification-plan) | Collection-index README subsections | platform | ready | NOT_RUN | EVD-003 |
+| WORK-004 | [VAL-DEF-004](../spec.md#success-criteria--verification-plan) | `sdlc.md` invariant, CIS numbers, sibling pin | platform | ready | NOT_RUN | EVD-004 |
 
 ## Task Evidence
 
