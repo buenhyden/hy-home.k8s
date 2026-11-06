@@ -1,6 +1,6 @@
 ---
 title: "Codex Provider Notes"
-version: "1.7.0"
+version: "1.8.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
@@ -144,9 +144,10 @@ team document, not a special automatic entry filename.
   `stopReason` and `suppressOutput` as unsupported. A non-zero exit that writes
   a reason to standard error blocks the call. The shared guard emits
   `systemMessage`, the exit-with-reason form and, since SPEC-0149,
-  `hookSpecificOutput.additionalContext` carrying its guidance and each write
-  target's folder `AGENTS.md` chain beyond the root-to-cwd chain Codex loads
-  itself, once per session (on every call without a `session_id`; not again
+  `hookSpecificOutput.additionalContext` carrying its guidance, a line naming
+  each write target's folder `AGENTS.md` paths on every write, and the text of
+  that chain beyond the root-to-cwd chain Codex loads itself (Codex only since
+  SPEC-0151; Claude loads it through folder `CLAUDE.md` imports), once per session (on every call without a `session_id`; not again
   after a context compaction). The current documentation lists `additionalContext` for
   `PreToolUse`, but the response contract observed above on 0.153.4 listed
   only three fields, and delivery on the installed 0.166.0 is unobserved (the

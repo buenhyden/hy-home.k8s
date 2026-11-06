@@ -1,10 +1,10 @@
 ---
 title: "05.operations"
-version: "0.5.0"
+version: "0.5.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-06"
 layer: "operations"
 ---
 # 05.operations
@@ -115,6 +115,7 @@ ADR, profile, lifecycle, template을 함께 검토한다.
 ├── runbooks/
 ├── incidents/
 ├── AGENTS.md
+├── CLAUDE.md
 └── README.md
 ```
 
@@ -125,6 +126,7 @@ ADR, profile, lifecycle, template을 함께 검토한다.
 | [runbooks/](./runbooks/) | 실행 가능한 운영 절차 |
 | [incidents/](./incidents/) | 사고 기록과 사후 분석 |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
+| [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
 
 ## Usage
 

@@ -44,6 +44,24 @@ def run_hook(payload: str, project_dir: Path, environment: dict | None = None):
     )
 
 
+def run_codex_adapter(payload: str, cwd: Path, environment: dict | None = None):
+    """Invoke the Codex adapter: no Claude variables, Git root only."""
+    env = {
+        key: value for key, value in os.environ.items() if not key.startswith("CLAUDE_")
+    }
+    if environment:
+        env.update(environment)
+    return subprocess.run(
+        ("bash", str(CODEX_ADAPTER_PATH)),
+        input=payload,
+        capture_output=True,
+        text=True,
+        env=env,
+        cwd=str(cwd),
+        timeout=300,
+    )
+
+
 def run_hook_without_project_dir(payload: str, cwd: Path):
     """Invoke the guard the way Codex does: no project variable, Git root only."""
     env = {
@@ -1022,11 +1040,18 @@ class FolderAgentRulesTests(unittest.TestCase):
         self.state = tempfile.TemporaryDirectory(prefix="agents-md-state-")
         self.addCleanup(self.state.cleanup)
 
-    def call(self, session: str | None, target: str = TARGET):
-        payload = {"tool_name": "Edit", "tool_input": {"file_path": target}}
+    def call(
+        self, session: str | None, target: str = TARGET, provider="codex", tool="Edit"
+    ):
+        payload = {"tool_name": tool, "tool_input": {"file_path": target}}
         if session is not None:
             payload["session_id"] = session
-        result = run_hook(json.dumps(payload), ROOT, {"TMPDIR": self.state.name})
+        environment = {"TMPDIR": self.state.name}
+        if provider == "codex":
+            payload["tool_name"] = "apply_patch"
+            result = run_codex_adapter(json.dumps(payload), ROOT, environment)
+        else:
+            result = run_hook(json.dumps(payload), ROOT, environment)
         self.assertEqual(result.returncode, 0, result.stderr)
         output = json.loads(result.stdout) if result.stdout.strip() else {}
         specific = output.get("hookSpecificOutput", {})
@@ -1078,6 +1103,31 @@ class FolderAgentRulesTests(unittest.TestCase):
         shared.chmod(0o755)
         self.assertIn(self.CHAIN_MARKERS[1], self.call("session-g"))
         self.assertIn(self.CHAIN_MARKERS[1], self.call("session-g"))
+
+    def test_claude_gets_the_path_line_on_every_edit_and_no_text(self):
+        line = "Folder agent rules for `docs/03.specs/README.md`: `docs/AGENTS.md`, `docs/03.specs/AGENTS.md`"
+        for tool in ("Edit", "Write"):
+            context = self.call("session-h", provider="claude", tool=tool)
+            self.assertIn(line, context)
+            self.assertNotIn(self.CHAIN_MARKERS[1], context)
+
+    def test_codex_also_gets_the_path_line_after_the_text(self):
+        self.call("session-i")
+        self.assertIn("`docs/03.specs/AGENTS.md`", self.call("session-i"))
+        self.assertNotIn(self.CHAIN_MARKERS[1], self.call("session-i"))
+
+    def test_session_start_hook_reinjects_the_reading_instruction(self):
+        result = subprocess.run(
+            ("bash", str(ROOT / ".claude/hooks/session-start.sh")),
+            input='{"source":"compact","session_id":"s"}',
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        specific = json.loads(result.stdout)["hookSpecificOutput"]
+        self.assertEqual(specific["hookEventName"], "SessionStart")
+        self.assertIn("AGENTS.md", specific["additionalContext"])
 
     def test_root_level_target_supplies_no_folder_file(self):
         self.assertNotIn("AGENTS.md`", self.call("session-e", "CHANGELOG.md"))

@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "2.3.13"
+version: "2.3.14"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -146,7 +146,7 @@ Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git
 
 ## Traceability
 
-No governance Spec package is open. SPEC-0150 and SPEC-0149, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
+No governance Spec package is open. SPEC-0151 and SPEC-0150, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
 
 ### Lifecycle Traceability
 
@@ -384,3 +384,4 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0148 | completed spec | Fixed AUD-0001 finding F-07: `validate-markdown-profiles.py` padded or truncated body-contract rows to the header width silently, which let one nine-cell evidence row disable the Task contract check; it now refuses such rows with `BODY-CONTRACT-ROW-WIDTH`. Focused test red then green; the fixed validator flags the three rows of the original `7aff341c` defect. Both criteria accepted on 2026-11-06; no durable contract introduced. Recover with `git show ef3a6398:<path>`. | `docs/03.specs/0148-task-table-row-width/` |
 | SPEC-0149 | completed spec | Fixed AUD-0001 F-08 and F-09: the shared pre-action guard `scripts/provider_write_guard.py` reported only through the user-facing `systemMessage`, and neither provider loaded folder `AGENTS.md` files outside its native path; the guard now also returns `hookSpecificOutput.additionalContext` with its guidance and each write target's folder `AGENTS.md` chain, root gateway excluded, once per session, and a state or session failure never blocks. Claude delivery observed in-session; Codex delivery DEFER until the usage limit resets. All three criteria accepted on 2026-11-06; the reading rule was promoted to `agent-execution.md`. Recover with `git show ea4e36be:<path>`. | `docs/03.specs/0149-agents-md-hook-context/` |
 | SPEC-0150 | completed spec | Fixed AUD-0001 F-10: `docs/90.references/AGENTS.md` rule 3 was unenforced; `validate-document-contract-registry.py` now compares each changed Stage 90 member with its HEAD version, following renames, and refuses with `REFERENCE_PUBLISHED_REWRITE` any change to a published member beyond its `status`, `version` and `updated` values and single-token link destinations, in local staged QA; the lifecycle validator is unchanged (REQ-0003-FR-0027). Both criteria accepted on 2026-11-06; no durable contract introduced. Recover with `git show 35d9733a:<path>`. | `docs/03.specs/0150-stage90-published-freeze/` |
+| SPEC-0151 | completed spec | Gave Claude every folder `AGENTS.md` natively: a one-line `@AGENTS.md` `CLAUDE.md` beside each of the 15 folder files, loaded with the import on the first Read, Write or Edit there (Read and Write observed in new 2.1.319 sessions; Edit per the documentation), with a `common/folder-claude-import` profile and a repository-quality pairing check; the shared guard names the folder `AGENTS.md` paths on every write and sends folder text only to Codex; a Claude `SessionStart` hook on compaction or resume re-injects the reading instruction, and the validator allows that one pinned session event per provider rule. All four criteria accepted on 2026-11-06; the reading rule was promoted to `agent-execution.md`. Recover with `git show bb5dc474:<path>`. | `docs/03.specs/0151-folder-claude-imports/` |

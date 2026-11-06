@@ -242,6 +242,25 @@ def agents_router_gaps(tracked) -> list[str]:
     return gaps
 
 
+def folder_claude_import_gaps(tracked, read) -> list[str]:
+    """Return each folder AGENTS.md lacking its one-line CLAUDE.md import."""
+
+    gaps = []
+    for path in sorted(tracked):
+        posix = pathlib.PurePosixPath(path)
+        if "/" not in path or posix.parts[:2] == ("docs", "98.archive"):
+            continue
+        folder = path.rsplit("/", 1)[0]
+        if posix.name == "AGENTS.md" and f"{folder}/CLAUDE.md" not in tracked:
+            gaps.append(f"{folder}/CLAUDE.md: missing")
+        if posix.name == "CLAUDE.md" and folder != ".claude":
+            if f"{folder}/AGENTS.md" not in tracked:
+                gaps.append(f"{folder}/AGENTS.md: missing for {path}")
+            elif read(path) != "@AGENTS.md\n":
+                gaps.append(f"{path}: content must be exactly @AGENTS.md")
+    return gaps
+
+
 def rel(path: pathlib.Path) -> str:
     return str(path.relative_to(root))
 
@@ -312,6 +331,11 @@ except Exception as exc:
 for missing_router in agents_router_gaps(tracked):
     fail(f"folder AGENTS.md needs its human router {missing_router}")
 
+for import_gap in folder_claude_import_gaps(
+    tracked, lambda path: read_text(root / path)
+):
+    fail(f"folder AGENTS.md needs its Claude import: {import_gap}")
+
 for tracked_path in sorted(tracked):
     if re.fullmatch(r"\.claude/[^/]+\.local\.md", tracked_path):
         fail(
@@ -330,7 +354,7 @@ for tracked_path in sorted(tracked):
 requirements_stage = root / "docs/01.requirements"
 if requirements_stage.exists():
     for requirement_doc in sorted(requirements_stage.glob("*.md")):
-        if requirement_doc.name in {"README.md", "AGENTS.md"}:
+        if requirement_doc.name in {"README.md", "AGENTS.md", "CLAUDE.md"}:
             continue
         if re.fullmatch(r"\d{4}-\d{2}-\d{2}-.+\.md", requirement_doc.name):
             fail(
@@ -346,7 +370,7 @@ if requirements_stage.exists():
 specs_stage = root / "docs/03.specs"
 if specs_stage.exists():
     for spec_entry in sorted(specs_stage.iterdir()):
-        if spec_entry.name in {"README.md", "AGENTS.md"}:
+        if spec_entry.name in {"README.md", "AGENTS.md", "CLAUDE.md"}:
             continue
         if spec_entry.is_dir():
             if not re.fullmatch(r"\d{4}-.+", spec_entry.name):
@@ -357,7 +381,7 @@ if specs_stage.exists():
             continue
         if spec_entry.is_file():
             fail(
-                "docs/03.specs may contain only README.md, AGENTS.md and numbered "
+                "docs/03.specs may contain only README.md, AGENTS.md, CLAUDE.md and numbered "
                 f"Spec folders: {rel(spec_entry)}"
             )
 

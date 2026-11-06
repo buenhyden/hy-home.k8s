@@ -594,6 +594,25 @@ def _save_agents_state(state: Path, supplied: dict[str, str]) -> None:
         return
 
 
+def folder_agents_paths(root: str, targets: list[str]) -> str:
+    """Name each target's folder AGENTS.md chain on every write, so a compacted
+    session is pointed back to the files even when their text is not resent."""
+    lines = []
+    for target in targets:
+        folders = PurePosixPath(target).parts[:-1]
+        chain = [
+            (PurePosixPath(*folders[:depth]) / AGENTS_FILE).as_posix()
+            for depth in range(1, len(folders) + 1)
+        ]
+        present = [path for path in chain if os.path.lexists(Path(root) / path)]
+        if present:
+            lines.append(
+                f"Folder agent rules for `{target}`: "
+                + ", ".join(f"`{path}`" for path in present)
+            )
+    return "\n".join(lines)
+
+
 def folder_agents_context(
     root: str, targets: list[str], session: object
 ) -> tuple[str, Path | None, dict[str, str]]:
@@ -760,8 +779,22 @@ def main(argv: list[str] | None = None) -> int:
     messages = build_messages(resolved_root, shell_targets)
     # systemMessage reaches the user only; additionalContext reaches the model.
     try:
-        folder_rules, state, supplied = folder_agents_context(
-            resolved_root, [*paths, *shell_targets], data.get("session_id")
+        # Claude loads folder AGENTS.md text natively through each folder's
+        # CLAUDE.md import (SPEC-0151); Codex gets it here once per session.
+        folder_rules, state, supplied = (
+            folder_agents_context(
+                resolved_root, [*paths, *shell_targets], data.get("session_id")
+            )
+            if not claude
+            else ("", None, {})
+        )
+        folder_rules = "\n\n".join(
+            part
+            for part in (
+                folder_agents_paths(resolved_root, [*paths, *shell_targets]),
+                folder_rules,
+            )
+            if part
         )
     except TimeoutError:
         raise  # keep the guard deadline
