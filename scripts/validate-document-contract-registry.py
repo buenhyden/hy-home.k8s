@@ -192,6 +192,152 @@ def _staged_reference_files(root: Path) -> dict[PurePosixPath, str]:
     return inventory
 
 
+REFERENCE_MEMBER_PROFILES = frozenset(
+    {"reference/audit", "reference/research", "reference/data"}
+)
+_FRONTMATTER_LIFECYCLE = re.compile(r"(?m)^(?:status|version|updated): .*$")
+# One destination token only: a title or prose inside the parentheses is content.
+_LINK_DESTINATION = re.compile(r"\]\((?:<[^<>\n]*>|[^\s()<>]*)\)")
+_PUBLISHED_STATUS = re.compile(r'(?m)^status: "published"[ \t]*$')
+
+
+def _split_frontmatter(text: str) -> tuple[str, str]:
+    if text.startswith("---\n"):
+        end = text.find("\n---\n", 4)
+        if end != -1:
+            return text[:end], text[end:]
+    return "", text
+
+
+def _frozen_view(text: str) -> str:
+    """Return what a published member may not change: all but lifecycle values
+    and link destinations, which stay open for edges and consumer succession."""
+    head, body = _split_frontmatter(text)
+    return _LINK_DESTINATION.sub("](-)", _FRONTMATTER_LIFECYCLE.sub("", head) + body)
+
+
+def published_rewrite_errors(
+    registry: Registry,
+    bases: dict[PurePosixPath, bytes],
+    staged: dict[PurePosixPath, bytes],
+) -> list[str]:
+    """Refuse a rewrite of a member that is published at its base revision."""
+
+    errors: list[str] = []
+    for path, content in sorted(staged.items()):
+        base = bases.get(path)
+        if base is None or base == content:
+            continue
+        try:
+            profile_id = classify_path(registry, path).profile_id
+        except DocumentContractError:
+            continue
+        if profile_id not in REFERENCE_MEMBER_PROFILES:
+            continue
+        try:
+            base_text = base.decode("utf-8")
+        except UnicodeDecodeError:
+            continue  # a published member is UTF-8 Markdown
+        if not _PUBLISHED_STATUS.search(_split_frontmatter(base_text)[0]):
+            continue
+        try:
+            staged_text = content.decode("utf-8")
+        except UnicodeDecodeError:
+            errors.append(
+                f"REFERENCE_PUBLISHED_REWRITE: {path.as_posix()} is not UTF-8"
+            )
+            continue
+        if _frozen_view(base_text) != _frozen_view(staged_text):
+            errors.append(
+                f"REFERENCE_PUBLISHED_REWRITE: {path.as_posix()} is published; only "
+                "its status, version, updated and link destinations may change. "
+                "Add a new dated member instead (docs/90.references/AGENTS.md rule 3)"
+            )
+    return errors
+
+
+def _git_blob(root: Path, object_id: str) -> bytes:
+    return run_bounded_process(
+        ["git", "cat-file", "blob", object_id],
+        cwd=root,
+        check=True,
+        timeout_seconds=GIT_TIMEOUT_SECONDS,
+        max_stdout_bytes=REFERENCE_PACK_FILE_MAX_BYTES,
+    ).stdout
+
+
+def _published_reference_bases(
+    root: Path, staged_inventory: dict[PurePosixPath, str]
+) -> tuple[dict[PurePosixPath, bytes], dict[PurePosixPath, bytes]]:
+    """Read HEAD and stage-zero blobs of Stage 90 files the index changes."""
+
+    try:
+        born = run_bounded_process(
+            ["git", "rev-parse", "--verify", "--quiet", "HEAD"],
+            cwd=root,
+            check=False,
+            timeout_seconds=GIT_TIMEOUT_SECONDS,
+            max_stdout_bytes=4096,
+        )
+        if born.returncode != 0:
+            return {}, {}  # unborn HEAD: nothing is published yet
+        listed = run_bounded_process(
+            ["git", "ls-tree", "-r", "-z", "HEAD", "--", "docs/90.references"],
+            cwd=root,
+            check=True,
+            timeout_seconds=GIT_TIMEOUT_SECONDS,
+            max_stdout_bytes=REFERENCE_PACK_GIT_MAX_BYTES,
+        )
+        # A renamed or moved member is compared with its HEAD original.
+        renames = run_bounded_process(
+            [
+                "git",
+                "diff",
+                "--cached",
+                "-M",
+                "--name-status",
+                "-z",
+                "--diff-filter=R",
+                "HEAD",
+                "--",
+                "docs/90.references",
+            ],
+            cwd=root,
+            check=True,
+            timeout_seconds=GIT_TIMEOUT_SECONDS,
+            max_stdout_bytes=REFERENCE_PACK_GIT_MAX_BYTES,
+        )
+        fields = renames.stdout.split(b"\0")
+        origin: dict[PurePosixPath, PurePosixPath] = {}
+        for index in range(0, len(fields) - 2, 3):
+            if fields[index].startswith(b"R"):
+                origin[PurePosixPath(fields[index + 2].decode("utf-8"))] = (
+                    PurePosixPath(fields[index + 1].decode("utf-8"))
+                )
+        head: dict[PurePosixPath, str] = {}
+        for record in listed.stdout.split(b"\0"):
+            if not record:
+                continue
+            header, raw_path = record.split(b"\t", 1)
+            _mode, kind, raw_object_id = header.split(b" ", 2)
+            if kind == b"blob":
+                head[PurePosixPath(raw_path.decode("utf-8"))] = raw_object_id.decode(
+                    "ascii"
+                )
+        bases: dict[PurePosixPath, bytes] = {}
+        staged: dict[PurePosixPath, bytes] = {}
+        for path, object_id in staged_inventory.items():
+            base_id = head.get(origin.get(path, path))
+            if base_id is not None and base_id != object_id:
+                bases[path] = _git_blob(root, base_id)
+                staged[path] = _git_blob(root, object_id)
+    except (AuthorityError, subprocess.SubprocessError, ValueError) as exc:
+        raise AssertionError(
+            f"REFERENCE_PACK_INDEX: HEAD comparison is unavailable: {exc}"
+        ) from exc
+    return bases, staged
+
+
 def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
     """Enforce the only current Stage 90 pack routes and their Stage 99 forms."""
 
@@ -373,6 +519,12 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
                     "between stage zero and worktree"
                 )
 
+    if not errors:
+        errors.extend(
+            published_rewrite_errors(
+                registry, *_published_reference_bases(root, staged_inventory)
+            )
+        )
     if errors:
         raise AssertionError("\n".join(errors))
 

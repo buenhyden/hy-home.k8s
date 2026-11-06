@@ -31,8 +31,8 @@ Refuse a rewrite of a published Stage 90 member (AUD-0001 F-10). It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | Focused tests and freeze check | platform | ready | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-FRZ-002](../spec.md#success-criteria--verification-plan) | Strict checks and observed refusal | platform | ready | NOT_RUN | EVD-002 |
+| WORK-001 | [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | Focused tests and freeze check | platform | in-progress | PASS | EVD-004, EVD-006 |
+| WORK-002 | [VAL-FRZ-002](../spec.md#success-criteria--verification-plan) | Strict checks and observed refusal | platform | in-progress | PASS | EVD-005 |
 
 ## Task Evidence
 
@@ -40,13 +40,17 @@ Refuse a rewrite of a published Stage 90 member (AUD-0001 F-10). It executes
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests red then green | Pending Spec approval | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-FRZ-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Strict checks and observed refusal | Pending Spec approval | NOT_RUN | Pending | yes | none |
+| EVD-003 | [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests red then green | Working tree on `cc7804cf` with the new tests and the old validator | FAIL | Local run, 2026-11-06T08:32Z: `PublishedMemberFreezeTest` errors; `published_rewrite_errors` does not exist | no | none |
+| EVD-004 | [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests red then green | Working tree on `cc7804cf` with the freeze check | PASS | Local run, 2026-11-06T08:33Z: `tests.test_reference_pack_routes` OK, including body and link-text rewrites refused, lifecycle values and link destinations allowed, draft, new and pack files not frozen; ruff clean | yes | EVD-001 |
+| EVD-005 | [VAL-FRZ-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Strict checks and observed refusal | Working tree on `cc7804cf`; the published `AUD-0001-m0001` staged with a one-word body change, then with a destination-only link change | PASS | Local run, 2026-11-06T08:34Z: the rewrite exits 1 with `REFERENCE_PUBLISHED_REWRITE`; the link change passes; m0001 restored to its HEAD bytes (SHA-256 prefix `5393780c2410897b` before and after) | yes | EVD-002 |
+| EVD-006 | [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests red then green | Working tree on `cc7804cf` after the review fixes | PASS | Local run, 2026-11-06T08:39Z: the independent review found no BLOCK and ADVISORY bypasses; fixed: a renamed or moved member is compared with its HEAD original (`git diff --cached -M`), only a single link destination token is normalized so a title or prose is content, only an unborn HEAD skips the check, and the staged text is decoded after the published check; `tests.test_reference_pack_routes` OK with two new link cases; staging a `git mv` of m0001 with a one-word change is refused, m0001 restored identical to HEAD | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | pending | none | Run the focused tests | platform |
-| [VAL-FRZ-002](../spec.md#success-criteria--verification-plan) | pending | none | Run the strict checks | platform |
+| [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | pending | EVD-004, EVD-006 | Awaiting operator acceptance | platform |
+| [VAL-FRZ-002](../spec.md#success-criteria--verification-plan) | pending | EVD-005 | Awaiting operator acceptance | platform |
 
 ## Approval and Safety Boundaries
 
@@ -65,4 +69,18 @@ Refuse a rewrite of a published Stage 90 member (AUD-0001 F-10). It executes
 
 ## Verification Summary
 
-Pending.
+- Red then green: the focused tests failed on the old validator (EVD-003)
+  and pass with the freeze check (EVD-004).
+- Observed: a staged rewrite of the published m0001 is refused and a
+  destination-only link change passes; m0001 is unchanged (EVD-005).
+- Not run: hosted, provider-runtime and live lanes (not applicable).
+- Review: no BLOCK; the rename and link-destination bypasses were fixed
+  (EVD-006).
+- Scope: the freeze runs in local staged QA, where HEAD and the index
+  differ; a plain strict run on a clean tree compares nothing, and hosted CI
+  does not run it, so `--no-verify` bypasses it.
+- Residual risk: reference-style link definitions (`[x]: target`) are not
+  normalized, so changing one is refused; a link-shaped text inside a code
+  fence is normalized like a link; one `git cat-file` runs per changed blob.
+- Next owner: operator, for criterion acceptance and merge. Rollback: revert
+  the implementing commit.
