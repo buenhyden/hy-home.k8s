@@ -1,6 +1,6 @@
 ---
 title: "Task Table Row Width"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -31,8 +31,8 @@ F-07). It executes [SPEC-0148](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-ROW-001](../spec.md#success-criteria--verification-plan) | Focused test and width diagnostic | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-ROW-002](../spec.md#success-criteria--verification-plan) | Strict checks and suites | platform | in-progress | PASS | EVD-005 |
+| WORK-001 | [VAL-ROW-001](../spec.md#success-criteria--verification-plan) | Focused test and width diagnostic | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-ROW-002](../spec.md#success-criteria--verification-plan) | Strict checks and suites | platform | completed | PASS | EVD-005 |
 
 ## Task Evidence
 
@@ -48,8 +48,8 @@ F-07). It executes [SPEC-0148](../spec.md) through
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-ROW-001](../spec.md#success-criteria--verification-plan) | pending | EVD-004 | Awaiting operator acceptance | platform |
-| [VAL-ROW-002](../spec.md#success-criteria--verification-plan) | pending | EVD-005 | Awaiting operator acceptance | platform |
+| [VAL-ROW-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Operator accepted on 2026-11-06 after review | platform |
+| [VAL-ROW-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Operator accepted on 2026-11-06 after review | platform |
 
 ## Approval and Safety Boundaries
 
@@ -75,5 +75,6 @@ F-07). It executes [SPEC-0148](../spec.md) through
 - Every current document passes the strict checks, and the consumer suites
   pass (EVD-005).
 - Not run: hosted, provider-runtime and live lanes (not applicable).
-- Next owner: operator, for criterion acceptance and merge. Rollback: revert
+- Acceptance: the operator accepted VAL-ROW-001 and 002 on 2026-11-06.
+- Next owner: operator, for merge. Rollback: revert
   the implementing commit.
