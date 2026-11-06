@@ -1,6 +1,6 @@
 ---
 title: "SDLC Cross-Artifact Conformance"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -37,9 +37,9 @@ found. It executes [SPEC-0146](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SDLC-001](../spec.md#success-criteria--verification-plan) | `sdlc.md` Cross-artifact conformance | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-SDLC-002](../spec.md#success-criteria--verification-plan) | Spec, Plan and ADR template prompts | platform | in-progress | PASS | EVD-005 |
-| WORK-003 | [VAL-SDLC-003](../spec.md#success-criteria--verification-plan) | Audit pack AUD-0001 | platform | in-progress | PASS | EVD-006 |
+| WORK-001 | [VAL-SDLC-001](../spec.md#success-criteria--verification-plan) | `sdlc.md` Cross-artifact conformance | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-SDLC-002](../spec.md#success-criteria--verification-plan) | Spec, Plan and ADR template prompts | platform | completed | PASS | EVD-005 |
+| WORK-003 | [VAL-SDLC-003](../spec.md#success-criteria--verification-plan) | Audit pack AUD-0001 | platform | completed | PASS | EVD-006 |
 
 ## Task Evidence
 
@@ -56,9 +56,9 @@ found. It executes [SPEC-0146](../spec.md) through
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-SDLC-001](../spec.md#success-criteria--verification-plan) | pending | EVD-004 | Awaiting operator acceptance | platform |
-| [VAL-SDLC-002](../spec.md#success-criteria--verification-plan) | pending | EVD-005 | Awaiting operator acceptance | platform |
-| [VAL-SDLC-003](../spec.md#success-criteria--verification-plan) | pending | EVD-006 | Awaiting operator acceptance | platform |
+| [VAL-SDLC-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Operator accepted on 2026-11-06 after review | platform |
+| [VAL-SDLC-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Operator accepted on 2026-11-06 after review | platform |
+| [VAL-SDLC-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Operator accepted on 2026-11-06 after review | platform |
 
 ## Approval and Safety Boundaries
 
@@ -89,5 +89,6 @@ found. It executes [SPEC-0146](../spec.md) through
   loading (audit F-06).
 - Residual risk: the new rules are prose; no validator checks a Spec's
   architecture links (audit D-1).
-- Next owner: operator, for criterion acceptance, push and merge. Rollback:
+- Acceptance: the operator accepted VAL-SDLC-001 to 003 on 2026-11-06.
+- Next owner: operator, for merge. Rollback:
   revert the branch commits.
