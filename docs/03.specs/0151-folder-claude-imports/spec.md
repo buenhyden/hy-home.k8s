@@ -1,8 +1,8 @@
 ---
 title: "Folder CLAUDE.md Imports"
-version: "0.2.1"
+version: "0.3.0"
 type: "sdlc/spec"
-status: "approved"
+status: "in-review"
 owner: "platform"
 updated: "2026-11-06"
 layer: "specs"
@@ -38,8 +38,6 @@ provider change needs this package. The [Plan](plan.md) orders the work and
   - the root `CLAUDE.md` and root `AGENTS.md` (the Codex gateway);
   - `.claude/CLAUDE.md` and anything below `docs/98.archive/`;
   - user-level settings and Codex hook registrations;
-  - a path announcement on every edit, which the folder imports and the guard
-    already cover.
 - Open questions: none that change a criterion. Whether an `AGENTS.md` edited
   mid-session is picked up is undocumented and left unclaimed.
 
@@ -56,6 +54,9 @@ provider change needs this package. The [Plan](plan.md) orders the work and
   hook adds context telling Claude to read the `AGENTS.md` chain of every
   folder it works in again; it runs no QA and calls no agent, and never
   blocks.
+- On every structured, patch or recognized shell write, for both providers,
+  the guard adds one line naming the target's folder `AGENTS.md` paths, so a
+  compacted session is pointed back to the files on each edit.
 - Claude may register `PreToolUse` and `SessionStart`, Codex only
   `PreToolUse`; the validator refuses any other event.
 
@@ -107,7 +108,7 @@ required by policy; revert the guard change to restore hook delivery.
 | VAL-CLI-001 | Focused tests fail before and pass after: pairing and content gaps refused, Codex alone gets the guard's folder chain |
 | VAL-CLI-002 | The 15 files, the profile, provider notes and policy are in place; strict checks and staged QA PASS |
 | VAL-CLI-003 | A new Claude session that only reads a file in an untouched folder shows that folder's `AGENTS.md` text in its context |
-| VAL-CLI-004 | Focused tests fail before and pass after: the session-start hook output and the per-provider event rule |
+| VAL-CLI-004 | Focused tests fail before and pass after: the session-start hook output, the per-provider event rule and the per-edit path line |
 
 ## Traceability
 
