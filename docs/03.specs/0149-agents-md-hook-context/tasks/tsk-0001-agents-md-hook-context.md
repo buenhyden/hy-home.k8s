@@ -1,6 +1,6 @@
 ---
 title: "Hook-Delivered Folder Agent Rules"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -32,9 +32,9 @@ for both providers. It executes [SPEC-0149](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | Guard chain and model-context output | platform | in-progress | PASS | EVD-005, EVD-009 |
-| WORK-002 | [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | Observed Claude delivery | platform | in-progress | PASS | EVD-006 |
-| WORK-003 | [VAL-HOOK-003](../spec.md#success-criteria--verification-plan) | Provider notes, policy and audit addendum | platform | in-progress | PASS | EVD-008 |
+| WORK-001 | [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | Guard chain and model-context output | platform | completed | PASS | EVD-005, EVD-009 |
+| WORK-002 | [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | Observed Claude delivery | platform | completed | PASS | EVD-006 |
+| WORK-003 | [VAL-HOOK-003](../spec.md#success-criteria--verification-plan) | Provider notes, policy and audit addendum | platform | completed | PASS | EVD-008 |
 
 ## Task Evidence
 
@@ -54,9 +54,9 @@ for both providers. It executes [SPEC-0149](../spec.md) through
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | pending | EVD-005, EVD-009 | Awaiting operator acceptance | platform |
-| [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | pending | EVD-006 | Awaiting operator acceptance | platform |
-| [VAL-HOOK-003](../spec.md#success-criteria--verification-plan) | pending | EVD-008 | Awaiting operator acceptance | platform |
+| [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-009 | Operator accepted on 2026-11-06 after review | platform |
+| [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Operator accepted on 2026-11-06 after review | platform |
+| [VAL-HOOK-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Operator accepted on 2026-11-06 after review | platform |
 
 ## Approval and Safety Boundaries
 
