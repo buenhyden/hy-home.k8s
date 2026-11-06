@@ -298,5 +298,60 @@ class ReferencePackRouteTest(unittest.TestCase):
         self.assertEqual(offenders, [])
 
 
+class PublishedMemberFreezeTest(unittest.TestCase):
+    """SPEC-0150: a published Stage 90 member is not rewritten."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = load_registry(ROOT)
+        cls.validator = load_registry_validator()
+
+    MEMBER = PurePosixPath("docs/90.references/audits/0001-example/m0001-example.md")
+    PACK = PurePosixPath("docs/90.references/audits/0001-example/README.md")
+
+    @staticmethod
+    def member(status: str, body: str) -> bytes:
+        return (
+            f'---\ntitle: "Example"\nversion: "0.1.0"\ntype: "reference/audit"\n'
+            f'status: "{status}"\nowner: "platform"\nupdated: "2026-11-01"\n---\n'
+            f"\n# Reference: Example\n\n{body}\n"
+        ).encode("utf-8")
+
+    def errors(self, base: bytes | None, staged: bytes, path=MEMBER) -> list[str]:
+        bases = {} if base is None else {path: base}
+        return self.validator.published_rewrite_errors(
+            self.registry, bases, {path: staged}
+        )
+
+    def test_body_rewrite_of_a_published_member_is_refused(self) -> None:
+        base = self.member("published", "Observed [AD](../a.md) once.")
+        for staged in (
+            self.member("published", "Observed [AD](../a.md) twice."),
+            self.member("published", "Observed [AD-0006](../a.md) once."),
+            self.member("published", 'Observed [AD](../a.md "new prose") once.'),
+            self.member("published", "Observed [AD](new sentence here) once."),
+        ):
+            with self.subTest(staged=staged):
+                (error,) = self.errors(base, staged)
+                self.assertIn("REFERENCE_PUBLISHED_REWRITE", error)
+
+    def test_lifecycle_values_and_link_destinations_may_change(self) -> None:
+        base = self.member("published", "Observed [AD](../a.md) once.")
+        staged = self.member("retired", "Observed [AD](../b.md#anchor) once.")
+        staged = staged.replace(b'version: "0.1.0"', b'version: "0.2.0"')
+        staged = staged.replace(b'updated: "2026-11-01"', b'updated: "2026-11-06"')
+        self.assertEqual(self.errors(base, staged), [])
+
+    def test_draft_new_and_pack_files_are_not_frozen(self) -> None:
+        draft = self.member("draft", "Before.")
+        self.assertEqual(self.errors(draft, self.member("draft", "After.")), [])
+        self.assertEqual(self.errors(None, self.member("published", "New.")), [])
+        published = self.member("published", "Index one.")
+        self.assertEqual(
+            self.errors(published, self.member("published", "Index two."), self.PACK),
+            [],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
