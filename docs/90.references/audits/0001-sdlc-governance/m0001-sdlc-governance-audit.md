@@ -2,7 +2,7 @@
 title: "SDLC Governance Audit"
 version: "0.1.0"
 type: "reference/audit"
-status: "in-review"
+status: "published"
 owner: "platform"
 updated: "2026-11-06"
 layer: "references"
@@ -91,11 +91,11 @@ changes. Current truth is owned by those files, not this report.
 
 | Remediation | Owner | Due or decision date |
 | --- | --- | --- |
-| F-01 to F-03: `sdlc.md` `Cross-artifact conformance`; Spec template prompts (SPEC-0146 WORK-001, WORK-002) | platform | Edited in the working tree 2026-11-06, uncommitted; checks pre-approval PASS; criterion acceptance pending |
-| F-04: Plan template compliance-check prompt (WORK-002) | platform | Edited in the working tree 2026-11-06, uncommitted; checks pre-approval PASS |
-| F-05: ADR template requirement prompt (WORK-002) | platform | Edited in the working tree 2026-11-06, uncommitted; checks pre-approval PASS |
+| F-01 to F-03: `sdlc.md` `Cross-artifact conformance`; Spec template prompts (SPEC-0146 WORK-001, WORK-002) | platform | Committed on branch 2026-11-06; checks PASS in the SPEC-0146 Task; criterion acceptance pending |
+| F-04: Plan template compliance-check prompt (WORK-002) | platform | Committed on branch 2026-11-06; checks PASS in the SPEC-0146 Task |
+| F-05: ADR template requirement prompt (WORK-002) | platform | Committed on branch 2026-11-06; checks PASS in the SPEC-0146 Task |
 | D-1: make the Spec → AD/ADR link machine-checked (add `sdlc/architecture-description` and `sdlc/architecture-decision` to the Spec's allowed sources, or a new column). It changes the registry, validator and every future Spec | operator | Decision pending; prose rule covers it until then |
-| D-2: SPEC-0146 Spec and Plan, and this pack, are `draft`: the lifecycle gate refuses creation in `approved` or `published`, so approval and publication are separate commits that await a commit request | operator | Pending commit request |
+| D-2: the lifecycle gate refuses creation in `approved` or `published`, so approval and publication are separate commits | operator | Resolved 2026-11-06: drafted `f3d71d9a`, approved `4fcdf22a` |
 | F-06: observe Codex loading in a Codex session | operator | Accepted deferral |
 
 Existing documents are not rewritten: the prompts apply to documents created
@@ -119,7 +119,7 @@ Pre-approval observations on the staged index, branch
 - Observed enforcement: the lifecycle gate refused `LIFECYCLE-CREATE` for
   documents created `approved` or `published`, and `TASK-PARENT-APPROVAL` for
   Task execution or evidence under a `draft` Spec. So the SPEC-0146 Task
-  evidence waits for the approval commit (D-2).
+  evidence waited for the approval commit `4fcdf22a` (D-2, resolved).
 - UNKNOWN: Codex loading (F-06). Not machine-checked: F-01 to F-03 (D-1).
 
 These are observations, not the Task's criterion evidence or a remediation

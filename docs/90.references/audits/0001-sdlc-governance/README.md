@@ -2,7 +2,7 @@
 title: "SDLC Governance Audit"
 version: "0.1.0"
 type: "reference/audit-pack"
-status: "in-review"
+status: "published"
 owner: "platform"
 updated: "2026-11-06"
 artifact_id: "AUD-0001"

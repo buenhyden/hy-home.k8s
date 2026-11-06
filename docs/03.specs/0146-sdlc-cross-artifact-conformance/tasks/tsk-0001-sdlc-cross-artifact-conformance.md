@@ -37,9 +37,9 @@ found. It executes [SPEC-0146](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SDLC-001](../spec.md#success-criteria--verification-plan) | `sdlc.md` Cross-artifact conformance | platform | ready | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-SDLC-002](../spec.md#success-criteria--verification-plan) | Spec, Plan and ADR template prompts | platform | ready | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-SDLC-003](../spec.md#success-criteria--verification-plan) | Audit pack AUD-0001 | platform | ready | NOT_RUN | EVD-003 |
+| WORK-001 | [VAL-SDLC-001](../spec.md#success-criteria--verification-plan) | `sdlc.md` Cross-artifact conformance | platform | in-progress | PASS | EVD-004 |
+| WORK-002 | [VAL-SDLC-002](../spec.md#success-criteria--verification-plan) | Spec, Plan and ADR template prompts | platform | in-progress | PASS | EVD-005 |
+| WORK-003 | [VAL-SDLC-003](../spec.md#success-criteria--verification-plan) | Audit pack AUD-0001 | platform | in-progress | PASS | EVD-006 |
 
 ## Task Evidence
 
@@ -48,14 +48,17 @@ found. It executes [SPEC-0146](../spec.md) through
 | EVD-001 | [VAL-SDLC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Strict document and link checks | Pending Spec approval | NOT_RUN | Pending; pre-approval observation in the audit Verification State | yes | none |
 | EVD-002 | [VAL-SDLC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Strict profile checks and document unit tests | Pending Spec approval | NOT_RUN | Pending; pre-approval observation in the audit Verification State | yes | none |
 | EVD-003 | [VAL-SDLC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Strict checks and independent review | Pending Spec approval | NOT_RUN | Pending; pre-approval observation in the audit Verification State | yes | none |
+| EVD-004 | [VAL-SDLC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Strict document and link checks | Staged index on `4fcdf22a` with the `sdlc.md` and template changes | PASS | Local run, 2026-11-06T05:36Z: contract-registry (267 paths), Markdown-profile, links-and-owners and lifecycle `--mode strict` PASS; `sdlc.md` carries `Cross-artifact conformance` | yes | EVD-001 |
+| EVD-005 | [VAL-SDLC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Strict profile checks and document unit tests | Staged index on `4fcdf22a` with the `sdlc.md` and template changes | PASS | Local run, 2026-11-06T05:36Z to 05:37Z: strict profile check PASS; `unittest discover -p 'test_document*.py'` 153 OK; form, task-execution and acceptance tests 52 OK | yes | EVD-002 |
+| EVD-006 | [VAL-SDLC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Strict checks and independent review | Staged index on `4fcdf22a` with the `sdlc.md` and template changes | PASS | code-reviewer report 2026-11-06: one BLOCK (audit claimed an unrecorded run) and advisories, all fixed before `f3d71d9a`; strict checks PASS at 05:36Z | yes | EVD-003 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-SDLC-001](../spec.md#success-criteria--verification-plan) | pending | none | Awaiting Spec approval commit and operator acceptance | platform |
-| [VAL-SDLC-002](../spec.md#success-criteria--verification-plan) | pending | none | Awaiting Spec approval commit and operator acceptance | platform |
-| [VAL-SDLC-003](../spec.md#success-criteria--verification-plan) | pending | none | Awaiting Spec approval commit and operator acceptance | platform |
+| [VAL-SDLC-001](../spec.md#success-criteria--verification-plan) | pending | EVD-004 | Awaiting operator acceptance | platform |
+| [VAL-SDLC-002](../spec.md#success-criteria--verification-plan) | pending | EVD-005 | Awaiting operator acceptance | platform |
+| [VAL-SDLC-003](../spec.md#success-criteria--verification-plan) | pending | EVD-006 | Awaiting operator acceptance | platform |
 
 ## Approval and Safety Boundaries
 
@@ -75,8 +78,16 @@ found. It executes [SPEC-0146](../spec.md) through
 
 ## Verification Summary
 
-Not yet run under an approved Spec. Pre-approval observations (strict checks,
-unit tests, independent review) are in the
-[audit Verification State](../../../90.references/audits/0001-sdlc-governance/m0001-sdlc-governance-audit.md#verification-state);
-rerun and record them here after the approval commit. Next owner: operator.
-Rollback: delete the branch.
+- Static lane: strict registry, profile, link and lifecycle checks PASS;
+  document, form and Task-contract unit tests PASS (EVD-004, EVD-005).
+- Review: independent read-only review, its BLOCK and advisories fixed
+  (EVD-006).
+- Each commit passed `python3 scripts/qa.py staged` in the approved scratch
+  venv; without it the style gates fail with `STYLE-TOOL` (environment limit,
+  not a repository defect).
+- Not run: hosted, provider-runtime and live lanes (not applicable); Codex
+  loading (audit F-06).
+- Residual risk: the new rules are prose; no validator checks a Spec's
+  architecture links (audit D-1).
+- Next owner: operator, for criterion acceptance, push and merge. Rollback:
+  revert the branch commits.

@@ -18,6 +18,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 ## Strategic Boundaries & Non-goals
 
 <!-- Author prompt: define authorized scope, protected surfaces, and explicit non-goals. -->
+<!-- Author prompt: list open questions and assumptions with an owner; an open question that changes a criterion keeps this Spec out of approved. -->
 
 ## Contracts
 
@@ -26,6 +27,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 ## Core Design
 
 <!-- Author prompt: explain components, control flow, state transitions, and key tradeoffs. -->
+<!-- Author prompt: link the Architecture Descriptions and ADRs that constrain this change and state how the design conforms, or say that none apply; a needed departure is decided in a new or amended ADR before approval. -->
 
 ## Data Modeling & Storage Strategy
 

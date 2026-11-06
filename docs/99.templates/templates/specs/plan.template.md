@@ -47,6 +47,7 @@ parent_ids: ["{{PARENT_ID}}"]
 ## Verification Plan
 
 <!-- Author prompt: map every work package to deterministic checks and evidence lanes. -->
+<!-- Author prompt: include an architecture compliance check that each work package stays within the views and ADRs named in Context; a departure returns the Spec to in-review. -->
 
 ## Risks & Mitigations
 
