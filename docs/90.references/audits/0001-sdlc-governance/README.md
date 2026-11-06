@@ -60,4 +60,4 @@ Verification State에 UNKNOWN으로 남긴다.
 
 - [Audits collection](../README.md)
 - [SDLC 정책](../../../../.agents/governance/sdlc.md)
-- [SPEC-0146](../../../03.specs/0146-sdlc-cross-artifact-conformance/spec.md)
+- SPEC-0146 (completed; summarized in the [REQ-0003 Archived Lineage](../../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage))

@@ -20,7 +20,7 @@ authors deciding on governance changes.
 
 ## Reference Type
 
-A dated assurance assessment. It informs [SPEC-0146](../../../03.specs/0146-sdlc-cross-artifact-conformance/spec.md)
+A dated assurance assessment. It informs SPEC-0146 (completed; summarized in the [REQ-0003 Archived Lineage](../../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage))
 and the operator decisions listed under Remediation.
 
 ## Authority Boundary
@@ -130,4 +130,4 @@ PASS.
 - [Audit pack](./README.md)
 - [Software Development Lifecycle](../../../../.agents/governance/sdlc.md)
 - [Document Lifecycle Policy](../../../../.agents/governance/document-lifecycle.md)
-- [SPEC-0146](../../../03.specs/0146-sdlc-cross-artifact-conformance/spec.md)
+- SPEC-0146 (completed; summarized in the [REQ-0003 Archived Lineage](../../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage))
