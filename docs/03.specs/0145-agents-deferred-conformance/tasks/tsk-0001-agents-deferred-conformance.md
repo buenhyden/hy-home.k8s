@@ -1,6 +1,6 @@
 ---
 title: "Agent Surface Deferred Conformance"
-version: "0.3.0"
+version: "0.3.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -31,10 +31,10 @@ through [WORK-001–004](../plan.md#work-breakdown).
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-DEF-003](../spec.md#success-criteria--verification-plan) | Derived projection fields | platform | in-progress | PASS | EVD-005, EVD-006 |
-| WORK-002 | [VAL-DEF-001](../spec.md#success-criteria--verification-plan) | Role-body shared sections | platform | in-progress | PASS | EVD-007, EVD-008 |
-| WORK-003 | [VAL-DEF-002](../spec.md#success-criteria--verification-plan) | Collection-index README subsections | platform | in-progress | PASS | EVD-009 |
-| WORK-004 | [VAL-DEF-004](../spec.md#success-criteria--verification-plan) | `sdlc.md` invariant, CIS numbers, sibling pin | platform | in-progress | PASS | EVD-010 |
+| WORK-001 | [VAL-DEF-003](../spec.md#success-criteria--verification-plan) | Derived projection fields | platform | completed | PASS | EVD-005, EVD-006 |
+| WORK-002 | [VAL-DEF-001](../spec.md#success-criteria--verification-plan) | Role-body shared sections | platform | completed | PASS | EVD-007, EVD-008 |
+| WORK-003 | [VAL-DEF-002](../spec.md#success-criteria--verification-plan) | Collection-index README subsections | platform | completed | PASS | EVD-009 |
+| WORK-004 | [VAL-DEF-004](../spec.md#success-criteria--verification-plan) | `sdlc.md` invariant, CIS numbers, sibling pin | platform | completed | PASS | EVD-010 |
 
 ## Task Evidence
 
@@ -55,10 +55,10 @@ through [WORK-001–004](../plan.md#work-breakdown).
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-DEF-001](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-002 | platform |
-| [VAL-DEF-002](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-003 | platform |
-| [VAL-DEF-003](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-001 | platform |
-| [VAL-DEF-004](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-004 | platform |
+| [VAL-DEF-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Operator accepted on 2026-11-06 | platform |
+| [VAL-DEF-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-009 | Operator accepted on 2026-11-06 | platform |
+| [VAL-DEF-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Operator accepted on 2026-11-06 | platform |
+| [VAL-DEF-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-010 | Operator accepted on 2026-11-06 | platform |
 
 ## Approval and Safety Boundaries
 
