@@ -1,10 +1,10 @@
 ---
 title: "Claude Provider Notes"
-version: "1.6.2"
+version: "1.7.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-06"
 ---
 
 # Claude Provider Notes
@@ -71,8 +71,14 @@ invocation. The common procedure retains the selected role and user scope.
   advisorily rather than blocked. On Codex the same class binds an
   operating-system `read-only` sandbox. That difference is documented and
   accepted; it is not parity, and neither side is described as the other.
-- Claude loads root `CLAUDE.md`, not a folder `AGENTS.md`. Before working in a
-  directory, read each `AGENTS.md` from the root down to it explicitly, as
+- Claude loads root `CLAUDE.md`, not a folder `AGENTS.md`: with a `CLAUDE.md`
+  present, Claude Code 2.1.319 reads no `AGENTS.md`, and the setting that loads
+  both is ignored in project settings (observed 2026-11-06). The pre-action
+  guard therefore returns each write target's folder `AGENTS.md` chain, root
+  excluded, as `hookSpecificOutput.additionalContext`, once per session;
+  `systemMessage` reaches only the user. Read-only tools are not hooked, so
+  before reading or reviewing in a directory, still read each `AGENTS.md` from
+  the root down to it explicitly, as
   [agent execution](../.agents/governance/agent-execution.md) requires.
 - Keep managed, project, and user instruction precedence intact. Use imports
   for shared context rather than copying policy into provider files.

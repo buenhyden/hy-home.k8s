@@ -32,9 +32,9 @@ for both providers. It executes [SPEC-0149](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | Guard chain and model-context output | platform | ready | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | Observed Claude delivery | platform | ready | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-HOOK-003](../spec.md#success-criteria--verification-plan) | Provider notes, policy and audit addendum | platform | ready | NOT_RUN | EVD-003 |
+| WORK-001 | [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | Guard chain and model-context output | platform | in-progress | PASS | EVD-005, EVD-009 |
+| WORK-002 | [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | Observed Claude delivery | platform | in-progress | PASS | EVD-006 |
+| WORK-003 | [VAL-HOOK-003](../spec.md#success-criteria--verification-plan) | Provider notes, policy and audit addendum | platform | in-progress | PASS | EVD-008 |
 
 ## Task Evidence
 
@@ -43,14 +43,20 @@ for both providers. It executes [SPEC-0149](../spec.md) through
 | EVD-001 | [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests red then green | Pending Spec approval | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Observed Claude delivery | Pending Spec approval | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-HOOK-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Strict checks and review | Pending Spec approval | NOT_RUN | Pending | yes | none |
+| EVD-004 | [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests red then green | Working tree on `7bfff20b` with the new tests and the old guard | FAIL | Local run, 2026-11-06T07:47Z: `FolderAgentRulesTests` 3 failures and 1 error; the guard emitted no `hookSpecificOutput` | no | none |
+| EVD-005 | [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests red then green | Working tree on `7bfff20b` with the guard change | PASS | Local run, 2026-11-06T07:48Z to 07:50Z: `FolderAgentRulesTests` 5 OK; `tests.test_k8s_pre_edit_hook` OK after one count test was rewritten to check each output field; ruff check and format clean | yes | EVD-001 |
+| EVD-006 | [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Observed Claude delivery | Claude Code 2.1.319, this session, the edited guard behind the unchanged `.claude/hooks/k8s-pre-edit.sh` | PASS | 2026-11-06 about 07:51Z: a `Write` of the AUD-0001 m0002 member returned PreToolUse `additionalContext` to the model with the Template-First guidance and the full text of `docs/AGENTS.md` and `docs/90.references/AGENTS.md`, without the root gateway; the retry in the same session returned the guidance only; a later Bash call supplied `scripts/AGENTS.md` once | yes | EVD-002 |
+| EVD-007 | [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Observed Codex delivery | codex-cli 0.166.0 | DEFER | 2026-11-06: the read-only probe stopped at the usage limit until 2026-11-09 18:37; next owner operator | no | none |
+| EVD-008 | [VAL-HOOK-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Strict checks and review | Staged index on `7bfff20b` with the provider notes, policy and m0002 | PASS | Local run, 2026-11-06: `python3 scripts/qa.py staged` 11 gates PASS including tooling-tests and agent-governance; `validate-agent-governance.py` PASS | yes | EVD-003 |
+| EVD-009 | [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests red then green | Working tree on `7bfff20b` after the review fixes | PASS | Local run, 2026-11-06T07:56Z: the independent review reproduced two BLOCK paths (a nested state file raised `RecursionError`, a lone-surrogate `session_id` raised `UnicodeEncodeError`, both exit 2; the reviewer re-ran both repros after the fix and they exit 0); fixed by catching every folder-context failure, treating corrupt state as empty, ignoring a state directory not private to the user, reading `AGENTS.md` with `O_NOFOLLOW`, recording delivery only after the selector allows the write, and re-raising the guard deadline `TimeoutError`; `FolderAgentRulesTests` 7 OK with two new regressions; `tests.test_k8s_pre_edit_hook` OK; ruff clean | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | pending | none | Run the focused tests | platform |
-| [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | pending | none | Observe a Claude write | platform |
-| [VAL-HOOK-003](../spec.md#success-criteria--verification-plan) | pending | none | Run the strict checks and review | platform |
+| [VAL-HOOK-001](../spec.md#success-criteria--verification-plan) | pending | EVD-005, EVD-009 | Awaiting operator acceptance | platform |
+| [VAL-HOOK-002](../spec.md#success-criteria--verification-plan) | pending | EVD-006 | Awaiting operator acceptance | platform |
+| [VAL-HOOK-003](../spec.md#success-criteria--verification-plan) | pending | EVD-008 | Awaiting operator acceptance | platform |
 
 ## Approval and Safety Boundaries
 
@@ -72,4 +78,16 @@ for both providers. It executes [SPEC-0149](../spec.md) through
 
 ## Verification Summary
 
-Pending.
+- Tests: the focused tests failed on the old guard (EVD-004) and pass with
+  the change; the whole hook module passes (EVD-005).
+- Claude runtime: observed in this session; folder rules reached the model
+  once per session and the root gateway was excluded (EVD-006).
+- Codex runtime: DEFER until the usage limit resets on 2026-11-09 (EVD-007).
+- Static: staged QA 11 gates PASS (EVD-008).
+- Review: two BLOCK paths found and fixed with regressions (EVD-009).
+- Residual risk: read-only tools are not hooked; the shell heuristic can
+  supply a folder's rules for a command that only runs a script there; a
+  context compaction is not detected, so rules supplied before it are not
+  supplied again; Codex acceptance of the new field is unverified.
+- Next owner: operator, for criterion acceptance, merge and the Codex probe.
+  Rollback: revert the implementing commit.

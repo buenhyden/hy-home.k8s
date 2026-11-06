@@ -474,7 +474,12 @@ class PatchEnvelopeTest(unittest.TestCase):
         )
 
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(result.stdout.count("Editing Kubernetes manifest"), 2)
+        output = json.loads(result.stdout)
+        for field in (
+            output["systemMessage"],
+            output["hookSpecificOutput"]["additionalContext"],
+        ):
+            self.assertEqual(field.count("Editing Kubernetes manifest"), 2)
 
     def test_an_envelope_naming_no_file_is_quiet_and_successful(self):
         result = run_hook(patch_payload(envelope()), ROOT)
@@ -1001,6 +1006,81 @@ class FailClosedGuardTests(unittest.TestCase):
                 )
                 self.assertEqual(result.returncode, 2, result.stderr)
                 self.assertIn("[FAIL]", result.stderr)
+
+
+class FolderAgentRulesTests(unittest.TestCase):
+    """SPEC-0149: folder AGENTS.md text reaches the model on writes."""
+
+    TARGET = "docs/03.specs/README.md"
+    CHAIN_MARKERS = (
+        "Agent instructions for `docs/` and every stage below it",
+        "Agent instructions for `docs/03.specs/` and every Spec package",
+    )
+    ROOT_GATEWAY_MARKER = "Thin GPT/Codex provider gateway"
+
+    def setUp(self):
+        self.state = tempfile.TemporaryDirectory(prefix="agents-md-state-")
+        self.addCleanup(self.state.cleanup)
+
+    def call(self, session: str | None, target: str = TARGET):
+        payload = {"tool_name": "Edit", "tool_input": {"file_path": target}}
+        if session is not None:
+            payload["session_id"] = session
+        result = run_hook(json.dumps(payload), ROOT, {"TMPDIR": self.state.name})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        output = json.loads(result.stdout) if result.stdout.strip() else {}
+        specific = output.get("hookSpecificOutput", {})
+        if specific:
+            self.assertEqual(specific.get("hookEventName"), "PreToolUse")
+        return specific.get("additionalContext", "")
+
+    def test_chain_reaches_the_model_without_the_root_gateway(self):
+        context = self.call("session-a")
+        for marker in self.CHAIN_MARKERS:
+            self.assertIn(marker, context)
+        self.assertIn("docs/03.specs/AGENTS.md", context)
+        self.assertNotIn(self.ROOT_GATEWAY_MARKER, context)
+
+    def test_each_file_is_supplied_once_per_session(self):
+        self.assertIn(self.CHAIN_MARKERS[1], self.call("session-b"))
+        self.assertNotIn(self.CHAIN_MARKERS[1], self.call("session-b"))
+        self.assertIn(self.CHAIN_MARKERS[1], self.call("session-c"))
+
+    def test_changed_file_is_supplied_again(self):
+        self.call("session-d")
+        (state,) = Path(self.state.name).rglob("*.json")
+        recorded = json.loads(state.read_text(encoding="utf-8"))
+        recorded["supplied"]["docs/03.specs/AGENTS.md"] = "0" * 64
+        state.write_text(json.dumps(recorded), encoding="utf-8")
+        context = self.call("session-d")
+        self.assertIn(self.CHAIN_MARKERS[1], context)
+        self.assertNotIn(self.CHAIN_MARKERS[0], context)
+
+    def test_without_a_session_every_call_supplies_the_chain(self):
+        self.assertIn(self.CHAIN_MARKERS[1], self.call(None))
+        self.assertIn(self.CHAIN_MARKERS[1], self.call(None))
+
+    def test_state_or_session_failure_never_blocks(self):
+        self.call("session-f")
+        (state,) = Path(self.state.name).rglob("*.json")
+        state.write_text("[" * 100000, encoding="utf-8")
+        self.assertIn(self.CHAIN_MARKERS[1], self.call("session-f"))
+        payload = (
+            '{"tool_name":"Edit","session_id":"\\ud800x","tool_input":{"file_path":"%s"}}'
+            % self.TARGET
+        )
+        result = run_hook(payload, ROOT, {"TMPDIR": self.state.name})
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_shared_state_directory_is_ignored(self):
+        shared = Path(self.state.name) / "hy-home-k8s-agents-md"
+        shared.mkdir(mode=0o755)
+        shared.chmod(0o755)
+        self.assertIn(self.CHAIN_MARKERS[1], self.call("session-g"))
+        self.assertIn(self.CHAIN_MARKERS[1], self.call("session-g"))
+
+    def test_root_level_target_supplies_no_folder_file(self):
+        self.assertNotIn("AGENTS.md`", self.call("session-e", "CHANGELOG.md"))
 
 
 if __name__ == "__main__":
