@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "2.3.5"
+version: "2.3.6"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -146,7 +146,7 @@ Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git
 
 ## Traceability
 
-[SPEC-0144](../03.specs/0144-agents-conformance/spec.md) (agent surface conformance) is the open governance package. SPEC-0143 and SPEC-0142, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
+No governance Spec package is open. SPEC-0144 and SPEC-0143, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
 
 ### Lifecycle Traceability
 
@@ -377,3 +377,4 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0140 | completed spec | Removed every archive and migration check and the archived files (ADR-0053), deleted legacy and one-time QA code and completed packages SPEC-0105 to SPEC-0139, refused superseded, retired and deprecated states in Stages 01 to 03, and split README (human) from folder AGENTS.md (agent). All five criteria accepted on 2026-11-03; durable contracts promoted to document lifecycle and document authoring policy. Recover with `git show a9e3a87b:<path>`. | `docs/03.specs/0140-archive-check-removal/` |
 | SPEC-0142 | completed spec | Removed stale Stage 99 contract entries: the retired Stage 00 Plan promotion owner, the ADR form's self-ID supersession cell, the unused profile modes `evidence` and `generated`, the unreferenced `requirementMemberId` definition and the unused `Agent Harness Requirements` language entry, and corrected the Stage 99 README and AGENTS prose. All four criteria accepted on 2026-11-06; the durable contract is in document lifecycle policy. Recover with `git show b712372b:<path>`. | `docs/03.specs/0142-stage99-contract-cleanup/` |
 | SPEC-0143 | completed spec | Removed the profile modes `frontmatter-free` and `classification-only` and the frontmatter mode `not-applicable`, which the schema and loader never produce, with the validator branches only they reached, and added a regression test that ties the typed modes to the schema enum. Both criteria accepted on 2026-11-06; no durable contract introduced. Recover with `git show 0dde6158:<path>`. | `docs/03.specs/0143-dead-profile-mode-cleanup/` |
+| SPEC-0144 | completed spec | Aligned `.agents/` with the current workspace after four read-only audits: corrected statements naming nonexistent writers, jobs, fields and tools, resolved intra-file contradictions (including a circular security severity deferral) and duplicated rules across governance, roles, skills, prompts, workflows, knowledge and evaluations; fixed `prompt-input.py` aborting on `git diff --check` findings and missing root routers, bound `ops-runbook` to `doc-writer`, and removed the unread `external_writes_require_approval` schema field, each with a regression test. All four criteria accepted on 2026-11-06; no durable contract introduced. Recover with `git show 22ed5caf:<path>`. | `docs/03.specs/0144-agents-conformance/` |
