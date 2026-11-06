@@ -22,6 +22,7 @@ F-07). It executes [SPEC-0148](../spec.md) through
 - Request (2026-11-06): review F-07 and proceed.
 - Review (2026-11-06): the work-item ID pattern is not the defect; a width
   mismatch silently disables the Task contract check.
+- Approval (2026-11-06): the operator's request to review F-07 and proceed approves SPEC-0148 and its Plan, drafted in `49a082b6`; merge is separate and criterion acceptance stays the operator's.
 - Start: branch `fix/task-table-row-width` from `main` at `d8a58a39`.
 
 ## Task Table
@@ -30,8 +31,8 @@ F-07). It executes [SPEC-0148](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-ROW-001](../spec.md#success-criteria--verification-plan) | Focused test and width diagnostic | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-ROW-002](../spec.md#success-criteria--verification-plan) | Strict checks and suites | platform | draft | NOT_RUN | EVD-002 |
+| WORK-001 | [VAL-ROW-001](../spec.md#success-criteria--verification-plan) | Focused test and width diagnostic | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-ROW-002](../spec.md#success-criteria--verification-plan) | Strict checks and suites | platform | ready | NOT_RUN | EVD-002 |
 
 ## Task Evidence
 
