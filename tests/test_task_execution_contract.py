@@ -468,9 +468,9 @@ class CompletionIndexTests(unittest.TestCase):
                     "| VAL-P02-001 | Focused test PASS |",
                     "## Traceability",
                     "### Lifecycle Traceability",
-                    "| Requirement ID | Spec criterion | Verification method |",
-                    "| --- | --- | --- |",
-                    "| N/A — approved direct package | VAL-P02-001 | Focused test |",
+                    "| Requirement ID | Spec criterion | Architecture | Verification method |",
+                    "| --- | --- | --- | --- |",
+                    "| N/A — approved direct package | VAL-P02-001 | None apply: fixture | Focused test |",
                     "",
                 ]
             ),
@@ -658,8 +658,8 @@ class CompletionIndexTests(unittest.TestCase):
                 "| VAL-P02-001 | Focused test PASS |\n| VAL-P02-002 | Second check |",
             )
             .replace(
-                "| N/A — approved direct package | VAL-P02-001 | Focused test |",
-                "| N/A — approved direct package | VAL-P02-001 | Focused test |\n| N/A — approved direct package | VAL-P02-002 | Second check |",
+                "| N/A — approved direct package | VAL-P02-001 | None apply: fixture | Focused test |",
+                "| N/A — approved direct package | VAL-P02-001 | None apply: fixture | Focused test |\n| N/A — approved direct package | VAL-P02-002 | None apply: fixture | Second check |",
             )
         )
         self.write(self.spec, spec)
@@ -1243,6 +1243,62 @@ class OptionalMultiRowStatusTests(unittest.TestCase):
         self.assertIn("TASK-EXECUTION-SUMMARY", rule_ids(hidden))
         self.assertEqual(
             self.task_status({"status": None}, self.without_status, self.profile), ""
+        )
+
+
+class SpecArchitectureColumnTests(unittest.TestCase):
+    """SPEC-0147: a Spec states its constraining architecture in one column."""
+
+    def _diagnostics(self, header: str, row: str) -> list[str]:
+        registry = load_registry(ROOT)
+        profile = next(p for p in registry.profiles if p.profile_id == "sdlc/spec")
+        path = PurePosixPath("docs/03.specs/0147-example/spec.md")
+        text = ROOT.joinpath(
+            "docs/99.templates/templates/specs/spec.template.md"
+        ).read_text(encoding="utf-8")
+        body = text.split("### Lifecycle Traceability", 1)[0]
+        body = body.replace("{{TITLE}}", "Example").replace("{{OWNER}}", "platform")
+        body = body.replace("{{UPDATED}}", "2026-11-06").replace(
+            "{{ARTIFACT_ID}}", "SPEC-0147"
+        )
+        separator = "| " + " | ".join("---" for _ in header.split("|")[1:-1]) + " |"
+        text = f"{body}### Lifecycle Traceability\n\n{header}\n{separator}\n{row}\n"
+        return [
+            item.rule_id
+            for item in MARKDOWN.validate_document_text(
+                text, path, profile, "strict", body_contracts="audit"
+            )
+        ]
+
+    def test_architecture_column_is_required_and_non_empty(self) -> None:
+        registry = load_registry(ROOT)
+        columns = {
+            p.profile_id: p.body_contract.required_columns
+            for p in registry.profiles
+            if p.profile_id in {"sdlc/spec", "common/template-sdlc-spec"}
+        }
+        self.assertEqual(len(set(columns.values())), 1, columns)
+        self.assertIn("Architecture", columns["sdlc/spec"])
+        new = "| Requirement ID | Spec criterion | Architecture | Verification method |"
+        old = "| Requirement ID | Spec criterion | Verification method |"
+        self.assertNotIn(
+            "BODY-CONTRACT-COLUMNS",
+            self._diagnostics(
+                new,
+                "| REQ-0001-FR-0001 | VAL-FEATURE-001 | None apply: no boundary change | Named test |",
+            ),
+        )
+        self.assertIn(
+            "BODY-CONTRACT-COLUMNS",
+            self._diagnostics(
+                old, "| REQ-0001-FR-0001 | VAL-FEATURE-001 | Named test |"
+            ),
+        )
+        self.assertIn(
+            "BODY-CONTRACT-CELL",
+            self._diagnostics(
+                new, "| REQ-0001-FR-0001 | VAL-FEATURE-001 |  | Named test |"
+            ),
         )
 
 

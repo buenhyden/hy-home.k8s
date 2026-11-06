@@ -92,7 +92,7 @@ implementing commit.
 
 ### Lifecycle Traceability
 
-| Requirement ID | Spec criterion | Verification method |
-| --- | --- | --- |
-| [REQ-0003-FR-0013](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-ARCH-001 | Focused test red then green |
-| [REQ-0003-FR-0013](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-ARCH-002 | Strict document checks and unit tests |
+| Requirement ID | Spec criterion | Architecture | Verification method |
+| --- | --- | --- | --- |
+| [REQ-0003-FR-0013](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-ARCH-001 | [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) | Focused test red then green |
+| [REQ-0003-FR-0013](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-ARCH-002 | [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) | Strict document checks and unit tests |

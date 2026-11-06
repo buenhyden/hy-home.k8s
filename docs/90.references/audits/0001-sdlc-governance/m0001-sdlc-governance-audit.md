@@ -94,7 +94,7 @@ changes. Current truth is owned by those files, not this report.
 | F-01 to F-03: `sdlc.md` `Cross-artifact conformance`; Spec template prompts (SPEC-0146 WORK-001, WORK-002) | platform | Committed on branch 2026-11-06; checks PASS in the SPEC-0146 Task; criterion acceptance pending |
 | F-04: Plan template compliance-check prompt (WORK-002) | platform | Committed on branch 2026-11-06; checks PASS in the SPEC-0146 Task |
 | F-05: ADR template requirement prompt (WORK-002) | platform | Committed on branch 2026-11-06; checks PASS in the SPEC-0146 Task |
-| D-1: make the Spec → AD/ADR link machine-checked (add `sdlc/architecture-description` and `sdlc/architecture-decision` to the Spec's allowed sources, or a new column). It changes the registry, validator and every future Spec | operator | Decision pending; prose rule covers it until then |
+| D-1: make the Spec → AD/ADR statement machine-checked | operator | Resolved 2026-11-06 by SPEC-0147: a required `Architecture` column in the Spec Lifecycle Traceability table; link-target and reciprocal checks were not added |
 | D-2: the lifecycle gate refuses creation in `approved` or `published`, so approval and publication are separate commits | operator | Resolved 2026-11-06: drafted `f3d71d9a`, approved `4fcdf22a` |
 | F-06: observe Codex loading in a Codex session | operator | Accepted deferral |
 
@@ -120,7 +120,7 @@ Pre-approval observations on the staged index, branch
   documents created `approved` or `published`, and `TASK-PARENT-APPROVAL` for
   Task execution or evidence under a `draft` Spec. So the SPEC-0146 Task
   evidence waited for the approval commit `4fcdf22a` (D-2, resolved).
-- UNKNOWN: Codex loading (F-06). Not machine-checked: F-01 to F-03 (D-1).
+- UNKNOWN: Codex loading (F-06). Not machine-checked: F-02 and F-03; F-01 is checked by the SPEC-0147 column.
 
 These are observations, not the Task's criterion evidence or a remediation
 PASS.

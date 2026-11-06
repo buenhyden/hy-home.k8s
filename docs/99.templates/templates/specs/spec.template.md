@@ -60,10 +60,10 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Traceability
 
-<!-- Author prompt: map product requirements to specification criteria and verification evidence. -->
+<!-- Author prompt: map product requirements to specification criteria, constraining architecture and verification evidence. -->
 
 ### Lifecycle Traceability
 
-| Requirement ID | Spec criterion | Verification method |
-| --- | --- | --- |
-| REQ-0001-FR-0001 | VAL-FEATURE-001 | Named unit, contract, integration, or review evidence |
+| Requirement ID | Spec criterion | Architecture | Verification method |
+| --- | --- | --- | --- |
+| REQ-0001-FR-0001 | VAL-FEATURE-001 | Constraining AD or ADR link, or why none applies | Named unit, contract, integration, or review evidence |

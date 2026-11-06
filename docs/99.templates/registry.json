@@ -364,6 +364,7 @@
           "required_columns": [
             "Requirement ID",
             "Spec criterion",
+            "Architecture",
             "Verification method"
           ],
           "identifier_columns": [
@@ -4477,6 +4478,7 @@
           "required_columns": [
             "Requirement ID",
             "Spec criterion",
+            "Architecture",
             "Verification method"
           ],
           "identifier_columns": [

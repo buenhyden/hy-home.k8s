@@ -1,6 +1,6 @@
 ---
 title: "Software Development Lifecycle"
-version: "3.1.0"
+version: "3.2.0"
 type: "governance/contract"
 status: "active"
 owner: "platform"
@@ -136,7 +136,9 @@ document content change does not trigger them.
 
 - Before a Spec leaves `draft`, its author reads the Requirement and the
   Architecture Descriptions and ADRs that own the affected boundary, and the
-  Spec links the ones that constrain the change or states that none apply.
+  Spec's Lifecycle Traceability `Architecture` column links the ones that
+  constrain each criterion or states why none applies. The validator checks
+  that the cell is present and non-empty; reviewers judge its content.
 - An open question that changes an acceptance criterion keeps the Spec out of
   `approved`; a Plan is not approved against an unapproved Spec.
 - A Spec or Plan that needs to depart from a current Architecture Description
