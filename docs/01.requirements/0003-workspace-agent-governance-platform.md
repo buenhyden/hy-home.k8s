@@ -146,7 +146,7 @@ Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git
 
 ## Traceability
 
-No governance Spec package is open. SPEC-0145 and SPEC-0144, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
+The open governance Spec package is [SPEC-0146](../03.specs/0146-sdlc-cross-artifact-conformance/spec.md). SPEC-0145 and SPEC-0144, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
 
 ### Lifecycle Traceability
 

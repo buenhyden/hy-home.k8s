@@ -53,11 +53,11 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 
 ```text
 audits/
+├── 0001-sdlc-governance/              # SDLC 거버넌스 감사 (AUD-0001)
 └── README.md                          # This file
 ```
 
-이 collection은 현재 audit pack을 보유하지 않는다. 이는 현재 처분 결과일 뿐이며,
-고유한 목적과 출처 경계를 갖춘 audit pack의 추가를 금지하지 않는다.
+현재 pack은 [0001-sdlc-governance](./0001-sdlc-governance/README.md) 하나다.
 
 ## Usage
 
