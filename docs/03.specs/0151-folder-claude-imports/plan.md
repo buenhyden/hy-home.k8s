@@ -1,8 +1,8 @@
 ---
 title: "Folder CLAUDE.md Imports Plan"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/plan"
-status: "approved"
+status: "in-review"
 owner: "platform"
 updated: "2026-11-06"
 layer: "specs"
@@ -33,7 +33,7 @@ compaction, and relative `@path` imports. Constraining architecture is
 
 ## Goals & In-Scope
 
-Close VAL-CLI-001 to VAL-CLI-003.
+Close VAL-CLI-001 to VAL-CLI-004.
 
 ## Non-Goals & Out-of-Scope
 
@@ -48,6 +48,7 @@ The non-goals listed in the Spec.
 | WORK-001 | [VAL-CLI-001](spec.md#success-criteria--verification-plan) | Tests first, then the pairing check and the Codex-only folder chain | None | [Task](tasks/tsk-0001-folder-claude-imports.md) | Tests FAIL then PASS |
 | WORK-002 | [VAL-CLI-002](spec.md#success-criteria--verification-plan) | Add the files, the profile and the documentation | WORK-001 | [Task](tasks/tsk-0001-folder-claude-imports.md) | Strict checks and staged QA |
 | WORK-003 | [VAL-CLI-003](spec.md#success-criteria--verification-plan) | Observe a read-only new Claude session | WORK-002 | [Task](tasks/tsk-0001-folder-claude-imports.md) | Observed context |
+| WORK-004 | [VAL-CLI-004](spec.md#success-criteria--verification-plan) | Tests first, then the session-start hook and the per-provider event rule | None | [Task](tasks/tsk-0001-folder-claude-imports.md) | Tests FAIL then PASS |
 
 ## Verification Plan
 
@@ -64,7 +65,7 @@ registry, as AD-0006 requires.
 
 ## Completion Criteria
 
-VAL-CLI-001 to VAL-CLI-003 have PASS evidence and an operator decision.
+VAL-CLI-001 to VAL-CLI-004 have PASS evidence and an operator decision.
 
 ## Promotion
 

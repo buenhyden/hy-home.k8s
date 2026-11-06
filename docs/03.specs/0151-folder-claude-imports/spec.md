@@ -1,8 +1,8 @@
 ---
 title: "Folder CLAUDE.md Imports"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/spec"
-status: "approved"
+status: "in-review"
 owner: "platform"
 updated: "2026-11-06"
 layer: "specs"
@@ -30,11 +30,16 @@ provider change needs this package. The [Plan](plan.md) orders the work and
   a pairing and content check in `scripts/validation/repository/quality.py`;
   the guard's folder chain limited to Codex; the `AGENTS.md` statements in
   `.claude/provider.md`, `.codex/provider.md` and
-  `.agents/governance/agent-execution.md`; the AUD-0001 m0002 draft row.
+  `.agents/governance/agent-execution.md`; the AUD-0001 m0002 draft row;
+  a Claude `SessionStart` hook on `compact|resume` that re-injects the reading
+  instruction, `.claude/hooks/session-start.sh`, and the per-provider hook
+  event rule in `scripts/validate-agent-governance.py`.
 - Non-goals:
   - the root `CLAUDE.md` and root `AGENTS.md` (the Codex gateway);
   - `.claude/CLAUDE.md` and anything below `docs/98.archive/`;
-  - user-level settings and hook registrations.
+  - user-level settings and Codex hook registrations;
+  - a path announcement on every edit, which the folder imports and the guard
+    already cover.
 - Open questions: none that change a criterion. Whether an `AGENTS.md` edited
   mid-session is picked up is undocumented and left unclaimed.
 
@@ -47,12 +52,22 @@ provider change needs this package. The [Plan](plan.md) orders the work and
 - Each folder `CLAUDE.md` maps to exactly one registry profile.
 - The shared guard supplies the folder `AGENTS.md` chain only to Codex; both
   providers keep its model-visible guidance.
+- On Claude `SessionStart` with source `compact` or `resume`, a repo-local
+  hook adds context telling Claude to read the `AGENTS.md` chain of every
+  folder it works in again; it runs no QA and calls no agent, and never
+  blocks.
+- Claude may register `PreToolUse` and `SessionStart`, Codex only
+  `PreToolUse`; the validator refuses any other event.
 
 ## Core Design
 
 Claude's native nested loading replaces the hook path for Claude, which
 covers reads and compaction reloads without repository code. Codex ignores
-`CLAUDE.md` and keeps the hook path. Constraining architecture: [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
+`CLAUDE.md` and keeps the hook path. Because a compacted conversation may keep
+earlier rules only as a summary, and on-demand reload is not yet observed
+here, a `SessionStart` hook re-injects the reading instruction after a
+compaction or resume. The validator's single-event rule exists to keep QA and
+agent calls out of session events; this hook keeps that rationale. Constraining architecture: [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 keeps provider adapters thin and document forms in the Stage 99 registry;
 this change adds one native profile and keeps the shared guard as the only
 cross-provider control.
@@ -92,6 +107,7 @@ required by policy; revert the guard change to restore hook delivery.
 | VAL-CLI-001 | Focused tests fail before and pass after: pairing and content gaps refused, Codex alone gets the guard's folder chain |
 | VAL-CLI-002 | The 15 files, the profile, provider notes and policy are in place; strict checks and staged QA PASS |
 | VAL-CLI-003 | A new Claude session that only reads a file in an untouched folder shows that folder's `AGENTS.md` text in its context |
+| VAL-CLI-004 | Focused tests fail before and pass after: the session-start hook output and the per-provider event rule |
 
 ## Traceability
 
@@ -102,3 +118,4 @@ required by policy; revert the guard change to restore hook delivery.
 | [REQ-0003-FR-0013](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-CLI-001 | [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) | Focused tests red then green |
 | [REQ-0003-FR-0013](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-CLI-002 | [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) | Strict checks and staged QA |
 | [REQ-0003-FR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-CLI-003 | [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) | Observed provider-runtime evidence |
+| [REQ-0003-FR-0011](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-CLI-004 | [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) | Focused tests red then green |
