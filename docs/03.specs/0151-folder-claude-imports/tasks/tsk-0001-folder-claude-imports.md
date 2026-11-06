@@ -25,7 +25,7 @@ imports. It executes [SPEC-0151](../spec.md) through
   reloads, which the SPEC-0149 hook path does not.
 - Approval (2026-11-06): the operator's request to review the folder `CLAUDE.md` approach and proceed approves SPEC-0151 and its Plan, drafted in `a8b2e941`; merge is separate and criterion acceptance stays the operator's.
 - Scope change (2026-11-06): the operator chose to add a Claude `SessionStart`
-  hook on `compact|resume`; the Spec and Plan returned to `in-review` in `c9a45252` and the operator's choice re-approves them.
+  hook on `compact|resume`; the Spec and Plan returned to `in-review` in `c9a45252` and the operator's choice re-approves them; the operator then asked for a per-edit path line, reviewed in `3432d0d9` and re-approved by that request.
 - Start: branch `feat/folder-claude-imports` from `main` at `8be06a16`.
 
 ## Task Table
@@ -37,7 +37,7 @@ imports. It executes [SPEC-0151](../spec.md) through
 | WORK-001 | [VAL-CLI-001](../spec.md#success-criteria--verification-plan) | Pairing check and Codex-only folder chain | platform | ready | NOT_RUN | EVD-001 |
 | WORK-002 | [VAL-CLI-002](../spec.md#success-criteria--verification-plan) | Files, profile and documentation | platform | ready | NOT_RUN | EVD-002 |
 | WORK-003 | [VAL-CLI-003](../spec.md#success-criteria--verification-plan) | Observed read-only Claude session | platform | ready | NOT_RUN | EVD-003 |
-| WORK-004 | [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | Session-start hook and per-provider event rule | platform | ready | NOT_RUN | EVD-004 |
+| WORK-004 | [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | Session-start hook, per-provider event rule and per-edit path line | platform | ready | NOT_RUN | EVD-004 |
 
 ## Task Evidence
 
