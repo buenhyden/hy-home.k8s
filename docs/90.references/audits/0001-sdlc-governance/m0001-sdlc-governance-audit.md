@@ -1,6 +1,6 @@
 ---
 title: "SDLC Governance Audit"
-version: "0.1.0"
+version: "0.2.0"
 type: "reference/audit"
 status: "published"
 owner: "platform"
@@ -75,6 +75,7 @@ product manifests, live, hosted and provider-runtime behavior.
 | F-04: The Plan lacks an architecture compliance check prompt | P2 | `plan.template.md` |
 | F-05: The ADR template does not ask for the requirement IDs it serves | P3 | `decision.template.md` |
 | F-06: Codex native loading of `AGENTS.md` was not observed in this audit | UNKNOWN | No Codex session run |
+| F-07: The Task validator accepted evidence-shaped rows (`EVD-###`, nine cells) inside the Task Table and then bound them as work items that could be neither deleted nor completed | P2 | Observed 2026-11-06 on an unpushed SPEC-0146 commit; strict checks PASS on the misplaced rows, then `TASK-ITEM-DELETE` and `TASK-ITEM-EDGE` refused every forward fix |
 
 ## Sources
 
@@ -97,6 +98,8 @@ changes. Current truth is owned by those files, not this report.
 | D-1: make the Spec → AD/ADR statement machine-checked | operator | Resolved 2026-11-06 by SPEC-0147: a required `Architecture` column in the Spec Lifecycle Traceability table; link-target and reciprocal checks were not added |
 | D-2: the lifecycle gate refuses creation in `approved` or `published`, so approval and publication are separate commits | operator | Resolved 2026-11-06: drafted `f3d71d9a`, approved `4fcdf22a` |
 | F-06: observe Codex loading in a Codex session | operator | Accepted deferral |
+| R-1: whether a Spec's `Architecture` cell names the right AD or ADR, and F-02 and F-03, stay reviewer-judged. A link-target check would need a second typed link column in the body-contract schema, and the content is semantic | operator | Decided 2026-11-06: no automation; the semantic review in `quality.md` is the control |
+| F-07: refuse a Task Table row whose ID is not a work-item ID or whose cell count differs from the header | operator | Open; needs its own Stage 03 package (executable behavior) |
 
 Existing documents are not rewritten: the prompts apply to documents created
 from the templates from now on, and the `sdlc.md` rules to packages opened
@@ -120,7 +123,7 @@ Pre-approval observations on the staged index, branch
   documents created `approved` or `published`, and `TASK-PARENT-APPROVAL` for
   Task execution or evidence under a `draft` Spec. So the SPEC-0146 Task
   evidence waited for the approval commit `4fcdf22a` (D-2, resolved).
-- UNKNOWN: Codex loading (F-06). Not machine-checked: F-02 and F-03; F-01 is checked by the SPEC-0147 column.
+- UNKNOWN: Codex loading (F-06). Not machine-checked by decision R-1: F-02, F-03 and the content of the SPEC-0147 column; its presence is checked. Open: F-07.
 
 These are observations, not the Task's criterion evidence or a remediation
 PASS.
