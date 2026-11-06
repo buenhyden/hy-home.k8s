@@ -22,6 +22,7 @@ executes [SPEC-0147](../spec.md) through
 - Request (2026-11-06): review D-1 and proceed.
 - Review (2026-11-06): option B, a required column without link-target or
   reciprocal checks, chosen over a target link column.
+- Approval (2026-11-06): the operator's request to review D-1 and proceed approves SPEC-0147 and its Plan, drafted in `b3e663fc`; merge is separate and criterion acceptance stays the operator's.
 - Start: branch `docs/sdlc-cross-artifact-conformance` at `d4338908`.
 
 ## Task Table
@@ -30,8 +31,8 @@ executes [SPEC-0147](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-ARCH-001](../spec.md#success-criteria--verification-plan) | Focused test and registry column | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-ARCH-002](../spec.md#success-criteria--verification-plan) | Template and fixtures | platform | draft | NOT_RUN | EVD-002 |
+| WORK-001 | [VAL-ARCH-001](../spec.md#success-criteria--verification-plan) | Focused test and registry column | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-ARCH-002](../spec.md#success-criteria--verification-plan) | Template and fixtures | platform | ready | NOT_RUN | EVD-002 |
 
 ## Task Evidence
 
