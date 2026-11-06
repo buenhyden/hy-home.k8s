@@ -18,6 +18,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 ## Context
 
 <!-- Author prompt: state the forces, constraints, and evidence that require one decision. -->
+<!-- Author prompt: name the requirement IDs and architecture views this decision serves or constrains. -->
 
 ## Decision
 

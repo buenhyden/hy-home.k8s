@@ -1,6 +1,6 @@
 ---
 title: "Software Development Lifecycle"
-version: "3.0.2"
+version: "3.2.0"
 type: "governance/contract"
 status: "active"
 owner: "platform"
@@ -127,6 +127,29 @@ A small correction reuses its current work owner and proportional checks. It
 need not create a Requirement, ADR, or a new Spec package merely to edit a file.
 An Issue can initiate work and a Project can display its progress without
 becoming a second execution record; the active Task alone records actual work.
+
+### Cross-artifact conformance
+
+These rules apply to the Executable behavior and Governance, provider, Stage 99
+rows, and to an Architecture row once it is implemented; a small correction or
+document content change does not trigger them.
+
+- Before a Spec leaves `draft`, its author reads the Requirement and the
+  Architecture Descriptions and ADRs that own the affected boundary, and the
+  Spec's Lifecycle Traceability `Architecture` column links the ones that
+  constrain each criterion or states why none applies. The validator checks
+  that the cell is present and non-empty; reviewers judge its content.
+- An open question that changes an acceptance criterion keeps the Spec out of
+  `approved`; a Plan is not approved against an unapproved Spec.
+- A Spec or Plan that needs to depart from a current Architecture Description
+  or ADR returns to `in-review` under the
+  [lifecycle policy](document-lifecycle.md), and dependent work stops until a
+  new or amended ADR is accepted or the departure is removed.
+- When implementation and an approved Requirement, Architecture or Spec
+  disagree, neither side is presumed correct. Record the divergence in the
+  active Task, then either amend the owning document through its own review
+  or correct the implementation. A requirement is never relaxed by editing a
+  downstream document alone.
 
 ## Validation and Refresh
 

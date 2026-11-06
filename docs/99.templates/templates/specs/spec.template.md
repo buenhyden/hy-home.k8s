@@ -18,6 +18,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 ## Strategic Boundaries & Non-goals
 
 <!-- Author prompt: define authorized scope, protected surfaces, and explicit non-goals. -->
+<!-- Author prompt: list open questions and assumptions with an owner; an open question that changes a criterion keeps this Spec out of approved. -->
 
 ## Contracts
 
@@ -26,6 +27,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 ## Core Design
 
 <!-- Author prompt: explain components, control flow, state transitions, and key tradeoffs. -->
+<!-- Author prompt: link the Architecture Descriptions and ADRs that constrain this change and state how the design conforms, or say that none apply; a needed departure is decided in a new or amended ADR before approval. -->
 
 ## Data Modeling & Storage Strategy
 
@@ -58,10 +60,10 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Traceability
 
-<!-- Author prompt: map product requirements to specification criteria and verification evidence. -->
+<!-- Author prompt: map product requirements to specification criteria, constraining architecture and verification evidence. -->
 
 ### Lifecycle Traceability
 
-| Requirement ID | Spec criterion | Verification method |
-| --- | --- | --- |
-| REQ-0001-FR-0001 | VAL-FEATURE-001 | Named unit, contract, integration, or review evidence |
+| Requirement ID | Spec criterion | Architecture | Verification method |
+| --- | --- | --- | --- |
+| REQ-0001-FR-0001 | VAL-FEATURE-001 | Constraining AD or ADR link, or why none applies | Named unit, contract, integration, or review evidence |
