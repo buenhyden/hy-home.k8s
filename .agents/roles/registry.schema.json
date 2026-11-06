@@ -164,10 +164,8 @@
         "responsibility",
         "permission_class",
         "capability_tier_ref",
-        "supported_providers",
         "skill_refs",
-        "handoff_to",
-        "projections"
+        "handoff_to"
       ],
       "properties": {
         "id": {
@@ -189,20 +187,6 @@
           "pattern": "^\\.agents/governance/model-selection\\.md#(?:top|worker)$",
           "maxLength": 160
         },
-        "supported_providers": {
-          "type": "array",
-          "prefixItems": [
-            {
-              "const": "claude"
-            },
-            {
-              "const": "codex"
-            }
-          ],
-          "items": false,
-          "minItems": 2,
-          "maxItems": 2
-        },
         "skill_refs": {
           "type": "array",
           "maxItems": 16,
@@ -219,29 +203,6 @@
           "items": {
             "type": "string",
             "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-          }
-        },
-        "projections": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "neutral",
-            "claude",
-            "codex"
-          ],
-          "properties": {
-            "neutral": {
-              "type": "string",
-              "pattern": "^\\.agents/roles/[a-z0-9-]+\\.md$"
-            },
-            "claude": {
-              "type": "string",
-              "pattern": "^\\.claude/agents/[a-z0-9-]+\\.md$"
-            },
-            "codex": {
-              "type": "string",
-              "pattern": "^\\.codex/agents/[a-z0-9-]+\\.toml$"
-            }
           }
         }
       }

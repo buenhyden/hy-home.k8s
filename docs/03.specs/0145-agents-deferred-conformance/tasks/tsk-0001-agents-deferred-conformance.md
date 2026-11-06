@@ -1,6 +1,6 @@
 ---
 title: "Agent Surface Deferred Conformance"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -31,7 +31,7 @@ through [WORK-001–004](../plan.md#work-breakdown).
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-DEF-003](../spec.md#success-criteria--verification-plan) | Derived projection fields | platform | ready | NOT_RUN | EVD-001 |
+| WORK-001 | [VAL-DEF-003](../spec.md#success-criteria--verification-plan) | Derived projection fields | platform | in-progress | PASS | EVD-005, EVD-006 |
 | WORK-002 | [VAL-DEF-001](../spec.md#success-criteria--verification-plan) | Role-body shared sections | platform | ready | NOT_RUN | EVD-002 |
 | WORK-003 | [VAL-DEF-002](../spec.md#success-criteria--verification-plan) | Collection-index README subsections | platform | ready | NOT_RUN | EVD-003 |
 | WORK-004 | [VAL-DEF-004](../spec.md#success-criteria--verification-plan) | `sdlc.md` invariant, CIS numbers, sibling pin | platform | ready | NOT_RUN | EVD-004 |
@@ -44,6 +44,8 @@ through [WORK-001–004](../plan.md#work-breakdown).
 | EVD-002 | [VAL-DEF-001](../spec.md#success-criteria--verification-plan) | WORK-002 | Strict document checks and agent-governance tests | Pending | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-DEF-002](../spec.md#success-criteria--verification-plan) | WORK-003 | Strict document checks | Pending | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-DEF-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Source comparison and strict document checks | Pending | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-DEF-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Regression test and agent-governance validator | Working tree on `40b97e1e` with the new test and the old registry | FAIL | Local run, 2026-11-06T00:44Z: `test_role_projections_are_derived_not_declared` fails because every role still carries `projections` and `supported_providers` | no | none |
+| EVD-006 | [VAL-DEF-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Regression test and agent-governance validator | Working tree on `40b97e1e` with the change | PASS | Local run, 2026-11-06T00:54Z: `tests.test_validate_agent_registry`, `tests.test_agent_governance` and `tests.test_prompt_input` 111 tests OK; `validate-agent-governance.py` PASS with projections=51; `role_projections` derives each path and the stale-or-extra projection comparison is unchanged; the role-level provider checks it replaced were unreachable | yes | EVD-001 |
 
 ## Criterion Acceptance
 

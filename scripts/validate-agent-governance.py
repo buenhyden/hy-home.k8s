@@ -60,6 +60,17 @@ REGISTRY_PROJECTION_SUFFIXES = {
     "claude": ".md",
     "codex": ".toml",
 }
+
+
+def role_projections(role_id: str) -> dict[str, str]:
+    """Return a role's neutral and provider projection paths, derived from its ID."""
+
+    return {
+        surface: (root / f"{role_id}{REGISTRY_PROJECTION_SUFFIXES[surface]}").as_posix()
+        for surface, root in REGISTRY_PROJECTION_ROOTS.items()
+    }
+
+
 REGISTRY_PERMISSION_BEHAVIOR = {
     "read-only-evidence": (False, False),
     "read-only-research": (False, False),
@@ -637,11 +648,6 @@ def validate_registry(
                 "AGENT-REGISTRY-PERMISSION",
                 f"{role_id} references an unknown permission class",
             )
-        if tuple(role["supported_providers"]) != REGISTRY_PROVIDER_IDS:
-            fail(
-                "AGENT-REGISTRY-PROVIDER",
-                f"{role_id} must support exactly claude and codex",
-            )
         if not set(role["skill_refs"]).issubset(skill_set):
             fail("AGENT-REGISTRY-SKILL", f"{role_id} references an unknown skill")
         handoffs = role["handoff_to"]
@@ -649,16 +655,7 @@ def validate_registry(
             fail("AGENT-REGISTRY-HANDOFF", f"{role_id} has an invalid handoff edge")
         handoff_count += len(handoffs)
 
-        for surface, path_text in role["projections"].items():
-            expected = (
-                REGISTRY_PROJECTION_ROOTS[surface]
-                / f"{role_id}{REGISTRY_PROJECTION_SUFFIXES[surface]}"
-            ).as_posix()
-            if path_text != expected or path_text in declared[surface]:
-                fail(
-                    "AGENT-REGISTRY-PROJECTION",
-                    f"{role_id}/{surface} must uniquely project to {expected}",
-                )
+        for surface, path_text in role_projections(role_id).items():
             declared[surface].add(path_text)
             projection_count += 1
 
@@ -1131,8 +1128,6 @@ def load_provider_bindings(
                 fail("AGENT-NATIVE-PERMISSION", "provider scope exceeds its class")
         for role_id, override in data["role_overrides"].items():
             role = roles[role_id]
-            if provider not in role["supported_providers"]:
-                fail(code, "role does not support its override provider")
             if "scope" not in override:
                 continue
             permission = permissions[role["permission_class"]]
@@ -1300,7 +1295,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         provider: binding["capability_models"] for provider, binding in bindings.items()
     }
     for role in registry["roles"]:
-        canonical = role["projections"]["neutral"]
+        canonical = role_projections(role["id"])["neutral"]
         capability_tier = role["capability_tier_ref"].rsplit("#", 1)[-1]
         _read_text(root, canonical, "AGENT-REGISTRY-PROJECTION")
         expected_refs = {
@@ -1311,7 +1306,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         }
         for provider in REGISTRY_PROVIDER_IDS:
             text = _read_text(
-                root, role["projections"][provider], "AGENT-NATIVE-METADATA"
+                root, role_projections(role["id"])[provider], "AGENT-NATIVE-METADATA"
             )
             if capability_models[provider].get(capability_tier) is None:
                 fail(
