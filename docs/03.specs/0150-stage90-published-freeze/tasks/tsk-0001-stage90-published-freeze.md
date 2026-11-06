@@ -22,6 +22,7 @@ Refuse a rewrite of a published Stage 90 member (AUD-0001 F-10). It executes
 - Review (2026-11-06): the check belongs to the Stage 90 topology owner, not
   the lifecycle validator (REQ-0003-FR-0027); link destinations stay
   changeable for consumer succession.
+- Approval (2026-11-06): the operator's request to resolve the remaining item approves SPEC-0150 and its Plan, drafted in `1b7f70aa`; merge is separate and criterion acceptance stays the operator's.
 - Start: branch `fix/stage90-published-freeze` from `main` at `397e0c26`.
 
 ## Task Table
@@ -30,8 +31,8 @@ Refuse a rewrite of a published Stage 90 member (AUD-0001 F-10). It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | Focused tests and freeze check | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-FRZ-002](../spec.md#success-criteria--verification-plan) | Strict checks and observed refusal | platform | draft | NOT_RUN | EVD-002 |
+| WORK-001 | [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | Focused tests and freeze check | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-FRZ-002](../spec.md#success-criteria--verification-plan) | Strict checks and observed refusal | platform | ready | NOT_RUN | EVD-002 |
 
 ## Task Evidence
 
