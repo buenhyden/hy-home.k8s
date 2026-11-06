@@ -1,10 +1,10 @@
 ---
 title: "Codex Provider Notes"
-version: "1.6.1"
+version: "1.7.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-06"
 ---
 
 # Codex Provider Notes
@@ -142,9 +142,17 @@ team document, not a special automatic entry filename.
   `PreToolUse` accepts `permissionDecision`, `permissionDecisionReason` and
   `systemMessage`, and treats `decision:approve`, `continue:false`,
   `stopReason` and `suppressOutput` as unsupported. A non-zero exit that writes
-  a reason to standard error blocks the call. The shared guard emits only
-  `systemMessage` and the exit-with-reason form, so no unsupported field is
-  relied on as a control here.
+  a reason to standard error blocks the call. The shared guard emits
+  `systemMessage`, the exit-with-reason form and, since SPEC-0149,
+  `hookSpecificOutput.additionalContext` carrying its guidance and each write
+  target's folder `AGENTS.md` chain beyond the root-to-cwd chain Codex loads
+  itself, once per session (on every call without a `session_id`; not again
+  after a context compaction). The current documentation lists `additionalContext` for
+  `PreToolUse`, but the response contract observed above on 0.153.4 listed
+  only three fields, and delivery on the installed 0.166.0 is unobserved (the
+  2026-11-06 probe hit the usage limit). If the client rejects the field, it
+  may also drop the `systemMessage` in the same response; no allow or block
+  control relies on either field.
 - The guard's shell observation is advisory on this provider as it is on the
   other: it reports recognized redirection, `tee` and in-place `sed` targets
   and blocks nothing, and it detects no interpreter-mediated or otherwise

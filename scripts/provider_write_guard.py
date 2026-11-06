@@ -19,6 +19,7 @@ Invalid path transport fails closed.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -523,6 +524,131 @@ def build_messages(resolved_root: str, shell_targets: list[str]) -> list[str]:
     return messages
 
 
+AGENTS_FILE = "AGENTS.md"
+# Folder rules supplied to the model per call; a file past this bound is
+# named instead, so one write never floods the context.
+AGENTS_CONTEXT_MAX_BYTES = 32 * 1024
+AGENTS_STATE_DIRECTORY = "hy-home-k8s-agents-md"
+AGENTS_STATE_MAX_BYTES = 256 * 1024
+
+
+def _read_agents_file(root: str, relative: PurePosixPath) -> str | None:
+    """Read one folder rule file without following a symlink; None if unsafe."""
+    cursor = Path(root)
+    try:
+        for part in relative.parts[:-1]:
+            cursor /= part
+            if stat.S_ISLNK(os.lstat(cursor).st_mode):
+                return None
+        descriptor = os.open(cursor / relative.name, os.O_RDONLY | os.O_NOFOLLOW)
+        with os.fdopen(descriptor, "rb") as handle:
+            status = os.fstat(handle.fileno())
+            if not stat.S_ISREG(status.st_mode):
+                return None
+            data = handle.read(AGENTS_CONTEXT_MAX_BYTES + 1)
+        if len(data) > AGENTS_CONTEXT_MAX_BYTES:
+            return None
+        return data.decode("utf-8")
+    except (OSError, UnicodeError):
+        return None
+
+
+def _agents_state_path(root: str, session: str) -> Path:
+    key = hashlib.sha256(f"{session}\0{root}".encode()).hexdigest()
+    return Path(tempfile.gettempdir()) / AGENTS_STATE_DIRECTORY / f"{key}.json"
+
+
+def _private_directory(directory: Path) -> bool:
+    status = os.lstat(directory)
+    return (
+        stat.S_ISDIR(status.st_mode)
+        and status.st_uid == os.geteuid()
+        and not stat.S_IMODE(status.st_mode) & 0o077
+    )
+
+
+def _load_agents_state(state: Path) -> dict[str, str]:
+    try:
+        if not _private_directory(state.parent):
+            return {}
+        if os.path.getsize(state) > AGENTS_STATE_MAX_BYTES:
+            return {}
+        supplied = json.loads(state.read_text(encoding="utf-8")).get("supplied", {})
+    except TimeoutError:
+        raise  # keep the guard deadline
+    except Exception:  # noqa: BLE001 - a corrupt state only re-supplies the rules
+        return {}
+    if not isinstance(supplied, dict):
+        return {}
+    return {k: v for k, v in supplied.items() if isinstance(v, str)}
+
+
+def _save_agents_state(state: Path, supplied: dict[str, str]) -> None:
+    # Deduplication is a convenience: a state failure never blocks a write.
+    try:
+        state.parent.mkdir(mode=0o700, exist_ok=True)
+        if not _private_directory(state.parent):
+            return
+        state.write_text(json.dumps({"supplied": supplied}), encoding="utf-8")
+    except OSError:
+        return
+
+
+def folder_agents_context(
+    root: str, targets: list[str], session: object
+) -> tuple[str, Path | None, dict[str, str]]:
+    """Return the folder AGENTS.md text the model has not yet seen this session.
+
+    The root AGENTS.md is the Codex gateway and is excluded: Claude gets the
+    common core through CLAUDE.md and Codex loads the root natively."""
+    chain: list[PurePosixPath] = []
+    for target in targets:
+        folders = PurePosixPath(target).parts[:-1]
+        for depth in range(1, len(folders) + 1):
+            candidate = PurePosixPath(*folders[:depth]) / AGENTS_FILE
+            if candidate not in chain:
+                chain.append(candidate)
+    if not chain:
+        return "", None, {}
+    session_key = (
+        session if isinstance(session, str) and 0 < len(session) <= 256 else ""
+    )
+    state = _agents_state_path(root, session_key) if session_key else None
+    supplied = _load_agents_state(state) if state else {}
+    blocks: list[str] = []
+    unread: list[str] = []
+    used = 0
+    changed = False
+    for relative in chain:
+        if not os.path.lexists(Path(root) / relative):
+            continue
+        text = _read_agents_file(root, relative)
+        if text is None:
+            unread.append(relative.as_posix())
+            continue
+        digest = hashlib.sha256(text.encode()).hexdigest()
+        if supplied.get(relative.as_posix()) == digest:
+            continue
+        block = (
+            f"Folder agent rules from `{relative.as_posix()}`; they apply to every "
+            f"file below `{relative.parent.as_posix()}/`:\n\n{text.strip()}"
+        )
+        size = len(block.encode())
+        if used + size > AGENTS_CONTEXT_MAX_BYTES:
+            unread.append(relative.as_posix())
+            continue
+        blocks.append(block)
+        used += size
+        supplied[relative.as_posix()] = digest
+        changed = True
+    if unread:
+        blocks.append(
+            "Read these folder agent rules explicitly before this change: "
+            + ", ".join(f"`{path}`" for path in unread)
+        )
+    return "\n\n".join(blocks), (state if changed else None), supplied
+
+
 def run_surface_selector(resolved_root: str) -> str | None:
     """Run the affected-surface selector over the collected paths.
 
@@ -632,8 +758,26 @@ def main(argv: list[str] | None = None) -> int:
                 reject("HOOK-PATH-SYMLINK")
 
     messages = build_messages(resolved_root, shell_targets)
+    # systemMessage reaches the user only; additionalContext reaches the model.
+    try:
+        folder_rules, state, supplied = folder_agents_context(
+            resolved_root, [*paths, *shell_targets], data.get("session_id")
+        )
+    except TimeoutError:
+        raise  # keep the guard deadline
+    except Exception:  # noqa: BLE001 - folder rules must never block a write
+        folder_rules, state, supplied = "", None, {}
+    model_context = "\n\n".join(part for part in (*messages, folder_rules) if part)
+    output: dict[str, object] = {}
     if messages:
-        print(json.dumps({"systemMessage": "\n\n".join(messages)}))
+        output["systemMessage"] = "\n\n".join(messages)
+    if model_context:
+        output["hookSpecificOutput"] = {
+            "hookEventName": "PreToolUse",
+            "additionalContext": model_context,
+        }
+    if output:
+        print(json.dumps(output))
 
     failure = run_surface_selector(resolved_root) if paths else None
     if failure:
@@ -643,6 +787,14 @@ def main(argv: list[str] | None = None) -> int:
             f"{failure}: affected-surface contract rejected a structured edit; "
             "inspect the registered route or profile before editing",
         )
+    # Record delivery only for a write the guard let through.
+    if state is not None:
+        try:
+            _save_agents_state(state, supplied)
+        except TimeoutError:
+            raise  # keep the guard deadline
+        except Exception:  # noqa: BLE001 - a state failure never blocks
+            pass
     return 0
 
 
