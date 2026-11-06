@@ -1,6 +1,6 @@
 ---
 title: "Network Reviewer Responsibility"
-version: "1.2.1"
+version: "1.2.2"
 type: "governance/role"
 status: "active"
 owner: "platform"
@@ -15,9 +15,7 @@ Review cluster networking, ingress, DNS, policy, and isolation behavior from rep
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes nothing and probes nothing live. It hands isolation, RBAC and secret findings to [security-auditor](security-auditor.md), sync-structure concerns to [gitops-reviewer](gitops-reviewer.md), and ownership questions to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -73,11 +71,13 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), this role reads the repository-static results of `bash scripts/validate-k8s-manifests.sh` and the external-service endpoint checker and cites manifest `file:line`; live ingress, DNS and TLS behavior is the live lane and stays unobserved. Report findings, not a lane PASS. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
+- [Infrastructure responsibility](README.md#infrastructure)
+- [Agent registry](registry.json)
+- [security-auditor](security-auditor.md)
+- [gitops-reviewer](gitops-reviewer.md)
+- [supervisor](supervisor.md)
 - [Quality policy](../governance/quality.md)

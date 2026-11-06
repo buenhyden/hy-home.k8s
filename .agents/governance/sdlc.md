@@ -1,6 +1,6 @@
 ---
 title: "Software Development Lifecycle"
-version: "3.0.1"
+version: "3.0.2"
 type: "governance/contract"
 status: "active"
 owner: "platform"
@@ -23,6 +23,11 @@ This flow selects the responsible document stage. Exact paths, profile IDs,
 frontmatter, sections, relationships, status classes, and lifecycle edges come
 only from the Stage 99 registry (`docs/99.templates/registry.json`). Provider and
 agent-roster authority is outside Stage 99 and is not defined here.
+
+This document is the one `governance/contract` member because it owns an
+invariant that other owners consume rather than a procedure: each change kind
+sets a minimum record set, check set and authoring approval (the change-kind
+table under Current Contract).
 
 ## Governance Context
 

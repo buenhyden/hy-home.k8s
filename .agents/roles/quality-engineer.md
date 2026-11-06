@@ -1,10 +1,10 @@
 ---
 title: "Quality Engineer Responsibility"
-version: "1.2.0"
+version: "1.2.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-11-06"
 ---
 
 # quality-engineer Responsibility
@@ -15,9 +15,7 @@ Design and run bounded repository validation and report reproducible quality evi
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes only registered validators and their fixtures and tests under `scripts/` and `tests/`, or a registered skill-local checker, per `scripts/validation/registry.json` and [scripts instructions](../../scripts/AGENTS.md). It hands correctness findings to [code-reviewer](code-reviewer.md), security findings to [security-auditor](security-auditor.md), and unresolved gates to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -72,11 +70,15 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run the selected gates through `python3 scripts/qa.py quick` or `staged` and the focused unit tests; report each result under its lane (repository-static, hosted, provider-runtime or live) and never treat one lane as proof for another. Lanes follow [quality](../governance/quality.md#validation-lane-contract). Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
+- [Quality responsibility](README.md#quality)
+- [Agent registry](registry.json)
+- [code-reviewer](code-reviewer.md)
+- [security-auditor](security-auditor.md)
+- [supervisor](supervisor.md)
+- [Validation registry](../../scripts/validation/registry.json)
+- [Scripts instructions](../../scripts/AGENTS.md)
 - [Quality policy](../governance/quality.md)

@@ -1,6 +1,6 @@
 ---
 title: "Agent Evaluator Responsibility"
-version: "1.3.1"
+version: "1.3.2"
 type: "governance/role"
 status: "active"
 owner: "platform"
@@ -15,9 +15,7 @@ Design and run agent evaluation cases and report scored evidence and improvement
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes only evaluation records under `.agents/evaluations/`, and never edits a role, skill or projection. It hands contract and skill repair to [governance-steward](governance-steward.md), lane membership to [quality-engineer](quality-engineer.md), and ownership questions to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -97,12 +95,14 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run only bounded paired trials and record their scores from actual paired sessions under `.agents/evaluations/`; the result is session evidence, any provider-runtime claim needs direct session evidence, and a synthetic rubric result is repository-static and never agent quality. Incomplete trials are reported as incomplete. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
-- [Quality policy](../governance/quality.md)
+- [Quality responsibility](README.md#quality)
 - [Evaluation evidence router](../evaluations/README.md)
+- [Agent registry](registry.json)
+- [governance-steward](governance-steward.md)
+- [quality-engineer](quality-engineer.md)
+- [supervisor](supervisor.md)
+- [Quality policy](../governance/quality.md)

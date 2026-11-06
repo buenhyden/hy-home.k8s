@@ -1,6 +1,6 @@
 ---
 title: "Common Prompt Contracts"
-version: "0.3.1"
+version: "0.3.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -29,14 +29,18 @@ script는 선언된 입력을 모아 요청을 표준 출력으로 쓴다. model
 
 ## Structure
 
-- [handoff](handoff.md): quality 정책이 이미 소유한 필드로 작업 인계를 조립한다.
-- [change-review](change-review.md): 로컬 차이에 대한 검토 요청을 조립한다.
-- [commit-message](commit-message.md): staged 차이만으로 커밋 메시지 초안
-  요청을 조립한다.
-- [doc-update](doc-update.md): 변경의 정규 소유자를 찾아 그 문서에 대한 수정안
-  요청을 만든다.
+### Item Index
+
+| Path | Purpose |
+| --- | --- |
+| [handoff](handoff.md) | quality 정책이 이미 소유한 필드로 작업 인계를 조립한다. |
+| [change-review](change-review.md) | 로컬 차이에 대한 검토 요청을 조립한다. |
+| [commit-message](commit-message.md) | staged 차이만으로 커밋 메시지 초안 요청을 조립한다. |
+| [doc-update](doc-update.md) | 변경의 정규 소유자를 찾아 그 문서에 대한 수정안 요청을 만든다. |
 
 ## Usage
+
+### Add and Find
 
 1. 계약을 추가하기 전에 [document authoring](../governance/document-authoring.md)을
    읽고 Stage 99 registry에서 prompt profile을 고른다.
@@ -47,7 +51,7 @@ script는 선언된 입력을 모아 요청을 표준 출력으로 쓴다. model
 4. 거절 조건을 명시한다. builder는 주제 입력이 비어 있는 경우만 거부하고 나머지
    조건은 요청하는 agent가 지킨다. 거절 조건이 없는 계약은 입력이 비어 있을 때 아무것도
    설명하지 않는 초안을 만든다.
-5. 새 계약은 위 Structure 목록에 모두 색인하고, 같은 식별자로
+5. 새 계약은 위 Item Index 표에 모두 색인하고, 같은 식별자로
    `.claude/commands/<id>.md` 진입점을 하나 둔다([Claude adapter](../../.claude/README.md)).
    진입점은 자체 계약을 갖지 않는다.
 

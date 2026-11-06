@@ -1,6 +1,6 @@
 ---
 title: "Gitops Reviewer Responsibility"
-version: "1.1.1"
+version: "1.1.2"
 type: "governance/role"
 status: "active"
 owner: "platform"
@@ -15,9 +15,7 @@ Review GitOps manifests and reconciliation behavior without assuming mutation au
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes nothing and mutates no cluster. It hands manifest repair to [k8s-implementer](k8s-implementer.md), secret or privilege findings to [security-auditor](security-auditor.md), and ownership questions to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -67,11 +65,14 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), read the results of `bash scripts/validate-k8s-manifests.sh` and the external-service endpoint checker (`.agents/skills/external-service-contract-audit/scripts/validate-service-endpoints.py --root .`) as repository-static evidence; a live Argo CD sync is the live lane and stays unobserved. Report findings, not a lane PASS. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
+- [Infrastructure responsibility](README.md#infrastructure)
+- [Agent registry](registry.json)
+- [k8s-implementer](k8s-implementer.md)
+- [security-auditor](security-auditor.md)
+- [supervisor](supervisor.md)
+- [GitOps tree](../../gitops/README.md)
 - [Quality policy](../governance/quality.md)

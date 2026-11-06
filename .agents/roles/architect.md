@@ -1,10 +1,10 @@
 ---
 title: "Architect Responsibility"
-version: "1.0.0"
+version: "1.0.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-11-06"
 ---
 
 # architect Responsibility
@@ -15,9 +15,7 @@ Own structural decisions and architecture descriptions, and trace them to requir
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes only Stage 02 decisions and architecture descriptions under `docs/02.architecture/`, never edits an accepted ADR in place. It hands prose repair to [doc-writer](doc-writer.md), implementation to [k8s-implementer](k8s-implementer.md), trust-boundary judgment to [security-auditor](security-auditor.md), and ownership questions to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -75,11 +73,15 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run `scripts/validate-markdown-profiles.py --mode strict`, `scripts/validate-links-and-owners.py --mode strict` and `scripts/validate-document-lifecycle.py --mode strict` on the touched Stage 02 documents; report each as repository evidence under the [validation lane contract](../governance/quality.md#validation-lane-contract). Review it when its responsibility changes. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
-- [Quality policy](../governance/quality.md)
+- [Architecture responsibility](README.md#architecture)
+- [Agent registry](registry.json)
+- [doc-writer](doc-writer.md)
+- [k8s-implementer](k8s-implementer.md)
+- [security-auditor](security-auditor.md)
+- [supervisor](supervisor.md)
+- [Stage 02 architecture](../../docs/02.architecture/README.md)
+- [Document authoring](../governance/document-authoring.md)

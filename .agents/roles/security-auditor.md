@@ -1,6 +1,6 @@
 ---
 title: "Security Auditor Responsibility"
-version: "1.1.1"
+version: "1.1.2"
 type: "governance/role"
 status: "active"
 owner: "platform"
@@ -15,9 +15,7 @@ Audit repository changes for secret exposure, privilege escalation, isolation fa
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes nothing. It hands remediation to [k8s-implementer](k8s-implementer.md) once a finding is clear, routing and manifest-structure findings to [network-reviewer](network-reviewer.md), and ownership questions to [supervisor](supervisor.md); plaintext secret exposure stops the review. The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -72,11 +70,14 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), cite repository-static evidence such as `python3 scripts/validate-github-actions-security.py --root .` and `python3 scripts/validate-agent-governance.py --root .` results with `file:line`, severity and control impact. Report findings, not a lane PASS; hosted and live security state stays unobserved unless directly evidenced. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
+- [Security responsibility](README.md#security)
+- [Agent registry](registry.json)
+- [k8s-implementer](k8s-implementer.md)
+- [network-reviewer](network-reviewer.md)
+- [supervisor](supervisor.md)
+- [Approval and safety](../governance/approval-and-safety.md)
 - [Quality policy](../governance/quality.md)

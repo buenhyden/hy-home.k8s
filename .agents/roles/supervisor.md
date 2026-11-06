@@ -1,6 +1,6 @@
 ---
 title: "Supervisor Responsibility"
-version: "1.2.1"
+version: "1.2.2"
 type: "governance/role"
 status: "active"
 owner: "platform"
@@ -15,9 +15,7 @@ Route bounded work, preserve approval and ownership boundaries, and reconcile fi
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role holds no structured write tool: it writes no repository surface and produces a delegation plan and reconciled account only. It hands every edit, review and validation back to the selected role, and escalates a governance conflict or unapproved destructive risk to the user. The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -76,11 +74,27 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), this role runs no check itself. It records each delegate's check under the lane that delegate reported (repository-static, hosted, provider-runtime or live), never re-labels one lane's result as another's, and re-observes state rather than reusing a prior PASS. Review it when routing changes. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
+- [Supervision responsibility](README.md#supervision)
+- [Agent registry](registry.json)
+- [agent-evaluator](agent-evaluator.md)
+- [architect](architect.md)
+- [ci-workflow-engineer](ci-workflow-engineer.md)
+- [code-reviewer](code-reviewer.md)
+- [doc-writer](doc-writer.md)
+- [docs-researcher](docs-researcher.md)
+- [gitops-reviewer](gitops-reviewer.md)
+- [governance-steward](governance-steward.md)
+- [incident-responder](incident-responder.md)
+- [k8s-implementer](k8s-implementer.md)
+- [network-reviewer](network-reviewer.md)
+- [observability-reviewer](observability-reviewer.md)
+- [quality-engineer](quality-engineer.md)
+- [repo-tooling-engineer](repo-tooling-engineer.md)
+- [security-auditor](security-auditor.md)
+- [wiki-curator](wiki-curator.md)
+- [Context and memory policy](../governance/context-and-memory.md)
 - [Quality policy](../governance/quality.md)
