@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "2.3.9"
+version: "2.3.10"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -146,7 +146,7 @@ Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git
 
 ## Traceability
 
-The open governance Spec package is [SPEC-0147](../03.specs/0147-spec-architecture-column/spec.md). SPEC-0146 and SPEC-0145, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
+No governance Spec package is open. SPEC-0147 and SPEC-0146, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
 
 ### Lifecycle Traceability
 
@@ -380,3 +380,4 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0144 | completed spec | Aligned `.agents/` with the current workspace after four read-only audits: corrected statements naming nonexistent writers, jobs, fields and tools, resolved intra-file contradictions (including a circular security severity deferral) and duplicated rules across governance, roles, skills, prompts, workflows, knowledge and evaluations; fixed `prompt-input.py` aborting on `git diff --check` findings and missing root routers, bound `ops-runbook` to `doc-writer`, and removed the unread `external_writes_require_approval` schema field, each with a regression test. All four criteria accepted on 2026-11-06; no durable contract introduced. Recover with `git show 22ed5caf:<path>`. | `docs/03.specs/0144-agents-conformance/` |
 | SPEC-0145 | completed spec | Resolved the items SPEC-0144 deferred: role-specific Authority Boundary, Validation and Refresh, and Related Documents in the 17 role bodies; Item Index and Add and Find in the `.agents/` collection READMEs; per-role `supported_providers` and `projections` removed from the agent registry and derived in `validate-agent-governance.py` (regression test first); the `sdlc.md` contract invariant stated; CIS references renumbered to CIS Kubernetes Benchmark v1.9; the `hy-home.docker` revision pin rechecked. All four criteria accepted on 2026-11-06; no durable contract introduced. Recover with `git show 1ea51238:<path>`. | `docs/03.specs/0145-agents-deferred-conformance/` |
 | SPEC-0146 | completed spec | After the AUD-0001 SDLC governance audit, added the `Cross-artifact conformance` rules to `sdlc.md` (a Spec links its constraining AD and ADRs or says none apply; an open question that changes a criterion blocks approval; an architecture departure waits for an accepted ADR; an implementation-versus-document divergence is resolved at its owner) and the matching Spec, Plan and ADR template prompts. All three criteria accepted on 2026-11-06; the durable rules were promoted to `sdlc.md`. Recover with `git show ca3ead4c:<path>`. | `docs/03.specs/0146-sdlc-cross-artifact-conformance/` |
+| SPEC-0147 | completed spec | Resolved AUD-0001 decision D-1: the `sdlc/spec` Lifecycle Traceability table and its template profile require an `Architecture` column (constraining AD or ADR link, or why none applies), enforced by the existing header and non-empty-cell checks without link-target or reciprocal checks; focused test red then green; Spec fixtures updated; `sdlc.md` 3.2.0 names the column. Both criteria accepted on 2026-11-06; the durable rule was promoted to `sdlc.md`. Recover with `git show 2b1ac507:<path>`. | `docs/03.specs/0147-spec-architecture-column/` |
