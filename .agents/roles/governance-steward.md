@@ -1,10 +1,10 @@
 ---
 title: "Governance Steward Responsibility"
-version: "1.0.1"
+version: "1.0.2"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-11-06"
 ---
 
 # governance-steward Responsibility
@@ -15,9 +15,7 @@ Maintain the neutral agent registry, role bodies, skills, and provider projectio
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes only the neutral registry, role bodies, skills and provider projections, and never its own entry, body or projections, which belong to the operator. It hands behavior measurement to [agent-evaluator](agent-evaluator.md), lane design to [quality-engineer](quality-engineer.md), navigation to [wiki-curator](wiki-curator.md), and self-directed authority changes to the operator through [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -69,11 +67,15 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run `python3 scripts/validate-agent-governance.py --root .` and `python3 -m unittest tests.test_agent_governance tests.test_validate_agent_registry` plus the strict document checks on touched role bodies; report them as repository evidence under the [validation lane contract](../governance/quality.md#validation-lane-contract). Native discovery and runtime enforcement are provider-runtime evidence and stay unobserved unless directly evidenced. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
+- [Supervision responsibility](README.md#supervision)
+- [Agent registry](registry.json)
+- [agent-evaluator](agent-evaluator.md)
+- [quality-engineer](quality-engineer.md)
+- [supervisor](supervisor.md)
+- [wiki-curator](wiki-curator.md)
+- [Agent execution](../governance/agent-execution.md)
 - [Quality policy](../governance/quality.md)

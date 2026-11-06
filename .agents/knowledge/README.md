@@ -1,6 +1,6 @@
 ---
 title: "Common Knowledge"
-version: "0.4.1"
+version: "0.4.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -28,11 +28,16 @@ validator다.
 
 ## Structure
 
-- [Project Map](project-map.md): 최상위 트리별 소유 범위와 각각의 진입 문서.
-- [Domain Index](domains.md): 운영 도메인별 정규 소유자, 진입 경로, 행이 유효한
-  조건.
+### Item Index
+
+| Path | Purpose |
+| --- | --- |
+| [Project Map](project-map.md) | 최상위 트리별 소유 범위와 각각의 진입 문서. |
+| [Domain Index](domains.md) | 운영 도메인별 정규 소유자, 진입 경로, 행이 유효한 조건. |
 
 ## Usage
+
+### Add and Find
 
 1. 문서를 추가하기 전에 [document authoring](../governance/document-authoring.md)을
    읽고 Stage 99 registry에서 knowledge profile을 고른다.
@@ -43,7 +48,7 @@ validator다.
 4. 포인터의 유효 조건은 관측 가능한 변화로 적는다. 선택적 관측 metadata는
    source hash와 만료일을 갖춰 context-and-memory 정책을 따르며, 원문 서술을
    복제하거나 변경을 승인하지 않는다.
-5. 새 knowledge 포인터 문서를 받아들이면 위 Structure 절에서 링크하고, 소유자
+5. 새 knowledge 포인터 문서를 받아들이면 위 Item Index 표에서 링크하고, 소유자
    세부는 이 라우터에 복사하지 말고 그 문서에 둔다.
 
 ## Related Documents

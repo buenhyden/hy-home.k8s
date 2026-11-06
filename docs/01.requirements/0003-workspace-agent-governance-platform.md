@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "2.3.6"
+version: "2.3.8"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -146,7 +146,7 @@ Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git
 
 ## Traceability
 
-No governance Spec package is open. SPEC-0144 and SPEC-0143, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
+No governance Spec package is open. SPEC-0145 and SPEC-0144, the last completed ones, and the earlier packages are summarized in [Archived Lineage](#archived-lineage) and recovered from Git history.
 
 ### Lifecycle Traceability
 
@@ -378,3 +378,4 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0142 | completed spec | Removed stale Stage 99 contract entries: the retired Stage 00 Plan promotion owner, the ADR form's self-ID supersession cell, the unused profile modes `evidence` and `generated`, the unreferenced `requirementMemberId` definition and the unused `Agent Harness Requirements` language entry, and corrected the Stage 99 README and AGENTS prose. All four criteria accepted on 2026-11-06; the durable contract is in document lifecycle policy. Recover with `git show b712372b:<path>`. | `docs/03.specs/0142-stage99-contract-cleanup/` |
 | SPEC-0143 | completed spec | Removed the profile modes `frontmatter-free` and `classification-only` and the frontmatter mode `not-applicable`, which the schema and loader never produce, with the validator branches only they reached, and added a regression test that ties the typed modes to the schema enum. Both criteria accepted on 2026-11-06; no durable contract introduced. Recover with `git show 0dde6158:<path>`. | `docs/03.specs/0143-dead-profile-mode-cleanup/` |
 | SPEC-0144 | completed spec | Aligned `.agents/` with the current workspace after four read-only audits: corrected statements naming nonexistent writers, jobs, fields and tools, resolved intra-file contradictions (including a circular security severity deferral) and duplicated rules across governance, roles, skills, prompts, workflows, knowledge and evaluations; fixed `prompt-input.py` aborting on `git diff --check` findings and missing root routers, bound `ops-runbook` to `doc-writer`, and removed the unread `external_writes_require_approval` schema field, each with a regression test. All four criteria accepted on 2026-11-06; no durable contract introduced. Recover with `git show 22ed5caf:<path>`. | `docs/03.specs/0144-agents-conformance/` |
+| SPEC-0145 | completed spec | Resolved the items SPEC-0144 deferred: role-specific Authority Boundary, Validation and Refresh, and Related Documents in the 17 role bodies; Item Index and Add and Find in the `.agents/` collection READMEs; per-role `supported_providers` and `projections` removed from the agent registry and derived in `validate-agent-governance.py` (regression test first); the `sdlc.md` contract invariant stated; CIS references renumbered to CIS Kubernetes Benchmark v1.9; the `hy-home.docker` revision pin rechecked. All four criteria accepted on 2026-11-06; no durable contract introduced. Recover with `git show 1ea51238:<path>`. | `docs/03.specs/0145-agents-deferred-conformance/` |

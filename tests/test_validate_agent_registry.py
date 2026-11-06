@@ -78,6 +78,23 @@ class AgentRegistryTests(unittest.TestCase):
                 REPOSITORY_ROOT, mutated, check_files=False
             )
 
+    def test_role_projections_are_derived_not_declared(self) -> None:
+        for row in self.registry["roles"]:
+            with self.subTest(role=row["id"]):
+                self.assertNotIn("projections", row)
+                self.assertNotIn("supported_providers", row)
+                self.assertEqual(
+                    self.validator.role_projections(row["id"]),
+                    {
+                        "neutral": f".agents/roles/{row['id']}.md",
+                        "claude": f".claude/agents/{row['id']}.md",
+                        "codex": f".codex/agents/{row['id']}.toml",
+                    },
+                )
+        mutated = self.registry_copy()
+        mutated["roles"][0]["projections"] = {}
+        self.assert_rule(mutated, "AGENT-REGISTRY-SCHEMA")
+
     def test_third_provider_is_rejected(self) -> None:
         mutated = self.registry_copy()
         mutated["providers"].append(
@@ -131,11 +148,6 @@ class AgentRegistryTests(unittest.TestCase):
         mutated["roles"][0]["skill_refs"].append("unknown-skill")
         self.assert_rule(mutated, "AGENT-REGISTRY-SKILL")
 
-    def test_projection_outside_provider_root_is_rejected(self) -> None:
-        mutated = self.registry_copy()
-        mutated["roles"][0]["projections"]["claude"] = ".agents/agents/supervisor.md"
-        self.assert_rule(mutated, "AGENT-REGISTRY-SCHEMA")
-
     def test_extra_registry_metadata_is_rejected(self) -> None:
         mutated = self.registry_copy()
         mutated["runtime_discovered"] = True
@@ -165,7 +177,7 @@ class CapabilityModelBindingTests(unittest.TestCase):
     def test_a_model_departure_is_declared_rather_than_implied(self) -> None:
         for role in self.registry["roles"]:
             tier = role["capability_tier_ref"].rsplit("#", 1)[-1]
-            for provider in role["supported_providers"]:
+            for provider in self.validator.REGISTRY_PROVIDER_IDS:
                 resolved = self.validator._bound_model(self.bindings, role, provider)
                 binding = self.bindings[provider]
                 with self.subTest(role=role["id"], provider=provider):

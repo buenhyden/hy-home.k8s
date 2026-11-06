@@ -1,6 +1,6 @@
 # External service consumer contracts
 
-Owner: platform. Scope: repository-static review, observed 2026-10-09.
+Owner: platform. Scope: repository-static review, observed 2026-11-06.
 Invalidate this reference when the cited consumer changes its endpoint,
 authentication reference, protocol or retry policy, or the external Docker
 publication changes. The owning manifest or Compose file wins.
@@ -25,8 +25,8 @@ loopback, unspecified, multicast or link-local. This does not prove routing.
 The separate `postgres-ha`/`pg-router` write/read ports 15432/15433 and the
 Valkey cluster lab are not current Kubernetes data-service contracts.
 
-Docker port declarations were checked against clean `hy-home.docker` revision
-`77a80bc1478c3dfb46cfe8b8de97aa971817c494`, in the management and
+Docker port declarations were rechecked on 2026-11-06 against clean `hy-home.docker`
+revision `63d5b78a03c372d1b0cf791014e16a4d84c98a35`, in the management and
 development Compose files named above. Recheck that source when its revision
 or runtime publication changes; this static reference does not establish
 database login, authentication or live reachability.

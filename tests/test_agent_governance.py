@@ -8,6 +8,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def role_projections(role_id: str) -> dict[str, str]:
+    from tests.test_validate_agent_registry import load_validator
+
+    return load_validator().role_projections(role_id)
+
+
 class GovernanceCutoverTests(unittest.TestCase):
     def test_agents_is_the_only_common_owner(self):
         import os
@@ -86,7 +92,7 @@ class NativeBoundaryTests(unittest.TestCase):
             ".agents/evaluations/harnesses/README.md",
             ".agents/evaluations/templates/README.md",
             ".agents/evaluations/results.md",
-            *role["projections"].values(),
+            *role_projections(role["id"]).values(),
             *(skill["path"] for skill in self.registry["skills"]),
         ]
         for path in paths:
@@ -145,7 +151,9 @@ class NativeBoundaryTests(unittest.TestCase):
         self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
 
     def test_missing_source_and_orphan_projection_reject(self):
-        source = self.root / self.registry["roles"][0]["projections"]["neutral"]
+        source = (
+            self.root / role_projections(self.registry["roles"][0]["id"])["neutral"]
+        )
         original = source.read_bytes()
         source.unlink()
         self.assert_rejected("AGENT-REGISTRY-PROJECTION")
@@ -574,7 +582,9 @@ class NativeBoundaryTests(unittest.TestCase):
         bindings = self.validator.load_provider_bindings(ROOT, full_registry)
         for role in full_registry["roles"]:
             expected = self.validator._bound_scope(bindings, role, "claude")
-            text = (ROOT / role["projections"]["claude"]).read_text(encoding="utf-8")
+            text = (ROOT / role_projections(role["id"])["claude"]).read_text(
+                encoding="utf-8"
+            )
             observed = re.search(r'(?m)^tools: "([^"]+)"$', text).group(1)
             with self.subTest(role=role["id"]):
                 self.assertEqual(observed.split(", "), list(expected))
@@ -784,7 +794,9 @@ class NativeBoundaryTests(unittest.TestCase):
     def test_symlink_parent_and_fifo_source_reject(self):
         import os
 
-        source = self.root / self.registry["roles"][0]["projections"]["neutral"]
+        source = (
+            self.root / role_projections(self.registry["roles"][0]["id"])["neutral"]
+        )
         source.unlink()
         os.mkfifo(source)
         self.assert_rejected("AGENT-REGISTRY-PROJECTION")
@@ -795,7 +807,7 @@ class NativeBoundaryTests(unittest.TestCase):
         role = self.registry["roles"][0]
         self.assertNotIn(
             "Registry handoff targets:",
-            (self.root / role["projections"]["neutral"]).read_text(),
+            (self.root / role_projections(role["id"])["neutral"]).read_text(),
         )
         role["handoff_to"] = [role["id"]]
         import json
@@ -991,7 +1003,7 @@ class ReadOnlyShellScopeTests(unittest.TestCase):
 
         for role in self.registry["roles"]:
             with self.subTest(role=role["id"]):
-                text = (ROOT / role["projections"]["claude"]).read_text(
+                text = (ROOT / role_projections(role["id"])["claude"]).read_text(
                     encoding="utf-8"
                 )
                 tools = re.search(r'(?m)^tools: "([^"]+)"$', text).group(1)

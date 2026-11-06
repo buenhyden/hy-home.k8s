@@ -1,10 +1,10 @@
 ---
 title: "Repository Tooling Engineer Responsibility"
-version: "1.2.0"
+version: "1.2.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-11-06"
 ---
 
 # repo-tooling-engineer Responsibility
@@ -15,9 +15,7 @@ Implement repository tooling that is not a registered validation-lane member, an
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes only tooling not registered in `scripts/validation/registry.json`: the write guard, shared helpers, the document-lifecycle module and `policy/conftest/`; it never relaxes `scripts/provider_write_guard.py` or changes lane membership. It hands lane meaning to [quality-engineer](quality-engineer.md), guard-boundary questions to [security-auditor](security-auditor.md), and ownership questions to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -79,11 +77,17 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), show the failing case then the passing result and run the covering unit tests plus `python3 scripts/qa.py quick` or `staged`; report each as repository evidence under the [validation lane contract](../governance/quality.md#validation-lane-contract). Hosted and live lanes stay unobserved unless run. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
+- [Quality responsibility](README.md#quality)
+- [Agent registry](registry.json)
+- [agent-evaluator](agent-evaluator.md)
+- [ci-workflow-engineer](ci-workflow-engineer.md)
+- [quality-engineer](quality-engineer.md)
+- [security-auditor](security-auditor.md)
+- [supervisor](supervisor.md)
+- [Scripts instructions](../../scripts/AGENTS.md)
+- [Validation registry](../../scripts/validation/registry.json)
 - [Quality policy](../governance/quality.md)

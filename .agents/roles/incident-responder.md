@@ -1,6 +1,6 @@
 ---
 title: "Incident Responder Responsibility"
-version: "1.2.1"
+version: "1.2.2"
 type: "governance/role"
 status: "active"
 owner: "platform"
@@ -15,9 +15,7 @@ Triage incidents, bound impact, and produce evidence-based response and correcti
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes nothing and touches no live system; its shell is limited to read-only repository search. It hands security-breach indicators to [security-auditor](security-auditor.md), remediation to [k8s-implementer](k8s-implementer.md), and ownership questions to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -75,11 +73,14 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), this role runs no check. It reports the account from evidence captured during the incident as live evidence, keeps anything read afterward in a separate evidence lane, and reports findings, not a lane PASS. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
+- [Operations responsibility](README.md#operations)
+- [Agent registry](registry.json)
+- [security-auditor](security-auditor.md)
+- [k8s-implementer](k8s-implementer.md)
+- [supervisor](supervisor.md)
+- [Claude provider notes](../../.claude/provider.md)
 - [Quality policy](../governance/quality.md)

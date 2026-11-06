@@ -1,6 +1,6 @@
 ---
 title: "Wiki Curator Responsibility"
-version: "1.2.1"
+version: "1.2.2"
 type: "governance/role"
 status: "active"
 owner: "platform"
@@ -15,9 +15,7 @@ Maintain knowledge navigation and canonical links without creating duplicate pol
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes only navigation: entry-point READMEs, index rows and the owner maps under `.agents/knowledge/`, never policy or generated artifacts. It hands new durable documents to [doc-writer](doc-writer.md) and contested ownership to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -74,11 +72,13 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run `python3 scripts/validate-knowledge-surface.py`, `scripts/validate-links-and-owners.py --mode strict` and `scripts/validate-markdown-profiles.py --mode strict`; report each as repository evidence under the [validation lane contract](../governance/quality.md#validation-lane-contract). Hosted and live lanes are not observed by this role. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
-- [Quality policy](../governance/quality.md)
+- [Documentation responsibility](README.md#documentation)
+- [Agent registry](registry.json)
+- [doc-writer](doc-writer.md)
+- [supervisor](supervisor.md)
+- [Knowledge maps](../knowledge/README.md)
+- [Document authoring](../governance/document-authoring.md)

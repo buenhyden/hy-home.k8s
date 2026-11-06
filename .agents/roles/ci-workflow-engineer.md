@@ -1,10 +1,10 @@
 ---
 title: "CI Workflow Engineer Responsibility"
-version: "1.1.0"
+version: "1.1.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-11-06"
 ---
 
 # ci-workflow-engineer Responsibility
@@ -15,9 +15,7 @@ Implement scoped hosted-surface changes under .github/ and keep workflow permiss
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes only the hosted surface under `.github/`: workflows, dependency policy and templates; widening permissions needs operator approval. It hands security judgment to [security-auditor](security-auditor.md), lane meaning to [quality-engineer](quality-engineer.md), tooling to [repo-tooling-engineer](repo-tooling-engineer.md), and permission widening to the operator through [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -61,7 +59,7 @@ templates need to change.
 
 ### Capability and Evidence
 
-- Required evidence: record each changed trigger, permission scope, and action identity, with the result of `scripts/validate-github-actions-security.py`.
+- Required evidence: record each changed trigger, permission scope, and action identity, with the result of `scripts/validate-github-actions-security.py --root .`.
 
 ### Handoff / Escalation
 
@@ -73,11 +71,15 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run `python3 scripts/validate-github-actions-security.py --root .` and `python3 scripts/qa.py staged`; report them as repository evidence under the [validation lane contract](../governance/quality.md#validation-lane-contract). A hosted result needs its exact SHA and run identity, and local execution of workflow steps is never reported as hosted. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
+- [Quality responsibility](README.md#quality)
+- [Agent registry](registry.json)
+- [quality-engineer](quality-engineer.md)
+- [repo-tooling-engineer](repo-tooling-engineer.md)
+- [security-auditor](security-auditor.md)
+- [supervisor](supervisor.md)
+- [GitHub surface](../../.github/repository-surface.md)
 - [Quality policy](../governance/quality.md)

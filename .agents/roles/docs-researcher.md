@@ -1,10 +1,10 @@
 ---
 title: "Docs Researcher Responsibility"
-version: "1.1.0"
+version: "1.1.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-11-06"
 ---
 
 # docs-researcher Responsibility
@@ -15,9 +15,7 @@ Collect and classify source evidence for documentation without claiming policy a
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes nothing in the repository and makes no unapproved external write; it may read approved external sources. It hands accepted findings to [doc-writer](doc-writer.md) and source-authority conflicts to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -67,11 +65,12 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), this role runs no repository validator. It reports each source with its identity, observation date and limits as source evidence, separate from repository-static results, and states what stays unverified; findings, not a lane PASS. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
-- [Quality policy](../governance/quality.md)
+- [Documentation responsibility](README.md#documentation)
+- [Agent registry](registry.json)
+- [doc-writer](doc-writer.md)
+- [supervisor](supervisor.md)
+- [Document authoring](../governance/document-authoring.md)

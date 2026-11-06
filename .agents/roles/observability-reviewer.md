@@ -1,6 +1,6 @@
 ---
 title: "Observability Reviewer Responsibility"
-version: "1.3.1"
+version: "1.3.2"
 type: "governance/role"
 status: "active"
 owner: "platform"
@@ -15,9 +15,7 @@ Review metrics, logs, alerts, dashboards, and operational observability coverage
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes nothing, and its shell is limited to read-only repository search. It hands sync-structure concerns to [gitops-reviewer](gitops-reviewer.md), sensitive-data findings to [security-auditor](security-auditor.md), and ownership questions to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -79,11 +77,14 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), this role reads the repository-static results of `bash scripts/validate-k8s-manifests.sh` and cites the manifest or SLO document `file:line`; live telemetry is the live lane and stays unobserved. Report findings, not a lane PASS. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
+- [Operations responsibility](README.md#operations)
+- [Agent registry](registry.json)
+- [gitops-reviewer](gitops-reviewer.md)
+- [security-auditor](security-auditor.md)
+- [supervisor](supervisor.md)
+- [Claude provider notes](../../.claude/provider.md)
 - [Quality policy](../governance/quality.md)

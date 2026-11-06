@@ -1,6 +1,6 @@
 ---
 title: "Agent Responsibilities"
-version: "2.2.1"
+version: "2.2.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -132,27 +132,33 @@ registry가, native 설정은 provider binding 표가 소유하고 projection은
 
 ## Structure
 
-정규 역할 본문:
+### Item Index
 
-- [supervisor](supervisor.md)
-- [architect](architect.md)
-- [governance-steward](governance-steward.md)
-- [ci-workflow-engineer](ci-workflow-engineer.md)
-- [repo-tooling-engineer](repo-tooling-engineer.md)
-- [agent-evaluator](agent-evaluator.md)
-- [code-reviewer](code-reviewer.md)
-- [doc-writer](doc-writer.md)
-- [gitops-reviewer](gitops-reviewer.md)
-- [incident-responder](incident-responder.md)
-- [k8s-implementer](k8s-implementer.md)
-- [network-reviewer](network-reviewer.md)
-- [observability-reviewer](observability-reviewer.md)
-- [security-auditor](security-auditor.md)
-- [wiki-curator](wiki-curator.md)
-- [docs-researcher](docs-researcher.md)
-- [quality-engineer](quality-engineer.md)
+| Path | Purpose |
+| --- | --- |
+| [supervisor](supervisor.md) | 작업을 범위 있게 배정하고 승인·소유권 경계를 지키며 최종 증거를 대조한다. |
+| [architect](architect.md) | 구조 결정과 architecture description을 소유하고 요구사항·Spec까지 추적한다. |
+| [governance-steward](governance-steward.md) | 중립 registry, 역할 본문, skill, provider projection을 유지한다. |
+| [ci-workflow-engineer](ci-workflow-engineer.md) | `.github/` 호스팅 표면 변경을 최소 권한으로 구현한다. |
+| [repo-tooling-engineer](repo-tooling-engineer.md) | validation lane에 속하지 않는 저장소 도구를 구현한다. |
+| [agent-evaluator](agent-evaluator.md) | agent 평가 사례를 설계·실행하고 점수화한 증거를 보고한다. |
+| [code-reviewer](code-reviewer.md) | 변경의 정확성, 유지보수성, 회귀 위험, 정책 정합성을 검토한다. |
+| [doc-writer](doc-writer.md) | 정규 SDLC 또는 공통 문서 소유자에서 거버넌스 문서를 작성한다. |
+| [gitops-reviewer](gitops-reviewer.md) | GitOps 매니페스트와 reconciliation 동작을 읽기 전용으로 검토한다. |
+| [incident-responder](incident-responder.md) | 장애를 분류하고 영향을 한정해 증거 기반 대응·교정 지침을 만든다. |
+| [k8s-implementer](k8s-implementer.md) | 범위가 정해진 Kubernetes·GitOps 변경을 구현하고 검증한다. |
+| [network-reviewer](network-reviewer.md) | 네트워킹, ingress, DNS, 정책, 격리를 저장소 증거로 검토한다. |
+| [observability-reviewer](observability-reviewer.md) | metrics, logs, alerts, dashboards의 관측 범위를 검토한다. |
+| [security-auditor](security-auditor.md) | secret 노출, 권한 상승, 격리 실패, 정책 위반을 감사한다. |
+| [wiki-curator](wiki-curator.md) | 지식 탐색과 정규 링크를 유지하되 중복 권한 원본을 만들지 않는다. |
+| [docs-researcher](docs-researcher.md) | 문서용 출처 증거를 수집·분류한다. |
+| [quality-engineer](quality-engineer.md) | 범위 있는 저장소 검증을 설계·실행하고 재현 가능한 증거를 보고한다. |
+| [registry.json](registry.json) | 역할, 권한, skill, 인계를 담은 기계가 읽는 agent registry. |
+| [registry.schema.json](registry.schema.json) | registry.json의 구조를 검증하는 schema. |
 
 ## Usage
+
+### Add and Find
 
 관련된 책임 소유자만 읽는다. 제품 의도는 Requirement Package에, backend와 API
 동작은 Spec과 그 구현 Task에 있다.

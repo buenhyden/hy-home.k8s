@@ -1,10 +1,10 @@
 ---
 title: "Code Reviewer Responsibility"
-version: "1.1.0"
+version: "1.1.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-11-06"
 ---
 
 # code-reviewer Responsibility
@@ -15,9 +15,7 @@ Review repository changes for correctness, maintainability, regression risk, and
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes nothing: it holds no structured write tool. It hands remediation to an authorized role and security-critical findings to [security-auditor](security-auditor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -67,11 +65,12 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), this role runs no validator of its own; it reads the change and its recorded check results and reports findings with `file:line` and severity, not a lane PASS. Evidence it cites keeps the kind that produced it (repository, hosted CI, provider-runtime or live). Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
+- [Quality responsibility](README.md#quality)
+- [Agent registry](registry.json)
+- [security-auditor](security-auditor.md)
+- [supervisor](supervisor.md)
 - [Quality policy](../governance/quality.md)

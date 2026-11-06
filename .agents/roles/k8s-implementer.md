@@ -1,10 +1,10 @@
 ---
 title: "K8S Implementer Responsibility"
-version: "1.1.0"
+version: "1.1.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-11-06"
 ---
 
 # k8s-implementer Responsibility
@@ -15,9 +15,7 @@ Implement explicitly scoped Kubernetes and GitOps changes and validate the affec
 
 ## Authority Boundary
 
-Follow [agent execution](../governance/agent-execution.md) and
-[approval and safety](../governance/approval-and-safety.md). The registry's
-permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes only the manifest paths the Task names under `gitops/` and `infrastructure/`, never plaintext secrets and never a live cluster. It hands release and structure review to [gitops-reviewer](gitops-reviewer.md), security posture to [security-auditor](security-auditor.md), and scope widening to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -68,11 +66,14 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Follow [work lifecycle](../workflows/work-lifecycle.md) and report static,
-provider-runtime, and live evidence separately. Review this role when its
-responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run `bash scripts/validate-k8s-manifests.sh`, the external-service endpoint checker and `python3 scripts/qa.py quick` or `staged` over the touched paths; report each as repository evidence under the [validation lane contract](../governance/quality.md#validation-lane-contract). Reconciliation against a cluster is the live lane and stays unobserved. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
-- [Role index](README.md)
+- [Infrastructure responsibility](README.md#infrastructure)
+- [Agent registry](registry.json)
+- [gitops-reviewer](gitops-reviewer.md)
+- [security-auditor](security-auditor.md)
+- [supervisor](supervisor.md)
+- [GitOps tree](../../gitops/README.md)
 - [Quality policy](../governance/quality.md)
