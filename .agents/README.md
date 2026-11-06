@@ -1,10 +1,10 @@
 ---
 title: "Common Agent Governance"
-version: "2.5.0"
+version: "2.5.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-11-06"
 ---
 
 # Common Agent Governance
@@ -22,10 +22,10 @@ provider별 차이와 native adapter는 [.claude/](../.claude/)와
 여기서 고치고, 구체적인 model, effort, native 권한 매핑은 각 provider의
 `bindings.json`이 소유한다. 검증되는 역할 projection은 그 값을 소비할 뿐이며,
 공통 registry나 생성기가 native 값의 두 번째 소유자가 되지 않는다.
-[Governance](governance/)와 prompt 계약이 `knowledge/`와 `prompts/`를
-소유한다. 각각 Stage 99 profile, affected-surface 범위, 이름 있는 소비자를
+`knowledge/`와 `prompts/`의 문서 형식은 Stage 99 profile이, prompt 입력의
+실행은 [`scripts/prompt-input.py`](../scripts/prompt-input.py)가 소유한다. 이 디렉터리들은 affected-surface 범위와 이름 있는 소비자를
 하나 이상 갖춰 도입되므로 읽는 쪽이 없는 디렉터리는 만들지 않는다.
-[Evaluations](evaluations/README.md)는 같은 작업을 skill 없이와 skill을 써서
+Evaluations는 같은 작업을 skill 없이와 skill을 써서
 실제로 짝지어 실행한 근거, 즉 원시 관측, 작업 맥락, 기준, 점수, 집계 결과로
 안내한다. 평가는 agent evaluator가, 문서 양식은 Stage 99가 소유한다. 이것은
 근거 영역이지 상시 합성 채점기나 저장소 QA 관문이 아니다.
@@ -40,17 +40,19 @@ workspace memory store에 둔다.
 
 | Path | Purpose |
 | --- | --- |
-| [governance/](governance/) | 규범 lifecycle과 용어(sdlc.md), 승인·안전·품질·Git·문서·맥락·model 정책 |
+| [governance/](governance/) | 규범 lifecycle과 용어(sdlc.md), 실행·승인·안전·품질·Git·문서·서식과 lint·맥락·model 정책(전체 목록이 아님) |
 | [roles/](roles/) | 책임 선택과 공통 인계 계약. `roles/registry.json`이 역할 ID, 중립 권한, skill 참조, native binding 경로를 담는다 |
 | `skills/<id>/` | 호출 가능한 공통 절차 package. 구성은 registry가 정한다 |
-| `workflows/` | 명시적으로 읽는 일반 lifecycle·위임 절차 |
-| `knowledge/` | 정규 소유자를 가리키는 수동 관리 포인터. 자체 정책은 없다 |
-| `prompts/` | 반복 작성 요청의 입력·출력 계약 |
+| [workflows/](workflows/) | 명시적으로 읽는 일반 lifecycle·위임 절차 |
+| [knowledge/](knowledge/) | 정규 소유자를 가리키는 수동 관리 포인터. 자체 정책은 없다 |
+| [prompts/](prompts/) | 반복 작성 요청의 입력·출력 계약 |
 | [evaluations/](evaluations/) | 관측된 짝 실행 agent 평가 근거의 라우터. 역할, skill, QA 관문 권한은 없다 |
 
 ### Skill package
 
-package는 `SKILL.md`와 두 provider가 함께 읽는 `agents/` sidecar를 담는다.
+package는 `SKILL.md`와 `agents/` sidecar를 담는다. `agents/openai.yaml`은 Codex의
+skill 정책이고, Claude의 명시 호출 정책은 `SKILL.md` frontmatter의
+`disable-model-invocation`이다.
 절차에 필요할 때만 디렉터리 세 개를 더 둘 수 있다. 단계가 다시 서술하지 않고
 가리키는 Markdown은 `references/`, 단계가 실행하는 helper는 `scripts/`, 출력을
 만드는 데 쓰는 파일은 `assets/`에 둔다. 어디에 둘지는 자료의 성격으로
@@ -95,4 +97,3 @@ sweep은 완료 명령이 아니다. 역할 projection 생성기는 쓰이지 �
 
 - Document profiles and templates (`docs/99.templates/README.md`)
 - [Repository documentation](../docs/README.md)
-- [Governance contracts](governance/)

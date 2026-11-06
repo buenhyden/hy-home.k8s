@@ -1,10 +1,10 @@
 ---
 title: "Formatting and Linting Policy"
-version: "1.5.0"
+version: "1.5.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-11-06"
 ---
 
 # Formatting and Linting Policy
@@ -30,8 +30,8 @@ inside a tool's own configuration. Terminal-document immutability belongs to
 `.gitattributes` owns Git text and line-ending normalization.
 `.pre-commit-config.yaml` owns hook integration, including pinned revisions,
 stages, arguments and exclusions. Its local staged and selected manual QA
-invocations share the same rule owner; a hosted branch-policy job is not a
-formatter. A separate hosted PR style job may invoke the same selected style
+invocations share the same rule owner; the hosted `ci-summary` job is not a
+formatter. The separate PR-only `style-pr` job may invoke the same selected style
 rule against its own merge input; it does not certify local purpose or
 document-content checks. `.editorconfig` reaches editors only and proves nothing
 about committed bytes.
@@ -49,7 +49,8 @@ about committed bytes.
   Python, infrastructure or whole-tree formatting merely because the file is
   Markdown. A change to a formatting rule or hook configuration needs its own
   focused contract regression under [quality](quality.md#ordinary-document-selection).
-- Run the selected lint and format rules on the final logical index immediately
+- The selected lint and format rules run on the final logical index as the
+  `selected-style` gate inside the `staged-qa` hook (`qa.py staged`), one run
   before a local commit. Reuse a successful identical style leaf under
   [quality](quality.md#validation-lane-contract) instead of running it again in
   another local caller. A hosted PR
@@ -79,13 +80,16 @@ about committed bytes.
   uses the same pinned hooks with `--files` naming only reviewed source paths;
   inspect the diff, restage and refresh the affected evidence afterward.
 - ShellCheck and shfmt cover shell scripts under `scripts/`, `infrastructure/`
-  and both provider hook directories. Ruff's explicit Python type restriction
+  and both provider hook directories, plus the extensionless
+  `scripts/githooks/` entries (`pre-commit`, `commit-msg`, `pre-push`). Ruff's explicit Python type restriction
   keeps Markdown with its own reporting linter.
 - Never suppress a rule for a whole file when the conflict is one rule.
   A whole-file exemption silently drops every other rule on that file.
 - Exclude `docs/98.archive/` from every auto-fixing formatter and from
   Markdown lint: it is unvalidated history. The three whitespace hooks share
-  one hook-local exclusion for it. Secret scanners are not excluded.
+  one hook-local exclusion for it, which also covers the raw paired-trial
+  outputs `.agents/evaluations/harnesses/*/baseline.md` and `with-skill.md`
+  (Markdown lint ignores the same files). Secret scanners are not excluded.
 
 ## Validation and Refresh
 

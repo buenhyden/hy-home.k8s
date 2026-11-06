@@ -1,10 +1,10 @@
 ---
 title: "Change Review Prompt Contract"
-version: "0.1.0"
+version: "0.1.1"
 type: "governance/prompt"
 status: "draft"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-11-06"
 ---
 
 # Change Review Prompt Contract
@@ -46,6 +46,9 @@ finding that names a path outside the changed set, or that neither difference
 supports, is discarded rather than reported.
 
 ## Refusal Conditions
+
+The builder enforces only the empty-subject refusal; the requesting agent
+enforces the remaining conditions below.
 
 - Both differences are empty, so there is nothing to review. An untracked-only
   path set does not establish a reviewable difference.

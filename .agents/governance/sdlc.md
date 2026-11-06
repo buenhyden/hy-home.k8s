@@ -1,10 +1,10 @@
 ---
 title: "Software Development Lifecycle"
-version: "3.0.0"
+version: "3.0.1"
 type: "governance/contract"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-11-06"
 ---
 
 # Software Development Lifecycle
@@ -13,8 +13,9 @@ updated: "2026-10-08"
 
 This document owns the human flow from durable requirements through
 architecture, Spec-driven implementation, operations, and historical recovery.
-Stage numbers express ownership and navigation rather than a one-way approval
-waterfall.
+Authors, agents and reviewers consume it to choose the responsible document
+owner. It guarantees one owner per kind of knowledge; stage numbers express
+ownership and navigation rather than a one-way approval waterfall.
 
 ## Authority Boundary
 
@@ -30,10 +31,10 @@ directly approved package-local work unit. Architecture Descriptions record
 current structure; ADRs record durable choices. A Stage 03 work unit owns its
 Spec, Plan, and independently reviewable Tasks. Stable operating knowledge
 moves to Stage 05, and reusable evidence to Stage 90; Git history owns
-historical recovery, and Stage 98 is an unvalidated holding area.
+historical recovery, and Stage 98 is unvalidated history.
 
 The common flow is Clarify → Spec → Plan → Tasks → cross-artifact analysis →
-Implement → Verify → promote durable meaning → Complete or Archive. GitHub
+Implement → Verify → promote durable meaning → Complete or retire. GitHub
 Spec Kit informs that flow without replacing this repository's per-Task
 records. Diátaxis informs Operations reader intent, C4 and arc42 inform
 proportional Architecture Description views, ADR practice preserves decision
@@ -81,7 +82,7 @@ technical-design artifact.
 | Provider / Role / Agent | Runtime-specific adapter contract / neutral responsibility and allowed scope / an executing instance of a role. Native configuration is not evidence of runtime enforcement. |
 | Skill | Reusable procedure under `.agents/skills/`; native discovery depends on the provider contract. A plain procedure reference is not a native registration. |
 | Hook / Gate / validator / Fixture | Native event callback / blocking quality decision / executable check implementing that decision / independent bounded test input. A hook need not run QA, and a test fixture is never production policy input. |
-| QA / CI / CD | Quality checks / integration orchestration and applicable branch metadata / delivery and reconciliation. This public repository runs repository-static QA locally; GitHub branch checks do not replay that QA. Argo CD reconciles declared GitOps state only under the operating boundary. |
+| QA / CI / CD | Quality checks / integration orchestration and applicable branch metadata / delivery and reconciliation. This public repository runs repository-static QA locally. The hosted `ci-summary` job checks branch and commit metadata and `style-pr` runs only the selected style gate (plus the CI Python contract check when a lock changes); neither replays the rest of that QA. Argo CD reconciles declared GitOps state only under the operating boundary. |
 | Deployment / release | Applying a declared version to an environment / identifying and publishing a deliverable. Neither follows automatically from local validation or a commit. |
 | Guide / Runbook | Explanatory operating knowledge / triggered operational steps with rollback and verification; Stage 05. |
 | Evidence / archive | Observed result with input, environment, and limits / non-authoritative historical retention. Task and Git own change evidence; Git owns source recovery. Stage 98 is unvalidated history. |
@@ -124,14 +125,19 @@ becoming a second execution record; the active Task alone records actual work.
 
 ## Validation and Refresh
 
-Run the registry, Markdown profile, link/owner, lifecycle, affected-surface,
-and repository quality gates selected by the changed paths. Treat repository
+Run the registry, Markdown profile (`scripts/validate-markdown-profiles.py`),
+link/owner, lifecycle (`scripts/validate-document-lifecycle.py`),
+affected-surface, and repository quality gates selected by the changed paths. Treat repository
 static results separately from hosted, provider-runtime, remote, or live
-evidence.
+evidence. Review this flow when a stage, the change-kind table or the
+lifecycle catalog in the Stage 99 registry changes.
 
 ## Related Documents
 
-- [Governance Hub](../README.md)
+- [Common Agent Governance](../README.md)
 - [Document Lifecycle Policy](document-lifecycle.md)
 - [Document Authoring Policy](document-authoring.md)
+- [Quality Policy](quality.md)
+- [Git Policy](git.md)
+- [Approval and Safety](approval-and-safety.md)
 - Document Profile Registry (`docs/99.templates/registry.json`)

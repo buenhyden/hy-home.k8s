@@ -20,26 +20,22 @@
     {
       "id": "read-only-evidence",
       "allows_mutation": false,
-      "allows_delegation": false,
-      "external_writes_require_approval": true
+      "allows_delegation": false
     },
     {
       "id": "read-only-research",
       "allows_mutation": false,
-      "allows_delegation": false,
-      "external_writes_require_approval": true
+      "allows_delegation": false
     },
     {
       "id": "scoped-authoring",
       "allows_mutation": true,
-      "allows_delegation": false,
-      "external_writes_require_approval": true
+      "allows_delegation": false
     },
     {
       "id": "orchestration",
       "allows_mutation": false,
-      "allows_delegation": true,
-      "external_writes_require_approval": true
+      "allows_delegation": true
     }
   ],
   "skills": [
@@ -185,6 +181,7 @@
       "skill_refs": [
         "docs-stage-conformance",
         "docs-stage-routing",
+        "ops-runbook",
         "requirements-to-design"
       ],
       "handoff_to": [

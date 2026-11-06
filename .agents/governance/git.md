@@ -1,10 +1,10 @@
 ---
 title: "Git Policy"
-version: "2.3.1"
+version: "2.3.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-11-06"
 ---
 
 # Git Policy
@@ -19,7 +19,8 @@ approved Plan specifies another base.
 
 The user owns push, publication, merge, discard, and history recovery decisions.
 Remote branch protection owns any required hosted metadata checks and cannot
-be inferred from local evidence. [Approval and safety](approval-and-safety.md)
+be inferred from local evidence: observe it before calling an integration
+accepted. [Approval and safety](approval-and-safety.md)
 governs protected actions and exceptions.
 
 ## Governance Context
@@ -34,12 +35,12 @@ branch convention; Codex-created branches normally use `codex/`.
   the logical change and inspect `git diff --cached`.
 - Use Conventional Commits with an imperative, specific summary; include the
   reason when it is not obvious. Keep commits aligned to Plan/Task units.
-- Validate the exact index with the selected staged profile before each logical
-  commit, including required lint and format checks immediately before the
-  commit. Local QA owns selected repository-static quality evidence. A feature
-  push, PR or main merge does not itself select a retired full/ci sweep. Follow the
+- Commit through the active hooks: the `staged-qa` hook validates the exact
+  index with the selected staged profile, which includes the selected lint and
+  format gate, as one run. Local QA owns selected repository-static quality
+  evidence. Follow the
   [quality sequence](quality.md#canonical-completion-sequence) and do not repeat
-  identical leaves across hook, command or delivery phases. Never use
+  an identical leaf across hook, command, push or delivery phases. Never use
   `--no-verify`.
 - For a prose-only authored document or README router commit, keep the common
   diff, applicable style and Commitizen message checks and the selected
@@ -47,7 +48,7 @@ branch convention; Codex-created branches normally use `codex/`.
   [ordinary document selection](quality.md#ordinary-document-selection); a
   governance, provider, native, schema, registry or executable change needs
   the focused contract checks its actual consumer selects. Preserve active
-  hooks, and do not replay their identical result on push.
+  hooks.
 - Do not reset, restore away edits, clean, amend, rebase, force-push, delete
   branches, or remove worktrees without explicit approval for that operation.
   Prefer a forward corrective commit to rewriting shared history.
@@ -68,14 +69,15 @@ branch convention; Codex-created branches normally use `codex/`.
 Develop each independently reviewable Spec package on an owned feature branch
 and linked worktree when needed. Run changed-behavior and affected checks while
 editing, exact-index and message checks at logical commits, then applicable
-named purpose and unit checks on the bounded final branch snapshot. Push and PR
-creation carry that evidence without re-executing the same leaf. Compare the
+named purpose and unit checks on the bounded final branch snapshot. Compare the
 integrated main tree and history with what was checked; a changed merge input
-gets only its invalidated checks, and an unchanged merge candidate does not
-replay them. The hosted `ci-summary` job owns the PR branch and commit-metadata verdict directly;
+gets only its invalidated checks. The hosted `ci-summary` job owns the PR branch and commit-metadata verdict directly;
 the hosted PR style job owns only its selected style verdict. Each observed
 result has its own SHA and trust boundary and never stands in for local purpose,
-unit or document-content checks. Every change to `main` arrives by pull
+unit or document-content checks. `ci-summary` accepts a pull request only
+when its base is `main` and its head branch starts with one of `feat/`, `fix/`,
+`docs/`, `refactor/`, `test/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`,
+`claude/` or `dependabot/`. Every change to `main` arrives by pull
 request; the intended protection blocks direct and force pushes. A pull
 request completes only when the required checks pass, the review requirement
 is met (no approving review is required, count 0, and no CODEOWNERS review,
@@ -90,8 +92,6 @@ Required checks, the new-context review and the owner's merge or explicit merge
 direction together offset the missing second reviewer; no automated check, App
 or signature replaces the owner's approval. A deployment style result requires
 an actual deployment workflow and run; absent that input, keep it unobserved.
-Observe the actual remote branch protection before calling an integration
-accepted.
 
 ### Release ownership
 
@@ -154,16 +154,13 @@ merge commit까지 검사한다. PR event의 정확한 base·head·merge SHA와 
 소유하고 [hosted surface](../../.github/repository-surface.md)가 결과 사용처를
 안내한다. Tracked 설정만으로 실행을 주장하지 않으며 실제 PR SHA와 run을
 관측하기 전 hosted 결과는 `NOT_RUN`이다. 문법 검사는 Git 생성 여부, 출처,
-승인 또는 merge 권한을 인증하지 않는다. merge는 merge commit만 쓰며, 의도한
-저장소 설정은 `.github/rulesets/main-protection.md`가 기록한다. PR title과
+승인 또는 merge 권한을 인증하지 않는다. PR title과
 선택된 style 결과는 merge commit message를 검증하지 않으므로, remote merge
 전에 생성될 merge message를 두 local message 검사로 확인한다.
 
 Selected local file checks do not validate a commit message. Inspect the
 effective `core.hooksPath` source and
-hook connection, and preserve active hooks and private settings. If an active
-hook has already run an identical leaf on the checked index, record that result
-without manually replaying it; a different mode, tool or input is separate.
+hook connection, and preserve active hooks and private settings.
 
 Git honours one hook directory, so a user-global `core.hooksPath` makes this
 repository's own hooks unreachable and silently drops the commit-message checks
@@ -190,8 +187,7 @@ pre-commit run commitizen --hook-stage commit-msg --commit-msg-filename "$MESSAG
 pre-commit run commit-message-exceptions --hook-stage commit-msg --commit-msg-filename "$MESSAGE_FILE"
 ```
 
-Both checks must succeed on that same file; do not replay a leaf already
-observed through an active hook on identical input/configuration. Use that file
+Both checks must succeed on that same file. Use that file
 for the real commit. When unrelated unstaged configuration would
 make pre-commit stash or refuse, use an isolated temporary Git repository with
 the index's Commitizen pin, `.cz.toml`, exception guard and both hook registrations,
@@ -204,8 +200,7 @@ widening the set of hooks that run is the only supported change.
 ## Validation and Refresh
 
 Inspect both staged and unstaged diffs after formatters. Rerun the affected
-checks against final bytes. Keep branch protection assumptions evidence-backed;
-do not claim a remote check ran from a local workflow-syntax result.
+checks against final bytes. Do not claim a remote check ran from a local workflow-syntax result.
 
 ## Related Documents
 

@@ -3,11 +3,11 @@ name: "docs-stage-routing"
 description: "Use when selecting the canonical owner and template for an authored document or rejecting parallel document trees."
 metadata:
   title: "Docs Stage Routing"
-  version: "1.1.0"
+  version: "1.1.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-16"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -52,9 +52,8 @@ using this procedure. Skill invocation does not authorize additional actions.
 ## Boundaries
 
 Routing never edits global or user-local skills, authentication, or
-configuration. `.agents/`의 새 설명은 한국어가 기본이며 기존 영어 본문도 유효하다.
-기계 key와 필수 heading은 원문을 유지하고 `.codex/`·`.claude/`의 native 계약은
-영어를 유지한다. Selecting a template grants no authority to author or execute
+configuration. Language policy is owned by
+[document authoring](../../governance/document-authoring.md). Selecting a template grants no authority to author or execute
 beyond the active task.
 
 ## Outputs

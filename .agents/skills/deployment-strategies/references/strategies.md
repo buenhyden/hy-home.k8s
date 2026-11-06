@@ -1,7 +1,7 @@
 # Kubernetes and Argo CD Deployment Strategy Catalog
 
-Six strategies appear in the comparison table; five have detailed manifest
-examples below. Recreate is the downtime-bearing comparison baseline. Read this
+Six strategies appear in the comparison table; three (Rolling, Blue-Green,
+Canary) have detailed manifest examples below. Recreate is the downtime-bearing comparison baseline. Read this
 when choosing; `../SKILL.md` owns the procedure that turns a choice into a
 reviewable change.
 
@@ -67,7 +67,7 @@ Blue:  [v1][v1][v1]  ← 0% (standby for rollback)
 Green: [v2][v2][v2]  ← 100% traffic
 ```
 
-**ArgoCD Rollouts CRD (preferred for GitOps):**
+**Argo Rollouts (preferred for GitOps):**
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -104,7 +104,7 @@ Stage 3: [v1 × 50%] [v2 × 50%]
 Stage 4: [v2 × 100%]           ✓
 ```
 
-**ArgoCD Rollouts CRD:**
+**Argo Rollouts:**
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -151,7 +151,8 @@ signal from a small share of traffic:
 - Traffic split by user segment (header, cookie, user-id hash).
 - Integrate with feature flag systems (LaunchDarkly, Flagsmith, etc.).
 - Promote only after reaching statistical significance.
-- Kubernetes implementation: Istio `VirtualService` weighted routes, or Nginx Ingress canary annotations.
+- Kubernetes implementation: Istio `VirtualService` weighted routes, as
+  `gitops/workloads/adminer/rollout.yaml` routes its canary.
 
 ---
 

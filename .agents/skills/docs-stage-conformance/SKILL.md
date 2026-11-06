@@ -3,11 +3,11 @@ name: "docs-stage-conformance"
 description: "Use when repairing scoped document-profile, README, heading, or cross-link drift without changing historical meaning."
 metadata:
   title: "Docs Stage Conformance"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -25,14 +25,13 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 1. Read the relevant gateway, document-authoring policy, current Git state,
    selected Stage 99 profile/template, and owning README.
-2. Identify concrete profile, heading, link, index, generated-output, or
-   authority drift before editing. For a broad governance audit use
-   workspace-harness-audit instead.
+2. Identify concrete profile, heading, link, index, or authority drift before editing. For a broad governance audit use
+   `workspace-harness-audit` instead.
 3. Apply the smallest authorized fix. Preserve completed evidence;
    report historical disposition to its owning Task rather than rewriting
    facts to satisfy a current profile.
 4. Update affected navigation and exact current consumers together.
-5. Run the applicable strict document validators and generated-index checks,
+5. Run the applicable strict document validators, link/owner and knowledge-surface checks,
    then the quality-policy completion sequence.
 6. Record scope, commands, results, limitations, and next owner in the active
    Task. Do not create a new package or parallel progress ledger merely for a

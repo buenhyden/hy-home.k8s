@@ -1,10 +1,10 @@
 ---
 title: "Agent Evaluation Trial Evidence"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-11-06"
 ---
 
 # Agent Evaluation Trial Evidence
@@ -22,18 +22,20 @@ Task가 소유한다.
 실행하지 않은 조건, 과거 합성 응답은 관측된 실행이 아니다. native skill 적재,
 명령 실행, 권한 관측은 각각 직접적인 세션 근거가 필요하다.
 
-## Structure
-
-### Item Index
-
-받아들인 직접 cycle 디렉터리를 여기에 한 번씩 색인한다. cycle 하나는 정확히
+cycle 하나는 정확히
 한 번의 짝 실행에 대해 `task.md`, `baseline.md`, `with-skill.md`, `score.md`를
 담는다. 두 원시 출력 파일은 관리용 frontmatter로 감싸지 않고 관측한 원래
 내용을 그대로 둔다. 재평가는 새 cycle 디렉터리를 쓰고 이전 근거를 보존한다.
 추가 실행도 별도 cycle 디렉터리를 쓴다. 유일한 집계 결과 소유자는
 [상위 라우터](../README.md)가 밝히고, [양식](../templates/README.md)은 schema를
-복사하지 않고 Stage 99를 가리킨다. 실행하지 않은 시도를 나타내는 자리표시
-행은 두지 않는다.
+복사하지 않고 Stage 99를 가리킨다.
+
+## Structure
+
+### Item Index
+
+받아들인 직접 cycle 디렉터리를 여기에 한 번씩 색인한다. 실행하지 않은 시도를 나타내는
+자리표시 행은 두지 않는다.
 
 ## Usage
 

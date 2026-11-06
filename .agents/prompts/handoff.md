@@ -1,10 +1,10 @@
 ---
 title: "Handoff Prompt Contract"
-version: "0.2.0"
+version: "0.2.1"
 type: "governance/prompt"
 status: "draft"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-11-06"
 ---
 
 # Handoff Prompt Contract
@@ -29,7 +29,7 @@ grants it, and a recorded boundary is not a standing authorization.
 | Branch | `git rev-parse --abbrev-ref HEAD` | Part of the snapshot the evidence describes |
 | Head commit | `git rev-parse HEAD` | Part of the snapshot the evidence describes |
 | Changed path set | `git status --porcelain` | The scope the handoff covers |
-| Committed scope | `git log --oneline -20` | The most recent logical units, bounded so the contract needs no base ref to exist |
+| Committed scope | `git log --oneline -20` | The most recent logical units, bounded rather than diffed against a base |
 
 The subject input is `Branch`. When it is empty the contract refuses, because
 a handoff without a snapshot describes no state.
@@ -39,14 +39,9 @@ a handoff without a snapshot describes no state.
 The handoff fields the quality policy lists, in its order, each either filled or
 explicitly marked `none` or `DEFER` with a reason. No field is omitted.
 
-Within snapshot evidence include worktree, divergence base, relevant file
-hashes, staged/unstaged scope and changed consumers. Within approval evidence
-include the current authorization and revocation check, plus concurrent writer
-ownership. Within limitations include command bounds, partial output and known
-budget state. The operator supplies facts not available to these read-only
-commands; the assembler must not invent them or authenticate approval.
-Apply the [resume decision](../governance/context-and-memory.md#resume-decision)
-before dependent mutation. Failed, timed-out, over-limit or invalid-encoding
+The operator supplies facts not available to these read-only commands, such as
+the resume checks the [resume decision](../governance/context-and-memory.md#resume-decision)
+lists; the assembler must not invent them or authenticate approval. Failed, timed-out, over-limit or invalid-encoding
 input produces no draft; no partial stdout or raw stderr is retained.
 
 The committed scope is bounded rather than diffed against a base branch. A base
@@ -60,6 +55,9 @@ A produced handoff is reviewed against the quality policy's field list before it
 is written into the owning Task. A field that silently disappeared fails review.
 
 ## Refusal Conditions
+
+The builder enforces only the empty-subject refusal; the requesting agent
+enforces the remaining conditions below.
 
 - No acceptance identifier or owning Task is supplied, so the handoff would have
   no destination.

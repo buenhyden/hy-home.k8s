@@ -2,7 +2,9 @@
 
 What to look for in each of the five dimensions — RBAC, NetworkPolicy,
 secret handling, container security context, and image supply chain — with
-the detection targets and checklists for each. Read the dimension the audit
+the detection targets and checklists for each. Where `vulnerability-patterns`
+lists a pattern, its level governs and the cell says so; any other row takes
+the tier in `../SKILL.md`. Read the dimension the audit
 is currently in; `../SKILL.md` owns the order, the severity meaning, and the
 report.
 
@@ -12,13 +14,13 @@ report.
 
 **Detection Targets:**
 
-| Risk Pattern                                   | Severity | Example                                       |
-| ---------------------------------------------- | -------- | --------------------------------------------- |
-| `ClusterRole` with `*` verbs                   | Critical | `verbs: ["*"]` on `secrets` resource          |
-| `ClusterRoleBinding` to service accounts       | High     | SA with cluster-wide list/get on secrets      |
-| `automountServiceAccountToken: true` (default) | Medium   | Pods that do not need API access              |
-| Overly broad namespace-scoped roles            | Medium   | `Role` with `get/list/watch` on all resources |
-| `system:masters` group membership              | Critical | Any non-bootstrap entity in this group        |
+| Risk Pattern                                   | Severity                           | Example                                       |
+| ---------------------------------------------- | ---------------------------------- | --------------------------------------------- |
+| `ClusterRole` with `*` verbs                   | Level per `vulnerability-patterns` | `verbs: ["*"]` on `secrets` resource          |
+| `ClusterRoleBinding` to service accounts       | Level per `vulnerability-patterns` | SA with cluster-wide list/get on secrets      |
+| `automountServiceAccountToken: true` (default) | Medium                             | Pods that do not need API access              |
+| Overly broad namespace-scoped roles            | Medium                             | `Role` with `get/list/watch` on all resources |
+| `system:masters` group membership              | Critical                           | Any non-bootstrap entity in this group        |
 
 **RBAC Audit Checklist:**
 
@@ -32,7 +34,7 @@ report.
 **Output format:**
 
 ```markdown
-| Resource | Binding               | Subject    | Overpermission | Severity |
+| Resource | Binding               | Subject    | Overpermission | Level    |
 | -------- | --------------------- | ---------- | -------------- | -------- |
 | secrets  | cluster-admin-binding | sa/default | list/get/watch | CRITICAL |
 ```
@@ -52,13 +54,13 @@ spec:
 
 **Detection Targets:**
 
-| Risk Pattern                         | Severity |
-| ------------------------------------ | -------- |
-| Namespace with no NetworkPolicy      | High     |
-| Pods reachable from `0.0.0.0/0`      | Critical |
-| Unrestricted egress to internet      | High     |
-| DNS-only egress not enforced         | Medium   |
-| Cross-namespace unrestricted ingress | High     |
+| Risk Pattern                         | Severity                           |
+| ------------------------------------ | ---------------------------------- |
+| Namespace with no NetworkPolicy      | Level per `vulnerability-patterns` |
+| Pods reachable from `0.0.0.0/0`      | Critical                           |
+| Unrestricted egress to internet      | High                               |
+| DNS-only egress not enforced         | Medium                             |
+| Cross-namespace unrestricted ingress | High                               |
 
 **Verification approach:**
 
@@ -94,7 +96,7 @@ env:
 # Wrong: plaintext in env
 env:
   - name: DB_PASSWORD
-    value: 'mysecretpassword'
+    value: "mysecretpassword"
 
 # Wrong: secret embedded in ConfigMap
 # Wrong: base64 in annotation (base64 is NOT encryption)
@@ -107,7 +109,7 @@ env:
 
 ### 4. Container Security Context
 
-**Required security context for production workloads:**
+**Required security context for any workload Argo CD reconciles:**
 
 ```yaml
 securityContext:
@@ -116,39 +118,41 @@ securityContext:
   readOnlyRootFilesystem: true
   allowPrivilegeEscalation: false
   capabilities:
-    drop: ['ALL']
+    drop: ["ALL"]
     add: [] # add only if strictly required
 ```
 
 **Detection Targets:**
 
-| Risk Pattern                                 | Severity |
-| -------------------------------------------- | -------- |
-| `runAsUser: 0` (root)                        | Critical |
-| `privileged: true`                           | Critical |
-| `allowPrivilegeEscalation: true`             | High     |
-| `hostPID: true` or `hostNetwork: true`       | Critical |
-| `hostPath` volume mounts                     | High     |
-| Missing `readOnlyRootFilesystem`             | Medium   |
-| `capabilities.add: ["NET_ADMIN"]` or similar | High     |
+| Risk Pattern                                 | Severity                           |
+| -------------------------------------------- | ---------------------------------- |
+| `runAsUser: 0` (root)                        | Level per `vulnerability-patterns` |
+| `privileged: true`                           | Level per `vulnerability-patterns` |
+| `allowPrivilegeEscalation: true`             | High                               |
+| `hostPID: true` or `hostNetwork: true`       | Level per `vulnerability-patterns` |
+| `hostPath` volume mounts                     | Level per `vulnerability-patterns` |
+| Missing `readOnlyRootFilesystem`             | `k8s-security-audit` tier (MEDIUM) |
+| `capabilities.add: ["NET_ADMIN"]` or similar | High                               |
 
 ### 5. Image Supply Chain
 
 **Verification targets:**
 
-- Images must use digest pinning or immutable tags
-- Images from unapproved registries are flagged
-- No `latest` tag in production workloads
+- Images use an explicit non-latest tag or a digest, the rule `gitops/README.md`
+  sets for every workload Argo CD reconciles
+- No `latest` or implicit-latest tag in any such workload
 
 ```yaml
 # Correct: digest pinned
-image: my-registry.io/app:v1.2.3@sha256:abc123...
+image: registry.example/app:v1.2.3@sha256:abc123...
 
 # Rejected: floating tag
-image: my-registry.io/app:latest
+image: registry.example/app:latest
 ```
 
-**Registry allowlist check:**
+**Registry and scan evidence:**
 
-- Flag any image not from approved registries
-- Flag images without vulnerability scan evidence in CI annotations
+- The repository defines no approved-registry list, so a registry is a reviewer
+  judgment, not a finding by itself.
+- Vulnerability-scan evidence in CI annotations is not currently enforced; record
+  its absence as a gap, not as a violation.

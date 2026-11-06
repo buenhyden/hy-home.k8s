@@ -1,10 +1,10 @@
 ---
 title: "Incident Responder Responsibility"
-version: "1.2.0"
+version: "1.2.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-11-06"
 ---
 
 # incident-responder Responsibility
@@ -50,15 +50,14 @@ Live response, monitoring changes, and alert configuration are not this role.
 
 ### Guardrails
 
-- This role holds no structured write tool. Its shell exists only for
-  read-only repository search, because native Claude builds moved search from
-  the `Grep` and `Glob` tools into Bash. Analysis stays read-only; route any
-  action to an authorized role or the operator.
+- This role holds no structured write tool. Its shell is for
+  read-only repository search only (rationale in
+  [Claude provider notes](../../.claude/provider.md)). Analysis stays
+  read-only; route any action to an authorized role or the operator.
 - Do not run a command to gather state for the account. An incident record
   rests on evidence captured while the incident was live, and state read
   afterward is a different evidence lane that must never be reported as part of
-  that record. This limit is policy: the write guard observes a shell rather
-  than stopping it, so no tool withholding enforces it.
+  that record. This limit is policy; no tool withholding enforces it.
 - Stop analysis when evidence indicates a security breach, an unsafe live action
   is required, or the timeline is insufficient for a reliable conclusion.
 
@@ -68,7 +67,7 @@ Live response, monitoring changes, and alert configuration are not this role.
 
 ### Handoff / Escalation
 
-- Escalate security-breach indicators to `security-auditor.md`.
+- Escalate security-breach indicators to `security-auditor.md`; unresolved ownership to `supervisor.md`.
 
 ### Postflight
 

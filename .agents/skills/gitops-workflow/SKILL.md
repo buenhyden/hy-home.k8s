@@ -2,12 +2,12 @@
 name: "gitops-workflow"
 description: "Use when onboarding, updating, or diagnosing workloads through the repository-backed GitOps and ArgoCD path."
 metadata:
-  title: "Gitops Workflow"
-  version: "1.0.1"
+  title: "GitOps Workflow"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-08"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -34,12 +34,18 @@ Define the approved GitOps path for workload onboarding, change review, and sync
    repository-backed changes only; live reconciliation remains operator-owned.
 3. Run the validation path through `k8s-validate`.
 4. Review release structure, sync targets, and rollout safety.
-5. Report PR and Argo CD reconciliation readiness. Creating a PR or triggering reconciliation requires separate explicit authorization.
+5. To diagnose a sync problem, read the Application, its source manifests and
+   recorded sync status read-only, and report the cause and the repository change
+   that would fix it; do not mutate live state.
+6. Report PR and Argo CD reconciliation readiness. Creating a PR or triggering reconciliation requires separate explicit authorization.
 
 ## Constraints
 
 - GitOps-first is mandatory.
-- Direct `kubectl apply` or similar drift-causing mutation is not allowed.
+- Direct `kubectl apply` or similar drift-causing mutation is not allowed,
+  except in documented bootstrap or break-glass runbooks.
+- A read-only role (such as `gitops-reviewer`) returns findings and routes any
+  edit to the implementation owner.
 - Repository structure and ArgoCD targeting must stay cluster-specific.
 - Secret management must follow approved resources only.
 

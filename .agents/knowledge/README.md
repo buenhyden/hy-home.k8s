@@ -1,10 +1,10 @@
 ---
 title: "Common Knowledge"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-11-06"
 ---
 # Common Knowledge
 
@@ -48,7 +48,7 @@ validator다.
 
 ## Related Documents
 
-- [Governance Hub](../README.md)
+- [Common Agent Governance](../README.md)
 - [Context and Memory](../governance/context-and-memory.md)
 - [knowledge-map skill](../skills/knowledge-map/SKILL.md)
 - [Repository documentation](../../docs/README.md)

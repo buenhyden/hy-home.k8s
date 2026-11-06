@@ -1,10 +1,10 @@
 ---
 title: "Project Map"
-version: "0.1.3"
+version: "0.1.4"
 type: "governance/knowledge"
 status: "draft"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-11-06"
 ---
 
 # Project Map
@@ -36,6 +36,7 @@ them. A disagreement between a row and its owner is resolved by the owner.
 | Repository tooling | `scripts/` | `scripts/README.md` | Validation routing stays registry-owned |
 | Tooling tests | `tests/` | `tests/README.md` | Each validator keeps an independent top-level test |
 | Agent evaluation evidence | `.agents/evaluations/` | `.agents/evaluations/README.md` | Actual paired evaluation evidence stays here; the registered evaluator role owns the assessment |
+| Local workspace notes | `_workspace/` | `_workspace/README.md` | Only the README files are tracked; working content stays outside shared policy |
 | Local sensitive files | `secrets/` | `secrets/README.md` | No secret value is tracked in this repository |
 | Hosted surface | `.github/` | `.github/repository-surface.md` | Hosted execution stays separate from repository-static evidence |
 
@@ -49,4 +50,4 @@ not on a schedule. Adding or removing a top-level tree invalidates this map.
 
 - [Common Knowledge](README.md)
 - [Domain Index](domains.md)
-- [Governance Hub](../README.md)
+- [Common Agent Governance](../README.md)

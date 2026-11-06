@@ -3,11 +3,11 @@ name: "incident-postmortem"
 description: "Use when writing a cluster incident postmortem or routing post-incident analysis through timeline reconstruction, root cause analysis, impact assessment, and remediation planning. Real-time on-call response, monitoring setup, and alert configuration are outside this skill's scope."
 metadata:
   title: "Incident Postmortem"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -26,13 +26,13 @@ skill never expands the responder's permissions.
 
 ## Workspace Boundary
 
-`_workspace/` is scratch-only for intermediate analysis. A durable fact record
-belongs to the `operation/incident` profile and its analysis to
-`operation/postmortem`. The Stage 99 registry (`docs/99.templates/registry.json`)
-owns the directory grammar, filename, template, and required sections for both.
-Use the current operations README for navigation and resolve the profile at write time rather than copying a path out of this
-procedure, because a path restated here drifts from the grammar the gate
-actually enforces.
+`_workspace/repo-support/analysis/` is scratch-only for intermediate analysis
+(see `_workspace/README.md`). A durable fact record belongs to the
+`operation/incident` profile and its analysis to `operation/postmortem`. The
+Stage 99 registry (`docs/99.templates/registry.json`) owns the directory
+grammar, filename, template, and required sections for both; resolve the
+profile at write time rather than copying a path out of this procedure. Use the
+current operations README for navigation.
 
 ## When NOT to Use
 
@@ -57,38 +57,19 @@ Extract from user input:
 - **Impact information** (optional) — affected services, user count, duration
 - **Actions taken** (optional) — emergency measures already performed
 
-Summarize input in the response. Creating a scratch file is a write like any
-other, so it never happens automatically.
+Summarize input in the response.
 
-### Phase 2: Timeline Reconstruction → `_workspace/01_timeline.md`
+### Phase 2: Timeline Reconstruction
 
-Reconstruct the full event sequence:
+Reconstruct the event sequence (UTC time, event, source, actor) with detection
+time, resolution time and duration. Tag events reconstructed from verbal
+accounts `[Verbal account-based]` and mark gaps with their time range and source
+limitation. The durable form is the `operation/incident` template
+(registry entry; see [Stage 99 templates](../../../docs/99.templates/README.md)).
 
-```markdown
-# Incident Timeline
+### Phase 3: Root Cause Analysis
 
-## Summary
-
-- **Incident ID**: [ID or description]
-- **Detection Time**: [YYYY-MM-DD HH:MM UTC]
-- **Resolution Time**: [YYYY-MM-DD HH:MM UTC]
-- **Total Duration**: [X hours Y minutes]
-
-## Event Log
-
-| Time (UTC) | Event               | Source             | Actor           |
-| ---------- | ------------------- | ------------------ | --------------- |
-| HH:MM      | [Event description] | [Log/Alert/Verbal] | [System/Person] |
-
-## Gap Analysis
-
-- [Unconfirmed] tags mark events reconstructed from verbal accounts
-- Gaps in evidence noted with time range and source limitation
-```
-
-### Phase 3: Root Cause Analysis → `_workspace/02_root_cause.md`
-
-Apply structured RCA (see `rca-methodology` skill for full technique guide):
+Apply structured RCA (see `rca-methodology` for the technique guide):
 
 - **5 Whys** for linear cause chains
 - **Fishbone** for multi-dimensional factors (People, Process, Technology, Environment, Monitoring)
@@ -96,86 +77,28 @@ Apply structured RCA (see `rca-methodology` skill for full technique guide):
 
 Write the Root Cause Analysis structure that `rca-methodology` defines under
 its Output Format heading. That skill owns the structure; this phase decides
-which techniques the incident needs and where the result is written.
+which techniques the incident needs.
 
-### Phase 4: Impact Assessment → `_workspace/03_impact_assessment.md`
+### Phase 4: Impact Assessment
 
-```markdown
-# Impact Assessment
+Cover service impact (service, impact, duration, recovery method), SLO status
+(target, actual, error budget consumed), and operational risk (security breach
+indicators, data integrity concerns). The incident template carries the
+impact fields; state estimates with their confidence.
 
-## Service Impact
+### Phase 5: Remediation Planning
 
-| Service | Impact | Duration | Recovery Method |
-| ------- | ------ | -------- | --------------- |
+Group actions by horizon (immediate under 24 h, short-term under 2 weeks,
+long-term under 3 months). Each action item is SMART: owner, due date and
+success criterion. The postmortem template carries the Action Items,
+Prevention and Verification, and Action Closure sections.
 
-## SLA/SLO Status
+### Phase 6: Final Postmortem Report
 
-| SLO | Target | Actual | Error Budget Consumed |
-| --- | ------ | ------ | --------------------- |
-
-## Operational Risk
-
-- Security breach indicators: [None/Details]
-- Data integrity concerns: [None/Details]
-```
-
-### Phase 5: Remediation Planning → `_workspace/04_remediation_plan.md`
-
-```markdown
-# Remediation Plan
-
-## Immediate Actions (< 24h)
-
-| Action | Owner | Due | Status |
-| ------ | ----- | --- | ------ |
-
-## Short-term Actions (< 2 weeks)
-
-## Long-term Actions (< 3 months)
-
-## Action Items
-
-- [ ] SMART action items with owner, due date, and success criteria
-```
-
-### Phase 6: Final Postmortem Report → `_workspace/postmortem_report.md`
-
-```markdown
-# Postmortem: [Incident Title]
-
-**Date**: YYYY-MM-DD
-**Severity**: P1/P2/P3
-**Duration**: X hours Y minutes
-**Status**: Resolved
-
-## Summary
-
-[2-3 sentences covering what happened, root cause, and current status]
-
-## Timeline
-
-[Reference or inline from 01_timeline.md]
-
-## Root Cause
-
-[Reference or inline from 02_root_cause.md]
-
-## Impact
-
-[Reference or inline from 03_impact_assessment.md]
-
-## Remediation
-
-[Reference or inline from 04_remediation_plan.md]
-
-## What Went Well
-
-- [System, process, or team behavior that helped]
-
-## Lessons Learned
-
-- [Non-blame, system-focused insights]
-```
+Assemble the report in the `operation/postmortem` template
+(registry entry; see [Stage 99 templates](../../../docs/99.templates/README.md)), which owns its
+section set and ordering. Severity uses the incident template's SEV-1 to SEV-4 scale.
+Keep the language blameless and system-focused.
 
 ## Modes by Task Scale
 
@@ -189,13 +112,11 @@ which techniques the incident needs and where the result is written.
 
 ## Data Protocol
 
-- The phase filenames above are optional author output examples; under the
-  execution mode stated above, a read-only role returns the analysis in its
-  response and writes nothing.
-- An explicitly authorized author writes a durable fact record under the
-  `operation/incident` profile and a durable analysis under
-  `operation/postmortem`, taking the path, template, and required sections
-  from the Stage 99 registry entry for whichever is being written.
+Under the execution mode stated above, a read-only role returns the analysis in
+its response and writes nothing. Creating a scratch file under
+`_workspace/repo-support/analysis/` is a write like any other and needs
+authorization. A durable record takes its path, template, and required sections
+from the Stage 99 registry entry for the profile being written.
 
 ## Error Handling
 
@@ -232,3 +153,5 @@ which techniques the incident needs and where the result is written.
 ## Related Skills
 
 - `rca-methodology` — Detailed 5 Whys, Fishbone, FTA, and change analysis techniques
+- `ops-runbook` — Turning a remediation into a repeatable operational procedure
+- `risk-report` — Recording residual risk for later tracking

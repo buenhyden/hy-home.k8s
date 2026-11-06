@@ -1,10 +1,10 @@
 ---
 title: "Agent Evaluation Form Router"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-11-06"
 ---
 
 # Agent Evaluation Form Router
@@ -29,7 +29,7 @@ runtime 권한을 주지 않는다.
 
 이 라우터에는 로컬 양식 사본이 없다. 현재 작업·점수·결과 양식은
 [Stage 99 template 라우터](../../../docs/99.templates/templates/README.md)에서,
-실제 근거를 둘 위치는 [실행 라우터](../harnesses/README.md)에서 확인한다.
+실제 근거를 둘 위치는 [Trial Evidence 라우터](../harnesses/README.md)에서 확인한다.
 Stage 99는 이 정규 파일을 `evaluation-task.template.md`,
 `evaluation-score.template.md`, `evaluation-results.template.md`로 부르며, 이
 라우터는 단계를 건너 개별 양식 파일로 링크하지 않는다.
@@ -49,7 +49,7 @@ Task를 따르고, 쓸 수 없는 세션과 빠진 응답은 비교가 아니라
 ## Related Documents
 
 - [Evaluation root](../README.md)
-- [Trial evidence router](../harnesses/README.md)
+- [Trial Evidence router](../harnesses/README.md)
 - [Stage 99 profiles](../../../docs/99.templates/README.md)
 - [Stage 99 template navigation](../../../docs/99.templates/templates/README.md)
 - [Stage 03 Spec navigation](../../../docs/03.specs/README.md)

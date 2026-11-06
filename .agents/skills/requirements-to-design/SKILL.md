@@ -3,11 +3,11 @@ name: "requirements-to-design"
 description: "Use when tracing Requirement Package members to relevant Architecture Descriptions, ADRs, and Spec contracts."
 metadata:
   title: "Requirements To Design"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -30,7 +30,9 @@ using this procedure. Skill invocation does not authorize additional actions.
    when no structural decision or view is needed.
 3. Trace each relevant requirement to architecture rationale and the owning
    Spec's behavior/acceptance contract. Executable OpenAPI, GraphQL, and Proto
-   definitions belong to that Spec package, not Stage 01.
+   definitions belong to that Spec package, not Stage 01. When the Spec
+   package was deleted, cite the Archived Lineage row of the current owning
+   document instead.
 4. Report covered, partial, missing, or not-applicable relationships with
    evidence. Do not auto-create an ADR or implementation document.
 5. When authorized, update reciprocal/current links through the selected
@@ -40,7 +42,7 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 Requirements remain solution-independent. Architecture owns structure and
 durable choices; Spec owns change-specific implementation behavior. Use
-docs-stage-routing for authoring and execution-plan for implementation order.
+`docs-stage-routing` for authoring and `execution-plan` for implementation order.
 
 ## Outputs
 

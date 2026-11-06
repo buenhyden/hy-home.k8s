@@ -1,13 +1,13 @@
 ---
 name: "risk-report"
-description: "Use when identifying, scoring, and reporting cluster-specific operational or security risks in a risk register."
+description: "Use when identifying, scoring, and reporting cluster-specific operational or security risks as a cluster risk report."
 metadata:
   title: "Risk Report"
-  version: "1.0.1"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-08"
+  updated: "2026-11-06"
 disable-model-invocation: true
 ---
 
@@ -47,7 +47,7 @@ reviewers reading the same repository reach the same row.
 Rate impact by blast radius rather than by how alarming the finding sounds.
 
 | Impact       | Meaning                                                        |
-| ------------ | --------------------------------------------------------------- |
+| ------------ | -------------------------------------------------------------- |
 | **Severe**   | Credential exposure, data loss, or cluster-wide unavailability |
 | **Moderate** | One namespace or workload degraded, recoverable by rollback    |
 | **Minor**    | Operational friction with no user-visible effect               |
@@ -60,30 +60,35 @@ The pair gives the level. Rows are likelihood, columns are impact.
 | **Possible** | LOW    | MEDIUM   | HIGH     |
 | **Unlikely** | LOW    | LOW      | MEDIUM   |
 
-The level decides how the register carries the risk.
+The level decides how the risk is carried.
 
-| Level    | Register disposition                                          |
+| Level    | Disposition                                                    |
 | -------- | -------------------------------------------------------------- |
 | CRITICAL | Blocking — the change under review does not proceed            |
 | HIGH     | Release-blocking — name the owner and the release it blocks    |
 | MEDIUM   | Monitor-only — name a review cue and the signal that raises it |
 | LOW      | Monitor-only — revisit at the next risk review                 |
 
-These four level names mean the same thing the security skills mean by them,
-so a reviewer holding both reads one vocabulary. Where `vulnerability-patterns`
+These four level names share their meaning with the security skills, so a
+reviewer holding both reads one vocabulary. The dispositions differ by purpose:
+this table says how a tracked risk is carried, while `k8s-security-audit` says
+what a finding obliges (for example MEDIUM is fixed within the sprint there and
+monitor-only here). Where `vulnerability-patterns`
 has already assigned a severity to a manifest pattern, take that severity as
 given; this matrix scores what no pattern table has classified.
 
 ## Constraints
 
-- Keep the register specific to `hy-home.k8s`.
+- Record risks in the response or the active Plan's Risks & Mitigations; no
+  separate risk register exists.
+- Keep the report specific to `hy-home.k8s`.
 - Prefer repository and approved inspection evidence over generic risk lists.
 - A risk whose likelihood rests on no evidence is not scored. Record it as an
   open question, because an invented score is harder to retract than a stated gap.
 
 ## Expected Outputs
 
-- A structured risk register or risk summary
+- A structured risk summary
 - Severity-ranked recommendations
 - Monitoring or review cues for follow-up work
 

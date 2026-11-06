@@ -1,10 +1,10 @@
 ---
 title: "Agent Responsibilities"
-version: "2.2.0"
+version: "2.2.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-11-06"
 ---
 # Agent Responsibilities
 
@@ -67,8 +67,8 @@ Kubernetes와 GitOps desired state를 재현 가능하고 격리된 상태로, �
 
 - secret 참조의 안전한 처리와 네트워크 격리를 유지한다.
 - 영향받는 매니페스트의 구문·정책·reconciliation 구조를 저장소 검사로 확인한다.
-- 운영 영향과 rollback은 소유 Plan 또는 Task에 기록하고 runbook 변경은 운영
-  담당에게 넘긴다.
+- 운영 영향과 rollback은 소유 Plan 또는 Task에 기록하고 runbook 변경은
+  [doc-writer](doc-writer.md)에게 넘긴다.
 - 클러스터 기동과 reconciliation은 명시적 승인 아래 운영자가 수행한다.
 
 ### Operations
@@ -89,9 +89,11 @@ Kubernetes와 GitOps desired state를 재현 가능하고 격리된 상태로, �
 
 수용 기준을 재현 가능한 검사에 연결하고 실패, 한계, 회귀 위험을 보고한다. QA의
 쓰기 범위는 registry 권한과 위임 범위가 정한다. QA는 배정된 테스트, fixture,
-Python 검증기, validation-lane 내용을 작성할 수 있지만 제품, 매니페스트, 보안
-승인, shell 검증기, 정책의 소유권은 얻지 않는다. CI trigger, 권한, concurrency,
-lane 밖 job은 거버넌스가 소유한다.
+검증 registry에 등록된 검증기(언어 무관), validation-lane 내용을 작성할 수 있지만
+제품, 매니페스트, 보안 승인, 정책의 소유권은 얻지 않는다. 등록되지 않은 도구는
+[repo-tooling-engineer](repo-tooling-engineer.md)에게 넘긴다. CI trigger, 권한,
+concurrency, lane 밖 job은 거버넌스가 소유하고
+[ci-workflow-engineer](ci-workflow-engineer.md)가 승인된 한도 안에서 변경을 구현한다.
 
 - 의미 규칙 family에서 양성 사례와 독립적인 음성 사례를 도출한다.
 - 복사한 대규모 fixture 행렬보다 범위가 정해진 mutation 테스트를 선호한다.
@@ -153,13 +155,13 @@ registry가, native 설정은 provider binding 표가 소유하고 projection은
 ## Usage
 
 관련된 책임 소유자만 읽는다. 제품 의도는 Requirement Package에, backend와 API
-동작은 Spec과 그 구현 Task에 있다. 이 인프라 작업 공간에서는 쓰이지 않는 독립
-agent 범위로 이런 일반 의무를 따로 둘 필요가 없다.
+동작은 Spec과 그 구현 Task에 있다.
 
 역할이나 skill은 승인된 구체적 공백이 있을 때만 중립 registry와 검토된
 projection을 통해 추가한다. 새 역할 본문은 `status: "draft"`로 만들고 이후의
-별도 논리 변경에서 `active`로 올린다. `governance/role` lifecycle domain은 생성을
-`draft`로만 허용하고, `active`에서 되돌아가는 edge가 없으며, 삭제는 별도로
+별도 논리 변경에서 `in-review`를 거쳐 `active`로 올린다.
+`governance/role` lifecycle domain(`governance-operations`)은 생성을 `draft`로만
+허용하고 `draft` → `in-review` → `active`만 거치고, `active`에서 되돌아가는 edge가 없으며, 삭제는 별도로
 승인된 변경으로만 한다. 처음부터 `active`로 커밋한 본문은 앞으로 고칠 수
 없으므로 그 커밋 전에 staged 검증 결과를 읽는다. 작업이 도메인을 넘을 때는 소유권
 전환을 선언하고, 경계가 불분명하거나 충돌하면 에스컬레이션한다.
@@ -170,10 +172,10 @@ Task의 범위가 바뀌면 책임을 다시 판단한다. 정확한 역할, 권
 
 ## Related Documents
 
-- [Governance Hub](../README.md)
+- [Common Agent Governance](../README.md)
 - [SDLC Flow](../governance/sdlc.md)
 - [Delegated Development](../workflows/delegated-development.md)
 - [Approval and Safety](../governance/approval-and-safety.md)
 - [Document Authoring](../governance/document-authoring.md)
-- Architecture Index (`docs/02.architecture/README.md`)
-- Operations Index (`docs/05.operations/README.md`)
+- [Architecture Index](../../docs/02.architecture/README.md)
+- [Operations Index](../../docs/05.operations/README.md)

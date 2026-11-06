@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "2.3.0"
+version: "2.3.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-06"
 ---
 
 # Quality and Evidence Policy
@@ -26,7 +26,8 @@ counts in prose.
 
 Current infrastructure work uses coverage of applicable validation contracts,
 not fictitious application coverage numbers. Where testable application code
-and coverage tooling exist, apply the approved application coverage target.
+and coverage tooling exist, apply the target the owning Requirement defines; no
+such target is defined today.
 Reviewers assess acceptance and regression coverage, not merely test counts.
 Provider projections preserve role and permission semantics while using native
 metadata; static parity never proves discovery, model resolution, or execution.
@@ -59,10 +60,9 @@ metadata; static parity never proves discovery, model resolution, or execution.
   (SPEC-0123; Git history: package `0123-hosted-lock-check` under
   `docs/03.specs/` at commit `69445fca`). A
   deployment style route applies only if a real
-  deployment workflow exists. Hosted automation does not run local full, unit or
+  deployment workflow exists. Hosted automation does not run local unit or
   document-content QA. A hosted result reports only what its jobs actually
-  observed; old full-QA `NOT_RUN` records remain historical, never a current
-  required gate or a proxy for a successful local run or style job.
+  observed and is never a proxy for a successful local run or style job.
 - **remote/live**: provider discovery or authenticated operation, remote
   execution, and operator-approved runtime checks need direct authorized
   evidence. Static presence and hosted CI do not imply this lane.
@@ -70,7 +70,8 @@ metadata; static parity never proves discovery, model resolution, or execution.
 A QA profile selects gate IDs; a lane describes routing or an evidence boundary.
 The execution registry owns commands and profile membership. Execute one logical
 leaf once for identical input bytes and history, configuration, tool identity,
-scope, mode and trust. Distinct index, working-tree, integrated-main and remote
+scope, mode and trust; a matching filename set alone never justifies reuse.
+Distinct index, working-tree, integrated-main and remote
 observations require their own evidence where those inputs differ. A phase name
 or a second caller does not justify replaying an already proven leaf.
 Treat local candidate-code QA as validation in the authorized workspace, not
@@ -103,20 +104,16 @@ they do not expire the user's authoring authorization or stop independent work.
 
 Every repository-static child selected by the validation-surface contract runs
 through the [validation runner](../../scripts/run-validation-lane.py), which
-owns the reviewed limit constants. The envelope bounds execution time and
-retained stdout and stderr independently, uses one monotonic cleanup deadline,
-and drains both streams concurrently in bounded read chunks.
-
-The runner starts each child in its own session/process group. Timeout, either
-pipe overflow, pipe failure, or pipes held by descendants after the direct
-leader exits is `FAIL`.
+owns the reviewed limit constants and treats timeout, pipe overflow or failure,
+or pipes held by descendants after the leader exits as `FAIL`.
 
 ### Result vocabulary
 
 - `PASS`: the named check ran over the stated scope and met its acceptance
   condition.
 - `NOT_RUN`: the named check did not execute. A selected required gate with this
-  result blocks completion and cannot enter PASS cache or signed proof. A check
+  result blocks completion and cannot enter the PASS cache, which is the local evidence index kept by
+  `scripts/qa.py`. A check
   outside the selected scope stays factual `NOT_RUN` without becoming a new
   requirement merely because a previous workflow once ran it.
 - `NOT_APPLICABLE`: the named check has no applicable target for the stated
@@ -233,13 +230,12 @@ not a policy sentence, owns the exact gate list and per-check limits.
 An ordinary authored document or README router change that alters only prose
 or navigation selects the common diff, style and commit-message checks plus
 document content checks for profile, relationships, links and lifecycle state.
-Do not select repository-wide quality, agent, infrastructure or unit sweeps
-gates solely because the changed path is Markdown. A change to a governance,
+Do not select repository-wide quality, agent or infrastructure gates, or
+unit sweeps, solely because the changed path is Markdown. A change to a governance,
 provider or native contract, a Stage 99 form, schema or registry, or executable
 implementation is a contract or behavior change: select its necessary focused
-regressions and affected gates under the owning validation registry. Keep
-document authoring or status-sync commands explicit; no validator or hook
-automatically invokes a writer. Document link checks remain local as specified
+regressions and affected gates under the owning validation registry. No
+validator or hook rewrites a governed document. Document link checks remain local as specified
 above.
 
 ### Delivery ownership
@@ -247,16 +243,15 @@ above.
 | Route | Required owner and evidence |
 | --- | --- |
 | Routine editing | Run focused behavior checks and selected affected `quick` checks over changed working-tree bytes. |
-| Local commit | Review the logical index, run selected exact-index `staged` QA, required lint and format checks on the final index immediately before commit, and actual commit-message validation, then commit with active hooks. An identical hook leaf already run over the same index must not be invoked a second time manually. |
+| Local commit | Review the logical index, then commit with active hooks as one run: the `staged-qa` hook runs exact-index `staged` QA, which includes the selected lint and format gate (`selected-style`), and the commit-msg hooks validate the actual message. Record that run once. |
 | Feature push | Preserve checked commit evidence and observed push result; pushing adds no QA leaf for unchanged inputs. |
 | Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. A pull request completes only when the required checks pass, the review requirement is met (no approving review is required, count 0) and the new-context review of the final diff reports no `BLOCK` finding. The repository owner merges it, or explicitly directs its merge, with a merge commit; automated checks, Apps and signatures never stand in for the owner's approval. |
-| Deployment | If a deployment workflow exists, observe its selected style check at the actual deployment SHA/run before deployment. Without such a workflow or run, retain `NOT_RUN` or `DEFER` for that lane; repository files alone cannot certify deployment. |
+| Deployment | Observe the selected style check at the actual deployment SHA/run before deployment, as the hosted lane requires; otherwise retain `NOT_RUN` or `DEFER`. Repository files alone cannot certify deployment. |
 | Main integration | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an unchanged merge candidate needs no repeat. Record the actual merge and any remote required-check result separately. |
-| Local handoff | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing security guarantees. No session timebox or reserve approval is required. Do not select blanket discovery or a retired full/ci sweep merely to close the task. |
+| Local handoff | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing security guarantees. No session timebox or reserve approval is required. |
 
-The registry selects gates within a profile. Reuse only a successful result for
-identical declared input bytes and history, configuration, tool identity, scope,
-mode and trust; changed inputs require a fresh result. A static workflow file
+The registry selects gates within a profile; changed inputs require a fresh
+result. A static workflow file
 cannot establish hosted execution or remote branch protection.
 
 ### Canonical completion sequence
@@ -270,15 +265,13 @@ cannot establish hosted execution or remote branch protection.
    alone do not establish that equivalence.
 3. **each logical commit**: inspect status and the unstaged diff, stage only the
    reviewed logical set, inspect the cached diff, run `git diff --check` and
-   `git diff --cached --check`, then selected exact-index staged QA and required
-   lint/format checks immediately before the commit. Validate the actual
-   message under Git policy and commit through normal active hooks;
-   record the leaf actually run and do not duplicate it merely because the
-   hook and manual command share a caller boundary.
+   `git diff --cached --check`, then commit through the active hooks, whose
+   `staged-qa` hook runs `qa.py staged` (exact-index QA including the selected
+   lint/format gate) as one run. Validate the actual message under Git policy
+   and record the leaf actually run.
 4. **delivery validation**: review the selected focused units and purpose gates
    against the final branch input. Record hosted branch metadata and selected
-   style at their own PR or deployment SHA/run when observed. Retired full/ci
-   and blanket unit discovery add no completion gate. Recheck an integrated-main
+   style at their own PR or deployment SHA/run when observed. Recheck an integrated-main
    input only to the extent changed bytes or history invalidate prior evidence.
 5. **repair and refresh**: inspect formatter findings, explicitly fix selected
    files, review/restage changed bytes and refresh affected evidence. QA itself
@@ -289,8 +282,7 @@ cannot establish hosted execution or remote branch protection.
    contract above.
 
 For a no-commit request preserve the index and record staged/message evidence
-as N/A. Input identity includes bytes, base/history, configuration and mode;
-a matching filename set alone never justifies evidence reuse.
+as N/A.
 
 Use raw NUL-delimited machine paths for changed/staged path transport. Do not
 reconstruct them with newline iteration or filtered display output. Preserve

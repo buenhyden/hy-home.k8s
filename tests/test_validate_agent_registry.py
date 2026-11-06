@@ -60,6 +60,24 @@ class AgentRegistryTests(unittest.TestCase):
                 self.assertNotIn(inappropriate, roles[role]["skill_refs"])
         self.assertEqual(roles["agent-evaluator"]["skill_refs"], [])
 
+    def test_every_registered_skill_has_a_binding_role(self) -> None:
+        bound = {skill for row in self.registry["roles"] for skill in row["skill_refs"]}
+        registered = {row["id"] for row in self.registry["skills"]}
+        self.assertEqual(registered - bound, set())
+        roles = {row["id"]: row for row in self.registry["roles"]}
+        self.assertIn("ops-runbook", roles["doc-writer"]["skill_refs"])
+
+    def test_permission_class_carries_no_unread_approval_flag(self) -> None:
+        mutated = self.registry_copy()
+        for row in mutated["permission_classes"]:
+            row.pop("external_writes_require_approval", None)
+        self.validator.validate_registry(REPOSITORY_ROOT, mutated, check_files=False)
+        mutated["permission_classes"][0]["external_writes_require_approval"] = True
+        with self.assertRaises(self.validator.HarnessError):
+            self.validator.validate_registry(
+                REPOSITORY_ROOT, mutated, check_files=False
+            )
+
     def test_third_provider_is_rejected(self) -> None:
         mutated = self.registry_copy()
         mutated["providers"].append(

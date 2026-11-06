@@ -1,10 +1,10 @@
 ---
 title: "Security Auditor Responsibility"
-version: "1.1.0"
+version: "1.1.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-11-06"
 ---
 
 # security-auditor Responsibility
@@ -64,6 +64,7 @@ turned into a security judgment.
 - Escalate implementation work to `k8s-implementer.md` only after findings are clear.
 - Route a routing or manifest-structure finding to `network-reviewer.md`, which
   is the reciprocal of that role stopping at isolation and RBAC judgment.
+- Route unresolved ownership to `supervisor.md`.
 
 ### Postflight
 

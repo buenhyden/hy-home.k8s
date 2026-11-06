@@ -192,6 +192,36 @@ class PromptInputBuilderTests(unittest.TestCase):
         self.assertIn("unstaged marker", assembled)
         self.assertIn("Command: `git diff`", assembled)
 
+    def test_change_review_reports_whitespace_errors_instead_of_aborting(self) -> None:
+        self.install_repository_contract("change-review")
+        self.commit("review.txt", "original\n")
+        (self.root / "review.txt").write_text("trailing   \n", encoding="utf-8")
+
+        assembled = self.module.assemble(self.root, "change-review")
+
+        self.assertIn("Command: `git diff --check`", assembled)
+        self.assertIn("trailing whitespace", assembled)
+
+    def test_doc_update_owner_candidates_include_the_root_routers(self) -> None:
+        self.install_repository_contract("doc-update")
+        for name in (
+            "docs/README.md",
+            "docs/01.requirements/README.md",
+            ".agents/README.md",
+        ):
+            (self.root / name).parent.mkdir(parents=True, exist_ok=True)
+            self.stage(name, "router\n")
+
+        assembled = self.module.assemble(self.root, "doc-update")
+        listing = assembled.split("### Owner candidates", 1)[1]
+
+        for name in (
+            "docs/README.md",
+            "docs/01.requirements/README.md",
+            ".agents/README.md",
+        ):
+            self.assertIn(f"\n{name}\n", listing)
+
     def test_change_review_keeps_cancelling_staged_and_unstaged_differences(
         self,
     ) -> None:
