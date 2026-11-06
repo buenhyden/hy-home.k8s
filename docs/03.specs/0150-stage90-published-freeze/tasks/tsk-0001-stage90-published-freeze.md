@@ -1,6 +1,6 @@
 ---
 title: "Stage 90 Published Member Freeze"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -31,8 +31,8 @@ Refuse a rewrite of a published Stage 90 member (AUD-0001 F-10). It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | Focused tests and freeze check | platform | in-progress | PASS | EVD-004, EVD-006 |
-| WORK-002 | [VAL-FRZ-002](../spec.md#success-criteria--verification-plan) | Strict checks and observed refusal | platform | in-progress | PASS | EVD-005 |
+| WORK-001 | [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | Focused tests and freeze check | platform | completed | PASS | EVD-004, EVD-006 |
+| WORK-002 | [VAL-FRZ-002](../spec.md#success-criteria--verification-plan) | Strict checks and observed refusal | platform | completed | PASS | EVD-005 |
 
 ## Task Evidence
 
@@ -49,8 +49,8 @@ Refuse a rewrite of a published Stage 90 member (AUD-0001 F-10). It executes
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | pending | EVD-004, EVD-006 | Awaiting operator acceptance | platform |
-| [VAL-FRZ-002](../spec.md#success-criteria--verification-plan) | pending | EVD-005 | Awaiting operator acceptance | platform |
+| [VAL-FRZ-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004, EVD-006 | Operator accepted on 2026-11-06 after review | platform |
+| [VAL-FRZ-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Operator accepted on 2026-11-06 after review | platform |
 
 ## Approval and Safety Boundaries
 
@@ -82,5 +82,6 @@ Refuse a rewrite of a published Stage 90 member (AUD-0001 F-10). It executes
 - Residual risk: reference-style link definitions (`[x]: target`) are not
   normalized, so changing one is refused; a link-shaped text inside a code
   fence is normalized like a link; one `git cat-file` runs per changed blob.
-- Next owner: operator, for criterion acceptance and merge. Rollback: revert
+- Acceptance: the operator accepted VAL-FRZ-001 and 002 on 2026-11-06.
+- Next owner: operator, for merge. Rollback: revert
   the implementing commit.
