@@ -1,8 +1,8 @@
 ---
 title: "Folder CLAUDE.md Imports"
-version: "0.2.0"
+version: "0.2.1"
 type: "sdlc/spec"
-status: "in-review"
+status: "approved"
 owner: "platform"
 updated: "2026-11-06"
 layer: "specs"
