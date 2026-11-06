@@ -725,6 +725,17 @@ def _body_contract_diagnostics(
         ]
     column_indexes = {column: index for index, column in enumerate(header)}
     for row_index, row in enumerate(rows, start=1):
+        if len(row) != len(header):
+            # A padded or truncated row would hide its cells from every check.
+            diagnostics.append(
+                _diagnostic(
+                    "BODY-CONTRACT-ROW-WIDTH",
+                    path,
+                    profile,
+                    f"{len(header)} cells, as in the header",
+                    f"row {row_index}: {len(row)} cells",
+                )
+            )
         normalized = row + [""] * max(0, len(header) - len(row))
         normalized = normalized[: len(header)]
         for column_index, value in enumerate(normalized):
