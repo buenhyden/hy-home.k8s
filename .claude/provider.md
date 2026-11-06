@@ -1,6 +1,6 @@
 ---
 title: "Claude Provider Notes"
-version: "1.7.0"
+version: "1.8.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
@@ -54,8 +54,10 @@ invocation. The common procedure retains the selected role and user scope.
   (`--upload-pack`, `--receive-pack`, `--exec`, `--output`) are denied.
   Programs that open files themselves and text-obfuscated paths cannot be
   matched; they stay residual risk, not coverage.
-- Tracked settings register only `.claude/hooks/k8s-pre-edit.sh` for pre-action
-  safety, on the shell, structured file and notebook tools. It fails closed:
+- Tracked settings register `.claude/hooks/k8s-pre-edit.sh` for pre-action
+  safety, on the shell, structured file and notebook tools, and
+  `.claude/hooks/session-start.sh` on `SessionStart` for `compact|resume`, which
+  only prints the reading instruction, runs no QA and never blocks. It fails closed:
   an adapter or guard failure exits 2 with a reason on stderr. That file is
   this provider's thin adapter; the boundary itself is owned by
   `scripts/provider_write_guard.py`, which the adapter resolves from its own
@@ -73,15 +75,17 @@ invocation. The common procedure retains the selected role and user scope.
   accepted; it is not parity, and neither side is described as the other.
 - Claude loads root `CLAUDE.md`, not a folder `AGENTS.md`: with a `CLAUDE.md`
   present, Claude Code 2.1.319 reads no `AGENTS.md`, and the setting that loads
-  both is ignored in project settings (observed 2026-11-06). The pre-action
-  guard therefore returns each write target's folder `AGENTS.md` chain, root
-  excluded, as `hookSpecificOutput.additionalContext`, once per session (on
-  every call when the payload has no `session_id`; not again after a context
-  compaction, and an oversized file is only named); `systemMessage` reaches
-  only the user. Read-only tools are not hooked, so
-  before reading or reviewing in a directory, still read each `AGENTS.md` from
-  the root down to it explicitly, as
-  [agent execution](../.agents/governance/agent-execution.md) requires.
+  both is ignored in project settings (observed 2026-11-06). Each folder that
+  has an `AGENTS.md` therefore has a sibling `CLAUDE.md` whose whole content is
+  `@AGENTS.md`; Claude loads it, with the import, once Claude reads, writes or
+  edits a file in that folder (SPEC-0151; new 2.1.319 sessions observed the
+  import after one Read and after one Write). The documentation says it
+  reloads on demand after a compaction; that is not yet observed here.
+  The repository quality check refuses a missing or altered import. The root
+  `AGENTS.md` is the Codex gateway and is not imported. The pre-action guard
+  also names the target's folder `AGENTS.md` paths on every write, and a
+  `SessionStart` hook on `compact|resume` re-injects the instruction to read
+  them again; `systemMessage` reaches only the user.
 - Keep managed, project, and user instruction precedence intact. Use imports
   for shared context rather than copying policy into provider files.
 - `settings.json` sets `autoMemoryEnabled: false`, and the validator rejects

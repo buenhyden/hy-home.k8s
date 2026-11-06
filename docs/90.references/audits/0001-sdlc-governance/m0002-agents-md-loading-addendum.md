@@ -79,7 +79,7 @@ when the guard output changes.
 | Remediation | Owner | Due or decision date |
 | --- | --- | --- |
 | F-08 and F-09: the guard supplies each target's folder `AGENTS.md` chain, root excluded, through `additionalContext`, once per session (SPEC-0149) | platform | Done 2026-11-06 under SPEC-0149; criteria accepted (REQ-0003 Archived Lineage) |
-| F-09 for reads: read-only tools are not hooked, so explicit reads stay required | operator | Accepted residual |
+| F-09 for reads: Claude now loads each folder `AGENTS.md` through a sibling one-line `CLAUDE.md` import on a read, write or edit, and a session-start hook re-injects the reading instruction after a compaction (SPEC-0151) | platform | Done 2026-11-06 |
 | F-10: later changes to this pack go into a new dated member; m0001 is left as it now stands, because restoring its published bytes would restore links to a deleted package; `validate-document-contract-registry.py` now refuses such a rewrite against the staged index, including a rename Git pairs (`REFERENCE_PUBLISHED_REWRITE`, SPEC-0150); an unpaired delete-and-add escapes it, and the lifecycle validator separately refuses a `published` member returning to `draft` | platform | Decided and enforced 2026-11-06 |
 | F-06: repeat the Codex probe after the limit resets | operator | 2026-11-09 or later |
 

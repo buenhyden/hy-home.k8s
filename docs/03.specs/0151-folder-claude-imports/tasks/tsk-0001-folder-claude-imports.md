@@ -34,10 +34,10 @@ imports. It executes [SPEC-0151](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CLI-001](../spec.md#success-criteria--verification-plan) | Pairing check and Codex-only folder chain | platform | ready | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-CLI-002](../spec.md#success-criteria--verification-plan) | Files, profile and documentation | platform | ready | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-CLI-003](../spec.md#success-criteria--verification-plan) | Observed read-only Claude session | platform | ready | NOT_RUN | EVD-003 |
-| WORK-004 | [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | Session-start hook, per-provider event rule and per-edit path line | platform | ready | NOT_RUN | EVD-004 |
+| WORK-001 | [VAL-CLI-001](../spec.md#success-criteria--verification-plan) | Pairing check and Codex-only folder chain | platform | in-progress | PASS | EVD-006 |
+| WORK-002 | [VAL-CLI-002](../spec.md#success-criteria--verification-plan) | Files, profile and documentation | platform | in-progress | PASS | EVD-007 |
+| WORK-003 | [VAL-CLI-003](../spec.md#success-criteria--verification-plan) | Observed read-only Claude session | platform | in-progress | PASS | EVD-008, EVD-011 |
+| WORK-004 | [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | Session-start hook, per-provider event rule and per-edit path line | platform | in-progress | PASS | EVD-009, EVD-012 |
 
 ## Task Evidence
 
@@ -47,21 +47,31 @@ imports. It executes [SPEC-0151](../spec.md) through
 | EVD-002 | [VAL-CLI-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Strict checks and staged QA | Pending Spec approval | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-CLI-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Observed read-only Claude session | Pending Spec approval | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Focused tests red then green | Pending Spec approval | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-CLI-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests red then green | Working tree on `28eb59d7` (after `e665bc1f`) with the new tests and the old code | FAIL | Local run, 2026-11-06T09:24Z: `tests.test_repository_quality_rules` setUpClass error (`folder_claude_import_gaps` missing) and `tests.test_agent_governance` errors (`.claude/hooks/session-start.sh` missing) | no | none |
+| EVD-006 | [VAL-CLI-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests red then green | Working tree on `28eb59d7` (after `e665bc1f`) with the change | PASS | Local run, 2026-11-06T09:25Z to 09:30Z: hook, quality-rule, agent-governance, reference-pack and tooling-ownership suites OK; Claude gets the path line on every edit and no folder text, Codex gets the text once per session | yes | EVD-001 |
+| EVD-007 | [VAL-CLI-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Strict checks and staged QA | Staged index on `28eb59d7` with 15 folder `CLAUDE.md` files, the profile and the documentation | PASS | Local run, 2026-11-06T09:30Z: strict contract-registry, profile, link and lifecycle PASS after the consumers that enumerate folder entries were updated (Stage 90 root entry allowlist, infrastructure coverage matrix row, the `folder-agents-guides` surface route and two route exclusions in `scripts/validation/registry.json`, the Stage 01 and 03 filename allowlists in `quality.py`, and the seven `docs/` stage README indexes); full `python3 scripts/qa.py staged` exit 0 with only the existing live `platform-assurance-depth` DEFER rows; `test_document*` OK; `validate-agent-governance.py` PASS | yes | EVD-002 |
+| EVD-008 | [VAL-CLI-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Observed read-only Claude session | `claude -p --model haiku --allowedTools Read`, Claude Code 2.1.319, working tree with the 15 files | PASS | 2026-11-06T09:26Z: before any tool the session reported the `docs/05.operations/AGENTS.md` sentence absent; after one Read of `docs/05.operations/README.md` it reported `docs/CLAUDE.md`, `docs/AGENTS.md`, `docs/05.operations/CLAUDE.md` and `docs/05.operations/AGENTS.md` loaded and quoted line 3 of that `AGENTS.md`, which the README does not contain; this session also loaded `scripts/` and `infrastructure/` imports with full text on access | yes | EVD-003 |
+| EVD-009 | [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Focused tests red then green | Working tree on `28eb59d7` (after `e665bc1f`) with the change | PASS | Local run, 2026-11-06T09:25Z: `test_session_start_is_claude_only_and_compact_or_resume`, `test_session_start_hook_reinjects_the_reading_instruction` and `test_claude_gets_the_path_line_on_every_edit_and_no_text` OK; a Codex `SessionStart` and a Claude `startup` matcher are refused | yes | EVD-004 |
+| EVD-010 | [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Focused tests red then green | Working tree on `28eb59d7` (after `e665bc1f`) with the new tests and the old code | FAIL | Local run, 2026-11-06T09:24Z: the session-start and per-edit path tests fail before `.claude/hooks/session-start.sh` and the path line exist (same run as EVD-005) | no | none |
+| EVD-011 | [VAL-CLI-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Observed read-only Claude session | `claude -p --model haiku --allowedTools Write`, Claude Code 2.1.319, Write-first with no prior Read | PASS | 2026-11-06T09:46Z: a first run's Write was blocked by the user-level GateGuard hook, so no folder file loaded and only the guard's path line arrived; a second run retried after the GateGuard facts and, after the successful Write of the ignored `tests/__pycache__/agents-md-probe.txt`, reported `tests/CLAUDE.md` and `tests/AGENTS.md` loaded and quoted line 3 of `tests/AGENTS.md`; the folder text arrives with the tool result, after the write | yes | none |
+| EVD-012 | [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Focused tests red then green | Working tree on `28eb59d7` after the review fixes | PASS | Local run, 2026-11-06: the review found one BLOCK (Write-first unobserved, closed by EVD-011) and advisories; the validator now pins the SessionStart command to `.claude/hooks/session-start.sh`, the path-line test covers Edit and Write, and the compaction reload is stated as documented and unobserved; suites OK | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-CLI-001](../spec.md#success-criteria--verification-plan) | pending | none | Run the focused tests | platform |
-| [VAL-CLI-002](../spec.md#success-criteria--verification-plan) | pending | none | Run the strict checks | platform |
-| [VAL-CLI-003](../spec.md#success-criteria--verification-plan) | pending | none | Observe a new session | platform |
-| [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | pending | none | Run the focused tests | platform |
+| [VAL-CLI-001](../spec.md#success-criteria--verification-plan) | pending | EVD-006 | Awaiting operator acceptance | platform |
+| [VAL-CLI-002](../spec.md#success-criteria--verification-plan) | pending | EVD-007 | Awaiting operator acceptance | platform |
+| [VAL-CLI-003](../spec.md#success-criteria--verification-plan) | pending | EVD-008, EVD-011 | Awaiting operator acceptance | platform |
+| [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | pending | EVD-009, EVD-012 | Awaiting operator acceptance | platform |
 
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: the 15 folder `CLAUDE.md` files beside folder
   `AGENTS.md` files, `docs/99.templates/registry.json`, `.secrets.baseline`,
   `scripts/validation/repository/quality.py`, `scripts/provider_write_guard.py`,
+  `scripts/validate-document-contract-registry.py` (Stage 90 root entry),
+  `infrastructure/README.md` (coverage matrix row),
   `tests/test_repository_quality_rules.py`, `tests/test_k8s_pre_edit_hook.py`,
   `.claude/provider.md`, `.codex/provider.md`, `.claude/settings.json`
   (`SessionStart` only), `.claude/hooks/session-start.sh`,
@@ -81,4 +91,16 @@ imports. It executes [SPEC-0151](../spec.md) through
 
 ## Verification Summary
 
-Pending.
+- Tests: red on the old code (EVD-005), green after (EVD-006, EVD-009).
+- Static: strict checks and suites PASS; two consumers updated (EVD-007).
+- Claude runtime: new sessions loaded folder `CLAUDE.md` imports with the
+  `AGENTS.md` text after a Read (EVD-008) and after a Write-first (EVD-011);
+  this session loaded them on access too. A write blocked by another hook
+  loads nothing, but the guard's path line still arrives.
+- Not run: the session-start hook in a real compaction or resume, which
+  needs a later session; Codex delivery stays DEFER.
+- Residual risk: whether an `AGENTS.md` edited mid-session is reloaded is
+  undocumented; the shell heuristic can name a folder's rules for a command
+  that only runs a script there.
+- Next owner: operator, for criterion acceptance and merge. Rollback: revert
+  the implementing commits.

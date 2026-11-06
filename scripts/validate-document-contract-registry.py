@@ -350,6 +350,7 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
     allowed_root_entries = {
         "README.md",
         "AGENTS.md",
+        "CLAUDE.md",
         *(item[0] for item in REFERENCE_PACK_CATEGORIES),
     }
     for entry in root_entries:
@@ -358,7 +359,7 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
         except OSError:
             errors.append(f"REFERENCE_PACK_ROOT_ENTRY: {entry.name} is unavailable")
             continue
-        if entry.name in {"README.md", "AGENTS.md"}:
+        if entry.name in {"README.md", "AGENTS.md", "CLAUDE.md"}:
             if not stat.S_ISREG(mode):
                 errors.append(
                     f"REFERENCE_PACK_ROOT_ENTRY: {entry.name} must be regular"

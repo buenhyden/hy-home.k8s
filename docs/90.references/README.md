@@ -1,10 +1,10 @@
 ---
 title: "90.references"
-version: "0.2.1"
+version: "0.2.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-06"
 layer: "references"
 ---
 # 90.references
@@ -51,6 +51,7 @@ docs/90.references/
 ├── data/
 ├── research/
 ├── AGENTS.md
+├── CLAUDE.md
 └── README.md
 ```
 
@@ -60,6 +61,7 @@ docs/90.references/
 | [data/](./data/) | 데이터 pack collection |
 | [research/](./research/) | 외부 조사 pack collection |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
+| [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
 
 세 collection은 동일한 3단 구조를 따른다: collection router `README.md`,
 pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<slug>.md`.

@@ -2410,6 +2410,33 @@
       "placeholder_policy": "forbidden"
     },
     {
+      "id": "common/folder-claude-import",
+      "family": "common",
+      "mode": "native",
+      "path_pattern": "^(?!docs/98\\.archive/)(?!\\.claude/)(?:[^/]+/)+CLAUDE\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": null,
+      "frontmatter": {
+        "mode": "absent",
+        "required": [],
+        "optional": [],
+        "forbidden": [],
+        "order": [],
+        "constants": {}
+      },
+      "sections": {
+        "required": [],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "forbidden"
+    },
+    {
       "id": "common/native-skill-package",
       "family": "common",
       "mode": "native",

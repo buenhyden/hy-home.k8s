@@ -81,6 +81,7 @@ class NativeBoundaryTests(unittest.TestCase):
             ".codex/config.toml",
             ".codex/rules/default.rules",
             ".claude/hooks/k8s-pre-edit.sh",
+            ".claude/hooks/session-start.sh",
             ".agents/governance/model-selection.md",
             ".agents/workflows/work-lifecycle.md",
             # The common authority directory is a closed set checked in both
@@ -915,6 +916,36 @@ class NativeBoundaryTests(unittest.TestCase):
                     path.write_text(json.dumps(changed))
                     self.assert_rejected("AGENT-NATIVE-HOOK")
             path.write_text(json.dumps(original))
+
+    def test_session_start_is_claude_only_and_compact_or_resume(self):
+        """SPEC-0151: one session event re-injects reading guidance on Claude."""
+        import copy
+        import json
+
+        path = self.root / ".claude/settings.json"
+        original = json.loads(path.read_text())
+        self.assertEqual(
+            original["hooks"]["SessionStart"][0]["matcher"], "compact|resume"
+        )
+        self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
+        changed = copy.deepcopy(original)
+        changed["hooks"]["SessionStart"][0]["matcher"] = "startup"
+        path.write_text(json.dumps(changed))
+        self.assert_rejected("AGENT-NATIVE-HOOK")
+        changed = copy.deepcopy(original)
+        changed["hooks"]["SessionStart"][0]["hooks"][0]["command"] = (
+            'bash "$CLAUDE_PROJECT_DIR/.claude/hooks/k8s-pre-edit.sh"'
+        )
+        path.write_text(json.dumps(changed))
+        self.assert_rejected("AGENT-NATIVE-HOOK")
+        path.write_text(json.dumps(original))
+        codex = self.root / ".codex/hooks.json"
+        hooks = copy.deepcopy(self.CODEX_HOOKS)
+        hooks["hooks"]["SessionStart"] = copy.deepcopy(
+            original["hooks"]["SessionStart"]
+        )
+        codex.write_text(json.dumps(hooks))
+        self.assert_rejected("AGENT-NATIVE-HOOK")
 
     def test_registered_guard_command_carries_no_dead_environment(self):
         """A variable the guard never reads is residue, not configuration."""

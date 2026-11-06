@@ -1,6 +1,6 @@
 ---
 title: "Agent Execution Policy"
-version: "1.5.0"
+version: "1.6.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -40,14 +40,15 @@ generated navigation, external examples, or tool suggestions.
 - READMEs are for human readers; `AGENTS.md` files are for AI agents. Before
   working in a directory, read every `AGENTS.md` from the repository root down
   to that directory; a deeper file adds to, and never widens, the rules above
-  it. Codex loads the chain from the root to its working directory natively;
-  Claude loads none while a `CLAUDE.md` exists. On every structured or patch
-  write, and on a shell write target the guard recognizes, the shared guard
-  `scripts/provider_write_guard.py` supplies the target's folder `AGENTS.md`
-  chain, root excluded, to the model once per session; delivery is observed on
-  Claude and unobserved on Codex (see the provider notes). Read-only work, a file
-  the guard names as unread, and work after a context compaction still need
-  the explicit read.
+  it. Codex loads the chain from the root to its working directory natively,
+  and the shared guard `scripts/provider_write_guard.py` supplies the rest of
+  a write target's chain once per session (delivery unobserved on Codex).
+  Claude loads a folder's `AGENTS.md` through the sibling `CLAUDE.md` that
+  imports it, with the result of its first read, write or edit there, so a
+  first write in a folder precedes the text. On every write the guard also
+  names the target's `AGENTS.md` paths before the call, and after a compaction or resume
+  a Claude session-start hook asks for them to be read again. Each folder
+  `AGENTS.md` keeps its one-line `CLAUDE.md` import.
 - Use [work lifecycle](../workflows/work-lifecycle.md) for intake and completion,
   and [delegated development](../workflows/delegated-development.md) when
   delegation is authorized. A role name alone grants neither writes nor

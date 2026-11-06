@@ -44,10 +44,18 @@ PROVIDER_HOOK_PATHS = {
     "claude": ".claude/settings.json",
     "codex": ".codex/hooks.json",
 }
-# Only a pre-action event is registered. A Stop, compaction, or session event
-# that ran whole QA or called another agent would re-enter this repository's
-# own validation, so those events stay unregistered on both providers.
-PROVIDER_HOOK_EVENTS = frozenset({"PreToolUse"})
+# A pre-action event is registered on both providers. A Stop, compaction, or
+# session event that ran whole QA or called another agent would re-enter this
+# repository's own validation, so the only other event is Claude's
+# SessionStart on compact|resume, whose handler only prints the folder
+# AGENTS.md reading instruction (SPEC-0151).
+PROVIDER_HOOK_EVENTS = {
+    "claude": frozenset({"PreToolUse", "SessionStart"}),
+    "codex": frozenset({"PreToolUse"}),
+}
+SESSION_START_MATCHER = "compact|resume"
+# The only session-event handler; it prints guidance and runs no QA or agent.
+SESSION_START_SCRIPT = ".claude/hooks/session-start.sh"
 PROVIDER_HOOK_ROOTS = (".claude/hooks/", ".codex/hooks/")
 PROVIDER_HOOK_TIMEOUT_RANGE = range(1, 61)
 REGISTRY_PROJECTION_ROOTS = {
@@ -1006,8 +1014,25 @@ def validate_provider_hooks(root: Path, provider: str, hooks: Any) -> None:
     can be added without editing a frozen literal.
     """
 
-    if not isinstance(hooks, dict) or set(hooks) != PROVIDER_HOOK_EVENTS:
+    if not isinstance(hooks, dict) or set(hooks) != PROVIDER_HOOK_EVENTS[provider]:
         fail("AGENT-NATIVE-HOOK", f"{provider}: unregistered hook event set")
+    for group in hooks.get("SessionStart") or []:
+        handlers = group.get("hooks") if isinstance(group, dict) else None
+        if (
+            not isinstance(group, dict)
+            or group.get("matcher") != SESSION_START_MATCHER
+            or not isinstance(handlers, list)
+            or any(
+                not isinstance(handler, dict)
+                or SESSION_START_SCRIPT not in str(handler.get("command", ""))
+                for handler in handlers
+            )
+        ):
+            fail(
+                "AGENT-NATIVE-HOOK",
+                f"{provider}: SessionStart runs beyond {SESSION_START_SCRIPT} "
+                "on compact|resume",
+            )
     for groups in hooks.values():
         if not isinstance(groups, list) or not groups:
             fail("AGENT-NATIVE-HOOK", f"{provider}: empty hook event")

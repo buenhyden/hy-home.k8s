@@ -1,10 +1,10 @@
 ---
 title: "docs: 프로젝트 문서 허브"
-version: "0.6.1"
+version: "0.6.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-06"
 ---
 # docs: 프로젝트 문서 허브
 
@@ -45,6 +45,7 @@ Stage 04는 사용하지 않는다. 모든 변경이 모든 stage의 새 문서�
 | [98.archive](98.archive/README.md) | 검증하지 않는 historical archive. README와 구조만 유지 |
 | [99.templates](99.templates/README.md) | 유일한 문서 registry와 복사 가능한 template |
 | [AGENTS.md](AGENTS.md) | `docs/` 전체에 적용되는 AI 에이전트용 지시. 사람은 각 README를 읽는다 |
+| [CLAUDE.md](CLAUDE.md) | Claude가 이 폴더의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
 
 `.agents/roles/registry.json`은 문서 registry와 별개로 역할 ID, 권한, handoff,
 skill과 provider projection을 소유한다.

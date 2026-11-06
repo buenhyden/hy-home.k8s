@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.16.3"
+version: "0.16.4"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-06"
 layer: "templates"
 ---
 # 99.templates
@@ -152,6 +152,7 @@ Stage 90 collection contract가 요구하는 audit/data collection·pack 경로�
 | [templates/](./templates/) | 복사해서 쓰는 form catalog |
 | [registry.json](./registry.json) | Document Profile Registry |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
+| [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
 
 이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
 [form catalog](./templates/README.md)가 소유한다.

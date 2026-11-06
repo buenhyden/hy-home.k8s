@@ -1,10 +1,10 @@
 ---
 title: "02.architecture"
-version: "0.6.2"
+version: "0.6.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-06"
 layer: "architecture"
 ---
 # 02.architecture
@@ -60,6 +60,7 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 | [descriptions/](./descriptions/) | Architecture Description과 참조 모델 |
 | [decisions/](./decisions/) | 아키텍처 결정 기록(ADR) |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
+| [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
 
 ## Usage
 

@@ -32,6 +32,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             "is_task_evidence_record",
             "rel",
             "agents_router_gaps",
+            "folder_claude_import_gaps",
         }
         nodes = [
             node
@@ -100,6 +101,23 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             gaps({".github/AGENTS.md", ".github/README.md"}),
             [".github/repository-surface.md"],
         )
+
+    def test_folder_agents_file_needs_its_claude_import(self):
+        gaps = self.rules["folder_claude_import_gaps"]
+        good = {"docs/CLAUDE.md": "@AGENTS.md\n"}
+        read = lambda path: good.get(path, "other\n")  # noqa: E731
+        tracked = {"AGENTS.md", "CLAUDE.md", ".claude/CLAUDE.md", "docs/AGENTS.md"}
+        self.assertEqual(gaps(tracked | {"docs/CLAUDE.md"}, read), [])
+        self.assertEqual(gaps(tracked, read), ["docs/CLAUDE.md: missing"])
+        self.assertEqual(
+            gaps({"gitops/CLAUDE.md", "gitops/AGENTS.md"}, read),
+            ["gitops/CLAUDE.md: content must be exactly @AGENTS.md"],
+        )
+        self.assertEqual(
+            gaps({"policy/CLAUDE.md"}, lambda path: "@AGENTS.md\n"),
+            ["policy/AGENTS.md: missing for policy/CLAUDE.md"],
+        )
+        self.assertEqual(gaps({"docs/98.archive/x/AGENTS.md"}, read), [])
 
     def test_current_collection_index_header_uses_shared_navigation_contract(self):
         validator = self.document_validator
