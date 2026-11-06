@@ -1,6 +1,6 @@
 ---
 title: "Folder CLAUDE.md Imports"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-06"
@@ -34,10 +34,10 @@ imports. It executes [SPEC-0151](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CLI-001](../spec.md#success-criteria--verification-plan) | Pairing check and Codex-only folder chain | platform | in-progress | PASS | EVD-006 |
-| WORK-002 | [VAL-CLI-002](../spec.md#success-criteria--verification-plan) | Files, profile and documentation | platform | in-progress | PASS | EVD-007 |
-| WORK-003 | [VAL-CLI-003](../spec.md#success-criteria--verification-plan) | Observed read-only Claude session | platform | in-progress | PASS | EVD-008, EVD-011 |
-| WORK-004 | [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | Session-start hook, per-provider event rule and per-edit path line | platform | in-progress | PASS | EVD-009, EVD-012 |
+| WORK-001 | [VAL-CLI-001](../spec.md#success-criteria--verification-plan) | Pairing check and Codex-only folder chain | platform | completed | PASS | EVD-006 |
+| WORK-002 | [VAL-CLI-002](../spec.md#success-criteria--verification-plan) | Files, profile and documentation | platform | completed | PASS | EVD-007 |
+| WORK-003 | [VAL-CLI-003](../spec.md#success-criteria--verification-plan) | Observed read-only Claude session | platform | completed | PASS | EVD-008, EVD-011 |
+| WORK-004 | [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | Session-start hook, per-provider event rule and per-edit path line | platform | completed | PASS | EVD-009, EVD-012 |
 
 ## Task Evidence
 
@@ -60,10 +60,10 @@ imports. It executes [SPEC-0151](../spec.md) through
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-CLI-001](../spec.md#success-criteria--verification-plan) | pending | EVD-006 | Awaiting operator acceptance | platform |
-| [VAL-CLI-002](../spec.md#success-criteria--verification-plan) | pending | EVD-007 | Awaiting operator acceptance | platform |
-| [VAL-CLI-003](../spec.md#success-criteria--verification-plan) | pending | EVD-008, EVD-011 | Awaiting operator acceptance | platform |
-| [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | pending | EVD-009, EVD-012 | Awaiting operator acceptance | platform |
+| [VAL-CLI-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Operator accepted on 2026-11-06 after review | platform |
+| [VAL-CLI-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-007 | Operator accepted on 2026-11-06 after review | platform |
+| [VAL-CLI-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-008, EVD-011 | Operator accepted on 2026-11-06 after review | platform |
+| [VAL-CLI-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-009, EVD-012 | Operator accepted on 2026-11-06 after review | platform |
 
 ## Approval and Safety Boundaries
 
@@ -102,5 +102,6 @@ imports. It executes [SPEC-0151](../spec.md) through
 - Residual risk: whether an `AGENTS.md` edited mid-session is reloaded is
   undocumented; the shell heuristic can name a folder's rules for a command
   that only runs a script there.
-- Next owner: operator, for criterion acceptance and merge. Rollback: revert
+- Acceptance: the operator accepted VAL-CLI-001 to 004 on 2026-11-06.
+- Next owner: operator, for merge and a later compaction observation. Rollback: revert
   the implementing commits.
