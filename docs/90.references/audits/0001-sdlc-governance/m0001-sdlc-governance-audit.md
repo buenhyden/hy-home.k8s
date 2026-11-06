@@ -99,7 +99,7 @@ changes. Current truth is owned by those files, not this report.
 | D-2: the lifecycle gate refuses creation in `approved` or `published`, so approval and publication are separate commits | operator | Resolved 2026-11-06: drafted `f3d71d9a`, approved `4fcdf22a` |
 | F-06: observe Codex loading in a Codex session | operator | Accepted deferral |
 | R-1: whether a Spec's `Architecture` cell names the right AD or ADR, and F-02 and F-03, stay reviewer-judged. A link-target check would need a second typed link column in the body-contract schema, and the content is semantic | operator | Decided 2026-11-06: no automation; the semantic review in `quality.md` is the control |
-| F-07: refuse a Task Table row whose ID is not a work-item ID or whose cell count differs from the header | operator | Open; needs its own Stage 03 package (executable behavior) |
+| F-07: refuse a body-contract row whose cell count differs from its header; the ID pattern was not the defect | operator | Fixed 2026-11-06 under SPEC-0148: `BODY-CONTRACT-ROW-WIDTH` |
 
 Existing documents are not rewritten; the prompts reach documents through
 the templates, and `sdlc.md` scopes its rules by change kind.
@@ -122,7 +122,7 @@ Pre-approval observations on the staged index, branch
   documents created `approved` or `published`, and `TASK-PARENT-APPROVAL` for
   Task execution or evidence under a `draft` Spec. So the SPEC-0146 Task
   evidence waited for the approval commit `4fcdf22a` (D-2, resolved).
-- UNKNOWN: Codex loading (F-06). Not machine-checked by decision R-1: F-02, F-03 and the content of the SPEC-0147 column; its presence is checked. Open: F-07.
+- UNKNOWN: Codex loading (F-06). Not machine-checked by decision R-1: F-02, F-03 and the content of the SPEC-0147 column; its presence is checked. F-07 fixed by SPEC-0148.
 
 These are observations, not the Task's criterion evidence or a remediation
 PASS.

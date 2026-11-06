@@ -1302,5 +1302,53 @@ class SpecArchitectureColumnTests(unittest.TestCase):
         )
 
 
+class TaskTableRowWidthTests(unittest.TestCase):
+    """SPEC-0148: a row wider or narrower than its header is refused."""
+
+    def test_misplaced_evidence_row_is_refused(self) -> None:
+        registry = load_registry(ROOT)
+        profile = next(p for p in registry.profiles if p.profile_id == "sdlc/task")
+        second = "[VAL-P02-002](../spec.md#success-criteria--verification-plan)"
+        good = task_text(
+            "in-progress",
+            [
+                row(
+                    "WORK-001", status="in-progress", result="PASS", evidence="EVD-001"
+                ),
+                row(
+                    "WORK-002",
+                    criterion=second,
+                    status="in-progress",
+                    result="PASS",
+                    evidence="EVD-002",
+                ),
+            ],
+        ).replace('status: "in-progress"\n', "", 1)
+        misplaced = (
+            f"| EVD-004 | {UPSTREAM} | WORK-001 | Check | Staged index | PASS | "
+            "Local run | yes | none |"
+        )
+        bad = good.replace(
+            "\n## Task Evidence", "\n" + misplaced + "\n## Task Evidence", 1
+        )
+
+        def rules(text: str) -> set[str]:
+            return {
+                item.rule_id
+                for item in MARKDOWN.validate_document_text(
+                    text, TASK, profile, "strict"
+                )
+            }
+
+        self.assertNotIn("BODY-CONTRACT-ROW-WIDTH", rules(good))
+        self.assertIn("BODY-CONTRACT-ROW-WIDTH", rules(bad))
+        narrow = good.replace(
+            "\n## Task Evidence",
+            f"\n| WORK-003 | {UPSTREAM} | x |\n## Task Evidence",
+            1,
+        )
+        self.assertIn("BODY-CONTRACT-ROW-WIDTH", rules(narrow))
+
+
 if __name__ == "__main__":
     unittest.main()
