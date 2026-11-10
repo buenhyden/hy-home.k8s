@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.23.1"
+version: "0.23.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -65,10 +65,11 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 03.specs/
 ├── AGENTS.md
 ├── CLAUDE.md
+├── 0153-cumulative-lifecycle-history-validation/
 └── README.md
 ```
 
-현재 열린 package는 없다.
+현재 열린 승인된 package는 [SPEC-0153](./0153-cumulative-lifecycle-history-validation/)이다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 

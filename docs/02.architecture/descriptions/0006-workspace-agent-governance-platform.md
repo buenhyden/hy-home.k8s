@@ -421,6 +421,7 @@ historical evidence rather than parallel operating instructions.
 - **Accepted manual disposition amendment**: [ADR-0056](../decisions/0056-manual-document-disposition-review.md) qualifies the no-proof disposition and unconditional Git-recovery clauses and records the bounded local first-record approval exception; the user's acceptance and completed implementation are separately recorded in REQ-0003 Archived Lineage
 - **Local QA and release implementation**: `scripts/qa.py` and `scripts/release.py`
 - **Completed change**: SPEC-0152 (left the tree; Git history recovers it) produced the manual policy and bounded approval reader. Its accepted Task and exact three-file recovery route are summarized in [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage). Earlier Spec packages also remain recoverable through their lineage owners.
+- **Open validation follow-up**: approved [SPEC-0153](../../03.specs/0153-cumulative-lifecycle-history-validation/spec.md) scopes the separately observed cumulative ADR and Task history failures; implementation passed local behavior checks while local delivery and criterion acceptance remain pending, and it adds no new decision authority.
 - **Historical decisions**: [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md); earlier ADRs are in Archived Lineage
 
 The prior architecture narrative is recoverable from this same path at commit

@@ -146,7 +146,7 @@ Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git
 
 ## Traceability
 
-SPEC-0152 completed the current manual disposition policy change; its exact completed source and recovery proof are in [Archived Lineage](#archived-lineage). Earlier completed packages, including SPEC-0151 and SPEC-0150, are summarized there and recovered from Git history. The seven-stage W00–W11 follow-up roadmap remains future work in `git show 4033d38e:docs/03.specs/0152-manual-document-disposition-policy/plan.md` under `Deferred Roadmap`; this closure does not complete those stages.
+SPEC-0152 completed the current manual disposition policy change; its exact completed source and recovery proof are in [Archived Lineage](#archived-lineage). Earlier completed packages, including SPEC-0151 and SPEC-0150, are summarized there and recovered from Git history. The seven-stage W00–W11 follow-up roadmap remains future work in `git show 4033d38e:docs/03.specs/0152-manual-document-disposition-policy/plan.md` under `Deferred Roadmap`; this closure does not complete those stages. The approved [SPEC-0153](../03.specs/0153-cumulative-lifecycle-history-validation/spec.md) addresses the separately observed broad-history ADR and Task validation failures; its implementation passed local behavior checks while local delivery and criterion acceptance remain pending, and it does not revise SPEC-0152's completed evidence.
 
 ### Lifecycle Traceability
 
@@ -178,7 +178,7 @@ SPEC-0152 completed the current manual disposition policy change; its exact comp
 | REQ-0003-FR-0024 | No compatibility layer remains without a consumer and a unique rule. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0025 | The governance validator checks these obligations at the current Registry and governance owners. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0026 | Each evidence class is reported separately and never promoted without observation. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0027 | Lifecycle validation judges profile, state and edges; body corrections pass semantic and link checks. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0140 (left the tree; Git history recovers it) |
+| REQ-0003-FR-0027 | Lifecycle validation judges profile, state and edges; body corrections pass semantic and link checks. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0153](../03.specs/0153-cumulative-lifecycle-history-validation/spec.md), SPEC-0140 (left the tree; Git history recovers it) |
 | REQ-0003-FR-0028 | Each failure class has a direct negative test, and a missing required tool fails. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0029 | A reviewed main release-preparation PR controls canonical changelog and a single SemVer tag/Release producer; historical SHA tags are preserved. Actual publication needs separate observation. | N/A — SPEC-0136, SPEC-0137 left the tree; Git history recovers them |
 | REQ-0003-FR-0030 | Active scripts, tests and hosted surfaces are retired only after ongoing coverage and consumers transfer, with distinct failure meanings preserved. | N/A — SPEC-0140 left the tree; Git history recovers it |

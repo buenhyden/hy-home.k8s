@@ -1516,10 +1516,10 @@ def _history_registered_task_template_copy(
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
     proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
 ) -> bool:
-    """Recognize only an unchanged registered form's unique first Task draft."""
+    """Recognize an unchanged registered form's unique legal first Task state."""
     if (
         target.profile_id != "sdlc/task"
-        or target.status != "draft"
+        or target.status not in {"draft", "ready", "in-progress", "blocked"}
         or target.state_issue is not None
         or target.artifact_id is None
         or _tree_blob_oid(root, parent, path) is not None
@@ -1545,6 +1545,61 @@ def _history_registered_task_template_copy(
             doc.artifact_id == target.artifact_id for doc in proposed_documents.values()
         )
         == 1
+    )
+
+
+def _history_first_adr_authoring_copy(
+    root: Path,
+    parent: str,
+    commit: str,
+    source: PurePosixPath,
+    path: PurePosixPath,
+    target: LifecycleDocument,
+    cache: _CumulativeHistoryCache,
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+) -> bool:
+    """Admit only a distinct canonical ADR copied into a first proposed ADR."""
+    if (
+        target.profile_id != "sdlc/architecture-decision"
+        or target.status != "proposed"
+        or target.state_issue is not None
+        or target.artifact_id is None
+        or _tree_blob_oid(root, parent, path) is not None
+    ):
+        return False
+    source_document = base_documents.get(source)
+    if (
+        source_document is None
+        or source_document.profile_id != target.profile_id
+        or source_document.state_issue is not None
+        or source_document.artifact_id is None
+        or source_document.artifact_id == target.artifact_id
+    ):
+        return False
+    owner = _load_canonical_markdown_module()
+    source_profile = classify_path(cache.registry_at(parent), source)
+    target_profile = classify_path(cache.registry_at(commit), path)
+    return bool(
+        source_profile.profile_id == target.profile_id
+        and target_profile.profile_id == target.profile_id
+        and source_document.artifact_id
+        == owner.expected_artifact_id(source, source_profile)
+        and target.artifact_id == owner.expected_artifact_id(path, target_profile)
+        and sum(
+            doc.artifact_id == source_document.artifact_id
+            for doc in base_documents.values()
+        )
+        == 1
+        and all(
+            doc.artifact_id != target.artifact_id for doc in base_documents.values()
+        )
+        and sum(
+            doc.artifact_id == target.artifact_id for doc in proposed_documents.values()
+        )
+        == 1
+        and (source_blob := _tree_blob_oid(root, parent, source)) is not None
+        and source_blob == _tree_blob_oid(root, commit, source)
     )
 
 
@@ -1662,6 +1717,18 @@ def _history_rename_or_copy_into_path(
                         root, parent, commit, source, path, target_document, cache
                     ):
                         continue
+                    if _history_first_adr_authoring_copy(
+                        root,
+                        parent,
+                        commit,
+                        source,
+                        path,
+                        target_document,
+                        cache,
+                        base_documents,
+                        proposed_documents,
+                    ):
+                        continue
                     if (
                         allow_distinct_artifact_copy
                         and not (
@@ -1724,6 +1791,22 @@ def _history_first_appearance_has_deletion(
     """Reject any concurrent deletion before admitting a first appearance."""
 
     return any(change.kind == "D" for change in _tree_changes(root, parent, commit))
+
+
+def _matching_seed_registry_oid(root: Path, base_commit: str) -> str | None:
+    """Use compared base documents as a seed only under identical registry bytes."""
+
+    oid = _tree_blob_oid(root, base_commit, CURRENT_REGISTRY_PATH)
+    if oid is None:
+        return None
+    try:
+        current_bytes = read_bounded_bytes(
+            root / CURRENT_REGISTRY_PATH, max_bytes=DOCUMENT_BLOB_MAX_BYTES
+        )
+        historical_bytes = _blob_bytes(root, oid)
+    except (OSError, ValueError):
+        return None
+    return oid if current_bytes == historical_bytes else None
 
 
 class _CumulativeHistoryBudgetExceeded(RuntimeError):
@@ -1798,16 +1881,46 @@ class _CumulativeHistoryCache:
     seed_documents: Mapping[PurePosixPath, LifecycleDocument] | None = None
     seed_texts: Mapping[PurePosixPath, str] | None = None
     seed_registry: Registry | None = None
+    seed_registry_oid: str | None = None
     snapshots: OrderedDict[
         str,
         tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]],
     ] = field(default_factory=OrderedDict)
-    snapshot_sizes: dict[str, int] = field(default_factory=dict)
+    snapshot_blobs: dict[str, Mapping[PurePosixPath, str]] = field(default_factory=dict)
+    snapshot_registry_oids: dict[str, str | None] = field(default_factory=dict)
     cached_snapshot_bytes: int = 0
     snapshot_work_bytes: int = 0
     evidence: OrderedDict[tuple[str, str], LifecycleEvidenceContext] = field(
         default_factory=OrderedDict
     )
+
+    def _resident_size_with(self, additional: Mapping[PurePosixPath, str]) -> int:
+        """Bound live raw payloads by exact path/blob identity across snapshots."""
+
+        live = {
+            (path, oid): oid
+            for snapshot in self.snapshot_blobs.values()
+            for path, oid in snapshot.items()
+        }
+        live.update(((path, oid), oid) for path, oid in additional.items())
+        return _snapshot_blob_size(
+            self.root,
+            {
+                PurePosixPath(f"cache/{index}"): oid
+                for index, oid in enumerate(live.values())
+            },
+        )
+
+    def _needs_resident_eviction(self, additional: Mapping[PurePosixPath, str]) -> bool:
+        try:
+            return (
+                self._resident_size_with(additional)
+                > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES
+            )
+        except _CumulativeHistoryBudgetExceeded:
+            # The temporary union may exceed an object/path bound even when
+            # the new snapshot alone fits after an old snapshot is evicted.
+            return True
 
     def registry_at(self, commit: str) -> Registry:
         """Classify each history event with the registry that commit carried.
@@ -1838,22 +1951,36 @@ class _CumulativeHistoryCache:
         ):
             raise _CumulativeHistoryBudgetExceeded
         own_registry = self.registry_at(commit)
+        registry_oid = _tree_blob_oid(self.root, commit, CURRENT_REGISTRY_PATH)
+        prior_commit = next(
+            (
+                revision
+                for revision in reversed(self.snapshots)
+                if self.snapshot_registry_oids[revision] == registry_oid
+            ),
+            None,
+        )
+        prior_blobs = self.snapshot_blobs[prior_commit] if prior_commit else None
+        prior_snapshot = self.snapshots[prior_commit] if prior_commit else None
         has_seed = (
             self.seed_blobs is not None
             and self.seed_documents is not None
             and self.seed_texts is not None
         )
-        reproject_seed = has_seed and self.seed_registry is not None
-        reuse_seed = reproject_seed or (
-            has_seed and own_registry.schema_version == self.registry.schema_version
+        reuse_seed = (
+            prior_snapshot is None
+            and has_seed
+            and self.seed_registry_oid is not None
+            and self.seed_registry_oid == registry_oid
         )
+        reference_blobs = prior_blobs if prior_blobs is not None else self.seed_blobs
         changed_blobs = (
             {
                 path: oid
                 for path, oid in blobs.items()
-                if self.seed_blobs.get(path) != oid
+                if reference_blobs.get(path) != oid
             }
-            if reuse_seed
+            if prior_snapshot is not None or reuse_seed
             else blobs
         )
         size = _snapshot_blob_size(self.root, changed_blobs)
@@ -1861,45 +1988,60 @@ class _CumulativeHistoryCache:
             self.snapshot_work_bytes + size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES
         ):
             raise _CumulativeHistoryBudgetExceeded
+        reused_texts: dict[PurePosixPath, str] = {}
+        for path, oid in changed_blobs.items():
+            for revision, old_blobs in reversed(tuple(self.snapshot_blobs.items())):
+                if old_blobs.get(path) == oid:
+                    candidate_text = self.snapshots[revision][1][path]
+                    if candidate_text:
+                        reused_texts[path] = candidate_text
+                        break
+            if (
+                path not in reused_texts
+                and self.seed_blobs is not None
+                and self.seed_texts is not None
+                and self.seed_blobs.get(path) == oid
+                and self.seed_texts[path]
+            ):
+                reused_texts[path] = self.seed_texts[path]
         while self.snapshots and (
             len(self.snapshots) >= CUMULATIVE_HISTORY_CACHE_MAX_SNAPSHOTS
-            or self.cached_snapshot_bytes + size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES
+            or self._needs_resident_eviction(blobs)
         ):
             evicted, _ = self.snapshots.popitem(last=False)
-            self.cached_snapshot_bytes -= self.snapshot_sizes.pop(evicted)
+            del self.snapshot_blobs[evicted]
+            del self.snapshot_registry_oids[evicted]
             for key in tuple(self.evidence):
                 if evicted in key:
                     del self.evidence[key]
-        if self.cached_snapshot_bytes + size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES:
+        resident_size = self._resident_size_with(blobs)
+        if resident_size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES:
             raise _CumulativeHistoryBudgetExceeded
         changed_documents, changed_texts = _snapshot_projection(
             self.root,
             own_registry,
-            blobs if reproject_seed else changed_blobs,
-            **(
-                {
-                    "reused_texts": {
-                        path: self.seed_texts[path]
-                        for path, oid in blobs.items()
-                        if self.seed_blobs.get(path) == oid
-                    }
-                }
-                if reproject_seed
-                else {}
-            ),
+            changed_blobs,
+            reused_texts=reused_texts,
         )
-        if reuse_seed and not reproject_seed:
-            assert self.seed_documents is not None and self.seed_texts is not None
+        if prior_snapshot is not None or reuse_seed:
+            if prior_snapshot is not None:
+                reference_documents, reference_texts = prior_snapshot
+            else:
+                assert self.seed_documents is not None and self.seed_texts is not None
+                reference_documents, reference_texts = (
+                    self.seed_documents,
+                    self.seed_texts,
+                )
             snapshot = (
                 MappingProxyType(
                     {
-                        path: changed_documents.get(path, self.seed_documents.get(path))
+                        path: changed_documents.get(path, reference_documents.get(path))
                         for path in blobs
                     }
                 ),
                 MappingProxyType(
                     {
-                        path: changed_texts.get(path, self.seed_texts.get(path))
+                        path: changed_texts.get(path, reference_texts.get(path))
                         for path in blobs
                     }
                 ),
@@ -1910,8 +2052,9 @@ class _CumulativeHistoryCache:
             snapshot = changed_documents, changed_texts
         self.snapshot_work_bytes += size
         self.snapshots[commit] = snapshot
-        self.snapshot_sizes[commit] = size
-        self.cached_snapshot_bytes += size
+        self.snapshot_blobs[commit] = blobs
+        self.snapshot_registry_oids[commit] = registry_oid
+        self.cached_snapshot_bytes = resident_size
         return snapshot
 
     def evidence_context(self, parent: str, commit: str) -> LifecycleEvidenceContext:
@@ -1992,6 +2135,27 @@ def _history_event_diagnostics(
     task_binding = after.profile_id == "sdlc/task" and _committed_task_binding(
         root, commit
     )
+    if (
+        after.profile_id == "sdlc/architecture-decision"
+        and after.status != "superseded"
+    ):
+        # Ordinary ADR creation and forward edges have no body contract.
+        # Still bind identity to both complete immutable snapshots; a terminal
+        # supersession keeps the full reciprocal-evidence path below.
+        parent_documents = cache._snapshot(parent)[0]
+        commit_documents = cache._snapshot(commit)[0]
+        identity_diagnostics = artifact_identity_reuse_diagnostics(
+            parent_documents, commit_documents, base_mode="explicit-ref"
+        )
+        if any(item.path == path for item in identity_diagnostics):
+            return tuple(item for item in identity_diagnostics if item.path == path)
+        return compare_lifecycle(
+            event_registry,
+            base_documents,
+            {path: after},
+            base_mode="explicit-ref",
+            base_registry=base_registry,
+        )
     if cache.seed_blobs is not None and cache.seed_registry is None:
         # Ordinary initial/forward edges need no cross-document body evidence.
         # Terminal supersession events retain the full-snapshot path.
@@ -2091,7 +2255,12 @@ def _history_proves_cumulative_create(
                 and (
                     allow_distinct_artifact_copy
                     or classify_path(registry, path).profile_id
-                    in {"sdlc/task", "sdlc/spec", "sdlc/plan"}
+                    in {
+                        "sdlc/task",
+                        "sdlc/spec",
+                        "sdlc/plan",
+                        "sdlc/architecture-decision",
+                    }
                 )
                 else None
             )
@@ -2262,6 +2431,7 @@ def _admit_cumulative_create_diagnostics(
         seed_documents=base_snapshot,
         seed_texts=base_texts,
         seed_registry=base_registry if mode != "staged" else None,
+        seed_registry_oid=_matching_seed_registry_oid(root, base_commit),
     )
     remaining_events = [CUMULATIVE_HISTORY_MAX_CANDIDATE_EVENTS]
     admitted_indices: set[int] = set()
