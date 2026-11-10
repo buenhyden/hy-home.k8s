@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "3.0.0"
+version: "3.0.1"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-10"
+updated: "2026-11-11"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -146,7 +146,7 @@ Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git
 
 ## Traceability
 
-SPEC-0152 completed the current manual disposition policy change; its exact completed source and recovery proof are in [Archived Lineage](#archived-lineage). Earlier completed packages, including SPEC-0151 and SPEC-0150, are summarized there and recovered from Git history. The seven-stage W00–W11 follow-up roadmap remains future work in `git show 4033d38e:docs/03.specs/0152-manual-document-disposition-policy/plan.md` under `Deferred Roadmap`; this closure does not complete those stages. The approved [SPEC-0153](../03.specs/0153-cumulative-lifecycle-history-validation/spec.md) addresses the separately observed broad-history ADR and Task validation failures; its implementation passed local behavior checks while local delivery and criterion acceptance remain pending, and it does not revise SPEC-0152's completed evidence.
+SPEC-0152 completed the current manual disposition policy change; its exact completed source and recovery proof are in [Archived Lineage](#archived-lineage). Earlier completed packages, including SPEC-0151 and SPEC-0150, are summarized there and recovered from Git history. The seven-stage W00–W11 follow-up roadmap remains future work in `git show 4033d38e:docs/03.specs/0152-manual-document-disposition-policy/plan.md` under `Deferred Roadmap`; this closure does not complete those stages. The approved [SPEC-0153](../03.specs/0153-cumulative-lifecycle-history-validation/spec.md) addresses the separately observed broad-history ADR and Task validation failures; its implementation is locally committed and source-history checks passed, while Task criterion acceptance remains pending. It does not revise SPEC-0152's completed evidence.
 
 ### Lifecycle Traceability
 
