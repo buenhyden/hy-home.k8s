@@ -38,6 +38,10 @@ The following stages are future work, outside WORK-001. Each begins only after a
 | 6 | W08 | Design a hard total memory-capacity bound and selective retrieval; identify actual access and revocation actors before deciding their controls. |
 | 7 | W10–W11 | Correct root README guidance for token input, optional PostgreSQL and required Valkey; connect quality targets to actual Argo CD sync and recovery observations. |
 
+### Accepted Completion and Package Exit
+
+The current user separately accepted ADR-0056 and all three Task criteria on 2026-11-10 and requested completion with local commits. Record that decision and a completed Task in a source commit while ADR-0056 remains proposed. Freeze the package's consumer, hold, authority and Git-history-only method assessment in the Task before that commit. After the committed Spec, Plan and Task have each passed exact reachable `commit:path` and temporary byte-comparison checks, place their actual results in REQ-0003's surviving Archived Lineage. In one reviewed closure change, accept ADR-0056 with durable links and the deleted-Spec notation, update current consumers and navigation, and delete only the three finished package files. A failed proof or unresolved consumer or hold defers the affected deletion; completion evidence remains in Git. This later authorized package exit is distinct from the original implementation's non-goal of disposing of historical documents.
+
 ## Goals & In-Scope
 
 - State manual disposition preconditions and recovery evidence at the current lifecycle owner.
@@ -48,7 +52,7 @@ The following stages are future work, outside WORK-001. Each begins only after a
 
 ## Non-Goals & Out-of-Scope
 
-- No actual deletion, move, historical restoration or retroactive acceptance.
+- The original WORK-001 implementation has no actual deletion, move, historical restoration or retroactive acceptance. The later, separately authorized standard exit of this completed Stage 03 package's three files is governed by the Accepted Completion and Package Exit sequence above, with postcommit recovery proof before deletion; it is not historical-corpus disposition.
 - No archive catalog, ledger, archive-disposition schema or gate, CI or unrelated code change. The narrow first-record approval marker, lifecycle reader and focused regressions are in scope.
 - No native provider or live environment claim.
 
@@ -69,11 +73,11 @@ Inspect `git diff --check` and the final changed paths. Run `python3 scripts/qa.
 - Policy language could imply an automatic archive gate; compare the final text with ADR-0053's retained unvalidated archive boundary.
 - A new procedure could imply past deletions were invalid; scope it to future dispositions of current documents and preserve dated history.
 - The proposed ADR could be mistaken for accepted authority; retain its proposed status and record review and acceptance separately.
-- A first-record approval receipt could overstate user consent; bind separate user approval and independent review to exact Spec/Plan bytes, and keep Task criterion and ADR acceptance pending.
+- A first-record approval receipt could overstate user consent; bind separate user approval and independent review to exact Spec/Plan bytes, and keep Task criterion and ADR acceptance pending until their distinct operator decision. The later acceptance is now recorded in EVD-031; ADR metadata changes only with the proven package exit.
 
 ## Completion Criteria
 
-Each Spec criterion has an accepted verdict with applicable PASS evidence, no unresolved required failure, and an independent review without blocking findings. The approved ADR and current durable owners contain the accepted rule. Task 0001 records final scope, snapshot, rollback and next owner. Repository-static evidence does not satisfy remote or live observation.
+Each Spec criterion has an accepted verdict with applicable PASS evidence, no unresolved required failure, and an independent review without blocking findings. The operator's ADR acceptance event is recorded with the completed Task; ADR metadata becomes `accepted` atomically with the separately proven package exit. Current durable policy owners contain the rule throughout. Task 0001 records final scope, snapshot, rollback and next owner. Repository-static evidence does not satisfy remote or live observation.
 
 ## Promotion
 
@@ -81,3 +85,5 @@ Each Spec criterion has an accepted verdict with applicable PASS evidence, no un
 | --- | --- | --- |
 | Manual current-document disposition preconditions and Git recovery proof | [Document Lifecycle Policy](../../../.agents/governance/document-lifecycle.md) | Current Contract |
 | Reference disposition steps | [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md) | Procedure and Recovery and Escalation |
+| Task evidence location and completed-package self-recovery handoff | [Document Lifecycle Policy](../../../.agents/governance/document-lifecycle.md) | Current Contract |
+| Evidence-bound initial Spec/Plan approval and normal draft boundary | [Document Lifecycle Policy](../../../.agents/governance/document-lifecycle.md) | Current Contract; the Stage 99 Registry and lifecycle reader retain the bounded machine implementation, while authoring guidance routes ordinary evidence |

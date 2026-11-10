@@ -89,6 +89,14 @@ execution and criterion acceptance.
    disposition relationships; this amendment does not require them to add an
    Archived Lineage table. A routine disposition belongs to its existing
    work item and does not require a new Spec or a separate retention ledger.
+   When a completed Stage 03 package includes its own evidence-owning Task,
+   freeze the package's consumer, hold, authority and method decision in that
+   Task before its final source commit. After that commit and before deleting
+   any package file, record the actual reachable source and temporary byte
+   comparison for each retired Spec, Plan and Task file in the surviving
+   requirement owner's existing Archived Lineage, linked to the Task decision.
+   Recording a file's final-byte proof inside itself would change the bytes
+   being proved. This owner-location rule preserves every recovery condition.
 5. **Local deferral.** Missing evidence, unknown or unresolved holds,
    unsatisfied consumers, or unavailable authority defer only the affected
    disposition. Preserve the source in place, name the missing condition and

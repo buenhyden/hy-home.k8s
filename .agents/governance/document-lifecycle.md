@@ -153,7 +153,16 @@ evidence is not rewritten to satisfy a later profile.
   route in the current owner's existing `Archived Lineage`; other document
   types use their existing relationships or disposition record. Do not impose
   a new table or field on every profile, or a separate Spec or permanent catalog
-  for each simple disposition.
+  for each simple disposition. When a completed Stage 03 package includes its
+  own evidence-owning Task, freeze the package's consumer, hold, authority and
+  method decision in that Task before its final source commit. The completed
+  Spec, Plan and Task cannot each contain proof of restoring their own final
+  committed bytes without changing those bytes. Before deleting any package
+  file, record the actual reachable `commit:path` and temporary byte-comparison
+  result for each retired file in the surviving current owner's existing
+  `Archived Lineage`, linked to the frozen Task decision. This changes only the
+  location of the completed package's postcommit proof; every recovery and
+  authority condition still applies to every file in the retiring unit.
 - Choose Git-history-only disposition only after proving that the exact
   `commit:path` containing the bytes of the current source is reachable from
   the intended retained history and that a temporary restoration matches the
