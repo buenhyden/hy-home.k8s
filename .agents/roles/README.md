@@ -1,10 +1,10 @@
 ---
 title: "Agent Responsibilities"
-version: "2.2.2"
+version: "2.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-10"
 ---
 # Agent Responsibilities
 
@@ -34,8 +34,9 @@ Architecture Description과 ADR은 구조 관점과 지속 선택을, Spec은 �
 
 - 구조 변경은 완결된 Requirement Package ID와 영향받는 Spec까지 추적한다.
 - 승인된 결정을 바꿀 때는 후속 ADR을 쓴다. 대체된 ADR은 해당 AD의
-  `Archived Lineage` 표에 요약한 뒤 같은 변경에서 삭제하며, 원본은 Git 이력으로
-  복구한다.
+  `Archived Lineage` 표에 요약하고 [문서 수명주기 정책](../governance/document-lifecycle.md)의
+  처분 전 조건을 확인한 뒤 같은 변경에서 삭제한다. 일부 조항만 개정한 경우에는
+  기존 ADR을 보존한다.
 - 구현·운영·보안 영향은 각 책임 소유자에게 넘긴다. 모든 문서의 소유권을
   주장하지 않는다.
 
@@ -47,7 +48,8 @@ Architecture Description과 ADR은 구조 관점과 지속 선택을, Spec은 �
 유지한다. 이 경계는 공통 작성·탐색 관심사와 배정된 문서 편집을 다루며, 모든
 단계 내용에 대한 권한은 아니다. 실질 결정은 각 단계 소유자에게, 정확한 양식은
 Stage 99에 있다. 더는 현행이 아닌 Stage 01~03 문서는 현행 소유 문서의
-`Archived Lineage` 표에 요약한 뒤 삭제하고, 원본은 Git 이력으로 복구한다.
+`Archived Lineage` 표에 요약하고 [문서 수명주기 정책](../governance/document-lifecycle.md)의
+처분 전 조건을 확인한 뒤 삭제한다. 원본은 확인된 Git 이력에서 복구한다.
 Stage 98은 검증하지 않는 보관 자리다.
 
 - 선택한 profile과 template, 문서 언어 경계를 적용한다.

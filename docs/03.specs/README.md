@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.22.1"
+version: "0.23.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-10"
 layer: "specs"
 ---
 # 03.specs
@@ -65,10 +65,11 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 03.specs/
 ├── AGENTS.md
 ├── CLAUDE.md
+├── 0152-manual-document-disposition-policy/
 └── README.md
 ```
 
-현재 열린 package는 없다.
+현재 열린 package는 [SPEC-0152](./0152-manual-document-disposition-policy/)다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
@@ -82,7 +83,7 @@ SPEC-0141([REQ-0002](../01.requirements/0002-argo-notifications-slack.md#archive
 2. 새 Spec은 `../99.templates/templates/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<####-slug>/spec.md`다.
 3. 변경 한정 설계와 수용 기준은 `spec.md`, 실행 순서·위험·예정 검증·rollback은 `plan.md`, 실제 실행·검사 사실·기준별 수용 판정은 package-local Task record가 소유한다. 범위나 근거가 승인 계약을 바꾸면 영향을 받는 Spec·Plan을 재검토한다.
 4. 장기 구조는 Stage 02 Architecture Description으로, 중요한 장기 결정은 ADR로 승격한다. 폐기된 Stage 04 경로는 새 문서에서 사용하지 않는다.
-5. 끝난 package는 지속 계약을 현재 소유 문서로 승격한 뒤 삭제하고 Requirement의 `Archived Lineage` 표에 요약한다. 대체되거나 철회된 단독 문서도 소유 문서의 `Archived Lineage` 표에 요약한 뒤 삭제하며 별도 기록이나 migration을 만들지 않는다([ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md)). 원본은 Git history가 복구한다.
+5. 끝난 package는 지속 계약을 현재 소유 문서로 승격하고 Requirement의 `Archived Lineage`에 요약한다. 대체되거나 철회된 단독 문서도 소유 문서에 요약한다. 삭제 전에는 [문서 수명주기 정책](../../.agents/governance/document-lifecycle.md)의 처분 조건을 확인하며, 원본은 확인된 Git 이력에서 복구한다([ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md)). 개별 단순 처분마다 새 Spec을 만들지 않는다.
 
 ### Relative Link Rules
 

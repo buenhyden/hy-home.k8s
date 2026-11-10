@@ -1,10 +1,10 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.8.1"
+version: "0.9.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-10"
 layer: "architecture"
 ---
 # 02.architecture/decisions (ADR)
@@ -74,12 +74,13 @@ layer: "architecture"
 | [`./0053-unvalidated-archive.md`](./0053-unvalidated-archive.md) | `docs/98.archive`를 검증하지 않고 Git history로만 복구 |
 | [`./0054-platform-decision-current-state-amendment.md`](./0054-platform-decision-current-state-amendment.md) | 플랫폼 ADR(0011, 0012, 0014, 0026, 0041, 0050)의 현행 불일치 조항을 운영자 승인으로 한정 개정 |
 | [`./0055-governance-decision-current-state-amendment.md`](./0055-governance-decision-current-state-amendment.md) | 거버넌스 ADR(0030, 0031, 0033, 0036, 0047, 0048, 0053)의 현행 불일치 조항을 운영자 승인으로 한정 개정 |
+| [`./0056-manual-document-disposition-review.md`](./0056-manual-document-disposition-review.md) | 현재 문서 처분 전 소비자·보존·권한·Git 원문 복구를 수동으로 확인하는 개정안 |
 
 ## Usage
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `../descriptions/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/templates/architecture/decision.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
-3. 이 log에는 superseded·retired·deprecated 상태의 ADR을 두지 않는다. 결정을 대체하는 변경은 새 ADR의 `supersedes`와 Traceability에 이전 ADR ID를 적고, 이전 ADR을 해당 AD의 `Archived Lineage` 표에 요약한 뒤 같은 변경에서 삭제한다. 원본은 Git history로만 복구하며 redirect나 본문 복제본을 만들지 않는다.
+3. 이 log에는 superseded·retired·deprecated 상태의 ADR을 두지 않는다. 결정 전체를 대체할 때는 새 ADR의 `supersedes`와 Traceability에 이전 ID를 적고, 해당 AD의 `Archived Lineage`에 요약한다. [문서 수명주기 정책](../../../.agents/governance/document-lifecycle.md)의 처분 조건을 확인한 뒤 같은 변경에서 삭제한다. 일부 조항만 개정할 때는 기존 ADR을 보존하고 새 ADR에 개정 범위를 적는다.
 4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
 6. ADR 번호는 재사용하지 않는다. 삭제된 ADR의 번호도 다시 쓰지 않으며, 기존 번호의 의미나 원래 승인·이력을 새 번호로 고쳐 쓰지 않는다.

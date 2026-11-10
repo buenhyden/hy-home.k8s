@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "3.3.1"
+version: "3.4.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-10"
 ---
 
 # Document Authoring Policy
@@ -160,16 +160,27 @@ express ownership, not a one-way waterfall.
     reciprocal lifecycle relationships and the Archived Lineage summary in the
     owning current document; recover removed bytes from Git history rather than
     rewriting history, leaving redirects, or keeping a second recovery ledger.
+    Before a current document leaves its stage, follow the manual consumer,
+    preservation, hold and authorization review in
+    [document lifecycle](document-lifecycle.md#current-contract). If
+    Git-history-only disposition is selected, also prove exact Git recovery.
+    Keep the decision and applicable recovery evidence in the existing Task
+    and current owner;
+    unresolved conditions defer only that disposition.
 14. Run the checks selected by the affected paths and record evidence in the
     owning Task using [quality policy](quality.md).
 
-Architecture Description은 요구와 연결된 품질 시나리오의 자극·환경·응답·측정값,
-구조 선택과 ADR, 책임과 관계를 읽을 수 있는 context/container 관점을 설명한다.
-Stage 90의 Audit는 기준·검사 범위·관측·심각도와 근거가 있는 발견·교정 owner·검증
-상태를, Research는 질문·방법·출처별 주장·한계·권고를, Data는 범위와 출처·생성
-방법·필드 의미와 단위·실제 사실·노후화 경계를 각각 소유한다. Registry는 지역
-heading과 형식을, 양식은 작성 출발점을 제공하며 사실·판정·현재 권한은 각 문서의
-실제 근거와 소유자가 결정한다.
+An Architecture Description explains requirement-linked quality scenarios,
+including stimulus, environment, response, and measure; structural choices
+and ADRs; and a context/container view that makes responsibilities and
+relationships readable. In Stage 90, an Audit owns criteria, check scope,
+observations, evidenced findings with severity, corrective owners, and
+verification state. Research owns questions, methods, claims by source,
+limitations, and recommendations. Data owns scope and provenance, production
+method, field meanings and units, observed facts, and staleness bounds. The
+Registry owns local headings and form, and templates provide a starting point;
+each document's actual evidence and owner determine its facts, decisions, and
+current authority.
 
 Governed Markdown uses the ordered common prefix "title", "version",
 "type", "status", "owner", and "updated"; later keys appear only when the
@@ -188,24 +199,28 @@ TITLE, OWNER, UPDATED, ARTIFACT_ID and PARENT_ID; parent_ids names exactly one
 direct structural owner rather than a duplicate spec_id. Authored documents contain none
 of those markers. Template history belongs to Registry contract version and
 Git, not to the created document's "version".
-Registry의 `document_language`가 문서별 언어를 소유한다. Navigation,
-reference-pack, operations profile은 한국어가 기본이다. `.agents/`의 governed
-Markdown에는 새 설명을 한국어로 쓰며 기존 영어 본문도 유효하다. 기계 key와 필수
-heading은 등록된 문법을 유지한다. `.agents/`의 비 Markdown 파일과 `.claude/`,
-`.codex/`의 non-README 파일은 영어 전용이다. README는 navigation profile을
-따른다. 그 밖의 현재 문서, 특히 Stage 01~03의 non-README 저술은 영어를
-유지하고 agent requirement section도 영어다. Template의 author prompt는
-등록된 언어를 따르며, 생성된 현행 산출물을 손으로 고치거나 taxonomy 밖의
-저술 트리를 만들지 않는다.
+The Registry's `document_language` owns each document's language. Navigation,
+reference-pack, and operations profiles default to Korean. Policies under
+`.agents/governance/` use English. New prose in governed Markdown elsewhere
+under `.agents/` defaults to Korean, and existing English prose remains valid.
+Machine keys and required headings retain their registered grammar.
+Non-Markdown files under `.agents/`, and non-README files under `.claude/` and
+`.codex/`, use English only. READMEs follow the navigation profile. Other
+current documents, especially non-README Stage 01–03 authored documents,
+remain English, as do agent requirement sections. Template author prompts
+follow the registered language. Do not hand-edit generated current artifacts
+or create authored trees outside the taxonomy.
 
-Stage 99 Registry의 선택적 `shared_contract`는 승인된 공동 판본과 이 지역
-adapter를 식별한다. 고정된 원본 revision과 digest는 검토한 bytes를 가리키며,
-`approval_ref`는 별도 공동 결정을 기록한다. Registry의 stage 값은 지역
-선언이지 그 자체로 수용 증거가 아니다. 실제 지역 채택에는 소유 Task의 통합
-검사·독립 검토·기준 판정이 필요하고, 공동 채택에는 각 저장소의 적용 근거가
-필요하다. 이 adapter의 상태·언어·native 확장은 명시적으로 유지한다. 새 공동
-판본에는 실제 소유자 결정과 채택 근거가 필요하며, 별도 지역 WGOV core를
-만들지 않는다.
+The Stage 99 Registry's optional `shared_contract` identifies the approved
+shared edition and this local adapter. Its pinned source revision and digest
+identify the reviewed bytes; `approval_ref` records a separate shared
+decision. A Registry stage value is a local declaration, not acceptance
+evidence by itself. Actual local adoption requires the owning Task's
+integration check, independent review, and criterion decision. Shared
+adoption also requires application evidence from each repository. Keep this
+adapter's status, language, and native extensions explicit. A new shared
+edition requires an actual owner decision and adoption evidence; do not create
+a separate local WGOV core.
 
 For Guide, Policy and Runbook, use the selected role's ordered sections and
 place its existing Lifecycle Traceability table under Related Documents.

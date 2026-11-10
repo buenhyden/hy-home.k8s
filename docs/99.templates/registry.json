@@ -5883,6 +5883,7 @@
       "Registry document_language, Korean-allowed common agent Markdown, and Codex/Claude native syntax",
       "Local candidate Task first-recording of observed draft, ready, in-progress, or blocked state",
       "Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval",
+      "Local candidate Spec/Plan first-recording as approved after actual batch review and approval",
       "Advisory shared workspace-memory SQLite store with Task and repository authority"
     ]
   }

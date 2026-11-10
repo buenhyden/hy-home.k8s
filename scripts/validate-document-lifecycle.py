@@ -897,6 +897,204 @@ def _local_plan_task_contract_issues(
     return tuple(issues)
 
 
+def _receipt_object(value: str, keys: frozenset[str]) -> dict[str, object] | None:
+    """Parse one bounded Task receipt without admitting duplicate JSON keys."""
+
+    if len(value.encode("utf-8")) > 4096:
+        return None
+
+    def unique(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        result: dict[str, object] = {}
+        for key, item in pairs:
+            if key in result:
+                raise ValueError("duplicate receipt key")
+            result[key] = item
+        return result
+
+    try:
+        parsed = json.loads(value, object_pairs_hook=unique)
+    except (ValueError, TypeError):
+        return None
+    return parsed if isinstance(parsed, dict) and parsed.keys() == keys else None
+
+
+def _new_approval_receipts(
+    task_path: PurePosixPath,
+    views: Mapping[PurePosixPath, LifecycleEvidenceDocument],
+    base_texts: Mapping[PurePosixPath, str],
+    spec_hash: str,
+    plan_hash: str,
+    spec_id: str,
+    plan_id: str,
+) -> bool:
+    """Check structure and exact review bytes; actor truth remains human-owned."""
+
+    view = views.get(task_path)
+    if view is None or view.document.profile_id != "sdlc/task":
+        return False
+    rows = [dict(cells) for cells in view.task_evidence_rows]
+    old_rows = (
+        _link_validator_module().task_base_evidence_rows(base_texts[task_path])
+        if task_path in base_texts
+        else []
+    )
+    if old_rows is None:
+        return False
+    approval_keys = frozenset(
+        {
+            "actor",
+            "approval_ref",
+            "review_ref",
+            "scope",
+            "reviewed_spec_sha256",
+            "reviewed_plan_sha256",
+            "validity",
+            "revocation",
+        }
+    )
+    old_ids = {row.get("Evidence", "").strip() for row in old_rows}
+    current_approvals = [
+        (row, receipt)
+        for row in rows
+        if row.get("Check", "").strip() == "Spec/Plan first-record approval"
+        and row.get("Evidence", "").strip() not in old_ids
+        for receipt in (_receipt_object(row.get("Input", ""), approval_keys),)
+        if receipt is not None
+        and receipt["reviewed_spec_sha256"] == spec_hash
+        and receipt["reviewed_plan_sha256"] == plan_hash
+    ]
+    if len(current_approvals) != 1:
+        return False
+    approval, approval_input = current_approvals[0]
+    if not isinstance(approval_input["review_ref"], str):
+        return False
+    reviews = [
+        row
+        for row in rows
+        if row.get("Check", "").strip() == "Independent semantic review"
+        and row.get("Evidence", "").strip() == approval_input["review_ref"]
+    ]
+    if len(reviews) != 1:
+        return False
+    review = reviews[0]
+    for row in (review, approval):
+        if any(
+            row.get(key, "").strip() != value
+            for key, value in (
+                ("Result", "PASS"),
+                ("Required", "yes"),
+                ("Resolves", "none"),
+            )
+        ):
+            return False
+    review_id = review.get("Evidence", "").strip()
+    approval_id = approval.get("Evidence", "").strip()
+    evidence_id = r"EVD-(?:[A-Z0-9]+-)*[0-9]{3}"
+    if not all(re.fullmatch(evidence_id, item) for item in (review_id, approval_id)):
+        return False
+    if (
+        review_id == approval_id
+        or sum(row.get("Evidence", "").strip() == review_id for row in rows) != 1
+        or sum(row.get("Evidence", "").strip() == approval_id for row in rows) != 1
+        or any(
+            row.get("Evidence", "").strip() in {review_id, approval_id}
+            for row in old_rows
+        )
+    ):
+        return False
+    if rows.index(review) >= rows.index(approval):
+        return False
+    review_input = _receipt_object(
+        review.get("Input", ""), frozenset({"spec_sha256", "plan_sha256"})
+    )
+    if review_input != {"spec_sha256": spec_hash, "plan_sha256": plan_hash}:
+        return False
+    approval_ref = approval_input["approval_ref"]
+    return bool(
+        approval_input["actor"] == "user"
+        and isinstance(approval_ref, str)
+        and approval_ref.strip() == approval_ref
+        and approval_ref.casefold() not in {"", "none", "pending", "tbd", "todo"}
+        and "{{" not in approval_ref
+        and "}}" not in approval_ref
+        and approval_input["review_ref"] == review_id
+        and approval_input["scope"] == [spec_id, plan_id]
+        and approval_input["reviewed_spec_sha256"] == spec_hash
+        and approval_input["reviewed_plan_sha256"] == plan_hash
+        and approval_input["validity"] == "confirmed"
+        and approval_input["revocation"] == "none"
+    )
+
+
+def _approved_initial_paths(
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_texts: Mapping[PurePosixPath, str],
+    base_texts: Mapping[PurePosixPath, str],
+    views: Mapping[PurePosixPath, LifecycleEvidenceDocument],
+) -> frozenset[PurePosixPath]:
+    """Admit only one newly approved, typed package pair per exact snapshot."""
+
+    admitted: set[PurePosixPath] = set()
+    for spec_path, spec in proposed_documents.items():
+        if spec.profile_id != "sdlc/spec" or spec.status != "approved":
+            continue
+        package = spec_path.parent
+        if spec_path != package / "spec.md" or spec_path in base_documents:
+            continue
+        plan_path = package / "plan.md"
+        plan = proposed_documents.get(plan_path)
+        if (
+            plan is None
+            or plan.profile_id != "sdlc/plan"
+            or plan.status != "approved"
+            or plan_path in base_documents
+        ):
+            continue
+        expected = direct_parent(plan_path, "sdlc/plan")
+        if expected is None or expected[0] != spec_path:
+            continue
+        spec_id = expected[1]
+        plan_id = f"{spec_id}-PLAN-0001"
+        try:
+            spec_metadata = frontmatter_mapping(proposed_texts[spec_path])
+            plan_metadata = frontmatter_mapping(proposed_texts[plan_path])
+        except (KeyError, ValueError, TypeError):
+            continue
+        if (
+            spec_metadata.get("artifact_id") != spec_id
+            or plan_metadata.get("artifact_id") != plan_id
+            or plan_metadata.get("parent_ids") != [spec_id]
+            or (spec.artifact_id is not None and spec.artifact_id != spec_id)
+            or (plan.artifact_id is not None and plan.artifact_id != plan_id)
+        ):
+            continue
+        spec_hash = hashlib.sha256(
+            proposed_texts[spec_path].encode("utf-8")
+        ).hexdigest()
+        plan_hash = hashlib.sha256(
+            proposed_texts[plan_path].encode("utf-8")
+        ).hexdigest()
+        for task_path, task in proposed_documents.items():
+            if task.profile_id != "sdlc/task" or task_path.parent != package / "tasks":
+                continue
+            task_parent = direct_parent(task_path, "sdlc/task")
+            if task_parent != (plan_path, plan_id):
+                continue
+            try:
+                task_metadata = frontmatter_mapping(proposed_texts[task_path])
+            except (KeyError, ValueError, TypeError):
+                continue
+            if task_metadata.get("parent_ids") != [plan_id]:
+                continue
+            if _new_approval_receipts(
+                task_path, views, base_texts, spec_hash, plan_hash, spec_id, plan_id
+            ):
+                admitted.update((spec_path, plan_path))
+                break
+    return frozenset(admitted)
+
+
 def _evidence_context(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -1122,6 +1320,9 @@ def _evidence_context(
         status_changed_paths=status_changed,
         body_changed_paths=body_changed | created,
         created_paths=created,
+        approved_initial_paths=_approved_initial_paths(
+            base_documents, proposed_documents, proposed_texts, base_texts, views
+        ),
         base_task_rows=MappingProxyType(base_task_rows),
         base_task_evidence_rows=MappingProxyType(base_task_evidence_rows),
         local_contract_issues=_local_plan_task_contract_issues(
@@ -1347,6 +1548,42 @@ def _history_registered_task_template_copy(
     )
 
 
+def _history_first_approved_template_copy(
+    root: Path,
+    parent: str,
+    commit: str,
+    source: PurePosixPath,
+    path: PurePosixPath,
+    target: LifecycleDocument,
+    cache: _CumulativeHistoryCache,
+) -> bool:
+    """Admit a registered Spec/Plan form copied into a receipt-bound new pair."""
+
+    if (
+        target.profile_id not in {"sdlc/spec", "sdlc/plan"}
+        or target.status != "approved"
+        or target.state_issue is not None
+        or target.artifact_id is None
+        or _tree_blob_oid(root, parent, path) is not None
+    ):
+        return False
+    profile = classify_path(cache.registry_at(commit), path)
+    if profile.profile_id != target.profile_id or source != profile.template:
+        return False
+    for revision in (parent, commit):
+        historical = classify_path(cache.registry_at(revision), path)
+        if historical.profile_id != target.profile_id or historical.template != source:
+            return False
+    source_blob = _tree_blob_oid(root, parent, source)
+    owner = _load_canonical_markdown_module()
+    return bool(
+        source_blob is not None
+        and source_blob == _tree_blob_oid(root, commit, source)
+        and target.artifact_id == owner.expected_artifact_id(path, profile)
+        and path in cache.evidence_context(parent, commit).approved_initial_paths
+    )
+
+
 def _history_rename_or_copy_into_path(
     root: Path,
     parent: str,
@@ -1421,8 +1658,16 @@ def _history_rename_or_copy_into_path(
                         proposed_documents,
                     ):
                         continue
+                    if _history_first_approved_template_copy(
+                        root, parent, commit, source, path, target_document, cache
+                    ):
+                        continue
                     if (
                         allow_distinct_artifact_copy
+                        and not (
+                            target_document.profile_id in {"sdlc/spec", "sdlc/plan"}
+                            and target_document.status == "approved"
+                        )
                         and source_document is not None
                         and source_document.state_issue is None
                         and source_document.artifact_id is not None
@@ -1759,7 +2004,11 @@ def _history_event_diagnostics(
         )
         if any(item.path == path for item in identity_diagnostics):
             return tuple(item for item in identity_diagnostics if item.path == path)
-        if task_binding:
+        if task_binding or (
+            before is None
+            and after.profile_id in {"sdlc/spec", "sdlc/plan"}
+            and after.status == "approved"
+        ):
             return compare_lifecycle(
                 event_registry,
                 base_documents,
@@ -1841,7 +2090,8 @@ def _history_proves_cumulative_create(
                 if not appeared
                 and (
                     allow_distinct_artifact_copy
-                    or classify_path(registry, path).profile_id == "sdlc/task"
+                    or classify_path(registry, path).profile_id
+                    in {"sdlc/task", "sdlc/spec", "sdlc/plan"}
                 )
                 else None
             )
@@ -1896,24 +2146,15 @@ def _history_proves_cumulative_create(
                 if prior_blob is not None:
                     return False
                 current = _history_document(history_cache, commit, path)
-                profile = classify_path(history_cache.registry_at(commit), path)
-                domain = profile.lifecycle_domain
-                assert domain is not None
-                inbound = {target for _, target in domain.transitions}
-                if (
-                    current.status is None
-                    or current.status
-                    not in {state for state, _ in domain.states if state not in inbound}
-                    or _history_event_diagnostics(
-                        root,
-                        registry,
-                        path,
-                        parent,
-                        commit,
-                        None,
-                        current,
-                        history_cache,
-                    )
+                if current.status is None or _history_event_diagnostics(
+                    root,
+                    registry,
+                    path,
+                    parent,
+                    commit,
+                    None,
+                    current,
+                    history_cache,
                 ):
                     return False
                 appeared = True

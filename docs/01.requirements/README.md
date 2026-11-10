@@ -1,10 +1,10 @@
 ---
 title: "01.requirements"
-version: "0.8.1"
+version: "0.9.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-10"
 layer: "requirements"
 ---
 # 01.requirements
@@ -72,7 +72,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 4. 문제·목표·stakeholder 요구, 기능·비기능·interface 요구, 제약, acceptance 기준과 범위·비범위를 구현 독립적으로 작성한다.
 5. 관련 `../02.architecture/descriptions/`, `../02.architecture/decisions/`, `../03.specs/` 추적 링크를 함께 갱신한다. 변경 가능한 실행 계약과 interface 구현 산출물은 Stage 03에 둔다.
 6. Agent 기능 요구에는 허용·금지 행동과 human-in-the-loop 기준을 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
-7. 이 stage에는 superseded·retired·deprecated 상태를 두지 않는다. 대체되거나 철회된 요구는 후속 문서의 `supersedes`와 Traceability에 ID를 남기고, 현재 소유 문서의 `Archived Lineage` 표에 요약한 뒤 같은 변경에서 삭제한다. 원본은 Git history가 복구한다([Document Lifecycle](../../.agents/governance/document-lifecycle.md)).
+7. 이 stage에는 superseded·retired·deprecated 상태를 두지 않는다. 대체되거나 철회된 요구는 후속 문서의 `supersedes`와 Traceability에 ID를 남기고, 현재 소유 문서의 `Archived Lineage` 표에 요약한다. 같은 변경에서 삭제하기 전에는 [Document Lifecycle](../../.agents/governance/document-lifecycle.md)의 소비자·보존·권한·복구 확인을 거친다.
 
 ### Relative Link Rules
 
@@ -89,7 +89,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 - AD와 Spec은 `REQ-####-(FR|NFR|IF)-####` 전체 요구 ID를 추적한다.
 - Agent 기능인 경우 사용 시나리오, 허용/금지 행동, human-in-the-loop 요구를 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
 - 후속 AD/ADR/Spec이 아직 없으면 없는 링크를 만들지 않고, 문서 인덱스와 Requirement Package의 `Related Documents`에 후속 갭으로 표시한다.
-- 현재 구현과 맞지 않는 변경 한정 실행 계약을 Stage 01에 보존하지 않는다. 대체·완료된 문서는 Architecture Description의 Archived Lineage 표에 요약하고 삭제하며, 원본은 Git history로 복구한다.
+- 현재 구현과 맞지 않는 변경 한정 실행 계약을 Stage 01에 보존하지 않는다. 대체·완료된 문서는 Architecture Description의 Archived Lineage 표에 요약하고, 처분 조건을 확인한 뒤 삭제한다. 원본은 확인된 Git 이력에서 복구한다.
 
 ### 요구사항 읽는 순서
 

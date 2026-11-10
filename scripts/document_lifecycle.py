@@ -13,6 +13,7 @@ import yaml
 from document_authority import AuthorityError, require_reciprocal_supersession
 from document_contracts import (
     DocumentProfile,
+    SPEC_PLAN_FIRST_APPROVED_EXTENSION,
     task_status,
     Registry,
     classify_path,
@@ -86,6 +87,7 @@ class LifecycleEvidenceContext:
     status_changed_paths: frozenset[PurePosixPath]
     body_changed_paths: frozenset[PurePosixPath]
     created_paths: frozenset[PurePosixPath]
+    approved_initial_paths: frozenset[PurePosixPath] = frozenset()
     base_task_rows: Mapping[PurePosixPath, tuple[tuple[tuple[str, str], ...], ...]] = (
         field(default_factory=dict)
     )
@@ -244,6 +246,7 @@ def _create_diagnostics(
     documents: Sequence[LifecycleDocument],
     *,
     base_mode: LifecycleBaseMode,
+    approved_initial_paths: frozenset[PurePosixPath] = frozenset(),
 ) -> list[LifecycleDiagnostic]:
     diagnostics: list[LifecycleDiagnostic] = []
     for document in documents:
@@ -278,7 +281,11 @@ def _create_diagnostics(
         initial_states = domain.initial_states or tuple(
             state for state, _ in domain.states if state not in inbound
         )
-        if document.status not in initial_states:
+        if document.status not in initial_states and not (
+            document.profile_id in {"sdlc/spec", "sdlc/plan"}
+            and document.status == "approved"
+            and document.path in approved_initial_paths
+        ):
             diagnostics.append(
                 _diagnostic(
                     "LIFECYCLE-CREATE",
@@ -768,7 +775,26 @@ def compare_lifecycle(
         proposed_documents[path]
         for path in sorted(created_paths, key=PurePosixPath.as_posix)
     ]
-    diagnostics.extend(_create_diagnostics(registry, created, base_mode=base_mode))
+    approved_initial_paths = frozenset()
+    if (
+        evidence_context is not None
+        and registry.shared_contract is not None
+        and registry.shared_contract.stage in {"candidate", "adopted"}
+        and SPEC_PLAN_FIRST_APPROVED_EXTENSION in registry.shared_contract.extensions
+    ):
+        approved_initial_paths = (
+            evidence_context.approved_initial_paths
+            & evidence_context.created_paths
+            & frozenset(created_paths)
+        )
+    diagnostics.extend(
+        _create_diagnostics(
+            registry,
+            created,
+            base_mode=base_mode,
+            approved_initial_paths=approved_initial_paths,
+        )
+    )
 
     if enforce_task_execution and evidence_context is not None:
         diagnostics.extend(

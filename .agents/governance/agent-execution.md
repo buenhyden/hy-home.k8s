@@ -1,10 +1,10 @@
 ---
 title: "Agent Execution Policy"
-version: "1.6.0"
+version: "1.7.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-10"
 ---
 
 # Agent Execution Policy
@@ -54,10 +54,12 @@ generated navigation, external examples, or tool suggestions.
   and [delegated development](../workflows/delegated-development.md) when
   delegation is authorized. A role name alone grants neither writes nor
   delegation.
-- `.agents/`의 새 공통 에이전트 설명은 한국어를 기본으로 쓰고 기존 영어 본문은
-  유효하게 둔다. 기계 key와 필수 heading, 명령·인용·원시 증거는 원문을 유지한다.
-  `.codex/`와 `.claude/`의 native 계약은 영어를 유지하고 사용자에게는 한국어로
-  답한다. 문서별 언어는 document-authoring 정책을 따른다.
+- Write policies under `.agents/governance/` in English. New common agent
+  descriptions elsewhere in `.agents/` default to Korean; existing English
+  prose remains valid. Preserve machine keys, required headings, commands,
+  quotations, and raw evidence in their original form. Native contracts under
+  `.codex/` and `.claude/` remain English, and responses to the user are in
+  Korean. Follow the document-authoring policy for each document's language.
 - Order work as repository change, review, then operator-controlled
   reconciliation; command examples must identify any operator-only step.
 - Fix recurring failures at their smallest durable owner: policy, skill,

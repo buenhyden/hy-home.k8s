@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import importlib.util
 import sys
 import unittest
 from pathlib import Path, PurePosixPath
@@ -140,6 +142,271 @@ class TaskHistoryRetentionTests(unittest.TestCase):
 
 
 class SpecPlanAuthorityTests(unittest.TestCase):
+    def test_first_approved_requires_scoped_approval_context(self) -> None:
+        raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
+        extension = "Local candidate Spec/Plan first-recording as approved after actual batch review and approval"
+        if extension not in raw["shared_contract"]["extensions"]:
+            raw["shared_contract"]["extensions"].append(extension)
+        registry = validate_registry(ROOT, raw)
+        package = PurePosixPath("docs/03.specs/0999-new-package")
+        spec = package / "spec.md"
+        plan = package / "plan.md"
+        task = package / "tasks/tsk-0001-work.md"
+        texts = {
+            spec: (
+                "---\n"
+                'title: "Example Spec"\nversion: "0.1.0"\ntype: "sdlc/spec"\n'
+                'status: "approved"\nowner: "platform"\nupdated: "2026-11-10"\n'
+                'layer: "specs"\nartifact_id: "SPEC-0999"\n---\n\n'
+                "# Example Spec\n\n## Overview\n\nReviewed contract.\n"
+            ),
+            plan: (
+                "---\n"
+                'title: "Example Plan"\nversion: "0.1.0"\ntype: "sdlc/plan"\n'
+                'status: "approved"\nowner: "platform"\nupdated: "2026-11-10"\n'
+                'layer: "specs"\nartifact_id: "SPEC-0999-PLAN-0001"\n'
+                'parent_ids: ["SPEC-0999"]\n---\n\n'
+                "# Example Plan\n\n## Overview\n\nReviewed order.\n"
+            ),
+        }
+        spec_hash = hashlib.sha256(texts[spec].encode()).hexdigest()
+        plan_hash = hashlib.sha256(texts[plan].encode()).hexdigest()
+        review_input = json.dumps(
+            {"spec_sha256": spec_hash, "plan_sha256": plan_hash},
+            separators=(",", ":"),
+        )
+        approval_input = json.dumps(
+            {
+                "actor": "user",
+                "approval_ref": "synthetic-chat-approval",
+                "review_ref": "EVD-003",
+                "scope": ["SPEC-0999", "SPEC-0999-PLAN-0001"],
+                "reviewed_spec_sha256": spec_hash,
+                "reviewed_plan_sha256": plan_hash,
+                "validity": "confirmed",
+                "revocation": "none",
+            },
+            separators=(",", ":"),
+        )
+        prior_hash = "0" * 64
+        prior_review_input = json.dumps(
+            {"spec_sha256": prior_hash, "plan_sha256": prior_hash},
+            separators=(",", ":"),
+        )
+        prior_approval_input = json.dumps(
+            {
+                "actor": "user",
+                "approval_ref": "synthetic-prior-approval",
+                "review_ref": "EVD-001",
+                "scope": ["SPEC-0999", "SPEC-0999-PLAN-0001"],
+                "reviewed_spec_sha256": prior_hash,
+                "reviewed_plan_sha256": prior_hash,
+                "validity": "confirmed",
+                "revocation": "none",
+            },
+            separators=(",", ":"),
+        )
+        texts[task] = (
+            "---\n"
+            'title: "Example Task"\nversion: "0.1.0"\ntype: "sdlc/task"\n'
+            'status: "draft"\nowner: "platform"\nupdated: "2026-11-10"\n'
+            'layer: "specs"\nartifact_id: "SPEC-0999-TSK-0001"\n'
+            'parent_ids: ["SPEC-0999-PLAN-0001"]\n---\n\n'
+            "# Example Task\n\n## Task Evidence\n\n"
+            "| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |\n"
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+            f"| EVD-001 | {CRITERION} | WORK-001 | Independent semantic review | {prior_review_input} | PASS | older synthetic review | yes | none |\n"
+            f"| EVD-002 | {CRITERION} | WORK-001 | Spec/Plan first-record approval | {prior_approval_input} | PASS | older synthetic approval | yes | none |\n"
+            f"| EVD-003 | {CRITERION} | WORK-001 | Independent semantic review | {review_input} | PASS | current synthetic reviewer receipt | yes | none |\n"
+            f"| EVD-004 | {CRITERION} | WORK-001 | Spec/Plan first-record approval | {approval_input} | PASS | synthetic chat reply | yes | none |\n"
+        )
+        documents = {
+            path: LifecycleDocument(path, profile, "approved")
+            for path, profile in (
+                (spec, "sdlc/spec"),
+                (plan, "sdlc/plan"),
+            )
+        }
+        documents[task] = LifecycleDocument(task, "sdlc/task", "draft")
+        module_spec = importlib.util.spec_from_file_location(
+            "first_approved_lifecycle_tested",
+            ROOT / "scripts/validate-document-lifecycle.py",
+        )
+        assert module_spec is not None and module_spec.loader is not None
+        validator = importlib.util.module_from_spec(module_spec)
+        sys.modules[module_spec.name] = validator
+        module_spec.loader.exec_module(validator)
+
+        def rules(
+            *,
+            candidate_registry=registry,
+            candidate_documents=documents,
+            candidate_texts=texts,
+            base_documents=None,
+            base_texts=None,
+            with_context=True,
+        ) -> set[str]:
+            prior_documents = base_documents or {}
+            prior_texts = base_texts or {}
+            context = (
+                validator._evidence_context(
+                    candidate_registry,
+                    prior_documents,
+                    candidate_documents,
+                    prior_texts,
+                    candidate_texts,
+                )
+                if with_context
+                else None
+            )
+            return {
+                item.rule_id
+                for item in compare_lifecycle(
+                    candidate_registry,
+                    prior_documents,
+                    candidate_documents,
+                    base_mode="staged",
+                    evidence_context=context,
+                )
+            }
+
+        self.assertNotIn(
+            "LIFECYCLE-CREATE",
+            rules(),
+        )
+        self.assertIn("LIFECYCLE-CREATE", rules(with_context=False))
+
+        missing_extension = json.loads(
+            (ROOT / "docs/99.templates/registry.json").read_text()
+        )
+        missing_extension["shared_contract"]["extensions"] = [
+            item
+            for item in missing_extension["shared_contract"]["extensions"]
+            if item
+            != "Local candidate Spec/Plan first-recording as approved after actual batch review and approval"
+        ]
+        self.assertIn(
+            "LIFECYCLE-CREATE",
+            rules(candidate_registry=validate_registry(ROOT, missing_extension)),
+        )
+
+        def changed_task(old: str, new: str) -> dict[PurePosixPath, str]:
+            lines = texts[task].splitlines(keepends=True)
+            current = next(
+                index
+                for index, line in enumerate(lines)
+                if line.startswith("| EVD-004 |")
+            )
+            assert old in lines[current]
+            lines[current] = lines[current].replace(old, new, 1)
+            return texts | {task: "".join(lines)}
+
+        adverse_rows = {
+            "wrong actor": changed_task('"actor":"user"', '"actor":"agent"'),
+            "empty approval ref": changed_task(
+                '"approval_ref":"synthetic-chat-approval"',
+                '"approval_ref":""',
+            ),
+            "wrong scope": changed_task(
+                '"scope":["SPEC-0999","SPEC-0999-PLAN-0001"]',
+                '"scope":["SPEC-0998","SPEC-0999-PLAN-0001"]',
+            ),
+            "wrong review ref": changed_task(
+                '"review_ref":"EVD-003"', '"review_ref":"EVD-001"'
+            ),
+            "missing review ref": changed_task(
+                '"review_ref":"EVD-003"', '"review_ref":"EVD-099"'
+            ),
+            "wrong approval digest": changed_task(
+                f'"reviewed_spec_sha256":"{spec_hash}"',
+                f'"reviewed_spec_sha256":"{"0" * 64}"',
+            ),
+            "unknown revocation": changed_task(
+                '"revocation":"none"', '"revocation":"unknown"'
+            ),
+            "unknown validity": changed_task(
+                '"validity":"confirmed"', '"validity":"unknown"'
+            ),
+            "missing approval row": texts
+            | {
+                task: "\n".join(
+                    line
+                    for line in texts[task].split("\n")
+                    if "Spec/Plan first-record approval" not in line
+                )
+            },
+            "stale approval only": texts
+            | {
+                task: "\n".join(
+                    line
+                    for line in texts[task].split("\n")
+                    if not line.startswith("| EVD-004 |")
+                )
+            },
+            "duplicate current approval": texts
+            | {
+                task: texts[task]
+                + next(
+                    line
+                    for line in texts[task].splitlines(keepends=True)
+                    if line.startswith("| EVD-004 |")
+                ).replace("| EVD-004 |", "| EVD-005 |", 1)
+            },
+        }
+        for label, candidate in adverse_rows.items():
+            with self.subTest(label=label):
+                self.assertIn(
+                    "LIFECYCLE-CREATE",
+                    rules(candidate_texts=candidate),
+                )
+
+        old_task = {task: documents[task]}
+        self.assertIn(
+            "LIFECYCLE-CREATE",
+            rules(base_documents=old_task, base_texts={task: texts[task]}),
+        )
+
+        for name, path, status in (
+            ("half approved", plan, "draft"),
+            ("terminal", spec, "completed"),
+        ):
+            with self.subTest(name=name):
+                old_text = texts[path]
+                new_text = old_text.replace(
+                    'status: "approved"', f'status: "{status}"', 1
+                )
+                old_hash = hashlib.sha256(old_text.encode()).hexdigest()
+                new_hash = hashlib.sha256(new_text.encode()).hexdigest()
+                candidate_texts = texts | {
+                    path: new_text,
+                    task: texts[task].replace(old_hash, new_hash),
+                }
+                candidate_documents = documents | {
+                    path: LifecycleDocument(path, documents[path].profile_id, status)
+                }
+                self.assertIn(
+                    "LIFECYCLE-CREATE",
+                    rules(
+                        candidate_documents=candidate_documents,
+                        candidate_texts=candidate_texts,
+                    ),
+                )
+
+        invalid_plan = texts[plan].replace(
+            'parent_ids: ["SPEC-0999"]', 'parent_ids: ["SPEC-0998"]', 1
+        )
+        invalid_plan_hash = hashlib.sha256(invalid_plan.encode()).hexdigest()
+        self.assertIn(
+            "LIFECYCLE-CREATE",
+            rules(
+                candidate_texts=texts
+                | {
+                    plan: invalid_plan,
+                    task: texts[task].replace(plan_hash, invalid_plan_hash),
+                }
+            ),
+        )
+
     def test_local_spec_plan_direct_approval_after_batch_review(self) -> None:
         raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
         extension = (

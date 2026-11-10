@@ -1,10 +1,10 @@
 ---
 title: "docs: 프로젝트 문서 허브"
-version: "0.6.2"
+version: "0.7.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-10"
 ---
 # docs: 프로젝트 문서 허브
 
@@ -63,8 +63,9 @@ skill과 provider projection을 소유한다.
 5. 경로 또는 내용 변경 시 해당 README와 현재 cross-link를 함께 점검한다.
    ID는 재사용하지 않고 다른 문서에서는 전체 ID로 추적한다.
 6. 완료된 본문을 새 형식에 맞추려고 다시 쓰지 않는다. 더 이상 현재가 아닌
-   문서는 해당 stage를 떠나며, 원본은 Git history가 복구한다
-   (`git show <commit>:<path>`). Stage 98은 검증하지 않는 기록 보관소로,
+   문서는 [문서 수명주기 정책](../.agents/governance/document-lifecycle.md)의
+   처분 전 확인을 거쳐 해당 stage를 떠난다. Git 이력만 남기는 처분은 확인된
+   원본 `commit:path`에서 복구한다. Stage 98은 검증하지 않는 기록 보관소로,
    README와 disposition 디렉터리 구조만 유지한다. 현재 문서는 Archive 대신
    현재 owner를 링크한다.
 7. [문서 작성 정책](../.agents/governance/document-authoring.md)과
