@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.4.2"
+version: "2.5.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-10"
 ---
 
 # Document Lifecycle Policy
@@ -39,16 +39,19 @@ evidence is not rewritten to satisfy a later profile.
   actual authority and disposition of remaining criteria.
   Approval never asserts implementation completion, criterion acceptance,
   or integration.
-- 새로 작성하거나 현행 범위에 맞춰 고치는 Plan은 승인된 Spec의 제약을
-  `Global Constraints`에서 연결하고 추가 실행 제약만 적으며, 단일 `Promotion`
-  기록 경로를 둔다. 진행 중인 계획은 승격 예정 대상을 승인이나 완료 증거로 쓰지 않는다.
-  Spec Package의 완료를 수용할 때에는 Plan의 `Promotion` 기록이 모든 지속 계약을
-  현재 `.agents/` 거버넌스 또는 Stage 01·02·05 소유 문서의 상대 링크와 그 안의 구체적 위치에 연결해야
-  한다. 지속 계약이 없으면 `none | none | No durable contract was introduced`
-  한 행만 명시한다. Registry가 구현하는 형식은
-  Stage 99 자체를 별도 현행 정책으로 지목하지 않고 해당 형식을 위임한 현행 규칙을
-  지목한다. Task의 PASS나 부모의 `approved`만으로 이 승격을
-  대신하지 않는다. 과거 Plan 원문은 새 기록을 위해 다시 쓰지 않는다.
+- A newly authored Plan, or one revised for current scope, links the approved
+  Spec's constraints in `Global Constraints`, adds only execution constraints
+  specific to the Plan, and keeps one `Promotion` record. An in-progress Plan
+  does not treat an intended promotion target as approval or completion evidence.
+  When a Spec package is accepted as complete, the Plan's `Promotion` record
+  links every durable contract to its current owner under `.agents/` governance
+  or Stage 01, 02 or 05, and names the concrete location in that owner. If
+  there is no durable contract, use exactly one row:
+  `none | none | No durable contract was introduced`. For a form implemented
+  by the Registry, name the current rule that delegates the form to Stage 99,
+  rather than Stage 99 itself as a separate policy owner. Neither a Task PASS
+  nor the parent Spec's `approved` state substitutes for promotion. Do not
+  rewrite a historical Plan to add a new record.
 - A Task carries actual work state: `draft` is proposed, `ready` means the
   approved inputs and execution prerequisites are assembled (it is no new
   approval or live-action permission), `in-progress`
@@ -77,20 +80,40 @@ evidence is not rewritten to satisfy a later profile.
   draft-to-approved transition after actual batch review and approval`
   admits the direct edge for this k8s regional
   adapter when a scoped user request, actual batch review and approval are
-  recorded. New Spec and Plan creation remains draft-only; approval means the
+  recorded. Ordinary new Spec and Plan creation remains draft-only, subject
+  only to the separately defined first-record approval exception below;
+  approval means the
   reviewed contract and plan are authorized, not execution completion, Task
   criterion acceptance. Do not create an intermediate
   Git state that was not observed solely to satisfy a transition reader.
   This local extension does not change WGOV-CORE 3.0.0 or, by itself, claim
   regional adoption; all later transitions retain their existing checks.
+- The `shared_contract.extensions` entry `Local candidate Spec/Plan
+  first-recording as approved after actual batch review and approval` admits a
+  narrow first Git record at `approved` when a scoped request, actual batch
+  review and user approval occurred before the first commit. The same-package
+  Spec and Plan must be recorded together with their typed parent identities
+  and Task link. The Task Evidence holds a separate `Independent semantic
+  review` PASS row and a `Spec/Plan first-record approval` PASS receipt. Both
+  rows identify SHA-256 hashes of the exact reviewed approved Spec and Plan
+  bytes. The receipt names the user, trusted approval reference, review row,
+  both document IDs, confirmed validity and no known revocation. A human
+  confirms the approval source and scope; the local validator checks only
+  receipt form, relationships and byte identity. This exception does not turn
+  authoring permission or earlier QA into retroactive execution approval,
+  Task criterion acceptance, ADR acceptance, protected-action authority or
+  integration evidence. Do not fabricate a draft commit or remove observed
+  Task evidence to satisfy the normal route. The shared WGOV-CORE edition and
+  ordinary later transitions remain intact.
 - Stage 01, 02 and 03 documents have no `superseded`, `retired` or
   `deprecated` state and no older form. A replaced or withdrawn document, or a
   completed Spec package, is summarized in the owning current document's
   `Archived Lineage` table and deleted in the same change; Git history recovers
   it. A successor names its predecessor in `supersedes` where the profile
-  allows it and in Traceability. 후속 Task의 기록 허용만으로 실행 권한이 생기지
-  않으며, 새 활성 작업의 `ready`·`in-progress` 전이와 실제 실행에는 그 작업을
-  소유하는 현행 `approved` Spec·Plan이 필요하다. No status alone grants
+  allows it and in Traceability. Permission to record a successor Task does
+  not itself grant execution authority. Moving new active work to `ready` or
+  `in-progress`, or executing it, requires its current owning `approved` Spec
+  and Plan. No status alone grants
   disposition, removal or new-execution authority.
 - Document approval, Task execution, criterion acceptance, QA result,
   publication, integration and archival disposition are separate claims. A
@@ -120,6 +143,35 @@ evidence is not rewritten to satisfy a later profile.
   the successor to link `supersedes` back in the same change.
 - A mutable or current owner cannot disappear without replacement coverage
   and consumer disposition.
+- Before a current document is deleted or moved into `docs/98.archive/`,
+  manually assess its current normative, historical, audit and recovery
+  consumers; preservation value and access need; holds; and actual disposition
+  authority. Record the target, basis, approval scope, disposition method and
+  unresolved conditions in the existing Task's Inputs, Approval and Safety
+  Boundaries, and Task Evidence. Transfer current meaning to its canonical
+  owner first. For Stage 01–03 documents, retain source identity and recovery
+  route in the current owner's existing `Archived Lineage`; other document
+  types use their existing relationships or disposition record. Do not impose
+  a new table or field on every profile, or a separate Spec or permanent catalog
+  for each simple disposition. When a completed Stage 03 package includes its
+  own evidence-owning Task, freeze the package's consumer, hold, authority and
+  method decision in that Task before its final source commit. The completed
+  Spec, Plan and Task cannot each contain proof of restoring their own final
+  committed bytes without changing those bytes. Before deleting any package
+  file, record the actual reachable `commit:path` and temporary byte-comparison
+  result for each retired file in the surviving current owner's existing
+  `Archived Lineage`, linked to the frozen Task decision. This changes only the
+  location of the completed package's postcommit proof; every recovery and
+  authority condition still applies to every file in the retiring unit.
+- Choose Git-history-only disposition only after proving that the exact
+  `commit:path` containing the bytes of the current source is reachable from
+  the intended retained history and that a temporary restoration matches the
+  current source byte for byte. An older Git object that loses uncommitted
+  changes is not recovery evidence. First identify the reason and consumer
+  when original-body preservation is required. If a hold, authority, consumer
+  transfer or applicable recovery evidence remains unresolved, defer that
+  disposition without changing or deleting the source. Do not retrospectively
+  rewrite completed records or rerun past dispositions under this procedure.
 - Navigation READMEs carry an "active" routing constant without artifact
   identity or lifecycle binding. Stable reference
   pack anchors named README retain their IDs and publication lifecycle.
@@ -136,7 +188,9 @@ evidence is not rewritten to satisfy a later profile.
 - `docs/98.archive/` is unvalidated history. It is outside the document
   inventory: no profile, lifecycle, link, catalog, retention, citation or
   migration check reads it, and its files carry no envelope, digest or ledger.
-  A change under it reruns only secret scanning. The directory keeps its README and disposition structure.
+  A change to an Archive body reruns only secret scanning; its README keeps the
+  existing formatting and Markdown-lint selection. The directory keeps its
+  README and disposition structure.
   A current document links the current owner rather than an archived file; a
   link into it is not checked, not even for existence.
 - A document that moves between active stages keeps no migration record.

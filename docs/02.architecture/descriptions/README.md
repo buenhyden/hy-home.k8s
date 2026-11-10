@@ -1,10 +1,10 @@
 ---
 title: "02.architecture/descriptions (AD)"
-version: "0.6.2"
+version: "0.7.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-10"
 layer: "architecture"
 ---
 # 02.architecture/descriptions (AD)
@@ -56,7 +56,7 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 1. 관련 `01.requirements/` 문서를 먼저 읽어 요구사항 경계를 고정한다.
 2. 새 AD는 `../../99.templates/templates/architecture/description.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/descriptions/####-<system-or-domain>.md`다. 안정 ID `AD-####`는 frontmatter에 둔다.
 3. 주요 설계 결정은 `02.architecture/decisions/`에 별도 ADR로 연결한다.
-4. 대체된 ADR의 ID는 후속 ADR의 `supersedes`와 Traceability가 유지하고, AD Archived Lineage가 요약하며, 같은 변경에서 삭제한다. 원본은 Git history가 복구한다([ADR-0053](../decisions/0053-unvalidated-archive.md)).
+4. ADR 전체를 대체할 때는 후속 ADR의 `supersedes`와 Traceability가 이전 ID를 유지하고 AD Archived Lineage가 요약한다. 삭제 전에는 [문서 수명주기 정책](../../../.agents/governance/document-lifecycle.md)의 처분 조건을 확인한다. 일부 조항만 개정할 때는 기존 ADR을 보존하고 후속 ADR의 Traceability에 개정 범위를 적는다([ADR-0055](../decisions/0055-governance-decision-current-state-amendment.md)).
 5. 구현 가능한 계약은 `03.specs/`로 내려보내고 양방향 링크를 유지한다.
 
 ### Relative Link Rules

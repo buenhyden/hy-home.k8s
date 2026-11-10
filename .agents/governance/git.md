@@ -1,10 +1,10 @@
 ---
 title: "Git Policy"
-version: "2.3.2"
+version: "2.3.3"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-10"
 ---
 
 # Git Policy
@@ -145,18 +145,20 @@ when changelog inclusion is intended. Prefer an imperative, specific subject
 under 72 characters; length, capitalization and body wrapping are guidance.
 History is read without rewriting older messages.
 
-Hosted `ci-summary`는 PR title을 신뢰된 base의 `.cz.toml` 저술 schema로만 검사하고
-generated-message 예외를 title에 적용하지 않는다. 같은 base의 문법과 generated
-`Merge`·`Revert` pattern으로 `base..head`에 새로 들어온 commit message를
-merge commit까지 검사한다. PR event의 정확한 base·head·merge SHA와 merge의
-부모 관계를 먼저 결속한다. [CI workflow](../../.github/workflows/ci.yml)와
-[그 정적 검증기](../../scripts/validate-ci-python-contract.py)가 실행 조건을
-소유하고 [hosted surface](../../.github/repository-surface.md)가 결과 사용처를
-안내한다. Tracked 설정만으로 실행을 주장하지 않으며 실제 PR SHA와 run을
-관측하기 전 hosted 결과는 `NOT_RUN`이다. 문법 검사는 Git 생성 여부, 출처,
-승인 또는 merge 권한을 인증하지 않는다. PR title과
-선택된 style 결과는 merge commit message를 검증하지 않으므로, remote merge
-전에 생성될 merge message를 두 local message 검사로 확인한다.
+Hosted `ci-summary` checks a PR title only against the trusted base's
+`.cz.toml` authoring schema; generated-message exceptions do not apply to
+titles. It checks newly introduced commit messages in `base..head`, including
+merge commits, against that base's grammar and generated `Merge` and `Revert`
+patterns. It first binds the exact PR event base, head, and merge SHA and the
+merge commit's parent relationship. The [CI workflow](../../.github/workflows/ci.yml)
+and [its static validator](../../scripts/validate-ci-python-contract.py) own
+the execution conditions; the [hosted surface](../../.github/repository-surface.md)
+explains where results are consumed. Tracked configuration alone does not
+prove execution. Hosted results remain `NOT_RUN` until an actual PR SHA and
+run are observed. Grammar checks do not authenticate Git generation, origin,
+approval, or merge authority. PR title and selected style results do not
+validate a merge commit message, so check the merge message that would be
+generated before remote merge with both local message checks.
 
 Selected local file checks do not validate a commit message. Inspect the
 effective `core.hooksPath` source and

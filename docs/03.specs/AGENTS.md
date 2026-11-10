@@ -24,8 +24,14 @@ criterion acceptance. A package exists only while its change is open.
 1. Start from `docs/99.templates/templates/specs/{spec,plan,task}.template.md`.
    Do not add a README or other router inside a package.
 2. Create a new Spec and Plan as `draft` and approve them in a separate
-   commit after review; the approval records the operator's request in the
-   Task Inputs. Approval never claims implementation or acceptance.
+   commit after review. When scoped user approval and actual batch review
+   precede their first Git record, the local first-record approval extension
+   in the [document lifecycle policy](../../.agents/governance/document-lifecycle.md)
+   permits both same-package documents to enter at `approved` together only
+   with the exact Task Evidence review and approval receipt. Keep the user's
+   request in Task Inputs; do not invent a draft-only commit or omit observed
+   evidence. Approval never claims implementation, criterion acceptance, ADR
+   acceptance, or protected-action authority.
 3. Task rows move `draft` → `ready` → `in-progress` → `completed`. A row is
    `completed` only with PASS evidence; record a blocker with its cause,
    resume condition and next owner.

@@ -38,6 +38,10 @@ SPEC_PLAN_DIRECT_APPROVAL_EXTENSION = (
     "Local candidate Spec/Plan direct draft-to-approved transition "
     "after actual batch review and approval"
 )
+SPEC_PLAN_FIRST_APPROVED_EXTENSION = (
+    "Local candidate Spec/Plan first-recording as approved after actual batch "
+    "review and approval"
+)
 TASK_INITIAL_STATES = ("draft", "ready", "in-progress", "blocked")
 MARKDOWN_TEMPLATE_PLACEHOLDER = re.compile(r"\{\{[A-Z][A-Z0-9_]*\}\}")
 DOCUMENT_TEXT_MAX_BYTES = 16 * 1024 * 1024

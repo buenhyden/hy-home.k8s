@@ -1,10 +1,10 @@
 ---
 title: "02.architecture"
-version: "0.6.3"
+version: "0.7.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-10"
 layer: "architecture"
 ---
 # 02.architecture
@@ -19,7 +19,7 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 이 stage는 현재 구조와 결정을 보존한다. 현재 repo-backed 실행계약은
 [`gitops/`](../../gitops/), [`scripts/validate-infrastructure-contracts.sh`](../../scripts/validate-infrastructure-contracts.sh),
 정적 검증 스크립트가 우선한다. ADR을 포함해 더 이상 현재가 아닌 문서는 current consumer와 의미를
-승계한 뒤 이 stage를 떠난다. Architecture Description의 Archived Lineage 표에 요약한 뒤 삭제하며, 원본은 Git history가 복구한다([ADR-0053](./decisions/0053-unvalidated-archive.md)). Stage 98은
+승계한 뒤 이 stage를 떠난다. Architecture Description의 Archived Lineage 표에 요약하고 [문서 수명주기 정책](../../.agents/governance/document-lifecycle.md)에 따른 처분 전 확인을 거쳐 삭제한다. 원본은 확인된 Git 이력에서 복구한다([ADR-0053](./decisions/0053-unvalidated-archive.md)). Stage 98은
 검증하지 않는 기록 보관소이며 현재 실행 권위가 아니다.
 
 ### Reader Route
@@ -67,7 +67,7 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 1. 요구사항을 시스템 경계와 품질 속성으로 확장할 때는 `descriptions/`를 갱신한다.
 2. 기술 선택이나 운영 모델 결정은 `decisions/`에 ADR로 기록한다.
 3. AD target은 `docs/02.architecture/descriptions/####-<system-or-domain>.md`, ADR target은 `docs/02.architecture/decisions/####-<short-title>.md`를 따른다. 유형은 부모 폴더가 결정하고 안정 ID는 frontmatter의 `AD-####`/`ADR-####`로 유지한다.
-4. 대체된 ADR의 ID는 후속 ADR의 `supersedes`와 Traceability가 유지하고, AD Archived Lineage가 요약하며, 같은 변경에서 삭제한다. 원본은 Git history가 복구한다.
+4. ADR 전체를 대체할 때는 후속 ADR의 `supersedes`와 Traceability가 이전 ID를 유지하고 AD Archived Lineage가 요약한다. 삭제 전에는 [문서 수명주기 정책](../../.agents/governance/document-lifecycle.md)의 처분 조건을 확인한다. 일부 조항만 개정할 때는 기존 ADR을 보존하고 후속 ADR의 Traceability에 개정 범위를 적는다.
 5. 구현자가 따라야 할 상세 계약은 `../03.specs/`로 넘긴다.
 6. 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다.
 7. Architecture Description에는 arc42의 목적별 구조를 비례적으로 적용하고,

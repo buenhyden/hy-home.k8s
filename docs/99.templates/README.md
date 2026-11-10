@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.16.4"
+version: "0.17.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-10"
 layer: "templates"
 ---
 # 99.templates
@@ -31,15 +31,16 @@ Stage 00이 없으며 그 지역 소유자는 `.agents/`다. digest는 중복 �
 공동 승인 `approval_ref`는 Registry `shared_contract`가 소유하며, 이전 검증 근거는
 Git history에서 복구한다.
 
-현행 지역 언어 확장에서는 `.agents/` governed Markdown에 새로
-쓰는 설명을 한국어로 작성하며 기존 영어 본문도 유효하다. Registry가 요구하는
+현행 지역 언어 확장에서는 `.agents/governance/` 정책을 영어로 작성한다.
+그 밖의 `.agents/` governed Markdown에는 새 설명을 한국어로 작성하며 기존
+영어 본문도 유효하다. Registry가 요구하는
 heading과 native key, 명령·인용·원시 증거는 원문을 유지한다. `.agents/`의
 JSON·YAML 등 비 Markdown 파일과 `.codex/`·`.claude/`의 native 문서는
 영어 전용이다. README는 해당 navigation profile을 따른다.
 `docs/01.requirements`~`docs/03.specs`의 non-README 본문은 계속 영어다.
 공통 Governance form의 기계 field·heading과 영어 author prompt는 유지하고,
 복사해 작성한 `.agents/` 본문의 새 설명에 위 지역 규칙을 적용한다. 이 언어
-확장과 아래의 Task 최초 기록·Spec/Plan 직접 전이 확장은 각각 하나만으로 승인된
+확장과 아래의 Task 최초 기록·Spec/Plan 직접 전이·조건부 최초 승인 확장은 각각 하나만으로 승인된
 WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 
 ## Scope
@@ -244,9 +245,28 @@ Result, Criterion Acceptance, Task Evidence와 실제 승인 사실은 관측에
 
 `Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`도 이 지역 adapter의 좁은 확장이다. 범위를 정한
 현행 사용자 지시, 실제 묶음 리뷰와 승인이 기록된 Spec·Plan은 `draft`에서
-`approved`로 직접 전이할 수 있다. 새 Spec·Plan의 최초 Git 기록은 계속
-`draft`이며, 관측하지 않은 중간 상태의 commit을 만들어 전이를 꾸미지 않는다.
+`approved`로 직접 전이할 수 있다. 새 Spec·Plan의 일반 최초 Git 기록은
+`draft`이며, 아래 조건부 최초 승인 예외를 제외하고 관측하지 않은 중간 상태의
+commit을 만들어 전이를 꾸미지 않는다.
 후속 전이와 증거 검증은 그대로 유지한다.
+
+### Spec·Plan First-Record Approval
+
+`Local candidate Spec/Plan first-recording as approved after actual batch review and approval`는
+새 Spec·Plan의 첫 Git 기록 전에 실제 묶음 검토와 범위가 분명한 사용자 승인이
+완료된 경우에만 적용하는 지역 예외다. 같은 package의 Spec과 Plan을 함께
+`approved`로 기록하고, 동일 Task의 `Task Evidence`에 `Independent semantic review`
+PASS와 `Spec/Plan first-record approval` PASS 영수증을 각각 남긴다. 독립 검토
+행의 `Input`은 단일 JSON object로 `spec_sha256`, `plan_sha256`을 담는다.
+승인 영수증의 `Input`은 단일 JSON object로 `actor`, `approval_ref`,
+`review_ref`, `scope`, `reviewed_spec_sha256`, `reviewed_plan_sha256`,
+`validity`, `revocation`을 담는다. `scope`는 두 문서의 정확한 artifact ID를
+담고, 두 행의 hash는 같은 최종 승인 본문 bytes를 가리킨다. 사람은 사용자
+승인 출처·범위·철회를 확인하고, validator는 형식·같은 package 관계·byte
+일치만 검사한다. Task Inputs는 실제 요청과 이전 QA의 시점을 분리해 기록한다.
+이 예외는 Task 기준 수용, ADR 수용, 보호 조치 권한이나 중간 draft commit의
+합성을 허용하지 않는다. 템플릿의 기본 최초 상태 `draft`와 일반 후속 전이는
+그대로 둔다.
 
 ### Shared Frontmatter Grammar
 

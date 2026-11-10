@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
 import io
 import json
 import subprocess
@@ -267,6 +268,253 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             self.git.commit(target.as_posix(), self.registered_task_document(status))
         return target, self.oid("HEAD")
 
+    def test_first_approved_receipt_has_same_staged_and_history_result(self) -> None:
+        package = "docs/03.specs/9999-first-approved"
+        parents: dict[str, bytes] = {}
+        for name, profile_id, artifact_id in (
+            ("spec.md", "sdlc/spec", "SPEC-9999"),
+            ("plan.md", "sdlc/plan", "SPEC-9999-PLAN-0001"),
+        ):
+            template = next(
+                profile.template
+                for profile in self.registry.profiles
+                if profile.profile_id == profile_id
+            )
+            text = (self.root / template).read_text()
+            for placeholder, value in {
+                "{{TITLE}}": "Synthetic first approved",
+                "{{OWNER}}": "platform",
+                "{{UPDATED}}": "2026-11-10",
+                "{{ARTIFACT_ID}}": artifact_id,
+                "{{PARENT_ID}}": "SPEC-9999",
+                "{{SPEC_RELATIVE_PATH}}": "spec.md",
+                "{{TASK_RELATIVE_PATH}}": "tasks/tsk-0001-work.md",
+            }.items():
+                text = text.replace(placeholder, value)
+            text = text.replace(
+                "| {{DURABLE_CONTRACT}} | [{{CURRENT_AUTHORITY_TITLE}}]"
+                "({{CURRENT_AUTHORITY_PATH}}) | {{LOCATION_IN_OWNER}} |",
+                "| none | none | No durable contract was introduced |",
+            )
+            if name == "plan.md":
+                text = text.replace(
+                    "## Global Constraints\n\n",
+                    "## Global Constraints\n\n"
+                    "The approved [Spec](spec.md#strategic-boundaries--non-goals) "
+                    "defines this synthetic package's scope and review boundary.\n\n",
+                    1,
+                )
+            self.assertNotIn("{{", text)
+            parents[f"{package}/{name}"] = text.replace(
+                'status: "draft"', 'status: "approved"', 1
+            ).encode()
+
+        spec_hash = hashlib.sha256(parents[f"{package}/spec.md"]).hexdigest()
+        plan_hash = hashlib.sha256(parents[f"{package}/plan.md"]).hexdigest()
+        review_input = json.dumps(
+            {"spec_sha256": spec_hash, "plan_sha256": plan_hash},
+            separators=(",", ":"),
+        )
+        approval_input = json.dumps(
+            {
+                "actor": "user",
+                "approval_ref": "synthetic-fixture-approval",
+                "review_ref": "EVD-002",
+                "scope": ["SPEC-9999", "SPEC-9999-PLAN-0001"],
+                "reviewed_spec_sha256": spec_hash,
+                "reviewed_plan_sha256": plan_hash,
+                "validity": "confirmed",
+                "revocation": "none",
+            },
+            separators=(",", ":"),
+        )
+        task = self.registered_task_document().decode()
+        task = task.replace(
+            "| NOT_RUN | Pending | yes | none |",
+            "| NOT_RUN | Pending | yes | none |\n"
+            "| EVD-002 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) "
+            f"| WORK-004 | Independent semantic review | {review_input} | PASS | "
+            "Synthetic reviewer receipt | yes | none |\n"
+            "| EVD-003 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) "
+            f"| WORK-004 | Spec/Plan first-record approval | {approval_input} | PASS | "
+            "Synthetic user approval receipt | yes | none |",
+            1,
+        )
+        files = parents | {f"{package}/tasks/tsk-0001-work.md": task.encode()}
+        for relative, payload in files.items():
+            target = self.root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(payload)
+        self.git.run("add", "--", *files)
+        staged_result, staged_output = self.invoke("staged")
+        self.assertEqual(staged_result, 0, staged_output)
+        self.git.run("commit", "--quiet", "-m", "first approved fixture")
+        tip = self.oid("HEAD")
+        history_cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
+        task_path = PurePosixPath(f"{package}/tasks/tsk-0001-work.md")
+        self.assertEqual(
+            history_cache._snapshot(tip)[0][task_path].profile_id,
+            "sdlc/task",
+        )
+        first_context = history_cache.evidence_context(self.base, tip)
+        self.assertEqual(
+            first_context.approved_initial_paths,
+            frozenset(
+                {
+                    PurePosixPath(f"{package}/spec.md"),
+                    PurePosixPath(f"{package}/plan.md"),
+                }
+            ),
+        )
+        spec_path = PurePosixPath(f"{package}/spec.md")
+        unrelated_source = PurePosixPath(
+            "docs/99.templates/templates/specs/plan.template.md"
+        )
+        unrelated_blob = VALIDATOR._tree_blob_oid(
+            self.root, self.base, unrelated_source
+        )
+        self.assertIsNotNone(unrelated_blob)
+        for provenance in (b"C095", b"R095"):
+            with self.subTest(provenance=provenance):
+                record = (
+                    provenance
+                    + b"\0"
+                    + unrelated_source.as_posix().encode()
+                    + b"\0"
+                    + spec_path.as_posix().encode()
+                    + b"\0"
+                )
+                with (
+                    mock.patch.object(VALIDATOR, "_run_git", return_value=record),
+                    mock.patch.object(
+                        VALIDATOR, "_tree_blob_oid", return_value=unrelated_blob
+                    ),
+                ):
+                    self.assertTrue(
+                        VALIDATOR._history_rename_or_copy_into_path(
+                            self.root,
+                            self.base,
+                            tip,
+                            spec_path,
+                            target_document=history_cache._snapshot(tip)[0][spec_path],
+                            cache=history_cache,
+                            allow_distinct_artifact_copy=False,
+                        )
+                    )
+        # A staged merge may permit ordinary distinct-artifact copies. A new
+        # approved Spec must still reject a copy from another package's Spec.
+        other_spec = PurePosixPath("docs/03.specs/9998-other/spec.md")
+        source_document = VALIDATOR.LifecycleDocument(
+            other_spec, "sdlc/spec", "approved", artifact_id="SPEC-9998"
+        )
+        target_document = history_cache._snapshot(tip)[0][spec_path]
+        staged_cache = mock.Mock()
+        staged_cache.registry = self.registry
+        staged_cache.registry_at.return_value = self.registry
+        staged_cache._snapshot.side_effect = [
+            ({other_spec: source_document}, {}),
+            ({other_spec: source_document, spec_path: target_document}, {}),
+        ]
+        unrelated_copy = (
+            b"C095\0"
+            + other_spec.as_posix().encode()
+            + b"\0"
+            + spec_path.as_posix().encode()
+            + b"\0"
+        )
+        with (
+            mock.patch.object(VALIDATOR, "_run_git", return_value=unrelated_copy),
+            mock.patch.object(VALIDATOR, "_tree_blob_oid", return_value="a" * 40),
+        ):
+            self.assertTrue(
+                VALIDATOR._history_rename_or_copy_into_path(
+                    self.root,
+                    self.base,
+                    tip,
+                    spec_path,
+                    target_document=target_document,
+                    cache=staged_cache,
+                    allow_distinct_artifact_copy=True,
+                )
+            )
+        for mode in ("ci", "explicit-ref"):
+            with self.subTest(mode=mode):
+                result, output = (
+                    self.invoke(mode, base_ref=self.base, to_ref=tip)
+                    if mode == "ci"
+                    else self.explicit(self.base, tip)
+                )
+                self.assertEqual(
+                    "LIFECYCLE-CREATE" in output,
+                    "LIFECYCLE-CREATE" in staged_output,
+                )
+                self.assertEqual(result, staged_result, output)
+
+        # A later unrelated commit forces the cumulative first-appearance
+        # proof to replay the originally approved package creation.
+        self.git.commit(".agents/governance/other.md", self.document("draft"))
+        later = self.oid("HEAD")
+        for name in ("spec.md", "plan.md"):
+            with self.subTest(name=name):
+                self.assertTrue(
+                    VALIDATOR._history_proves_cumulative_create(
+                        self.root,
+                        self.registry,
+                        PurePosixPath(f"{package}/{name}"),
+                        self.base,
+                        later,
+                    )
+                )
+        for mode in ("ci", "explicit-ref"):
+            with self.subTest(mode=mode, later=True):
+                result, output = (
+                    self.invoke(mode, base_ref=self.base, to_ref=later)
+                    if mode == "ci"
+                    else self.explicit(self.base, later)
+                )
+                self.assertEqual(result, 0, output)
+
+        changed_spec = parents[f"{package}/spec.md"].replace(
+            b'status: "approved"', b'status: "in-review"', 1
+        )
+        changed_plan = parents[f"{package}/plan.md"].replace(
+            b'status: "approved"', b'status: "in-review"', 1
+        )
+        self.git.commit_many(
+            {
+                f"{package}/spec.md": changed_spec,
+                f"{package}/plan.md": changed_plan,
+            }
+        )
+        revised = self.oid("HEAD")
+        for name in ("spec.md", "plan.md"):
+            with self.subTest(name=name, status_changed=True):
+                self.assertTrue(
+                    VALIDATOR._history_proves_cumulative_create(
+                        self.root,
+                        self.registry,
+                        PurePosixPath(f"{package}/{name}"),
+                        self.base,
+                        revised,
+                    )
+                )
+        for mode in ("ci", "explicit-ref"):
+            with self.subTest(mode=mode, status_changed=True):
+                _, output = (
+                    self.invoke(mode, base_ref=self.base, to_ref=revised)
+                    if mode == "ci"
+                    else self.explicit(self.base, revised)
+                )
+                self.assertNotIn("LIFECYCLE-CREATE", output)
+
+        # A recipient branch sees the approved package through a staged merge
+        # candidate, whose first-parent source history must prove the same edge.
+        self.git.run("checkout", "--quiet", "-b", "recipient", self.base)
+        self.git.commit(".agents/governance/other.md", self.document("draft"))
+        self.git.run("merge", "--no-commit", "--no-ff", tip)
+        merge_result, merge_output = self.invoke("staged")
+        self.assertEqual(merge_result, 0, merge_output)
+
     def test_real_registered_task_template_first_draft_copy_is_admitted(self) -> None:
         target = PurePosixPath(
             "docs/03.specs/9999-template-history/tasks/tsk-0001-copy.md"
@@ -304,6 +552,209 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             )
         )
 
+    def test_registered_task_first_in_progress_copy_then_completed(self) -> None:
+        package = "docs/03.specs/9999-template-history"
+        self.registered_task_history()
+        approved_parents = self.base
+        target = PurePosixPath(f"{package}/tasks/tsk-0001-copy.md")
+        self.git.run("reset", "--hard", approved_parents)
+        self.git.commit(target.as_posix(), self.registered_task_document("in-progress"))
+        first = self.oid("HEAD")
+        records = self.git.run(
+            "diff",
+            "--name-status",
+            "-z",
+            "--find-copies=1%",
+            "--find-copies-harder",
+            "-l0",
+            approved_parents,
+            first,
+            "--",
+        ).split(b"\0")
+        destination = records.index(target.as_posix().encode())
+        self.assertTrue(records[destination - 2].startswith(b"C"))
+        self.assertEqual(
+            records[destination - 1],
+            b"docs/99.templates/templates/specs/task.template.md",
+        )
+        self.git.commit(target.as_posix(), self.registered_task_document("completed"))
+        completed = self.oid("HEAD")
+        for mode in ("ci", "explicit-ref"):
+            with self.subTest(mode=mode):
+                result, output = (
+                    self.invoke(mode, base_ref=approved_parents, to_ref=completed)
+                    if mode == "ci"
+                    else self.explicit(approved_parents, completed)
+                )
+                self.assertEqual(result, 0, output)
+
+    def adr_document(self, artifact_id: str, *, status: str = "proposed") -> bytes:
+        template = (
+            self.root / "docs/99.templates/templates/architecture/decision.template.md"
+        ).read_text()
+        text = (
+            template.replace("{{TITLE}}", "Synthetic decision")
+            .replace("{{OWNER}}", "platform")
+            .replace("{{UPDATED}}", "2026-11-11")
+            .replace("{{ARTIFACT_ID}}", artifact_id)
+            .replace("{{PREDECESSOR_ADR_ID}}", "N/A")
+            .replace("{{AFFECTED_SPEC_LINK}}", "N/A")
+        )
+        return text.replace('status: "proposed"', f'status: "{status}"', 1).encode()
+
+    def test_distinct_adr_authoring_copies_admit_proposed_then_accepted(self) -> None:
+        source = PurePosixPath("docs/02.architecture/decisions/0998-source.md")
+        target = PurePosixPath("docs/02.architecture/decisions/0999-target.md")
+        self.git.commit(source.as_posix(), self.adr_document("ADR-0998"))
+        self.base = self.oid("HEAD")
+        for scale in ("high", "low"):
+            with self.subTest(scale=scale):
+                self.git.run("reset", "--hard", self.base)
+                target_text = self.adr_document("ADR-0999").decode()
+                if scale == "low":
+                    target_text = target_text.replace(
+                        "## Decision\n\n",
+                        "## Decision\n\n" + "Different decision. " * 600 + "\n\n",
+                    )
+                self.git.commit(target.as_posix(), target_text.encode())
+                proposed = self.oid("HEAD")
+                records = self.git.run(
+                    "diff",
+                    "--name-status",
+                    "-z",
+                    "--find-copies=1%",
+                    "--find-copies-harder",
+                    "-l0",
+                    self.base,
+                    proposed,
+                    "--",
+                ).split(b"\0")
+                destination = records.index(target.as_posix().encode())
+                self.assertTrue(records[destination - 2].startswith(b"C"))
+                self.assertEqual(records[destination - 1], source.as_posix().encode())
+                self.git.commit(
+                    target.as_posix(),
+                    target_text.replace(
+                        'status: "proposed"', 'status: "accepted"', 1
+                    ).encode(),
+                )
+                accepted = self.oid("HEAD")
+                for mode in ("ci", "explicit-ref"):
+                    result, output = (
+                        self.invoke(mode, base_ref=self.base, to_ref=accepted)
+                        if mode == "ci"
+                        else self.explicit(self.base, accepted)
+                    )
+                    self.assertEqual(result, 0, output)
+
+    def test_adr_authoring_copy_rejects_invalid_identity_and_provenance(self) -> None:
+        source = PurePosixPath("docs/02.architecture/decisions/0998-source.md")
+        target = PurePosixPath("docs/02.architecture/decisions/0999-target.md")
+        self.git.commit(source.as_posix(), self.adr_document("ADR-0998"))
+        self.base = self.oid("HEAD")
+        for mutation in ("same-id", "source-mutated", "rename", "first-accepted"):
+            with self.subTest(mutation=mutation):
+                self.git.run("reset", "--hard", self.base)
+                payload = self.adr_document(
+                    "ADR-0998" if mutation == "same-id" else "ADR-0999",
+                    status="accepted" if mutation == "first-accepted" else "proposed",
+                )
+                if mutation == "rename":
+                    self.git.run("mv", source.as_posix(), target.as_posix())
+                    (self.root / target).write_bytes(payload)
+                    self.git.run("add", "--", target.as_posix())
+                    self.git.run("commit", "--quiet", "-m", "renamed ADR")
+                elif mutation == "source-mutated":
+                    (self.root / source).write_bytes(
+                        self.adr_document("ADR-0998")
+                        + b"\nSource changed in same commit.\n"
+                    )
+                    (self.root / target).write_bytes(payload)
+                    self.git.run("add", "--", source.as_posix(), target.as_posix())
+                    self.git.run("commit", "--quiet", "-m", "changed source ADR")
+                else:
+                    self.git.commit(target.as_posix(), payload)
+                if mutation != "first-accepted":
+                    self.git.commit(
+                        target.as_posix(),
+                        payload.replace(
+                            b'status: "proposed"', b'status: "accepted"', 1
+                        ),
+                    )
+                created = self.oid("HEAD")
+                result, output = self.explicit(self.base, created)
+                self.assertNotEqual(result, 0, output)
+                if mutation == "same-id":
+                    self.assertIn("LIFECYCLE-IDENTITY-REUSE", output)
+                else:
+                    self.assertIn("LIFECYCLE-CREATE", output)
+
+    def test_ordinary_adr_edges_skip_full_context_but_supersession_keeps_it(
+        self,
+    ) -> None:
+        target = PurePosixPath("docs/02.architecture/decisions/0999-target.md")
+        self.git.commit(target.as_posix(), self.adr_document("ADR-0999"))
+        proposed_commit = self.oid("HEAD")
+        accepted = self.adr_document("ADR-0999", status="accepted")
+        self.git.commit(target.as_posix(), accepted)
+        accepted_commit = self.oid("HEAD")
+        cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
+        before = cache._snapshot(proposed_commit)[0][target]
+        after = cache._snapshot(accepted_commit)[0][target]
+        with mock.patch.object(
+            cache,
+            "evidence_context",
+            side_effect=AssertionError("not ordinary ADR work"),
+        ):
+            self.assertEqual(
+                VALIDATOR._history_event_diagnostics(
+                    self.root,
+                    self.registry,
+                    target,
+                    proposed_commit,
+                    accepted_commit,
+                    before,
+                    after,
+                    cache,
+                ),
+                (),
+            )
+            self.assertEqual(
+                VALIDATOR._history_event_diagnostics(
+                    self.root,
+                    self.registry,
+                    target,
+                    self.base,
+                    proposed_commit,
+                    None,
+                    before,
+                    cache,
+                ),
+                (),
+            )
+        self.git.commit(
+            target.as_posix(),
+            accepted.replace(b'status: "accepted"', b'status: "superseded"', 1),
+        )
+        superseded_commit = self.oid("HEAD")
+        terminal = cache._snapshot(superseded_commit)[0][target]
+        with mock.patch.object(
+            cache,
+            "evidence_context",
+            side_effect=AssertionError("terminal context required"),
+        ):
+            with self.assertRaisesRegex(AssertionError, "terminal context required"):
+                VALIDATOR._history_event_diagnostics(
+                    self.root,
+                    self.registry,
+                    target,
+                    accepted_commit,
+                    superseded_commit,
+                    after,
+                    terminal,
+                    cache,
+                )
+
     def test_registered_task_history_is_admitted_by_ci_and_explicit_ref(self) -> None:
         target, completed = self.registered_task_history()
         for mode in ("ci", "explicit-ref"):
@@ -337,7 +788,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
     def registered_task_boundary_parent(self, mutation, target, source, data):
         if mutation == "state":
-            return self.registered_task_document("ready")
+            return self.registered_task_document("completed")
         if mutation == "identity":
             return data.replace(b"SPEC-9999-TSK-0001", b"SPEC-9999-TSK-0002")
         if mutation == "reused":
@@ -555,6 +1006,231 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         result, output = self.explicit(self.base, active)
 
         self.assertEqual(result, 0, output)
+
+    def test_unchanged_large_context_is_charged_once_across_history(self) -> None:
+        self.git.commit(
+            ".agents/governance/other.md",
+            self.document("draft", "Unchanged contextual evidence " + "x" * 105_000),
+        )
+        first = self.oid("HEAD")
+        second = self.commit("draft")
+        third = self.commit("in-review")
+        cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
+        with mock.patch.object(
+            VALIDATOR, "CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES", 1_200_000
+        ):
+            for commit in (first, second, third):
+                snapshot, _ = cache._snapshot(commit)
+                self.assertIn(PurePosixPath(".agents/governance/other.md"), snapshot)
+        self.assertLessEqual(cache.snapshot_work_bytes, 1_200_000)
+
+    def test_changed_large_context_still_exhausts_work_budget(self) -> None:
+        other = ".agents/governance/other.md"
+        self.git.commit(other, self.document("draft", "First context " + "x" * 105_000))
+        first = self.oid("HEAD")
+        self.git.commit(
+            other, self.document("draft", "Changed context " + "y" * 105_000)
+        )
+        second = self.oid("HEAD")
+        cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
+        with mock.patch.object(
+            VALIDATOR, "CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES", 1_200_000
+        ):
+            cache._snapshot(first)
+            with self.assertRaises(VALIDATOR._CumulativeHistoryBudgetExceeded):
+                cache._snapshot(second)
+
+    def test_registry_blob_change_reprojects_unchanged_document(self) -> None:
+        first = self.commit("draft")
+        cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
+        path = PurePosixPath(self.path)
+        self.assertEqual(
+            cache._snapshot(first)[0][path].profile_id, "governance/contract"
+        )
+        registry_path = "docs/99.templates/registry.json"
+        registry_file = self.root / registry_path
+        raw = json.loads(registry_file.read_text())
+        next(p for p in raw["profiles"] if p["id"] == "governance/contract")[
+            "path_pattern"
+        ] = r"^\.agents/governance/other\.md$"
+        registry_file.write_text(json.dumps(raw))
+        self.git.run("add", "--", registry_path)
+        self.git.run("commit", "--quiet", "-m", "change registry routing")
+        second = self.oid("HEAD")
+        self.assertEqual(
+            VALIDATOR._tree_blob_oid(self.root, first, path),
+            VALIDATOR._tree_blob_oid(self.root, second, path),
+        )
+        self.assertEqual(cache._snapshot(second)[0][path].profile_id, "unclassified")
+        seed_documents, seed_texts = cache._snapshot(first)
+        seeded = VALIDATOR._CumulativeHistoryCache(
+            self.root,
+            self.registry,
+            seed_blobs=VALIDATOR._tree_blob_map(self.root, first),
+            seed_documents=seed_documents,
+            seed_texts=seed_texts,
+            seed_registry_oid=VALIDATOR._tree_blob_oid(
+                self.root, first, PurePosixPath(registry_path)
+            ),
+        )
+        self.assertEqual(seeded._snapshot(second)[0][path].profile_id, "unclassified")
+
+    def test_cross_registry_snapshots_share_raw_text_within_resident_cap(self) -> None:
+        paths = (
+            self.path,
+            ".agents/governance/source.md",
+            ".agents/governance/other.md",
+            ".agents/governance/repeated.md",
+        )
+        for index, path in enumerate(paths):
+            self.git.commit(
+                path,
+                self.document("draft", f"Context {index} " + "x" * 105_000),
+            )
+        first = self.oid("HEAD")
+        cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
+        first_documents, first_texts = cache._snapshot(first)
+        registry_path = "docs/99.templates/registry.json"
+        registry_file = self.root / registry_path
+        raw = json.loads(registry_file.read_text())
+        next(p for p in raw["profiles"] if p["id"] == "governance/contract")[
+            "path_pattern"
+        ] = r"^\.agents/governance/(?:cumulative-history|other|repeated)\.md$"
+        registry_file.write_text(json.dumps(raw))
+        self.git.run("add", "--", registry_path)
+        self.git.run("commit", "--quiet", "-m", "change registry routing")
+        second = self.oid("HEAD")
+        with mock.patch.object(
+            VALIDATOR, "CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES", 2_800_000
+        ):
+            second_documents, second_texts = cache._snapshot(second)
+        source = PurePosixPath(paths[1])
+        self.assertEqual(first_documents[source].profile_id, "governance/contract")
+        self.assertEqual(second_documents[source].profile_id, "unclassified")
+        self.assertIs(first_texts[source], second_texts[source])
+        self.assertEqual(len(cache.snapshots), 2)
+        self.assertLess(cache.cached_snapshot_bytes, 2_800_000)
+        self.assertGreater(cache.snapshot_work_bytes, cache.cached_snapshot_bytes)
+
+    def test_opaque_sentinel_is_not_reused_as_raw_text(self) -> None:
+        path = PurePosixPath(self.path)
+        payload = self.document("draft")
+        self.git.commit(path.as_posix(), payload)
+        first = self.oid("HEAD")
+        registry_path = "docs/99.templates/registry.json"
+        registry_file = self.root / registry_path
+        raw = json.loads(registry_file.read_text())
+        next(p for p in raw["profiles"] if p["id"] == "governance/contract")[
+            "path_pattern"
+        ] = r"^\.agents/governance/other\.md$"
+        registry_file.write_text(json.dumps(raw))
+        self.git.run("add", "--", registry_path)
+        self.git.run("commit", "--quiet", "-m", "change registry routing")
+        second = self.oid("HEAD")
+        original_opaque = VALIDATOR.is_opaque_evaluation_output
+
+        def synthetic_opaque(registry, candidate):
+            if candidate == path:
+                profile = next(
+                    p
+                    for p in registry.profiles
+                    if p.profile_id == "governance/contract"
+                )
+                return "cumulative-history" in profile.path_pattern
+            return original_opaque(registry, candidate)
+
+        with mock.patch.object(
+            VALIDATOR, "is_opaque_evaluation_output", side_effect=synthetic_opaque
+        ):
+            cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
+            first_documents, first_texts = cache._snapshot(first)
+            self.assertEqual(first_texts[path], "")
+            self.assertEqual(cache._snapshot(second)[1][path], payload.decode())
+            seeded = VALIDATOR._CumulativeHistoryCache(
+                self.root,
+                self.registry,
+                seed_blobs=VALIDATOR._tree_blob_map(self.root, first),
+                seed_documents=first_documents,
+                seed_texts=first_texts,
+                seed_registry_oid=VALIDATOR._tree_blob_oid(
+                    self.root, first, PurePosixPath(registry_path)
+                ),
+            )
+            self.assertEqual(seeded._snapshot(second)[1][path], payload.decode())
+
+    def test_union_over_path_limit_evicts_before_failing(self) -> None:
+        count = VALIDATOR.CUMULATIVE_HISTORY_MAX_SNAPSHOT_PATHS
+        old = {
+            PurePosixPath(f"docs/old/{index}.md"): "a" * 40 for index in range(count)
+        }
+        new = dict(old)
+        changed_path = next(iter(old))
+        new[changed_path] = "b" * 40
+        cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
+
+        def bounded_size(_root, blobs):
+            if len(blobs) > count:
+                raise VALIDATOR._CumulativeHistoryBudgetExceeded
+            return len(blobs)
+
+        def synthetic_projection(_root, _registry, blobs, **_kwargs):
+            return (
+                {path: object() for path in blobs},
+                {path: "synthetic" for path in blobs},
+            )
+
+        with (
+            mock.patch.object(VALIDATOR, "_tree_blob_map", side_effect=(old, new)),
+            mock.patch.object(VALIDATOR, "_tree_blob_oid", return_value=None),
+            mock.patch.object(
+                VALIDATOR, "_snapshot_blob_size", side_effect=bounded_size
+            ),
+            mock.patch.object(
+                VALIDATOR, "_snapshot_projection", side_effect=synthetic_projection
+            ),
+            mock.patch.object(
+                VALIDATOR, "CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES", count
+            ),
+        ):
+            cache._snapshot("first")
+            cache._snapshot("second")
+        self.assertEqual(tuple(cache.snapshots), ("second",))
+        self.assertEqual(cache.cached_snapshot_bytes, count)
+
+        over_limit = dict(old)
+        over_limit[PurePosixPath("docs/old/extra.md")] = "c" * 40
+        with mock.patch.object(VALIDATOR, "_tree_blob_map", return_value=over_limit):
+            with self.assertRaises(VALIDATOR._CumulativeHistoryBudgetExceeded):
+                VALIDATOR._CumulativeHistoryCache(self.root, self.registry)._snapshot(
+                    "over-limit"
+                )
+
+    def test_seed_registry_identity_rejects_dirty_and_staged_registry(self) -> None:
+        registry_path = "docs/99.templates/registry.json"
+        original_oid = VALIDATOR._tree_blob_oid(
+            self.root, self.base, PurePosixPath(registry_path)
+        )
+        self.assertEqual(
+            VALIDATOR._matching_seed_registry_oid(self.root, self.base),
+            original_oid,
+        )
+        registry_file = self.root / registry_path
+        raw = json.loads(registry_file.read_text())
+        next(p for p in raw["profiles"] if p["id"] == "governance/contract")[
+            "path_pattern"
+        ] = r"^\.agents/governance/other\.md$"
+        registry_file.write_text(json.dumps(raw))
+        self.assertIsNone(VALIDATOR._matching_seed_registry_oid(self.root, self.base))
+        self.git.run("add", "--", registry_path)
+        self.assertIsNone(VALIDATOR._matching_seed_registry_oid(self.root, self.base))
+        registry_file.unlink()
+        outside = self.root.parent / "external-registry.json"
+        outside.write_bytes((self.seed_root / registry_path).read_bytes())
+        registry_file.symlink_to(outside)
+        self.assertIsNone(VALIDATOR._matching_seed_registry_oid(self.root, self.base))
+        registry_file.unlink()
+        registry_file.write_bytes(b"x" * (VALIDATOR.DOCUMENT_BLOB_MAX_BYTES + 1))
+        self.assertIsNone(VALIDATOR._matching_seed_registry_oid(self.root, self.base))
 
     def test_committed_ref_blobs_ignore_dirty_checkout_and_index(self) -> None:
         self.commit("draft")
@@ -913,7 +1589,16 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         documents, texts = VALIDATOR._snapshot_projection(
             self.root, self.registry, blobs
         )
-        seed = dict(seed_blobs=blobs, seed_documents=documents, seed_texts=texts)
+        seed = dict(
+            seed_blobs=blobs,
+            seed_documents=documents,
+            seed_texts=texts,
+            seed_registry_oid=VALIDATOR._tree_blob_oid(
+                self.root,
+                draft,
+                PurePosixPath("docs/99.templates/registry.json"),
+            ),
+        )
         cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry, **seed)
         with mock.patch.object(
             VALIDATOR, "_snapshot_projection", wraps=VALIDATOR._snapshot_projection

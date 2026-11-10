@@ -1,10 +1,10 @@
 ---
 title: "Software Development Lifecycle"
-version: "3.2.0"
+version: "3.3.0"
 type: "governance/contract"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-10"
 ---
 
 # Software Development Lifecycle
@@ -60,8 +60,13 @@ lineage, and Google SRE informs factual incidents and blameless postmortems.
    table owns each criterion verdict.
 4. Promote stable operator controls to Guide, Policy, or Runbook owners and
    preserve incident learning in Incident and Postmortem records.
-5. Replace or withdraw a Stage 01, 02 or 03 document by summarizing it in the
-   owning current document's Archived Lineage table and deleting it; supersede
+5. Before a current document is deleted or moved, complete the manual
+   consumer, preservation, hold and authority review in
+   [document lifecycle](document-lifecycle.md#current-contract). A
+   Git-history-only disposition also needs the exact recovery proof. Defer the
+   affected disposition if any condition is unresolved. Replace or withdraw a
+   Stage 01, 02 or 03 document by summarizing it in the owning current
+   document's Archived Lineage table and deleting it; supersede
    or retire other documents only through registry-owned lifecycle edges and
    their reciprocal links.
 6. Keep release procedure in a Runbook when one is needed, local execution
