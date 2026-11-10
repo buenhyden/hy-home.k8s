@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.23.0"
+version: "0.23.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -65,17 +65,17 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 03.specs/
 ├── AGENTS.md
 ├── CLAUDE.md
-├── 0152-manual-document-disposition-policy/
 └── README.md
 ```
 
-현재 열린 package는 [SPEC-0152](./0152-manual-document-disposition-policy/)다.
+현재 열린 package는 없다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
 완료된 package는 그 Requirement Package의 `Archived Lineage` 표가 요약한다.
-최근 것은 SPEC-0151과 SPEC-0150([REQ-0003](../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage))과
-SPEC-0141([REQ-0002](../01.requirements/0002-argo-notifications-slack.md#archived-lineage))이다.
+최근 것은 SPEC-0152, SPEC-0151과 SPEC-0150이다. 이들의 요약은
+[REQ-0003의 Archived Lineage](../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage)에 있다.
+SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-slack.md#archived-lineage)에 있다.
 
 ## Usage
 

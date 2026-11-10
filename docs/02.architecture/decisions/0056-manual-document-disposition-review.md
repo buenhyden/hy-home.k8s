@@ -1,8 +1,8 @@
 ---
 title: "Manual Document Disposition Review"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-11-10"
 layer: "architecture"
@@ -13,7 +13,7 @@ artifact_id: "ADR-0056"
 
 ## Overview
 
-This proposed amendment adds manual review before disposing of a current
+This accepted amendment adds manual review before disposing of a current
 governed document. It replaces only the no-record/no-proof disposition clause
 of [ADR-0053](./0053-unvalidated-archive.md) and the unconditional Git-recovery
 interpretation of [ADR-0055](./0055-governance-decision-current-state-amendment.md)
@@ -24,13 +24,15 @@ Spec/Plan pair as approved when its actual batch review and user approval are
 already evidenced.
 
 The request owner approved implementation of this policy-first plan on
-2026-11-10. That request authorizes preparation of this candidate and its current
+2026-11-10. That request authorized preparation of this candidate and its current
 document consumers. The request owner subsequently authorized the limited
 contract and validator change supporting that first-record approval exception.
-Those requests do not record acceptance of this ADR or an individual
-document's disposition. The original approval references, review, acceptance
-and publication are recorded separately in
-[SPEC-0152's Task](../../03.specs/0152-manual-document-disposition-policy/tasks/tsk-0001-manual-document-disposition-policy.md).
+Those earlier requests did not record acceptance of this ADR or an individual
+document's disposition. The current user separately accepted ADR-0056 and all
+SPEC-0152 Task criteria on 2026-11-10 and requested local completion. The
+original approval references, review and acceptance remain in the completed
+Task at the exact source commit named by [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage).
+This accepted decision does not by itself authorize a different disposition.
 
 ## Context
 
@@ -118,8 +120,8 @@ execution and criterion acceptance.
    approval reference, independent batch-review evidence, the pair's scope,
    the exact reviewed Spec and Plan byte hashes, and confirmed validity with
    no revocation. The receipt format belongs to the
-   [Spec's contract](../../03.specs/0152-manual-document-disposition-policy/spec.md)
-   and its existing lifecycle consumer; this ADR does not duplicate that
+   [document lifecycle policy](../../../.agents/governance/document-lifecycle.md),
+   Stage 99 Registry and existing lifecycle consumer; this ADR does not duplicate that
    schema. Missing, mismatched or unavailable context fails closed, including
    a standalone lifecycle comparison with no receipt context. A recorded
    receipt is checked for structure, relationships and byte identity; the
@@ -133,15 +135,19 @@ their existing authority and evidence boundaries. This is a local adapter
 extension, not a new shared-contract edition or proof of another repository's
 adoption.
 
-The amendment takes effect through recorded review and acceptance of the
-candidate. The Task separately records local implementation and validation;
-neither is substituted for that acceptance. A later individual disposition
-still requires its own applicable authority and evidence.
+The amendment is accepted on the current user's 2026-11-10 decision, after
+the completed Task recorded local implementation and validation. The
+SPEC-0152 package's separately authorized standard exit has exact recovery
+proof in REQ-0003 Archived Lineage. Any later individual disposition still
+requires its own applicable authority and evidence.
 
 ## Explicit Non-goals
 
-- Deleting or moving any document as part of this policy change, or restoring
-  and reassessing the historical deleted corpus.
+- Deleting or moving a document as part of the original WORK-001 policy
+  implementation, or restoring and reassessing the historical deleted corpus.
+  The user's later, separate completion request authorizes the standard exit
+  of only the completed SPEC-0152 package after its exact recovery proof in
+  REQ-0003 Archived Lineage; no other or historical document is disposed of.
 - Rewriting accepted ADRs, completed Task evidence, published research, or
   historical numbering.
 - Adding a retention catalog, frozen-body store, tombstone, migration ledger,
@@ -150,8 +156,8 @@ still requires its own applicable authority and evidence.
   validation are the only added machine contract in this change.
 - Applying development-document disposition rules to service data, backups,
   credentials or the shared memory store, or changing another repository.
-- Treating this proposed ADR, a static PASS or the plan implementation request
-  as permission for a particular destructive or external action.
+- Treating this accepted ADR, a static PASS or the original plan implementation
+  request as permission for an unrelated destructive or external action.
 
 ## Consequences
 
@@ -188,8 +194,10 @@ still requires its own applicable authority and evidence.
 
 - **Requirements:** [REQ-0003-FR-0012, REQ-0003-FR-0015, REQ-0003-FR-0020 and REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md).
 - **Architecture:** [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md).
-- **Change and acceptance:** [SPEC-0152](../../03.specs/0152-manual-document-disposition-policy/spec.md),
-  criteria `VAL-DISP-001`, `VAL-DISP-002` and `VAL-DISP-003`.
+- **Change and acceptance:** N/A — SPEC-0152 left the tree; Git history recovers it.
+  The current user's 2026-11-10 acceptance of `VAL-DISP-001`, `VAL-DISP-002`
+  and `VAL-DISP-003` and the exact source are summarized in
+  [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage).
 - **Policy and procedure:** [document lifecycle](../../../.agents/governance/document-lifecycle.md)
   and [reference maintenance](../../05.operations/runbooks/0011-reference-maintenance-runbook.md).
 - **First-record approval ownership:** the
@@ -202,6 +210,6 @@ still requires its own applicable authority and evidence.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0053](./0053-unvalidated-archive.md) | Replaces only the permission to dispose of a document without a record or proof; preserves archive exclusion and the existing disposition routes | [SPEC-0152](../../03.specs/0152-manual-document-disposition-policy/spec.md) |
-| [ADR-0055](./0055-governance-decision-current-state-amendment.md) | Qualifies Decision 1's Git-only recovery with manual pre-disposition review; preserves Decision 7's README lint exception and all other clauses | [SPEC-0152](../../03.specs/0152-manual-document-disposition-policy/spec.md) |
-| [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) | Adds the bounded local first-record Spec/Plan approval exception at the existing policy, Registry and lifecycle reader owners | [SPEC-0152](../../03.specs/0152-manual-document-disposition-policy/spec.md) |
+| [ADR-0053](./0053-unvalidated-archive.md) | Replaces only the permission to dispose of a document without a record or proof; preserves archive exclusion and the existing disposition routes | N/A — SPEC-0152 left the tree; Git history recovers it |
+| [ADR-0055](./0055-governance-decision-current-state-amendment.md) | Qualifies Decision 1's Git-only recovery with manual pre-disposition review; preserves Decision 7's README lint exception and all other clauses | N/A — SPEC-0152 left the tree; Git history recovers it |
+| [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) | Adds the bounded local first-record Spec/Plan approval exception at the existing policy, Registry and lifecycle reader owners | N/A — SPEC-0152 left the tree; Git history recovers it |
