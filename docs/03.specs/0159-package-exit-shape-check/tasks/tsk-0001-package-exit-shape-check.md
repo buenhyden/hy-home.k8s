@@ -2,7 +2,7 @@
 title: "Package Exit Shape Check"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-11"
 layer: "specs"
@@ -14,7 +14,7 @@ parent_ids: ["SPEC-0159-PLAN-0001"]
 
 ## Overview
 
-This in-progress Task records the W02 intake and the execution of [SPEC-0159](../spec.md) under its [Plan](../plan.md). EVD-001 and EVD-002 were observed before approval and are marked not required; The user approved the amended Spec and Plan on 2026-11-11 (EVD-007, EVD-008).
+This completed Task records the W02 intake and the execution of [SPEC-0159](../spec.md) under its [Plan](../plan.md). EVD-001 and EVD-002 were observed before approval and are marked not required; The user approved the amended Spec and Plan on 2026-11-11 (EVD-007, EVD-008).
 
 ## Inputs
 
@@ -27,8 +27,8 @@ This in-progress Task records the W02 intake and the execution of [SPEC-0159](..
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-EXIT-001](../spec.md#success-criteria--verification-plan) | Focused tests RED, rule and wiring, tests GREEN, suite registration. | platform | in-progress | PASS | EVD-009 passed RED then GREEN. |
-| WORK-002 | [VAL-EXIT-002](../spec.md#success-criteria--verification-plan), [VAL-EXIT-003](../spec.md#success-criteria--verification-plan) | Suites, ADR-0057, policy sentence and rule 7, review, ADR decision, commit checks. | platform | in-progress | NOT_RUN | EVD-004 to EVD-006 are pending. |
+| WORK-001 | [VAL-EXIT-001](../spec.md#success-criteria--verification-plan) | Focused tests RED, rule and wiring, tests GREEN, suite registration. | platform | completed | PASS | EVD-009 passed RED then GREEN; EVD-016 accepted. |
+| WORK-002 | [VAL-EXIT-002](../spec.md#success-criteria--verification-plan), [VAL-EXIT-003](../spec.md#success-criteria--verification-plan) | Suites, ADR-0057, policy sentence and rule 7, review, ADR decision, commit checks. | platform | completed | PASS | EVD-010, EVD-011 and EVD-015 passed; EVD-017 accepted. |
 
 ## Task Evidence
 
@@ -48,20 +48,23 @@ This in-progress Task records the W02 intake and the execution of [SPEC-0159](..
 | EVD-012 | [VAL-EXIT-002](../spec.md#success-criteria--verification-plan), [VAL-EXIT-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Independent semantic review | {"spec_sha256":"cf642dc6e1fcf0ce740029fa9c377f5145582d9780b44f98cc8a4a0b52aa8991","plan_sha256":"fa042e831c00cf444a515a1135b69527ea27233ce95a42fd927217d76451f4f9"} | PASS | The first package commit attempt was refused by `BODY-LINK-RECIPROCAL`: ADR-0057's Affected Spec link needs a Spec link back, and a plain-text cell fails `BODY-LINK-TARGET`. The only change is one link to ADR-0057 in the Spec scope list. Round 4 by the same reviewer matched these hashes and confirmed that removing the link gives exactly the EVD-007 Spec bytes; the Plan is unchanged. No BLOCK or FIX. | yes | none |
 | EVD-013 | [VAL-EXIT-002](../spec.md#success-criteria--verification-plan), [VAL-EXIT-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-chat user answer Approve to the question approving the SPEC-0159 Spec with the one added link to ADR-0057 dated 2026-11-11 Asia/Seoul","review_ref":"EVD-012","scope":["SPEC-0159","SPEC-0159-PLAN-0001"],"reviewed_spec_sha256":"cf642dc6e1fcf0ce740029fa9c377f5145582d9780b44f98cc8a4a0b52aa8991","reviewed_plan_sha256":"fa042e831c00cf444a515a1135b69527ea27233ce95a42fd927217d76451f4f9","validity":"confirmed","revocation":"none"} | PASS | Trusted direct user answer in this chat on 2026-11-11 Asia/Seoul; it supersedes the EVD-008 receipt, whose Spec bytes changed by one link. No message UUID was supplied or invented. This receipt accepts no criterion and authorizes no push or merge. | yes | none |
 | EVD-014 | [VAL-EXIT-003](../spec.md#success-criteria--verification-plan) | WORK-002 | ADR-0057 user decision | Direct current-chat user answer "Accept ADR-0057 (Recommended)" dated 2026-11-11 Asia/Seoul, given after the code review (EVD-011) | PASS | The user accepted ADR-0057. ADR-0057 is recorded as `proposed` in `bd4cbaac` and moves to `accepted` (1.0.0) in the following commit, together with its AD-0006 decision-list entry (AD-0006 2.4.3), the rule and its wiring, the test module, its suite registration and route, the lifecycle policy 2.5.2 sentence and rule 7, as Plan constraint three requires. This decision accepts no Task criterion. | no | none |
+| EVD-015 | [VAL-EXIT-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Strict document checks and exact-index QA | Strict document validators, `validate-document-lifecycle.py --mode staged`, then the active pre-commit `staged-qa` hook, commitizen check and generated-message check on commits `bd4cbaac` and `56fae49f` after baseline commits `ffd01f2a` and `ae362566`; QA interpreter `/tmp/hyhome-first-approved-qa/bin/python3` with the existing pre-commit hook cache; 2026-11-11 | PASS | The first `bd4cbaac` attempt failed in `staged-qa` on `BODY-LINK-RECIPROCAL` and nothing was committed; the one-link Spec correction is recorded in EVD-012 and EVD-013. Afterwards all strict validators and the staged lifecycle check exited 0 and every hook passed for both commits; `56fae49f` was itself checked by the new rule through the staged hook. Local repository-static evidence only; no hosted CI is claimed. | yes | EVD-006 |
+| EVD-016 | [VAL-EXIT-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Operator criterion acceptance | Direct current-chat user message dated 2026-11-11 Asia/Seoul: "accept VAL-EXIT-001 to VAL-EXIT-003" | PASS | The user accepted VAL-EXIT-001 (WORK-001; EVD-017 records the same message for WORK-002). Acceptance closes W02's ARC-02 gap only and authorizes no push, PR, merge or package exit. | no | none |
+| EVD-017 | [VAL-EXIT-002](../spec.md#success-criteria--verification-plan), [VAL-EXIT-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Operator criterion acceptance | Direct current-chat user message dated 2026-11-11 Asia/Seoul: "accept VAL-EXIT-001 to VAL-EXIT-003" | PASS | The user accepted VAL-EXIT-002 and VAL-EXIT-003 (WORK-002; the same message as EVD-016). Acceptance closes W02's ARC-02 gap only and authorizes no push, PR, merge or package exit. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-EXIT-001](../spec.md#success-criteria--verification-plan) | pending | none | EVD-009 passed; waits for EVD-006 and operator acceptance. | platform |
-| [VAL-EXIT-002](../spec.md#success-criteria--verification-plan) | pending | none | EVD-010 passed; waits for EVD-006 and operator acceptance. | platform |
-| [VAL-EXIT-003](../spec.md#success-criteria--verification-plan) | pending | none | EVD-011 passed; ADR-0057 accepted (EVD-014); waits for EVD-006 and operator acceptance. | platform |
+| [VAL-EXIT-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-009, EVD-016 | Accepted by the user on 2026-11-11; closes W02's ARC-02 gap only. | platform |
+| [VAL-EXIT-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-017 | Accepted by the user on 2026-11-11; closes W02's ARC-02 gap only. | platform |
+| [VAL-EXIT-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-011, EVD-012, EVD-015, EVD-017 | Accepted by the user on 2026-11-11; closes W02's ARC-02 gap only. | platform |
 
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: `docs/03.specs/0159-package-exit-shape-check/`, `docs/03.specs/README.md`, one back-link sentence in the Traceability section of `docs/01.requirements/0003-workspace-agent-governance-platform.md`, `scripts/document_lifecycle.py`, `scripts/validate-document-lifecycle.py`, `tests/test_document_lifecycle_package_exit.py`, `scripts/run-contract-tests.py`, one exact route in `scripts/validation/registry.json`, new `docs/02.architecture/decisions/0057-package-exit-shape-check.md` with its entry in `docs/02.architecture/decisions/README.md` and, once accepted, one entry in the AD-0006 decision list with its patch `version` bump and `updated` date, one sentence in `.agents/governance/document-lifecycle.md` with its patch `version` bump and `updated` date, rule 7 of `docs/03.specs/AGENTS.md`, and `.secrets.baseline` entries marking this Task's reviewed SHA-256 document digests as non-secret
 - **Forbidden Paths**: every other repository path, including ADR-0056, any other AD-0006 text, `docs/99.templates/`, any other governance policy text, provider settings, `.github/`, the archive and the package under `_workspace/`
-- **Approval Required**: Spec and Plan approval of the current bytes is recorded (EVD-013). ADR-0057 acceptance is recorded (EVD-014). Criterion acceptance, and any commit, push, PR or merge are pending.
+- **Approval Required**: Spec and Plan approval of the current bytes is recorded (EVD-013). ADR-0057 acceptance is recorded (EVD-014). Criterion acceptance is recorded (EVD-016, EVD-017); the user authorized the commits. Any push, PR, merge or package exit is pending.
 - **Static Validation**: focused unit tests, the `document-lifecycle` suite, the strict document checks in `docs/AGENTS.md`, `validate-document-lifecycle.py --mode staged` and the active commit hooks
 - **Live Validation**: N/A; no runtime behaviour is claimed.
 - **Secret / Vault Handling**: no secret, token or private memory body was read or printed
@@ -70,4 +73,4 @@ This in-progress Task records the W02 intake and the execution of [SPEC-0159](..
 
 ## Verification Summary
 
-The W02 intake and the manual exit of SPEC-0154 to SPEC-0158 are recorded (EVD-001, EVD-002). The tests, implementation, ADR-0057, policy text, review and exact-index QA are NOT_RUN until the Spec and Plan are approved.
+W02 is closed. The intake (EVD-001) found ARC-02 open, and SPEC-0154 to SPEC-0158 left the tree by hand under the user's authority (EVD-002, commits `a6f44976` and `c8a891fb`). `LIFECYCLE-PACKAGE-EXIT` now refuses, in staged mode, a Stage 03 package exit that is unfinished (R1), partial (R2), missing an Archived Lineage update in the same change (R3), or a Spec or Plan edit after all Tasks are terminal (R4). The tests went RED then GREEN (EVD-009), the suites and a replay of the real closure passed (EVD-010), the code review passed with its fixes applied (EVD-011), and the Spec and Plan were approved again after four review rounds (EVD-012, EVD-013). The user accepted ADR-0057 (EVD-014), exact-index QA passed (EVD-015), and the user accepted all three criteria (EVD-016, EVD-017). Residual limits: the rule reads only the governed Markdown files of a package; a `#` line inside a code fence ends a lineage section early; it runs only in staged mode, so a commit without hooks and CI ranges are not checked; replay coverage is left to W05.
