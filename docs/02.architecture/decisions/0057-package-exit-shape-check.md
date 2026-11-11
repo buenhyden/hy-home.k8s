@@ -1,6 +1,6 @@
 ---
 title: "Package Exit Shape Check"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -94,11 +94,11 @@ forbids.
 
 - **Requirements:** [REQ-0003-FR-0015, REQ-0003-FR-0020 and REQ-0003-FR-0028](../../01.requirements/0003-workspace-agent-governance-platform.md).
 - **Architecture:** [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md).
-- **Change:** [SPEC-0159](../../03.specs/0159-package-exit-shape-check/spec.md).
+- **Change:** N/A — SPEC-0159 left the tree; Git history recovers it. Its acceptance and exact source are summarized in [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage).
 - **Policy:** [document lifecycle](../../../.agents/governance/document-lifecycle.md).
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0056](./0056-manual-document-disposition-review.md) | Narrows only Decision 6's "validators do not enforce them" for the Stage 03 package exit shape; every other clause stays | [SPEC-0159](../../03.specs/0159-package-exit-shape-check/spec.md) |
+| [ADR-0056](./0056-manual-document-disposition-review.md) | Narrows only Decision 6's "validators do not enforce them" for the Stage 03 package exit shape; every other clause stays | N/A — SPEC-0159 left the tree; Git history recovers it |
