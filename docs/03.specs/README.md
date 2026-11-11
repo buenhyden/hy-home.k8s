@@ -66,13 +66,14 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ├── 0154-requirement-owner-crosswalk/
 ├── 0155-designated-source-applicability/
 ├── 0156-rejected-package-clauses/
+├── 0157-shared-edition-consistency/
 ├── 0158-w00-obligation-closure/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── README.md
 ```
 
-현재 열린 package는 [SPEC-0154 Requirement Owner Crosswalk](./0154-requirement-owner-crosswalk/)다. W00–W01 요구 소유자 교차표를 기록하며 Spec과 Plan은 승인되었다. [SPEC-0155 Designated Source Applicability](./0155-designated-source-applicability/)는 W00의 남은 출처 검토·과거 작업 연결을 기록하며 Spec과 Plan은 승인되었다. [SPEC-0156 Rejected Package Clauses](./0156-rejected-package-clauses/)는 W01에서 채택하지 않은 외부 패키지 조항을 REQ-0003에 기록하며 Spec과 Plan은 승인되었다. [SPEC-0158 W00 Obligation Closure](./0158-w00-obligation-closure/)는 W00 프롬프트의 남은 기록 의무를 기록하며 Spec과 Plan은 승인되었다.
+현재 열린 package는 [SPEC-0154 Requirement Owner Crosswalk](./0154-requirement-owner-crosswalk/)다. W00–W01 요구 소유자 교차표를 기록하며 Spec과 Plan은 승인되었다. [SPEC-0155 Designated Source Applicability](./0155-designated-source-applicability/)는 W00의 남은 출처 검토·과거 작업 연결을 기록하며 Spec과 Plan은 승인되었다. [SPEC-0156 Rejected Package Clauses](./0156-rejected-package-clauses/)는 W01에서 채택하지 않은 외부 패키지 조항을 REQ-0003에 기록하며 Spec과 Plan은 승인되었다. [SPEC-0157 Shared Edition Consistency](./0157-shared-edition-consistency/)는 규칙 문서가 registry의 공동 계약 판본과 같은지 검사하는 W01 변경을 기록하며 Spec과 Plan은 승인되었다. [SPEC-0158 W00 Obligation Closure](./0158-w00-obligation-closure/)는 W00 프롬프트의 남은 기록 의무를 기록하며 Spec과 Plan은 승인되었다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
