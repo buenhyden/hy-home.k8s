@@ -22,6 +22,8 @@ from document_contracts import (
     classify_paths,
     enumerate_target_markdown,
     load_registry,
+    shared_edition_mismatches,
+    shared_edition_surface_texts,
 )
 from validation.repository.bounded_io import BoundedInputError, read_bytes
 
@@ -638,6 +640,11 @@ def main() -> int:
         registry = load_registry(root)
         _assert_template_source_parity(registry)
         _assert_reference_pack_topology(root, registry)
+        edition_mismatches = shared_edition_mismatches(
+            registry.shared_contract, shared_edition_surface_texts(root)
+        )
+        if edition_mismatches:
+            raise DocumentContractError(edition_mismatches)
         profile_ids = {profile.profile_id for profile in registry.profiles}
         readme_family = args.profile == "readme"
         if args.profile and not readme_family and args.profile not in profile_ids:

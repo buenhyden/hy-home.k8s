@@ -1220,6 +1220,54 @@ def enumerate_tracked_regular_paths(
     return _sorted_paths(paths)
 
 
+SHARED_EDITION_SURFACES = (".agents/", "docs/99.templates/", ".claude/", ".codex/")
+
+
+def shared_edition_surface_texts(root: Path) -> dict[PurePosixPath, str]:
+    """Read the tracked Markdown rule surfaces that may name the shared edition."""
+
+    paths = enumerate_tracked_regular_paths(
+        root,
+        pathspecs=tuple(
+            f":(glob){prefix}**/*.md" for prefix in SHARED_EDITION_SURFACES
+        ),
+    )
+    return {path: read_repository_text(root, path) for path in paths}
+
+
+def shared_edition_mismatches(
+    contract: SharedContract | None,
+    texts: Mapping[PurePosixPath, str],
+) -> tuple[Diagnostic, ...]:
+    """Report rule-surface edition mentions that differ from the adopted one."""
+
+    if contract is None:
+        return ()
+    pattern = re.compile(
+        re.escape(contract.contract_id)
+        + r"`?\s*(?:/\s*)?`?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]*\d[0-9A-Za-z]*)?)"
+    )
+    found = []
+    for path in sorted(texts):
+        posix = path.as_posix()
+        if not posix.endswith(".md") or not posix.startswith(SHARED_EDITION_SURFACES):
+            continue
+        text = texts[path]
+        for match in pattern.finditer(text):
+            if match.group(1) == contract.version:
+                continue
+            line = text.count("\n", 0, match.start()) + 1
+            found.append(
+                _diagnostic(
+                    "REGISTRY_SHARED_EDITION_MISMATCH",
+                    path=path,
+                    expected=f"{contract.contract_id} {contract.version}",
+                    actual=f"line {line}: {contract.contract_id} {match.group(1)}",
+                )
+            )
+    return tuple(found)
+
+
 @lru_cache(maxsize=None)
 def _compile_route(value: str) -> re.Pattern[str]:
     return re.compile(value)

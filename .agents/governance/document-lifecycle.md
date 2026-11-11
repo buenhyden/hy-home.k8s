@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.5.0"
+version: "2.5.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-10"
+updated: "2026-11-11"
 ---
 
 # Document Lifecycle Policy
@@ -105,6 +105,11 @@ evidence is not rewritten to satisfy a later profile.
   integration evidence. Do not fabricate a draft commit or remove observed
   Task evidence to satisfy the normal route. The shared WGOV-CORE edition and
   ordinary later transitions remain intact.
+- Current rule documents under `.agents/`, `docs/99.templates/`, `.claude/`
+  and `.codex/` name only the `shared_contract.version` the Stage 99 registry
+  adopts; the registry validator refuses another edition as
+  `REGISTRY_SHARED_EDITION_MISMATCH`. Spec packages, the archive and
+  `CHANGELOG.md` are history and may name older editions.
 - Stage 01, 02 and 03 documents have no `superseded`, `retired` or
   `deprecated` state and no older form. A replaced or withdrawn document, or a
   completed Spec package, is summarized in the owning current document's
