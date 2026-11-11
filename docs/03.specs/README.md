@@ -64,12 +64,13 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ```text
 03.specs/
 ├── 0159-package-exit-shape-check/
+├── 0160-document-form-gaps/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── README.md
 ```
 
-현재 열린 package는 [SPEC-0159 Package Exit Shape Check](./0159-package-exit-shape-check/)다. 끝난 Stage 03 package가 잘못된 모양으로 tree를 떠나는 것을 staged commit에서 막는 W02 변경을 기록하며 Spec과 Plan은 승인되었다.
+현재 열린 package는 완료된 [SPEC-0159 Package Exit Shape Check](./0159-package-exit-shape-check/)와 진행 중인 [SPEC-0160 Document Form Gaps](./0160-document-form-gaps/)다. SPEC-0159는 끝난 Stage 03 package가 잘못된 모양으로 tree를 떠나는 것을 staged commit에서 막으며, 수용되었지만 아직 tree를 떠나지 않았다. SPEC-0160은 front-matter 규칙 시험, 감사 양식 열과 두 중복 설명의 정리를 다루는 W03 변경을 기록하며 Spec과 Plan은 승인되었다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
