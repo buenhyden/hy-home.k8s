@@ -44,6 +44,7 @@ SUITES = {
     ),
     "document-lifecycle": _modules(
         "document_artifact_identity",
+        "document_lifecycle_package_exit",
     ),
     "validation-routing": _modules(
         "validate_affected_surfaces",

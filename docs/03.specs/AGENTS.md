@@ -44,8 +44,13 @@ criterion acceptance. A package exists only while its change is open.
 6. Criterion acceptance is the operator's decision; an agent records PASS
    evidence and leaves `Acceptance` pending until the operator accepts.
 7. A finished package promotes each durable contract through the Plan's
-   `Promotion` table, is summarized in the Requirement's `Archived Lineage`
-   table, and is deleted. Update this stage's README in the same change.
+   `Promotion` table. Before its final source commit, its Task freezes the
+   consumer, hold, authority and method decision. After that commit, the
+   Requirement's `Archived Lineage` records each file's recovery proof and
+   summary, and the whole package is deleted in that same change with this
+   stage's README updated. An unresolved condition defers the deletion. The
+   staged `LIFECYCLE-PACKAGE-EXIT` check refuses the wrong shape; see the
+   [document lifecycle policy](../../.agents/governance/document-lifecycle.md).
 
 ## Checks
 

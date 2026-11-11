@@ -1,8 +1,8 @@
 ---
 title: "Package Exit Shape Check"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-11-11"
 layer: "architecture"
@@ -13,7 +13,7 @@ artifact_id: "ADR-0057"
 
 ## Overview
 
-This proposed amendment narrows one clause of accepted
+This accepted amendment narrows one clause of accepted
 [ADR-0056](./0056-manual-document-disposition-review.md) Decision 6,
 "Existing validators do not enforce them", for Stage 03 packages only. A
 staged commit that removes a Stage 03 package in the wrong shape becomes a
@@ -22,6 +22,10 @@ review, consumer transfer and disposition authority stay a manual procedure
 with independent review, and no archive-content or historical-cutover gate is
 introduced. ADR-0056 keeps its body; this decision amends it, as ADR-0056
 amended ADR-0053 and ADR-0055.
+
+The current user accepted this decision on 2026-11-11, after an independent
+code review of the implementing change passed. The acceptance is recorded in
+the SPEC-0159 Task. It authorizes no package disposition by itself.
 
 ## Context
 

@@ -1300,6 +1300,10 @@
         {
           "kind": "exact",
           "value": "tests/test_document_artifact_identity.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_document_lifecycle_package_exit.py"
         }
       ],
       "validators": [
