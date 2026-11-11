@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "3.0.2"
+version: "3.0.3"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -117,6 +117,7 @@ In scope: current owner boundaries, approval, document lifecycle, validation res
 Out of scope: new provider admission, vendoring an external role catalog, collecting secrets, live changes, or creating a Release family.
 The removed shared progress ledger and the past proposal's `agentSystems`/`evidenceOwnerPolicies` are not
 claimed as current implementation or restored as a new parallel registry. FR-0025's ongoing obligations are validated at their current owners.
+The external v14.2 execution package is evidence only; four of its clauses conflict with accepted requirements and are not adopted: a single machine ledger for unfinished, adoption and survey state (FR-0019, FR-0022), forbidding a mandatory extra model call in single-maintainer review (FR-0018), renumbering Stage 03 from 1 (FR-0023), and generated reverse traceability in place of hand-written back-links (IF-0001 and acceptance criterion 02, checked by `BODY-LINK-RECIPROCAL`).
 
 ## Risks, Dependencies, and Assumptions
 The relevant owners update concrete provider/model availability and authentication evidence. A static file is not runtime discovery.
@@ -146,7 +147,7 @@ Withdrawn, completed and superseded packages through SPEC-0140 were deleted. Git
 
 ## Traceability
 
-SPEC-0152 completed the current manual disposition policy change; its exact completed source and recovery proof are in [Archived Lineage](#archived-lineage). Earlier completed packages, including SPEC-0151 and SPEC-0150, are summarized there and recovered from Git history. The seven-stage W00–W11 follow-up roadmap remains future work in `git show 4033d38e:docs/03.specs/0152-manual-document-disposition-policy/plan.md` under `Deferred Roadmap`; this closure does not complete those stages. SPEC-0153 corrected the separately observed broad-history ADR and Task validation failures; its Task criteria were accepted on 2026-11-11, and its completed source and recovery proof are in [Archived Lineage](#archived-lineage). It does not revise SPEC-0152's completed evidence. The open [SPEC-0154](../03.specs/0154-requirement-owner-crosswalk/spec.md) records stage W00–W01 of that roadmap: a crosswalk from an external execution package's requirement IDs to current owners, with conflict dispositions and stage handoffs; its Task owns execution and acceptance. The open [SPEC-0155](../03.specs/0155-designated-source-applicability/spec.md) records the remaining W00 obligations: designated-source applicability, legacy work-package lineage and official-source checks.
+SPEC-0152 completed the current manual disposition policy change; its exact completed source and recovery proof are in [Archived Lineage](#archived-lineage). Earlier completed packages, including SPEC-0151 and SPEC-0150, are summarized there and recovered from Git history. The seven-stage W00–W11 follow-up roadmap remains future work in `git show 4033d38e:docs/03.specs/0152-manual-document-disposition-policy/plan.md` under `Deferred Roadmap`; this closure does not complete those stages. SPEC-0153 corrected the separately observed broad-history ADR and Task validation failures; its Task criteria were accepted on 2026-11-11, and its completed source and recovery proof are in [Archived Lineage](#archived-lineage). It does not revise SPEC-0152's completed evidence. The open [SPEC-0154](../03.specs/0154-requirement-owner-crosswalk/spec.md) records stage W00–W01 of that roadmap: a crosswalk from an external execution package's requirement IDs to current owners, with conflict dispositions and stage handoffs; its Task owns execution and acceptance. The open [SPEC-0155](../03.specs/0155-designated-source-applicability/spec.md) records the remaining W00 obligations: designated-source applicability, legacy work-package lineage and official-source checks. The open [SPEC-0156](../03.specs/0156-rejected-package-clauses/spec.md) records stage W01: the four rejected package clauses in Scope and Non-goals.
 
 ### Lifecycle Traceability
 
