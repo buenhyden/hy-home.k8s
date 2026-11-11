@@ -1,0 +1,279 @@
+---
+title: "W00 v14.7 Delta Intake"
+version: "0.1.0"
+type: "sdlc/task"
+status: "in-progress"
+owner: "platform"
+updated: "2026-11-12"
+layer: "specs"
+artifact_id: "SPEC-0161-TSK-0001"
+parent_ids: ["SPEC-0161-PLAN-0001"]
+---
+
+# Task: W00 v14.7 Delta Intake
+
+## Overview
+
+This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under its [Plan](../plan.md). EVD-001 to EVD-006, EVD-010 and EVD-011 were observed before approval and are marked not required. The user approved the Spec and Plan on 2026-11-12 (EVD-013) and confirmed the exact reviewed bytes (EVD-015, EVD-016).
+
+## Inputs
+
+- **Request:** on 2026-11-12 (Asia/Seoul) the user pasted the v14.7 W00 prompt (`TASK-hy-home-k8s-W00.md`) and named the package directory `_workspace/workspace_execution_tasks/{dependencies, reports, tools}`. The request does not approve this Spec or Plan, accept a criterion, or authorize a commit, push or merge.
+- **Workspace:** WORKSPACE_ROOT is the repository root; PACKAGE_ROOT `_workspace/workspace_execution_tasks/`, git-ignored by `.gitignore` line 74. Base `main` at `4a47cb40`, clean worktree and index, no open pull request; branch `claude/w00-v14-7-intake`.
+- **Inputs (SHA-256):** W00 prompt `65d1cc62db9e2aae2476138d4285d4138a65202309bb4e6167b694758abbd1e7`; `INPUT-REPORT-ORIGINAL.txt` `dc348e7fc67f77ab8667cc4b1eecb50dbac2857d30617eff1246dd23d8748d23` (same as SPEC-0154); `REQUIREMENTS.json` `4c9da241ba185310048f3231815c04ed42dc7ce54c44e201f97e469f5945084b`; `PROFILE-REQUIREMENTS.json` `079f07c13b7c54391366185d0fd0ce543ec81c4877a4fbef9df0a82790ed2e75` (same as SPEC-0154); `REVISION-v14_7.json` `67c42631cf48f3fc4e7c84329c0eb87dfb7775fb000a7381696c931161541463`; `REQUEST-AMENDMENTS-v14_5.json` `02342b6b15d12de00e7880c8a161a3e418acd12324e3b8330eb66594adc90a27`; `COMMON-SECTION-CONTRACT.json` `4f79183d59c34ee87d1cab35c5ffc86eb7012f5df1db4dc4b91a8fd412e8c618`; `STAGE-QA-MATRIX.json` `12d8962c96c769cd3bbc12bcc2e9d29b31d4e60e9a48190c2d1ad6934030e873`; `QA-CHANGE-PROTOCOL.md` `106ee35cba6b2ea0313168541cce11f4b73573125b261be296f854d295f8826d`; `REPOSITORY-VOCABULARY.json` `b03ae3c00a4228de90d90b48c9a7af4b716492651d83b6deab128d9e3bc92fce`; `TEMPLATE-DEFINITION-CONTRACT.md` `ff7e35b8b75406c9bedb603f8fb4d0449401564b3eae79138b9f9b222c61eb10`; `OPEN-01-14.json` `4dde48c427323cd6a1cdef9280fd281f1bab019c07ea5fd947728639aa6b8677`.
+- **Upstream:** completed SPEC-0154 to SPEC-0160, recoverable from the REQ-0003 Archived Lineage.
+
+## Task Table
+
+### Lifecycle Traceability
+
+| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| WORK-001 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan), [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | Record the delta tables, check completeness, obtain independent review. | platform | frontmatter | NOT_RUN | Pre-approval observations EVD-001 to EVD-006; required checks EVD-007 to EVD-009 pending approval. |
+
+## Task Evidence
+
+| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| EVD-001 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Pre-approval edition comparison | Package v14.7 against the v14.1, v14.4, v14.5 and v14.6 history archives; prompt diff against v14.6; workspace HEAD `4a47cb40`; 2026-11-12 | PASS | Edition Delta table below. The exact v14.2 `REQUIREMENTS.json` (SPEC-0154 input, prefix `8af753f1`) is not in any history archive; v14.1 is the base. Same 106 IDs since v14.1; 16 rows changed only `implementation` or `verification` text (18 field changes). | no | none |
+| EVD-002 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Pre-approval requirement-change links | `REVISION-v14_7.json`, `REQUEST-AMENDMENTS-v14_5.json`, the 16 changed rows, REQ-0003 Scope and Non-goals, and repository searches at `4a47cb40`; 2026-11-12 | PASS | Requirement Changes table below: 50 rows (16 changed requirements, 12 R45, 20 R147, RS-09, CI-SCOPE). | no | none |
+| EVD-003 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Pre-approval pull-request table | `gh pr list --state all --limit 10` metadata at HEAD `4a47cb40`; 2026-11-12 | PASS | Related Pull Requests table below. Only metadata was read; no diff, check run or review was re-read. | no | none |
+| EVD-004 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Pre-approval document-form survey | Read-only agent over `COMMON-SECTION-CONTRACT`, `TEMPLATE-DEFINITION-CONTRACT`, `REPOSITORY-VOCABULARY`, `docs/99.templates/registry.json`, 18 templates, `scripts/document_contracts.py`, `scripts/validate-markdown-profiles.py`; HEAD `4a47cb40`; 2026-11-12 | PASS | Document Form Handoff table below. No file changed. | no | none |
+| EVD-005 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Pre-approval stage-QA survey | Read-only agent over `STAGE-QA-MATRIX`, `QA-CHANGE-PROTOCOL`, `.pre-commit-config.yaml`, `scripts/githooks/`, `scripts/qa.py`, `.github/workflows/ci.yml`, `.github/rulesets/main-protection.md`, `.claude/settings.json`, parts of `quality.md` and `git.md`; HEAD `4a47cb40`; 2026-11-12 | PASS | Stage QA Handoff table below. No hook, QA lane or network call was run. | no | none |
+| EVD-006 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Pre-approval OPEN dispositions and read denominator | `OPEN-01-14.json`, SPEC-0158 OPEN table at `6a519871`, the two surveys, `git ls-files` counts at `4a47cb40` | PASS | OPEN Dispositions and Read Denominator tables below. | no | none |
+| EVD-007 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Completeness check under approved parents | The tables in this Task plus a negative copy | NOT_RUN | Pending Spec and Plan approval. | yes | none |
+| EVD-008 | [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent read-only semantic review | Change links, handoff writers and OPEN dispositions | NOT_RUN | Pending; a reviewer that produced none of the tables. | yes | none |
+| EVD-009 | [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Strict document checks and exact-index QA | Strict document validators, the staged lifecycle check and the active commit hooks on the exact index | NOT_RUN | Pending an authorized commit. | yes | none |
+| EVD-010 | [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Pre-approval independent review, round 1 | A read-only code-reviewer that produced no table, over the staged package at HEAD `4a47cb40`; 2026-11-12 | FAIL | Two BLOCKs: OPEN-05 and OPEN-06 verdicts weaker than SPEC-0158 Review Corrections; files with two primary writers and rows without paths. Seven FIXes: OPEN-09 and OPEN-13 overstated, Root README Getting Started, R45-07 mixed state, `.secrets.baseline` scope, README status sentence, REQ-0003 sentence at exit. | no | none |
+| EVD-011 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Pre-approval verification of unverified survey items | Read-only agent over the named tests, `scripts/validate-document-lifecycle.py` 660-889, Stage 90 profiles and validators, generator search, README navigation, `.git/hooks/pre-commit` and `scripts/githooks/chained-hook.sh`; `gh api` branch protection, check runs and repository merge settings, read only, 2026-11-11T23:46Z; direct fetch of the LambdaDB article and the agency-agents and SillyMemory licences | PASS | Corrections from EVD-010 applied; OPEN-05 and OPEN-13 closed by evidence, OPEN-09 confirmed, PUSH-DURING and MERGE-BEFORE observed, PROMOTION and DOC-S90 gaps and the missing generator recorded. Local environment: `chained-hook.sh` runs `.git/hooks/pre-commit`, whose interpreter `/tmp/hyhome-r10-validation` is absent, so it falls back to a `pre-commit` without `jsonschema`; QA uses a scratch venv built from `.github/requirements/ci-validation.txt`. | no | none |
+| EVD-012 | [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent read-only semantic review | Same reviewer as EVD-010 over Task SHA-256 `66a730d289e68179c7cec6f84a023e57369fd07504a1b674804f3f324f09ea09`, Spec `8acb1507…`, Plan `5fe718c6…`; it re-ran the `gh api` protection, settings and check-run reads; 2026-11-12 | PASS | No BLOCK. Two FIXes (R147-07 and R147-20 writer wording, MERGE-BEFORE wording) and two NOTEs applied before approval; no other content changed. | yes | EVD-008 |
+| EVD-013 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan), [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Spec and Plan approval receipt | The user's answer "Approve and commit" to the SPEC-0161 approval question in this session, 2026-11-12, after the batch review EVD-010 and EVD-012 | PASS | Spec and Plan set to `approved` 1.0.0 together at first Git record (first-record approval extension). Approval does not accept a criterion or authorize push, PR or merge. | no | none |
+| EVD-014 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Completeness check under approved parents | Single-use checker SHA-256 `e5136c1915d677d97ecc33f32fd5d57cd74c628df2dbe1c6ae0a7fb5820a10c2` over this Task (SHA-256 `64c32724eac714252479260cfa60a83d9dc998f48501392ee1668fdbf6b88961`) after approval; negative copy without R147-05, with GOV-01 writer `none` and OPEN-07 verdict `OPEN`; 2026-11-12 | PASS | Positive: 50 rows (21 COVERED, 27 OPEN, 1 REJECTED_BY_CONTRACT, 1 DECISION_NEEDED), OPEN-01..14 once each with an allowed verdict, every cited path tracked except the declared CREATE target `.agents/knowledge/glossary.md`. Negative: all three injected faults reported, exit 1. | yes | EVD-007 |
+| EVD-015 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan), [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent semantic review | {"spec_sha256":"5b304a9dfdc190752a3afad4f8088a748c2f0215a906a13fbf4f0afb1e23ad4f","plan_sha256":"e388f9e724ba5beabd088272fee6aaf39d18a360eeb4e6a1908a0747afed2620"} | PASS | Same read-only reviewer as EVD-010 and EVD-012, round 3, 2026-11-12: both exact hashes matched; reverting only the version, status and approved wording reproduces the round-2 bytes `8acb1507…` and `5fe718c6…`; verdict APPROVE, no BLOCK, no FIX on Spec or Plan. | yes | none |
+| EVD-016 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan), [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-session user answer Confirm approval to the SPEC-0161 exact-byte reconfirmation question dated 2026-11-12 Asia/Seoul","review_ref":"EVD-015","scope":["SPEC-0161","SPEC-0161-PLAN-0001"],"reviewed_spec_sha256":"5b304a9dfdc190752a3afad4f8088a748c2f0215a906a13fbf4f0afb1e23ad4f","reviewed_plan_sha256":"e388f9e724ba5beabd088272fee6aaf39d18a360eeb4e6a1908a0747afed2620","validity":"confirmed","revocation":"none"} | PASS | The user first answered Approve and commit (EVD-013) before review; after the review changes listed in the reconfirmation question the user confirmed these exact bytes. No message UUID was supplied or invented. This receipt accepts no criterion and authorizes no push, PR or merge. | yes | none |
+
+### Edition Delta
+
+| Input | v14.2 consumed by SPEC-0154..0160 | v14.7 | Effect |
+| --- | --- | --- | --- |
+| Original input report | `dc348e7f…` | same | No new source atoms. |
+| 106 requirement IDs | 106 | 106, same IDs | No ID added or removed. |
+| Requirement text | v14.1 base used (v14.2 bytes absent) | 16 rows changed in `implementation` or `verification` only (18 field changes) | Linked below. |
+| Profile requirements K8S-01..03 | `079f07c1…` | same | No new profile duty. |
+| Clauses | none | R45-01..12 (v14.5), R147-01..20 (v14.7) | Linked below. |
+| Contracts | none | COMMON-DOC-FORM-1, QA-STAGES-1, QA-ALIGNMENT-v14_7, Repository Vocabulary, TemplateDefinition, Q-08 path decision | Handoff tables below. |
+
+### Requirement Changes
+
+State: COVERED (current owner already conforms, evidence named; for a clause a later stage also applies, COVERED means only that W00's own conduct conforms and that stage still applies it), OPEN (writer stage named), REJECTED_BY_CONTRACT (an accepted requirement and a same-scope user decision exclude it), DECISION_NEEDED (an unresolved conflict for the named stage).
+
+| ID | Change | Current owner | State | Writer |
+| --- | --- | --- | --- | --- |
+| SCOPE-02 | Acceptance waiting is no reason to reimplement; KEEP and residual acceptance are separate axes | This Task; `docs/03.specs/AGENTS.md` rule 6 | COVERED | none |
+| SCOPE-04 | Compare conditions, exceptions, negations and consumers, not only ID counts | This Task, Requirement Changes table | COVERED | none |
+| SCOPE-10 | Distinguish current-copy migration of completed documents from historical bytes | `docs/AGENTS.md` rule 6; `docs/03.specs/AGENTS.md` rule 4 | OPEN | W03 (migration map in the same change as the form change) |
+| GOV-01 | Define Repository Vocabulary in `.agents/knowledge/glossary.md` | Absent; terms live in `.agents/governance/sdlc.md` "Shared terminology and ownership" | OPEN | W01 |
+| GOV-04 | Approved registry is still a reform target | `docs/99.templates/registry.json` (`schema_version` 10) | OPEN | W01 policy, W03 registry |
+| GOV-06 | Single-writer registry reformed; derived consumers read the new contract | `docs/99.templates/registry.json`, `scripts/document_contracts.py` | OPEN | W03 |
+| DOC-04 | Profile field, state, relation and table definitions reformed | `docs/99.templates/registry.json` | OPEN | W03 |
+| DOC-05 | Section and body contracts match target H2/H3 and tables | `docs/99.templates/registry.json` `sections`, `relationships.body_contract` | OPEN | W03 |
+| DOC-11 | Every real template has a TemplateDefinition; Release role removed; Q-08 path kept | No TemplateDefinition equivalent; no Release role remains; path kept | OPEN | W03 |
+| SDLC-01 | Remove an independent Release document role | REQ-0003 Scope excludes a Release family; no Release profile, template or validator rule exists | COVERED | none |
+| SDLC-07 | Transition rules in the registry reformed with W03 | `.agents/governance/document-lifecycle.md` (semantics); `docs/99.templates/registry.json` `lifecycle` (W03 writes) | OPEN | W04 (policy semantics only) |
+| SDLC-08 | Old approved registry edition is not a pass basis | `scripts/validate-document-lifecycle.py`, `scripts/document_lifecycle.py` | OPEN | W05 |
+| ARC-05 | Recover real attachments when LFS, submodule or filters are used | No LFS, submodule or filter in use (no `.gitattributes` filter, no `.gitmodules`) | COVERED | none |
+| QA-03 | Validator input is the reformed registry edition | `scripts/validate-document-contract-registry.py` | OPEN | W05 |
+| QA-17 | Validators changed for the reformed registry; new violations fail | `scripts/validate-markdown-profiles.py`, `tests/test_*section*`, `tests/test_task_*` | OPEN | W05 |
+| AGENT-04 | Separate direct, wrapper and nested hook delivery on the installed client | `.claude/hooks/k8s-pre-edit.sh`; provider note | OPEN | W07 |
+| R45-01 | Trace prior instruction to current change per request | This Task, Edition Delta and this table | COVERED | none |
+| R45-02 | Compare HEAD, files and recent PRs | This Task, Related Pull Requests | COVERED | none |
+| R45-03 | Ask only real local conflicts | This Task, Conflicts | COVERED | none |
+| R45-04 | Link external evidence to change and test | This Task, External Evidence | COVERED | none |
+| R45-05 | Run only the selected stage in this workspace | This package scope | COVERED | none |
+| R45-06 | Reform the approved registry itself | `docs/99.templates/registry.json` | OPEN | W03 |
+| R45-07 | Keep `docs/99.templates/`; reform forms and consumers in place | Path unchanged; forms not yet reformed | OPEN | W03 |
+| R45-08 | Repository Vocabulary in the glossary | Absent | OPEN | W01 |
+| R45-09 | Release role removal without removing tags, releases or CHANGELOG | Same as SDLC-01; `scripts/release.py` and runbook 0012 kept | COVERED | none |
+| R45-10 | TemplateDefinition per real template | Absent | OPEN | W03 |
+| R45-11 | OPEN-01..14 as historical identifiers | This Task, OPEN Dispositions | COVERED | none |
+| R45-12 | Verify common adoption across four purposes | Other workspaces out of scope (package decision D-04) | OPEN | W11, this workspace only |
+| R147-01 | Link sources, prior reports and ownership by ID | This Task with SPEC-0154/0158 reuse | COVERED | none |
+| R147-02 | Read the workspace with a read denominator | This Task, Read Denominator (partial, stated) | COVERED | none |
+| R147-03 | Approved norms are reform targets | Same as GOV-04 | OPEN | W01 |
+| R147-04 | Common H2/H3 forms in templates and consumers | Document Form Handoff | OPEN | W03 |
+| R147-05 | Tests, QA and scripts follow QA-ALIGNMENT | Stage QA Handoff and Document Form Handoff | OPEN | W05 |
+| R147-06 | Bind Git before/during/after cells | Stage QA Handoff | OPEN | W06 |
+| R147-07 | Separate SDLC stage from document STAGE | `.agents/governance/document-lifecycle.md` (W04 writes); `.agents/governance/sdlc.md` (W01 writes, W04 supplies semantics) | OPEN | W04 |
+| R147-08 | Safe archive and exit | `LIFECYCLE-PACKAGE-EXIT` (SPEC-0159), ADR-0056 manual review | COVERED | none (W02 reuses) |
+| R147-09 | Vocabulary owner alignment; keep Release role removed | Glossary absent | OPEN | W01 |
+| R147-10 | Keep path; migrate registry to CI chain | Path unchanged | OPEN | W03 |
+| R147-11 | External sources linked to files and tests | This Task, External Evidence | COVERED | none |
+| R147-12 | Protect completed work; link only new differences | This Task reuses SPEC-0154..0160 | COVERED | none |
+| R147-13 | Self-contained stage prompts | Package property, not a workspace file | COVERED | none |
+| R147-14 | Project-Template dev/main | Other purpose | COVERED | none (not applicable here) |
+| R147-15 | blog-data domains | Other purpose | COVERED | none (not applicable here) |
+| R147-16 | Kubernetes impact of governance changes | Manifests and their consumers | OPEN | W10 |
+| R147-17 | Harness: static versus live provider evidence | `.claude/provider.md`, `.codex/provider.md` | OPEN | W07 |
+| R147-18 | OPEN items' currentness | This Task, OPEN Dispositions | COVERED | none |
+| R147-19 | Ask only unresolved conflicts | This Task, Conflicts | COVERED | none |
+| R147-20 | Reuse only equivalent results | `.agents/governance/quality.md` validation runner envelope (W01 writes); `scripts/qa.py` result reuse | OPEN | W05 (`scripts/qa.py`); W01 writes the policy text |
+| RS-09 | Generated reverse traceability | REQ-0003 Scope and Non-goals; `BODY-LINK-RECIPROCAL` | REJECTED_BY_CONTRACT | none (SPEC-0156 user decision reused) |
+| CI-SCOPE | PR-DURING runs affected implementation and product leaves in hosted CI | `.agents/governance/quality.md` "Hosted automation does not run local unit or document-content QA"; `git.md` | DECISION_NEEDED | W01, then W06 |
+
+### Related Pull Requests
+
+| PR | Base | Head branch | Head | Merge | Merged (UTC) | Scope | Read |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| #227 | main | claude/exit-0159-0160 | `44f46944` | `4a47cb40` | 2026-11-11T14:10:07Z | Close SPEC-0159, SPEC-0160 | metadata |
+| #226 | main | claude/w03-document-forms | `ab436a92` | `bebed75b` | 2026-11-11T14:01:17Z | W03 document form gaps (v14.2) | metadata |
+| #225 | main | claude/w02-package-exit | `78bab1dd` | `6a82354b` | 2026-11-11T13:59:58Z | W02 package exit shape check | metadata |
+| #224 | main | claude/w01-edition-check | `e84a954d` | `83abcad6` | 2026-11-11T12:35:09Z | W01 shared-edition check | metadata |
+| #223 | main | claude/w00-closure | `18ef5024` | `6a519871` | 2026-11-11T11:50:22Z | SPEC-0158 W00 closure | metadata |
+| #222 | main | claude/w01-governance-standards | `7963dd04` | `facb787e` | 2026-11-11T11:41:44Z | SPEC-0156 rejected clauses | metadata |
+| #221 | main | claude/requirement-owner-crosswalk | `ff6bcdb2` | `6949179f` | 2026-11-11T11:04:14Z | SPEC-0154, SPEC-0155 | metadata |
+| #220 | main | codex/manual-document-disposition-policy | `7b2b2e0c` | `b7497ee1` | 2026-11-10T22:44:28Z | Disposition review and lifecycle replay (ADR-0056) | metadata |
+
+All eight are merged; merge is not criterion acceptance. Their acceptance lives in the archived Tasks. PR #220's lifecycle replay and ADR-0056 manual review are kept, as the prompt directs, and not re-registered.
+
+### Document Form Handoff
+
+Target: COMMON-DOC-FORM-1 1.0.0. Every current template lacks the target H3 set; the registry models H2 names only.
+
+| Role | Current owner | Difference | Writer | Consumers to move together |
+| --- | --- | --- | --- | --- |
+| Requirement | `sdlc/requirement`, `templates/requirements/requirement-package.template.md` | 10 H2 against 5; Scope at 8 not 2; no conditional Quality Requirements | W03 | W05 section tests |
+| Architecture | `sdlc/architecture-description`, `templates/architecture/description.template.md` | Only Overview and Traceability match | W03 | W05 |
+| ADR | `sdlc/architecture-decision`, `templates/architecture/decision.template.md` | Extra Overview and Explicit Non-goals; Alternatives after Consequences; Supersession only in frontmatter | W03 | W04 lifecycle (supersession) |
+| Spec | `sdlc/spec`, `templates/specs/spec.template.md` | 11 H2 against 5; only Overview matches | W03 | W05 (`scripts/document_lifecycle.py`, tests) |
+| Plan | `sdlc/plan`, `templates/specs/plan.template.md` | Promotion optional against required Promotion Map; Dependencies and Implementation Strategy missing | W03 | W04 promotion receipts |
+| Task | `sdlc/task`, `templates/specs/task.template.md` | No H2 matches; body contract binds "Task Table" and "Lifecycle Traceability" | W03 | W04; W05 `test_task_execution_contract.py`, `test_task_acceptance_contract.py`; W01 `work-lifecycle.md` and `quality.md` name current Task headings |
+| Guide, Runbook, Policy | `operation/{guide,runbook,policy}`, `templates/operations/` | H2 names differ; Policy lacks Ownership | W03 | W05 `test_operations_section_contract.py` |
+| Incident, Postmortem | `operation/{incident,postmortem}` | 10 and 12 H2 against 5 | W03 | W05 |
+| Root README | `common/readme-repository` | Only the optional Getting Started matches; Purpose, Repository Map and References differ | W03 | W05 README navigation |
+| Stage README | `common/readme-stage-index` | Only Related Documents matches | W03 | W05 |
+| Service README | No such role; nearest `common/readme-implementation` | Role scope undecided | W03 | none yet |
+| AGENTS | `common/folder-agents-guide`, no template | Template absent | W03 | W07 loaders |
+| Skill | `common/native-skill-package`, no template | Template absent; `governance/skill` governs workflows, not `SKILL.md` | W03 | W07 |
+| Registry model | `docs/99.templates/registry.json`, `docs/99.templates/contracts/document-profile.schema.json`, `scripts/document_contracts.py` `HeadingContract` | No H3, section_id, parent_id, condition, empty_policy, TemplateDefinition or template version | W03 | W05 |
+| H3 and empty rules | `scripts/validate-markdown-profiles.py` `_body_diagnostics`, `_scan_required_h2_content` | No parent-aware H3, order, duplicate or conditional checks; empty rule only on required H2; `ordered` only on 6 profiles | W05 | W03 registry flags |
+| Fenced fake headings | `scan_headings` | Handled; no negative test | W05 | none |
+| Generator | None: no script fills `{{TITLE}}` placeholders; forms are copied by hand | Target chain names a Generator; create it or record why none is needed | W03 | W05 |
+| Link-only section | `_LINK_ONLY_SECTIONS = {"Related Documents"}` hard-coded in `scripts/validate-markdown-profiles.py` | Must follow the registry when headings change | W05 | W03 |
+| Vocabulary | `.agents/governance/sdlc.md` terminology table | Glossary absent; no term IDs or version | W01 | W05 duplicate-ID check; `.agents/knowledge/README.md` |
+| Policy versus `governance/rule` | `operation/policy`, `governance/{role,rule,skill}` | Target Policy role owner undecided; `governance/*` not in the 16 target roles | W01 then W03 | none yet |
+
+### Stage QA Handoff
+
+Target: QA-STAGES-1. PASS means the current binding already gives the target guarantee.
+
+| Cell or row | Current binding | State | Writer |
+| --- | --- | --- | --- |
+| COMMIT-BEFORE | `staged-qa` → `scripts/qa.py staged` on the index snapshot; partial stage covered by `tests/test_qa_runner.py` | PASS | none |
+| COMMIT-DURING | commitizen and `scripts/commit-message-exceptions.py`; no prepare-commit-msg or pre-merge-commit | PASS, low gap | W06 |
+| COMMIT-AFTER | No post-commit; Task evidence is the record | GAP, low; decide no blocking hook | W06 (`scripts/githooks/`) |
+| PUSH-BEFORE | `scripts/githooks/pre-push` has no target | GAP or N/A by `git.md` | W06 |
+| PUSH-DURING | Branch protection read back 2026-11-11T23:46Z: force push and deletion disabled, admins enforced | PASS | none |
+| PUSH-AFTER | Push-event `ci-summary` reports NOT_APPLICABLE | PASS | none |
+| PR-BEFORE | `git.md` and PR template only | PASS, policy only | W06 (`.github/PULL_REQUEST_TEMPLATE.md`) |
+| PR-DURING | `pull_request`, checks `refs/pull/N/merge`, base and head identity asserted, tools from trusted base | PASS for identity; scope DECISION_NEEDED (CI-SCOPE) | W01, then W06 |
+| PR-AFTER | No `workflow_run`; manual readiness | N/A | none |
+| MERGE-BEFORE | Read back: required contexts `ci-summary`, `style-pr` with `strict: true` (branch must be up to date), merge commit only, 0 required reviews | PASS; `main-protection.md` does not mention `strict` | W06 (should record `strict` in `.github/rulesets/main-protection.md`) |
+| MERGE-DURING | No merge queue | N/A | none |
+| MERGE-AFTER | No post-merge regression; `cancel-in-progress` on main | GAP, policy-accepted | W06 |
+| SDLC rows | `PLAN-PROMOTION` (`scripts/validate-document-lifecycle.py` 665-786) checks table shape, one link to an approved `.agents/` or Stage 01/02/05 owner and duplicates; not the anchor or member, and no Task receipt cross-check seen (lines after 889 unread) | GAP | W05 (`scripts/validate-document-lifecycle.py`) |
+| DOC-S00 | Agent-governance and knowledge checks; vocabulary rule_id binding absent | GAP | W01 (`.agents/knowledge/glossary.md`); W05 consumes |
+| DOC-S01 to S03, S05 | Profile, lifecycle, links, package exit | Survey PASS (validators not read) | none |
+| DOC-S90 | Profiles `reference/*`, `ARTIFACT-IDENTITY`, pack topology and README navigation are checked; source, edition and freshness are prose only and no generated-snapshot freshness check exists | GAP | W05 (`scripts/validate-markdown-profiles.py`) |
+| DOC-S98 | No body re-check; archive excluded | Survey PASS | none |
+| DOC-S99 | Registry checks pass today; tests hard-code current headings (see OPEN-09) | CONFLICT with COMMON-DOC-FORM-1 | W03 (`docs/99.templates/`); W05 consumes |
+| DOC-DOMAINS | Vault ESO surfaces; no content or site domain | PASS; N/A for site | none |
+| Old-rule tests | `tests/test_validate_ci_python_contract.py`, `scripts/validate-ci-python-contract.py`, `tests/test_ci_branch_metadata.py`; `scripts/validate-pr-metadata.py` mirrors the `ci.yml` inline script | Move only with CI-SCOPE | See Primary Writers |
+
+### Primary Writers
+
+One primary writer per file; other stages consume through the named interface.
+
+| Files | Primary writer | Interface consumers |
+| --- | --- | --- |
+| `.agents/knowledge/glossary.md` (create), `.agents/governance/sdlc.md`, `quality.md`, `git.md`, `document-authoring.md`, `.agents/workflows/work-lifecycle.md` | W01 | W03, W04, W05, W06, W07 |
+| `.agents/governance/document-lifecycle.md` | W04 | W03 registry `lifecycle`, W05 lifecycle validator |
+| `docs/99.templates/registry.json`, `docs/99.templates/contracts/document-profile.schema.json`, `docs/99.templates/templates/`, `docs/99.templates/README.md`, `scripts/document_contracts.py`, current documents under `docs/01`, `02`, `03`, `05` and READMEs | W03 | W04, W05 |
+| `scripts/validate-markdown-profiles.py`, `scripts/validate-document-contract-registry.py`, `scripts/validate-document-lifecycle.py`, `scripts/document_lifecycle.py`, `scripts/validate-links-and-owners.py`, `scripts/validate-ci-python-contract.py`, `scripts/qa.py` and `tests/` | W05 | W03, W04, W06 |
+| `.github/workflows/ci.yml`, `scripts/validate-pr-metadata.py`, `.pre-commit-config.yaml`, `scripts/githooks/`, `.github/rulesets/main-protection.md`, `.github/PULL_REQUEST_TEMPLATE.md` | W06 | W05 |
+| `.claude/hooks/`, `.claude/provider.md`, `.codex/provider.md` | W07 | none |
+| Kubernetes manifests and their consumers | W10 | none |
+
+### External Evidence
+
+| Source | Access | Applied to | Result |
+| --- | --- | --- | --- |
+| RS-09 NASA SWE-052 | Inherited, not re-queried | Bidirectional links | Forward links kept; generated reverse links REJECTED_BY_CONTRACT |
+| RS-18 | Inherited | Survey before change | This package records; writers change |
+| RS-22 Git worktree | Inherited | Workspace boundary | Single worktree, no new worktree |
+| RS-39 | Inherited | Selective reading | Unchanged inputs reused from SPEC-0154..0158 |
+| RS-49 `git diff --cached` | Direct relevant sections (package) | COMMIT-BEFORE | Index snapshot and partial-stage test exist |
+| RS-50 GitHub events | Direct relevant sections (package) | PR-DURING | Merge SHA checked out; head and base asserted |
+
+### OPEN Dispositions
+
+| ID | Verdict | Basis | Next owner |
+| --- | --- | --- | --- |
+| OPEN-01 | UNVERIFIED | Source bytes unchanged; preserved, not certified (SPEC-0158) | Package reviewer |
+| OPEN-02 | UNVERIFIED | Same as OPEN-01 | Package reviewer |
+| OPEN-03 | RESIDUAL_CONFIRMED | 52 local packages linked in SPEC-0155: 37 DELTA open at their stages | Named stages |
+| OPEN-04 | BLOCKED_EVIDENCE | `SOURCE_BYTES_NOT_AVAILABLE`; no history archive holds them | Holder of the original reports |
+| OPEN-05 | CLOSED_BY_EVIDENCE | Article retrieved directly on 2026-11-12 (HTTP 200, published 2026-10-25, SHA-256 `41115ffd3c337d24a6d41f58af0b55ee65c9a3d279e64ff261e93240c3944482`); the article's companion repository SillyMemory has licence AGPL-3.0 (`LICENSE` blob `0ad25db4`), `main` now `32ce8464`; nothing adopted | none |
+| OPEN-06 | UNVERIFIED | Licence caveat closed: agency-agents `LICENSE` is MIT (blob `523078c0`, `main` still `8ae61646`). The 13 UNVERIFIED and 10 reference-for-stage perspective rows of SPEC-0155 stay open until a stage proposes adopting one | Stage that proposes adoption |
+| OPEN-07 | RESIDUAL_CONFIRMED | Cited files plus `scripts/`, `tests/`, hooks and workflows listed; whole tree not read | W00 on request |
+| OPEN-08 | UNVERIFIED | No live, native or cluster authority in this scope | W10 |
+| OPEN-09 | RESIDUAL_CONFIRMED | Hard-coded current headings: `tests/test_task_execution_contract.py` (Task, Spec and Plan fixtures, `section == "Task Table"`), `tests/test_task_acceptance_contract.py` (`#success-criteria--verification-plan`, `## Task Evidence`), `tests/test_document_terminal_contract.py` (incident and postmortem H2); registry-driven or synthetic: `test_operations_section_contract.py`, `test_repository_form_contracts.py`, `test_document_frontmatter_negatives.py` | W05 |
+| OPEN-10 | NOT_APPLICABLE | hy-home-docker only | none |
+| OPEN-11 | NOT_APPLICABLE | hy-home-docker only | none |
+| OPEN-12 | NOT_APPLICABLE | hy-home-docker SPEC-0212 only | none |
+| OPEN-13 | CLOSED_BY_EVIDENCE | Read back 2026-11-11T23:46Z: required `ci-summary` and `style-pr` (app 15368, strict); both passed on PR #227 head; on `main` `4a47cb40` `ci-summary` succeeded and `style-pr` skipped by design | none |
+| OPEN-14 | NOT_APPLICABLE | hy-home-docker runner only | none |
+
+### Conflicts
+
+| ID | Files | Current | Package | Decision |
+| --- | --- | --- | --- | --- |
+| RS-09 | REQ-0003 Scope and Non-goals; `BODY-LINK-RECIPROCAL` | Hand-written back-links required | Generated reverse links | Reuse SPEC-0156 decision: not adopted |
+| CI-SCOPE | `.agents/governance/quality.md` hosted lane; `git.md`; `.github/workflows/ci.yml`; `tests/test_validate_ci_python_contract.py` | Hosted CI runs metadata and style only, by design (local QA is not an isolation boundary for PR code) | PR-DURING runs affected leaves under trusted configuration and least privilege | Open; W01 asks the user. W06 and W05 wait. |
+| POLICY-ROLE | `docs/99.templates/registry.json` `operation/policy`, `governance/rule` | Two shapes | One Policy role | Open; W01 decides before W03 |
+
+### Read Denominator
+
+| Set | Listed | Read | Partial | Listed only |
+| --- | --- | --- | --- | --- |
+| Package v14.7 contracts and source deltas | 12 | 7 | 3 | 2 |
+| `docs/99.templates/registry.json` and schema | 2 | 0 | 2 | 0 |
+| Templates under `docs/99.templates/templates/` | 37 | 0 | 18 (headings) | 19 |
+| `scripts/` tracked files | 65 | 4 (`qa.py`, `githooks/chained-hook.sh`, `githooks/pre-push`, `githooks/pre-commit`) | 8 | 53 |
+| `tests/` tracked files | 76 | 3 | 5 | 68 |
+| `.github/workflows/` | 3 | 1 (`ci.yml`) | 0 | 2 |
+| `.claude/hooks/` and settings hooks | 3 | 1 (settings block) | 0 | 2 |
+| Governance policy files | 4 | 0 | 3 (`quality.md`, `git.md`, `sdlc.md`) | 1 |
+
+Listed-only files are not semantically reviewed. Each writer stage re-reads its files before editing.
+
+## Criterion Acceptance
+
+| Criterion | Acceptance | Evidence | Disposition | Current owner |
+| --- | --- | --- | --- | --- |
+| [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | pending | none | Run the completeness check after approval | platform |
+| [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | pending | none | Independent review and exact-index QA after approval | platform |
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `docs/03.specs/0161-w00-v14-7-delta-intake/`, `docs/03.specs/README.md`, one back-link sentence in `docs/01.requirements/0003-workspace-agent-governance-platform.md` Traceability, `.secrets.baseline` (reviewed digest entries only, if the secret scan flags this Task's digests)
+- **Forbidden Paths**: every file named in a handoff table; `_workspace/workspace_execution_tasks/` (read-only input)
+- **Approval Required**: Spec and Plan approval; any commit, push, PR, merge or package exit; the CI-SCOPE and POLICY-ROLE decisions belong to W01
+- **Static Validation**: strict document validators, staged lifecycle check, `python3 scripts/qa.py staged`
+- **Live Validation**: DEFER; no live surface in scope
+- **Secret / Vault Handling**: no secret read or printed
+- **Rollback Plan**: delete the branch `claude/w00-v14-7-intake`; `main` is unchanged
+- **Evidence Location**: this Task
+
+## Verification Summary
+
+Pre-approval survey only. Required completeness, review and exact-index checks are NOT_RUN pending approval. Residual risk: the survey read large validators and tests in part; writers must re-read before editing. Next owners: W01 (vocabulary, CI-SCOPE, POLICY-ROLE), then W03, W04, W05, W06, W07 and W10 per the handoff tables.

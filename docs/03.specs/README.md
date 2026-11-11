@@ -63,12 +63,13 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 
 ```text
 03.specs/
+├── 0161-w00-v14-7-delta-intake/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── README.md
 ```
 
-현재 열린 package는 없다.
+현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. 외부 v14.7 실행 패키지의 W00 변경분을 기록한다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
