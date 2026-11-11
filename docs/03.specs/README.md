@@ -63,12 +63,14 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 
 ```text
 03.specs/
+├── 0154-requirement-owner-crosswalk/
+├── 0155-designated-source-applicability/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── README.md
 ```
 
-현재 열린 package는 없다.
+현재 열린 package는 [SPEC-0154 Requirement Owner Crosswalk](./0154-requirement-owner-crosswalk/)다. W00–W01 요구 소유자 교차표를 기록하며 Spec과 Plan은 승인되었다. [SPEC-0155 Designated Source Applicability](./0155-designated-source-applicability/)는 W00의 남은 출처 검토·과거 작업 연결을 기록하며 Spec과 Plan은 승인되었다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
