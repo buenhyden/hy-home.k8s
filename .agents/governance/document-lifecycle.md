@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.5.2"
+version: "2.5.3"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -97,7 +97,12 @@ evidence is not rewritten to satisfy a later profile.
   review` PASS row and a `Spec/Plan first-record approval` PASS receipt. Both
   rows identify SHA-256 hashes of the exact reviewed approved Spec and Plan
   bytes. The receipt names the user, trusted approval reference, review row,
-  both document IDs, confirmed validity and no known revocation. A human
+  both document IDs, confirmed validity and no known revocation.
+  Each row's `Input` is one JSON object: the review row has exactly
+  `spec_sha256` and `plan_sha256`; the receipt has exactly `actor` (`user`),
+  `approval_ref`, `review_ref`, `scope` (the Spec and Plan IDs),
+  `reviewed_spec_sha256`, `reviewed_plan_sha256`, `validity` (`confirmed`)
+  and `revocation` (`none`). A human
   confirms the approval source and scope; the local validator checks only
   receipt form, relationships and byte identity. This exception does not turn
   authoring permission or earlier QA into retroactive execution approval,
@@ -128,7 +133,10 @@ evidence is not rewritten to satisfy a later profile.
   current Task keeps execution in one Task Table and one frontmatter status
   marker. For one row, the marker is the human source; for multiple rows, the
   row states are the human source, frontmatter `status` is omitted and the
-  validators derive the summary from the rows.
+  validators derive the summary from the rows. A multi-row Task that already
+  carries `status` must equal the row-derived value, and earlier records are
+  not rewritten. A table that cannot be read in the current column form
+  yields no derived summary and fails as a missing status.
   The Registry owns state/result values and summary binding; the lifecycle
   checker reads the Git index for completion handoff. Each assigned criterion
   has one authored verdict in Criterion Acceptance, and each factual Task

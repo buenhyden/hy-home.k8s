@@ -29,6 +29,7 @@ SUITES = {
         "operations_section_contract",
         "operations_lineage_contract",
         "shared_contract_binding",
+        "document_frontmatter_negatives",
         "document_scope_selection",
         "task_summary_derivation",
         "evaluation_document_profiles",

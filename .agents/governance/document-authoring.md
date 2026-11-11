@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "3.4.0"
+version: "3.4.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-10"
+updated: "2026-11-11"
 ---
 
 # Document Authoring Policy
@@ -74,8 +74,8 @@ express ownership, not a one-way waterfall.
    the sole document status marker. For one row, author its state only in
    frontmatter and use literal `frontmatter` in the row. For a multi-row Task,
    author only row states and omit frontmatter `status`; the validators derive
-   the summary from the Registry-bound rows on each read (Stage 99 Task Status
-   Authoring), so no writer exists and no second human-maintained state is kept.
+   the summary from the Registry-bound rows on each read (see the document
+   lifecycle policy), so no writer exists and no second human-maintained state is kept.
    Record each criterion's sole authored `pending`, `accepted`, `rejected`, or
    `not-required` disposition in the Task's Criterion Acceptance table, with
    evidence, disposition rationale and current owner. Neither the execution
@@ -115,12 +115,11 @@ express ownership, not a one-way waterfall.
      area that has its own agent responsibilities (a registry role works
      there) and rules an agent must follow that common policy and the parent
      `AGENTS.md` do not already state: forbidden live actions, ownership
-     boundaries, required checks. Today: `docs/` and each of its stages
-     `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`,
-     `docs/05.operations/`, `docs/90.references/` and `docs/99.templates/`,
-     plus `gitops/`, `infrastructure/`, `policy/`, `scripts/`, `tests/`,
-     `.github/`, `examples/` and `examples/azure/`, whose single file also
-     carries the rules of its subfolders.
+     boundaries, required checks. The registry profile
+     `common/folder-agents-guide` governs every such file; list the current
+     set with `git ls-files '*/AGENTS.md'` rather than keeping a copy here. A
+     folder `AGENTS.md` also carries the rules of subfolders that have none
+     of their own, as `examples/azure/` does.
    - **README.md only** when the folder is navigation or a collection inside
      an area whose parent `AGENTS.md` already covers it (the collections
      inside a `docs/` stage, the unvalidated `docs/98.archive/`,

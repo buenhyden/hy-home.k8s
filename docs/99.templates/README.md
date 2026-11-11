@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.17.0"
+version: "0.17.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-10"
+updated: "2026-11-11"
 layer: "templates"
 ---
 # 99.templates
@@ -217,56 +217,13 @@ resolved Incident에는 시간대를 포함한 실제 resolved_at과 해결 증�
 
 ### Task Status Authoring
 
-한 행 Task는 Status 칸에 literal `frontmatter`를 쓰고 실제 상태는 frontmatter
-`status` 하나에만 쓴다. 다중 행 Task는 각 행의 Status만 사람이 작성하고
-frontmatter `status`는 생략한다. validator와 lifecycle reader는 행 상태에서
-요약을 읽을 때마다 파생하므로 별도 동기화 명령이 없다. 이미 `status`를 가진
-다중 행 Task는 그 값이 행 파생 값과 같아야 하며, 과거 기록은 다시 쓰지 않는다.
-현재 열 형식의 표를 읽을 수 없으면 요약을 파생하지 않고 상태 누락으로
-실패한다. `ready`는 실행 준비이지 별도 승인 단계가
-아니다. Stage 01·02·03 문서에는 `superseded`·`retired`·`deprecated` 상태와
-이전 양식이 없다. 대체·철회된 문서와 완료된 Spec Package는 소유 현행 문서의
-`Archived Lineage` 표에 요약한 뒤 같은 변경에서 삭제하며, 후속 문서는 profile이 허용하는 곳에서
-`supersedes`와 Traceability에 이전 문서를 적는다. 정본은 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)다.
-Result, Criterion Acceptance, Task Evidence와 실제 승인 사실은 관측에 따라
-별도로 작성한다.
-
-현재 k8s 지역 adapter의 Task 최초 기록은 관측된 `draft`·`ready`·
-`in-progress`·`blocked`를 허용한다. 사용자의 현행 범위 지시로 이미 시작한
-실행을 처음 문서화할 때 실제 행 상태를 그대로 쓴다. Task Inputs에는 지시의
-범위와 현재 권한, 실제 착수 또는
-차단 근거, 각 행의 owner와 선행 조건을 남긴다. `ready`에는 승인된 입력과
-준비 완료가 필요하며, `blocked`에는 원인·재개 조건·다음 owner가 필요하다.
-`completed` 등 종단 상태로 새 Task를 만들 수 없고, 이후 전이·기준 수용·
-필수 증거 규칙은 그대로 적용된다. 최초 `draft` commit을 합성하지 않는다.
-이는 Registry `shared_contract.extensions`에 명시된 지역 확장이다.
-
-### Spec·Plan Direct Approval
-
-`Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`도 이 지역 adapter의 좁은 확장이다. 범위를 정한
-현행 사용자 지시, 실제 묶음 리뷰와 승인이 기록된 Spec·Plan은 `draft`에서
-`approved`로 직접 전이할 수 있다. 새 Spec·Plan의 일반 최초 Git 기록은
-`draft`이며, 아래 조건부 최초 승인 예외를 제외하고 관측하지 않은 중간 상태의
-commit을 만들어 전이를 꾸미지 않는다.
-후속 전이와 증거 검증은 그대로 유지한다.
-
-### Spec·Plan First-Record Approval
-
-`Local candidate Spec/Plan first-recording as approved after actual batch review and approval`는
-새 Spec·Plan의 첫 Git 기록 전에 실제 묶음 검토와 범위가 분명한 사용자 승인이
-완료된 경우에만 적용하는 지역 예외다. 같은 package의 Spec과 Plan을 함께
-`approved`로 기록하고, 동일 Task의 `Task Evidence`에 `Independent semantic review`
-PASS와 `Spec/Plan first-record approval` PASS 영수증을 각각 남긴다. 독립 검토
-행의 `Input`은 단일 JSON object로 `spec_sha256`, `plan_sha256`을 담는다.
-승인 영수증의 `Input`은 단일 JSON object로 `actor`, `approval_ref`,
-`review_ref`, `scope`, `reviewed_spec_sha256`, `reviewed_plan_sha256`,
-`validity`, `revocation`을 담는다. `scope`는 두 문서의 정확한 artifact ID를
-담고, 두 행의 hash는 같은 최종 승인 본문 bytes를 가리킨다. 사람은 사용자
-승인 출처·범위·철회를 확인하고, validator는 형식·같은 package 관계·byte
-일치만 검사한다. Task Inputs는 실제 요청과 이전 QA의 시점을 분리해 기록한다.
-이 예외는 Task 기준 수용, ADR 수용, 보호 조치 권한이나 중간 draft commit의
-합성을 허용하지 않는다. 템플릿의 기본 최초 상태 `draft`와 일반 후속 전이는
-그대로 둔다.
+Task 행 상태와 frontmatter `status`의 작성법은
+[Document Authoring Policy](../../.agents/governance/document-authoring.md)와
+[Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)가,
+Task 최초 기록이 허용하는 상태와 Spec·Plan의 direct approval·first-record
+approval 예외는 Document Lifecycle Policy가 정본이다. 이 README는 그 규칙을
+다시 적지 않는다. 지역 확장의 정확한 이름은 Registry
+`shared_contract.extensions`에 있다.
 
 ### Shared Frontmatter Grammar
 

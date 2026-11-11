@@ -45,9 +45,9 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ### Findings and Gaps
 
-| Finding or gap | Severity | Evidence |
-| --- | --- | --- |
-| <!-- Author prompt: State the deviation or evidence gap. --> | <!-- Author prompt: State justified impact. --> | <!-- Author prompt: Cite the observation. --> |
+| ID | Finding or gap | Requirement | Fact or hypothesis | Severity | Evidence | Action | Acceptance |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| <!-- Author prompt: Give a stable finding ID. --> | <!-- Author prompt: State the deviation or evidence gap. --> | <!-- Author prompt: Name the requirement ID it affects, or N/A. --> | <!-- Author prompt: Say whether it is an observed fact or a hypothesis. --> | <!-- Author prompt: State justified impact. --> | <!-- Author prompt: Cite the observation. --> | <!-- Author prompt: Name the proposed action and its owner. --> | <!-- Author prompt: State what evidence would accept the action. --> |
 
 ## Sources
 
