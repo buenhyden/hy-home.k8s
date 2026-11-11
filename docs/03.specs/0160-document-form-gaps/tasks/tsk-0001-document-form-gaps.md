@@ -2,7 +2,7 @@
 title: "Document Form Gaps"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-11"
 layer: "specs"
@@ -14,7 +14,7 @@ parent_ids: ["SPEC-0160-PLAN-0001"]
 
 ## Overview
 
-This in-progress Task records the W03 intake and the execution of [SPEC-0160](../spec.md) under its [Plan](../plan.md). EVD-001 was observed before approval and is marked not required; The user approved the amended Spec and Plan on 2026-11-11 (EVD-009, EVD-010).
+This completed Task records the W03 intake and the execution of [SPEC-0160](../spec.md) under its [Plan](../plan.md). EVD-001 was observed before approval and is marked not required; The user approved the amended Spec and Plan on 2026-11-11 (EVD-009, EVD-010).
 
 ## Inputs
 
@@ -27,8 +27,8 @@ This in-progress Task records the W03 intake and the execution of [SPEC-0160](..
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-FORM-001](../spec.md#success-criteria--verification-plan), [VAL-FORM-002](../spec.md#success-criteria--verification-plan) | Front-matter and form tests, registration and route, audit columns, mutation run. | platform | in-progress | PASS | EVD-011 and EVD-012 passed. |
-| WORK-002 | [VAL-FORM-003](../spec.md#success-criteria--verification-plan) | Folder-list and README pointers, review, commit checks. | platform | in-progress | NOT_RUN | EVD-004 to EVD-006 are pending. |
+| WORK-001 | [VAL-FORM-001](../spec.md#success-criteria--verification-plan), [VAL-FORM-002](../spec.md#success-criteria--verification-plan) | Front-matter and form tests, registration and route, audit columns, mutation run. | platform | completed | PASS | EVD-011 and EVD-012 passed; EVD-019 accepted. |
+| WORK-002 | [VAL-FORM-003](../spec.md#success-criteria--verification-plan) | Folder-list and README pointers, review, commit checks. | platform | completed | PASS | EVD-013, EVD-014, EVD-017 and EVD-018 passed; EVD-020 accepted. |
 
 ## Task Evidence
 
@@ -51,6 +51,9 @@ This in-progress Task records the W03 intake and the execution of [SPEC-0160](..
 | EVD-015 | [VAL-FORM-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Independent semantic review | {"spec_sha256":"c7f35418bbe406b06cb64caefe87b0568e49e2fdfcf153f4301dc3558dafd6f5","plan_sha256":"627beae524dc893b7ea5b2b88129b29d8f667d78d60d9a17e2690e03cdbf1cb0"} | PASS | Round 3 by the EVD-008 reviewer, after the EVD-014 review found two fixes outside the boundary and the user chose to fix them here (option A): the two Task status rules move into the lifecycle policy, and the `document-authoring.md` reference and the Task form prompt point to the lifecycle policy. The reviewer matched these exact hashes, found only those changes, and judged that the prompt-text change needs no new regression (a disposable copy passed the strict checks and 39 form and language tests). No BLOCK or FIX. | yes | none |
 | EVD-016 | [VAL-FORM-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-chat user message approve the amended SPEC-0160 Spec and Plan dated 2026-11-11 Asia/Seoul","review_ref":"EVD-015","scope":["SPEC-0160","SPEC-0160-PLAN-0001"],"reviewed_spec_sha256":"c7f35418bbe406b06cb64caefe87b0568e49e2fdfcf153f4301dc3558dafd6f5","reviewed_plan_sha256":"627beae524dc893b7ea5b2b88129b29d8f667d78d60d9a17e2690e03cdbf1cb0","validity":"confirmed","revocation":"none"} | PASS | Trusted direct user message in this chat on 2026-11-11 Asia/Seoul approving the bytes reviewed in EVD-015; it supersedes the EVD-010 receipt, whose bytes changed. No message UUID was supplied or invented. This receipt accepts no criterion and authorizes no push or merge. | yes | none |
 | EVD-017 | [VAL-FORM-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Status-rule clause and pointer repair | `document-lifecycle.md` 2.5.3, `document-authoring.md` 3.4.1, `task.template.md`; strict document validators, the `document` suite (21 modules, 313 tests), `tests.test_repository_form_contracts` and `tests.test_document_language`; 2026-11-11 | PASS | The lifecycle policy now states that a multi-row Task carrying `status` must equal the row-derived value without rewriting earlier records, and that a table unreadable in the current column form yields no derived summary and fails as a missing status, copied from the removed README text. The `document-authoring.md` reference and the Task Table author prompt now point to the lifecycle policy, so no owner points back to the README. All checks pass. | yes | none |
+| EVD-018 | [VAL-FORM-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Strict document checks and exact-index QA | Strict document validators, `validate-document-lifecycle.py --mode staged` on the exact index, then the active pre-commit `staged-qa` hook, commitizen check and generated-message check on commit `7b006fdc` after baseline commit `b20fc01f`; QA interpreter `/tmp/hyhome-first-approved-qa/bin/python3` with the existing pre-commit hook cache; 2026-11-11 | PASS | All strict validators and the staged lifecycle check exited 0 with the Task form edit and the Task first record in the same commit, and every hook passed on the first attempt. Local repository-static evidence only; no hosted CI is claimed. | yes | EVD-006 |
+| EVD-019 | [VAL-FORM-001](../spec.md#success-criteria--verification-plan), [VAL-FORM-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Operator criterion acceptance | Direct current-chat user message dated 2026-11-11 Asia/Seoul: "approval of the amended SPEC-0160 Spec and Plan,acceptance of VAL-FORM-001 to VAL-FORM-003" | PASS | The user accepted VAL-FORM-001 and VAL-FORM-002 (WORK-001; EVD-020 records the same message for WORK-002). The acceptance was given before the EVD-014 review and the option-A fixes; those fixes added the status-rule clause and pointer repair (EVD-017) and left the VAL-FORM text and the test, form and pointer evidence unchanged. Acceptance closes the W03 gaps DOC-04, SCOPE-03 and DOC-10 only and authorizes no push, PR, merge or package exit; adopting any Q-03 candidate form stays a separate decision. | no | none |
+| EVD-020 | [VAL-FORM-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Operator criterion acceptance | Direct current-chat user message dated 2026-11-11 Asia/Seoul: "approval of the amended SPEC-0160 Spec and Plan,acceptance of VAL-FORM-001 to VAL-FORM-003" | PASS | The user accepted VAL-FORM-003 (WORK-002; the same message as EVD-019). The acceptance was given before the EVD-014 review and the option-A fixes; those fixes added the status-rule clause and pointer repair (EVD-017) and left the VAL-FORM text and the test, form and pointer evidence unchanged. It authorizes no push, PR, merge or package exit. | no | none |
 
 ### Q-03 Role Candidate Comparison
 
@@ -80,15 +83,15 @@ The package's 19-role table is an unapproved candidate, not a standard or this r
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-FORM-001](../spec.md#success-criteria--verification-plan) | pending | none | EVD-011 passed; waits for EVD-006 and operator acceptance. | platform |
-| [VAL-FORM-002](../spec.md#success-criteria--verification-plan) | pending | none | EVD-012 passed; waits for EVD-006 and operator acceptance. | platform |
-| [VAL-FORM-003](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-004 to EVD-006. | platform |
+| [VAL-FORM-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-011, EVD-019 | Accepted by the user on 2026-11-11; closes the W03 gaps only. | platform |
+| [VAL-FORM-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-012, EVD-019 | Accepted by the user on 2026-11-11; closes the W03 gaps only. | platform |
+| [VAL-FORM-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-013, EVD-014, EVD-017, EVD-018, EVD-020 | Accepted by the user on 2026-11-11; closes the W03 gaps only. | platform |
 
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: `docs/03.specs/0160-document-form-gaps/`, `docs/03.specs/README.md`, one back-link sentence in the Traceability section of `docs/01.requirements/0003-workspace-agent-governance-platform.md`, `tests/test_document_frontmatter_negatives.py`, `scripts/run-contract-tests.py`, one exact route in `scripts/validation/registry.json`, the Findings and Gaps table of `docs/99.templates/templates/references/audit.template.md`, the folder list in `.agents/governance/document-authoring.md` and three subsections of `docs/99.templates/README.md`, one sentence in `.agents/governance/document-lifecycle.md` naming the first-record receipt JSON keys and one clause there stating the two Task status rules the README alone stated, the `(Stage 99 Task Status Authoring)` reference in `.agents/governance/document-authoring.md`, the Task Table author prompt in `docs/99.templates/templates/specs/task.template.md`, each file with its patch `version` bump and `updated` date, and `.secrets.baseline` entries marking this Task's reviewed SHA-256 document digests as non-secret
 - **Forbidden Paths**: every other repository path, including validators, `docs/99.templates/registry.json`, the published audits under `docs/90.references/audits/`, other governance text, ADRs, provider settings, `.github/` and the package under `_workspace/`
-- **Approval Required**: Spec and Plan approval of the current bytes is recorded (EVD-016). Criterion acceptance, and any commit, push, PR or merge are pending.
+- **Approval Required**: Spec and Plan approval of the current bytes is recorded (EVD-016). Criterion acceptance is recorded (EVD-019, EVD-020); the user authorized the commits. Any push, PR, merge or package exit is pending.
 - **Static Validation**: focused tests, the `document` suite, the strict document checks in `docs/AGENTS.md`, `validate-document-lifecycle.py --mode staged` and the active commit hooks
 - **Live Validation**: N/A; no runtime behaviour is claimed.
 - **Secret / Vault Handling**: no secret, token or private memory body was read or printed
@@ -97,4 +100,4 @@ The package's 19-role table is an unapproved candidate, not a standard or this r
 
 ## Verification Summary
 
-The W03 intake is recorded (EVD-001). The tests, form change, pointer edits, review and exact-index QA are NOT_RUN until the Spec and Plan are approved.
+W03 is closed. The intake (EVD-001) found the three W00 handoffs still open. Six front-matter rules now have tests that a mutation run proves sensitive (EVD-011). The audit form has eight finding columns with a form test, and the published audits are unchanged (EVD-012). The hand-kept AGENTS.md folder list and the Stage 99 README restatement are replaced by pointers; the lifecycle policy now names the first-record receipt keys and the two Task status rules only the README stated, and no owner points back to the README (EVD-013, EVD-017). The package's unapproved 19-role table is recorded as the Q-03 comparison and no candidate form is adopted (EVD-007). Reviews passed (EVD-009, EVD-014, EVD-015), the user approved the amended Spec and Plan (EVD-016), exact-index QA passed (EVD-018), and the user accepted all three criteria (EVD-019, EVD-020). Residual: the front-matter tests reach one emit site of `FM-KEYSET`, `FM-DATE` and `FM-FORBIDDEN` each; adopting any Q-03 row is a later user decision; the direct `BODY-LINK-RECIPROCAL` test stays with W05.
