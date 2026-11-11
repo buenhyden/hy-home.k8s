@@ -807,6 +807,119 @@ def compare_lifecycle(
 LOCAL_CONTRACT_EVIDENCE_GAP = "current same-package Plan and Spec authority"
 
 
+_PACKAGE_DIR = re.compile(r"[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*")
+_TERMINAL_TASK_STATES = frozenset({"completed", "cancelled"})
+_LINEAGE_HEADING = re.compile(r"^(#{2,3}) Archived Lineage[ \t]*$", re.MULTILINE)
+
+
+def _archived_lineage_text(text: str) -> str:
+    """Return the body of each level-2 or level-3 `Archived Lineage` section."""
+
+    sections = []
+    for match in _LINEAGE_HEADING.finditer(text):
+        level = len(match.group(1))
+        end = re.compile(rf"^#{{1,{level}}} ", re.MULTILINE).search(text, match.end())
+        sections.append(text[match.end() : end.start() if end else len(text)])
+    return "\n".join(sections)
+
+
+def package_exit_diagnostics(
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+    base_texts: Mapping[PurePosixPath, str],
+    proposed_texts: Mapping[PurePosixPath, str],
+    *,
+    base_mode: LifecycleBaseMode,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Refuse a staged Stage 03 package exit in the wrong shape.
+
+    The inputs are full snapshots, so an unchanged Task is still judged.
+    Recovery proof, holds and authority stay manual (ADR-0056 Decision 6).
+    """
+
+    packages: dict[str, list[PurePosixPath]] = {}
+    for path in base_documents:
+        if (
+            len(path.parts) >= 4
+            and path.parts[:2] == ("docs", "03.specs")
+            and _PACKAGE_DIR.fullmatch(path.parts[2])
+        ):
+            packages.setdefault(path.parts[2], []).append(path)
+    lineage = "\n".join(
+        _archived_lineage_text(proposed_texts.get(path, ""))
+        for path, document in proposed_documents.items()
+        if document.profile_id == "sdlc/requirement"
+        and proposed_texts.get(path) != base_texts.get(path)
+    )
+    diagnostics = []
+    for name in sorted(packages):
+        root = PurePosixPath("docs/03.specs", name)
+        paths = packages[name]
+        tasks = [path for path in paths if path.parts[3] == "tasks"]
+        tasks_terminal = all(
+            base_documents[path].status in _TERMINAL_TASK_STATES for path in tasks
+        )
+        spec = base_documents.get(root / "spec.md")
+        finished = tasks_terminal and (
+            bool(tasks) or (spec is not None and spec.status == "cancelled")
+        )
+        deleted = [path for path in paths if path not in proposed_documents]
+
+        def refuse(
+            path: PurePosixPath, rule: str, observed: str, expected: str
+        ) -> None:
+            diagnostics.append(
+                _diagnostic(
+                    "LIFECYCLE-PACKAGE-EXIT",
+                    path=path,
+                    profile=base_documents[path].profile_id
+                    if path in base_documents
+                    else "sdlc/spec",
+                    expected=expected,
+                    observed=f"{rule}: {observed}",
+                    base_mode=base_mode,
+                    evidence_gap=(
+                        "package exit shape; recovery, hold and authority stay manual"
+                    ),
+                )
+            )
+
+        if deleted:
+            if not finished:
+                refuse(
+                    root,
+                    "R1",
+                    "deletes a package that is not finished at the base",
+                    "every Task completed or cancelled first",
+                )
+            elif len(deleted) != len(paths):
+                refuse(
+                    root,
+                    "R2",
+                    f"deletes {len(deleted)} of {len(paths)} package files",
+                    "the whole package leaves in one change",
+                )
+            elif f"{root.as_posix()}/" not in lineage:
+                refuse(
+                    root,
+                    "R3",
+                    "no Requirement changed here names the package in Archived Lineage",
+                    "Archived Lineage entry in the same change",
+                )
+            continue
+        if tasks and tasks_terminal:
+            for document in ("spec.md", "plan.md"):
+                path = root / document
+                if path in base_texts and proposed_texts.get(path) != base_texts[path]:
+                    refuse(
+                        path,
+                        "R4",
+                        "edits the Spec or Plan of a finished package",
+                        "finished package Spec and Plan unchanged",
+                    )
+    return tuple(diagnostics)
+
+
 def local_contract_diagnostics(
     context: LifecycleEvidenceContext, *, base_mode: LifecycleBaseMode
 ) -> tuple[LifecycleDiagnostic, ...]:

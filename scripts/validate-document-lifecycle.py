@@ -48,8 +48,9 @@ from document_lifecycle import (
     document_from_text,
     lifecycle_diagnostic_sort_key,
     local_contract_diagnostics,
-    validate_snapshot_documents,
+    package_exit_diagnostics,
     validate_current_task_evidence,
+    validate_snapshot_documents,
 )
 from document_authority import (
     AuthorityError,
@@ -2554,6 +2555,14 @@ def _evaluate_comparison(
         evidence_context,
         base_mode=mode,  # type: ignore[arg-type]
     )
+    if mode == "staged":
+        diagnostics += package_exit_diagnostics(
+            base_snapshot,
+            proposed_snapshot,
+            base_texts,
+            proposed_texts,
+            base_mode="staged",
+        )
     return _admit_cumulative_create_diagnostics(
         diagnostics,
         root=root,

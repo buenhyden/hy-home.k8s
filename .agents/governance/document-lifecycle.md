@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.5.1"
+version: "2.5.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -205,8 +205,13 @@ evidence is not rewritten to satisfy a later profile.
 Lifecycle validators use bounded regular-file reads, strict UTF-8, explicit
 subprocess timeouts, and stage-zero Git bytes. Illegal edges, incomplete
 reciprocal links, oversize or undecodable authority input, and material staged
-drift are failures. Review this policy whenever the registry lifecycle catalog
-changes.
+drift are failures. In `staged` mode `LIFECYCLE-PACKAGE-EXIT` refuses a Stage
+03 package exit in the wrong shape among the package's Markdown files: an
+unfinished package, part of a package, a package that no Requirement changed
+in the same commit names in Archived Lineage, or a Spec or Plan edit in a
+package whose Tasks are all terminal (ADR-0057).
+Recovery proof, holds, consumers and authority stay manual. Review this policy
+whenever the registry lifecycle catalog changes.
 
 ## Related Documents
 

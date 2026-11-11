@@ -1,6 +1,6 @@
 ---
 title: "Agent and Document Governance Architecture Description (AD)"
-version: "2.4.2"
+version: "2.4.3"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -419,6 +419,7 @@ historical evidence rather than parallel operating instructions.
 - **Local QA and release decision**: [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md)
 - **Current-state amendment**: [ADR-0055](../decisions/0055-governance-decision-current-state-amendment.md) replaces the governance ADR clauses that no longer match the repository
 - **Accepted manual disposition amendment**: [ADR-0056](../decisions/0056-manual-document-disposition-review.md) qualifies the no-proof disposition and unconditional Git-recovery clauses and records the bounded local first-record approval exception; the user's acceptance and completed implementation are separately recorded in REQ-0003 Archived Lineage
+- **Accepted package exit shape amendment**: [ADR-0057](../decisions/0057-package-exit-shape-check.md) narrows only ADR-0056 Decision 6: in `staged` mode the lifecycle validator refuses a Stage 03 package exit in the wrong shape (`LIFECYCLE-PACKAGE-EXIT`), while recovery proof, holds, consumers and authority stay manual
 - **Local QA and release implementation**: `scripts/qa.py` and `scripts/release.py`
 - **Completed change**: SPEC-0152 (left the tree; Git history recovers it) produced the manual policy and bounded approval reader. Its accepted Task and exact three-file recovery route are summarized in [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage). Earlier Spec packages also remain recoverable through their lineage owners.
 - **Completed validation follow-up**: SPEC-0153 (left the tree; Git history recovers it) corrected the separately observed cumulative ADR and Task history failures. The current user accepted its three Task criteria on 2026-11-11; the completed source and exact recovery evidence are in [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage). The existing validator and tests own the correction; it adds no new decision authority.
