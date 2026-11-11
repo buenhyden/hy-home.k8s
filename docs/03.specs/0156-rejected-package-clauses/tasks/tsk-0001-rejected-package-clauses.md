@@ -1,8 +1,8 @@
 ---
 title: "Rejected Package Clauses"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-11"
 layer: "specs"
@@ -30,7 +30,7 @@ This Task records stage W01 for [SPEC-0156](../spec.md) under its [Plan](../plan
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-REJ-001](../spec.md#success-criteria--verification-plan), [VAL-REJ-002](../spec.md#success-criteria--verification-plan), [VAL-REJ-003](../spec.md#success-criteria--verification-plan) | Record the intake survey; add the REQ-0003 non-goals sentence, version and back-link; obtain independent review. | platform | frontmatter | NOT_RUN | EVD-005 and EVD-006 record the approval review and receipt; EVD-007 and EVD-009 pass the sentence check and review; EVD-004 exact-index QA is pending the commit. |
+| WORK-001 | [VAL-REJ-001](../spec.md#success-criteria--verification-plan), [VAL-REJ-002](../spec.md#success-criteria--verification-plan), [VAL-REJ-003](../spec.md#success-criteria--verification-plan) | Record the intake survey; add the REQ-0003 non-goals sentence, version and back-link; obtain independent review. | platform | frontmatter | PASS | EVD-005 and EVD-006 record the approval review and receipt; EVD-007, EVD-009 and EVD-010 pass the sentence check, review and exact-index QA; EVD-011 records the user's criterion acceptance. |
 
 ## Task Evidence
 
@@ -45,6 +45,8 @@ This Task records stage W01 for [SPEC-0156](../spec.md) under its [Plan](../plan
 | EVD-007 | [VAL-REJ-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Non-goals sentence check | REQ-0003 "Scope and Non-goals" after the approved edit (version 3.0.3); a negative copy with the renumbering clause removed | PASS | The section names all four clauses and cites FR-0019, FR-0022, FR-0018, FR-0023, IF-0001, acceptance criterion 02 and `BODY-LINK-RECIPROCAL`, and says the package is evidence only. The negative copy was detected as missing the renumbering clause and FR-0023. | yes | EVD-002 |
 | EVD-008 | [VAL-REJ-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent read-only semantic review | Round 1 review of the REQ-0003 diff against FR-0018, FR-0019, FR-0022, FR-0023, IF-0001 and the Q-W01-01 decision | FAIL | No BLOCK, no new obligation, clauses 1–3 correct; but the reverse-traceability clause rested on IF-0001 alone, which only requires reciprocal links during a migration. The checked back-link contract also rests on acceptance criterion 02 and `BODY-LINK-RECIPROCAL`, which the sentence did not cite. | yes | none |
 | EVD-009 | [VAL-REJ-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent read-only semantic review | Round 2 review of the corrected REQ-0003 sentence, 2026-11-11 | PASS | The fourth clause now cites IF-0001 and acceptance criterion 02, checked by `BODY-LINK-RECIPROCAL`; the sentence restates accepted contracts only, adds no obligation, and matches the user's decision to keep checked back-links. | yes | EVD-003, EVD-008 |
+| EVD-010 | [VAL-REJ-001](../spec.md#success-criteria--verification-plan), [VAL-REJ-002](../spec.md#success-criteria--verification-plan), [VAL-REJ-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Strict document checks and exact-index QA | Active pre-commit `staged-qa` hook, commitizen check and generated-message check on commit `268a703c` after baseline commit `ec043815`; QA interpreter `/tmp/hyhome-first-approved-qa/bin/python3` with the existing pre-commit hook cache; 2026-11-11T11:11:52Z | PASS | All three hooks Passed on the first attempt for both commits. Local repository-static evidence only; no hosted CI is claimed. | yes | EVD-004 |
+| EVD-011 | [VAL-REJ-001](../spec.md#success-criteria--verification-plan), [VAL-REJ-002](../spec.md#success-criteria--verification-plan), [VAL-REJ-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Operator criterion acceptance | Direct current-chat user message dated 2026-11-11 Asia/Seoul: "Accepting VAL-REJ-001..003" | PASS | The user accepted VAL-REJ-001, VAL-REJ-002 and VAL-REJ-003. Acceptance closes W01's differences only; GOV-08 stays with W07 and the Project-Template boundary item stays unverified. It authorizes no push, PR, merge or package exit. | no | none |
 
 ### W01 Intake Survey
 
@@ -80,9 +82,9 @@ Observed at HEAD `ff6bcdb2` on 2026-11-11. Values are survey labels, not lifecyc
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-REJ-001](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-002 after approval and the edit. | platform |
-| [VAL-REJ-002](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-003 after the edit. | platform |
-| [VAL-REJ-003](../spec.md#success-criteria--verification-plan) | pending | none | Run EVD-004 at the commit. | platform |
+| [VAL-REJ-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-007, EVD-010, EVD-011 | Accepted by the user on 2026-11-11; closes W01's differences only. | platform |
+| [VAL-REJ-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-009, EVD-010, EVD-011 | Accepted by the user on 2026-11-11; closes W01's differences only. | platform |
+| [VAL-REJ-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-010, EVD-011 | Accepted by the user on 2026-11-11; closes W01's differences only. | platform |
 
 ## Approval and Safety Boundaries
 
@@ -97,4 +99,4 @@ Observed at HEAD `ff6bcdb2` on 2026-11-11. Values are survey labels, not lifecyc
 
 ## Verification Summary
 
-W01's contract and responsibility items already hold at their current owners. The single W01 change is a REQ-0003 non-goals sentence recording four rejected package clauses: the GOV-06 machine ledger (FR-0019, FR-0022), the GIT-09 no-extra-model-call review clause (FR-0018), the DOC-12 Stage 03 renumbering (FR-0023), and generated reverse traceability (IF-0001, by Q-W01-01). It also closes legacy work packages WP-09, WP-47 and WP-52 and the W01 parts of WP-35 and WP-45. GOV-08 stays with W07. The edit and its checks are NOT_RUN pending approval.
+W01's contract and responsibility items already hold at their current owners. The single W01 change is a REQ-0003 non-goals sentence recording four rejected package clauses: the GOV-06 machine ledger (FR-0019, FR-0022), the GIT-09 no-extra-model-call review clause (FR-0018), the DOC-12 Stage 03 renumbering (FR-0023), and generated reverse traceability (IF-0001, by Q-W01-01). It also closes legacy work packages WP-09, WP-47 and WP-52 and the W01 parts of WP-35 and WP-45. GOV-08 stays with W07. The edit, its sentence check (EVD-007), independent review (EVD-009) and exact-index QA (EVD-010) passed, and the user accepted all three criteria (EVD-011).
