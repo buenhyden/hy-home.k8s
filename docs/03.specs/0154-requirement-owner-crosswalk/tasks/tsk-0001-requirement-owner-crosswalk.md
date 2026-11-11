@@ -1,8 +1,8 @@
 ---
 title: "Requirement Owner Crosswalk"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-11"
 layer: "specs"
@@ -48,7 +48,7 @@ This Task records the W00 survey for [SPEC-0154](../spec.md) under its [Plan](..
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-TRACE-001](../spec.md#success-criteria--verification-plan), [VAL-TRACE-002](../spec.md#success-criteria--verification-plan), [VAL-TRACE-003](../spec.md#success-criteria--verification-plan) | Record the baseline and the 109-row crosswalk, verify completeness, obtain independent review, and record conflict dispositions and handoffs. | platform | frontmatter | NOT_RUN | EVD-001 to EVD-004 are pre-approval observations; EVD-011 and EVD-012 record the approval review and receipt; EVD-010 and EVD-013 pass the review and completeness checks; EVD-007 exact-index QA waits for an authorized commit. |
+| WORK-001 | [VAL-TRACE-001](../spec.md#success-criteria--verification-plan), [VAL-TRACE-002](../spec.md#success-criteria--verification-plan), [VAL-TRACE-003](../spec.md#success-criteria--verification-plan) | Record the baseline and the 109-row crosswalk, verify completeness, obtain independent review, and record conflict dispositions and handoffs. | platform | frontmatter | PASS | EVD-013, EVD-014, EVD-010 and EVD-021 verify completeness, independent review and exact-index QA; EVD-019 and EVD-020 are the final approval review and receipt; EVD-022 records the user's criterion acceptance. |
 
 ## Task Evidence
 
@@ -74,6 +74,8 @@ This Task records the W00 survey for [SPEC-0154](../spec.md) under its [Plan](..
 | EVD-018 | [VAL-TRACE-001](../spec.md#success-criteria--verification-plan), [VAL-TRACE-002](../spec.md#success-criteria--verification-plan), [VAL-TRACE-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-chat user answer dated 2026-11-11 Asia/Seoul choosing to baseline the reviewed SPEC-0154 document digests in .secrets.baseline and amend the Plan, after the approvals recorded in EVD-012 and EVD-016","review_ref":"EVD-017","scope":["SPEC-0154","SPEC-0154-PLAN-0001"],"reviewed_spec_sha256":"650dce5b8b05ac2fe9363379a4f6d0d705112fdad330f60083fd3932204145bd","reviewed_plan_sha256":"ad3ac27f12a6e2220cdc8b87acb2c4d762c9a6655453f7a343c00fba838cf887","validity":"confirmed","revocation":"none"} | PASS | Trusted direct user answer in this chat on 2026-11-11 Asia/Seoul; EVD-017 is the separate exact-byte review. No message UUID was supplied or invented. EVD-012 and EVD-016 stay as receipts for earlier Plan bytes. This receipt accepts no criterion and authorizes no push or protected action. | yes | none |
 | EVD-019 | [VAL-TRACE-001](../spec.md#success-criteria--verification-plan), [VAL-TRACE-002](../spec.md#success-criteria--verification-plan), [VAL-TRACE-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent semantic review | {"spec_sha256":"650dce5b8b05ac2fe9363379a4f6d0d705112fdad330f60083fd3932204145bd","plan_sha256":"a633307920144298e96fa68138ecc2c0cc14534ce00248f1ace25ab9d022e09d"} | PASS | Reviewer A round 6, 2026-11-11: the third commit attempt failed the repository-quality gate for the absolute local checkout path in the Plan Context. That bullet now names the repository root checkout. The reviewer matched both exact hashes, confirmed the bullet wording is the only Plan change since round 5 and that no absolute local path remains, and found no BLOCK or FIX. The same attempt showed that the secret check reads `.secrets.baseline` from HEAD (`scripts/validate-selected-nonstyle.py:408`), so the baseline entries are committed first. It supersedes EVD-017 for the amended Plan. | yes | none |
 | EVD-020 | [VAL-TRACE-001](../spec.md#success-criteria--verification-plan), [VAL-TRACE-002](../spec.md#success-criteria--verification-plan), [VAL-TRACE-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-chat user request dated 2026-11-11 Asia/Seoul to commit SPEC-0154, after the approvals recorded in EVD-012, EVD-016 and EVD-018; this revision only removes a local checkout path that the repository-quality gate forbids and changes no scope","review_ref":"EVD-019","scope":["SPEC-0154","SPEC-0154-PLAN-0001"],"reviewed_spec_sha256":"650dce5b8b05ac2fe9363379a4f6d0d705112fdad330f60083fd3932204145bd","reviewed_plan_sha256":"a633307920144298e96fa68138ecc2c0cc14534ce00248f1ace25ab9d022e09d","validity":"confirmed","revocation":"none"} | PASS | Trusted direct user request in this chat on 2026-11-11 Asia/Seoul; EVD-019 is the separate exact-byte review. No message UUID was supplied or invented. Earlier receipts stay as history for earlier Plan bytes. This receipt accepts no criterion and authorizes no push or protected action. | yes | none |
+| EVD-021 | [VAL-TRACE-001](../spec.md#success-criteria--verification-plan), [VAL-TRACE-002](../spec.md#success-criteria--verification-plan), [VAL-TRACE-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Strict document checks and exact-index QA | Active pre-commit `staged-qa` hook, commitizen check and generated-message check on commit `c9cbe52205bdc218ec54514531c280f7e04d6715` (tree `7260f0e69b143b2a108dd59c9aa3abdf21246e59`) after baseline commit `dcdc7168`; QA interpreter `/tmp/hyhome-first-approved-qa/bin/python3` (Python 3.12.3) with the existing pre-commit hook cache; 2026-11-11T10:24:44Z | PASS | All three hooks Passed and the commit was created. On success the hook prints only its summary. Earlier attempts on the same branch failed and were corrected before this commit: `BODY-LINK-RECIPROCAL` (REQ-0003 back-link), `LANG-ENGLISH-FIRST` and `TASK-EVIDENCE-RESOLUTION` in this Task, `pre_commit` unavailable to `/usr/bin/python3`, markdownlint emphasis and inline-HTML findings, detect-secrets digests, the repository-quality local-path finding, and a pathspec commit refused by staged QA. Local repository-static evidence only; no hosted CI is claimed. | yes | EVD-007 |
+| EVD-022 | [VAL-TRACE-001](../spec.md#success-criteria--verification-plan), [VAL-TRACE-002](../spec.md#success-criteria--verification-plan), [VAL-TRACE-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Operator criterion acceptance | Direct current-chat user message dated 2026-11-11 Asia/Seoul: "Accepting the three criteria (VAL-TRACE-001..003), A commit" | PASS | The user accepted VAL-TRACE-001, VAL-TRACE-002 and VAL-TRACE-003 and requested the commit. Acceptance closes W00–W01 only; every handed-off GAP, CONFLICT and UNVERIFIED row stays open with its stage owner. It authorizes no push, PR, merge, package exit or deletion. | no | none |
 
 ### Requirement Crosswalk
 
@@ -195,9 +197,9 @@ Observed at HEAD `b7497ee1` on 2026-11-11. Package IDs are the v14.2 package's l
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-TRACE-001](../spec.md#success-criteria--verification-plan) | pending | EVD-013 | PASS evidence recorded; awaiting operator acceptance. | platform |
-| [VAL-TRACE-002](../spec.md#success-criteria--verification-plan) | pending | EVD-010, EVD-011 | PASS evidence recorded; awaiting operator acceptance. | platform |
-| [VAL-TRACE-003](../spec.md#success-criteria--verification-plan) | pending | EVD-010 | PASS evidence recorded; awaiting operator acceptance. | platform |
+| [VAL-TRACE-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-013, EVD-021, EVD-022 | Accepted by the user on 2026-11-11; closes W00–W01 only. | platform |
+| [VAL-TRACE-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-014, EVD-019, EVD-021, EVD-022 | Accepted by the user on 2026-11-11; closes W00–W01 only. | platform |
+| [VAL-TRACE-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-014, EVD-021, EVD-022 | Accepted by the user on 2026-11-11; closes W00–W01 only. | platform |
 
 ## Approval and Safety Boundaries
 
@@ -212,7 +214,7 @@ Observed at HEAD `b7497ee1` on 2026-11-11. Package IDs are the v14.2 package's l
 
 ## Verification Summary
 
-After the independent reviews and corrections (EVD-008, EVD-009), 73 of 109 package requirements fit their current repository owner and are KEEP, including the settled PR #220 replay, ADR-0056 and the Git-only closure. The remaining 36 rows (19 GAP, 5 CONFLICT, 12 UNVERIFIED) are handed off below. Exact-index QA waits for an authorized commit.
+After the independent reviews and corrections (EVD-008, EVD-009), 73 of 109 package requirements fit their current repository owner and are KEEP, including the settled PR #220 replay, ADR-0056 and the Git-only closure. The remaining 36 rows (19 GAP, 5 CONFLICT, 12 UNVERIFIED) are handed off below. Exact-index QA passed on commit `c9cbe522` (EVD-021), and the user accepted all three criteria (EVD-022).
 
 ### Conflict Dispositions
 
