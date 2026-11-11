@@ -47,6 +47,7 @@ This Task records stage W01 for [SPEC-0156](../spec.md) under its [Plan](../plan
 | EVD-009 | [VAL-REJ-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent read-only semantic review | Round 2 review of the corrected REQ-0003 sentence, 2026-11-11 | PASS | The fourth clause now cites IF-0001 and acceptance criterion 02, checked by `BODY-LINK-RECIPROCAL`; the sentence restates accepted contracts only, adds no obligation, and matches the user's decision to keep checked back-links. | yes | EVD-003, EVD-008 |
 | EVD-010 | [VAL-REJ-001](../spec.md#success-criteria--verification-plan), [VAL-REJ-002](../spec.md#success-criteria--verification-plan), [VAL-REJ-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Strict document checks and exact-index QA | Active pre-commit `staged-qa` hook, commitizen check and generated-message check on commit `268a703c` after baseline commit `ec043815`; QA interpreter `/tmp/hyhome-first-approved-qa/bin/python3` with the existing pre-commit hook cache; 2026-11-11T11:11:52Z | PASS | All three hooks Passed on the first attempt for both commits. Local repository-static evidence only; no hosted CI is claimed. | yes | EVD-004 |
 | EVD-011 | [VAL-REJ-001](../spec.md#success-criteria--verification-plan), [VAL-REJ-002](../spec.md#success-criteria--verification-plan), [VAL-REJ-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Operator criterion acceptance | Direct current-chat user message dated 2026-11-11 Asia/Seoul: "Accepting VAL-REJ-001..003" | PASS | The user accepted VAL-REJ-001, VAL-REJ-002 and VAL-REJ-003. Acceptance closes W01's differences only; GOV-08 stays with W07 and the Project-Template boundary item stays unverified. It authorizes no push, PR, merge or package exit. | no | none |
+| EVD-012 | [VAL-REJ-001](../spec.md#success-criteria--verification-plan), [VAL-REJ-002](../spec.md#success-criteria--verification-plan), [VAL-REJ-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md`, `tasks/tsk-0001-rejected-package-clauses.md`; current consumers REQ-0003, the Stage 03 README and `.secrets.baseline`; the user's 2026-11-11 exit authority; Git-history-only method | PASS | Consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. This is only a pre-disposition decision: each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison remain required and will be recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### W01 Intake Survey
 
@@ -90,12 +91,19 @@ Observed at HEAD `ff6bcdb2` on 2026-11-11. Values are survey labels, not lifecyc
 
 - **Allowed Paths**: `docs/03.specs/0156-rejected-package-clauses/`, `docs/03.specs/README.md`, the "Scope and Non-goals" sentence, version, `updated` and one Traceability back-link sentence of `docs/01.requirements/0003-workspace-agent-governance-platform.md`, and `.secrets.baseline` entries marking this Task's reviewed SHA-256 document digests as non-secret
 - **Forbidden Paths**: every other repository path, including `.agents/`, `.claude/`, `.codex/`, `scripts/`, `tests/`, `.github/`, `docs/99.templates/`, manifests, the completed SPEC-0154 and SPEC-0155 packages and the package under `_workspace/`
-- **Approval Required**: Spec and Plan approval before any REQ-0003 edit, criterion acceptance, and any commit, push, PR or merge. All are pending.
+- **Approval Required**: Spec and Plan approval before any REQ-0003 edit, criterion acceptance, and any commit, push, PR or merge. All are pending. On 2026-11-11 the user authorized this package's exit from the tree (EVD-012).
 - **Static Validation**: the strict document checks in `docs/AGENTS.md`, `validate-document-lifecycle.py --mode staged` and the active commit hooks
 - **Live Validation**: N/A; no runtime behaviour is claimed.
 - **Secret / Vault Handling**: no secret, token or private memory body was read or printed
 - **Rollback Plan**: remove the package folder and revert the Stage 03 README hunk, the REQ-0003 hunks and this Task's `.secrets.baseline` entries
-- **Evidence Location**: this Task
+- **Evidence Location**: this Task; after the final source commit, the per-file recovery proof is in REQ-0003 Archived Lineage
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package, `spec.md`, `plan.md`, `tasks/tsk-0001-rejected-package-clauses.md`, through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract, the four rejected package clauses, is already promoted to REQ-0003 Scope and Non-goals and stays there. The W01 intake survey has historical value only and stays recoverable with `git show <freeze-commit>:<path>`. The REQ-0003 Traceability sentence and the Stage 03 README entry are rewritten in the closure change to point to Archived Lineage; this Task's `.secrets.baseline` entries leave with it.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's explicit 2026-11-11 selection of this package for exit is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
 
 ## Verification Summary
 
