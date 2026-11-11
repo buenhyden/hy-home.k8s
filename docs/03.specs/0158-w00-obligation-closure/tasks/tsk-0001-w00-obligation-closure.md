@@ -2,7 +2,7 @@
 title: "W00 Obligation Closure"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-11"
 layer: "specs"
@@ -14,7 +14,7 @@ parent_ids: ["SPEC-0158-PLAN-0001"]
 
 ## Overview
 
-This in-progress Task records the W00 closure tables for [SPEC-0158](../spec.md) under its [Plan](../plan.md). EVD-001 to EVD-005 were observed before approval and are marked not required. The user approved the Spec and Plan on 2026-11-11 (EVD-009, EVD-010).
+This completed Task records the W00 closure tables for [SPEC-0158](../spec.md) under its [Plan](../plan.md). EVD-001 to EVD-005 were observed before approval and are marked not required. The user approved the Spec and Plan on 2026-11-11 (EVD-009, EVD-010).
 
 ## Inputs
 
@@ -28,7 +28,7 @@ This in-progress Task records the W00 closure tables for [SPEC-0158](../spec.md)
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CLOSE-001](../spec.md#success-criteria--verification-plan), [VAL-CLOSE-002](../spec.md#success-criteria--verification-plan), [VAL-CLOSE-003](../spec.md#success-criteria--verification-plan) | Record the six tables, check completeness, obtain independent review. | platform | frontmatter | NOT_RUN | EVD-001 to EVD-005 are pre-approval observations; EVD-006 to EVD-008 are the required checks still pending. |
+| WORK-001 | [VAL-CLOSE-001](../spec.md#success-criteria--verification-plan), [VAL-CLOSE-002](../spec.md#success-criteria--verification-plan), [VAL-CLOSE-003](../spec.md#success-criteria--verification-plan) | Record the six tables, check completeness, obtain independent review. | platform | frontmatter | PASS | EVD-009 and EVD-010 record the approval review and receipt; EVD-011, EVD-012, EVD-015 and EVD-016 pass completeness, negative cases, review and exact-index QA; EVD-017 records the user's criterion acceptance. |
 
 ## Task Evidence
 
@@ -49,6 +49,8 @@ This in-progress Task records the W00 closure tables for [SPEC-0158](../spec.md)
 | EVD-013 | [VAL-CLOSE-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent read-only semantic review | Round 1 by a read-only reviewer that produced none of the tables, over the USER22 Links, OPEN Dispositions and Primary Writers tables against the package's `USER22.json`, `REMAINING-14.csv`, `V13_4-REMAINING-7.csv`, stage prompts and the SPEC-0154/0155/0156 Tasks; 2026-11-11 | FAIL | USER22 Links: every cited crosswalk status, action, owner and line matched; 5 COVERED, 16 OPEN, 1 UNMAPPED confirmed. Primary Writers: all six writers match the stage main write scopes. OPEN Dispositions: two BLOCKs. OPEN-06 was called closed by non-adoption although SPEC-0155 keeps 13 UNVERIFIED and 10 reference rows; OPEN-SOURCES inherited that error. Four FIXes: OPEN-03 omitted the 37 open deltas, OPEN-05 omitted the summarizing-fetch caveat, OPEN-LOCAL cited not-yet-accepted SPEC-0158 as evidence, and USER22-22 counted handoffs before SPEC-0156 closed the W01 ones. The supervising session confirmed the SPEC-0155 counts. Corrections are in Review Corrections below; the original rows are kept. | yes | none |
 | EVD-014 | [VAL-CLOSE-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent read-only semantic review | Round 2 by the same reviewer over Task SHA-256 `7615bdfeb0e1b9db8d89c442ef556d2481d7843f543af004bda66875e0d75f45`; 2026-11-11 | FAIL | No BLOCK. Both round-1 BLOCKs are resolved in counts (SPEC-0155: 13 UNVERIFIED, 17 NOT\_ADOPTED, 10 SUP-02 reference rows; SUP-01 13 KEEP, 37 DELTA, 1 retired alias, 1 unmapped), and the OPEN-03, OPEN-05, OPEN-LOCAL and USER22-22 corrections are accurate. Two FIXes: the OPEN-06 correction named "the stages in the SPEC-0155 table" as owner, but only one of the 13 UNVERIFIED rows names a stage; and EVD-013 miscounts round 1, which had three FIXes (OPEN-03, OPEN-05, USER22-22) and recorded OPEN-LOCAL as a NOTE. EVD-013 is kept unchanged and is corrected by this row; the OPEN-06 owner is corrected in Review Corrections. | yes | none |
 | EVD-015 | [VAL-CLOSE-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent read-only semantic review | Round 3 by the same reviewer over Task SHA-256 `6d2cf96a8ef74c05aa2d945b31e836ffc962dd66e3fab39551ef42c24f8c2a71`; 2026-11-11 | PASS | Both round-2 FIXes resolved: the OPEN-06 owner matches the package closing condition and the SPEC-0155 UNVERIFIED rows, and EVD-014 corrects the EVD-013 count while EVD-013 stays unchanged. EVD-014 records round 2 faithfully. No BLOCK or FIX; one NOTE: DS-07 mentions W01 only conditionally, so "only one names a stage" holds. | yes | EVD-007, EVD-013, EVD-014 |
+| EVD-016 | [VAL-CLOSE-001](../spec.md#success-criteria--verification-plan), [VAL-CLOSE-002](../spec.md#success-criteria--verification-plan), [VAL-CLOSE-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Strict document checks and exact-index QA | Strict document validators and `validate-document-lifecycle.py --mode staged` on the exact index, then the active pre-commit `staged-qa` hook, commitizen check and generated-message check on commit `bd2c3e5d` after baseline commit `f1c1ecf7`; QA interpreter `/tmp/hyhome-first-approved-qa/bin/python3` with the existing pre-commit hook cache; 2026-11-11T20:45:06+09:00 | PASS | All four strict validators and the staged lifecycle check exited 0; all hooks passed on the first attempt for both commits. Local repository-static evidence only; no hosted CI is claimed. | yes | EVD-008 |
+| EVD-017 | [VAL-CLOSE-001](../spec.md#success-criteria--verification-plan), [VAL-CLOSE-002](../spec.md#success-criteria--verification-plan), [VAL-CLOSE-003](../spec.md#success-criteria--verification-plan) | WORK-001 | Operator criterion acceptance | Direct current-chat user message dated 2026-11-11 Asia/Seoul: "accept VAL-CLOSE-001 through VAL-CLOSE-003" | PASS | The user accepted VAL-CLOSE-001, VAL-CLOSE-002 and VAL-CLOSE-003. Acceptance closes W00's recording obligations only; open, partial, blocked and not-certified items stay with their owners. It authorizes no push, PR, merge or package exit. | no | none |
 
 ### USER22 Links
 
@@ -237,15 +239,15 @@ Each tracked file cited as an owner in the SPEC-0154 crosswalk or the SPEC-0155 
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-CLOSE-001](../spec.md#success-criteria--verification-plan) | pending | none | EVD-011 passed; waits for EVD-007, EVD-008 and operator acceptance. | platform |
-| [VAL-CLOSE-002](../spec.md#success-criteria--verification-plan) | pending | none | EVD-012 passed; waits for EVD-008 and operator acceptance. | platform |
-| [VAL-CLOSE-003](../spec.md#success-criteria--verification-plan) | pending | none | EVD-015 passed; waits for EVD-008 and operator acceptance. | platform |
+| [VAL-CLOSE-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-011, EVD-016, EVD-017 | Accepted by the user on 2026-11-11; closes W00's recording obligations only. | platform |
+| [VAL-CLOSE-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-012, EVD-016, EVD-017 | Accepted by the user on 2026-11-11; closes W00's recording obligations only. | platform |
+| [VAL-CLOSE-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-015, EVD-016, EVD-017 | Accepted by the user on 2026-11-11; closes W00's recording obligations only. | platform |
 
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: `docs/03.specs/0158-w00-obligation-closure/`, `docs/03.specs/README.md`, one back-link sentence in the Traceability section of `docs/01.requirements/0003-workspace-agent-governance-platform.md`, and `.secrets.baseline` entries marking this Task's reviewed SHA-256 document digests as non-secret
 - **Forbidden Paths**: every other repository path, including every file in the primary-writer table, `.agents/`, `.claude/`, `.codex/`, `scripts/`, `tests/`, `.github/`, the completed SPEC-0154 to SPEC-0156 packages and the package under `_workspace/`
-- **Approval Required**: Spec and Plan approval is recorded (EVD-010). Criterion acceptance and any commit, push, PR or merge are pending.
+- **Approval Required**: Spec and Plan approval (EVD-010) and criterion acceptance (EVD-017) are recorded; the user authorized the commits. Any push, PR, merge or package exit is pending.
 - **Static Validation**: the strict document checks in `docs/AGENTS.md`, `validate-document-lifecycle.py --mode staged` and the active commit hooks
 - **Live Validation**: N/A; no runtime behaviour is claimed.
 - **Secret / Vault Handling**: no secret, token or private memory body was read or printed
@@ -254,4 +256,4 @@ Each tracked file cited as an owner in the SPEC-0154 crosswalk or the SPEC-0155 
 
 ## Verification Summary
 
-W00's recording obligations are recorded in this Task: all 22 USER22 items are linked (5 covered, 16 open with stages, 1 unmapped to W11), the related pull requests are tabulated at the read level actually used, the four missing negative cases were run and each fault was detected, every file handed to several stages has one primary writer, every OPEN item has a disposition, and the 85 cited files have read levels. Items that stay open: 16 USER22 items with their stages, USER22-22 for W11, OPEN-03 with 37 deltas at their stages, OPEN-04 blocked on missing source bytes, OPEN-06, OPEN-07, OPEN-LOCAL and OPEN-SOURCES partial, and OPEN-01, OPEN-02 and OPEN-LEGACY-SEMANTIC preserved but not certified. The user approved the Spec and Plan (EVD-010). The completeness check (EVD-011) and the negative cases (EVD-012) passed under approved parents. Review round 1 failed with two BLOCKs and three FIXes in the OPEN dispositions and USER22-22, plus an OPEN-LOCAL note (EVD-013, whose own count EVD-014 corrects). Round 2 found no BLOCK and two FIXes (EVD-014). Both rounds are corrected in Review Corrections, and round 3 passed with no BLOCK or FIX (EVD-015). Exact-index QA (EVD-008) is NOT_RUN until the commit.
+W00's recording obligations are recorded in this Task: all 22 USER22 items are linked (5 covered, 16 open with stages, 1 unmapped to W11), the related pull requests are tabulated at the read level actually used, the four missing negative cases were run and each fault was detected, every file handed to several stages has one primary writer, every OPEN item has a disposition, and the 85 cited files have read levels. Items that stay open: 16 USER22 items with their stages, USER22-22 for W11, OPEN-03 with 37 deltas at their stages, OPEN-04 blocked on missing source bytes, OPEN-06, OPEN-07, OPEN-LOCAL and OPEN-SOURCES partial, and OPEN-01, OPEN-02 and OPEN-LEGACY-SEMANTIC preserved but not certified. The user approved the Spec and Plan (EVD-010). The completeness check (EVD-011) and the negative cases (EVD-012) passed under approved parents. Review round 1 failed with two BLOCKs and three FIXes in the OPEN dispositions and USER22-22, plus an OPEN-LOCAL note (EVD-013, whose own count EVD-014 corrects). Round 2 found no BLOCK and two FIXes (EVD-014). Both rounds are corrected in Review Corrections, and round 3 passed with no BLOCK or FIX (EVD-015). Exact-index QA passed (EVD-016), and the user accepted all three criteria (EVD-017).
