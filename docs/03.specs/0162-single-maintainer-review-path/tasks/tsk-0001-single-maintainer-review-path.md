@@ -44,6 +44,7 @@ This Task records the GIT-09 review-path change for [SPEC-0162](../spec.md) unde
 | EVD-008 | [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Core-diff checklist and exact-index QA | Implementation commit `f0aa80cf` (tree `0908582282a7e6d5f2c97900b6c78246c430406f`); `python3 scripts/qa.py staged` and the commit hooks with the scratch venv (pre-commit 4.6.1, jsonschema 4.26.0); 2026-11-12 | PASS | Staged QA passed agent-governance, document-contract-registry, document-lifecycle, knowledge-surface, links-and-owners, markdown-profiles, repository-quality, selected-nonstyle and selected-style; the Staged QA Snapshot, commitizen and commit-message-exception hooks passed. With the EVD-007 checklist this closes EVD-005. | yes | EVD-005 |
 | EVD-009 | [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Document contract suite after the implementation | `python3 scripts/run-contract-tests.py --root . --suite document` on the tree after `f0aa80cf`, run during SPEC-0163 WORK-002; 2026-11-12 | FAIL | 3 failures in `tests/test_document_frontmatter_negatives.py`: the test pinned 2026-11-11 and used the live `document-lifecycle.md`, which `f0aa80cf` dated 2026-11-12. EVD-008's staged QA did not select this suite. The fix is in SPEC-0163 WORK-002 (its EVD-009, EVD-010). | yes | none |
 | EVD-010 | [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Document contract suite after the implementation | Same command with the SPEC-0163 WORK-002 test fix staged; 2026-11-12 | PASS | 21 modules, 313 tests OK. | yes | EVD-009 |
+| EVD-011 | [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-12 exit authority; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
@@ -62,6 +63,13 @@ This Task records the GIT-09 review-path change for [SPEC-0162](../spec.md) unde
 - **Secret / Vault Handling**: no secret read or printed
 - **Rollback Plan**: revert the implementation commit; the package commit can be reverted separately
 - **Evidence Location**: this Task
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and its Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the quality policy Semantic review (Promotion row); Git policy, the work lifecycle, the document lifecycle policy, REQ-0003 FR-0018 and the Stage 03 AGENTS role row carry the rest. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's explicit 2026-11-12 answer "Exit 0162-0164 now" is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
 
 ## Verification Summary
 

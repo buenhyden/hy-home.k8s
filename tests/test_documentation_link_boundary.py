@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import re
 import sys
 import unittest
 from contextlib import redirect_stdout
@@ -164,8 +165,17 @@ class RetainedLinkAndTemplateTests(unittest.TestCase):
     def test_forward_relationship_link_still_fails_broken_or_wrong_profile(
         self,
     ) -> None:
-        spec = PurePosixPath("docs/03.specs/0164-derived-reverse-traceability/spec.md")
-        parent = "../../01.requirements/0003-workspace-agent-governance-platform.md"
+        # Any open Spec whose Traceability cites a Requirement serves; packages
+        # leave the tree when they finish, so none is named here.
+        spec, parent = next(
+            (path.relative_to(ROOT), link)
+            for path in sorted((ROOT / "docs/03.specs").glob("*/spec.md"))
+            for link in re.findall(
+                r"\]\((\.\./\.\./01\.requirements/[^)#]+\.md)\)",
+                path.read_text(encoding="utf-8"),
+            )
+        )
+        spec = PurePosixPath(spec.as_posix())
         context = validator._build_context(ROOT, (spec,))
         context = replace(context, paths=(spec, *context.paths))
         registry = validator.load_registry(ROOT)

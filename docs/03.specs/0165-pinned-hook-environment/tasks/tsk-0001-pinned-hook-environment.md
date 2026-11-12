@@ -27,8 +27,8 @@ This Task records the commit-hook environment change for [SPEC-0165](../spec.md)
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-HOOKENV-001](../spec.md#success-criteria--verification-plan) | Dispatcher change, test-first. | platform | in-progress | PASS | EVD-004 and EVD-007 pass; completion waits for the operator's criterion acceptance. |
-| WORK-002 | [VAL-HOOKENV-002](../spec.md#success-criteria--verification-plan) | Owner text; machine setup; real commit. | platform | in-progress | PASS | EVD-006 resolves EVD-005; completion waits for the operator's criterion acceptance. |
+| WORK-001 | [VAL-HOOKENV-001](../spec.md#success-criteria--verification-plan) | Dispatcher change, test-first. | platform | completed | PASS | EVD-004 and EVD-007 pass; the user accepted the criterion on 2026-11-12. |
+| WORK-002 | [VAL-HOOKENV-002](../spec.md#success-criteria--verification-plan) | Owner text; machine setup; real commit. | platform | completed | PASS | EVD-006 resolves EVD-005; the user accepted the criterion on 2026-11-12. |
 
 ## Task Evidence
 
@@ -46,8 +46,8 @@ This Task records the commit-hook environment change for [SPEC-0165](../spec.md)
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-HOOKENV-001](../spec.md#success-criteria--verification-plan) | pending | none | Dispatcher tests before and after | platform |
-| [VAL-HOOKENV-002](../spec.md#success-criteria--verification-plan) | pending | none | Owner text and a real commit without the scratch environment | platform |
+| [VAL-HOOKENV-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004, EVD-007 | Accepted by the user on 2026-11-12 (direct answer "Accept both" to the SPEC-0165 acceptance question) | platform |
+| [VAL-HOOKENV-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the user on 2026-11-12 (direct answer "Accept both" to the SPEC-0165 acceptance question) | platform |
 
 ## Approval and Safety Boundaries
 
@@ -62,4 +62,4 @@ This Task records the commit-hook environment change for [SPEC-0165](../spec.md)
 
 ## Verification Summary
 
-The Spec and Plan are approved (EVD-002, EVD-003). WORK-001 passes (EVD-004, checklist EVD-007); WORK-002 passes on commit `beae88a1` made without the scratch environment (EVD-006 resolves EVD-005). The durable contract is promoted to Git policy 2.5.0. Criterion acceptance is pending. Risk class `high` (hook path).
+The Spec and Plan are approved (EVD-002, EVD-003). WORK-001 passes (EVD-004, checklist EVD-007); WORK-002 passes on commit `beae88a1` made without the scratch environment (EVD-006 resolves EVD-005). The durable contract is promoted to Git policy 2.5.0. The user accepted both criteria on 2026-11-12. Risk class `high` (hook path).
