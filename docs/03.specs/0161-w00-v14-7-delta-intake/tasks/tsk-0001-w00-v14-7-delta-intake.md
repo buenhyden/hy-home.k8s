@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.10"
+version: "0.1.11"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -337,6 +337,7 @@ Added 2026-11-12 under the user's W03 request (EVD-025). W03 runs as several Sta
 | W03-H08 | Relationship contract (W03-B) | Write the per-relationship contract (parent, requirement basis, design constraint, promotion, supersession) with cardinality, direction, canonical owner and derived consumers, citing the existing checks; add only checks found missing | W03; resume with phase 3 (the SDLC roles own these relations) |
 | W03-H09 | Cross-repository equivalence | This workspace claims local adoption only; the normalized-projection comparison across the four repositories belongs to the common-contract carrier | W10; resume when another repository's adoption evidence exists |
 | W03-H10 | Heading-list consumers once a role has a form (SPEC-0169 review) | `scripts/validate-document-lifecycle.py:676` returns early unless `Promotion` is an allowed Plan H2, but the Plan form names `Promotion Map`, so `PLAN-PROMOTION` would switch off silently; `scripts/document_contracts.py:2229` reads raw `sections.required` for README navigation and would refuse a README form profile; a source profile with more than one tabled template twin (Policy: `governance/rule` and `operation/policy`) needs a merge or refusal rule | W03; resume in the Plan, README and Policy packages respectively |
+| W03-H11 | `qa-runner` fixture branch name (SPEC-0169 EVD-010) | `tests/test_qa_runner.py` `test_snapshot_keeps_a_default_branch_that_exists_only_as_remote_tracking` deletes `master`, which exists only when the local Git default branch is `master`; make the fixture name its initial branch | W05; resume when W05 starts |
 
 ## Criterion Acceptance
 

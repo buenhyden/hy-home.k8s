@@ -1,6 +1,6 @@
 ---
 title: "W03 Guide Form"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-12"
@@ -28,9 +28,9 @@ This Task records the first phase-2 package of W03, the Guide form, for [SPEC-01
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-GUIDEFORM-001](../spec.md#success-criteria--verification-plan) | Schema, registry form, extension, TemplateDefinition and table registry checks. | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-GUIDEFORM-002](../spec.md#success-criteria--verification-plan) | Document table check. | platform | in-progress | PASS | EVD-005 |
-| WORK-003 | [VAL-GUIDEFORM-003](../spec.md#success-criteria--verification-plan) | Template and GDE-0010 moved form-only with the meaning map; policy text; regression and exact-index QA. | platform | in-progress | PASS | EVD-006, EVD-007, EVD-008, EVD-009, EVD-010 |
+| WORK-001 | [VAL-GUIDEFORM-001](../spec.md#success-criteria--verification-plan) | Schema, registry form, extension, TemplateDefinition and table registry checks. | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-GUIDEFORM-002](../spec.md#success-criteria--verification-plan) | Document table check. | platform | completed | PASS | EVD-005 |
+| WORK-003 | [VAL-GUIDEFORM-003](../spec.md#success-criteria--verification-plan) | Template and GDE-0010 moved form-only with the meaning map; policy text; regression and exact-index QA. | platform | completed | PASS | EVD-006, EVD-007, EVD-008, EVD-009, EVD-010; implementation commit `20761b1d` passed exact-index QA and the hooks |
 
 ## Task Evidence
 
@@ -46,14 +46,15 @@ This Task records the first phase-2 package of W03, the Guide form, for [SPEC-01
 | EVD-008 | [VAL-GUIDEFORM-003](../spec.md#success-criteria--verification-plan) | WORK-003 | GDE-0010 meaning map | Diff of GDE-0010 1.6.0 to 1.7.0; implementer word-multiset comparison and author read | PASS | Outcome: Overview sentence 1, Audience and Goal sentences 1 and 2, the three reader bullets. Boundaries: Overview sentences 2 and 3 (no duplicated procedure; ADR-0048 owns the decision) and Audience sentence 3 (owners of commands, CI jobs and recovery). Environment: Prerequisites items 1 and 3. Permissions: items 2 and 4. Actions: Guidance sections 1 to 5 unchanged, headings now H4. Exceptions: the retired full/ci `NOT_RUN` bullet and the live-check bullet. Expected Result: the local PASS, fixed-count and aggregate-gate bullets. Troubleshooting: the retired-path bullet. Lifecycle Traceability under Verification unchanged. Related Documents removed; six links already inline. Added sentences (3, Korean in the guide): Outcome, a related-document line linking the Reference Maintenance Runbook; Environment, a none-with-reason line saying tool versions are not applicable because `scripts/README.md` owns the command implementation; Permissions, a related-document line linking the Agent Execution Policy. No other word added or changed. | yes | none |
 | EVD-009 | [VAL-GUIDEFORM-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Semantic review: risk class and core-diff checklist | Diff of 10 files over `414989ae` (about 1,330 lines added, 120 removed) | PASS | Risk class `medium` (registry, validator, test and governed document change). Checklist: scope matches the Spec plus the user-approved fixture (EVD-006); one writer per file; the form equals the external contract; ADR-0033 and ADR-0059 unchanged; no check weakened (heading lists derived so `REGISTRY_BODY_SECTION`, template author prompts, residue scope and link heading validity keep running; `REGISTRY_FORM_LEGACY_LISTS` stays on raw lists); policy text in `document-authoring.md` 3.7.0 and `docs/99.templates/README.md` 0.19.0; no secret read; recovery is reverting the implementation commit. No permission, trigger, hook or workflow changed. | yes | none |
 | EVD-010 | [VAL-GUIDEFORM-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Every contract suite and the remaining consumer-path fixtures | Author run over the working tree after `414989ae`, 2026-11-12; first implementation commit attempt refused by staged QA (`document-lifecycle` suite: 3 failures, `REGISTRY_TEMPLATE_DEFINITION` in fixtures that copy only part of the registry) | PASS | Under the user's EVD-006 decision, the same consumer-path copy is added to `tests/test_document_lifecycle_package_exit.py` (its template-source copy set) and `tests/test_document_artifact_identity.py` (one temporary root); no assertion changed. All suites: `agent-governance` 104, `ci-metadata` 87, `cluster-gate` 72, `document` 401, `document-lifecycle` 18 (after the fix), `release` 29, `tooling` 166, `validation-routing` 173 OK. `qa-runner` 37 tests, 1 error in `test_snapshot_keeps_a_default_branch_that_exists_only_as_remote_tracking`: `git branch -D master` fails because the fixture repository's initial branch name follows the local Git default; the test and `scripts/qa.py` are untouched by this change and staged QA does not select that suite here. Next owner for that environment dependency: W05. | yes | none |
+| EVD-011 | [VAL-GUIDEFORM-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-12 exit authority; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-GUIDEFORM-001](../spec.md#success-criteria--verification-plan) | pending | EVD-004 | Awaiting the operator's acceptance | platform |
-| [VAL-GUIDEFORM-002](../spec.md#success-criteria--verification-plan) | pending | EVD-005 | Awaiting the operator's acceptance | platform |
-| [VAL-GUIDEFORM-003](../spec.md#success-criteria--verification-plan) | pending | EVD-006, EVD-007, EVD-008, EVD-009, EVD-010 | Awaiting the operator's acceptance | platform |
+| [VAL-GUIDEFORM-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the user on 2026-11-12 (direct answer "Accept all three" to the SPEC-0169 criterion question) | platform |
+| [VAL-GUIDEFORM-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the user on 2026-11-12 (direct answer "Accept all three" to the SPEC-0169 criterion question) | platform |
+| [VAL-GUIDEFORM-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-006, EVD-007, EVD-008, EVD-009, EVD-010 | Accepted by the user on 2026-11-12 (direct answer "Accept all three" to the SPEC-0169 criterion question) | platform |
 
 ## Approval and Safety Boundaries
 
@@ -66,6 +67,14 @@ This Task records the first phase-2 package of W03, the Guide form, for [SPEC-01
 - **Rollback Plan**: revert the implementation commit; before that, delete the package commit
 - **Evidence Location**: this Task
 
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document authoring policy (Guide paragraph and table-contract sentence) and the registry (Plan Promotion rows). The `qa-runner` default-branch dependency found in EVD-010 is carried into the SPEC-0161 Task as W03-H11 before deletion; the other follow-ups are already SPEC-0161 W03-H06 to W03-H10. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes. The registry TemplateDefinition text and code docstrings name SPEC-0169 as an identifier, not a link, and stay.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's explicit 2026-11-12 answer "Exit now (Recommended)" is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
+
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002) and approved at their exact bytes (EVD-003). WORK-001 to WORK-003 implemented with PASS evidence (EVD-004 to EVD-010); every criterion awaits the operator's acceptance. Risk class `medium`. Residual risk: a mistyped first header exempts a Steps table (stated in the Spec). Next owner: the operator for acceptance, then W03 for package exit and the next phase-2 role.
+Spec and Plan reviewed (EVD-001, EVD-002) and approved at their exact bytes (EVD-003). WORK-001 to WORK-003 implemented with PASS evidence (EVD-004 to EVD-010); implementation commit `20761b1d`. The user accepted all three criteria and the package exit on 2026-11-12 (EVD-011). Risk class `medium`. Residual risk: a mistyped first header exempts a Steps table (stated in the Spec). Next owner: W03 for the next phase-2 role (Runbook).
