@@ -52,6 +52,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-015 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan), [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent semantic review | {"spec_sha256":"5b304a9dfdc190752a3afad4f8088a748c2f0215a906a13fbf4f0afb1e23ad4f","plan_sha256":"e388f9e724ba5beabd088272fee6aaf39d18a360eeb4e6a1908a0747afed2620"} | PASS | Same read-only reviewer as EVD-010 and EVD-012, round 3, 2026-11-12: both exact hashes matched; reverting only the version, status and approved wording reproduces the round-2 bytes `8acb1507…` and `5fe718c6…`; verdict APPROVE, no BLOCK, no FIX on Spec or Plan. | yes | none |
 | EVD-016 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan), [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-session user answer Confirm approval to the SPEC-0161 exact-byte reconfirmation question dated 2026-11-12 Asia/Seoul","review_ref":"EVD-015","scope":["SPEC-0161","SPEC-0161-PLAN-0001"],"reviewed_spec_sha256":"5b304a9dfdc190752a3afad4f8088a748c2f0215a906a13fbf4f0afb1e23ad4f","reviewed_plan_sha256":"e388f9e724ba5beabd088272fee6aaf39d18a360eeb4e6a1908a0747afed2620","validity":"confirmed","revocation":"none"} | PASS | The user first answered Approve and commit (EVD-013) before review; after the review changes listed in the reconfirmation question the user confirmed these exact bytes. No message UUID was supplied or invented. This receipt accepts no criterion and authorizes no push, PR or merge. | yes | none |
 | EVD-017 | [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Strict document checks and exact-index QA | Package commit `9697d99c` (tree `e1985935dfb9d4f9f7a8f7ba17f0dcece578dae9`) on baseline commit `2c687402`; `python3 scripts/qa.py staged` (profile staged, snapshot index) and the commit hooks, with the scratch venv from `.github/requirements/ci-validation.txt` (pre-commit 4.6.1, jsonschema 4.26.0, Python 3.12) first on PATH; 2026-11-12 | PASS | Staged QA on the full index passed agent-governance, ci-python-contract, document-contract-registry, document-lifecycle, links-and-owners, markdown-profiles, repository-quality and selected-style; selected-nonstyle failed only because it trusts `HEAD:.secrets.baseline` before the baseline commit, so the baseline was committed first (`2c687402`). Both commits then passed the Staged QA Snapshot, commitizen and commit-message-exception hooks (exit 0). | yes | EVD-009 |
+| EVD-018 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | User decisions on conflicts | Direct user messages in this session, 2026-11-12 Asia/Seoul: (1) where an existing rule conflicts with the current v14.7 requirement, change it to match the current requirement; (2) Q-07: renumber Stage 01, 02 and 03 as display numbers only, keeping `artifact_id` | PASS | RS-09 (DOC-09), GIT-09 and CI-SCOPE are adopted and replace the SPEC-0156 rejections; the machine-ledger rejection agrees with v14.7 and stays; POLICY-ROLE follows the same-role rule; DOC-12 is display-number renumbering after the open work closes. Rows and Conflicts updated. | no | none |
 
 ### Edition Delta
 
@@ -118,8 +119,10 @@ State: COVERED (current owner already conforms, evidence named; for a clause a l
 | R147-18 | OPEN items' currentness | This Task, OPEN Dispositions | COVERED | none |
 | R147-19 | Ask only unresolved conflicts | This Task, Conflicts | COVERED | none |
 | R147-20 | Reuse only equivalent results | `.agents/governance/quality.md` validation runner envelope (W01 writes); `scripts/qa.py` result reuse | OPEN | W05 (`scripts/qa.py`); W01 writes the policy text |
-| RS-09 | Generated reverse traceability | REQ-0003 Scope and Non-goals; `BODY-LINK-RECIPROCAL` | REJECTED_BY_CONTRACT | none (SPEC-0156 user decision reused) |
-| CI-SCOPE | PR-DURING runs affected implementation and product leaves in hosted CI | `.agents/governance/quality.md` "Hosted automation does not run local unit or document-content QA"; `git.md` | DECISION_NEEDED | W01, then W06 |
+| RS-09 | Generated reverse traceability (DOC-09: derive the reverse index from the single child-to-parent link) | REQ-0003 IF-0001 and Scope and Non-goals; `BODY-LINK-RECIPROCAL` in `scripts/validate-links-and-owners.py` | OPEN | W05 (validator), W01 (REQ-0003 text); decision EVD-018 |
+| GIT-09 | An extra agent API call is not a mandatory reviewer in single-maintainer review | REQ-0003 FR-0018; `.agents/governance/quality.md` Semantic review; `.agents/workflows/work-lifecycle.md` Completion | OPEN | W01; decision EVD-018 |
+| DOC-12 | Contiguous display numbers for Stage 01, 02 and 03 after the open work closes; `artifact_id` stays the stable trace ID; no retired ID reissued | File and folder names under `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`; registry `path_pattern` and identity rules | OPEN | W03 (last, after open packages close); decision EVD-018 |
+| CI-SCOPE | PR-DURING runs affected implementation and product leaves in hosted CI | `.agents/governance/quality.md` hosted lane; `git.md`; `.github/workflows/ci.yml` | OPEN | W06 (`ci.yml`), W01 (policy text); decision EVD-018 |
 
 ### Related Pull Requests
 
@@ -208,7 +211,7 @@ One primary writer per file; other stages consume through the named interface.
 
 | Source | Access | Applied to | Result |
 | --- | --- | --- | --- |
-| RS-09 NASA SWE-052 | Inherited, not re-queried | Bidirectional links | Forward links kept; generated reverse links REJECTED_BY_CONTRACT |
+| RS-09 NASA SWE-052 | Inherited, not re-queried | Bidirectional links | Single forward link; reverse index to be derived (adopted, EVD-018) |
 | RS-18 | Inherited | Survey before change | This package records; writers change |
 | RS-22 Git worktree | Inherited | Workspace boundary | Single worktree, no new worktree |
 | RS-39 | Inherited | Selective reading | Unchanged inputs reused from SPEC-0154..0158 |
@@ -238,9 +241,12 @@ One primary writer per file; other stages consume through the named interface.
 
 | ID | Files | Current | Package | Decision |
 | --- | --- | --- | --- | --- |
-| RS-09 | REQ-0003 Scope and Non-goals; `BODY-LINK-RECIPROCAL` | Hand-written back-links required | Generated reverse links | Reuse SPEC-0156 decision: not adopted |
-| CI-SCOPE | `.agents/governance/quality.md` hosted lane; `git.md`; `.github/workflows/ci.yml`; `tests/test_validate_ci_python_contract.py` | Hosted CI runs metadata and style only, by design (local QA is not an isolation boundary for PR code) | PR-DURING runs affected leaves under trusted configuration and least privilege | Open; W01 asks the user. W06 and W05 wait. |
-| POLICY-ROLE | `docs/99.templates/registry.json` `operation/policy`, `governance/rule` | Two shapes | One Policy role | Open; W01 decides before W03 |
+| RS-09 | REQ-0003 Scope and Non-goals and IF-0001; `BODY-LINK-RECIPROCAL` | Hand-written back-links required | Reverse index derived from the single child-to-parent link | Adopt: the current requirement wins (EVD-018); replaces the SPEC-0156 rejection |
+| CI-SCOPE | `.agents/governance/quality.md` hosted lane; `git.md`; `.github/workflows/ci.yml`; `tests/test_validate_ci_python_contract.py` | Hosted CI runs metadata and style only | PR-DURING runs affected leaves under trusted configuration and least privilege | Adopt (EVD-018): PR code runs with a read-only token and no secrets |
+| POLICY-ROLE | `docs/99.templates/registry.json` `operation/policy`, `governance/rule` | Two shapes | One Policy role | Adopt (EVD-018): both profiles implement the common Policy form; W03 |
+| GIT-09 | REQ-0003 FR-0018 and Scope and Non-goals; `quality.md` Semantic review | An independent agent reviewer is required | No extra agent API call as a mandatory reviewer | Adopt (EVD-018): risk checklist, automated checks and explicit human acceptance; an agent review stays optional |
+| DOC-12 | Stage 01/02/03 file and folder numbers | Number equals stable ID; gaps kept | Contiguous numbering from 1 | Adopt as display numbers only (Q-07, EVD-018); `artifact_id` unchanged; after open work closes |
+| LEDGER | REQ-0003 Scope and Non-goals (FR-0019, FR-0022) | No machine ledger | v14.7 also forbids a competing ledger (GOV-03, SDLC-04) | No conflict; existing rule kept |
 
 ### Read Denominator
 
@@ -277,4 +283,4 @@ Listed-only files are not semantically reviewed. Each writer stage re-reads its 
 
 ## Verification Summary
 
-Required completeness (EVD-014), independent review (EVD-012, EVD-015) and exact-index QA (EVD-017) pass; criterion acceptance is pending the operator. Residual risk: the survey read large validators and tests in part; writers must re-read before editing. Next owners: W01 (vocabulary, CI-SCOPE, POLICY-ROLE), then W03, W04, W05, W06, W07 and W10 per the handoff tables.
+Required completeness (EVD-014), independent review (EVD-012, EVD-015) and exact-index QA (EVD-017) pass; criterion acceptance is pending the operator. Residual risk: the survey read large validators and tests in part; writers must re-read before editing. Next owners: W01 (vocabulary, review path, policy text for CI-SCOPE and DOC-09), then W03, W04, W05, W06, W07 and W10 per the handoff tables; DOC-12 display renumbering last.
