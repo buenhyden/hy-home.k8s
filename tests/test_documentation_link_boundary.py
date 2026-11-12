@@ -161,20 +161,6 @@ class RetainedReciprocalAndTemplateTests(unittest.TestCase):
         authored = PurePosixPath("docs/03.specs/0140-archive-check-removal/spec.md")
         self.assertEqual(validator._local_destination(authored, expected)[0], "local")
 
-    def test_current_backlink_is_still_required(self) -> None:
-        owner = PurePosixPath("docs/03.specs/0140-archive-check-removal/spec.md")
-        expected = PurePosixPath(
-            "docs/01.requirements/0003-workspace-agent-governance-platform.md"
-        )
-        context = SimpleNamespace(
-            texts={owner: "Current completed Spec without a backlink."},
-        )
-        self.assertFalse(validator._links_back_to(context, owner, expected))
-        context.texts[owner] = (
-            "[Requirement](../../01.requirements/0003-workspace-agent-governance-platform.md)"
-        )
-        self.assertTrue(validator._links_back_to(context, owner, expected))
-
     def test_full_uppercase_placeholder_is_only_a_template_destination(self) -> None:
         form = PurePosixPath("docs/99.templates/templates/specs/plan.template.md")
         for variable in (

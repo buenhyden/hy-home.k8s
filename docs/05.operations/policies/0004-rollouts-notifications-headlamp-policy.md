@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.3.1"
+version: "1.3.2"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-12"
 layer: "operations"
 artifact_id: "POL-0004"
 ---
@@ -114,5 +114,5 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — SPEC-0004 left the tree and is recovered from Git history, so no eligible upstream document carries a reciprocal link | Platform Owner for promotion approval, analysis exceptions, CRDs, dashboard, and rollback evidence | Argo Rollouts chart values, Rollout resources, AnalysisTemplate review, dashboard ingress/TLS, and runbook evidence |
-| N/A — SPEC-0005 left the tree and is recovered from Git history, so no eligible upstream document carries a reciprocal link | Platform Owner for subscription policy; secret owner for the Slack credential path | OpenBao-to-ESO secret contract, ArgoCD notifications ConfigMap and annotations, Rollouts controller notification values, controller logs, and plaintext-secret gates |
+| N/A — SPEC-0004 left the tree and is recovered from Git history, so no eligible upstream document is available to link as the promoting owner | Platform Owner for promotion approval, analysis exceptions, CRDs, dashboard, and rollback evidence | Argo Rollouts chart values, Rollout resources, AnalysisTemplate review, dashboard ingress/TLS, and runbook evidence |
+| N/A — SPEC-0005 left the tree and is recovered from Git history, so no eligible upstream document is available to link as the promoting owner | Platform Owner for subscription policy; secret owner for the Slack credential path | OpenBao-to-ESO secret contract, ArgoCD notifications ConfigMap and annotations, Rollouts controller notification values, controller logs, and plaintext-secret gates |

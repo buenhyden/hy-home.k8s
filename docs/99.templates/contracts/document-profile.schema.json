@@ -324,7 +324,6 @@
                   "target_link_column",
                   "allowed_source_profile_ids",
                   "allowed_target_profile_ids",
-                  "reciprocal_evidence",
                   "allow_explicit_exclusion"
                 ],
                 "properties": {
@@ -464,9 +463,6 @@
                     "items": {
                       "type": "string"
                     }
-                  },
-                  "reciprocal_evidence": {
-                    "type": "boolean"
                   },
                   "allow_explicit_exclusion": {
                     "type": "boolean"

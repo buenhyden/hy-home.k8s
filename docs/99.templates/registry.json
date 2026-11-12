@@ -93,7 +93,6 @@
             "sdlc/architecture-description",
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -188,7 +187,6 @@
             "sdlc/architecture-decision",
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -276,7 +274,6 @@
           "allowed_target_profile_ids": [
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -383,7 +380,6 @@
             "sdlc/requirement"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -492,7 +488,6 @@
           "allowed_target_profile_ids": [
             "sdlc/task"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -600,7 +595,6 @@
             "sdlc/spec"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true,
           "task_execution": {
             "single_status_marker": "frontmatter",
@@ -760,7 +754,6 @@
             "sdlc/task"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -853,7 +846,6 @@
             "sdlc/task"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -947,7 +939,6 @@
             "operation/policy"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -1039,7 +1030,6 @@
           "allowed_target_profile_ids": [
             "sdlc/task"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -1129,7 +1119,6 @@
           "allowed_target_profile_ids": [
             "sdlc/task"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -3611,7 +3600,6 @@
           "allowed_target_profile_ids": [
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -3702,7 +3690,6 @@
             "sdlc/architecture-decision",
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -3803,7 +3790,6 @@
           "allowed_target_profile_ids": [
             "sdlc/task"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -3904,7 +3890,6 @@
             "sdlc/spec"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true,
           "task_execution": {
             "single_status_marker": "frontmatter",
@@ -4057,7 +4042,6 @@
             "sdlc/task"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4144,7 +4128,6 @@
           "allowed_target_profile_ids": [
             "sdlc/task"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4230,7 +4213,6 @@
             "sdlc/task"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4316,7 +4298,6 @@
           "allowed_target_profile_ids": [
             "sdlc/task"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4403,7 +4384,6 @@
             "operation/policy"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4495,7 +4475,6 @@
             "sdlc/architecture-description",
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4594,7 +4573,6 @@
             "sdlc/requirement"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },

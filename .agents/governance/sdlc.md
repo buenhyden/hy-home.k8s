@@ -1,6 +1,6 @@
 ---
 title: "Software Development Lifecycle"
-version: "3.4.0"
+version: "3.4.1"
 type: "governance/contract"
 status: "active"
 owner: "platform"
@@ -122,7 +122,7 @@ follow the [Git policy](git.md) for every row.
 | Document content: README, guide, reference | The current owner, or the Task of the package that changes it | Ordinary document selection | The operator's request |
 | Executable behavior | A Stage 03 package; a failing case then a passing case in its Task | Focused regressions and affected purpose gates | Spec and Plan approval |
 | Governance, provider, Stage 99 form, schema or registry | A Stage 03 package; durable meaning promoted to its owner | The contract-change selection in [quality](quality.md) | Spec and Plan approval |
-| Architecture boundary or durable choice | An Architecture Description or ADR; a package when it is implemented | Document checks and reciprocal links | The operator accepts the ADR |
+| Architecture boundary or durable choice | An Architecture Description or ADR; a package when it is implemented | Document checks and forward links | The operator accepts the ADR |
 | Live cluster change or incident fix | A Task, and an Incident record for an incident; Runbook steps | Observation in the approved live lane | The operator approves the live action; approved bootstrap and break-glass actions stay operator-bound under [approval and safety](approval-and-safety.md) |
 
 Security checks follow their existing owners: [quality](quality.md) selects
