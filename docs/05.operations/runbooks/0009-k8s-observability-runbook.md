@@ -1,10 +1,10 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.4.1"
+version: "2.5.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "operations"
 artifact_id: "RUN-0009"
 ---
@@ -13,8 +13,34 @@ artifact_id: "RUN-0009"
 
 ## Purpose
 
+### Trigger and Outcome
+
 이 런북은 cluster 안 Alloy(`monitoring/alloy-k8s-logs`)의 k8s 메트릭·로그 수집에
-장애가 났을 때 진단하고 복구하는 절차를 제공한다. ArgoCD component별 확인은
+장애가 났을 때 진단하고 복구하는 절차를 제공한다.
+
+- 외부 Prometheus에서 `up{cluster="k3d-hyhome"}` 결과가 비었거나 job이 빠졌을 때
+- `argocd_app_info`, `kube_pod_*`, `istio_requests_total`이 조회되지 않을 때
+- Loki에서 `{cluster="k3d-hyhome"}` 쿼리 결과가 비어 있을 때
+- `alloy-k8s-logs` 파드가 `CrashLoopBackOff` 상태일 때
+- Alloy 로그에 remote write 오류가 반복될 때
+
+주된 장애 원인:
+
+1. **remote write 실패**: 자격 증명이 외부 Traefik의 Basic Auth와
+   맞지 않거나(401), 이름 해석·CA가 어긋나거나(`no such host`, `x509`), remote
+   write receiver가 꺼져 있다(404).
+2. **alloy-k8s-logs CrashLoop**: `readOnlyRootFilesystem` + storage 경로
+   미설정, 또는 미지원 속성 사용
+3. **egress 차단**: `monitoring` NetworkPolicy가 `192.168.0.13`의 `3100`/`443`이나
+   API server `6443`을 허용하지 않는다.
+4. **target 누락**: component의 label, container port, annotation이 바뀌어
+   relabel 규칙에서 빠진다.
+5. **AppProject destinations 미포함**: `monitoring` 네임스페이스가 AppProject에 없어
+   Application 배포 실패
+
+### Scope
+
+ArgoCD component별 확인은
 [RUN-0008](./0008-argocd-metrics-prometheus-runbook.md)이 다룬다.
 
 수집 경로([ADR-0045](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md),
@@ -35,36 +61,28 @@ artifact_id: "RUN-0009"
 저장, 조회, dashboard, alert rule은 외부 observability workspace가 소유한다. 외부
 Prometheus의 NodePort static scrape는 폐지되었다.
 
-주된 장애 원인:
+관련 문서: [Kiali Connectivity Runbook](./0007-kiali-observability-connectivity-runbook.md), [`../../../gitops/platform/monitoring`](../../../gitops/platform/monitoring)
 
-1. **remote write 실패**: 자격 증명이 외부 Traefik의 Basic Auth와
-   맞지 않거나(401), 이름 해석·CA가 어긋나거나(`no such host`, `x509`), remote
-   write receiver가 꺼져 있다(404).
-2. **alloy-k8s-logs CrashLoop**: `readOnlyRootFilesystem` + storage 경로
-   미설정, 또는 미지원 속성 사용
-3. **egress 차단**: `monitoring` NetworkPolicy가 `192.168.0.13`의 `3100`/`443`이나
-   API server `6443`을 허용하지 않는다.
-4. **target 누락**: component의 label, container port, annotation이 바뀌어
-   relabel 규칙에서 빠진다.
-5. **AppProject destinations 미포함**: `monitoring` 네임스페이스가 AppProject에 없어
-   Application 배포 실패
+## Preconditions
 
-## Trigger and Preconditions
+### Authority and Access
 
-- 외부 Prometheus에서 `up{cluster="k3d-hyhome"}` 결과가 비었거나 job이 빠졌을 때
-- `argocd_app_info`, `kube_pod_*`, `istio_requests_total`이 조회되지 않을 때
-- Loki에서 `{cluster="k3d-hyhome"}` 쿼리 결과가 비어 있을 때
-- `alloy-k8s-logs` 파드가 `CrashLoopBackOff` 상태일 때
-- Alloy 로그에 remote write 오류가 반복될 때
+승인·권한 조건: 해당 없음 — 이 런북은 Preconditions에 소유자·승인·권한 항목을 따로 정하지 않는다.
 
----
+관련 문서: [Observability Platform Policy](../policies/0005-observability-platform-operations-policy.md)
 
-## Procedure
+### Safety Checks
+
+안전 점검: 해당 없음 — 이 런북은 Preconditions에 백업·가용성·동시성·비밀 보호 항목을 따로 정하지 않는다.
+
+## Steps
+
+### Actions
 
 아래 절차는 전체 상태 진단, platform-monitoring App 복구, Alloy CrashLoop 복구,
 remote write 복구, target 누락 복구 순서로 수행한다.
 
-### 정상 상태 기준값
+#### 정상 상태 기준값
 
 | 항목 | 기준값 |
 | --- | --- |
@@ -75,11 +93,9 @@ remote write 복구, target 누락 복구 순서로 수행한다.
 | Loki k8s 로그 스트림 | `{cluster="k3d-hyhome"}` → 스트림 수 > 0 |
 | AppProject destinations | `monitoring` 포함 |
 
----
+#### Procedure 1: 전체 상태 진단
 
-### Procedure 1: 전체 상태 진단
-
-### 외부 Prometheus 조회
+##### 외부 Prometheus 조회
 
 외부 observability 운영자가 승인된 인증 조회 경로에서 아래 PromQL을 실행한다.
 이 저장소의 Runbook은 비밀번호 파일을 읽거나 인증 helper를 만들지 않는다.
@@ -112,9 +128,7 @@ curl -s -G "$LOKI/loki/api/v1/query_range" \
 승인된 조회 경로가 401, `x509` 오류를 내거나 응답하지 않으면 Procedure 4로
 이동하고, 실제 인증·TLS 복구는 외부 observability owner에게 넘긴다.
 
----
-
-### Procedure 2: platform-monitoring ArgoCD App 배포 복구
+#### Procedure 2: platform-monitoring ArgoCD App 배포 복구
 
 > **Agent execution boundary**: AppProject 직접 적용은 human-approved bootstrap 또는 break-glass 전용이다. Agent는 기본적으로 Git 파일 수정, 리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.
 
@@ -136,18 +150,16 @@ argocd app sync platform-monitoring
 kubectl get deploy,svc -n monitoring
 ```
 
----
+#### Procedure 3: alloy-k8s-logs CrashLoop 복구
 
-### Procedure 3: alloy-k8s-logs CrashLoop 복구
-
-### 3-1. 원인 파악
+##### 3-1. 원인 파악
 
 ```bash
 kubectl logs -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --tail=30
 kubectl describe pod -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs
 ```
 
-### 3-2. 오류 시그니처별 조치
+##### 3-2. 오류 시그니처별 조치
 
 | 오류 시그니처 | 원인 | 조치 |
 | --- | --- | --- |
@@ -156,7 +168,7 @@ kubectl describe pod -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs
 | `nodes/proxy` `Forbidden` | kubelet/cAdvisor proxy 권한 누락 | ClusterRole의 `nodes/proxy` get 확인 |
 | `connection refused` to `loki-external` | host `3100` 미공개 또는 egress 차단 | Procedure 4 |
 
-### 3-3. 수정 후 재배포
+##### 3-3. 수정 후 재배포
 
 `gitops/platform/monitoring/alloy-k8s-logs.yaml`을 고치고 커밋한 뒤 동기화한다.
 Alloy는 mount된 설정을 다시 읽지 않으므로 `config.alloy`를 바꾸면 Deployment의
@@ -174,9 +186,7 @@ argocd app sync platform-monitoring
 kubectl apply -f gitops/platform/monitoring/alloy-k8s-logs.yaml
 ```
 
----
-
-### Procedure 4: remote write와 로그 전송 경로 복구
+#### Procedure 4: remote write와 로그 전송 경로 복구
 
 ```bash
 # 1. 외부 route: 인증 없이 401이면 route가 살아 있다 (Linux server host에서)
@@ -202,15 +212,13 @@ kubectl -n monitoring get networkpolicy allow-egress-monitoring -o yaml | rg -A8
   workspace의 Basic Auth가 어긋난 것이다. 외부 workspace가 값을 맞춘다.
 - `404`면 `--web.enable-remote-write-receiver`가 꺼져 있다. 외부 workspace가 소유한다.
 - `no such host`, `x509`면 [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md)의
-  Procedure 4단계로 `coredns-custom`이나 `hy-home-root-ca`를 재적용한다.
+  Steps 4단계로 `coredns-custom`이나 `hy-home-root-ca`를 재적용한다.
 - Loki EndpointSlice가 `192.168.0.13:3100`이 아니면
   [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)의 External Endpoint
   Recovery 절차를 따른다. NetworkPolicy가 틀렸으면 Git의
   `gitops/platform/network-policies/`를 고치고 reconciliation으로 반영한다.
 
----
-
-### Procedure 5: target 누락 복구
+#### Procedure 5: target 누락 복구
 
 `kubernetes-pods` job에서 특정 component가 빠지면 label과 port를 relabel 규칙과
 비교한다. ArgoCD component는 [RUN-0008](./0008-argocd-metrics-prometheus-runbook.md)이
@@ -231,9 +239,13 @@ kubectl get pods -n istio-system -l app=istiod \
 - 외부 Prometheus 쪽에서 job 이름은 `kubernetes-pods`이고 component는 `app`
   label로 구분한다.
 
----
+### Stop Conditions
 
-## Verification
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+
+## Validation
+
+### Service Checks
 
 ```bash
 echo "[1] alloy-k8s-logs"
@@ -257,29 +269,28 @@ curl -s -G "http://192.168.0.13:3100/loki/api/v1/query_range" \
 | `count(argocd_app_info{cluster="k3d-hyhome"})` | 현재 root Application 수 이상 |
 | `count(kube_node_info{cluster="k3d-hyhome"})` | 현행 k3d 4개 노드 |
 
+- **Signals**: Alloy pod readiness, Alloy remote write errors, `up{cluster="k3d-hyhome"}` by job and app, Loki stream count.
+
+### Evidence
+
 실제 쿼리 결과와 시각이 없으면 이 부분은 검증 완료가 아니다.
 
-- **Signals**: Alloy pod readiness, Alloy remote write errors, `up{cluster="k3d-hyhome"}` by job and app, Loki stream count.
 - **Evidence to Capture**: verification command output, ArgoCD Application status, Alloy logs, host port table.
-
-## Recovery and Escalation
-
-- Monitoring manifest changes should be reverted through GitOps if relabel, remote write, or egress changes regress collection.
-- External Prometheus, Loki, dashboard, and alert rule changes are reverted in the owning external workspace.
-- AppProject destination changes require reviewed GitOps updates; direct cluster edits remain bootstrap/break-glass only.
-
----
-
-## Related Documents
-
-- [Observability Platform Policy](../policies/0005-observability-platform-operations-policy.md)
-- [Kiali Connectivity Runbook](./0007-kiali-observability-connectivity-runbook.md)
-- [ADR-0045](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md)
-- [ADR-0046](../../02.architecture/decisions/0046-external-services-over-host-addresses.md)
-- [`../../../gitops/platform/monitoring`](../../../gitops/platform/monitoring)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
 | [Observability Platform Operations Policy](../policies/0005-observability-platform-operations-policy.md) | In-cluster metric collection, remote write, ArgoCD metrics, Alloy log/event collection, or monitoring AppProject admission is degraded. | Platform operator captures pod, remote write, job, Loki, and ArgoCD evidence; GitOps owner restores cluster resources and the observability owner restores external Prometheus/Loki publication and settings. |
+
+## Recovery
+
+### Rollback
+
+- Monitoring manifest changes should be reverted through GitOps if relabel, remote write, or egress changes regress collection.
+- External Prometheus, Loki, dashboard, and alert rule changes are reverted in the owning external workspace.
+- AppProject destination changes require reviewed GitOps updates; direct cluster edits remain bootstrap/break-glass only.
+
+### Escalation
+
+에스컬레이션: 해당 없음 — 이 런북은 Recovery에 에스컬레이션 담당을 따로 정하지 않는다.

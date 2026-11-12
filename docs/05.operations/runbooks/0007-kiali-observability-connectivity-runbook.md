@@ -1,10 +1,10 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "2.1.2"
+version: "2.2.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "operations"
 artifact_id: "RUN-0007"
 ---
@@ -12,6 +12,8 @@ artifact_id: "RUN-0007"
 # Kiali Observability 연결 복구 Runbook
 
 ## Purpose
+
+### Trigger and Outcome
 
 이 런북은 Kiali에서 Grafana, Prometheus, Tempo 등 외부 관측성 서비스가 Unreachable로 표시되는 장애를 진단하고 복구하는 절차를 제공한다.
 
@@ -21,19 +23,35 @@ artifact_id: "RUN-0007"
 2. **Tempo endpoint drift**: Tempo는 `tempo-external` Service와 EndpointSlice를 거쳐 host port `192.168.0.13:3200`으로 닿는다. EndpointSlice는 ArgoCD Application `platform-external-services`가 Git에서 관리한다.
 3. **Grafana 인증 실패**: 외부 Grafana는 익명 API 접근을 허용하지 않는다. Kiali는 Grafana Viewer service account token(`istio-system/kiali-grafana-auth`, OpenBao `platform/grafana-api`)을 bearer로 보낸다. token이 없거나 만료·폐기되면 `/api/frontend/settings`가 401을 반환하고 Kiali는 Grafana를 Unreachable로 표시한다.
 
-## Trigger and Preconditions
-
 - Kiali에서 Grafana/Prometheus/Tempo가 unreachable로 표시될 때
 - 외부 workspace가 관측 서비스의 route, host port 공개나 bind 주소를 바꾼 뒤
 - `kubectl get endpointslice -n platform`에서 `tempo-external-1`의 주소가 비어있거나 없을 때
 
----
+### Scope
 
-## Procedure
+범위: 해당 없음 — 이 절에 옮길 시스템, 환경, 영향 범위 문장이 본문에 따로 없으며, 대상은 Trigger and Outcome에 적혀 있다.
+
+관련 문서: **k8s Observability Runbook**: [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md); **External Services**: [`../../../gitops/platform/external-services`](../../../gitops/platform/external-services)
+
+## Preconditions
+
+### Authority and Access
+
+권한 및 접근: 해당 없음 — 이 절에 옮길 소유자, 승인, 권한 문장이 본문에 따로 없다.
+
+관련 문서: **Operations Policy**: [`../policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
+
+### Safety Checks
+
+안전 점검: 해당 없음 — 이 절에 따로 옮길 백업, 가용성, 동시 실행, 비밀 보호 항목이 본문에 없다.
+
+## Steps
+
+### Actions
 
 아래 절차는 외부 route와 host port 확인, Kiali 파드 연결 테스트, NetworkPolicy 점검, Kiali 설정 확인, Grafana auth 확인 순서로 수행한다.
 
-### Kiali 외부 의존 계약표 (ADR-0046)
+#### Kiali 외부 의존 계약표 (ADR-0046)
 
 | 대상 | 경로 | 인증 |
 | --- | --- | --- |
@@ -43,11 +61,9 @@ artifact_id: "RUN-0007"
 
 > 닫혀 있거나 route가 응답하지 않으면 이 저장소가 아니라 외부 workspace의 route와 port 공개를 먼저 확인한다.
 
----
+#### Procedure 1: 연결 상태 진단
 
-### Procedure 1: 연결 상태 진단
-
-### 1-1. 외부 route와 host port 확인 (Linux server host에서)
+##### 1-1. 외부 route와 host port 확인 (Linux server host에서)
 
 ```bash
 # 인증 없이 401이면 Prometheus API route가 살아 있다
@@ -58,7 +74,7 @@ curl -s -o /dev/null -w '%{http_code}\n' --cacert secrets/certs/rootCA.pem \
 docker ps --format '{{.Names}}\t{{.Ports}}' | rg 'infra-tempo'
 ```
 
-### 1-2. Kiali 파드에서 직접 연결 테스트
+##### 1-2. Kiali 파드에서 직접 연결 테스트
 
 `nc`는 Kiali 컨테이너 내에서 오동작할 수 있으므로 반드시 `bash /dev/tcp`를 사용한다.
 
@@ -81,9 +97,9 @@ kubectl -n istio-system get externalsecret kiali-prometheus-auth
 
 `coredns-custom`이나 `kiali-cabundle`이 없거나 Kiali 로그에 `no such host`,
 `x509`가 보이면 [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md)의
-Procedure 4단계로 재적용한다.
+Steps 4단계로 재적용한다.
 
-### 1-3. Tempo EndpointSlice 확인
+##### 1-3. Tempo EndpointSlice 확인
 
 ```bash
 kubectl -n platform get endpointslice tempo-external-1
@@ -93,9 +109,7 @@ kubectl -n platform get endpointslice tempo-external-1
 [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)의 External Endpoint
 Recovery 절차로 복구한다.
 
----
-
-### Procedure 2: NetworkPolicy egress 규칙 점검
+#### Procedure 2: NetworkPolicy egress 규칙 점검
 
 NetworkPolicy의 egress `ipBlock` 규칙은 **post-DNAT 기준 IP**로 작성해야 한다. Kiali egress는 host 주소 `192.168.0.13/32`의 `443`, `3200`을 허용한다(ADR-0046).
 
@@ -111,9 +125,7 @@ kubectl -n istio-system get networkpolicy allow-kiali-egress-to-observability -o
 argocd app sync platform-network-policies
 ```
 
----
-
-### Procedure 3: Kiali 외부 서비스 설정 확인
+#### Procedure 3: Kiali 외부 서비스 설정 확인
 
 Kiali의 외부 서비스 설정은 `gitops/apps/root/platform-kiali-app.yaml`의 `cr.spec.external_services`가 소유한다.
 
@@ -130,15 +142,13 @@ kubectl get configmap kiali -n istio-system -o yaml | rg -A3 'grafana|prometheus
 argocd app sync platform-kiali
 ```
 
----
+#### Troubleshooting
 
-### Troubleshooting
-
-### `nc` 명령이 Kiali 파드 내에서 항상 OK를 반환한다
+##### `nc` 명령이 Kiali 파드 내에서 항상 OK를 반환한다
 
 Kiali 기본 이미지의 `nc`(BusyBox)는 특정 옵션에서 오동작할 수 있다. Procedure 1-2의 `bash /dev/tcp` 방식을 사용한다.
 
-### 경로·endpoint·egress가 맞는데도 연결이 안 된다
+##### 경로·endpoint·egress가 맞는데도 연결이 안 된다
 
 1. cluster DNS가 외부 이름을 host 주소로 해석하는지 확인한다.
 
@@ -154,7 +164,7 @@ Kiali 기본 이미지의 `nc`(BusyBox)는 특정 옵션에서 오동작할 수 
    kubectl rollout restart deployment/kiali -n istio-system
    ```
 
-### Kiali 로그에 `grafana version check failed: code=[401]`가 반복된다
+##### Kiali 로그에 `grafana version check failed: code=[401]`가 반복된다
 
 **원인**: Kiali가 보내는 Grafana service account token이 없거나 만료·폐기되었다. 외부 Grafana는 익명 API 접근을 허용하지 않는다.
 
@@ -187,9 +197,13 @@ kubectl -n istio-system get externalsecret kiali-grafana-auth
 kubectl -n istio-system logs deploy/kiali --since=2m | rg -i 'grafana|401'
 ```
 
----
+### Stop Conditions
 
-## Verification
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+
+## Validation
+
+### Service Checks
 
 - [ ] Kiali pod에서 `192.168.0.13:443`과 `192.168.0.13:3200` TCP 연결이 성공한다.
 - [ ] `tempo-external-1` 주소가 host 주소 `192.168.0.13`이고 port가 `3200`이다.
@@ -197,24 +211,27 @@ kubectl -n istio-system logs deploy/kiali --since=2m | rg -i 'grafana|401'
 - [ ] Kiali 로그에 Grafana `401`이나 Prometheus 연결 오류가 없다.
 
 - **Signals**: Kiali external service status, Kiali logs, `tempo-external` EndpointSlice, Kiali NetworkPolicy egress rules, Grafana API response code.
+
+### Evidence
+
 - **Evidence to Capture**: Kiali log excerpts, route response codes, `/api/frontend/settings` HTTP result, applied PR link for GitOps corrections.
-
-## Recovery and Escalation
-
-- NetworkPolicy and Kiali configuration changes are reverted through GitOps if the new address or port mapping is wrong.
-- Tempo EndpointSlice recovery follows RUN-0001 External Endpoint Recovery; name resolution and CA recovery follow RUN-0002 Procedure step 4.
-- Grafana auth changes belong to the external observability workspace; this repository only verifies their result.
-
-## Related Documents
-
-- **Operations Policy**: [`../policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
-- **k8s Observability Runbook**: [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)
-- **Endpoint Recovery**: [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)
-- **Name Resolution and CA Recovery**: [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)
-- **External Services**: [`../../../gitops/platform/external-services`](../../../gitops/platform/external-services)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
 | [Observability Platform Operations Policy](../policies/0005-observability-platform-operations-policy.md) | Kiali reports Prometheus, Grafana, or Tempo unreachable because the external route, name resolution or CA, Tempo endpoint, NetworkPolicy, URL, or Viewer-only API access may have drifted. | Platform operator captures Kiali logs, route, endpoint, and egress evidence; RUN-0001 and RUN-0002 own endpoint and CA repair, and the observability owner persists Grafana changes in its repository. |
+
+## Recovery
+
+### Recovery Procedures
+
+- Tempo EndpointSlice recovery follows RUN-0001 External Endpoint Recovery; name resolution and CA recovery follow RUN-0002 Steps step 4.
+
+### Rollback
+
+- NetworkPolicy and Kiali configuration changes are reverted through GitOps if the new address or port mapping is wrong.
+
+### Escalation
+
+- Grafana auth changes belong to the external observability workspace; this repository only verifies their result.

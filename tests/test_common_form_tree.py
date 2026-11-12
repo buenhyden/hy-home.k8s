@@ -75,6 +75,60 @@ GUIDE_TREE = (
     ("Procedure", ("Actions", "Exceptions")),
     ("Verification", ("Expected Result", "Troubleshooting")),
 )
+RUNBOOK = ("operation/runbook", "common/template-operation-runbook")
+RUNBOOK_TREE = (
+    ("Purpose", ("Trigger and Outcome", "Scope")),
+    ("Preconditions", ("Authority and Access", "Safety Checks")),
+    ("Steps", ("Actions", "Stop Conditions")),
+    ("Validation", ("Service Checks", "Evidence")),
+    ("Recovery", ("Rollback", "Escalation")),
+)
+RUNBOOK_EXTENSIONS = [
+    {
+        "id": "runbook-recovery-procedures",
+        "kind": "local_h3",
+        "condition": (
+            "a runbook holds recovery or remediation procedures that are not an "
+            "undo of its steps"
+        ),
+        "owner": "platform",
+        "verification": "the form tree check",
+        "review": "when the Runbook form version changes",
+        "removal": (
+            "when the common Runbook form gains an H3 for non-rollback recovery"
+        ),
+        "parent_id": "runbook-recovery",
+        "title": "Recovery Procedures",
+    },
+    {
+        "id": "runbook-lifecycle-traceability",
+        "kind": "local_h3",
+        "condition": (
+            "a runbook in a status the body contract enforces (draft, in-review, "
+            "active, deprecated) states its promoted owner or an N/A reason"
+        ),
+        "owner": "platform",
+        "verification": "the body-contract check",
+        "review": "when the Runbook form version changes",
+        "removal": "when runbook lineage has another registered owner",
+        "parent_id": "runbook-validation",
+        "title": "Lifecycle Traceability",
+    },
+]
+RUNBOOK_TABLE_KEYS = {
+    "Triggers": (
+        "runbook-steps-actions",
+        ("Trigger", "Action", "Rollback"),
+        0,
+        "Trigger",
+    ),
+    "Lifecycle Traceability": (
+        "runbook-lifecycle-traceability",
+        ("Promoted owner", "Trigger or control", "Evidence or recovery owner"),
+        1,
+        "Promoted owner",
+    ),
+}
 GUIDE_EXTENSION = {
     "id": "guide-lifecycle-traceability",
     "kind": "local_h3",
@@ -251,9 +305,14 @@ def with_form(
                 if definitions:
                     profile["template_definition"] = definition()
     forms = candidate["common_forms"]["forms"]
-    candidate["common_forms"]["forms"] = [
-        item for item in forms if item["form_id"] != role
-    ] + [form(role, sections, extensions)]
+    replacement = form(role, sections, extensions)
+    # Keep the registry order: swap the role's form in place, else append it.
+    if any(item["form_id"] == role for item in forms):
+        candidate["common_forms"]["forms"] = [
+            replacement if item["form_id"] == role else item for item in forms
+        ]
+    else:
+        forms.append(replacement)
     return candidate
 
 
@@ -266,7 +325,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_only_the_guide_form(
+    def test_repository_registry_binds_clear_roles_and_carries_only_the_guide_and_runbook_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -274,47 +333,103 @@ class RepositoryRegistryTests(unittest.TestCase):
         common = raw["common_forms"]
         self.assertEqual(common["contract_id"], "COMMON-DOC-FORM-1")
         self.assertEqual(common["version"], "1.0.0")
-        self.assertEqual([item["form_id"] for item in common["forms"]], ["guide"])
-        guide = common["forms"][0]
-        self.assertEqual((guide["form_id"], guide["title"]), ("guide", "Guide"))
-        self.assertEqual(guide["h1"], "{{document_title}}")
         self.assertEqual(
-            [
-                (
-                    item["section_id"],
-                    item["title"],
-                    item["order"],
-                    [
-                        (child["section_id"], child["title"], child["order"])
-                        for child in item["children"]
-                    ],
-                )
-                for item in guide["sections"]
-            ],
-            [
-                (
-                    f"guide-{title.lower()}",
-                    title,
-                    position,
-                    [
-                        (
-                            f"guide-{title.lower()}-{child.lower().replace(' ', '-')}",
-                            child,
-                            n,
-                        )
-                        for n, child in enumerate(children, start=1)
-                    ],
-                )
-                for position, (title, children) in enumerate(GUIDE_TREE, start=1)
-            ],
+            [(item["form_id"], item["title"]) for item in common["forms"]],
+            [("guide", "Guide"), ("runbook", "Runbook")],
         )
-        every = [
-            node for item in guide["sections"] for node in (item, *item["children"])
-        ]
-        self.assertEqual({node["requiredness"] for node in every}, {"required"})
-        self.assertEqual({node.get("link_only") for node in every}, {False})
-        self.assertEqual(guide["extensions"], [GUIDE_EXTENSION])
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
+        for form_id, tree, extensions, tables, profiles, body_section in (
+            (
+                "guide",
+                GUIDE_TREE,
+                [GUIDE_EXTENSION],
+                GUIDE_TABLE_KEYS,
+                GUIDE,
+                "Verification",
+            ),
+            (
+                "runbook",
+                RUNBOOK_TREE,
+                RUNBOOK_EXTENSIONS,
+                RUNBOOK_TABLE_KEYS,
+                RUNBOOK,
+                "Validation",
+            ),
+        ):
+            loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
+            self.assertEqual(loaded["h1"], "{{document_title}}")
+            self.assertEqual(
+                [
+                    (
+                        item["section_id"],
+                        item["title"],
+                        item["order"],
+                        [
+                            (child["section_id"], child["title"], child["order"])
+                            for child in item["children"]
+                        ],
+                    )
+                    for item in loaded["sections"]
+                ],
+                [
+                    (
+                        f"{form_id}-{title.lower()}",
+                        title,
+                        position,
+                        [
+                            (
+                                f"{form_id}-{title.lower()}-"
+                                f"{child.lower().replace(' ', '-')}",
+                                child,
+                                n,
+                            )
+                            for n, child in enumerate(children, start=1)
+                        ],
+                    )
+                    for position, (title, children) in enumerate(tree, start=1)
+                ],
+            )
+            every = [
+                node
+                for item in loaded["sections"]
+                for node in (item, *item["children"])
+            ]
+            conditional = {
+                node["section_id"]
+                for node in every
+                if node["requiredness"] != "required"
+            }
+            self.assertEqual(
+                conditional,
+                {"runbook-recovery-rollback"} if form_id == "runbook" else set(),
+            )
+            self.assertEqual({node.get("link_only") for node in every}, {False})
+            self.assertEqual(loaded["extensions"], extensions)
+            for profile_id in profiles:
+                profile = by_id[profile_id]
+                self.assertEqual(
+                    profile["sections"]["required"]
+                    + profile["sections"]["optional"]
+                    + profile["sections"]["forbidden"],
+                    [],
+                )
+                self.assertEqual(
+                    profile["relationships"]["body_contract"]["section"], body_section
+                )
+                self.assertNotIn("substantive_body", profile["sections"])
+                self.assertNotIn("ordered", profile["sections"])
+            self.assertEqual(
+                {
+                    table["name"]: (
+                        table["section"],
+                        tuple(column["key"] for column in table["columns"]),
+                        table["minimum_rows"],
+                        table["row_identity"],
+                    )
+                    for table in by_id[profiles[1]]["template_definition"]["tables"]
+                },
+                tables,
+            )
         for profile_id, profile in by_id.items():
             sources = profile["relationships"]["source_profile_ids"]
             expected = ROLE_BINDINGS.get(
@@ -322,34 +437,10 @@ class RepositoryRegistryTests(unittest.TestCase):
             )
             with self.subTest(profile=profile_id):
                 self.assertEqual(profile.get("document_role"), expected)
-                if profile_id == GUIDE[1]:
-                    self.assertEqual(
-                        {
-                            table["name"]: (
-                                table["section"],
-                                tuple(column["key"] for column in table["columns"]),
-                                table["minimum_rows"],
-                                table["row_identity"],
-                            )
-                            for table in profile["template_definition"]["tables"]
-                        },
-                        GUIDE_TABLE_KEYS,
-                    )
+                if profile_id in (GUIDE[1], RUNBOOK[1]):
+                    self.assertIn("template_definition", profile)
                 else:
                     self.assertNotIn("template_definition", profile)
-        for profile_id in GUIDE:
-            self.assertEqual(
-                by_id[profile_id]["sections"]["required"]
-                + by_id[profile_id]["sections"]["optional"]
-                + by_id[profile_id]["sections"]["forbidden"],
-                [],
-            )
-            self.assertEqual(
-                by_id[profile_id]["relationships"]["body_contract"]["section"],
-                "Verification",
-            )
-            self.assertNotIn("substantive_body", by_id[profile_id]["sections"])
-            self.assertNotIn("ordered", by_id[profile_id]["sections"])
         self.assertEqual(
             {
                 by_id[i]["document_role"]
@@ -363,22 +454,35 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_only_the_guide_form(self) -> None:
+    def test_repository_registry_loads_with_only_the_guide_and_runbook_forms(
+        self,
+    ) -> None:
         registry = CONTRACTS.load_registry(ROOT)
-        self.assertEqual([item.form_id for item in registry.common_forms], ["guide"])
-        loaded = registry.common_forms[0]
+        self.assertEqual(
+            [item.form_id for item in registry.common_forms], ["guide", "runbook"]
+        )
+        forms = {item.form_id: item for item in registry.common_forms}
+        tables = {
+            "guide": ["Steps", "Lifecycle Traceability"],
+            "runbook": ["Triggers", "Lifecycle Traceability"],
+        }
         for profile in registry.profiles:
             with self.subTest(profile=profile.profile_id):
-                if profile.profile_id in GUIDE:
-                    self.assertIs(profile.form, loaded)
-                    self.assertEqual(
-                        [table.name for table in profile.tables],
-                        ["Steps", "Lifecycle Traceability"],
-                    )
+                role = next(
+                    (
+                        form_id
+                        for form_id, ids in (("guide", GUIDE), ("runbook", RUNBOOK))
+                        if profile.profile_id in ids
+                    ),
+                    None,
+                )
+                if role:
+                    self.assertIs(profile.form, forms[role])
+                    self.assertEqual([t.name for t in profile.tables], tables[role])
                 else:
                     self.assertIsNone(profile.form)
                     self.assertEqual(profile.tables, ())
-                if profile.profile_id == GUIDE[1]:
+                if profile.profile_id in (GUIDE[1], RUNBOOK[1]):
                     self.assertIsNotNone(profile.template_definition)
                 else:
                     self.assertIsNone(profile.template_definition)
@@ -415,7 +519,9 @@ class FormRegistryTests(unittest.TestCase):
 
     def test_valid_form_binds_to_every_profile_of_its_role(self) -> None:
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
-        self.assertEqual([item.form_id for item in registry.common_forms], ["guide"])
+        self.assertEqual(
+            [item.form_id for item in registry.common_forms], ["guide", "runbook"]
+        )
         loaded = registry.common_forms[0]
         self.assertEqual(
             [item.title for item in loaded.sections],
@@ -430,7 +536,7 @@ class FormRegistryTests(unittest.TestCase):
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         for profile_id in GUIDE:
             self.assertIs(by_id[profile_id].form, loaded)
-        self.assertIsNone(by_id["operation/runbook"].form)
+        self.assertIsNone(by_id["operation/policy"].form)
 
     def test_valid_extensions_are_typed(self) -> None:
         retained = {
@@ -604,7 +710,7 @@ class FormRegistryTests(unittest.TestCase):
             self.assertIn("REGISTRY_POLICY_ROLE", rules_of(raw))
         raw = load_raw()
         for profile in raw["profiles"]:
-            if profile["id"] not in GUIDE:
+            if profile["id"] not in GUIDE + RUNBOOK:
                 profile.pop("document_role", None)
         self.assertEqual(rules_of(raw), set())
 
@@ -1224,9 +1330,9 @@ class TableCheckTests(unittest.TestCase):
         )
 
     def test_a_profile_without_tables_is_not_checked(self) -> None:
-        runbook = typed_profiles(load_raw())["operation/runbook"]
-        self.assertEqual(runbook.tables, ())
-        self.assertEqual(self.found(guide_body(STEPS), runbook), [])
+        policy = typed_profiles(load_raw())["operation/policy"]
+        self.assertEqual(policy.tables, ())
+        self.assertEqual(self.found(guide_body(STEPS), policy), [])
 
     def test_the_check_runs_for_authored_documents_only(self) -> None:
         wrong = "| Step | Action |\n| --- | --- |\n| 1 | Run |"
@@ -1268,6 +1374,173 @@ class TableIteratorTests(unittest.TestCase):
             (["A", "B"], [["1", "2"], ["3", "4"]]),
         )
         self.assertIsNone(MARKDOWN._first_visible_table("no table here"))
+
+
+RUNBOOK_PATH = PurePosixPath("docs/05.operations/runbooks/0001-temporary-runbook.md")
+TRIGGERS = (
+    "| Trigger | Action | Rollback |\n| --- | --- | --- |\n| Alert | Restart | Undo |"
+)
+RUNBOOK_BODY = md(
+    "# Runbook title",
+    "## Purpose",
+    "### Trigger and Outcome\n\nAn alert starts it.",
+    "### Scope\n\nOne service.",
+    "## Preconditions",
+    "### Authority and Access\n\nOwner approval.",
+    "### Safety Checks\n\nBackup exists.",
+    "## Steps",
+    "### Actions\n\nRun it.",
+    "### Stop Conditions\n\nStop on error.",
+    "## Validation",
+    "### Service Checks\n\nRead the status.",
+    "### Evidence\n\nNone recorded.",
+    "## Recovery",
+    "### Escalation\n\nCall the owner.",
+)
+
+
+class RunbookFormTests(unittest.TestCase):
+    """SPEC-0170 VAL-RUNBOOKFORM-001: the Runbook form, its tables and extensions."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.profile = typed_profiles(load_raw())[RUNBOOK[0]]
+
+    def tree(self, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(
+                RUNBOOK_PATH, self.profile, text, "active"
+            )
+        )
+
+    def tables(self, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._table_diagnostics(RUNBOOK_PATH, self.profile, text)
+        )
+
+    def under(self, heading: str, block: str) -> str:
+        """Insert an H3 block just before the given H2 (or at the end)."""
+
+        if not heading:
+            return RUNBOOK_BODY + "\n" + block + "\n"
+        return RUNBOOK_BODY.replace(heading, block + "\n\n" + heading)
+
+    def test_the_loaded_runbook_heading_lists_equal_the_form_h2_titles(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        titles = tuple(title for title, _ in RUNBOOK_TREE)
+        loaded = next(f for f in registry.common_forms if f.form_id == "runbook")
+        self.assertEqual(tuple(item.title for item in loaded.sections), titles)
+        by_id = {profile.profile_id: profile for profile in registry.profiles}
+        for profile_id in RUNBOOK:
+            with self.subTest(profile=profile_id):
+                headings = by_id[profile_id].headings
+                self.assertEqual(headings.required, titles)
+                self.assertEqual(headings.allowed, titles)
+                self.assertFalse(headings.substantive_body)
+                self.assertFalse(headings.ordered)
+
+    def test_the_loader_copies_the_runbook_tables_to_the_source_profile(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        by_id = {profile.profile_id: profile for profile in registry.profiles}
+        twin, source = by_id[RUNBOOK[1]], by_id[RUNBOOK[0]]
+        self.assertEqual(source.tables, twin.tables)
+        triggers, lifecycle = twin.tables
+        self.assertEqual(
+            (
+                triggers.name,
+                triggers.section,
+                triggers.minimum_rows,
+                triggers.row_identity,
+            ),
+            ("Triggers", "runbook-steps-actions", 0, "Trigger"),
+        )
+        self.assertEqual(
+            [column.key for column in lifecycle.columns],
+            list(RUNBOOK_TABLE_KEYS["Lifecycle Traceability"][1]),
+        )
+        self.assertTrue(all(column.required for column in triggers.columns))
+
+    def test_the_repository_runbook_registry_is_valid_and_its_twin_matches(
+        self,
+    ) -> None:
+        self.assertEqual(rules_of(load_raw()), set())
+        REGISTRY_CHECK._assert_template_source_parity(CONTRACTS.load_registry(ROOT))
+
+    def test_a_complete_runbook_passes_the_tree(self) -> None:
+        self.assertEqual(self.tree(RUNBOOK_BODY), [])
+
+    def test_a_triggers_table_passes_when_it_keeps_the_registered_columns(
+        self,
+    ) -> None:
+        body = RUNBOOK_BODY.replace("Run it.", "Run it.\n\n" + TRIGGERS)
+        self.assertEqual(self.tables(body), [])
+
+    def test_a_header_only_triggers_table_passes_because_the_minimum_is_zero(
+        self,
+    ) -> None:
+        header_only = "| Trigger | Action | Rollback |\n| --- | --- | --- |"
+        self.assertEqual(self.tables(RUNBOOK_BODY.replace("Run it.", header_only)), [])
+        self.assertEqual(self.tables(RUNBOOK_BODY), [])
+
+    def test_a_reordered_or_missing_triggers_column_fails(self) -> None:
+        for header in (
+            "| Trigger | Rollback | Action |",
+            "| Trigger | Action |",
+            "| Trigger | Action | Rollback | Note |",
+        ):
+            cells = header.count("|") - 1
+            table = f"{header}\n" + "| --- " * cells + "|\n" + "| a " * cells + "|"
+            with self.subTest(header=header):
+                self.assertEqual(
+                    self.tables(RUNBOOK_BODY.replace("Run it.", table)),
+                    ["BODY-TABLE-COLUMNS"],
+                )
+
+    def test_the_four_column_step_table_is_not_identified(self) -> None:
+        step = (
+            "| Step | Action | Expected result | Stop / escalate when |\n"
+            "| --- | --- | --- | --- |\n| 1 | Run | Pass | Error |"
+        )
+        self.assertEqual(self.tables(RUNBOOK_BODY.replace("Run it.", step)), [])
+
+    def test_a_triggers_table_outside_actions_is_not_looked_at(self) -> None:
+        wrong = "| Trigger | Action |\n| --- | --- |\n| a | b |"
+        body = RUNBOOK_BODY.replace("Stop on error.", wrong)
+        self.assertEqual(self.tables(body), [])
+
+    def test_recovery_procedures_is_accepted_under_recovery(self) -> None:
+        block = "### Recovery Procedures\n\nRestore the replica from the snapshot."
+        self.assertEqual(self.tree(self.under("", block)), [])
+        before_rollback = RUNBOOK_BODY.replace(
+            "### Escalation",
+            block + "\n\n### Rollback\n\nUndo step 1.\n\n### Escalation",
+        )
+        self.assertEqual(self.tree(before_rollback), [])
+
+    def test_recovery_procedures_under_another_h2_is_refused(self) -> None:
+        block = "### Recovery Procedures\n\nRestore the replica."
+        self.assertEqual(
+            self.tree(self.under("## Validation", block)), ["BODY-H3-PARENT"]
+        )
+
+    def test_an_absent_recovery_procedures_passes_and_an_empty_one_fails(self) -> None:
+        self.assertNotIn("Recovery Procedures", RUNBOOK_BODY)
+        self.assertEqual(self.tree(RUNBOOK_BODY), [])
+        self.assertEqual(
+            self.tree(self.under("", "### Recovery Procedures\n")),
+            ["BODY-SECTION-EMPTY"],
+        )
+
+    def test_lifecycle_traceability_belongs_under_validation(self) -> None:
+        block = (
+            "### Lifecycle Traceability\n\n"
+            "| Promoted owner | Trigger or control | Evidence or recovery owner |\n"
+            "| --- | --- | --- |\n| N/A | None | None |"
+        )
+        self.assertEqual(self.tree(self.under("## Recovery", block)), [])
+        self.assertEqual(self.tree(self.under("## Steps", block)), ["BODY-H3-PARENT"])
 
 
 class RetainedFormTests(unittest.TestCase):
@@ -1376,17 +1649,19 @@ class RetainedFormTests(unittest.TestCase):
         self.assertEqual(body_rules("proposed", self.TREE), [])
 
 
-class CurrentRegistryUnchangedTests(unittest.TestCase):
-    def test_only_the_guide_profiles_use_the_tree(self) -> None:
+class CurrentRegistryGuideAndRunbookOnlyTests(unittest.TestCase):
+    def test_only_the_guide_and_runbook_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
-        self.assertEqual([item.form_id for item in registry.common_forms], ["guide"])
         self.assertEqual(
-            sorted(p.profile_id for p in registry.profiles if p.form is not None),
-            sorted(GUIDE),
+            [item.form_id for item in registry.common_forms], ["guide", "runbook"]
         )
         self.assertEqual(
-            [p.profile_id for p in registry.profiles if p.template_definition],
-            [GUIDE[1]],
+            sorted(p.profile_id for p in registry.profiles if p.form is not None),
+            sorted(GUIDE + RUNBOOK),
+        )
+        self.assertEqual(
+            sorted(p.profile_id for p in registry.profiles if p.template_definition),
+            sorted([GUIDE[1], RUNBOOK[1]]),
         )
 
 

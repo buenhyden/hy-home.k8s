@@ -891,18 +891,9 @@
         }
       },
       "sections": {
-        "required": [
-          "Purpose",
-          "Trigger and Preconditions",
-          "Procedure",
-          "Verification",
-          "Recovery and Escalation",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
-        "forbidden": [],
-        "substantive_body": true,
-        "ordered": true
+        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -917,7 +908,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Related Documents",
+          "section": "Validation",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4452,18 +4443,9 @@
         }
       },
       "sections": {
-        "required": [
-          "Purpose",
-          "Trigger and Preconditions",
-          "Procedure",
-          "Verification",
-          "Recovery and Escalation",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
-        "forbidden": [],
-        "substantive_body": true,
-        "ordered": true
+        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -4471,7 +4453,7 @@
           "operation/runbook"
         ],
         "body_contract": {
-          "section": "Related Documents",
+          "section": "Validation",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4496,7 +4478,122 @@
           "allow_explicit_exclusion": true
         }
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a runbook that carries an operator through one executable operating procedure, its checks and its recovery.",
+        "responsibility": "A runbook owns the preconditions, steps, stop conditions, validation and recovery of one operating procedure; stable explanations stay with guides and rules with policies.",
+        "non_goals": [
+          "Stable explanatory material, which belongs to a guide.",
+          "Normative rules and approvals, which belong to a policy or governance document.",
+          "Granting authority to run any command; a command or its boundary marker never authorizes execution."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md",
+          ".agents/governance/approval-and-safety.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every operation/runbook document under docs/05.operations/runbooks/ and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/operations/runbook.template.md",
+          "docs/99.templates/README.md",
+          "docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md",
+          "docs/05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md",
+          "docs/05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md",
+          "docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md",
+          "docs/05.operations/runbooks/0007-kiali-observability-connectivity-runbook.md",
+          "docs/05.operations/runbooks/0008-argocd-metrics-prometheus-runbook.md",
+          "docs/05.operations/runbooks/0009-k8s-observability-runbook.md",
+          "docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md",
+          "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md",
+          "docs/05.operations/runbooks/0012-main-release-preparation-runbook.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          ".agents/skills/ops-runbook/SKILL.md"
+        ],
+        "validation": {
+          "positive": [
+            "Each runbook and the template pass the form tree, table, body-contract, author-prompt, residue and command-boundary checks.",
+            "A runbook whose Triggers table keeps the registered columns, or whose Triggers table has a header only, passes the document table check."
+          ],
+          "negative": [
+            "A reordered, missing or extra Triggers column fails BODY-TABLE-COLUMNS.",
+            "A Recovery Procedures H3 outside Recovery fails BODY-H3-PARENT and an empty one fails BODY-SECTION-EMPTY.",
+            "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT.",
+            "A table section outside the form fails REGISTRY_TABLE_SECTION."
+          ],
+          "regression": [
+            "The loaded runbook profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the Guide and Runbook forms and definitions in the repository registry."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0170 meaning map moves each runbook sentence into its Purpose, Preconditions, Steps, Validation or Recovery section without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous six-section runbook layout, its four-column step table and its template.",
+          "rollback": "Revert the SPEC-0170 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Triggers",
+            "section": "runbook-steps-actions",
+            "columns": [
+              {
+                "key": "Trigger",
+                "meaning": "The condition that makes the operator run the action.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Action",
+                "meaning": "What the operator does when the trigger holds.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Rollback",
+                "meaning": "How the action is undone, or why it cannot be.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Trigger"
+          },
+          {
+            "name": "Lifecycle Traceability",
+            "section": "runbook-lifecycle-traceability",
+            "columns": [
+              {
+                "key": "Promoted owner",
+                "meaning": "Link to the Spec or Task that owns the runbook lineage, or an N/A reason.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Trigger or control",
+                "meaning": "The trigger or control the runbook answers.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Evidence or recovery owner",
+                "meaning": "Where the evidence is kept or who owns recovery.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 1,
+            "row_identity": "Promoted owner"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-sdlc-requirement",
@@ -6481,6 +6578,404 @@
             "review": "when the Guide form version changes",
             "removal": "when guide lineage has another registered owner",
             "parent_id": "guide-verification",
+            "title": "Lifecycle Traceability"
+          }
+        ]
+      },
+      {
+        "form_id": "runbook",
+        "title": "Runbook",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "runbook-purpose",
+            "level": 2,
+            "parent_id": null,
+            "title": "Purpose",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "운영 절차의 목적",
+            "required_content": [
+              "운영 절차의 목적에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "runbook-purpose-trigger-and-outcome",
+                "level": 3,
+                "parent_id": "runbook-purpose",
+                "title": "Trigger and Outcome",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실행 트리거와 복구/운영 목표",
+                "required_content": [
+                  "실행 트리거와 복구/운영 목표을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "runbook-purpose-scope",
+                "level": 3,
+                "parent_id": "runbook-purpose",
+                "title": "Scope",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "서비스·환경·영향 범위",
+                "required_content": [
+                  "서비스·환경·영향 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "runbook-preconditions",
+            "level": 2,
+            "parent_id": null,
+            "title": "Preconditions",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "운영 안전 선행조건",
+            "required_content": [
+              "운영 안전 선행조건에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "runbook-preconditions-authority-and-access",
+                "level": 3,
+                "parent_id": "runbook-preconditions",
+                "title": "Authority and Access",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "소유자 승인·권한·환경 확인",
+                "required_content": [
+                  "소유자 승인·권한·환경 확인을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "runbook-preconditions-safety-checks",
+                "level": 3,
+                "parent_id": "runbook-preconditions",
+                "title": "Safety Checks",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "백업·가용성·동시 작업·비밀 보호",
+                "required_content": [
+                  "백업·가용성·동시 작업·비밀 보호을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "runbook-steps",
+            "level": 2,
+            "parent_id": null,
+            "title": "Steps",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "현행 운영 단계",
+            "required_content": [
+              "현행 운영 단계에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "runbook-steps-actions",
+                "level": 3,
+                "parent_id": "runbook-steps",
+                "title": "Actions",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "확인된 명령·입력·실행 책임",
+                "required_content": [
+                  "확인된 명령·입력·실행 책임을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "runbook-steps-stop-conditions",
+                "level": 3,
+                "parent_id": "runbook-steps",
+                "title": "Stop Conditions",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "관측 기준·중단·추가 승인",
+                "required_content": [
+                  "관측 기준·중단·추가 승인을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "runbook-validation",
+            "level": 2,
+            "parent_id": null,
+            "title": "Validation",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "실행 결과 확인",
+            "required_content": [
+              "실행 결과 확인에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "runbook-validation-service-checks",
+                "level": 3,
+                "parent_id": "runbook-validation",
+                "title": "Service Checks",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "기대 상태·측정·읽기 확인",
+                "required_content": [
+                  "기대 상태·측정·읽기 확인을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "runbook-validation-evidence",
+                "level": 3,
+                "parent_id": "runbook-validation",
+                "title": "Evidence",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 관측·위치·판본·남은 제한",
+                "required_content": [
+                  "실제 관측·위치·판본·남은 제한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "runbook-recovery",
+            "level": 2,
+            "parent_id": null,
+            "title": "Recovery",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "복구와 상향 인계",
+            "required_content": [
+              "복구와 상향 인계에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "runbook-recovery-rollback",
+                "level": 3,
+                "parent_id": "runbook-recovery",
+                "title": "Rollback",
+                "order": 1,
+                "requiredness": "conditional",
+                "condition": "실행·변경이 상태나 산출물을 변경함",
+                "content": "원복 조건·절차·데이터 보존",
+                "required_content": [
+                  "원복 조건·절차·데이터 보존을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "omit_when_condition_false",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "runbook-recovery-escalation",
+                "level": 3,
+                "parent_id": "runbook-recovery",
+                "title": "Escalation",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "운영자·인계 근거·복구 불가 조건",
+                "required_content": [
+                  "운영자·인계 근거·복구 불가 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          }
+        ],
+        "extensions": [
+          {
+            "id": "runbook-recovery-procedures",
+            "kind": "local_h3",
+            "condition": "a runbook holds recovery or remediation procedures that are not an undo of its steps",
+            "owner": "platform",
+            "verification": "the form tree check",
+            "review": "when the Runbook form version changes",
+            "removal": "when the common Runbook form gains an H3 for non-rollback recovery",
+            "parent_id": "runbook-recovery",
+            "title": "Recovery Procedures"
+          },
+          {
+            "id": "runbook-lifecycle-traceability",
+            "kind": "local_h3",
+            "condition": "a runbook in a status the body contract enforces (draft, in-review, active, deprecated) states its promoted owner or an N/A reason",
+            "owner": "platform",
+            "verification": "the body-contract check",
+            "review": "when the Runbook form version changes",
+            "removal": "when runbook lineage has another registered owner",
+            "parent_id": "runbook-validation",
             "title": "Lifecycle Traceability"
           }
         ]

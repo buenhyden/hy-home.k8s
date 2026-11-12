@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD ESO OpenBao Recovery Runbook"
-version: "1.5.0"
+version: "1.6.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "operations"
 artifact_id: "RUN-0002"
 ---
@@ -12,6 +12,21 @@ artifact_id: "RUN-0002"
 # ArgoCD ESO OpenBao Recovery Runbook
 
 ## Purpose
+
+### Trigger and Outcome
+
+이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 OpenBao
+sealed 상태, 이름 해석 또는 CA drift, Kubernetes auth drift를 구분하고,
+ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
+
+- `vault-backend`가 `Ready=False`
+- ESO 로그에 `connection refused`, `no such host`, `x509`, `InvalidProviderConfig`, 또는 `context deadline exceeded` 반복
+- ESO 로그에 `Vault is sealed`가 반복
+- `argocd-external-valkey`가 `SecretSyncedError`
+- 복구 후 ArgoCD HTTPS 진입점(`argo.hy-k8s.home.arpa`) 회귀가 의심될 때
+- k3d cluster 재생성 뒤 OpenBao Kubernetes auth가 실패할 때
+
+### Scope
 
 외부 secret backend는 OpenBao(ADR-0041)이며 Vault API 호환이다. 파일명과
 `vault-*` 식별자는 호환성 때문에 유지한다. ESO는 외부 Traefik 뒤의
@@ -21,29 +36,30 @@ artifact_id: "RUN-0002"
 인증서를 검증한다(ADR-0046). `ClusterSecretStore/vault-backend`와 ESO `vault` provider는 기존
 Kubernetes 식별자로 유지한다.
 
-이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 OpenBao
-sealed 상태, 이름 해석 또는 CA drift, Kubernetes auth drift를 구분하고,
-ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
-
 bootstrap `[7.3/11]` 단계가 만드는 CoreDNS custom zone과 gateway CA
 ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
-런북의 Procedure 4단계가 단일 owner다. Kiali, Alloy, Rollouts 런북은 이름
+런북의 Steps 4단계가 단일 owner다. Kiali, Alloy, Rollouts 런북은 이름
 해석이나 `x509` 오류를 이 단계로 보낸다.
+
+관련 문서: [`../../02.architecture/descriptions/0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+
+## Preconditions
+
+### Authority and Access
 
 > **Agent execution boundary**: CoreDNS custom zone과 `openbao-ca` ConfigMap 재적용, OpenBao auth 설정 변경은 human-approved break-glass 전용이다. Agent는 기본적으로 사전 스냅샷, Git 파일 보정안, 검증 계획, 후속 증적 정리까지만 수행한다.
 
-## Trigger and Preconditions
+관련 문서: **Operations Policy**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md); [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md); [`../../02.architecture/decisions/0046-external-services-over-host-addresses.md`](../../02.architecture/decisions/0046-external-services-over-host-addresses.md)
 
-- `vault-backend`가 `Ready=False`
-- ESO 로그에 `connection refused`, `no such host`, `x509`, `InvalidProviderConfig`, 또는 `context deadline exceeded` 반복
-- ESO 로그에 `Vault is sealed`가 반복
-- `argocd-external-valkey`가 `SecretSyncedError`
-- 복구 후 ArgoCD HTTPS 진입점(`argo.hy-k8s.home.arpa`) 회귀가 의심될 때
-- k3d cluster 재생성 뒤 OpenBao Kubernetes auth가 실패할 때
+### Safety Checks
 
-## Procedure
+안전 점검: 해당 없음 — 이 절에 따로 옮길 백업, 가용성, 동시 실행, 비밀 보호 항목이 본문에 없으며, 점검 항목은 Steps의 Checklist에 있다.
 
-### Checklist
+## Steps
+
+### Actions
+
+#### Checklist
 
 - [ ] `kubectl` 컨텍스트 확인
 - [ ] 평문 시크릿/토큰 출력 금지
@@ -137,7 +153,7 @@ ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
    ```
 
 7. 복구한 경로에 해당하는 라이브 계약을 운영자가 선택해 검증한다. ESO
-   readiness는 아래 `Verification`의 metadata 조회로 확인하고,
+   readiness는 아래 `Validation`의 metadata 조회로 확인하고,
    NetworkPolicy와 ingress/TLS를 수정한 경우에만 각 검증 스크립트를
    실행한다. 모든 live 전제가 충족된 별도 전체 플랫폼 수용 작업에서만
    `infrastructure/verify/run-all.sh`를 사용한다.
@@ -169,9 +185,15 @@ ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
 9. GitOps source gate를 확인한다(로컬 파일 수정만으로 반영되지 않음).
    [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md) 절차 6의 루트 앱
    `source.path`·`targetRevision` 검사 두 줄을 그대로 다시 실행하고, 둘 다
-   통과해야 Verification으로 넘어간다.
+   통과해야 Validation으로 넘어간다.
 
-## Verification
+### Stop Conditions
+
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+
+## Validation
+
+### Service Checks
 
 - [ ] `vault-backend Ready=True`
 - [ ] `argocd-external-valkey Ready=True`
@@ -185,11 +207,44 @@ ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
 - [ ] 선택한 저장소 정적 계약(`./scripts/validate-infrastructure-contracts.sh`) 통과
 
 - **Signals**: ArgoCD Application health, ExternalSecret Ready status, ESO controller logs, CoreDNS logs, repo-server logs.
+
+### Evidence
+
 - **Evidence to Capture**: failed sync output, ExternalSecret condition, OpenBao auth role read result, recovery command output.
 
-## Recovery and Escalation
+### Lifecycle Traceability
 
-CoreDNS custom zone 재적용이 상황을 악화시키면 Procedure 1단계의 스냅샷으로
+| Promoted owner | Trigger or control | Evidence or recovery owner |
+| --- | --- | --- |
+| [K8s GitOps Platform Operations Policy](../policies/0001-k8s-gitops-operations-policy.md) | `vault-backend` or dependent ExternalSecrets are not Ready because sealed state, name resolution or CA drift, or Kubernetes-auth drift must be distinguished. | Platform operator records secret-safe snapshots and readiness metadata; external OpenBao operator owns unseal/auth changes, and approved break-glass owners reconcile CoreDNS and CA changes back to Git. |
+
+## Recovery
+
+### Recovery Procedures
+
+#### Troubleshooting Signatures
+
+- `openbao.hy.home.arpa`에 대한 `no such host`: CoreDNS custom zone이 없거나 로드되지 않았다.
+- `x509: certificate signed by unknown authority`: `openbao-ca` ConfigMap이 없거나 오래되었다.
+- `192.168.0.13:443`에 대한 `connection refused`: 외부 Traefik이 host 주소에 bind되지 않았다.
+- ESO controller 로그의 `InvalidProviderConfig`
+- `kubernetes_host`와 CA가 최신인데도 `auth/kubernetes/login`이 `403 permission denied`: ESO token에 API server audience가 없다. OpenBao에는 reviewer JWT가 없어 그 token을 자기 credential로 TokenReview에 보내고, API server는 `vault`만 가진 token에 `401`을 돌려준다. `vault-backend`는 `gitops/platform/eso/vault-secret-store.yaml`에서 두 audience(`vault`, `https://kubernetes.default.svc.cluster.local`)를 모두 유지한다.
+- `argocd-external-valkey SecretSyncedError`
+- `cert.pem` SAN 불일치로 인한 TLS handshake 오류
+
+#### SAN mismatch remediation
+
+```bash
+openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
+  rg 'argo\.hy-k8s\.home\.arpa|\*\.hy-k8s\.home\.arpa'
+```
+
+SAN이 없으면 인증서를 재발급한 뒤
+[RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)의 bootstrap 절차를 다시 실행한다.
+
+### Rollback
+
+CoreDNS custom zone 재적용이 상황을 악화시키면 Steps 1단계의 스냅샷으로
 되돌린다. zone을 삭제하면 cluster 안에서 `openbao`, `prometheus`,
 `grafana` 이름 해석이 모두 끊기므로 삭제로 롤백하지 않는다. CA
 ConfigMap은 같은 `rootCA.pem`으로 다시 적용하는 것이 롤백이다.
@@ -202,37 +257,7 @@ kubectl -n kube-system rollout restart deployment/coredns
 
 - 롤백 후 변경한 입력에 해당하는 정적 계약과 위 선택 live 검사를 다시
   확인한다. 전체 플랫폼 수용 검사가 필요한 별도 작업만 `run-all.sh`를 수행한다.
+
+### Escalation
+
 - 동일 증상이 반복되면 Operations 예외 승인 절차를 따른다.
-
-### Troubleshooting Signatures
-
-- `openbao.hy.home.arpa`에 대한 `no such host`: CoreDNS custom zone이 없거나 로드되지 않았다.
-- `x509: certificate signed by unknown authority`: `openbao-ca` ConfigMap이 없거나 오래되었다.
-- `192.168.0.13:443`에 대한 `connection refused`: 외부 Traefik이 host 주소에 bind되지 않았다.
-- ESO controller 로그의 `InvalidProviderConfig`
-- `kubernetes_host`와 CA가 최신인데도 `auth/kubernetes/login`이 `403 permission denied`: ESO token에 API server audience가 없다. OpenBao에는 reviewer JWT가 없어 그 token을 자기 credential로 TokenReview에 보내고, API server는 `vault`만 가진 token에 `401`을 돌려준다. `vault-backend`는 `gitops/platform/eso/vault-secret-store.yaml`에서 두 audience(`vault`, `https://kubernetes.default.svc.cluster.local`)를 모두 유지한다.
-- `argocd-external-valkey SecretSyncedError`
-- `cert.pem` SAN 불일치로 인한 TLS handshake 오류
-
-### SAN mismatch remediation
-
-```bash
-openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
-  rg 'argo\.hy-k8s\.home\.arpa|\*\.hy-k8s\.home\.arpa'
-```
-
-SAN이 없으면 인증서를 재발급한 뒤
-[RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)의 bootstrap 절차를 다시 실행한다.
-
-## Related Documents
-
-- **Operations Policy**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md)
-- [`../../02.architecture/descriptions/0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- [`../../02.architecture/decisions/0046-external-services-over-host-addresses.md`](../../02.architecture/decisions/0046-external-services-over-host-addresses.md)
-
-### Lifecycle Traceability
-
-| Promoted owner | Trigger or control | Evidence or recovery owner |
-| --- | --- | --- |
-| [K8s GitOps Platform Operations Policy](../policies/0001-k8s-gitops-operations-policy.md) | `vault-backend` or dependent ExternalSecrets are not Ready because sealed state, name resolution or CA drift, or Kubernetes-auth drift must be distinguished. | Platform operator records secret-safe snapshots and readiness metadata; external OpenBao operator owns unseal/auth changes, and approved break-glass owners reconcile CoreDNS and CA changes back to Git. |

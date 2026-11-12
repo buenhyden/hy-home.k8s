@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.4.0"
+version: "1.5.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "operations"
 artifact_id: "RUN-0001"
 ---
@@ -13,7 +13,15 @@ artifact_id: "RUN-0001"
 
 ## Purpose
 
+### Trigger and Outcome
+
 이 런북은 Linux server 기반 GitOps 플랫폼을 즉시 실행 가능한 체크리스트 순서로 부트스트랩하고, 오류 시그니처별 복구 절차를 제공한다.
+
+- 신규 로컬 플랫폼 초기 구축
+- 환경 재구축/복구
+- 정책 검증 전 사전 점검
+
+### Scope
 
 k3d 클러스터(`hyhome`, server 1 / agent 3, context `k3d-hyhome`) 구성, ArgoCD
 설치, ESO/OpenBao 연동, 필수 management Valkey
@@ -21,19 +29,28 @@ k3d 클러스터(`hyhome`, server 1 / agent 3, context `k3d-hyhome`) 구성, Arg
 development PostgreSQL은 별도의 host-loopback 선택 점검 대상이며 현재
 K8s DB endpoint가 아니다.
 
-## Trigger and Preconditions
+관련 문서: **Incident and Postmortem Index**: [`../incidents/README.md`](../incidents/README.md); [`../../02.architecture/descriptions/0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 
-- 신규 로컬 플랫폼 초기 구축
-- 환경 재구축/복구
-- 정책 검증 전 사전 점검
+## Preconditions
+
+### Authority and Access
+
 - 실행 운영자는 대상 k3d context, host 주소와 검토한 Git revision, 해당 bootstrap
   또는 복구 행위의 승인 범위와 현재 유효성을 먼저 확인한다. 클러스터 생성,
   Secret 생성, ArgoCD 로그인·동기화와 직접 적용은 이 문서 자체의 승인으로
   실행하지 않는다. 인증정보는 transcript와 Task에 남기지 않는다.
 
-## Procedure
+관련 문서: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md); [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md); [`../../02.architecture/decisions/0041-openbao-secret-backend.md`](../../02.architecture/decisions/0041-openbao-secret-backend.md)
 
-### Checklist
+### Safety Checks
+
+안전 점검: 해당 없음 — 이 절에 따로 옮길 백업, 가용성, 동시 실행, 비밀 보호 항목이 본문에 없으며, 점검 항목은 Steps의 Checklist에 있다.
+
+## Steps
+
+### Actions
+
+#### Checklist
 
 - [ ] Linux server host의 native Docker Engine 정상 상태 (`docker context show`가 `default`)
 - [ ] bootstrap 필수 CLI(`k3d`, `kubectl`, `helm`, `docker`, `curl`, `jq`, `openssl`, `rg`) 설치; `argocd` CLI는 운영 확인용
@@ -144,7 +161,13 @@ K8s DB endpoint가 아니다.
     argocd app list
     ```
 
-## Verification
+### Stop Conditions
+
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+
+## Validation
+
+### Service Checks
 
 - [ ] `kubectl get nodes`에서 4개 노드 Ready 확인
 - [ ] `kubectl -n argocd get pods` 정상
@@ -157,9 +180,8 @@ K8s DB endpoint가 아니다.
       선택적 localhost PostgreSQL 점검 결과는 별도 host 증거로 기록
 
 - **Signals**: ArgoCD health/sync, ESO sync status, pod readiness
-- **Evidence to Capture**: 명령 출력, 이벤트 로그, 실패/복구 타임스탬프
 
-### Troubleshooting Matrix
+#### Troubleshooting Matrix
 
 | 에러 시그니처                                                                      | 진단 포인트                                  | 즉시 조치                                                      | 재검증                                                                                    |
 | ---------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
@@ -168,15 +190,21 @@ K8s DB endpoint가 아니다.
 | `WRONGPASS invalid username-password pair`                                         | ArgoCD secret과 OpenBao 값 불일치            | ExternalSecret 재조정 대기, 지속되면 [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md) | `kubectl -n argocd get externalsecret argocd-external-valkey` + ArgoCD 로그              |
 | `app path does not exist` (`root-platform`)                                        | `spec.source.path`와 원격 브랜치 구조 불일치 | `gitops/apps/root` 경로 확인 후 앱 재동기화                    | 절차 6의 `spec.source.path`·`spec.source.targetRevision` 정확한 값 비교 재실행              |
 
-## Recovery and Escalation
+### Evidence
 
-- [ ] ArgoCD app을 이전 리비전으로 rollback
+- **Evidence to Capture**: 명령 출력, 이벤트 로그, 실패/복구 타임스탬프
 
-  ```bash
-  # operator-approved
-  argocd app history root-platform
-  argocd app rollback root-platform <history-id>
-  ```
+### Lifecycle Traceability
+
+완료된 SPEC-0008은 초기 구현 증적이며, 현재 플랫폼 구조는 위 AD-0007이 소유한다.
+
+| Promoted owner | Trigger or control | Evidence or recovery owner |
+| --- | --- | --- |
+| N/A — SPEC-0008 is historical promotion evidence that Git history recovers | A new or rebuilt local cluster needs the current ArgoCD, ESO/OpenBao, TLS, and external-service contracts established and checked. | Platform operator captures bootstrap, ArgoCD/ESO, endpoint, and connectivity evidence and owns bounded ArgoCD rollback or configuration recovery. |
+
+## Recovery
+
+### Recovery Procedures
 
 - [ ] OpenBao 값을 명령 인자나 환경 변수로 브리지하지 않는다. OpenBao의
       경로/정책과 ESO readiness를 복구한 뒤 ExternalSecret 재조정을 기다리고,
@@ -193,7 +221,7 @@ K8s DB endpoint가 아니다.
 - [ ] 외부 endpoint 복구는 아래 절차를, ESO auth 복구는
       [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md)를 따른다.
 
-### External Endpoint Recovery
+#### External Endpoint Recovery
 
 이 절이 `gitops/platform/external-services`의 Service/EndpointSlice 복구
 절차의 단일 owner다. 이 경로는 ArgoCD Application
@@ -222,18 +250,16 @@ reconciliation이다.
 4. 적용 뒤 이 런북의 step 8, 9로 재검증하고, 직접 적용했다면 Git과 live
    상태가 같은지 ArgoCD diff로 확인한다.
 
-## Related Documents
+### Rollback
 
-- **Incident and Postmortem Index**: [`../incidents/README.md`](../incidents/README.md)
-- [`../../02.architecture/descriptions/0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
-- [`../../02.architecture/decisions/0041-openbao-secret-backend.md`](../../02.architecture/decisions/0041-openbao-secret-backend.md)
+- [ ] ArgoCD app을 이전 리비전으로 rollback
 
-### Lifecycle Traceability
+  ```bash
+  # operator-approved
+  argocd app history root-platform
+  argocd app rollback root-platform <history-id>
+  ```
 
-완료된 SPEC-0008은 초기 구현 증적이며, 현재 플랫폼 구조는 위 AD-0007이 소유한다.
+### Escalation
 
-| Promoted owner | Trigger or control | Evidence or recovery owner |
-| --- | --- | --- |
-| N/A — SPEC-0008 is historical promotion evidence that Git history recovers | A new or rebuilt local cluster needs the current ArgoCD, ESO/OpenBao, TLS, and external-service contracts established and checked. | Platform operator captures bootstrap, ArgoCD/ESO, endpoint, and connectivity evidence and owns bounded ArgoCD rollback or configuration recovery. |
+에스컬레이션: 해당 없음 — 이 런북은 별도의 에스컬레이션 경로를 정하지 않는다.
