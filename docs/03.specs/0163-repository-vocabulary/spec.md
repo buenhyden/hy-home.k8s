@@ -1,6 +1,6 @@
 ---
 title: "Repository Vocabulary"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -81,6 +81,6 @@ If a definition cannot avoid a twelve-word span from its owner, the definition i
 
 | Requirement ID | Spec criterion | Architecture | Verification method |
 | --- | --- | --- | --- |
-| [REQ-0003-FR-0032](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-VOCAB-001 | [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md) | Knowledge validator and inline ID check. |
+| [REQ-0003-FR-0032](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-VOCAB-001 | [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md), [ADR-0058](../../02.architecture/decisions/0058-repository-vocabulary-in-knowledge-surface.md) | Knowledge validator and inline ID check. |
 | [REQ-0003-FR-0028](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-VOCAB-002 | [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) | Direct negative tests in the contract suite. |
-| [REQ-0003-FR-0032](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-VOCAB-003 | [ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md) | ADR acceptance, strict document checks and commit hooks. |
+| [REQ-0003-FR-0032](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-VOCAB-003 | [ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md), [ADR-0058](../../02.architecture/decisions/0058-repository-vocabulary-in-knowledge-surface.md) | ADR acceptance, strict document checks and commit hooks. |

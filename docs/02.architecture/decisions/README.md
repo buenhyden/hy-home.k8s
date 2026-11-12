@@ -1,10 +1,10 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.9.0"
+version: "0.10.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-10"
+updated: "2026-11-12"
 layer: "architecture"
 ---
 # 02.architecture/decisions (ADR)
@@ -76,6 +76,7 @@ layer: "architecture"
 | [`./0055-governance-decision-current-state-amendment.md`](./0055-governance-decision-current-state-amendment.md) | 거버넌스 ADR(0030, 0031, 0033, 0036, 0047, 0048, 0053)의 현행 불일치 조항을 운영자 승인으로 한정 개정 |
 | [`./0056-manual-document-disposition-review.md`](./0056-manual-document-disposition-review.md) | 현재 문서 처분 전 소비자·보존·권한·Git 원문 복구를 수동으로 확인하는 개정안 |
 | [`./0057-package-exit-shape-check.md`](./0057-package-exit-shape-check.md) | 끝난 Stage 03 package가 잘못된 모양으로 tree를 떠나는 것을 staged commit에서 막도록 ADR-0056 Decision 6을 좁히는 개정 |
+| [`./0058-repository-vocabulary-in-knowledge-surface.md`](./0058-repository-vocabulary-in-knowledge-surface.md) | `.agents/knowledge/glossary.md` 하나만 용어 의미를 소유하는 Repository Vocabulary로 허용하도록 ADR-0036 Decision 3의 포인터 전용 조항을 좁히는 개정 |
 
 ## Usage
 
