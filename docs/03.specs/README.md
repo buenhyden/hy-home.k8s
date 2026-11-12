@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.23.10"
+version: "0.23.11"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -64,12 +64,13 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ```text
 03.specs/
 ├── 0161-w00-v14-7-delta-intake/
+├── 0167-w02-safe-disposition/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── README.md
 ```
 
-현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, 그 단계들이 끝날 때까지 남긴다.
+현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)와 [SPEC-0167 W02 Safe Disposition](./0167-w02-safe-disposition/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, 그 단계들이 끝날 때까지 남긴다. SPEC-0167은 개발 문서의 처분 규칙에 보존 이력 조건, 동결 본문 보호, 적용 범위, 거부된 ADR의 종료를 더한다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
