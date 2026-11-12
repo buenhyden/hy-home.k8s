@@ -1,6 +1,6 @@
 ---
 title: "Git Policy"
-version: "2.4.0"
+version: "2.5.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -181,8 +181,32 @@ hook of any other name stops running the moment this repository's
 prevent, so widening it to a new hook means adding the matching entry rather
 than assuming the chain already covers the name.
 
+The workspace hook runs with one pinned validation environment first on
+`PATH`, named by the Git option `hyhome.validationVenv`. Build it once per
+account, outside every checkout, from the hashed lock:
+
+```bash
+umask 022 && python3 -m venv "$HOME/.venvs/hyhome-validation"
+"$HOME/.venvs/hyhome-validation/bin/python" -m pip install --only-binary :all: \
+  --require-hashes -r .github/requirements/ci-validation.txt
+git config --global hyhome.validationVenv "$HOME/.venvs/hyhome-validation"
+```
+
+The chain refuses the workspace hook with `HOOK-ENV` when the option is unset
+or empty, or when the environment lies inside a worktree. It also refuses an
+environment that lacks an executable `bin/python3` or `bin/pre-commit`, or
+whose files are writable by group or other, or owned by another account.
+Git configuration is not tracked, so a commit under review cannot choose the
+environment. Rebuild the environment when the lock changes; the chain does not
+compare it with the lock. The pin covers the hook's interpreter, pre-commit,
+the `language: system` Python entries, `scripts/qa.py` and the Python gates it
+runs. It does not cover shell validators, which use the closed system `PATH`
+`scripts/qa.py` builds, or `language: python` hooks, which use pre-commit's own
+environments. Unsetting the option blocks the hook, so it is no way around a
+check.
+
 If the same message is not checked by an active commit-msg hook, validate the
-actual UTF-8 message file in the pinned pre-commit environment before
+actual UTF-8 message file in the pinned validation environment before
 committing:
 
 ```bash

@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.11.0"
+version: "0.12.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-11-12"
 ---
 # scripts
 
@@ -198,6 +198,12 @@ Python이 그대로 쓰인다. selected style·nonstyle gate는 그 Python의
 conftest만 신뢰할 수 있는 interpreter 인접 경로나 계정 소유의 정확한 fallback도
 허용한다. 시스템 Python에 `ensurepip`가 없으면 `uv venv`와 `uv pip install
 --require-hashes`로 같은 lock을 설치할 수 있다.
+
+커밋 hook은 Git 설정 `hyhome.validationVenv`가 가리키는 이 환경을
+`PATH` 맨 앞에 두고 워크스페이스 hook을 실행한다. 설정이 없거나, 환경이
+checkout 안에 있거나, group·other 쓰기 권한이나 다른 계정 소유 파일이
+있으면 `HOOK-ENV`로 커밋을 막는다. 구성 명령과 범위는
+[Git policy](../.agents/governance/git.md)가 소유한다.
 저장소 로컬 venv나 namespace가 매핑된 상위 디렉터리 소유권 때문에 그 fallback이
 달라질 수 있으므로, venv 활성화 여부가 아니라 실제로 해석된 실행 파일을
 기록한다. shell validator의 `python3`는 닫힌 시스템 PATH를 따르므로 그 library
