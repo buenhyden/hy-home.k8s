@@ -722,13 +722,13 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
             "operation/guide": ("common/template-operation-guide",),
             "operation/incident": (
                 "common/template-operation-incident",
-                "Roles and Coordination",
-                "Closure",
+                "Resolution",
+                "Evidence",
             ),
             "operation/postmortem": (
                 "common/template-operation-postmortem",
-                "Detection and Response Review",
-                "Action Closure",
+                "Corrective Actions",
+                "Evidence",
             ),
             "operation/policy": ("common/template-operation-policy",),
             "operation/runbook": ("common/template-operation-runbook",),
@@ -744,23 +744,25 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
                 # form now declares none and the loader hands it the authored
                 # one, so sharing is inherited rather than copied and checked.
                 self.assertIsNone(template["lifecycle"])
-                loaded = next(
-                    item
+                loaded_profiles = {
+                    item.profile_id: item
                     for item in load_document_contracts()
                     .load_registry(REPOSITORY_ROOT)
                     .profiles
-                    if item.profile_id == template_id
-                )
+                }
+                loaded = loaded_profiles[template_id]
                 self.assertEqual(
                     loaded.status_domain,
                     tuple(authored["lifecycle"]["status_domain"]),
                 )
-                self.assertTrue(
-                    set(sections).issubset(authored["sections"]["required"])
-                )
-                self.assertTrue(
-                    set(sections).issubset(template["sections"]["required"])
-                )
+                # A form-backed role keeps no raw H2 list; the loader derives
+                # the heading lists from the form, so read those.
+                for profile_id in (authored_id, template_id):
+                    self.assertTrue(
+                        set(sections).issubset(
+                            loaded_profiles[profile_id].headings.required
+                        )
+                    )
                 self.assertIn(
                     "artifact_id",
                     template["frontmatter"]["required"],

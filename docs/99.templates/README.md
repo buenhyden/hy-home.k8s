@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.20.0"
+version: "0.21.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -104,11 +104,13 @@ form 경로의 대응은 Registry만 소유한다.
   capacity는 현재 consumer가 없어 Spec 본문과 실제 구현 소유자에게 수렴했다.
 - **Operations forms** (`operations/`): `guide`, `policy`, `runbook`,
   `incident`, `postmortem`의 서로 다른 운영 증거 책임을 유지한다.
-  Guide와 Runbook은 Registry form을 쓴다. Guide의 분류·독자·목표는 `Purpose`,
-  `Lifecycle Traceability` 관계 표는 `Verification` 아래에 둔다. Runbook의
-  트리거·절차·검증·복구는 form의 `Purpose`, `Preconditions`, `Steps`,
-  `Validation`, `Recovery`에 배치하고, `Lifecycle Traceability` 관계 표는
-  `Validation` 아래에 둔다. Policy의 적용 대상·통제·검토는 해당 역할의 core에
+  Guide, Runbook, Incident, Postmortem은 Registry form을 쓴다. Guide의
+  분류·독자·목표는 `Purpose`, `Lifecycle Traceability` 관계 표는
+  `Verification` 아래에 둔다. Runbook의 트리거·절차·검증·복구는 form의
+  `Purpose`, `Preconditions`, `Steps`, `Validation`, `Recovery`에 배치하고,
+  `Lifecycle Traceability` 관계 표는 `Validation` 아래에 둔다. Incident의
+  `Lifecycle Traceability` 관계 표는 `Evidence` 아래에, Postmortem의 표는
+  `Corrective Actions` 아래에 둔다. Policy의 적용 대상·통제·검토는 해당 역할의 core에
   배치하며, Policy의 기존 `Lifecycle Traceability` 관계 표는 그 package 전까지
   `Related Documents` 아래에서 같은 source·열·상호 참조 의미를 유지한다.
   기계가 읽는 정확한 heading과 순서·내용 경계는 Registry가 소유한다. 빈 heading이나

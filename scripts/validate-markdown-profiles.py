@@ -1594,18 +1594,21 @@ def _frontmatter_body(
                         repr(data.get("resolved_at")),
                     )
                 )
-            closure = _exact_heading_section(body, "## Closure")
+            # SPEC-0171: the Incident form holds resolution evidence in its
+            # unique Recovery Verification H3 (its Resolution parent is
+            # enforced by BODY-H3-PARENT in the tree check, not here).
+            recovery = _exact_heading_section(body, "### Recovery Verification")
             if (
-                not closure
-                or not closure.strip()
-                or re.fullmatch(r"(?is)\s*(?:TBD|Pending|N/A|<!--.*?-->)\s*", closure)
+                not recovery
+                or not recovery.strip()
+                or re.fullmatch(r"(?is)\s*(?:TBD|Pending|N/A|<!--.*?-->)\s*", recovery)
             ):
                 diagnostics.append(
                     _diagnostic(
                         "INCIDENT-RESOLUTION-EVIDENCE",
                         path,
                         profile,
-                        "concrete Closure resolution evidence",
+                        "concrete Recovery Verification resolution evidence",
                         "missing resolution evidence",
                     )
                 )

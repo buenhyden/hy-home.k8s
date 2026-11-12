@@ -976,18 +976,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Incident Metadata",
-          "Roles and Coordination",
-          "Impact",
-          "Timeline",
-          "Response State",
-          "Evidence",
-          "Follow-up Actions",
-          "Closure",
-          "Traceability"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -1002,7 +991,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Evidence",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "detected",
@@ -1065,20 +1054,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Incident Link and Impact Summary",
-          "Root Cause Analysis",
-          "Contributing Factors",
-          "Detection and Response Review",
-          "What Went Well",
-          "What Went Wrong",
-          "Action Items",
-          "Prevention and Verification",
-          "Action Closure",
-          "Documentation Feedback Loop",
-          "Traceability"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -1092,7 +1068,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Corrective Actions",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4079,7 +4055,7 @@
           ],
           "regression": [
             "The loaded guide profiles keep heading lists equal to the form H2 titles.",
-            "tests/test_common_form_tree.py asserts exactly the Guide form and definition in the repository registry."
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
           ]
         },
         "migration": {
@@ -4184,18 +4160,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Incident Metadata",
-          "Roles and Coordination",
-          "Impact",
-          "Timeline",
-          "Response State",
-          "Evidence",
-          "Follow-up Actions",
-          "Closure",
-          "Traceability"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -4205,7 +4170,7 @@
           "operation/incident"
         ],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Evidence",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "detected",
@@ -4228,7 +4193,117 @@
           "allow_explicit_exclusion": true
         }
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for an incident record that states the confirmed event, its impact, its timeline, its resolution and its evidence.",
+        "responsibility": "An incident record owns the observed facts, timeline, mitigation, recovery verification and evidence of one event; causal analysis and corrective actions belong to the postmortem.",
+        "non_goals": [
+          "Root-cause analysis and corrective-action design, which belong to the postmortem.",
+          "Recording a guess as an observed fact or rewriting a historical log.",
+          "Granting authority for any live action; a record of an action never authorizes repeating it."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/document-lifecycle.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every operation/incident document under docs/05.operations/incidents/ and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/operations/incident.template.md",
+          "docs/99.templates/README.md",
+          "docs/05.operations/incidents/README.md",
+          "docs/05.operations/AGENTS.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_document_terminal_contract.py",
+          "tests/test_native_skill_envelope.py",
+          ".agents/skills/incident-postmortem/SKILL.md"
+        ],
+        "validation": {
+          "positive": [
+            "The incident template passes the form tree, table, body-contract, author-prompt and residue checks.",
+            "An incident whose Events table keeps the registered columns, or whose Events table has a header only, passes the document table check."
+          ],
+          "negative": [
+            "A reordered, missing or extra Events column fails BODY-TABLE-COLUMNS.",
+            "A Lifecycle Traceability H3 outside Evidence fails BODY-H3-PARENT.",
+            "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT.",
+            "A resolved incident whose Recovery Verification holds no concrete evidence fails INCIDENT-RESOLUTION-EVIDENCE."
+          ],
+          "regression": [
+            "The loaded incident profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
+            "tests/test_native_skill_envelope.py shows INCIDENT-RESOLUTION-EVIDENCE failing without Recovery Verification evidence and passing with it."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0171 incident template map moves each of the ten former H2 sections into the Summary, Impact, Timeline, Resolution or Evidence section without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous ten-section incident template; no incident document exists.",
+          "rollback": "Revert the SPEC-0171 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Events",
+            "section": "incident-timeline-events",
+            "columns": [
+              {
+                "key": "Timestamp",
+                "meaning": "The zoned time of the observation, decision or action.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Event",
+                "meaning": "What was observed, decided or done at that time.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Actor",
+                "meaning": "Who or what observed, decided or acted.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Timestamp"
+          },
+          {
+            "name": "Lifecycle Traceability",
+            "section": "incident-lifecycle-traceability",
+            "columns": [
+              {
+                "key": "Timeline or action",
+                "meaning": "The timeline entry or response action the row covers.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Evidence",
+                "meaning": "The named incident evidence for it.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Follow-up Task",
+                "meaning": "The follow-up Task that owns it, or an N/A reason.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 1,
+            "row_identity": "Timeline or action"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-operation-policy",
@@ -4354,20 +4429,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Incident Link and Impact Summary",
-          "Root Cause Analysis",
-          "Contributing Factors",
-          "Detection and Response Review",
-          "What Went Well",
-          "What Went Wrong",
-          "Action Items",
-          "Prevention and Verification",
-          "Action Closure",
-          "Documentation Feedback Loop",
-          "Traceability"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -4377,7 +4439,7 @@
           "operation/postmortem"
         ],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Corrective Actions",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4400,7 +4462,122 @@
           "allow_explicit_exclusion": true
         }
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a postmortem that records the root cause, the confirmed impact, the corrective actions and their evidence for one incident.",
+        "responsibility": "A postmortem owns the causal analysis, contributing factors, corrective actions and review decision for one incident; the observed facts and timeline stay in the incident record.",
+        "non_goals": [
+          "Restating the incident timeline, which belongs to the incident record.",
+          "Assigning blame to a person; contributing factors are recorded without blame.",
+          "Granting authority for any live action; a corrective action never authorizes its own execution."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/document-lifecycle.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every operation/postmortem document under docs/05.operations/incidents/ and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/operations/postmortem.template.md",
+          "docs/99.templates/README.md",
+          "docs/05.operations/incidents/README.md",
+          "docs/05.operations/AGENTS.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_document_terminal_contract.py",
+          ".agents/skills/incident-postmortem/SKILL.md"
+        ],
+        "validation": {
+          "positive": [
+            "The postmortem template passes the form tree, table, body-contract, author-prompt and residue checks.",
+            "A postmortem whose Actions table keeps the registered columns, or whose Actions table has a header only, passes the document table check.",
+            "A postmortem with no What Went Well H3 passes, and one with the H3 under Impact and a body passes."
+          ],
+          "negative": [
+            "A reordered, missing or extra Actions column fails BODY-TABLE-COLUMNS.",
+            "A Lifecycle Traceability H3 outside Corrective Actions or a What Went Well H3 outside Impact fails BODY-H3-PARENT.",
+            "A What Went Well H3 with no body fails BODY-SECTION-EMPTY.",
+            "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT."
+          ],
+          "regression": [
+            "The loaded postmortem profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0171 postmortem template map moves each of the twelve former H2 sections into the Summary, Root Cause, Impact, Corrective Actions or Evidence section without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous twelve-section postmortem template; no postmortem document exists.",
+          "rollback": "Revert the SPEC-0171 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Actions",
+            "section": "postmortem-corrective-actions-actions",
+            "columns": [
+              {
+                "key": "Action",
+                "meaning": "The corrective action that prevents recurrence.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Owner",
+                "meaning": "The person or team that owns the action.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Verification",
+                "meaning": "How the completion and effect of the action are verified.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Action"
+          },
+          {
+            "name": "Lifecycle Traceability",
+            "section": "postmortem-lifecycle-traceability",
+            "columns": [
+              {
+                "key": "Root cause or action",
+                "meaning": "The root cause or prevention action the row covers.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Owner and due state",
+                "meaning": "The owner and the due date or state of the action.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Follow-up Task",
+                "meaning": "The follow-up Task that owns it, or an N/A reason.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Feedback target",
+                "meaning": "The requirement, decision, Spec, guide or policy owner that receives the lesson.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 1,
+            "row_identity": "Root cause or action"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-operation-runbook",
@@ -4531,7 +4708,7 @@
           ],
           "regression": [
             "The loaded runbook profiles keep heading lists equal to the form H2 titles.",
-            "tests/test_common_form_tree.py asserts exactly the Guide and Runbook forms and definitions in the repository registry."
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
           ]
         },
         "migration": {
@@ -6977,6 +7154,791 @@
             "removal": "when runbook lineage has another registered owner",
             "parent_id": "runbook-validation",
             "title": "Lifecycle Traceability"
+          }
+        ]
+      },
+      {
+        "form_id": "incident",
+        "title": "Incident",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "incident-summary",
+            "level": 2,
+            "parent_id": null,
+            "title": "Summary",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "사건의 확인 사실",
+            "required_content": [
+              "사건의 확인 사실에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "incident-summary-event",
+                "level": 3,
+                "parent_id": "incident-summary",
+                "title": "Event",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "식별자·발생·탐지 시각",
+                "required_content": [
+                  "식별자·발생·탐지 시각을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "incident-summary-current-status",
+                "level": 3,
+                "parent_id": "incident-summary",
+                "title": "Current Status",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "현재 상태와 확인 범위",
+                "required_content": [
+                  "현재 상태와 확인 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "incident-impact",
+            "level": 2,
+            "parent_id": null,
+            "title": "Impact",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "영향과 범위",
+            "required_content": [
+              "영향과 범위에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "incident-impact-affected-users",
+                "level": 3,
+                "parent_id": "incident-impact",
+                "title": "Affected Users",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "대상·서비스·데이터 영향",
+                "required_content": [
+                  "대상·서비스·데이터 영향을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "incident-impact-severity-and-duration",
+                "level": 3,
+                "parent_id": "incident-impact",
+                "title": "Severity and Duration",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "심각도·기간·추정 구분",
+                "required_content": [
+                  "심각도·기간·추정 구분을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "incident-timeline",
+            "level": 2,
+            "parent_id": null,
+            "title": "Timeline",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "사실의 시간 순서",
+            "required_content": [
+              "사실의 시간 순서에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "incident-timeline-events",
+                "level": 3,
+                "parent_id": "incident-timeline",
+                "title": "Events",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "시각·행위자·관측·행동",
+                "required_content": [
+                  "시각·행위자·관측·행동을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "incident-timeline-decisions",
+                "level": 3,
+                "parent_id": "incident-timeline",
+                "title": "Decisions",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "당시 결정·근거·권한",
+                "required_content": [
+                  "당시 결정·근거·권한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "incident-resolution",
+            "level": 2,
+            "parent_id": null,
+            "title": "Resolution",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "대응과 복원",
+            "required_content": [
+              "대응과 복원에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "incident-resolution-mitigation",
+                "level": 3,
+                "parent_id": "incident-resolution",
+                "title": "Mitigation",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 완화·복구·되돌림",
+                "required_content": [
+                  "실제 완화·복구·되돌림을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "incident-resolution-recovery-verification",
+                "level": 3,
+                "parent_id": "incident-resolution",
+                "title": "Recovery Verification",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "복원 관측·잔여 위험",
+                "required_content": [
+                  "복원 관측·잔여 위험을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "incident-evidence",
+            "level": 2,
+            "parent_id": null,
+            "title": "Evidence",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "근거와 후속",
+            "required_content": [
+              "근거와 후속에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "incident-evidence-evidence-sources",
+                "level": 3,
+                "parent_id": "incident-evidence",
+                "title": "Evidence Sources",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "로그·측정·원문·접근 제한",
+                "required_content": [
+                  "로그·측정·원문·접근 제한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "incident-evidence-follow-up-owners",
+                "level": 3,
+                "parent_id": "incident-evidence",
+                "title": "Follow-up Owners",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "재발 방지 Task·담당·조건",
+                "required_content": [
+                  "재발 방지 Task·담당·조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          }
+        ],
+        "extensions": [
+          {
+            "id": "incident-lifecycle-traceability",
+            "kind": "local_h3",
+            "condition": "a document in a status the body contract enforces states its follow-up Task or an N/A reason",
+            "owner": "platform",
+            "verification": "the body-contract check",
+            "review": "when the form version changes",
+            "removal": "when incident lineage has another registered owner",
+            "parent_id": "incident-evidence",
+            "title": "Lifecycle Traceability"
+          }
+        ]
+      },
+      {
+        "form_id": "postmortem",
+        "title": "Postmortem",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "postmortem-summary",
+            "level": 2,
+            "parent_id": null,
+            "title": "Summary",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "회고 범위",
+            "required_content": [
+              "회고 범위에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "postmortem-summary-incident-reference",
+                "level": 3,
+                "parent_id": "postmortem-summary",
+                "title": "Incident Reference",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "대상 사건·판본·독자",
+                "required_content": [
+                  "대상 사건·판본·독자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "postmortem-summary-review-scope",
+                "level": 3,
+                "parent_id": "postmortem-summary",
+                "title": "Review Scope",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "검토 범위·사실/가정 구별",
+                "required_content": [
+                  "검토 범위·사실/가정 구별을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "postmortem-root-cause",
+            "level": 2,
+            "parent_id": null,
+            "title": "Root Cause",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "원인과 기여 조건",
+            "required_content": [
+              "원인과 기여 조건에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "postmortem-root-cause-causal-analysis",
+                "level": 3,
+                "parent_id": "postmortem-root-cause",
+                "title": "Causal Analysis",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "증거에 근거한 원인 연결",
+                "required_content": [
+                  "증거에 근거한 원인 연결을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "postmortem-root-cause-contributing-factors",
+                "level": 3,
+                "parent_id": "postmortem-root-cause",
+                "title": "Contributing Factors",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "기여 조건·탐지 공백·불확실성",
+                "required_content": [
+                  "기여 조건·탐지 공백·불확실성을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "postmortem-impact",
+            "level": 2,
+            "parent_id": null,
+            "title": "Impact",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "사용자와 서비스 영향",
+            "required_content": [
+              "사용자와 서비스 영향에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "postmortem-impact-observed-impact",
+                "level": 3,
+                "parent_id": "postmortem-impact",
+                "title": "Observed Impact",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "관측 영향·범위·기간",
+                "required_content": [
+                  "관측 영향·범위·기간을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "postmortem-impact-detection-and-response",
+                "level": 3,
+                "parent_id": "postmortem-impact",
+                "title": "Detection and Response",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "탐지·대응 평가와 근거",
+                "required_content": [
+                  "탐지·대응 평가와 근거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "postmortem-corrective-actions",
+            "level": 2,
+            "parent_id": null,
+            "title": "Corrective Actions",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "재발 방지 실행 계약",
+            "required_content": [
+              "재발 방지 실행 계약에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "postmortem-corrective-actions-actions",
+                "level": 3,
+                "parent_id": "postmortem-corrective-actions",
+                "title": "Actions",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "조치·담당·기준·기한 대신 재개 조건",
+                "required_content": [
+                  "조치·담당·기준·기한 대신 재개 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "postmortem-corrective-actions-verification",
+                "level": 3,
+                "parent_id": "postmortem-corrective-actions",
+                "title": "Verification",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "효과 검증·후속 Task 참조",
+                "required_content": [
+                  "효과 검증·후속 Task 참조을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "postmortem-evidence",
+            "level": 2,
+            "parent_id": null,
+            "title": "Evidence",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "회고의 근거",
+            "required_content": [
+              "회고의 근거에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "postmortem-evidence-source-records",
+                "level": 3,
+                "parent_id": "postmortem-evidence",
+                "title": "Source Records",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "사건·로그·결정 연결",
+                "required_content": [
+                  "사건·로그·결정 연결을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "postmortem-evidence-review-decision",
+                "level": 3,
+                "parent_id": "postmortem-evidence",
+                "title": "Review Decision",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "검토·게시·미결 사항",
+                "required_content": [
+                  "검토·게시·미결 사항을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          }
+        ],
+        "extensions": [
+          {
+            "id": "postmortem-lifecycle-traceability",
+            "kind": "local_h3",
+            "condition": "a document in a status the body contract enforces states its follow-up Task or an N/A reason",
+            "owner": "platform",
+            "verification": "the body-contract check",
+            "review": "when the form version changes",
+            "removal": "when incident lineage has another registered owner",
+            "parent_id": "postmortem-corrective-actions",
+            "title": "Lifecycle Traceability"
+          },
+          {
+            "id": "postmortem-what-went-well",
+            "kind": "local_h3",
+            "condition": "a postmortem records controls or response actions that reduced impact",
+            "owner": "platform",
+            "verification": "the form tree check",
+            "review": "when the Postmortem form version changes",
+            "removal": "when the common Postmortem form gains a What Went Well H3",
+            "parent_id": "postmortem-impact",
+            "title": "What Went Well"
           }
         ]
       }

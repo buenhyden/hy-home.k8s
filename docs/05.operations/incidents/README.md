@@ -1,10 +1,10 @@
 ---
 title: "05.operations/incidents"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-13"
 layer: "operations"
 ---
 # 05.operations/incidents
@@ -87,20 +87,19 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 
 Incident Record는 다음 항목을 포함한다.
 
-- Overview와 Incident Metadata
-- Roles and Coordination
-- Impact, Timeline, Response State
-- Evidence와 Follow-up Actions
-- Closure와 Lifecycle Traceability
+- Summary: Event, Current Status
+- Impact: Affected Users, Severity and Duration
+- Timeline: Events, Decisions
+- Resolution: Mitigation, Recovery Verification
+- Evidence: Evidence Sources, Follow-up Owners, Lifecycle Traceability
 
 Postmortem은 다음 항목을 포함한다.
 
-- Incident Link and Impact Summary
-- Root Cause Analysis와 Contributing Factors
-- Detection and Response Review
-- What Went Well / What Went Wrong
-- Action Items, Prevention and Verification, Action Closure
-- Documentation Feedback Loop과 Lifecycle Traceability
+- Summary: Incident Reference, Review Scope
+- Root Cause: Causal Analysis, Contributing Factors와 그 아래 What Went Wrong
+- Impact: Observed Impact, Detection and Response, 선택 항목인 What Went Well
+- Corrective Actions: Actions, Verification, Lifecycle Traceability
+- Evidence: Source Records, Review Decision
 
 ### Review Expectations
 
