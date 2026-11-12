@@ -28,7 +28,7 @@ This Task records the DOC-09 change for [SPEC-0164](../spec.md) under its [Plan]
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-REVERSE-002](../spec.md#success-criteria--verification-plan) | Backlinks tool, test-first. | platform | completed | PASS | EVD-006 resolves EVD-004. |
-| WORK-002 | [VAL-REVERSE-001](../spec.md#success-criteria--verification-plan), [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | Remove the reciprocal rule everywhere; reword the traceability owners. | platform | in-progress | PASS | EVD-007 to EVD-010 pass; completion waits for the operator's criterion acceptance. |
+| WORK-002 | [VAL-REVERSE-001](../spec.md#success-criteria--verification-plan), [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | Remove the reciprocal rule everywhere; reword the traceability owners. | platform | completed | PASS | EVD-007 to EVD-011 pass; the user accepted every criterion on 2026-11-12. |
 
 ## Task Evidence
 
@@ -44,14 +44,15 @@ This Task records the DOC-09 change for [SPEC-0164](../spec.md) under its [Plan]
 | EVD-008 | [VAL-REVERSE-001](../spec.md#success-criteria--verification-plan), [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Reciprocal rule removal checks with exact-index QA | Commit `09293928` (tree `c9455a1fafd381adb0a952da43790556e319f0ed`); `python3 scripts/qa.py staged` and the commit hooks with the scratch venv; 2026-11-12 | PASS | 13 gates PASS, including document-contract-tests and document-lifecycle-tests; the Staged QA Snapshot, commitizen and commit-message-exception hooks passed. With EVD-007 this closes EVD-005. | yes | EVD-005 |
 | EVD-009 | [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Forward relationship link regression | New `test_forward_relationship_link_still_fails_broken_or_wrong_profile` in `tests/test_documentation_link_boundary.py` over this package's `spec.md`: unchanged, a missing Requirement target, an AD-0006 target; a mutation copy with the profile branch disabled; suites `document` and `tooling`; `ruff check` and `ruff format --check`; 2026-11-12 | PASS | No test asserted `BODY-LINK-BROKEN` or `BODY-LINK-SOURCE-PROFILE` before; the removed back-link test was the only one near them. Unchanged: no finding; missing target: `BODY-LINK-BROKEN`; AD target: `BODY-LINK-SOURCE-PROFILE`. Mutation: fails with `'BODY-LINK-SOURCE-PROFILE' not found in []`; restored: passes. Suites document 313, tooling 166 OK; ruff clean. The test class name and the validator docstring no longer mention reciprocal evidence. | yes | none |
 | EVD-010 | [VAL-REVERSE-001](../spec.md#success-criteria--verification-plan), [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Core-diff checklist | Diff `f4fc3000..09293928` outside `docs/03.specs` (21 files, 221 insertions, 133 deletions) plus the EVD-009 change; risk class `medium`; 2026-11-12 | PASS | Acceptance matches VAL-REVERSE-001 to 003 (EVD-006 to EVD-009). One writer per file, as the Spec assigns. Checks removed: only `BODY-LINK-RECIPROCAL`, `REGISTRY_BODY_RECIPROCAL` and their test, as the Spec requires; forward link, profile and stage-boundary checks kept and now tested (EVD-009); supersession reciprocity untouched. No secret; `.secrets.baseline` moved one line only. No permission, trigger or protected action changed. Recovery: revert `09293928`, then `b784e418`. Findings: NOTE, `scripts/validation/registry.json` gained one exact path, `tests/test_document_backlinks.py`, under the existing knowledge-surface test surface, and `scripts/run-contract-tests.py` lists the module in `tooling`; the Spec said the registry stays unchanged. The entry maps a test file to a surface (`SURFACE-PATH-UNMATCHED` otherwise) and adds no gate, so the tool is still not a gate. NOTE, the leftover-key refusal comes from the loader (EVD-007). No BLOCK or FIX open. | yes | none |
+| EVD-011 | [VAL-REVERSE-001](../spec.md#success-criteria--verification-plan), [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Promotion to the current owner | Plan Promotion row; `.agents/governance/document-authoring.md` 3.5.0 rule 6; 2026-11-12 | PASS | The Plan's promotion was not yet done: no current policy sentence said to write each relation once and derive the reverse view. Added to rule 6, with supersession pairs (rule 13) kept reciprocal. The Plan's `Where` cell names a section "Traceability and relationships" that the policy does not have; rule 6 is the link rule that owns it. Strict document checks and exact-index QA on the commit. | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-REVERSE-001](../spec.md#success-criteria--verification-plan) | pending | none | Search and strict checks after WORK-002 | platform |
-| [VAL-REVERSE-002](../spec.md#success-criteria--verification-plan) | pending | none | Backlinks tests before and after | platform |
-| [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | pending | none | Forward and schema negative cases and suites | platform |
+| [VAL-REVERSE-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-007, EVD-008, EVD-010, EVD-011 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
+| [VAL-REVERSE-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
+| [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-008, EVD-009, EVD-010 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
 
 ## Approval and Safety Boundaries
 
@@ -66,4 +67,4 @@ This Task records the DOC-09 change for [SPEC-0164](../spec.md) under its [Plan]
 
 ## Verification Summary
 
-WORK-001 is complete (EVD-006); WORK-002 passes (EVD-007 to EVD-010, with the core-diff checklist in EVD-010) and waits for criterion acceptance. Parent-side link columns remain forward links until the common-forms work replaces them. Risk class `medium` (registry, validator and test change).
+WORK-001 is complete (EVD-006); WORK-002 passes (EVD-007 to EVD-010, with the core-diff checklist in EVD-010) and the promotion to `document-authoring.md` rule 6 is EVD-011; the user accepted every criterion on 2026-11-12. Parent-side link columns remain forward links until the common-forms work replaces them. Risk class `medium` (registry, validator and test change).

@@ -2,7 +2,7 @@
 title: "W00 v14.7 Delta Intake"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-12"
 layer: "specs"
@@ -29,7 +29,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan), [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | Record the delta tables, check completeness, obtain independent review. | platform | frontmatter | PASS | Required checks pass: EVD-014 (completeness, resolves EVD-007), EVD-012 and EVD-015 (independent review, EVD-012 resolves EVD-008), EVD-017 (exact-index QA, resolves EVD-009). Criterion acceptance is the operator's decision. |
+| WORK-001 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan), [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | Record the delta tables, check completeness, obtain independent review. | platform | frontmatter | PASS | Required checks pass: EVD-014 (completeness, resolves EVD-007), EVD-012 and EVD-015 (independent review, EVD-012 resolves EVD-008), EVD-017 (exact-index QA, resolves EVD-009). The user accepted both criteria on 2026-11-12. |
 
 ## Task Evidence
 
@@ -269,8 +269,8 @@ Listed-only files are not semantically reviewed. Each writer stage re-reads its 
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | pending | none | Run the completeness check after approval | platform |
-| [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | pending | none | Independent review and exact-index QA after approval | platform |
+| [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-014, EVD-015, EVD-016 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
+| [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-012, EVD-015, EVD-016, EVD-017, EVD-020 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
 
 ## Approval and Safety Boundaries
 
@@ -285,4 +285,4 @@ Listed-only files are not semantically reviewed. Each writer stage re-reads its 
 
 ## Verification Summary
 
-Required completeness (EVD-014), independent review (EVD-012, EVD-015) and exact-index QA (EVD-017) pass; criterion acceptance is pending the operator. Residual risk: the survey read large validators and tests in part; writers must re-read before editing. The core-diff checklist is EVD-020 (risk class `low`). GOV-01 vocabulary, GIT-09 review path and DOC-09 are done in SPEC-0163, SPEC-0162 and SPEC-0164. Next owners: W01 (GOV-02 to GOV-08, CI-SCOPE policy text, POLICY-ROLE), then W03, W04, W05, W06, W07 and W10 per the handoff tables; DOC-12 display renumbering last.
+Required completeness (EVD-014), independent review (EVD-012, EVD-015) and exact-index QA (EVD-017) pass; the user accepted every criterion on 2026-11-12. Residual risk: the survey read large validators and tests in part; writers must re-read before editing. The core-diff checklist is EVD-020 (risk class `low`). GOV-01 vocabulary, GIT-09 review path and DOC-09 are done in SPEC-0163, SPEC-0162 and SPEC-0164. Next owners: W01 (GOV-02 to GOV-08, CI-SCOPE policy text, POLICY-ROLE), then W03, W04, W05, W06, W07 and W10 per the handoff tables; DOC-12 display renumbering last.

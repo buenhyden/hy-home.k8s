@@ -2,7 +2,7 @@
 title: "Single-Maintainer Review Path"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-12"
 layer: "specs"
@@ -28,7 +28,7 @@ This Task records the GIT-09 review-path change for [SPEC-0162](../spec.md) unde
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-REVIEW-001](../spec.md#success-criteria--verification-plan), [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | Edit the six owners, search for remaining agent-review obligations, record the checklist review. | platform | frontmatter | PASS | EVD-006 (search, resolves EVD-004) and EVD-007 with EVD-008 (checklist and exact-index QA, resolve EVD-005) pass; criterion acceptance is the operator's decision. |
+| WORK-001 | [VAL-REVIEW-001](../spec.md#success-criteria--verification-plan), [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | Edit the six owners, search for remaining agent-review obligations, record the checklist review. | platform | frontmatter | PASS | EVD-006 (search, resolves EVD-004) and EVD-007 with EVD-008 (checklist and exact-index QA, resolve EVD-005) pass; the user accepted every criterion on 2026-11-12. |
 
 ## Task Evidence
 
@@ -49,8 +49,8 @@ This Task records the GIT-09 review-path change for [SPEC-0162](../spec.md) unde
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-REVIEW-001](../spec.md#success-criteria--verification-plan) | pending | none | Run the search after the edits | platform |
-| [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | pending | none | Checklist and exact-index QA after the edits | platform |
+| [VAL-REVIEW-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
+| [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-007, EVD-008, EVD-010 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
 
 ## Approval and Safety Boundaries
 
@@ -65,4 +65,4 @@ This Task records the GIT-09 review-path change for [SPEC-0162](../spec.md) unde
 
 ## Verification Summary
 
-The edits are in `f0aa80cf`; the search (EVD-006) and the checklist with exact-index QA (EVD-007, EVD-008) pass; criterion acceptance is pending the operator. Risk class `high` (pull-request completion and merge-direction wording).
+The edits are in `f0aa80cf`; the search (EVD-006) and the checklist with exact-index QA (EVD-007, EVD-008) pass; the user accepted every criterion on 2026-11-12. Risk class `high` (pull-request completion and merge-direction wording).

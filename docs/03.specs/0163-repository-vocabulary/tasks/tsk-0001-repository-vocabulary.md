@@ -28,7 +28,7 @@ This Task records the Repository Vocabulary change for [SPEC-0163](../spec.md) u
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-VOCAB-002](../spec.md#success-criteria--verification-plan) | Failing vocabulary and Hangul tests, then the validator change. | platform | completed | PASS | EVD-006 resolves EVD-004. |
-| WORK-002 | [VAL-VOCAB-001](../spec.md#success-criteria--verification-plan), [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | ADR-0058, FR-0032, registry and template, glossary, SDLC table and the knowledge owners. | platform | in-progress | PASS | EVD-007, EVD-008, EVD-010, EVD-011 and EVD-012 pass; completion waits for the operator's criterion acceptance. |
+| WORK-002 | [VAL-VOCAB-001](../spec.md#success-criteria--verification-plan), [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | ADR-0058, FR-0032, registry and template, glossary, SDLC table and the knowledge owners. | platform | completed | PASS | EVD-007, EVD-008, EVD-010, EVD-011 and EVD-012 pass; the user accepted every criterion on 2026-11-12. |
 
 ## Task Evidence
 
@@ -68,9 +68,9 @@ This Task records the Repository Vocabulary change for [SPEC-0163](../spec.md) u
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-VOCAB-001](../spec.md#success-criteria--verification-plan) | pending | none | Glossary and inline ID check | platform |
-| [VAL-VOCAB-002](../spec.md#success-criteria--verification-plan) | pending | none | Tests before and after the validator change | platform |
-| [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | pending | none | ADR-0058 acceptance and owner updates | platform |
+| [VAL-VOCAB-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-008, EVD-011, EVD-012 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
+| [VAL-VOCAB-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
+| [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-011, EVD-012 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
 
 ## Approval and Safety Boundaries
 
