@@ -25,7 +25,6 @@ SPEC.loader.exec_module(PROFILES)
 
 from document_contracts import classify_path, load_registry  # noqa: E402
 
-TODAY = dt.date(2026, 11, 11)
 RULE = PurePosixPath(".agents/governance/document-lifecycle.md")
 FOLDER_AGENTS = PurePosixPath("docs/AGENTS.md")
 AUDIT_FORM = ROOT / "docs/99.templates/templates/references/audit.template.md"
@@ -46,6 +45,11 @@ class FrontmatterNegativeTest(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.registry = load_registry(ROOT)
         cls.source = (ROOT / RULE).read_text(encoding="utf-8")
+        # The control is judged on its own `updated` day, so editing the live
+        # rule never turns the valid control into a future-dated document.
+        match = re.search(r'^updated: "(\d{4}-\d{2}-\d{2})"$', cls.source, re.M)
+        assert match, "control has no updated date"
+        cls.today = dt.date.fromisoformat(match.group(1))
 
     def rules(self, text: str, path: PurePosixPath = RULE) -> set[str]:
         profile = next(
@@ -54,7 +58,7 @@ class FrontmatterNegativeTest(unittest.TestCase):
             if item.profile_id == classify_path(self.registry, path).profile_id
         )
         found = PROFILES.validate_document_text(
-            text, path, profile, "strict", today=TODAY, include_body=False
+            text, path, profile, "strict", today=self.today, include_body=False
         )
         return {item.rule_id for item in found if item.rule_id.startswith("FM-")}
 

@@ -28,7 +28,7 @@ This Task records the Repository Vocabulary change for [SPEC-0163](../spec.md) u
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-VOCAB-002](../spec.md#success-criteria--verification-plan) | Failing vocabulary and Hangul tests, then the validator change. | platform | completed | PASS | EVD-006 resolves EVD-004. |
-| WORK-002 | [VAL-VOCAB-001](../spec.md#success-criteria--verification-plan), [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | ADR-0058, FR-0032, registry and template, glossary, SDLC table and the knowledge owners. | platform | ready | NOT_RUN | Pending ADR-0058 acceptance. |
+| WORK-002 | [VAL-VOCAB-001](../spec.md#success-criteria--verification-plan), [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | ADR-0058, FR-0032, registry and template, glossary, SDLC table and the knowledge owners. | platform | in-progress | PASS | EVD-007, EVD-008 and EVD-010 pass; exact-index QA of the commit follows. |
 
 ## Task Evidence
 
@@ -40,6 +40,27 @@ This Task records the Repository Vocabulary change for [SPEC-0163](../spec.md) u
 | EVD-004 | [VAL-VOCAB-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Vocabulary validator tests | `tests/test_validate_knowledge_surface.py` with the new tests on the unchanged validator, then with the validator change | NOT_RUN | Pending the implementation commit. | yes | none |
 | EVD-005 | [VAL-VOCAB-001](../spec.md#success-criteria--verification-plan), [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Glossary, registry and owner checks with exact-index QA | Knowledge validator, inline ID check, strict document checks and commit hooks | NOT_RUN | Pending ADR-0058 acceptance. | yes | none |
 | EVD-006 | [VAL-VOCAB-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Vocabulary validator tests | `python3 -m unittest tests.test_validate_knowledge_surface` with the seven new tests on the validator at `5a8ba3dc`, then with the validator change; `python3 scripts/run-contract-tests.py --root . --suite tooling`; `python3 scripts/validate-knowledge-surface.py --root .`; `ruff check` and `ruff format --check` on both files; 2026-11-12 | PASS | RED: 15 run, 7 failed (valid vocabulary, empty table, bad ID, duplicate ID, missing owner, copied Latin span, copied Hangul span); the 8 existing tests passed. GREEN: 15 OK. Suite `tooling`: 7 modules, 162 tests OK. Tree: 2 pointer documents, 0 violations under Hangul matching. Ruff clean. | yes | EVD-004 |
+| EVD-007 | [VAL-VOCAB-001](../spec.md#success-criteria--verification-plan), [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | WORK-002 | ADR-0058 acceptance | Direct current-session user answer "Accept ADR-0058" to the acceptance question, 2026-11-12 Asia/Seoul; ADR-0058 first recorded `proposed` in `5ec2a995` | PASS | ADR-0058 moves to `accepted` 1.0.0 in the WORK-002 commit; it accepts no SPEC-0163 criterion. | yes | none |
+| EVD-008 | [VAL-VOCAB-001](../spec.md#success-criteria--verification-plan), [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Glossary, registry and owner checks | Worktree after `63afa49b` with WORK-002 staged: `python3 scripts/validate-knowledge-surface.py --root .`; inline set comparison of the glossary's common Term IDs with `REPOSITORY-VOCABULARY.json`; the four strict document validators; `validate-document-lifecycle.py --mode staged`; suites `document`, `tooling`, `agent-governance`; `validate-agent-governance.py`; 2026-11-12 | PASS | Knowledge surface: 3 documents, 0 violations. Common IDs: 33 of 33, equal to the contract set. First run found 10 `LINK-STAGE-BOUNDARY` hits (glossary pointed into numbered stages) and `LIFECYCLE-CREATE` (glossary created `active`); owners rerouted to stage READMEs and indexes, glossary first recorded `draft`. After that all four validators PASS. Suites: tooling 162, agent-governance 104 PASS; document first FAIL (3, see EVD-009), then 313 PASS. | yes | none |
+| EVD-009 | [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Document contract suite | `python3 scripts/run-contract-tests.py --root . --suite document` on the WORK-002 worktree; 2026-11-12 | FAIL | `tests/test_document_frontmatter_negatives.py` pinned `TODAY = 2026-11-11` while using the live `.agents/governance/document-lifecycle.md` as its valid control; SPEC-0162 commit `f0aa80cf` set that file's `updated` to 2026-11-12, so `FM-FUTURE-DATE` failed 3 tests. Fixed in WORK-002 by judging the control on its own `updated` day; the 2999 future-date case keeps its strength. | yes | none |
+| EVD-010 | [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Document contract suite | Same command after the test change; `ruff check` and `ruff format --check` on the test | PASS | 21 modules, 313 tests OK; ruff clean. | yes | EVD-009 |
+
+### SDLC Table Mapping
+
+| Old row | Kept in `sdlc.md` (rule) | Moved to the glossary (meaning) |
+| --- | --- | --- |
+| Requirement | Stage 01 | TERM-REQUIREMENT |
+| Architecture Description / ADR | Stage 02 | TERM-ARCHITECTURE-DESCRIPTION, TERM-ARCHITECTURE-DECISION |
+| Spec / Plan / Task | One Stage 03 package; approval is not execution completion | TERM-SPEC, TERM-PLAN, TERM-TASK |
+| GitHub Issue / Project | Link by ID or URL, no full copy, no two-way status sync, remote state needs observation | TERM-ISSUE |
+| Policy / rule / contract / control | Placement in `.agents/governance/`, scripts and Stage 99; no parallel policy directories; `governance/rule` identity | TERM-POLICY, TERM-RULE, TERM-CONTRACT, TERM-CONTROL |
+| Provider / Role / Agent | Native configuration is not runtime evidence | TERM-PROVIDER, TERM-ROLE, TERM-AGENT |
+| Skill | Lives under `.agents/skills/`; discovery depends on the provider; a reference is not a registration | TERM-SKILL |
+| Hook / Gate / validator / Fixture | A hook need not run QA; a fixture is never production policy input | TERM-HOOK, TERM-GATE, TERM-VALIDATOR, TERM-FIXTURE |
+| QA / CI / CD | Local repository-static QA; hosted jobs' scope; Argo CD boundary | TERM-QA, TERM-CI, TERM-CD |
+| Deployment / release | Neither follows from local validation or a commit | TERM-DEPLOYMENT, TERM-RELEASE-OPERATION |
+| Guide / Runbook | Stage 05 | TERM-GUIDE, TERM-RUNBOOK |
+| Evidence / archive | Task and Git own change evidence; Git owns recovery; Stage 98 is unvalidated history | TERM-EVIDENCE, TERM-ARCHIVE |
 
 ## Criterion Acceptance
 
@@ -62,4 +83,4 @@ This Task records the Repository Vocabulary change for [SPEC-0163](../spec.md) u
 
 ## Verification Summary
 
-Approval recorded; WORK-001 and WORK-002 are pending. Risk class `medium` (registry, validator, test and ADR change).
+WORK-001 is complete (EVD-006). WORK-002 checks pass (EVD-007, EVD-008, EVD-010); a document-suite regression from SPEC-0162 was found and fixed (EVD-009, EVD-010). The glossary is first recorded `draft`; moving it to `active` is a follow-up transition. Risk class `medium` (registry, validator, test and ADR change).

@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.17.1"
+version: "0.18.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-11"
+updated: "2026-11-12"
 layer: "templates"
 ---
 # 99.templates
@@ -82,6 +82,7 @@ form 경로의 대응은 Registry만 소유한다.
   `.codex/provider.md`에 둔다. `governance/skill`은 두 flat workflow의
   생명주기 있는 문서 타입이며 native skill package와 구별한다.
   `governance/knowledge`는 `.agents/knowledge/`의 포인터 문서를,
+  `governance/vocabulary`는 그 안의 `glossary.md` 용어 정의 문서 하나를,
   `governance/prompt`는 `.agents/prompts/`의 요청 계약을 소유하며 두 surface의
   README는 공통 router profile로 해석한다.
   `governance/*`는 기존 path/role identity를 유지한다. 기존 optional

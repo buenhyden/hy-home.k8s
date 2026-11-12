@@ -1,8 +1,8 @@
 ---
 title: "Repository Vocabulary in the Knowledge Surface"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-11-12"
 layer: "architecture"
@@ -13,7 +13,7 @@ artifact_id: "ADR-0058"
 
 ## Overview
 
-This proposed amendment narrows one clause of accepted
+This accepted amendment narrows one clause of accepted
 [ADR-0036](./0036-common-knowledge-and-prompt-surfaces.md) Decision 3, which
 says `.agents/knowledge/` owns hand-maintained pointer material that states no
 policy of its own. It admits exactly one non-pointer document there,
@@ -21,6 +21,9 @@ policy of its own. It admits exactly one non-pointer document there,
 meaning of shared governance terms. Every other clause of ADR-0036 stays.
 ADR-0036 keeps its body; this decision amends it, as ADR-0057 amended
 ADR-0056.
+
+The current user accepted this decision on 2026-11-12. The acceptance is
+recorded in the SPEC-0163 Task. It accepts no SPEC-0163 criterion by itself.
 
 ## Context
 

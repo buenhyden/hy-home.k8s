@@ -1,10 +1,10 @@
 ---
 title: "Context and Memory Policy"
-version: "1.4.1"
+version: "1.5.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-12"
 ---
 
 # Context and Memory Policy
@@ -58,7 +58,8 @@ assumptions. Resume only through the [resume decision](#resume-decision).
   status belong to the owning Spec Task, and durable knowledge stays with the
   responsible policy, skill, operating document, or reference owner. `.agents/knowledge/` maps those owners
   without restating them; it is a pointer surface, never a second store of
-  current state.
+  current state. Its one exception, `glossary.md`, owns term meanings and
+  states no rule (ADR-0058).
 - A checkpoint is an optional, untracked human aid; no repository tool creates
   one. Static validation of a synthetic checkpoint proves neither actual
   checkpoint execution nor provider memory, hook, or compaction behavior.
