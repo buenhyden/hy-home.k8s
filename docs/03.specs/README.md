@@ -64,12 +64,13 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ```text
 03.specs/
 ├── 0161-w00-v14-7-delta-intake/
+├── 0162-single-maintainer-review-path/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── README.md
 ```
 
-현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. 외부 v14.7 실행 패키지의 W00 변경분을 기록한다.
+현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)와 [SPEC-0162 Single-Maintainer Review Path](./0162-single-maintainer-review-path/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분을 기록하고, SPEC-0162는 필수 에이전트 검토를 위험 등급·자동 검사·핵심 diff 점검표·소유자 수용 경로로 바꾼다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
