@@ -7,6 +7,7 @@ import os
 import shlex
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -40,9 +41,54 @@ class ChainedGitHooksTest(unittest.TestCase):
             capture_output=True,
         )
         self.workspace_dir = self.repo / ".git/hooks"
+        self.venv = self.make_venv(self.root / "검증 env")
+        self.venv_setting: str | None = str(self.venv)
+        self.global_hooks: Path | None = None
+        self.write_config()
+
+    def make_venv(self, path: Path) -> Path:
+        site = path / "lib/python3/site-packages"
+        site.mkdir(parents=True)
+        (path / "bin").mkdir()
+        (site / "marker.py").write_text("", encoding="utf-8")
+        (path / "pyvenv.cfg").write_text("home = /usr/bin\n", encoding="utf-8")
+        (path / "bin/python3").symlink_to(sys.executable)
+        stub = path / "bin/pre-commit"
+        stub.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+        stub.chmod(0o755)
+        for directory in (path, path / "bin", path / "lib", site.parent, site):
+            directory.chmod(0o755)
+        for file in (site / "marker.py", path / "pyvenv.cfg"):
+            file.chmod(0o644)
+        return path
+
+    def write_config(self) -> None:
+        lines = []
+        if self.global_hooks is not None:
+            lines += ["[core]", f"\thooksPath = {self.global_hooks}"]
+        if self.venv_setting is not None:
+            lines += ["[hyhome]", f"\tvalidationVenv = {self.venv_setting}"]
+        self.config.write_text(
+            "\n".join(lines) + "\n" if lines else "", encoding="utf-8"
+        )
 
     def set_global_path(self, path: Path) -> None:
-        self.config.write_text(f"[core]\n\thooksPath = {path}\n", encoding="utf-8")
+        self.global_hooks = path
+        self.write_config()
+
+    def shim(self, name: str, body: str) -> None:
+        bin_dir = self.root / "shims"
+        bin_dir.mkdir(exist_ok=True)
+        tool = bin_dir / name
+        tool.write_text(body, encoding="utf-8")
+        tool.chmod(0o755)
+        self.env["PATH"] = str(bin_dir) + os.pathsep + self.env["PATH"]
+
+    def assert_env_refused(self, result: subprocess.CompletedProcess[str]) -> None:
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertIn("HOOK-ENV", result.stderr)
+        self.assertIn("hyhome.validationVenv", result.stderr)
+        self.assertEqual(self.records(), [])
 
     def make_hook(self, path: Path, label: str, *, status: int = 0) -> None:
         path.write_text(
@@ -51,6 +97,7 @@ class ChainedGitHooksTest(unittest.TestCase):
             "pathlib.Path(os.environ['HOOK_TEST_LOG']).open('a', encoding='utf-8').write("
             f"json.dumps({{'label': {label!r}, 'args': sys.argv[1:], "
             "'cwd': os.getcwd(), 'index': os.environ.get('GIT_INDEX_FILE'), "
+            "'path': os.environ.get('PATH'), "
             "'stdin': sys.stdin.read()}, ensure_ascii=False) + '\\n')\n"
             f"sys.exit({status})\n",
             encoding="utf-8",
@@ -173,6 +220,146 @@ class ChainedGitHooksTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("recurs", result.stderr.lower())
         self.assertEqual(self.records(), [])
+
+    def test_only_the_workspace_hook_gets_the_validation_environment(self) -> None:
+        self.set_global_path(self.global_dir)
+        for hook in ("pre-commit", "commit-msg"):
+            with self.subTest(hook=hook):
+                if self.log.exists():
+                    self.log.unlink()
+                self.make_hook(self.global_dir / hook, "global")
+                self.make_hook(self.workspace_dir / hook, "workspace")
+                result = self.run_chain(hook)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                paths = {item["label"]: item["path"] for item in self.records()}
+                self.assertEqual(paths["global"], self.env["PATH"])
+                self.assertEqual(
+                    paths["workspace"],
+                    f"{os.path.realpath(self.venv)}/bin{os.pathsep}{self.env['PATH']}",
+                )
+
+    def test_unusable_environment_blocks_before_any_hook(self) -> None:
+        self.set_global_path(self.global_dir)
+        self.make_hook(self.global_dir / "pre-commit", "global")
+        self.make_hook(self.workspace_dir / "pre-commit", "workspace")
+        cases: dict[str, str | None] = {
+            "unset": None,
+            "empty": "",
+            "relative": "relative/env",
+            "missing": str(self.root / "absent"),
+            "inside checkout": str(self.make_venv(self.repo / "env")),
+        }
+        git_env = {
+            **self.env,
+            "GIT_AUTHOR_NAME": "t",
+            "GIT_AUTHOR_EMAIL": "t@example.invalid",
+            "GIT_COMMITTER_NAME": "t",
+            "GIT_COMMITTER_EMAIL": "t@example.invalid",
+        }
+        for argv in (
+            ("git", "-C", str(self.repo), "commit", "-q", "--allow-empty", "-m", "x"),
+            (
+                "git",
+                "-C",
+                str(self.repo),
+                "worktree",
+                "add",
+                "--detach",
+                "-q",
+                str(self.root / "other tree"),
+            ),
+        ):
+            subprocess.run(argv, env=git_env, check=True, capture_output=True)
+        if self.log.exists():  # the setup commit ran the synthetic hooks
+            self.log.unlink()
+        cases["inside another worktree"] = str(
+            self.make_venv(self.root / "other tree/env")
+        )
+
+        def broken(name: str, change) -> str:
+            path = self.make_venv(self.root / "cases" / name)
+            change(path)
+            return str(path)
+
+        cases["no python3"] = broken("a", lambda v: (v / "bin/python3").unlink())
+        cases["no pre-commit"] = broken("b", lambda v: (v / "bin/pre-commit").unlink())
+        cases["group-writable directory"] = broken("c", lambda v: v.chmod(0o775))
+        cases["other-writable bin"] = broken("d", lambda v: (v / "bin").chmod(0o757))
+        cases["group-writable pre-commit"] = broken(
+            "e", lambda v: (v / "bin/pre-commit").chmod(0o775)
+        )
+        cases["group-writable site-packages file"] = broken(
+            "f", lambda v: (v / "lib/python3/site-packages/marker.py").chmod(0o664)
+        )
+
+        def umask_002(path: Path) -> None:
+            for item in path.rglob("*"):
+                if not item.is_symlink():
+                    item.chmod(
+                        0o775 if item.is_dir() or os.access(item, os.X_OK) else 0o664
+                    )
+            path.chmod(0o775)
+
+        cases["built under umask 002"] = broken("g", umask_002)
+        for name, value in cases.items():
+            with self.subTest(case=name):
+                self.venv_setting = value
+                self.write_config()
+                self.assert_env_refused(self.run_chain("pre-commit"))
+
+    def test_foreign_owner_is_refused(self) -> None:
+        self.make_hook(self.workspace_dir / "pre-commit", "workspace")
+        real = shutil.which("find") or "/usr/bin/find"
+        # Report the invoking account as some other uid, so every entry looks foreign.
+        self.shim(
+            "find",
+            '#!/bin/sh\nme=$(id -u)\nfor a in "$@"; do shift; '
+            '[ "$a" = "$me" ] && a=99999; set -- "$@" "$a"; done\n'
+            f'exec {shlex.quote(real)} "$@"\n',
+        )
+        self.assert_env_refused(self.run_chain("pre-commit"))
+
+    def test_accepted_environment_spellings(self) -> None:
+        self.make_hook(self.workspace_dir / "pre-commit", "workspace")
+        sibling = self.make_venv(Path(f"{self.repo}-venv"))
+        link = self.root / "env link"
+        link.symlink_to(self.venv, target_is_directory=True)
+        for name, value, expected in (
+            ("sibling sharing the checkout prefix", str(sibling), sibling),
+            ("symbolic link", str(link), self.venv),
+            ("home expansion", "~/검증 env", self.venv),
+        ):
+            with self.subTest(case=name):
+                if self.log.exists():
+                    self.log.unlink()
+                self.venv_setting = value
+                self.write_config()
+                result = self.run_chain("pre-commit")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertTrue(
+                    self.records()[0]["path"].startswith(
+                        f"{os.path.realpath(expected)}/bin{os.pathsep}"
+                    )
+                )
+
+    def test_environment_read_error_is_not_treated_as_unset(self) -> None:
+        self.make_hook(self.workspace_dir / "pre-commit", "workspace")
+        self.shim(
+            "git",
+            "#!/bin/sh\n"
+            'case "$*" in *hyhome.validationVenv*) echo boom >&2; exit 7;; esac\n'
+            f'exec {shlex.quote(shutil.which("git") or "/usr/bin/git")} "$@"\n',
+        )
+        result = self.run_chain("pre-commit")
+        self.assertEqual(result.returncode, 7, result.stderr)
+        self.assertIn("HOOK-CONFIG", result.stderr)
+        self.assertEqual(self.records(), [])
+
+    def test_pre_push_without_workspace_hook_needs_no_environment(self) -> None:
+        self.venv_setting = None
+        self.write_config()
+        result = self.run_chain("pre-push", input_text="")
+        self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_push_payload_context_order_and_first_failure(self) -> None:
         self.set_global_path(self.global_dir)

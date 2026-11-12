@@ -1,6 +1,6 @@
 ---
 title: "Repository Vocabulary in the Knowledge Surface"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -81,10 +81,10 @@ is the governance view.
 
 - **Requirements:** [REQ-0003-FR-0032](../../01.requirements/0003-workspace-agent-governance-platform.md).
 - **Architecture:** [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md).
-- **Change:** [SPEC-0163](../../03.specs/0163-repository-vocabulary/spec.md).
+- **Change:** N/A — SPEC-0163 left the tree; Git history recovers it. Its acceptance and exact source are summarized in [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage).
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0036](./0036-common-knowledge-and-prompt-surfaces.md) | Narrows only Decision 3's pointer-only knowledge clause for `.agents/knowledge/glossary.md`; every other clause stays | [SPEC-0163](../../03.specs/0163-repository-vocabulary/spec.md) |
+| [ADR-0036](./0036-common-knowledge-and-prompt-surfaces.md) | Narrows only Decision 3's pointer-only knowledge clause for `.agents/knowledge/glossary.md`; every other clause stays | N/A — SPEC-0163 left the tree; Git history recovers it |
