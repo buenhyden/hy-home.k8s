@@ -2,7 +2,7 @@
 title: "Registry Common Form Model"
 version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-11-12"
 layer: "architecture"
@@ -13,12 +13,15 @@ artifact_id: "ADR-0059"
 
 ## Overview
 
-This proposed amendment adds optional keys to the generation-10 Stage 99
+This accepted amendment adds optional keys to the generation-10 Stage 99
 registry so it can carry one common document form per role. It amends the
 current-state clarification of accepted
 [ADR-0033](./0033-common-document-contract-v9.md), which lists the generation-10
 top-level keys. ADR-0033 keeps its body; this decision amends it, as ADR-0058
 amended ADR-0036. Every other ADR-0033 clause stays.
+
+The current user accepted this decision on 2026-11-12. The acceptance is
+recorded in the SPEC-0168 Task. It accepts no SPEC-0168 criterion by itself.
 
 ## Context
 

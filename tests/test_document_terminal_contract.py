@@ -190,6 +190,43 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         with self.assertRaisesRegex(authority.AuthorityError, "STAGE99_AGENT_FIELD"):
             authority.validate_registry_authority(registry)
 
+    def test_stage99_registry_still_rejects_a_bare_role_key_on_a_profile(self) -> None:
+        authority = load_document_authority()
+        registry = clone_registry(self.registry)
+        registry["profiles"][0]["role"] = "policy"
+        with self.assertRaisesRegex(authority.AuthorityError, "STAGE99_AGENT_FIELD"):
+            authority.validate_registry_authority(registry)
+
+    def test_stage99_authority_admits_the_optional_form_keys(self) -> None:
+        authority = load_document_authority()
+        registry = clone_registry(self.registry)
+        authority.validate_registry_authority(registry)
+        self.assertIn("common_forms", registry)
+        self.assertTrue(any("document_role" in item for item in registry["profiles"]))
+        registry["profiles"][0]["template_definition"] = {}
+        authority.validate_registry_authority(registry)
+        registry["profiles"][0]["document_roles"] = ["policy"]
+        with self.assertRaisesRegex(
+            authority.AuthorityError, "REGISTRY_PROFILE_FIELDS"
+        ):
+            authority.validate_registry_authority(registry)
+
+    def test_typed_stage_and_document_role_match_the_schema(self) -> None:
+        contracts = load_document_contracts()
+        schema = json.loads(PROFILE_SCHEMA_PATH.read_text(encoding="utf-8"))
+        stages = schema["properties"]["shared_contract"]["properties"]["stage"]["enum"]
+        self.assertEqual(
+            set(get_args(get_type_hints(contracts.SharedContract)["stage"])),
+            set(stages),
+        )
+        self.assertEqual(set(stages), {"candidate", "approved", "adopted"})
+        roles = schema["properties"]["profiles"]["items"]["properties"][
+            "document_role"
+        ]["enum"]
+        hint = get_type_hints(contracts.DocumentProfile)["document_role"]
+        literal = next(item for item in get_args(hint) if item is not type(None))
+        self.assertEqual(set(get_args(literal)), set(roles))
+
     def test_template_references_a_profile_not_a_destination(self) -> None:
         authority = load_document_authority()
         with self.assertRaisesRegex(authority.AuthorityError, "TEMPLATE_DESTINATION"):

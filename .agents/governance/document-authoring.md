@@ -235,9 +235,12 @@ reported as full, and an approved compatible edition coexisting with a newer
 one is not a defect by itself. The target contract record names the contract
 ID, version, single authoring owner, approval reference with approver and
 date, scope, exceptions, effective point, migration, rollback and consumer
-edition. Today's registry carries `contract_id`, `version`, `stage`
-(`candidate` or `adopted`), `owner`, `approval_ref` and `extensions`; the
-remaining fields and an `approved` stage are registry work, not yet present.
+edition. The registry carries `contract_id`, `version`, `stage` (`candidate`,
+`approved` or `adopted`), `owner`, `approval_ref`, `approved_by`, `approved_at`,
+`effective_from`, `extensions` and the optional `scope`, `migration`, `rollback`
+and `consumer_version`; an approved or adopted record needs the approval facts,
+and a fact no record states is `unverified` and is admitted only beside an
+`approval_ref`.
 
 A regional extension may bind paths, commands, environments, native syntax,
 quality targets and deployment. Each extension states its condition, owner,

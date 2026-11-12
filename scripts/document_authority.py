@@ -28,14 +28,16 @@ TOP_LEVEL_KEYS = frozenset(
         "lifecycle_domains",
     }
 )
-# SPEC-0091 adds the README navigation contract and SPEC-0093 the document
-# language contract. A comparison-base registry from before either decision
-# has none of them, so the keys are admitted beside the required set.
+# SPEC-0091 adds the README navigation contract, SPEC-0093 the document
+# language contract and SPEC-0168 the common form model. A comparison-base
+# registry from before any of those decisions has none of them, so the keys
+# are admitted beside the required set.
 OPTIONAL_TOP_LEVEL_KEYS = frozenset(
     {
         "readme_navigation",
         "document_language",
         "shared_contract",
+        "common_forms",
     }
 )
 PROFILE_KEYS = frozenset(
@@ -53,6 +55,9 @@ PROFILE_KEYS = frozenset(
         "placeholder_policy",
     }
 )
+# SPEC-0168: a profile may bind a common document role and, as a template, carry
+# its TemplateDefinition. The agent-field ban below stays in force for both.
+OPTIONAL_PROFILE_KEYS = frozenset({"document_role", "template_definition"})
 DOCUMENT_FAMILIES = frozenset(
     {"common", "governance", "sdlc", "operation", "reference", "evaluation"}
 )
@@ -160,10 +165,11 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
         if not isinstance(profile_id, str) or not profile_id or profile_id in seen:
             raise AuthorityError("REGISTRY_PROFILE_ID: IDs must be unique strings")
         seen.add(profile_id)
-        if set(profile) != PROFILE_KEYS:
+        if set(profile) - OPTIONAL_PROFILE_KEYS != PROFILE_KEYS:
             raise AuthorityError(
                 f"REGISTRY_PROFILE_FIELDS: {profile_id}: "
-                f"expected {sorted(PROFILE_KEYS)}, actual {sorted(profile)}"
+                f"expected {sorted(PROFILE_KEYS)} plus optional "
+                f"{sorted(OPTIONAL_PROFILE_KEYS)}, actual {sorted(profile)}"
             )
         if profile.get("family") not in DOCUMENT_FAMILIES:
             raise AuthorityError(f"REGISTRY_PROFILE_FAMILY: {profile_id}")
