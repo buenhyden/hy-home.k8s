@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.23.12"
+version: "0.23.13"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -64,12 +64,13 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ```text
 03.specs/
 ├── 0161-w00-v14-7-delta-intake/
+├── 0168-w03-common-form-model/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── README.md
 ```
 
-현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, 그 단계들이 끝날 때까지 남긴다.
+현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)와 [SPEC-0168 W03 Common Form Model](./0168-w03-common-form-model/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, 그 단계들이 끝날 때까지 남긴다. SPEC-0168은 W03의 첫 단계로, 역할별 공통 문서 양식을 담을 registry·검사 모델을 더하고 현재 문서의 제목은 바꾸지 않는다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
