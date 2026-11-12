@@ -1,6 +1,6 @@
 ---
 title: "W02 Safe Disposition"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-12"
@@ -52,8 +52,8 @@ Read-only survey at `b4925358` by a delegated general-purpose agent, with the li
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan), [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | Edit the three W02 files the Spec names. | platform | in-progress | PASS | EVD-004, EVD-006 |
-| WORK-002 | [VAL-DISPOSE-003](../spec.md#success-criteria--verification-plan) | Record the handoffs and the exact-index QA. | platform | in-progress | PASS | EVD-005; exact-index QA and hooks run on the implementation commit |
+| WORK-001 | [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan), [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | Edit the three W02 files the Spec names. | platform | completed | PASS | EVD-004, EVD-006 |
+| WORK-002 | [VAL-DISPOSE-003](../spec.md#success-criteria--verification-plan) | Record the handoffs and the exact-index QA. | platform | completed | PASS | EVD-005; exact-index QA and hooks run on the implementation commit |
 
 ## Task Evidence
 
@@ -65,6 +65,7 @@ Read-only survey at `b4925358` by a delegated general-purpose agent, with the li
 | EVD-004 | [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan), [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Owner edits, anchor and phrase search, document checks | Working tree over `ff98cab8`: `document-lifecycle.md` 2.7.0, `docs/01.requirements/README.md` 0.9.1, `docs/02.architecture/AGENTS.md`; 2026-11-12 | PASS | Anchor search on a whitespace-collapsed copy of `document-lifecycle.md`: `reachable only through the reflog`, `not reformatted, translated or normalized`, `repository development documents only` and `` a `rejected` ADR is not current `` each 1 hit. README phrase search: 2 hits before, 0 after. Stage 02 `AGENTS.md` rule 2 names `rejected` as the outcome that triggers the exit, with the deferral condition. Strict registry (291 paths), Markdown profile, link/owner and lifecycle validators PASS; agent governance PASS; `document` suite 313 tests OK. | yes | none |
 | EVD-005 | [VAL-DISPOSE-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Handoff record | Spec Interfaces and the Handoffs table below | PASS | W03 and W04 (registry `rejected` state) and W05 (unreachable `done` and `archived` status branches) have owner, interface and resume condition; none started here. | yes | none |
 | EVD-006 | [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan), [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Semantic review: risk class and core-diff checklist | Diff of the three W02 files over `ff98cab8` | PASS | Risk class `medium` (policy change). Checklist: each Contracts item is in its named owner; one writer per file (this Task); consistent with ADR-0053, ADR-0056 (deferral kept) and ADR-0057 (no presence check); no check removed or weakened; no secret read; no current document disposed; recovery is reverting the implementation commit. No permission, trigger or protected action changed. Findings: none `BLOCK` or `FIX`; NOTE: the registry still allows a stored `rejected` ADR until W03 and W04 decide. | yes | none |
+| EVD-007 | [VAL-DISPOSE-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-12 exit authority; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Handoffs
 
@@ -77,9 +78,9 @@ Read-only survey at `b4925358` by a delegated general-purpose agent, with the li
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan) | pending | none | Lifecycle anchors and KEEP evidence | platform |
-| [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | pending | none | README phrase search, Stage 02 rule, document checks | platform |
-| [VAL-DISPOSE-003](../spec.md#success-criteria--verification-plan) | pending | none | Handoffs and exact-index QA | platform |
+| [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004, EVD-006 | Accepted by the user on 2026-11-12 (direct answer "Accept all three" to the SPEC-0167 criterion question) | platform |
+| [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the user on 2026-11-12 (direct answer "Accept all three" to the SPEC-0167 criterion question) | platform |
+| [VAL-DISPOSE-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the user on 2026-11-12 (direct answer "Accept all three" to the SPEC-0167 criterion question) | platform |
 
 ## Approval and Safety Boundaries
 
@@ -92,6 +93,13 @@ Read-only survey at `b4925358` by a delegated general-purpose agent, with the li
 - **Rollback Plan**: revert the implementation commit
 - **Evidence Location**: this Task
 
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document lifecycle policy 2.7.0 (Plan Promotion row), with the Stage 01 README and Stage 02 `AGENTS.md` routing to it. The W03, W04 and W05 handoffs above stay recoverable from Git history and are summarized in the REQ-0003 Archived Lineage row. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's explicit 2026-11-12 answer "Exit now (Recommended)" is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
+
 ## Verification Summary
 
-WORK-001 and WORK-002 done; checks in EVD-004 PASS; semantic review in EVD-006 has no `BLOCK` or `FIX`. Risk class `medium` (policy change). Criterion acceptance is pending the operator. Not run: live checks (no live surface). Rollback: revert the implementation commit. Residual risk: the rules are manual review conditions without a new check, by design (ADR-0056, ADR-0057). Next owner: the operator for acceptance; W03 can start independently.
+WORK-001 and WORK-002 done; checks in EVD-004 PASS; semantic review in EVD-006 has no `BLOCK` or `FIX`. Risk class `medium` (policy change). The user accepted all three criteria on 2026-11-12. Not run: live checks (no live surface). Rollback: revert the implementation commit. Residual risk: the rules are manual review conditions without a new check, by design (ADR-0056, ADR-0057). Next owner: package exit per EVD-007; W03 can start independently.
