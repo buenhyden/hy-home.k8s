@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import dataclasses
 import importlib.util
 import json
 import sys
@@ -68,6 +69,35 @@ ROLE_BINDINGS = {
 }
 GUIDE = ("operation/guide", "common/template-operation-guide")
 ADR = ("sdlc/architecture-decision", "common/template-sdlc-architecture-decision")
+GUIDE_TREE = (
+    ("Purpose", ("Outcome", "Boundaries")),
+    ("Prerequisites", ("Environment", "Permissions")),
+    ("Procedure", ("Actions", "Exceptions")),
+    ("Verification", ("Expected Result", "Troubleshooting")),
+)
+GUIDE_EXTENSION = {
+    "id": "guide-lifecycle-traceability",
+    "kind": "local_h3",
+    "condition": (
+        "a guide in a status the body contract enforces (draft, in-review, "
+        "active, deprecated) states its promoted owner or an N/A reason"
+    ),
+    "owner": "platform",
+    "verification": "the body-contract check",
+    "review": "when the Guide form version changes",
+    "removal": "when guide lineage has another registered owner",
+    "parent_id": "guide-verification",
+    "title": "Lifecycle Traceability",
+}
+GUIDE_TABLE_KEYS = {
+    "Steps": ("guide-procedure-actions", ("Step", "Action", "Check"), 0, "Step"),
+    "Lifecycle Traceability": (
+        "guide-lifecycle-traceability",
+        ("Promoted owner", "Audience outcome", "Operating surface"),
+        1,
+        "Promoted owner",
+    ),
+}
 
 
 def load_raw() -> dict:
@@ -181,6 +211,7 @@ def definition(**fields: object) -> dict:
             "retained_history": "completed documents keep their headings",
             "rollback": "revert the change",
         },
+        "tables": [],
     }
     item.update(fields)
     return item
@@ -215,9 +246,14 @@ def with_form(
             profile["document_role"] = role
             profile["sections"].update(required=[], optional=[], forbidden=[])
             profile["relationships"]["body_contract"] = None
-            if profile["mode"] == "template" and definitions:
-                profile["template_definition"] = definition()
-    candidate["common_forms"]["forms"] = [form(role, sections, extensions)]
+            if profile["mode"] == "template":
+                profile.pop("template_definition", None)
+                if definitions:
+                    profile["template_definition"] = definition()
+    forms = candidate["common_forms"]["forms"]
+    candidate["common_forms"]["forms"] = [
+        item for item in forms if item["form_id"] != role
+    ] + [form(role, sections, extensions)]
     return candidate
 
 
@@ -230,13 +266,54 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_no_form(self) -> None:
+    def test_repository_registry_binds_clear_roles_and_carries_only_the_guide_form(
+        self,
+    ) -> None:
         raw = load_raw()
         self.assertEqual(raw["schema_version"], 10)
+        common = raw["common_forms"]
+        self.assertEqual(common["contract_id"], "COMMON-DOC-FORM-1")
+        self.assertEqual(common["version"], "1.0.0")
+        self.assertEqual([item["form_id"] for item in common["forms"]], ["guide"])
+        guide = common["forms"][0]
+        self.assertEqual((guide["form_id"], guide["title"]), ("guide", "Guide"))
+        self.assertEqual(guide["h1"], "{{document_title}}")
         self.assertEqual(
-            raw["common_forms"],
-            {"contract_id": "COMMON-DOC-FORM-1", "version": "1.0.0", "forms": []},
+            [
+                (
+                    item["section_id"],
+                    item["title"],
+                    item["order"],
+                    [
+                        (child["section_id"], child["title"], child["order"])
+                        for child in item["children"]
+                    ],
+                )
+                for item in guide["sections"]
+            ],
+            [
+                (
+                    f"guide-{title.lower()}",
+                    title,
+                    position,
+                    [
+                        (
+                            f"guide-{title.lower()}-{child.lower().replace(' ', '-')}",
+                            child,
+                            n,
+                        )
+                        for n, child in enumerate(children, start=1)
+                    ],
+                )
+                for position, (title, children) in enumerate(GUIDE_TREE, start=1)
+            ],
         )
+        every = [
+            node for item in guide["sections"] for node in (item, *item["children"])
+        ]
+        self.assertEqual({node["requiredness"] for node in every}, {"required"})
+        self.assertEqual({node.get("link_only") for node in every}, {False})
+        self.assertEqual(guide["extensions"], [GUIDE_EXTENSION])
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
         for profile_id, profile in by_id.items():
             sources = profile["relationships"]["source_profile_ids"]
@@ -245,7 +322,34 @@ class RepositoryRegistryTests(unittest.TestCase):
             )
             with self.subTest(profile=profile_id):
                 self.assertEqual(profile.get("document_role"), expected)
-                self.assertNotIn("template_definition", profile)
+                if profile_id == GUIDE[1]:
+                    self.assertEqual(
+                        {
+                            table["name"]: (
+                                table["section"],
+                                tuple(column["key"] for column in table["columns"]),
+                                table["minimum_rows"],
+                                table["row_identity"],
+                            )
+                            for table in profile["template_definition"]["tables"]
+                        },
+                        GUIDE_TABLE_KEYS,
+                    )
+                else:
+                    self.assertNotIn("template_definition", profile)
+        for profile_id in GUIDE:
+            self.assertEqual(
+                by_id[profile_id]["sections"]["required"]
+                + by_id[profile_id]["sections"]["optional"]
+                + by_id[profile_id]["sections"]["forbidden"],
+                [],
+            )
+            self.assertEqual(
+                by_id[profile_id]["relationships"]["body_contract"]["section"],
+                "Verification",
+            )
+            self.assertNotIn("substantive_body", by_id[profile_id]["sections"])
+            self.assertNotIn("ordered", by_id[profile_id]["sections"])
         self.assertEqual(
             {
                 by_id[i]["document_role"]
@@ -259,11 +363,25 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_without_a_form(self) -> None:
+    def test_repository_registry_loads_with_only_the_guide_form(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
-        self.assertEqual(registry.common_forms, ())
+        self.assertEqual([item.form_id for item in registry.common_forms], ["guide"])
+        loaded = registry.common_forms[0]
         for profile in registry.profiles:
-            self.assertIsNone(profile.form)
+            with self.subTest(profile=profile.profile_id):
+                if profile.profile_id in GUIDE:
+                    self.assertIs(profile.form, loaded)
+                    self.assertEqual(
+                        [table.name for table in profile.tables],
+                        ["Steps", "Lifecycle Traceability"],
+                    )
+                else:
+                    self.assertIsNone(profile.form)
+                    self.assertEqual(profile.tables, ())
+                if profile.profile_id == GUIDE[1]:
+                    self.assertIsNotNone(profile.template_definition)
+                else:
+                    self.assertIsNone(profile.template_definition)
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         self.assertEqual(by_id["governance/rule"].document_role, "policy")
         self.assertIsNone(by_id["governance/role"].document_role)
@@ -486,23 +604,22 @@ class FormRegistryTests(unittest.TestCase):
             self.assertIn("REGISTRY_POLICY_ROLE", rules_of(raw))
         raw = load_raw()
         for profile in raw["profiles"]:
-            profile.pop("document_role", None)
+            if profile["id"] not in GUIDE:
+                profile.pop("document_role", None)
         self.assertEqual(rules_of(raw), set())
 
     def test_template_twin_must_share_its_sources_role(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         REGISTRY_CHECK._assert_template_source_parity(registry)
-        raw = load_raw()
-        next(item for item in raw["profiles"] if item["id"] == GUIDE[1])[
-            "document_role"
-        ] = "runbook"
+        raw = self.candidate()
+        profile_of(raw, GUIDE[1])["document_role"] = "runbook"
         loaded = CONTRACTS.validate_registry(ROOT, raw)
         with self.assertRaisesRegex(AssertionError, "template/source contract differs"):
             REGISTRY_CHECK._assert_template_source_parity(loaded)
-        raw = load_raw()
-        next(item for item in raw["profiles"] if item["id"] == GUIDE[1]).pop(
-            "document_role"
-        )
+        raw = self.candidate()
+        twin = profile_of(raw, GUIDE[1])
+        twin.pop("document_role")
+        twin.pop("template_definition")
         loaded = CONTRACTS.validate_registry(ROOT, raw)
         with self.assertRaisesRegex(AssertionError, "template/source contract differs"):
             REGISTRY_CHECK._assert_template_source_parity(loaded)
@@ -556,7 +673,13 @@ class TemplateDefinitionTests(unittest.TestCase):
         self.assertIn("REGISTRY_TEMPLATE_DEFINITION", rules_of(raw))
 
     def test_incomplete_definition_fails_the_schema(self) -> None:
-        for key in ("purpose", "consumer_paths", "migration", "validation"):
+        for key in (
+            "purpose",
+            "consumer_paths",
+            "migration",
+            "validation",
+            "tables",
+        ):
             incomplete = definition()
             del incomplete[key]
             with self.subTest(missing=key):
@@ -565,6 +688,155 @@ class TemplateDefinitionTests(unittest.TestCase):
             "REGISTRY_SCHEMA",
             rules_of(self.candidate(definition(role="Release"))),
         )
+
+
+def profile_of(raw: dict, profile_id: str) -> dict:
+    return next(item for item in raw["profiles"] if item["id"] == profile_id)
+
+
+def guide_tables(raw: dict) -> list[dict]:
+    return profile_of(raw, GUIDE[1])["template_definition"]["tables"]
+
+
+class GuideFormRegistryTests(unittest.TestCase):
+    """SPEC-0169 VAL-GUIDEFORM-001: the Guide form, its tables and their checks."""
+
+    def test_the_repository_registry_is_valid(self) -> None:
+        self.assertEqual(rules_of(load_raw()), set())
+
+    def test_loaded_guide_heading_lists_equal_the_form_h2_titles(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        titles = tuple(title for title, _ in GUIDE_TREE)
+        self.assertEqual(
+            tuple(item.title for item in registry.common_forms[0].sections), titles
+        )
+        by_id = {profile.profile_id: profile for profile in registry.profiles}
+        for profile_id in GUIDE:
+            with self.subTest(profile=profile_id):
+                headings = by_id[profile_id].headings
+                self.assertEqual(headings.required, titles)
+                self.assertEqual(headings.allowed, titles)
+                self.assertFalse(headings.substantive_body)
+                self.assertFalse(headings.ordered)
+
+    def test_derived_required_list_skips_a_conditional_h2(self) -> None:
+        sections = guide_sections()
+        sections[1]["requiredness"] = "conditional"
+        sections[1]["condition"] = "the guide has steps"
+        profile = typed_profiles(with_form(load_raw(), "guide", GUIDE, sections))[
+            GUIDE[0]
+        ]
+        self.assertEqual(profile.headings.required, ("Overview", "Related Documents"))
+        self.assertEqual(
+            profile.headings.allowed, ("Overview", "Procedure", "Related Documents")
+        )
+
+    def test_the_loader_types_the_tables_and_copies_them_to_the_source(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        by_id = {profile.profile_id: profile for profile in registry.profiles}
+        twin, source = by_id[GUIDE[1]], by_id[GUIDE[0]]
+        self.assertEqual(source.tables, twin.tables)
+        steps, lifecycle = twin.tables
+        self.assertEqual(
+            (steps.name, steps.section, steps.minimum_rows, steps.row_identity),
+            ("Steps", "guide-procedure-actions", 0, "Step"),
+        )
+        self.assertEqual(
+            [column.key for column in lifecycle.columns],
+            list(GUIDE_TABLE_KEYS["Lifecycle Traceability"][1]),
+        )
+        self.assertTrue(all(column.required for column in steps.columns))
+        with self.assertRaises(dataclasses.FrozenInstanceError):
+            steps.name = "Other"  # type: ignore[misc]
+
+    def test_body_section_must_be_a_required_h2_of_the_form(self) -> None:
+        for bad in ("Related Documents", "Lifecycle Traceability", "Actions"):
+            for profile_id in GUIDE:
+                raw = load_raw()
+                profile_of(raw, profile_id)["relationships"]["body_contract"][
+                    "section"
+                ] = bad
+                with self.subTest(section=bad, profile=profile_id):
+                    self.assertIn("REGISTRY_BODY_SECTION", rules_of(raw))
+
+    def test_a_guide_profile_with_h2_lists_is_refused(self) -> None:
+        for key in ("required", "optional", "forbidden"):
+            for profile_id in GUIDE:
+                raw = load_raw()
+                profile_of(raw, profile_id)["sections"][key] = ["Verification"]
+                with self.subTest(list=key, profile=profile_id):
+                    self.assertIn("REGISTRY_FORM_LEGACY_LISTS", rules_of(raw))
+
+    def test_a_table_section_must_be_a_form_section_or_extension(self) -> None:
+        raw = load_raw()
+        guide_tables(raw)[0]["section"] = "guide-missing"
+        self.assertIn("REGISTRY_TABLE_SECTION", rules_of(raw))
+        raw = load_raw()
+        guide_tables(raw)[0]["section"] = "Actions"
+        self.assertIn("REGISTRY_TABLE_SECTION", rules_of(raw))
+        for accepted in ("guide-purpose", "guide-verification-troubleshooting"):
+            raw = load_raw()
+            guide_tables(raw)[0]["section"] = accepted
+            with self.subTest(section=accepted):
+                self.assertEqual(rules_of(raw), set())
+
+    def test_a_table_needs_a_form_to_name_a_section(self) -> None:
+        raw = load_raw()
+        raw["common_forms"]["forms"] = []
+        for profile_id in GUIDE:
+            profile_of(raw, profile_id)["sections"]["required"] = ["Verification"]
+        self.assertIn("REGISTRY_TABLE_SECTION", rules_of(raw))
+
+    def test_column_keys_must_be_unique_and_name_the_row_identity(self) -> None:
+        raw = load_raw()
+        columns = guide_tables(raw)[0]["columns"]
+        columns[2]["key"] = "Action"
+        self.assertIn("REGISTRY_TABLE_COLUMNS", rules_of(raw))
+        raw = load_raw()
+        guide_tables(raw)[0]["row_identity"] = "Number"
+        self.assertIn("REGISTRY_TABLE_COLUMNS", rules_of(raw))
+
+    def test_the_body_contract_table_keeps_the_body_contract_columns(self) -> None:
+        for mutate in (
+            lambda keys: keys.reverse(),
+            lambda keys: keys.__setitem__(2, "Surface"),
+            lambda keys: keys.pop(),
+            lambda keys: keys.append("Notes"),
+        ):
+            raw = load_raw()
+            table = guide_tables(raw)[1]
+            keys = [column["key"] for column in table["columns"]]
+            mutate(keys)
+            table["columns"] = [
+                {"key": key, "meaning": "m", "data_type": "string", "required": True}
+                for key in keys
+            ]
+            with self.subTest(keys=keys):
+                self.assertIn("REGISTRY_TABLE_BODY_CONTRACT", rules_of(raw))
+
+    def test_a_definition_without_tables_fails_the_schema(self) -> None:
+        raw = load_raw()
+        del profile_of(raw, GUIDE[1])["template_definition"]["tables"]
+        self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
+
+    def test_the_table_schema_is_closed(self) -> None:
+        def broken(change) -> dict:
+            raw = load_raw()
+            change(guide_tables(raw)[0])
+            return raw
+
+        for label, change in (
+            ("extra table key", lambda t: t.update(extra=1)),
+            ("extra column key", lambda t: t["columns"][0].update(extra=1)),
+            ("column without required", lambda t: t["columns"][0].pop("required")),
+            ("column without meaning", lambda t: t["columns"][0].pop("meaning")),
+            ("no columns", lambda t: t.update(columns=[])),
+            ("negative minimum", lambda t: t.update(minimum_rows=-1)),
+            ("no row identity", lambda t: t.pop("row_identity")),
+            ("no minimum rows", lambda t: t.pop("minimum_rows")),
+        ):
+            with self.subTest(label):
+                self.assertIn("REGISTRY_SCHEMA", rules_of(broken(change)))
 
 
 H1 = "# Guide title"
@@ -830,6 +1102,174 @@ class HeadingTreeTests(unittest.TestCase):
         self.assertIn("BODY-H3-UNSUPPORTED", [i.rule_id for i in broken])
 
 
+STEPS = "| Step | Action | Check |\n| --- | --- | --- |\n| 1 | Run | Read |"
+OTHER = "| Name | Value |\n| --- | --- |\n| a | b |"
+LIFECYCLE = (
+    "| Promoted owner | Audience outcome | Operating surface |\n"
+    "| --- | --- | --- |\n| N/A | Readers | Surface |"
+)
+
+
+def guide_body(actions: str, verification: str = "") -> str:
+    return md(
+        "# Guide",
+        "## Procedure",
+        "### Actions",
+        actions,
+        "### Exceptions",
+        "None.",
+        "## Verification",
+        verification or "### Expected Result\n\nPass.",
+    )
+
+
+class TableCheckTests(unittest.TestCase):
+    """SPEC-0169 VAL-GUIDEFORM-002: the document table check in isolation."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        raw = load_raw()
+        cls.profile = typed_profiles(raw)[GUIDE[0]]
+        guide_tables(raw)[0]["minimum_rows"] = 2
+        profiles = typed_profiles(raw)
+        cls.strict = profiles[GUIDE[0]]
+        cls.template = profiles[GUIDE[1]]
+
+    def found(self, body: str, profile=None) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._table_diagnostics(
+                GUIDE_PATH, profile or self.profile, body
+            )
+        )
+
+    def test_a_matching_table_passes(self) -> None:
+        self.assertEqual(self.found(guide_body(STEPS)), [])
+
+    def test_a_missing_optional_table_or_section_passes(self) -> None:
+        self.assertEqual(self.found(guide_body("Run the command.")), [])
+        self.assertEqual(self.found(md("# Guide", "## Procedure")), [])
+        self.assertEqual(self.found(md("# Guide", "## Purpose")), [])
+
+    def test_other_tables_in_the_section_are_ignored(self) -> None:
+        self.assertEqual(self.found(guide_body(OTHER + "\n\n" + STEPS)), [])
+        self.assertEqual(self.found(guide_body(OTHER)), [])
+        # An ignored table never counts towards the minimum.
+        self.assertEqual(
+            self.found(guide_body(OTHER), self.strict), ["BODY-TABLE-ROWS"]
+        )
+
+    def test_a_reordered_missing_or_extra_column_fails(self) -> None:
+        for header in (
+            "| Step | Check | Action |",
+            "| Step | Action |",
+            "| Step | Action | Check | Note |",
+            "| Step | Action | Check | Check |",
+        ):
+            cells = header.count("|") - 1
+            body = f"{header}\n" + "| --- " * cells + "|\n" + "| 1 " * cells + "|"
+            with self.subTest(header=header):
+                self.assertEqual(self.found(guide_body(body)), ["BODY-TABLE-COLUMNS"])
+
+    def test_every_identified_table_is_checked(self) -> None:
+        wrong = "| Step | Action |\n| --- | --- |\n| 1 | Run |"
+        body = STEPS + "\n\n" + wrong
+        self.assertEqual(self.found(guide_body(body)), ["BODY-TABLE-COLUMNS"])
+
+    def test_the_minimum_rows_count_every_identified_table_in_the_section(
+        self,
+    ) -> None:
+        header_only = "| Step | Action | Check |\n| --- | --- | --- |"
+        self.assertEqual(
+            self.found(guide_body(header_only), self.strict), ["BODY-TABLE-ROWS"]
+        )
+        self.assertEqual(
+            self.found(guide_body(STEPS), self.strict), ["BODY-TABLE-ROWS"]
+        )
+        self.assertEqual(
+            self.found(guide_body(STEPS + "\n| 2 | Run | Read |"), self.strict),
+            [],
+        )
+        split = guide_body(STEPS + "\n\n#### Detail\n\n" + STEPS)
+        self.assertEqual(self.found(split, self.strict), [])
+
+    def test_a_table_in_another_section_is_not_looked_at(self) -> None:
+        body = md(
+            "# Guide",
+            "## Procedure",
+            "### Actions",
+            "Run it.",
+            "### Exceptions",
+            "| Step | Action |\n| --- | --- |\n| 1 | Run |",
+        )
+        self.assertEqual(self.found(body), [])
+        self.assertEqual(self.found(body, self.strict), ["BODY-TABLE-ROWS"])
+
+    def test_a_non_unique_section_heading_is_left_to_the_tree_check(self) -> None:
+        body = guide_body(STEPS) + "\n### Actions\n\n" + OTHER + "\n"
+        self.assertEqual(self.found(body, self.strict), [])
+
+    def test_the_body_contract_table_is_not_checked_twice(self) -> None:
+        wrong = LIFECYCLE.replace("Operating surface", "Surface")
+        body = guide_body(STEPS, "### Lifecycle Traceability\n\n" + wrong)
+        self.assertEqual(self.found(body), [])
+        self.assertEqual(
+            sorted(
+                item.rule_id
+                for item in MARKDOWN._body_contract_diagnostics(
+                    GUIDE_PATH, self.profile, body, "active", "registry"
+                )
+            ),
+            ["BODY-CONTRACT-COLUMNS"],
+        )
+
+    def test_a_profile_without_tables_is_not_checked(self) -> None:
+        runbook = typed_profiles(load_raw())["operation/runbook"]
+        self.assertEqual(runbook.tables, ())
+        self.assertEqual(self.found(guide_body(STEPS), runbook), [])
+
+    def test_the_check_runs_for_authored_documents_only(self) -> None:
+        wrong = "| Step | Action |\n| --- | --- |\n| 1 | Run |"
+        text = (
+            "---\n"
+            'title: "Guide"\nversion: "1.0.0"\ntype: "operation/guide"\n'
+            'status: "active"\nowner: "platform"\nupdated: "2026-11-12"\n'
+            'layer: "operations"\nartifact_id: "GDE-0001"\n---\n\n' + guide_body(wrong)
+        )
+
+        def rules(profile) -> list[str]:
+            return [
+                item.rule_id
+                for item in MARKDOWN.validate_document_text(
+                    text, GUIDE_PATH, profile, "strict"
+                )
+                if item.rule_id.startswith("BODY-TABLE-")
+            ]
+
+        self.assertEqual(rules(self.profile), ["BODY-TABLE-COLUMNS"])
+        self.assertEqual(rules(self.template), [])
+        self.assertEqual(rules(self.strict), ["BODY-TABLE-COLUMNS", "BODY-TABLE-ROWS"])
+
+
+class TableIteratorTests(unittest.TestCase):
+    def test_every_table_is_yielded_in_order(self) -> None:
+        text = md(
+            "| A | B |\n| --- | --- |\n| 1 | 2 |\n| 3 | 4 |",
+            "text",
+            "```\n| X | Y |\n| - | - |\n```",
+            "| C |\n| :---: |",
+        )
+        self.assertEqual(
+            list(MARKDOWN._visible_tables(text)),
+            [(["A", "B"], [["1", "2"], ["3", "4"]]), (["C"], [])],
+        )
+        self.assertEqual(
+            MARKDOWN._first_visible_table(text),
+            (["A", "B"], [["1", "2"], ["3", "4"]]),
+        )
+        self.assertIsNone(MARKDOWN._first_visible_table("no table here"))
+
+
 class RetainedFormTests(unittest.TestCase):
     """W03-D02: an ADR keeps its H2 lists for the statuses a retained form names."""
 
@@ -937,10 +1377,17 @@ class RetainedFormTests(unittest.TestCase):
 
 
 class CurrentRegistryUnchangedTests(unittest.TestCase):
-    def test_no_current_profile_uses_the_tree(self) -> None:
+    def test_only_the_guide_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
-        self.assertEqual(registry.common_forms, ())
-        self.assertTrue(all(profile.form is None for profile in registry.profiles))
+        self.assertEqual([item.form_id for item in registry.common_forms], ["guide"])
+        self.assertEqual(
+            sorted(p.profile_id for p in registry.profiles if p.form is not None),
+            sorted(GUIDE),
+        )
+        self.assertEqual(
+            [p.profile_id for p in registry.profiles if p.template_definition],
+            [GUIDE[1]],
+        )
 
 
 if __name__ == "__main__":

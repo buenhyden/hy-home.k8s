@@ -7,6 +7,7 @@ import dataclasses
 import datetime as dt
 import importlib.util
 import io
+import json
 import re
 import shutil
 import subprocess
@@ -215,6 +216,18 @@ class PathArtifactIdentityTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="artifact-identity-") as temporary:
             root = Path(temporary)
             shutil.copytree(ROOT / "docs/99.templates", root / "docs/99.templates")
+            # TemplateDefinition consumer paths must exist for the registry.
+            registry = json.loads(
+                (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
+            )
+            for profile in registry["profiles"]:
+                for named in profile.get("template_definition", {}).get(
+                    "consumer_paths", ()
+                ):
+                    target = root / named
+                    if not target.exists():
+                        target.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copyfile(ROOT / named, target)
             source = (
                 ROOT / "docs/02.architecture/descriptions/"
                 "0004-argo-rollouts-progressive-delivery.md"

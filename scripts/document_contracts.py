@@ -697,6 +697,27 @@ DocumentRole = Literal[
 
 
 @dataclass(frozen=True)
+class TableColumn:
+    """One column of a template table; `key` is the exact header text."""
+
+    key: str
+    meaning: str
+    data_type: str
+    required: bool
+
+
+@dataclass(frozen=True)
+class TableContract:
+    """A table a template carries inside one section of its role's form."""
+
+    name: str
+    section: str
+    columns: tuple[TableColumn, ...]
+    minimum_rows: int
+    row_identity: str
+
+
+@dataclass(frozen=True)
 class FormSection:
     """One COMMON-DOC-FORM-1 section; link_only is the one local field."""
 
@@ -786,6 +807,7 @@ class DocumentProfile:
     template_definition: Mapping[str, Any] | None = dataclass_field(
         default=None, hash=False
     )
+    tables: tuple[TableContract, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -1465,6 +1487,40 @@ def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
     )
 
 
+def _form_headings(form: CommonForm) -> HeadingContract:
+    """The H2 lists a form implies: required titles in order, all titles allowed."""
+
+    return HeadingContract(
+        required=tuple(
+            item.title for item in form.sections if item.requiredness == "required"
+        ),
+        allowed=tuple(item.title for item in form.sections),
+    )
+
+
+def _tables_from_definition(
+    definition: Mapping[str, Any] | None,
+) -> tuple[TableContract, ...]:
+    return tuple(
+        TableContract(
+            name=table["name"],
+            section=table["section"],
+            columns=tuple(
+                TableColumn(
+                    key=column["key"],
+                    meaning=column["meaning"],
+                    data_type=column["data_type"],
+                    required=column["required"],
+                )
+                for column in table["columns"]
+            ),
+            minimum_rows=table["minimum_rows"],
+            row_identity=table["row_identity"],
+        )
+        for table in (definition or {}).get("tables", ())
+    )
+
+
 def _profile_from_mapping(
     raw: Mapping[str, Any],
     *,
@@ -1505,11 +1561,17 @@ def _profile_from_mapping(
         ),
         constants=tuple(constants.items()),
         status_domain=status_domain,
-        headings=HeadingContract(
-            required=tuple(raw["sections"]["required"]),
-            allowed=tuple(raw["sections"]["required"] + raw["sections"]["optional"]),
-            substantive_body=raw["sections"].get("substantive_body", False),
-            ordered=raw["sections"].get("ordered", False),
+        headings=(
+            _form_headings(form)
+            if form is not None
+            else HeadingContract(
+                required=tuple(raw["sections"]["required"]),
+                allowed=tuple(
+                    raw["sections"]["required"] + raw["sections"]["optional"]
+                ),
+                substantive_body=raw["sections"].get("substantive_body", False),
+                ordered=raw["sections"].get("ordered", False),
+            )
         ),
         template=_normalize_relative_path(template) if template is not None else None,
         mode=raw["mode"],
@@ -1520,6 +1582,7 @@ def _profile_from_mapping(
         document_role=raw.get("document_role"),
         form=form,
         template_definition=raw.get("template_definition"),
+        tables=_tables_from_definition(raw.get("template_definition")),
     )
 
 
@@ -1546,6 +1609,10 @@ def _terminal_semantic_diagnostics(
     diagnostics: list[Diagnostic] = []
     raw_profiles = raw_registry["profiles"]
     profiles_by_id = {profile["id"]: profile for profile in raw_profiles}
+    raw_forms = {
+        form["form_id"]: form
+        for form in (raw_registry.get("common_forms") or {}).get("forms", ())
+    }
     for raw_profile in raw_profiles:
         profile_id = raw_profile["id"]
         for field, rule_id in (
@@ -1592,7 +1659,16 @@ def _terminal_semantic_diagnostics(
             )
         body_contract = relationships["body_contract"]
         if body_contract is not None:
-            required_headings = raw_profile["sections"]["required"]
+            role_form = raw_forms.get(raw_profile.get("document_role"))
+            required_headings = (
+                [
+                    item["title"]
+                    for item in role_form["sections"]
+                    if item["requiredness"] == "required"
+                ]
+                if role_form is not None
+                else raw_profile["sections"]["required"]
+            )
             if body_contract["section"] not in required_headings:
                 diagnostics.append(
                     _diagnostic(
@@ -1958,6 +2034,58 @@ def _form_section_diagnostics(
     return faults
 
 
+def _table_diagnostics(
+    tables: Sequence[Mapping[str, Any]],
+    form: Mapping[str, Any] | None,
+    body_contract: Mapping[str, Any] | None,
+) -> list[tuple[str, str, str]]:
+    """Check each template table against its role's form and the body contract."""
+
+    section_ids: set[str] = set()
+    if form is not None:
+        stack = list(form["sections"])
+        while stack:
+            item = stack.pop()
+            section_ids.add(item["section_id"])
+            stack.extend(item["children"])
+        section_ids.update(
+            item["id"] for item in form["extensions"] if item["kind"] == "local_h3"
+        )
+    faults: list[tuple[str, str, str]] = []
+    for table in tables:
+        name = table["name"]
+        keys = [column["key"] for column in table["columns"]]
+        if table["section"] not in section_ids:
+            faults.append(
+                (
+                    "REGISTRY_TABLE_SECTION",
+                    "a section ID or local_h3 extension ID of the role's form",
+                    f"{name}: {table['section']!r}",
+                )
+            )
+        if len(keys) != len(set(keys)) or table["row_identity"] not in keys:
+            faults.append(
+                (
+                    "REGISTRY_TABLE_COLUMNS",
+                    "unique column keys and a row_identity naming one of them",
+                    f"{name}: keys {keys!r}, row_identity {table['row_identity']!r}",
+                )
+            )
+        if (
+            body_contract is not None
+            and name == body_contract["table_heading"]
+            and keys != body_contract["required_columns"]
+        ):
+            faults.append(
+                (
+                    "REGISTRY_TABLE_BODY_CONTRACT",
+                    f"the body contract's columns {body_contract['required_columns']!r}",
+                    f"{name}: {keys!r}",
+                )
+            )
+    return faults
+
+
 def _form_registry_diagnostics(
     root: Path,
     raw_registry: Mapping[str, Any],
@@ -1974,6 +2102,7 @@ def _form_registry_diagnostics(
     for form in forms:
         faults.extend((*fault, "") for fault in _form_section_diagnostics(form))
     roles_with_form = set(form_ids)
+    forms_by_role = {form["form_id"]: form for form in forms}
     for profile_id, profile in profiles_by_id.items():
         role = profile.get("document_role")
         lists = profile["sections"]
@@ -2009,6 +2138,14 @@ def _form_registry_diagnostics(
                     profile_id,
                 )
             )
+        faults.extend(
+            (*fault, profile_id)
+            for fault in _table_diagnostics(
+                definition["tables"],
+                forms_by_role.get(role),
+                profile["relationships"]["body_contract"],
+            )
+        )
         for named in definition["consumer_paths"]:
             try:
                 named_path = _normalize_relative_path(named)
@@ -2158,6 +2295,19 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
             ),
         )
         if profile.mode == "template" and profile.source_profile_ids
+        else profile
+        for profile in profiles
+    )
+    # A template's tables are the contract of the documents it was copied from.
+    inherited = {
+        source: profile.tables
+        for profile in profiles
+        if profile.mode == "template" and profile.tables
+        for source in profile.source_profile_ids
+    }
+    profiles = tuple(
+        replace(profile, tables=inherited[profile.profile_id])
+        if profile.profile_id in inherited
         else profile
         for profile in profiles
     )

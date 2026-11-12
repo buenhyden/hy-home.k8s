@@ -1188,6 +1188,7 @@
         "policy_refs",
         "vocabulary_refs",
         "applicability",
+        "tables",
         "consumer_paths",
         "validation",
         "migration"
@@ -1231,6 +1232,12 @@
         "applicability": {
           "type": "string",
           "pattern": "\\S"
+        },
+        "tables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/template_table"
+          }
         },
         "consumer_paths": {
           "type": "array",
@@ -1301,6 +1308,67 @@
               "pattern": "\\S"
             }
           }
+        }
+      }
+    },
+    "template_table": {
+      "description": "One table a template carries: its section, ordered columns, minimum data rows and row identity.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "section",
+        "columns",
+        "minimum_rows",
+        "row_identity"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "columns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "meaning",
+              "data_type",
+              "required"
+            ],
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "meaning": {
+                "type": "string",
+                "minLength": 1
+              },
+              "data_type": {
+                "type": "string",
+                "minLength": 1
+              },
+              "required": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "minimum_rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "row_identity": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },
