@@ -17,7 +17,7 @@ criterion acceptance. A package exists only while its change is open.
 | Break work into a Spec, Plan and Task | [supervisor](../../.agents/roles/supervisor.md) | `task-breakdown`, `execution-plan`, `risk-report` | `.claude/agents/supervisor.md` | `.codex/agents/supervisor.toml` |
 | Author package documents | [doc-writer](../../.agents/roles/doc-writer.md) | `docs-stage-conformance`, `docs-stage-routing`, `requirements-to-design` | `.claude/agents/doc-writer.md` | `.codex/agents/doc-writer.toml` |
 | Run checks and record Task evidence | [quality-engineer](../../.agents/roles/quality-engineer.md) | `k8s-validate`, `workspace-harness-audit` | `.claude/agents/quality-engineer.md` | `.codex/agents/quality-engineer.toml` |
-| Independent change review | [code-reviewer](../../.agents/roles/code-reviewer.md) | `risk-report` | `.claude/agents/code-reviewer.md` | `.codex/agents/code-reviewer.toml` |
+| Optional change review (never a required reviewer) | [code-reviewer](../../.agents/roles/code-reviewer.md) | `risk-report` | `.claude/agents/code-reviewer.md` | `.codex/agents/code-reviewer.toml` |
 
 ## Rules
 

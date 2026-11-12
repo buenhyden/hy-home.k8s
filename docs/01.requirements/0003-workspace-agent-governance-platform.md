@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "3.0.5"
+version: "3.1.0"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-11"
+updated: "2026-11-12"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -68,7 +68,7 @@ Acceptance criteria are abbreviated `AC##` in the Verification intent column.
 | REQ-0003-FR-0015 | Before disposing of a current document, the owner must hand over its unique current meaning and assess current, historical, audit and recovery consumers, preservation value, holds and disposition authority. Existing factual records remain intact. Unresolved conditions defer that disposition. | Must | Reviewed Task evidence names each assessment and owner; link and owner checks find no orphan current consumer. |
 | REQ-0003-FR-0016 | Affected-path, lane, and argv routing must have one machine owner. A logical check executes once per identical bytes, configuration, tool identity, scope, mode and trust; validators with distinct failure meanings remain separate, and stages select rather than duplicate those checks. | Must | Validation registry routing tests PASS. |
 | REQ-0003-FR-0017 | This public repository performs purpose, unit and document-content QA locally. Hosted CI checks branch and delivery metadata with a fail-closed verdict and runs only the selected shared style rule as a distinct PR final defense on its own merge SHA/run, plus, when a PR changes `.github/requirements/`, the reviewed base's CI lock contract on the PR files, because a bot-authored lock update never passes local staged QA; it does not rerun or certify local purpose QA. Hosted jobs use least privilege and immutable external Action identifiers and produce no artifact under the current contract. A future artifact uploader must define its purpose, inputs, trust boundary, retention budget and validation owner in its introduction contract, with validation of those declared constraints. Local validation is never reported as a hosted result; historical unrun hosted full QA remains `NOT_RUN` evidence, not a current gate. A deployment style check requires an actual deployment workflow and observed run. | Must | AC11: hosted runs have their own SHA/run evidence. |
-| REQ-0003-FR-0018 | Changes must be delivered as logical commits with independent review, exact-index validation, required lint and format on the final local index immediately before commit, and reversible boundaries. Select affected purpose gates and named behavior and security unit regressions after tool and budget preflight. Retire the long local full/ci sweep and blanket unit discovery from completion, including global QA changes; an explicit audit selects bounded named checks for its purpose rather than reintroducing the sweep. | Must | AC11: commit-time lint/format and selected checks recorded. |
+| REQ-0003-FR-0018 | Changes must be delivered as logical commits with a single-maintainer review (a recorded risk class, applicable automated checks, a core-diff checklist and the owner's explicit acceptance; an extra agent or model call is never a required reviewer), exact-index validation, required lint and format on the final local index immediately before commit, and reversible boundaries. Select affected purpose gates and named behavior and security unit regressions after tool and budget preflight. Retire the long local full/ci sweep and blanket unit discovery from completion, including global QA changes; an explicit audit selects bounded named checks for its purpose rather than reintroducing the sweep. | Must | AC11: commit-time lint/format and selected checks recorded. |
 | REQ-0003-FR-0019 | The package-local Plan/Task owns execution state and order, and must not distort the original tranche, follow-up, and succession history or copy it into a permanent central roster. | Must | Plan/Task review shows package-local state. |
 | REQ-0003-FR-0020 | A non-current document leaves its active stage only after its disposition conditions are met. Git-history-only disposition requires a reachable exact source `commit:path` whose bytes match the source being disposed of and a byte-identical temporary restoration. The existing Task carries disposition and recovery evidence; Stage 01–03 use the current owner's Archived Lineage, while other types use their existing relationships or disposition record. No recovery ledger, catalog or migration record is added. `docs/98.archive/` remains unvalidated and non-authoritative; it currently holds only its README and directory structure. | Must | Reviewed Task evidence includes source identity and restoration result; lifecycle and link checks PASS for the changed current documents. |
 | REQ-0003-FR-0021 | Audit, research, data, generated output, and learning material must state their basis, observation time, and owner, and must not substitute for current policy or execution approval. | Must | Reference profiles carry basis, date and owner. |
@@ -117,7 +117,7 @@ In scope: current owner boundaries, approval, document lifecycle, validation res
 Out of scope: new provider admission, vendoring an external role catalog, collecting secrets, live changes, or creating a Release family.
 The removed shared progress ledger and the past proposal's `agentSystems`/`evidenceOwnerPolicies` are not
 claimed as current implementation or restored as a new parallel registry. FR-0025's ongoing obligations are validated at their current owners.
-The external v14.2 execution package is evidence only; four of its clauses conflict with accepted requirements and are not adopted: a single machine ledger for unfinished, adoption and survey state (FR-0019, FR-0022), forbidding a mandatory extra model call in single-maintainer review (FR-0018), renumbering Stage 03 from 1 (FR-0023), and generated reverse traceability in place of hand-written back-links (IF-0001 and acceptance criterion 02, checked by `BODY-LINK-RECIPROCAL`).
+The external v14.2 execution package is evidence only; the clauses below conflicted with accepted requirements and were not adopted; on 2026-11-12 the user decided that the current v14.7 requirements prevail, so the review clause is now adopted through SPEC-0162 and the others are recorded in SPEC-0161: a single machine ledger for unfinished, adoption and survey state (FR-0019, FR-0022), renumbering Stage 03 from 1 (FR-0023), and generated reverse traceability in place of hand-written back-links (IF-0001 and acceptance criterion 02, checked by `BODY-LINK-RECIPROCAL`).
 
 ## Risks, Dependencies, and Assumptions
 The relevant owners update concrete provider/model availability and authentication evidence. A static file is not runtime discovery.
@@ -139,7 +139,7 @@ It follows the current boundaries of [ADR-0030](../02.architecture/decisions/003
 - **Allowed Actions**: Inspect current owners, edit approved repository scope, and run non-destructive local validation.
 - **Disallowed Actions**: Read secret values, invent runtime evidence, restore obsolete governance owners, or mutate external/live systems without approval.
 - **Human-in-the-loop Requirement**: Obtain approval for destructive Git, external actions, provider authentication, deployment, or secret handling.
-- **Evaluation Expectation**: Preserve independent review, stable-snapshot validation results, failure limitations, and package-local unfinished ownership.
+- **Evaluation Expectation**: Preserve the risk-classed checklist review and owner acceptance, stable-snapshot validation results, failure limitations, and package-local unfinished ownership.
 
 ### Unfinished execution and original lineage
 
@@ -170,7 +170,7 @@ SPEC-0152 completed the current manual disposition policy change; its exact comp
 | REQ-0003-FR-0015 | A disposition transfers current meaning and reviews all consumer and preservation obligations before removal. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0016 | One machine route selects each applicable leaf once per identical input, configuration, tool, mode and trust while independent validator failure meanings remain distinct. | N/A — SPEC-0117, SPEC-0118, SPEC-0120 left the tree; Git history recovers them |
 | REQ-0003-FR-0017 | Public-repository purpose QA runs locally; hosted branch metadata and PR style have distinct observed inputs and never certify local QA. | N/A — SPEC-0113, SPEC-0115, SPEC-0123 left the tree; Git history recovers them |
-| REQ-0003-FR-0018 | Logical commits get independent review, exact-index and pre-commit style checks; named purpose/unit gates replace retired full/ci and blanket discovery. | N/A — SPEC-0140 left the tree; Git history recovers it |
+| REQ-0003-FR-0018 | Logical commits get the risk-classed checklist review and owner acceptance, exact-index and pre-commit style checks; named purpose/unit gates replace retired full/ci and blanket discovery. | N/A — SPEC-0140 left the tree; Git history recovers it |
 | REQ-0003-FR-0019 | Execution state lives only in the package-local Plan/Task. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0020 | Eligible non-current documents leave their stage after manual source restoration review; `docs/98.archive/` remains unvalidated. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), ADR-0056, SPEC-0152 and SPEC-0140 (left the tree; Git history recovers them) |
 | REQ-0003-FR-0021 | Each reference, audit or generated artifact names basis, observation time and owner. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
