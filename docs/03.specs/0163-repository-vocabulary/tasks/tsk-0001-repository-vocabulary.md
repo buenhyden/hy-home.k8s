@@ -27,7 +27,7 @@ This Task records the Repository Vocabulary change for [SPEC-0163](../spec.md) u
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-VOCAB-002](../spec.md#success-criteria--verification-plan) | Failing vocabulary and Hangul tests, then the validator change. | platform | in-progress | NOT_RUN | Pending the implementation commit. |
+| WORK-001 | [VAL-VOCAB-002](../spec.md#success-criteria--verification-plan) | Failing vocabulary and Hangul tests, then the validator change. | platform | completed | PASS | EVD-006 resolves EVD-004. |
 | WORK-002 | [VAL-VOCAB-001](../spec.md#success-criteria--verification-plan), [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | ADR-0058, FR-0032, registry and template, glossary, SDLC table and the knowledge owners. | platform | ready | NOT_RUN | Pending ADR-0058 acceptance. |
 
 ## Task Evidence
@@ -39,6 +39,7 @@ This Task records the Repository Vocabulary change for [SPEC-0163](../spec.md) u
 | EVD-003 | [VAL-VOCAB-001](../spec.md#success-criteria--verification-plan), [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-session user answer Approve these bytes to the SPEC-0163 question dated 2026-11-12 Asia/Seoul; recorded bytes differ only by the approved status edits verified in EVD-002","review_ref":"EVD-002","scope":["SPEC-0163","SPEC-0163-PLAN-0001"],"reviewed_spec_sha256":"8fa68d19802d5c9d52ae269b518f0520fa00afa4ac046f75d604f5346cb235d5","reviewed_plan_sha256":"5999a7381fdc248dbd9d01c2a5613cbf6c68fbb74719ad7e4c72a07cf271f712","validity":"confirmed","revocation":"none"} | PASS | No message UUID was supplied or invented. This receipt accepts no criterion or ADR and authorizes no push, PR or merge. | yes | none |
 | EVD-004 | [VAL-VOCAB-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Vocabulary validator tests | `tests/test_validate_knowledge_surface.py` with the new tests on the unchanged validator, then with the validator change | NOT_RUN | Pending the implementation commit. | yes | none |
 | EVD-005 | [VAL-VOCAB-001](../spec.md#success-criteria--verification-plan), [VAL-VOCAB-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Glossary, registry and owner checks with exact-index QA | Knowledge validator, inline ID check, strict document checks and commit hooks | NOT_RUN | Pending ADR-0058 acceptance. | yes | none |
+| EVD-006 | [VAL-VOCAB-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Vocabulary validator tests | `python3 -m unittest tests.test_validate_knowledge_surface` with the seven new tests on the validator at `5a8ba3dc`, then with the validator change; `python3 scripts/run-contract-tests.py --root . --suite tooling`; `python3 scripts/validate-knowledge-surface.py --root .`; `ruff check` and `ruff format --check` on both files; 2026-11-12 | PASS | RED: 15 run, 7 failed (valid vocabulary, empty table, bad ID, duplicate ID, missing owner, copied Latin span, copied Hangul span); the 8 existing tests passed. GREEN: 15 OK. Suite `tooling`: 7 modules, 162 tests OK. Tree: 2 pointer documents, 0 violations under Hangul matching. Ruff clean. | yes | EVD-004 |
 
 ## Criterion Acceptance
 
