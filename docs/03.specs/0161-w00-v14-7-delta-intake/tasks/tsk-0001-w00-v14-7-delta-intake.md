@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.4"
+version: "0.1.5"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -315,6 +315,11 @@ Added 2026-11-12 under the user's W03 request (EVD-025). W03 runs as several Sta
 | W03-D03 | `Archived Lineage` and `Lifecycle Traceability` are conditional local extensions | Kept under the role's Traceability or References H2; the package-exit check and recovery commands keep their heading | W03, W05 |
 | W03-D04 | `Lifecycle Traceability` host where no Traceability or References H2 exists | Plan: common H3 Implementation Strategy > Work Breakdown; Task: Execution Log; Guide: Verification; Runbook: Validation; Policy: Ownership; each a conditional local H3 except Plan | W03 |
 | W03-D05 | Shared contract approval facts not on record stay `unverified` | WGOV-CORE keeps stage `adopted` and its `approval_ref`; new approver and date fields hold `unverified`; nothing is inferred from the owner name | W03 |
+| W03-H01 | Phase 2 forms: Guide, Runbook, Policy, Incident, Postmortem, READMEs, `AGENTS.md`, `SKILL.md`; table column contracts; README rule IDs in tree mode; roles for the unclear profiles | One role form per change in `common_forms`, TemplateDefinitions filled, documents moved form-only | W03; resume now (SPEC-0168 accepted) |
+| W03-H02 | Phase 3 forms: Requirement, Architecture, ADR with W03-D02, Spec, Plan, Task; delete the H2-list model, list-built `HeadingContract.allowed` and `BODY-HEADING-EMPTY` for form profiles | Consumer renames and the `TASK-EVIDENCE-RETENTION` heading map | W03; resume after phase 2 is accepted; if W04 starts first, record the slip here |
+| W03-H03 | Retired-identity reservation (W02-H01) | Reserve IDs named in the owners' `Archived Lineage`; refusal test for a retired SPEC ID | W05; resume now |
+| W03-H04 | Generator reason | Verify that template parity and the template-mode tree check stand in for a generator | W05; resume now |
+| W03-H05 | ADR `rejected` state | Keep or remove the stored state given the W02 exit rule | W04; resume when W04 starts |
 
 ## Criterion Acceptance
 

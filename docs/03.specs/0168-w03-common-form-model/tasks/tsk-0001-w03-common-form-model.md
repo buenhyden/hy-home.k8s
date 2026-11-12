@@ -1,6 +1,6 @@
 ---
 title: "W03 Common Form Model"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-12"
@@ -48,9 +48,9 @@ Two read-only delegated surveys at `0281409b` and `9e03b720`. Read in part: the 
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-FORMMODEL-001](../spec.md#success-criteria--verification-plan) | Schema, registry and parser model with registry negative tests. | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-FORMMODEL-002](../spec.md#success-criteria--verification-plan) | Heading-tree diagnostics with positive and negative tests. | platform | in-progress | PASS | EVD-005 |
-| WORK-003 | [VAL-FORMMODEL-003](../spec.md#success-criteria--verification-plan) | Regression over the current tree, handoffs and exact-index QA. | platform | in-progress | PASS | EVD-006, EVD-007; exact-index QA and hooks run on the implementation commit |
+| WORK-001 | [VAL-FORMMODEL-001](../spec.md#success-criteria--verification-plan) | Schema, registry and parser model with registry negative tests. | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-FORMMODEL-002](../spec.md#success-criteria--verification-plan) | Heading-tree diagnostics with positive and negative tests. | platform | completed | PASS | EVD-005 |
+| WORK-003 | [VAL-FORMMODEL-003](../spec.md#success-criteria--verification-plan) | Regression over the current tree, handoffs and exact-index QA. | platform | completed | PASS | EVD-006, EVD-007, EVD-008; implementation commit `9265b507` passed exact-index QA and the hooks |
 
 ## Task Evidence
 
@@ -64,6 +64,7 @@ Two read-only delegated surveys at `0281409b` and `9e03b720`. Read in part: the 
 | EVD-006 | [VAL-FORMMODEL-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Regression over the current tree | Author re-run over the working tree after `1bc7c0f1` with `hyhome.validationVenv/bin` on `PATH`; 2026-11-12 | PASS | Strict registry (292 paths), Markdown profile, link/owner and lifecycle validators exit 0 with 0 FAIL lines, byte-identical to the implementer's before run; agent governance PASS; affected surfaces PASS (uncovered 0, ambiguous 0). Suites: `document` 377 tests OK (313 before), `agent-governance` 104 OK (104 before), `document-lifecycle` 18 OK, `tooling` 166 OK, `validation-routing` 173 OK. `ruff check scripts tests` clean. `.secrets.baseline` registry line moved 5988 to 6017 in `1bc7c0f1`, then corrected to 6016 (detect-secrets counts from the line above the `grep -n` number, as 5988 did for 5989) in `f4abea64` after the staged nonstyle check refused 6017. | yes | none |
 | EVD-007 | [VAL-FORMMODEL-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Semantic review: risk class and core-diff checklist | Diff of 14 files over `1bc7c0f1` (about 1,660 lines added, 110 removed) | PASS | Risk class `medium` (registry, authority guard, validator and test change). Checklist: scope matches the Spec's list; one writer per file; consistent with ADR-0033 as amended by proposed ADR-0059 and with the W01 extension and approval rules; no check weakened (the agent-field ban and exact required profile keys stay; `BODY-HEADING-EMPTY` unchanged for current profiles); no secret read; recovery is reverting the implementation commit. No permission, trigger, hook or workflow changed; `provider_write_guard.py` untouched. Interpretations recorded: approval fields required are `approved_by`, `approved_at`, `effective_from`; the typed reader accepts bare-string extensions only for historical registries; profile `sections` stays inline in the schema for an out-of-scope subschema test; tree mode reuses the current H1/H2 rule IDs, README rule IDs are a phase-2 decision. NOTE: the Plan's phrase about tests pinning generation 10 needed no change. | yes | none |
 | EVD-008 | [VAL-FORMMODEL-003](../spec.md#success-criteria--verification-plan) | WORK-003 | ADR-0059 acceptance | Direct current-session user answer "Accept ADR-0059" to the question naming its decisions, 2026-11-12 Asia/Seoul | PASS | ADR-0059 moves from `proposed` to `accepted` in the implementation commit; its Overview records the acceptance. This accepts no SPEC-0168 criterion. | yes | none |
+| EVD-009 | [VAL-FORMMODEL-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-12 exit authority; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Handoffs
 
@@ -79,9 +80,9 @@ Two read-only delegated surveys at `0281409b` and `9e03b720`. Read in part: the 
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-FORMMODEL-001](../spec.md#success-criteria--verification-plan) | pending | none | Registry model and negatives | platform |
-| [VAL-FORMMODEL-002](../spec.md#success-criteria--verification-plan) | pending | none | Heading-tree checks | platform |
-| [VAL-FORMMODEL-003](../spec.md#success-criteria--verification-plan) | pending | none | Zero new diagnostics and handoffs | platform |
+| [VAL-FORMMODEL-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the user on 2026-11-12 (direct answer "Accept all three" to the SPEC-0168 criterion question) | platform |
+| [VAL-FORMMODEL-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the user on 2026-11-12 (direct answer "Accept all three" to the SPEC-0168 criterion question) | platform |
+| [VAL-FORMMODEL-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-006, EVD-007, EVD-008 | Accepted by the user on 2026-11-12 (direct answer "Accept all three" to the SPEC-0168 criterion question) | platform |
 
 ## Approval and Safety Boundaries
 
@@ -94,6 +95,13 @@ Two read-only delegated surveys at `0281409b` and `9e03b720`. Read in part: the 
 - **Rollback Plan**: revert the implementation commit
 - **Evidence Location**: this Task
 
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document authoring policy and the registry, decided by ADR-0059 (Plan Promotion rows). The handoffs above are carried into the SPEC-0161 Task (W03 Decisions, W03-H01 to W03-H05) before deletion. Current consumers: the Stage 03 README entry, this Task's `.secrets.baseline` entries, and ADR-0059's Change and Lifecycle Traceability links, which the closure change rewrites to the departed-Spec form. Code comments naming SPEC-0168 are identifiers, not links, and stay.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's explicit 2026-11-12 answer "Exit now (Recommended)" is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
+
 ## Verification Summary
 
-WORK-001 to WORK-003 implemented; EVD-004 to EVD-007 PASS. The user accepted ADR-0059 on 2026-11-12 (EVD-008); criterion acceptance is pending. Risk class `medium` (registry, authority guard, validator and test change; no permission, trigger, hook, workflow or protected action).
+WORK-001 to WORK-003 implemented; EVD-004 to EVD-007 PASS. The user accepted ADR-0059 on 2026-11-12 (EVD-008) and all three criteria on 2026-11-12. The handoffs below are carried into SPEC-0161 W03 Decisions before exit. Risk class `medium` (registry, authority guard, validator and test change; no permission, trigger, hook, workflow or protected action).
