@@ -1,6 +1,6 @@
 ---
 title: "W02 Safe Disposition"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-12"
@@ -52,8 +52,8 @@ Read-only survey at `b4925358` by a delegated general-purpose agent, with the li
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan), [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | Edit the three W02 files the Spec names. | platform | ready | NOT_RUN | Waits for the Spec and Plan approval. |
-| WORK-002 | [VAL-DISPOSE-003](../spec.md#success-criteria--verification-plan) | Record the handoffs and the exact-index QA. | platform | ready | NOT_RUN | Waits for WORK-001. |
+| WORK-001 | [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan), [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | Edit the three W02 files the Spec names. | platform | in-progress | PASS | EVD-004, EVD-006 |
+| WORK-002 | [VAL-DISPOSE-003](../spec.md#success-criteria--verification-plan) | Record the handoffs and the exact-index QA. | platform | in-progress | PASS | EVD-005; exact-index QA and hooks run on the implementation commit |
 
 ## Task Evidence
 
@@ -62,6 +62,16 @@ Read-only survey at `b4925358` by a delegated general-purpose agent, with the li
 | EVD-001 | [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan), [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Pre-approval review round 1 | Read-only code-reviewer that wrote none of the package; spec.md `5fc92614…`, plan.md `a472e591…`; 2026-11-12 | PASS | APPROVE with no BLOCK; FIXes: rejected-ADR rule needed the deferral condition; Stage 02 rule 2 listed `rejected` as a kept state; ARC-02 router-exception tests had no row; anchor search needed collapsed whitespace. NOTEs: `.secrets.baseline` scope alignment, presence-check wording, open-package count, FR-0030 mapping. All applied before approval except the FR-0030 note, kept by reasoning. | no | none |
 | EVD-002 | [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan), [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent semantic review | {"spec_sha256":"868089f4d3375c4040e2f7887387d97c78d98c14e3fe242c376c03f406333763","plan_sha256":"2d8825f6d7ee5d52871a3e25a96e5c7686769e1ecf48c51c4bbad772b3fe2953"} | PASS | Same reviewer, round 2, 2026-11-12: both hashes matched; every round-1 FIX present; verdict APPROVE with no BLOCK or FIX. NOTEs: the ARC-03 recovery-boundary row is acceptable rather than strong; FR-0012 is not named for the W03/W04 registry handoff. The reviewer is independent of the author; this row records a review, not a second approval. | yes | none |
 | EVD-003 | [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan), [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-session user answer Approve these bytes to the SPEC-0167 question naming spec.md 868089f4 and plan.md 2d8825f6 dated 2026-11-12 Asia/Seoul","review_ref":"EVD-002","scope":["SPEC-0167","SPEC-0167-PLAN-0001"],"reviewed_spec_sha256":"868089f4d3375c4040e2f7887387d97c78d98c14e3fe242c376c03f406333763","reviewed_plan_sha256":"2d8825f6d7ee5d52871a3e25a96e5c7686769e1ecf48c51c4bbad772b3fe2953","validity":"confirmed","revocation":"none"} | PASS | No message UUID was supplied or invented. This receipt accepts no criterion and authorizes no push, PR or merge. | yes | none |
+| EVD-004 | [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan), [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Owner edits, anchor and phrase search, document checks | Working tree over `ff98cab8`: `document-lifecycle.md` 2.7.0, `docs/01.requirements/README.md` 0.9.1, `docs/02.architecture/AGENTS.md`; 2026-11-12 | PASS | Anchor search on a whitespace-collapsed copy of `document-lifecycle.md`: `reachable only through the reflog`, `not reformatted, translated or normalized`, `repository development documents only` and `` a `rejected` ADR is not current `` each 1 hit. README phrase search: 2 hits before, 0 after. Stage 02 `AGENTS.md` rule 2 names `rejected` as the outcome that triggers the exit, with the deferral condition. Strict registry (291 paths), Markdown profile, link/owner and lifecycle validators PASS; agent governance PASS; `document` suite 313 tests OK. | yes | none |
+| EVD-005 | [VAL-DISPOSE-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Handoff record | Spec Interfaces and the Handoffs table below | PASS | W03 and W04 (registry `rejected` state) and W05 (unreachable `done` and `archived` status branches) have owner, interface and resume condition; none started here. | yes | none |
+| EVD-006 | [VAL-DISPOSE-001](../spec.md#success-criteria--verification-plan), [VAL-DISPOSE-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Semantic review: risk class and core-diff checklist | Diff of the three W02 files over `ff98cab8` | PASS | Risk class `medium` (policy change). Checklist: each Contracts item is in its named owner; one writer per file (this Task); consistent with ADR-0053, ADR-0056 (deferral kept) and ADR-0057 (no presence check); no check removed or weakened; no secret read; no current document disposed; recovery is reverting the implementation commit. No permission, trigger or protected action changed. Findings: none `BLOCK` or `FIX`; NOTE: the registry still allows a stored `rejected` ADR until W03 and W04 decide. | yes | none |
+
+### Handoffs
+
+| Stage | Owner | Interface | Resume condition |
+| --- | --- | --- | --- |
+| W03, W04 | Stage 99 registry author; lifecycle policy author | Decide whether the ADR family keeps `rejected` as a stored state now that a rejected ADR leaves the tree in the same change; trace it under REQ-0003 FR-0012 | W03 starts |
+| W05 | Validator and test author | Trace the `done` and `archived` branches in `scripts/validate-links-and-owners.py` and the terminal statuses in `scripts/validation/current_executable_references.py`; remove them with their tests if no registry domain reaches them | W05 starts |
 
 ## Criterion Acceptance
 
@@ -84,4 +94,4 @@ Read-only survey at `b4925358` by a delegated general-purpose agent, with the li
 
 ## Verification Summary
 
-Not started; waits for the Spec and Plan approval. Risk class `medium` (policy change).
+WORK-001 and WORK-002 done; checks in EVD-004 PASS; semantic review in EVD-006 has no `BLOCK` or `FIX`. Risk class `medium` (policy change). Criterion acceptance is pending the operator. Not run: live checks (no live surface). Rollback: revert the implementation commit. Residual risk: the rules are manual review conditions without a new check, by design (ADR-0056, ADR-0057). Next owner: the operator for acceptance; W03 can start independently.

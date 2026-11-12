@@ -27,7 +27,12 @@ Records (ADR), which record durable technical and operating decisions.
    `docs/99.templates/templates/architecture/`.
 2. AD states are `draft`, `in-review` and `active`; ADR states are
    `proposed`, `accepted` and `rejected`. Moving an ADR to `accepted` needs
-   the operator's recorded approval.
+   the operator's recorded approval. `rejected` is the decision outcome that
+   triggers the ADR's exit, not a state kept in the tree: once the manual
+   disposition review is satisfied, summarize the ADR in the owning AD's
+   `Archived Lineage` and delete it in the same change, as the
+   [document lifecycle policy](../../.agents/governance/document-lifecycle.md)
+   requires; otherwise defer.
 3. Never edit an accepted decision in place. Write a successor ADR whose
    `supersedes` and Traceability keep the predecessor ID, summarize the
    predecessor in the owning AD's `Archived Lineage` table, and delete it in
