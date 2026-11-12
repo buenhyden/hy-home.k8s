@@ -1,6 +1,6 @@
 ---
 title: "W03 Runbook Form"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-13"
@@ -29,8 +29,8 @@ This Task records the second phase-2 package of W03, the Runbook form, for [SPEC
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RUNBOOKFORM-001](../spec.md#success-criteria--verification-plan) | Registry form, extension, TemplateDefinition and tables; repository-registry tests. | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-RUNBOOKFORM-002](../spec.md#success-criteria--verification-plan) | Template and ten runbooks moved form-only with the meaning map; policy, README and skill text; regression and exact-index QA. | platform | in-progress | PASS | EVD-005, EVD-006, EVD-007 |
+| WORK-001 | [VAL-RUNBOOKFORM-001](../spec.md#success-criteria--verification-plan) | Registry form, extension, TemplateDefinition and tables; repository-registry tests. | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-RUNBOOKFORM-002](../spec.md#success-criteria--verification-plan) | Template and ten runbooks moved form-only with the meaning map; policy, README and skill text; regression and exact-index QA. | platform | completed | PASS | EVD-005, EVD-006, EVD-007; implementation commit `7ef670fc` passed exact-index QA and the hooks |
 
 ## Task Evidence
 
@@ -43,13 +43,14 @@ This Task records the second phase-2 package of W03, the Runbook form, for [SPEC
 | EVD-005 | [VAL-RUNBOOKFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Runbook meaning map and added lines | Ten runbooks at `57cc11df` against the working tree; two doc-writer subagents built each file by copying source line ranges; author word-multiset comparison per runbook (frontmatter, headings, rules and list markers ignored) | PASS | Removed words are only links already inline elsewhere in the same runbook with their labels (0003, 0007, 0008, 0009, 0010, 0011) and renamed section pointers. Added words are only the "related documents" line prefixes and the none-with-reason lines. Per runbook: Purpose split into Trigger and Outcome and Scope (executor, type and boundary lines of 0011 and 0012 to Authority and Access); Trigger and Preconditions bullets to Trigger and Outcome, Safety Checks or Authority and Access (0010 pre-check block as H4 in Safety Checks; 0012 stop sentence to Stop Conditions); Procedure to Actions with H3 as H4 and logical children as H5 (0004 router check under Procedure 4; 0007 sub-steps and Troubleshooting questions; 0009 external Prometheus query and 3-1 to 3-3; 0010 1-1 to 1-4); Verification to Service Checks and Evidence (0001 Troubleshooting Matrix as H4 in Service Checks); Recovery and Escalation to Recovery Procedures (0001, 0002, 0003, 0004, 0007, 0010, 0011, 0012), Rollback (undo content in 0001, 0002, 0004, 0007, 0008, 0009, 0010, 0011) and Escalation; Lifecycle Traceability under Validation unchanged. Pointer edits: 0010 anchor retargeted to Rollback; section names Procedure and Verification renamed to Steps and Validation in 0002, 0003, 0007 and 0009 pointer sentences. Added lines, all Korean none-with-reason: Stop Conditions in nine runbooks (no separate list; checks stay in Actions; on failure follow Recovery and Escalation; 0011 points to its step 6 hold condition); Safety Checks in eight; Authority and Access in six; Escalation in six; Scope in 0007. The author replaced the implementers' first Stop Conditions line, which was untrue for 0001, and removed a stale section name from the Escalation lines. Reviewer notes kept for the user: 0009 Rollback keeps a bullet on reviewed AppProject changes with the undo bullets; 0004 moves two departed-Spec identifiers to Scope. | yes | none |
 | EVD-006 | [VAL-RUNBOOKFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Regression over the tree, suites and lint | Author run over the working tree after `d6e41b86`, 2026-11-13 | PASS | The four strict document validators exit 0 with output byte-identical to the before run at `57cc11df`. `python3 scripts/validation/repository/quality.py --root .` PASS (command boundary markers found); `form_contracts.py` rc 0; markdownlint over the ten runbooks, the template and the skill reports 0 issues; `ruff check scripts tests` clean; `graphify update .` rc 0. Suites: `agent-governance` 104, `ci-metadata` 87, `cluster-gate` 72, `document` 414, `document-lifecycle` 18, `release` 29, `tooling` 166, `validation-routing` 173 OK; `qa-runner` 37 with the one pre-existing default-branch error handed to W05 as SPEC-0161 W03-H11. `.secrets.baseline` registry `source_revision` line 6100 moved to 6197 in `d6e41b86`. | yes | none |
 | EVD-007 | [VAL-RUNBOOKFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Semantic review: risk class and core-diff checklist | Diff of 17 files over `d6e41b86` (about 1,570 lines added, 570 removed) | PASS | Risk class `medium` (registry, test and governed document change across ten operating documents). Checklist: scope matches the Spec; one writer per file; the form equals the external contract; ADR-0033 and ADR-0059 unchanged; no script changed; no check weakened; policy text `document-authoring.md` 3.8.0, `docs/99.templates/README.md` 0.20.0, runbooks README 0.4.0 and `ops-runbook` skill 1.1.0 name the new sections; no runbook command, approval or boundary marker added or removed; no secret read; recovery is reverting the implementation commit. No permission, trigger, hook or workflow changed. | yes | none |
+| EVD-008 | [VAL-RUNBOOKFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 exit authority; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RUNBOOKFORM-001](../spec.md#success-criteria--verification-plan) | pending | EVD-004 | Awaiting the operator's acceptance | platform |
-| [VAL-RUNBOOKFORM-002](../spec.md#success-criteria--verification-plan) | pending | EVD-005, EVD-006, EVD-007 | Awaiting the operator's acceptance | platform |
+| [VAL-RUNBOOKFORM-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0170 criterion question, which listed the added none-with-reason lines and the two placement notes) | platform |
+| [VAL-RUNBOOKFORM-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-006, EVD-007 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0170 criterion question, which listed the added none-with-reason lines and the two placement notes) | platform |
 
 ## Approval and Safety Boundaries
 
@@ -62,6 +63,14 @@ This Task records the second phase-2 package of W03, the Runbook form, for [SPEC
 - **Rollback Plan**: revert the implementation commit; before that, delete the package commit
 - **Evidence Location**: this Task
 
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document authoring policy and the registry (Plan Promotion row). W03-D13 is already in the SPEC-0161 Task; no new handoff arises. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes. The registry TemplateDefinition text and test docstrings name SPEC-0170 as an identifier, not a link, and stay.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's explicit 2026-11-13 answer "Exit, push and PR" is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
+
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002) and approved at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); both criteria await the operator's acceptance. Risk class `medium`. Residual risk: the none-with-reason lines and two placement judgements in EVD-005 await the user's review. Next owner: the operator.
+Spec and Plan reviewed (EVD-001, EVD-002) and approved at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); implementation commit `7ef670fc`. The user accepted both criteria and the package exit on 2026-11-13 (EVD-008). Risk class `medium`. Next owner: W03 for the next phase-2 role (Incident).
