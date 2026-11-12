@@ -878,12 +878,14 @@ def _table_diagnostics(
         if section is None:
             continue
         keys = [column.key for column in table.columns]
+        # Optional columns trail the required ones, so a header may stop early.
+        required = sum(column.required for column in table.columns)
         rows = 0
         for header, data in _visible_tables(section):
             if header[0] != keys[0]:
                 continue
             rows += len(data)
-            if header != keys:
+            if header != keys[: len(header)] or len(header) < required:
                 found.append(
                     _diagnostic(
                         "BODY-TABLE-COLUMNS",
