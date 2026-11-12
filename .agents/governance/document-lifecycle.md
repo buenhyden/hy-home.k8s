@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.5.3"
+version: "2.6.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-11"
+updated: "2026-11-12"
 ---
 
 # Document Lifecycle Policy
@@ -94,7 +94,8 @@ evidence is not rewritten to satisfy a later profile.
   review and user approval occurred before the first commit. The same-package
   Spec and Plan must be recorded together with their typed parent identities
   and Task link. The Task Evidence holds a separate `Independent semantic
-  review` PASS row and a `Spec/Plan first-record approval` PASS receipt. Both
+  review` PASS row, which records the exact-byte checklist review by the
+  approving owner or an optional separate reviewer, and a `Spec/Plan first-record approval` PASS receipt. Both
   rows identify SHA-256 hashes of the exact reviewed approved Spec and Plan
   bytes. The receipt names the user, trusted approval reference, review row,
   both document IDs, confirmed validity and no known revocation.

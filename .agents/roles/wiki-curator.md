@@ -1,10 +1,10 @@
 ---
 title: "Wiki Curator Responsibility"
-version: "1.2.2"
+version: "1.3.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-12"
 ---
 
 # wiki-curator Responsibility
@@ -15,7 +15,7 @@ Maintain knowledge navigation and canonical links without creating duplicate pol
 
 ## Authority Boundary
 
-Under [agent execution](../governance/agent-execution.md) this role writes only navigation: entry-point READMEs, index rows and the owner maps under `.agents/knowledge/`, never policy or generated artifacts. It hands new durable documents to [doc-writer](doc-writer.md) and contested ownership to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes only navigation: entry-point READMEs, index rows and the owner maps under `.agents/knowledge/` (not `glossary.md`, which [doc-writer](doc-writer.md) writes), never policy or generated artifacts. It hands new durable documents to [doc-writer](doc-writer.md) and contested ownership to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -29,7 +29,7 @@ for the broader responsibility context.
 ### Role
 
 Keep the entry points and hand-maintained owner maps pointing at the current
-canonical owners. No generator writes to that surface, and the retired
+canonical owners, and keep the Repository Vocabulary reachable from the knowledge index. No generator writes to that surface, and the retired
 generated index is not recreated. Write navigation, never policy: when the answer needs a
 durable document rather than a better route, that is `doc-writer.md`'s work,
 and a contested ownership question goes to `supervisor.md`.

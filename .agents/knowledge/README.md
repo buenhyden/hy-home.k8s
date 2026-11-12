@@ -1,18 +1,18 @@
 ---
 title: "Common Knowledge"
-version: "0.4.2"
+version: "0.5.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-12"
 ---
 # Common Knowledge
 
 ## Overview
 
-이 영역은 방향을 잡는 질문에 답한다. 어느 트리가 무엇을 소유하는지, 어떤
+이 영역은 방향을 잡는 질문과 공통 용어의 뜻을 묻는 질문에 답한다. 어느 트리가 무엇을 소유하는지, 어떤
 도메인에서 무엇을 먼저 열어야 하는지를 알려 준다. 여기에는 포인터와 범위가
-정해진 관측 metadata만 있다. 정책, 설계, 절차, 현재 상태에 대한 서술은 모두 각
+정해진 관측 metadata, 그리고 용어 의미만 정의하는 [Repository Vocabulary](glossary.md) 하나가 있다. 정책, 설계, 절차, 현재 상태에 대한 서술은 모두 각
 행이 가리키는 소유자에게 남는다.
 
 ## Scope
@@ -34,6 +34,7 @@ validator다.
 | --- | --- |
 | [Project Map](project-map.md) | 최상위 트리별 소유 범위와 각각의 진입 문서. |
 | [Domain Index](domains.md) | 운영 도메인별 정규 소유자, 진입 경로, 행이 유효한 조건. |
+| [Repository Vocabulary](glossary.md) | 공통 거버넌스 용어의 의미와 그 규칙을 소유하는 정책. 규칙은 서술하지 않는다(ADR-0058). |
 
 ## Usage
 

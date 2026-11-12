@@ -27,6 +27,9 @@ from validation.repository.bounded_io import (
 KNOWLEDGE_ROOT = ".agents/knowledge"
 KNOWLEDGE_README = f"{KNOWLEDGE_ROOT}/README.md"
 POINTER_HEADING = "## Pointer Index"
+GLOSSARY = f"{KNOWLEDGE_ROOT}/glossary.md"
+VOCABULARY_HEADING = "## Repository Vocabulary"
+EXTENSION_HEADING = "## Local Extensions"
 MAX_DOCUMENT_BYTES = 256 * 1024
 DUPLICATE_SPAN_WORDS = 12
 
@@ -35,8 +38,9 @@ TABLE_ROW = re.compile(r"^\s*\|(?P<cells>.+)\|\s*$")
 TABLE_DIVIDER = re.compile(r"^\s*\|[\s:|-]+\|\s*$")
 HEADING = re.compile(r"^##\s")
 PATH_TOKEN = re.compile(r"^[.A-Za-z0-9_][A-Za-z0-9_./-]*$")
-WORD = re.compile(r"[a-z0-9]+")
+WORD = re.compile(r"[a-z0-9가-힣]+")
 FRONTMATTER = re.compile(r"\A---\n.*?\n---\n", re.DOTALL)
+TERM_ID = re.compile(r"^TERM-[A-Z0-9]+(?:-[A-Z0-9]+)*$")
 
 
 class Finding(NamedTuple):
@@ -80,9 +84,9 @@ def _section(text: str, heading: str) -> list[str]:
     return collected
 
 
-def _pointer_rows(text: str) -> list[str]:
+def _pointer_rows(text: str, heading: str = POINTER_HEADING) -> list[str]:
     rows: list[str] = []
-    for line in _section(text, POINTER_HEADING):
+    for line in _section(text, heading):
         if TABLE_DIVIDER.match(line):
             continue
         match = TABLE_ROW.match(line)
@@ -240,17 +244,60 @@ def _check_facts(root: Path, document: str, text: str) -> list[Finding]:
     return []
 
 
+def _check_vocabulary(document: str, body: str) -> tuple[list[Finding], list[str]]:
+    """Check the glossary's term tables; return findings and every term row."""
+
+    common = _pointer_rows(body, VOCABULARY_HEADING)
+    if not common:
+        return [
+            Finding(
+                "KNOWLEDGE-VOCABULARY-EMPTY",
+                document,
+                "no Repository Vocabulary row was found",
+            )
+        ], []
+    rows = common + _pointer_rows(body, EXTENSION_HEADING)
+    findings: list[Finding] = []
+    seen: set[str] = set()
+    for row in rows:
+        term_id = row.split("|", 1)[0].strip().strip("`")
+        if not TERM_ID.match(term_id):
+            findings.append(
+                Finding(
+                    "KNOWLEDGE-TERM-ID",
+                    document,
+                    f"`{term_id}` is not a TERM- identifier",
+                )
+            )
+        elif term_id in seen:
+            findings.append(
+                Finding(
+                    "KNOWLEDGE-TERM-DUPLICATE",
+                    document,
+                    f"`{term_id}` is defined more than once",
+                )
+            )
+        seen.add(term_id)
+    return findings, rows
+
+
 def _check_document(root: Path, document: str) -> list[Finding]:
     text = _read_document(root / document, document)
     body = _body(text)
-    rows = _pointer_rows(body)
     findings = _check_facts(root, document, text)
 
-    if not rows:
-        findings.append(
-            Finding("KNOWLEDGE-POINTER-EMPTY", document, "no pointer row was found")
-        )
-        return findings
+    if document == GLOSSARY:
+        vocabulary_findings, rows = _check_vocabulary(document, body)
+        findings.extend(vocabulary_findings)
+        if not rows:
+            return findings
+    else:
+        rows = _pointer_rows(body)
+        if not rows:
+            findings.append(
+                Finding("KNOWLEDGE-POINTER-EMPTY", document, "no pointer row was found")
+            )
+            return findings
 
     named = _named_paths(rows)
     existing: list[str] = []

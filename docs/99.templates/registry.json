@@ -93,7 +93,6 @@
             "sdlc/architecture-description",
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -188,7 +187,6 @@
             "sdlc/architecture-decision",
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -276,7 +274,6 @@
           "allowed_target_profile_ids": [
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -383,7 +380,6 @@
             "sdlc/requirement"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -492,7 +488,6 @@
           "allowed_target_profile_ids": [
             "sdlc/task"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -600,7 +595,6 @@
             "sdlc/spec"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true,
           "task_execution": {
             "single_status_marker": "frontmatter",
@@ -760,7 +754,6 @@
             "sdlc/task"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -853,7 +846,6 @@
             "sdlc/task"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -947,7 +939,6 @@
             "operation/policy"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -1039,7 +1030,6 @@
           "allowed_target_profile_ids": [
             "sdlc/task"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -1129,7 +1119,6 @@
           "allowed_target_profile_ids": [
             "sdlc/task"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -1417,7 +1406,7 @@
       "id": "governance/knowledge",
       "family": "governance",
       "mode": "authored",
-      "path_pattern": "^\\.agents/knowledge/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^\\.agents/knowledge/(?!README\\.md$|glossary\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/knowledge.template.md",
       "frontmatter": {
@@ -1463,6 +1452,76 @@
         ],
         "optional": [],
         "forbidden": []
+      },
+      "lifecycle": {
+        "status_domain": [
+          "draft",
+          "in-review",
+          "active",
+          "deprecated",
+          "superseded",
+          "retired"
+        ]
+      },
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "forbidden"
+    },
+    {
+      "id": "governance/vocabulary",
+      "family": "governance",
+      "mode": "authored",
+      "path_pattern": "^\\.agents/knowledge/glossary\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/governance/vocabulary.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [
+          "supersedes",
+          "superseded_by",
+          "artifact_id"
+        ],
+        "forbidden": [
+          "layer"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "supersedes",
+          "superseded_by"
+        ],
+        "constants": {
+          "type": "governance/vocabulary"
+        }
+      },
+      "sections": {
+        "required": [
+          "Purpose",
+          "Scope",
+          "Normative Language",
+          "Repository Vocabulary",
+          "Local Extensions",
+          "Maintenance",
+          "References"
+        ],
+        "optional": [],
+        "forbidden": [],
+        "ordered": true
       },
       "lifecycle": {
         "status_domain": [
@@ -3541,7 +3600,6 @@
           "allowed_target_profile_ids": [
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -3632,7 +3690,6 @@
             "sdlc/architecture-decision",
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -3733,7 +3790,6 @@
           "allowed_target_profile_ids": [
             "sdlc/task"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -3834,7 +3890,6 @@
             "sdlc/spec"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true,
           "task_execution": {
             "single_status_marker": "frontmatter",
@@ -3987,7 +4042,6 @@
             "sdlc/task"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4074,7 +4128,6 @@
           "allowed_target_profile_ids": [
             "sdlc/task"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4160,7 +4213,6 @@
             "sdlc/task"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4246,7 +4298,6 @@
           "allowed_target_profile_ids": [
             "sdlc/task"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4333,7 +4384,6 @@
             "operation/policy"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4425,7 +4475,6 @@
             "sdlc/architecture-description",
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4524,7 +4573,6 @@
             "sdlc/requirement"
           ],
           "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
       },
@@ -4726,6 +4774,69 @@
       "relationships": {
         "source_profile_ids": [
           "governance/knowledge"
+        ],
+        "body_contract": null
+      },
+      "placeholder_policy": "template-only"
+    },
+    {
+      "id": "common/template-governance-vocabulary",
+      "family": "common",
+      "mode": "template",
+      "path_pattern": "^docs/99\\.templates/templates/governance/vocabulary\\.template\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/governance/vocabulary.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [
+          "supersedes",
+          "superseded_by",
+          "artifact_id"
+        ],
+        "forbidden": [
+          "layer"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "supersedes",
+          "superseded_by"
+        ],
+        "constants": {
+          "type": "governance/vocabulary"
+        }
+      },
+      "sections": {
+        "required": [
+          "Purpose",
+          "Scope",
+          "Normative Language",
+          "Repository Vocabulary",
+          "Local Extensions",
+          "Maintenance",
+          "References"
+        ],
+        "optional": [],
+        "forbidden": [],
+        "ordered": true
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [
+          "governance/vocabulary"
         ],
         "body_contract": null
       },
@@ -5605,6 +5716,7 @@
         "operation/runbook",
         "governance/contract",
         "governance/knowledge",
+        "governance/vocabulary",
         "governance/prompt",
         "governance/provider",
         "governance/role",

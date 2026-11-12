@@ -353,14 +353,9 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "REGISTRY_BODY_TARGET_PROFILE",
                 lambda body: body.update(allowed_target_profile_ids=["sdlc/unknown"]),
             ),
-            "reciprocal-without-link": (
-                "REGISTRY_BODY_RECIPROCAL",
-                lambda body: body.update(
-                    source_link_column=None,
-                    target_link_column=None,
-                    allowed_source_profile_ids=[],
-                    allowed_target_profile_ids=[],
-                ),
+            "leftover-reciprocal-evidence": (
+                "REGISTRY_BODY_FIELD",
+                lambda body: body.update(reciprocal_evidence=True),
             ),
         }
         for name, (rule_id, mutate) in mutations.items():

@@ -77,6 +77,7 @@ SUITES = {
         "current_executable_references",
         "workspace_boundary",
         "validate_knowledge_surface",
+        "document_backlinks",
     ),
     "cluster-gate": _modules(
         "check_secret_handling",

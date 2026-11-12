@@ -573,7 +573,6 @@ class BodyContract:
     target_link_column: str | None
     allowed_source_profile_ids: tuple[str, ...]
     allowed_target_profile_ids: tuple[str, ...]
-    reciprocal_evidence: bool
     allow_explicit_exclusion: bool
     task_execution: TaskExecution | None = None
 
@@ -1311,7 +1310,6 @@ def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
         target_link_column=raw["target_link_column"],
         allowed_source_profile_ids=tuple(raw["allowed_source_profile_ids"]),
         allowed_target_profile_ids=tuple(raw["allowed_target_profile_ids"]),
-        reciprocal_evidence=raw["reciprocal_evidence"],
         allow_explicit_exclusion=raw["allow_explicit_exclusion"],
         task_execution=(
             None
@@ -1541,18 +1539,6 @@ def _terminal_semantic_diagnostics(
                             ),
                         )
                     )
-            if body_contract["reciprocal_evidence"] and not (
-                body_contract["source_link_column"]
-                or body_contract["target_link_column"]
-            ):
-                diagnostics.append(
-                    _diagnostic(
-                        "REGISTRY_BODY_RECIPROCAL",
-                        profile=profile_id,
-                        expected="at least one linked column for reciprocal evidence",
-                        actual="no source or target link column",
-                    )
-                )
 
         template = raw_profile["template_source"]
         if template is not None:

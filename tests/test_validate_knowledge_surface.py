@@ -215,6 +215,68 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
         )
         self.assertNotIn("KNOWLEDGE-INDEX-MISSING", self.codes())
 
+    def write_glossary(self, common: str, local: str = "") -> None:
+        header = (
+            "| Term ID | Term | Definition | Not to Confuse | Policy Owner "
+            "| Contract Version |\n| --- | --- | --- | --- | --- | --- |\n"
+        )
+        self.write_readme("glossary.md")
+        (self.surface / "glossary.md").write_text(
+            FRONTMATTER.replace("governance/knowledge", "governance/vocabulary")
+            + "# Repository Vocabulary\n\n## Purpose\n\nTerm meanings.\n\n"
+            + "## Repository Vocabulary\n\n"
+            + header
+            + common
+            + "\n\n## Local Extensions\n\n"
+            + (header + local if local else "None.")
+            + "\n\n## Maintenance\n\nOwners change rules.\n",
+            encoding="utf-8",
+        )
+
+    def term(self, term_id: str, owner: str = "owner/README.md") -> str:
+        return f"| {term_id} | Term | A short meaning. | Other | `{owner}` | 1.0.0 |"
+
+    def test_valid_vocabulary_passes(self) -> None:
+        self.write_glossary(self.term("TERM-ONE"), self.term("TERM-LOCAL-TWO"))
+        self.assertEqual(self.codes(), [])
+
+    def test_vocabulary_without_terms_fails(self) -> None:
+        self.write_glossary("")
+        self.assertIn("KNOWLEDGE-VOCABULARY-EMPTY", self.codes())
+
+    def test_malformed_term_id_fails(self) -> None:
+        self.write_glossary(self.term("term-one"))
+        self.assertIn("KNOWLEDGE-TERM-ID", self.codes())
+
+    def test_duplicate_term_id_across_tables_fails(self) -> None:
+        self.write_glossary(self.term("TERM-ONE"), self.term("TERM-ONE"))
+        self.assertIn("KNOWLEDGE-TERM-DUPLICATE", self.codes())
+
+    def test_missing_policy_owner_fails(self) -> None:
+        self.write_glossary(self.term("TERM-ONE", "absent/POLICY.md"))
+        self.assertIn("KNOWLEDGE-PATH-MISSING", self.codes())
+
+    def test_definition_copying_its_owner_fails(self) -> None:
+        borrowed = (
+            "| TERM-ONE | Term | The reconciliation boundary keeps declarative "
+            "desired state under version control so that every applied change "
+            "arrives through a reviewed pull request. | Other | "
+            "`owner/README.md` | 1.0.0 |"
+        )
+        self.write_glossary(borrowed)
+        self.assertIn("KNOWLEDGE-DUPLICATED-SPAN", self.codes())
+
+    def test_definition_copying_korean_owner_text_fails(self) -> None:
+        korean = (
+            "선언된 원하는 상태는 버전 관리 아래에 두고 모든 적용 변경은 "
+            "검토된 풀 요청을 거쳐 들어오며 클러스터를 직접 바꾸지 않는다"
+        )
+        (self.root / "owner" / "KO.md").write_text(korean + "\n", encoding="utf-8")
+        self.write_glossary(
+            f"| TERM-ONE | Term | {korean} | Other | `owner/KO.md` | 1.0.0 |"
+        )
+        self.assertIn("KNOWLEDGE-DUPLICATED-SPAN", self.codes())
+
     def test_absent_surface_reports_nothing(self) -> None:
         empty = Path(self._directory.name) / "empty"
         empty.mkdir()

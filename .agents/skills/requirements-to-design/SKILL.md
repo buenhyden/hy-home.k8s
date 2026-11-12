@@ -3,11 +3,11 @@ name: "requirements-to-design"
 description: "Use when tracing Requirement Package members to relevant Architecture Descriptions, ADRs, and Spec contracts."
 metadata:
   title: "Requirements To Design"
-  version: "1.0.1"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-12"
 disable-model-invocation: true
 ---
 
@@ -35,7 +35,7 @@ using this procedure. Skill invocation does not authorize additional actions.
    document instead.
 4. Report covered, partial, missing, or not-applicable relationships with
    evidence. Do not auto-create an ADR or implementation document.
-5. When authorized, update reciprocal/current links through the selected
+5. When authorized, update forward links to the current owners through the selected
    profiles and verify complete stable IDs and path ownership.
 
 ## Boundaries

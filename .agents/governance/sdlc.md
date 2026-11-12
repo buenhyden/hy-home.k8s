@@ -1,10 +1,10 @@
 ---
 title: "Software Development Lifecycle"
-version: "3.3.0"
+version: "3.4.1"
 type: "governance/contract"
 status: "active"
 owner: "platform"
-updated: "2026-11-10"
+updated: "2026-11-12"
 ---
 
 # Software Development Lifecycle
@@ -80,22 +80,26 @@ interface, so it has no design-system authority and no root design document; if
 one is ever introduced it takes that authority and does not become a Stage 03
 technical-design artifact.
 
-### Shared terminology and ownership
+### Ownership and placement
 
-| Term | Meaning and owner |
+The meaning of each term below is owned by the
+[Repository Vocabulary](../knowledge/glossary.md); this table owns only where
+each artifact lives and the rules that govern it.
+
+| Term | Owner and placement rule |
 | --- | --- |
-| Requirement | Durable need and acceptance boundary; Stage 01. |
-| Architecture Description / Architecture Decision Record | Current structural view / durable choice and rationale; Stage 02. |
-| Spec / Plan / Task | Approved change contract / approved execution order and risk / actual work, check evidence, criterion acceptance and handoff; one Stage 03 package. Approval is not execution completion. |
-| GitHub Issue / Project | Request and priority / a view of work state. Link to a Spec and Task by ID or URL; do not copy their full contract or evidence or synchronize status in both directions. Remote state requires observation. |
-| Policy / rule / contract / control | A policy owns normative meaning; a rule is one obligation; a contract specifies an interface or invariant; a control enforces it. Common behavior belongs to `.agents/governance/`, executable enforcement to scripts, document shape to Stage 99. These terms do not create parallel policy directories. The Stage 99 profile `governance/rule` names the shape those policy documents share, from the retired directory they once sat in; it is a stable identity rather than a claim that such a document carries one obligation. |
-| Provider / Role / Agent | Runtime-specific adapter contract / neutral responsibility and allowed scope / an executing instance of a role. Native configuration is not evidence of runtime enforcement. |
-| Skill | Reusable procedure under `.agents/skills/`; native discovery depends on the provider contract. A plain procedure reference is not a native registration. |
-| Hook / Gate / validator / Fixture | Native event callback / blocking quality decision / executable check implementing that decision / independent bounded test input. A hook need not run QA, and a test fixture is never production policy input. |
-| QA / CI / CD | Quality checks / integration orchestration and applicable branch metadata / delivery and reconciliation. This public repository runs repository-static QA locally. The hosted `ci-summary` job checks branch and commit metadata and `style-pr` runs only the selected style gate (plus the CI Python contract check when a lock changes); neither replays the rest of that QA. Argo CD reconciles declared GitOps state only under the operating boundary. |
-| Deployment / release | Applying a declared version to an environment / identifying and publishing a deliverable. Neither follows automatically from local validation or a commit. |
-| Guide / Runbook | Explanatory operating knowledge / triggered operational steps with rollback and verification; Stage 05. |
-| Evidence / archive | Observed result with input, environment, and limits / non-authoritative historical retention. Task and Git own change evidence; Git owns source recovery. Stage 98 is unvalidated history. |
+| Requirement | Stage 01. |
+| Architecture Description / Architecture Decision Record | Stage 02. |
+| Spec / Plan / Task | One Stage 03 package. Approval is not execution completion. |
+| GitHub Issue / Project | Link to a Spec and Task by ID or URL; do not copy their full contract or evidence or synchronize status in both directions. Remote state requires observation. |
+| Policy / rule / contract / control | Common behavior belongs to `.agents/governance/`, executable enforcement to scripts, document shape to Stage 99. These terms do not create parallel policy directories. The Stage 99 profile `governance/rule` names the shape those policy documents share, from the retired directory they once sat in; it is a stable identity rather than a claim that such a document carries one obligation. |
+| Provider / Role / Agent | Native configuration is not evidence of runtime enforcement. |
+| Skill | Lives under `.agents/skills/`; native discovery depends on the provider contract. A plain procedure reference is not a native registration. |
+| Hook / Gate / validator / Fixture | A hook need not run QA, and a test fixture is never production policy input. |
+| QA / CI / CD | This public repository runs repository-static QA locally. The hosted `ci-summary` job checks branch and commit metadata and `style-pr` runs only the selected style gate (plus the CI Python contract check when a lock changes); neither replays the rest of that QA. Argo CD reconciles declared GitOps state only under the operating boundary. |
+| Deployment / release | Neither follows automatically from local validation or a commit. |
+| Guide / Runbook | Stage 05. |
+| Evidence / archive | Task and Git own change evidence; Git owns source recovery. Stage 98 is unvalidated history. |
 
 ### Proportional transitions
 
@@ -118,7 +122,7 @@ follow the [Git policy](git.md) for every row.
 | Document content: README, guide, reference | The current owner, or the Task of the package that changes it | Ordinary document selection | The operator's request |
 | Executable behavior | A Stage 03 package; a failing case then a passing case in its Task | Focused regressions and affected purpose gates | Spec and Plan approval |
 | Governance, provider, Stage 99 form, schema or registry | A Stage 03 package; durable meaning promoted to its owner | The contract-change selection in [quality](quality.md) | Spec and Plan approval |
-| Architecture boundary or durable choice | An Architecture Description or ADR; a package when it is implemented | Document checks and reciprocal links | The operator accepts the ADR |
+| Architecture boundary or durable choice | An Architecture Description or ADR; a package when it is implemented | Document checks and forward links | The operator accepts the ADR |
 | Live cluster change or incident fix | A Task, and an Incident record for an incident; Runbook steps | Observation in the approved live lane | The operator approves the live action; approved bootstrap and break-glass actions stay operator-bound under [approval and safety](approval-and-safety.md) |
 
 Security checks follow their existing owners: [quality](quality.md) selects

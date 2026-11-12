@@ -1,10 +1,10 @@
 ---
 title: "Git Policy"
-version: "2.3.3"
+version: "2.4.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-10"
+updated: "2026-11-12"
 ---
 
 # Git Policy
@@ -82,13 +82,14 @@ request; the intended protection blocks direct and force pushes. A pull
 request completes only when the required checks pass, the review requirement
 is met (no approving review is required, count 0, and no CODEOWNERS review,
 because a sole owner cannot approve their own pull request) and the
-new-context review of the final diff reports no `BLOCK` finding
-([semantic review](quality.md#semantic-review)).
+core-diff checklist of the final diff records no unresolved `BLOCK` finding
+([semantic review](quality.md#semantic-review)); an extra agent review is
+optional and never required.
 The repository owner (`@buenhyden`) merges the pull request, or explicitly
 directs its merge, using a merge commit only, so the commits a Task cites stay
 reachable; an administrator bypass (`--admin`) is never used. The intended
 repository merge setting is recorded in `.github/rulesets/main-protection.md`.
-Required checks, the new-context review and the owner's merge or explicit merge
+Required checks, the checklist review and the owner's merge or explicit merge
 direction together offset the missing second reviewer; no automated check, App
 or signature replaces the owner's approval. A deployment style result requires
 an actual deployment workflow and run; absent that input, keep it unobserved.

@@ -3,11 +3,11 @@ name: "knowledge-map"
 description: "Use when auditing governance navigation, role/skill references, stage indexes, or current cross-links."
 metadata:
   title: "Knowledge Map"
-  version: "1.0.1"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-12"
 disable-model-invocation: true
 ---
 
@@ -34,7 +34,8 @@ second policy or role roster.
 2. Resolve exact role and skill paths from `.agents/roles/registry.json`; resolve
    document profiles and indexes from the Stage 99 registry. Read
    `.agents/knowledge/project-map.md` for the tree that owns a path and
-   `.agents/knowledge/domains.md` for the entry document of a domain; take the
+   `.agents/knowledge/domains.md` for the entry document of a domain, and
+   `.agents/knowledge/glossary.md` for what a shared term means; take the
    owner path, entry path and validity condition from the row and verify each
    against the tree rather than trusting the row.
 3. Apply the current document-authoring rule: outside-doc navigation reaches

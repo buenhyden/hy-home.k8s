@@ -91,7 +91,8 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | `document_authority.py`, `validate-links-and-owners.py` | 현재 owner와 문서 간 관계의 의미 검증. 링크 검사 한 실행의 context가 Registry와 문서 inventory를 보유해 같은 입력의 재조회에 쓰인다. |
 | `document_lifecycle.py`, `validate-document-lifecycle.py` | registry가 분류한 lifecycle과 staged index 전이 |
 | `document_language.py` | 문서의 언어를 판정하는 순수 규칙 |
-| `validate-knowledge-surface.py` | knowledge owner 포인터와 제한된 관찰 출처 검증 |
+| `validate-knowledge-surface.py` | knowledge owner 포인터, Repository Vocabulary 용어 표와 제한된 관찰 출처 검증 |
+| `document-backlinks.py` | 정방향 링크에서 한 문서를 가리키는 추적 문서 목록을 파생하는 탐색 도구(gate 아님) |
 | `json_schema_validation.py` | production validator가 함께 쓰는 오프라인 JSON Schema 로딩 |
 | `run-contract-tests.py` | 이름 있는 suite 하나의 계약 회귀를 그 suite의 목적 gate로 실행한다. suite별 모듈 목록은 이 파일이 소유하며, 각 gate는 Registry에서 `--suite`로 suite 하나를 지정한다. 긴 blanket unit discovery의 간접 `coveredBy`를 현재 완료 조건으로 삼지 않는다. |
 

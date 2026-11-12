@@ -1,10 +1,10 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.2.3"
+version: "1.2.4"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-12"
 layer: "operations"
 artifact_id: "POL-0003"
 ---
@@ -118,4 +118,4 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — cert-manager, Istio, and Kiali controls derive from accepted architecture and current operations evidence, but no eligible upstream document carries a reciprocal policy link | Platform Owner for component and namespace controls | ClusterIssuer and CA-secret contract, namespace injection rules, Istio sync waves, and Kiali egress limits |
+| N/A — cert-manager, Istio, and Kiali controls derive from accepted architecture and current operations evidence, but no eligible upstream document is available to link as the promoting owner | Platform Owner for component and namespace controls | ClusterIssuer and CA-secret contract, namespace injection rules, Istio sync waves, and Kiali egress limits |

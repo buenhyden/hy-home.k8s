@@ -40,7 +40,7 @@ def _report(source: PurePosixPath, target: str):
 STAGE_PREFIXES = validator._stage_document_prefixes(validator.load_registry(ROOT))
 
 
-class RetainedReciprocalAndTemplateTests(unittest.TestCase):
+class RetainedLinkAndTemplateTests(unittest.TestCase):
     def test_deleted_target_selects_one_hop_incoming_body_reader(self) -> None:
         deleted = PurePosixPath("docs/05.operations/runbooks/deleted.md")
         incoming = PurePosixPath("docs/05.operations/guides/0001-incoming.md")
@@ -161,19 +161,32 @@ class RetainedReciprocalAndTemplateTests(unittest.TestCase):
         authored = PurePosixPath("docs/03.specs/0140-archive-check-removal/spec.md")
         self.assertEqual(validator._local_destination(authored, expected)[0], "local")
 
-    def test_current_backlink_is_still_required(self) -> None:
-        owner = PurePosixPath("docs/03.specs/0140-archive-check-removal/spec.md")
-        expected = PurePosixPath(
-            "docs/01.requirements/0003-workspace-agent-governance-platform.md"
-        )
-        context = SimpleNamespace(
-            texts={owner: "Current completed Spec without a backlink."},
-        )
-        self.assertFalse(validator._links_back_to(context, owner, expected))
-        context.texts[owner] = (
-            "[Requirement](../../01.requirements/0003-workspace-agent-governance-platform.md)"
-        )
-        self.assertTrue(validator._links_back_to(context, owner, expected))
+    def test_forward_relationship_link_still_fails_broken_or_wrong_profile(
+        self,
+    ) -> None:
+        spec = PurePosixPath("docs/03.specs/0164-derived-reverse-traceability/spec.md")
+        parent = "../../01.requirements/0003-workspace-agent-governance-platform.md"
+        context = validator._build_context(ROOT, (spec,))
+        context = replace(context, paths=(spec, *context.paths))
+        registry = validator.load_registry(ROOT)
+        profiles = {item.profile_id: item for item in registry.profiles}
+        original = context.texts[spec]
+
+        def rules(text: str) -> list[str]:
+            context.texts[spec] = text
+            return [
+                item.rule_id
+                for item in validator._body_contract_link_diagnostics(
+                    context, profiles, "registry", selected_paths=frozenset({spec})
+                )
+            ]
+
+        self.assertEqual(rules(original), [])
+        broken = original.replace(parent, "../../01.requirements/9999-missing.md")
+        self.assertIn("BODY-LINK-BROKEN", rules(broken))
+        design = "../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md"
+        wrong = original.replace(f"]({parent})", f"]({design})")
+        self.assertIn("BODY-LINK-SOURCE-PROFILE", rules(wrong))
 
     def test_full_uppercase_placeholder_is_only_a_template_destination(self) -> None:
         form = PurePosixPath("docs/99.templates/templates/specs/plan.template.md")

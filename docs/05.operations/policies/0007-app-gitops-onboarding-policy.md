@@ -1,10 +1,10 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.4.0"
+version: "1.4.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-12"
 layer: "operations"
 artifact_id: "POL-0007"
 ---
@@ -204,4 +204,4 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — the app-onboarding policy is promoted from the current sample/adminer patterns and operations workflow, with no eligible upstream document carrying a reciprocal policy link | Platform Owner for workload admission and AppProject exceptions; application owner for image, rollout, and runtime evidence | required Rollout/AnalysisTemplate manifests, fixed image tags, ingress/TLS and Istio contracts, OpenBao/ESO boundary, PR review, and GitOps/manifest/secret validation gates |
+| N/A — the app-onboarding policy is promoted from the current sample/adminer patterns and operations workflow, with no eligible upstream document available to link as the promoting owner | Platform Owner for workload admission and AppProject exceptions; application owner for image, rollout, and runtime evidence | required Rollout/AnalysisTemplate manifests, fixed image tags, ingress/TLS and Istio contracts, OpenBao/ESO boundary, PR review, and GitOps/manifest/secret validation gates |

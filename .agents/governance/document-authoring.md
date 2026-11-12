@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "3.4.1"
+version: "3.5.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-11"
+updated: "2026-11-12"
 ---
 
 # Document Authoring Policy
@@ -61,7 +61,11 @@ express ownership, not a one-way waterfall.
    Machine reads are admitted only by the exact consumer, target and access-kind
    tuples in the link validator; they do not authorize rendered links. Route
    grammars stay in the Stage 99 registry. Links inside `docs/` retain their
-   historical and current relationship contracts.
+   historical and current relationship contracts. Write each traceability
+   relation once, in the document that cites its parent; never hand-write a
+   back-link. Derive the reverse view on demand with
+   `scripts/document-backlinks.py`. Supersession pairs (rule 13) stay
+   reciprocal.
    Link the current owner instead of `docs/98.archive/`; that directory is
    unvalidated history, and a link into it is not checked.
 7. Keep a Requirement Package solution-independent. Put executable interface

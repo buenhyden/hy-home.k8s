@@ -1,10 +1,10 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.3.2"
+version: "1.3.3"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-12"
 layer: "operations"
 artifact_id: "POL-0005"
 ---
@@ -119,4 +119,4 @@ Alloy의 relabel·remote-write 설정과 실제 외부 Prometheus의 series 수�
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — current GitOps and external observability contracts have no reciprocal Spec or Task policy link | Platform Owner and Observability Owner | service naming, Alloy relabel and remote write, Prometheus/Grafana/Loki config, AppProject destination, owning Runbooks |
+| N/A — current GitOps and external observability contracts have no promoting Spec or Task to link | Platform Owner and Observability Owner | service naming, Alloy relabel and remote write, Prometheus/Grafana/Loki config, AppProject destination, owning Runbooks |

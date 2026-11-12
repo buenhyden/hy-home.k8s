@@ -1,10 +1,10 @@
 ---
 title: "Work Lifecycle"
-version: "2.1.1"
+version: "2.2.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-12"
 ---
 
 # Work Lifecycle
@@ -96,7 +96,8 @@ end the loop.
 
 1. Check acceptance, links, owner boundaries, language, and README navigation
    through the [semantic review contract](../governance/quality.md#semantic-review):
-   applicable automated checks plus an independent read-only reviewer.
+   a recorded risk class, applicable automated checks, a core-diff checklist
+   and the owner's explicit acceptance; an agent review is optional.
 2. Follow the delivery route and ordered sequence in
    [quality policy](../governance/quality.md#delivery-ownership). Record local
    selected QA and pre-commit lint/format over their actual snapshots. PR branch

@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "2.3.1"
+version: "2.4.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-12"
 ---
 
 # Quality and Evidence Policy
@@ -142,37 +142,49 @@ results, approval, integration and publication are distinct facts.
 
 ### Semantic review
 
-Routine repository meaning checks previously repeated by a human use both
-applicable automated checks and an independent read-only agent review. This
-includes acceptance/implementation alignment, document completion or
-supersession, ownership, and consistency with current contracts. When both
-parts pass with no unresolved `BLOCK` finding, do not request another human semantic
-confirmation for the same scope and evidence snapshot.
+A single-maintainer review combines a recorded risk class, the applicable
+static and contract checks, a core-diff checklist over the exact snapshot, the
+owner's explicit acceptance and a recovery path, with the evidence and any
+release approval recorded. An extra agent or model API call is never a required
+reviewer: no rule, gate or completion condition may depend on one, and adding
+one under another name (proxy, summary or gate helper) is the same violation.
+When the operator asks for one, a separate read-only agent review is optional
+supporting evidence. No review step, agent or human, is recorded as a second
+human approval.
 
+- Record the risk class in the existing handoff evidence: `low` for a
+  document-only change outside policy, registry, validator, hook, workflow and
+  permission files; `medium` for a policy, registry, template, validator or test
+  change; `high` for a permission, secret-handling, hook, workflow,
+  protected-action or data-loss path. A disputed class takes the higher one.
 - Run the applicable checks selected by the validation registry. Automation
-  establishes only what those checks cover; the reviewer examines remaining
-  meaning against the actual diff, current owners, acceptance criteria and
-  command results, rather than endorsing the author's summary.
-- Select a reviewer with the relevant registered responsibility who did not
-  author or modify the reviewed changes. A separate agent identity and a
-  read-only assignment are required; an author cannot certify their own work
-  by changing roles. The reviewer reports findings without repairing files.
-- Record the checked snapshot, check results, reviewer identity, inspected
-  scope, findings and disposition in the existing handoff evidence. The writer
-  repairs findings; refresh affected checks and independent review after
-  changes. Reuse unchanged evidence under the validation lane contract.
+  establishes only what those checks cover.
+- Complete the core-diff checklist against the actual diff, current owners,
+  acceptance criteria and command results, not the author's summary:
+  acceptance and implementation alignment, document completion or
+  supersession, one writer per file, consistency with current contracts and
+  policies, removed or weakened checks, secret exposure and the recovery path
+  (rollback commit or bounded procedure). A `high`
+  change also lists each changed permission, trigger and protected action.
 - Grade every finding `BLOCK`, `FIX` or `NOTE`. `BLOCK` is a correctness,
   security or data-loss defect or a violation of a current contract or policy;
   it must be fixed before merge. `FIX` should be fixed, in the same change or
-  in a tracked follow-up with a named owner. `NOTE` is informational.
-- For a pull request, review the final diff of the exact head in a new context
-  separated from the authoring context: one that did not write the change and
-  receives the diff and current owners, not the author's conclusions.
-- A failed required check or unresolved `BLOCK` finding blocks completion. Missing
-  applicable automation or an unavailable independent reviewer is an explicit
-  evidence gap, not PASS; route it to the responsible owner. Human judgment is
-  needed for unresolved intent, conflicting authority or a decision reserved
-  to the request owner, not routine repetition of a completed review.
+  in a tracked follow-up with a named owner. `NOTE` is informational. A `BLOCK`
+  from an optional review blocks in the same way until fixed or dispositioned
+  by the owner.
+- Record the checked snapshot, check results, risk class, checklist outcome,
+  findings, any optional reviewer identity and the disposition in the existing
+  handoff evidence. The writer repairs findings and refreshes the affected
+  checks and checklist after changes. Reuse unchanged evidence under the
+  validation lane contract.
+- For a pull request, complete the checklist over the final diff of the exact
+  head.
+- A failed required check or unresolved `BLOCK` finding blocks completion.
+  Missing applicable automation is an explicit evidence gap, not PASS; route it
+  to the responsible owner. The owner's explicit acceptance is the decision; it
+  is never inferred from a check PASS, a merge or an optional review. Human
+  judgment beyond that acceptance is needed for unresolved intent, conflicting
+  authority or a decision reserved to the request owner.
 - This review rule supplies quality evidence, not authorization. Explicit
   human/operator approvals, protected external actions and required hosted
   reviews remain governed by their existing owners. Native and live claims
@@ -245,7 +257,7 @@ above.
 | Routine editing | Run focused behavior checks and selected affected `quick` checks over changed working-tree bytes. |
 | Local commit | Review the logical index, then commit with active hooks as one run: the `staged-qa` hook runs exact-index `staged` QA, which includes the selected lint and format gate (`selected-style`), and the commit-msg hooks validate the actual message. Record that run once. |
 | Feature push | Preserve checked commit evidence and observed push result; pushing adds no QA leaf for unchanged inputs. |
-| Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. A pull request completes only when the required checks pass, the review requirement is met (no approving review is required, count 0) and the new-context review of the final diff reports no `BLOCK` finding. The repository owner merges it, or explicitly directs its merge, with a merge commit; automated checks, Apps and signatures never stand in for the owner's approval. |
+| Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. A pull request completes only when the required checks pass, the review requirement is met (no approving review is required, count 0) and the core-diff checklist of the final diff records no unresolved `BLOCK` finding. The repository owner merges it, or explicitly directs its merge, with a merge commit; automated checks, Apps and signatures never stand in for the owner's approval. |
 | Deployment | Observe the selected style check at the actual deployment SHA/run before deployment, as the hosted lane requires; otherwise retain `NOT_RUN` or `DEFER`. Repository files alone cannot certify deployment. |
 | Main integration | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an unchanged merge candidate needs no repeat. Record the actual merge and any remote required-check result separately. |
 | Local handoff | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing security guarantees. No session timebox or reserve approval is required. |
@@ -301,7 +313,7 @@ Record in the owning Task or approved evidence record:
 - commands and tool/version, with each ordered completion-step result;
 - separate lane results and limitations;
 - the approval boundary in force: what was authorized and what was not;
-- reviewer identity and disposition;
+- risk class, checklist outcome, any optional reviewer identity and disposition;
 - rollback commit or bounded rollback procedure;
 - residual risk and next owner.
 

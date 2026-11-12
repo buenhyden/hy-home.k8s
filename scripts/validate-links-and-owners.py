@@ -2934,18 +2934,6 @@ def lifecycle_markdown_evidence(
     )
 
 
-def _links_back_to(
-    context: Context,
-    owner: PurePosixPath,
-    expected: PurePosixPath,
-) -> bool:
-    for raw_link in _extract_links(context.texts[owner]):
-        kind, target = _local_destination(owner, raw_link)
-        if kind in {"local", "anchor"} and target == expected:
-            return True
-    return False
-
-
 def _optional_gfm_table_cells(line: str) -> list[str]:
     """Parse a GFM table row with optional leading and trailing pipes."""
 
@@ -3500,7 +3488,7 @@ def _body_contract_link_diagnostics(
     *,
     selected_paths: frozenset[PurePosixPath] | None = None,
 ) -> list[Diagnostic]:
-    """Validate registry-owned relationship cells and reciprocal evidence."""
+    """Validate registry-owned relationship cells."""
 
     if body_contracts not in {"registry", "audit"}:
         raise ConfigurationError("body_contracts must be registry or audit")
@@ -3597,33 +3585,6 @@ def _body_contract_link_diagnostics(
                             )
                         )
                         continue
-                    target_profile = profiles_by_id[target_view.profile_id]
-                    target_status = task_status(
-                        context.metadata[target],
-                        context.texts.get(target, ""),
-                        target_profile,
-                    )
-                    reciprocal_in_scope = _body_contract_link_is_enforced(
-                        target,
-                        target_profile,
-                        target_status,
-                        body_contracts,
-                        path_prefixes,
-                    )
-                    if (
-                        contract.reciprocal_evidence
-                        and reciprocal_in_scope
-                        and not _links_back_to(context, target, path)
-                    ):
-                        diagnostics.append(
-                            _diag(
-                                "BODY-LINK-RECIPROCAL",
-                                path,
-                                profile.profile_id,
-                                f"{target.as_posix()} links back to {path.as_posix()}",
-                                f"row {row_number}, {column}: missing reciprocal evidence",
-                            )
-                        )
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 

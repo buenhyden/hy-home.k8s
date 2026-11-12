@@ -1851,6 +1851,10 @@
         {
           "kind": "exact",
           "value": "tests/test_validate_knowledge_surface.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_document_backlinks.py"
         }
       ],
       "validators": [
