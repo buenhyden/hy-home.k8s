@@ -1,6 +1,6 @@
 ---
 title: "W01 Governance Alignment"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-12"
@@ -53,8 +53,8 @@ Read-only survey at `e3d72466`. Read fully: the glossary, `sdlc.md`, `quality.md
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan), [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | Edit the W01 files the Spec names; `work-lifecycle.md` needs no W01 edit because its hosted-lane text is the W06 change set. | platform | in-progress | PASS | EVD-004, EVD-006 |
-| WORK-002 | [VAL-GOVALIGN-003](../spec.md#success-criteria--verification-plan) | Record the handoffs and the exact-index QA. | platform | in-progress | PASS | EVD-005, EVD-006; exact-index QA and hooks run on the implementation commit |
+| WORK-001 | [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan), [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | Edit the W01 files the Spec names; `work-lifecycle.md` needs no W01 edit because its hosted-lane text is the W06 change set. | platform | completed | PASS | EVD-004, EVD-006 |
+| WORK-002 | [VAL-GOVALIGN-003](../spec.md#success-criteria--verification-plan) | Record the handoffs and the exact-index QA. | platform | completed | PASS | EVD-005, EVD-006; exact-index QA and hooks run on the implementation commit |
 
 ## Task Evidence
 
@@ -67,6 +67,7 @@ Read-only survey at `e3d72466`. Read fully: the glossary, `sdlc.md`, `quality.md
 | EVD-005 | [VAL-GOVALIGN-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Handoff record | Spec Interfaces and the Handoffs table below | PASS | W03, W04, W05, W06 and W07 each have owner, interface and resume condition; none was started here. | yes | none |
 | EVD-006 | [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan), [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Semantic review: risk class and core-diff checklist | Diff of the five W01 files over `4300d7c6` | PASS | Risk class `medium` (policy change). Checklist: acceptance alignment holds (each Contracts item in its named owner); one writer per file (this Task); consistent with FR-0017 and ADR-0048, which the hosted target sentence names as governing; no check removed or weakened; no secret read or printed; recovery is reverting the implementation commit. No permission, trigger or protected action changed. Findings: none `BLOCK` or `FIX`; NOTE: the `quality.md` reuse key now names environment, guarantee and consumer while `scripts/qa.py` does not yet (W05). | yes | none |
 | EVD-007 | [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan), [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Requirement trace and follow-up survey | W01 package sections 1-11 against `1643e66d`; 2026-11-12 | PASS | Every owned ID now has an action and file:line evidence in the Requirement Trace below; W01-A, W01-B, GOV-01, R147-09 and R147-19 were not traced before. Glossary owner labels `W03 contract author`, `W07 verification owner` and `W00 lineage owner` named package stages; renamed to `Registry author`, `Native runtime verification owner` and `Audit lineage owner` with the same links. Open: the glossary is still `draft` although it owns term meaning (operator decision). | yes | none |
+| EVD-008 | [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan), [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Glossary status decision | Direct current-session user answer "Promote to active (Recommended)" to the glossary status question, 2026-11-12 Asia/Seoul | PASS | The glossary moves `draft` to `in-review` to `active`, one registered edge per commit; no definition changes with it. | no | none |
 
 ### Handoffs
 
@@ -102,9 +103,9 @@ Read-only survey at `e3d72466`. Read fully: the glossary, `sdlc.md`, `quality.md
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan) | pending | none | Owner edits and phrase search | platform |
-| [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | pending | none | Glossary links and knowledge checks | platform |
-| [VAL-GOVALIGN-003](../spec.md#success-criteria--verification-plan) | pending | none | Handoffs and exact-index QA | platform |
+| [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004, EVD-006, EVD-007 | Accepted by the user on 2026-11-12 (direct answer "Accept all three" to the SPEC-0166 criterion question) | platform |
+| [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-004, EVD-007 | Accepted by the user on 2026-11-12 (direct answer "Accept all three" to the SPEC-0166 criterion question) | platform |
+| [VAL-GOVALIGN-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the user on 2026-11-12 (direct answer "Accept all three" to the SPEC-0166 criterion question) | platform |
 
 ## Approval and Safety Boundaries
 
@@ -119,4 +120,4 @@ Read-only survey at `e3d72466`. Read fully: the glossary, `sdlc.md`, `quality.md
 
 ## Verification Summary
 
-WORK-001 and WORK-002 done; all checks in EVD-004 PASS; semantic review in EVD-006 has no `BLOCK` or `FIX`. Risk class `medium` (policy change). Criterion acceptance is pending the operator. Not run: live checks (no live surface). Rollback: revert the implementation commit. Residual risk: the W03, W05 and W06 targets are policy text without enforcement until those stages land. Next owner: the operator for acceptance, then W02 or W03 per the package order.
+WORK-001 and WORK-002 done; all checks in EVD-004 PASS; semantic review in EVD-006 has no `BLOCK` or `FIX`. Risk class `medium` (policy change). The user accepted all three criteria on 2026-11-12 and decided to promote the glossary to `active` (EVD-008). Not run: live checks (no live surface). Rollback: revert the implementation commit. Residual risk: the W03, W05 and W06 targets are policy text without enforcement until those stages land. Next owner: the operator for package exit; W02 can start independently.
