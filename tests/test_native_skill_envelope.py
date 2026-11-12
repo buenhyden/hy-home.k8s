@@ -122,19 +122,18 @@ class NativeSkillEnvelopeTests(unittest.TestCase):
                 )
             },
         )
+        heading = "### Recovery Verification\n"
+        self.assertIn(heading, changed)
         changed = changed.replace(
-            "## Closure\n",
-            "## Closure\n\n[Resolved check](incident.md#evidence) confirms recovery.\n",
+            heading,
+            heading + "\n[Resolved check](incident.md#evidence) confirms recovery.\n",
         )
-        self.assertNotIn(
-            "INCIDENT-RESOLVED-AT",
-            {
-                d.rule_id
-                for d in MARKDOWN.validate_document_text(
-                    changed, path, profile, "strict"
-                )
-            },
-        )
+        rules = {
+            d.rule_id
+            for d in MARKDOWN.validate_document_text(changed, path, profile, "strict")
+        }
+        self.assertNotIn("INCIDENT-RESOLVED-AT", rules)
+        self.assertNotIn("INCIDENT-RESOLUTION-EVIDENCE", rules)
 
 
 if __name__ == "__main__":

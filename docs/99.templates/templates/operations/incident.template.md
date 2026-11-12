@@ -11,13 +11,11 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 # Incident: [Incident Title]
 
-## Overview
+## Summary
 
-<!-- Author prompt: 관측된 사건, 현재 상태, 대응 범위를 요약한다. -->
+### Event
 
-## Incident Metadata
-
-<!-- Author prompt: incident ID, 심각도, 시작 또는 탐지 시각, frontmatter status에서 파생한 현재 상태, 영향받은 환경, 다음 점검 시점을 기록한다. 허용 상태값은 Registry의 operation/incident 프로필을 따른다. -->
+<!-- Author prompt: 관측된 사건과 대응 범위를 요약하고, incident ID, 시작 또는 탐지 시각, frontmatter status에서 파생한 현재 상태, 다음 점검 시점을 기록한다. -->
 
 | Field | Value |
 | --- | --- |
@@ -26,39 +24,59 @@ artifact_id: "{{ARTIFACT_ID}}"
 | Current state | frontmatter `status`의 현재 값 |
 | Next checkpoint | {{TIMESTAMP}} or N/A — closed |
 
-## Roles and Coordination
+### Current Status
 
-<!-- Author prompt: incident commander, operations lead, communications owner, escalation owner를 적는다. N/A는 이유가 있을 때만 쓴다. -->
+<!-- Author prompt: 관측된 현재 상태와 확인 범위를 적는다. 허용 상태값은 Registry의 operation/incident 프로필을 따른다. -->
 
 ## Impact
 
-<!-- Author prompt: 영향받은 사용자와 서비스, 지속 시간, 확인된 한계를 적는다. -->
+### Affected Users
+
+<!-- Author prompt: 영향받은 사용자와 서비스, 영향받은 환경, 확인된 한계를 적는다. -->
+
+### Severity and Duration
+
+<!-- Author prompt: 심각도(SEV-1 / SEV-2 / SEV-3 / SEV-4)와 지속 시간을 확인된 사실과 추정을 구분해 적는다. -->
 
 ## Timeline
 
+### Events
+
 <!-- Author prompt: 시각이 붙은 관측, 결정, 조치를 사후 추론 없이 기록한다. -->
 
-## Response State
+<!-- Author prompt: 시각별 관측과 행위자를 나눌 때만 아래 Events 표를 사용하고, 그렇지 않으면 표를 지운다. -->
+
+| Timestamp | Event | Actor |
+| --- | --- | --- |
+| {{TIMESTAMP}} | Describe one observation, decision, or action. | Name who or what acted. |
+
+### Decisions
+
+<!-- Author prompt: 당시의 결정과 근거, 권한을 적고 incident commander, operations lead, communications owner, escalation owner를 함께 적는다. N/A는 이유가 있을 때만 쓴다. -->
+
+## Resolution
+
+### Mitigation
 
 <!-- Author prompt: 현재 맡은 역할, 완화 조치, escalation, 다음 점검 시점을 추적한다. -->
 
+### Recovery Verification
+
+<!-- Author prompt: resolved 상태일 때만 frontmatter resolved_at에 실제 시간대 포함 시각을 기록하고 해결 증거를 이 절에 적는다. 해결 전에는 시각을 미리 채우지 않는다. 종료 owner와 남은 위험을 함께 기록한다. -->
+
 ## Evidence
+
+### Evidence Sources
 
 <!-- Author prompt: 비밀이 없는 로그, 지표, 변경, 보존된 산출물을 링크한다. -->
 
-## Follow-up Actions
+### Follow-up Owners
 
 <!-- Author prompt: owner와 기한 상태가 있는 후속 Task를 만든다. 근본 원인 분석은 여기에서 하지 않는다. -->
 
-## Closure
-
-<!-- Author prompt: resolved 상태일 때만 frontmatter resolved_at에 실제 시간대 포함 시각을 기록하고 해결 증거를 본문에 적는다. 해결 전에는 시각을 미리 채우지 않는다. 종료 owner와 남은 위험을 함께 기록한다. -->
-
-## Traceability
+### Lifecycle Traceability
 
 <!-- Author prompt: 타임라인의 조치와 증거를 후속 Task의 owner에 연결한다. -->
-
-### Lifecycle Traceability
 
 | Timeline or action | Evidence | Follow-up Task |
 | --- | --- | --- |

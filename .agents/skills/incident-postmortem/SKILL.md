@@ -3,11 +3,11 @@ name: "incident-postmortem"
 description: "Use when writing a cluster incident postmortem or routing post-incident analysis through timeline reconstruction, root cause analysis, impact assessment, and remediation planning. Real-time on-call response, monitoring setup, and alert configuration are outside this skill's scope."
 metadata:
   title: "Incident Postmortem"
-  version: "1.0.1"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -90,8 +90,9 @@ impact fields; state estimates with their confidence.
 
 Group actions by horizon (immediate under 24 h, short-term under 2 weeks,
 long-term under 3 months). Each action item is SMART: owner, due date and
-success criterion. The postmortem template carries the Action Items,
-Prevention and Verification, and Action Closure sections.
+success criterion. The postmortem template carries them under Corrective
+Actions (Actions and Verification); the closing approver goes in Evidence >
+Review Decision.
 
 ### Phase 6: Final Postmortem Report
 

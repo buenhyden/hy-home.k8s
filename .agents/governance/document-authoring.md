@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.8.0"
+version: "3.9.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -254,11 +254,13 @@ through that source; an edit made only in the copy is a defect. The Policy
 role, its forms and placement are owned by the
 [SDLC contract](sdlc.md#ownership-and-placement).
 
-Guide and Runbook use their registry forms. Guide keeps its classification,
-readers and goal under Purpose and its Lifecycle Traceability table under
-Verification; Runbook keeps its Lifecycle Traceability table under Validation.
-Policy uses the selected role's ordered sections and keeps its existing
-Lifecycle Traceability table under Related Documents until its package. A
+Guide, Runbook, Incident and Postmortem use their registry forms. Guide keeps
+its classification, readers and goal under Purpose and its Lifecycle
+Traceability table under Verification; Runbook keeps its Lifecycle Traceability
+table under Validation; Incident keeps its Lifecycle Traceability table under
+Evidence and Postmortem under Corrective Actions. Policy uses the selected
+role's ordered sections and keeps its existing Lifecycle Traceability table
+under Related Documents until its package. A
 TemplateDefinition names each table's section, ordered columns, minimum rows and
 row identity, and the validator checks column order, count and minimum rows.
 Classifications, prerequisites, controls, observations and recovery stay native

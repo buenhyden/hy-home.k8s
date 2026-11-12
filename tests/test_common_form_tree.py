@@ -129,6 +129,101 @@ RUNBOOK_TABLE_KEYS = {
         "Promoted owner",
     ),
 }
+INCIDENT = ("operation/incident", "common/template-operation-incident")
+INCIDENT_TREE = (
+    ("Summary", ("Event", "Current Status")),
+    ("Impact", ("Affected Users", "Severity and Duration")),
+    ("Timeline", ("Events", "Decisions")),
+    ("Resolution", ("Mitigation", "Recovery Verification")),
+    ("Evidence", ("Evidence Sources", "Follow-up Owners")),
+)
+POSTMORTEM = ("operation/postmortem", "common/template-operation-postmortem")
+POSTMORTEM_TREE = (
+    ("Summary", ("Incident Reference", "Review Scope")),
+    ("Root Cause", ("Causal Analysis", "Contributing Factors")),
+    ("Impact", ("Observed Impact", "Detection and Response")),
+    ("Corrective Actions", ("Actions", "Verification")),
+    ("Evidence", ("Source Records", "Review Decision")),
+)
+# The four roles that carry a form; every other profile keeps its H2 lists.
+FORM_PROFILES = GUIDE + RUNBOOK + INCIDENT + POSTMORTEM
+FORM_TEMPLATES = (GUIDE[1], RUNBOOK[1], INCIDENT[1], POSTMORTEM[1])
+LIFECYCLE_CONDITION = (
+    "a document in a status the body contract enforces states its follow-up "
+    "Task or an N/A reason"
+)
+INCIDENT_EXTENSIONS = [
+    {
+        "id": "incident-lifecycle-traceability",
+        "kind": "local_h3",
+        "condition": LIFECYCLE_CONDITION,
+        "owner": "platform",
+        "verification": "the body-contract check",
+        "review": "when the form version changes",
+        "removal": "when incident lineage has another registered owner",
+        "parent_id": "incident-evidence",
+        "title": "Lifecycle Traceability",
+    }
+]
+POSTMORTEM_EXTENSIONS = [
+    {
+        "id": "postmortem-lifecycle-traceability",
+        "kind": "local_h3",
+        "condition": LIFECYCLE_CONDITION,
+        "owner": "platform",
+        "verification": "the body-contract check",
+        "review": "when the form version changes",
+        "removal": "when incident lineage has another registered owner",
+        "parent_id": "postmortem-corrective-actions",
+        "title": "Lifecycle Traceability",
+    },
+    {
+        "id": "postmortem-what-went-well",
+        "kind": "local_h3",
+        "condition": (
+            "a postmortem records controls or response actions that reduced impact"
+        ),
+        "owner": "platform",
+        "verification": "the form tree check",
+        "review": "when the Postmortem form version changes",
+        "removal": "when the common Postmortem form gains a What Went Well H3",
+        "parent_id": "postmortem-impact",
+        "title": "What Went Well",
+    },
+]
+INCIDENT_TABLE_KEYS = {
+    "Events": (
+        "incident-timeline-events",
+        ("Timestamp", "Event", "Actor"),
+        0,
+        "Timestamp",
+    ),
+    "Lifecycle Traceability": (
+        "incident-lifecycle-traceability",
+        ("Timeline or action", "Evidence", "Follow-up Task"),
+        1,
+        "Timeline or action",
+    ),
+}
+POSTMORTEM_TABLE_KEYS = {
+    "Actions": (
+        "postmortem-corrective-actions-actions",
+        ("Action", "Owner", "Verification"),
+        0,
+        "Action",
+    ),
+    "Lifecycle Traceability": (
+        "postmortem-lifecycle-traceability",
+        (
+            "Root cause or action",
+            "Owner and due state",
+            "Follow-up Task",
+            "Feedback target",
+        ),
+        1,
+        "Root cause or action",
+    ),
+}
 GUIDE_EXTENSION = {
     "id": "guide-lifecycle-traceability",
     "kind": "local_h3",
@@ -325,7 +420,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_only_the_guide_and_runbook_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_four_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -335,7 +430,12 @@ class RepositoryRegistryTests(unittest.TestCase):
         self.assertEqual(common["version"], "1.0.0")
         self.assertEqual(
             [(item["form_id"], item["title"]) for item in common["forms"]],
-            [("guide", "Guide"), ("runbook", "Runbook")],
+            [
+                ("guide", "Guide"),
+                ("runbook", "Runbook"),
+                ("incident", "Incident"),
+                ("postmortem", "Postmortem"),
+            ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
         for form_id, tree, extensions, tables, profiles, body_section in (
@@ -355,6 +455,22 @@ class RepositoryRegistryTests(unittest.TestCase):
                 RUNBOOK,
                 "Validation",
             ),
+            (
+                "incident",
+                INCIDENT_TREE,
+                INCIDENT_EXTENSIONS,
+                INCIDENT_TABLE_KEYS,
+                INCIDENT,
+                "Evidence",
+            ),
+            (
+                "postmortem",
+                POSTMORTEM_TREE,
+                POSTMORTEM_EXTENSIONS,
+                POSTMORTEM_TABLE_KEYS,
+                POSTMORTEM,
+                "Corrective Actions",
+            ),
         ):
             loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
             self.assertEqual(loaded["h1"], "{{document_title}}")
@@ -373,12 +489,12 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ],
                 [
                     (
-                        f"{form_id}-{title.lower()}",
+                        f"{form_id}-{title.lower().replace(' ', '-')}",
                         title,
                         position,
                         [
                             (
-                                f"{form_id}-{title.lower()}-"
+                                f"{form_id}-{title.lower().replace(' ', '-')}-"
                                 f"{child.lower().replace(' ', '-')}",
                                 child,
                                 n,
@@ -430,6 +546,11 @@ class RepositoryRegistryTests(unittest.TestCase):
                 },
                 tables,
             )
+            for table in by_id[profiles[1]]["template_definition"]["tables"]:
+                for column in table["columns"]:
+                    self.assertTrue(column["meaning"])
+                    self.assertEqual(column["data_type"], "string")
+                    self.assertIs(column["required"], True)
         for profile_id, profile in by_id.items():
             sources = profile["relationships"]["source_profile_ids"]
             expected = ROLE_BINDINGS.get(
@@ -437,7 +558,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             )
             with self.subTest(profile=profile_id):
                 self.assertEqual(profile.get("document_role"), expected)
-                if profile_id in (GUIDE[1], RUNBOOK[1]):
+                if profile_id in FORM_TEMPLATES:
                     self.assertIn("template_definition", profile)
                 else:
                     self.assertNotIn("template_definition", profile)
@@ -454,24 +575,30 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_only_the_guide_and_runbook_forms(
-        self,
-    ) -> None:
+    def test_repository_registry_loads_with_exactly_the_four_forms(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
-            [item.form_id for item in registry.common_forms], ["guide", "runbook"]
+            [item.form_id for item in registry.common_forms],
+            ["guide", "runbook", "incident", "postmortem"],
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
             "guide": ["Steps", "Lifecycle Traceability"],
             "runbook": ["Triggers", "Lifecycle Traceability"],
+            "incident": ["Events", "Lifecycle Traceability"],
+            "postmortem": ["Actions", "Lifecycle Traceability"],
         }
         for profile in registry.profiles:
             with self.subTest(profile=profile.profile_id):
                 role = next(
                     (
                         form_id
-                        for form_id, ids in (("guide", GUIDE), ("runbook", RUNBOOK))
+                        for form_id, ids in (
+                            ("guide", GUIDE),
+                            ("runbook", RUNBOOK),
+                            ("incident", INCIDENT),
+                            ("postmortem", POSTMORTEM),
+                        )
                         if profile.profile_id in ids
                     ),
                     None,
@@ -482,7 +609,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 else:
                     self.assertIsNone(profile.form)
                     self.assertEqual(profile.tables, ())
-                if profile.profile_id in (GUIDE[1], RUNBOOK[1]):
+                if profile.profile_id in FORM_TEMPLATES:
                     self.assertIsNotNone(profile.template_definition)
                 else:
                     self.assertIsNone(profile.template_definition)
@@ -520,7 +647,8 @@ class FormRegistryTests(unittest.TestCase):
     def test_valid_form_binds_to_every_profile_of_its_role(self) -> None:
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
-            [item.form_id for item in registry.common_forms], ["guide", "runbook"]
+            [item.form_id for item in registry.common_forms],
+            ["guide", "runbook", "incident", "postmortem"],
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -710,7 +838,7 @@ class FormRegistryTests(unittest.TestCase):
             self.assertIn("REGISTRY_POLICY_ROLE", rules_of(raw))
         raw = load_raw()
         for profile in raw["profiles"]:
-            if profile["id"] not in GUIDE + RUNBOOK:
+            if profile["id"] not in FORM_PROFILES:
                 profile.pop("document_role", None)
         self.assertEqual(rules_of(raw), set())
 
@@ -1543,6 +1671,260 @@ class RunbookFormTests(unittest.TestCase):
         self.assertEqual(self.tree(self.under("## Steps", block)), ["BODY-H3-PARENT"])
 
 
+INCIDENT_PATH = PurePosixPath(
+    "docs/05.operations/incidents/2026/inc-0001-example/incident.md"
+)
+INCIDENT_BODY = md(
+    "# Incident title",
+    "## Summary",
+    "### Event\n\n| Field | Value |\n| --- | --- |\n| Severity | SEV-2 |",
+    "### Current Status\n\nInvestigating.",
+    "## Impact",
+    "### Affected Users\n\nOne team.",
+    "### Severity and Duration\n\nSEV-2 for one hour.",
+    "## Timeline",
+    "### Events\n\nThe alert fired.",
+    "### Decisions\n\nThe commander chose rollback.",
+    "## Resolution",
+    "### Mitigation\n\nRolled back.",
+    "### Recovery Verification\n\nChecks pass.",
+    "## Evidence",
+    "### Evidence Sources\n\nA log link.",
+    "### Follow-up Owners\n\nA Task owner.",
+)
+POSTMORTEM_PATH = PurePosixPath(
+    "docs/05.operations/incidents/2026/inc-0001-example/postmortem.md"
+)
+POSTMORTEM_BODY = md(
+    "# Postmortem title",
+    "## Summary",
+    "### Incident Reference\n\nIncident INC-0001 as recorded in the incident folder.",
+    "### Review Scope\n\nThe whole event.",
+    "## Root Cause",
+    "### Causal Analysis\n\nA bad rollout.",
+    "### Contributing Factors\n\nNo canary.",
+    "## Impact",
+    "### Observed Impact\n\nOne team.",
+    "### Detection and Response\n\nAn alert fired.",
+    "## Corrective Actions",
+    "### Actions\n\nAdd a canary.",
+    "### Verification\n\nThe canary catches it.",
+    "## Evidence",
+    "### Source Records\n\nA log link.",
+    "### Review Decision\n\nApproved.",
+)
+
+
+class RoleFormBody(unittest.TestCase):
+    """Shared checks for a role form; each subclass names its form and body."""
+
+    PATH: PurePosixPath
+    PROFILES: tuple[str, str]
+    FORM_ID: str
+    TREE: tuple
+    TABLE_KEYS: dict
+    BODY: str
+    HEADER: tuple[str, ...]  # its registered columns
+    HOME: str  # the H3 line its table belongs under
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        if cls is RoleFormBody:
+            raise unittest.SkipTest("shared base; its subclasses run the checks")
+        cls.profile = typed_profiles(load_raw())[cls.PROFILES[0]]
+
+    def tree(self, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(
+                self.PATH, self.profile, text, "active"
+            )
+        )
+
+    def tables(self, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._table_diagnostics(self.PATH, self.profile, text)
+        )
+
+    def under(self, heading: str, block: str) -> str:
+        """Insert an H3 block just before the given H2 (or at the end)."""
+
+        if not heading:
+            return self.BODY + "\n" + block + "\n"
+        return self.BODY.replace("\n" + heading, "\n" + block + "\n\n" + heading, 1)
+
+    def table(self, header: tuple[str, ...], *rows: tuple[str, ...]) -> str:
+        lines = [
+            "| " + " | ".join(header) + " |",
+            "| " + " | ".join("---" for _ in header) + " |",
+        ]
+        lines += ["| " + " | ".join(row) + " |" for row in rows]
+        return "\n".join(lines)
+
+    def with_table(self, table: str, *, home: str | None = None) -> str:
+        home = home or self.HOME
+        return self.BODY.replace(home, home + "\n\n" + table, 1)
+
+    def test_the_loaded_heading_lists_equal_the_form_h2_titles(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        titles = tuple(title for title, _ in self.TREE)
+        loaded = next(f for f in registry.common_forms if f.form_id == self.FORM_ID)
+        self.assertEqual(tuple(item.title for item in loaded.sections), titles)
+        by_id = {profile.profile_id: profile for profile in registry.profiles}
+        for profile_id in self.PROFILES:
+            with self.subTest(profile=profile_id):
+                headings = by_id[profile_id].headings
+                self.assertEqual(headings.required, titles)
+                self.assertEqual(headings.allowed, titles)
+                self.assertFalse(headings.substantive_body)
+                self.assertFalse(headings.ordered)
+
+    def test_the_loader_copies_the_tables_to_the_source_profile(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        by_id = {profile.profile_id: profile for profile in registry.profiles}
+        twin, source = by_id[self.PROFILES[1]], by_id[self.PROFILES[0]]
+        self.assertEqual(source.tables, twin.tables)
+        self.assertEqual(
+            {
+                t.name: (
+                    t.section,
+                    tuple(c.key for c in t.columns),
+                    t.minimum_rows,
+                    t.row_identity,
+                )
+                for t in twin.tables
+            },
+            self.TABLE_KEYS,
+        )
+        self.assertTrue(all(c.required for t in twin.tables for c in t.columns))
+
+    def test_the_repository_registry_is_valid_and_its_twin_matches(self) -> None:
+        self.assertEqual(rules_of(load_raw()), set())
+        REGISTRY_CHECK._assert_template_source_parity(CONTRACTS.load_registry(ROOT))
+
+    def test_a_complete_document_passes_the_tree(self) -> None:
+        self.assertEqual(self.tree(self.BODY), [])
+        self.assertEqual(self.tables(self.BODY), [])
+
+    def test_the_optional_table_passes_with_the_registered_columns(self) -> None:
+        row = tuple("x" for _ in self.HEADER)
+        body = self.with_table(self.table(self.HEADER, row))
+        self.assertEqual(self.tables(body), [])
+        self.assertEqual(self.tree(body), [])
+
+    def test_a_header_only_table_passes_because_the_minimum_is_zero(self) -> None:
+        self.assertEqual(self.tables(self.with_table(self.table(self.HEADER))), [])
+
+    def test_a_reordered_missing_or_extra_column_fails(self) -> None:
+        first, second, third = self.HEADER
+        for header in (
+            (first, third, second),
+            (first, second),
+            (*self.HEADER, "Note"),
+        ):
+            table = self.table(header, tuple("x" for _ in header))
+            with self.subTest(header=header):
+                self.assertEqual(
+                    self.tables(self.with_table(table)), ["BODY-TABLE-COLUMNS"]
+                )
+
+    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
+        wrong = self.table(self.HEADER[:2], ("a", "b"))
+        body = self.with_table(wrong, home="### Source Records")
+        self.assertEqual(self.tables(body), [])
+
+
+class IncidentFormTests(RoleFormBody):
+    """SPEC-0171 VAL-INCIDENTFORM-001: the Incident form, its tables and extension."""
+
+    PATH = INCIDENT_PATH
+    PROFILES = INCIDENT
+    FORM_ID = "incident"
+    TREE = INCIDENT_TREE
+    TABLE_KEYS = INCIDENT_TABLE_KEYS
+    BODY = INCIDENT_BODY
+    HEADER = ("Timestamp", "Event", "Actor")
+    HOME = "The alert fired."
+
+    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
+        wrong = self.table(("Timestamp", "Event"), ("a", "b"))
+        body = INCIDENT_BODY.replace("Checks pass.", wrong)
+        self.assertEqual(self.tables(body), [])
+
+    def test_the_metadata_table_is_not_a_contract_table(self) -> None:
+        self.assertIn("| Field | Value |", INCIDENT_BODY)
+        self.assertEqual(self.tables(INCIDENT_BODY), [])
+        wrong = self.table(("Field",), ("Severity",))
+        self.assertEqual(self.tables(self.with_table(wrong, home="Investigating.")), [])
+
+    def test_lifecycle_traceability_belongs_under_evidence(self) -> None:
+        block = (
+            "### Lifecycle Traceability\n\n"
+            "| Timeline or action | Evidence | Follow-up Task |\n"
+            "| --- | --- | --- |\n| Alert | A log | N/A |"
+        )
+        self.assertEqual(self.tree(self.under("", block)), [])
+        self.assertEqual(
+            self.tree(self.under("## Evidence", block)), ["BODY-H3-PARENT"]
+        )
+
+
+class PostmortemFormTests(RoleFormBody):
+    """SPEC-0171 VAL-INCIDENTFORM-001: the Postmortem form, tables and extensions."""
+
+    PATH = POSTMORTEM_PATH
+    PROFILES = POSTMORTEM
+    FORM_ID = "postmortem"
+    TREE = POSTMORTEM_TREE
+    TABLE_KEYS = POSTMORTEM_TABLE_KEYS
+    BODY = POSTMORTEM_BODY
+    HEADER = ("Action", "Owner", "Verification")
+    HOME = "Add a canary."
+
+    WELL = "### What Went Well\n\nThe alert fired within a minute."
+
+    def test_what_went_well_is_accepted_under_impact(self) -> None:
+        self.assertEqual(self.tree(self.under("## Corrective Actions", self.WELL)), [])
+        after_detection = POSTMORTEM_BODY.replace(
+            "## Corrective Actions", self.WELL + "\n\n## Corrective Actions"
+        )
+        self.assertLess(
+            after_detection.index("### Detection and Response"),
+            after_detection.index("### What Went Well"),
+        )
+
+    def test_what_went_well_under_another_h2_is_refused(self) -> None:
+        for heading in ("## Root Cause", "## Evidence"):
+            with self.subTest(before=heading):
+                self.assertEqual(
+                    self.tree(self.under(heading, self.WELL)), ["BODY-H3-PARENT"]
+                )
+        self.assertEqual(self.tree(self.under("", self.WELL)), ["BODY-H3-PARENT"])
+
+    def test_an_absent_what_went_well_passes_and_an_empty_one_fails(self) -> None:
+        self.assertNotIn("What Went Well", POSTMORTEM_BODY)
+        self.assertEqual(self.tree(POSTMORTEM_BODY), [])
+        empty = self.under("## Corrective Actions", "### What Went Well\n")
+        self.assertEqual(self.tree(empty), ["BODY-SECTION-EMPTY"])
+
+    def test_what_went_wrong_is_an_h4_under_contributing_factors(self) -> None:
+        body = POSTMORTEM_BODY.replace(
+            "No canary.", "No canary.\n\n#### What Went Wrong\n\nA wrong assumption."
+        )
+        self.assertEqual(self.tree(body), [])
+
+    def test_lifecycle_traceability_belongs_under_corrective_actions(self) -> None:
+        block = (
+            "### Lifecycle Traceability\n\n"
+            "| Root cause or action | Owner and due state | Follow-up Task "
+            "| Feedback target |\n| --- | --- | --- | --- |\n"
+            "| Cause | Platform | N/A | Spec |"
+        )
+        self.assertEqual(self.tree(self.under("## Evidence", block)), [])
+        self.assertEqual(self.tree(self.under("", block)), ["BODY-H3-PARENT"])
+
+
 class RetainedFormTests(unittest.TestCase):
     """W03-D02: an ADR keeps its H2 lists for the statuses a retained form names."""
 
@@ -1649,19 +2031,20 @@ class RetainedFormTests(unittest.TestCase):
         self.assertEqual(body_rules("proposed", self.TREE), [])
 
 
-class CurrentRegistryGuideAndRunbookOnlyTests(unittest.TestCase):
-    def test_only_the_guide_and_runbook_profiles_use_the_tree(self) -> None:
+class CurrentRegistryFourFormsOnlyTests(unittest.TestCase):
+    def test_only_the_four_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
-            [item.form_id for item in registry.common_forms], ["guide", "runbook"]
+            [item.form_id for item in registry.common_forms],
+            ["guide", "runbook", "incident", "postmortem"],
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),
-            sorted(GUIDE + RUNBOOK),
+            sorted(FORM_PROFILES),
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.template_definition),
-            sorted([GUIDE[1], RUNBOOK[1]]),
+            sorted(FORM_TEMPLATES),
         )
 
 
