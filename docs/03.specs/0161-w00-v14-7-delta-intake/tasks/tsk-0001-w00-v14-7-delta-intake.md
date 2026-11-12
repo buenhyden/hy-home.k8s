@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -57,6 +57,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-020 | [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Core-diff checklist | Diff `4a47cb40..af7484ec` and `9546baeb` for this package (6 files, 458 insertions, 2 deletions, then this Task only); risk class `low`: documents and reviewed `.secrets.baseline` digest entries, no policy, registry, validator, hook, workflow or permission file; 2026-11-12 | PASS | Acceptance matches VAL-DELTA-001 (EVD-014, EVD-019) and VAL-DELTA-002 (EVD-012, EVD-015, EVD-017). One writer per file (W00: this package, Stage 03 README, REQ-0003 sentence). No check removed or weakened. No secret; the baseline adds digests of this package's lines only. No permission, trigger or protected action changed. Recovery: revert the package commits. Findings: NOTE, the Next owners sentence named W01 for vocabulary, review path and DOC-09, which SPEC-0162 to SPEC-0164 have since done; updated in the Verification Summary. No BLOCK or FIX open. | yes | none |
 | EVD-021 | [VAL-DELTA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Hosted PR checks | PR #228 head `8bdbc3fcbccee2269bc3023216b321248035da44`; workflow `CI` run `43139364138` (jobs `ci-summary` `130922323793`, `style-pr` `130922323380`); `gh pr checks 228`; 2026-11-12 | PASS | `ci-summary` and `style-pr`, the two required contexts, passed; GitGuardian, greeting and label passed too. This observes the hosted result for that head only; later commits need their own run. | no | none |
 | EVD-022 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W00 follow-up OPEN correction | User W00 follow-up correction request of 2026-11-12; `OPEN-01-14.json`; a file-name and content search of `_workspace/workspace_execution_tasks/` and a path search of all 21 Git refs for the OPEN-04 originals; `git ls-files` at `d623681f` (659 files) | PASS | Added OPEN Disposition Corrections: OPEN-01 and OPEN-02 stay UNVERIFIED without blocking product work or asking for user acceptance; OPEN-04 BLOCKED_EVIDENCE is limited to the direct comparison and names the searched scope; OPEN-06 split into a closed licence row and a conditional perspective row; OPEN-07 split into inventory, read, consumer and verification denominators with owners. Earlier rows and tables are unchanged. | no | none |
+| EVD-023 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W02 follow-up survey | `scripts/document_lifecycle.py:408-445` (`artifact_identity_reuse_diagnostics`) and `.agents/governance/document-lifecycle.md:26` at `1e12f9fd`; code reading, not executed; 2026-11-12 | PASS | Found a W02 hand-off that SPEC-0167 did not record: identity reservation for documents that left the tree. The policy says stable identities are never reused, but `LIFECYCLE-IDENTITY-REUSE` reserves only identities present in the comparison base, so an ID retired through Git history is not protected by any check. Recorded in Stage Follow-up Handoffs below for W03 and W05. Also checked and kept: `context-and-memory.md:88` (memory never deleted by Task completion) matches the W02 scope rule; `tests/test_document_lifecycle_cumulative_history.py` does not read `docs/98.archive/` (active-document replay, ARC-07); ADR-0031's archive and retention clauses are already marked not current by ADR-0055 and ADR-0053, so it stays accepted. | no | none |
 
 ### Edition Delta
 
@@ -291,6 +292,14 @@ The other IDs keep the verdicts above: OPEN-03 RESIDUAL_CONFIRMED at the named s
 | Governance policy files | 4 | 0 | 3 (`quality.md`, `git.md`, `sdlc.md`) | 1 |
 
 Listed-only files are not semantically reviewed. Each writer stage re-reads its files before editing.
+
+### Stage Follow-up Handoffs
+
+Added 2026-11-12 under the user's W02 follow-up request (EVD-023). SPEC-0167 left the tree with its Task frozen, so a hand-off found afterwards is recorded here, the open owner of the W01 to W10 hand-off tables.
+
+| ID | Source requirement | Gap | Owner | Interface | Resume condition |
+| --- | --- | --- | --- | --- | --- |
+| W02-H01 | W02 section 3 item 1 (registry retention and identity reservation reviewed, changes to W03); `document-lifecycle.md:26` | `LIFECYCLE-IDENTITY-REUSE` reserves only identities present in the comparison base; an ID whose document left through Git history can be minted again | W03 registry author, then W05 validator author | W03 decides where retired identities are reserved (for example the owners' `Archived Lineage` rows or a registry key); W05 extends the reuse check to that source with a refusal test for a retired SPEC ID | W03 starts |
 
 ## Criterion Acceptance
 
