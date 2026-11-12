@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.5.0"
+version: "3.6.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -219,11 +219,37 @@ shared edition and this local adapter. Its pinned source revision and digest
 identify the reviewed bytes; `approval_ref` records a separate shared
 decision. A Registry stage value is a local declaration, not acceptance
 evidence by itself. Actual local adoption requires the owning Task's
-integration check, independent review, and criterion decision. Shared
+integration check, the owner's semantic review under the
+[quality policy](quality.md#semantic-review), and criterion decision. Shared
 adoption also requires application evidence from each repository. Keep this
 adapter's status, language, and native extensions explicit. A new shared
 edition requires an actual owner decision and adoption evidence; do not create
 a separate local WGOV core.
+
+Approval and adoption are separate facts. An approved or adopted edition
+records past authority and does not freeze the contract; a later approved
+target supersedes it through a recorded change. Approval is never inferred
+from a role name, hash, signature or registry value; absent evidence stays
+unverified, and no new ledger is created for it. Partial adoption is never
+reported as full, and an approved compatible edition coexisting with a newer
+one is not a defect by itself. The target contract record names the contract
+ID, version, single authoring owner, approval reference with approver and
+date, scope, exceptions, effective point, migration, rollback and consumer
+edition. Today's registry carries `contract_id`, `version`, `stage`
+(`candidate` or `adopted`), `owner`, `approval_ref` and `extensions`; the
+remaining fields and an `approved` stage are registry work, not yet present.
+
+A regional extension may bind paths, commands, environments, native syntax,
+quality targets and deployment. Each extension states its condition, owner,
+verification, review point and removal criterion. An extension
+never weakens or removes a common required condition, and a path or edition
+difference alone is no permanent exception. Standardization never forces one language,
+folder layout, CLI or quality number on every product.
+
+A derived or generated copy names its source and edition and changes only
+through that source; an edit made only in the copy is a defect. The Policy
+role, its forms and placement are owned by the
+[SDLC contract](sdlc.md#ownership-and-placement).
 
 For Guide, Policy and Runbook, use the selected role's ordered sections and
 place its existing Lifecycle Traceability table under Related Documents.

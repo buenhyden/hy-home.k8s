@@ -20,7 +20,7 @@
 # workspace hook runs with the validation environment named by the Git option
 # `hyhome.validationVenv` first on PATH; Git configuration is not tracked, and
 # the environment must lie outside every worktree, belong to the invoking
-# account or root, and carry no group- or other-write bit (SPEC-0165).
+# account or root, and carry no group- or other-write bit (Git policy).
 set -euo pipefail
 
 HOOK_NAME="$1"
