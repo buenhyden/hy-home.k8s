@@ -3488,7 +3488,7 @@ def _body_contract_link_diagnostics(
     *,
     selected_paths: frozenset[PurePosixPath] | None = None,
 ) -> list[Diagnostic]:
-    """Validate registry-owned relationship cells and reciprocal evidence."""
+    """Validate registry-owned relationship cells."""
 
     if body_contracts not in {"registry", "audit"}:
         raise ConfigurationError("body_contracts must be registry or audit")
