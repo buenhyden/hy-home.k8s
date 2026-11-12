@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.23.5"
+version: "0.23.6"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-11"
+updated: "2026-11-12"
 layer: "specs"
 ---
 # 03.specs
@@ -67,12 +67,13 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ├── 0162-single-maintainer-review-path/
 ├── 0163-repository-vocabulary/
 ├── 0164-derived-reverse-traceability/
+├── 0165-pinned-hook-environment/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── README.md
 ```
 
-현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/), [SPEC-0162 Single-Maintainer Review Path](./0162-single-maintainer-review-path/), [SPEC-0163 Repository Vocabulary](./0163-repository-vocabulary/), [SPEC-0164 Derived Reverse Traceability](./0164-derived-reverse-traceability/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분을 기록하고, SPEC-0162는 필수 에이전트 검토를 위험 등급·자동 검사·핵심 diff 점검표·소유자 수용 경로로 바꾼다. SPEC-0163은 공통 용어의 의미를 소유하는 Repository Vocabulary를 만든다. SPEC-0164는 손으로 쓰는 역방향 링크를 정방향 링크에서 파생하는 역조회로 바꾼다.
+현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/), [SPEC-0162 Single-Maintainer Review Path](./0162-single-maintainer-review-path/), [SPEC-0163 Repository Vocabulary](./0163-repository-vocabulary/), [SPEC-0164 Derived Reverse Traceability](./0164-derived-reverse-traceability/), [SPEC-0165 Pinned Hook Environment](./0165-pinned-hook-environment/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분을 기록하고, SPEC-0162는 필수 에이전트 검토를 위험 등급·자동 검사·핵심 diff 점검표·소유자 수용 경로로 바꾼다. SPEC-0163은 공통 용어의 의미를 소유하는 Repository Vocabulary를 만든다. SPEC-0164는 손으로 쓰는 역방향 링크를 정방향 링크에서 파생하는 역조회로 바꾼다. SPEC-0165는 커밋 hook이 Git 설정 `hyhome.validationVenv`가 가리키는 고정 검증 환경에서 실행되게 한다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
