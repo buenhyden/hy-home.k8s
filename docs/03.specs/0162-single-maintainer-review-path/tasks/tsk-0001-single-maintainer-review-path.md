@@ -28,7 +28,7 @@ This Task records the GIT-09 review-path change for [SPEC-0162](../spec.md) unde
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-REVIEW-001](../spec.md#success-criteria--verification-plan), [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | Edit the six owners, search for remaining agent-review obligations, record the checklist review. | platform | frontmatter | NOT_RUN | EVD-001 to EVD-003 record the approval; the edits and checks follow. |
+| WORK-001 | [VAL-REVIEW-001](../spec.md#success-criteria--verification-plan), [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | Edit the six owners, search for remaining agent-review obligations, record the checklist review. | platform | frontmatter | PASS | EVD-006 (search, resolves EVD-004) and EVD-007 with EVD-008 (checklist and exact-index QA, resolve EVD-005) pass; criterion acceptance is the operator's decision. |
 
 ## Task Evidence
 
@@ -41,6 +41,7 @@ This Task records the GIT-09 review-path change for [SPEC-0162](../spec.md) unde
 | EVD-005 | [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Core-diff checklist and exact-index QA | The implementation commit's exact index | NOT_RUN | Pending the edits. | yes | none |
 | EVD-006 | [VAL-REVIEW-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Agent-review obligation search | `git grep` for `independent read-only`, `independent review`, `new-context review`, `separate agent identity`, `reviewer identity`, `second reviewer`, `read-only agent`, `Independent change review` over `.agents`, `.claude`, `.codex`, `docs/AGENTS.md`, `docs/*/AGENTS.md`, REQ-0003 and `docs/02.architecture/decisions`, on the edited worktree after `2402a7c1`; 2026-11-12 | PASS | Changed: `quality.md` Semantic review, Pull request row and handoff field; `git.md` completion and offset sentence; `work-lifecycle.md` Completion 1; `document-lifecycle.md` review row; REQ-0003 FR-0018 rows, Evaluation Expectation and Scope sentence; `docs/03.specs/AGENTS.md` role row. Remaining hits: optional review and optional reviewer identity (`quality.md`), the offset sentence now naming checks, checklist and owner merge (`git.md`), `document-authoring.md` evidence kind, ADR-0047/0052/0056/0057 generic "independent review" (defined by `quality.md`; ADR-0052's App check retired 2026-11-03), REQ-0003 closure history. No current rule requires an agent reviewer. | yes | EVD-004 |
 | EVD-007 | [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Core-diff checklist and exact-index QA | Implementation diff of six owners (64 insertions, 49 deletions); risk class `high`; `python3 scripts/qa.py staged` and the commit hooks on the implementation commit's exact index with the scratch venv; 2026-11-12 | PASS | Checklist: acceptance matches VAL-REVIEW-001/002; one writer (W01) per file; consistent with GIT-09 and the Spec contracts; no check removed or weakened (`BLOCK` still blocks, missing automation stays a gap); no secret; permissions, triggers and protected actions unchanged, only the completion wording; recovery: revert this commit. Findings: none open. QA result recorded below in EVD-008 after the commit. | yes | none |
+| EVD-008 | [VAL-REVIEW-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Core-diff checklist and exact-index QA | Implementation commit `f0aa80cf` (tree `0908582282a7e6d5f2c97900b6c78246c430406f`); `python3 scripts/qa.py staged` and the commit hooks with the scratch venv (pre-commit 4.6.1, jsonschema 4.26.0); 2026-11-12 | PASS | Staged QA passed agent-governance, document-contract-registry, document-lifecycle, knowledge-surface, links-and-owners, markdown-profiles, repository-quality, selected-nonstyle and selected-style; the Staged QA Snapshot, commitizen and commit-message-exception hooks passed. With the EVD-007 checklist this closes EVD-005. | yes | EVD-005 |
 
 ## Criterion Acceptance
 
@@ -62,4 +63,4 @@ This Task records the GIT-09 review-path change for [SPEC-0162](../spec.md) unde
 
 ## Verification Summary
 
-Approval recorded; the edits, the search and the checklist with exact-index QA are pending. Risk class `high` (pull-request completion and merge-direction wording).
+The edits are in `f0aa80cf`; the search (EVD-006) and the checklist with exact-index QA (EVD-007, EVD-008) pass; criterion acceptance is pending the operator. Risk class `high` (pull-request completion and merge-direction wording).
