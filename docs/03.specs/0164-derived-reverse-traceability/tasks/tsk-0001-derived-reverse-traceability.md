@@ -28,7 +28,7 @@ This Task records the DOC-09 change for [SPEC-0164](../spec.md) under its [Plan]
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-REVERSE-002](../spec.md#success-criteria--verification-plan) | Backlinks tool, test-first. | platform | completed | PASS | EVD-006 resolves EVD-004. |
-| WORK-002 | [VAL-REVERSE-001](../spec.md#success-criteria--verification-plan), [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | Remove the reciprocal rule everywhere; reword the traceability owners. | platform | in-progress | PASS | EVD-007 passes; exact-index QA of the commit follows. |
+| WORK-002 | [VAL-REVERSE-001](../spec.md#success-criteria--verification-plan), [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | Remove the reciprocal rule everywhere; reword the traceability owners. | platform | in-progress | PASS | EVD-007 and EVD-008 pass; completion waits for the operator's criterion acceptance. |
 
 ## Task Evidence
 
@@ -41,6 +41,7 @@ This Task records the DOC-09 change for [SPEC-0164](../spec.md) under its [Plan]
 | EVD-005 | [VAL-REVERSE-001](../spec.md#success-criteria--verification-plan), [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Reciprocal rule removal checks with exact-index QA | Repository search, `document` suite, strict document checks and commit hooks | NOT_RUN | Pending WORK-002. | yes | none |
 | EVD-006 | [VAL-REVERSE-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Backlinks tool tests | `python3 -m unittest tests.test_document_backlinks` before and after adding `scripts/document-backlinks.py` at `f4fc3000`; `python3 scripts/run-contract-tests.py --root . --suite tooling` with the module registered; `ruff check` and `ruff format`; the tool on REQ-0003 in the tree; 2026-11-12 | PASS | RED: 4 tests, 4 errors (tool absent). GREEN: 4 OK. Suite `tooling`: 8 modules, 166 tests OK. Ruff clean after formatting. On the tree the tool lists the SPEC-0161 to SPEC-0164 documents that cite REQ-0003. | yes | EVD-004 |
 | EVD-007 | [VAL-REVERSE-001](../spec.md#success-criteria--verification-plan), [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Reciprocal rule removal | Worktree after `9c9fd469`: the `leftover-reciprocal-evidence` case in `tests/test_document_terminal_contract.py` before and after the removal; suites `document` and `tooling`; the four strict document validators; the Spec's `git grep` over `.agents`, `docs/AGENTS.md`, `docs/*/AGENTS.md`, Stage 01, 02 (descriptions), 05 and 99; 2026-11-12 | PASS | RED: the leftover key was accepted (`DocumentContractError not raised`). After removing 22 registry keys, the schema `required` entry and property, the loader field, `REGISTRY_BODY_RECIPROCAL`, the `BODY-LINK-RECIPROCAL` branch and `_links_back_to`, the leftover key is refused by `REGISTRY_BODY_FIELD`, the loader's exact-field check that runs before the schema (the Spec said the schema; the refusal is earlier, the outcome the same). Suites: document 312, tooling 166 PASS. Strict validators PASS with the four REQ-0003 back-link sentences removed. Search: only `document-lifecycle.md` Validation and Refresh and `sdlc.md` rule 5 (supersession, kept) and the REQ-0003 rejected-clause history sentence remain. | yes | none |
+| EVD-008 | [VAL-REVERSE-001](../spec.md#success-criteria--verification-plan), [VAL-REVERSE-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Reciprocal rule removal checks with exact-index QA | Commit `09293928` (tree `c9455a1fafd381adb0a952da43790556e319f0ed`); `python3 scripts/qa.py staged` and the commit hooks with the scratch venv; 2026-11-12 | PASS | 13 gates PASS, including document-contract-tests and document-lifecycle-tests; the Staged QA Snapshot, commitizen and commit-message-exception hooks passed. With EVD-007 this closes EVD-005. | yes | EVD-005 |
 
 ## Criterion Acceptance
 
@@ -63,4 +64,4 @@ This Task records the DOC-09 change for [SPEC-0164](../spec.md) under its [Plan]
 
 ## Verification Summary
 
-Approval recorded; WORK-001 and WORK-002 are pending. Risk class `medium` (registry, validator and test change).
+WORK-001 is complete (EVD-006); WORK-002 passes (EVD-007, EVD-008) and waits for criterion acceptance. Parent-side link columns remain forward links until the common-forms work replaces them. Risk class `medium` (registry, validator and test change).
