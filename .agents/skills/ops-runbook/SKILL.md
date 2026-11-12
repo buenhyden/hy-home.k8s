@@ -3,11 +3,11 @@ name: "ops-runbook"
 description: "Use when authoring or reviewing operations runbooks for bootstrap, recovery, deployment, backup, and incident procedures in hy-home.k8s."
 metadata:
   title: "Ops Runbook"
-  version: "1.0.2"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -36,22 +36,25 @@ use without requiring cluster access delegation.
    grammar and the form
    (registry entry; see [Stage 99 templates](../../../docs/99.templates/README.md)). Runbooks are
    Korean-first per the registry `document_language`. A read-only reviewer returns findings and writes nothing.
-2. Under Trigger and Preconditions, state the required cluster state,
-   credentials, and environment variables.
-3. Under Procedure, list every step with the exact command, expected output,
-   and failure signal.
-4. Under Verification, include a check after each destructive or irreversible
+2. Under Preconditions, state the required cluster state, credentials, and
+   environment variables.
+3. Under Steps > Actions, list every step with the exact command, expected
+   output, and failure signal; put the stop and additional-approval conditions
+   under Stop Conditions.
+4. Under Validation, include a check after each destructive or irreversible
    action and the post-conditions that confirm success.
-5. Under Recovery and Escalation, undo each step in reverse order and name the
-   escalation owner.
-6. Under Related Documents, link the relevant Argo CD apps, OpenBao paths, or
-   ExternalSecret/ClusterSecretStore (`vault-backend`) resources.
+5. Under Recovery, put non-rollback recovery under Recovery Procedures, undo
+   each step in reverse order under Rollback, and name the escalation owner
+   under Escalation.
+6. Link the relevant Argo CD apps, OpenBao paths, or
+   ExternalSecret/ClusterSecretStore (`vault-backend`) resources inline by type:
+   normative links in Preconditions > Authority and Access, evidence links in
+   Validation > Evidence, and navigation links in Purpose > Scope.
 7. An authorized author saves the file at the resolved runbook profile path.
 8. Update `docs/05.operations/runbooks/README.md` to include the new runbook link.
 
-Section names and order follow the profile: Purpose; Trigger and
-Preconditions; Procedure; Verification; Recovery and Escalation; Related
-Documents.
+Section names and order follow the Runbook form: Purpose; Preconditions;
+Steps; Validation; Recovery.
 
 ## Safety Rules
 

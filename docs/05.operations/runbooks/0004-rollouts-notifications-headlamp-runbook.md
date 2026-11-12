@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.3.2"
+version: "1.4.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 layer: "operations"
 artifact_id: "RUN-0004"
 ---
@@ -13,7 +13,17 @@ artifact_id: "RUN-0004"
 
 ## Purpose
 
+### Trigger and Outcome
+
 이 런북은 Argo Rollouts, Slack 알림, Headlamp의 초기 확인, 복구, 검증 절차를 제공한다.
+
+- Rollouts Controller가 기동하지 않거나 CRD가 없을 때
+- ArgoCD Notifications 또는 Rollouts 알림 Slack 메시지가 전달되지 않을 때
+- Headlamp에 접근 불가 (401/404/502) 또는 `headlamp-tls` 미발급 상황
+- 초기 플랫폼 부트스트랩 후 신규 컴포넌트 검증 시
+
+### Scope
+
 Slack 알림은 두 경로로 나뉜다. ArgoCD Notifications(`argocd` namespace)는
 `on-health-degraded`, `on-sync-failed`, `on-deployed`를 `slack:hy-home-alerts`로
 보내고, Rollouts 완료·중단 이벤트(`on-rollout-completed`, `on-rollout-aborted`)는
@@ -23,22 +33,29 @@ Argo Rollouts controller의 자체 notification engine이 같은 채널로 보�
 자기 namespace에 Secret을 만든다. 플랫폼은 Rollout 승격 방식을 강제하지 않는다
 (REQ-0001-IF-0002, ADR-0054). 참조 Rollout은 `gitops/workloads/adminer`다.
 
-## Trigger and Preconditions
+관련 문서: **Rollouts notification delivery**: SPEC-0141 (left the tree; Git history recovers it); **Earlier Specs**: SPEC-0004 and SPEC-0005 (left the tree; Git history recovers them)
 
-- Rollouts Controller가 기동하지 않거나 CRD가 없을 때
-- ArgoCD Notifications 또는 Rollouts 알림 Slack 메시지가 전달되지 않을 때
-- Headlamp에 접근 불가 (401/404/502) 또는 `headlamp-tls` 미발급 상황
-- 초기 플랫폼 부트스트랩 후 신규 컴포넌트 검증 시
+## Preconditions
 
----
+### Authority and Access
 
-## Procedure
+권한 및 접근: 해당 없음 — 이 절에 옮길 소유자, 승인, 권한 문장이 본문에 따로 없다.
+
+관련 문서: **Operations**: [`../policies/0004-rollouts-notifications-headlamp-policy.md`](../policies/0004-rollouts-notifications-headlamp-policy.md); **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md); **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md); **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md); **ADR-0054**: [`../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md`](../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md)
+
+### Safety Checks
+
+안전 점검: 해당 없음 — 이 절에 따로 옮길 백업, 가용성, 동시 실행, 비밀 보호 항목이 본문에 없다.
+
+## Steps
+
+### Actions
 
 아래 절차는 Notifications secret 확인, ArgoCD Notifications 확인, Rollouts 및 Rollouts 알림 확인, Headlamp 및 Rollouts Dashboard 접근 검증 순서로 수행한다.
 [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)의 CLI 전제에 더해
 `kubectl argo rollouts` plugin이 필요하다.
 
-### Procedure 1: OpenBao Notifications Secret 확인
+#### Procedure 1: OpenBao Notifications Secret 확인
 
 Slack token provisioning은 이 저장소의 실행 transcript 밖에서 승인된
 OpenBao operator가 수행하는 external secret operation이다. token 값, login
@@ -56,9 +73,7 @@ kubectl -n argo-rollouts get secret argo-rollouts-notification-secret
 > **주의**: 증적은 위와 같은 metadata-only 조회로 남기고, secret 값을
 > 출력하는 `-o yaml`/`-o json` 조회는 쓰지 않는다.
 
----
-
-### Procedure 2: ArgoCD Notifications 활성화 확인
+#### Procedure 2: ArgoCD Notifications 활성화 확인
 
 ```bash
 # notifications controller pod 확인
@@ -71,9 +86,7 @@ kubectl -n argocd get cm argocd-notifications-cm -o yaml | head -20
 kubectl -n argocd logs deploy/argocd-notifications-controller --tail=100 | grep -i 'slack\|sent\|error'
 ```
 
----
-
-### Procedure 3: Argo Rollouts 상태 확인
+#### Procedure 3: Argo Rollouts 상태 확인
 
 ```bash
 # Rollouts controller 및 dashboard pod 확인
@@ -96,9 +109,7 @@ kubectl argo rollouts list rollouts --all-namespaces
 kubectl argo rollouts get rollout <name> -n <namespace> --watch
 ```
 
----
-
-### Procedure 4: Headlamp 접근 검증
+#### Procedure 4: Headlamp 접근 검증
 
 ```bash
 # Pod 및 Ingress 상태 확인
@@ -113,7 +124,7 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
   -o /dev/null -w '%{http_code}' https://headlamp.hy-k8s.home.arpa/
 ```
 
-### k8s router 경로 확인
+##### k8s router 경로 확인
 
 ```bash
 # Ingress host와 TLS 상태
@@ -124,9 +135,7 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
   -o /dev/null -w '%{http_code}' https://headlamp.hy-k8s.home.arpa/
 ```
 
----
-
-### Procedure 5: Rollouts Dashboard 접근 검증
+#### Procedure 5: Rollouts Dashboard 접근 검증
 
 ```bash
 # Pod 및 Ingress 상태
@@ -138,9 +147,13 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
   -o /dev/null -w '%{http_code}' https://rollouts.hy-k8s.home.arpa/
 ```
 
----
+### Stop Conditions
 
-## Verification
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+
+## Validation
+
+### Service Checks
 
 - [ ] `argo-rollouts` namespace에 controller + dashboard Pod Running
 - [ ] `argo-rollouts` Rollout CRD 존재
@@ -155,16 +168,28 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 - [ ] `hy-k8s.home.arpa/headlamp`, `hy-k8s.home.arpa/rollouts` → 301 응답
 
 - **Signals**: Rollouts controller readiness and logs, ArgoCD notification controller logs, Headlamp ingress/TLS status, k8s router HTTP response codes.
+
+### Evidence
+
 - **Evidence to Capture**: pod status output, Slack send/error log snippets, HTTP response codes, ArgoCD Application health.
 
-## Recovery and Escalation
+### Lifecycle Traceability
 
-- Rollout 문제가 발생하면 `kubectl argo rollouts undo`로 workload 단위 rollback을 수행한다.
-- Notifications 문제가 발생하면 OpenBao secret과 ExternalSecret 동기화 상태를 먼저 복구하고 controller 재시작은 마지막 수단으로 둔다. ESO auth 복구는 [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md)가 소유한다.
+| Promoted owner | Trigger or control | Evidence or recovery owner |
+| --- | --- | --- |
+| N/A — SPEC-0004 left the tree and is recovered from Git history, so no eligible upstream document is available to link as the promoting owner | Rollouts controller, CRDs, dashboard, promotion, analysis, Rollouts notification engine, or workload rollback needs bootstrap, diagnosis, or verification. | Platform operator records controller/CRD/Rollout/dashboard evidence and owns approved promotion or workload rollback. |
+| N/A — SPEC-0005 left the tree and is recovered from Git history, so no eligible upstream document is available to link as the promoting owner | ArgoCD Notifications or Rollouts engine delivery, or an ESO-backed Slack secret, is missing or degraded without exposing credential values. | Platform operator records controller, ConfigMap, ExternalSecret, and redacted send/error evidence; secret owner restores the OpenBao input. |
+
+## Recovery
+
+- Notifications 문제가 발생하면 OpenBao secret과 ExternalSecret 동기화 상태를 먼저 복구하고 controller 재시작은 마지막 수단으로 둔다.
+
 - Rollouts 알림 trigger·template·구독은 Git(`gitops/apps/root/platform-rollouts-app.yaml`)이 소유하므로 ConfigMap을 직접 고치지 않고 Git 수정과 ArgoCD reconciliation으로 바로잡는다.
 - Headlamp 접근 실패 시 Ingress/TLS와 k8s router 경로를 확인하고, Dashboard 재도입이 아니라 Headlamp 경로를 복구한다.
 
-### 복구: ESO 재동기화
+### Recovery Procedures
+
+#### 복구: ESO 재동기화
 
 아래 annotation과 이 런북의 restart·promote·undo 명령은 live
 state를 바꾸므로 [POL-0004](../policies/0004-rollouts-notifications-headlamp-policy.md)와
@@ -180,7 +205,7 @@ kubectl -n argo-rollouts annotate externalsecret argo-rollouts-notification-secr
   force-sync=$(date +%s) --overwrite
 ```
 
-### Rollout 수동 프로모션
+#### Rollout 수동 프로모션
 
 ```bash
 # operator-approved only
@@ -194,7 +219,7 @@ kubectl argo rollouts promote <rollout-name> -n <namespace> --full
 kubectl argo rollouts undo <rollout-name> -n <namespace>
 ```
 
-### 복구: Headlamp TLS NotReady
+#### 복구: Headlamp TLS NotReady
 
 `headlamp-tls`가 `READY=False`이면 먼저 ClusterIssuer 복구를
 [RUN-0003](./0003-platform-expansion-bootstrap-runbook.md)으로 확인한다.
@@ -208,21 +233,21 @@ argocd app get platform-headlamp-config --hard-refresh
 Ingress는 `ingressClassName: nginx`(IngressClass `nginx`, 실제 컨트롤러는 Traefik)를
 쓰므로 이름 `nginx`를 ingress-nginx 잔존으로 해석하지 않는다.
 
-### 복구: Headlamp Token Unauthorized
+#### 복구: Headlamp Token Unauthorized
 
 브라우저 접근이 401이고 인증이 필요하면 승인된 운영자가 짧은 수명의
 ServiceAccount token을 비밀값 취급이 가능한 전용 경로로 발급·전달한다. 일반
 터미널 출력, transcript, 문서, 로그, 채팅에 token을 남기지 않는다. 이
 런북에서 token 발급 명령은 실행하지 않는다.
 
-### 복구: Headlamp 재시작
+#### 복구: Headlamp 재시작
 
 ```bash
 # operator-approved restart only
 kubectl -n headlamp rollout restart deployment headlamp
 ```
 
-### Troubleshooting Signatures
+#### Troubleshooting Signatures
 
 - `Error syncing application: slack token is empty` → OpenBao `platform/notifications`의 `slack_token` 미등록 또는 ESO 미동기화
 - Rollouts 완료·중단 알림만 오지 않음 → `argo-rollouts-notification-secret` 미동기화, `argo-rollouts-notification-configmap`의 trigger/template 누락, 또는 controller 로그의 Slack 오류 확인
@@ -230,19 +255,10 @@ kubectl -n headlamp rollout restart deployment headlamp
 - Rollouts `CRD not found` → `installCRDs: true` 확인 또는 ArgoCD sync wave 순서 문제
 - Rollouts Dashboard 502 → dashboard Pod 미기동, service port 3100 확인
 
-## Related Documents
+### Rollback
 
-- **Operations**: [`../policies/0004-rollouts-notifications-headlamp-policy.md`](../policies/0004-rollouts-notifications-headlamp-policy.md)
-- **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
-- **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
-- **ADR-0054**: [`../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md`](../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md)
-- **Rollouts notification delivery**: SPEC-0141 (left the tree; Git history recovers it)
-- **Earlier Specs**: SPEC-0004 and SPEC-0005 (left the tree; Git history recovers them)
+- Rollout 문제가 발생하면 `kubectl argo rollouts undo`로 workload 단위 rollback을 수행한다.
 
-### Lifecycle Traceability
+### Escalation
 
-| Promoted owner | Trigger or control | Evidence or recovery owner |
-| --- | --- | --- |
-| N/A — SPEC-0004 left the tree and is recovered from Git history, so no eligible upstream document is available to link as the promoting owner | Rollouts controller, CRDs, dashboard, promotion, analysis, Rollouts notification engine, or workload rollback needs bootstrap, diagnosis, or verification. | Platform operator records controller/CRD/Rollout/dashboard evidence and owns approved promotion or workload rollback. |
-| N/A — SPEC-0005 left the tree and is recovered from Git history, so no eligible upstream document is available to link as the promoting owner | ArgoCD Notifications or Rollouts engine delivery, or an ESO-backed Slack secret, is missing or degraded without exposing credential values. | Platform operator records controller, ConfigMap, ExternalSecret, and redacted send/error evidence; secret owner restores the OpenBao input. |
+- ESO auth 복구는 [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md)가 소유한다.

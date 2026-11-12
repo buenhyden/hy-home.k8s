@@ -1,10 +1,10 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.3.0"
+version: "1.4.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-10"
+updated: "2026-11-13"
 layer: "operations"
 artifact_id: "RUN-0011"
 ---
@@ -13,23 +13,41 @@ artifact_id: "RUN-0011"
 
 ## Purpose
 
+### Trigger and Outcome
+
 이 Runbook은 `docs/90.references/`의 Audit, Research, Data 비권위
-참고 자료를 추가·갱신·종료할 때 사용하는 실행 체크리스트다. Reference
-내용의 사실과 출처는 각 문서가 소유하고, 이 Runbook은 절차만 소유한다.
-
-- **Type**: Repository documentation maintenance
-- **Execution boundary**: tracked repository files and local static validation
-- **Approval boundary**: 외부 publish, provider action, live cluster mutation,
-  credential use, destructive Git operation은 포함하지 않는다.
-
-## Trigger and Preconditions
+참고 자료를 추가·갱신·종료할 때 사용하는 실행 체크리스트다.
 
 - 외부 조사 출처 또는 확인일을 갱신할 때
 - 독립적인 Audit 또는 Data reference를 추가하거나 종료할 때
 - Reference category, filename, router, consumer link를 바꿀 때
 - 참고 자료가 현재 정책·요구·설계·절차를 중복하는지 재검토할 때
 
-## Procedure
+### Scope
+
+Reference
+내용의 사실과 출처는 각 문서가 소유하고, 이 Runbook은 절차만 소유한다.
+
+관련 문서: Stage 90 agent instructions: `docs/90.references/AGENTS.md`, Stage 90 router: `docs/90.references/README.md`, Research collection: `docs/90.references/research/README.md`
+
+## Preconditions
+
+### Authority and Access
+
+- **Type**: Repository documentation maintenance
+- **Execution boundary**: tracked repository files and local static validation
+- **Approval boundary**: 외부 publish, provider action, live cluster mutation,
+  credential use, destructive Git operation은 포함하지 않는다.
+
+관련 문서: Document authoring policy: `.agents/governance/document-authoring.md`
+
+### Safety Checks
+
+안전 점검: 해당 없음 — 이 런북은 Preconditions에 백업·가용성·동시성·비밀 보호 항목을 따로 정하지 않는다.
+
+## Steps
+
+### Actions
 
 1. 자료의 semantic owner를 분류한다.
    - Agent governance는 공통 거버넌스(`.agents/`)에 둔다.
@@ -117,7 +135,13 @@ artifact_id: "RUN-0011"
    Task Evidence에 남기되, 종료 단위에 Task 자체가 포함된 경우 위의 살아남는
    Archived Lineage에 남긴다. 문서 본문은 로그에 복사하지 않는다.
 
-## Verification
+### Stop Conditions
+
+중단 조건: 해당 없음 — 이 런북은 별도의 중단 조건 절을 두지 않으며, 보류 조건은 Actions의 6단계에 있다.
+
+## Validation
+
+### Service Checks
 
 현재 QA 실행 registry가 변경 경로에 맞춰 gate를 선택한다. 작업 트리의
 `quick`은 선택된 입력의 미리보기이며, commit 직전에는 최종 Git index를
@@ -143,6 +167,8 @@ python3 scripts/qa.py staged
 - [ ] 보존 자료의 출처·확인일·freshness trigger가 명시되어 있다.
 - [ ] 현재 동작과 버전은 Stage 01/02 및 직접 구현 소스와 일치한다.
 
+### Evidence
+
 - changed-path 목록과 reviewed diff
 - category 및 Stage router
 - source metadata와 직접 저장소 소스
@@ -152,31 +178,27 @@ python3 scripts/qa.py staged
 정적 PASS는 외부 출처의 현재성, hosted CI, provider runtime, live cluster
 상태를 증명하지 않는다.
 
-## Recovery and Escalation
-
-- 잘못된 분류는 redirect를 만들지 않고, 동일 변경을 revert하거나 canonical
-  owner에 새 수정으로 바로잡는다.
-- 종료된 본문은 Task에 기록한 정확한 `git show <commit>:<path>`로 복구하며,
-  현재 Stage에 되살리기 전 고유 목적과 consumer를 다시 검토한다. Git 원문
-  도달성이나 bytes 일치가 확인되지 않으면 처분하지 않고 문서 소유자에게 넘긴다.
-- validator 실패 시 실패한 owner/router/link만 수정하고 무관한 문서를
-  일괄 재생성하지 않는다.
-
-## Related Documents
-
-- Stage 90 agent instructions: `docs/90.references/AGENTS.md`
-- Stage 90 router: `docs/90.references/README.md`
-- Research collection: `docs/90.references/research/README.md`
-- [Audit Pack Template](../../99.templates/templates/references/audit-pack.template.md)
-- [Data Pack Template](../../99.templates/templates/references/data-pack.template.md)
-- [Research Pack Template](../../99.templates/templates/references/research-pack.template.md)
-- [Audit Reference Template](../../99.templates/templates/references/audit.template.md)
-- [Data Reference Template](../../99.templates/templates/references/data.template.md)
-- [Research Reference Template](../../99.templates/templates/references/research.template.md)
-- Document authoring policy: `.agents/governance/document-authoring.md`
-
 ### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
 | N/A — SPEC-0054 (left the tree; Git history recovers it). It applied `.agents/governance/document-authoring.md` and selects a bounded Stage 90 reference or the canonical common-governance or Stage 01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; Git history recovers retired bodies. |
+
+## Recovery
+
+### Recovery Procedures
+
+- validator 실패 시 실패한 owner/router/link만 수정하고 무관한 문서를
+  일괄 재생성하지 않는다.
+
+### Rollback
+
+- 잘못된 분류는 redirect를 만들지 않고, 동일 변경을 revert하거나 canonical
+  owner에 새 수정으로 바로잡는다.
+- 종료된 본문은 Task에 기록한 정확한 `git show <commit>:<path>`로 복구하며,
+  현재 Stage에 되살리기 전 고유 목적과 consumer를 다시 검토한다.
+
+### Escalation
+
+- Git 원문
+  도달성이나 bytes 일치가 확인되지 않으면 처분하지 않고 문서 소유자에게 넘긴다.

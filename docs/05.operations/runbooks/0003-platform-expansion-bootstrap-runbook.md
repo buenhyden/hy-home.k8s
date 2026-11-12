@@ -1,10 +1,10 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.3.0"
+version: "1.4.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "operations"
 artifact_id: "RUN-0003"
 ---
@@ -13,7 +13,18 @@ artifact_id: "RUN-0003"
 
 ## Purpose
 
-이 런북은 기본 플랫폼 위에 추가된 cert-manager, Istio(현재 1.25.2), Kiali를 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다. Ingress controller는 Traefik이며 Istio 업그레이드(ADR-0051)는 아직 실행되지 않았다.
+### Trigger and Outcome
+
+이 런북은 기본 플랫폼 위에 추가된 cert-manager, Istio(현재 1.25.2), Kiali를 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다.
+
+- 신규 플랫폼 확장 컴포넌트 설치
+- host 재시작 또는 k3d 클러스터 재생성 후 복구
+- cert-manager ClusterIssuer NotReady 복구
+- Istio/Kiali 배포 실패 복구
+
+### Scope
+
+Ingress controller는 Traefik이며 Istio 업그레이드(ADR-0051)는 아직 실행되지 않았다.
 
 기본 플랫폼 부트스트랩(`infrastructure/bootstrap-local.sh`, ArgoCD, ESO/OpenBao,
 외부 서비스 endpoint)은 [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md),
@@ -21,16 +32,25 @@ Headlamp 검증·복구는 [RUN-0004](./0004-rollouts-notifications-headlamp-run
 Kiali와 외부 observability 연결 복구는
 [RUN-0007](./0007-kiali-observability-connectivity-runbook.md)이 소유한다.
 
-## Trigger and Preconditions
+관련 문서: **Architecture**: [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 
-- 신규 플랫폼 확장 컴포넌트 설치
-- host 재시작 또는 k3d 클러스터 재생성 후 복구
-- cert-manager ClusterIssuer NotReady 복구
-- Istio/Kiali 배포 실패 복구
+## Preconditions
 
-## Procedure
+### Authority and Access
 
-### Checklist
+권한 및 접근: 해당 없음 — 이 절에 옮길 소유자, 승인, 권한 문장이 본문에 따로 없다.
+
+관련 문서: **Operations**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md); **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md); [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
+
+### Safety Checks
+
+안전 점검: 해당 없음 — 이 절에 따로 옮길 백업, 가용성, 동시 실행, 비밀 보호 항목이 본문에 없으며, 점검 항목은 Steps의 Checklist에 있다.
+
+## Steps
+
+### Actions
+
+#### Checklist
 
 - [ ] [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md) checklist와 bootstrap 완료
 - [ ] `secrets/certs/rootCA.pem` 존재 (cert-manager용)
@@ -75,9 +95,15 @@ Kiali와 외부 observability 연결 복구는
    kubectl -n istio-system logs deploy/kiali | grep -i prometheus | tail -5
    ```
 
-5. 아래 Verification의 정적 계약과 런타임 검사를 실행한다.
+5. 아래 Validation의 정적 계약과 런타임 검사를 실행한다.
 
-## Verification
+### Stop Conditions
+
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+
+## Validation
+
+### Service Checks
 
 ```bash
 # 정적 계약
@@ -93,11 +119,22 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 ```
 
 - **Signals**: ClusterIssuer readiness, Istiod/Kiali deployment availability, ArgoCD Application health.
+
+### Evidence
+
 - **Evidence to Capture**: static contract output, relevant Kubernetes events, cert-manager logs, Kiali Prometheus connection logs.
 
-## Recovery and Escalation
+### Lifecycle Traceability
 
-### cert-manager ClusterIssuer NotReady
+| Promoted owner | Trigger or control | Evidence or recovery owner |
+| --- | --- | --- |
+| [Service Mesh and cert-manager Operations Policy](../policies/0003-service-mesh-cert-manager-policy.md) | Initial expansion or recovery of cert-manager, Istio, or Kiali must preserve CA-secret, namespace-injection, and sync-wave controls. | Platform operator captures ClusterIssuer, ingress/TLS, deployment, and static-contract evidence; approved break-glass operator owns bounded recovery actions. |
+
+## Recovery
+
+### Recovery Procedures
+
+#### cert-manager ClusterIssuer NotReady
 
 **증상**: `kubectl get clusterissuer mkcert-ca-issuer` → `READY=False`
 
@@ -121,7 +158,7 @@ kubectl wait clusterissuer mkcert-ca-issuer \
   --for=condition=Ready --timeout=60s
 ```
 
-### Istiod CrashLoop / OOMKilled
+#### Istiod CrashLoop / OOMKilled
 
 **증상**: `kubectl -n istio-system get pods -l app=istiod` → CrashLoopBackOff 또는 OOMKilled
 
@@ -137,12 +174,12 @@ kubectl -n istio-system top pod -l app=istiod
 kubectl -n istio-system rollout restart deploy/istiod
 ```
 
-### Kiali "No Prometheus" 오류
+#### Kiali "No Prometheus" 오류
 
 Kiali의 Prometheus·Grafana·Tempo 연결 복구는
 [RUN-0007](./0007-kiali-observability-connectivity-runbook.md)을 따른다.
 
-### Istio CRD 없이 istiod 설치 오류
+#### Istio CRD 없이 istiod 설치 오류
 
 **증상**: `platform-istiod` ArgoCD app sync 실패 — CRD not found
 
@@ -159,16 +196,6 @@ kubectl get crd | grep istio.io | wc -l
 argocd app sync platform-istiod
 ```
 
-## Related Documents
+### Escalation
 
-- **Architecture**: [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- **Operations**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
-- **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- **Previous Runbook**: [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)
-- [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
-
-### Lifecycle Traceability
-
-| Promoted owner | Trigger or control | Evidence or recovery owner |
-| --- | --- | --- |
-| [Service Mesh and cert-manager Operations Policy](../policies/0003-service-mesh-cert-manager-policy.md) | Initial expansion or recovery of cert-manager, Istio, or Kiali must preserve CA-secret, namespace-injection, and sync-wave controls. | Platform operator captures ClusterIssuer, ingress/TLS, deployment, and static-contract evidence; approved break-glass operator owns bounded recovery actions. |
+에스컬레이션: 해당 없음 — 이 런북은 별도의 에스컬레이션 경로를 정하지 않는다.
