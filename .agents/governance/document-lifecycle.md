@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.6.0"
+version: "2.7.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -121,7 +121,11 @@ evidence is not rewritten to satisfy a later profile.
   completed Spec package, is summarized in the owning current document's
   `Archived Lineage` table and deleted in the same change; Git history recovers
   it. A successor names its predecessor in `supersedes` where the profile
-  allows it and in Traceability. Permission to record a successor Task does
+  allows it and in Traceability. A `rejected` ADR is not current: once the
+  manual disposition review below is satisfied, the change that records the
+  rejection summarizes it in the owning document's `Archived Lineage` and
+  deletes it; otherwise that disposition is deferred. Permission to record a
+  successor Task does
   not itself grant execution authority. Moving new active work to `ready` or
   `in-progress`, or executing it, requires its current owning `approved` Spec
   and Plan. No status alone grants
@@ -157,6 +161,9 @@ evidence is not rewritten to satisfy a later profile.
   the successor to link `supersedes` back in the same change.
 - A mutable or current owner cannot disappear without replacement coverage
   and consumer disposition.
+- These disposition rules govern repository development documents only.
+  Service and operations data, backups, credentials, Vault records and the
+  shared memory store keep their own owners and are never removed under them.
 - Before a current document is deleted or moved into `docs/98.archive/`,
   manually assess its current normative, historical, audit and recovery
   consumers; preservation value and access need; holds; and actual disposition
@@ -177,11 +184,19 @@ evidence is not rewritten to satisfy a later profile.
   `Archived Lineage`, linked to the frozen Task decision. This changes only the
   location of the completed package's postcommit proof; every recovery and
   authority condition still applies to every file in the retiring unit.
+  After the final source commit, the frozen decision and evidence text is
+  not reformatted, translated or normalized; a correction goes to a current
+  document.
 - Choose Git-history-only disposition only after proving that the exact
   `commit:path` containing the bytes of the current source is reachable from
   the intended retained history and that a temporary restoration matches the
   current source byte for byte. An older Git object that loses uncommitted
-  changes is not recovery evidence. First identify the reason and consumer
+  changes is not recovery evidence. An object reachable only through the
+  reflog, absent from a shallow clone, or lost by squash, rebase or branch
+  cleanup is not retained history, and its disposition is deferred. Git LFS,
+  submodules and filters are not used here; if one is introduced, recovery
+  covers its payload, not the pointer or gitlink. First identify the reason
+  and consumer
   when original-body preservation is required. If a hold, authority, consumer
   transfer or applicable recovery evidence remains unresolved, defer that
   disposition without changing or deleting the source. Do not retrospectively
