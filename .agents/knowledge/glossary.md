@@ -2,7 +2,7 @@
 title: "Repository Vocabulary"
 version: "1.1.0"
 type: "governance/vocabulary"
-status: "in-review"
+status: "active"
 owner: "platform"
 updated: "2026-11-12"
 ---
