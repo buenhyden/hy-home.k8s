@@ -1,6 +1,6 @@
 ---
 title: "W01 Governance Alignment"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-12"
@@ -66,6 +66,7 @@ Read-only survey at `e3d72466`. Read fully: the glossary, `sdlc.md`, `quality.md
 | EVD-004 | [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan), [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Owner edits, phrase and anchor search, document checks | Working tree over `4300d7c6`: `document-authoring.md` 3.6.0, `sdlc.md` 3.5.0, `quality.md` 2.5.0, `git.md` 2.5.1, glossary 1.1.0; 2026-11-12 | PASS | Phrase search over `.agents`, `.claude`, `CLAUDE.md`, `AGENTS.md`: no hit for `checks branch metadata`, `calling an integration accepted`, `neither side is presumed correct`; no `independent review` in `document-authoring.md`. Anchor search: each of the seven anchors has one hit in its named owner; `one document role` also appears in the glossary `TERM-PROFILE` definition with another meaning (profile scope), not a Policy-role statement. 54 of 54 Policy Owner cells are relative links to existing files; `TERM-CI` reads "runs the hosted checks the quality policy selects" with the quality policy as owner. Strict registry (291 paths), Markdown profile, link/owner and lifecycle validators PASS; knowledge surface PASS (3 documents, 0 violations); agent governance PASS; `document` suite 313 tests OK; `agent-governance` suite 104 tests OK. | yes | none |
 | EVD-005 | [VAL-GOVALIGN-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Handoff record | Spec Interfaces and the Handoffs table below | PASS | W03, W04, W05, W06 and W07 each have owner, interface and resume condition; none was started here. | yes | none |
 | EVD-006 | [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan), [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Semantic review: risk class and core-diff checklist | Diff of the five W01 files over `4300d7c6` | PASS | Risk class `medium` (policy change). Checklist: acceptance alignment holds (each Contracts item in its named owner); one writer per file (this Task); consistent with FR-0017 and ADR-0048, which the hosted target sentence names as governing; no check removed or weakened; no secret read or printed; recovery is reverting the implementation commit. No permission, trigger or protected action changed. Findings: none `BLOCK` or `FIX`; NOTE: the `quality.md` reuse key now names environment, guarantee and consumer while `scripts/qa.py` does not yet (W05). | yes | none |
+| EVD-007 | [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan), [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Requirement trace and follow-up survey | W01 package sections 1-11 against `1643e66d`; 2026-11-12 | PASS | Every owned ID now has an action and file:line evidence in the Requirement Trace below; W01-A, W01-B, GOV-01, R147-09 and R147-19 were not traced before. Glossary owner labels `W03 contract author`, `W07 verification owner` and `W00 lineage owner` named package stages; renamed to `Registry author`, `Native runtime verification owner` and `Audit lineage owner` with the same links. Open: the glossary is still `draft` although it owns term meaning (operator decision). | yes | none |
 
 ### Handoffs
 
@@ -76,6 +77,26 @@ Read-only survey at `e3d72466`. Read fully: the glossary, `sdlc.md`, `quality.md
 | W05 | Validator and test author | Derived-copy drift check; `shared_contract` binding tests; refusal of contradictory approval text; `scripts/qa.py` reuse key with environment, guarantee and consumer | W03 lands |
 | W06 | Hosted CI owner | One change set: successor to ADR-0048, FR-0017 and criterion 11 amendment, `.github/workflows/ci.yml`, mirrored CI scripts and tests, hosted-lane text in `quality.md`, `sdlc.md`, `git.md` and `work-lifecycle.md` | W06 starts and the user accepts the successor ADR |
 | W07 | Verification owner | Allow and deny tests for low-risk approval reuse | W07 starts |
+
+### Requirement Trace
+
+| ID | Action | Evidence (file:line at `1643e66d` unless noted) | Remaining owner |
+| --- | --- | --- | --- |
+| GOV-01 | KEEP (SPEC-0163) and CHANGE | Glossary owns meaning (`sdlc.md:86-87`); W01 linked every owner cell | W05 consistency checks |
+| GOV-02 | ADD | `document-authoring.md:242-247` | W03 `extensions` fields |
+| GOV-03 | ADD target record | `document-authoring.md:229-239` | W03 registry fields |
+| GOV-04, R147-03, QA-C01 | ADD | `document-authoring.md:229-235` | W03 `approved` stage; W05 tests |
+| GOV-05 | KEEP | `git.md:84`, `quality.md:269`, `approval-and-safety.md:66-68` | none |
+| GOV-06 | ADD rule | `document-authoring.md:249-250` | W05 drift check |
+| GOV-07 | CHANGE | `sdlc.md:157-167` | W05 refusal tests |
+| GOV-08 | KEEP text | `approval-and-safety.md:60-61` | W07 allow and deny tests |
+| R147-07 | ADD | `sdlc.md:169-177` | W04 per-role semantics |
+| R147-09 | KEEP and CHANGE | `TERM-RELEASE-OPERATION` (glossary:73), `sdlc.md:75-76`; owner labels renamed (EVD-007) | none |
+| R147-19 | KEEP | Only the glossary status is asked; CI-SCOPE, POLICY-ROLE, Q-07, Q-08 reused from SPEC-0161 EVD-018 | operator (glossary status) |
+| R147-20 | CHANGE | `quality.md:77-81` | W05 `scripts/qa.py` |
+| SUP-12 | KEEP | `agent-execution.md:68-73`, `document-authoring.md` shared-contract paragraph | none |
+| W01-A | CHANGE | Approval, adoption, owners and target record above; registry rows to W03 | W03, W05 |
+| W01-B | KEEP | Approval is not a Git object, status, checkbox, successful QA or reviewer verdict (`approval-and-safety.md:85-86`); no check grants integration (`git.md:60`); checks, Apps and signatures never stand in for the owner (`quality.md:269`); no inference from a role name or hash (`document-authoring.md:231-232`); GitHub Actions is not deployment CD (`approval-and-safety.md:102`) | W07 rejection tests |
 
 ## Criterion Acceptance
 
