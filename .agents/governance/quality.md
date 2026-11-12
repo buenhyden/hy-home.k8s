@@ -1,6 +1,6 @@
 ---
 title: "Quality and Evidence Policy"
-version: "2.4.0"
+version: "2.5.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -63,6 +63,12 @@ metadata; static parity never proves discovery, model resolution, or execution.
   deployment workflow exists. Hosted automation does not run local unit or
   document-content QA. A hosted result reports only what its jobs actually
   observed and is never a proxy for a successful local run or style job.
+  The user adopted on 2026-11-12 a target in which PR-time hosted CI runs the
+  affected implementation and product checks with a read-only token and no
+  secrets. It is a target, not current behavior: until one change set accepts
+  a successor to ADR-0048 and amends REQ-0003 FR-0017 with the workflow,
+  FR-0017 and ADR-0048 govern, and the hosted jobs are `ci-summary` and
+  `style-pr`.
 - **remote/live**: provider discovery or authenticated operation, remote
   execution, and operator-approved runtime checks need direct authorized
   evidence. Static presence and hosted CI do not imply this lane.
@@ -70,7 +76,10 @@ metadata; static parity never proves discovery, model resolution, or execution.
 A QA profile selects gate IDs; a lane describes routing or an evidence boundary.
 The execution registry owns commands and profile membership. Execute one logical
 leaf once for identical input bytes and history, configuration, tool identity,
-scope, mode and trust; a matching filename set alone never justifies reuse.
+environment, scope, mode, trust, guarantee and consumer; a matching filename
+set alone never justifies reuse, and reuse never drops a required security,
+regression or artifact check. A check that runs after an action observes it;
+it never claims to have blocked it.
 Distinct index, working-tree, integrated-main and remote
 observations require their own evidence where those inputs differ. A phase name
 or a second caller does not justify replaying an already proven leaf.

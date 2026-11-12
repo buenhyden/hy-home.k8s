@@ -1,6 +1,6 @@
 ---
 title: "Git Policy"
-version: "2.5.0"
+version: "2.5.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -19,8 +19,9 @@ approved Plan specifies another base.
 
 The user owns push, publication, merge, discard, and history recovery decisions.
 Remote branch protection owns any required hosted metadata checks and cannot
-be inferred from local evidence: observe it before calling an integration
-accepted. [Approval and safety](approval-and-safety.md)
+be inferred from local evidence: observe it before reporting that an
+integration met its required checks; Acceptance stays a criterion decision.
+[Approval and safety](approval-and-safety.md)
 governs protected actions and exceptions.
 
 ## Governance Context

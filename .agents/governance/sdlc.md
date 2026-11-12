@@ -1,6 +1,6 @@
 ---
 title: "Software Development Lifecycle"
-version: "3.4.1"
+version: "3.5.0"
 type: "governance/contract"
 status: "active"
 owner: "platform"
@@ -92,7 +92,7 @@ each artifact lives and the rules that govern it.
 | Architecture Description / Architecture Decision Record | Stage 02. |
 | Spec / Plan / Task | One Stage 03 package. Approval is not execution completion. |
 | GitHub Issue / Project | Link to a Spec and Task by ID or URL; do not copy their full contract or evidence or synchronize status in both directions. Remote state requires observation. |
-| Policy / rule / contract / control | Common behavior belongs to `.agents/governance/`, executable enforcement to scripts, document shape to Stage 99. These terms do not create parallel policy directories. The Stage 99 profile `governance/rule` names the shape those policy documents share, from the retired directory they once sat in; it is a stable identity rather than a claim that such a document carries one obligation. |
+| Policy / rule / contract / control | Common behavior belongs to `.agents/governance/`, executable enforcement to scripts, document shape to Stage 99. These terms do not create parallel policy directories. The Stage 99 profile `governance/rule` names the shape those policy documents share, from the retired directory they once sat in; it is a stable identity rather than a claim that such a document carries one obligation. Policy is one document role with one common form, placed as `governance/rule` under `.agents/governance/` or `operation/policy` in Stage 05; a Rule is a normative unit with a stable ID inside a Policy, not a document role. |
 | Provider / Role / Agent | Native configuration is not evidence of runtime enforcement. |
 | Skill | Lives under `.agents/skills/`; native discovery depends on the provider contract. A plain procedure reference is not a native registration. |
 | Hook / Gate / validator / Fixture | A hook need not run QA, and a test fixture is never production policy input. |
@@ -122,7 +122,7 @@ follow the [Git policy](git.md) for every row.
 | Document content: README, guide, reference | The current owner, or the Task of the package that changes it | Ordinary document selection | The operator's request |
 | Executable behavior | A Stage 03 package; a failing case then a passing case in its Task | Focused regressions and affected purpose gates | Spec and Plan approval |
 | Governance, provider, Stage 99 form, schema or registry | A Stage 03 package; durable meaning promoted to its owner | The contract-change selection in [quality](quality.md) | Spec and Plan approval |
-| Architecture boundary or durable choice | An Architecture Description or ADR; a package when it is implemented | Document checks and forward links | The operator accepts the ADR |
+| Architecture boundary or durable choice | An Architecture Description or ADR; a package when it is implemented | Document checks and forward links | The operator approves the ADR, whose status becomes `accepted` |
 | Live cluster change or incident fix | A Task, and an Incident record for an incident; Runbook steps | Observation in the approved live lane | The operator approves the live action; approved bootstrap and break-glass actions stay operator-bound under [approval and safety](approval-and-safety.md) |
 
 Security checks follow their existing owners: [quality](quality.md) selects
@@ -155,10 +155,25 @@ document content change does not trigger them.
   [lifecycle policy](document-lifecycle.md), and dependent work stops until a
   new or amended ADR is accepted or the departure is removed.
 - When implementation and an approved Requirement, Architecture or Spec
-  disagree, neither side is presumed correct. Record the divergence in the
-  active Task, then either amend the owning document through its own review
-  or correct the implementation. A requirement is never relaxed by editing a
-  downstream document alone.
+  disagree, resolve in the order current user requirement, approved contract,
+  implementation and tests. Record the divergence in the active Task, then
+  either amend the owning document through its own review or correct the
+  implementation, changing producer, reader, schema, current guidance and
+  tests in one change set. An unapproved test expectation never becomes
+  policy, a test is never edited alone to make a violation pass, and a
+  requirement is never relaxed by editing a downstream document alone. This
+  order never authorizes a protected action: [approval and
+  safety](approval-and-safety.md) still binds, and no package or agent
+  message counts as user approval.
+
+### Three axes
+
+Three separate axes describe where work stands, and one never implies
+another. The document STAGE (Stage 01 to 99) names the owner and place of a
+document. The SDLC phase (Clarify to Complete above) names the work step.
+The Git point names before, during or after commit, push, pull request or
+merge. Status, acceptance, promotion and exit per document role follow the
+[lifecycle policy](document-lifecycle.md).
 
 ## Validation and Refresh
 
