@@ -1,50 +1,69 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.6.0"
+version: "1.7.0"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-12"
 layer: "operations"
 artifact_id: "GDE-0010"
 ---
 
 # CI/CD 및 QA 검증 경계 가이드
 
-## Overview
+## Purpose
+
+### Outcome
 
 이 가이드는 변경 작성자가 로컬 정적 검증, GitHub Actions PR branch·title metadata와 별도 style,
-승인된 런타임 검증을 서로 다른 증적 등급으로 해석하도록 돕는다. 실행 순서나
-복구 절차를 복제하지 않고, 현재 검증 진입점과 증적의 한계를 안내한다. 목적 QA는
-로컬 QA가 소유하고 호스팅 CI는 branch·title metadata와 선택된 style만 확인한다는
-결정은 [ADR-0048](../../02.architecture/decisions/0048-local-qa-and-semver-release-ownership.md)이 소유한다.
-
-## Audience and Goal
+승인된 런타임 검증을 서로 다른 증적 등급으로 해석하도록 돕는다.
 
 주된 학습 목적은 `explanation`이다. 독자는 검증 결과가 어떤 증적 등급을
-뜻하는지 구분한다. 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
-`.github/workflows/ci.yml`, 실행·복구 절차는 연결된 Runbook이 소유한다.
+뜻하는지 구분한다.
 
 - 문서·GitOps·자동화 변경을 작성하거나 검토하는 개발자
 - 정적 검증 결과를 운영 증적으로 해석하는 플랫폼 운영자
 - 허용된 범위 안에서 검증을 수행하고 handoff를 작성하는 AI Agent
 
+관련 문서: [Reference Maintenance Runbook](../runbooks/0011-reference-maintenance-runbook.md)
+
+### Boundaries
+
+실행 순서나
+복구 절차를 복제하지 않고, 현재 검증 진입점과 증적의 한계를 안내한다. 목적 QA는
+로컬 QA가 소유하고 호스팅 CI는 branch·title metadata와 선택된 style만 확인한다는
+결정은 [ADR-0048](../../02.architecture/decisions/0048-local-qa-and-semver-release-ownership.md)이 소유한다.
+
+검증 명령의 구현은 `scripts/README.md`, CI job 구성은
+`.github/workflows/ci.yml`, 실행·복구 절차는 연결된 Runbook이 소유한다.
+
 ## Prerequisites
 
+### Environment
+
 - 저장소 checkout과 변경 범위에 대한 읽기 권한
-- [Quality Policy](../../../.agents/governance/quality.md)의 증적 경계 이해
 - 변경한 표면의 소유 Spec, Policy, Runbook 확인
+
+도구 판본: 해당 없음 — 명령의 구현은 `scripts/README.md`가 소유하므로 이 가이드는 도구 판본을 고정하지 않는다.
+
+### Permissions
+
+- [Quality Policy](../../../.agents/governance/quality.md)의 증적 경계 이해
 - live cluster나 외부 서비스 검증이 필요하면 별도의 명시적 승인
 
-## Guidance
+관련 문서: [Agent Execution Policy](../../../.agents/governance/agent-execution.md)
 
-### 1. 변경 표면을 먼저 분류한다
+## Procedure
+
+### Actions
+
+#### 1. 변경 표면을 먼저 분류한다
 
 `python3 scripts/validate-affected-surfaces.py --root .`는 registry 계약과
 추적된 경로의 라우팅을 검사한다. 실제 변경 경로 선택과 실행은 아래 QA
 진입점이 소유한다. 라우팅 결과는 실행 권한이나 live 검증 권한을 부여하지 않는다.
 
-### 2. 가장 작은 로컬 검증에서 시작한다
+#### 2. 가장 작은 로컬 검증에서 시작한다
 
 | 변경 상태 | 권장 진입점 | 증적 의미 |
 | --- | --- | --- |
@@ -59,7 +78,7 @@ artifact_id: "GDE-0010"
 않는다. 문서 링크·owner 검사는 로컬 QA에만 속하며, 로컬 target 통과가
 외부 URL 가용성을 증명하지 않는다.
 
-### 3. 호스팅 CI의 소유 경계를 확인한다
+#### 3. 호스팅 CI의 소유 경계를 확인한다
 
 `.github/workflows/ci.yml`이 job 이름, 의존 관계, 실행 조건의 canonical
 source이며, job과 required check의 현재 구성은
@@ -73,7 +92,7 @@ source이며, job과 required check의 현재 구성은
 이 문서는 job 목록을 복제하지 않는다. 로컬 성공은 호스팅 환경의
 권한·event·required-check 상태까지 증명하지 않는다.
 
-### 4. 증적 등급을 구분해 handoff한다
+#### 4. 증적 등급을 구분해 handoff한다
 
 - 로컬 정적 검증: checkout에 있는 파일과 도구의 계약을 확인한다.
 - 호스팅 CI: event와 PR branch·trusted-base title metadata, 선택된 PR style의
@@ -97,7 +116,7 @@ contract가 소유한다. 이 문서는 그 항목을 줄여 옮기지 않는다
 릴리스는 `CHANGELOG.md`와 `scripts/release.py`가 만들며, 절차는
 [Release Preparation Runbook](../runbooks/0012-main-release-preparation-runbook.md)이 소유한다.
 
-### 5. 규칙별 실행 소유자와 메시지 검증을 구분한다
+#### 5. 규칙별 실행 소유자와 메시지 검증을 구분한다
 
 | 규칙 | 실행 소유자 | 유지되는 경계 |
 | --- | --- | --- |
@@ -112,28 +131,25 @@ contract가 소유한다. 이 문서는 그 항목을 줄여 옮기지 않는다
 hook 연결과 커밋 메시지 검증 절차는
 [Git policy](../../../.agents/governance/git.md)가 소유한다.
 
-## Verification and Troubleshooting
+### Exceptions
 
-- 로컬 PASS를 required check 또는 배포 성공으로 표현하지 않는다.
-- 문서에 CI job 수나 fixture 수를 고정해 currentness를 대체하지 않는다.
-- 실패한 aggregate gate를 더 작은 PASS 몇 개로 상쇄하지 않는다.
 - 퇴역한 full/ci의 과거 `NOT_RUN`은 해당 입력의 역사로 보존한다. 현재 선택된
   필수 검사가 미실행이면 그 검사에 `NOT_RUN`과 다음 owner를 기록한다.
   `NOT_APPLICABLE`는 검사 대상이 없을 때만 사용한다.
 - live cluster, OpenBao, 외부 API 검증은 정적 QA의 기본 범위로 확장하지 않는다.
+
+## Verification
+
+### Expected Result
+
+- 로컬 PASS를 required check 또는 배포 성공으로 표현하지 않는다.
+- 문서에 CI job 수나 fixture 수를 고정해 currentness를 대체하지 않는다.
+- 실패한 aggregate gate를 더 작은 PASS 몇 개로 상쇄하지 않는다.
+
+### Troubleshooting
+
 - 퇴역 문서의 경로를 redirect 문서로 유지하지 않고 현재 owner로 소비자를
   직접 연결한다.
-
-## Related Documents
-
-- [Quality Policy](../../../.agents/governance/quality.md)
-- [Agent Execution Policy](../../../.agents/governance/agent-execution.md)
-- [Scripts Router](../../../scripts/README.md)
-- [Release Preparation Runbook](../runbooks/0012-main-release-preparation-runbook.md)
-- [ADR-0048](../../02.architecture/decisions/0048-local-qa-and-semver-release-ownership.md)
-- [ADR-0052](../../02.architecture/decisions/0052-single-main-trunk-branch-strategy.md)
-- [Main Protection Record](../../../.github/rulesets/main-protection.md)
-- [Reference Maintenance Runbook](../runbooks/0011-reference-maintenance-runbook.md)
 
 ### Lifecycle Traceability
 

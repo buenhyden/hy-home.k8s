@@ -11,31 +11,55 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 # [Topic Name] Guide
 
-## Overview
+## Purpose
 
-<!-- Author prompt: 독자가 얻을 결과와 이 가이드가 다루는 운영 영역을 밝힌다. -->
+### Outcome
 
-## Audience and Goal
+<!-- Author prompt: 독자가 얻을 작업 결과와 독자를 사실·가정과 구분해 밝히고, 주된 학습 목적을 tutorial/how-to/reference/explanation 가운데 하나로 분류한 뒤 현재 권한 원본과 관련 운영 문서로 연결한다. -->
 
-<!-- Author prompt: 주된 학습 목적을 tutorial/how-to/reference/explanation 가운데 하나로 설명하고 독자의 역할, 권한, 배경지식을 연결한다. -->
+### Boundaries
+
+<!-- Author prompt: 이 가이드가 다루는 범위와 다루지 않는 비목표를 사실·가정과 구분해 밝히고, 다른 owner가 소유한 항목은 실제 참조로 연결한다. -->
 
 ## Prerequisites
 
-<!-- Author prompt: 검증된 입력, 도구, 권한, 안전한 시작 상태를 나열한다. -->
+### Environment
 
-## Guidance
+<!-- Author prompt: 실행 전에 필요한 도구 판본, 검증된 입력, 접근을 사실·가정과 구분해 밝히고 실제 참조로 연결한다. -->
 
-<!-- Author prompt: 독자가 정상 경로를 이해하거나 따라갈 수 있도록 필요한 순서, 판단 기준, 관찰 가능한 결과를 적는다. -->
+### Permissions
 
-## Verification and Troubleshooting
+<!-- Author prompt: 허용되는 권한과 보호해야 할 대상을 사실·가정과 구분해 밝히고 규범 정책으로 연결한다. -->
 
-<!-- Author prompt: 독자가 결과를 확인할 방법과 흔한 오류의 증상, 안전한 다음 경로를 설명한다. -->
+## Procedure
 
-## Related Documents
+### Actions
 
-<!-- Author prompt: 현재 권한 원본과 관련 운영 문서를 연결하고, 승격된 owner의 독자 결과와 운영 영역을 구체적으로 적는다. -->
+<!-- Author prompt: 순서별 입력, 행동, 기대 출력을 사실·가정과 구분해 밝히고 실제 참조로 연결한다. -->
+
+<!-- Author prompt: 순서가 있는 절차일 때만 아래 Steps 표를 사용하고, 그렇지 않으면 표를 지운다. -->
+
+| Step | Action | Check |
+| --- | --- | --- |
+| 1 | Describe the action. | Describe the observable check. |
+
+### Exceptions
+
+<!-- Author prompt: 실패, 분기, 중단 조건과 문의 경로를 사실·가정과 구분해 밝히고 실제 참조로 연결한다. -->
+
+## Verification
+
+### Expected Result
+
+<!-- Author prompt: 성공과 실패의 관측 결과와 확인 방법을 사실·가정과 구분해 밝히고 실제 참조로 연결한다. -->
+
+### Troubleshooting
+
+<!-- Author prompt: 진단 방법, 안전한 복구, 담당을 사실·가정과 구분해 밝히고 실제 참조로 연결한다. -->
 
 ### Lifecycle Traceability
+
+<!-- Author prompt: 승격된 owner의 독자 결과와 운영 영역을 구체적으로 적는다. -->
 
 | Promoted owner | Audience outcome | Operating surface |
 | --- | --- | --- |

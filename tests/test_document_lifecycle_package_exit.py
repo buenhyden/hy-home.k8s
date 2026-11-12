@@ -214,6 +214,13 @@ class PackageExitStagedWiringTest(unittest.TestCase):
                 for item in raw["profiles"]
                 if item["template_source"] is not None
             ),
+            *(
+                named
+                for item in raw["profiles"]
+                for named in item.get("template_definition", {}).get(
+                    "consumer_paths", ()
+                )
+            ),
         }:
             copy = self.root / relative
             copy.parent.mkdir(parents=True, exist_ok=True)

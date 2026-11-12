@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.6.0"
+version: "3.7.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -254,8 +254,12 @@ through that source; an edit made only in the copy is a defect. The Policy
 role, its forms and placement are owned by the
 [SDLC contract](sdlc.md#ownership-and-placement).
 
-For Guide, Policy and Runbook, use the selected role's ordered sections and
-place its existing Lifecycle Traceability table under Related Documents.
+Guide uses its registry form, with its classification, readers and goal under
+Purpose and its Lifecycle Traceability table under Verification. Policy and
+Runbook use the selected role's ordered sections and keep their existing
+Lifecycle Traceability table under Related Documents until their packages. A
+TemplateDefinition names each table's section, ordered columns, minimum rows and
+row identity, and the validator checks column order, count and minimum rows.
 Classifications, prerequisites, controls, observations and recovery stay native
 submodules in their relevant roles. Fill sections with concrete content; a
 heading, comment, placeholder or empty fence is no operating instruction.

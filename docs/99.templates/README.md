@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.18.0"
+version: "0.19.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -104,11 +104,13 @@ form 경로의 대응은 Registry만 소유한다.
   capacity는 현재 consumer가 없어 Spec 본문과 실제 구현 소유자에게 수렴했다.
 - **Operations forms** (`operations/`): `guide`, `policy`, `runbook`,
   `incident`, `postmortem`의 서로 다른 운영 증거 책임을 유지한다.
-  Guide의 분류·독자·목표, Policy의 적용 대상·통제·검토,
-  Runbook의 트리거·절차·검증·복구는 해당 역할의 core에 배치한다.
-  기존 `Lifecycle Traceability` 관계 표는 세 역할의 `Related Documents`
-  아래에서 같은 source·열·상호 참조 의미를 유지한다. 기계가 읽는 정확한
-  heading과 순서·내용 경계는 Registry가 소유한다. 빈 heading이나
+  Guide는 Registry form을 쓰며 분류·독자·목표는 `Purpose`,
+  `Lifecycle Traceability` 관계 표는 `Verification` 아래에 둔다.
+  Policy의 적용 대상·통제·검토, Runbook의 트리거·절차·검증·복구는
+  해당 역할의 core에 배치한다. Policy와 Runbook의 기존
+  `Lifecycle Traceability` 관계 표는 각 역할 package 전까지
+  `Related Documents` 아래에서 같은 source·열·상호 참조 의미를 유지한다.
+  기계가 읽는 정확한 heading과 순서·내용 경계는 Registry가 소유한다. 빈 heading이나
   placeholder만 채운 항목은 실질 내용이 아니며, 형식 PASS는 live 증거가 아니다.
 - **Reference forms** (`references/`): Stage 90 collection 세 곳은 모두 같은 3단
   구조를 갖는다. collection router `{audits,data,research}/README.md`는

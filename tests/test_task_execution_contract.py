@@ -6,6 +6,7 @@ import importlib.util
 import contextlib
 from dataclasses import replace
 import io
+import json
 import re
 import shutil
 import subprocess
@@ -444,6 +445,19 @@ class CompletionIndexTests(unittest.TestCase):
             self.root / "docs/99.templates",
             ignore=shutil.ignore_patterns("__pycache__"),
         )
+        # A TemplateDefinition names consumer paths outside Stage 99 and the
+        # registry check requires them to exist.
+        registry = json.loads(
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
+        )
+        for profile in registry["profiles"]:
+            for named in profile.get("template_definition", {}).get(
+                "consumer_paths", ()
+            ):
+                target = self.root / named
+                if not target.exists():
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copyfile(ROOT / named, target)
         self.spec = SPEC
         self.plan = SPEC.parent / "plan.md"
         self.task = TASK

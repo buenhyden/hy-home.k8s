@@ -13,7 +13,7 @@ import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
-from typing import Any, Mapping, Sequence
+from typing import Any, Iterator, Mapping, Sequence
 from zoneinfo import ZoneInfo
 
 import yaml
@@ -24,6 +24,7 @@ from json_schema_validation import SchemaEvaluationError, schema_errors
 # The names this file does not call itself are re-exported for the
 # harness validators that reach the contract through it.
 from document_contracts import (
+    CommonForm,
     ConditionalConstraint,  # noqa: F401 - re-exported
     ConstantConstraint,  # noqa: F401 - re-exported
     Diagnostic,
@@ -465,30 +466,38 @@ def _exact_heading_section(text: str, heading: str) -> str | None:
     return "\n".join(raw_lines[start + 1 : end])
 
 
-def _first_visible_table(
-    text: str,
-) -> tuple[list[str], list[list[str]]] | None:
-    """Return the first valid pipe-led GFM table outside comments and fences."""
+def _visible_tables(text: str) -> Iterator[tuple[list[str], list[list[str]]]]:
+    """Yield every valid pipe-led GFM table outside comments and fences, in order."""
 
     lines = _visible_markdown(text).splitlines()
-    for index in range(len(lines) - 1):
-        if re.match(r"^ {0,3}\|", lines[index]) is None:
+    index = 0
+    while index < len(lines) - 1:
+        start, index = index, index + 1
+        if re.match(r"^ {0,3}\|", lines[start]) is None:
             continue
-        header = _gfm_table_cells(lines[index])
-        delimiter = _gfm_table_cells(lines[index + 1])
+        header = _gfm_table_cells(lines[start])
+        delimiter = _gfm_table_cells(lines[start + 1])
         if len(header) != len(delimiter) or not header:
             continue
         if not all(re.fullmatch(r":?-{3,}:?", cell) for cell in delimiter):
             continue
         rows: list[list[str]] = []
-        for row_line in lines[index + 2 :]:
+        for row_line in lines[start + 2 :]:
             if not row_line.strip():
                 break
             if re.match(r"^ {0,3}\|", row_line) is None:
                 break
             rows.append(_gfm_table_cells(row_line))
-        return header, rows
-    return None
+        index = start + 2 + len(rows)
+        yield header, rows
+
+
+def _first_visible_table(
+    text: str,
+) -> tuple[list[str], list[list[str]]] | None:
+    """Return the first valid pipe-led GFM table outside comments and fences."""
+
+    return next(_visible_tables(text), None)
 
 
 IDENTIFIER_PATTERNS = {
@@ -825,6 +834,76 @@ def _body_contract_diagnostics(
                         )
                     )
     return sorted(diagnostics, key=diagnostic_sort_key)
+
+
+def _form_heading(form: CommonForm, section_id: str) -> tuple[int, str] | None:
+    """The heading level and title of a form section or local H3 extension."""
+
+    for section in form.sections:
+        if section.section_id == section_id:
+            return section.level, section.title
+        for child in section.children:
+            if child.section_id == section_id:
+                return child.level, child.title
+    for extension in form.extensions:
+        if (
+            extension.kind == "local_h3"
+            and extension.extension_id == section_id
+            and extension.title is not None
+        ):
+            return 3, extension.title
+    return None
+
+
+def _table_diagnostics(
+    path: PurePosixPath, profile: DocumentProfile, body: str
+) -> list[Diagnostic]:
+    """SPEC-0169: check the profile's template tables inside their sections.
+
+    A table is identified by its first header cell. The table the body contract
+    owns keeps its own checks, and a non-unique section heading is left to the
+    heading-tree check.
+    """
+
+    if profile.form is None:
+        return []
+    owned = profile.body_contract.table_heading if profile.body_contract else None
+    found: list[Diagnostic] = []
+    for table in profile.tables:
+        heading = _form_heading(profile.form, table.section)
+        if table.name == owned or heading is None:
+            continue
+        level, title = heading
+        section = _exact_heading_section(body, f"{'#' * level} {title}")
+        if section is None:
+            continue
+        keys = [column.key for column in table.columns]
+        rows = 0
+        for header, data in _visible_tables(section):
+            if header[0] != keys[0]:
+                continue
+            rows += len(data)
+            if header != keys:
+                found.append(
+                    _diagnostic(
+                        "BODY-TABLE-COLUMNS",
+                        path,
+                        profile,
+                        f"{table.name}: {json.dumps(keys, ensure_ascii=False)}",
+                        json.dumps(header, ensure_ascii=False),
+                    )
+                )
+        if rows < table.minimum_rows:
+            found.append(
+                _diagnostic(
+                    "BODY-TABLE-ROWS",
+                    path,
+                    profile,
+                    f"{table.name}: at least {table.minimum_rows} data rows",
+                    f"{rows} rows",
+                )
+            )
+    return found
 
 
 def starter_placeholder(value: str) -> str | None:
@@ -2004,6 +2083,8 @@ def validate_document_text(
         status = task_status(metadata, text, profile)
     if include_body:
         diagnostics.extend(_body_diagnostics(path, profile, body, status))
+        if profile.mode == "authored":
+            diagnostics.extend(_table_diagnostics(path, profile, body))
     diagnostics.extend(artifact_identity_diagnostics(path, profile, metadata))
     if not include_body:
         return sorted(diagnostics, key=diagnostic_sort_key)

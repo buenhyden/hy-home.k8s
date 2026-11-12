@@ -714,18 +714,9 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Audience and Goal",
-          "Prerequisites",
-          "Guidance",
-          "Verification and Troubleshooting",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
-        "forbidden": [],
-        "substantive_body": true,
-        "ordered": true
+        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -740,7 +731,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Related Documents",
+          "section": "Verification",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4023,18 +4014,9 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Audience and Goal",
-          "Prerequisites",
-          "Guidance",
-          "Verification and Troubleshooting",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
-        "forbidden": [],
-        "substantive_body": true,
-        "ordered": true
+        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -4042,7 +4024,7 @@
           "operation/guide"
         ],
         "body_contract": {
-          "section": "Related Documents",
+          "section": "Verification",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4066,7 +4048,109 @@
           "allow_explicit_exclusion": true
         }
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a guide that explains or walks a reader through a stable operating procedure.",
+        "responsibility": "A guide owns how a reader reaches and checks one operating outcome; execution and recovery steps stay with runbooks and rules stay with policies.",
+        "non_goals": [
+          "Executable recovery or release procedures, which belong to a runbook.",
+          "Normative rules and approvals, which belong to a policy or governance document.",
+          "Granting authority to run any command."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every operation/guide document under docs/05.operations/guides/ and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/operations/guide.template.md",
+          "docs/99.templates/README.md",
+          "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validation/repository/form_contracts.py",
+          "tests/test_common_form_tree.py"
+        ],
+        "validation": {
+          "positive": [
+            "GDE-0010 passes the form tree, table, body-contract, author-prompt and residue checks.",
+            "A guide whose Steps table keeps the registered columns passes the document table check."
+          ],
+          "negative": [
+            "A reordered, missing or extra Steps column fails BODY-TABLE-COLUMNS.",
+            "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT.",
+            "A table section outside the form fails REGISTRY_TABLE_SECTION."
+          ],
+          "regression": [
+            "The loaded guide profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the Guide form and definition in the repository registry."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0169 meaning map moves each GDE-0010 sentence into its Purpose, Prerequisites, Procedure or Verification section without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous six-section guide layout and its template.",
+          "rollback": "Revert the SPEC-0169 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Steps",
+            "section": "guide-procedure-actions",
+            "columns": [
+              {
+                "key": "Step",
+                "meaning": "Order of the step in the procedure.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Action",
+                "meaning": "What the reader does at this step.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Check",
+                "meaning": "How the reader observes that the step worked.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Step"
+          },
+          {
+            "name": "Lifecycle Traceability",
+            "section": "guide-lifecycle-traceability",
+            "columns": [
+              {
+                "key": "Promoted owner",
+                "meaning": "Link to the Spec or Task that owns the guide lineage, or an N/A reason.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Audience outcome",
+                "meaning": "The outcome the guide gives its readers.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Operating surface",
+                "meaning": "The system, workflow or concept the guide covers.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 1,
+            "row_identity": "Promoted owner"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-operation-incident",
@@ -6086,6 +6170,321 @@
   "common_forms": {
     "contract_id": "COMMON-DOC-FORM-1",
     "version": "1.0.0",
-    "forms": []
+    "forms": [
+      {
+        "form_id": "guide",
+        "title": "Guide",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "guide-purpose",
+            "level": 2,
+            "parent_id": null,
+            "title": "Purpose",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "사용자가 달성할 목적",
+            "required_content": [
+              "사용자가 달성할 목적에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "guide-purpose-outcome",
+                "level": 3,
+                "parent_id": "guide-purpose",
+                "title": "Outcome",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "작업 결과와 독자",
+                "required_content": [
+                  "작업 결과와 독자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "guide-purpose-boundaries",
+                "level": 3,
+                "parent_id": "guide-purpose",
+                "title": "Boundaries",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "범위·비목표",
+                "required_content": [
+                  "범위·비목표을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "guide-prerequisites",
+            "level": 2,
+            "parent_id": null,
+            "title": "Prerequisites",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "실행 전 조건",
+            "required_content": [
+              "실행 전 조건에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "guide-prerequisites-environment",
+                "level": 3,
+                "parent_id": "guide-prerequisites",
+                "title": "Environment",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "도구 판본·입력·접근",
+                "required_content": [
+                  "도구 판본·입력·접근을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "guide-prerequisites-permissions",
+                "level": 3,
+                "parent_id": "guide-prerequisites",
+                "title": "Permissions",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "허용 권한·보호 대상",
+                "required_content": [
+                  "허용 권한·보호 대상을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "guide-procedure",
+            "level": 2,
+            "parent_id": null,
+            "title": "Procedure",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "재현 가능한 수행 방법",
+            "required_content": [
+              "재현 가능한 수행 방법에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "guide-procedure-actions",
+                "level": 3,
+                "parent_id": "guide-procedure",
+                "title": "Actions",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "순서별 입력·행동·기대 출력",
+                "required_content": [
+                  "순서별 입력·행동·기대 출력을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "guide-procedure-exceptions",
+                "level": 3,
+                "parent_id": "guide-procedure",
+                "title": "Exceptions",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실패·분기·중단·문의",
+                "required_content": [
+                  "실패·분기·중단·문의을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "guide-verification",
+            "level": 2,
+            "parent_id": null,
+            "title": "Verification",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "작업 결과 확인",
+            "required_content": [
+              "작업 결과 확인에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "guide-verification-expected-result",
+                "level": 3,
+                "parent_id": "guide-verification",
+                "title": "Expected Result",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "성공·실패 관측과 확인 방법",
+                "required_content": [
+                  "성공·실패 관측과 확인 방법을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "guide-verification-troubleshooting",
+                "level": 3,
+                "parent_id": "guide-verification",
+                "title": "Troubleshooting",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "진단·안전한 복구·담당",
+                "required_content": [
+                  "진단·안전한 복구·담당을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          }
+        ],
+        "extensions": [
+          {
+            "id": "guide-lifecycle-traceability",
+            "kind": "local_h3",
+            "condition": "a guide in a status the body contract enforces (draft, in-review, active, deprecated) states its promoted owner or an N/A reason",
+            "owner": "platform",
+            "verification": "the body-contract check",
+            "review": "when the Guide form version changes",
+            "removal": "when guide lineage has another registered owner",
+            "parent_id": "guide-verification",
+            "title": "Lifecycle Traceability"
+          }
+        ]
+      }
+    ]
   }
 }
