@@ -1,6 +1,6 @@
 ---
 title: "W01 Governance Alignment"
-version: "0.4.0"
+version: "0.5.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-12"
@@ -68,6 +68,7 @@ Read-only survey at `e3d72466`. Read fully: the glossary, `sdlc.md`, `quality.md
 | EVD-006 | [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan), [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Semantic review: risk class and core-diff checklist | Diff of the five W01 files over `4300d7c6` | PASS | Risk class `medium` (policy change). Checklist: acceptance alignment holds (each Contracts item in its named owner); one writer per file (this Task); consistent with FR-0017 and ADR-0048, which the hosted target sentence names as governing; no check removed or weakened; no secret read or printed; recovery is reverting the implementation commit. No permission, trigger or protected action changed. Findings: none `BLOCK` or `FIX`; NOTE: the `quality.md` reuse key now names environment, guarantee and consumer while `scripts/qa.py` does not yet (W05). | yes | none |
 | EVD-007 | [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan), [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Requirement trace and follow-up survey | W01 package sections 1-11 against `1643e66d`; 2026-11-12 | PASS | Every owned ID now has an action and file:line evidence in the Requirement Trace below; W01-A, W01-B, GOV-01, R147-09 and R147-19 were not traced before. Glossary owner labels `W03 contract author`, `W07 verification owner` and `W00 lineage owner` named package stages; renamed to `Registry author`, `Native runtime verification owner` and `Audit lineage owner` with the same links. Open: the glossary is still `draft` although it owns term meaning (operator decision). | yes | none |
 | EVD-008 | [VAL-GOVALIGN-001](../spec.md#success-criteria--verification-plan), [VAL-GOVALIGN-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Glossary status decision | Direct current-session user answer "Promote to active (Recommended)" to the glossary status question, 2026-11-12 Asia/Seoul | PASS | The glossary moves `draft` to `in-review` to `active`, one registered edge per commit; no definition changes with it. | no | none |
+| EVD-009 | [VAL-GOVALIGN-003](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-12 exit authority; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Handoffs
 
@@ -118,6 +119,13 @@ Read-only survey at `e3d72466`. Read fully: the glossary, `sdlc.md`, `quality.md
 - **Rollback Plan**: revert the implementation commit
 - **Evidence Location**: this Task
 
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document authoring policy 3.6.0, the SDLC contract 3.5.0, the quality policy 2.5.0, Git policy 2.5.1 and the active Repository Vocabulary (Promotion rows of the Plan). The W03 to W07 handoffs are recorded in the Handoffs table above and stay recoverable from Git history; each named stage reads them from the REQ-0003 Archived Lineage row. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries. SPEC-0161's mentions of W01 are historical text and stay.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's explicit 2026-11-12 answer "Exit now (Recommended)" is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
+
 ## Verification Summary
 
-WORK-001 and WORK-002 done; all checks in EVD-004 PASS; semantic review in EVD-006 has no `BLOCK` or `FIX`. Risk class `medium` (policy change). The user accepted all three criteria on 2026-11-12 and decided to promote the glossary to `active` (EVD-008). Not run: live checks (no live surface). Rollback: revert the implementation commit. Residual risk: the W03, W05 and W06 targets are policy text without enforcement until those stages land. Next owner: the operator for package exit; W02 can start independently.
+WORK-001 and WORK-002 done; all checks in EVD-004 PASS; semantic review in EVD-006 has no `BLOCK` or `FIX`. Risk class `medium` (policy change). The user accepted all three criteria on 2026-11-12 and decided to promote the glossary to `active` (EVD-008). Not run: live checks (no live surface). Rollback: revert the implementation commit. Residual risk: the W03, W05 and W06 targets are policy text without enforcement until those stages land. Next owner: package exit per EVD-009; W02 can start independently.
