@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.2"
+version: "0.1.5"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -59,6 +59,8 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-022 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W00 follow-up OPEN correction | User W00 follow-up correction request of 2026-11-12; `OPEN-01-14.json`; a file-name and content search of `_workspace/workspace_execution_tasks/` and a path search of all 21 Git refs for the OPEN-04 originals; `git ls-files` at `d623681f` (659 files) | PASS | Added OPEN Disposition Corrections: OPEN-01 and OPEN-02 stay UNVERIFIED without blocking product work or asking for user acceptance; OPEN-04 BLOCKED_EVIDENCE is limited to the direct comparison and names the searched scope; OPEN-06 split into a closed licence row and a conditional perspective row; OPEN-07 split into inventory, read, consumer and verification denominators with owners. Earlier rows and tables are unchanged. | no | none |
 | EVD-023 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W02 follow-up survey | `scripts/document_lifecycle.py:408-445` (`artifact_identity_reuse_diagnostics`) and `.agents/governance/document-lifecycle.md:26` at `1e12f9fd`; code reading, not executed; 2026-11-12 | PASS | Found a W02 hand-off that SPEC-0167 did not record: identity reservation for documents that left the tree. The policy says stable identities are never reused, but `LIFECYCLE-IDENTITY-REUSE` reserves only identities present in the comparison base, so an ID retired through Git history is not protected by any check. Recorded in Stage Follow-up Handoffs below for W03 and W05. Also checked and kept: `context-and-memory.md:88` (memory never deleted by Task completion) matches the W02 scope rule; `tests/test_document_lifecycle_cumulative_history.py` does not read `docs/98.archive/` (active-document replay, ARC-07); ADR-0031's archive and retention clauses are already marked not current by ADR-0055 and ADR-0053, so it stays accepted. | no | none |
 | EVD-024 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Isolated probe of the identity reuse check | `python3 -I` calling `scripts/document_lifecycle.py` `artifact_identity_reuse_diagnostics` with synthetic in-memory documents at `24492613`; no repository file read as input or written; 2026-11-12 | PASS | Control: a new document reusing `SPEC-0161`, present in the base, returned `LIFECYCLE-IDENTITY-REUSE`. Probe: a new document reusing `SPEC-0165`, which left the tree through Git history, returned 0 diagnostics. The W02-H01 gap is observed, not only read; the hand-off owner and resume condition are unchanged. It confirms EVD-023's code reading; EVD-023 was not a failure, so nothing is resolved. | no | none |
+| EVD-025 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03 user decisions on form migration | Direct current-session user answers, 2026-11-12 Asia/Seoul, to two questions after a read-only W03 inventory at `0281409b` (84 profiles; about 129 current documents in the 16 common roles, 30 more in unclear roles) | PASS | (1) "Migrate all except ADRs": every current document moves to the COMMON-DOC-FORM-1 headings form-only (decisions, criteria, evidence values and IDs unchanged; Git history keeps the original bytes), except the 33 accepted ADRs, which keep their current form as a recorded exception until a successor replaces each one. (2) "Conditional local extension": `Archived Lineage` and the `Lifecycle Traceability` table stay as named conditional H3 extensions under the role's Traceability or References H2, each with condition, owner, verification, review point and removal criterion. Recorded in W03 Decisions below. | no | none |
+| EVD-026 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03 user decisions on trace host and contract approval facts | Direct current-session user answers, 2026-11-12 Asia/Seoul, after the W03 phase-1 design | PASS | (1) "Nearest owning H2": Plan carries `Lifecycle Traceability` in the common H3 Implementation Strategy > Work Breakdown; Task, Guide, Runbook and Policy host it as a conditional local H3 under Execution Log, Verification, Validation and Ownership. (2) "Record as unverified": WGOV-CORE 3.0.0 stays `adopted` with its existing `approval_ref`; `approved_by`, `approved_at` and `effective_from` hold the literal `unverified`, allowed only with an `approval_ref`. Recorded as W03-D04 and W03-D05. | no | none |
 
 ### Edition Delta
 
@@ -301,6 +303,23 @@ Added 2026-11-12 under the user's W02 follow-up request (EVD-023). SPEC-0167 lef
 | ID | Source requirement | Gap | Owner | Interface | Resume condition |
 | --- | --- | --- | --- | --- | --- |
 | W02-H01 | W02 section 3 item 1 (registry retention and identity reservation reviewed, changes to W03); `document-lifecycle.md:26` | `LIFECYCLE-IDENTITY-REUSE` reserves only identities present in the comparison base; an ID whose document left through Git history can be minted again | W03 registry author, then W05 validator author | W03 decides where retired identities are reserved (for example the owners' `Archived Lineage` rows or a registry key); W05 extends the reuse check to that source with a refusal test for a retired SPEC ID | W03 starts |
+
+### W03 Decisions
+
+Added 2026-11-12 under the user's W03 request (EVD-025). W03 runs as several Stage 03 packages; each reads these decisions.
+
+| ID | Decision | Effect on current rules | Owner |
+| --- | --- | --- | --- |
+| W03-D01 | Form-only migration of current documents to COMMON-DOC-FORM-1, except accepted ADRs | The append-only Task evidence and `TASK-EVIDENCE-RETENTION` rules gain a recorded form-only route that maps old to new headings and keeps every row value; Stage 02 `AGENTS.md` rule 3 stays for ADR bodies | W03 (registry, forms, documents), W05 (retention check) |
+| W03-D02 | Accepted ADRs keep their current form until replaced | The ADR profile accepts the current form for an `accepted` ADR as a conditional extension with removal criterion "replaced by a successor ADR"; a new ADR uses the common form | W03, W05 |
+| W03-D03 | `Archived Lineage` and `Lifecycle Traceability` are conditional local extensions | Kept under the role's Traceability or References H2; the package-exit check and recovery commands keep their heading | W03, W05 |
+| W03-D04 | `Lifecycle Traceability` host where no Traceability or References H2 exists | Plan: common H3 Implementation Strategy > Work Breakdown; Task: Execution Log; Guide: Verification; Runbook: Validation; Policy: Ownership; each a conditional local H3 except Plan | W03 |
+| W03-D05 | Shared contract approval facts not on record stay `unverified` | WGOV-CORE keeps stage `adopted` and its `approval_ref`; new approver and date fields hold `unverified`; nothing is inferred from the owner name | W03 |
+| W03-H01 | Phase 2 forms: Guide, Runbook, Policy, Incident, Postmortem, READMEs, `AGENTS.md`, `SKILL.md`; table column contracts; README rule IDs in tree mode; roles for the unclear profiles | One role form per change in `common_forms`, TemplateDefinitions filled, documents moved form-only | W03; resume now (SPEC-0168 accepted) |
+| W03-H02 | Phase 3 forms: Requirement, Architecture, ADR with W03-D02, Spec, Plan, Task; delete the H2-list model, list-built `HeadingContract.allowed` and `BODY-HEADING-EMPTY` for form profiles | Consumer renames and the `TASK-EVIDENCE-RETENTION` heading map | W03; resume after phase 2 is accepted; if W04 starts first, record the slip here |
+| W03-H03 | Retired-identity reservation (W02-H01) | Reserve IDs named in the owners' `Archived Lineage`; refusal test for a retired SPEC ID | W05; resume now |
+| W03-H04 | Generator reason | Verify that template parity and the template-mode tree check stand in for a generator | W05; resume now |
+| W03-H05 | ADR `rejected` state | Keep or remove the stored state given the W02 exit rule | W04; resume when W04 starts |
 
 ## Criterion Acceptance
 

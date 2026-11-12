@@ -274,6 +274,9 @@ def _native_surface_diagnostics(
 class HeadingScan:
     headings: tuple[tuple[int, str], ...]
     unclosed_fence: bool
+    # One tuple of (line, fenced) pairs per heading: the visible lines up to the
+    # next heading of any level, HTML comments removed and fenced code flagged.
+    bodies: tuple[tuple[tuple[str, bool], ...], ...] = ()
 
 
 def _strip_html_comments(line: str, in_comment: bool) -> tuple[str, bool]:
@@ -301,6 +304,7 @@ def scan_headings(markdown: str) -> HeadingScan:
     """Scan ATX headings outside CommonMark-compatible fenced blocks."""
 
     headings: list[tuple[int, str]] = []
+    bodies: list[list[tuple[str, bool]]] = []
     fence_character: str | None = None
     fence_length = 0
     in_comment = False
@@ -314,22 +318,33 @@ def scan_headings(markdown: str) -> HeadingScan:
             if closing.fullmatch(raw_line):
                 fence_character = None
                 fence_length = 0
+            elif bodies:
+                bodies[-1].append((raw_line, True))
             continue
         line, in_comment = _strip_html_comments(raw_line, in_comment)
         match = opening.match(line)
         if match:
             marker = match.group(1)
             if marker[0] == "`" and "`" in match.group(2):
+                if bodies:
+                    bodies[-1].append((line, False))
                 continue
             fence_character = marker[0]
             fence_length = len(marker)
             continue
         match = re.match(r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$", line)
         if not match:
+            if bodies:
+                bodies[-1].append((line, False))
             continue
         title = re.sub(r"[ \t]+#+[ \t]*$", "", match.group(2).strip()).strip()
         headings.append((len(match.group(1)), title))
-    return HeadingScan(tuple(headings), fence_character is not None)
+        bodies.append([])
+    return HeadingScan(
+        tuple(headings),
+        fence_character is not None,
+        tuple(tuple(body) for body in bodies),
+    )
 
 
 def text_outside_fenced_code(markdown: str) -> str:
@@ -1536,10 +1551,157 @@ def _frontmatter_body(
     return body
 
 
+def _form_tree_diagnostics(
+    path: PurePosixPath, profile: DocumentProfile, scan: HeadingScan
+) -> list[Diagnostic]:
+    """SPEC-0168 QA-C02: check the H2 and H3 headings against the role's form."""
+
+    form = profile.form
+    assert form is not None
+    found: list[Diagnostic] = []
+
+    def add(rule_id: str, expected: str, actual: str) -> None:
+        found.append(_diagnostic(rule_id, path, profile, expected, actual))
+
+    registered = {section.title: section for section in form.sections}
+    local: dict[str | None, set[str]] = {}
+    homes: dict[str, set[str | None]] = {}
+    for section in form.sections:
+        for child in section.children:
+            homes.setdefault(child.title, set()).add(section.section_id)
+    for extension in form.extensions:
+        if extension.kind == "local_h3" and extension.title is not None:
+            local.setdefault(extension.parent_id, set()).add(extension.title)
+            homes.setdefault(extension.title, set()).add(extension.parent_id)
+
+    headings = scan.headings
+    h2_titles = [title for level, title in headings if level == 2]
+    for title in dict.fromkeys(h2_titles):
+        if h2_titles.count(title) > 1:
+            add("BODY-H2-DUPLICATE", "unique H2", title)
+    for title in h2_titles:
+        if title not in registered:
+            add("BODY-HEADING-UNSUPPORTED", "a registered H2", title)
+    for section in form.sections:
+        if section.requiredness == "required" and section.title not in h2_titles:
+            add("BODY-HEADING-REQUIRED", "required H2", section.title)
+    present = [title for title in dict.fromkeys(h2_titles) if title in registered]
+    in_order = [s.title for s in form.sections if s.title in present]
+    if present != in_order:
+        add("BODY-H2-ORDER", json.dumps(in_order), json.dumps(present))
+
+    # Each block is one H2 and the H3 headings under it; the first block holds
+    # any H3 that has no H2 above it.
+    blocks: list[tuple[int | None, str | None, list[tuple[int, str]]]] = [
+        (None, None, [])
+    ]
+    for index, (level, title) in enumerate(headings):
+        if level == 2:
+            blocks.append((index, title, []))
+        elif level == 3:
+            blocks[-1][2].append((index, title))
+
+    def body_lines(index: int) -> list[tuple[str, bool]]:
+        level = headings[index][0]
+        end = next(
+            (i for i in range(index + 1, len(headings)) if headings[i][0] <= level),
+            len(headings),
+        )
+        return [line for body in scan.bodies[index:end] for line in body]
+
+    def empty(index: int, link_only: bool) -> bool:
+        return not _substantive_section_body(
+            body_lines(index), links_are_content=link_only
+        )
+
+    for index, title, children in blocks:
+        names = [name for _, name in children]
+        if index is None:
+            for name in dict.fromkeys(names):
+                add("BODY-H3-PARENT", "an H2 above every H3", name)
+            continue
+        parent = registered.get(title or "")
+        kids = {child.title: child for child in parent.children} if parent else {}
+        extras = local.get(parent.section_id if parent else None, set())
+        for name in dict.fromkeys(names):
+            if names.count(name) > 1:
+                add("BODY-H3-DUPLICATE", "unique H3 under one H2", f"{title}: {name}")
+            if name in kids or name in extras:
+                continue
+            if name in homes:
+                add(
+                    "BODY-H3-PARENT",
+                    "an H3 under its registered H2",
+                    f"{title}: {name}",
+                )
+            else:
+                add(
+                    "BODY-H3-UNSUPPORTED",
+                    "a registered H3 or local extension",
+                    f"{title}: {name}",
+                )
+        if parent is None:
+            continue
+        for child in parent.children:
+            if child.requiredness == "required" and child.title not in names:
+                add("BODY-H3-REQUIRED", "required H3", f"{title}: {child.title}")
+        seen = [name for name in dict.fromkeys(names) if name in kids]
+        ordered = [child.title for child in parent.children if child.title in seen]
+        if seen != ordered:
+            add("BODY-H3-ORDER", json.dumps(ordered), json.dumps(seen))
+        if profile.mode != "authored":
+            continue
+        if not children and empty(index, parent.link_only):
+            add("BODY-SECTION-EMPTY", "a section with authored content", title or "")
+        for position, name in children:
+            if name in kids or name in extras:
+                link_only = name in kids and kids[name].link_only
+                if empty(position, link_only):
+                    add(
+                        "BODY-SECTION-EMPTY",
+                        "a section with authored content",
+                        f"{title}: {name}",
+                    )
+    return found
+
+
+def _template_residue_diagnostics(
+    path: PurePosixPath, profile: DocumentProfile, body: str
+) -> list[Diagnostic]:
+    """Authored content carries no template author prompt or legacy residue."""
+
+    diagnostics: list[Diagnostic] = []
+    if profile.placeholder_policy == "forbidden":
+        residue_source = text_outside_fenced_code(body)
+        for _ in AUTHOR_PROMPT_COMMENT.finditer(residue_source):
+            diagnostics.append(
+                _diagnostic(
+                    "BODY-AUTHOR-PROMPT",
+                    path,
+                    profile,
+                    "authored content without template author prompts",
+                    AUTHOR_PROMPT_MARKER,
+                )
+            )
+        for marker in GENERIC_RESIDUE:
+            for _ in range(residue_source.count(marker)):
+                diagnostics.append(
+                    _diagnostic(
+                        "BODY-TEMPLATE-RESIDUE",
+                        path,
+                        profile,
+                        "authored content without legacy/template residue",
+                        marker,
+                    )
+                )
+    return diagnostics
+
+
 def _body_diagnostics(
     path: PurePosixPath,
     profile: DocumentProfile,
     body: str,
+    status: str = "",
 ) -> list[Diagnostic]:
     scan = scan_headings(body)
     readme = profile.profile_class == "readme"
@@ -1549,7 +1711,15 @@ def _body_diagnostics(
         diagnostics.append(
             _diagnostic(rule, path, profile, "all fenced blocks are closed", "unclosed")
         )
-    if not profile.headings.required and not profile.headings.allowed:
+    # SPEC-0168: a profile whose role has a form is checked against its section
+    # tree, unless a retained form names this status and supplies H2 lists.
+    headings = profile.headings
+    tree = profile.form is not None
+    if profile.form is not None:
+        retained = profile.form.retained_headings(status)
+        if retained is not None:
+            headings, tree = retained, False
+    if not tree and not headings.required and not headings.allowed:
         return diagnostics
     h1 = [title for level, title in scan.headings if level == 1]
     h2 = [title for level, title in scan.headings if level == 2]
@@ -1571,23 +1741,25 @@ def _body_diagnostics(
                 placeholder,
             )
         )
-    missing = [heading for heading in profile.headings.required if heading not in h2]
+    if tree:
+        diagnostics.extend(_form_tree_diagnostics(path, profile, scan))
+        diagnostics.extend(_template_residue_diagnostics(path, profile, body))
+        return diagnostics
+    missing = [heading for heading in headings.required if heading not in h2]
     required_rule = "README_H2_REQUIRED" if readme else "BODY-HEADING-REQUIRED"
     diagnostics.extend(
         _diagnostic(required_rule, path, profile, "required H2", heading)
         for heading in missing
     )
-    if profile.headings.ordered and not missing:
-        observed_order = [
-            heading for heading in h2 if heading in profile.headings.required
-        ]
-        if observed_order != list(profile.headings.required):
+    if headings.ordered and not missing:
+        observed_order = [heading for heading in h2 if heading in headings.required]
+        if observed_order != list(headings.required):
             diagnostics.append(
                 _diagnostic(
                     "BODY-H2-ORDER",
                     path,
                     profile,
-                    json.dumps(profile.headings.required),
+                    json.dumps(headings.required),
                     json.dumps(observed_order),
                 )
             )
@@ -1595,8 +1767,8 @@ def _body_diagnostics(
         h2_counts = collections.Counter(h2)
         section_content = _scan_required_h2_content(
             body,
-            profile.headings.required,
-            substantive_body=profile.headings.substantive_body,
+            headings.required,
+            substantive_body=headings.substantive_body,
         )
         diagnostics.extend(
             _diagnostic(
@@ -1627,36 +1799,14 @@ def _body_diagnostics(
         _diagnostic(duplicate_rule, path, profile, "unique H2", heading)
         for heading in duplicate
     )
-    represented = set(profile.headings.allowed)
+    represented = set(headings.allowed)
     unsupported_rule = "README_H2_UNSUPPORTED" if readme else "BODY-HEADING-UNSUPPORTED"
     diagnostics.extend(
         _diagnostic(unsupported_rule, path, profile, "allowed H2", heading)
         for heading in h2
         if heading not in represented
     )
-    if profile.placeholder_policy == "forbidden":
-        residue_source = text_outside_fenced_code(body)
-        for _ in AUTHOR_PROMPT_COMMENT.finditer(residue_source):
-            diagnostics.append(
-                _diagnostic(
-                    "BODY-AUTHOR-PROMPT",
-                    path,
-                    profile,
-                    "authored content without template author prompts",
-                    AUTHOR_PROMPT_MARKER,
-                )
-            )
-        for marker in GENERIC_RESIDUE:
-            for _ in range(residue_source.count(marker)):
-                diagnostics.append(
-                    _diagnostic(
-                        "BODY-TEMPLATE-RESIDUE",
-                        path,
-                        profile,
-                        "authored content without legacy/template residue",
-                        marker,
-                    )
-                )
+    diagnostics.extend(_template_residue_diagnostics(path, profile, body))
     return diagnostics
 
 
@@ -1844,8 +1994,6 @@ def validate_document_text(
     body = _frontmatter_body(
         text, path, profile, diagnostics, effective_today, frontmatter_schema
     )
-    if include_body:
-        diagnostics.extend(_body_diagnostics(path, profile, body))
     status = ""
     metadata: dict[str, Any] = {}
     if profile.frontmatter.mode == "required":
@@ -1854,6 +2002,8 @@ def validate_document_text(
         except ContractError:
             metadata = {}
         status = task_status(metadata, text, profile)
+    if include_body:
+        diagnostics.extend(_body_diagnostics(path, profile, body, status))
     diagnostics.extend(artifact_identity_diagnostics(path, profile, metadata))
     if not include_body:
         return sorted(diagnostics, key=diagnostic_sort_key)

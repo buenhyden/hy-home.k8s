@@ -17,6 +17,7 @@ from document_contracts import (
     task_status,
     Registry,
     classify_path,
+    local_extension_names,
     task_criterion_ids,
 )
 
@@ -778,9 +779,8 @@ def compare_lifecycle(
     approved_initial_paths = frozenset()
     if (
         evidence_context is not None
-        and registry.shared_contract is not None
-        and registry.shared_contract.stage in {"candidate", "adopted"}
-        and SPEC_PLAN_FIRST_APPROVED_EXTENSION in registry.shared_contract.extensions
+        and SPEC_PLAN_FIRST_APPROVED_EXTENSION
+        in local_extension_names(registry.shared_contract)
     ):
         approved_initial_paths = (
             evidence_context.approved_initial_paths

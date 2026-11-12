@@ -6,7 +6,7 @@ import copy
 import re
 import stat
 import subprocess
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field as dataclass_field, replace
 from functools import lru_cache
 from types import MappingProxyType
 from pathlib import Path, PurePosixPath
@@ -43,6 +43,10 @@ SPEC_PLAN_FIRST_APPROVED_EXTENSION = (
     "review and approval"
 )
 TASK_INITIAL_STATES = ("draft", "ready", "in-progress", "blocked")
+# The shared contract's local extensions apply at each of these stages.
+SHARED_STAGES = ("candidate", "approved", "adopted")
+# SPEC-0168: the one policy role that governance/rule and operation/policy share.
+POLICY_ROLE_SOURCES = ("governance/rule", "operation/policy")
 MARKDOWN_TEMPLATE_PLACEHOLDER = re.compile(r"\{\{[A-Z][A-Z0-9_]*\}\}")
 DOCUMENT_TEXT_MAX_BYTES = 16 * 1024 * 1024
 _LS_FILES_MODES = {b"100644", b"100755", b"120000", b"160000"}
@@ -672,6 +676,80 @@ class DocumentLanguage:
         )
 
 
+DocumentRole = Literal[
+    "requirement",
+    "architecture",
+    "adr",
+    "spec",
+    "plan",
+    "task",
+    "guide",
+    "runbook",
+    "policy",
+    "incident",
+    "postmortem",
+    "root-readme",
+    "stage-readme",
+    "service-readme",
+    "agents",
+    "skill",
+]
+
+
+@dataclass(frozen=True)
+class FormSection:
+    """One COMMON-DOC-FORM-1 section; link_only is the one local field."""
+
+    section_id: str
+    title: str
+    level: Literal[2, 3]
+    parent_id: str | None
+    order: int
+    requiredness: Literal["required", "conditional", "optional"]
+    condition: str
+    empty_policy: Literal["explain_none_or_not_applicable", "omit_when_condition_false"]
+    link_only: bool
+    children: tuple["FormSection", ...]
+
+
+@dataclass(frozen=True)
+class FormExtension:
+    """A registered departure from a form: a local H3 or a retained H2 list."""
+
+    extension_id: str
+    kind: Literal["local_h3", "retained_form"]
+    condition: str
+    owner: str
+    verification: str
+    review: str
+    removal: str
+    parent_id: str | None = None
+    title: str | None = None
+    statuses: tuple[str, ...] = ()
+    retained: HeadingContract | None = None
+
+
+@dataclass(frozen=True)
+class CommonForm:
+    """The section tree every profile bound to one document role shares."""
+
+    form_id: DocumentRole
+    title: str
+    h1: str
+    language_rule: str
+    extension_policy: str
+    sections: tuple[FormSection, ...]
+    extensions: tuple[FormExtension, ...]
+
+    def retained_headings(self, status: str) -> HeadingContract | None:
+        """The retained H2 lists that replace the tree for this status, if any."""
+
+        for extension in self.extensions:
+            if extension.kind == "retained_form" and status in extension.statuses:
+                return extension.retained
+        return None
+
+
 @dataclass(frozen=True)
 class DocumentProfile:
     profile_id: str
@@ -703,6 +781,23 @@ class DocumentProfile:
     placeholder_policy: Literal["forbidden", "template-only"]
     body_contract: BodyContract | None
     lifecycle_domain: LifecycleDomain | None
+    document_role: DocumentRole | None = None
+    form: CommonForm | None = None
+    template_definition: Mapping[str, Any] | None = dataclass_field(
+        default=None, hash=False
+    )
+
+
+@dataclass(frozen=True)
+class SharedExtension:
+    """A local extension of the shared contract; unrecorded facts read unverified."""
+
+    name: str
+    condition: str
+    owner: str
+    verification: str
+    review: str
+    removal: str
 
 
 @dataclass(frozen=True)
@@ -711,14 +806,45 @@ class SharedContract:
 
     contract_id: str
     version: str
-    stage: Literal["candidate", "adopted"]
+    stage: Literal["candidate", "approved", "adopted"]
     owner: str
     source: str
     source_revision: str | None
     content_digest: str
     approval_ref: str | None
     local_adapter: str
-    extensions: tuple[str, ...]
+    extensions: tuple[SharedExtension, ...]
+    approved_by: str | None = None
+    approved_at: str | None = None
+    effective_from: str | None = None
+    scope: str | None = None
+    migration: str | None = None
+    rollback: str | None = None
+    consumer_version: str | None = None
+
+
+def extension_name(extension: Mapping[str, Any] | SharedExtension) -> str:
+    """The one reader of a shared-contract extension's name."""
+
+    if isinstance(extension, Mapping):
+        return extension["name"]
+    return extension.name
+
+
+def local_extension_names(
+    shared: Mapping[str, Any] | SharedContract | None,
+) -> frozenset[str]:
+    """Names of the local extensions in force; none at an unrecognized stage."""
+
+    if shared is None:
+        return frozenset()
+    if isinstance(shared, Mapping):
+        stage, extensions = shared.get("stage"), shared.get("extensions", ())
+    else:
+        stage, extensions = shared.stage, shared.extensions
+    if stage not in SHARED_STAGES:
+        return frozenset()
+    return frozenset(extension_name(item) for item in extensions)
 
 
 @dataclass(frozen=True)
@@ -729,6 +855,7 @@ class Registry:
     readme_navigation: ReadmeNavigation | None = None
     document_language: DocumentLanguage | None = None
     shared_contract: SharedContract | None = None
+    common_forms: tuple[CommonForm, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -1342,6 +1469,7 @@ def _profile_from_mapping(
     raw: Mapping[str, Any],
     *,
     lifecycle_domain: LifecycleDomain | None,
+    form: CommonForm | None = None,
 ) -> DocumentProfile:
     frontmatter = raw["frontmatter"]
     lifecycle = raw["lifecycle"]
@@ -1389,6 +1517,9 @@ def _profile_from_mapping(
         placeholder_policy=raw["placeholder_policy"],
         body_contract=_body_contract(raw["relationships"]["body_contract"]),
         lifecycle_domain=lifecycle_domain,
+        document_role=raw.get("document_role"),
+        form=form,
+        template_definition=raw.get("template_definition"),
     )
 
 
@@ -1569,18 +1700,9 @@ def _terminal_semantic_diagnostics(
     assigned_profiles: set[str] = set()
     domains_by_profile: dict[str, Mapping[str, Any]] = {}
     families: set[str] = set()
-    shared_contract = raw_registry.get("shared_contract")
-    local_extension_stage = isinstance(
-        shared_contract, Mapping
-    ) and shared_contract.get("stage") in {"candidate", "adopted"}
-    local_task_recording = (
-        local_extension_stage
-        and TASK_FIRST_RECORDING_EXTENSION in shared_contract.get("extensions", ())
-    )
-    local_spec_direct_approval = (
-        local_extension_stage
-        and SPEC_PLAN_DIRECT_APPROVAL_EXTENSION in shared_contract.get("extensions", ())
-    )
+    local_extensions = local_extension_names(raw_registry.get("shared_contract"))
+    local_task_recording = TASK_FIRST_RECORDING_EXTENSION in local_extensions
+    local_spec_direct_approval = SPEC_PLAN_DIRECT_APPROVAL_EXTENSION in local_extensions
     for domain in raw_registry["lifecycle_domains"]:
         family = domain["family"]
         initial_states = domain.get("initial_states")
@@ -1594,7 +1716,7 @@ def _terminal_semantic_diagnostics(
                     "REGISTRY_LIFECYCLE_DOMAIN",
                     expected=(
                         "spec-plan draft-to-approved edge exactly when the local "
-                        "extension is declared at candidate or adopted stage"
+                        "extension is declared at a recognized shared stage"
                     ),
                     actual="spec-plan direct approval extension/edge mismatch",
                 )
@@ -1676,6 +1798,12 @@ def _terminal_semantic_diagnostics(
             domains_by_profile[profile_id] = domain
 
     diagnostics.extend(_registry_section_diagnostics(raw_registry, profiles_by_id))
+    diagnostics.extend(_shared_extension_diagnostics(raw_registry))
+    diagnostics.extend(
+        _form_registry_diagnostics(
+            root, raw_registry, profiles_by_id, template_regular_paths
+        )
+    )
 
     for profile_id, profile in profiles_by_id.items():
         if profile["mode"] != "authored":
@@ -1710,6 +1838,284 @@ def _terminal_semantic_diagnostics(
     return tuple(diagnostics)
 
 
+def _shared_extension_diagnostics(raw_registry: Mapping[str, Any]) -> list[Diagnostic]:
+    """Require every shared-contract extension name to appear once."""
+
+    shared = raw_registry.get("shared_contract")
+    if not isinstance(shared, Mapping):
+        return []
+    names = [extension_name(item) for item in shared.get("extensions", ())]
+    return [
+        _diagnostic(
+            "REGISTRY_SHARED_EXTENSION",
+            expected="one extension per name",
+            actual=f"duplicate extension {name!r}",
+        )
+        for name in sorted({name for name in names if names.count(name) > 1})
+    ]
+
+
+def _form_section_diagnostics(
+    form: Mapping[str, Any],
+) -> list[tuple[str, str, str]]:
+    """Check one form's tree: nesting, levels, order, uniqueness and conditions."""
+
+    faults: list[tuple[str, str, str]] = []
+    seen_ids: set[str] = set()
+
+    def walk(
+        items: Sequence[Mapping[str, Any]],
+        parent: Mapping[str, Any] | None,
+        level: int,
+    ) -> None:
+        orders = [item["order"] for item in items]
+        if any(left >= right for left, right in zip(orders, orders[1:])):
+            faults.append(
+                (
+                    "REGISTRY_FORM_ORDER",
+                    "sibling sections listed in strictly increasing order",
+                    f"{form['form_id']}: {orders!r}",
+                )
+            )
+        titles = [item["title"] for item in items]
+        for title in sorted({name for name in titles if titles.count(name) > 1}):
+            faults.append(
+                (
+                    "REGISTRY_FORM_SECTION",
+                    "unique sibling titles",
+                    f"{form['form_id']}: duplicate title {title!r}",
+                )
+            )
+        for item in items:
+            where = f"{form['form_id']}: {item['section_id']}"
+            if item["section_id"] in seen_ids:
+                faults.append(
+                    (
+                        "REGISTRY_FORM_SECTION",
+                        "unique section IDs",
+                        f"{where} repeats",
+                    )
+                )
+            seen_ids.add(item["section_id"])
+            if item["level"] != level:
+                faults.append(
+                    ("REGISTRY_FORM_LEVEL", f"level {level} at this depth", where)
+                )
+            expected_parent = parent["section_id"] if parent else None
+            if item["parent_id"] != expected_parent:
+                faults.append(
+                    (
+                        "REGISTRY_FORM_PARENT",
+                        f"parent_id {expected_parent!r}",
+                        f"{where}: {item['parent_id']!r}",
+                    )
+                )
+            if item["requiredness"] == "conditional" and item["condition"] == "always":
+                faults.append(
+                    (
+                        "REGISTRY_FORM_CONDITION",
+                        "a conditional section names its own condition",
+                        where,
+                    )
+                )
+            if level == 3 and item["children"]:
+                faults.append(("REGISTRY_FORM_LEVEL", "no sections below an H3", where))
+            elif level == 2:
+                walk(item["children"], item, 3)
+
+    walk(form["sections"], None, 2)
+    top = {item["section_id"]: item for item in form["sections"]}
+    extension_ids: set[str] = set()
+    local_titles: set[tuple[str, str]] = set()
+    for extension in form["extensions"]:
+        where = f"{form['form_id']}: {extension['id']}"
+        if extension["id"] in extension_ids:
+            faults.append(("REGISTRY_FORM_EXTENSION", "unique extension IDs", where))
+        extension_ids.add(extension["id"])
+        if extension["kind"] != "local_h3":
+            continue
+        parent = top.get(extension["parent_id"])
+        if parent is None:
+            faults.append(
+                (
+                    "REGISTRY_FORM_EXTENSION",
+                    "a parent_id naming an H2 section of the form",
+                    f"{where}: {extension['parent_id']!r}",
+                )
+            )
+            continue
+        taken = {child["title"] for child in parent["children"]}
+        key = (parent["section_id"], extension["title"])
+        if extension["title"] in taken or key in local_titles:
+            faults.append(
+                (
+                    "REGISTRY_FORM_EXTENSION",
+                    "a title unused under its parent",
+                    f"{where}: {extension['title']!r}",
+                )
+            )
+        local_titles.add(key)
+    return faults
+
+
+def _form_registry_diagnostics(
+    root: Path,
+    raw_registry: Mapping[str, Any],
+    profiles_by_id: Mapping[str, Mapping[str, Any]],
+    template_regular_paths: frozenset[PurePosixPath] | None = None,
+) -> list[Diagnostic]:
+    """SPEC-0168: validate forms, role bindings and TemplateDefinitions."""
+
+    faults: list[tuple[str, str, str, str]] = []
+    forms = (raw_registry.get("common_forms") or {}).get("forms", [])
+    form_ids = [form["form_id"] for form in forms]
+    for form_id in sorted({name for name in form_ids if form_ids.count(name) > 1}):
+        faults.append(("REGISTRY_FORM_DUPLICATE", "one form per role", form_id, ""))
+    for form in forms:
+        faults.extend((*fault, "") for fault in _form_section_diagnostics(form))
+    roles_with_form = set(form_ids)
+    for profile_id, profile in profiles_by_id.items():
+        role = profile.get("document_role")
+        lists = profile["sections"]
+        if role in roles_with_form and (
+            lists["required"] or lists["optional"] or lists["forbidden"]
+        ):
+            faults.append(
+                (
+                    "REGISTRY_FORM_LEGACY_LISTS",
+                    "a profile whose role has a form carries no H2 lists",
+                    f"role {role}",
+                    profile_id,
+                )
+            )
+        definition = profile.get("template_definition")
+        if definition is None:
+            if profile["mode"] == "template" and role in roles_with_form:
+                faults.append(
+                    (
+                        "REGISTRY_TEMPLATE_DEFINITION",
+                        "a template whose role has a form carries its definition",
+                        f"role {role}",
+                        profile_id,
+                    )
+                )
+            continue
+        if profile["mode"] != "template" or role is None:
+            faults.append(
+                (
+                    "REGISTRY_TEMPLATE_DEFINITION",
+                    "a definition only on a template profile with a document_role",
+                    f"mode {profile['mode']}, role {role}",
+                    profile_id,
+                )
+            )
+        for named in definition["consumer_paths"]:
+            try:
+                named_path = _normalize_relative_path(named)
+                if named_path.as_posix() != named:
+                    raise ValueError("path is not canonical")
+                if not stat.S_ISREG(_lstat_named_path(root, named_path)):
+                    raise ValueError("not a regular file")
+            except ValueError as exc:
+                faults.append(
+                    (
+                        "REGISTRY_TEMPLATE_DEFINITION",
+                        "consumer paths naming existing regular files",
+                        f"{named}: {exc}",
+                        profile_id,
+                    )
+                )
+    group = {
+        profile_id
+        for profile_id, profile in profiles_by_id.items()
+        if profile_id in POLICY_ROLE_SOURCES
+        or set(profile["relationships"]["source_profile_ids"])
+        & set(POLICY_ROLE_SOURCES)
+    }
+    policy_roles = {profiles_by_id[item].get("document_role") for item in group}
+    # None and "policy" are each fine alone; a mix, or any other role, is not.
+    if len(policy_roles) > 1 or policy_roles - {None, "policy"}:
+        faults.append(
+            (
+                "REGISTRY_POLICY_ROLE",
+                "governance/rule, operation/policy and their template twins share the policy role",
+                repr(sorted(map(str, policy_roles))),
+                "",
+            )
+        )
+    return [
+        _diagnostic(rule, profile=profile_id, expected=expected, actual=actual)
+        for rule, expected, actual, profile_id in faults
+    ]
+
+
+def _common_form_from_mapping(raw: Mapping[str, Any]) -> CommonForm:
+    def section(item: Mapping[str, Any]) -> FormSection:
+        return FormSection(
+            section_id=item["section_id"],
+            title=item["title"],
+            level=item["level"],
+            parent_id=item["parent_id"],
+            order=item["order"],
+            requiredness=item["requiredness"],
+            condition=item["condition"],
+            empty_policy=item["empty_policy"],
+            link_only=item.get("link_only", False),
+            children=tuple(section(child) for child in item["children"]),
+        )
+
+    def extension(item: Mapping[str, Any]) -> FormExtension:
+        lists = item.get("retained_sections")
+        return FormExtension(
+            extension_id=item["id"],
+            kind=item["kind"],
+            condition=item["condition"],
+            owner=item["owner"],
+            verification=item["verification"],
+            review=item["review"],
+            removal=item["removal"],
+            parent_id=item.get("parent_id"),
+            title=item.get("title"),
+            statuses=tuple(item.get("statuses", ())),
+            retained=(
+                None
+                if lists is None
+                else HeadingContract(
+                    required=tuple(lists["required"]),
+                    allowed=tuple(lists["required"] + lists["optional"]),
+                    substantive_body=lists.get("substantive_body", False),
+                    ordered=lists.get("ordered", False),
+                )
+            ),
+        )
+
+    return CommonForm(
+        form_id=raw["form_id"],
+        title=raw["title"],
+        h1=raw["h1"],
+        language_rule=raw["language_rule"],
+        extension_policy=raw["extension_policy"],
+        sections=tuple(section(item) for item in raw["sections"]),
+        extensions=tuple(extension(item) for item in raw["extensions"]),
+    )
+
+
+def _shared_contract_from_mapping(raw: Mapping[str, Any]) -> SharedContract:
+    # A comparison-base registry from before the object shape lists bare names;
+    # what it never recorded reads as unverified, as for the repository record.
+    return SharedContract(
+        **{
+            **raw,
+            "extensions": tuple(
+                SharedExtension(item, item, *("unverified",) * 4)
+                if isinstance(item, str)
+                else SharedExtension(**item)
+                for item in raw["extensions"]
+            ),
+        }
+    )
+
+
 def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
     domains = tuple(
         LifecycleDomain(
@@ -1727,10 +2133,17 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         profile_id: domain for domain in domains for profile_id in domain.profile_ids
     }
 
+    forms = tuple(
+        _common_form_from_mapping(item)
+        for item in (raw.get("common_forms") or {}).get("forms", ())
+    )
+    forms_by_role = {form.form_id: form for form in forms}
+
     def typed_profile(profile: Mapping[str, Any]) -> DocumentProfile:
         return _profile_from_mapping(
             profile,
             lifecycle_domain=domains_by_profile.get(profile["id"]),
+            form=forms_by_role.get(profile.get("document_role")),
         )
 
     profiles = tuple(typed_profile(profile) for profile in raw["profiles"])
@@ -1751,12 +2164,7 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
     return Registry(
         schema_version=raw["schema_version"],
         shared_contract=(
-            SharedContract(
-                **{
-                    **raw["shared_contract"],
-                    "extensions": tuple(raw["shared_contract"]["extensions"]),
-                }
-            )
+            _shared_contract_from_mapping(raw["shared_contract"])
             if "shared_contract" in raw
             else None
         ),
@@ -1764,6 +2172,7 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         lifecycle_domains=domains,
         readme_navigation=_readme_navigation_from_mapping(raw.get("readme_navigation")),
         document_language=_document_language_from_mapping(raw.get("document_language")),
+        common_forms=forms,
     )
 
 

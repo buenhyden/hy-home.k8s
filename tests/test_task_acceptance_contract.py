@@ -15,7 +15,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from document_contracts import (  # noqa: E402
     TASK_FIRST_RECORDING_EXTENSION,
     _terminal_semantic_diagnostics,
+    extension_name,
     load_registry,
+    local_extension_names,
     validate_registry,
 )
 from document_lifecycle import (  # noqa: E402
@@ -30,6 +32,19 @@ from document_lifecycle import (  # noqa: E402
 
 CRITERION = "[VAL-P03-001](../spec.md#success-criteria--verification-plan)"
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def shared_extension(name: str) -> dict[str, str]:
+    """A local extension whose owner, tests and review are not recorded."""
+
+    return {
+        "name": name,
+        "condition": name,
+        "owner": "unverified",
+        "verification": "unverified",
+        "review": "unverified",
+        "removal": "unverified",
+    }
 
 
 class TaskHistoryRetentionTests(unittest.TestCase):
@@ -145,8 +160,8 @@ class SpecPlanAuthorityTests(unittest.TestCase):
     def test_first_approved_requires_scoped_approval_context(self) -> None:
         raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
         extension = "Local candidate Spec/Plan first-recording as approved after actual batch review and approval"
-        if extension not in raw["shared_contract"]["extensions"]:
-            raw["shared_contract"]["extensions"].append(extension)
+        if extension not in local_extension_names(raw["shared_contract"]):
+            raw["shared_contract"]["extensions"].append(shared_extension(extension))
         registry = validate_registry(ROOT, raw)
         package = PurePosixPath("docs/03.specs/0999-new-package")
         spec = package / "spec.md"
@@ -282,7 +297,7 @@ class SpecPlanAuthorityTests(unittest.TestCase):
         missing_extension["shared_contract"]["extensions"] = [
             item
             for item in missing_extension["shared_contract"]["extensions"]
-            if item
+            if extension_name(item)
             != "Local candidate Spec/Plan first-recording as approved after actual batch review and approval"
         ]
         self.assertIn(
@@ -417,7 +432,7 @@ class SpecPlanAuthorityTests(unittest.TestCase):
             item for item in raw["lifecycle_domains"] if item["family"] == "spec-plan"
         )
         self.assertIn(raw["shared_contract"]["stage"], ("candidate", "adopted"))
-        self.assertIn(extension, raw["shared_contract"]["extensions"])
+        self.assertIn(extension, local_extension_names(raw["shared_contract"]))
         self.assertEqual(domain["initial_states"], ["draft"])
         self.assertIn(["draft", "approved"], domain["transitions"])
         registry = validate_registry(ROOT, raw)
@@ -469,13 +484,18 @@ class SpecPlanAuthorityTests(unittest.TestCase):
         ]
         candidate = raw | {"lifecycle_domains": domains}
         extensions = [
-            item for item in raw["shared_contract"]["extensions"] if item != extension
+            item
+            for item in raw["shared_contract"]["extensions"]
+            if extension_name(item) != extension
         ]
         for shared in (
             {**raw["shared_contract"], "extensions": extensions},
             {
                 **raw["shared_contract"],
-                "extensions": [*extensions, "unreviewed direct approval"],
+                "extensions": [
+                    *extensions,
+                    shared_extension("unreviewed direct approval"),
+                ],
             },
             {**raw["shared_contract"], "stage": "unreviewed"},
         ):
@@ -543,36 +563,38 @@ class SpecPlanAuthorityTests(unittest.TestCase):
 
     def test_local_lifecycle_extensions_remain_effective_after_adoption(self) -> None:
         raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
-        adopted = raw | {
-            "shared_contract": {**raw["shared_contract"], "stage": "adopted"}
-        }
-        registry = validate_registry(ROOT, adopted)
         spec = PurePosixPath("docs/03.specs/0999-new-package/spec.md")
         task = PurePosixPath("docs/03.specs/0999-new-package/tasks/tsk-0001-work.md")
-        self.assertNotIn(
-            "LIFECYCLE-EDGE",
-            {
-                item.rule_id
-                for item in compare_lifecycle(
-                    registry,
-                    {spec: LifecycleDocument(spec, "sdlc/spec", "draft")},
-                    {spec: LifecycleDocument(spec, "sdlc/spec", "approved")},
-                    base_mode="staged",
+        for stage in ("approved", "adopted"):
+            registry = validate_registry(
+                ROOT,
+                raw | {"shared_contract": {**raw["shared_contract"], "stage": stage}},
+            )
+            with self.subTest(stage=stage):
+                self.assertNotIn(
+                    "LIFECYCLE-EDGE",
+                    {
+                        item.rule_id
+                        for item in compare_lifecycle(
+                            registry,
+                            {spec: LifecycleDocument(spec, "sdlc/spec", "draft")},
+                            {spec: LifecycleDocument(spec, "sdlc/spec", "approved")},
+                            base_mode="staged",
+                        )
+                    },
                 )
-            },
-        )
-        self.assertNotIn(
-            "LIFECYCLE-CREATE",
-            {
-                item.rule_id
-                for item in compare_lifecycle(
-                    registry,
-                    {},
-                    {task: LifecycleDocument(task, "sdlc/task", "blocked")},
-                    base_mode="staged",
+                self.assertNotIn(
+                    "LIFECYCLE-CREATE",
+                    {
+                        item.rule_id
+                        for item in compare_lifecycle(
+                            registry,
+                            {},
+                            {task: LifecycleDocument(task, "sdlc/task", "blocked")},
+                            base_mode="staged",
+                        )
+                    },
                 )
-            },
-        )
 
     def test_local_task_first_recording_accepts_observed_nonterminal_state(
         self,
@@ -580,7 +602,8 @@ class SpecPlanAuthorityTests(unittest.TestCase):
         raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
         self.assertIn(raw["shared_contract"]["stage"], ("candidate", "adopted"))
         self.assertIn(
-            TASK_FIRST_RECORDING_EXTENSION, raw["shared_contract"]["extensions"]
+            TASK_FIRST_RECORDING_EXTENSION,
+            local_extension_names(raw["shared_contract"]),
         )
         registry = validate_registry(ROOT, raw)
         task = PurePosixPath("docs/03.specs/0999-new-package/tasks/tsk-0001-work.md")
@@ -617,7 +640,9 @@ class SpecPlanAuthorityTests(unittest.TestCase):
                 **raw,
                 "shared_contract": {
                     **raw["shared_contract"],
-                    "extensions": ["unreviewed Task creation permission"],
+                    "extensions": [
+                        shared_extension("unreviewed Task creation permission")
+                    ],
                 },
             },
             {

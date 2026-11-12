@@ -589,12 +589,16 @@ def _assert_template_source_parity(registry: Registry) -> None:
             profile.frontmatter,
             profile.headings,
             profile.body_contract,
+            profile.document_role,
+            profile.form,
         )
         expected = (
             source.profile_class,
             source_frontmatter,
             source.headings,
             source.body_contract,
+            source.document_role,
+            source.form,
         )
         if inherited != expected:
             raise AssertionError(

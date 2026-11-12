@@ -40,6 +40,7 @@ SUITES = {
         "json_schema_validation",
         "common_agents_document_routes",
         "document_terminal_contract",
+        "common_form_tree",
         "document_language",
         "documentation_link_boundary",
     ),

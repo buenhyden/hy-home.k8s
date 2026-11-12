@@ -50,6 +50,7 @@
         "stage": {
           "enum": [
             "candidate",
+            "approved",
             "adopted"
           ]
         },
@@ -87,12 +88,61 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "type": "string",
-            "pattern": "\\S"
+            "$ref": "#/$defs/shared_extension"
           }
+        },
+        "approved_by": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "approved_at": {
+          "type": "string",
+          "pattern": "^(?:unverified|[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01]))$"
+        },
+        "effective_from": {
+          "type": "string",
+          "pattern": "^(?:unverified|[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01]))$"
+        },
+        "scope": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "migration": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "rollback": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "consumer_version": {
+          "type": "string",
+          "pattern": "\\S"
         }
       },
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "stage": {
+                "enum": [
+                  "approved",
+                  "adopted"
+                ]
+              }
+            },
+            "required": [
+              "stage"
+            ]
+          },
+          "then": {
+            "required": [
+              "approved_by",
+              "approved_at",
+              "effective_from"
+            ]
+          }
+        },
         {
           "if": {
             "properties": {
@@ -111,6 +161,49 @@
               },
               "version": {
                 "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "anyOf": [
+              {
+                "properties": {
+                  "approved_by": {
+                    "const": "unverified"
+                  }
+                },
+                "required": [
+                  "approved_by"
+                ]
+              },
+              {
+                "properties": {
+                  "approved_at": {
+                    "const": "unverified"
+                  }
+                },
+                "required": [
+                  "approved_at"
+                ]
+              },
+              {
+                "properties": {
+                  "effective_from": {
+                    "const": "unverified"
+                  }
+                },
+                "required": [
+                  "effective_from"
+                ]
+              }
+            ]
+          },
+          "then": {
+            "properties": {
+              "approval_ref": {
+                "type": "string"
               }
             }
           }
@@ -158,6 +251,26 @@
               "template",
               "native",
               "non-target"
+            ]
+          },
+          "document_role": {
+            "enum": [
+              "requirement",
+              "architecture",
+              "adr",
+              "spec",
+              "plan",
+              "task",
+              "guide",
+              "runbook",
+              "policy",
+              "incident",
+              "postmortem",
+              "root-readme",
+              "stage-readme",
+              "service-readme",
+              "agents",
+              "skill"
             ]
           },
           "path_pattern": {
@@ -476,6 +589,9 @@
               "forbidden",
               "template-only"
             ]
+          },
+          "template_definition": {
+            "$ref": "#/$defs/template_definition"
           }
         }
       }
@@ -697,6 +813,532 @@
             "type": "string",
             "pattern": "\\.md$"
           }
+        }
+      }
+    },
+    "common_forms": {
+      "description": "The opt-in section tree per document role; a role has a form only once it is listed.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_id",
+        "version",
+        "forms"
+      ],
+      "properties": {
+        "contract_id": {
+          "const": "COMMON-DOC-FORM-1"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "forms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_form"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "heading_lists": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "optional",
+        "forbidden"
+      ],
+      "properties": {
+        "required": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "optional": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "forbidden": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "substantive_body": {
+          "type": "boolean"
+        },
+        "ordered": {
+          "type": "boolean"
+        }
+      }
+    },
+    "section": {
+      "description": "One COMMON-DOC-FORM-1 section; link_only is the one local field.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "section_id",
+        "level",
+        "parent_id",
+        "title",
+        "order",
+        "requiredness",
+        "condition",
+        "content",
+        "required_content",
+        "prohibited_content",
+        "empty_policy",
+        "validation_ids",
+        "children"
+      ],
+      "properties": {
+        "section_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "level": {
+          "enum": [
+            2,
+            3
+          ]
+        },
+        "parent_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "requiredness": {
+          "enum": [
+            "required",
+            "conditional",
+            "optional"
+          ]
+        },
+        "condition": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "content": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required_content": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "prohibited_content": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "empty_policy": {
+          "enum": [
+            "explain_none_or_not_applicable",
+            "omit_when_condition_false"
+          ]
+        },
+        "validation_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "link_only": {
+          "type": "boolean",
+          "default": false
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/section"
+          }
+        }
+      }
+    },
+    "form_extension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "condition",
+        "owner",
+        "verification",
+        "review",
+        "removal"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "kind": {
+          "enum": [
+            "local_h3",
+            "retained_form"
+          ]
+        },
+        "condition": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "owner": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "verification": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "review": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "removal": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "parent_id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "title": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "statuses": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "retained_sections": {
+          "$ref": "#/$defs/heading_lists"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "local_h3"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "parent_id",
+              "title"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "statuses"
+                  ]
+                },
+                {
+                  "required": [
+                    "retained_sections"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "retained_form"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "statuses",
+              "retained_sections"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "parent_id"
+                  ]
+                },
+                {
+                  "required": [
+                    "title"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "common_form": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "form_id",
+        "title",
+        "h1",
+        "language_rule",
+        "extension_policy",
+        "sections",
+        "extensions"
+      ],
+      "properties": {
+        "form_id": {
+          "enum": [
+            "requirement",
+            "architecture",
+            "adr",
+            "spec",
+            "plan",
+            "task",
+            "guide",
+            "runbook",
+            "policy",
+            "incident",
+            "postmortem",
+            "root-readme",
+            "stage-readme",
+            "service-readme",
+            "agents",
+            "skill"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "h1": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "language_rule": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "extension_policy": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/section"
+          }
+        },
+        "extensions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/form_extension"
+          }
+        }
+      }
+    },
+    "template_definition": {
+      "description": "The TemplateDefinition fields a registry stores; role, version, headings and the rest are derived.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "purpose",
+        "responsibility",
+        "non_goals",
+        "policy_refs",
+        "vocabulary_refs",
+        "applicability",
+        "consumer_paths",
+        "validation",
+        "migration"
+      ],
+      "properties": {
+        "purpose": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "responsibility": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "non_goals": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "policy_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "vocabulary_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "applicability": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "consumer_paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "validation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "positive",
+            "negative",
+            "regression"
+          ],
+          "properties": {
+            "positive": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "negative": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "regression": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "migration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "meaning_map",
+            "retained_history",
+            "rollback"
+          ],
+          "properties": {
+            "meaning_map": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "retained_history": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "rollback": {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          }
+        }
+      }
+    },
+    "shared_extension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "condition",
+        "owner",
+        "verification",
+        "review",
+        "removal"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "condition": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "owner": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "verification": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "review": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "removal": {
+          "type": "string",
+          "pattern": "\\S"
         }
       }
     }
