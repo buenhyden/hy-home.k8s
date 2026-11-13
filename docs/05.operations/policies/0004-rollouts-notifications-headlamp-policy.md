@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.3.2"
+version: "1.4.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 layer: "operations"
 artifact_id: "POL-0004"
 ---
@@ -13,9 +13,20 @@ artifact_id: "POL-0004"
 
 ## Purpose
 
+### Objective
+
 이 문서는 Argo Rollouts(점진적 배포), Argo Notifications(Slack 알림), Headlamp(클러스터 UI) 운영 통제 기준을 정의한다.
 
+### Authority
+
+- **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
+- **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
+- **ADR-0054**: [`../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md`](../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md)
+
 ## Scope
+
+### Applies To
 
 - Argo Rollouts — `argo-rollouts` namespace
 - Argo Notifications (ArgoCD 내장 컨트롤러) — `argocd` namespace
@@ -29,9 +40,15 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 - **Agents**: 운영 자동화 에이전트
 - **Environments**: Linux server local cluster
 
-## Controls
+### Exclusions
 
-### Argo Rollouts
+범위에서 제외한다고 따로 표시한 항목은 없으며, chart 버전은 위 Applies To의 문단대로 각 Application manifest가 소유한다.
+
+## Rules
+
+### Requirements
+
+#### Argo Rollouts
 
 - **Required**:
   - Rollouts Controller namespace: `argo-rollouts` 고정
@@ -49,7 +66,7 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
   - `argo-rollouts` namespace에 Rollouts 외 워크로드 배치
   - `skipAnalysis: true` 임의 사용
 
-### Argo Notifications
+#### Argo Notifications
 
 - **Required**:
   - Slack app token(`service.slack`의 `$slack-token`): OpenBao `platform/notifications` 속성 `slack_token` → ESO → `argocd/argocd-notifications-secret`. Rollouts 컨트롤러는 같은 OpenBao 항목을 `gitops/platform/eso/rollouts-notification-secret.yaml`의 ExternalSecret으로 받아 `argo-rollouts/argo-rollouts-notification-secret`에 둔다
@@ -65,7 +82,7 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
   - `argocd-notifications-secret`과 `argo-rollouts-notification-secret`에 Slack token 평문 커밋
   - ArgoCD chart의 notifications controller 비활성화(`notifications.enabled: false`) 임의 적용 (Rollouts chart의 별도 값과 무관)
 
-### Headlamp
+#### Headlamp
 
 - **Required**:
   - Headlamp namespace: `headlamp` 고정
@@ -78,12 +95,7 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 - **Disallowed**:
   - 대체된 클러스터 UI 재설치 (ADR-0014의 Headlamp 계약과 충돌)
 
-## Exceptions and Escalation
-
-- Rollouts analysis skip, notifications disablement, or Headlamp authentication changes require platform owner approval and a linked PR.
-- Live cluster changes follow the shared exception in [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions-and-escalation).
-
-## Verification and Review
+### Enforcement
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
@@ -99,18 +111,34 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
   결과는 명명된 환경의 운영자 증거가 필요하다. 이 정책은 제품 임계값의
   별도 작성 원본이 아니다.
 
-## Related Documents
+- **Runbook**: [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)
 
-- **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
-- **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
-- **ADR-0054**: [`../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md`](../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md)
+## Exceptions
+
+### Exception Conditions
+
+- Rollouts analysis skip, notifications disablement, or Headlamp authentication changes require platform owner approval and a linked PR.
+- Live cluster changes follow the shared exception in [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions).
+
+### Approval and Review
+
+예외 승인은 위 Exception Conditions의 platform owner 승인과 연결된 PR 요건을 따른다.
+
+## Ownership
+
+### Responsibilities
+
+책임 주체는 아래 Lifecycle Traceability 표의 Control owner 열에 적혀 있다.
+
+### Change and Adoption
+
+변경 검토 시점은 위 Enforcement의 운영 변경 시 즉시 및 정기 분기 검토 항목을 따른다.
+
+### Lifecycle Traceability
+
 - **Rollouts Spec**: SPEC-0004 (left the tree; Git history recovers it)
 - **Notifications Spec**: SPEC-0005 (left the tree; Git history recovers it)
 - **Rollouts notification delivery**: SPEC-0141 (left the tree; Git history recovers it)
-- **Runbook**: [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)
-
-### Lifecycle Traceability
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |

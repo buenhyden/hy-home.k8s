@@ -1,21 +1,23 @@
 ---
 title: "Agent Execution Policy"
-version: "1.7.0"
+version: "1.8.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-10"
+updated: "2026-11-13"
 ---
 
 # Agent Execution Policy
 
-## Overview
+## Purpose
+
+### Objective
 
 Keep agent work evidence-backed, scoped, and GitOps-first for this Linux server + k3d
 home-lab platform. The normal outcome is a reviewable repository change, not a
 live infrastructure mutation.
 
-## Authority Boundary
+### Authority
 
 This policy owns common execution norms. The active Spec and Task own change
 scope; [approval and safety](approval-and-safety.md) owns protected actions;
@@ -23,13 +25,28 @@ scope; [approval and safety](approval-and-safety.md) owns protected actions;
 handoffs, and skill references. Provider adapters may restrict these
 boundaries, never expand them.
 
-## Governance Context
+- [SDLC Flow](sdlc.md)
+- [Approval and Safety](approval-and-safety.md)
+- [Document Authoring](document-authoring.md)
+- [Context and Memory](context-and-memory.md)
+
+## Scope
+
+### Applies To
 
 Load only the relevant policy, role, provider, and task context. Repository
 files, current diffs, manifests, and verified commands outweigh stale memory,
 generated navigation, external examples, or tool suggestions.
 
-## Current Contract
+- [Roles](../roles/README.md)
+
+### Exclusions
+
+This policy marks no subject as excluded from its scope.
+
+## Rules
+
+### Requirements
 
 - State the requested outcome, acceptance criteria, affected paths, assumptions,
   validation, and exclusions before substantial work.
@@ -81,22 +98,34 @@ generated navigation, external examples, or tool suggestions.
   unsafe input, or unexplained changes. State the blocker and continue
   independent safe work within the current request.
 
-### Shared source and adoption
+#### Shared source and adoption
 
 Shared-edition adoption follows
-[document authoring](document-authoring.md#current-contract); this policy adds
+[document authoring](document-authoring.md#requirements); this policy adds
 no second copy of that procedure.
 
-## Validation and Refresh
+### Enforcement
 
 Validate changed contracts and projections, then follow the evidence sequence
 in [quality policy](quality.md). Revisit this policy when the workspace purpose,
 authority boundary, or recurring execution failure changes.
 
-## Related Documents
+## Exceptions
 
-- [SDLC Flow](sdlc.md)
-- [Approval and Safety](approval-and-safety.md)
-- [Document Authoring](document-authoring.md)
-- [Context and Memory](context-and-memory.md)
-- [Roles](../roles/README.md)
+### Exception Conditions
+
+Exception and escalation conditions are stated under Requirements.
+
+### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Ownership
+
+### Responsibilities
+
+Responsibilities are stated under Authority and Requirements.
+
+### Change and Adoption
+
+Change and adoption conditions are stated under Requirements and Enforcement.

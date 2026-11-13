@@ -1,20 +1,22 @@
 ---
 title: "Context and Memory Policy"
-version: "1.5.0"
+version: "1.6.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 ---
 
 # Context and Memory Policy
 
-## Overview
+## Purpose
+
+### Objective
 
 Retain only the context needed to resume safely. Repository state and the
 owning SDLC document, not a memory ledger, determine current truth.
 
-## Authority Boundary
+### Authority
 
 This policy owns repository context retention, resume verification, and the
 boundary for advisory provider-local memory. It grants no provider/runtime
@@ -26,12 +28,27 @@ ADRs, Specs, Runbooks, and incident records own durable domain knowledge.
 Temporary checkpoints and provider-local memory are advisory and confer no
 execution authority.
 
-## Governance Context
+- [Work Lifecycle](../workflows/work-lifecycle.md)
+- [Document Lifecycle](document-lifecycle.md)
+- [Approval and Safety](approval-and-safety.md)
+- [Quality Policy](quality.md)
+
+## Scope
+
+### Applies To
 
 Compaction and handoff can preserve useful summaries while also carrying stale
 assumptions. Resume only through the [resume decision](#resume-decision).
 
-## Current Contract
+- Archive Index (`docs/98.archive/README.md`)
+
+### Exclusions
+
+This policy marks no subject as excluded from its scope.
+
+## Rules
+
+### Requirements
 
 - Keep working context bounded, factual, redacted, and scoped to one task.
   Record remaining acceptance criteria and next owner rather than raw sessions.
@@ -64,7 +81,7 @@ assumptions. Resume only through the [resume decision](#resume-decision).
   one. Static validation of a synthetic checkpoint proves neither actual
   checkpoint execution nor provider memory, hook, or compaction behavior.
 
-### Shared workspace memory store
+#### Shared workspace memory store
 
 SPEC-0109 (Git history: package `0109-shared-workspace-memory` under
 `docs/03.specs/` at commit `69445fca`) defined one store that Claude and Codex sessions both read and write:
@@ -116,7 +133,7 @@ resuming. A separate Git directory layout is currently unsupported; it reports
 - Native Claude and Codex memory stay disabled in project configuration, and
   their existing files are neither deleted nor imported.
 
-### Bounded observation metadata
+#### Bounded observation metadata
 
 A reviewed observation may carry a `knowledge-fact` JSON block in an existing
 knowledge document. It records provenance, not a copy of the source policy.
@@ -135,7 +152,7 @@ expiry changes also invalidate caches even if the file hash is unchanged.
 The validator checks metadata, file identity and dates; it cannot authenticate
 an approval or infer whether a writer concealed sensitive content.
 
-### Resume decision
+#### Resume decision
 
 Re-observe the worktree, branch, HEAD and divergence base, relevant file hashes,
 staged/unstaged paths and changed consumers before dependent mutation. Compare
@@ -155,16 +172,28 @@ not block independent local work. A summary saying PASS does not waive this
 recheck. These are agent and operator obligations, not a claim of native
 runtime enforcement.
 
-## Validation and Refresh
+### Enforcement
 
 Check summaries for stale owner links, duplicated task state, and sensitive
 data. Report conflicting memory rather than rewriting the repository to match
 it. Use [quality policy](quality.md) for evidence and handoff classification.
 
-## Related Documents
+## Exceptions
 
-- [Work Lifecycle](../workflows/work-lifecycle.md)
-- [Document Lifecycle](document-lifecycle.md)
-- Archive Index (`docs/98.archive/README.md`)
-- [Approval and Safety](approval-and-safety.md)
-- [Quality Policy](quality.md)
+### Exception Conditions
+
+This policy states no exception condition of its own.
+
+### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Ownership
+
+### Responsibilities
+
+Responsibilities are stated under Authority and Requirements.
+
+### Change and Adoption
+
+This policy states no change or adoption rule of its own.

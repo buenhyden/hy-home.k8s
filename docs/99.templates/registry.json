@@ -798,18 +798,9 @@
         }
       },
       "sections": {
-        "required": [
-          "Purpose",
-          "Scope",
-          "Controls",
-          "Exceptions and Escalation",
-          "Verification and Review",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
-        "forbidden": [],
-        "substantive_body": true,
-        "ordered": true
+        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -824,7 +815,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Related Documents",
+          "section": "Ownership",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -1755,14 +1746,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -4725,18 +4709,9 @@
         }
       },
       "sections": {
-        "required": [
-          "Purpose",
-          "Scope",
-          "Controls",
-          "Exceptions and Escalation",
-          "Verification and Review",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
-        "forbidden": [],
-        "substantive_body": true,
-        "ordered": true
+        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -4744,7 +4719,7 @@
           "operation/policy"
         ],
         "body_contract": {
-          "section": "Related Documents",
+          "section": "Ownership",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4768,7 +4743,120 @@
           "allow_explicit_exclusion": true
         }
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a operations policy that states one normative rule set with its purpose, scope, requirements, exceptions and ownership.",
+        "responsibility": "A operations policy owns the rules, their enforcement and the exceptions and ownership of one governed concern; procedures stay with runbooks and explanations with guides.",
+        "non_goals": [
+          "Executable operating procedures, which belong to a runbook.",
+          "Stable explanatory material, which belongs to a guide.",
+          "Granting authority beyond the owning policy, approval and safety documents."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every operation/policy document under docs/05.operations/policies/ and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/operations/policy.template.md",
+          "docs/99.templates/README.md",
+          "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md",
+          "docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md",
+          "docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md",
+          "docs/05.operations/policies/0005-observability-platform-operations-policy.md",
+          "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validation/document_content.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_document_artifact_identity.py",
+          "tests/test_document_language.py",
+          "tests/test_document_terminal_contract.py"
+        ],
+        "validation": {
+          "positive": [
+            "Each operations policy and the template pass the form tree, table, body-contract, author-prompt and residue checks.",
+            "A operations policy whose Rules table keeps the registered columns, or whose Rules table has a header only, passes the document table check."
+          ],
+          "negative": [
+            "A reordered, missing or extra Rules column fails BODY-TABLE-COLUMNS.",
+            "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT.",
+            "A table section outside the form fails REGISTRY_TABLE_SECTION.",
+            "A source profile named by two template twins that carry tables fails REGISTRY_TABLE_TWIN."
+          ],
+          "regression": [
+            "The loaded policy profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0175 meaning map moves each sentence of the former six-section operations policy layout into its Purpose, Scope, Rules, Exceptions or Ownership section without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous six-section operations policy layout and its template.",
+          "rollback": "Revert the SPEC-0175 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Rules",
+            "section": "policy-rules-requirements",
+            "columns": [
+              {
+                "key": "Rule",
+                "meaning": "The stable ID or short name of the rule.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Condition",
+                "meaning": "The condition under which the rule applies.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Evidence",
+                "meaning": "Where compliance with the rule is observed or recorded.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Rule"
+          },
+          {
+            "name": "Lifecycle Traceability",
+            "section": "policy-lifecycle-traceability",
+            "columns": [
+              {
+                "key": "Promoted owner",
+                "meaning": "Link to the Spec or Task that owns the policy lineage, or an N/A reason.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Control owner",
+                "meaning": "The accountable role that owns the control.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Enforcement surface",
+                "meaning": "The validator, review or platform boundary that enforces the control.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 1,
+            "row_identity": "Promoted owner"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-operation-postmortem",
@@ -5832,14 +5920,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -5850,7 +5931,97 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a governance rule that states one normative rule set with its purpose, scope, requirements, exceptions and ownership.",
+        "responsibility": "A governance rule owns the rules, their enforcement and the exceptions and ownership of one governed concern; procedures stay with runbooks and explanations with guides.",
+        "non_goals": [
+          "Executable operating procedures, which belong to a runbook.",
+          "Stable explanatory material, which belongs to a guide.",
+          "Granting authority beyond the owning policy, approval and safety documents."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every governance/rule document under .agents/governance/ and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/governance/rule.template.md",
+          "docs/99.templates/README.md",
+          ".agents/governance/agent-execution.md",
+          ".agents/governance/approval-and-safety.md",
+          ".agents/governance/context-and-memory.md",
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/document-lifecycle.md",
+          ".agents/governance/formatting-and-linting.md",
+          ".agents/governance/git.md",
+          ".agents/governance/model-selection.md",
+          ".agents/governance/quality.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validation/document_content.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_document_artifact_identity.py",
+          "tests/test_document_language.py",
+          "tests/test_document_terminal_contract.py"
+        ],
+        "validation": {
+          "positive": [
+            "Each governance rule and the template pass the form tree, table, body-contract, author-prompt and residue checks.",
+            "A governance rule whose Rules table keeps the registered columns, or whose Rules table has a header only, passes the document table check."
+          ],
+          "negative": [
+            "A reordered, missing or extra Rules column fails BODY-TABLE-COLUMNS.",
+            "A table section outside the form fails REGISTRY_TABLE_SECTION.",
+            "A source profile named by two template twins that carry tables fails REGISTRY_TABLE_TWIN."
+          ],
+          "regression": [
+            "The loaded policy profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0175 meaning map moves each sentence of the former six-section governance rule layout into its Purpose, Scope, Rules, Exceptions or Ownership section without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous six-section governance rule layout and its template.",
+          "rollback": "Revert the SPEC-0175 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Rules",
+            "section": "policy-rules-requirements",
+            "columns": [
+              {
+                "key": "Rule",
+                "meaning": "The stable ID or short name of the rule.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Condition",
+                "meaning": "The condition under which the rule applies.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Evidence",
+                "meaning": "Where compliance with the rule is observed or recorded.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Rule"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-governance-skill",
@@ -9226,6 +9397,393 @@
           }
         ],
         "extensions": []
+      },
+      {
+        "form_id": "policy",
+        "title": "Policy",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "policy-purpose",
+            "level": 2,
+            "parent_id": null,
+            "title": "Purpose",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "규칙의 목적",
+            "required_content": [
+              "규칙의 목적에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "policy-purpose-objective",
+                "level": 3,
+                "parent_id": "policy-purpose",
+                "title": "Objective",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "보장하려는 의미·위험 통제",
+                "required_content": [
+                  "보장하려는 의미·위험 통제을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "policy-purpose-authority",
+                "level": 3,
+                "parent_id": "policy-purpose",
+                "title": "Authority",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "정책 소유자·개정 근거",
+                "required_content": [
+                  "정책 소유자·개정 근거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "policy-scope",
+            "level": 2,
+            "parent_id": null,
+            "title": "Scope",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "적용 범위",
+            "required_content": [
+              "적용 범위에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "policy-scope-applies-to",
+                "level": 3,
+                "parent_id": "policy-scope",
+                "title": "Applies To",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "대상·환경·소비자",
+                "required_content": [
+                  "대상·환경·소비자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "policy-scope-exclusions",
+                "level": 3,
+                "parent_id": "policy-scope",
+                "title": "Exclusions",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "비적용 조건·다른 정본과 경계",
+                "required_content": [
+                  "비적용 조건·다른 정본과 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "policy-rules",
+            "level": 2,
+            "parent_id": null,
+            "title": "Rules",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "규범 규칙의 단일 정본",
+            "required_content": [
+              "규범 규칙의 단일 정본에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "policy-rules-requirements",
+                "level": 3,
+                "parent_id": "policy-rules",
+                "title": "Requirements",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "안정 규칙 ID·조건·필수/권고/선택",
+                "required_content": [
+                  "안정 규칙 ID·조건·필수/권고/선택을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "policy-rules-enforcement",
+                "level": 3,
+                "parent_id": "policy-rules",
+                "title": "Enforcement",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "집행 지점·검사·수동 확인·실패 조치",
+                "required_content": [
+                  "집행 지점·검사·수동 확인·실패 조치을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "policy-exceptions",
+            "level": 2,
+            "parent_id": null,
+            "title": "Exceptions",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "예외의 제한된 계약",
+            "required_content": [
+              "예외의 제한된 계약에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "policy-exceptions-exception-conditions",
+                "level": 3,
+                "parent_id": "policy-exceptions",
+                "title": "Exception Conditions",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "사유·범위·위험·기한",
+                "required_content": [
+                  "사유·범위·위험·기한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "policy-exceptions-approval-and-review",
+                "level": 3,
+                "parent_id": "policy-exceptions",
+                "title": "Approval and Review",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "예외 권한·검증·재검토·철회",
+                "required_content": [
+                  "예외 권한·검증·재검토·철회을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "policy-ownership",
+            "level": 2,
+            "parent_id": null,
+            "title": "Ownership",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "변경·채택 책임",
+            "required_content": [
+              "변경·채택 책임에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "policy-ownership-responsibilities",
+                "level": 3,
+                "parent_id": "policy-ownership",
+                "title": "Responsibilities",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "작성·검토·승인·실행 책임",
+                "required_content": [
+                  "작성·검토·승인·실행 책임을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "policy-ownership-change-and-adoption",
+                "level": 3,
+                "parent_id": "policy-ownership",
+                "title": "Change and Adoption",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "판본·이행·채택·드리프트 검증",
+                "required_content": [
+                  "판본·이행·채택·드리프트 검증을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          }
+        ],
+        "extensions": [
+          {
+            "id": "policy-lifecycle-traceability",
+            "kind": "local_h3",
+            "condition": "a policy in a status the body contract enforces (draft, in-review, active, deprecated) states its promoted owner or an N/A reason",
+            "owner": "platform",
+            "verification": "the body-contract check",
+            "review": "when the Policy form version changes",
+            "removal": "when policy lineage has another registered owner",
+            "parent_id": "policy-ownership",
+            "title": "Lifecycle Traceability"
+          }
+        ]
       }
     ]
   }

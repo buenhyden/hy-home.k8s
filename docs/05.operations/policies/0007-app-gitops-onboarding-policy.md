@@ -1,10 +1,10 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.4.1"
+version: "1.5.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 layer: "operations"
 artifact_id: "POL-0007"
 ---
@@ -12,6 +12,8 @@ artifact_id: "POL-0007"
 # 앱 GitOps 온보딩 정책
 
 ## Purpose
+
+### Objective
 
 이 문서는 `hy-home.k8s` 클러스터에 새로운 애플리케이션을 온보딩할 때 따라야 하는
 플랫폼 운영 정책을 정의한다.
@@ -21,7 +23,13 @@ artifact_id: "POL-0007"
 이 정책은 현재 앱 온보딩의 기준 계약이다. 실행 순서와 검증·복구 절차는
 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 담당한다.
 
+### Authority
+
+별도 상위 권위 문서 목록은 없으며, 인용된 ADR은 아래 Requirements의 각 통제 본문에 있다.
+
 ## Scope
+
+### Applies To
 
 - `apps` namespace에 배포되는 신규 애플리케이션 workload
 - Argo Rollouts, AnalysisTemplate, Traefik, cert-manager, Istio sidecar/mTLS 패턴
@@ -31,15 +39,23 @@ artifact_id: "POL-0007"
 - **Agents**: 문서/운영 자동화 에이전트
 - **Environments**: Linux server local cluster
 
-## Controls
+### Exclusions
+
+이 정책의 범위에서 제외한다고 따로 표시한 항목은 없다.
+
+## Rules
+
+### Requirements
 
 세부 통제는 아래 1-5장에 정의한다. 모든 신규 앱은 Rollout, AnalysisTemplate, 명시적 ingress/TLS, GitOps PR flow, secret/OpenBao 경계를 따라야 한다.
 
 ---
 
-### 1. 배포 리소스 정책
+#### 1. 배포 리소스 정책
 
-### 1-1. Rollout 필수
+
+
+#### 1-1. Rollout 필수
 
 apps namespace의 모든 워크로드는 `argoproj.io/v1alpha1/Rollout`을 사용해야 한다.
 Deployment는 현재 `appproject-apps` namespaceResourceWhitelist에 포함되지 않으며, 플랫폼 정책상 신규 앱은 Rollout을 사용한다.
@@ -49,7 +65,7 @@ Deployment는 현재 `appproject-apps` namespaceResourceWhitelist에 포함되�
 
 **Required evidence**: `gitops/workloads/<appname>/rollout.yaml`이 존재하고 고정 이미지 태그와 canary 전략을 사용한다.
 
-### 1-2. AnalysisTemplate 필수
+#### 1-2. AnalysisTemplate 필수
 
 모든 Rollout은 canary 단계에서 AnalysisTemplate을 참조해야 한다.
 
@@ -59,7 +75,7 @@ Deployment는 현재 `appproject-apps` namespaceResourceWhitelist에 포함되�
 - **측정 주기**: 30s, `count: 4`(유한한 canary step 측정), failureLimit: 1
 - **Required evidence**: `analysis-template.yaml`이 Rollout canary 단계에서 참조된다.
 
-### 1-3. 이미지 태그
+#### 1-3. 이미지 태그
 
 | 항목       | 정책                                                |
 | ---------- | --------------------------------------------------- |
@@ -69,20 +85,22 @@ Deployment는 현재 `appproject-apps` namespaceResourceWhitelist에 포함되�
 
 ---
 
-### 2. 네트워킹 정책
+#### 2. 네트워킹 정책
 
-### 2-1. Istio 포트 명명 규칙
+
+
+#### 2-1. Istio 포트 명명 규칙
 
 Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 **이유**: Istio가 HTTP 프로토콜로 자동 인식하여 올바른 메트릭과 트레이싱을 수집한다.
 
-### 2-2. Ingress 설정
+#### 2-2. Ingress 설정
 
 신규 앱 Ingress는 `ingressClassName: nginx`, `cert-manager.io/cluster-issuer: mkcert-ca-issuer`, `nginx.ingress.kubernetes.io/ssl-redirect: "true"`, `<appname>.hy-k8s.home.arpa` host 계약을 따라야 한다.
 `nginx` class는 Traefik의 Ingress-NGINX provider가 처리하는 호환 class이며, 은퇴한 ingress-nginx controller를 뜻하지 않는다([ADR-0050](../../02.architecture/decisions/0050-ingress-nginx-replacement-with-traefik.md)).
 
-### 2-3. k8s router 경로
+#### 2-3. k8s router 경로
 
 `*.hy-k8s.home.arpa` 도메인은 k8s 전용 router가 받으므로 외부 저장소 변경이 필요 없다.
 
@@ -92,9 +110,11 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 ---
 
-### 3. 보안 정책
+#### 3. 보안 정책
 
-### 3-1. Istio mTLS
+
+
+#### 3-1. Istio mTLS
 
 `apps` namespace에 PeerAuthentication STRICT가 적용되어 있다.
 
@@ -105,7 +125,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
   옮겨야 하며, 그렇지 않으면 `apps` 전체의 STRICT mTLS가 함께 사라진다.
 - **전제**: Pod에 Istio sidecar가 주입되어야 함 (`apps` namespace에 `istio-injection: enabled` 라벨)
 
-### 3-2. NetworkPolicy
+#### 3-2. NetworkPolicy
 
 현재 `apps` namespace 전체에 egress 정책(`allow-egress-apps`)이 적용된다:
 
@@ -120,7 +140,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 **신규 외부 서비스 연결 필요 시**: `gitops/platform/network-policies/apps-egress.yaml`에 egress 규칙을 추가하고 Platform 팀(운영자 본인)에 변경 요청한다.
 
-### 3-3. 시크릿 관리
+#### 3-3. 시크릿 관리
 
 | 항목            | 정책                                                 |
 | --------------- | ---------------------------------------------------- |
@@ -132,15 +152,17 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 ---
 
-### 4. GitOps 워크플로우 정책
+#### 4. GitOps 워크플로우 정책
 
-### 4-1. 파일 배치 규칙
+
+
+#### 4-1. 파일 배치 규칙
 
 `gitops/workloads/<appname>/`는 `apps-generator` 자동 감지 경로다.
 필수 파일은 `kustomization.yaml`, `rollout.yaml`, `service.yaml`, `ingress.yaml`, `analysis-template.yaml`이다.
 `external-secret.yaml`은 OpenBao/ESO 연동이 필요한 경우에만 추가한다.
 
-### 4-2. 네이밍 규칙
+#### 4-2. 네이밍 규칙
 
 | 항목        | 규칙                           | 예시                        |
 | ----------- | ------------------------------ | --------------------------- |
@@ -150,7 +172,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 | OpenBao 경로 | `secret/apps/<appname>/config` | `secret/apps/my-api/config` |
 | ESO key     | `apps/<appname>/config`        | `apps/my-api/config`        |
 
-### 4-3. 금지 사항
+#### 4-3. 금지 사항
 
 - `kubectl apply`로 직접 클러스터 변경 (operator-approved AppProject bootstrap/break-glass 제외)
 - `latest` 태그 이미지 사용
@@ -159,7 +181,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 ---
 
-### 5. 온보딩 통제 체크리스트
+#### 5. 온보딩 통제 체크리스트
 
 새 앱 온보딩은 아래 정책 게이트를 만족해야 한다. 실행 순서와 체크리스트는 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 소유한다.
 
@@ -174,12 +196,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 ---
 
-## Exceptions and Escalation
-
-- `kubectl apply` 또는 AppProject live 반영은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions-and-escalation)의 operator-approved bootstrap/break-glass 공통 예외를 따른다.
-- ExternalSecret이 필요 없는 앱은 OpenBao 연동 파일을 생략할 수 있지만, plaintext Kubernetes Secret manifest는 허용하지 않는다.
-
-## Verification and Review
+### Enforcement
 
 - 정적 검증 증적: GitOps 구조, k8s manifest, secret-handling 검증이 통과해야 한다.
 - 런타임 증적: 승인된 온보딩 후 명명된 ArgoCD Application의 `Synced/Healthy`, Rollout 상태, 실제 Pod ready/desired 컨테이너 수와 Ingress TLS 상태를 확인한다. 현재 sample의 `2/2`를 모든 새 앱의 고정 컨테이너 수로 취급하지 않는다.
@@ -192,13 +209,32 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
   이 정책의 adminer 분석 주기와 canary 설정은 현재 구성 예시이며 새 앱의
   보편적인 가용성 목표가 아니다.
 
-## Related Documents
-
 - **Runbook**: [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md)
 - **예시 템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app)
 - **참조 구현**: [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer)
 - **AppProject**: [`../../../gitops/clusters/local/appproject-apps.yaml`](../../../gitops/clusters/local/appproject-apps.yaml)
 - **NetworkPolicy**: [`../../../gitops/platform/network-policies/apps-egress.yaml`](../../../gitops/platform/network-policies/apps-egress.yaml)
+
+## Exceptions
+
+### Exception Conditions
+
+- `kubectl apply` 또는 AppProject live 반영은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의 operator-approved bootstrap/break-glass 공통 예외를 따른다.
+- ExternalSecret이 필요 없는 앱은 OpenBao 연동 파일을 생략할 수 있지만, plaintext Kubernetes Secret manifest는 허용하지 않는다.
+
+### Approval and Review
+
+예외 승인은 위 Exception Conditions가 가리키는 POL-0001의 operator-approved bootstrap/break-glass 공통 예외를 따른다.
+
+## Ownership
+
+### Responsibilities
+
+책임 주체는 아래 Lifecycle Traceability 표의 Control owner 열에 적혀 있다.
+
+### Change and Adoption
+
+변경 검토 시점은 위 Enforcement의 새 앱 온보딩 및 계약 변경 시 검토 항목을 따른다.
 
 ### Lifecycle Traceability
 

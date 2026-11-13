@@ -2171,6 +2171,25 @@ def _form_registry_diagnostics(
                         profile_id,
                     )
                 )
+    # A template's tables are inherited by each source it names, so a source
+    # named by two tabled twins would silently keep only the later one's.
+    twins_of: dict[str, list[str]] = {}
+    for profile_id, profile in profiles_by_id.items():
+        if profile["mode"] == "template" and (
+            profile.get("template_definition") or {}
+        ).get("tables"):
+            for source in profile["relationships"]["source_profile_ids"]:
+                twins_of.setdefault(source, []).append(profile_id)
+    for source, twins in twins_of.items():
+        if len(twins) > 1:
+            faults.append(
+                (
+                    "REGISTRY_TABLE_TWIN",
+                    "a source profile named by at most one template twin that carries tables",
+                    f"named by {sorted(twins)!r}",
+                    source,
+                )
+            )
     group = {
         profile_id
         for profile_id, profile in profiles_by_id.items()

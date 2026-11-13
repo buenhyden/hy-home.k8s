@@ -1,21 +1,23 @@
 ---
 title: "Git Policy"
-version: "2.5.1"
+version: "2.6.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 ---
 
 # Git Policy
 
-## Overview
+## Purpose
+
+### Objective
 
 Keep local changes small, reviewable, and traceable to the active Spec and
 Task. `main` is the default integration base unless repository evidence or the
 approved Plan specifies another base.
 
-## Authority Boundary
+### Authority
 
 The user owns push, publication, merge, discard, and history recovery decisions.
 Remote branch protection owns any required hosted metadata checks and cannot
@@ -24,13 +26,25 @@ integration met its required checks; Acceptance stays a criterion decision.
 [Approval and safety](approval-and-safety.md)
 governs protected actions and exceptions.
 
-## Governance Context
+- [Quality Policy](quality.md)
+- [Approval and Safety](approval-and-safety.md)
+- [Work Lifecycle](../workflows/work-lifecycle.md)
+
+## Scope
+
+### Applies To
 
 Inspect whether work is in a checkout, linked worktree, or detached HEAD.
 Preserve user changes and host-managed workspaces. Use the active provider's
 branch convention; Codex-created branches normally use `codex/`.
 
-## Current Contract
+### Exclusions
+
+This policy marks no subject as excluded from its scope.
+
+## Rules
+
+### Requirements
 
 - Before staging, inspect status and the relevant unstaged diff. Stage only
   the logical change and inspect `git diff --cached`.
@@ -62,7 +76,7 @@ branch convention; Codex-created branches normally use `codex/`.
   obtain exact confirmation. Clean only workflow-owned worktrees, never the
   user's main or host-managed workspace.
 
-### Branch and integration routing
+#### Branch and integration routing
 
 `main` is the only long-lived branch; feature branches and the
 `release/<tag>` preparation branch are short-lived (ADR-0052 in the
@@ -95,7 +109,7 @@ direction together offset the missing second reviewer; no automated check, App
 or signature replaces the owner's approval. A deployment style result requires
 an actual deployment workflow and run; absent that input, keep it unobserved.
 
-### Release ownership
+#### Release ownership
 
 Use one producer for a `v`-prefixed strict SemVer tag and its matching GitHub
 Release, bound to an exact reviewed main commit. A development push or merge
@@ -118,7 +132,7 @@ route; a local script or workflow declaration is not such evidence. Keep
 release procedure with the Stage 05 operations owner and execution evidence
 with the Task and Git.
 
-### Commit-message validation
+#### Commit-message validation
 
 [`.cz.toml`](../../.cz.toml) is the single Commitizen grammar owner for
 supported types, optional scope, subject and body/footer syntax of ordinary
@@ -225,13 +239,27 @@ the source repository. Never change hooksPath, disable a hook, or set a skip
 variable in order to make a failing check pass or to leave a check unrun;
 widening the set of hooks that run is the only supported change.
 
-## Validation and Refresh
+### Enforcement
 
 Inspect both staged and unstaged diffs after formatters. Rerun the affected
 checks against final bytes. Do not claim a remote check ran from a local workflow-syntax result.
 
-## Related Documents
+## Exceptions
 
-- [Quality Policy](quality.md)
-- [Approval and Safety](approval-and-safety.md)
-- [Work Lifecycle](../workflows/work-lifecycle.md)
+### Exception Conditions
+
+Exception and escalation conditions are stated under Requirements.
+
+### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Ownership
+
+### Responsibilities
+
+Responsibilities are stated under Authority and Requirements.
+
+### Change and Adoption
+
+This policy states no change or adoption rule of its own.

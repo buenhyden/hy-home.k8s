@@ -1,10 +1,10 @@
 ---
 title: "Software Development Lifecycle"
-version: "3.5.0"
+version: "3.5.1"
 type: "governance/contract"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 ---
 
 # Software Development Lifecycle
@@ -62,7 +62,7 @@ lineage, and Google SRE informs factual incidents and blameless postmortems.
    preserve incident learning in Incident and Postmortem records.
 5. Before a current document is deleted or moved, complete the manual
    consumer, preservation, hold and authority review in
-   [document lifecycle](document-lifecycle.md#current-contract). A
+   [document lifecycle](document-lifecycle.md#requirements). A
    Git-history-only disposition also needs the exact recovery proof. Defer the
    affected disposition if any condition is unresolved. Replace or withdraw a
    Stage 01, 02 or 03 document by summarizing it in the owning current

@@ -203,9 +203,56 @@ SERVICE_TABLE_KEYS = {
         "Command",
     ),
 }
-# The seven roles that carry a form; every other profile keeps its H2 lists.
+POLICY_GOVERNANCE = ("governance/rule", "common/template-governance-rule")
+POLICY_OPERATIONS = ("operation/policy", "common/template-operation-policy")
+POLICY_TREE = (
+    ("Purpose", ("Objective", "Authority")),
+    ("Scope", ("Applies To", "Exclusions")),
+    ("Rules", ("Requirements", "Enforcement")),
+    ("Exceptions", ("Exception Conditions", "Approval and Review")),
+    ("Ownership", ("Responsibilities", "Change and Adoption")),
+)
+POLICY_EXTENSION = {
+    "id": "policy-lifecycle-traceability",
+    "kind": "local_h3",
+    "condition": (
+        "a policy in a status the body contract enforces (draft, in-review, "
+        "active, deprecated) states its promoted owner or an N/A reason"
+    ),
+    "owner": "platform",
+    "verification": "the body-contract check",
+    "review": "when the Policy form version changes",
+    "removal": "when policy lineage has another registered owner",
+    "parent_id": "policy-ownership",
+    "title": "Lifecycle Traceability",
+}
+POLICY_RULES_TABLE = (
+    "policy-rules-requirements",
+    ("Rule", "Condition", "Evidence"),
+    0,
+    "Rule",
+)
+POLICY_GOVERNANCE_TABLE_KEYS = {"Rules": POLICY_RULES_TABLE}
+POLICY_OPERATIONS_TABLE_KEYS = {
+    "Rules": POLICY_RULES_TABLE,
+    "Lifecycle Traceability": (
+        "policy-lifecycle-traceability",
+        ("Promoted owner", "Control owner", "Enforcement surface"),
+        1,
+        "Promoted owner",
+    ),
+}
+# The eight roles that carry a form; every other profile keeps its H2 lists.
 FORM_PROFILES = (
-    GUIDE + RUNBOOK + INCIDENT + POSTMORTEM + ROOT_FORM + STAGE_FORM + SERVICE_FORM
+    GUIDE
+    + RUNBOOK
+    + INCIDENT
+    + POSTMORTEM
+    + ROOT_FORM
+    + STAGE_FORM
+    + SERVICE_FORM
+    + POLICY_GOVERNANCE
+    + POLICY_OPERATIONS
 )
 FORM_TEMPLATES = (
     GUIDE[1],
@@ -217,8 +264,10 @@ FORM_TEMPLATES = (
     STAGE_FORM[3],
     SERVICE_FORM[1],
     SERVICE_FORM[3],
+    POLICY_GOVERNANCE[1],
+    POLICY_OPERATIONS[1],
 )
-SEVEN_FORMS = [
+EIGHT_FORMS = [
     "guide",
     "runbook",
     "incident",
@@ -226,6 +275,7 @@ SEVEN_FORMS = [
     "root-readme",
     "stage-readme",
     "service-readme",
+    "policy",
 ]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
@@ -499,7 +549,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_seven_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_eight_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -517,6 +567,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ("root-readme", "Root README"),
                 ("stage-readme", "Stage README"),
                 ("service-readme", "Service README"),
+                ("policy", "Policy"),
             ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
@@ -576,6 +627,22 @@ class RepositoryRegistryTests(unittest.TestCase):
                 SERVICE_TABLE_KEYS,
                 SERVICE_FORM,
                 None,
+            ),
+            (
+                "policy",
+                POLICY_TREE,
+                [POLICY_EXTENSION],
+                POLICY_GOVERNANCE_TABLE_KEYS,
+                POLICY_GOVERNANCE,
+                None,
+            ),
+            (
+                "policy",
+                POLICY_TREE,
+                [POLICY_EXTENSION],
+                POLICY_OPERATIONS_TABLE_KEYS,
+                POLICY_OPERATIONS,
+                "Ownership",
             ),
         ):
             loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
@@ -687,11 +754,11 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_seven_forms(self) -> None:
+    def test_repository_registry_loads_with_exactly_the_eight_forms(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            SEVEN_FORMS,
+            EIGHT_FORMS,
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -702,7 +769,9 @@ class RepositoryRegistryTests(unittest.TestCase):
             "root-readme": ["Directory Index"],
             "stage-readme": ["Index"],
             "service-readme": ["Commands"],
+            "policy": ["Rules", "Lifecycle Traceability"],
         }
+        governance_tables = ["Rules"]
         for profile in registry.profiles:
             with self.subTest(profile=profile.profile_id):
                 role = next(
@@ -716,6 +785,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("root-readme", ROOT_FORM),
                             ("stage-readme", STAGE_FORM),
                             ("service-readme", SERVICE_FORM),
+                            ("policy", POLICY_GOVERNANCE + POLICY_OPERATIONS),
                         )
                         if profile.profile_id in ids
                     ),
@@ -723,7 +793,12 @@ class RepositoryRegistryTests(unittest.TestCase):
                 )
                 if role:
                     self.assertIs(profile.form, forms[role])
-                    self.assertEqual([t.name for t in profile.tables], tables[role])
+                    self.assertEqual(
+                        [t.name for t in profile.tables],
+                        governance_tables
+                        if profile.profile_id in POLICY_GOVERNANCE
+                        else tables[role],
+                    )
                 else:
                     self.assertIsNone(profile.form)
                     self.assertEqual(profile.tables, ())
@@ -766,7 +841,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            SEVEN_FORMS,
+            EIGHT_FORMS,
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -782,7 +857,7 @@ class FormRegistryTests(unittest.TestCase):
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         for profile_id in GUIDE:
             self.assertIs(by_id[profile_id].form, loaded)
-        self.assertIsNone(by_id["operation/policy"].form)
+        self.assertIsNone(by_id["governance/role"].form)
 
     def test_valid_extensions_are_typed(self) -> None:
         retained = {
@@ -1576,9 +1651,9 @@ class TableCheckTests(unittest.TestCase):
         )
 
     def test_a_profile_without_tables_is_not_checked(self) -> None:
-        policy = typed_profiles(load_raw())["operation/policy"]
-        self.assertEqual(policy.tables, ())
-        self.assertEqual(self.found(guide_body(STEPS), policy), [])
+        role = typed_profiles(load_raw())["governance/role"]
+        self.assertEqual(role.tables, ())
+        self.assertEqual(self.found(guide_body(STEPS), role), [])
 
     def test_the_check_runs_for_authored_documents_only(self) -> None:
         wrong = "| Step | Action |\n| --- | --- |\n| 1 | Run |"
@@ -2384,6 +2459,136 @@ class PostmortemFormTests(RoleFormBody):
         self.assertEqual(self.tree(self.under("", block)), ["BODY-H3-PARENT"])
 
 
+GOVERNANCE_POLICY_PATH = PurePosixPath(".agents/governance/agent-execution.md")
+OPERATIONS_POLICY_PATH = PurePosixPath(
+    "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md"
+)
+
+
+def policy_body() -> str:
+    return md(
+        "# Policy title",
+        "## Purpose",
+        "### Objective\n\nKeep changes reviewable.",
+        "### Authority\n\nPlatform owns this policy.",
+        "## Scope",
+        "### Applies To\n\nEvery change.",
+        "### Exclusions\n\nNone: nothing is excluded.",
+        "## Rules",
+        "### Requirements\n\nReview every change.",
+        "### Enforcement\n\nCI checks it.",
+        "## Exceptions",
+        "### Exception Conditions\n\nNone: no exception exists.",
+        "### Approval and Review\n\nThe owner approves.",
+        "## Ownership",
+        "### Responsibilities\n\nPlatform.",
+        "### Change and Adoption\n\nChanges follow the Spec.",
+    )
+
+
+class GovernancePolicyFormTests(RoleFormBody):
+    """SPEC-0175 VAL-POLICY-001: the Policy form on governance rules."""
+
+    PATH = GOVERNANCE_POLICY_PATH
+    PROFILES = POLICY_GOVERNANCE
+    FORM_ID = "policy"
+    TREE = POLICY_TREE
+    TABLE_KEYS = POLICY_GOVERNANCE_TABLE_KEYS
+    BODY = policy_body()
+    HEADER = ("Rule", "Condition", "Evidence")
+    HOME = "Review every change."
+
+    def test_the_loader_copies_the_tables_to_the_source_profile(self) -> None:
+        super().test_the_loader_copies_the_tables_to_the_source_profile()
+        self.assertIsNone(typed_profiles(load_raw())[self.PROFILES[0]].body_contract)
+
+    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
+        wrong = self.table(self.HEADER[:2], ("a", "b"))
+        body = self.with_table(wrong, home="Platform owns this policy.")
+        self.assertEqual(self.tables(body), [])
+
+
+class OperationsPolicyFormTests(RoleFormBody):
+    """SPEC-0175 VAL-POLICY-001: the Policy form on operations policies."""
+
+    PATH = OPERATIONS_POLICY_PATH
+    PROFILES = POLICY_OPERATIONS
+    FORM_ID = "policy"
+    TREE = POLICY_TREE
+    TABLE_KEYS = POLICY_OPERATIONS_TABLE_KEYS
+    BODY = policy_body()
+    HEADER = ("Rule", "Condition", "Evidence")
+    HOME = "Review every change."
+
+    BLOCK = (
+        "### Lifecycle Traceability\n\n"
+        "| Promoted owner | Control owner | Enforcement surface |\n"
+        "| --- | --- | --- |\n| N/A | Platform | CI |"
+    )
+
+    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
+        wrong = self.table(self.HEADER[:2], ("a", "b"))
+        body = self.with_table(wrong, home="Platform owns this policy.")
+        self.assertEqual(self.tables(body), [])
+
+    def test_the_loader_copies_the_tables_to_the_source_profile(self) -> None:
+        super().test_the_loader_copies_the_tables_to_the_source_profile()
+        contract = typed_profiles(load_raw())[self.PROFILES[0]].body_contract
+        self.assertEqual(contract.section, "Ownership")
+        self.assertEqual(contract.table_heading, "Lifecycle Traceability")
+
+    def test_lifecycle_traceability_is_accepted_after_change_and_adoption(
+        self,
+    ) -> None:
+        body = self.under("", self.BLOCK)
+        self.assertLess(
+            body.index("### Change and Adoption"),
+            body.index("### Lifecycle Traceability"),
+        )
+        self.assertEqual(self.tree(body), [])
+        self.assertEqual(self.tables(body), [])
+
+    def test_lifecycle_traceability_under_another_h2_is_refused(self) -> None:
+        for heading in ("## Rules", "## Exceptions", "## Ownership"):
+            with self.subTest(before=heading):
+                self.assertEqual(
+                    self.tree(self.under(heading, self.BLOCK)), ["BODY-H3-PARENT"]
+                )
+
+    def test_an_absent_lifecycle_traceability_passes_and_an_empty_one_fails(
+        self,
+    ) -> None:
+        self.assertNotIn("Lifecycle Traceability", self.BODY)
+        empty = self.under("", "### Lifecycle Traceability\n")
+        self.assertEqual(self.tree(empty), ["BODY-SECTION-EMPTY"])
+
+
+class TemplateTwinTableTests(unittest.TestCase):
+    """SPEC-0175 W03-H10: two tabled twins may not name one source profile."""
+
+    def second_twin(self, raw: dict, *, tables: bool) -> dict:
+        twin = copy.deepcopy(profile_of(raw, GUIDE[1]))
+        twin["id"] = "common/template-operation-guide-second"
+        twin["path_pattern"] = (
+            "^docs/99\\.templates/templates/operations/guide\\.second$"
+        )
+        if not tables:
+            twin["template_definition"]["tables"] = []
+        raw["profiles"].append(twin)
+        return raw
+
+    def test_the_repository_registry_names_each_source_once(self) -> None:
+        self.assertNotIn("REGISTRY_TABLE_TWIN", rules_of(load_raw()))
+
+    def test_a_source_named_by_two_tabled_twins_is_refused(self) -> None:
+        raw = self.second_twin(load_raw(), tables=True)
+        self.assertIn("REGISTRY_TABLE_TWIN", rules_of(raw))
+
+    def test_a_second_twin_without_tables_is_not_refused(self) -> None:
+        raw = self.second_twin(load_raw(), tables=False)
+        self.assertEqual(rules_of(raw), set())
+
+
 class RetainedFormTests(unittest.TestCase):
     """W03-D02: an ADR keeps its H2 lists for the statuses a retained form names."""
 
@@ -2490,12 +2695,12 @@ class RetainedFormTests(unittest.TestCase):
         self.assertEqual(body_rules("proposed", self.TREE), [])
 
 
-class CurrentRegistrySevenFormsOnlyTests(unittest.TestCase):
-    def test_only_the_seven_form_profiles_use_the_tree(self) -> None:
+class CurrentRegistryEightFormsOnlyTests(unittest.TestCase):
+    def test_only_the_eight_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            SEVEN_FORMS,
+            EIGHT_FORMS,
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),

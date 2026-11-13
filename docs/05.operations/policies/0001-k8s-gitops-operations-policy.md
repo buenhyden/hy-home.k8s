@@ -1,10 +1,10 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.5.0"
+version: "1.6.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "operations"
 artifact_id: "POL-0001"
 ---
@@ -13,12 +13,22 @@ artifact_id: "POL-0001"
 
 ## Purpose
 
+### Objective
+
 이 문서는 Linux server 기반 로컬 k3d GitOps 플랫폼의 운영 통제를 정의한다.
 여기서 multi-node 또는 HA는 production 고가용성 보장이 아니라
 `infrastructure/k3d/k3d-cluster.yaml`의 `servers: 1`, `agents: 3` 로컬
 검증 baseline을 뜻한다.
 
+### Authority
+
+이 정책이 근거로 삼는 상위 문서는 다음과 같다.
+
+- [AD-0007 Current Local GitOps Platform](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+
 ## Scope
+
+### Applies To
 
 - k3d cluster와 ArgoCD pull 기반 GitOps 운영
 - ESO와 외부 OpenBao의 시크릿 경계
@@ -30,17 +40,15 @@ artifact_id: "POL-0001"
 - **Roles**: Platform Owner, Security Reviewer, GitOps/Docs automation agents
 - **Environment**: Linux server local cluster와 GitHub Actions
 
-## Controls
+### Exclusions
 
-### Responsibilities
+이 정책은 위 Applies To에 적은 범위 밖으로 제외한다고 따로 표시한 항목을 두지 않는다.
 
-| Role | Responsibility | Escalation owner |
-| --- | --- | --- |
-| Platform Owner | GitOps desired state, external endpoint, runtime baseline을 승인한다. | Workspace Owner |
-| Security Reviewer | OpenBao, RBAC, NetworkPolicy, 예외의 최소권한을 검토한다. | Workspace Owner |
-| Change author | 정적 검증과 필요한 승인·runtime 증적을 handoff한다. | Platform Owner |
+## Rules
 
-### Control Register
+### Requirements
+
+#### Control Register
 
 | Control | Accountable role | Enforcement surface | Evidence |
 | --- | --- | --- | --- |
@@ -51,7 +59,7 @@ artifact_id: "POL-0001"
 | PLAT-005 least privilege | Security Reviewer | AppProject, RBAC, NetworkPolicy | wildcard absence and destination/egress review |
 | PLAT-006 validation | Change author | local validators and GitHub Actions | static PASS plus separately approved runtime evidence when required |
 
-### Required
+#### Required
 
 - External-service Service와 EndpointSlice desired state는
   `gitops/platform/external-services/*.yaml`을 single source of truth로 삼는다.
@@ -92,13 +100,13 @@ artifact_id: "POL-0001"
 - CD는 ArgoCD pull/reconciliation이 소유한다. GitHub Actions와 로컬 gate는
   정적 검증 증적이며 배포 완료 증적을 대신하지 않는다.
 
-### Allowed
+#### Allowed
 
 - 검토된 Git desired state 변경과 ArgoCD reconciliation
 - read-only 진단과 소유 Runbook에 따른 복구
 - 명시적 human approval과 증적을 갖춘 bootstrap/break-glass 작업
 
-### Disallowed
+#### Disallowed
 
 - 평문 시크릿 커밋, 승인 없는 권한 확장, wildcard AppProject 허용
 - 로컬 파일 또는 정적 PASS만으로 runtime 배포·복구 완료 선언
@@ -106,25 +114,7 @@ artifact_id: "POL-0001"
 - Git desired state 없이 EndpointSlice를 상시 수동 관리
 - 외부 서비스 workspace의 Traefik에 k8s route 추가
 
-## Exceptions and Escalation
-
-<!-- 기존 #exceptions 인용을 보존하는 이 앵커 한 줄만 HTML로 유지한다. -->
-<!-- markdownlint-disable-next-line MD033 -->
-<a id="exceptions"></a>
-
-이 절은 Stage 05 전체의 live 변경 예외 기준이다. 다른 Policy는 자신의
-component 고유 예외만 추가하고 이 기준을 반복하지 않는다.
-
-`kubectl apply/patch/delete`, EndpointSlice patch, AppProject live 반영,
-forced ArgoCD reconciliation, 외부 OpenBao 변경, 외부 Docker runtime,
-host 주소와 이름 해석 변경은 즉시 복구가 필요하고 Platform Owner가 범위·기간·위험·rollback을 승인한
-bootstrap 또는 break-glass 상황에서만 허용한다. 실행 후 실제 상태를 Git
-desired state와 맞추고 승인·검증 증적을 남긴다. 예외는 만료 시 기본 통제로
-복귀한다. 승인 결정 자체는
-[Approval and Safety Policy](../../../.agents/governance/approval-and-safety.md)가
-소유하며, Runbook은 이 예외 안에서 실행할 절차만 제공한다.
-
-## Verification and Review
+### Enforcement
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
@@ -143,11 +133,42 @@ NetworkPolicy, CI workflow 계약이 바뀔 때 즉시 검토한다. 고정된 j
 시나리오가 소유한다. 이 정책의 manifest 값과 static PASS는 해당 목표의
 설정 근거이며, reconciled 상태나 복구 시간을 측정한 결과가 아니다.
 
-## Related Documents
-
-- [AD-0007 Current Local GitOps Platform](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [Platform Bootstrap Runbook](../runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [ESO Recovery Runbook (RUN-0002)](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+
+## Exceptions
+
+### Exception Conditions
+
+이 절은 Stage 05 전체의 live 변경 예외 기준이다. 다른 Policy는 자신의
+component 고유 예외만 추가하고 이 기준을 반복하지 않는다.
+
+`kubectl apply/patch/delete`, EndpointSlice patch, AppProject live 반영,
+forced ArgoCD reconciliation, 외부 OpenBao 변경, 외부 Docker runtime,
+host 주소와 이름 해석 변경은 즉시 복구가 필요하고 Platform Owner가 범위·기간·위험·rollback을 승인한
+bootstrap 또는 break-glass 상황에서만 허용한다. 실행 후 실제 상태를 Git
+desired state와 맞추고 승인·검증 증적을 남긴다. 예외는 만료 시 기본 통제로
+복귀한다. 승인 결정 자체는
+[Approval and Safety Policy](../../../.agents/governance/approval-and-safety.md)가
+소유하며, Runbook은 이 예외 안에서 실행할 절차만 제공한다.
+
+### Approval and Review
+
+예외의 승인과 검토 주체는 위 Exception Conditions의 승인 문장과 Ownership의 Responsibilities 표에 적혀 있다.
+
+## Ownership
+
+### Responsibilities
+
+| Role | Responsibility | Escalation owner |
+| --- | --- | --- |
+| Platform Owner | GitOps desired state, external endpoint, runtime baseline을 승인한다. | Workspace Owner |
+| Security Reviewer | OpenBao, RBAC, NetworkPolicy, 예외의 최소권한을 검토한다. | Workspace Owner |
+| Change author | 정적 검증과 필요한 승인·runtime 증적을 handoff한다. | Platform Owner |
+
+### Change and Adoption
+
+변경 검토 시점은 위 Enforcement의 월 1회 및 계약 변경 시 검토 문단을 따른다.
 
 ### Lifecycle Traceability
 
