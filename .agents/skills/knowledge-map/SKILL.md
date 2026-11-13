@@ -3,7 +3,7 @@ name: "knowledge-map"
 description: "Use when auditing governance navigation, role/skill references, stage indexes, or current cross-links."
 metadata:
   title: "Knowledge Map"
-  version: "1.1.2"
+  version: "1.1.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -73,7 +73,7 @@ This skill takes no input beyond the user's request and the files its Steps name
 
 A bounded gap list with current owners, verification results, limitations, and
 next owner in the active Task. Do not append a separate progress ledger or
-recreate machine roster tables.
+recreate machine roster tables. Once the work residue ledger exists, the supervisor records an open gap with no Task owner as a work residue ledger entry.
 
 ## Verification
 

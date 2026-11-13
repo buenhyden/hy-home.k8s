@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.23"
+version: "0.1.24"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -79,6 +79,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-043 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D32 recorded | User answer "One-use exemption (Recommended)" to the freeze-gate question for the `layer` removal, 2026-11-13 Asia/Seoul; the SPEC-0184 pre-approval review round 1 | PASS | Recorded as W03-D32; applied by SPEC-0184. | no | none |
 | EVD-044 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | `layer` line removed from this package | SPEC-0184 implementation under W03-D22 and W03-D32, 2026-11-13 | PASS | This package's `spec.md`, `plan.md` and Task lost their frontmatter `layer` line only (spec `5b304a9dfdc19075`→`698da2d295ae2d6b`, plan `e388f9e724ba5bea`→`7395a09a86e2e4e6`, sha256 prefixes); metadata only, no scope or decision change; the package-exit check accepted the Spec and Plan edit through SPEC-0184's one-use exemption. | no | none |
 | EVD-045 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D37 to W03-D40 recorded | User answers "Residue-only JSON ledger (Recommended)", "On-demand view; prune (Recommended)", "Seed now; exempt history (Recommended)" and "New ADR + REQ/AD edits (Recommended)" to the GOV-06 ledger questions, 2026-11-13 Asia/Seoul | PASS | Recorded as W03-D37 to W03-D40 with the SPEC-0185 package commit; applied by SPEC-0185 and W03-H30 package 2. | no | none |
+| EVD-046 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | GOV-06 ledger statements superseded | SPEC-0185 implementation under W03-D37 to W03-D40, 2026-11-13; SPEC-0185 Task evidence EVD-006, EVD-007, EVD-008, EVD-009, EVD-010 and EVD-011 | PASS | Supersedes the statement of the `LEDGER` conflict row ("No conflict; existing rule kept") and EVD-018's statement that the machine-ledger rejection agrees with v14.7 and stays: the single machine ledger agrees with v14.7 and is adopted as the work residue ledger of ADR-0060 (proposed), which holds residue only and is not a competing progress ledger; REQ-0003 FR-0019 and FR-0022 and AD-0006 carry the amended sentences. No ledger file exists until W03-H30 package 2. No earlier EVD row or decision is edited; only the state cells of the `LEDGER` and W03-H30 rows are refreshed. | no | none |
 
 ### Edition Delta
 
@@ -297,7 +298,7 @@ The other IDs keep the verdicts above: OPEN-03 RESIDUAL_CONFIRMED at the named s
 | POLICY-ROLE | `docs/99.templates/registry.json` `operation/policy`, `governance/rule` | Two shapes | One Policy role | Adopt (EVD-018): both profiles implement the common Policy form; W03 |
 | GIT-09 | REQ-0003 FR-0018 and Scope and Non-goals; `quality.md` Semantic review | An independent agent reviewer is required | No extra agent API call as a mandatory reviewer | Adopted and implemented by SPEC-0162 (EVD-019) |
 | DOC-12 | Stage 01/02/03 file and folder numbers | Number equals stable ID; gaps kept | Contiguous numbering from 1 | Adopt as display numbers only (Q-07, EVD-018); `artifact_id` unchanged; after open work closes |
-| LEDGER | REQ-0003 Scope and Non-goals (FR-0019, FR-0022) | No machine ledger | v14.7 also forbids a competing ledger (GOV-03, SDLC-04) | No conflict; existing rule kept |
+| LEDGER | REQ-0003 Scope and Non-goals (FR-0019, FR-0022) | No machine ledger | v14.7 also forbids a competing ledger (GOV-03, SDLC-04) | Superseded by EVD-046: adopted as the work residue ledger (SPEC-0185, ADR-0060 proposed); built by W03-H30 package 2 |
 
 ### Read Denominator
 
@@ -393,7 +394,7 @@ Added 2026-11-12 under the user's W03 request (EVD-025). W03 runs as several Sta
 | W03-H27 | Document generator (W03-D24) | No generator creates a document from the registry and template | Build it after the `layer` removal | W03; after W03-H25 |
 | W03-H28 | Local forms and the full TemplateDefinition record (W03-D26, W03-H15) | The nine local roles have H2 lists only, and no function derives or validates the package's full TemplateDefinition record | Build the forms and move the documents form-only; then derive the full record from profile, form and definition and validate it against a copy of the package schema, with the six SDLC templates following in phase 3 (W03-H13) | W03 with W05; its own package |
 | W03-H29 | Policy role and rule IDs (W03-D27) | `sdlc.md` is on `governance/contract`; no policy rule carries a stable ID | Move `sdlc.md` form-only to the Policy role; give the policy rules stable IDs with a check | W03 with W05; its own package |
-| W03-H30 | GOV-06 machine ledger (W03-D25) | No machine ledger exists, and REQ-0003 FR-0019 and FR-0022 forbid one | Amend the requirement and AD-0006, add the ledger, a drift check and tests | W03 with W05; its own package |
+| W03-H30 | GOV-06 machine ledger (W03-D25) | REQ-0003 FR-0019, FR-0022 and AD-0006 amended and ADR-0060 proposed by SPEC-0185 (EVD-046); no ledger file, schema, script or drift check exists yet | Amend the requirement and AD-0006, add the ledger, a drift check and tests | W03 with W05; its own package |
 | W03-H31 | Stale tracking found by the 2026-11-13 conformance audit | The Requirement Changes states of this Task still show OPEN rows that SPEC-0166 and later closed; its Verification Summary still names W01 next; W03-H01, W03-H04 and W03-H06 rows are stale (W03-H04 is resolved by W03-D24); EVD-025 counts 33 accepted ADRs where the tree has 34; registry `migration.meaning_map` strings say the Task records a map that left with the deleted Task | Correct by appended rows and a closing summary; record the 34-ADR exception and point the meaning maps to REQ-0003 Archived Lineage recovery | W03; with the W03 closing (W03-H20) |
 | W03-H32 | Glossary definitions across repositories (conformance audit D5) | The glossary translates the Korean shared vocabulary definitions, so identity across the four repositories cannot be shown byte for byte | Record the translation and compare meaning in the cross-repository check | W11 |
 

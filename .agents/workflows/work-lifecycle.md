@@ -1,6 +1,6 @@
 ---
 title: "Work Lifecycle"
-version: "2.2.2"
+version: "2.2.3"
 type: "governance/skill"
 status: "active"
 owner: "platform"
@@ -52,7 +52,7 @@ The procedure parts are Intake, Resume, Implementation and Completion.
 4. Resolve the Stage 99 profile and template before authored document changes.
    Record the current scoped request in the existing Task Inputs and Approval
    and Safety Boundaries. Keep the Spec acceptance contract, Plan work mapping
-   and actual Task execution/evidence separate; no extra progress ledger.
+   and actual Task execution/evidence separate; no extra progress ledger (the work residue ledger of ADR-0060 holds residue, not a progress record).
 5. Resolve selected required-check tools, environment, actual resource/output
    needs, technical command limits and necessary native execution approval through
    [quality preflight](../governance/quality.md#validation-runner-envelope).
@@ -121,7 +121,7 @@ end the loop.
 
 Hooks are supplemental evidence or enforcement only when their intended
 runtime actually loads them. Advisory compaction output is not completion
-evidence, and no historical progress-ledger append is required for new work.
+evidence, and no historical progress-ledger append is required for new work; the work residue ledger is residue and not a progress record.
 
 ### Failure Handling
 

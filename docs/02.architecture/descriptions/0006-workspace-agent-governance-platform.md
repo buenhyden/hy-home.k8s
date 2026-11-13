@@ -1,6 +1,6 @@
 ---
 title: "Agent and Document Governance Architecture Description (AD)"
-version: "2.4.5"
+version: "2.5.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -37,7 +37,7 @@ actual validation state is confirmed in the relevant Task.
 - The repository does not own provider accounts, authentication, model access, or global installs. External accounts,
   credentials, provider capabilities, and the live runtime are not implementation evidence for this document.
 - GitOps desired state, Kubernetes policy, and external service interfaces stay in their existing domains.
-- No separate governance registry, per-provider policy fork, Release family, or shared progress ledger is created.
+- No separate governance registry, per-provider policy fork, Release family, or shared progress ledger is created; the work residue ledger of [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) holds residue only and is not one.
 - SPEC-0152 (left the tree; Git history recovers it) completed the manual
   disposition policy and bounded first-record Spec/Plan approval change. The
   [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage)
@@ -91,7 +91,7 @@ its deleted predecessors decided (see Archived Lineage).
 | Human execution policy | [Common governance](../../../.agents/README.md) | Root/provider gateways, role responsibilities, approval, quality, and document authoring; copying the machine schema is forbidden |
 | Document machine contract and forms | [Stage 99 Registry](../../99.templates/registry.json) and [forms](../../99.templates/README.md) | Profile, route, metadata, identity, lifecycle, and template consumers |
 | Validation dispatch | [Validation Registry](../../../scripts/validation/registry.json) | Local affected-path, lane, and argv; each validator keeps its own failure meaning |
-| Execution | [Stage 03](../../03.specs/README.md) | Package-local Spec/Plan/Tasks; state, order, and validation evidence are not copied into a central roster |
+| Execution | [Stage 03](../../03.specs/README.md) | Package-local Spec/Plan/Tasks; state, order, and validation evidence are not copied into a central roster, except residue pointers held in the work residue ledger |
 | Skill evaluation evidence | [Evaluation router](../../../.agents/evaluations/README.md) | Same-task noSkill/withSkill observations and their scoring; evidence form belongs to Stage 99, Skill membership and runtime contracts remain with their existing owners |
 | Operations and reference | [Stage 05](../../05.operations/README.md), [Stage 90](../../90.references/README.md) | Operating procedures kept apart from observed evidence; a Reference does not substitute for approval or current policy |
 | Historical recovery | Reachable Git, the owning Task and profile-specific lineage owners | The [accepted manual-review decision](../decisions/0056-manual-document-disposition-review.md) keeps evidence in every owning Task, Archived Lineage for Stage 01-03, and existing profile relationships for other types; [Stage 98](../../98.archive/README.md) remains unvalidated history under ADR-0053 and is not current authority or a reactivation path |
@@ -226,7 +226,7 @@ Reusable decision context may live in the shared workspace memory store
 (`scripts/workspace_memory.py`, Git-ignored `.workspace-memory/`). Both
 providers read and write it, and their native memory is disabled in project
 configuration. It is never Task status, evidence, approval or acceptance, and
-it is not the retired shared progress ledger. The shared store belongs to the
+it is not the retired shared progress ledger. The work residue ledger of [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) is a separate repository file holding residue only. The shared store belongs to the
 representative worktree; source references are checked against the caller
 worktree without following symlinks. Request-bound retries, a capacity bound
 on every store connection, and verified atomic backup replacement protect
@@ -365,10 +365,10 @@ verification require their own actual evidence and applicable authorization.
 | [REQ-0003-FR-0016](../../01.requirements/0003-workspace-agent-governance-platform.md) | Local Registry dispatch, proportional selection and independent failure meanings | [ADR-0031](../decisions/0031-current-corpus-retention-and-validation-ownership.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md), [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
 | [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | Local QA and hosted delivery metadata with separate evidence | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
 | [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-index logical delivery and no repeated identical leaf at later stages | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [ADR-0052](../decisions/0052-single-main-trunk-branch-strategy.md) |
-| [REQ-0003-FR-0019](../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local sequencing with unchanged historical program lineage | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md) |
+| [REQ-0003-FR-0019](../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local sequencing with unchanged historical program lineage | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md), [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) |
 | [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | Unvalidated archive with accepted manual hold, authority and exact-source recovery checks before disposition | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0031](../decisions/0031-current-corpus-retention-and-validation-ownership.md), [ADR-0053](../decisions/0053-unvalidated-archive.md), [ADR-0056](../decisions/0056-manual-document-disposition-review.md), SPEC-0152 (left the tree; Git history recovers it) |
 | [REQ-0003-FR-0021](../../01.requirements/0003-workspace-agent-governance-platform.md) | Reference provenance separated from current execution authority | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md) |
-| [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | Ignored checkpoint state and the shared memory store versus Task-owned durable execution evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md) |
+| [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | Ignored checkpoint state and the shared memory store versus Task-owned durable execution evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md), [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) |
 | [REQ-0003-FR-0023](../../01.requirements/0003-workspace-agent-governance-platform.md) | Profile-owned stable identity and source-preserving migration mapping | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0033](../decisions/0033-common-document-contract-v9.md) |
 | [REQ-0003-FR-0024](../../01.requirements/0003-workspace-agent-governance-platform.md) | Consumer-zero removal of compatibility surfaces after semantic transfer | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0031](../decisions/0031-current-corpus-retention-and-validation-ownership.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md), [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
 | [REQ-0003-FR-0025](../../01.requirements/0003-workspace-agent-governance-platform.md) | Current Agent Registry and common governance risk, trust, and approval owners | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
@@ -419,6 +419,7 @@ historical evidence rather than parallel operating instructions.
 - **Current-state amendment**: [ADR-0055](../decisions/0055-governance-decision-current-state-amendment.md) replaces the governance ADR clauses that no longer match the repository
 - **Accepted manual disposition amendment**: [ADR-0056](../decisions/0056-manual-document-disposition-review.md) qualifies the no-proof disposition and unconditional Git-recovery clauses and records the bounded local first-record approval exception; the user's acceptance and completed implementation are separately recorded in REQ-0003 Archived Lineage
 - **Accepted package exit shape amendment**: [ADR-0057](../decisions/0057-package-exit-shape-check.md) narrows only ADR-0056 Decision 6: in `staged` mode the lifecycle validator refuses a Stage 03 package exit in the wrong shape (`LIFECYCLE-PACKAGE-EXIT`), while recovery proof, holds, consumers and authority stay manual
+- **Work residue ledger amendment**: [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) narrows the no-ledger clauses of ADR-0031, ADR-0036, ADR-0047 and ADR-0048 to no competing progress ledger of execution state; the work residue ledger holds residue only
 - **Local QA and release implementation**: `scripts/qa.py` and `scripts/release.py`
 - **Completed change**: SPEC-0152 (left the tree; Git history recovers it) produced the manual policy and bounded approval reader. Its accepted Task and exact three-file recovery route are summarized in [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage). Earlier Spec packages also remain recoverable through their lineage owners.
 - **Completed validation follow-up**: SPEC-0153 (left the tree; Git history recovers it) corrected the separately observed cumulative ADR and Task history failures. The current user accepted its three Task criteria on 2026-11-11; the completed source and exact recovery evidence are in [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage). The existing validator and tests own the correction; it adds no new decision authority.

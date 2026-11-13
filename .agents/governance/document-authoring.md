@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.20.1"
+version: "3.20.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -185,7 +185,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 13. Preserve accepted decisions and completed evidence. Use successors,
     reciprocal lifecycle relationships and the Archived Lineage summary in the
     owning current document; recover removed bytes from Git history rather than
-    rewriting history, leaving redirects, or keeping a second recovery ledger.
+    rewriting history, leaving redirects, or keeping a second recovery ledger; a closed work residue ledger entry is recovered from Git history.
     Before a current document leaves its stage, follow the manual consumer,
     preservation, hold and authorization review in
     [document lifecycle](document-lifecycle.md#requirements). If
@@ -253,7 +253,7 @@ Approval and adoption are separate facts. An approved or adopted edition
 records past authority and does not freeze the contract; a later approved
 target supersedes it through a recorded change. Approval is never inferred
 from a role name, hash, signature or registry value; absent evidence stays
-unverified, and no new ledger is created for it. Partial adoption is never
+unverified, and no new ledger is created for it; an unverified approval fact is not a work residue ledger entry. Partial adoption is never
 reported as full, and an approved compatible edition coexisting with a newer
 one is not a defect by itself. The target contract record names the contract
 ID, version, single authoring owner, approval reference with approver and
