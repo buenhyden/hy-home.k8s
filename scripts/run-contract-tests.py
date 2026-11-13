@@ -45,6 +45,7 @@ SUITES = {
         "frontmatter_yaml",
         "document_language",
         "documentation_link_boundary",
+        "semver_grammar",
     ),
     "document-lifecycle": _modules(
         "document_artifact_identity",

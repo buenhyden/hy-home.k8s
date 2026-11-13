@@ -23,6 +23,7 @@ from typing import Any, NoReturn, Sequence
 
 from frontmatter_yaml import FrontmatterError, load_frontmatter
 from json_schema_validation import SchemaEvaluationError, schema_errors
+from semver_grammar import SEMVER_PATTERN
 
 
 REGISTRY_PATH = PurePosixPath(".agents/roles/registry.json")
@@ -1323,8 +1324,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
             or not isinstance(document_metadata.get("title"), str)
             or not document_metadata["title"].strip()
             or not isinstance(document_metadata.get("version"), str)
-            or re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", document_metadata["version"])
-            is None
+            or re.fullmatch(SEMVER_PATTERN, document_metadata["version"]) is None
             or document_metadata.get("type") != "governance/skill"
             or document_metadata.get("status")
             not in {

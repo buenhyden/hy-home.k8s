@@ -25,14 +25,12 @@ from pathlib import Path
 from urllib.parse import quote
 from typing import Sequence
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from semver_grammar import SEMVER_PATTERN  # noqa: E402
+
 
 REPOSITORY = "github.com/buenhyden/hy-home.k8s"
-_VERSION = re.compile(
-    r"v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
-    r"(?:-((?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)"
-    r"(?:\.(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*))*))?"
-    r"(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?\Z"
-)
+_VERSION = re.compile("v" + SEMVER_PATTERN + r"\Z")
 _RELEASE_HEADING = re.compile(r"^## \[([^]]+)\] - (\d{4}-\d{2}-\d{2})$", re.M)
 _REMOTE = re.compile(
     r"(?:git@github\.com:|https://github\.com/|ssh://git@github\.com/)"
