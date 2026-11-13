@@ -1936,13 +1936,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -1957,6 +1951,7 @@
       "id": "common/readme-collection-index",
       "family": "common",
       "mode": "router",
+      "document_role": "stage-readme",
       "path_pattern": "^(?:\\.agents/knowledge/README\\.md|\\.agents/prompts/README\\.md|\\.agents/roles/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/(?:audits|data|research)/README\\.md|docs/99\\.templates/templates/README\\.md|\\.agents/evaluations/(?:harnesses|templates)/README\\.md)$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-collection-index.template.md",
@@ -1991,13 +1986,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -2939,13 +2928,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -2956,12 +2939,102 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a stage README: a human index that states the stage responsibility, lists its current items, and routes readers to the create, review and transition rules and to its upstream, downstream, policy and template documents.",
+        "responsibility": "A stage README owns the human-facing index of a documentation stage and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
+        "non_goals": [
+          "Restating detailed policy, which belongs to its canonical owner document.",
+          "Holding agent instructions, which belong to the folder AGENTS.md.",
+          "Defining the collection README form or the Root, Service, Workspace and Reference Pack README forms, which keep their own profiles."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The seven stage READMEs and their template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/common/readme-stage-index.template.md",
+          "docs/01.requirements/README.md",
+          "docs/02.architecture/README.md",
+          "docs/03.specs/README.md",
+          "docs/05.operations/README.md",
+          "docs/90.references/README.md",
+          "docs/99.templates/README.md",
+          "docs/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validation/document_content.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_readme_navigation.py",
+          "tests/test_repository_quality_rules.py"
+        ],
+        "validation": {
+          "positive": [
+            "The stage READMEs and the template pass the form tree, navigation, document-content, author-prompt and residue checks.",
+            "An Index table with Path and Purpose columns, or with Path, Purpose and Owner columns, passes the document table check.",
+            "The navigation section Current Items is read as the H3 of the form, with its H4 subsections, up to the next H3 or H2."
+          ],
+          "negative": [
+            "A stage README missing a form H3 fails BODY-H3-REQUIRED.",
+            "An Index header that omits Purpose or reorders its columns fails BODY-TABLE-COLUMNS.",
+            "A direct child missing from Current Items fails README-NAV-COMPLETE."
+          ],
+          "regression": [
+            "The loaded stage README profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
+            "tests/test_readme_navigation.py covers a complete Current Items listing and a missing child.",
+            "tests/test_repository_quality_rules.py covers a document-content table under an H4."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0173 map moves each sentence of the former five-section stage READMEs into Stage Responsibility, Contents, Workflow or Related Documents without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous five-section stage READMEs and template.",
+          "rollback": "Revert the SPEC-0173 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Index",
+            "section": "stage-readme-contents-current-items",
+            "columns": [
+              {
+                "key": "Path",
+                "meaning": "The direct child folder or file the row describes.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Purpose",
+                "meaning": "What the path holds and why a reader opens it.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Owner",
+                "meaning": "The person or team that maintains the path.",
+                "data_type": "string",
+                "required": false
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Path"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-readme-collection-index",
       "family": "common",
       "mode": "template",
+      "document_role": "stage-readme",
       "path_pattern": "^docs/99\\.templates/templates/common/readme\\-collection\\-index\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-collection-index.template.md",
@@ -2995,13 +3068,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -3012,7 +3079,105 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a collection README: a human index that states the stage responsibility, lists its current items, and routes readers to the create, review and transition rules and to its upstream, downstream, policy and template documents.",
+        "responsibility": "A collection README owns the human-facing index of a document collection and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
+        "non_goals": [
+          "Restating detailed policy, which belongs to its canonical owner document.",
+          "Holding agent instructions, which belong to the folder AGENTS.md.",
+          "Defining the stage README form or the Root, Service, Workspace and Reference Pack README forms, which keep their own profiles."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The fifteen collection READMEs and their template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/common/readme-collection-index.template.md",
+          ".agents/evaluations/harnesses/README.md",
+          ".agents/evaluations/templates/README.md",
+          ".agents/knowledge/README.md",
+          ".agents/prompts/README.md",
+          ".agents/roles/README.md",
+          "docs/02.architecture/decisions/README.md",
+          "docs/02.architecture/descriptions/README.md",
+          "docs/05.operations/guides/README.md",
+          "docs/05.operations/incidents/README.md",
+          "docs/05.operations/policies/README.md",
+          "docs/05.operations/runbooks/README.md",
+          "docs/90.references/audits/README.md",
+          "docs/90.references/data/README.md",
+          "docs/90.references/research/README.md",
+          "docs/99.templates/templates/README.md",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validation/document_content.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_readme_navigation.py",
+          "tests/test_repository_quality_rules.py"
+        ],
+        "validation": {
+          "positive": [
+            "The collection READMEs and the template pass the form tree, navigation, document-content, author-prompt and residue checks.",
+            "An Index table with Path and Purpose columns, or with Path, Purpose and Owner columns, passes the document table check.",
+            "The navigation section Current Items is read as the H3 of the form, with its H4 subsections, up to the next H3 or H2."
+          ],
+          "negative": [
+            "A collection README missing a form H3 fails BODY-H3-REQUIRED.",
+            "An Index header that omits Purpose or reorders its columns fails BODY-TABLE-COLUMNS.",
+            "A direct child missing from Current Items fails README-NAV-COMPLETE."
+          ],
+          "regression": [
+            "The loaded collection README profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
+            "tests/test_readme_navigation.py covers a complete Current Items listing and a missing child.",
+            "tests/test_repository_quality_rules.py covers a document-content table under an H4."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0173 map moves each sentence of the former five-section collection READMEs into Stage Responsibility, Contents, Workflow or Related Documents without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous five-section collection READMEs and template.",
+          "rollback": "Revert the SPEC-0173 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Index",
+            "section": "stage-readme-contents-current-items",
+            "columns": [
+              {
+                "key": "Path",
+                "meaning": "The direct child folder or file the row describes.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Purpose",
+                "meaning": "What the path holds and why a reader opens it.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Owner",
+                "meaning": "The person or team that maintains the path.",
+                "data_type": "string",
+                "required": false
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Path"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-readme-implementation",
@@ -6354,11 +6519,11 @@
         "complete": false
       },
       "common/readme-stage-index": {
-        "section": "Structure",
+        "section": "Current Items",
         "complete": true
       },
       "common/readme-collection-index": {
-        "section": "Structure",
+        "section": "Current Items",
         "complete": true
       },
       "common/readme-implementation": {
@@ -8292,6 +8457,308 @@
                 ],
                 "prohibited_content": [
                   "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          }
+        ],
+        "extensions": []
+      },
+      {
+        "form_id": "stage-readme",
+        "title": "Stage README",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "stage-readme-stage-responsibility",
+            "level": 2,
+            "parent_id": null,
+            "title": "Stage Responsibility",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "문서 단계의 책임",
+            "required_content": [
+              "문서 단계의 책임에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "Task 상태를 독립적으로 수동 관리하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "stage-readme-stage-responsibility-purpose-and-readers",
+                "level": 3,
+                "parent_id": "stage-readme-stage-responsibility",
+                "title": "Purpose and Readers",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "이 단계의 의미·독자",
+                "required_content": [
+                  "이 단계의 의미·독자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "Task 상태를 독립적으로 수동 관리하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "stage-readme-stage-responsibility-inputs-and-outputs",
+                "level": 3,
+                "parent_id": "stage-readme-stage-responsibility",
+                "title": "Inputs and Outputs",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "소유 정보·유입/유출 조건",
+                "required_content": [
+                  "소유 정보·유입/유출 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "Task 상태를 독립적으로 수동 관리하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "stage-readme-contents",
+            "level": 2,
+            "parent_id": null,
+            "title": "Contents",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "현행 문서의 탐색",
+            "required_content": [
+              "현행 문서의 탐색에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "Task 상태를 독립적으로 수동 관리하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "stage-readme-contents-current-items",
+                "level": 3,
+                "parent_id": "stage-readme-contents",
+                "title": "Current Items",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 존재하는 유효 문서·열린 변경",
+                "required_content": [
+                  "실제 존재하는 유효 문서·열린 변경을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "Task 상태를 독립적으로 수동 관리하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "stage-readme-contents-classification",
+                "level": 3,
+                "parent_id": "stage-readme-contents",
+                "title": "Classification",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "하위 유형·정본·비권위 기록 경계",
+                "required_content": [
+                  "하위 유형·정본·비권위 기록 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "Task 상태를 독립적으로 수동 관리하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "stage-readme-workflow",
+            "level": 2,
+            "parent_id": null,
+            "title": "Workflow",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "작성과 종료 흐름",
+            "required_content": [
+              "작성과 종료 흐름에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "Task 상태를 독립적으로 수동 관리하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "stage-readme-workflow-create-and-review",
+                "level": 3,
+                "parent_id": "stage-readme-workflow",
+                "title": "Create and Review",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "템플릿·검토·승인 경로",
+                "required_content": [
+                  "템플릿·검토·승인 경로을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "Task 상태를 독립적으로 수동 관리하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "stage-readme-workflow-transition-and-exit",
+                "level": 3,
+                "parent_id": "stage-readme-workflow",
+                "title": "Transition and Exit",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "상태 전이·승격·처분 소비자",
+                "required_content": [
+                  "상태 전이·승격·처분 소비자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "Task 상태를 독립적으로 수동 관리하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "stage-readme-related-documents",
+            "level": 2,
+            "parent_id": null,
+            "title": "Related Documents",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "단계 간 연결",
+            "required_content": [
+              "단계 간 연결에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "Task 상태를 독립적으로 수동 관리하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "stage-readme-related-documents-upstream-and-downstream",
+                "level": 3,
+                "parent_id": "stage-readme-related-documents",
+                "title": "Upstream and Downstream",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "요구·설계·작업·운영 연결",
+                "required_content": [
+                  "요구·설계·작업·운영 연결을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "Task 상태를 독립적으로 수동 관리하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "stage-readme-related-documents-policy-and-templates",
+                "level": 3,
+                "parent_id": "stage-readme-related-documents",
+                "title": "Policy and Templates",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "현재 규범·공통 템플릿 참조",
+                "required_content": [
+                  "현재 규범·공통 템플릿 참조을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "Task 상태를 독립적으로 수동 관리하지 않는다.",
                   "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
                 ],
                 "empty_policy": "explain_none_or_not_applicable",

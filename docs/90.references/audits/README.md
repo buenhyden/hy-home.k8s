@@ -1,17 +1,19 @@
 ---
 title: "90.references/audits"
-version: "0.2.1"
+version: "0.2.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "references"
 ---
 # 90.references/audits
 
-> 구현 audit pack, 그 보고서, 오래 유지할 audit 증거를 두는 곳이다.
+## Stage Responsibility
 
-## Overview
+### Purpose and Readers
+
+> 구현 audit pack, 그 보고서, 오래 유지할 audit 증거를 두는 곳이다.
 
 `audits/`는 오래 유지할 audit 자료를 둔다. 저장소에 실제로 무엇이 있는지를
 관찰 날짜와 함께 확인한 결과, 각 관찰을 얻은 방법, 그로부터 나온 발견 사항이
@@ -23,7 +25,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`,
 `docs/05.operations/`의 정본 소유자가 맡는다.
 
-### Collection Readers
+#### Collection Readers
 
 이 README의 주요 독자:
 
@@ -31,9 +33,9 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - Operators
 - Documentation Writers
 
-## Scope
+### Inputs and Outputs
 
-### In Scope
+#### In Scope
 
 - audit pack 색인 자료
 - 관찰 날짜가 붙은 구현·적합성 검사
@@ -41,7 +43,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - `docs/99.templates/templates/references/audit-pack.template.md`로 만든 pack README
 - `docs/99.templates/templates/references/audit.template.md`로 만든 보고서
 
-### Out of Scope
+#### Out of Scope
 
 - 활성 거버넌스 정책이나 provider 실행 규칙
 - runtime roster 변경, hook 연결, 권한 변경
@@ -49,7 +51,9 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - 운영 runbook, release gate, 배포 승인, incident 대응
 - 생성되었거나 병행 관리되는 `docs/superpowers/**` 내용
 
-## Structure
+## Contents
+
+### Current Items
 
 ```text
 audits/
@@ -59,7 +63,13 @@ audits/
 
 현재 pack은 [0001-sdlc-governance](./0001-sdlc-governance/README.md) 하나다.
 
-## Usage
+### Classification
+
+이 README에는 분류 표가 따로 없다.
+
+## Workflow
+
+### Create and Review
 
 1. audit pack 자료를 추가하거나 바꾸기 전에 해당 Spec 패키지(`docs/03.specs/`)가 있으면 그 Plan과 Task를 읽는다.
 2. `audits/####-<slug>/README.md`는
@@ -72,7 +82,7 @@ audits/
 5. 활성 정책, 구현 계약, runbook, task 증거는 여기서 다시 정의하지 말고 각 정본 소유자에게 돌려보낸다.
 6. audit pack 구조나 검증 증거가 바뀌면 이 README와 상위 [90.references README](../README.md)를 함께 갱신한다. 검증 증거는 활성 Task가 있으면 그 Task에 기록한다.
 
-### Relative Link Rules
+#### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/90.references/audits/`다.
 
@@ -82,11 +92,20 @@ audits/
 - 작성된 audit reference 파일에서 저장소 최상위 소스를 가리킬 때는 `../../../<path>`를 쓴다.
 - 선택 사항이거나 계획 중인 대상 경로는 대상이 생길 때까지 code literal로 둔다.
 
+### Transition and Exit
+
+이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
+
 ## Related Documents
 
+### Upstream and Downstream
+
 - [90.references README](../README.md)
+- [Agent Governance Hub](../../../.agents/README.md)
+- [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
+
+### Policy and Templates
+
 - [Audit Pack Template](../../99.templates/templates/references/audit-pack.template.md)
 - [Audit Reference Template](../../99.templates/templates/references/audit.template.md)
 - [Templates README](../../99.templates/README.md)
-- [Agent Governance Hub](../../../.agents/README.md)
-- [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

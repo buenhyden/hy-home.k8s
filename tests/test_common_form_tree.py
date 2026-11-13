@@ -66,6 +66,7 @@ ROLE_BINDINGS = {
     "operation/policy": "policy",
     "common/readme-repository": "root-readme",
     "common/readme-stage-index": "stage-readme",
+    "common/readme-collection-index": "stage-readme",
 }
 GUIDE = ("operation/guide", "common/template-operation-guide")
 ADR = ("sdlc/architecture-decision", "common/template-sdlc-architecture-decision")
@@ -160,9 +161,45 @@ ROOT_TABLE_KEYS = {
         "Path",
     ),
 }
-# The five roles that carry a form; every other profile keeps its H2 lists.
-FORM_PROFILES = GUIDE + RUNBOOK + INCIDENT + POSTMORTEM + ROOT_FORM
-FORM_TEMPLATES = (GUIDE[1], RUNBOOK[1], INCIDENT[1], POSTMORTEM[1], ROOT_FORM[1])
+STAGE_FORM = (
+    "common/readme-stage-index",
+    "common/template-readme-stage-index",
+    "common/readme-collection-index",
+    "common/template-readme-collection-index",
+)
+STAGE_FORM_TREE = (
+    ("Stage Responsibility", ("Purpose and Readers", "Inputs and Outputs")),
+    ("Contents", ("Current Items", "Classification")),
+    ("Workflow", ("Create and Review", "Transition and Exit")),
+    ("Related Documents", ("Upstream and Downstream", "Policy and Templates")),
+)
+STAGE_TABLE_KEYS = {
+    "Index": (
+        "stage-readme-contents-current-items",
+        ("Path", "Purpose", "Owner"),
+        0,
+        "Path",
+    ),
+}
+# The six roles that carry a form; every other profile keeps its H2 lists.
+FORM_PROFILES = GUIDE + RUNBOOK + INCIDENT + POSTMORTEM + ROOT_FORM + STAGE_FORM
+FORM_TEMPLATES = (
+    GUIDE[1],
+    RUNBOOK[1],
+    INCIDENT[1],
+    POSTMORTEM[1],
+    ROOT_FORM[1],
+    STAGE_FORM[1],
+    STAGE_FORM[3],
+)
+SIX_FORMS = [
+    "guide",
+    "runbook",
+    "incident",
+    "postmortem",
+    "root-readme",
+    "stage-readme",
+]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
     "Task or an N/A reason"
@@ -435,7 +472,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_five_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_six_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -451,6 +488,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ("incident", "Incident"),
                 ("postmortem", "Postmortem"),
                 ("root-readme", "Root README"),
+                ("stage-readme", "Stage README"),
             ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
@@ -493,6 +531,14 @@ class RepositoryRegistryTests(unittest.TestCase):
                 [],
                 ROOT_TABLE_KEYS,
                 ROOT_FORM,
+                None,
+            ),
+            (
+                "stage-readme",
+                STAGE_FORM_TREE,
+                [],
+                STAGE_TABLE_KEYS,
+                STAGE_FORM,
                 None,
             ),
         ):
@@ -557,26 +603,30 @@ class RepositoryRegistryTests(unittest.TestCase):
                 self.assertEqual(contract and contract["section"], body_section)
                 self.assertNotIn("substantive_body", profile["sections"])
                 self.assertNotIn("ordered", profile["sections"])
-            self.assertEqual(
-                {
-                    table["name"]: (
-                        table["section"],
-                        tuple(column["key"] for column in table["columns"]),
-                        table["minimum_rows"],
-                        table["row_identity"],
-                    )
-                    for table in by_id[profiles[1]]["template_definition"]["tables"]
-                },
-                tables,
-            )
-            for table in by_id[profiles[1]]["template_definition"]["tables"]:
-                for column in table["columns"]:
-                    self.assertTrue(column["meaning"])
-                    self.assertEqual(column["data_type"], "string")
-                    self.assertIs(
-                        column["required"],
-                        not (form_id == "root-readme" and column["key"] == "Owner"),
-                    )
+            for twin in (p for p in profiles if by_id[p]["mode"] == "template"):
+                self.assertEqual(
+                    {
+                        table["name"]: (
+                            table["section"],
+                            tuple(column["key"] for column in table["columns"]),
+                            table["minimum_rows"],
+                            table["row_identity"],
+                        )
+                        for table in by_id[twin]["template_definition"]["tables"]
+                    },
+                    tables,
+                )
+                for table in by_id[twin]["template_definition"]["tables"]:
+                    for column in table["columns"]:
+                        self.assertTrue(column["meaning"])
+                        self.assertEqual(column["data_type"], "string")
+                        self.assertIs(
+                            column["required"],
+                            not (
+                                form_id in ("root-readme", "stage-readme")
+                                and column["key"] == "Owner"
+                            ),
+                        )
         for profile_id, profile in by_id.items():
             sources = profile["relationships"]["source_profile_ids"]
             expected = ROLE_BINDINGS.get(
@@ -601,11 +651,11 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_five_forms(self) -> None:
+    def test_repository_registry_loads_with_exactly_the_six_forms(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            ["guide", "runbook", "incident", "postmortem", "root-readme"],
+            SIX_FORMS,
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -614,6 +664,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             "incident": ["Events", "Lifecycle Traceability"],
             "postmortem": ["Actions", "Lifecycle Traceability"],
             "root-readme": ["Directory Index"],
+            "stage-readme": ["Index"],
         }
         for profile in registry.profiles:
             with self.subTest(profile=profile.profile_id):
@@ -626,6 +677,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("incident", INCIDENT),
                             ("postmortem", POSTMORTEM),
                             ("root-readme", ROOT_FORM),
+                            ("stage-readme", STAGE_FORM),
                         )
                         if profile.profile_id in ids
                     ),
@@ -676,7 +728,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            ["guide", "runbook", "incident", "postmortem", "root-readme"],
+            SIX_FORMS,
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -1629,6 +1681,121 @@ class RootReadmeFormTests(unittest.TestCase):
         )
 
 
+class StageReadmeFormTests(unittest.TestCase):
+    """SPEC-0173: the Stage README form, its Index table and its navigation."""
+
+    HOME = "### Current Items\n\nText."
+    HEADER = ("Path", "Purpose", "Owner")
+    BODY = md(
+        "# Stage",
+        *(
+            f"{'## ' + title}\n\n" + "\n\n".join(f"### {h3}\n\nText." for h3 in h3s)
+            for title, h3s in STAGE_FORM_TREE
+        ),
+    )
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = CONTRACTS.load_registry(ROOT)
+        cls.by_id = {p.profile_id: p for p in cls.registry.profiles}
+
+    def tree(self, profile_id: str, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(
+                PurePosixPath("docs/README.md"), self.by_id[profile_id], text
+            )
+        )
+
+    def tables(self, profile_id: str, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._table_diagnostics(
+                PurePosixPath("docs/README.md"), self.by_id[profile_id], text
+            )
+        )
+
+    def with_table(self, *lines: str, home: str | None = None) -> str:
+        home = home or self.HOME
+        return self.BODY.replace(home, home + "\n\n" + "\n".join(lines), 1)
+
+    def test_the_heading_lists_equal_the_form_h2_titles(self) -> None:
+        titles = tuple(title for title, _ in STAGE_FORM_TREE)
+        for profile_id in STAGE_FORM:
+            with self.subTest(profile=profile_id):
+                headings = self.by_id[profile_id].headings
+                self.assertEqual(headings.required, titles)
+                self.assertEqual(headings.allowed, titles)
+
+    def test_a_complete_body_passes_and_an_old_h2_fails_the_tree(self) -> None:
+        for profile_id in STAGE_FORM[::2]:
+            with self.subTest(profile=profile_id):
+                self.assertEqual(self.tree(profile_id, self.BODY), [])
+                deeper = self.BODY.replace(
+                    "### Classification\n\nText.",
+                    "### Classification\n\nText.\n\n#### Matrix\n\nText.",
+                )
+                self.assertEqual(self.tree(profile_id, deeper), [])
+                self.assertNotEqual(
+                    self.tree(profile_id, self.BODY + "\n## Structure\n\nText.\n"), []
+                )
+                self.assertIn(
+                    "BODY-H3-REQUIRED",
+                    self.tree(
+                        profile_id,
+                        self.BODY.replace("### Current Items", "#### Current Items"),
+                    ),
+                )
+
+    def test_the_index_table_accepts_its_registered_columns(self) -> None:
+        for profile_id in STAGE_FORM[::2]:
+            for header in (self.HEADER[:2], self.HEADER):
+                row = tuple("x" for _ in header)
+                text = self.with_table(
+                    "| " + " | ".join(header) + " |",
+                    "| " + " | ".join("---" for _ in header) + " |",
+                    "| " + " | ".join(row) + " |",
+                )
+                with self.subTest(profile=profile_id, header=header):
+                    self.assertEqual(self.tables(profile_id, text), [])
+            header_only = self.with_table("| Path | Purpose |", "| --- | --- |")
+            with self.subTest(profile=profile_id, header="header only"):
+                self.assertEqual(self.tables(profile_id, header_only), [])
+
+    def test_a_reordered_missing_or_extra_column_fails(self) -> None:
+        for profile_id in STAGE_FORM[::2]:
+            for header in (
+                ("Path",),
+                ("Path", "Owner", "Purpose"),
+                (*self.HEADER, "Note"),
+            ):
+                text = self.with_table(
+                    "| " + " | ".join(header) + " |",
+                    "| " + " | ".join("---" for _ in header) + " |",
+                    "| " + " | ".join("x" for _ in header) + " |",
+                )
+                with self.subTest(profile=profile_id, header=header):
+                    self.assertEqual(
+                        self.tables(profile_id, text), ["BODY-TABLE-COLUMNS"]
+                    )
+
+    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
+        wrong = self.with_table(
+            "| Path |", "| --- |", "| a |", home="### Classification"
+        )
+        for profile_id in STAGE_FORM[::2]:
+            with self.subTest(profile=profile_id):
+                self.assertEqual(self.tables(profile_id, wrong), [])
+
+    def test_the_navigation_section_is_the_current_items_h3(self) -> None:
+        for profile_id in STAGE_FORM[::2]:
+            navigation = self.registry.readme_navigation.profiles[profile_id]
+            with self.subTest(profile=profile_id):
+                self.assertEqual(
+                    (navigation.section, navigation.complete), ("Current Items", True)
+                )
+
+
 class TableIteratorTests(unittest.TestCase):
     def test_every_table_is_yielded_in_order(self) -> None:
         text = md(
@@ -2175,12 +2342,12 @@ class RetainedFormTests(unittest.TestCase):
         self.assertEqual(body_rules("proposed", self.TREE), [])
 
 
-class CurrentRegistryFiveFormsOnlyTests(unittest.TestCase):
-    def test_only_the_five_form_profiles_use_the_tree(self) -> None:
+class CurrentRegistrySixFormsOnlyTests(unittest.TestCase):
+    def test_only_the_six_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            ["guide", "runbook", "incident", "postmortem", "root-readme"],
+            SIX_FORMS,
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),

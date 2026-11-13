@@ -1,20 +1,57 @@
 ---
 title: "05.operations/guides"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "operations"
 ---
 # 05.operations/guides
 
-> 운영자와 개발자가 k3d/GitOps 작업을 이해하고 재현할 수 있도록 how-to 중심 가이드를 관리한다.
+## Stage Responsibility
 
-## Overview
+### Purpose and Readers
+
+> 운영자와 개발자가 k3d/GitOps 작업을 이해하고 재현할 수 있도록 how-to 중심 가이드를 관리한다.
 
 이 경로는 안정 상태의 사용법, 온보딩 흐름, 배경 설명을 제공한다.
 정책 통제 기준은 [policies](../policies/README.md), 즉시 실행할 복구 절차는 [runbooks](../runbooks/README.md), 실제 사고 기록은 [incidents](../incidents/README.md)에서 관리한다.
+
+#### Collection Readers
+
+이 README의 주요 독자:
+
+- Developers
+- Operators
+- Documentation Writers
+
+### Inputs and Outputs
+
+#### In Scope
+
+- 온보딩/이해 중심 가이드
+- 선행 조건과 점검 명령
+- 공통 실패 패턴 및 회피 방법
+- Spec/Operations/Runbook 교차 링크
+
+#### Out of Scope
+
+- 정책 통제 기준 정의
+- 실시간 장애 대응 절차
+- 사후 사고 분석 보고서
+
+## Contents
+
+### Current Items
+
+#### 문서 인덱스
+
+| Path | Purpose |
+| --- | --- |
+| [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md) | CI/CD QA 검증의 로컬·호스팅 경계와 증적 해석 안내 |
+
+### Classification
 
 | 필요 상황                                        | 문서 유형        |
 | ------------------------------------------------ | ---------------- |
@@ -23,38 +60,9 @@ layer: "operations"
 | 실패 상황에서 바로 따라 할 체크리스트가 필요함   | Runbook으로 이동 |
 | 허용/금지/예외 기준을 확인해야 함                | Policy로 이동    |
 
-### Collection Readers
+## Workflow
 
-이 README의 주요 독자:
-
-- Developers
-- Operators
-- Documentation Writers
-
-## Scope
-
-### In Scope
-
-- 온보딩/이해 중심 가이드
-- 선행 조건과 점검 명령
-- 공통 실패 패턴 및 회피 방법
-- Spec/Operations/Runbook 교차 링크
-
-### Out of Scope
-
-- 정책 통제 기준 정의
-- 실시간 장애 대응 절차
-- 사후 사고 분석 보고서
-
-## Structure
-
-### 문서 인덱스
-
-| Path | Purpose |
-| --- | --- |
-| [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md) | CI/CD QA 검증의 로컬·호스팅 경계와 증적 해석 안내 |
-
-## Usage
+### Create and Review
 
 1. 현재 플랫폼 구조는 [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md), 운영 통제와 절차는 관련 Policy/Runbook에서 확인한다.
 2. 새 가이드 추가/수정 시 [guide.template.md](../../99.templates/templates/operations/guide.template.md)를 기반으로 작성한다.
@@ -63,7 +71,7 @@ layer: "operations"
 5. 명령 순서, 롤백, 복구가 핵심이면 가이드에 복제하지 말고 [runbooks](../runbooks/README.md)에 둔다.
 6. 허용/금지/예외 승인 기준은 가이드가 아니라 [policies](../policies/README.md)에 둔다.
 
-### Documentation Standards
+#### Documentation Standards
 
 이 영역의 가이드는 안정 상태의 사용법과 이해를 돕는 문서로 유지한다.
 
@@ -71,7 +79,7 @@ layer: "operations"
 - 기존 Spec, Policy, Runbook이 소유하는 계약을 중복 정의하지 않고 상대 링크로 연결한다.
 - 실행 예시는 재현 가능한 형태로 작성하고, 고위험 명령 경계는 [Operations Mutation Boundary](../README.md#operations-mutation-boundary)를 따른다.
 
-### Traceability Rules
+#### Traceability Rules
 
 Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 
@@ -79,7 +87,7 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - sibling 운영 문서: 관련 Policy, Runbook, Incident 경로
 - 하위 실행 증적: Task 또는 validation guide
 
-### Relative Link Rules
+#### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/05.operations/guides/`다.
 
@@ -87,7 +95,13 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - sibling operations folder는 `../policies/`, `../runbooks/`, `../incidents/`로 연결한다.
 - upstream docs stage는 `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`로 연결한다.
 
+### Transition and Exit
+
+이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
+
 ## Related Documents
+
+### Upstream and Downstream
 
 - [Agent Governance Hub](../../../.agents/README.md)
 - [03.specs](../../03.specs/README.md)
@@ -96,5 +110,8 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - [05.operations/incidents](../incidents/README.md)
 - [Requirement](../../01.requirements/0004-current-local-gitops-platform.md)
 - [AD](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+
+### Policy and Templates
+
 - [Guide Template](../../99.templates/templates/operations/guide.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)

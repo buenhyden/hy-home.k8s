@@ -1,17 +1,19 @@
 ---
 title: "90.references/data"
-version: "0.2.1"
+version: "0.2.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "references"
 ---
 # 90.references/data
 
-> 오래 유지할 data pack, 그 dataset, dataset 출처를 두는 곳이다.
+## Stage Responsibility
 
-## Overview
+### Purpose and Readers
+
+> 오래 유지할 data pack, 그 dataset, dataset 출처를 두는 곳이다.
 
 `data/`는 오래 유지할 dataset 자료를 둔다. 저장소가 의존하는 데이터의 형태와
 출처, 각 스냅샷을 수집한 방법, 갱신·보존 경계가 여기에 해당한다. 이후의 plan,
@@ -23,7 +25,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`,
 `docs/05.operations/`의 정본 소유자가 맡는다.
 
-### Collection Readers
+#### Collection Readers
 
 이 README의 주요 독자:
 
@@ -31,9 +33,9 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - Operators
 - Documentation Writers
 
-## Scope
+### Inputs and Outputs
 
-### In Scope
+#### In Scope
 
 - data pack 색인 자료
 - dataset의 형태, 출처, 수집 방법 기록
@@ -41,7 +43,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - `docs/99.templates/templates/references/data-pack.template.md`로 만든 pack README
 - `docs/99.templates/templates/references/data.template.md`로 만든 dataset
 
-### Out of Scope
+#### Out of Scope
 
 - 활성 거버넌스 정책이나 provider 실행 규칙
 - runtime roster 변경, hook 연결, 권한 변경
@@ -49,7 +51,9 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - secret 값, credential, 가리지 않은 민감 기록
 - 운영 runbook, release gate, 배포 승인, incident 대응
 
-## Structure
+## Contents
+
+### Current Items
 
 ```text
 data/
@@ -59,7 +63,13 @@ data/
 이 collection은 현재 data pack을 보유하지 않는다. 이는 현재 처분 결과일 뿐이며,
 고유한 목적과 출처 경계를 갖춘 data pack의 추가를 금지하지 않는다.
 
-## Usage
+### Classification
+
+이 README에는 분류 표가 따로 없다.
+
+## Workflow
+
+### Create and Review
 
 1. data pack 자료를 추가하거나 바꾸기 전에 해당 Spec 패키지(`docs/03.specs/`)가 있으면 그 Plan과 Task를 읽는다.
 2. `data/####-<slug>/README.md`는
@@ -72,7 +82,7 @@ data/
 5. 활성 정책, 구현 계약, runbook, task 증거는 여기서 다시 정의하지 말고 각 정본 소유자에게 돌려보낸다.
 6. data pack 구조나 검증 증거가 바뀌면 이 README와 상위 [90.references README](../README.md)를 함께 갱신한다. 검증 증거는 활성 Task가 있으면 그 Task에 기록한다.
 
-### Relative Link Rules
+#### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/90.references/data/`다.
 
@@ -82,11 +92,20 @@ data/
 - 작성된 data reference 파일에서 저장소 최상위 소스를 가리킬 때는 `../../../<path>`를 쓴다.
 - 선택 사항이거나 계획 중인 대상 경로는 대상이 생길 때까지 code literal로 둔다.
 
+### Transition and Exit
+
+이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
+
 ## Related Documents
 
+### Upstream and Downstream
+
 - [90.references README](../README.md)
+- [Agent Governance Hub](../../../.agents/README.md)
+- [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
+
+### Policy and Templates
+
 - [Data Pack Template](../../99.templates/templates/references/data-pack.template.md)
 - [Data Reference Template](../../99.templates/templates/references/data.template.md)
 - [Templates README](../../99.templates/README.md)
-- [Agent Governance Hub](../../../.agents/README.md)
-- [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

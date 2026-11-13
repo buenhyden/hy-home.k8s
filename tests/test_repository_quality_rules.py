@@ -303,6 +303,14 @@ class RepositoryQualityRuleTests(unittest.TestCase):
                     (["Name", "Value"], [["alpha", "one"]]),
                 )
         self.assertIsNone(parse(f"## {title}\n### {title}" + table, title))
+        self.assertEqual(
+            parse(f"## Contents\n\n#### {title}" + table, title),
+            (["Name", "Value"], [["alpha", "one"]]),
+        )
+        for outer in ("##", "###"):
+            self.assertIsNone(parse(f"{outer} {title}\n#### {title}" + table, title))
+        self.assertIsNone(parse(f"#### {title}\n#### {title}" + table, title))
+        self.assertIsNone(parse(f"##### {title}" + table, title))
         self.assertIsNone(parse(f"```markdown\n## {title}{table}```\n", title))
 
     def test_generic_residue_retains_lines_and_delegates_structural_markdown(self):

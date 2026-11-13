@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.22.0"
+version: "0.23.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -9,9 +9,11 @@ layer: "templates"
 ---
 # 99.templates
 
-> repo-authored 문서와 README가 시작해야 하는 canonical template stage다.
+## Stage Responsibility
 
-## Overview
+### Purpose and Readers
+
+> repo-authored 문서와 README가 시작해야 하는 canonical template stage다.
 
 이 경로는 직접 복사 가능한 form과 사람을 위한 authoring guidance를 함께 제공한다. 정확한 경로, profile, frontmatter, 상태, heading, lifecycle,
 relationship, template 연결은
@@ -43,9 +45,28 @@ JSON·YAML 등 비 Markdown 파일과 `.codex/`·`.claude/`의 native 문서는
 확장과 아래의 Task 최초 기록·Spec/Plan 직접 전이·조건부 최초 승인 확장은 각각 하나만으로 승인된
 WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 
-## Scope
+### Inputs and Outputs
 
-### Responsibility Boundary
+입력과 출력: 해당 없음 — 이 stage README는 입력과 출력의 범위를 따로 나열하지 않는다.
+
+## Contents
+
+### Current Items
+
+| Path | Purpose |
+| --- | --- |
+| [contracts/](./contracts/) | 기계 계약과 그 schema |
+| [templates/](./templates/) | 복사해서 쓰는 form catalog |
+| [registry.json](./registry.json) | Document Profile Registry |
+| [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
+| [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
+
+이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
+[form catalog](./templates/README.md)가 소유한다.
+
+### Classification
+
+#### Responsibility Boundary
 
 | Surface | Role | Canonical owner |
 | --- | --- | --- |
@@ -58,7 +79,7 @@ WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 계약을 소유하지 않는다. Form에는 재사용 가능한 구조만 두고, 공통 규칙은 이 README
 또는 `.agents/governance`의 공통 정책으로 돌려보낸다.
 
-### Physical Form Inventory
+#### Physical Form Inventory
 
 Form directory는 사람이 form을 찾도록 physical responsibility surface별로 묶는다.
 파일 이름은 form이 만드는 문서 kind를 나타내지만, directory 이름은 Registry
@@ -68,9 +89,10 @@ form 경로의 대응은 Registry만 소유한다.
 
 - **Common forms** (`common/`): governed navigation README는 순서가 고정된
   여섯 key 봉투와 `type: "common/readme"`, `status: "active"`, 별도 artifact
-  identity 없는 형태를 공유한다. stage·collection·implementation·workspace·
-  runtime-governance README만 `Overview`/`Scope`/`Structure`/`Usage`/
-  `Related Documents` core를 공유하고, 루트 README는 Registry form의 `Purpose`,
+  identity 없는 형태를 공유한다. stage·collection README는 Stage README form을 쓰고,
+  `Overview`/`Scope`/`Structure`/`Usage`/`Related Documents` core는
+  implementation(W03-D16이 해결될 때까지 agent·provider README 네 곳 포함)·
+  workspace·runtime-governance README만 공유하며, 루트 README는 Registry form의 `Purpose`,
   `Repository Map`, `Getting Started`, `References`를 쓴다. 각 form과 선택
   module은 경로별 Registry profile이 고른다. stage·collection index form은 `updated` 뒤에
   `layer`를 더한다. README는 사람 독자만을 대상으로 한다. 폴더의 agent 지시는 그
@@ -144,7 +166,7 @@ form 경로의 대응은 Registry만 소유한다.
 현재 physical form의 전체 목록과 각각의 소유 profile은 README나 support prose가
 아니라 registry와 repository quality gate에서 계산한다.
 
-### Deliberately Empty Profiles
+#### Deliberately Empty Profiles
 
 현재 record가 없는 것은 곧 사용하지 않는 capacity를 뜻하지 않는다.
 `operation/incident`와 `operation/postmortem`은 사건 발생 전에도 운영 증거를
@@ -153,20 +175,9 @@ form 경로의 대응은 Registry만 소유한다.
 Stage 90 collection contract가 요구하는 audit/data collection·pack 경로를
 구조적으로 보장하므로 유지한다. 이는 이미 retired한 미사용 capacity와 구별한다.
 
-## Structure
+## Workflow
 
-| Path | Purpose |
-| --- | --- |
-| [contracts/](./contracts/) | 기계 계약과 그 schema |
-| [templates/](./templates/) | 복사해서 쓰는 form catalog |
-| [registry.json](./registry.json) | Document Profile Registry |
-| [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
-| [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
-
-이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
-[form catalog](./templates/README.md)가 소유한다.
-
-## Usage
+### Create and Review
 
 1. **Classify**: repository-relative target path를 registry로 분류하고 정확히 하나의
    profile이 선택되는지 확인한다.
@@ -223,17 +234,7 @@ PASS로 미해소 필수 결과를 숨기지 않는다. 완료 인계는 필수 
 있지만 사유와 다음 owner를 남긴다.
 resolved Incident에는 시간대를 포함한 실제 resolved_at과 해결 증거가 필요하다.
 
-### Task Status Authoring
-
-Task 행 상태와 frontmatter `status`의 작성법은
-[Document Authoring Policy](../../.agents/governance/document-authoring.md)와
-[Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)가,
-Task 최초 기록이 허용하는 상태와 Spec·Plan의 direct approval·first-record
-approval 예외는 Document Lifecycle Policy가 정본이다. 이 README는 그 규칙을
-다시 적지 않는다. 지역 확장의 정확한 이름은 Registry
-`shared_contract.extensions`에 있다.
-
-### Shared Frontmatter Grammar
+#### Shared Frontmatter Grammar
 
 모든 governed Markdown은 "title", "version", "type", "status", "owner",
 "updated" 순서로 시작한다. 이후 "layer", "artifact_id", relationship,
@@ -267,8 +268,25 @@ optional identity만 보존한다.
 Stage 98(`docs/98.archive/`)에는 profile과 form이 없다. 그 경로는 문서
 inventory 밖이며 검증하지 않는다.
 
+### Transition and Exit
+
+#### Task Status Authoring
+
+Task 행 상태와 frontmatter `status`의 작성법은
+[Document Authoring Policy](../../.agents/governance/document-authoring.md)와
+[Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)가,
+Task 최초 기록이 허용하는 상태와 Spec·Plan의 direct approval·first-record
+approval 예외는 Document Lifecycle Policy가 정본이다. 이 README는 그 규칙을
+다시 적지 않는다. 지역 확장의 정확한 이름은 Registry
+`shared_contract.extensions`에 있다.
+
 ## Related Documents
 
+### Upstream and Downstream
+
 - [Docs README](../README.md)
+
+### Policy and Templates
+
 - [Agent Governance Hub](../../.agents/README.md)
 - [Document Authoring Policy](../../.agents/governance/document-authoring.md)

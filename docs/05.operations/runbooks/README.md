@@ -1,6 +1,6 @@
 ---
 title: "05.operations/runbooks"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -9,9 +9,11 @@ layer: "operations"
 ---
 # 05.operations/runbooks
 
-> 반복 가능한 운영 작업을 즉시 실행할 수 있는 체크리스트/절차 문서를 관리한다.
+## Stage Responsibility
 
-## Overview
+### Purpose and Readers
+
+> 반복 가능한 운영 작업을 즉시 실행할 수 있는 체크리스트/절차 문서를 관리한다.
 
 이 경로는 운영자가 장애 상황 또는 재구축 상황에서 바로 실행 가능한 절차를 제공한다.
 정책 정의는 [policies](../policies/README.md), 가이드 설명은 [guides](../guides/README.md), 사고 분석은 [incidents](../incidents/README.md)에서 관리한다.
@@ -19,14 +21,7 @@ layer: "operations"
 런북은 “정해진 순서로 실행하고, 증적을 남기고, 실패 시 복구하는 문서”다.
 배경 설명과 온보딩은 [guides](../guides/README.md), 허용/금지/예외 기준은 [policies](../policies/README.md), 실제 사고 기록은 [incidents](../incidents/README.md)로 보낸다.
 
-| 필요 상황                                | 문서 유형     |
-| ---------------------------------------- | ------------- |
-| 명령 순서, 검증 기준, 복구 경로가 필요함 | Runbook       |
-| 장애 시그니처를 보고 대응해야 함         | Runbook       |
-| 정책의 허용/금지 기준을 확인해야 함      | Policy로 이동 |
-| 작업 배경과 선행 지식을 익혀야 함        | Guide로 이동  |
-
-### Collection Readers
+#### Collection Readers
 
 이 README의 주요 독자:
 
@@ -34,24 +29,26 @@ layer: "operations"
 - Developers
 - Documentation Writers
 
-## Scope
+### Inputs and Outputs
 
-### In Scope
+#### In Scope
 
 - 실행 순서 중심 체크리스트
 - 검증 커맨드와 성공 기준
 - 오류 시그니처 기반 트러블슈팅
 - 안전한 롤백/복구 절차
 
-### Out of Scope
+#### Out of Scope
 
 - 정책 통제의 정의 자체
 - 튜토리얼 중심 배경 설명
 - 사고 원인 분석 보고서
 
-## Structure
+## Contents
 
-### 문서 인덱스
+### Current Items
+
+#### 문서 인덱스
 
 | Path | Purpose |
 | --- | --- |
@@ -66,7 +63,18 @@ layer: "operations"
 | [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md) | Stage 90 Audit/Data/Research pack 유지보수 런북 |
 | [`./0012-main-release-preparation-runbook.md`](./0012-main-release-preparation-runbook.md) | main CHANGELOG 준비와 SemVer GitHub Release의 운영자 게시 절차 |
 
-## Usage
+### Classification
+
+| 필요 상황                                | 문서 유형     |
+| ---------------------------------------- | ------------- |
+| 명령 순서, 검증 기준, 복구 경로가 필요함 | Runbook       |
+| 장애 시그니처를 보고 대응해야 함         | Runbook       |
+| 정책의 허용/금지 기준을 확인해야 함      | Policy로 이동 |
+| 작업 배경과 선행 지식을 익혀야 함        | Guide로 이동  |
+
+## Workflow
+
+### Create and Review
 
 1. 관련 Spec/Operations를 먼저 확인해 계약값을 고정한다.
 2. [runbook.template.md](../../99.templates/templates/operations/runbook.template.md)를 기반으로 작성한다.
@@ -75,7 +83,7 @@ layer: "operations"
 5. 정책 통제 기준은 런북에 복제하지 말고 [policies](../policies/README.md)로 연결한다.
 6. 고위험 명령 예시는 [Operations Mutation Boundary](../README.md#operations-mutation-boundary)를 따른다.
 
-### Usage Instructions
+#### Usage Instructions
 
 이 영역은 운영자가 정해진 순서대로 실행할 절차가 필요할 때 사용한다.
 
@@ -83,18 +91,18 @@ layer: "operations"
 2. Runbook의 `Purpose`와 `Preconditions`를 확인한 뒤 `Steps`를 따라 실행한다.
 3. 실행 후 `Validation`과 그 `Evidence`에 맞춰 증적을 남긴다.
 
-### Verification and Monitoring
+#### Verification and Monitoring
 
 - Runbook 문서 구조 검증은 [runbook.template.md](../../99.templates/templates/operations/runbook.template.md)와 `scripts/qa.py`를 기준으로 한다.
 - 작업 증적은 명령 출력, GitOps diff, ArgoCD sync 상태, dashboard/log snapshot, CI 결과 중 해당 Runbook이 요구하는 항목으로 남긴다.
 
-### Incident and Recovery Links
+#### Incident and Recovery Links
 
 - Policies: [05.operations/policies](../policies/README.md)
 - Incident Records: [05.operations/incidents](../incidents/README.md)
 - Postmortems: `../incidents/<year>/inc-####-<slug>/postmortem.md`
 
-### Relative Link Rules
+#### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/05.operations/runbooks/`다.
 
@@ -102,13 +110,22 @@ layer: "operations"
 - sibling operations folder는 `../guides/`, `../policies/`, `../incidents/`로 연결한다.
 - upstream docs stage는 `../../02.architecture/`, `../../03.specs/`로 연결한다.
 
+### Transition and Exit
+
+이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
+
 ## Related Documents
+
+### Upstream and Downstream
 
 - [05.operations/guides](../guides/README.md)
 - [05.operations/policies](../policies/README.md)
 - [05.operations/incidents](../incidents/README.md)
 - [AD](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [ADR](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+
+### Policy and Templates
+
 - [Operations Policy](../policies/0001-k8s-gitops-operations-policy.md)
 - [Runbook Template](../../99.templates/templates/operations/runbook.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)

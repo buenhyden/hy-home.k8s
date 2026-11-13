@@ -446,7 +446,7 @@ class RepositoryContractTests(unittest.TestCase):
             "docs/90.references/research/0009-x/m0001-a.md",
         )
         text = (
-            "# R\n\n## Structure\n\n- [0009-x/](./0009-x/)\n"
+            "# R\n\n## Contents\n\n### Current Items\n\n- [0009-x/](./0009-x/)\n"
             "- [a](./0009-x/m0001-a.md)\n"
         )
         self.assertIn(
@@ -457,7 +457,7 @@ class RepositoryContractTests(unittest.TestCase):
     def test_knowledge_collection_must_reach_every_document(self):
         path = ".agents/knowledge/README.md"
         files = (".agents/knowledge/map.md", ".agents/knowledge/other.md")
-        text = "# K\n\n## Structure\n\n- [map](map.md)\n"
+        text = "# K\n\n## Contents\n\n### Current Items\n\n- [map](map.md)\n"
         self.assertEqual(
             self.diagnostics(path, "common/readme-collection-index", text, files),
             {"README-NAV-COMPLETE"},
@@ -470,6 +470,24 @@ class RepositoryContractTests(unittest.TestCase):
                 files,
             ),
             set(),
+        )
+
+    def test_stage_readme_lists_every_child_under_current_items(self):
+        path = "docs/03.specs/README.md"
+        files = ("docs/03.specs/0001-a/spec.md", "docs/03.specs/0002-b/spec.md")
+        text = (
+            "# S\n\n## Contents\n\n### Current Items\n\n"
+            "| Path | Purpose |\n| --- | --- |\n"
+            "| [0001-a/](./0001-a/) | A |\n| [0002-b/](./0002-b/) | B |\n\n"
+            "### Classification\n\nNone.\n"
+        )
+        self.assertEqual(
+            self.diagnostics(path, "common/readme-stage-index", text, files), set()
+        )
+        missing = text.replace("| [0002-b/](./0002-b/) | B |\n", "")
+        self.assertEqual(
+            self.diagnostics(path, "common/readme-stage-index", missing, files),
+            {"README-NAV-COMPLETE"},
         )
 
 
