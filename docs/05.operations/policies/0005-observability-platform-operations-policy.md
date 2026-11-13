@@ -1,10 +1,10 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.3.3"
+version: "1.4.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 layer: "operations"
 artifact_id: "POL-0005"
 ---
@@ -13,11 +13,21 @@ artifact_id: "POL-0005"
 
 ## Purpose
 
+### Objective
+
 이 문서는 local cluster와 외부 observability backend 사이의 메트릭·로그
 수집 통제를 하나의 정책으로 정의한다. 서비스 포트, in-cluster Alloy 수집과 remote write,
 Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
+### Authority
+
+이 정책이 근거로 삼는 상위 문서는 다음과 같다.
+
+- [Service Mesh and cert-manager Policy](./0003-service-mesh-cert-manager-policy.md)
+
 ## Scope
+
+### Applies To
 
 - `gitops/platform/external-services/`의 Istio 포트 명명
 - `gitops/platform/argocd/`와 `gitops/platform/monitoring/`의 metrics endpoint
@@ -28,17 +38,15 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 - **Roles**: Platform Owner, Observability Owner, approved operator
 - **Environment**: Linux server local cluster와 연결된 external observability services
 
-## Controls
+### Exclusions
 
-### Responsibilities
+범위에서 제외한다고 따로 표시한 항목은 Scope 절에 없으며, 외부 observability 설정의 소유 경계는 아래 Exception Conditions에 적혀 있다.
 
-| Role | Responsibility | Escalation owner |
-| --- | --- | --- |
-| Platform Owner | Service, AppProject GitOps 계약을 승인한다. | Workspace Owner |
-| Observability Owner | Prometheus, Grafana, Loki, Alloy 수집 계약을 유지한다. | Platform Owner |
-| Approved operator | Runbook에 따라 runtime 증적과 복구 결과를 기록한다. | Platform Owner |
+## Rules
 
-### Control Register
+### Requirements
+
+#### Control Register
 
 | Control | Accountable role | Enforcement surface | Evidence |
 | --- | --- | --- | --- |
@@ -49,14 +57,14 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 | OBS-005 access | Platform Owner | Grafana service account role and AppProject destinations | Viewer-only token and monitoring destination |
 | OBS-006 in-cluster metric collection | Observability Owner | in-cluster Alloy `prometheus.remote_write` to `https://prometheus.hy.home.arpa/api/v1/write` through the external Traefik with Basic Auth (`monitoring/prometheus-api-auth`) and the `hy-home-root-ca` gateway CA, and `monitoring` egress to host `192.168.0.13:443` (ADR-0046) | `cluster="k3d-hyhome"` series for jobs `kubernetes-pods`, `kubelet`, `cadvisor` in the external Prometheus |
 
-### Service Port Naming
+#### Service Port Naming
 
 `gitops/platform/external-services/`의 Service와 EndpointSlice 포트 이름은 `<protocol>[-suffix]` 형식이어야 한다.
 현재 외부 계약은 Alloy `grpc-otlp`/`http-otlp`, Valkey `tcp-valkey`,
 Loki와 Tempo의 `http`를 사용한다. suffix-only
 이름이나 프로토콜이 없는 이름은 금지한다.
 
-### In-Cluster Metric Collection
+#### In-Cluster Metric Collection
 
 k8s 메트릭의 기준 수집 경로는 cluster 안 Alloy다
 ([ADR-0045](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md)).
@@ -68,7 +76,7 @@ Prometheus의 NodePort static scrape와 metrics NodePort Service(`30082-30092`)�
 Service가 다시 생기면 실패한다. 수집을 위해 과도한 kubeconfig 권한을 외부에
 부여하지 않는다.
 
-### Logs, Rules, and Access
+#### Logs, Rules, and Access
 
 - in-cluster `alloy-k8s-logs`는 `monitoring` namespace에서 Kubernetes API를
   통해 pod logs/events를 수집하고 `loki-external.platform.svc.cluster.local:3100`으로 전송한다.
@@ -82,15 +90,7 @@ Service가 다시 생기면 실패한다. 수집을 위해 과도한 kubeconfig 
 - `gitops/clusters/local/appproject-platform.yaml`은 `monitoring` destination을
   명시하며 wildcard destination으로 대체하지 않는다.
 
-## Exceptions and Escalation
-
-AppProject live 변경은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions-and-escalation)의
-공통 live 변경 예외를 따른다. 이 정책이 추가하는 조건은 manifest와 관련
-Runbook을 같은 변경으로 동기화하는 것이다. 외부
-Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소유하며
-이 저장소의 Runbook은 그 결과를 검증만 한다.
-
-## Verification and Review
+### Enforcement
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
@@ -108,12 +108,37 @@ Alloy의 relabel·remote-write 설정과 실제 외부 Prometheus의 series 수�
 단일 원본은 [REQ-0004 telemetry 시나리오](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-telemetry)이며,
 이 정책과 RUN-0008/0009는 책임자와 검증 경로를 제공한다.
 
-## Related Documents
-
-- [Service Mesh and cert-manager Policy](./0003-service-mesh-cert-manager-policy.md)
 - [Kiali Connectivity Runbook](../runbooks/0007-kiali-observability-connectivity-runbook.md)
 - [ArgoCD Metrics Runbook](../runbooks/0008-argocd-metrics-prometheus-runbook.md)
 - [K8s Observability Runbook](../runbooks/0009-k8s-observability-runbook.md)
+
+## Exceptions
+
+### Exception Conditions
+
+AppProject live 변경은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의
+공통 live 변경 예외를 따른다. 이 정책이 추가하는 조건은 manifest와 관련
+Runbook을 같은 변경으로 동기화하는 것이다. 외부
+Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소유하며
+이 저장소의 Runbook은 그 결과를 검증만 한다.
+
+### Approval and Review
+
+예외 승인은 위 Exception Conditions가 가리키는 POL-0001의 공통 live 변경 예외를 따른다.
+
+## Ownership
+
+### Responsibilities
+
+| Role | Responsibility | Escalation owner |
+| --- | --- | --- |
+| Platform Owner | Service, AppProject GitOps 계약을 승인한다. | Workspace Owner |
+| Observability Owner | Prometheus, Grafana, Loki, Alloy 수집 계약을 유지한다. | Platform Owner |
+| Approved operator | Runbook에 따라 runtime 증적과 복구 결과를 기록한다. | Platform Owner |
+
+### Change and Adoption
+
+변경 검토 조건은 위 Enforcement의 검토 문단에 적혀 있다.
 
 ### Lifecycle Traceability
 

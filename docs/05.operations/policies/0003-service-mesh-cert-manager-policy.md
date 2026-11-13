@@ -1,10 +1,10 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.2.4"
+version: "1.3.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 layer: "operations"
 artifact_id: "POL-0003"
 ---
@@ -13,12 +13,25 @@ artifact_id: "POL-0003"
 
 ## Purpose
 
+### Objective
+
 이 문서는 cert-manager(TLS 자동화), Istio(서비스메시), Kiali(메시 관측) 운영 통제 기준을 정의한다.
 플랫폼 확장 컴포넌트의 보안 정책, 갱신 제약, 허용/금지 작업을 명시한다.
 클러스터 UI(Headlamp) 통제는 [POL-0004](./0004-rollouts-notifications-headlamp-policy.md),
 k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitops-operations-policy.md)이 소유한다.
 
+### Authority
+
+- **Architecture**: [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+- **ADR-0006**: [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
+- **ADR-0008**: [`../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md`](../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md)
+- **ADR-0009**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
+- **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- **Platform Policy**: [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)
+
 ## Scope
+
+### Applies To
 
 - cert-manager + mkcert ClusterIssuer(`mkcert-ca-issuer`)
 - Istio(istiod) + sidecar 주입 정책
@@ -28,9 +41,15 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - **Agents**: 문서/운영 자동화 에이전트
 - **Environments**: Linux server local cluster
 
-## Controls
+### Exclusions
 
-### TLS / cert-manager
+이 정책은 범위에서 제외한다고 따로 표시한 항목을 Applies To에 두지 않으며, 금지 작업은 위 Requirements의 Disallowed 항목에 적혀 있다.
+
+## Rules
+
+### Requirements
+
+#### TLS / cert-manager
 
 - **Required**:
   - ClusterIssuer 단일 운영: `mkcert-ca-issuer` (CA type, mkcert rootCA 참조)
@@ -45,7 +64,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
   - `mkcert-root-ca` Secret 평문 커밋
   - ClusterIssuer 다중 운영 (이름 오염 위험)
 
-### Istio / Service Mesh
+#### Istio / Service Mesh
 
 - **Required**:
   - IngressGateway를 선언하지 않는다 (istiod Application values에 gateway 없음, ADR-0008)
@@ -60,7 +79,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
   - IngressGateway 활성화
   - Ambient mesh 전환(로컬 플랫폼 스코프 외)
 
-### Kiali / Observability
+#### Kiali / Observability
 
 - **Required**:
   - auth: `anonymous` (로컬 전용)
@@ -74,24 +93,14 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
   - 프로덕션에 anonymous auth 유지
   - Kiali egress를 `0.0.0.0/0` 등 광역 cidr로 확장
 
-### CI Governance
+#### CI Governance
 
 - `scripts/validate-infrastructure-contracts.sh` PASS가 모든 IP/endpoint
   변경의 선행 조건이다. 이 검사의 선택과 실행은 QA 실행 레지스트리가 소유한다.
 - shell syntax 정적 검증 후 bootstrap-local.sh 변경을 반영한다.
 - cert-manager/Istio/Kiali GitOps 리소스는 AppProject `platform` 스코프 내에서만 배포된다.
 
-## Exceptions and Escalation
-
-- rootCA 재발급 시 `mkcert-root-ca` Secret 재주입 후 cert-manager controller 재시작 허용.
-- Istio istiod CrashLoop가 관측되어 requests 변경이 필요한 경우 Platform Owner가
-  현재 `gitops/apps/root/platform-istiod-app.yaml`의 requests(`100m`, `128Mi`)와
-  limits(`500m`, `512Mi`), 실패 증상, 변경안과 rollback을 검토한다. 변경안의
-  memory request는 128Mi 아래로 낮추지 않는다. Platform Owner 승인과
-  [POL-0001의 live 예외](./0001-k8s-gitops-operations-policy.md#exceptions-and-escalation)가
-  필요한 실행은 운영자에게 넘기고 실제 조정 결과를 별도 증거로 기록한다.
-
-## Verification and Review
+### Enforcement
 
 - endpoint와 TLS 경계 계약 검증 증적을 남긴다.
 - cert-manager/Istio/Kiali 변경 후 관련 GitOps manifest와 runbook의 계약 값이 일치하는지 확인한다.
@@ -103,18 +112,37 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
   [외부 인터페이스](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-external-interface)에
   둔다. 이 정책의 현재 설정 확인은 복구 시간이나 실제 연결 성공을 증명하지 않는다.
 
-## Related Documents
-
-- **Architecture**: [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Runbook**: [`../runbooks/0003-platform-expansion-bootstrap-runbook.md`](../runbooks/0003-platform-expansion-bootstrap-runbook.md)
-- **ADR-0006**: [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
-- **ADR-0008**: [`../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md`](../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md)
-- **ADR-0009**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
-- **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- **Platform Policy**: [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)
-- **Current control review**: SPEC-0106 (left the tree; Git history recovers it)의 과거 review는 이 정책을 istiod source와 비교했다. 원래 promotion 승인이나 live 도입 증적이 아니다.
+
+## Exceptions
+
+### Exception Conditions
+
+- rootCA 재발급 시 `mkcert-root-ca` Secret 재주입 후 cert-manager controller 재시작 허용.
+- Istio istiod CrashLoop가 관측되어 requests 변경이 필요한 경우 Platform Owner가
+  현재 `gitops/apps/root/platform-istiod-app.yaml`의 requests(`100m`, `128Mi`)와
+  limits(`500m`, `512Mi`), 실패 증상, 변경안과 rollback을 검토한다. 변경안의
+  memory request는 128Mi 아래로 낮추지 않는다. Platform Owner 승인과
+  [POL-0001의 live 예외](./0001-k8s-gitops-operations-policy.md#exceptions)가
+  필요한 실행은 운영자에게 넘기고 실제 조정 결과를 별도 증거로 기록한다.
+
+### Approval and Review
+
+예외 승인은 위 Exception Conditions의 Platform Owner 검토와 POL-0001의 live 예외 승인을 따른다.
+
+## Ownership
+
+### Responsibilities
+
+책임 주체는 아래 Lifecycle Traceability 표의 Control owner 열에 적혀 있다.
+
+### Change and Adoption
+
+변경 검토 시점은 위 Enforcement의 컴포넌트 버전 변경 및 ADR 변경 항목을 따른다.
 
 ### Lifecycle Traceability
+
+- **Current control review**: SPEC-0106 (left the tree; Git history recovers it)의 과거 review는 이 정책을 istiod source와 비교했다. 원래 promotion 승인이나 live 도입 증적이 아니다.
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |

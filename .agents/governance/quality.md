@@ -1,20 +1,22 @@
 ---
 title: "Quality and Evidence Policy"
-version: "2.5.0"
+version: "2.6.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 ---
 
 # Quality and Evidence Policy
 
-## Overview
+## Purpose
+
+### Objective
 
 Report exactly what was checked, over which bytes and scope, and with which
 limitations. Passing a local command is not proof of provider or live behavior.
 
-## Authority Boundary
+### Authority
 
 This policy owns lane, result, completion-order, and handoff meanings.
 The validation-surface contract selects executable checks; validators own
@@ -22,7 +24,14 @@ their rules and bounded execution limits. Aggregates compose those checks.
 Do not duplicate limit constants, fixture matrices, mutable digests, or corpus
 counts in prose.
 
-## Governance Context
+- [Approval and Safety](approval-and-safety.md)
+- [Work Lifecycle](../workflows/work-lifecycle.md)
+- [Git Policy](git.md)
+- [Formatting and Linting Policy](formatting-and-linting.md)
+
+## Scope
+
+### Applies To
 
 Current infrastructure work uses coverage of applicable validation contracts,
 not fictitious application coverage numbers. Where testable application code
@@ -32,9 +41,15 @@ Reviewers assess acceptance and regression coverage, not merely test counts.
 Provider projections preserve role and permission semantics while using native
 metadata; static parity never proves discovery, model resolution, or execution.
 
-## Current Contract
+### Exclusions
 
-### Validation lane contract
+This policy marks no subject as excluded from its scope.
+
+## Rules
+
+### Requirements
+
+#### Validation lane contract
 
 - **quick / affected**: selected checks cover normalized working-tree changes,
   including applicable new files and deletion/rename paths. Record selection
@@ -93,7 +108,7 @@ metadata jobs neither run nor certify them. A local repository link-target
 result does not establish external URL availability; record that as a separate
 unobserved external condition unless directly authorized and checked.
 
-### Validation runner envelope
+#### Validation runner envelope
 
 Before implementation, identify the required gates and resolve their tools,
 environment, actual cost/output needs, technical command limits and necessary
@@ -116,7 +131,7 @@ through the [validation runner](../../scripts/run-validation-lane.py), which
 owns the reviewed limit constants and treats timeout, pipe overflow or failure,
 or pipes held by descendants after the leader exits as `FAIL`.
 
-### Result vocabulary
+#### Result vocabulary
 
 - `PASS`: the named check ran over the stated scope and met its acceptance
   condition.
@@ -149,7 +164,7 @@ criterion. An unrelated PASS cannot hide a required unresolved result. The
 Task's Criterion Acceptance table owns the single criterion verdict; check
 results, approval, integration and publication are distinct facts.
 
-### Semantic review
+#### Semantic review
 
 A single-maintainer review combines a recorded risk class, the applicable
 static and contract checks, a core-diff checklist over the exact snapshot, the
@@ -199,7 +214,7 @@ human approval.
   reviews remain governed by their existing owners. Native and live claims
   still require the corresponding observed evidence.
 
-### Agent evaluation evidence
+#### Agent evaluation evidence
 
 The [agent evaluator](../roles/agent-evaluator.md) may compare actual
 `noSkill` and `withSkill` trials of the same task as bounded measurement
@@ -218,7 +233,7 @@ direct session evidence. Keeping evaluation evidence does not register a
 grader as a recurring QA gate. Admission requires a durable consumer, an
 owned failure rule and the validation registry's separate review.
 
-### QA admission and retirement
+#### QA admission and retirement
 
 Admit a recurring check only for a current document contract or actual
 repository-purpose surface: document profiles, forms, frontmatter, relations,
@@ -246,7 +261,7 @@ select by changed impact, then reuse only a narrowly proven result. Measure
 before claiming a cost or speed improvement. The selected registry contract,
 not a policy sentence, owns the exact gate list and per-check limits.
 
-### Ordinary document selection
+#### Ordinary document selection
 
 An ordinary authored document or README router change that alters only prose
 or navigation selects the common diff, style and commit-message checks plus
@@ -259,7 +274,7 @@ regressions and affected gates under the owning validation registry. No
 validator or hook rewrites a governed document. Document link checks remain local as specified
 above.
 
-### Delivery ownership
+#### Delivery ownership
 
 | Route | Required owner and evidence |
 | --- | --- |
@@ -275,7 +290,7 @@ The registry selects gates within a profile; changed inputs require a fresh
 result. A static workflow file
 cannot establish hosted execution or remote branch protection.
 
-### Canonical completion sequence
+#### Canonical completion sequence
 
 1. **targeted**: reproduce changed behavior and run focused checks while implementing.
 2. **quick**: during iterations, run selected affected checks when the
@@ -310,7 +325,7 @@ reconstruct them with newline iteration or filtered display output. Preserve
 runner boundary failures and optional-tool deferrals rather than treating them
 as successful selected coverage.
 
-### Handoff evidence contract
+#### Handoff evidence contract
 
 Record in the owning Task or approved evidence record:
 
@@ -335,7 +350,7 @@ acting; a recorded snapshot says which state the evidence described, and a
 recorded boundary keeps a past authorization from being read as a standing
 one. Neither field grants authority, and a stale record never widens it.
 
-### Supply-chain identity
+#### Supply-chain identity
 
 Retain immutable identities where byte identity is the security contract:
 pinned external Actions/hooks, resolved dependency artifacts, or Git-backed
@@ -343,17 +358,31 @@ recovery objects. Their owning contract records purpose and
 refresh/recovery procedure. Branch HEADs, current docs, local validators, and
 inventory counts are not policy pins.
 
-## Validation and Refresh
+### Enforcement
 
 Refresh this policy when evidence semantics change, not when a corpus count or
 implementation constant changes. Preserve the distinction between repository,
 provider-runtime, hosted CI, and live checks. Formatters or deferred tools
 cannot silently advance a task to completion.
 
-## Related Documents
-
 - [Validation Routing Registry](../../scripts/validation/registry.json)
-- [Approval and Safety](approval-and-safety.md)
-- [Work Lifecycle](../workflows/work-lifecycle.md)
-- [Git Policy](git.md)
-- [Formatting and Linting Policy](formatting-and-linting.md)
+
+## Exceptions
+
+### Exception Conditions
+
+This policy states no exception condition of its own.
+
+### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Ownership
+
+### Responsibilities
+
+Responsibilities are stated under Authority and Requirements.
+
+### Change and Adoption
+
+Change and adoption conditions are stated under Enforcement.

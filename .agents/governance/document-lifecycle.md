@@ -1,20 +1,22 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.7.0"
+version: "2.8.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 ---
 
 # Document Lifecycle Policy
 
-## Overview
+## Purpose
+
+### Objective
 
 This policy governs document promotion, blocking, supersession, retirement,
 withdrawal, and historical recovery across the repository.
 
-## Authority Boundary
+### Authority
 
 The Stage 99 registry (`docs/99.templates/registry.json`) is the sole machine
 owner for lifecycle states, directed transitions, and the internal `mutable`,
@@ -22,13 +24,28 @@ owner for lifecycle states, directed transitions, and the internal `mutable`,
 profile status. This policy explains evidence obligations and does not repeat
 the machine transition table.
 
-## Governance Context
+- [Software Development Lifecycle](sdlc.md)
+- Document Profile Registry (`docs/99.templates/registry.json`)
+- [Document Authoring Policy](document-authoring.md)
+
+## Scope
+
+### Applies To
 
 Stable identities are append-only and never reused. Mutable and current
 documents may change only within their selected profile contract. Stage 90
 evidence is not rewritten to satisfy a later profile.
 
-## Current Contract
+- [Common Agent Governance](../README.md)
+- Archive Stage (`docs/98.archive/README.md`)
+
+### Exclusions
+
+This policy marks no subject as excluded from its scope.
+
+## Rules
+
+### Requirements
 
 - A proposed status change must be one directed edge declared by the selected
   profile family. For a new Spec or Plan, `draft` states unreviewed intent,
@@ -224,7 +241,7 @@ evidence is not rewritten to satisfy a later profile.
   link into it is not checked, not even for existence.
 - A document that moves between active stages keeps no migration record.
 
-## Validation and Refresh
+### Enforcement
 
 Lifecycle validators use bounded regular-file reads, strict UTF-8, explicit
 subprocess timeouts, and stage-zero Git bytes. Illegal edges, incomplete
@@ -237,10 +254,22 @@ package whose Tasks are all terminal (ADR-0057).
 Recovery proof, holds, consumers and authority stay manual. Review this policy
 whenever the registry lifecycle catalog changes.
 
-## Related Documents
+## Exceptions
 
-- [Software Development Lifecycle](sdlc.md)
-- [Common Agent Governance](../README.md)
-- Document Profile Registry (`docs/99.templates/registry.json`)
-- [Document Authoring Policy](document-authoring.md)
-- Archive Stage (`docs/98.archive/README.md`)
+### Exception Conditions
+
+Exception and escalation conditions are stated under Requirements.
+
+### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Ownership
+
+### Responsibilities
+
+Responsibilities are stated under Authority and Requirements.
+
+### Change and Adoption
+
+Change and adoption conditions are stated under Enforcement.

@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.24.0"
+version: "0.25.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -102,7 +102,8 @@ form 경로의 대응은 Registry만 소유한다.
   `common/root-provider-shim` gateway로 유지한다.
 - **Governance forms** (`governance/`): 공통 SDLC 계약, provider note, 역할,
   정책, 워크플로, 지식 지도, 프롬프트 계약에 `contract`, `provider`, `role`,
-  `rule`, `skill`, `knowledge`, `prompt` form이 대응한다. 공통 소유자는
+  `rule`, `skill`, `knowledge`, `prompt` form이 대응한다. `rule`은 운영 `policy`와
+  같은 Policy form을 쓴다. 공통 소유자는
   `.agents`에, provider note는 `.claude/provider.md`와
   `.codex/provider.md`에 둔다. `governance/skill`은 두 flat workflow의
   생명주기 있는 문서 타입이며 native skill package와 구별한다.
@@ -129,15 +130,16 @@ form 경로의 대응은 Registry만 소유한다.
   capacity는 현재 consumer가 없어 Spec 본문과 실제 구현 소유자에게 수렴했다.
 - **Operations forms** (`operations/`): `guide`, `policy`, `runbook`,
   `incident`, `postmortem`의 서로 다른 운영 증거 책임을 유지한다.
-  Guide, Runbook, Incident, Postmortem은 Registry form을 쓴다. Guide의
+  Guide, Runbook, Incident, Postmortem, Policy는 Registry form을 쓴다. Guide의
   분류·독자·목표는 `Purpose`, `Lifecycle Traceability` 관계 표는
   `Verification` 아래에 둔다. Runbook의 트리거·절차·검증·복구는 form의
   `Purpose`, `Preconditions`, `Steps`, `Validation`, `Recovery`에 배치하고,
   `Lifecycle Traceability` 관계 표는 `Validation` 아래에 둔다. Incident의
   `Lifecycle Traceability` 관계 표는 `Evidence` 아래에, Postmortem의 표는
-  `Corrective Actions` 아래에 둔다. Policy의 적용 대상·통제·검토는 해당 역할의 core에
-  배치하며, Policy의 기존 `Lifecycle Traceability` 관계 표는 그 package 전까지
-  `Related Documents` 아래에서 같은 source·열·상호 참조 의미를 유지한다.
+  `Corrective Actions` 아래에 둔다. Policy의 목적·범위·규칙·예외·소유는 form의
+  `Purpose`, `Scope`, `Rules`, `Exceptions`, `Ownership`에 배치하고, Policy의
+  `Lifecycle Traceability` 관계 표는 `Ownership` 아래에서 같은 source·열·상호 참조
+  의미를 유지한다.
   기계가 읽는 정확한 heading과 순서·내용 경계는 Registry가 소유한다. 빈 heading이나
   placeholder만 채운 항목은 실질 내용이 아니며, 형식 PASS는 live 증거가 아니다.
 - **Reference forms** (`references/`): Stage 90 collection 세 곳은 모두 같은 3단

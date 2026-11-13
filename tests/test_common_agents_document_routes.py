@@ -163,7 +163,7 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
         path = PurePosixPath(".agents/governance/document-authoring.md")
         profile = contracts.classify_path(self.registry, path)
         source = (ROOT / path).read_text(encoding="utf-8")
-        translated = source.replace("## Overview", "## 개요", 1)
+        translated = source.replace("## Purpose", "## 목적", 1)
         diagnostics = MARKDOWN.validate_document_text(
             translated, path, profile, "strict"
         )

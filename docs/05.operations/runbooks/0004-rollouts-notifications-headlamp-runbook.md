@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.4.0"
+version: "1.4.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -193,7 +193,7 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 
 아래 annotation과 이 런북의 restart·promote·undo 명령은 live
 state를 바꾸므로 [POL-0004](../policies/0004-rollouts-notifications-headlamp-policy.md)와
-[POL-0001](../policies/0001-k8s-gitops-operations-policy.md#exceptions-and-escalation)에 따른
+[POL-0001](../policies/0001-k8s-gitops-operations-policy.md#exceptions)에 따른
 operator-approved 실행에서만 사용한다.
 
 ```bash

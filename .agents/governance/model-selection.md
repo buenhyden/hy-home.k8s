@@ -1,20 +1,22 @@
 ---
 title: "Model Selection Policy"
-version: "1.6.1"
+version: "1.7.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-13"
 ---
 
 # Model Selection Policy
 
-## Overview
+## Purpose
+
+### Objective
 
 Use capability appropriate to the task without turning model age, role names,
 or static configuration into claims of observed fitness.
 
-## Authority Boundary
+### Authority
 
 The [agent registry](../roles/registry.json) owns each role's
 capability-tier reference and neutral permission class. This policy defines
@@ -24,27 +26,40 @@ configured model, reasoning and permission values. Role projections consume
 those tables under the neutral class ceiling; neither table nor projection
 proves availability, entitlement, resolution or execution.
 
-## Governance Context
+- [Agent Registry](../roles/registry.json)
+- [Codex Provider](../../.codex/provider.md)
+- [Claude Provider](../../.claude/provider.md)
+- [Quality Policy](quality.md)
+
+## Scope
+
+### Applies To
 
 Capability, permissions, and responsibility are independent. Escalating a
 bounded task to a stronger permitted model does not grant new tools, writes,
 delegation, or approval, and does not change the role's registry membership.
 
-## Current Contract
+### Exclusions
 
-### Top
+This policy marks no subject as excluded from its scope.
+
+## Rules
+
+### Requirements
+
+#### Top
 
 Use the strongest permitted capability for high-risk synthesis, orchestration,
 or complex security and incident judgment. The stable anchor is `#top`;
 resolve membership from the registry rather than inferring it from a role name.
 
-### Worker
+#### Worker
 
 Use a bounded capable model for focused implementation, documentation,
 validation, or review. The stable anchor is `#worker`; a difficult assignment
 may justify explicit escalation.
 
-### Cost and throughput
+#### Cost and throughput
 
 Capability selection carries a spend and latency boundary as well as a quality
 one. Keep a bounded task on the worker tier and state the expected cost
@@ -68,7 +83,7 @@ request and continue independent local work. Never silently choose a more
 expensive fallback. Unknown cost, RPM, TPM and subscription/API limits are
 unverified, not an invented task-wide stop or a claim of native enforcement.
 
-### Selection and escalation
+#### Selection and escalation
 
 - Preserve configured native model and effort values during a documentation
   or routing change. Model promotion requires separately authorized scope and
@@ -84,16 +99,29 @@ unverified, not an invented task-wide stop or a claim of native enforcement.
 - Do not maintain dated per-model fitness snapshots, branch pins, or copied
   role censuses as current policy. Evidence belongs to its dated owner.
 
-## Validation and Refresh
+### Enforcement
 
 Validate registry tier references, native binding tables, neutral permission
 ceilings and provider projections after changes.
 Assess model behavior with authorized, secret-free task evidence before
 claiming improved fitness.
 
-## Related Documents
+## Exceptions
 
-- [Agent Registry](../roles/registry.json)
-- [Codex Provider](../../.codex/provider.md)
-- [Claude Provider](../../.claude/provider.md)
-- [Quality Policy](quality.md)
+### Exception Conditions
+
+Exception and escalation conditions are stated under Requirements.
+
+### Approval and Review
+
+This policy states no exception approval or review step of its own.
+
+## Ownership
+
+### Responsibilities
+
+Responsibilities are stated under Authority and Requirements.
+
+### Change and Adoption
+
+Change and adoption conditions are stated under Enforcement.

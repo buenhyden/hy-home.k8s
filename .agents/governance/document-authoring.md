@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.12.0"
+version: "3.13.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -9,25 +9,41 @@ updated: "2026-11-13"
 
 # Document Authoring Policy
 
-## Overview
+## Purpose
+
+### Objective
 
 Select the document owner by purpose, author from its canonical template, and
 close the change with traceable evidence.
 
-## Authority Boundary
+### Authority
 
 Stage 99 README (`docs/99.templates/README.md`) is the human authoring guide.
 Its registry (`docs/99.templates/registry.json`) alone owns exact paths,
 profiles, IDs, sections, metadata, lifecycle, and relationships. This policy
 owns agent procedure, not a second machine contract.
 
-## Governance Context
+- [Document Lifecycle](document-lifecycle.md)
+- [Work Lifecycle](../workflows/work-lifecycle.md)
+
+## Scope
+
+### Applies To
 
 Use [SDLC flow](sdlc.md) to distinguish durable requirements, current
 architecture, change-specific behavior, and operating knowledge. Stage numbers
 express ownership, not a one-way waterfall.
 
-## Current Contract
+- Stage 99 Author Guide (`docs/99.templates/README.md`)
+- Archive Index (`docs/98.archive/README.md`)
+
+### Exclusions
+
+This policy marks no subject as excluded from its scope.
+
+## Rules
+
+### Requirements
 
 1. Identify the owning stage and normalize the final repository-relative path.
 2. Resolve exactly one registry profile and read its canonical template before
@@ -165,7 +181,7 @@ express ownership, not a one-way waterfall.
     rewriting history, leaving redirects, or keeping a second recovery ledger.
     Before a current document leaves its stage, follow the manual consumer,
     preservation, hold and authorization review in
-    [document lifecycle](document-lifecycle.md#current-contract). If
+    [document lifecycle](document-lifecycle.md#requirements). If
     Git-history-only disposition is selected, also prove exact Git recovery.
     Keep the decision and applicable recovery evidence in the existing Task
     and current owner;
@@ -254,7 +270,7 @@ through that source; an edit made only in the copy is a defect. The Policy
 role, its forms and placement are owned by the
 [SDLC contract](sdlc.md#ownership-and-placement).
 
-Guide, Runbook, Incident, Postmortem, Root README, Stage README and Service
+Guide, Runbook, Incident, Postmortem, Policy, Root README, Stage README and Service
 README use their registry forms. Guide keeps its classification, readers and
 goal under Purpose and its Lifecycle Traceability table under Verification;
 Runbook keeps its Lifecycle Traceability table under Validation; Incident keeps
@@ -286,15 +302,28 @@ adapter adopted an edition. Bind final approval to the reviewed edition's actual
 content, revision and digest only after its real decision, and do not create a
 competing normative core.
 
-## Validation and Refresh
+### Enforcement
 
 Run strict registry, Markdown-profile, link/owner, and lifecycle checks when
 their contracts are affected. A deletion or consolidation requires replacement
 coverage and consumer disposition in the same logical change.
 
-## Related Documents
+## Exceptions
 
-- [Document Lifecycle](document-lifecycle.md)
-- Stage 99 Author Guide (`docs/99.templates/README.md`)
-- [Work Lifecycle](../workflows/work-lifecycle.md)
-- Archive Index (`docs/98.archive/README.md`)
+### Exception Conditions
+
+Exception and escalation conditions are stated under Requirements.
+
+### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Ownership
+
+### Responsibilities
+
+Responsibilities are stated under Authority and Requirements.
+
+### Change and Adoption
+
+Change and adoption conditions are stated under Requirements.

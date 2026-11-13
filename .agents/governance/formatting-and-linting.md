@@ -1,22 +1,24 @@
 ---
 title: "Formatting and Linting Policy"
-version: "1.5.1"
+version: "1.6.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-13"
 ---
 
 # Formatting and Linting Policy
 
-## Overview
+## Purpose
+
+### Objective
 
 Each formatting and linting rule has one semantic owner. Git normalization,
 editor hints and hook delivery may project that rule for their distinct jobs,
 and each suppression states why it exists. A configuration file that no tool
 reads is not a convention; it is drift that reads like one.
 
-## Authority Boundary
+### Authority
 
 This policy owns which tool covers which file type, where a shared byte rule
 is declared, and the discipline for suppressing a rule. It does not own lane,
@@ -25,7 +27,13 @@ selection, which belongs to the validation-surface registry; or the rules
 inside a tool's own configuration. Terminal-document immutability belongs to
 [document lifecycle](document-lifecycle.md).
 
-## Governance Context
+- [Quality Policy](quality.md)
+- [Document Lifecycle Policy](document-lifecycle.md)
+- [Git Policy](git.md)
+
+## Scope
+
+### Applies To
 
 `.gitattributes` owns Git text and line-ending normalization.
 `.pre-commit-config.yaml` owns hook integration, including pinned revisions,
@@ -36,7 +44,13 @@ rule against its own merge input; it does not certify local purpose or
 document-content checks. `.editorconfig` reaches editors only and proves nothing
 about committed bytes.
 
-## Current Contract
+### Exclusions
+
+Exclusions of files from formatters and linters are stated under Requirements.
+
+## Rules
+
+### Requirements
 
 - Keep one semantic owner for each rule. Project it only where a complementary
   layer needs it: `.gitattributes` for Git normalization, `.editorconfig` for
@@ -91,7 +105,7 @@ about committed bytes.
   outputs `.agents/evaluations/harnesses/*/baseline.md` and `with-skill.md`
   (Markdown lint ignores the same files). Secret scanners are not excluded.
 
-## Validation and Refresh
+### Enforcement
 
 Measure a suppression before changing it: remove it in a copy of the tracked
 corpus outside the working tree, run the tool over that copy, and classify
@@ -100,8 +114,22 @@ confined to terminal documents cannot be retired by editing; findings in
 current documents can. Re-measure when a blocking document changes state or
 when a hook revision moves, and record the result in the owning Task.
 
-## Related Documents
+## Exceptions
 
-- [Quality Policy](quality.md)
-- [Document Lifecycle Policy](document-lifecycle.md)
-- [Git Policy](git.md)
+### Exception Conditions
+
+Exception and escalation conditions are stated under Requirements.
+
+### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Ownership
+
+### Responsibilities
+
+Responsibilities are stated under Authority and Requirements.
+
+### Change and Adoption
+
+This policy states no change or adoption rule of its own.

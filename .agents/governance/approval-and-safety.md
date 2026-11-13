@@ -1,32 +1,48 @@
 ---
 title: "Approval and Safety Policy"
-version: "1.3.2"
+version: "1.4.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-13"
 ---
 
 # Approval and Safety Policy
 
-## Overview
+## Purpose
+
+### Objective
 
 Agents prepare desired-state changes and local evidence within the user's
 scope. Protected actions require explicit human or operator authority.
 
-## Authority Boundary
+### Authority
 
 This policy owns approval decisions. Native sandbox, tool, permission, and
 approval controls may be stricter; static configuration never proves runtime
 enforcement. Runbooks describe authorized procedures, not standing approval.
 
-## Governance Context
+- [Agent Execution](agent-execution.md)
+- [Git Policy](git.md)
+- [Quality Policy](quality.md)
+
+## Scope
+
+### Applies To
 
 Kubernetes, Argo CD, Vault, cloud, remote Git, and CI operations affect state
 outside the reviewable repository. Keep those actions separate from writing
 and validating their configuration.
 
-## Current Contract
+- Operations Index (`docs/05.operations/README.md`)
+
+### Exclusions
+
+This policy marks no subject as excluded from its scope.
+
+## Rules
+
+### Requirements
 
 | Surface                                        | Default                                         | Approval boundary                                                                        |
 | ---------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
@@ -37,7 +53,7 @@ and validating their configuration.
 | Live cluster, Argo CD, Vault, and cloud        | No mutation                                     | Explicit operator action with target, command class, rollback, and evidence              |
 | Secrets and private runtime data               | Do not read or record values                    | Stop and use the approved secret/incident process; never expose values                   |
 
-### Authoring and execution
+#### Authoring and execution
 
 Scoped local authoring includes development and operating documents, redacted
 examples, synthetic inputs and non-secret management metadata. A dangerous
@@ -60,7 +76,7 @@ the relevant Task and paths; review does not grant writes or authorization.
 Reuse valid approval for the same scope, subject and reviewed revision rather
 than asking the human to repeat a completed routine review.
 
-### Operator approval route
+#### Operator approval route
 
 There is no repository mechanism that authenticates an approving actor.
 The request owner/operator verifies approval through the original trusted
@@ -87,7 +103,7 @@ reviewer verdict is no approval. Historical approval is evidence of a past
 decision, never a reusable standing grant. The operator route does not
 delegate live/secret operations to a subagent.
 
-### Execution controls
+#### Execution controls
 
 - Subagents never mutate live clusters. Approved bootstrap or break-glass
   actions remain operator-bound, not delegated background work.
@@ -136,16 +152,29 @@ delegate live/secret operations to a subagent.
   obtain necessary native permission for actual resources without bypassing a
   guard or misreporting an unexecuted check.
 
-## Validation and Refresh
+### Enforcement
 
 Run the affected safety, secret-handling, permission, and policy checks when a
 protected surface changes. Report unexecuted external checks using the
 [quality result vocabulary](quality.md#result-vocabulary). Never bypass a
 failing required check or provider restriction.
 
-## Related Documents
+## Exceptions
 
-- [Agent Execution](agent-execution.md)
-- [Git Policy](git.md)
-- [Quality Policy](quality.md)
-- Operations Index (`docs/05.operations/README.md`)
+### Exception Conditions
+
+This policy states no exception condition of its own; the operator approval route is stated under Requirements.
+
+### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Ownership
+
+### Responsibilities
+
+Responsibilities are stated under Authority and Requirements.
+
+### Change and Adoption
+
+This policy states no change or adoption rule of its own.
