@@ -1,6 +1,6 @@
 ---
 title: "W03 YAML 1.2.2 Frontmatter Loader"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-13"
@@ -31,8 +31,8 @@ This Task records handoff W03-H26, the YAML 1.2 frontmatter loader, for [SPEC-01
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-YAML-001](../spec.md#success-criteria--verification-plan) | Loader module, five call sites, tests, one-time comparison. | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-YAML-002](../spec.md#success-criteria--verification-plan) | Lock, dialect record, policy text; the user's install; regression and exact-index QA. | platform | in-progress | PASS | EVD-005, EVD-006, EVD-007; exact-index QA at the implementation commit |
+| WORK-001 | [VAL-YAML-001](../spec.md#success-criteria--verification-plan) | Loader module, five call sites, tests, one-time comparison. | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-YAML-002](../spec.md#success-criteria--verification-plan) | Lock, dialect record, policy text; the user's install; regression and exact-index QA. | platform | completed | PASS | EVD-005, EVD-006, EVD-007; implementation commit `9dc6bc53` passed exact-index QA and the hooks |
 
 ## Task Evidence
 
@@ -45,13 +45,21 @@ This Task records handoff W03-H26, the YAML 1.2 frontmatter loader, for [SPEC-01
 | EVD-005 | [VAL-YAML-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Lock, dialect record, policy text and the user's install | Staged diff over `a8da75e5` | PASS | `.github/requirements/ci-validation.in` gains `ruamel.yaml==0.19.1`; the lock regenerated with its header command adds exactly one hashed entry and moves no pin; `validate-ci-python-contract.py` and `validate-github-actions-security.py` pass. `frontmatter_dialect` names the one loader for all five entries with timestamps kept as text, current `YAML 1.2 (ruamel.yaml 0.19.1, with stated refusals)`, target `YAML 1.2.2` asserted by the dialect test. `document-authoring.md` 3.20.0 and `scripts/README.md` 0.14.0. The user installed the lock into the local validation environment on 2026-11-13 (`Successfully installed ruamel-yaml-0.19.1`). No registry baseline line moved. | yes | none |
 | EVD-006 | [VAL-YAML-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Regression over the tree, suites and lint | Implementer runs in the scratch environment, then the commit hooks over the exact index, 2026-11-13 | PASS | The four strict document validators give output byte-identical to the before run at `a8da75e5`. Suites: `document` 667 (3 skipped), `document-lifecycle` 24, `agent-governance` 105, `ci-metadata` 87, `validation-routing` 173, `tooling` 166 OK; `validate-affected-surfaces.py` PASS; `ruff check` and `ruff format --check` clean; markdownlint 0 issues; `graphify update .` done. The first commit attempt failed exact-index QA with `SURFACE-PATH-AMBIGUOUS` on `scripts/frontmatter_yaml.py` (the new exact route and the `scripts` surface regex both matched); the author added the module to that regex's exclusion list beside `document_contracts.py`, after which `validate-affected-surfaces.py` reported `ambiguous=0`, and exact-index QA runs in the commit hooks of the implementation commit. | yes | none |
 | EVD-007 | [VAL-YAML-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Semantic review: risk class and core-diff checklist | Diff of 15 files over `a8da75e5` | PASS | Risk class `medium` (five validators, one new dependency in the CI lock, tests). Checklist: scope matches the Spec; non-frontmatter YAML loads untouched; one exact pin, hashed, binary-only wheel with no required dependency, released 2026-01-02; W03-H26 amended as recorded under Inputs; no document body or frontmatter value changed; no secret read; recovery is reverting the implementation commit and the lock line. No permission, trigger, hook or workflow file changed. | yes | none |
+| EVD-008 | [VAL-YAML-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. This package closes W03-H26. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-YAML-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-YAML-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-YAML-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0183 criterion question naming implementation commit `9dc6bc53`) | platform |
+| [VAL-YAML-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-006, EVD-007 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0183 criterion question naming implementation commit `9dc6bc53`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document authoring policy and `frontmatter_dialect` in the registry (Plan Promotion row). No new handoff arises. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes. Code comments that name SPEC-0183 use it as an identifier, not a link, and stay.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
 
 ## Approval and Safety Boundaries
 
@@ -66,4 +74,4 @@ This Task records handoff W03-H26, the YAML 1.2 frontmatter loader, for [SPEC-01
 
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); criterion acceptance pending. Risk class `medium`.
+Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); implementation commit `9dc6bc53`. The user accepted both criteria on 2026-11-13, and the approval of commit, push and PR covers the package exit (EVD-008); this package closes W03-H26. Risk class `medium`. Next owner: W03 for SPEC-0184.
