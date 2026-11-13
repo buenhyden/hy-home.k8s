@@ -1,10 +1,10 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.27"
+version: "0.1.28"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 artifact_id: "SPEC-0161-TSK-0001"
 parent_ids: ["SPEC-0161-PLAN-0001"]
 ---
@@ -83,6 +83,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-047 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D45 and W03-D46 recorded | User answers "Common, v14.7 (Recommended)" to the glossary edition question and "Accept both (Recommended)" to the SPEC-0190 implementation deviation question, 2026-11-13 Asia/Seoul | PASS | Recorded as W03-D45 and W03-D46 with the SPEC-0190 package commit; applied by SPEC-0190. | no | none |
 | EVD-048 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D33 to W03-D36 recorded | User answers "Keep form-less (Recommended)", "Split governance-role (Recommended)", "Register as is (Recommended)" and "One form; Sources link-only (Recommended)" to the local-forms questions, 2026-11-13 Asia/Seoul | PASS | Recorded as W03-D33 to W03-D36 with the SPEC-0186 package commit; applied by SPEC-0186, SPEC-0188 and SPEC-0189. | no | none |
 | EVD-049 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D41 to W03-D44 recorded | User answers "Fold into governance/rule (Recommended)", "`<CODE>-R<NNN>` per doc (Recommended)", "Inline ID + required table (Recommended)" and "Status column now (Recommended)" to the Policy role and rule ID questions, 2026-11-13 Asia/Seoul | PASS | Recorded as W03-D41 to W03-D44 with the SPEC-0187 package commit; W03-D41 is applied by SPEC-0187, W03-D42 to W03-D44 by Policy packages 2 to 5. | no | none |
+| EVD-050 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D54 recorded | User answer "Fix root cause in SPEC-0187 (Recommended)" to the lifecycle base-read question for the removed `governance/contract` profile, 2026-11-14 Asia/Seoul | PASS | Recorded as W03-D54 with the SPEC-0187 implementation; implemented by SPEC-0187 EVD-010. | no | none |
 
 ### Edition Delta
 
@@ -378,6 +379,7 @@ Added 2026-11-12 under the user's W03 request (EVD-025). W03 runs as several Sta
 | W03-D44 | Rule retirement (W03-D42) | The Rules table has a Status column; a retired row stays with Status "retired; successor ID"; reuse is refused within a document now and across history in a later package. User answer "Status column now (Recommended)", 2026-11-13 | W03 with W05; packages 2 to 5 |
 | W03-D45 | Edition of the SemVer glossary terms (SEMVER-POLICY sections 4 and 6; `.agents/knowledge/glossary.md`) | The eight terms Public Contract, Compatibility, Contract Version, Registry Schema Version, Document Revision, Prerelease, Build Metadata and Baseline Namespace are common Repository Vocabulary rows with the edition `repository-vocabulary v14.7`, the revision that defines them; no existing v14.5 row changes, and cross-repository adoption is verified by W11. User answer "Common, v14.7 (Recommended)", 2026-11-13 | W03; SPEC-0190 |
 | W03-D46 | SPEC-0190 implementation deviations (`document-profile.schema.json` `adopted` binding; consumers outside the Spec list) | The `adopted` contract-version guard keeps the numeric core of the shared SemVer grammar, so leading zeros and prereleases are refused for an adopted binding while the other two contract patterns take the full grammar; the validation surface registry and `tests/test_frontmatter_key_contract.py` are edited as consumers of the new module and pattern. User answer "Accept both (Recommended)", 2026-11-13 | W03; SPEC-0190 |
+| W03-D54 | Lifecycle base read for a removed profile (SPEC-0187; scripts/document_lifecycle.py) | The lifecycle comparison BASE is still classified with the current registry and no historical registry is parsed; on the base side only, a document whose claimed type is not a current profile but whose path classifies to a current profile is read under the classified profile without a state issue, because it was valid when committed and an unknown base type can only come from a profile the change removes. The proposed side keeps the unknown-type issue. Implemented inside SPEC-0187 as a recorded deviation from its Spec scope. User answer "Fix root cause in SPEC-0187 (Recommended)", 2026-11-14 | W03; SPEC-0187 |
 | W03-H01 | Phase 2 forms: Guide, Runbook, Policy, Incident, Postmortem, READMEs, `AGENTS.md`, `SKILL.md`; table column contracts; README rule IDs in tree mode; roles for the unclear profiles | One role form per change in `common_forms`, TemplateDefinitions filled, documents moved form-only | W03; resume now (SPEC-0168 accepted) |
 | W03-H02 | Phase 3 forms: Requirement, Architecture, ADR with W03-D02, Spec, Plan, Task; delete the H2-list model, list-built `HeadingContract.allowed` and `BODY-HEADING-EMPTY` for form profiles | Consumer renames and the `TASK-EVIDENCE-RETENTION` heading map | W03; resume after phase 2 is accepted; if W04 starts first, record the slip here |
 | W03-H03 | Retired-identity reservation (W02-H01) | Reserve IDs named in the owners' `Archived Lineage`; refusal test for a retired SPEC ID | W05; resume now |

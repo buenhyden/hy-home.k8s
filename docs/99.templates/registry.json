@@ -1259,75 +1259,6 @@
       "placeholder_policy": "forbidden"
     },
     {
-      "id": "governance/contract",
-      "family": "governance",
-      "mode": "authored",
-      "document_role": "governance-document",
-      "path_pattern": "^\\.agents/governance/sdlc\\.md$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/contract.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "optional": [
-          "supersedes",
-          "superseded_by",
-          "artifact_id"
-        ],
-        "forbidden": [
-          "layer"
-        ],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "artifact_id",
-          "supersedes",
-          "superseded_by"
-        ],
-        "constants": {
-          "type": "governance/contract"
-        }
-      },
-      "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": {
-        "status_domain": [
-          "draft",
-          "in-review",
-          "active",
-          "deprecated",
-          "superseded",
-          "retired"
-        ]
-      },
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": null
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
       "id": "governance/knowledge",
       "family": "governance",
       "mode": "authored",
@@ -1656,7 +1587,7 @@
       "family": "governance",
       "mode": "authored",
       "document_role": "policy",
-      "path_pattern": "^\\.agents/governance/(?:agent-execution|approval-and-safety|context-and-memory|document-authoring|document-lifecycle|formatting-and-linting|git|model-selection|quality)\\.md$",
+      "path_pattern": "^\\.agents/governance/(?:agent-execution|approval-and-safety|context-and-memory|document-authoring|document-lifecycle|formatting-and-linting|git|model-selection|quality|sdlc)\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/rule.template.md",
       "frontmatter": {
@@ -6143,115 +6074,6 @@
       }
     },
     {
-      "id": "common/template-governance-contract",
-      "family": "common",
-      "mode": "template",
-      "document_role": "governance-document",
-      "path_pattern": "^docs/99\\.templates/templates/governance/contract\\.template\\.md$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/contract.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "optional": [
-          "supersedes",
-          "superseded_by",
-          "artifact_id"
-        ],
-        "forbidden": [
-          "layer"
-        ],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "artifact_id",
-          "supersedes",
-          "superseded_by"
-        ],
-        "constants": {
-          "type": "governance/contract"
-        }
-      },
-      "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [
-          "governance/contract"
-        ],
-        "body_contract": null
-      },
-      "placeholder_policy": "template-only",
-      "template_definition": {
-        "purpose": "Give authors one form for the common SDLC contract: its overview, authority boundary, governance context, current contract and validation.",
-        "responsibility": "The contract document owns the common SDLC contract and routes readers to its canonical owners; it restates no rule another owner holds.",
-        "non_goals": [
-          "Being a COMMON-DOC-FORM-1 role: governance-document is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
-          "Changing the template's H2 lists, which stay as the profile records them.",
-          "Holding a table: this template records none and its documents keep their prose and links."
-        ],
-        "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md"
-        ],
-        "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
-        ],
-        "applicability": "The governance/contract profile document and its template.",
-        "tables": [],
-        "consumer_paths": [
-          "docs/99.templates/templates/governance/contract.template.md",
-          "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/README.md",
-          "scripts/document_contracts.py",
-          "scripts/validate-markdown-profiles.py",
-          "tests/test_common_form_tree.py",
-          ".agents/governance/sdlc.md"
-        ],
-        "validation": {
-          "positive": [
-            "The template and a document of the governance-document role pass the strict Markdown profile check with the H2 list the profile records."
-          ],
-          "negative": [
-            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
-            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
-            "A document missing a required H2 fails BODY-HEADING-REQUIRED."
-          ],
-          "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to governance-document, their unchanged H2 lists and this definition's tables.",
-            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
-          ]
-        },
-        "migration": {
-          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
-          "retained_history": "Git history retains the registry without this role binding and definition.",
-          "rollback": "Revert the SPEC-0179 implementation commit."
-        }
-      }
-    },
-    {
       "id": "common/template-governance-knowledge",
       "family": "common",
       "mode": "template",
@@ -6929,6 +6751,7 @@
           ".agents/governance/git.md",
           ".agents/governance/model-selection.md",
           ".agents/governance/quality.md",
+          ".agents/governance/sdlc.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
           "scripts/validate-links-and-owners.py",
@@ -8387,7 +8210,6 @@
         "operation/guide",
         "operation/policy",
         "operation/runbook",
-        "governance/contract",
         "governance/knowledge",
         "governance/vocabulary",
         "governance/prompt",
