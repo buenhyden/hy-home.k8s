@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import collections
-import copy
 import datetime as dt
 import json
 import math
@@ -16,8 +15,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Iterator, Mapping, Sequence
 from zoneinfo import ZoneInfo
 
-import yaml
-
+from frontmatter_yaml import FrontmatterError, load_frontmatter
 from json_schema_validation import SchemaEvaluationError, schema_errors
 
 # This module is the markdown-profile facade over the document contract.
@@ -99,38 +97,6 @@ class ContractError(ValueError):
         super().__init__(detail)
 
 
-class DuplicateKeyLoader(yaml.SafeLoader):
-    """Safe YAML loader that rejects duplicate mapping keys."""
-
-
-DuplicateKeyLoader.yaml_implicit_resolvers = copy.deepcopy(
-    yaml.SafeLoader.yaml_implicit_resolvers
-)
-for _resolver_key, _resolvers in DuplicateKeyLoader.yaml_implicit_resolvers.items():
-    DuplicateKeyLoader.yaml_implicit_resolvers[_resolver_key] = [
-        resolver
-        for resolver in _resolvers
-        if resolver[0] != "tag:yaml.org,2002:timestamp"
-    ]
-
-
-def _construct_mapping(
-    loader: DuplicateKeyLoader, node: yaml.MappingNode, deep: bool = False
-) -> dict[object, object]:
-    mapping: dict[object, object] = {}
-    for key_node, value_node in node.value:
-        key = loader.construct_object(key_node, deep=deep)
-        if key in mapping:
-            raise ContractError("FM-DUPLICATE-KEY", str(key))
-        mapping[key] = loader.construct_object(value_node, deep=deep)
-    return mapping
-
-
-DuplicateKeyLoader.add_constructor(
-    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _construct_mapping
-)
-
-
 def extract_frontmatter(text: str) -> tuple[list[str], dict[str, object], str]:
     """Extract an exact leading YAML mapping without losing key order."""
 
@@ -141,10 +107,10 @@ def extract_frontmatter(text: str) -> tuple[list[str], dict[str, object], str]:
         raise ContractError("FM-DELIMITER", "frontmatter is not closed")
     raw = text[4:closing]
     try:
-        data = yaml.load(raw, Loader=DuplicateKeyLoader) or {}
-    except ContractError:
-        raise
-    except yaml.YAMLError as exc:
+        data = load_frontmatter(raw) or {}
+    except FrontmatterError as exc:
+        if exc.reason == "duplicate-key":
+            raise ContractError("FM-DUPLICATE-KEY", str(exc.key)) from exc
         raise ContractError("FM-KEYSET", "frontmatter YAML is invalid") from exc
     if not isinstance(data, dict):
         raise ContractError("FM-KEYSET", "frontmatter must be a mapping")

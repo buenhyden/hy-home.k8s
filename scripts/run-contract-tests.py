@@ -42,6 +42,7 @@ SUITES = {
         "document_terminal_contract",
         "common_form_tree",
         "frontmatter_key_contract",
+        "frontmatter_yaml",
         "document_language",
         "documentation_link_boundary",
     ),
