@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.26.0"
+version: "0.27.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -104,10 +104,14 @@ form 경로의 대응은 Registry만 소유한다.
 - **Governance forms** (`governance/`): 공통 SDLC 계약, provider note, 역할,
   정책, 워크플로, 지식 지도, 프롬프트 계약에 `contract`, `provider`, `role`,
   `rule`, `skill`, `knowledge`, `prompt` form이 대응한다. `rule`은 운영 `policy`와
-  같은 Policy form을 쓴다. 공통 소유자는
+  같은 Policy form을 쓴다. `skill`은 `.agents/workflows/`의 두 workflow와
+  `.agents/skills/<id>/SKILL.md` native package가 같은 Skill form을 쓰며,
+  skill reference file과 asset은 role 없이 native로 남는다. 공통 소유자는
   `.agents`에, provider note는 `.claude/provider.md`와
-  `.codex/provider.md`에 둔다. `governance/skill`은 두 flat workflow의
-  생명주기 있는 문서 타입이며 native skill package와 구별한다.
+  `.codex/provider.md`에 둔다. `governance/skill`은 두 workflow의
+  생명주기 있는 문서 타입이며 native skill package와 같은 Skill form을 쓰되
+  문서 frontmatter와 native 봉투로 구별한다. workflow는 등록된 지역 H3
+  `Authority Boundary`를 쓸 수 있다.
   `governance/knowledge`는 `.agents/knowledge/`의 포인터 문서를,
   `governance/vocabulary`는 그 안의 `glossary.md` 용어 정의 문서 하나를,
   `governance/prompt`는 `.agents/prompts/`의 요청 계약을 소유하며 두 surface의
@@ -159,7 +163,8 @@ form 경로의 대응은 Registry만 소유한다.
   `common/provider-native-command`로 분류하며 `.agents/prompts/`의 계약을
   호출하는 진입점일 뿐 계약 자체를 소유하지 않는다.
   `.agents/skills/<id>/SKILL.md`는 `common/native-skill-package` native
-  profile로 분류하며 top-level `name`/`description`, 공통 여섯 key를 담는
+  profile로 분류하며 Skill form을 쓰고 `common/template-native-skill`
+  template이 그 form을 보인다. top-level `name`/`description`, 공통 여섯 key를 담는
   `metadata`, boolean `disable-model-invocation: true`를 사용한다. 문서
   봉투는 metadata 내부에만 두며 실제 native invocation/tool/model
   controls를 형식 정규화를 위해 바꾸지 않는다. 각 package의

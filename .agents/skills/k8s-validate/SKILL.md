@@ -3,11 +3,11 @@ name: "k8s-validate"
 description: "Use when validating Kubernetes manifests, GitOps structure, and secret-handling checks in this cluster repository."
 metadata:
   title: "K8s Validate"
-  version: "1.0.2"
+  version: "1.0.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,17 +16,32 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # k8s-validate
 
-## Purpose
+## Purpose and Trigger
+
+### When to Use
 
 Define the validation sequence for manifest changes before GitOps review or merge preparation.
 
-## When NOT to Use
+### When Not to Use
 
 - Reviewing manifests for security anti-patterns; use `vulnerability-patterns`.
 - Auditing cluster security posture across dimensions; use `k8s-security-audit`.
 - Onboarding or diagnosing a workload through the GitOps path; use `gitops-workflow`.
 
-## Workflow Steps
+#### Constraints
+
+- `.kube-linter.yaml` is the lint baseline. An exclusion there waives a lint
+  rule, never a security finding; route the finding to `k8s-security-audit`.
+- Secret-handling violations are blocking.
+- API-schema coverage is limited to the built-in kinds and fixed offline source
+  selected by the registered checker. An unavailable required tool or schema
+  fails that check; do not promote a partial result or a fallback to PASS.
+- Validation must remain repository-backed and cluster-specific.
+- Do not downgrade blocking failures into informational output.
+
+## Procedure
+
+### Steps
 
 Run the checks through `python3 scripts/qa.py quick` or
 `python3 scripts/qa.py staged`, selected and bounded as
@@ -50,27 +65,32 @@ defines; `python3 scripts/qa.py --list` shows what each profile reaches.
    custom-resource schema from a schema PASS, and report unobserved live state
    as DEFER.
 
-## Constraints
+### Failure Handling
 
-- `.kube-linter.yaml` is the lint baseline. An exclusion there waives a lint
-  rule, never a security finding; route the finding to `k8s-security-audit`.
-- Secret-handling violations are blocking.
-- API-schema coverage is limited to the built-in kinds and fixed offline source
-  selected by the registered checker. An unavailable required tool or schema
-  fails that check; do not promote a partial result or a fallback to PASS.
-- Validation must remain repository-backed and cluster-specific.
-- Do not downgrade blocking failures into informational output.
+- Stop on syntax errors or blocking secret violations.
+- If a tool is unavailable, report the limitation explicitly.
+- Route remediation to the implementation owner, or report the finding to the
+  supervising owner when the selected role has no implementation handoff.
 
-## Expected Outputs
+## Inputs and Outputs
+
+### Inputs
+
+None is stated in this document.
+
+### Outputs
 
 - Validation summary across selected syntax, render, schema, lint, structure,
   and secret checks, with actual depth and limitations per target
 - Blocking reasons, if any
 - Next action guidance for review or remediation
 
-## Failure Handling
+## Verification
 
-- Stop on syntax errors or blocking secret violations.
-- If a tool is unavailable, report the limitation explicitly.
-- Route remediation to the implementation owner, or report the finding to the
-  supervising owner when the selected role has no implementation handoff.
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.

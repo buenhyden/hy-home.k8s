@@ -3,11 +3,11 @@ name: "knowledge-map"
 description: "Use when auditing governance navigation, role/skill references, stage indexes, or current cross-links."
 metadata:
   title: "Knowledge Map"
-  version: "1.1.0"
+  version: "1.1.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,18 +16,22 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # knowledge-map
 
-## Purpose
+## Purpose and Trigger
+
+### When to Use
 
 Find stale navigation and duplicate authority without turning an index into a
 second policy or role roster.
 
-## When NOT to Use
+### When Not to Use
 
 - Repairing one document's profile, heading, or link drift; use `docs-stage-conformance`.
 - Choosing where a new document belongs; use `docs-stage-routing`.
 - Auditing ownership across governance, GitOps, and QA; use `workspace-harness-audit`.
 
-## Workflow Steps
+## Procedure
+
+### Steps
 
 1. Read the relevant gateway, common governance work lifecycle, and document-authoring
    policy; inspect current Git state and the task's authorized write boundary.
@@ -55,13 +59,29 @@ second policy or role roster.
    when authorized; preserve completed evidence and route historical
    path disposition to its owning Task.
 
-## Outputs
+### Failure Handling
+
+None is stated in this document.
+
+## Inputs and Outputs
+
+### Inputs
+
+None is stated in this document.
+
+### Outputs
 
 A bounded gap list with current owners, verification results, limitations, and
 next owner in the active Task. Do not append a separate progress ledger or
 recreate machine roster tables.
 
-## Related Owners
+## Verification
+
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
 
 - `.agents/governance/document-authoring.md`
 - `.agents/governance/context-and-memory.md`

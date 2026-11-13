@@ -3,11 +3,11 @@ name: "execution-plan"
 description: "Use when turning an approved Spec and architecture constraints into ordered, testable implementation work."
 metadata:
   title: "Execution Plan"
-  version: "1.0.1"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,13 +16,27 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # execution-plan
 
-## When NOT to Use
+## Purpose and Trigger
+
+### When to Use
+
+Use this skill as its frontmatter description states.
+
+### When Not to Use
 
 - Decomposing an approved Plan into Task records; use `task-breakdown`.
 - Tracing a Requirement to the designs that constrain it; use `requirements-to-design`.
 - Scoring and recording the risks the plan carries; use `risk-report`.
 
-## Workflow Steps
+#### Boundaries
+
+Do not restate the template's heading inventory here or create standalone
+design/test authority. The Spec owns behavior; the Plan owns implementation
+order, verification, risk, and rollback. Use `task-breakdown` for executable units.
+
+## Procedure
+
+### Steps
 
 1. Read the approved Spec, related requirements and decisions, current task
    state, and repository evidence.
@@ -37,13 +51,27 @@ using this procedure. Skill invocation does not authorize additional actions.
 6. Review the direction and ownership boundary with the user when the request
    requires design approval; then follow the authorized execution workflow.
 
-## Boundaries
+### Failure Handling
 
-Do not restate the template's heading inventory here or create standalone
-design/test authority. The Spec owns behavior; the Plan owns implementation
-order, verification, risk, and rollback. Use `task-breakdown` for executable units.
+None is stated in this document.
 
-## Outputs
+## Inputs and Outputs
+
+### Inputs
+
+None is stated in this document.
+
+### Outputs
 
 A profile-conformant Plan with explicit dependencies, verification, rollback,
 and links to the current Spec and Tasks.
+
+## Verification
+
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.

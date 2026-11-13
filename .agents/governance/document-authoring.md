@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.14.0"
+version: "3.15.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -271,7 +271,7 @@ through that source; an edit made only in the copy is a defect. The Policy
 role, its forms and placement are owned by the
 [SDLC contract](sdlc.md#ownership-and-placement).
 
-Guide, Runbook, Incident, Postmortem, Policy, AGENTS, Root README, Stage README and
+Guide, Runbook, Incident, Postmortem, Policy, AGENTS, Skill, Root README, Stage README and
 Service README use their registry forms. Guide keeps its classification, readers and
 goal under Purpose and its Lifecycle Traceability table under Verification;
 Runbook keeps its Lifecycle Traceability table under Validation; Incident keeps
@@ -281,7 +281,9 @@ Stage README, which the stage and collection READMEs use, keeps an optional
 Index table under Current Items; Service README, which the implementation,
 agent and provider, and runtime-governance READMEs use, keeps an optional
 Commands table under Checks; AGENTS, which every `AGENTS.md` uses, keeps an
-optional Tool Rules table under Local Obligations. Policy uses the selected
+optional Tool Rules table under Local Obligations; Skill, which the common
+workflows and every native `SKILL.md` use, keeps an optional Steps table under
+Steps. Policy uses the selected
 role's ordered sections and keeps its existing Lifecycle Traceability table
 under Related Documents until its package. A
 TemplateDefinition names each table's section, ordered columns, minimum rows and

@@ -3,11 +3,11 @@ name: "gitops-workflow"
 description: "Use when onboarding, updating, or diagnosing workloads through the repository-backed GitOps and ArgoCD path."
 metadata:
   title: "GitOps Workflow"
-  version: "1.0.2"
+  version: "1.0.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,17 +16,31 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # gitops-workflow
 
-## Purpose
+## Purpose and Trigger
+
+### When to Use
 
 Define the approved GitOps path for workload onboarding, change review, and sync diagnosis in `hy-home.k8s`.
 
-## When NOT to Use
+### When Not to Use
 
 - Choosing how the change rolls out; use `deployment-strategies`.
 - Running the repository validation lanes; use `k8s-validate`.
 - Reviewing the manifests for security anti-patterns; use `vulnerability-patterns`.
 
-## Workflow Steps
+#### Constraints
+
+- GitOps-first is mandatory.
+- Direct `kubectl apply` or similar drift-causing mutation is not allowed,
+  except in documented bootstrap or break-glass runbooks.
+- A read-only role (such as `gitops-reviewer`) returns findings and routes any
+  edit to the implementation owner.
+- Repository structure and ArgoCD targeting must stay cluster-specific.
+- Secret management must follow approved resources only.
+
+## Procedure
+
+### Steps
 
 1. Define the target workload or GitOps object and confirm the repository path.
 2. For an external endpoint change, use `external-service-contract-audit` to
@@ -39,24 +53,30 @@ Define the approved GitOps path for workload onboarding, change review, and sync
    that would fix it; do not mutate live state.
 6. Report PR and Argo CD reconciliation readiness. Creating a PR or triggering reconciliation requires separate explicit authorization.
 
-## Constraints
+### Failure Handling
 
-- GitOps-first is mandatory.
-- Direct `kubectl apply` or similar drift-causing mutation is not allowed,
-  except in documented bootstrap or break-glass runbooks.
-- A read-only role (such as `gitops-reviewer`) returns findings and routes any
-  edit to the implementation owner.
-- Repository structure and ArgoCD targeting must stay cluster-specific.
-- Secret management must follow approved resources only.
+- If repository ownership is unclear, escalate to the supervising owner.
+- If security findings block progress, hand off to the security review owner.
+- If validation fails, stop and route through `k8s-validate` remediation before continuing.
 
-## Expected Outputs
+## Inputs and Outputs
+
+### Inputs
+
+None is stated in this document.
+
+### Outputs
 
 - Clear next steps for onboarding, updating, or diagnosing a workload
 - Validation prerequisites and review expectations
 - A concise checklist for PR and reconciliation readiness
 
-## Failure Handling
+## Verification
 
-- If repository ownership is unclear, escalate to the supervising owner.
-- If security findings block progress, hand off to the security review owner.
-- If validation fails, stop and route through `k8s-validate` remediation before continuing.
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.

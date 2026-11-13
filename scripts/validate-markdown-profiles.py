@@ -1113,7 +1113,7 @@ def _frontmatter_value_style_diagnostics(
         ):
             continue
         if (
-            profile.mode == "native"
+            profile.mode in {"native", "template"}
             and isinstance(dict(profile.constants).get(key), bool)
             and isinstance(value, bool)
         ):

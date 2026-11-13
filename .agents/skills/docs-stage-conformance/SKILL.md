@@ -3,11 +3,11 @@ name: "docs-stage-conformance"
 description: "Use when repairing scoped document-profile, README, heading, or cross-link drift without changing historical meaning."
 metadata:
   title: "Docs Stage Conformance"
-  version: "1.0.1"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,12 +16,26 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # docs-stage-conformance
 
-## When NOT to Use
+## Purpose and Trigger
+
+### When to Use
+
+Use this skill as its frontmatter description states.
+
+### When Not to Use
 
 - Choosing the owner and template for a document that has neither yet; use `docs-stage-routing`.
 - Auditing navigation and owner maps across the tree rather than one document; use `knowledge-map`.
 
-## Workflow Steps
+#### Boundaries
+
+Registry/template prompts are not authored-body errors. Do not use broad custom
+scans as proof when a canonical validator already owns the rule. Report an
+unclear ownership or required semantic change before expanding the task.
+
+## Procedure
+
+### Steps
 
 1. Read the relevant gateway, document-authoring policy, current Git state,
    selected Stage 99 profile/template, and owning README.
@@ -37,13 +51,27 @@ using this procedure. Skill invocation does not authorize additional actions.
    Task. Do not create a new package or parallel progress ledger merely for a
    narrow cleanup.
 
-## Boundaries
+### Failure Handling
 
-Registry/template prompts are not authored-body errors. Do not use broad custom
-scans as proof when a canonical validator already owns the rule. Report an
-unclear ownership or required semantic change before expanding the task.
+None is stated in this document.
 
-## Outputs
+## Inputs and Outputs
+
+### Inputs
+
+None is stated in this document.
+
+### Outputs
 
 A scoped conformance diff and reproducible validation evidence without altered
 historical or runtime claims.
+
+## Verification
+
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.

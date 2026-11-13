@@ -3,11 +3,11 @@ name: "risk-report"
 description: "Use when identifying, scoring, and reporting cluster-specific operational or security risks as a cluster risk report."
 metadata:
   title: "Risk Report"
-  version: "1.0.2"
+  version: "1.0.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,24 +16,39 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # risk-report
 
-## Purpose
+## Purpose and Trigger
+
+### When to Use
 
 Define how to identify, score, and report cluster risks in a repeatable format for `hy-home.k8s`.
 
-## When NOT to Use
+### When Not to Use
 
 - Auditing cluster security posture; use `k8s-security-audit`.
 - Matching manifests to known-bad shapes; use `vulnerability-patterns`, which owns pattern-to-level.
 - Analysing an incident that already happened; use `rca-methodology`.
 
-## Workflow Steps
+#### Constraints
+
+- Record risks in the response or the active Plan's Risks & Mitigations; no
+  separate risk register exists.
+- Keep the report specific to `hy-home.k8s`.
+- Prefer repository and approved inspection evidence over generic risk lists.
+- A risk whose likelihood rests on no evidence is not scored. Record it as an
+  open question, because an invented score is harder to retract than a stated gap.
+
+## Procedure
+
+### Steps
+
+#### Workflow Steps
 
 1. Identify risks across security, availability, operations, and change management.
 2. Score each risk with the scale below.
 3. Record leading indicators or monitoring hooks where applicable.
 4. Produce a cluster-specific risk summary with recommended actions.
 
-## Scoring
+#### Scoring
 
 Rate likelihood from the evidence in hand rather than from intuition, so two
 reviewers reading the same repository reach the same row.
@@ -77,23 +92,30 @@ monitor-only here). Where `vulnerability-patterns`
 has already assigned a severity to a manifest pattern, take that severity as
 given; this matrix scores what no pattern table has classified.
 
-## Constraints
+### Failure Handling
 
-- Record risks in the response or the active Plan's Risks & Mitigations; no
-  separate risk register exists.
-- Keep the report specific to `hy-home.k8s`.
-- Prefer repository and approved inspection evidence over generic risk lists.
-- A risk whose likelihood rests on no evidence is not scored. Record it as an
-  open question, because an invented score is harder to retract than a stated gap.
+- If live inspection is unavailable, fall back to repository-backed static analysis and state the limitation.
+- If security-critical findings emerge, escalate to the security review owner.
+- If ownership or routing is unclear, escalate to the supervising owner.
 
-## Expected Outputs
+## Inputs and Outputs
+
+### Inputs
+
+None is stated in this document.
+
+### Outputs
 
 - A structured risk summary
 - Severity-ranked recommendations
 - Monitoring or review cues for follow-up work
 
-## Failure Handling
+## Verification
 
-- If live inspection is unavailable, fall back to repository-backed static analysis and state the limitation.
-- If security-critical findings emerge, escalate to the security review owner.
-- If ownership or routing is unclear, escalate to the supervising owner.
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.

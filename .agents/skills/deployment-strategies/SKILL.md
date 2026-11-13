@@ -3,11 +3,11 @@ name: "deployment-strategies"
 description: "Use when comparing or designing Kubernetes and ArgoCD deployment strategies, including Blue-Green, Canary, Rolling update, rollback, zero-downtime deployment, progressive delivery, probes, and DORA metrics. Monitoring tool setup and actual CI pipeline configuration are outside this skill's scope."
 metadata:
   title: "Deployment Strategies"
-  version: "1.0.1"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,16 +16,24 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # Deployment Strategies — Choosing and Verifying a Rollout
 
+## Purpose and Trigger
+
+### When to Use
+
 Select a rollout strategy for a Kubernetes workload reconciled by Argo CD, then
 design the verification and reversal that make the choice safe to review.
 
-## When NOT to Use
+### When Not to Use
 
 - Validating the manifests a strategy produces; use `k8s-validate`.
 - Reviewing those manifests for security anti-patterns; use `vulnerability-patterns`.
 - Onboarding or diagnosing the workload itself; use `gitops-workflow`.
 
-## Workflow Steps
+## Procedure
+
+### Steps
+
+#### Workflow Steps
 
 1. State what the change is risking: whether it can be served side by side with
    the current version, whether it is reversible by reverting desired state
@@ -42,14 +50,7 @@ design the verification and reversal that make the choice safe to review.
    produces a reviewable change, never a cluster action.
 5. Observe the branch and approval boundary below before proposing the change.
 
-## Reference Material
-
-`references/strategies.md` holds the catalog and `references/verification.md`
-holds probe, abort, and measurement detail. Both are read when a decision needs
-them rather than carried through every use of this skill, because a rollout
-question is usually about one strategy and not about all six.
-
-## Branch and Promotion Model
+#### Branch and Promotion Model
 
 This workspace has one integration branch and no environment promotion chain,
 so the generic multi-branch models a deployment guide usually lists do not
@@ -62,3 +63,30 @@ which actions need explicit authorization.
 
 No promotion path shortens an approval. A passing check is evidence, never
 permission, and an emergency still needs the same authorization boundary.
+
+### Failure Handling
+
+None is stated in this document.
+
+## Inputs and Outputs
+
+### Inputs
+
+`references/strategies.md` holds the catalog and `references/verification.md`
+holds probe, abort, and measurement detail. Both are read when a decision needs
+them rather than carried through every use of this skill, because a rollout
+question is usually about one strategy and not about all six.
+
+### Outputs
+
+None is stated in this document.
+
+## Verification
+
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.

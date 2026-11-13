@@ -3,11 +3,11 @@ name: "k8s-security-audit"
 description: "Use when auditing Kubernetes RBAC, NetworkPolicy gaps, Secret handling, container security context, image supply chain, or related cluster security hardening. Real-time intrusion detection and WAF configuration are outside this skill's scope."
 metadata:
   title: "K8s Security Audit"
-  version: "1.0.1"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,10 +16,14 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # k8s Security Audit — Cluster Security Assessment
 
+## Purpose and Trigger
+
+### When to Use
+
 Assess a repository's Kubernetes security posture across five dimensions and
 report what each one found, at a severity that says what the finding obliges.
 
-## When NOT to Use
+### When Not to Use
 
 - Matching individual manifests to known-bad shapes; use `vulnerability-patterns`, which owns pattern-to-level.
 - Checking manifest and GitOps structure rather than posture; use `k8s-validate`.
@@ -29,7 +33,11 @@ report what each one found, at a severity that says what the finding obliges.
   `external-service-contract-audit`. Its static relationship result does not
   establish security posture or permission to contact an endpoint.
 
-## Workflow Steps
+## Procedure
+
+### Steps
+
+#### Workflow Steps
 
 1. Fix the audit scope and type: which namespaces, paths, or manifests, and
    whether this is a full audit or one dimension. A finding outside the stated
@@ -46,13 +54,7 @@ report what each one found, at a severity that says what the finding obliges.
 5. Write the report with the format below, and record the closing state rather
    than deciding acceptance, which this procedure does not own.
 
-## Reference Material
-
-`references/audit-dimensions.md` holds the per-dimension detection targets and
-checklists. It is read a dimension at a time as step 2 works through them,
-which is why it is not carried in the procedure itself.
-
-## Severity Classification
+#### Severity Classification
 
 This table owns what a level obliges. It does not map manifest patterns onto
 levels: `vulnerability-patterns` owns that mapping together with the conditions
@@ -67,7 +69,23 @@ anything.
 | **MEDIUM**   | Fix within sprint            | Missing readOnlyRootFilesystem, default SA token automount                        |
 | **LOW**      | Track in backlog             | Image tag conventions, label hygiene                                              |
 
-## Audit Report Format
+### Failure Handling
+
+- Plaintext secret exposure → **immediate stop condition**; do not proceed until resolved.
+- RBAC findings and network isolation gaps → route remediation to the
+  implementation owner, or record them for the supervising owner when the
+  selected role has no implementation handoff.
+- Escalate ambiguous security decisions to the supervising owner.
+
+## Inputs and Outputs
+
+### Inputs
+
+`references/audit-dimensions.md` holds the per-dimension detection targets and
+checklists. It is read a dimension at a time as step 2 works through them,
+which is why it is not carried in the procedure itself.
+
+### Outputs
 
 ```markdown
 # Security Audit Report
@@ -142,14 +160,12 @@ what an audit may decide for itself, and [the SDLC flow](../../governance/sdlc.m
 never infers approval from a checkbox. A report that carries the acceptance
 box also carries the invitation to tick it.
 
-## Failure Handling
+## Verification
 
-- Plaintext secret exposure → **immediate stop condition**; do not proceed until resolved.
-- RBAC findings and network isolation gaps → route remediation to the
-  implementation owner, or record them for the supervising owner when the
-  selected role has no implementation handoff.
-- Escalate ambiguous security decisions to the supervising owner.
+### Checks
 
-## Related Skills
+None is stated in this document.
+
+### Completion and Handoff
 
 - `vulnerability-patterns` — Kubernetes manifest vulnerability pattern catalog (YAML/Helm)

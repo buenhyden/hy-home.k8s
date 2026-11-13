@@ -3,11 +3,11 @@ name: "rca-methodology"
 description: "Use when performing root cause analysis with 5 Whys, Fishbone diagrams, Fault Tree Analysis, change analysis, incident cause analysis, or cognitive-bias checks. Timeline reconstruction and remediation planning are outside this skill's scope."
 metadata:
   title: "RCA Methodology"
-  version: "1.0.1"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,15 +16,21 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # RCA Methodology — Tracing an Incident to Its Cause
 
+## Purpose and Trigger
+
+### When to Use
+
 Choose a root cause analysis technique for a cluster incident, apply it against
 captured evidence, and return the result in the structure this skill owns.
 
-## When NOT to Use
+### When Not to Use
 
 - Reconstructing the timeline or planning remediation; use `incident-postmortem`.
 - Turning the remediation into a repeatable procedure; use `ops-runbook`.
 
-## Workflow Steps
+## Procedure
+
+### Steps
 
 1. State the problem as one observable fact with a time boundary. An analysis
    that starts from a suspicion inherits it as a conclusion.
@@ -39,13 +45,23 @@ captured evidence, and return the result in the structure this skill owns.
    first plausible cause is the one an analysis stops at.
 5. Return the result in the Output Format below.
 
-## Reference Material
+### Failure Handling
+
+None is stated in this document.
+
+## Inputs and Outputs
+
+### Inputs
 
 `references/techniques.md` holds the five techniques worked through on a
 cluster incident, with their pitfalls and the selection guide. It is read for
 the technique in use rather than in full, since an analysis applies one or two.
 
-## Output Format
+### Outputs
+
+The result structure is stated under Output Format.
+
+#### Output Format
 
 Return scratch RCA output in the response when acting in a read-only role. An
 explicitly authorized author may record it in the assigned Task. Where a
@@ -77,3 +93,13 @@ tree, or change table), each step citing its evidence, ending in the root cause]
 - [ ] Evidence-based (not verbal assumption)
 - [ ] System/process focus confirmed (no blame language)
 ```
+
+## Verification
+
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.
