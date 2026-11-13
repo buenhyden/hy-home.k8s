@@ -351,6 +351,25 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "work-residue-ledger",
+      "argv": [
+        "python3",
+        "scripts/validate-work-residue-ledger.py",
+        "--root",
+        "."
+      ],
+      "lanes": [
+        "affected",
+        "staged"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Work residue ledger agreement with the Task residue rows is required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "github-actions-security",
       "argv": [
         "python3",
@@ -955,7 +974,8 @@
         "document-lifecycle-tests",
         "links-and-owners",
         "markdown-profiles",
-        "repository-quality"
+        "repository-quality",
+        "work-residue-ledger"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1078,7 +1098,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)(?:README|AGENTS|CLAUDE)\\.md$)docs/(?:README\\.md|01\\.requirements/.*|02\\.architecture/.*|03\\.specs/.*|05\\.operations/.*|90\\.references/.*)$"
+          "value": "^(?!.*(?:^|/)(?:README|AGENTS|CLAUDE)\\.md$)(?!docs/03\\.specs/work-residue-ledger\\.json$)docs/(?:README\\.md|01\\.requirements/.*|02\\.architecture/.*|03\\.specs/.*|05\\.operations/.*|90\\.references/.*)$"
         },
         {
           "kind": "exact",
@@ -1089,7 +1109,8 @@
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
-        "markdown-profiles"
+        "markdown-profiles",
+        "work-residue-ledger"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -1452,6 +1473,54 @@
       "fallback": {
         "status": "FAIL",
         "reason": "Document reader changes require the registered document checks and focused behavior regressions."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "work-residue-ledger",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/03.specs/work-residue-ledger.json"
+        }
+      ],
+      "validators": [
+        "repository-quality",
+        "work-residue-ledger"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "A work residue ledger change requires the drift and closure gate."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "work-residue-implementation",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validate-work-residue-ledger.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/work-residue-ledger.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_work_residue_ledger.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "document-contract-tests",
+        "repository-quality",
+        "work-residue-ledger"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Work residue gate and view changes require the gate and its focused regressions."
       },
       "evidenceLane": "repo-static"
     },
@@ -2022,7 +2091,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|frontmatter_yaml\\.py|semver_grammar\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle|pr-metadata|ci-python-contract)\\.py)$)(?!scripts/validate-agent-governance\\.py$)(?!scripts/workspace_memory\\.py$)(?!scripts/githooks/(?:pre-commit|commit-msg|pre-push|chained-hook\\.sh)$)(?!scripts/(?:check-secret-handling|render-platform-chart-kinds|validate-(?:gitops-structure|infrastructure-contracts|k8s-manifests|policy-gates))\\.sh$)(?!scripts/validate-(?:gitops-change-set|vault-eso-contracts)\\.py$)(?!scripts/validation/platform/)(?!scripts/(?:commit-message-exceptions|prompt-input|provider_write_guard|validate-selected-nonstyle)\\.py$)(?!scripts/validation/(?:current_executable_references|repository/(?:form_contracts|sample_app_contract))\\.py$)(?!scripts/(?:run-contract-tests|run-validation-lane|select-affected-surfaces|validate-affected-surfaces|validate-selected-style|validate-workspace-boundary|validate-knowledge-surface)\\.py$)(?!scripts/validation/repository/(?:bounded_io|quality)\\.py$)(?!scripts/validate-github-actions-security\\.py$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|frontmatter_yaml\\.py|semver_grammar\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle|pr-metadata|ci-python-contract)\\.py)$)(?!scripts/validate-agent-governance\\.py$)(?!scripts/(?:validate-work-residue-ledger|work-residue-ledger)\\.py$)(?!scripts/workspace_memory\\.py$)(?!scripts/githooks/(?:pre-commit|commit-msg|pre-push|chained-hook\\.sh)$)(?!scripts/(?:check-secret-handling|render-platform-chart-kinds|validate-(?:gitops-structure|infrastructure-contracts|k8s-manifests|policy-gates))\\.sh$)(?!scripts/validate-(?:gitops-change-set|vault-eso-contracts)\\.py$)(?!scripts/validation/platform/)(?!scripts/(?:commit-message-exceptions|prompt-input|provider_write_guard|validate-selected-nonstyle)\\.py$)(?!scripts/validation/(?:current_executable_references|repository/(?:form_contracts|sample_app_contract))\\.py$)(?!scripts/(?:run-contract-tests|run-validation-lane|select-affected-surfaces|validate-affected-surfaces|validate-selected-style|validate-workspace-boundary|validate-knowledge-surface)\\.py$)(?!scripts/validation/repository/(?:bounded_io|quality)\\.py$)(?!scripts/validate-github-actions-security\\.py$)scripts/.*$"
         }
       ],
       "validators": [
@@ -2162,6 +2231,7 @@
       "tooling-tests",
       "cluster-gate-tests",
       "document-lifecycle",
+      "work-residue-ledger",
       "external-service-contracts",
       "github-actions-security",
       "gitops-change-set",
@@ -2195,6 +2265,7 @@
       "tooling-tests",
       "cluster-gate-tests",
       "document-lifecycle",
+      "work-residue-ledger",
       "external-service-contracts",
       "github-actions-security",
       "gitops-change-set",

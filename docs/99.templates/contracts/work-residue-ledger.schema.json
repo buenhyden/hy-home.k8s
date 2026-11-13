@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hy-home.k8s/docs/99.templates/contracts/work-residue-ledger.schema.json",
+  "title": "Work residue ledger",
+  "description": "Validates the work residue ledger: open handoffs, conflicts, adoption items and survey items as pointers. A Task and its EVD rows own execution state, evidence and acceptance, so an entry has no key for them. Agreement with the Task rows is checked by the work-residue-ledger gate, not by this schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schema_version", "entries"],
+  "properties": {
+    "$schema": {
+      "const": "../99.templates/contracts/work-residue-ledger.schema.json"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  },
+  "$defs": {
+    "text": {
+      "type": "string",
+      "pattern": "^\\S(?:.*\\S)?$"
+    },
+    "path": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$"
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "state", "owner", "resume_condition", "source"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "kind": {
+          "enum": ["handoff", "conflict", "adoption", "survey"]
+        },
+        "state": {
+          "enum": ["open", "terminal"]
+        },
+        "owner": {
+          "$ref": "#/$defs/text"
+        },
+        "resume_condition": {
+          "$ref": "#/$defs/text"
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path"],
+          "properties": {
+            "path": {
+              "$ref": "#/$defs/path"
+            },
+            "registry_key": {
+              "enum": ["shared_contract", "common_forms"]
+            }
+          }
+        },
+        "closure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "evidence"],
+          "properties": {
+            "path": {
+              "$ref": "#/$defs/path"
+            },
+            "evidence": {
+              "type": "string",
+              "pattern": "^EVD-[0-9]{3}$"
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "terminal"
+              }
+            },
+            "required": ["state"]
+          },
+          "then": {
+            "required": ["closure"]
+          },
+          "else": {
+            "not": {
+              "required": ["closure"]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "adoption"
+              }
+            },
+            "required": ["kind"]
+          },
+          "then": {
+            "properties": {
+              "source": {
+                "required": ["registry_key"]
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "source": {
+                "not": {
+                  "required": ["registry_key"]
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

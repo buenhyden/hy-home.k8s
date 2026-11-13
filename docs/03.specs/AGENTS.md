@@ -10,7 +10,9 @@ parent [`docs/AGENTS.md`](../AGENTS.md) still applies.
 Stage 03 holds change packages `####-<slug>/`: `spec.md` owns the change
 contract and acceptance criteria, `plan.md` the work order, risks and
 rollback, and `tasks/tsk-####-<slug>.md` the actual execution, evidence and
-criterion acceptance. A package exists only while its change is open.
+criterion acceptance. A package exists only while its change is open. The folder also holds
+`work-residue-ledger.json`, the work residue ledger of open handoff, conflict,
+adoption and survey residue as pointers; the Task owns execution state.
 
 | Work here | Role (`.agents/roles/`) | Skills | Claude | Codex |
 | --- | --- | --- | --- | --- |
@@ -58,7 +60,10 @@ Canonical sources are the documents linked or named in the opening paragraph and
    consumer, hold, authority and method decision. After that commit, the
    Requirement's `Archived Lineage` records each file's recovery proof and
    summary, and the whole package is deleted in that same change with this
-   stage's README updated. An unresolved condition defers the deletion. The
+   stage's README updated. Residue is written as a `Residue Handoff` row in the
+   Task and an entry in the ledger in the same change, and a terminal entry is
+   deleted no later than the exit commit of the package whose Task holds its
+   closure row. An unresolved condition defers the deletion. The
    staged `LIFECYCLE-PACKAGE-EXIT` check refuses the wrong shape; see the
    [document lifecycle policy](../../.agents/governance/document-lifecycle.md).
 

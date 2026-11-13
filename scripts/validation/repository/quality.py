@@ -374,7 +374,12 @@ if requirements_stage.exists():
 specs_stage = root / "docs/03.specs"
 if specs_stage.exists():
     for spec_entry in sorted(specs_stage.iterdir()):
-        if spec_entry.name in {"README.md", "AGENTS.md", "CLAUDE.md"}:
+        if spec_entry.name in {
+            "README.md",
+            "AGENTS.md",
+            "CLAUDE.md",
+            "work-residue-ledger.json",
+        }:
             continue
         if spec_entry.is_dir():
             if not re.fullmatch(r"\d{4}-.+", spec_entry.name):
@@ -385,7 +390,8 @@ if specs_stage.exists():
             continue
         if spec_entry.is_file():
             fail(
-                "docs/03.specs may contain only README.md, AGENTS.md, CLAUDE.md and numbered "
+                "docs/03.specs may contain only README.md, AGENTS.md, CLAUDE.md, "
+                "work-residue-ledger.json and numbered "
                 f"Spec folders: {rel(spec_entry)}"
             )
 

@@ -33,6 +33,8 @@ parent_ids: ["{{PARENT_ID}}"]
 
 <!-- Author prompt: record each factual check with an exact input and location; for a command, name it, its tool version, exit code and UTC time when they matter. Required is yes or no. Resolves is none or comma-space separated earlier Evidence IDs. A required FAIL, DEFER, or NOT_RUN is closed only by a later PASS for the same Check, Work Unit, and Criteria that explicitly names its Evidence ID. Keep failed rows as history. -->
 
+<!-- Author prompt: write residue (an open handoff, conflict, adoption or survey item) only in one `### Residue Handoff` table under this section, after the evidence table, with the columns ID, Residue, State, Owner, Resume condition and Closure, and add the matching entry to `docs/03.specs/work-residue-ledger.json` in the same change. State is open or terminal; Closure is none or a PASS Evidence ID of this Task. -->
+
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan) | WORK-001 | Named deterministic check | Exact revision or fixture | NOT_RUN | Pending | yes | none |

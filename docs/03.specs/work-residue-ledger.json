@@ -1,0 +1,828 @@
+{
+  "$schema": "../99.templates/contracts/work-residue-ledger.schema.json",
+  "schema_version": 1,
+  "entries": [
+    {
+      "id": "AGENT-04",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W07",
+      "resume_condition": "When W07 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "CI-SCOPE",
+      "kind": "conflict",
+      "state": "open",
+      "owner": "W06",
+      "resume_condition": "When W06 starts (W03-D28)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "COMMIT-AFTER",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W06",
+      "resume_condition": "When W06 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "COMMIT-BEFORE",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W06",
+      "resume_condition": "When W06 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "DOC-04",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When the registry reform finishes with phase 3",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "DOC-05",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When the registry reform finishes with phase 3",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "DOC-11",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When every template has its TemplateDefinition (W03-H13, W03-H15)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "DOC-12",
+      "kind": "conflict",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "Last, after all docs work is finished (W03-D30)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "DOC-S00",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "DOC-S90",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "DOC-S99",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When phase 3 and W05 move the hard-coded headings (OPEN-09)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "GOV-04",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W01 policy, W03 registry",
+      "resume_condition": "When the registry reform finishes with phase 3",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "GOV-06",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When the registry reform finishes with phase 3",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "LEDGER",
+      "kind": "conflict",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "After the user accepts the SPEC-0191 criteria",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "MERGE-AFTER",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W06",
+      "resume_condition": "When W06 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "MERGE-BEFORE",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W06",
+      "resume_condition": "When W06 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "OLD-RULE-TESTS",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W06",
+      "resume_condition": "With CI-SCOPE",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "OPEN-01",
+      "kind": "survey",
+      "state": "open",
+      "owner": "Shared source research (W00 package level)",
+      "resume_condition": "When a difference shown to affect a current owner is found",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "OPEN-02",
+      "kind": "survey",
+      "state": "open",
+      "owner": "Shared source research (W00 package level)",
+      "resume_condition": "When a difference shown to affect a current owner is found",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "OPEN-03",
+      "kind": "survey",
+      "state": "open",
+      "owner": "Named stages",
+      "resume_condition": "When each named stage closes its DELTA packages",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "OPEN-04",
+      "kind": "survey",
+      "state": "open",
+      "owner": "Holder of the original reports",
+      "resume_condition": "When the original reports are supplied",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "OPEN-06",
+      "kind": "survey",
+      "state": "open",
+      "owner": "W01, W03 or W07",
+      "resume_condition": "Only when that stage plans to adopt a named source",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "OPEN-07",
+      "kind": "survey",
+      "state": "open",
+      "owner": "W03, W05, W06, W07, W10 by file set",
+      "resume_condition": "Each writer stage reads its whole file set before editing",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "OPEN-08",
+      "kind": "survey",
+      "state": "open",
+      "owner": "W10",
+      "resume_condition": "When W10 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "OPEN-09",
+      "kind": "survey",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 moves the hard-coded headings",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "PR-DURING",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W06",
+      "resume_condition": "When CI-SCOPE closes",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "PUSH-BEFORE",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W06",
+      "resume_condition": "When W06 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "QA-03",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "QA-17",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R147-03",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W01",
+      "resume_condition": "Same as GOV-04",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R147-04",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When the common forms reach every role (phase 3)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R147-05",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R147-06",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W06",
+      "resume_condition": "When W06 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R147-07",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W04",
+      "resume_condition": "When W04 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R147-10",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When the registry reform finishes with phase 3",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R147-16",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W10",
+      "resume_condition": "When W10 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R147-17",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W07",
+      "resume_condition": "When W07 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R147-20",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R45-06",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When the registry reform finishes with phase 3",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R45-07",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When the registry reform finishes with phase 3",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R45-10",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When every template has its TemplateDefinition (W03-H13, W03-H15)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "R45-12",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W11, this workspace only",
+      "resume_condition": "When another repository's adoption evidence exists",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "SCOPE-10",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With the migration map of the form change (phase 3)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "SDLC-07",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W04 (policy semantics only)",
+      "resume_condition": "When W04 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "SDLC-08",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "SDLC-ROWS",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W00-H01",
+      "kind": "survey",
+      "state": "open",
+      "owner": "W00 package level",
+      "resume_condition": "When a difference shown to affect a current owner is found",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W01-H01",
+      "kind": "survey",
+      "state": "open",
+      "owner": "W01",
+      "resume_condition": "When W01 re-reads its files before editing",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H02",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "After phase 2 is accepted; if W04 starts first, record the slip here",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H05",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W04",
+      "resume_condition": "When W04 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H08",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With phase 3 (the SDLC roles own these relations)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H09",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W11",
+      "resume_condition": "When another repository's adoption evidence exists",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H10",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "In the Plan, README and Policy packages respectively",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H11",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H12",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H13",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With phase 3 (W03-H02)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H15",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03 with W05",
+      "resume_condition": "After phase 3; the H07 package named in the row is closed",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H16",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With W03-H08 in phase 3",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H19",
+      "kind": "adoption",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With the W03 closing",
+      "source": {
+        "path": "docs/99.templates/registry.json",
+        "registry_key": "common_forms"
+      }
+    },
+    {
+      "id": "W03-H20",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "Last before DOC-12",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H21",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With the W03 closing",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H23",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W10",
+      "resume_condition": "When W10 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H27",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "After W03-H25, which SPEC-0184 closed",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H29",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03 with W05",
+      "resume_condition": "Packages 2 to 5 add the rule IDs (W03-D42 to W03-D44)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H30",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03 with W05",
+      "resume_condition": "Closes through the ledger cycle of SPEC-0191",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H31",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With the W03 closing (W03-H20)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H32",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W11",
+      "resume_condition": "In the cross-repository check",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H33",
+      "kind": "adoption",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With the W03 closing",
+      "source": {
+        "path": "docs/99.templates/registry.json",
+        "registry_key": "shared_contract"
+      }
+    },
+    {
+      "id": "W03-H34",
+      "kind": "survey",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When W03 re-reads its files before editing",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H35",
+      "kind": "survey",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When W03 re-reads its files before editing",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H36",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With phase 3 (W03-H02)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H37",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With phase 3 (W03-H02)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H38",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With phase 3 (W03-H02)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H39",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With phase 3 (W03-H02)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H40",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With phase 3 (W03-H02)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H41",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "With phase 3 (W03-H02)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W03-H42",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "After W03-H25, which SPEC-0184 closed",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W05-H01",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W05-H02",
+      "kind": "survey",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 re-reads its files before editing",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W05-H03",
+      "kind": "survey",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 re-reads its files before editing",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W06-H01",
+      "kind": "survey",
+      "state": "open",
+      "owner": "W06",
+      "resume_condition": "When W06 re-reads its files before editing",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W07-H01",
+      "kind": "survey",
+      "state": "open",
+      "owner": "W07",
+      "resume_condition": "When W07 re-reads its files before editing",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    }
+  ]
+}
