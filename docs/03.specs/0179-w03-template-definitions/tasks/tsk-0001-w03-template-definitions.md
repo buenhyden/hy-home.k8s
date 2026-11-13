@@ -1,6 +1,6 @@
 ---
 title: "W03 TemplateDefinitions for Templates Without a Common Role"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-13"
@@ -29,8 +29,8 @@ This Task records handoff W03-H06, the TemplateDefinitions for the fourteen temp
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-TPLDEF-001](../spec.md#success-criteria--verification-plan) | Role list and schema; bindings; table checks; TemplateDefinitions and tables; tests. | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-TPLDEF-002](../spec.md#success-criteria--verification-plan) | m0001 `Sources` table; policy texts; regression and exact-index QA. | platform | in-progress | PASS | EVD-005, EVD-006, EVD-007; exact-index QA at the implementation commit |
+| WORK-001 | [VAL-TPLDEF-001](../spec.md#success-criteria--verification-plan) | Role list and schema; bindings; table checks; TemplateDefinitions and tables; tests. | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-TPLDEF-002](../spec.md#success-criteria--verification-plan) | m0001 `Sources` table; policy texts; regression and exact-index QA. | platform | completed | PASS | EVD-005, EVD-006, EVD-007; implementation commit `b9c4b07b` passed exact-index QA and the hooks |
 
 ## Task Evidence
 
@@ -43,13 +43,21 @@ This Task records handoff W03-H06, the TemplateDefinitions for the fourteen temp
 | EVD-005 | [VAL-TPLDEF-002](../spec.md#success-criteria--verification-plan) | WORK-002 | m0001 `Sources` migration and policy texts | Staged diff over `766467af`, compared row by row by an author script against `HEAD` | PASS | With the research table recorded and m0001 unmigrated, the strict profile check returned exactly one diagnostic, `BODY-TABLE-COLUMNS` on m0001 (implementer log). After migration: 15 rows before and after, each row `[Source](URL)`, `Not graded`, the Checked date and the Result text, 0 mismatches; the only other lines changed are `version` 0.2.1 and `updated`; the `## Review and Freshness` table is unchanged. Policy texts: `document-authoring.md` 3.17.0 adds the heading-line sentence; `docs/99.templates/README.md` 0.29.0 adds one Korean sentence naming the nine roles and phase 3 for the SDLC definitions. | yes | none |
 | EVD-006 | [VAL-TPLDEF-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Regression over the tree, suites and lint | Author run over the staged index after `766467af`, 2026-11-13 | PASS | The four strict document validators give output equal to the before run at `19e4b481`. Staged lifecycle PASS; `python3 scripts/qa.py staged` 12 gates PASS. Suites: `agent-governance` 105, `ci-metadata` 87, `cluster-gate` 72, `document` 584 (3 skipped), `document-lifecycle` 18, `release` 29, `tooling` 166, `validation-routing` 173 OK. `ruff check scripts tests` and `ruff format --check scripts tests` clean; markdownlint 0 issues (implementer); `graphify update .` rc 0. `.secrets.baseline` registry line 7407 moved to 8730 in `766467af`. | yes | none |
 | EVD-007 | [VAL-TPLDEF-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Semantic review: risk class and core-diff checklist | Diff of 9 files over `766467af` | PASS | Risk class `medium` (role literal, schema, registry, two validators, tests and one reference document). Checklist: scope matches the Spec; one writer per file; W03-D09, W03-D20 and W03-D21 applied; no form added; no template body or heading changed; the m0001 table moved row for row with `Not graded` stated and `Relevance` recorded as the retrieval result; the ignored read-only contract input was read only; no secret read; recovery is reverting the implementation commit. No permission, trigger, hook or workflow file changed. | yes | none |
+| EVD-008 | [VAL-TPLDEF-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 standing approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-TPLDEF-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-TPLDEF-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-TPLDEF-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0179 criterion question naming implementation commit `b9c4b07b` and EVD-004 to EVD-007) | platform |
+| [VAL-TPLDEF-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-006, EVD-007 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0179 criterion question naming implementation commit `b9c4b07b` and EVD-004 to EVD-007) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document authoring policy and the registry (Plan Promotion row). Open follow-ups stay in the SPEC-0161 Task as W03-H13. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes. Registry text, code comments and test docstrings name SPEC-0179 as an identifier, not a link, and stay.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 standing approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
 
 ## Approval and Safety Boundaries
 
@@ -64,4 +72,4 @@ This Task records handoff W03-H06, the TemplateDefinitions for the fourteen temp
 
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); criterion acceptance pending. Risk class `medium`.
+Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); implementation commit `b9c4b07b`. The user accepted both criteria on 2026-11-13, and the standing approval of commit, push and PR covers the package exit (EVD-008). Risk class `medium`. Next owner: W03 for SPEC-0180 (W03-H03).
