@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.14.0"
+version: "0.15.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -89,6 +89,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `validate-workspace-boundary.py` | staged workspace 경계와 ignore 경로 계약 |
 | `render-platform-chart-kinds.sh` | 운영자가 직접 실행하는 chart kind 리뷰 보조 도구 |
 | `release.py` | main changelog PR을 준비하고 SemVer GitHub Release 하나를 명시적으로 게시한다. 기본은 로컬 읽기 전용 미리보기이며 `publish --execute`는 운영자 작업이다. |
+| `semver_grammar.py` | 저장소 버전 값의 SemVer 2.0.0 문법(`SEMVER_PATTERN`, `is_semver`) 하나를 소유한다. `release.py`는 이것으로 tag 패턴을 만들고, 스킬 envelope 검사와 문서 schema의 `version` 패턴이 같은 문법을 쓴다. |
 
 ### Supported Environment
 

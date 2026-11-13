@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import document_contracts as CONTRACTS  # noqa: E402
 from frontmatter_yaml import FrontmatterError, load_frontmatter  # noqa: E402
+from semver_grammar import SEMVER_PATTERN  # noqa: E402
 
 
 def _load_script(name: str, filename: str):
@@ -472,7 +473,7 @@ class RegistryKeyContractTests(unittest.TestCase):
         adr = table[("sdlc/architecture-decision", "layer")]
         self.assertIn("architecture", adr["allowed_values"])
         self.assertNotIn(("sdlc/spec", "layer"), table)
-        self.assertIn("[0-9]+", table[("sdlc/spec", "version")]["allowed_values"])
+        self.assertIn(SEMVER_PATTERN, table[("sdlc/spec", "version")]["allowed_values"])
         self.assertIn("draft", table[("sdlc/spec", "status")]["allowed_values"])
         self.assertTrue(
             table[("sdlc/task", "cancellation")]["requiredness"].startswith(

@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.20.2"
+version: "3.21.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -214,7 +214,14 @@ selected profile declares them. A new document starts at version "0.1.0" and
 the first stable approval raises it to "1.0.0". Patch means a correction
 without changed meaning, minor means compatible meaning or section growth, and
 major means an incompatible role or contract change. Status and version are
-independent. Native Skill packages keep name and description at the top and
+independent. A version value is a SemVer 2.0.0 string without a "v" prefix,
+checked by the one grammar in `scripts/semver_grammar.py`. Document Revision,
+Contract Version and Registry Schema Version are separate objects; an artifact
+identity or a package edition label is not a version. In "0.y.z" an
+incompatible change and a feature raise the minor and a compatible fix raises
+the patch. One edit raises the highest affected level once, and an unchanged
+object keeps its version. A commit type such as `docs:` does not by itself
+decide the level. Native Skill packages keep name and description at the top and
 place that six-key document envelope inside metadata. Preserve native
 invocation, tool and model controls; metadata does not grant execution authority.
 
