@@ -1,10 +1,10 @@
 ---
 title: "SDLC Governance Audit"
-version: "0.2.0"
+version: "0.2.1"
 type: "reference/audit-pack"
 status: "published"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-13"
 artifact_id: "AUD-0001"
 ---
 
@@ -24,7 +24,7 @@ artifact_id: "AUD-0001"
 cluster, hosted CI 실행, provider runtime의 동작은 제외한다. 관찰은 `main`
 `3ec90be8` 시점의 저장소 정적 상태로 한정한다.
 
-## Audit Contract
+## Pack Contract
 
 관측 날짜는 2026-11-06이고 기준선은 `main` `3ec90be8`이다. 방법은 정책 원문과
 Stage 99 registry의 profile 계약을 읽고, 해당 validator와 문서 단위 테스트를
@@ -33,9 +33,9 @@ Verification State에 UNKNOWN으로 남긴다.
 
 ## Structure
 
-직접 멤버는 아래 Report Index 하나로 찾는다.
+직접 멤버는 아래 Pack Index 하나로 찾는다.
 
-## Report Index
+## Pack Index
 
 - [m0001 SDLC governance audit](./m0001-sdlc-governance-audit.md): 인벤토리,
   발견 사항, 개선 기록, 검증 상태를 맡는다.
@@ -44,7 +44,7 @@ Verification State에 UNKNOWN으로 남긴다.
 
 ## Usage
 
-먼저 Audit Contract와 Evidence Boundary를 읽고, 보고서에서 발견 사항과 그 처분을
+먼저 Pack Contract와 Evidence Boundary를 읽고, 보고서에서 발견 사항과 그 처분을
 확인한다. 현재 규칙은 보고서가 아니라
 [SDLC 정책](../../../../.agents/governance/sdlc.md)에서 읽는다.
 

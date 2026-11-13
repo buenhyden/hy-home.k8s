@@ -1,10 +1,10 @@
 ---
 title: "Archive Retention and Provenance Research Pack"
-version: "0.1.3"
+version: "0.1.4"
 type: "reference/research-pack"
 status: "in-review"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 artifact_id: "RES-0002"
 ---
 
@@ -25,7 +25,7 @@ Git이 객체에 이름을 붙이고 보관하는 방식, 대체된 결정과 in
 이 pack은 아래 연구 계약과 보고서 색인에 명시한 주제와 출처를 포함한다.
 실행 승인, 현재 정책, hosted·provider·live 결과는 증거 범위에서 제외한다.
 
-## Research Contract
+## Pack Contract
 
 - **관찰 날짜**: 2026-09-15.
 - **출처 종류**: Git, HTTP, JSON Schema, CommonMark, GitHub의 1차 문서, ADR
@@ -41,7 +41,7 @@ Git이 객체에 이름을 붙이고 보관하는 방식, 대체된 결정과 in
 직접 멤버와 그 연구 책임은 아래 보고서 색인에서 찾는다. 각 멤버의 날짜와
 판정은 멤버 본문이 소유하며 이 anchor는 별도 실행 상태를 기록하지 않는다.
 
-## Report Index
+## Pack Index
 
 | Reference | Role |
 | --- | --- |

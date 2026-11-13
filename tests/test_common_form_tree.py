@@ -6,6 +6,7 @@ import copy
 import dataclasses
 import importlib.util
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -49,6 +50,8 @@ ROLE_IDS = (
     "service-readme",
     "agents",
     "skill",
+    "workspace-readme",
+    "reference-pack-readme",
 )
 # The profiles whose common role is clear; every other profile carries none.
 ROLE_BINDINGS = {
@@ -67,6 +70,10 @@ ROLE_BINDINGS = {
     "common/folder-agents-guide": "agents",
     "governance/skill": "skill",
     "common/native-skill-package": "skill",
+    "common/readme-workspace-staging": "workspace-readme",
+    "reference/research-pack": "reference-pack-readme",
+    "reference/audit-pack": "reference-pack-readme",
+    "reference/data-pack": "reference-pack-readme",
     "common/readme-repository": "root-readme",
     "common/readme-stage-index": "stage-readme",
     "common/readme-collection-index": "stage-readme",
@@ -275,6 +282,73 @@ SKILL_EXTENSION = {
 SKILL_TABLE_KEYS = {
     "Steps": ("skill-procedure-steps", ("Step", "Input", "Output"), 0, "Step")
 }
+WORKSPACE_FORM = (
+    "common/readme-workspace-staging",
+    "common/template-readme-workspace-staging",
+)
+WORKSPACE_FORM_TREE = (
+    ("Overview", ()),
+    ("Scope", ("Permitted Artifacts", "Forbidden Local State")),
+    ("Structure", ()),
+    ("Usage", ("Promotion and Cleanup", "Tracking Rules")),
+    ("Related Documents", ()),
+)
+PACK_FORM = (
+    "reference/research-pack",
+    "common/template-readme-research-pack",
+    "reference/audit-pack",
+    "common/template-readme-audit-pack",
+    "reference/data-pack",
+    "common/template-readme-data-pack",
+)
+PACK_FORM_TREE = (
+    ("Overview", ()),
+    ("Scope", ()),
+    ("Pack Contract", ()),
+    ("Method", ()),
+    ("Structure", ()),
+    ("Pack Index", ()),
+    ("Usage", ()),
+    ("Refresh and Succession", ()),
+    ("Review and Closure", ()),
+    ("Refresh and Retention", ()),
+    ("Evidence Boundary", ()),
+    ("Related Documents", ()),
+)
+PACK_NOT_REQUIRED = (
+    "Method",
+    "Refresh and Succession",
+    "Review and Closure",
+    "Refresh and Retention",
+)
+PACK_EXTENSIONS = [
+    {
+        "id": "pack-external-finding-vocabulary",
+        "kind": "local_h3",
+        "condition": (
+            "a research pack that fixes the external finding vocabulary its reports use"
+        ),
+        "owner": "platform",
+        "verification": "the form tree check",
+        "review": "when the Reference Pack README form changes",
+        "removal": ("when the Reference Pack README form gains a matching section"),
+        "parent_id": "reference-pack-readme-pack-contract",
+        "title": "External Finding Vocabulary",
+    },
+    {
+        "id": "pack-separate-evidence-axes",
+        "kind": "local_h3",
+        "condition": (
+            "a research pack that keeps its evidence axes apart in its reports"
+        ),
+        "owner": "platform",
+        "verification": "the form tree check",
+        "review": "when the Reference Pack README form changes",
+        "removal": ("when the Reference Pack README form gains a matching section"),
+        "parent_id": "reference-pack-readme-pack-contract",
+        "title": "Separate Evidence Axes",
+    },
+]
 POLICY_GOVERNANCE_TABLE_KEYS = {"Rules": POLICY_RULES_TABLE}
 POLICY_OPERATIONS_TABLE_KEYS = {
     "Rules": POLICY_RULES_TABLE,
@@ -285,7 +359,7 @@ POLICY_OPERATIONS_TABLE_KEYS = {
         "Promoted owner",
     ),
 }
-# The ten roles that carry a form; every other profile keeps its H2 lists.
+# The twelve roles that carry a form; every other profile keeps its H2 lists.
 FORM_PROFILES = (
     GUIDE
     + RUNBOOK
@@ -299,6 +373,8 @@ FORM_PROFILES = (
     + AGENTS
     + SKILL_GOVERNANCE
     + SKILL_NATIVE
+    + WORKSPACE_FORM
+    + PACK_FORM
 )
 FORM_TEMPLATES = (
     GUIDE[1],
@@ -315,8 +391,12 @@ FORM_TEMPLATES = (
     AGENTS[1],
     SKILL_GOVERNANCE[1],
     SKILL_NATIVE[1],
+    WORKSPACE_FORM[1],
+    PACK_FORM[1],
+    PACK_FORM[3],
+    PACK_FORM[5],
 )
-TEN_FORMS = [
+TWELVE_FORMS = [
     "guide",
     "runbook",
     "incident",
@@ -327,6 +407,8 @@ TEN_FORMS = [
     "policy",
     "agents",
     "skill",
+    "workspace-readme",
+    "reference-pack-readme",
 ]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
@@ -600,7 +682,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_ten_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twelve_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -621,6 +703,8 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ("policy", "Policy"),
                 ("agents", "AGENTS"),
                 ("skill", "Skill"),
+                ("workspace-readme", "Workspace README"),
+                ("reference-pack-readme", "Reference Pack README"),
             ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
@@ -714,6 +798,22 @@ class RepositoryRegistryTests(unittest.TestCase):
                 SKILL_NATIVE,
                 None,
             ),
+            (
+                "workspace-readme",
+                WORKSPACE_FORM_TREE,
+                [],
+                {},
+                WORKSPACE_FORM,
+                None,
+            ),
+            (
+                "reference-pack-readme",
+                PACK_FORM_TREE,
+                PACK_EXTENSIONS,
+                {},
+                PACK_FORM,
+                None,
+            ),
         ):
             loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
             self.assertEqual(loaded["h1"], "{{document_title}}")
@@ -760,9 +860,21 @@ class RepositoryRegistryTests(unittest.TestCase):
             }
             self.assertEqual(
                 conditional,
-                {"runbook-recovery-rollback"} if form_id == "runbook" else set(),
+                {
+                    "runbook": {"runbook-recovery-rollback"},
+                    "reference-pack-readme": {
+                        f"reference-pack-readme-{title.lower().replace(' ', '-')}"
+                        for title in PACK_NOT_REQUIRED
+                    },
+                }.get(form_id, set()),
             )
-            self.assertEqual({node.get("link_only") for node in every}, {False})
+            self.assertTrue(all(isinstance(n.get("link_only"), bool) for n in every))
+            self.assertEqual(
+                {node["section_id"] for node in every if node.get("link_only")},
+                {f"{form_id}-related-documents"}
+                if form_id in ("workspace-readme", "reference-pack-readme")
+                else set(),
+            )
             self.assertEqual(loaded["extensions"], extensions)
             for profile_id in profiles:
                 profile = by_id[profile_id]
@@ -824,11 +936,11 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_ten_forms(self) -> None:
+    def test_repository_registry_loads_with_exactly_the_twelve_forms(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TEN_FORMS,
+            TWELVE_FORMS,
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -842,6 +954,8 @@ class RepositoryRegistryTests(unittest.TestCase):
             "policy": ["Rules", "Lifecycle Traceability"],
             "agents": ["Tool Rules"],
             "skill": ["Steps"],
+            "workspace-readme": [],
+            "reference-pack-readme": [],
         }
         governance_tables = ["Rules"]
         for profile in registry.profiles:
@@ -860,6 +974,8 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("policy", POLICY_GOVERNANCE + POLICY_OPERATIONS),
                             ("agents", AGENTS),
                             ("skill", SKILL_GOVERNANCE + SKILL_NATIVE),
+                            ("workspace-readme", WORKSPACE_FORM),
+                            ("reference-pack-readme", PACK_FORM),
                         )
                         if profile.profile_id in ids
                     ),
@@ -884,7 +1000,7 @@ class RepositoryRegistryTests(unittest.TestCase):
         self.assertEqual(by_id["governance/rule"].document_role, "policy")
         self.assertIsNone(by_id["governance/role"].document_role)
 
-    def test_schema_role_and_form_enums_are_the_sixteen_common_roles(self) -> None:
+    def test_schema_role_and_form_enums_are_the_eighteen_roles(self) -> None:
         schema = json.loads(
             (
                 ROOT / "docs/99.templates/contracts/document-profile.schema.json"
@@ -915,7 +1031,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TEN_FORMS,
+            TWELVE_FORMS,
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -3001,6 +3117,347 @@ class NativeSkillFormTests(SkillFormBody):
                 self.assertIsNone(by_id[profile_id].form)
 
 
+WORKSPACE_PATH = PurePosixPath("_workspace/diagnostics/README.md")
+PACK_PATH = PurePosixPath("docs/90.references/research/0001-example/README.md")
+LOCAL_FORM_CONSUMERS = (
+    "docs/99.templates/registry.json",
+    "docs/99.templates/contracts/document-profile.schema.json",
+    "docs/99.templates/README.md",
+    "scripts/document_contracts.py",
+    "scripts/validate-markdown-profiles.py",
+    "scripts/validate-document-contract-registry.py",
+    "scripts/validate-links-and-owners.py",
+    "scripts/validation/repository/form_contracts.py",
+    "scripts/validation/repository/quality.py",
+    "tests/test_common_form_tree.py",
+)
+
+
+def workspace_body() -> str:
+    return md(
+        "# Workspace area",
+        "## Overview\n\nA local staging area.",
+        "## Scope",
+        "### Permitted Artifacts\n\nAnalysis output.",
+        "### Forbidden Local State\n\nNo secrets.",
+        "## Structure\n\nOne folder per kind.",
+        "## Usage",
+        "### Promotion and Cleanup\n\nPromote, then delete.",
+        "### Tracking Rules\n\nIgnored by Git.",
+        "## Related Documents\n\n- [Root](../README.md)",
+    )
+
+
+def pack_body(*extra: tuple[str, str]) -> str:
+    """A pack README; `extra` is (H2 title, body) of the optional sections."""
+
+    later = dict(extra)
+    blocks = ["# Research pack"]
+    for title, _ in PACK_FORM_TREE:
+        if title == "Related Documents":
+            blocks.append("## Related Documents\n\n- [Stage](../README.md)")
+        elif title in PACK_NOT_REQUIRED:
+            if title in later:
+                blocks.append(f"## {title}\n\n{later[title]}")
+        else:
+            blocks.append(f"## {title}\n\nThe {title} of the pack.")
+    return md(*blocks)
+
+
+# TestCase is named again so the static collector sees a runnable base.
+class LocalReadmeForm(unittest.TestCase):
+    """Shared checks for a Stage 99 local README role (W03-D09, W03-D10)."""
+
+    PATH: PurePosixPath
+    PROFILES: tuple[str, ...]  # source, twin, ...
+    FORM_ID: str
+    FORM_TITLE: str
+    TREE: tuple
+    BODY: str
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        if cls is LocalReadmeForm:
+            raise unittest.SkipTest("shared base; its subclasses run the checks")
+        cls.profile = typed_profiles(load_raw())[cls.PROFILES[0]]
+
+    def tree(self, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(
+                self.PATH, self.profile, text, "active"
+            )
+        )
+
+    def under(self, heading: str, block: str) -> str:
+        """Insert a block just before the given H2 (or at the end)."""
+
+        if not heading:
+            return self.BODY + "\n" + block + "\n"
+        return self.BODY.replace("\n" + heading, "\n" + block + "\n\n" + heading, 1)
+
+    def raw_form(self) -> dict:
+        return next(
+            f
+            for f in load_raw()["common_forms"]["forms"]
+            if f["form_id"] == self.FORM_ID
+        )
+
+    def test_the_form_is_a_stage_99_local_role_with_the_readme_language_rule(
+        self,
+    ) -> None:
+        raw = self.raw_form()
+        stage = next(
+            f
+            for f in load_raw()["common_forms"]["forms"]
+            if f["form_id"] == "stage-readme"
+        )
+        self.assertEqual(raw["title"], self.FORM_TITLE)
+        self.assertEqual(raw["h1"], "{{document_title}}")
+        self.assertEqual(raw["language_rule"], stage["language_rule"])
+        policy = raw["extension_policy"]
+        for needle in ("Stage 99", "W03-D09", "W03-D10", "COMMON-DOC-FORM-1"):
+            self.assertIn(needle, policy)
+        self.assertNotEqual(policy, stage["extension_policy"])
+
+    def test_the_form_tree_has_the_registered_titles_and_no_body_section(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        loaded = next(f for f in registry.common_forms if f.form_id == self.FORM_ID)
+        self.assertEqual(
+            tuple(
+                (item.title, tuple(child.title for child in item.children))
+                for item in loaded.sections
+            ),
+            self.TREE,
+        )
+        for profile_id in self.PROFILES:
+            with self.subTest(profile=profile_id):
+                profile = profile_of(load_raw(), profile_id)
+                self.assertEqual(profile["document_role"], self.FORM_ID)
+                self.assertEqual(
+                    profile["sections"],
+                    {"required": [], "optional": [], "forbidden": []},
+                )
+                self.assertIsNone(profile["relationships"]["body_contract"])
+
+    def test_the_repository_registry_is_valid_and_its_twins_match(self) -> None:
+        self.assertEqual(rules_of(load_raw()), set())
+        REGISTRY_CHECK._assert_template_source_parity(CONTRACTS.load_registry(ROOT))
+
+    def test_every_template_twin_has_a_definition_without_tables(self) -> None:
+        for profile_id in self.PROFILES:
+            profile = profile_of(load_raw(), profile_id)
+            if profile["mode"] != "template":
+                continue
+            with self.subTest(profile=profile_id):
+                definition_ = profile["template_definition"]
+                self.assertEqual(definition_["tables"], [])
+                self.assertEqual(
+                    definition_["policy_refs"],
+                    [
+                        ".agents/governance/document-authoring.md",
+                        ".agents/governance/document-lifecycle.md",
+                    ],
+                )
+                self.assertEqual(
+                    definition_["vocabulary_refs"], [".agents/knowledge/glossary.md"]
+                )
+                paths = definition_["consumer_paths"]
+                self.assertEqual(len(paths), len(set(paths)))
+                self.assertIn(profile["template_source"], paths)
+                for path in (*LOCAL_FORM_CONSUMERS, *paths):
+                    self.assertTrue((ROOT / path).is_file(), path)
+                for path in LOCAL_FORM_CONSUMERS:
+                    self.assertIn(path, paths)
+
+    def test_a_complete_document_passes_the_tree(self) -> None:
+        self.assertEqual(self.tree(self.BODY), [])
+
+    def test_a_missing_or_renamed_h2_fails_the_tree(self) -> None:
+        self.assertEqual(
+            self.tree(self.BODY.replace("## Structure", "## Layout")),
+            ["BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"],
+        )
+
+    def test_an_unregistered_h3_is_refused(self) -> None:
+        self.assertEqual(
+            self.tree(self.under("## Related Documents", "### Stray\n\nText.")),
+            ["BODY-H3-UNSUPPORTED"],
+        )
+
+
+class WorkspaceReadmeFormTests(LocalReadmeForm):
+    """SPEC-0178 VAL-LOCALREADME-001: the Workspace README form."""
+
+    PATH = WORKSPACE_PATH
+    PROFILES = WORKSPACE_FORM
+    FORM_ID = "workspace-readme"
+    FORM_TITLE = "Workspace README"
+    TREE = WORKSPACE_FORM_TREE
+    BODY = workspace_body()
+
+    def test_the_form_has_no_extension(self) -> None:
+        self.assertEqual(self.raw_form()["extensions"], [])
+
+    def test_a_router_profile_leaves_empty_sections_to_review(self) -> None:
+        self.assertEqual(self.profile.mode, "router")
+        bare = re.sub(r"(## Structure\n\n)[^\n]*", r"\1", self.BODY)
+        self.assertEqual(self.tree(bare), [])
+        links = re.sub(r"(## Structure\n\n)[^\n]*", r"\1- [a](a.md)", self.BODY)
+        self.assertEqual(self.tree(links), [])
+
+    def test_a_missing_or_renamed_form_h3_fails_the_tree(self) -> None:
+        self.assertEqual(
+            self.tree(self.BODY.replace("### Tracking Rules", "### Tracking")),
+            ["BODY-H3-REQUIRED", "BODY-H3-UNSUPPORTED"],
+        )
+        self.assertEqual(
+            self.tree(self.under("## Structure", "### Stray\n\nText.")),
+            ["BODY-H3-UNSUPPORTED"],
+        )
+
+    def test_the_seven_workspace_readmes_resolve_to_the_profile(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        for path in (
+            "_workspace/README.md",
+            "_workspace/diagnostics/README.md",
+            "_workspace/diagnostics/ci/README.md",
+            "_workspace/diagnostics/validation/README.md",
+            "_workspace/repo-support/README.md",
+            "_workspace/repo-support/analysis/README.md",
+            "_workspace/repo-support/previews/README.md",
+        ):
+            with self.subTest(path=path):
+                profile = CONTRACTS.classify_path(registry, PurePosixPath(path))
+                self.assertEqual(profile.profile_id, WORKSPACE_FORM[0])
+                self.assertEqual(profile.document_role, "workspace-readme")
+
+
+class ReferencePackFormTests(LocalReadmeForm):
+    """SPEC-0178 VAL-LOCALREADME-001: the Reference Pack README form."""
+
+    PATH = PACK_PATH
+    PROFILES = PACK_FORM
+    FORM_ID = "reference-pack-readme"
+    FORM_TITLE = "Reference Pack README"
+    TREE = PACK_FORM_TREE
+    BODY = pack_body()
+
+    def test_related_documents_may_be_a_link_list_and_no_other_section(self) -> None:
+        self.assertEqual(self.tree(self.BODY), [])
+        plain = re.sub(r"(## Structure\n\n)[^\n]*", r"\1- [a](a.md)", self.BODY)
+        self.assertEqual(self.tree(plain), ["BODY-SECTION-EMPTY"])
+        bare = re.sub(r"(## Related Documents\n\n)[^\n]*", r"\1", self.BODY)
+        self.assertEqual(self.tree(bare), ["BODY-SECTION-EMPTY"])
+
+    def test_the_form_has_the_two_registered_local_h3s(self) -> None:
+        self.assertEqual(self.raw_form()["extensions"], PACK_EXTENSIONS)
+
+    def test_the_three_closure_sections_and_method_are_not_required(self) -> None:
+        sections = {s["title"]: s for s in self.raw_form()["sections"]}
+        for title in PACK_NOT_REQUIRED:
+            with self.subTest(section=title):
+                self.assertNotEqual(sections[title]["requiredness"], "required")
+                self.assertNotEqual(sections[title]["condition"], "always")
+        self.assertEqual(sections["Method"]["requiredness"], "optional")
+        for title in PACK_NOT_REQUIRED[1:]:
+            self.assertEqual(sections[title]["requiredness"], "conditional")
+
+    def test_the_profiles_derive_the_required_headings_from_the_form(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        every = tuple(title for title, _ in PACK_FORM_TREE)
+        required = tuple(t for t in every if t not in PACK_NOT_REQUIRED)
+        by_id = {profile.profile_id: profile for profile in registry.profiles}
+        for profile_id in PACK_FORM:
+            with self.subTest(profile=profile_id):
+                headings = by_id[profile_id].headings
+                self.assertEqual(headings.required, required)
+                self.assertEqual(headings.allowed, every)
+
+    def test_each_conditional_section_may_be_absent_or_present(self) -> None:
+        self.assertEqual(self.tree(self.BODY), [])
+        for title in PACK_NOT_REQUIRED:
+            with self.subTest(section=title):
+                body = pack_body((title, "The pack states it."))
+                self.assertEqual(self.tree(body), [])
+                empty = pack_body((title, ""))
+                self.assertEqual(self.tree(empty), ["BODY-SECTION-EMPTY"])
+
+    def test_every_closure_section_is_accepted_at_once_in_form_order(self) -> None:
+        body = pack_body(*((title, "Stated.") for title in PACK_NOT_REQUIRED))
+        self.assertEqual(self.tree(body), [])
+        early = body.replace(
+            "## Usage", "## Review and Closure\n\nEarly.\n\n## Usage", 1
+        )
+        early = early.replace("## Review and Closure\n\nStated.\n\n", "", 1)
+        self.assertEqual(self.tree(early), ["BODY-H2-ORDER"])
+
+    def test_an_old_pack_heading_is_refused(self) -> None:
+        for old, new in (
+            ("## Pack Contract", "## Research Contract"),
+            ("## Pack Index", "## Report Index"),
+        ):
+            with self.subTest(old=new):
+                self.assertEqual(
+                    self.tree(self.BODY.replace(old, new)),
+                    ["BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"],
+                )
+
+    def test_the_local_h3s_are_accepted_under_pack_contract_only(self) -> None:
+        for title in ("External Finding Vocabulary", "Separate Evidence Axes"):
+            block = f"### {title}\n\nThe pack keeps it."
+            with self.subTest(h3=title):
+                self.assertEqual(self.tree(self.under("## Structure", block)), [])
+                for heading in ("## Pack Contract", "## Usage", "## Related Documents"):
+                    self.assertEqual(
+                        self.tree(self.under(heading, block)), ["BODY-H3-PARENT"]
+                    )
+                self.assertEqual(self.tree(self.under("", block)), ["BODY-H3-PARENT"])
+
+    def test_an_empty_local_h3_fails_and_an_absent_one_passes(self) -> None:
+        self.assertNotIn("External Finding Vocabulary", self.BODY)
+        empty = self.under("## Structure", "### Separate Evidence Axes\n")
+        self.assertEqual(self.tree(empty), ["BODY-SECTION-EMPTY"])
+
+    def test_both_local_h3s_are_accepted_together_under_pack_contract(self) -> None:
+        both = self.under(
+            "## Structure",
+            "### External Finding Vocabulary\n\nTerms.\n\n"
+            "### Separate Evidence Axes\n\nAxes.",
+        )
+        self.assertEqual(self.tree(both), [])
+
+    def test_the_three_pack_profiles_read_navigation_from_pack_index(self) -> None:
+        navigation = load_raw()["readme_navigation"]["profiles"]
+        for profile_id in (
+            "reference/audit-pack",
+            "reference/data-pack",
+            "reference/research-pack",
+        ):
+            with self.subTest(profile=profile_id):
+                self.assertEqual(
+                    navigation[profile_id], {"section": "Pack Index", "complete": True}
+                )
+
+    def test_the_pack_readmes_resolve_to_the_pack_profiles(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        for path, profile_id in (
+            (
+                "docs/90.references/research/0001-workspace-engineering/README.md",
+                "reference/research-pack",
+            ),
+            (
+                "docs/90.references/audits/0001-sdlc-governance/README.md",
+                "reference/audit-pack",
+            ),
+            ("docs/90.references/data/0001-example/README.md", "reference/data-pack"),
+        ):
+            with self.subTest(path=path):
+                profile = CONTRACTS.classify_path(registry, PurePosixPath(path))
+                self.assertEqual(profile.profile_id, profile_id)
+                self.assertEqual(profile.document_role, "reference-pack-readme")
+
+
 class TemplateTwinTableTests(unittest.TestCase):
     """SPEC-0175 W03-H10: two tabled twins may not name one source profile."""
 
@@ -3134,11 +3591,11 @@ class RetainedFormTests(unittest.TestCase):
 
 
 class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
-    def test_only_the_ten_form_profiles_use_the_tree(self) -> None:
+    def test_only_the_twelve_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TEN_FORMS,
+            TWELVE_FORMS,
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),

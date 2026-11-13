@@ -17,7 +17,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 <!-- Author prompt: 포함하는 질문과 자료, 제외 대상, 관찰 및 권한의 한계를 정한다. -->
 
-## Audit Contract
+## Pack Contract
 
 <!-- Author prompt: 관측 날짜, 기준선, 방법, 권한의 한계, 해결되지 않은 증거를 기록한다. -->
 
@@ -25,7 +25,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 <!-- Author prompt: 직접 멤버의 탐색은 아래 색인 하나에 맡기며 별도 상태·날짜 표를 만들지 않는다. -->
 
-## Report Index
+## Pack Index
 
 <!-- Author prompt: 이 pack의 보고서를 한 번씩 링크하고 각 보고서가 맡은 감사 책임을 적는다. 상태, 날짜, 개수는 각 문서가 직접 가지므로 옮겨 적지 않는다. 경로 매트릭스는 그 멤버를 나열하는 폴더의 README에 둔다. -->
 
