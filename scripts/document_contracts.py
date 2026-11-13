@@ -2071,6 +2071,15 @@ def _table_diagnostics(
                     f"{name}: keys {keys!r}, row_identity {table['row_identity']!r}",
                 )
             )
+        flags = [column["required"] for column in table["columns"]]
+        if False in flags and True in flags[flags.index(False) :]:
+            faults.append(
+                (
+                    "REGISTRY_TABLE_COLUMNS",
+                    "optional columns only after every required column",
+                    f"{name}: required flags {flags!r}",
+                )
+            )
         if (
             body_contract is not None
             and name == body_contract["table_heading"]
@@ -2354,11 +2363,19 @@ def _readme_navigation_registry_diagnostics(
     raw_registry: Mapping[str, Any],
     profiles_by_id: Mapping[str, Mapping[str, Any]],
 ) -> list[Diagnostic]:
-    """Require navigation entries to name README roles and their own H2s."""
+    """Require navigation entries to name README roles and their own sections.
+
+    A section is a required H2 of the profile lists or, for a profile whose
+    role has a form, a required H2 or H3 title unique among the form's titles.
+    """
 
     contract = raw_registry.get("readme_navigation")
     if contract is None:
         return []
+    forms = {
+        form["form_id"]: form
+        for form in (raw_registry.get("common_forms") or {}).get("forms", ())
+    }
     faults: list[str] = []
     for profile_id, entry in contract["profiles"].items():
         profile = profiles_by_id.get(profile_id)
@@ -2376,7 +2393,21 @@ def _readme_navigation_registry_diagnostics(
         )
         if profile.get("mode") != "router" and not pack_anchor:
             faults.append(f"{profile_id} is not a README navigation profile")
-        if entry["section"] not in profile.get("sections", {}).get("required", ()):
+        allowed = set(profile.get("sections", {}).get("required", ()))
+        form = forms.get(profile.get("document_role"))
+        if form is not None:
+            titles = [
+                (item["title"], item["requiredness"])
+                for section in form["sections"]
+                for item in (section, *section["children"])
+            ]
+            names = [title for title, _ in titles]
+            allowed.update(
+                title
+                for title, requiredness in titles
+                if requiredness == "required" and names.count(title) == 1
+            )
+        if entry["section"] not in allowed:
             faults.append(f"{profile_id} section {entry['section']!r} is not required")
     if contract["max_deep_links_per_child"] < 1:
         faults.append("max_deep_links_per_child is below one")
@@ -2389,7 +2420,10 @@ def _readme_navigation_registry_diagnostics(
     return [
         _diagnostic(
             "REGISTRY_README_NAVIGATION",
-            expected="README roles, their required H2 sections, and README paths",
+            expected=(
+                "README roles, their required H2 sections or their form's "
+                "required, unique H2 or H3 titles, and README paths"
+            ),
             actual=fault,
         )
         for fault in faults

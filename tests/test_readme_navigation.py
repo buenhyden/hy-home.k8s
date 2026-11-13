@@ -27,6 +27,7 @@ LINKS = load_links()
 FENCE = "`" * 3
 ROUTER = "common/readme-stage-index"
 IMPLEMENTATION = "common/readme-implementation"
+ROOT_README = "common/readme-repository"
 
 
 def navigation(pending=(), exempt=()):
@@ -40,6 +41,7 @@ def navigation(pending=(), exempt=()):
             {
                 ROUTER: contracts.ReadmeNavigationProfile("Document Index", True),
                 IMPLEMENTATION: contracts.ReadmeNavigationProfile("Structure", False),
+                ROOT_README: contracts.ReadmeNavigationProfile("Directories", False),
             }
         ),
         pending_paths=frozenset(PurePosixPath(p) for p in pending),
@@ -240,6 +242,44 @@ class ReadmeNavigationTests(unittest.TestCase):
         )
 
 
+H3_SECTION = (
+    "# R\n\n## Repository Map\n\n### Directories\n\n- [a](./a/k.md)\n\n"
+    "#### Top-level Areas\n\n- [c](./c/k.md)\n\n"
+    "### Canonical Entry Points\n\n- [b](./b/k.md)\n\n"
+    "## References\n\n- [d](./d/k.md)\n"
+)
+H3_FILES = tree("r/README.md", "r/a/k.md", "r/b/k.md", "r/c/k.md", "r/d/k.md")
+
+
+class ReadmeNavigationH3SectionTests(unittest.TestCase):
+    def depth_targets(self, text):
+        found = run(text, files=H3_FILES, profile=ROOT_README, path="r/README.md")
+        return sorted(
+            item.actual.split(" reaches ")[1]
+            for item in found
+            if item.rule_id == "README-NAV-DEPTH"
+        )
+
+    def test_h3_section_counts_its_links_and_h4_content(self):
+        self.assertEqual(self.depth_targets(H3_SECTION), ["a/k.md", "c/k.md"])
+
+    def test_h3_section_excludes_the_next_h3_and_h2(self):
+        reads = LINKS._readme_section(H3_SECTION, "Directories")
+        self.assertIn("Top-level Areas", reads)
+        self.assertNotIn("Canonical Entry Points", reads)
+        self.assertNotIn("References", reads)
+
+    def test_h3_sharing_a_list_profile_h2_title_does_not_displace_it(self):
+        text = (
+            "# S\n\n## Overview\n\n### Document Index\n\n"
+            "- [x](./0001-a/spec.md)\n\n" + GOOD_ROUTER.split("\n\n", 1)[1]
+        )
+        reads = LINKS._readme_section(text, "Document Index")
+        self.assertNotIn("spec.md", reads)
+        self.assertIn("0002-b", reads)
+        self.assertEqual(codes(text), [])
+
+
 class ReadmeNavigationRegistryTests(unittest.TestCase):
     def raw(self, **changes):
         contract = {
@@ -285,6 +325,85 @@ class ReadmeNavigationRegistryTests(unittest.TestCase):
         ):
             with self.subTest(changes=changes):
                 self.assertEqual(self.faults(**changes), ["REGISTRY_README_NAVIGATION"])
+
+
+class ReadmeNavigationFormRegistryTests(unittest.TestCase):
+    """A form profile may name a required, unique H2 or H3 title of its form."""
+
+    ROLE = "common/readme-repository"
+
+    def form(self, extra_h3="Canonical Entry Points"):
+        def section(title, level, children=()):
+            return {
+                "title": title,
+                "level": level,
+                "requiredness": "required",
+                "children": list(children),
+            }
+
+        return {
+            "form_id": "root-readme",
+            "sections": [
+                section("Purpose", 2, [section("Project Role", 3)]),
+                section(
+                    "Repository Map",
+                    2,
+                    [section("Directories", 3), section(extra_h3, 3)],
+                ),
+            ],
+        }
+
+    def faults(self, section, form=None, with_forms=True, role="root-readme"):
+        raw = {
+            "readme_navigation": {
+                "placeholders": ["README.md"],
+                "forbidden_index_columns": [],
+                "max_deep_links_per_child": 1,
+                "profiles": {self.ROLE: {"section": section, "complete": False}},
+                "pending_paths": [],
+                "exempt_paths": [],
+            }
+        }
+        if with_forms:
+            raw["common_forms"] = {"forms": [form or self.form()]}
+        profile = {"mode": "router", "sections": {"required": []}}
+        if role:
+            profile["document_role"] = role
+        return [
+            item.rule_id
+            for item in contracts._readme_navigation_registry_diagnostics(
+                raw, {self.ROLE: profile}
+            )
+        ]
+
+    def test_registry_accepts_a_form_h3_and_h2(self):
+        self.assertEqual(self.faults("Directories"), [])
+        self.assertEqual(self.faults("Repository Map"), [])
+
+    def test_registry_rejects_a_title_absent_from_the_form(self):
+        self.assertEqual(self.faults("Structure"), ["REGISTRY_README_NAVIGATION"])
+
+    def test_registry_rejects_a_title_repeated_in_the_form(self):
+        form = self.form(extra_h3="Directories")
+        self.assertEqual(
+            self.faults("Directories", form), ["REGISTRY_README_NAVIGATION"]
+        )
+
+    def test_raw_registry_without_common_forms_still_works(self):
+        self.assertEqual(
+            self.faults("Directories", with_forms=False),
+            ["REGISTRY_README_NAVIGATION"],
+        )
+        self.assertEqual(
+            self.faults("Directories", with_forms=False, role=None),
+            ["REGISTRY_README_NAVIGATION"],
+        )
+
+    def test_a_profile_without_a_form_keeps_h3_names_out(self):
+        self.assertEqual(
+            self.faults("Directories", role="stage-readme"),
+            ["REGISTRY_README_NAVIGATION"],
+        )
 
 
 class RepositoryContractTests(unittest.TestCase):

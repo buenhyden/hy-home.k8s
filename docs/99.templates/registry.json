@@ -1886,18 +1886,8 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
-        "optional": [
-          "Audience",
-          "Getting Started",
-          "Verification"
-        ],
+        "required": [],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": null,
@@ -2815,18 +2805,8 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
-        "optional": [
-          "Audience",
-          "Getting Started",
-          "Verification"
-        ],
+        "required": [],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": null,
@@ -2836,7 +2816,90 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for the repository README: a human entry point that states the project role and boundaries, maps the repository, gives the shortest verified start and points to current documentation and owners.",
+        "responsibility": "The root README owns the human-facing orientation to the repository and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
+        "non_goals": [
+          "Restating detailed policy, which belongs to its canonical owner document.",
+          "Holding agent instructions, which belong to the folder AGENTS.md.",
+          "Defining the Stage, collection, implementation, workspace or reference-pack README forms, which keep their own profiles."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The repository README.md and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/common/readme-repository.template.md",
+          "README.md",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validation/document_content.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_readme_navigation.py"
+        ],
+        "validation": {
+          "positive": [
+            "The root README and its template pass the form tree, navigation, document-content, author-prompt and residue checks.",
+            "A Directory Index table with Path and Purpose columns, or with Path, Purpose and Owner columns, passes the document table check.",
+            "The navigation section Directories is read as the H3 of the form, with its H4 subsections, up to the next H3 or H2."
+          ],
+          "negative": [
+            "A root README missing a form H3 fails BODY-HEADING-REQUIRED.",
+            "A Directory Index header that omits Purpose or reorders its columns fails BODY-TABLE-COLUMNS.",
+            "A navigation section absent from the form or repeated in it fails REGISTRY_README_NAVIGATION.",
+            "A required table column after an optional one fails REGISTRY_TABLE_COLUMNS."
+          ],
+          "regression": [
+            "The loaded root README profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
+            "tests/test_readme_navigation.py covers an H3 navigation section and the registry rule for a form H3."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0172 map moves each sentence of the former eight-section README.md into the Purpose, Repository Map, Getting Started or References section without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous eight-section README.md and root README template.",
+          "rollback": "Revert the SPEC-0172 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Directory Index",
+            "section": "root-readme-repository-map-directories",
+            "columns": [
+              {
+                "key": "Path",
+                "meaning": "The direct child folder or file the row describes.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Purpose",
+                "meaning": "What the path holds and why a reader opens it.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Owner",
+                "meaning": "The person or team that maintains the path.",
+                "data_type": "string",
+                "required": false
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Path"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-readme-stage-index",
@@ -6287,7 +6350,7 @@
     "max_deep_links_per_child": 1,
     "profiles": {
       "common/readme-repository": {
-        "section": "Structure",
+        "section": "Directories",
         "complete": false
       },
       "common/readme-stage-index": {
@@ -7941,6 +8004,308 @@
             "title": "What Went Well"
           }
         ]
+      },
+      {
+        "form_id": "root-readme",
+        "title": "Root README",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "root-readme-purpose",
+            "level": 2,
+            "parent_id": null,
+            "title": "Purpose",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "사람용 프로젝트 진입점",
+            "required_content": [
+              "사람용 프로젝트 진입점에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "root-readme-purpose-project-role",
+                "level": 3,
+                "parent_id": "root-readme-purpose",
+                "title": "Project Role",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "프로젝트 목적·주 독자",
+                "required_content": [
+                  "프로젝트 목적·주 독자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "root-readme-purpose-boundaries",
+                "level": 3,
+                "parent_id": "root-readme-purpose",
+                "title": "Boundaries",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 지원 범위·비목표",
+                "required_content": [
+                  "실제 지원 범위·비목표을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "root-readme-repository-map",
+            "level": 2,
+            "parent_id": null,
+            "title": "Repository Map",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "파일과 책임 안내",
+            "required_content": [
+              "파일과 책임 안내에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "root-readme-repository-map-directories",
+                "level": 3,
+                "parent_id": "root-readme-repository-map",
+                "title": "Directories",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "현재 디렉터리별 목적·소유자",
+                "required_content": [
+                  "현재 디렉터리별 목적·소유자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "root-readme-repository-map-canonical-entry-points",
+                "level": 3,
+                "parent_id": "root-readme-repository-map",
+                "title": "Canonical Entry Points",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "정본 정책·개발·운영 진입점",
+                "required_content": [
+                  "정본 정책·개발·운영 진입점을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "root-readme-getting-started",
+            "level": 2,
+            "parent_id": null,
+            "title": "Getting Started",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "안전한 시작 절차",
+            "required_content": [
+              "안전한 시작 절차에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "root-readme-getting-started-prerequisites",
+                "level": 3,
+                "parent_id": "root-readme-getting-started",
+                "title": "Prerequisites",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 도구·환경·권한",
+                "required_content": [
+                  "실제 도구·환경·권한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "root-readme-getting-started-first-verified-path",
+                "level": 3,
+                "parent_id": "root-readme-getting-started",
+                "title": "First Verified Path",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "시작·검사·기대 결과",
+                "required_content": [
+                  "시작·검사·기대 결과을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "root-readme-references",
+            "level": 2,
+            "parent_id": null,
+            "title": "References",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "관련 자료 안내",
+            "required_content": [
+              "관련 자료 안내에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "root-readme-references-current-documentation",
+                "level": 3,
+                "parent_id": "root-readme-references",
+                "title": "Current Documentation",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "현행 사용·개발·운영 링크",
+                "required_content": [
+                  "현행 사용·개발·운영 링크을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "root-readme-references-support-and-ownership",
+                "level": 3,
+                "parent_id": "root-readme-references",
+                "title": "Support and Ownership",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "문의·오류 보고·유지 책임",
+                "required_content": [
+                  "문의·오류 보고·유지 책임을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "상세 정책의 독립 정본이나 에이전트 전용 지침을 만들지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          }
+        ],
+        "extensions": []
       }
     ]
   }

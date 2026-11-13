@@ -145,9 +145,24 @@ POSTMORTEM_TREE = (
     ("Corrective Actions", ("Actions", "Verification")),
     ("Evidence", ("Source Records", "Review Decision")),
 )
-# The four roles that carry a form; every other profile keeps its H2 lists.
-FORM_PROFILES = GUIDE + RUNBOOK + INCIDENT + POSTMORTEM
-FORM_TEMPLATES = (GUIDE[1], RUNBOOK[1], INCIDENT[1], POSTMORTEM[1])
+ROOT_FORM = ("common/readme-repository", "common/template-readme-repository")
+ROOT_FORM_TREE = (
+    ("Purpose", ("Project Role", "Boundaries")),
+    ("Repository Map", ("Directories", "Canonical Entry Points")),
+    ("Getting Started", ("Prerequisites", "First Verified Path")),
+    ("References", ("Current Documentation", "Support and Ownership")),
+)
+ROOT_TABLE_KEYS = {
+    "Directory Index": (
+        "root-readme-repository-map-directories",
+        ("Path", "Purpose", "Owner"),
+        0,
+        "Path",
+    ),
+}
+# The five roles that carry a form; every other profile keeps its H2 lists.
+FORM_PROFILES = GUIDE + RUNBOOK + INCIDENT + POSTMORTEM + ROOT_FORM
+FORM_TEMPLATES = (GUIDE[1], RUNBOOK[1], INCIDENT[1], POSTMORTEM[1], ROOT_FORM[1])
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
     "Task or an N/A reason"
@@ -420,7 +435,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_four_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_five_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -435,6 +450,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ("runbook", "Runbook"),
                 ("incident", "Incident"),
                 ("postmortem", "Postmortem"),
+                ("root-readme", "Root README"),
             ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
@@ -470,6 +486,14 @@ class RepositoryRegistryTests(unittest.TestCase):
                 POSTMORTEM_TABLE_KEYS,
                 POSTMORTEM,
                 "Corrective Actions",
+            ),
+            (
+                "root-readme",
+                ROOT_FORM_TREE,
+                [],
+                ROOT_TABLE_KEYS,
+                ROOT_FORM,
+                None,
             ),
         ):
             loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
@@ -529,9 +553,8 @@ class RepositoryRegistryTests(unittest.TestCase):
                     + profile["sections"]["forbidden"],
                     [],
                 )
-                self.assertEqual(
-                    profile["relationships"]["body_contract"]["section"], body_section
-                )
+                contract = profile["relationships"]["body_contract"]
+                self.assertEqual(contract and contract["section"], body_section)
                 self.assertNotIn("substantive_body", profile["sections"])
                 self.assertNotIn("ordered", profile["sections"])
             self.assertEqual(
@@ -550,7 +573,10 @@ class RepositoryRegistryTests(unittest.TestCase):
                 for column in table["columns"]:
                     self.assertTrue(column["meaning"])
                     self.assertEqual(column["data_type"], "string")
-                    self.assertIs(column["required"], True)
+                    self.assertIs(
+                        column["required"],
+                        not (form_id == "root-readme" and column["key"] == "Owner"),
+                    )
         for profile_id, profile in by_id.items():
             sources = profile["relationships"]["source_profile_ids"]
             expected = ROLE_BINDINGS.get(
@@ -575,11 +601,11 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_four_forms(self) -> None:
+    def test_repository_registry_loads_with_exactly_the_five_forms(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            ["guide", "runbook", "incident", "postmortem"],
+            ["guide", "runbook", "incident", "postmortem", "root-readme"],
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -587,6 +613,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             "runbook": ["Triggers", "Lifecycle Traceability"],
             "incident": ["Events", "Lifecycle Traceability"],
             "postmortem": ["Actions", "Lifecycle Traceability"],
+            "root-readme": ["Directory Index"],
         }
         for profile in registry.profiles:
             with self.subTest(profile=profile.profile_id):
@@ -598,6 +625,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("runbook", RUNBOOK),
                             ("incident", INCIDENT),
                             ("postmortem", POSTMORTEM),
+                            ("root-readme", ROOT_FORM),
                         )
                         if profile.profile_id in ids
                     ),
@@ -648,7 +676,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            ["guide", "runbook", "incident", "postmortem"],
+            ["guide", "runbook", "incident", "postmortem", "root-readme"],
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -1485,6 +1513,122 @@ class TableCheckTests(unittest.TestCase):
         self.assertEqual(rules(self.strict), ["BODY-TABLE-COLUMNS", "BODY-TABLE-ROWS"])
 
 
+class OptionalTrailingColumnTests(unittest.TestCase):
+    """SPEC-0172: optional columns may only trail the required ones."""
+
+    @classmethod
+    def raw_with_note(cls, required: bool = False) -> dict:
+        raw = load_raw()
+        columns = guide_tables(raw)[0]["columns"]
+        columns.append(
+            {"key": "Note", "meaning": "m", "data_type": "string", "required": required}
+        )
+        return raw
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.profile = typed_profiles(cls.raw_with_note())[GUIDE[0]]
+
+    def found(self, header: tuple[str, ...]) -> list[str]:
+        cells = len(header)
+        body = (
+            "| "
+            + " | ".join(header)
+            + " |\n"
+            + "| --- " * cells
+            + "|\n"
+            + "| x " * cells
+            + "|"
+        )
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._table_diagnostics(
+                GUIDE_PATH, self.profile, guide_body(body)
+            )
+        )
+
+    def test_an_omitted_optional_trailing_column_passes(self) -> None:
+        self.assertEqual(self.found(("Step", "Action", "Check")), [])
+
+    def test_a_present_optional_trailing_column_passes(self) -> None:
+        self.assertEqual(self.found(("Step", "Action", "Check", "Note")), [])
+
+    def test_a_missing_required_column_fails(self) -> None:
+        for header in (("Step", "Action"), ("Step",)):
+            with self.subTest(header=header):
+                self.assertEqual(self.found(header), ["BODY-TABLE-COLUMNS"])
+
+    def test_a_reordered_or_extra_column_still_fails(self) -> None:
+        for header in (
+            ("Step", "Action", "Note"),
+            ("Step", "Action", "Note", "Check"),
+            ("Step", "Action", "Check", "Note", "Extra"),
+        ):
+            with self.subTest(header=header):
+                self.assertEqual(self.found(header), ["BODY-TABLE-COLUMNS"])
+
+    def test_a_required_column_after_an_optional_one_is_refused(self) -> None:
+        self.assertEqual(rules_of(self.raw_with_note()), set())
+        raw = self.raw_with_note()
+        columns = guide_tables(raw)[0]["columns"]
+        columns[1]["required"] = False
+        self.assertIn("REGISTRY_TABLE_COLUMNS", rules_of(raw))
+        raw = self.raw_with_note(required=True)
+        guide_tables(raw)[0]["columns"][2]["required"] = False
+        self.assertIn("REGISTRY_TABLE_COLUMNS", rules_of(raw))
+
+
+class RootReadmeFormTests(unittest.TestCase):
+    """SPEC-0172: the Root README form and its table in the repository registry."""
+
+    BODY = md(
+        "# Project",
+        *(
+            f"{'## ' + title}\n\n" + "\n\n".join(f"### {h3}\n\nText." for h3 in h3s)
+            for title, h3s in ROOT_FORM_TREE
+        ),
+    )
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = CONTRACTS.load_registry(ROOT)
+        cls.profile = {p.profile_id: p for p in cls.registry.profiles}[ROOT_FORM[0]]
+
+    def tree(self, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(
+                PurePosixPath("README.md"), self.profile, text
+            )
+        )
+
+    def test_the_heading_lists_equal_the_form_h2_titles(self) -> None:
+        titles = tuple(title for title, _ in ROOT_FORM_TREE)
+        self.assertEqual(self.profile.headings.required, titles)
+        self.assertEqual(self.profile.headings.allowed, titles)
+
+    def test_a_complete_body_passes_the_tree_and_an_h4_is_allowed(self) -> None:
+        self.assertEqual(self.tree(self.BODY), [])
+        deeper = self.BODY.replace(
+            "### Boundaries\n\nText.",
+            "### Boundaries\n\nText.\n\n#### In Scope\n\nText.",
+        )
+        self.assertEqual(self.tree(deeper), [])
+
+    def test_a_missing_h3_or_an_old_h2_fails_the_tree(self) -> None:
+        self.assertIn(
+            "BODY-H3-REQUIRED",
+            self.tree(self.BODY.replace("### Directories", "#### Directories")),
+        )
+        self.assertNotEqual(self.tree(self.BODY + "\n## Structure\n\nText.\n"), [])
+
+    def test_the_navigation_section_is_the_directories_h3(self) -> None:
+        navigation = self.registry.readme_navigation.profiles[ROOT_FORM[0]]
+        self.assertEqual(
+            (navigation.section, navigation.complete), ("Directories", False)
+        )
+
+
 class TableIteratorTests(unittest.TestCase):
     def test_every_table_is_yielded_in_order(self) -> None:
         text = md(
@@ -2031,12 +2175,12 @@ class RetainedFormTests(unittest.TestCase):
         self.assertEqual(body_rules("proposed", self.TREE), [])
 
 
-class CurrentRegistryFourFormsOnlyTests(unittest.TestCase):
-    def test_only_the_four_form_profiles_use_the_tree(self) -> None:
+class CurrentRegistryFiveFormsOnlyTests(unittest.TestCase):
+    def test_only_the_five_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            ["guide", "runbook", "incident", "postmortem"],
+            ["guide", "runbook", "incident", "postmortem", "root-readme"],
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),

@@ -3787,17 +3787,32 @@ def _readme_visible_lines(text: str) -> tuple[list[str], list[str]]:
 
 
 def _readme_section(text: str, heading: str) -> str:
+    """Read the first H2 titled `heading`, else the first H3, up to its end.
+
+    The section ends at the next heading of the same or a higher level, so
+    deeper subsections belong to it.
+    """
+
     visible, _ = _readme_visible_lines(text)
-    chosen: list[str] = []
-    inside = False
-    for raw, line in zip(text.split("\n"), visible):
-        match = re.match(r"^(#{1,2})\s+(.+?)\s*#*\s*$", line)
+    headings = []
+    for index, line in enumerate(visible):
+        match = re.match(r"^(#{1,6})\s+(.+?)\s*#*\s*$", line)
         if match:
-            inside = len(match.group(1)) == 2 and match.group(2) == heading
-            continue
-        if inside:
-            chosen.append(raw)
-    return "\n".join(chosen)
+            headings.append((index, len(match.group(1)), match.group(2)))
+    for level in (2, 3):
+        for position, (start, found, title) in enumerate(headings):
+            if found != level or title != heading:
+                continue
+            end = next(
+                (
+                    index
+                    for index, deeper, _ in headings[position + 1 :]
+                    if deeper <= level
+                ),
+                len(visible),
+            )
+            return "\n".join(text.split("\n")[start + 1 : end])
+    return ""
 
 
 def _readme_targets(

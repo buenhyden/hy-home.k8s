@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.21.0"
+version: "0.22.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -68,9 +68,11 @@ form 경로의 대응은 Registry만 소유한다.
 
 - **Common forms** (`common/`): governed navigation README는 순서가 고정된
   여섯 key 봉투와 `type: "common/readme"`, `status: "active"`, 별도 artifact
-  identity 없는 `Overview`/`Scope`/`Structure`/`Usage`/`Related Documents` core를
-  공유한다. 저장소·stage·collection·implementation·workspace form과 선택 module은
-  경로별 Registry profile이 고른다. stage·collection index form은 `updated` 뒤에
+  identity 없는 형태를 공유한다. stage·collection·implementation·workspace·
+  runtime-governance README만 `Overview`/`Scope`/`Structure`/`Usage`/
+  `Related Documents` core를 공유하고, 루트 README는 Registry form의 `Purpose`,
+  `Repository Map`, `Getting Started`, `References`를 쓴다. 각 form과 선택
+  module은 경로별 Registry profile이 고른다. stage·collection index form은 `updated` 뒤에
   `layer`를 더한다. README는 사람 독자만을 대상으로 한다. 폴더의 agent 지시는 그
   폴더의 `AGENTS.md`에 두며, 이는 frontmatter와 form이 없는 native
   `common/folder-agents-guide` 파일이다. 루트 `AGENTS.md`와 `CLAUDE.md`는
