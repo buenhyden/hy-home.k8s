@@ -1,22 +1,25 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.11.0"
+version: "0.12.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 layer: "architecture"
 ---
+
 # 02.architecture/decisions (ADR)
 
-> 아키텍처 선택의 맥락, 대안, 결과를 보존하는 ADR stage다.
+## Stage Responsibility
 
-## Overview
+### Purpose and Readers
+
+> 아키텍처 선택의 맥락, 대안, 결과를 보존하는 ADR stage다.
 
 이 경로는 중요한 기술/아키텍처 결정을 ADR로 기록하는 canonical stage다.
 각 ADR은 하나의 결정, 그 맥락, 대안, 결과를 보존해 이후 Spec과 운영 정책이 같은 근거를 공유하게 한다.
 
-### Collection Readers
+#### Collection Readers
 
 이 README의 주요 독자:
 
@@ -24,21 +27,23 @@ layer: "architecture"
 - Platform Engineers
 - Operators
 
-## Scope
+### Inputs and Outputs
 
-### In Scope
+#### In Scope
 
 - 중요한 기술 결정 1건을 다루는 ADR
 - 맥락, 결정, 비목표, 대안, 결과
 - 관련 Requirement Package/AD/Spec/Plan/Operations 링크
 
-### Out of Scope
+#### Out of Scope
 
 - 상세 구현 설계
 - 운영 절차와 장애 대응 단계
 - 장문의 제품 배경 설명
 
-## Structure
+## Contents
+
+### Current Items
 
 각 ADR의 승인·대체 상태는 해당 문서의 frontmatter가 소유한다. 이 표는 결정의 역할과 후속 경로를 안내한다.
 
@@ -79,16 +84,21 @@ layer: "architecture"
 | [`./0058-repository-vocabulary-in-knowledge-surface.md`](./0058-repository-vocabulary-in-knowledge-surface.md) | `.agents/knowledge/glossary.md` 하나만 용어 의미를 소유하는 Repository Vocabulary로 허용하도록 ADR-0036 Decision 3의 포인터 전용 조항을 좁히는 개정 |
 | [`./0059-registry-common-form-model.md`](./0059-registry-common-form-model.md) | Stage 99 registry(generation 10 유지)에 선택 키를 더해 역할별 공통 문서 양식, 문서 역할, TemplateDefinition, 공유 계약 승인 필드를 담도록 ADR-0033의 현재 상태 키 목록을 개정 |
 
-## Usage
+### Classification
+
+이 README에는 분류 표가 없다.
+
+## Workflow
+
+### Create and Review
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `../descriptions/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/templates/architecture/decision.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
-3. 이 log에는 superseded·retired·deprecated 상태의 ADR을 두지 않는다. 결정 전체를 대체할 때는 새 ADR의 `supersedes`와 Traceability에 이전 ID를 적고, 해당 AD의 `Archived Lineage`에 요약한다. [문서 수명주기 정책](../../../.agents/governance/document-lifecycle.md)의 처분 조건을 확인한 뒤 같은 변경에서 삭제한다. 일부 조항만 개정할 때는 기존 ADR을 보존하고 새 ADR에 개정 범위를 적는다.
-4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
-5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
-6. ADR 번호는 재사용하지 않는다. 삭제된 ADR의 번호도 다시 쓰지 않으며, 기존 번호의 의미나 원래 승인·이력을 새 번호로 고쳐 쓰지 않는다.
+3. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
+4. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
+5. ADR 번호는 재사용하지 않는다. 삭제된 ADR의 번호도 다시 쓰지 않으며, 기존 번호의 의미나 원래 승인·이력을 새 번호로 고쳐 쓰지 않는다.
 
-### Relative Link Rules
+#### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/02.architecture/decisions/`다.
 
@@ -97,11 +107,20 @@ layer: "architecture"
 - upstream/downstream docs stage는 `../../01.requirements/`, `../../03.specs/`, `../../05.operations/`로 연결한다. Retired Stage 04 execution route는 current link target으로 사용하지 않는다.
 - 새 ADR의 실제 Markdown 링크는 최종 ADR 파일 위치 기준으로 다시 계산하고, placeholder target은 code literal로 남긴다.
 
+### Transition and Exit
+
+1. 이 log에는 superseded·retired·deprecated 상태의 ADR을 두지 않는다. 결정 전체를 대체할 때는 새 ADR의 `supersedes`와 Traceability에 이전 ID를 적고, 해당 AD의 `Archived Lineage`에 요약한다. [문서 수명주기 정책](../../../.agents/governance/document-lifecycle.md)의 처분 조건을 확인한 뒤 같은 변경에서 삭제한다. 일부 조항만 개정할 때는 기존 ADR을 보존하고 새 ADR에 개정 범위를 적는다.
+
 ## Related Documents
+
+### Upstream and Downstream
 
 - [Architecture README](../README.md)
 - [02.architecture/descriptions](../descriptions/README.md)
 - [03.specs](../../03.specs/README.md)
 - [05.operations/policies](../../05.operations/policies/README.md)
-- [99.templates ADR Template](../../99.templates/templates/architecture/decision.template.md)
 - [Archive Index](../../98.archive/README.md)
+
+### Policy and Templates
+
+- [99.templates ADR Template](../../99.templates/templates/architecture/decision.template.md)

@@ -1,17 +1,19 @@
 ---
 title: "90.references/research"
-version: "0.2.1"
+version: "0.2.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "references"
 ---
 # 90.references/research
 
-> workspace harness research pack 참조, 출처 원장, 오래 유지할 연구 종합을 두는 곳이다.
+## Stage Responsibility
 
-## Overview
+### Purpose and Readers
+
+> workspace harness research pack 참조, 출처 원장, 오래 유지할 연구 종합을 두는 곳이다.
 
 `research/`는 workspace harness와 workspace engineering research pack의 오래
 유지할 참조 자료를 둔다. 출처에 근거한 발견, 관찰 날짜가 붙은 출처 확인, 종합을
@@ -23,7 +25,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`,
 `docs/05.operations/`의 정본 소유자가 맡는다.
 
-### Collection Readers
+#### Collection Readers
 
 이 README의 주요 독자:
 
@@ -31,9 +33,9 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - Operators
 - Documentation Writers
 
-## Scope
+### Inputs and Outputs
 
-### In Scope
+#### In Scope
 
 - workspace harness research pack 색인 자료
 - 오래 유지할 출처 원장과 출처 우선순위 메모
@@ -42,7 +44,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - `docs/99.templates/templates/references/research-pack.template.md`로 만든 pack README
 - `docs/99.templates/templates/references/research.template.md`로 만든 보고서
 
-### Out of Scope
+#### Out of Scope
 
 - 활성 거버넌스 정책이나 provider 실행 규칙
 - runtime roster 변경, hook 연결, 권한 변경
@@ -50,7 +52,9 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - 운영 runbook, release gate, 배포 승인, incident 대응
 - 생성되었거나 병행 관리되는 `docs/superpowers/**` 내용
 
-## Structure
+## Contents
+
+### Current Items
 
 ```text
 research/
@@ -59,7 +63,7 @@ research/
 └── README.md
 ```
 
-### Research Pack Index
+#### Research Pack Index
 
 | Path | Purpose |
 | --- | --- |
@@ -76,7 +80,13 @@ registry가 요구하는 `m####-` identity prefix 뒤에 의미 있는 주제 �
 이 prefix는 identity이지 정렬 키가 아니다. 현재 보고서 파일 이름에 `part-*.md`,
 날짜, 두 번째 정렬 prefix를 붙이지 않는다.
 
-## Usage
+### Classification
+
+이 README에는 분류 표가 따로 없다.
+
+## Workflow
+
+### Create and Review
 
 1. research pack 자료를 추가하거나 바꾸기 전에 해당 Spec 패키지(`docs/03.specs/`)가 있으면 그 Plan과 Task를 읽는다.
 2. pack README는
@@ -89,7 +99,7 @@ registry가 요구하는 `m####-` identity prefix 뒤에 의미 있는 주제 �
 6. 활성 정책, 구현 계약, runbook, task 증거는 여기서 다시 정의하지 말고 각 정본 소유자에게 돌려보낸다.
 7. research pack 구조나 검증 증거가 바뀌면 이 README와 상위 [90.references README](../README.md)를 함께 갱신한다. 검증 증거는 활성 Task가 있으면 그 Task에 기록한다.
 
-### Relative Link Rules
+#### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/90.references/research/`다.
 
@@ -102,7 +112,7 @@ registry가 요구하는 `m####-` identity prefix 뒤에 의미 있는 주제 �
 - pack README와 member는 한 단계 더 깊으므로 저장소 최상위에 `../../../../<path>`, stage에 `../../../<stage>/`를 쓴다. 최종 파일 위치에서 상대 경로를 계산한다.
 - 선택 사항이거나 계획 중인 대상 경로는 대상이 생길 때까지 code literal로 둔다.
 
-### Source Priority
+#### Source Priority
 
 연구 출처끼리 어긋나면 다음 우선순위를 따른다.
 
@@ -116,10 +126,19 @@ market scan 발견은 권위가 없다. 맥락, 지형, 용어를 파악하는 �
 있지만 market scan 자료라고 표시해야 하며 공식 문서, 저장소 근거 증거, 저장소의
 정본 소유자를 뒤집을 수 없다.
 
+### Transition and Exit
+
+이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
+
 ## Related Documents
 
+### Upstream and Downstream
+
 - [90.references README](../README.md)
-- [Research Reference Template](../../99.templates/templates/references/research.template.md)
-- [Templates README](../../99.templates/README.md)
 - [Agent Governance Hub](../../../.agents/README.md)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
+
+### Policy and Templates
+
+- [Research Reference Template](../../99.templates/templates/references/research.template.md)
+- [Templates README](../../99.templates/README.md)

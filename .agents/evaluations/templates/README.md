@@ -1,21 +1,23 @@
 ---
 title: "Agent Evaluation Form Router"
-version: "0.2.1"
+version: "0.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-13"
 ---
 
 # Agent Evaluation Form Router
 
-## Overview
+## Stage Responsibility
+
+### Purpose and Readers
 
 정규 평가 작업, 점수, 집계 양식은 [Stage 99](../../../docs/99.templates/README.md)에
 있다. 이 디렉터리는 작성자를 그 양식으로 안내할 뿐이며, schema를 복제하거나
 예시 결과를 실제 근거로 제공하지 않는다.
 
-## Scope
+### Inputs and Outputs
 
 평가 문서를 작성하기 전에 현재 Stage 99 profile을 고른다. 점수를 매기는 한 번의
 실행 cycle에는 작업 맥락과 실제 출력 두 개가 먼저 있어야 하고, 집계 전에는
@@ -23,9 +25,11 @@ updated: "2026-11-06"
 집계 소유자는 [평가 root](../README.md)가 유지한다. 양식은 실행, 게시, native
 runtime 권한을 주지 않는다.
 
-## Structure
+## Contents
 
-### Item Index
+### Current Items
+
+#### Item Index
 
 이 라우터에는 로컬 양식 사본이 없다. 현재 작업·점수·결과 양식은
 [Stage 99 template 라우터](../../../docs/99.templates/templates/README.md)에서,
@@ -34,9 +38,15 @@ Stage 99는 이 정규 파일을 `evaluation-task.template.md`,
 `evaluation-score.template.md`, `evaluation-results.template.md`로 부르며, 이
 라우터는 단계를 건너 개별 양식 파일로 링크하지 않는다.
 
-## Usage
+### Classification
 
-### Add and Find
+이 README에는 분류 표가 없다.
+
+## Workflow
+
+### Create and Review
+
+#### Add and Find
 
 대상 경로에는 Stage 99의 정확한 profile과 판본을 쓴다. 기준과 채점자 식별을
 채점 입력과 함께 보존하고, rubric을 고치면 점수를 조용히 다시 쓰지 말고 판본이
@@ -46,10 +56,19 @@ Stage 99는 이 정규 파일을 `evaluation-task.template.md`,
 Task를 따르고, 쓸 수 없는 세션과 빠진 응답은 비교가 아니라 근거 공백으로
 넘긴다.
 
+### Transition and Exit
+
+상태와 종료 규칙은 위 Add and Find에 함께 있다.
+
 ## Related Documents
+
+### Upstream and Downstream
 
 - [Evaluation root](../README.md)
 - [Trial Evidence router](../harnesses/README.md)
+- [Stage 03 Spec navigation](../../../docs/03.specs/README.md)
+
+### Policy and Templates
+
 - [Stage 99 profiles](../../../docs/99.templates/README.md)
 - [Stage 99 template navigation](../../../docs/99.templates/templates/README.md)
-- [Stage 03 Spec navigation](../../../docs/03.specs/README.md)

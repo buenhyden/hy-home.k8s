@@ -1,21 +1,24 @@
 ---
 title: "Common Knowledge"
-version: "0.5.0"
+version: "0.6.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 ---
+
 # Common Knowledge
 
-## Overview
+## Stage Responsibility
+
+### Purpose and Readers
 
 이 영역은 방향을 잡는 질문과 공통 용어의 뜻을 묻는 질문에 답한다. 어느 트리가 무엇을 소유하는지, 어떤
 도메인에서 무엇을 먼저 열어야 하는지를 알려 준다. 여기에는 포인터와 범위가
 정해진 관측 metadata, 그리고 용어 의미만 정의하는 [Repository Vocabulary](glossary.md) 하나가 있다. 정책, 설계, 절차, 현재 상태에 대한 서술은 모두 각
 행이 가리키는 소유자에게 남는다.
 
-## Scope
+### Inputs and Outputs
 
 knowledge 문서는 소유자 경로, 읽는 사람이 먼저 여는 진입 경로, 그 행이 유효한
 조건을 적는다. 가리키는 본문의 어떤 구간도 다시 옮겨 적지 않고, 사람이 직접
@@ -26,9 +29,11 @@ validator다.
 범위 밖: 승인 경계, 권한, 역할 명단, gate 명령, lifecycle 상태, 근거 등급. 이들은
 기존 소유자에게 남으며, 그중 하나를 다시 서술하는 행은 편의가 아니라 결함이다.
 
-## Structure
+## Contents
 
-### Item Index
+### Current Items
+
+#### Item Index
 
 | Path | Purpose |
 | --- | --- |
@@ -36,9 +41,15 @@ validator다.
 | [Domain Index](domains.md) | 운영 도메인별 정규 소유자, 진입 경로, 행이 유효한 조건. |
 | [Repository Vocabulary](glossary.md) | 공통 거버넌스 용어의 의미와 그 규칙을 소유하는 정책. 규칙은 서술하지 않는다(ADR-0058). |
 
-## Usage
+### Classification
 
-### Add and Find
+이 README에는 분류 표가 없다.
+
+## Workflow
+
+### Create and Review
+
+#### Add and Find
 
 1. 문서를 추가하기 전에 [document authoring](../governance/document-authoring.md)을
    읽고 Stage 99 registry에서 knowledge profile을 고른다.
@@ -52,9 +63,18 @@ validator다.
 5. 새 knowledge 포인터 문서를 받아들이면 위 Item Index 표에서 링크하고, 소유자
    세부는 이 라우터에 복사하지 말고 그 문서에 둔다.
 
+### Transition and Exit
+
+이 README에는 상태·승격·종료 규칙이 없다.
+
 ## Related Documents
 
+### Upstream and Downstream
+
 - [Common Agent Governance](../README.md)
+- [Repository documentation](../../docs/README.md)
+
+### Policy and Templates
+
 - [Context and Memory](../governance/context-and-memory.md)
 - [knowledge-map skill](../skills/knowledge-map/SKILL.md)
-- [Repository documentation](../../docs/README.md)

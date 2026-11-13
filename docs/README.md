@@ -1,20 +1,22 @@
 ---
 title: "docs: 프로젝트 문서 허브"
-version: "0.7.0"
+version: "0.8.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-10"
+updated: "2026-11-13"
 ---
 # docs: 프로젝트 문서 허브
 
-## Overview
+## Stage Responsibility
+
+### Purpose and Readers
 
 요구사항, 구조적 결정, 변경 계약, 실행 증거와 운영 지식을 연결하는
 `hy-home.k8s` 문서 진입점이다. 각 문서는 한 가지 목적의 정본을 가지며
 README는 탐색을 돕고 별도의 정책·상태 목록을 만들지 않는다.
 
-## Scope
+### Inputs and Outputs
 
 - 공통 Agent 거버넌스는 문서 stage 밖의 `.agents/`가 소유한다.
   정책·역할·스킬·SDLC를 관리하며 제공자 차이는 네이티브 영역에 둔다.
@@ -33,7 +35,9 @@ README는 탐색을 돕고 별도의 정책·상태 목록을 만들지 않는�
 Stage 04는 사용하지 않는다. 모든 변경이 모든 stage의 새 문서를 요구하지는
 않지만, 필요한 요구·결정·수용 기준·실행 증거는 서로 추적 가능해야 한다.
 
-## Structure
+## Contents
+
+### Current Items
 
 | Path | Purpose |
 | --- | --- |
@@ -50,7 +54,13 @@ Stage 04는 사용하지 않는다. 모든 변경이 모든 stage의 새 문서�
 `.agents/roles/registry.json`은 문서 registry와 별개로 역할 ID, 권한, handoff,
 skill과 provider projection을 소유한다.
 
-## Usage
+### Classification
+
+분류: 해당 없음 — 이 stage README는 하위 유형을 따로 나누지 않는다.
+
+## Workflow
+
+### Create and Review
 
 1. [SDLC 흐름](../.agents/governance/sdlc.md)으로 목적과 소유 stage를 정한다.
 2. [Stage 99 안내](99.templates/README.md)와 registry에서 최종 경로의
@@ -62,19 +72,13 @@ skill과 provider projection을 소유한다.
    구현 순서·위험·검증·rollback은 Plan, 작업 결과는 개별 Task에 둔다.
 5. 경로 또는 내용 변경 시 해당 README와 현재 cross-link를 함께 점검한다.
    ID는 재사용하지 않고 다른 문서에서는 전체 ID로 추적한다.
-6. 완료된 본문을 새 형식에 맞추려고 다시 쓰지 않는다. 더 이상 현재가 아닌
-   문서는 [문서 수명주기 정책](../.agents/governance/document-lifecycle.md)의
-   처분 전 확인을 거쳐 해당 stage를 떠난다. Git 이력만 남기는 처분은 확인된
-   원본 `commit:path`에서 복구한다. Stage 98은 검증하지 않는 기록 보관소로,
-   README와 disposition 디렉터리 구조만 유지한다. 현재 문서는 Archive 대신
-   현재 owner를 링크한다.
-7. [문서 작성 정책](../.agents/governance/document-authoring.md)과
+6. [문서 작성 정책](../.agents/governance/document-authoring.md)과
    [품질·증거 정책](../.agents/governance/quality.md)에 따라 검증하고
    현재 Task에 결과·제한·다음 담당자를 기록한다.
 
 정적 검증은 live cluster 변경 승인이나 실제 provider 실행 증거가 아니다.
 
-### 문서 역할과 언어 계약
+#### 문서 역할과 언어 계약
 
 사람이 읽는 안내와 요약은 한국어를 우선하고, AI Agent가 실행 기준으로 삼는
 정책·프롬프트·도구·검증 계약은 영어를 우선한다. 한 문서가 두 독자를 함께
@@ -86,11 +90,25 @@ skill과 provider projection을 소유한다.
 운영 안내처럼 사람이 먼저 읽는 문서는 한국어로 두되, 그 안에 들어가는 AI Agent
 실행 지시나 도구 계약은 영어로 분리한다.
 
+### Transition and Exit
+
+1. 완료된 본문을 새 형식에 맞추려고 다시 쓰지 않는다. 더 이상 현재가 아닌
+   문서는 [문서 수명주기 정책](../.agents/governance/document-lifecycle.md)의
+   처분 전 확인을 거쳐 해당 stage를 떠난다. Git 이력만 남기는 처분은 확인된
+   원본 `commit:path`에서 복구한다. Stage 98은 검증하지 않는 기록 보관소로,
+   README와 disposition 디렉터리 구조만 유지한다. 현재 문서는 Archive 대신
+   현재 owner를 링크한다.
+
 ## Related Documents
 
+### Upstream and Downstream
+
 - [Root README](../README.md)
+- [Archive](98.archive/README.md)
+- [Scripts](../scripts/README.md)
+
+### Policy and Templates
+
 - [Governance Hub](../.agents/README.md)
 - [Document Lifecycle](../.agents/governance/document-lifecycle.md)
 - [Templates](99.templates/README.md)
-- [Archive](98.archive/README.md)
-- [Scripts](../scripts/README.md)

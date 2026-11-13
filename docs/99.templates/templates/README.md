@@ -1,15 +1,18 @@
 ---
 title: "99.templates/templates"
-version: "0.5.0"
+version: "0.6.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 layer: "templates"
 ---
+
 # 99.templates/templates
 
-## Overview
+## Stage Responsibility
+
+### Purpose and Readers
 
 이 디렉터리는 저장소가 인정하는 모든 authored 문서의 physical form을 담는다.
 Form directory는 navigation을 위해 physical responsibility surface별로 묶고,
@@ -19,20 +22,22 @@ profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
 [registry](../registry.json)와 [frontmatter schema](../contracts/frontmatter.schema.json)가
 소유하고, form은 그 계약을 저자가 채울 수 있는 모양으로 보여줄 뿐이다.
 
-## Scope
+### Inputs and Outputs
 
-### In Scope
+#### In Scope
 
 - 각 profile이 소유하는 physical form 파일
 - 저자가 채워야 할 값의 placeholder와 author prompt
 
-### Out of Scope
+#### Out of Scope
 
 - profile 선택 규칙, key 문법, lifecycle 상태 (registry와 schema가 소유)
 - 완성된 문서의 예시나 사본
 - form 디렉터리별 README (이 카탈로그 하나만 둔다)
 
-## Structure
+## Contents
+
+### Current Items
 
 | Path | Purpose |
 | --- | --- |
@@ -46,7 +51,13 @@ profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
 | [runtime/](./runtime/) | claude-agent (Markdown), claude-command (Markdown), codex-agent (TOML) |
 | [specs/](./specs/) | spec, plan, task |
 
-## Usage
+### Classification
+
+이 README에는 분류 표가 없다.
+
+## Workflow
+
+### Create and Review
 
 1. 만들려는 문서의 경로로 [registry](../registry.json)에서 profile을 하나만
    해석하고, 그 profile이 지정한 form을 읽는다.
@@ -60,9 +71,18 @@ profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
    profile이 하나씩 있으며, 그 profile이 원본 profile을 source로 가리킨다.
 4. 확장자는 그 form을 읽는 런타임이 읽는 확장자를 쓴다.
 
+### Transition and Exit
+
+이 README에는 상태·승격·종료 규칙이 없다.
+
 ## Related Documents
 
+### Upstream and Downstream
+
 - [Stage 99 README](../README.md)
+
+### Policy and Templates
+
 - [Document Profile Registry](../registry.json)
 - [Frontmatter Schema](../contracts/frontmatter.schema.json)
 - [Document Authoring Policy](../../../.agents/governance/document-authoring.md)

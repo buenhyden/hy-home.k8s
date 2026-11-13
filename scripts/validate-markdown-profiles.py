@@ -2023,7 +2023,7 @@ def _document_content_table(
 ) -> tuple[list[str], list[list[str]]] | None:
     sections = [
         section
-        for heading in (f"## {title}", f"### {title}")
+        for heading in (f"## {title}", f"### {title}", f"#### {title}")
         if (section := _exact_heading_section(text, heading)) is not None
     ]
     return _first_visible_table(sections[0]) if len(sections) == 1 else None
