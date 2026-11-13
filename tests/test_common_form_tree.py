@@ -33,7 +33,7 @@ REGISTRY_CHECK = _load_script(
 )
 MARKDOWN = _load_script("common_form_markdown", "validate-markdown-profiles.py")
 
-ROLE_IDS = (
+FORM_IDS = (
     "requirement",
     "architecture",
     "adr",
@@ -53,7 +53,22 @@ ROLE_IDS = (
     "workspace-readme",
     "reference-pack-readme",
 )
-# The profiles whose common role is clear; every other profile carries none.
+# W03-D20: nine Stage 99 local roles follow the eighteen form identifiers; none
+# of them has a form.
+LOCAL_ROLE_IDS = (
+    "reference-report",
+    "governance-document",
+    "knowledge-map",
+    "vocabulary",
+    "prompt",
+    "evaluation-task",
+    "evaluation-score",
+    "evaluation-results",
+    "provider-native",
+)
+ROLE_IDS = FORM_IDS + LOCAL_ROLE_IDS
+# The profiles bound to a role: the clear common roles, then the nine local
+# roles on their source profiles; every other profile carries none.
 ROLE_BINDINGS = {
     "sdlc/requirement": "requirement",
     "sdlc/architecture-description": "architecture",
@@ -79,6 +94,82 @@ ROLE_BINDINGS = {
     "common/readme-collection-index": "stage-readme",
     "common/readme-implementation": "service-readme",
     "common/readme-runtime-governance": "service-readme",
+    "reference/audit": "reference-report",
+    "reference/research": "reference-report",
+    "reference/data": "reference-report",
+    "governance/contract": "governance-document",
+    "governance/provider": "governance-document",
+    "governance/role": "governance-document",
+    "governance/knowledge": "knowledge-map",
+    "governance/vocabulary": "vocabulary",
+    "governance/prompt": "prompt",
+    "evaluation/task": "evaluation-task",
+    "evaluation/score": "evaluation-score",
+    "evaluation/results": "evaluation-results",
+    "common/provider-native-metadata": "provider-native",
+    "common/provider-native-command": "provider-native",
+}
+# The fourteen templates of the local roles carry a definition and these tables.
+LOCAL_TABLES = {
+    "common/template-reference-audit": [
+        ("Criterion", "### Criteria and Inspected Surface"),
+        ("Observation", "### Observed Evidence"),
+        ("ID", "### Findings and Gaps"),
+        ("Remediation", "### Remediation"),
+    ],
+    "common/template-reference-research": [
+        ("Claim", "### Claim-Source Matrix"),
+        ("Source", "## Sources"),
+    ],
+    "common/template-reference-data": [
+        ("Field", "### Schema"),
+        ("Source", "### Provenance"),
+        ("Generation command", "### Generation and Refresh"),
+    ],
+    "common/template-governance-contract": [],
+    "common/template-governance-knowledge": [],
+    "common/template-governance-vocabulary": [("Term ID", "## Repository Vocabulary")],
+    "common/template-governance-prompt": [],
+    "common/template-governance-provider": [],
+    "common/template-governance-role": [],
+    "common/template-evaluation-task": [
+        ("Field", "## Overview"),
+        ("Trial ID", "## Declared Trials"),
+        ("Criterion ID", "## Signals and Criteria"),
+    ],
+    "common/template-evaluation-score": [
+        ("Field", "## Overview"),
+        ("Trial ID", "## Trial Evidence"),
+        ("Trial ID", "## Criterion Scores"),
+    ],
+    "common/template-evaluation-results": [
+        ("Cycle ID", "## Pair Coverage"),
+        ("Scope", "## Aggregate"),
+    ],
+    "common/template-exception-provider-native-metadata": [],
+    "common/template-exception-provider-native-command": [],
+}
+LOCAL_TEMPLATES = tuple(LOCAL_TABLES)
+# A source profile inherits the tables of the template that names it.
+LOCAL_SOURCES = {
+    "common/template-reference-audit": "reference/audit",
+    "common/template-reference-research": "reference/research",
+    "common/template-reference-data": "reference/data",
+    "common/template-governance-contract": "governance/contract",
+    "common/template-governance-knowledge": "governance/knowledge",
+    "common/template-governance-vocabulary": "governance/vocabulary",
+    "common/template-governance-prompt": "governance/prompt",
+    "common/template-governance-provider": "governance/provider",
+    "common/template-governance-role": "governance/role",
+    "common/template-evaluation-task": "evaluation/task",
+    "common/template-evaluation-score": "evaluation/score",
+    "common/template-evaluation-results": "evaluation/results",
+    "common/template-exception-provider-native-metadata": "common/provider-native-metadata",
+    "common/template-exception-provider-native-command": "common/provider-native-command",
+}
+LOCAL_PROFILE_TABLES = {
+    **LOCAL_TABLES,
+    **{source: LOCAL_TABLES[twin] for twin, source in LOCAL_SOURCES.items()},
 }
 GUIDE = ("operation/guide", "common/template-operation-guide")
 ADR = ("sdlc/architecture-decision", "common/template-sdlc-architecture-decision")
@@ -919,7 +1010,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             )
             with self.subTest(profile=profile_id):
                 self.assertEqual(profile.get("document_role"), expected)
-                if profile_id in FORM_TEMPLATES:
+                if profile_id in FORM_TEMPLATES + LOCAL_TEMPLATES:
                     self.assertIn("template_definition", profile)
                 else:
                     self.assertNotIn("template_definition", profile)
@@ -990,17 +1081,23 @@ class RepositoryRegistryTests(unittest.TestCase):
                         else tables[role],
                     )
                 else:
+                    # A role without a form: a local role or no role at all.
                     self.assertIsNone(profile.form)
-                    self.assertEqual(profile.tables, ())
-                if profile.profile_id in FORM_TEMPLATES:
+                    self.assertEqual(
+                        [(t.name, t.section) for t in profile.tables],
+                        LOCAL_PROFILE_TABLES.get(profile.profile_id, []),
+                    )
+                if profile.profile_id in FORM_TEMPLATES + LOCAL_TEMPLATES:
                     self.assertIsNotNone(profile.template_definition)
                 else:
                     self.assertIsNone(profile.template_definition)
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         self.assertEqual(by_id["governance/rule"].document_role, "policy")
-        self.assertIsNone(by_id["governance/role"].document_role)
+        self.assertEqual(by_id["governance/role"].document_role, "governance-document")
 
-    def test_schema_role_and_form_enums_are_the_eighteen_roles(self) -> None:
+    def test_schema_role_enum_is_twenty_seven_and_form_enum_stays_eighteen(
+        self,
+    ) -> None:
         schema = json.loads(
             (
                 ROOT / "docs/99.templates/contracts/document-profile.schema.json"
@@ -1010,8 +1107,14 @@ class RepositoryRegistryTests(unittest.TestCase):
             "document_role"
         ]["enum"]
         form_id = schema["$defs"]["common_form"]["properties"]["form_id"]["enum"]
+        self.assertEqual(len(ROLE_IDS), 27)
         self.assertEqual(tuple(profile_role), ROLE_IDS)
-        self.assertEqual(tuple(form_id), ROLE_IDS)
+        self.assertEqual(tuple(form_id), FORM_IDS)
+        self.assertEqual(len(form_id), 18)
+        self.assertEqual(
+            [item.form_id for item in CONTRACTS.load_registry(ROOT).common_forms],
+            TWELVE_FORMS,
+        )
         self.assertEqual(
             schema["$defs"]["section"]["properties"]["level"]["enum"], [2, 3]
         )
@@ -1222,7 +1325,9 @@ class FormRegistryTests(unittest.TestCase):
         raw = load_raw()
         for profile in raw["profiles"]:
             if profile["id"] not in FORM_PROFILES:
+                # A local role's template holds a definition, which needs a role.
                 profile.pop("document_role", None)
+                profile.pop("template_definition", None)
         self.assertEqual(rules_of(raw), set())
 
     def test_template_twin_must_share_its_sources_role(self) -> None:
@@ -1282,7 +1387,10 @@ class TemplateDefinitionTests(unittest.TestCase):
             for item in raw["profiles"]
             if item["id"] == "common/template-governance-role"
         )
-        twin["template_definition"] = definition()
+        # The template holds its definition; without a role it is refused.
+        self.assertEqual(twin["document_role"], "governance-document")
+        self.assertEqual(rules_of(raw), set())
+        del twin["document_role"]
         self.assertIn("REGISTRY_TEMPLATE_DEFINITION", rules_of(raw))
 
     def test_named_paths_must_exist(self) -> None:
@@ -3590,6 +3698,163 @@ class RetainedFormTests(unittest.TestCase):
         self.assertEqual(body_rules("proposed", self.TREE), [])
 
 
+class LocalRoleTableTests(unittest.TestCase):
+    """SPEC-0179: a role without a form names a table by its template heading line."""
+
+    RESEARCH = ("reference/research", "common/template-reference-research")
+    PATH = PurePosixPath("docs/90.references/research/0001-sample/m0001-sample.md")
+    SOURCES = "## Sources"
+    SOURCES_HEADER = ("Source", "Grade", "Retrieved", "Relevance")
+    CLAIM = "### Claim-Source Matrix"
+    CLAIM_HEADER = ("Claim", "Source", "Verification state")
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.profiles = typed_profiles(load_raw())
+
+    def document(self, heading: str, header: tuple[str, ...]) -> str:
+        """A research body with one table under the given heading line."""
+
+        table = "\n".join(
+            (
+                "| " + " | ".join(header) + " |",
+                "| " + " | ".join("---" for _ in header) + " |",
+                "| " + " | ".join("x" for _ in header) + " |",
+            )
+        )
+        level = heading.split(" ", 1)[0]
+        parent = "## Definitions / Facts\n\n" if level == "###" else ""
+        return f"# Reference: Sample\n\n{parent}{heading}\n\n{table}\n"
+
+    def table_rules(self, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._table_diagnostics(
+                self.PATH, self.profiles[self.RESEARCH[0]], text
+            )
+        )
+
+    def template_rules(self, text: str, profile_id: str | None = None) -> list[str]:
+        profile = self.profiles[profile_id or self.RESEARCH[1]]
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._template_table_section_diagnostics(
+                profile.template, profile, text
+            )
+        )
+
+    def template_body(self, profile_id: str | None = None) -> str:
+        profile = self.profiles[profile_id or self.RESEARCH[1]]
+        text = (ROOT / profile.template).read_text(encoding="utf-8")
+        return text.split("\n---\n", 1)[1]
+
+    def test_each_local_template_holds_its_recorded_heading_lines(self) -> None:
+        for profile_id in LOCAL_TEMPLATES:
+            with self.subTest(template=profile_id):
+                profile = self.profiles[profile_id]
+                self.assertEqual(
+                    [(t.name, t.section) for t in profile.tables],
+                    LOCAL_TABLES[profile_id],
+                )
+                self.assertEqual(
+                    self.template_rules(self.template_body(profile_id), profile_id),
+                    [],
+                )
+
+    def test_a_table_under_an_h2_or_an_h3_is_read_by_its_heading_line(self) -> None:
+        for heading, header in (
+            (self.SOURCES, self.SOURCES_HEADER),
+            (self.CLAIM, self.CLAIM_HEADER),
+        ):
+            with self.subTest(heading=heading):
+                self.assertEqual(self.table_rules(self.document(heading, header)), [])
+
+    def test_a_reordered_column_fails_under_an_h2_and_under_an_h3(self) -> None:
+        for heading, header in (
+            (self.SOURCES, ("Source", "Retrieved", "Grade", "Relevance")),
+            (self.CLAIM, ("Claim", "Verification state", "Source")),
+        ):
+            with self.subTest(heading=heading):
+                self.assertEqual(
+                    self.table_rules(self.document(heading, header)),
+                    ["BODY-TABLE-COLUMNS"],
+                )
+
+    def test_a_missing_required_column_fails_under_an_h2_and_under_an_h3(self) -> None:
+        for heading, header in (
+            (self.SOURCES, ("Source", "Grade", "Retrieved")),
+            (self.CLAIM, ("Claim", "Source")),
+        ):
+            with self.subTest(heading=heading):
+                self.assertEqual(
+                    self.table_rules(self.document(heading, header)),
+                    ["BODY-TABLE-COLUMNS"],
+                )
+
+    def test_a_document_is_not_read_without_the_exact_heading_or_when_it_repeats(
+        self,
+    ) -> None:
+        wrong = ("Source", "URL", "Checked", "Result")
+        self.assertEqual(self.table_rules(self.document("## Source List", wrong)), [])
+        repeated = self.document(self.SOURCES, wrong) + "\n" + self.SOURCES + "\n"
+        self.assertEqual(self.table_rules(repeated), [])
+
+    def test_a_different_table_with_the_same_first_cell_fails_under_the_heading(
+        self,
+    ) -> None:
+        wrong = ("Source", "URL", "Checked", "Result")
+        self.assertEqual(
+            self.table_rules(self.document(self.SOURCES, wrong)),
+            ["BODY-TABLE-COLUMNS"],
+        )
+
+    def test_a_heading_line_missing_from_the_template_fails(self) -> None:
+        body = self.template_body().replace(self.CLAIM, "### Claim Matrix")
+        self.assertEqual(self.template_rules(body), ["BODY-TABLE-SECTION"])
+
+    def test_a_heading_line_outside_fences_and_comments_must_be_the_only_one(
+        self,
+    ) -> None:
+        body = self.template_body()
+        self.assertEqual(
+            self.template_rules(body + "\n" + self.CLAIM + "\n"),
+            ["BODY-TABLE-SECTION"],
+        )
+        hidden = body + f"\n```\n{self.CLAIM}\n```\n<!--\n{self.CLAIM}\n-->\n"
+        self.assertEqual(self.template_rules(hidden), [])
+
+    def test_a_table_under_an_h2_outside_the_required_list_fails(self) -> None:
+        body = self.template_body().replace("## Definitions / Facts", "## Facts", 1)
+        self.assertEqual(self.template_rules(body), ["BODY-TABLE-SECTION"])
+        body = self.template_body().replace("## Sources", "## Source List", 1)
+        self.assertEqual(self.template_rules(body), ["BODY-TABLE-SECTION"])
+
+    def test_the_registry_section_is_an_h2_or_h3_line_with_a_listed_h2_title(
+        self,
+    ) -> None:
+        def rules(section: str) -> set[str]:
+            raw = load_raw()
+            profile_of(raw, self.RESEARCH[1])["template_definition"]["tables"][1][
+                "section"
+            ] = section
+            return rules_of(raw)
+
+        for accepted in ("## Sources", "### Any Heading", "### Sources"):
+            with self.subTest(section=accepted):
+                self.assertEqual(rules(accepted), set())
+        for refused in (
+            "Sources",
+            "# Sources",
+            "#### Sources",
+            "##Sources",
+            "## Source List",
+            "## ",
+            "research-sources",
+        ):
+            with self.subTest(section=refused):
+                self.assertIn("REGISTRY_TABLE_SECTION", rules(refused))
+
+
 class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
     def test_only_the_twelve_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
@@ -3603,7 +3868,7 @@ class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.template_definition),
-            sorted(FORM_TEMPLATES),
+            sorted(FORM_TEMPLATES + LOCAL_TEMPLATES),
         )
 
 

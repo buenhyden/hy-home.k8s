@@ -865,16 +865,20 @@ def _table_diagnostics(
     heading-tree check.
     """
 
-    if profile.form is None:
-        return []
     owned = profile.body_contract.table_heading if profile.body_contract else None
     found: list[Diagnostic] = []
     for table in profile.tables:
-        heading = _form_heading(profile.form, table.section)
-        if table.name == owned or heading is None:
+        if profile.form is None:
+            # A role without a form records the template's own heading line.
+            heading_line: str | None = table.section
+        else:
+            heading = _form_heading(profile.form, table.section)
+            heading_line = (
+                None if heading is None else "#" * heading[0] + " " + heading[1]
+            )
+        if table.name == owned or heading_line is None:
             continue
-        level, title = heading
-        section = _exact_heading_section(body, f"{'#' * level} {title}")
+        section = _exact_heading_section(body, heading_line)
         if section is None:
             continue
         keys = [column.key for column in table.columns]
@@ -903,6 +907,51 @@ def _table_diagnostics(
                     profile,
                     f"{table.name}: at least {table.minimum_rows} data rows",
                     f"{rows} rows",
+                )
+            )
+    return found
+
+
+def _template_table_section_diagnostics(
+    path: PurePosixPath, profile: DocumentProfile, body: str
+) -> list[Diagnostic]:
+    """BODY-TABLE-SECTION: a template of a role without a form holds each recorded
+    table heading line exactly once, under an H2 of the required list."""
+
+    if profile.form is not None:
+        return []
+    lines = _visible_markdown(body).splitlines()
+    found: list[Diagnostic] = []
+    for table in profile.tables:
+        matches = [index for index, line in enumerate(lines) if line == table.section]
+        if len(matches) != 1:
+            found.append(
+                _diagnostic(
+                    "BODY-TABLE-SECTION",
+                    path,
+                    profile,
+                    f"{table.name}: {table.section!r} exactly once outside "
+                    "fences and comments",
+                    f"{len(matches)} times",
+                )
+            )
+            continue
+        h2 = next(
+            (
+                lines[index][3:]
+                for index in range(matches[0], -1, -1)
+                if lines[index].startswith("## ")
+            ),
+            None,
+        )
+        if h2 not in profile.headings.required:
+            found.append(
+                _diagnostic(
+                    "BODY-TABLE-SECTION",
+                    path,
+                    profile,
+                    f"{table.name}: a heading line under an H2 of the required list",
+                    f"{table.section!r} under {h2!r}",
                 )
             )
     return found
@@ -2090,6 +2139,8 @@ def validate_document_text(
         diagnostics.extend(_body_diagnostics(path, profile, body, status))
         if profile.mode == "authored":
             diagnostics.extend(_table_diagnostics(path, profile, body))
+        elif profile.mode == "template":
+            diagnostics.extend(_template_table_section_diagnostics(path, profile, body))
     diagnostics.extend(artifact_identity_diagnostics(path, profile, metadata))
     if not include_body:
         return sorted(diagnostics, key=diagnostic_sort_key)

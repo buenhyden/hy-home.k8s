@@ -676,6 +676,29 @@ class DocumentLanguage:
         )
 
 
+# The eighteen COMMON-DOC-FORM-1 identifiers a form may carry.
+FormId = Literal[
+    "requirement",
+    "architecture",
+    "adr",
+    "spec",
+    "plan",
+    "task",
+    "guide",
+    "runbook",
+    "policy",
+    "incident",
+    "postmortem",
+    "root-readme",
+    "stage-readme",
+    "service-readme",
+    "agents",
+    "skill",
+    "workspace-readme",
+    "reference-pack-readme",
+]
+
+# Nine Stage 99 local roles follow: a role with no form (W03-D09, W03-D20).
 DocumentRole = Literal[
     "requirement",
     "architecture",
@@ -695,6 +718,15 @@ DocumentRole = Literal[
     "skill",
     "workspace-readme",
     "reference-pack-readme",
+    "reference-report",
+    "governance-document",
+    "knowledge-map",
+    "vocabulary",
+    "prompt",
+    "evaluation-task",
+    "evaluation-score",
+    "evaluation-results",
+    "provider-native",
 ]
 
 
@@ -757,7 +789,7 @@ class FormExtension:
 class CommonForm:
     """The section tree every profile bound to one document role shares."""
 
-    form_id: DocumentRole
+    form_id: FormId
     title: str
     h1: str
     language_rule: str
@@ -2037,12 +2069,21 @@ def _form_section_diagnostics(
     return faults
 
 
+_TABLE_HEADING_LINE = re.compile(r"(#{2,3}) (\S(?:.*\S)?)")
+
+
 def _table_diagnostics(
     tables: Sequence[Mapping[str, Any]],
     form: Mapping[str, Any] | None,
     body_contract: Mapping[str, Any] | None,
+    required_h2: Sequence[str] = (),
 ) -> list[tuple[str, str, str]]:
-    """Check each template table against its role's form and the body contract."""
+    """Check each template table against its role's form and the body contract.
+
+    A role without a form names a table's section by its template heading line;
+    no template body is read here, so only the line's shape and an H2 title in
+    the profile's required list are checked (BODY-TABLE-SECTION reads the body).
+    """
 
     section_ids: set[str] = set()
     if form is not None:
@@ -2058,7 +2099,20 @@ def _table_diagnostics(
     for table in tables:
         name = table["name"]
         keys = [column["key"] for column in table["columns"]]
-        if table["section"] not in section_ids:
+        if form is None:
+            heading = _TABLE_HEADING_LINE.fullmatch(table["section"])
+            if heading is None or (
+                len(heading.group(1)) == 2 and heading.group(2) not in required_h2
+            ):
+                faults.append(
+                    (
+                        "REGISTRY_TABLE_SECTION",
+                        "an H3 heading line, or an H2 heading line whose title "
+                        "is in the profile's required list",
+                        f"{name}: {table['section']!r}",
+                    )
+                )
+        elif table["section"] not in section_ids:
             faults.append(
                 (
                     "REGISTRY_TABLE_SECTION",
@@ -2156,6 +2210,7 @@ def _form_registry_diagnostics(
                 definition["tables"],
                 forms_by_role.get(role),
                 profile["relationships"]["body_contract"],
+                profile["sections"]["required"],
             )
         )
         for named in definition["consumer_paths"]:

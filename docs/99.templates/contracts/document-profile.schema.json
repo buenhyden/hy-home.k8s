@@ -272,7 +272,16 @@
               "agents",
               "skill",
               "workspace-readme",
-              "reference-pack-readme"
+              "reference-pack-readme",
+              "reference-report",
+              "governance-document",
+              "knowledge-map",
+              "vocabulary",
+              "prompt",
+              "evaluation-task",
+              "evaluation-score",
+              "evaluation-results",
+              "provider-native"
             ]
           },
           "path_pattern": {
@@ -1332,6 +1341,7 @@
           "minLength": 1
         },
         "section": {
+          "description": "For a role with a form, a section ID or local H3 extension ID of that form; for a role without a form, the exact heading line that holds the table in the template, an H2 or H3 such as '## Sources' or '### Claim-Source Matrix'.",
           "type": "string",
           "minLength": 1
         },

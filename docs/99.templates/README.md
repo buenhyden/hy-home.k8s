@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.28.0"
+version: "0.29.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -127,6 +127,12 @@ form 경로의 대응은 Registry만 소유한다.
   출력이다. Registry는 경로와 작성 형식을 검사하며 점수의 진실성이나
   provider 실행을 인증하지 않는다. 원시 출력은 format hook과 lint의
   정확한 출력 경로에서만 제외하고 비밀·크기·파일 안전 검사는 유지한다.
+  W03-D20에 따라 참조 보고서, 거버넌스 문서, 지식 지도, 어휘, 프롬프트, 평가
+  세 종류, provider-native 템플릿은 `reference-report`,
+  `governance-document`, `knowledge-map`, `vocabulary`, `prompt`,
+  `evaluation-task`, `evaluation-score`, `evaluation-results`,
+  `provider-native`의 Stage 99 지역 역할과 공통 form 없는 TemplateDefinition을
+  갖고, 여섯 SDLC 템플릿의 TemplateDefinition은 3단계에서 더한다.
 - **Core SDLC forms**: physical `requirements/`, `architecture/`, `specs/`
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
   `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의
