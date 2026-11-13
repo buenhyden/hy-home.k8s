@@ -689,6 +689,47 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 else:
                     self.assertIn("LIFECYCLE-CREATE", output)
 
+    def lineage_owner(self, retired: str) -> bytes:
+        """An ADR-shaped base document whose lineage names a retired identity."""
+        return (
+            self.adr_document("ADR-0998").decode()
+            + "\n### Archived Lineage\n\n| Source | Kind |\n| --- | --- |\n"
+            + f"| {retired} (superseded) | superseded decision |\n"
+        ).encode()
+
+    def test_explicit_ref_refuses_a_new_document_reusing_a_lineage_identity(
+        self,
+    ) -> None:
+        owner = PurePosixPath("docs/02.architecture/decisions/0998-owner.md")
+        target = PurePosixPath("docs/02.architecture/decisions/0997-target.md")
+        self.git.commit(owner.as_posix(), self.lineage_owner("ADR-0997"))
+        base = self.oid("HEAD")
+        self.git.commit(target.as_posix(), self.adr_document("ADR-0997"))
+        result, output = self.explicit(base, self.oid("HEAD"))
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-IDENTITY-REUSE", output)
+        self.git.run("reset", "--hard", base)
+        self.git.commit(target.as_posix(), self.adr_document("ADR-0996"))
+        result, output = self.explicit(base, self.oid("HEAD"))
+        self.assertEqual(result, 0, output)
+
+    def test_history_call_refuses_a_new_document_reusing_a_lineage_identity(
+        self,
+    ) -> None:
+        owner = PurePosixPath("docs/02.architecture/decisions/0998-owner.md")
+        target = PurePosixPath("docs/02.architecture/decisions/0997-target.md")
+        self.git.commit(owner.as_posix(), self.lineage_owner("ADR-0997"))
+        base = self.oid("HEAD")
+        self.git.commit(target.as_posix(), self.adr_document("ADR-0997"))
+        commit = self.oid("HEAD")
+        cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
+        after = cache._snapshot(commit)[0][target]
+        found = VALIDATOR._history_event_diagnostics(
+            self.root, self.registry, target, base, commit, None, after, cache
+        )
+        self.assertEqual([item.rule_id for item in found], ["LIFECYCLE-IDENTITY-REUSE"])
+        self.assertIn("Archived Lineage", found[0].observed_transition)
+
     def test_ordinary_adr_edges_skip_full_context_but_supersession_keeps_it(
         self,
     ) -> None:

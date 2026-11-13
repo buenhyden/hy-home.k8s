@@ -47,6 +47,7 @@ from document_lifecycle import (
     compare_lifecycle,
     document_from_text,
     lifecycle_diagnostic_sort_key,
+    lineage_retired_identities,
     local_contract_diagnostics,
     package_exit_diagnostics,
     validate_current_task_evidence,
@@ -1329,6 +1330,10 @@ def _evidence_context(
         local_contract_issues=_local_plan_task_contract_issues(
             registry, base_documents, proposed_documents, base_texts, proposed_texts
         ),
+        retired_identities=(
+            lineage_retired_identities(proposed_texts)
+            | lineage_retired_identities(base_texts)
+        ),
     )
 
 
@@ -1894,6 +1899,15 @@ class _CumulativeHistoryCache:
     evidence: OrderedDict[tuple[str, str], LifecycleEvidenceContext] = field(
         default_factory=OrderedDict
     )
+    retired: dict[str, dict[str, PurePosixPath]] = field(default_factory=dict)
+
+    def retired_between(self, parent: str, commit: str) -> dict[str, PurePosixPath]:
+        """Lineage-reserved identities of two snapshots, derived once per commit."""
+
+        for oid in (parent, commit):
+            if oid not in self.retired:
+                self.retired[oid] = lineage_retired_identities(self._snapshot(oid)[1])
+        return self.retired[commit] | self.retired[parent]
 
     def _resident_size_with(self, additional: Mapping[PurePosixPath, str]) -> int:
         """Bound live raw payloads by exact path/blob identity across snapshots."""
@@ -2146,7 +2160,10 @@ def _history_event_diagnostics(
         parent_documents = cache._snapshot(parent)[0]
         commit_documents = cache._snapshot(commit)[0]
         identity_diagnostics = artifact_identity_reuse_diagnostics(
-            parent_documents, commit_documents, base_mode="explicit-ref"
+            parent_documents,
+            commit_documents,
+            base_mode="explicit-ref",
+            retired=cache.retired_between(parent, commit),
         )
         if any(item.path == path for item in identity_diagnostics):
             return tuple(item for item in identity_diagnostics if item.path == path)
@@ -2165,7 +2182,10 @@ def _history_event_diagnostics(
         parent_documents = cache._snapshot(parent)[0]
         commit_documents = cache._snapshot(commit)[0]
         identity_diagnostics = artifact_identity_reuse_diagnostics(
-            parent_documents, commit_documents, base_mode="explicit-ref"
+            parent_documents,
+            commit_documents,
+            base_mode="explicit-ref",
+            retired=cache.retired_between(parent, commit),
         )
         if any(item.path == path for item in identity_diagnostics):
             return tuple(item for item in identity_diagnostics if item.path == path)

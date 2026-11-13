@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import copy
+import functools
 import re
 from dataclasses import dataclass, field
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from typing import Literal, Mapping, Sequence
 
 import yaml
@@ -17,6 +18,7 @@ from document_contracts import (
     task_status,
     Registry,
     classify_path,
+    load_json_file,
     local_extension_names,
     task_criterion_ids,
 )
@@ -96,6 +98,7 @@ class LifecycleEvidenceContext:
         PurePosixPath, tuple[tuple[tuple[str, str], ...], ...]
     ] = field(default_factory=dict)
     local_contract_issues: tuple[tuple[PurePosixPath, str, str, str, str], ...] = ()
+    retired_identities: Mapping[str, PurePosixPath] = field(default_factory=dict)
 
 
 class _UniqueKeyLoader(yaml.SafeLoader):
@@ -411,9 +414,11 @@ def artifact_identity_reuse_diagnostics(
     proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
     *,
     base_mode: LifecycleBaseMode,
+    retired: Mapping[str, PurePosixPath] | None = None,
 ) -> tuple[LifecycleDiagnostic, ...]:
-    """Reject new owners of identities reserved by the base."""
+    """Reject new owners of identities reserved by the base or a lineage."""
 
+    retired = retired or {}
     reserved: dict[str, set[PurePosixPath]] = {}
     for document in base_documents.values():
         if document.artifact_id is not None:
@@ -428,7 +433,15 @@ def artifact_identity_reuse_diagnostics(
         base = base_documents.get(path)
         if base is not None and base.artifact_id == artifact_id:
             continue
-        if not reserved.get(artifact_id):
+        lineage = next(
+            (
+                identity
+                for identity in sorted(retired)
+                if artifact_id == identity or artifact_id.startswith(identity + "-")
+            ),
+            None,
+        )
+        if not reserved.get(artifact_id) and lineage is None:
             continue
         diagnostics.append(
             _diagnostic(
@@ -436,7 +449,13 @@ def artifact_identity_reuse_diagnostics(
                 path=path,
                 profile=document.profile_id,
                 expected="new artifact identity absent from the comparison base",
-                observed=f"{artifact_id!r} reserved at another document path",
+                observed=(
+                    f"{artifact_id!r} reserved at another document path"
+                    if lineage is None
+                    else f"{artifact_id!r} reserved by retired identity "
+                    f"{lineage!r} in the Archived Lineage of "
+                    f"{retired[lineage].as_posix()}"
+                ),
                 base_mode=base_mode,
                 evidence_gap="base identity provenance",
             )
@@ -631,6 +650,11 @@ def compare_lifecycle(
             identity_base,
             identity_proposed,
             base_mode=base_mode,
+            retired=(
+                evidence_context.retired_identities
+                if evidence_context is not None
+                else frozenset()
+            ),
         )
     )
     consumed_base: set[PurePosixPath] = set()
@@ -821,6 +845,90 @@ def _archived_lineage_text(text: str) -> str:
         end = re.compile(rf"^#{{1,{level}}} ", re.MULTILINE).search(text, match.end())
         sections.append(text[match.end() : end.start() if end else len(text)])
     return "\n".join(sections)
+
+
+_HISTORICAL_IDENTITY = ("OPS-[0-9]{4}", "MIG-[0-9]{4}")
+_SCHEMA_PATH = Path(__file__).resolve().parents[1] / (
+    "docs/99.templates/contracts/frontmatter.schema.json"
+)
+_TABLE_SEPARATOR = re.compile(r"\s*:?-+:?\s*")
+
+
+@functools.lru_cache(maxsize=1)
+def _identity_branches() -> tuple[re.Pattern[str], ...]:
+    """Top-level alternatives of `terminalArtifactId` plus historical prefixes."""
+
+    pattern = load_json_file(_SCHEMA_PATH)["$defs"]["terminalArtifactId"]["pattern"]
+    body = pattern.removeprefix("^(?:").removesuffix(")$")
+    branches, depth, start = [], 0, 0
+    for index, character in enumerate(body):
+        depth += (character == "(") - (character == ")")
+        if character == "|" and depth == 0:
+            branches.append(body[start:index])
+            start = index + 1
+    branches.append(body[start:])
+    return tuple(re.compile(item) for item in (*branches, *_HISTORICAL_IDENTITY))
+
+
+def _table_cells(row: str) -> list[str]:
+    cells = re.split(r"(?<!\\)\|", row.strip().removeprefix("|"))
+    if not cells[-1].strip():
+        cells.pop()
+    return [cell.strip() for cell in cells]
+
+
+def _identity_tokens(cell: str) -> list[str]:
+    """Longest identity at each position not glued to a letter, digit or `-`."""
+
+    tokens, position = [], 0
+    while position < len(cell):
+        if position and re.match(r"[A-Za-z0-9-]", cell[position - 1]):
+            position += 1
+            continue
+        matches = [
+            match.group(0)
+            for branch in _identity_branches()
+            if (match := branch.match(cell, position))
+        ]
+        longest = max(matches, key=len, default="")
+        end = position + len(longest)
+        if longest and not re.match(r"[A-Za-z0-9]", cell[end : end + 1]):
+            tokens.append(longest)
+            position = end
+        else:
+            position += 1
+    return tokens
+
+
+def lineage_retired_identities(
+    texts: Mapping[PurePosixPath, str],
+) -> dict[str, PurePosixPath]:
+    """Identity tokens in the first cell of each `Archived Lineage` data row.
+
+    Each token maps to the first document, in path order, whose lineage names it.
+    """
+
+    retired: dict[str, PurePosixPath] = {}
+    for path, text in sorted(texts.items(), key=lambda item: item[0].as_posix()):
+        if "Archived Lineage" not in text:
+            continue
+        rows = [
+            line
+            for line in _archived_lineage_text(text).splitlines()
+            if line.lstrip().startswith("|")
+        ]
+        for index, row in enumerate(rows):
+            cells = _table_cells(row)
+            following = _table_cells(rows[index + 1]) if index + 1 < len(rows) else []
+            if (
+                not cells
+                or all(_TABLE_SEPARATOR.fullmatch(cell) for cell in cells)
+                or (following and all(_TABLE_SEPARATOR.fullmatch(c) for c in following))
+            ):
+                continue
+            for token in _identity_tokens(cells[0]):
+                retired.setdefault(token, path)
+    return retired
 
 
 def package_exit_diagnostics(

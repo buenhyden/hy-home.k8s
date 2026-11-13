@@ -272,6 +272,154 @@ class RetiredArtifactIdentityTest(unittest.TestCase):
         )
 
 
+class LineageRetiredIdentityTest(unittest.TestCase):
+    """Identities named in an `Archived Lineage` first cell stay reserved."""
+
+    lineage_path = PurePosixPath("docs/01.requirements/0004-x.md")
+
+    @classmethod
+    def lineage(cls, *cells: str, heading: str = "### Archived Lineage") -> str:
+        rows = "".join(f"| {cell} | kind | summary | `path` |\n" for cell in cells)
+        return (
+            "## Other\n\n| Source | Kind |\n| --- | --- |\n| SPEC-0999 | x |\n\n"
+            f"{heading}\n\nNote.\n\n| Source | Kind | Summary | Path |\n"
+            f"| --- | --- | --- | --- |\n{rows}\n## After\n\n"
+            "| Source |\n| --- |\n| SPEC-0998 |\n"
+        )
+
+    def retired(self, *cells: str, heading: str = "### Archived Lineage"):
+        text = self.lineage(*cells, heading=heading)
+        return frozenset(
+            LIFECYCLE.lineage_retired_identities({self.lineage_path: text})
+        )
+
+    @staticmethod
+    def document(path: str, artifact_id: str):
+        return LIFECYCLE.LifecycleDocument(
+            path=PurePosixPath(path),
+            profile_id="sdlc/spec",
+            status="approved",
+            artifact_id=artifact_id,
+        )
+
+    def diagnostics(self, base, proposed, retired):
+        return LIFECYCLE.artifact_identity_reuse_diagnostics(
+            {item.path: item for item in base},
+            {item.path: item for item in proposed},
+            base_mode="staged",
+            retired=dict.fromkeys(retired, PurePosixPath(self.lineage_path)),
+        )
+
+    def test_first_cell_shapes_reserve_whole_tokens(self) -> None:
+        for heading in ("### Archived Lineage", "## Archived Lineage"):
+            with self.subTest(heading=heading):
+                self.assertEqual(
+                    self.retired(
+                        "SPEC-0165",
+                        "REQ-0001 (superseded)",
+                        "Some title (AD-0003)",
+                        "RES-0002-m0001",
+                        "inc-0001-0001-PM",
+                        "SPEC-0165-PLAN-0001",
+                        "OPS-0004",
+                        "MIG-0002",
+                        "Pipe \\| title (SPEC-0172)",
+                        "REQ-0004-FR-0009",
+                        "xSPEC-0170 -SPEC-0171 SPEC-01720 no token",
+                        heading=heading,
+                    ),
+                    frozenset(
+                        {
+                            "SPEC-0165",
+                            "REQ-0001",
+                            "AD-0003",
+                            "RES-0002-m0001",
+                            "inc-0001-0001-PM",
+                            "SPEC-0165-PLAN-0001",
+                            "OPS-0004",
+                            "MIG-0002",
+                            "SPEC-0172",
+                            "REQ-0004",
+                        }
+                    ),
+                )
+
+    def test_only_the_first_cell_of_a_data_row_in_the_section_is_read(self) -> None:
+        text = (
+            self.lineage("SPEC-0165")
+            .replace("| `path` |", "| `path` | ADR-0999 |")
+            .replace("| kind |", "| ADR-0998 |")
+        )
+        self.assertEqual(
+            set(LIFECYCLE.lineage_retired_identities({self.lineage_path: text})),
+            {"SPEC-0165"},
+        )
+        self.assertEqual(
+            LIFECYCLE.lineage_retired_identities(
+                {self.lineage_path: "## Archived Lineage\n\nSPEC-0165 only prose.\n"}
+            ),
+            {},
+        )
+
+    def test_new_document_cannot_reuse_a_retired_identity_or_child(self) -> None:
+        retired = frozenset({"SPEC-0165"})
+        for artifact_id in ("SPEC-0165", "SPEC-0165-PLAN-0001"):
+            with self.subTest(artifact_id=artifact_id):
+                diagnostics = self.diagnostics(
+                    [],
+                    [self.document("docs/03.specs/0165-x/spec.md", artifact_id)],
+                    retired,
+                )
+                self.assertEqual(
+                    [item.rule_id for item in diagnostics],
+                    ["LIFECYCLE-IDENTITY-REUSE"],
+                )
+                self.assertIn("'SPEC-0165'", diagnostics[0].observed_transition)
+                self.assertIn(
+                    f"Archived Lineage of {self.lineage_path}",
+                    diagnostics[0].observed_transition,
+                )
+        self.assertEqual(
+            self.diagnostics(
+                [],
+                [self.document("docs/03.specs/0166-x/spec.md", "SPEC-0166")],
+                retired,
+            ),
+            (),
+        )
+
+    def test_unchanged_edited_and_exited_documents_pass(self) -> None:
+        retired = frozenset({"SPEC-0165", "SPEC-0165-PLAN-0001"})
+        spec = self.document("docs/03.specs/0165-x/spec.md", "SPEC-0165")
+        plan = self.document("docs/03.specs/0165-x/plan.md", "SPEC-0165-PLAN-0001")
+        edited = dataclasses.replace(spec, status="completed")
+        self.assertEqual(self.diagnostics([spec], [spec], retired), ())
+        self.assertEqual(self.diagnostics([spec], [edited], retired), ())
+        self.assertEqual(self.diagnostics([spec, plan], [], retired), ())
+
+    def test_member_and_incident_identities_are_read_whole(self) -> None:
+        retired = frozenset({"RES-0002-m0001", "inc-0001-0001-PM"})
+        for artifact_id, refused in (
+            ("RES-0002", False),
+            ("RES-0002-m0001", True),
+            ("inc-0001-0001", False),
+            ("inc-0001-0001-PM", True),
+        ):
+            with self.subTest(artifact_id=artifact_id):
+                found = self.diagnostics(
+                    [],
+                    [self.document("docs/x/doc.md", artifact_id)],
+                    retired,
+                )
+                self.assertEqual(bool(found), refused)
+
+    def test_base_reservation_still_fails_without_a_retired_set(self) -> None:
+        old = self.document("docs/03.specs/0165-x/spec.md", "SPEC-0165")
+        new = self.document("docs/03.specs/0165-y/spec.md", "SPEC-0165")
+        found = self.diagnostics([old], [new], frozenset())
+        self.assertEqual([item.rule_id for item in found], ["LIFECYCLE-IDENTITY-REUSE"])
+
+
 class ScopedDocumentMetadataTests(unittest.TestCase):
     def test_scoped_cli_keeps_global_duplicate_identity_and_pending_census(self):
         unrelated = PurePosixPath(

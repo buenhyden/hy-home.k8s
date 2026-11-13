@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.8.0"
+version: "2.9.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -32,7 +32,9 @@ the machine transition table.
 
 ### Applies To
 
-Stable identities are append-only and never reused. Mutable and current
+Stable identities are append-only and never reused. Retired identities are
+reserved by the first column of the owners' `Archived Lineage` and checked by
+`LIFECYCLE-IDENTITY-REUSE`. Mutable and current
 documents may change only within their selected profile contract. Stage 90
 evidence is not rewritten to satisfy a later profile.
 
