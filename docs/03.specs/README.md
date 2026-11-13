@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.23.40"
+version: "0.23.41"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -68,18 +68,17 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ```text
 03.specs/
 ├── 0161-w00-v14-7-delta-intake/
-├── 0181-w03-frontmatter-key-contract/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── README.md
 ```
 
-현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, 그 단계들이 끝날 때까지 남긴다. [SPEC-0181 W03 Frontmatter Key Contract](./0181-w03-frontmatter-key-contract/)는 frontmatter 키의 의미와 YAML 방언을 레지스트리에 기록한다.
+현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, 그 단계들이 끝날 때까지 남긴다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
 완료된 package는 그 Requirement Package의 `Archived Lineage` 표가 요약한다.
-최근 것은 SPEC-0162부터 SPEC-0180까지, SPEC-0154부터 SPEC-0160까지와 SPEC-0153, SPEC-0152다. 이들의 요약은
+최근 것은 SPEC-0162부터 SPEC-0181까지, SPEC-0154부터 SPEC-0160까지와 SPEC-0153, SPEC-0152다. 이들의 요약은
 [REQ-0003의 Archived Lineage](../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage)에 있다.
 SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-slack.md#archived-lineage)에 있다.
 
