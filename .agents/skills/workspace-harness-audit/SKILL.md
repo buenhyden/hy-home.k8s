@@ -3,11 +3,11 @@ name: "workspace-harness-audit"
 description: "Use when auditing workspace-wide SDLC, agent governance, GitOps, scripts, and QA ownership against an approved request."
 metadata:
   title: "Workspace Harness Audit"
-  version: "1.0.1"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,21 +16,40 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # workspace-harness-audit
 
-## Purpose
+## Purpose and Trigger
+
+### When to Use
 
 Keep broad workspace analysis complete, evidence-backed, and bounded to the
 authorized repository work. Narrow document drift belongs to
 `docs-stage-conformance` instead.
 
-## When NOT to Use
+### When Not to Use
 
 - Repairing narrow document drift; use `docs-stage-conformance`.
 - Auditing navigation and owner maps; use `knowledge-map`.
 - Auditing cluster security posture; use `k8s-security-audit`.
 
-## Workflow Phases
+#### Boundaries
 
-### Coverage map
+- An audit request implies no live cluster, OpenBao, cloud, paid, credential, or
+  remote action.
+- A finding about native provider behavior needs runtime evidence. Tracked
+  configuration shows intent, never discovery or execution.
+- Registry inventories, exact gate limits, branch pins, and dated model-fitness
+  snapshots stay with their owners. A skill that copies one is itself a finding.
+- Durable results belong to canonical documents and Task records. An audit does
+  not leave behind a progress, closure, or current-state ledger of its own.
+
+## Procedure
+
+### Steps
+
+The audit runs in the phases below.
+
+#### Workflow Phases
+
+##### Coverage map
 
 Take the reading and the write boundary from
 [work lifecycle](../../workflows/work-lifecycle.md) intake. What this audit adds
@@ -40,7 +59,7 @@ no evidence source is recorded as uninspected rather than as clean, because a
 broad audit fails by leaving a silent gap far more often than by reporting a
 wrong finding.
 
-### Authority review
+##### Authority review
 
 Resolve each instruction, safety constraint, validation signal, and durable
 knowledge claim to its current owner: `.agents/roles/registry.json` for roles
@@ -52,7 +71,7 @@ An external catalog, benchmark, or third-party agent definition is evidence or
 a strategy lens. It never authorizes expanding the roster or standing up
 governance beside an existing owner.
 
-### Disposition
+##### Disposition
 
 For each gap, separate what the audit may settle from what it must route.
 Remove a duplicate owner only when both tests pass: no consumer remains, and
@@ -61,25 +80,34 @@ behavior in the owning Spec, and record priority, dependencies, file ownership,
 rollback, and deferred external work in the owning Plan/Task under its existing
 package IDs.
 
-### Verification and handoff
+##### Verification and handoff
 
 Follow [quality policy](../../governance/quality.md) and the work-lifecycle
 completion sequence. Check every acceptance item against current files and
 actual command results rather than against the intake map, and carry each
 unresolved item into the handoff by name.
 
-## Boundaries
+### Failure Handling
 
-- An audit request implies no live cluster, OpenBao, cloud, paid, credential, or
-  remote action.
-- A finding about native provider behavior needs runtime evidence. Tracked
-  configuration shows intent, never discovery or execution.
-- Registry inventories, exact gate limits, branch pins, and dated model-fitness
-  snapshots stay with their owners. A skill that copies one is itself a finding.
-- Durable results belong to canonical documents and Task records. An audit does
-  not leave behind a progress, closure, or current-state ledger of its own.
+None is stated in this document.
 
-## Outputs
+## Inputs and Outputs
+
+### Inputs
+
+None is stated in this document.
+
+### Outputs
 
 A requirement-to-owner coverage map, bounded disposition decisions, approved
 implementation evidence, validation limitations, and a concrete next owner.
+
+## Verification
+
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.

@@ -1,34 +1,40 @@
 ---
 title: "Delegated Development"
-version: "1.1.0"
+version: "1.1.1"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-11-13"
 ---
 
 # Delegated Development
 
-## Overview
+## Purpose and Trigger
+
+### When to Use
 
 Delegate bounded work through a supported runtime mechanism while preserving
 responsibility, least privilege, and independent evidence.
 
-## Authority Boundary
+Related documents: [Roles](../roles/README.md),
+[Model Selection](../governance/model-selection.md),
+[Work Lifecycle](work-lifecycle.md) and
+[Approval and Safety](../governance/approval-and-safety.md).
+
+### When Not to Use
+
+None is stated in this document.
+
+### Authority Boundary
 
 The [agent registry](../roles/registry.json) owns exact role IDs,
 permission classes, handoff edges, capability-tier references, skill references,
 and projection paths. This procedure explains their use without duplicating the
 roster or tool inventory.
 
-## Governance Context
+## Procedure
 
-Neutral role and skill content lives in common governance; Claude and Codex
-projections add native metadata only. Tracked files do not prove that a runtime
-discovers, loads, or enforces them. Delegation requires explicit user or
-applicable instruction authorization and an available runtime mechanism.
-
-## Current Contract
+### Steps
 
 1. Resolve the role, permission class, skills, and native projection from the
    registry. Read that projection and its imported responsibility owners.
@@ -57,15 +63,31 @@ Subagents never perform live mutation or secret-value operations. A higher
 capability tier does not grant broader permission. Provider-native runtime
 evidence remains distinct from repository-static projection parity.
 
-## Validation and Refresh
+### Failure Handling
+
+Failure handling is stated in steps 4 and 6 of Steps.
+
+## Inputs and Outputs
+
+### Inputs
+
+Neutral role and skill content lives in common governance; Claude and Codex
+projections add native metadata only. Tracked files do not prove that a runtime
+discovers, loads, or enforces them. Delegation requires explicit user or
+applicable instruction authorization and an available runtime mechanism.
+
+### Outputs
+
+None is stated in this document.
+
+## Verification
+
+### Checks
 
 Run registry, projection/config, and semantic/permission checks when a role,
 import, permission, handoff, skill, or provider projection changes. Confirm the
 actual provider mechanism separately before claiming native delegation.
 
-## Related Documents
+### Completion and Handoff
 
-- [Roles](../roles/README.md)
-- [Model Selection](../governance/model-selection.md)
-- [Work Lifecycle](work-lifecycle.md)
-- [Approval and Safety](../governance/approval-and-safety.md)
+Completion and handoff are stated in steps 6 and 7 of Steps.

@@ -3,11 +3,11 @@ name: "external-service-contract-audit"
 description: "Use when auditing selectorless external Service/EndpointSlice mappings or repository consumers of external HTTP, database and OTLP endpoints."
 metadata:
   title: "External Service Contract Audit"
-  version: "1.0.1"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-08"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,18 +16,31 @@ using this procedure. Skill invocation grants no additional authority.
 
 # external-service-contract-audit
 
-## Purpose
+## Purpose and Trigger
+
+### When to Use
 
 Check the repository contract between an external service and its Kubernetes
 consumers before changing a port, endpoint, protocol or secret reference.
 
-## When NOT to Use
+### When Not to Use
 
 - General workload onboarding or Argo CD diagnosis: `gitops-workflow`.
 - General manifest validation: `k8s-validate`.
 - Live connectivity or authentication probes without separate operator scope.
 
-## Workflow Steps
+#### Constraints
+
+Use tracked and nonignored new YAML in `gitops/platform/external-services/`.
+The checker accepts bounded regular files, requires installed Python, Git and
+PyYAML, and rejects unsafe paths, aliases and malformed contracts. It performs
+no network request. It is not Kubernetes schema validation or an ESO/security
+replacement. Named targetPort resolution is outside this repository's numeric
+external-endpoint contract and fails explicitly.
+
+## Procedure
+
+### Steps
 
 1. Identify the changed Service and every same-namespace EndpointSlice bearing
    its service-name label. Inspect its actual consumer and secret reference;
@@ -43,24 +56,31 @@ consumers before changing a port, endpoint, protocol or secret reference.
 4. Run the affected central QA profile. Its registry selects this checker;
    invocation of this skill never adds a gate or changes an approval.
 
-## Constraints
-
-Use tracked and nonignored new YAML in `gitops/platform/external-services/`.
-The checker accepts bounded regular files, requires installed Python, Git and
-PyYAML, and rejects unsafe paths, aliases and malformed contracts. It performs
-no network request. It is not Kubernetes schema validation or an ESO/security
-replacement. Named targetPort resolution is outside this repository's numeric
-external-endpoint contract and fails explicitly.
-
-## Expected Outputs
-
-Report affected consumer/field, PASS or FAIL, command and static scope, required
-remediation, and deferred live evidence with its next owner. Preserve separate
-results for general Kubernetes validation and live connectivity.
-
-## Failure Handling
+### Failure Handling
 
 A missing required tool, malformed input, timeout or incomplete output is FAIL.
 Stop and report the bounded error; do not echo raw YAML, stderr or credentials.
 Route manifest repair to `k8s-implementer` and contract review to
 `gitops-reviewer`. Live probes require the operator's separately scoped action.
+
+## Inputs and Outputs
+
+### Inputs
+
+None is stated in this document.
+
+### Outputs
+
+Report affected consumer/field, PASS or FAIL, command and static scope, required
+remediation, and deferred live evidence with its next owner. Preserve separate
+results for general Kubernetes validation and live connectivity.
+
+## Verification
+
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.

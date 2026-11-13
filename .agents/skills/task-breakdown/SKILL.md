@@ -3,11 +3,11 @@ name: "task-breakdown"
 description: "Use when decomposing an approved implementation Plan into bounded executable Task records."
 metadata:
   title: "Task Breakdown"
-  version: "1.0.1"
+  version: "1.0.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,12 +16,26 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # task-breakdown
 
-## When NOT to Use
+## Purpose and Trigger
+
+### When to Use
+
+Use this skill as its frontmatter description states.
+
+### When Not to Use
 
 - Producing the ordered Plan the Task records come from; use `execution-plan`.
 - Choosing the template and owner for the Task record; use `docs-stage-routing`.
 
-## Workflow Steps
+#### Boundaries
+
+A Task may touch several related files or require several checks; do not split
+it merely to satisfy an artificial one-file/one-check rule. Ownership and
+reviewability determine the unit. Delegation still requires authorization.
+
+## Procedure
+
+### Steps
 
 1. Read the Spec and Plan work breakdown; preserve approved work-package IDs.
 2. Define each independently reviewable logical unit with exact ownership,
@@ -35,13 +49,27 @@ using this procedure. Skill invocation does not authorize additional actions.
 6. Keep status, validation evidence, review, rollback, residual risk, and next
    owner in that Task. Do not create a parallel monolithic task/progress record.
 
-## Boundaries
+### Failure Handling
 
-A Task may touch several related files or require several checks; do not split
-it merely to satisfy an artificial one-file/one-check rule. Ownership and
-reviewability determine the unit. Delegation still requires authorization.
+None is stated in this document.
 
-## Outputs
+## Inputs and Outputs
+
+### Inputs
+
+None is stated in this document.
+
+### Outputs
 
 Ordered, profile-conformant Task records with complete acceptance and evidence
 requirements, ready for authorized execution.
+
+## Verification
+
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.

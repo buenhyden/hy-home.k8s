@@ -3,11 +3,11 @@ name: "docs-stage-routing"
 description: "Use when selecting the canonical owner and template for an authored document or rejecting parallel document trees."
 metadata:
   title: "Docs Stage Routing"
-  version: "1.1.1"
+  version: "1.1.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-06"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,12 +16,27 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # docs-stage-routing
 
-## When NOT to Use
+## Purpose and Trigger
+
+### When to Use
+
+Use this skill as its frontmatter description states.
+
+### When Not to Use
 
 - Repairing drift in a document whose owner is already settled; use `docs-stage-conformance`.
 - Maintaining the indexes and owner maps that route a reader; use `knowledge-map`.
 
-## Workflow Steps
+#### Boundaries
+
+Routing never edits global or user-local skills, authentication, or
+configuration. Language policy is owned by
+[document authoring](../../governance/document-authoring.md). Selecting a template grants no authority to author or execute
+beyond the active task.
+
+## Procedure
+
+### Steps
 
 1. Classify the content: human governance, a durable requirement, architecture,
    a change contract, operating knowledge, reference evidence, or recovery
@@ -49,15 +64,28 @@ using this procedure. Skill invocation does not authorize additional actions.
    [quality policy](../../governance/quality.md) for validation and Task
    evidence.
 
-## Boundaries
+### Failure Handling
 
-Routing never edits global or user-local skills, authentication, or
-configuration. Language policy is owned by
-[document authoring](../../governance/document-authoring.md). Selecting a template grants no authority to author or execute
-beyond the active task.
+None is stated in this document.
 
-## Outputs
+## Inputs and Outputs
+
+### Inputs
+
+None is stated in this document.
+
+### Outputs
 
 The canonical path, the selected profile and template, the owner links and
 index changes the change requires, validation evidence, and any authority
 boundary left unresolved.
+
+## Verification
+
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.

@@ -3,7 +3,7 @@ name: "ops-runbook"
 description: "Use when authoring or reviewing operations runbooks for bootstrap, recovery, deployment, backup, and incident procedures in hy-home.k8s."
 metadata:
   title: "Ops Runbook"
-  version: "1.1.0"
+  version: "1.1.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -16,19 +16,30 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # ops-runbook
 
-## Purpose
+## Purpose and Trigger
+
+### When to Use
 
 Author and review operations runbooks (`docs/05.operations/runbooks/`) for this repository's
 Linux server + k3d + ArgoCD platform. Ensure runbooks are executable, verifiable, and safe for operator
 use without requiring cluster access delegation.
 
-## When NOT to Use
+### When Not to Use
 
 - Authoring an execution plan or task unit; use `execution-plan` or `task-breakdown`.
 - Tracing requirements or architecture decisions; use `requirements-to-design`.
 - Diagnosing a live incident without an existing runbook; use `incident-postmortem` after.
 
-## Workflow Steps
+#### Safety Rules
+
+- Never include plaintext Kubernetes secrets or OpenBao tokens in runbook steps.
+- Every bootstrap-boundary action (k3d create, ArgoCD install, root app apply) must state
+  the exact `kubectl apply` or `helm install` command and its scope.
+- Break-glass actions must record scope, rollback, and verification evidence in the runbook.
+
+## Procedure
+
+### Steps
 
 1. Identify the runbook type and the runbook index
    (`docs/05.operations/runbooks/README.md`). Resolve its `operation/runbook`
@@ -56,9 +67,26 @@ use without requiring cluster access delegation.
 Section names and order follow the Runbook form: Purpose; Preconditions;
 Steps; Validation; Recovery.
 
-## Safety Rules
+### Failure Handling
 
-- Never include plaintext Kubernetes secrets or OpenBao tokens in runbook steps.
-- Every bootstrap-boundary action (k3d create, ArgoCD install, root app apply) must state
-  the exact `kubectl apply` or `helm install` command and its scope.
-- Break-glass actions must record scope, rollback, and verification evidence in the runbook.
+None is stated in this document.
+
+## Inputs and Outputs
+
+### Inputs
+
+None is stated in this document.
+
+### Outputs
+
+None is stated in this document.
+
+## Verification
+
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.

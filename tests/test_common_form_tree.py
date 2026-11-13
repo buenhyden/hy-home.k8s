@@ -65,6 +65,8 @@ ROLE_BINDINGS = {
     "governance/rule": "policy",
     "operation/policy": "policy",
     "common/folder-agents-guide": "agents",
+    "governance/skill": "skill",
+    "common/native-skill-package": "skill",
     "common/readme-repository": "root-readme",
     "common/readme-stage-index": "stage-readme",
     "common/readme-collection-index": "stage-readme",
@@ -249,6 +251,30 @@ AGENTS_TABLE_KEYS = {
         "Rule",
     )
 }
+SKILL_GOVERNANCE = ("governance/skill", "common/template-governance-skill")
+SKILL_NATIVE = ("common/native-skill-package", "common/template-native-skill")
+SKILL_TREE = (
+    ("Purpose and Trigger", ("When to Use", "When Not to Use")),
+    ("Procedure", ("Steps", "Failure Handling")),
+    ("Inputs and Outputs", ("Inputs", "Outputs")),
+    ("Verification", ("Checks", "Completion and Handoff")),
+)
+SKILL_EXTENSION = {
+    "id": "skill-authority-boundary",
+    "kind": "local_h3",
+    "condition": (
+        "a workflow that applies existing policy and states its own authority boundary"
+    ),
+    "owner": "platform",
+    "verification": "the form tree check",
+    "review": "when the Skill form version changes",
+    "removal": "when the common Skill form gains an authority H3",
+    "parent_id": "skill-purpose-and-trigger",
+    "title": "Authority Boundary",
+}
+SKILL_TABLE_KEYS = {
+    "Steps": ("skill-procedure-steps", ("Step", "Input", "Output"), 0, "Step")
+}
 POLICY_GOVERNANCE_TABLE_KEYS = {"Rules": POLICY_RULES_TABLE}
 POLICY_OPERATIONS_TABLE_KEYS = {
     "Rules": POLICY_RULES_TABLE,
@@ -259,7 +285,7 @@ POLICY_OPERATIONS_TABLE_KEYS = {
         "Promoted owner",
     ),
 }
-# The nine roles that carry a form; every other profile keeps its H2 lists.
+# The ten roles that carry a form; every other profile keeps its H2 lists.
 FORM_PROFILES = (
     GUIDE
     + RUNBOOK
@@ -271,6 +297,8 @@ FORM_PROFILES = (
     + POLICY_GOVERNANCE
     + POLICY_OPERATIONS
     + AGENTS
+    + SKILL_GOVERNANCE
+    + SKILL_NATIVE
 )
 FORM_TEMPLATES = (
     GUIDE[1],
@@ -285,8 +313,10 @@ FORM_TEMPLATES = (
     POLICY_GOVERNANCE[1],
     POLICY_OPERATIONS[1],
     AGENTS[1],
+    SKILL_GOVERNANCE[1],
+    SKILL_NATIVE[1],
 )
-NINE_FORMS = [
+TEN_FORMS = [
     "guide",
     "runbook",
     "incident",
@@ -296,6 +326,7 @@ NINE_FORMS = [
     "service-readme",
     "policy",
     "agents",
+    "skill",
 ]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
@@ -569,7 +600,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_nine_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_ten_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -589,6 +620,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ("service-readme", "Service README"),
                 ("policy", "Policy"),
                 ("agents", "AGENTS"),
+                ("skill", "Skill"),
             ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
@@ -666,6 +698,22 @@ class RepositoryRegistryTests(unittest.TestCase):
                 "Ownership",
             ),
             ("agents", AGENTS_TREE, [], AGENTS_TABLE_KEYS, AGENTS, None),
+            (
+                "skill",
+                SKILL_TREE,
+                [SKILL_EXTENSION],
+                SKILL_TABLE_KEYS,
+                SKILL_GOVERNANCE,
+                None,
+            ),
+            (
+                "skill",
+                SKILL_TREE,
+                [SKILL_EXTENSION],
+                SKILL_TABLE_KEYS,
+                SKILL_NATIVE,
+                None,
+            ),
         ):
             loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
             self.assertEqual(loaded["h1"], "{{document_title}}")
@@ -776,11 +824,11 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_nine_forms(self) -> None:
+    def test_repository_registry_loads_with_exactly_the_ten_forms(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            NINE_FORMS,
+            TEN_FORMS,
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -793,6 +841,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             "service-readme": ["Commands"],
             "policy": ["Rules", "Lifecycle Traceability"],
             "agents": ["Tool Rules"],
+            "skill": ["Steps"],
         }
         governance_tables = ["Rules"]
         for profile in registry.profiles:
@@ -810,6 +859,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("service-readme", SERVICE_FORM),
                             ("policy", POLICY_GOVERNANCE + POLICY_OPERATIONS),
                             ("agents", AGENTS),
+                            ("skill", SKILL_GOVERNANCE + SKILL_NATIVE),
                         )
                         if profile.profile_id in ids
                     ),
@@ -865,7 +915,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            NINE_FORMS,
+            TEN_FORMS,
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -2730,6 +2780,227 @@ class AgentsFormTests(RoleFormBody):
         self.assertEqual(self.tables(body), [])
 
 
+GOVERNANCE_SKILL_PATH = PurePosixPath(".agents/workflows/work-lifecycle.md")
+NATIVE_SKILL_PATH = PurePosixPath(".agents/skills/example/SKILL.md")
+SKILL_AUTHORITY = "### Authority Boundary\n\nThis procedure applies existing policy."
+
+
+def skill_body(*, preface: str = "") -> str:
+    blocks = (
+        "# Skill title",
+        "## Purpose and Trigger",
+        "### When to Use\n\nUse it when a change needs review.",
+        "### When Not to Use\n\nNot for a one-line fix.",
+        "## Procedure",
+        "### Steps\n\n1. Run the check.",
+        "### Failure Handling\n\nStop on a failed check.",
+        "## Inputs and Outputs",
+        "### Inputs\n\nThe request.",
+        "### Outputs\n\nA report.",
+        "## Verification",
+        "### Checks\n\nRun the suite.",
+        "### Completion and Handoff\n\nRecord the result.",
+    )
+    return md(*((preface,) if preface else ()), *blocks)
+
+
+# TestCase is named again so the static collector sees a runnable base.
+class SkillFormBody(RoleFormBody, unittest.TestCase):
+    """Shared Skill checks; the two Skill profile pairs share one form."""
+
+    FORM_ID = "skill"
+    TREE = SKILL_TREE
+    TABLE_KEYS = SKILL_TABLE_KEYS
+    BODY = skill_body()
+    HEADER = ("Step", "Input", "Output")
+    HOME = "1. Run the check."
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        if cls is SkillFormBody:
+            raise unittest.SkipTest("shared base; its subclasses run the checks")
+        super().setUpClass()
+
+    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
+        wrong = self.table(self.HEADER[:2], ("a", "b"))
+        body = self.with_table(wrong, home="A report.")
+        self.assertEqual(self.tables(body), [])
+
+    def test_the_table_keys_are_the_step_input_output_columns(self) -> None:
+        raw = profile_of(load_raw(), self.PROFILES[1])
+        (table,) = raw["template_definition"]["tables"]
+        self.assertEqual(table["section"], "skill-procedure-steps")
+        self.assertEqual(table["row_identity"], "Step")
+        self.assertEqual(table["minimum_rows"], 0)
+        self.assertEqual(
+            [(c["key"], c["required"]) for c in table["columns"]],
+            [("Step", True), ("Input", True), ("Output", True)],
+        )
+
+    def test_the_form_has_one_local_extension_and_no_body_section(self) -> None:
+        form = next(
+            f for f in load_raw()["common_forms"]["forms"] if f["form_id"] == "skill"
+        )
+        self.assertEqual(form["extensions"], [SKILL_EXTENSION])
+        for profile_id in self.PROFILES:
+            self.assertIsNone(
+                profile_of(load_raw(), profile_id)["relationships"]["body_contract"]
+            )
+
+    def test_the_template_twin_names_every_real_consumer(self) -> None:
+        twin = profile_of(load_raw(), self.PROFILES[1])
+        paths = twin["template_definition"]["consumer_paths"]
+        self.assertEqual(len(paths), len(set(paths)))
+        for path in paths:
+            with self.subTest(path=path):
+                self.assertTrue((ROOT / path).is_file())
+        self.assertIn(twin["template_source"], paths)
+
+    def test_a_missing_or_renamed_form_heading_fails_the_tree(self) -> None:
+        self.assertEqual(
+            self.tree(self.BODY.replace("### Checks", "### Tests")),
+            ["BODY-H3-REQUIRED", "BODY-H3-UNSUPPORTED"],
+        )
+        self.assertEqual(
+            self.tree(self.BODY.replace("## Procedure", "## Workflow Steps")),
+            [
+                "BODY-H3-PARENT",
+                "BODY-H3-PARENT",
+                "BODY-HEADING-REQUIRED",
+                "BODY-HEADING-UNSUPPORTED",
+            ],
+        )
+        self.assertEqual(
+            self.tree(self.under("## Verification", "### Stray\n\nText.")),
+            ["BODY-H3-UNSUPPORTED"],
+        )
+
+    def test_deeper_headings_stay_inside_their_form_h3(self) -> None:
+        body = self.BODY.replace(
+            "Stop on a failed check.", "Stop.\n\n#### Deep\n\nDetail.\n\n##### Deeper"
+        )
+        self.assertEqual(self.tree(body), [])
+
+    def test_authority_boundary_is_accepted_after_when_not_to_use(self) -> None:
+        body = self.under("## Procedure", SKILL_AUTHORITY)
+        self.assertLess(
+            body.index("### When Not to Use"), body.index("### Authority Boundary")
+        )
+        self.assertEqual(self.tree(body), [])
+
+    def test_authority_boundary_under_another_h2_is_refused(self) -> None:
+        for heading in ("## Inputs and Outputs", "## Verification"):
+            with self.subTest(before=heading):
+                self.assertEqual(
+                    self.tree(self.under(heading, SKILL_AUTHORITY)),
+                    ["BODY-H3-PARENT"],
+                )
+        self.assertEqual(self.tree(self.under("", SKILL_AUTHORITY)), ["BODY-H3-PARENT"])
+
+    def test_the_steps_table_passes_and_a_wrong_table_there_fails(self) -> None:
+        good = self.table(self.HEADER, ("1", "A request", "A report"))
+        self.assertEqual(self.tables(self.with_table(good)), [])
+        old = self.table(("Step", "Action", "Check"), ("1", "a", "b"))
+        self.assertEqual(self.tables(self.with_table(old)), ["BODY-TABLE-COLUMNS"])
+
+
+class GovernanceSkillFormTests(SkillFormBody):
+    """SPEC-0177 VAL-SKILL-001: the Skill form on the common workflows."""
+
+    PATH = GOVERNANCE_SKILL_PATH
+    PROFILES = SKILL_GOVERNANCE
+
+    def test_the_authored_profile_keeps_a_form_and_empty_h2_lists(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        by_id = {profile.profile_id: profile for profile in registry.profiles}
+        self.assertEqual(by_id[self.PROFILES[0]].mode, "authored")
+        self.assertEqual(
+            profile_of(load_raw(), self.PROFILES[0])["sections"],
+            {"required": [], "optional": [], "forbidden": []},
+        )
+
+    def test_an_absent_authority_boundary_passes_and_an_empty_one_fails(self) -> None:
+        self.assertNotIn("Authority Boundary", self.BODY)
+        self.assertEqual(self.tree(self.BODY), [])
+        empty = self.under("## Procedure", "### Authority Boundary\n")
+        self.assertEqual(self.tree(empty), ["BODY-SECTION-EMPTY"])
+
+    def test_both_workflows_resolve_to_the_skill_profile(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        for path in (
+            ".agents/workflows/work-lifecycle.md",
+            ".agents/workflows/delegated-development.md",
+        ):
+            with self.subTest(path=path):
+                profile = CONTRACTS.classify_path(registry, PurePosixPath(path))
+                self.assertEqual(profile.profile_id, SKILL_GOVERNANCE[0])
+                self.assertEqual(profile.document_role, "skill")
+
+
+class NativeSkillFormTests(SkillFormBody):
+    """SPEC-0177 VAL-SKILL-001: the Skill form on native SKILL.md packages."""
+
+    PATH = NATIVE_SKILL_PATH
+    PROFILES = SKILL_NATIVE
+
+    def test_the_loaded_heading_lists_equal_the_form_h2_titles(self) -> None:
+        # The native Skill profiles carry no H2 lists, like the AGENTS ones.
+        registry = CONTRACTS.load_registry(ROOT)
+        loaded = next(f for f in registry.common_forms if f.form_id == self.FORM_ID)
+        self.assertEqual(
+            tuple(item.title for item in loaded.sections),
+            tuple(title for title, _ in self.TREE),
+        )
+        by_id = {profile.profile_id: profile for profile in registry.profiles}
+        for profile_id in self.PROFILES:
+            with self.subTest(profile=profile_id):
+                raw = profile_of(load_raw(), profile_id)
+                self.assertEqual(
+                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
+                )
+                self.assertIs(by_id[profile_id].form, loaded)
+
+    def test_the_package_is_native_and_its_template_is_the_exact_twin(self) -> None:
+        raw = load_raw()
+        package, twin = (profile_of(raw, profile_id) for profile_id in self.PROFILES)
+        self.assertEqual(package["mode"], "native")
+        self.assertEqual(
+            package["template_source"],
+            "docs/99.templates/templates/common/native-skill.template.md",
+        )
+        self.assertEqual(twin["mode"], "template")
+        self.assertEqual(twin["placeholder_policy"], "template-only")
+        self.assertEqual(twin["frontmatter"], package["frontmatter"])
+        self.assertEqual(
+            twin["frontmatter"]["constants"], {"disable-model-invocation": True}
+        )
+        self.assertEqual(
+            twin["relationships"]["source_profile_ids"], [self.PROFILES[0]]
+        )
+        self.assertEqual(
+            twin["path_pattern"],
+            "^docs/99\\.templates/templates/common/native\\-skill\\.template\\.md$",
+        )
+
+    def test_the_authority_sentence_before_the_h1_does_not_disturb_the_tree(
+        self,
+    ) -> None:
+        body = skill_body(preface="Read the policy before using this procedure.")
+        self.assertEqual(self.tree(body), [])
+        self.assertEqual(self.tables(body), [])
+
+    def test_reference_files_and_assets_keep_no_role(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        by_id = {profile.profile_id: profile for profile in registry.profiles}
+        for profile_id in (
+            "common/native-skill-reference",
+            "common/native-skill-asset",
+        ):
+            with self.subTest(profile=profile_id):
+                self.assertIsNone(by_id[profile_id].document_role)
+                self.assertIsNone(by_id[profile_id].form)
+
+
 class TemplateTwinTableTests(unittest.TestCase):
     """SPEC-0175 W03-H10: two tabled twins may not name one source profile."""
 
@@ -2862,12 +3133,12 @@ class RetainedFormTests(unittest.TestCase):
         self.assertEqual(body_rules("proposed", self.TREE), [])
 
 
-class CurrentRegistryNineFormsOnlyTests(unittest.TestCase):
-    def test_only_the_nine_form_profiles_use_the_tree(self) -> None:
+class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
+    def test_only_the_ten_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            NINE_FORMS,
+            TEN_FORMS,
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),

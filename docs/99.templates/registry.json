@@ -1770,6 +1770,7 @@
       "id": "governance/skill",
       "family": "governance",
       "mode": "authored",
+      "document_role": "skill",
       "path_pattern": "^\\.agents/workflows/(?:work-lifecycle|delegated-development)\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/skill.template.md",
@@ -1807,14 +1808,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -2423,9 +2417,10 @@
       "id": "common/native-skill-package",
       "family": "common",
       "mode": "native",
+      "document_role": "skill",
       "path_pattern": "^\\.agents/skills/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/SKILL\\.md$",
       "artifact_id_pattern": null,
-      "template_source": null,
+      "template_source": "docs/99.templates/templates/common/native-skill.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -6028,6 +6023,7 @@
       "id": "common/template-governance-skill",
       "family": "common",
       "mode": "template",
+      "document_role": "skill",
       "path_pattern": "^docs/99\\.templates/templates/governance/skill\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/skill.template.md",
@@ -6065,14 +6061,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -6083,7 +6072,230 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a common workflow that states when it applies, its ordered procedure, its inputs and outputs, and how it is checked and handed off.",
+        "responsibility": "A workflow under .agents/workflows/ owns one invoked procedure and its own authority boundary as a registered local heading; policy, role and skill authority stay with their owners and are linked, not copied.",
+        "non_goals": [
+          "Restating policy, role or approval text that its owner already states.",
+          "Adding a step, permission or command beyond the owning policy, approval and safety documents.",
+          "Native SKILL.md packages, which keep their provider frontmatter and use the common/template-native-skill template."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/agent-execution.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every governance/skill workflow under .agents/workflows/ and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/governance/skill.template.md",
+          ".agents/workflows/delegated-development.md",
+          ".agents/workflows/work-lifecycle.md",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validate-agent-governance.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_document_terminal_contract.py"
+        ],
+        "validation": {
+          "positive": [
+            "Each workflow and the template pass the form tree, table, author-prompt and residue checks.",
+            "A workflow with the registered Authority Boundary heading after When Not to Use, or with a Steps table that keeps the registered columns, passes."
+          ],
+          "negative": [
+            "A missing, renamed or misplaced Skill heading fails the form tree check.",
+            "A reordered, missing or extra Steps column fails BODY-TABLE-COLUMNS.",
+            "A table section outside the form fails REGISTRY_TABLE_SECTION.",
+            "A source profile named by two template twins that carry tables fails REGISTRY_TABLE_TWIN."
+          ],
+          "regression": [
+            "The Skill profiles keep empty heading lists; the authored workflow profile derives its heading lists from the form.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0177 meaning map moves each sentence of the former six-heading workflow layout into the Skill form without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous six-heading workflow layout and its template.",
+          "rollback": "Revert the SPEC-0177 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Steps",
+            "section": "skill-procedure-steps",
+            "columns": [
+              {
+                "key": "Step",
+                "meaning": "The stable number or short name of the step.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Input",
+                "meaning": "What the step reads or needs before it runs.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Output",
+                "meaning": "What the step produces or records.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Step"
+          }
+        ]
+      }
+    },
+    {
+      "id": "common/template-native-skill",
+      "family": "common",
+      "mode": "template",
+      "document_role": "skill",
+      "path_pattern": "^docs/99\\.templates/templates/common/native\\-skill\\.template\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/common/native-skill.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "name",
+          "description",
+          "metadata",
+          "disable-model-invocation"
+        ],
+        "optional": [],
+        "forbidden": [],
+        "order": [
+          "name",
+          "description",
+          "metadata",
+          "disable-model-invocation"
+        ],
+        "constants": {
+          "disable-model-invocation": true
+        }
+      },
+      "sections": {
+        "required": [],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [
+          "common/native-skill-package"
+        ],
+        "body_contract": null
+      },
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a native skill package that states when the skill applies, its ordered procedure, its inputs and outputs, and how it is checked and handed off.",
+        "responsibility": "A SKILL.md owns one invoked procedure; the provider frontmatter, skill name and loader path stay unchanged, and policy, role and approval authority stay with their owners and are linked, not copied.",
+        "non_goals": [
+          "Restating policy, role or approval text that its owner already states.",
+          "Adding a step, permission or command beyond the owning policy, approval and safety documents.",
+          "Skill reference files and assets, which stay native without a common role."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/agent-execution.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every SKILL.md package under .agents/skills/ and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/common/native-skill.template.md",
+          ".agents/skills/deployment-strategies/SKILL.md",
+          ".agents/skills/docs-stage-conformance/SKILL.md",
+          ".agents/skills/docs-stage-routing/SKILL.md",
+          ".agents/skills/execution-plan/SKILL.md",
+          ".agents/skills/external-service-contract-audit/SKILL.md",
+          ".agents/skills/gitops-workflow/SKILL.md",
+          ".agents/skills/incident-postmortem/SKILL.md",
+          ".agents/skills/k8s-security-audit/SKILL.md",
+          ".agents/skills/k8s-validate/SKILL.md",
+          ".agents/skills/knowledge-map/SKILL.md",
+          ".agents/skills/ops-runbook/SKILL.md",
+          ".agents/skills/rca-methodology/SKILL.md",
+          ".agents/skills/requirements-to-design/SKILL.md",
+          ".agents/skills/risk-report/SKILL.md",
+          ".agents/skills/task-breakdown/SKILL.md",
+          ".agents/skills/vulnerability-patterns/SKILL.md",
+          ".agents/skills/workspace-harness-audit/SKILL.md",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validate-agent-governance.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_document_terminal_contract.py",
+          "tests/test_native_skill_envelope.py",
+          "tests/test_common_agents_document_routes.py"
+        ],
+        "validation": {
+          "positive": [
+            "Each SKILL.md and the template pass the form tree, table, author-prompt, residue and agent-governance checks.",
+            "A template twin that carries the unquoted constant disable-model-invocation: true passes the frontmatter quote check."
+          ],
+          "negative": [
+            "A missing, renamed or misplaced Skill heading fails the form tree check.",
+            "A reordered, missing or extra Steps column fails BODY-TABLE-COLUMNS.",
+            "A table section outside the form fails REGISTRY_TABLE_SECTION.",
+            "A source profile named by two template twins that carry tables fails REGISTRY_TABLE_TWIN."
+          ],
+          "regression": [
+            "The native Skill profiles stay native and keep empty heading lists.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0177 meaning map moves each sentence of the 17 SKILL.md packages into the Skill form without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous section layout of the 17 SKILL.md packages.",
+          "rollback": "Revert the SPEC-0177 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Steps",
+            "section": "skill-procedure-steps",
+            "columns": [
+              {
+                "key": "Step",
+                "meaning": "The stable number or short name of the step.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Input",
+                "meaning": "What the step reads or needs before it runs.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Output",
+                "meaning": "What the step produces or records.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Step"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-agents-guide",
@@ -10289,6 +10501,320 @@
           }
         ],
         "extensions": []
+      },
+      {
+        "form_id": "skill",
+        "title": "Skill",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "skill-purpose-and-trigger",
+            "level": 2,
+            "parent_id": null,
+            "title": "Purpose and Trigger",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "호출형 절차의 목적",
+            "required_content": [
+              "호출형 절차의 목적에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "skill-purpose-and-trigger-when-to-use",
+                "level": 3,
+                "parent_id": "skill-purpose-and-trigger",
+                "title": "When to Use",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "입력·목적·적용 트리거",
+                "required_content": [
+                  "입력·목적·적용 트리거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "skill-purpose-and-trigger-when-not-to-use",
+                "level": 3,
+                "parent_id": "skill-purpose-and-trigger",
+                "title": "When Not to Use",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "비적용·상시 규칙과 경계",
+                "required_content": [
+                  "비적용·상시 규칙과 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "skill-procedure",
+            "level": 2,
+            "parent_id": null,
+            "title": "Procedure",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "재사용 실행 순서",
+            "required_content": [
+              "재사용 실행 순서에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "skill-procedure-steps",
+                "level": 3,
+                "parent_id": "skill-procedure",
+                "title": "Steps",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "입력 확인·수행·기대 결과",
+                "required_content": [
+                  "입력 확인·수행·기대 결과을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "skill-procedure-failure-handling",
+                "level": 3,
+                "parent_id": "skill-procedure",
+                "title": "Failure Handling",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실패·중단·복구·인계",
+                "required_content": [
+                  "실패·중단·복구·인계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "skill-inputs-and-outputs",
+            "level": 2,
+            "parent_id": null,
+            "title": "Inputs and Outputs",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "인터페이스",
+            "required_content": [
+              "인터페이스에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "skill-inputs-and-outputs-inputs",
+                "level": 3,
+                "parent_id": "skill-inputs-and-outputs",
+                "title": "Inputs",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "필수 입력·판본·권한",
+                "required_content": [
+                  "필수 입력·판본·권한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "skill-inputs-and-outputs-outputs",
+                "level": 3,
+                "parent_id": "skill-inputs-and-outputs",
+                "title": "Outputs",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "산출물·소비자·보존 범위",
+                "required_content": [
+                  "산출물·소비자·보존 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "skill-verification",
+            "level": 2,
+            "parent_id": null,
+            "title": "Verification",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "호출 결과 검증",
+            "required_content": [
+              "호출 결과 검증에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "skill-verification-checks",
+                "level": 3,
+                "parent_id": "skill-verification",
+                "title": "Checks",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "정상·위반·회귀와 통과 조건",
+                "required_content": [
+                  "정상·위반·회귀와 통과 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "skill-verification-completion-and-handoff",
+                "level": 3,
+                "parent_id": "skill-verification",
+                "title": "Completion and Handoff",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "완료 범위·잔여·담당",
+                "required_content": [
+                  "완료 범위·잔여·담당을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          }
+        ],
+        "extensions": [
+          {
+            "id": "skill-authority-boundary",
+            "kind": "local_h3",
+            "condition": "a workflow that applies existing policy and states its own authority boundary",
+            "owner": "platform",
+            "verification": "the form tree check",
+            "review": "when the Skill form version changes",
+            "removal": "when the common Skill form gains an authority H3",
+            "parent_id": "skill-purpose-and-trigger",
+            "title": "Authority Boundary"
+          }
+        ]
       }
     ]
   }

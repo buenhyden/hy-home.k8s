@@ -1,35 +1,44 @@
 ---
 title: "Work Lifecycle"
-version: "2.2.0"
+version: "2.2.1"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 ---
 
 # Work Lifecycle
 
-## Overview
+## Purpose and Trigger
+
+### When to Use
 
 Use one intake-to-handoff procedure for substantial repository work rather than
 separate bootstrap, preflight, and postflight rule copies.
 
-## Authority Boundary
+Related policy and responsibility documents: [SDLC Flow](../governance/sdlc.md),
+[Document Authoring](../governance/document-authoring.md),
+[Context and Memory](../governance/context-and-memory.md) and
+[Roles](../roles/README.md).
+
+### When Not to Use
+
+None is stated in this document.
+
+### Authority Boundary
 
 This procedure applies [agent execution](../governance/agent-execution.md),
 [approval and safety](../governance/approval-and-safety.md), and
 [quality](../governance/quality.md). It does not grant new scope or override the
 active Task, registry permissions, or provider controls.
 
-## Governance Context
+## Procedure
 
-Start at the current provider gateway, then load the minimum relevant policy,
-role responsibility, provider note, and owning Spec/Plan/Task. Re-observe Git
-state on resume; historical progress and provider-local memory are auxiliary.
+### Steps
 
-## Current Contract
+The procedure parts are Intake, Resume, Implementation and Completion.
 
-### Intake
+#### Intake
 
 1. State the outcome, acceptance IDs, in/out scope, material assumptions, and
    protected actions. Resolve contradictions before editing.
@@ -52,7 +61,7 @@ state on resume; historical progress and provider-local memory are auxiliary.
    Quality preflight creates no business deadline, session timebox or
    final-validation reserve approval.
 
-### Resume
+#### Resume
 
 Apply the [context policy resume decision](../governance/context-and-memory.md#resume-decision)
 before dependent writes. Put worktree identity and relevant file hashes under
@@ -62,7 +71,7 @@ budget state with the lane results and limitations of the Verification Summary
 (the [handoff fields](../governance/quality.md#handoff-evidence-contract)). On conflict, retain completed work and name the
 next owner; refresh the affected evidence before resuming.
 
-### Implementation
+#### Implementation
 
 Make the smallest testable change. Demonstrate a focused failing case for a
 changed executable behavior, then its passing result; use selected profile,
@@ -92,7 +101,7 @@ conflict, and name the next owner. Stop the dependent action and continue
 independent approved safe work. Never weaken a contract, a gate, or a test to
 end the loop.
 
-### Completion
+#### Completion
 
 1. Check acceptance, links, owner boundaries, language, and README navigation
    through the [semantic review contract](../governance/quality.md#semantic-review):
@@ -114,15 +123,30 @@ Hooks are supplemental evidence or enforcement only when their intended
 runtime actually loads them. Advisory compaction output is not completion
 evidence, and no historical progress-ledger append is required for new work.
 
-## Validation and Refresh
+### Failure Handling
+
+The stop rule is stated under Implementation in Steps ("Bound the attempt").
+
+## Inputs and Outputs
+
+### Inputs
+
+Start at the current provider gateway, then load the minimum relevant policy,
+role responsibility, provider note, and owning Spec/Plan/Task. Re-observe Git
+state on resume; historical progress and provider-local memory are auxiliary.
+
+### Outputs
+
+None is stated in this document.
+
+## Verification
+
+### Checks
 
 Run the selected static checks and preserve exact results. Review this
 procedure when intake, delegation, completion, or handoff routing changes;
 keep shared lane meanings in quality policy.
 
-## Related Documents
+### Completion and Handoff
 
-- [SDLC Flow](../governance/sdlc.md)
-- [Document Authoring](../governance/document-authoring.md)
-- [Context and Memory](../governance/context-and-memory.md)
-- [Roles](../roles/README.md)
+Completion and handoff are stated under Completion in Steps.

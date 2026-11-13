@@ -3,11 +3,11 @@ name: "requirements-to-design"
 description: "Use when tracing Requirement Package members to relevant Architecture Descriptions, ADRs, and Spec contracts."
 metadata:
   title: "Requirements To Design"
-  version: "1.0.2"
+  version: "1.0.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
 disable-model-invocation: true
 ---
 
@@ -16,12 +16,26 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # requirements-to-design
 
-## When NOT to Use
+## Purpose and Trigger
+
+### When to Use
+
+Use this skill as its frontmatter description states.
+
+### When Not to Use
 
 - Turning an approved Spec into ordered implementation work; use `execution-plan`.
 - Choosing where the resulting design document belongs; use `docs-stage-routing`.
 
-## Workflow Steps
+#### Boundaries
+
+Requirements remain solution-independent. Architecture owns structure and
+durable choices; Spec owns change-specific implementation behavior. Use
+`docs-stage-routing` for authoring and `execution-plan` for implementation order.
+
+## Procedure
+
+### Steps
 
 1. Read the Requirement Package and extract complete member IDs such as
    `REQ-0001-FR-0001`, `REQ-0001-NFR-0001`, and `REQ-0001-IF-0001`.
@@ -38,13 +52,27 @@ using this procedure. Skill invocation does not authorize additional actions.
 5. When authorized, update forward links to the current owners through the selected
    profiles and verify complete stable IDs and path ownership.
 
-## Boundaries
+### Failure Handling
 
-Requirements remain solution-independent. Architecture owns structure and
-durable choices; Spec owns change-specific implementation behavior. Use
-`docs-stage-routing` for authoring and `execution-plan` for implementation order.
+None is stated in this document.
 
-## Outputs
+## Inputs and Outputs
+
+### Inputs
+
+None is stated in this document.
+
+### Outputs
 
 A bounded traceability/gap map with full requirement IDs and current owners,
 plus any authorized link repair and validation evidence.
+
+## Verification
+
+### Checks
+
+None is stated in this document.
+
+### Completion and Handoff
+
+None is stated in this document.

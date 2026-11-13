@@ -34,7 +34,46 @@ SYNTHETIC_SKILL = (
     '  owner: "platform"\n'
     '  updated: "2026-10-05"\n'
     "disable-model-invocation: true\n"
-    "---\n\n# Example\n"
+    "---\n\n# Example\n\n"
+    "## Purpose and Trigger\n"
+    "\n"
+    "### When to Use\n"
+    "\n"
+    "Use it when a change needs review.\n"
+    "\n"
+    "### When Not to Use\n"
+    "\n"
+    "Not for a one-line fix.\n"
+    "\n"
+    "## Procedure\n"
+    "\n"
+    "### Steps\n"
+    "\n"
+    "1. Run the check.\n"
+    "\n"
+    "### Failure Handling\n"
+    "\n"
+    "Stop on a failed check.\n"
+    "\n"
+    "## Inputs and Outputs\n"
+    "\n"
+    "### Inputs\n"
+    "\n"
+    "The request.\n"
+    "\n"
+    "### Outputs\n"
+    "\n"
+    "A report.\n"
+    "\n"
+    "## Verification\n"
+    "\n"
+    "### Checks\n"
+    "\n"
+    "Run the suite.\n"
+    "\n"
+    "### Completion and Handoff\n"
+    "\n"
+    "Record the result.\n"
 )
 
 
@@ -45,7 +84,7 @@ class NativeSkillEnvelopeTests(unittest.TestCase):
         metadata, body = VALIDATOR._frontmatter(SYNTHETIC_SKILL)
         self.assertEqual(metadata["metadata"]["type"], "governance/skill")
         self.assertIs(metadata["disable-model-invocation"], True)
-        self.assertEqual(body.strip(), "# Example")
+        self.assertTrue(body.strip().startswith("# Example\n\n## Purpose and Trigger"))
 
     def test_synthetic_skill_metadata_drives_markdown_and_lifecycle(self) -> None:
         registry = load_registry(ROOT)

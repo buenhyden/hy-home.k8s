@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import datetime as dt
 import importlib.util
 import io
 import json
@@ -490,6 +491,43 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             "strict",
         )
         self.assertIn("FM-QUOTE", {item.rule_id for item in diagnostics})
+
+    def test_a_template_twin_may_carry_an_unquoted_boolean_constant(self) -> None:
+        markdown = load_validator("frontmatter_boolean", VALIDATOR_PATHS["markdown"])
+        registry = markdown.load_registry(REPOSITORY_ROOT)
+        path = PurePosixPath(".agents/skills/example/SKILL.md")
+        native = markdown.classify_path(registry, path)
+        self.assertEqual(dict(native.constants)["disable-model-invocation"], True)
+
+        def quote(profile: Any, value: str) -> set[str]:
+            text = f'---\nname: "example"\ndisable-model-invocation: {value}\n---\n'
+            return {
+                item.rule_id
+                for item in markdown._frontmatter_value_style_diagnostics(
+                    text, path, profile
+                )
+            }
+
+        def constant(profile: Any, value: object) -> set[str]:
+            data = {"disable-model-invocation": value}
+            return {
+                item.rule_id
+                for item in markdown._value_contract_diagnostics(
+                    path, profile, data, dt.date(2026, 11, 13)
+                )
+            }
+
+        for mode in ("native", "template"):
+            profile = replace(native, mode=mode)
+            with self.subTest(mode=mode):
+                self.assertEqual(quote(profile, "true"), set())
+                self.assertEqual(quote(profile, "yes"), {"FM-QUOTE"})
+                self.assertEqual(quote(profile, '"true"'), set())
+                self.assertEqual(constant(profile, True), set())
+                self.assertEqual(constant(profile, "true"), {"FM-VALUE-CONSTANT"})
+                self.assertEqual(constant(profile, False), {"FM-VALUE-CONSTANT"})
+        # Only a native or template profile has the exemption.
+        self.assertEqual(quote(replace(native, mode="authored"), "true"), {"FM-QUOTE"})
 
     def test_artifact_id_validation_uses_profile_pattern(self) -> None:
         markdown = load_validator("artifact_id_contract", VALIDATOR_PATHS["markdown"])
