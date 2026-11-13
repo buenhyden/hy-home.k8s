@@ -133,16 +133,6 @@
       }
     },
     {
-      "id": "LEDGER",
-      "kind": "conflict",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "After the user accepts the SPEC-0191 criteria",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "MERGE-AFTER",
       "kind": "handoff",
       "state": "open",
@@ -639,16 +629,6 @@
       "state": "open",
       "owner": "W03 with W05",
       "resume_condition": "Packages 2 to 5 add the rule IDs (W03-D42 to W03-D44)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W03-H30",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03 with W05",
-      "resume_condition": "Closes through the ledger cycle of SPEC-0191",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
