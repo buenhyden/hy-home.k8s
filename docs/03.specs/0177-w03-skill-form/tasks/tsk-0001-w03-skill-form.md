@@ -1,6 +1,6 @@
 ---
 title: "W03 Skill Form"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-13"
@@ -28,8 +28,8 @@ This Task records the ninth phase-2 package of W03, the Skill form, for [SPEC-01
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SKILL-001](../spec.md#success-criteria--verification-plan) | Registry form, extension, template profile, TemplateDefinitions, tables and bindings; tests. | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-SKILL-002](../spec.md#success-criteria--verification-plan) | 19 documents and two templates moved with the map; policy texts; regression and exact-index QA. | platform | in-progress | PASS | EVD-005, EVD-006, EVD-007; exact-index QA at the implementation commit |
+| WORK-001 | [VAL-SKILL-001](../spec.md#success-criteria--verification-plan) | Registry form, extension, template profile, TemplateDefinitions, tables and bindings; tests. | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-SKILL-002](../spec.md#success-criteria--verification-plan) | 19 documents and two templates moved with the map; policy texts; regression and exact-index QA. | platform | completed | PASS | EVD-005, EVD-006, EVD-007; implementation commit `51fe9c38` passed exact-index QA and the hooks |
 
 ## Task Evidence
 
@@ -42,13 +42,21 @@ This Task records the ninth phase-2 package of W03, the Skill form, for [SPEC-01
 | EVD-005 | [VAL-SKILL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | 19 documents and two templates meaning map | Implementer map (doc-writer subagent) and a multiset line comparison of every file against `HEAD`, read by the author | PASS | Removed lines are only old H2 headings, version and updated values, and the workflow Related Documents link bullets, whose links now sit in one line under When to Use; frontmatter and the authority sentence before each H1 are unchanged; fenced headings unchanged; `Output Format` kept as an H4 in `rca-methodology`; phases nested at H5 in `incident-postmortem` and `workspace-harness-audit`; `#### Completion` kept. The author restored `#### Workflow Steps` (four skills) and `#### Execution Mode` (`incident-postmortem`), which the implementer had dropped, so every source section under Steps keeps its heading as the Spec requires, and read each workflow pointer against its target text. Placement calls for owner review: empty skill H3s carry "None is stated in this document."; the five skills without intro text point When to Use to the frontmatter description; the workflows' Related Documents links, including the Roles responsibility router, all go to When to Use; workflow Failure Handling and Completion and Handoff point to named steps. | yes | none |
 | EVD-006 | [VAL-SKILL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Regression over the tree, fragments, suites and lint | Author run over the staged index after `62df7117`, 2026-11-13 | PASS | The four strict document validators and `validate-agent-governance.py` exit 0 with output equal to the before run at `15c42849`. Fragment search: the only new line is this package's own Plan text; the 17 `work-lifecycle.md#completion` links resolve. `quality.py` PASS; markdownlint 0 issues; `ruff check scripts tests` and `ruff format --check scripts tests` clean; `graphify update .` rc 0. Suites: `agent-governance` 105, `ci-metadata` 87, `cluster-gate` 72, `document` 542, `document-lifecycle` 18, `release` 29, `tooling` 166, `validation-routing` 173 OK; `qa-runner` not re-run (known W03-H11 error). `.secrets.baseline` registry line 7054 moved to 7266 in `62df7117`. | yes | none |
 | EVD-007 | [VAL-SKILL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Semantic review: risk class and core-diff checklist | Diff of 29 files over `62df7117` | PASS | Risk class `medium` (registry, one frontmatter rule, tests, 17 procedures agents invoke and two workflows they load). Checklist: scope matches the Spec; one writer per file; the form equals the external contract; W03-D07 and W03-D10 applied; skill names, descriptions, invocation flags, bundle files and provider links unchanged; the quote exemption still needs the constant value; policy text `document-authoring.md` 3.15.0 and `docs/99.templates/README.md` 0.27.0; the ignored read-only contract input was read only; no secret read; recovery is reverting the implementation commit. No permission, trigger, hook or workflow file changed. | yes | none |
+| EVD-008 | [VAL-SKILL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 standing approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-SKILL-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-SKILL-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-SKILL-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0177 criterion question, which listed the five placement calls of EVD-005) | platform |
+| [VAL-SKILL-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-006, EVD-007 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0177 criterion question, which listed the five placement calls of EVD-005) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document authoring policy, the registry and `scripts/validate-markdown-profiles.py` (Plan Promotion row). No new handoff arises. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes. Registry text, code comments and test docstrings name SPEC-0177 as an identifier, not a link, and stay.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 standing approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
 
 ## Approval and Safety Boundaries
 
@@ -63,4 +71,4 @@ This Task records the ninth phase-2 package of W03, the Skill form, for [SPEC-01
 
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); criterion acceptance pending. Risk class `medium`.
+Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); implementation commit `51fe9c38`. The user accepted both criteria on 2026-11-13, and the standing approval of commit, push and PR covers the package exit (EVD-008). Risk class `medium`. Next owner: W03 for the Workspace and Reference Pack README package.
