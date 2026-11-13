@@ -1303,7 +1303,8 @@
             "evaluation-score",
             "evaluation-results",
             "governance-document",
-            "governance-role"
+            "governance-role",
+            "reference-report"
           ]
         },
         "title": {

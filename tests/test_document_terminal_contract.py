@@ -230,8 +230,8 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         self.assertEqual(len(roles), 28)
 
     def test_typed_form_identifier_matches_the_schema_form_enum(self) -> None:
-        # SPEC-0188: two local roles still have no form, so the typed form
-        # identifier is its own literal of the twenty-six form identifiers.
+        # SPEC-0189: one local role still has no form, so the typed form
+        # identifier is its own literal of the twenty-seven form identifiers.
         contracts = load_document_contracts()
         schema = json.loads(PROFILE_SCHEMA_PATH.read_text(encoding="utf-8"))
         forms = schema["$defs"]["common_form"]["properties"]["form_id"]["enum"]
@@ -240,10 +240,10 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         ]["enum"]
         literal = get_args(get_type_hints(contracts.CommonForm)["form_id"])
         self.assertEqual(literal, tuple(forms))
-        self.assertEqual(len(forms), 26)
+        self.assertEqual(len(forms), 27)
         self.assertEqual(
             set(roles) - set(literal),
-            {"reference-report", "provider-native"},
+            {"provider-native"},
         )
 
     def test_template_references_a_profile_not_a_destination(self) -> None:

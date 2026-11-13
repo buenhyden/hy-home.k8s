@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.30.3"
+version: "0.30.4"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -130,8 +130,10 @@ form 경로의 대응은 Registry만 소유한다.
   각자의 Stage 99 지역 form을 쓰고(H2만 두며 H3는 없다), W03-D34에 따라
   `governance-role`(`.agents/roles/*.md`, Current Contract 아래 여덟 H3)과
   `governance-document`(provider 노트 두 개, H2만)도 각자의 지역 form을 쓴다.
-  `reference-report`와 `provider-native`는 아직 form 없는
-  Stage 99 지역 역할과 TemplateDefinition을 갖는다. 여섯 SDLC 템플릿의
+  `provider-native`를 뺀 모든 Stage 99 지역 역할은 각자의 지역 form을 쓰며,
+  W03-D35와 W03-D36에 따라 `reference-report`는 감사·연구·데이터 보고서가
+  함께 쓰는 form 하나를 가진다. `provider-native`만 form 없는 Stage 99 지역
+  역할과 TemplateDefinition을 갖는다. 여섯 SDLC 템플릿의
   TemplateDefinition은 3단계에서 더한다.
 - **Core SDLC forms**: physical `requirements/`, `architecture/`, `specs/`
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,

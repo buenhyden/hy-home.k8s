@@ -60,18 +60,15 @@ FORM_IDS = (
     "evaluation-results",
     "governance-document",
     "governance-role",
+    "reference-report",
 )
-# W03-D20, W03-D26, W03-D33: two Stage 99 local roles have no form
-# (reference-report gets one in W03-D36; provider-native keeps none).
-LOCAL_ROLE_IDS = ("reference-report", "provider-native")
+# W03-D20, W03-D26, W03-D33: one Stage 99 local role has no form
+# (provider-native keeps none; reference-report gets one in W03-D36).
+LOCAL_ROLE_IDS = ("provider-native",)
 # The schema role order: the 18 first roles, reference-report, the governance
 # document and governance role, the six small local roles, then provider-native.
 ROLE_IDS = (
-    FORM_IDS[:18]
-    + LOCAL_ROLE_IDS[:1]
-    + FORM_IDS[24:]
-    + FORM_IDS[18:24]
-    + LOCAL_ROLE_IDS[1:]
+    FORM_IDS[:18] + FORM_IDS[26:] + FORM_IDS[24:26] + FORM_IDS[18:24] + LOCAL_ROLE_IDS
 )
 # The profiles bound to a role: the clear common roles, then the local roles on
 # their source profiles; every other profile carries none.
@@ -115,24 +112,8 @@ ROLE_BINDINGS = {
     "common/provider-native-command": "provider-native",
     "common/codex-agent-binding": "provider-native",
 }
-# The six templates of the roles without a form carry a definition and these
-# tables, each named by its exact heading line.
+# The three templates of the role without a form carry a definition and no table.
 LOCAL_TABLES = {
-    "common/template-reference-audit": [
-        ("Criterion", "### Criteria and Inspected Surface"),
-        ("Observation", "### Observed Evidence"),
-        ("ID", "### Findings and Gaps"),
-        ("Remediation", "### Remediation"),
-    ],
-    "common/template-reference-research": [
-        ("Claim", "### Claim-Source Matrix"),
-        ("Source", "## Sources"),
-    ],
-    "common/template-reference-data": [
-        ("Field", "### Schema"),
-        ("Source", "### Provenance"),
-        ("Generation command", "### Generation and Refresh"),
-    ],
     "common/template-exception-provider-native-metadata": [],
     "common/template-exception-provider-native-command": [],
     "common/template-exception-provider-native-codex": [],
@@ -140,9 +121,6 @@ LOCAL_TABLES = {
 LOCAL_TEMPLATES = tuple(LOCAL_TABLES)
 # A source profile inherits the tables of the template that names it.
 LOCAL_SOURCES = {
-    "common/template-reference-audit": "reference/audit",
-    "common/template-reference-research": "reference/research",
-    "common/template-reference-data": "reference/data",
     "common/template-exception-provider-native-metadata": "common/provider-native-metadata",
     "common/template-exception-provider-native-command": "common/provider-native-command",
     "common/template-exception-provider-native-codex": "common/codex-agent-binding",
@@ -698,17 +676,189 @@ GOVERNANCE_FORMS = (
         "Related Documents",
     ),
 )
-# Every local form in registry order: the six small forms, then SPEC-0188's two.
-LOCAL_FORMS = SMALL_FORMS + GOVERNANCE_FORMS
+# SPEC-0189: the one reference-report form of the audit, research and data reports.
+REFERENCE_FORM = (
+    "reference/audit",
+    "common/template-reference-audit",
+    "reference/research",
+    "common/template-reference-research",
+    "reference/data",
+    "common/template-reference-data",
+)
+REFERENCE_H2 = (
+    "Overview",
+    "Reference Type",
+    "Authority Boundary",
+    "Scope",
+    "Definitions / Facts",
+    "Sources",
+    "Review and Freshness",
+    "Related Documents",
+)
+# The 31 conditional H3 titles per H2 in form order: each report kind's template
+# titles and the 15 historical titles that two or more research reports share.
+REFERENCE_H3 = {
+    "Overview": ("Historical overview and observation boundary",),
+    "Reference Type": ("Historical reference classification",),
+    "Authority Boundary": ("Historical authority statement",),
+    "Scope": (
+        "Criteria and Inspected Surface",
+        "Historical scope",
+        "Research Questions",
+        "Method",
+    ),
+    "Definitions / Facts": (
+        "Observed Evidence",
+        "Findings and Gaps",
+        "Historical observations and corrections \u2014 2026-08-08 to 2026-09-05",
+        "Current external analysis",
+        "Historical analysis and dated observations",
+        "Current external research",
+        "Follow-up workspace questions",
+        "Claim-Source Matrix",
+        "Findings",
+        "Schema",
+        "Repository Facts",
+    ),
+    "Sources": (
+        "Historical source provenance",
+        "Current primary sources",
+        "Historical sources",
+        "Provenance",
+    ),
+    "Review and Freshness": (
+        "Remediation",
+        "Verification State",
+        "Current review boundary",
+        "Historical refresh record",
+        "Dated history retained from 2026-08-08 through 2026-09-14",
+        "Limitations",
+        "Recommendations",
+        "Generation and Refresh",
+        "Staleness Boundaries",
+    ),
+    "Related Documents": (),
+}
+REFERENCE_TREE = tuple((title, REFERENCE_H3[title]) for title in REFERENCE_H2)
+REFERENCE_FORMS = (
+    (
+        "reference-report",
+        "Reference Report",
+        REFERENCE_FORM,
+        REFERENCE_TREE,
+        [],
+        "Related Documents",
+    ),
+)
+# The nine tables of the three twins, each named by its form section id (SPEC-0179
+# moved them to heading lines; SPEC-0189 gives the role a form).
+REFERENCE_TABLES = {
+    "common/template-reference-audit": [
+        (
+            "Criterion",
+            "reference-report-scope-criteria-and-inspected-surface",
+            ("Criterion", "In-scope surface"),
+            0,
+            "Criterion",
+        ),
+        (
+            "Observation",
+            "reference-report-definitions-facts-observed-evidence",
+            ("Observation", "Source and input", "Result"),
+            0,
+            "Observation",
+        ),
+        (
+            "ID",
+            "reference-report-definitions-facts-findings-and-gaps",
+            (
+                "ID",
+                "Finding or gap",
+                "Requirement",
+                "Fact or hypothesis",
+                "Severity",
+                "Evidence",
+                "Action",
+                "Acceptance",
+            ),
+            0,
+            "ID",
+        ),
+        (
+            "Remediation",
+            "reference-report-review-and-freshness-remediation",
+            ("Remediation", "Owner", "Due or decision date"),
+            0,
+            "Remediation",
+        ),
+    ],
+    "common/template-reference-research": [
+        (
+            "Claim",
+            "reference-report-definitions-facts-claim-source-matrix",
+            ("Claim", "Source", "Verification state"),
+            0,
+            "Claim",
+        ),
+        (
+            "Source",
+            "reference-report-sources",
+            ("Source", "Grade", "Retrieved", "Relevance"),
+            0,
+            "Source",
+        ),
+    ],
+    "common/template-reference-data": [
+        (
+            "Field",
+            "reference-report-definitions-facts-schema",
+            ("Field", "Meaning and unit", "Producer"),
+            0,
+            "Field",
+        ),
+        (
+            "Source",
+            "reference-report-sources-provenance",
+            ("Source", "Revision or observation", "Derivation"),
+            0,
+            "Source",
+        ),
+        (
+            "Generation command",
+            "reference-report-review-and-freshness-generation-and-refresh",
+            ("Generation command", "Refresh trigger", "Owner"),
+            0,
+            "Generation command",
+        ),
+    ],
+}
+# The source profile of each twin inherits the twin's tables.
+REFERENCE_PROFILE_TABLES = {
+    **REFERENCE_TABLES,
+    "reference/audit": REFERENCE_TABLES["common/template-reference-audit"],
+    "reference/research": REFERENCE_TABLES["common/template-reference-research"],
+    "reference/data": REFERENCE_TABLES["common/template-reference-data"],
+}
+# Every local form in registry order: the six small forms, SPEC-0188's two, then
+# SPEC-0189's reference-report.
+LOCAL_FORMS = SMALL_FORMS + GOVERNANCE_FORMS + REFERENCE_FORMS
+
+
+def slug(title: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
+
+
 LOCAL_LINK_ONLY = {
-    "workspace-readme": "workspace-readme-related-documents",
-    "reference-pack-readme": "reference-pack-readme-related-documents",
+    "workspace-readme": {"workspace-readme-related-documents"},
+    "reference-pack-readme": {"reference-pack-readme-related-documents"},
     **{
-        form_id: f"{form_id}-{link.lower().replace(' ', '-')}"
+        form_id: {f"{form_id}-{slug(link)}"}
         for form_id, _, _, _, _, link in LOCAL_FORMS
     },
 }
-# The twenty roles that carry a form; every other profile keeps its H2 lists.
+# The reference-report form also keeps its Sources section link-only (W03-D36).
+LOCAL_LINK_ONLY["reference-report"].add("reference-report-sources")
+# The twenty-one roles that carry a form; every other profile keeps its H2 lists.
 FORM_PROFILES = (
     GUIDE
     + RUNBOOK
@@ -732,6 +882,7 @@ FORM_PROFILES = (
     + RESULTS_FORM
     + GOVERNANCE_DOCUMENT_FORM
     + GOVERNANCE_ROLE_FORM
+    + REFERENCE_FORM
 )
 FORM_TEMPLATES = (
     GUIDE[1],
@@ -760,8 +911,11 @@ FORM_TEMPLATES = (
     RESULTS_FORM[1],
     GOVERNANCE_DOCUMENT_FORM[1],
     GOVERNANCE_ROLE_FORM[1],
+    REFERENCE_FORM[1],
+    REFERENCE_FORM[3],
+    REFERENCE_FORM[5],
 )
-TWENTY_FORMS = [
+TWENTY_ONE_FORMS = [
     "guide",
     "runbook",
     "incident",
@@ -782,6 +936,7 @@ TWENTY_FORMS = [
     "evaluation-results",
     "governance-document",
     "governance-role",
+    "reference-report",
 ]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
@@ -1055,7 +1210,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twenty_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twenty_one_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -1210,13 +1365,12 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ],
                 [
                     (
-                        f"{form_id}-{title.lower().replace(' ', '-')}",
+                        f"{form_id}-{slug(title)}",
                         title,
                         position,
                         [
                             (
-                                f"{form_id}-{title.lower().replace(' ', '-')}-"
-                                f"{child.lower().replace(' / ', '-').replace(' ', '-')}",
+                                f"{form_id}-{slug(title)}-{slug(child)}",
                                 child,
                                 n,
                             )
@@ -1244,14 +1398,20 @@ class RepositoryRegistryTests(unittest.TestCase):
                         f"reference-pack-readme-{title.lower().replace(' ', '-')}"
                         for title in PACK_NOT_REQUIRED
                     },
+                    "reference-report": {
+                        f"reference-report-{slug(h2)}-{slug(h3)}"
+                        for h2, titles in REFERENCE_H3.items()
+                        for h3 in titles
+                    },
                 }.get(form_id, set()),
             )
             self.assertTrue(all(isinstance(n.get("link_only"), bool) for n in every))
             self.assertEqual(
                 {node["section_id"] for node in every if node.get("link_only")},
-                {LOCAL_LINK_ONLY[form_id]} if form_id in LOCAL_LINK_ONLY else set(),
+                LOCAL_LINK_ONLY.get(form_id, set()),
             )
-            self.assertEqual(loaded["extensions"], extensions)
+            if form_id != "reference-report":
+                self.assertEqual(loaded["extensions"], extensions)
             for profile_id in profiles:
                 profile = by_id[profile_id]
                 self.assertEqual(
@@ -1277,7 +1437,9 @@ class RepositoryRegistryTests(unittest.TestCase):
                         for table in by_id[twin]["template_definition"]["tables"]
                     ),
                     sorted(
-                        [(name, *spec) for name, spec in tables.items()]
+                        REFERENCE_TABLES[twin]
+                        if form_id == "reference-report"
+                        else [(name, *spec) for name, spec in tables.items()]
                         if isinstance(tables, dict)
                         else tables
                     ),
@@ -1285,7 +1447,11 @@ class RepositoryRegistryTests(unittest.TestCase):
                 for table in by_id[twin]["template_definition"]["tables"]:
                     for column in table["columns"]:
                         self.assertTrue(column["meaning"])
-                        self.assertEqual(column["data_type"], "string")
+                        # The research Sources table dates its retrieval (W03-D21).
+                        self.assertEqual(
+                            column["data_type"],
+                            "date" if column["key"] == "Retrieved" else "string",
+                        )
                         self.assertIs(
                             column["required"],
                             not (
@@ -1317,11 +1483,11 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_twenty_forms(self) -> None:
+    def test_repository_registry_loads_with_exactly_the_twenty_one_forms(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_FORMS,
+            TWENTY_ONE_FORMS,
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -1376,10 +1542,14 @@ class RepositoryRegistryTests(unittest.TestCase):
                         [t.name for t in profile.tables],
                         governance_tables
                         if profile.profile_id in POLICY_GOVERNANCE
+                        else [
+                            n for n, *_ in REFERENCE_PROFILE_TABLES[profile.profile_id]
+                        ]
+                        if role == "reference-report"
                         else tables[role],
                     )
                 else:
-                    # A role without a form: one of the two local roles or no role.
+                    # A role without a form: provider-native or no role.
                     self.assertIsNone(profile.form)
                     self.assertEqual(
                         [(t.name, t.section) for t in profile.tables],
@@ -1396,7 +1566,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             by_id["governance/provider"].document_role, "governance-document"
         )
 
-    def test_schema_role_enum_is_twenty_eight_and_form_enum_is_twenty_six(
+    def test_schema_role_enum_is_twenty_eight_and_form_enum_is_twenty_seven(
         self,
     ) -> None:
         schema = json.loads(
@@ -1411,10 +1581,10 @@ class RepositoryRegistryTests(unittest.TestCase):
         self.assertEqual(len(ROLE_IDS), 28)
         self.assertEqual(tuple(profile_role), ROLE_IDS)
         self.assertEqual(tuple(form_id), FORM_IDS)
-        self.assertEqual(len(form_id), 26)
+        self.assertEqual(len(form_id), 27)
         self.assertEqual(
             [item.form_id for item in CONTRACTS.load_registry(ROOT).common_forms],
-            TWENTY_FORMS,
+            TWENTY_ONE_FORMS,
         )
         self.assertEqual(
             schema["$defs"]["section"]["properties"]["level"]["enum"], [2, 3]
@@ -1435,7 +1605,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_FORMS,
+            TWENTY_ONE_FORMS,
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -4290,8 +4460,8 @@ class GovernanceRoleFormTests(unittest.TestCase):
     def test_the_forms_hold_twenty_sections_and_no_extension(self) -> None:
         forms = {f["form_id"]: f for f in self.raw["common_forms"]["forms"]}
         stage = forms["stage-readme"]
-        self.assertEqual(len(forms), 20)
-        self.assertEqual(list(forms)[-2:], ["governance-document", "governance-role"])
+        self.assertEqual(len(forms), 21)
+        self.assertEqual(list(forms)[-3:-1], ["governance-document", "governance-role"])
         counts = {}
         for form_id, title, _, tree, _, link in GOVERNANCE_FORMS:
             with self.subTest(form=form_id):
@@ -4473,6 +4643,398 @@ class GovernanceRoleFormTests(unittest.TestCase):
         )
 
 
+class ReferenceReportFormTests(unittest.TestCase):
+    """SPEC-0189 VAL-REFFORM-001: the reference-report form of the three report kinds."""
+
+    AUDIT_H3 = {
+        "Scope": ("Criteria and Inspected Surface",),
+        "Definitions / Facts": ("Observed Evidence", "Findings and Gaps"),
+        "Review and Freshness": ("Remediation", "Verification State"),
+    }
+    RESEARCH_H3 = {
+        "Scope": ("Research Questions", "Method"),
+        "Definitions / Facts": ("Claim-Source Matrix", "Findings"),
+        "Review and Freshness": ("Limitations", "Recommendations"),
+    }
+    DATA_H3 = {
+        "Definitions / Facts": ("Schema", "Repository Facts"),
+        "Sources": ("Provenance",),
+        "Review and Freshness": ("Generation and Refresh", "Staleness Boundaries"),
+    }
+    KINDS = {
+        "reference/audit": ("audits", AUDIT_H3),
+        "reference/research": ("research", RESEARCH_H3),
+        "reference/data": ("data", DATA_H3),
+    }
+    # (H2, count of conditional H3) and (parent H2, count of local_h3 extensions).
+    CONDITIONAL_BY_H2 = {
+        "Overview": 1,
+        "Reference Type": 1,
+        "Authority Boundary": 1,
+        "Scope": 4,
+        "Definitions / Facts": 11,
+        "Sources": 4,
+        "Review and Freshness": 9,
+        "Related Documents": 0,
+    }
+    EXTENSIONS_BY_H2 = {
+        "Definitions / Facts": 33,
+        "Sources": 3,
+        "Review and Freshness": 3,
+    }
+    LINK = "- [Source](https://example.com/a), grade A, retrieved 2026-11-13."
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.raw = load_raw()
+        cls.profiles = typed_profiles(cls.raw)
+        cls.form = next(
+            f
+            for f in cls.raw["common_forms"]["forms"]
+            if f["form_id"] == "reference-report"
+        )
+
+    @staticmethod
+    def body(h3: dict, *, sources: str | None = None) -> str:
+        blocks = ["# Reference: Sample"]
+        for h2 in REFERENCE_H2:
+            children = h3.get(h2, ())
+            if h2 == "Related Documents":
+                blocks.append(f"## {h2}\n\n- [Owner](owner.md)")
+            elif children:
+                blocks.append(f"## {h2}")
+                blocks += [f"### {c}\n\nThe {c} text." for c in children]
+            elif h2 == "Sources":
+                blocks.append(f"## {h2}\n\n{sources or ReferenceReportFormTests.LINK}")
+            else:
+                blocks.append(f"## {h2}\n\nThe {h2} text.")
+        return md(*blocks)
+
+    def rules(self, profile_id: str, text: str) -> list[str]:
+        folder, _ = self.KINDS[profile_id]
+        path = PurePosixPath(f"docs/90.references/{folder}/0001-sample/m0001-sample.md")
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(
+                path, self.profiles[profile_id], text, "published"
+            )
+        )
+
+    def research(self, text: str) -> list[str]:
+        return self.rules("reference/research", text)
+
+    def test_the_form_is_a_stage_99_local_form_with_eight_required_h2(self) -> None:
+        stage = next(
+            f
+            for f in self.raw["common_forms"]["forms"]
+            if f["form_id"] == "stage-readme"
+        )
+        form = self.form
+        self.assertEqual(form["title"], "Reference Report")
+        self.assertEqual(form["h1"], "{{document_title}}")
+        self.assertEqual(form["language_rule"], stage["language_rule"])
+        for needle in (
+            "Stage 99",
+            "W03-D20",
+            "W03-D26",
+            "W03-D35",
+            "W03-D36",
+            "COMMON-DOC-FORM-1",
+        ):
+            self.assertIn(needle, form["extension_policy"])
+        self.assertNotEqual(form["extension_policy"], stage["extension_policy"])
+        self.assertEqual([s["title"] for s in form["sections"]], list(REFERENCE_H2))
+        self.assertEqual(self.raw["common_forms"]["contract_id"], "COMMON-DOC-FORM-1")
+        for node in form["sections"]:
+            with self.subTest(section=node["title"]):
+                self.assertEqual(node["requiredness"], "required")
+                self.assertEqual(node["condition"], "always")
+                self.assertEqual(node["empty_policy"], "explain_none_or_not_applicable")
+                self.assertIs(
+                    node["link_only"], node["title"] in ("Sources", "Related Documents")
+                )
+
+    def test_every_section_carries_the_form_fields_and_a_slug_id(self) -> None:
+        nodes = [n for s in self.form["sections"] for n in (s, *s["children"])]
+        self.assertEqual(len(nodes), 39)
+        for node in nodes:
+            with self.subTest(section=node["section_id"]):
+                self.assertTrue(node["content"])
+                self.assertTrue(node["required_content"])
+                self.assertTrue(node["prohibited_content"])
+                self.assertEqual(
+                    node["validation_ids"], ["FORM-STRUCTURE", "FORM-CONTENT-REVIEW"]
+                )
+                self.assertIsInstance(node["link_only"], bool)
+                prefix = "reference-report-"
+                if node["level"] == 2:
+                    self.assertEqual(node["section_id"], prefix + slug(node["title"]))
+                else:
+                    self.assertEqual(
+                        node["section_id"],
+                        f"{node['parent_id']}-{slug(node['title'])}",
+                    )
+
+    def test_sources_asks_for_link_grade_and_iso_retrieval_date(self) -> None:
+        sources = self.form["sections"][5]
+        self.assertEqual(sources["title"], "Sources")
+        text = " ".join(sources["required_content"])
+        for needle in ("링크", "등급", "ISO"):
+            self.assertIn(needle, text)
+
+    def test_the_form_holds_thirty_one_conditional_h3_in_registered_order(self) -> None:
+        counts = {}
+        for node in self.form["sections"]:
+            counts[node["title"]] = len(node["children"])
+            self.assertEqual(
+                [c["title"] for c in node["children"]],
+                list(REFERENCE_H3[node["title"]]),
+            )
+            for child in node["children"]:
+                with self.subTest(h3=child["section_id"]):
+                    self.assertEqual(child["level"], 3)
+                    self.assertEqual(child["requiredness"], "conditional")
+                    self.assertNotEqual(child["condition"], "always")
+                    self.assertEqual(child["empty_policy"], "omit_when_condition_false")
+                    self.assertIs(child["link_only"], False)
+        self.assertEqual(counts, self.CONDITIONAL_BY_H2)
+        self.assertEqual(sum(counts.values()), 31)
+
+    def test_each_conditional_h3_names_its_own_report_kind_or_history(self) -> None:
+        conditions = [
+            (c["title"], c["condition"])
+            for s in self.form["sections"]
+            for c in s["children"]
+        ]
+        self.assertEqual(len({text for _, text in conditions}), 31)
+        for title, text in conditions:
+            with self.subTest(h3=title):
+                if title in {
+                    t
+                    for kind in (self.AUDIT_H3, self.DATA_H3)
+                    for v in kind.values()
+                    for t in v
+                }:
+                    self.assertTrue("audit" in text or "data" in text, text)
+                else:
+                    self.assertIn("research", text)
+
+    def test_the_thirty_nine_local_h3_extensions_are_one_document_titles(self) -> None:
+        extensions = self.form["extensions"]
+        self.assertEqual(len(extensions), 39)
+        self.assertEqual(len({e["id"] for e in extensions}), 39)
+        by_id = {s["section_id"]: s for s in self.form["sections"]}
+        counts: dict[str, int] = {}
+        for item in extensions:
+            with self.subTest(extension=item["id"]):
+                self.assertEqual(item["kind"], "local_h3")
+                self.assertEqual(item["owner"], "platform")
+                self.assertEqual(item["verification"], "the form tree check")
+                for field in ("condition", "review", "removal", "title"):
+                    self.assertTrue(item[field])
+                parent = by_id[item["parent_id"]]
+                counts[parent["title"]] = counts.get(parent["title"], 0) + 1
+                self.assertNotIn(
+                    item["title"], [c["title"] for c in parent["children"]]
+                )
+        self.assertEqual(counts, self.EXTENSIONS_BY_H2)
+        under_sources = sorted(
+            e["title"]
+            for e in extensions
+            if e["parent_id"] == "reference-report-sources"
+        )
+        self.assertEqual(under_sources, ["Findings", "Limitations", "Recommendations"])
+        titles = [e["title"] for e in extensions]
+        self.assertTrue(
+            any("\u2014" in title and "2026-" in title for title in titles),
+            "a dated title keeps its em dash and date",
+        )
+
+    def test_the_six_profiles_hold_no_h2_list_and_the_pack_profiles_do_not_change(
+        self,
+    ) -> None:
+        for profile_id in REFERENCE_FORM:
+            with self.subTest(profile=profile_id):
+                raw = profile_of(self.raw, profile_id)
+                self.assertEqual(raw["document_role"], "reference-report")
+                self.assertEqual(
+                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
+                )
+                typed = self.profiles[profile_id]
+                self.assertEqual(typed.form.form_id, "reference-report")
+                self.assertEqual(typed.headings.required, REFERENCE_H2)
+        for profile_id in PACK_FORM:
+            self.assertEqual(
+                profile_of(self.raw, profile_id)["document_role"],
+                "reference-pack-readme",
+            )
+        bound = sorted(
+            p["id"]
+            for p in self.raw["profiles"]
+            if p.get("document_role") == "reference-report"
+        )
+        self.assertEqual(bound, sorted(REFERENCE_FORM))
+
+    def test_the_nine_tables_use_form_section_ids(self) -> None:
+        ids = {
+            n["section_id"] for s in self.form["sections"] for n in (s, *s["children"])
+        }
+        for twin, expected in REFERENCE_TABLES.items():
+            with self.subTest(twin=twin):
+                tables = profile_of(self.raw, twin)["template_definition"]["tables"]
+                self.assertEqual(
+                    [
+                        (
+                            t["name"],
+                            t["section"],
+                            tuple(c["key"] for c in t["columns"]),
+                            t["minimum_rows"],
+                            t["row_identity"],
+                        )
+                        for t in tables
+                    ],
+                    expected,
+                )
+                for table in tables:
+                    self.assertIn(table["section"], ids)
+                    self.assertFalse(table["section"].startswith("#"))
+        self.assertEqual(sum(len(v) for v in REFERENCE_TABLES.values()), 9)
+
+    def test_a_table_section_must_be_a_form_section_id(self) -> None:
+        twin = "common/template-reference-research"
+        for section_text in (
+            "### Claim-Source Matrix",
+            "## Sources",
+            "reference-report-nope",
+        ):
+            raw = load_raw()
+            profile_of(raw, twin)["template_definition"]["tables"][0]["section"] = (
+                section_text
+            )
+            with self.subTest(section=section_text):
+                self.assertIn("REGISTRY_TABLE_SECTION", rules_of(raw))
+        self.assertEqual(rules_of(load_raw()), set())
+
+    def test_the_twin_definitions_say_the_role_has_its_own_form(self) -> None:
+        for twin in REFERENCE_TABLES:
+            definition_ = profile_of(self.raw, twin)["template_definition"]
+            with self.subTest(twin=twin):
+                first, second = definition_["non_goals"][:2]
+                self.assertNotIn("has no form", first)
+                self.assertIn("own local form", first)
+                for needle in ("W03-D20", "W03-D26", "W03-D35", "W03-D36"):
+                    self.assertIn(needle, first)
+                self.assertIn("COMMON-DOC-FORM-1", first)
+                self.assertIn("owned by the form", second)
+                for path in (
+                    "scripts/validate-document-contract-registry.py",
+                    "scripts/validation/repository/form_contracts.py",
+                    "scripts/validation/repository/quality.py",
+                ):
+                    self.assertIn(path, definition_["consumer_paths"])
+                    self.assertTrue((ROOT / path).is_file())
+                self.assertEqual(
+                    len(definition_["consumer_paths"]),
+                    len(set(definition_["consumer_paths"])),
+                )
+                text = json.dumps(definition_["validation"])
+                self.assertIn("form tree check", text)
+                self.assertNotIn("BODY-TABLE-SECTION", text)
+                self.assertNotIn("heading line", text)
+                self.assertIn("SPEC-0189", definition_["migration"]["meaning_map"])
+        research = profile_of(self.raw, "common/template-reference-research")
+        self.assertIn(
+            "W03-D21", research["template_definition"]["migration"]["meaning_map"]
+        )
+
+    def test_the_three_templates_pass_the_form_tree(self) -> None:
+        for template in ("audit", "research", "data"):
+            twin = self.profiles[f"common/template-reference-{template}"]
+            with self.subTest(template=template):
+                path = PurePosixPath(twin.template)
+                text = (ROOT / path).read_text(encoding="utf-8")
+                found = MARKDOWN.validate_document_text(text, path, twin, "strict")
+                self.assertEqual([item.rule_id for item in found], [])
+
+    def test_a_report_of_each_kind_passes_the_tree(self) -> None:
+        for profile_id, (_, h3) in self.KINDS.items():
+            with self.subTest(profile=profile_id):
+                self.assertEqual(self.rules(profile_id, self.body(h3)), [])
+
+    def test_a_report_with_no_h3_passes_and_a_missing_conditional_h3_passes(
+        self,
+    ) -> None:
+        self.assertEqual(self.research(self.body({})), [])
+        partial = {**self.RESEARCH_H3, "Scope": ("Research Questions",)}
+        self.assertEqual(self.research(self.body(partial)), [])
+
+    def test_a_missing_or_renamed_required_h2_fails(self) -> None:
+        text = self.body(self.RESEARCH_H3)
+        missing = text.replace("## Related Documents\n\n- [Owner](owner.md)\n", "")
+        self.assertEqual(self.research(missing), ["BODY-HEADING-REQUIRED"])
+        renamed = text.replace("## Reference Type", "## Kind")
+        self.assertEqual(
+            self.research(renamed),
+            ["BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"],
+        )
+
+    def test_a_reordered_h2_fails(self) -> None:
+        text = self.body({})
+        swapped = (
+            text.replace("## Scope", "## @@")
+            .replace("## Overview", "## Scope")
+            .replace("## @@", "## Overview")
+        )
+        self.assertEqual(self.research(swapped), ["BODY-H2-ORDER"])
+
+    def test_a_reordered_conditional_h3_fails(self) -> None:
+        swapped = {**self.RESEARCH_H3, "Scope": ("Method", "Research Questions")}
+        self.assertEqual(self.research(self.body(swapped)), ["BODY-H3-ORDER"])
+
+    def test_an_unregistered_h3_is_refused(self) -> None:
+        stray = {**self.RESEARCH_H3, "Scope": ("Research Questions", "Stray")}
+        self.assertEqual(self.research(self.body(stray)), ["BODY-H3-UNSUPPORTED"])
+
+    def test_an_h3_under_the_wrong_h2_is_refused(self) -> None:
+        wrong = {**self.RESEARCH_H3, "Sources": ("Method",)}
+        self.assertEqual(self.research(self.body(wrong)), ["BODY-H3-PARENT"])
+
+    def test_a_duplicate_h3_is_refused(self) -> None:
+        twice = {**self.RESEARCH_H3, "Scope": ("Method", "Method")}
+        self.assertIn("BODY-H3-DUPLICATE", self.research(self.body(twice)))
+
+    def test_a_registered_extension_is_accepted_only_under_its_h2(self) -> None:
+        item = next(
+            e for e in self.form["extensions"] if e["parent_id"].endswith("-sources")
+        )
+        under_sources = {**self.RESEARCH_H3, "Sources": (item["title"],)}
+        self.assertEqual(self.research(self.body(under_sources)), [])
+        under_scope = {**self.RESEARCH_H3, "Scope": (item["title"],)}
+        self.assertEqual(self.research(self.body(under_scope)), ["BODY-H3-PARENT"])
+
+    def test_a_bare_or_empty_section_fails(self) -> None:
+        text = self.body(self.RESEARCH_H3)
+        empty = text.replace("The Overview text.", "")
+        self.assertEqual(self.research(empty), ["BODY-SECTION-EMPTY"])
+        hollow = text.replace("The Method text.", "")
+        self.assertEqual(self.research(hollow), ["BODY-SECTION-EMPTY"])
+
+    def test_only_sources_and_related_documents_accept_a_list_of_links(self) -> None:
+        text = self.body(self.RESEARCH_H3)
+        self.assertEqual(self.research(text), [])
+        plain = text.replace("The Overview text.", "- [a](a.md)")
+        self.assertEqual(self.research(plain), ["BODY-SECTION-EMPTY"])
+        listed = self.body({}, sources="- [a](https://example.com/a)\n- [b](b.md)")
+        self.assertEqual(self.research(listed), [])
+
+    def test_the_old_h2_lists_are_refused_on_a_profile_with_a_form(self) -> None:
+        raw = load_raw()
+        profile_of(raw, "reference/research")["sections"]["required"] = list(
+            REFERENCE_H2
+        )
+        self.assertIn("REGISTRY_FORM_LEGACY_LISTS", rules_of(raw))
+
+
 class TemplateTwinTableTests(unittest.TestCase):
     """SPEC-0175 W03-H10: two tabled twins may not name one source profile."""
 
@@ -4605,6 +5167,53 @@ class RetainedFormTests(unittest.TestCase):
         self.assertEqual(body_rules("proposed", self.TREE), [])
 
 
+# SPEC-0189: no real template holds heading-line tables any more, so a synthetic
+# registry moves the three reference twins and their sources to a role without a
+# form (provider-native) with the H2 lists and heading lines they once recorded.
+HEADING_LINE_TABLES = {
+    "common/template-reference-audit": [
+        ("Criterion", "### Criteria and Inspected Surface"),
+        ("Observation", "### Observed Evidence"),
+        ("ID", "### Findings and Gaps"),
+        ("Remediation", "### Remediation"),
+    ],
+    "common/template-reference-research": [
+        ("Claim", "### Claim-Source Matrix"),
+        ("Source", "## Sources"),
+    ],
+    "common/template-reference-data": [
+        ("Field", "### Schema"),
+        ("Source", "### Provenance"),
+        ("Generation command", "### Generation and Refresh"),
+    ],
+}
+
+
+def heading_line_registry() -> dict:
+    """The repository registry with the reference profiles moved to no form."""
+
+    raw = load_raw()
+    for twin, lines in HEADING_LINE_TABLES.items():
+        source = twin.replace("common/template-reference-", "reference/")
+        for profile_id in (source, twin):
+            profile = profile_of(raw, profile_id)
+            profile["document_role"] = "provider-native"
+            profile["sections"] = {
+                "required": list(REFERENCE_H2),
+                "optional": [],
+                "forbidden": [],
+            }
+        tables = profile_of(raw, twin)["template_definition"]["tables"]
+        for table, (_, section) in zip(tables, lines, strict=True):
+            table["section"] = section
+    raw["common_forms"]["forms"] = [
+        item
+        for item in raw["common_forms"]["forms"]
+        if item["form_id"] != "reference-report"
+    ]
+    return raw
+
+
 class LocalRoleTableTests(unittest.TestCase):
     """SPEC-0179: a role without a form names a table by its template heading line."""
 
@@ -4617,7 +5226,7 @@ class LocalRoleTableTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.profiles = typed_profiles(load_raw())
+        cls.profiles = typed_profiles(heading_line_registry())
 
     def document(self, heading: str, header: tuple[str, ...]) -> str:
         """A research body with one table under the given heading line."""
@@ -4659,13 +5268,18 @@ class LocalRoleTableTests(unittest.TestCase):
             return text
         return text.split("\n---\n", 1)[1]
 
+    def test_the_synthetic_registry_is_valid_and_has_no_form(self) -> None:
+        self.assertEqual(rules_of(heading_line_registry()), set())
+        for profile_id in HEADING_LINE_TABLES:
+            self.assertIsNone(self.profiles[profile_id].form)
+
     def test_each_local_template_holds_its_recorded_heading_lines(self) -> None:
-        for profile_id in LOCAL_TEMPLATES:
+        for profile_id in HEADING_LINE_TABLES:
             with self.subTest(template=profile_id):
                 profile = self.profiles[profile_id]
                 self.assertEqual(
                     [(t.name, t.section) for t in profile.tables],
-                    LOCAL_TABLES[profile_id],
+                    HEADING_LINE_TABLES[profile_id],
                 )
                 self.assertEqual(
                     self.template_rules(self.template_body(profile_id), profile_id),
@@ -4744,7 +5358,7 @@ class LocalRoleTableTests(unittest.TestCase):
         self,
     ) -> None:
         def rules(section: str) -> set[str]:
-            raw = load_raw()
+            raw = heading_line_registry()
             profile_of(raw, self.RESEARCH[1])["template_definition"]["tables"][1][
                 "section"
             ] = section
@@ -4767,11 +5381,11 @@ class LocalRoleTableTests(unittest.TestCase):
 
 
 class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
-    def test_only_the_twenty_form_profiles_use_the_tree(self) -> None:
+    def test_only_the_twenty_one_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_FORMS,
+            TWENTY_ONE_FORMS,
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),
