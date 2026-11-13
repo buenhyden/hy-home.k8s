@@ -3,7 +3,7 @@ name: "deployment-strategies"
 description: "Use when comparing or designing Kubernetes and ArgoCD deployment strategies, including Blue-Green, Canary, Rolling update, rollback, zero-downtime deployment, progressive delivery, probes, and DORA metrics. Monitoring tool setup and actual CI pipeline configuration are outside this skill's scope."
 metadata:
   title: "Deployment Strategies"
-  version: "1.0.2"
+  version: "1.0.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -66,7 +66,7 @@ permission, and an emergency still needs the same authorization boundary.
 
 ### Failure Handling
 
-None is stated in this document.
+This skill has no failure branch of its own; a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
 ## Inputs and Outputs
 
@@ -79,14 +79,14 @@ question is usually about one strategy and not about all six.
 
 ### Outputs
 
-None is stated in this document.
+This procedure defines no output format of its own beyond the results its Steps describe; if it needs one, define it here.
 
 ## Verification
 
 ### Checks
 
-None is stated in this document.
+This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
 ### Completion and Handoff
 
-None is stated in this document.
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.

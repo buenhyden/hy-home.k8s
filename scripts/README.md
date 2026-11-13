@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.13.0"
+version: "0.13.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -137,7 +137,7 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 
 ### Security Boundary
 
-이 문서에는 secret, credential, 권한 경계만을 다루는 별도 내용이 없다.
+이 문서는 secret, credential, 권한 경계만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
 
 ## Development
 
@@ -272,7 +272,7 @@ python3 scripts/run-validation-lane.py \
 
 ### Runbook Links
 
-이 문서에는 runbook이나 운영 가이드 링크가 없다.
+이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
 
 ### Observability and Recovery
 

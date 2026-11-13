@@ -1,6 +1,6 @@
 ---
 title: "Agent Evaluation Trial Evidence"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -43,7 +43,7 @@ cycle 하나는 정확히
 
 ### Classification
 
-이 README에는 분류 표가 없다.
+이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
 ## Workflow
 

@@ -3,7 +3,7 @@ name: "ops-runbook"
 description: "Use when authoring or reviewing operations runbooks for bootstrap, recovery, deployment, backup, and incident procedures in hy-home.k8s."
 metadata:
   title: "Ops Runbook"
-  version: "1.1.1"
+  version: "1.1.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -69,24 +69,24 @@ Steps; Validation; Recovery.
 
 ### Failure Handling
 
-None is stated in this document.
+This skill has no failure branch of its own; a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
 ## Inputs and Outputs
 
 ### Inputs
 
-None is stated in this document.
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### Outputs
 
-None is stated in this document.
+This procedure defines no output format of its own beyond the results its Steps describe; if it needs one, define it here.
 
 ## Verification
 
 ### Checks
 
-None is stated in this document.
+This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
 ### Completion and Handoff
 
-None is stated in this document.
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.

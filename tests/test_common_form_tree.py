@@ -1665,6 +1665,18 @@ class HeadingTreeTests(unittest.TestCase):
         )
         self.assertEqual(self.found(empty), ["BODY-SECTION-EMPTY"])
 
+    def test_a_bare_childless_h2_fails_and_an_explained_one_passes(self) -> None:
+        bare = VALID.replace(
+            "- [Specification](spec.md)", "None is stated in this document."
+        )
+        self.assertEqual(self.found(bare), ["BODY-SECTION-BARE"])
+        explained = VALID.replace(
+            "- [Specification](spec.md)",
+            "This guide has no related document; link one here when it exists.",
+        )
+        self.assertEqual(self.found(explained), [])
+        self.assertEqual(self.found(bare, profile=self.template), [])
+
     def test_wrong_parent(self) -> None:
         text = md(
             H1,
@@ -2883,13 +2895,15 @@ def agents_body() -> str:
         "Agent instructions for `scripts/`.",
         "## Scope",
         "### Allowed Surface\n\nValidators only.",
-        "### Non-goals\n\nThis file states no separate non-goals rule.",
+        "### Non-goals\n\nThis folder adds no non-goal beyond the parent `AGENTS.md`; "
+        "if work here must be excluded, state it here.",
         "## Required Policies",
         "### Canonical Sources\n\nThe quality policy.",
         "### Local Obligations\n\n1. Keep the change small.",
         "## Workflow",
         "### Inspect and Change\n\nFollow the rules above.",
-        "### Handoff\n\nThis file states no separate handoff rule.",
+        "### Handoff\n\nThis folder hands off through the work lifecycle's Completion "
+        "steps with no extra field; if it needs one, state it here.",
         "## Verification",
         "### Required Checks\n\nRun the suite.",
         "### Evidence and Limits\n\nRepository-static only.",
@@ -3020,6 +3034,80 @@ class AgentsFormTests(RoleFormBody):
 GOVERNANCE_SKILL_PATH = PurePosixPath(".agents/workflows/work-lifecycle.md")
 NATIVE_SKILL_PATH = PurePosixPath(".agents/skills/example/SKILL.md")
 SKILL_AUTHORITY = "### Authority Boundary\n\nThis procedure applies existing policy."
+
+
+class BareSectionTests(unittest.TestCase):
+    """SPEC-0182 VAL-EMPTY-001: BODY-SECTION-BARE refuses a bare statement."""
+
+    NONE = "None is stated in this document."
+    KOREAN = "이 README에는 분류 표가 없다."
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        profiles = typed_profiles(load_raw())
+        cls.native = profiles[AGENTS[0]]
+        cls.template = profiles[AGENTS[1]]
+        cls.no_form = profiles["common/native-changelog"]
+
+    def found(self, text: str, profile=None) -> list[str]:
+        profile = profile or self.native
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(AGENTS_PATH, profile, text, "active")
+        )
+
+    def with_line(self, line: str, heading: str = "### Handoff") -> str:
+        body = agents_body()
+        start = body.index(heading) + len(heading)
+        end = body.index("\n\n##", start)
+        return body[:start] + "\n\n" + line + body[end:]
+
+    def test_each_bare_shape_fails(self) -> None:
+        for line in (
+            self.NONE,
+            "This file states no separate handoff rule.",
+            "This policy marks no subject as excluded from its scope.",
+            "This skill states no failure branch of its own.",
+            self.KOREAN,
+            "이 문서에는 runbook이나 링크가 없다.",
+            "이 정책에는 예외 조건, 승인 단계가 없다.",
+        ):
+            with self.subTest(line=line):
+                self.assertEqual(
+                    self.found(self.with_line(line)), ["BODY-SECTION-BARE"]
+                )
+
+    def test_an_explained_none_passes(self) -> None:
+        for line in (
+            "This folder hands off through the work lifecycle's Completion steps "
+            "with no extra field; if it needs one, state it here.",
+            "This file states no separate handoff rule; it is a provider gateway.",
+            "이 문서는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.",
+            "이 디렉터리는 라우터이며 로컬 작업 절차가 없다.",
+            "이 정책은 예외가 없으므로 별도 승인이 없다.",
+        ):
+            with self.subTest(line=line):
+                self.assertEqual(self.found(self.with_line(line)), [])
+
+    def test_a_pointer_passes(self) -> None:
+        line = "Handoff is stated in rules 3 and 5 under Local Obligations."
+        self.assertEqual(self.found(self.with_line(line)), [])
+
+    def test_a_reworded_bare_statement_passes_which_is_the_stated_limit(self) -> None:
+        line = "Nothing is stated here."
+        self.assertEqual(self.found(self.with_line(line)), [])
+
+    def test_a_statement_with_more_than_one_line_or_in_code_passes(self) -> None:
+        self.assertEqual(self.found(self.with_line(self.NONE + "\n\nMore.")), [])
+        self.assertEqual(self.found(self.with_line("```\n" + self.NONE + "\n```")), [])
+
+    def test_a_template_and_a_role_without_a_form_are_not_checked(self) -> None:
+        body = self.with_line(self.NONE)
+        self.assertEqual(self.found(body, self.template), [])
+        self.assertEqual(self.found(self.NONE, self.no_form), [])
+
+    def test_the_agents_fixture_carries_only_explained_lines(self) -> None:
+        self.assertEqual(self.found(agents_body()), [])
 
 
 def skill_body(*, preface: str = "") -> str:

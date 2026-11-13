@@ -3,7 +3,7 @@ name: "docs-stage-conformance"
 description: "Use when repairing scoped document-profile, README, heading, or cross-link drift without changing historical meaning."
 metadata:
   title: "Docs Stage Conformance"
-  version: "1.0.2"
+  version: "1.0.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -53,13 +53,13 @@ unclear ownership or required semantic change before expanding the task.
 
 ### Failure Handling
 
-None is stated in this document.
+This skill's stop condition is stated under Boundaries: an unclear ownership or a required semantic change is reported before the task is expanded; any other failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
 ## Inputs and Outputs
 
 ### Inputs
 
-None is stated in this document.
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### Outputs
 
@@ -70,8 +70,8 @@ historical or runtime claims.
 
 ### Checks
 
-None is stated in this document.
+This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
 ### Completion and Handoff
 
-None is stated in this document.
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.

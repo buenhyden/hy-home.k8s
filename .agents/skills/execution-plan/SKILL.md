@@ -3,7 +3,7 @@ name: "execution-plan"
 description: "Use when turning an approved Spec and architecture constraints into ordered, testable implementation work."
 metadata:
   title: "Execution Plan"
-  version: "1.0.2"
+  version: "1.0.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -53,13 +53,13 @@ order, verification, risk, and rollback. Use `task-breakdown` for executable uni
 
 ### Failure Handling
 
-None is stated in this document.
+This skill has no failure branch of its own; a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
 ## Inputs and Outputs
 
 ### Inputs
 
-None is stated in this document.
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### Outputs
 
@@ -70,8 +70,8 @@ and links to the current Spec and Tasks.
 
 ### Checks
 
-None is stated in this document.
+This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
 ### Completion and Handoff
 
-None is stated in this document.
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.

@@ -3,7 +3,7 @@ name: "rca-methodology"
 description: "Use when performing root cause analysis with 5 Whys, Fishbone diagrams, Fault Tree Analysis, change analysis, incident cause analysis, or cognitive-bias checks. Timeline reconstruction and remediation planning are outside this skill's scope."
 metadata:
   title: "RCA Methodology"
-  version: "1.0.2"
+  version: "1.0.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -47,7 +47,7 @@ captured evidence, and return the result in the structure this skill owns.
 
 ### Failure Handling
 
-None is stated in this document.
+This skill has no failure branch of its own; a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
 ## Inputs and Outputs
 
@@ -98,8 +98,8 @@ tree, or change table), each step citing its evidence, ending in the root cause]
 
 ### Checks
 
-None is stated in this document.
+This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
 ### Completion and Handoff
 
-None is stated in this document.
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.

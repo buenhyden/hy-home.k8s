@@ -3,7 +3,7 @@ name: "task-breakdown"
 description: "Use when decomposing an approved implementation Plan into bounded executable Task records."
 metadata:
   title: "Task Breakdown"
-  version: "1.0.2"
+  version: "1.0.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -51,13 +51,13 @@ reviewability determine the unit. Delegation still requires authorization.
 
 ### Failure Handling
 
-None is stated in this document.
+This skill has no failure branch of its own; a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
 ## Inputs and Outputs
 
 ### Inputs
 
-None is stated in this document.
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### Outputs
 
@@ -68,8 +68,8 @@ requirements, ready for authorized execution.
 
 ### Checks
 
-None is stated in this document.
+This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
 ### Completion and Handoff
 
-None is stated in this document.
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.

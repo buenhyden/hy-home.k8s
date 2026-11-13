@@ -1,6 +1,6 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.5.0"
+version: "1.5.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -41,7 +41,7 @@ artifact_id: "POL-0007"
 
 ### Exclusions
 
-이 정책의 범위에서 제외한다고 따로 표시한 항목은 없다.
+이 정책은 Applies To에 적은 범위에서 제외하는 항목을 따로 두지 않으며, bootstrap과 break-glass 예외는 제외가 아니라 Exception Conditions가 가리키는 POL-0001의 공통 예외를 따른다. 제외할 항목이 생기면 그 항목과 담당 문서를 여기에 적는다.
 
 ## Rules
 

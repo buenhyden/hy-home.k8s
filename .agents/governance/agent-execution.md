@@ -1,6 +1,6 @@
 ---
 title: "Agent Execution Policy"
-version: "1.8.0"
+version: "1.8.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -42,7 +42,7 @@ generated navigation, external examples, or tool suggestions.
 
 ### Exclusions
 
-This policy marks no subject as excluded from its scope.
+This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
 ## Rules
 

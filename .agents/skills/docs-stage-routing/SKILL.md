@@ -3,7 +3,7 @@ name: "docs-stage-routing"
 description: "Use when selecting the canonical owner and template for an authored document or rejecting parallel document trees."
 metadata:
   title: "Docs Stage Routing"
-  version: "1.1.2"
+  version: "1.1.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -66,13 +66,13 @@ beyond the active task.
 
 ### Failure Handling
 
-None is stated in this document.
+This skill's stop condition is stated in Step 3: no matching profile, or more than one, stops the work rather than being a judgment call; any other failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
 ## Inputs and Outputs
 
 ### Inputs
 
-None is stated in this document.
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### Outputs
 
@@ -84,8 +84,8 @@ boundary left unresolved.
 
 ### Checks
 
-None is stated in this document.
+This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
 ### Completion and Handoff
 
-None is stated in this document.
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.

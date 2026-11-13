@@ -22,7 +22,7 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 
 ### Non-goals
 
-This file states no separate non-goals rule.
+This folder adds no non-goal beyond the parent `AGENTS.md` and the governance policies; if work here must be excluded, state it here.
 
 ## Required Policies
 
@@ -45,7 +45,7 @@ Inspecting and changing files follows the rules under Local Obligations.
 
 ### Handoff
 
-This file states no separate handoff rule.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
 
 ## Verification
 
@@ -59,7 +59,7 @@ directly:
 
 ### Evidence and Limits
 
-Evidence limits are stated at the end of the Purpose text under Allowed Surface: a PASS here is repository-static evidence only.
+Evidence limits are stated in the opening text of Allowed Surface: a PASS here is repository-static evidence only.
 
 ## Safety
 
@@ -69,4 +69,4 @@ Protected actions are stated in rule 4 under Local Obligations.
 
 ### Stop and Escalate
 
-This file states no separate stop or escalation rule.
+This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.

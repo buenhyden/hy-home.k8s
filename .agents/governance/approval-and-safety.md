@@ -1,6 +1,6 @@
 ---
 title: "Approval and Safety Policy"
-version: "1.4.0"
+version: "1.4.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -38,7 +38,7 @@ and validating their configuration.
 
 ### Exclusions
 
-This policy marks no subject as excluded from its scope.
+This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
 ## Rules
 
@@ -177,4 +177,4 @@ Responsibilities are stated under Authority and Requirements.
 
 ### Change and Adoption
 
-This policy states no change or adoption rule of its own.
+This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.

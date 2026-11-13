@@ -971,6 +971,16 @@ class RequiredH2Content:
 
 
 _BARE_PLACEHOLDER = re.compile(r"(?i)^(?:TBD|TODO|N/A|NA|pending)[\s.!?]*$")
+# One bare statement: a closed English "states no <words>" shape, or one Korean
+# sentence about this document that ends in 없다. with no reason connective.
+_BARE_STATEMENT = re.compile(
+    r"None is stated in this document\."
+    r"|This (?:file|policy|document|README|skill|procedure) (?:states|marks) no "
+    r"[\w -]+\."
+    r"|이 (?:문서|README|정책)[^.]*없다\."
+)
+BARE_EXPECTED = "a section that states its reason and follow-up condition"
+_BARE_REASON_CONNECTIVE = re.compile(r"이며|므로|때문")
 _TABLE_SEPARATOR = re.compile(r"^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$")
 _EMPTY_HTML_ANCHOR = re.compile(r"(?i)<a\b[^>]*>\s*</a>|<a\b[^>]*/>")
 _CHECKBOX_MARKER = re.compile(r"^\[[ xX]\](?:\s+|$)")
@@ -1747,6 +1757,18 @@ def _form_tree_diagnostics(
             body_lines(index), links_are_content=link_only
         )
 
+    def bare(index: int) -> bool:
+        # SPEC-0182: the whole body up to the next heading is one bare statement.
+        # A reworded statement passes; whether a line explains is semantic review.
+        lines = [(line.strip(), fenced) for line, fenced in scan.bodies[index]]
+        lines = [(line, fenced) for line, fenced in lines if line]
+        return (
+            len(lines) == 1
+            and not lines[0][1]
+            and _BARE_STATEMENT.fullmatch(lines[0][0]) is not None
+            and not _BARE_REASON_CONNECTIVE.search(lines[0][0])
+        )
+
     for index, title, children in blocks:
         names = [name for _, name in children]
         if index is None:
@@ -1782,19 +1804,26 @@ def _form_tree_diagnostics(
         ordered = [child.title for child in parent.children if child.title in seen]
         if seen != ordered:
             add("BODY-H3-ORDER", json.dumps(ordered), json.dumps(seen))
-        if profile.mode != "authored":
+        if profile.mode == "template":
             continue
-        if not children and empty(index, parent.link_only):
+        # An empty section is judged on authored documents only; a bare
+        # statement (SPEC-0182) on every non-template document of a form.
+        authored = profile.mode == "authored"
+        if authored and not children and empty(index, parent.link_only):
             add("BODY-SECTION-EMPTY", "a section with authored content", title or "")
+        elif not children and bare(index):
+            add("BODY-SECTION-BARE", BARE_EXPECTED, title or "")
         for position, name in children:
             if name in kids or name in extras:
                 link_only = name in kids and kids[name].link_only
-                if empty(position, link_only):
+                if authored and empty(position, link_only):
                     add(
                         "BODY-SECTION-EMPTY",
                         "a section with authored content",
                         f"{title}: {name}",
                     )
+                elif bare(position):
+                    add("BODY-SECTION-BARE", BARE_EXPECTED, f"{title}: {name}")
     return found
 
 

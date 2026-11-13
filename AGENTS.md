@@ -11,7 +11,7 @@ This file states no separate allowed-surface rule; it is a provider gateway.
 
 ### Non-goals
 
-This file states no separate non-goals rule.
+This gateway adds no non-goal beyond the governance policies it loads; if work through it must be excluded, state it here.
 
 ## Required Policies
 
@@ -33,7 +33,7 @@ Read `.codex/CODEX.md` before acting.
 
 ### Local Obligations
 
-This file states no separate local obligations beyond the reads above and below.
+This gateway is a thin provider gateway and adds no obligation beyond the reads above and below; if it needs one, state it here.
 
 ## Workflow
 
@@ -44,13 +44,13 @@ procedures explicitly before acting; explicit reads complement native discovery;
 
 ### Handoff
 
-This file states no separate handoff rule.
+This gateway hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
 
 ## Verification
 
 ### Required Checks
 
-This file states no separate required checks.
+This gateway runs no check of its own; the checks the invoking task selects under the quality policy apply. If it needs a required check, state it here.
 
 ### Evidence and Limits
 
@@ -61,8 +61,8 @@ or runtime enforcement evidence.
 
 ### Protected Actions
 
-This file states no separate protected-action rule.
+This gateway adds no protected action beyond the approval and safety policy; if work through it can start one, name it here.
 
 ### Stop and Escalate
 
-This file states no separate stop or escalation rule.
+This gateway adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work through it needs its own, state it here.

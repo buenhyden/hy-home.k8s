@@ -1,6 +1,6 @@
 ---
 title: "90.references/data"
-version: "0.2.2"
+version: "0.2.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -65,7 +65,7 @@ data/
 
 ### Classification
 
-이 README에는 분류 표가 따로 없다.
+이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
 ## Workflow
 

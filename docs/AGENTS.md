@@ -35,7 +35,7 @@ skill. A documentation change request follows the
 
 ### Non-goals
 
-Non-goals are stated at the end of the Purpose text under Allowed Surface: agents here do not change runtime state.
+Non-goals are stated in the opening text of Allowed Surface: agents here do not change runtime state.
 
 ## Required Policies
 
@@ -77,7 +77,7 @@ Inspecting and changing files follows the rules under Local Obligations.
 
 ### Handoff
 
-This file states no separate handoff rule.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
 
 ## Verification
 
@@ -87,14 +87,14 @@ Required checks are stated in rule 8 under Local Obligations.
 
 ### Evidence and Limits
 
-This file states no separate evidence or limits rule.
+This folder adds no evidence rule beyond the quality policy's handoff contract; if a check here has a limit to report, state it here.
 
 ## Safety
 
 ### Protected Actions
 
-Protected actions are stated at the end of the Purpose text under Allowed Surface: agents here do not change runtime state.
+Protected actions are stated in the opening text of Allowed Surface: agents here do not change runtime state.
 
 ### Stop and Escalate
 
-This file states no separate stop or escalation rule.
+This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.

@@ -1,6 +1,6 @@
 ---
 title: "secrets"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -98,8 +98,8 @@ PASS는 추적된 바이트에 대한 증적이다. 로컬 워크트리에 놓�
 
 ### Runbook Links
 
-이 문서에는 runbook이나 운영 가이드 링크가 없다.
+이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
 
 ### Observability and Recovery
 
-이 문서에는 운영 관측과 복구만을 다루는 별도 내용이 없다.
+이 문서는 운영 관측과 복구만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.

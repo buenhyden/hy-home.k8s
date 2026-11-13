@@ -1,6 +1,6 @@
 ---
 title: "90.references/research"
-version: "0.2.3"
+version: "0.2.4"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -82,7 +82,7 @@ registry가 요구하는 `m####-` identity prefix 뒤에 의미 있는 주제 �
 
 ### Classification
 
-이 README에는 분류 표가 따로 없다.
+이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
 ## Workflow
 

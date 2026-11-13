@@ -76,7 +76,7 @@ Run the strict document checks listed in the parent `AGENTS.md`.
 
 ### Evidence and Limits
 
-This file states no separate evidence or limits rule.
+This folder adds no evidence rule beyond the quality policy's handoff contract; if a check here has a limit to report, state it here.
 
 ## Safety
 

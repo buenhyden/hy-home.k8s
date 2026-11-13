@@ -22,7 +22,7 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 
 ### Non-goals
 
-Non-goals are stated at the end of the Purpose text under Allowed Surface: nothing here is reconciled or deployed.
+Non-goals are stated in the opening text of Allowed Surface: nothing here is reconciled or deployed.
 
 ## Required Policies
 
@@ -45,7 +45,7 @@ Inspecting and changing files follows the rules under Local Obligations.
 
 ### Handoff
 
-This file states no separate handoff rule.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
 
 ## Verification
 
@@ -59,7 +59,7 @@ directly:
 
 ### Evidence and Limits
 
-This file states no separate evidence or limits rule.
+This folder adds no evidence rule beyond the quality policy's handoff contract; if a check here has a limit to report, state it here.
 
 ## Safety
 
@@ -69,4 +69,4 @@ Protected actions are stated in rules 1 and 3 under Local Obligations.
 
 ### Stop and Escalate
 
-This file states no separate stop or escalation rule.
+This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
