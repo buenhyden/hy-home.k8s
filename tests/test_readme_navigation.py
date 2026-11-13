@@ -40,7 +40,9 @@ def navigation(pending=(), exempt=()):
         profiles=MappingProxyType(
             {
                 ROUTER: contracts.ReadmeNavigationProfile("Document Index", True),
-                IMPLEMENTATION: contracts.ReadmeNavigationProfile("Structure", False),
+                IMPLEMENTATION: contracts.ReadmeNavigationProfile(
+                    "Service Role", False
+                ),
                 ROOT_README: contracts.ReadmeNavigationProfile("Directories", False),
             }
         ),
@@ -133,7 +135,7 @@ class ReadmeNavigationTests(unittest.TestCase):
     def test_code_span_paths_in_tables_count(self):
         files = tree("g/README.md", "g/p/a/k.yaml", "g/p/b/k.yaml", "g/w/c/k.yaml")
         text = (
-            "# G\n\n## Structure\n\n- [p/](./p/)\n- [w/](./w/)\n\n"
+            "# G\n\n## Purpose\n\n### Service Role\n\n- [p/](./p/)\n- [w/](./w/)\n\n"
             "## Operations\n\n| Area | Owner |\n| --- | --- |\n"
             "| `p/a` | x |\n| `p/b` | y |\n"
         )
@@ -143,7 +145,7 @@ class ReadmeNavigationTests(unittest.TestCase):
     def test_code_spans_in_prose_outside_navigation_do_not_count(self):
         files = tree("g/README.md", "g/p/a/k.yaml", "g/p/b/k.yaml")
         text = (
-            "# G\n\n## Structure\n\n- [p/](./p/)\n\n"
+            "# G\n\n## Purpose\n\n### Service Role\n\n- [p/](./p/)\n\n"
             "## Operations\n\nEdit `p/a` before `p/b`.\n"
         )
         self.assertEqual(
@@ -186,9 +188,27 @@ class ReadmeNavigationTests(unittest.TestCase):
             "k/README.md",
             modes={"k/link": "120000", "k/module": "160000"},
         )
-        text = "# K\n\n## Structure\n\n- [link](./link)\n- [module](./module)\n"
+        text = (
+            "# K\n\n## Purpose\n\n### Service Role\n\n"
+            "- [link](./link)\n- [module](./module)\n"
+        )
         self.assertEqual(
             codes(text, files=files, profile=IMPLEMENTATION, path="k/README.md"), []
+        )
+
+    def test_service_readme_reads_child_links_under_service_role(self):
+        files = tree("g/README.md", "g/p/k.yaml", "g/w/k.yaml")
+        text = (
+            "# G\n\n## Purpose\n\n### Service Role\n\n- [p/](./p/)\n- [w/](./w/)\n\n"
+            "### Supported Environment\n\nNone.\n"
+        )
+        self.assertEqual(
+            codes(text, files=files, profile=IMPLEMENTATION, path="g/README.md"), []
+        )
+        broken = text.replace("[w/](./w/)", "[gone/](./gone/)")
+        self.assertIn(
+            "README-NAV-LABEL",
+            codes(broken, files=files, profile=IMPLEMENTATION, path="g/README.md"),
         )
 
     def test_profile_without_navigation_entry_is_ignored(self):
