@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.27.0"
+version: "0.28.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -93,7 +93,8 @@ form 경로의 대응은 Registry만 소유한다.
   implementation(agent·provider README 네 곳 포함)·runtime-governance README는
   Service README form을 쓰며,
   `Overview`/`Scope`/`Structure`/`Usage`/`Related Documents` core는
-  workspace README만 공유한다. 루트 README는 Registry form의 `Purpose`,
+  workspace README만 공유하며, workspace README는 W03-D09에 따른 Stage 99
+  지역 역할의 자체 Workspace README form을 쓴다. 루트 README는 Registry form의 `Purpose`,
   `Repository Map`, `Getting Started`, `References`를 쓴다. 각 form과 선택
   module은 경로별 Registry profile이 고른다. stage·collection index form은 `updated` 뒤에
   `layer`를 더한다. README는 사람 독자만을 대상으로 한다. 폴더의 agent 지시는 그
@@ -153,6 +154,9 @@ form 경로의 대응은 Registry만 소유한다.
   `####-<slug>/README.md`는 `reference/audit-pack`·`reference/data-pack`·`reference/research-pack` form을,
   pack member `####-<slug>/m####-<slug>.md`는 같은 family의
   `reference/audit`·`reference/data`·`reference/research` form을 사용한다.
+  세 pack README는 W03-D10에 따른 Stage 99 지역 역할의 자체 Reference Pack
+  README form을 함께 쓰며, 종류별 계약 절은 `Pack Contract`, 멤버 색인 절은
+  `Pack Index`로 부른다.
 - **Runtime forms** (`runtime/`): provider가 직접 읽는 binding만 담는다.
   Claude는 `claude-agent.template.md`와 `claude-command.template.md`, Codex는
   `codex-agent.template.toml`이며 이 form들은 provider 소유

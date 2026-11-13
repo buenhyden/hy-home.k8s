@@ -270,7 +270,9 @@
               "stage-readme",
               "service-readme",
               "agents",
-              "skill"
+              "skill",
+              "workspace-readme",
+              "reference-pack-readme"
             ]
           },
           "path_pattern": {
@@ -882,7 +884,7 @@
       }
     },
     "section": {
-      "description": "One COMMON-DOC-FORM-1 section; link_only is the one local field.",
+      "description": "One section of a form in the COMMON-DOC-FORM-1 list, which also holds Stage 99 local forms; link_only is the one local field.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1143,7 +1145,9 @@
             "stage-readme",
             "service-readme",
             "agents",
-            "skill"
+            "skill",
+            "workspace-readme",
+            "reference-pack-readme"
           ]
         },
         "title": {

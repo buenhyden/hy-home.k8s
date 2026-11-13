@@ -447,17 +447,29 @@ class RepositoryContractTests(unittest.TestCase):
             )
         }
 
-    def test_research_pack_must_reach_every_report(self):
-        path = "docs/90.references/research/0009-x/README.md"
-        files = (
-            "docs/90.references/research/0009-x/m0001-a.md",
-            "docs/90.references/research/0009-x/m0002-b.md",
-        )
-        text = "# X\n\n## Report Index\n\n- [a](m0001-a.md)\n"
-        self.assertEqual(
-            self.diagnostics(path, "reference/research-pack", text, files),
-            {"README-NAV-COMPLETE"},
-        )
+    def test_every_pack_must_reach_every_member_from_its_pack_index(self):
+        for category, kind in (
+            ("research", "research"),
+            ("audits", "audit"),
+            ("data", "data"),
+        ):
+            path = f"docs/90.references/{category}/0009-x/README.md"
+            files = (
+                f"docs/90.references/{category}/0009-x/m0001-a.md",
+                f"docs/90.references/{category}/0009-x/m0002-b.md",
+            )
+            both = "# X\n\n## Pack Index\n\n- [a](m0001-a.md)\n- [b](m0002-b.md)\n"
+            one = both.replace("- [b](m0002-b.md)\n", "")
+            with self.subTest(kind=kind):
+                profile = f"reference/{kind}-pack"
+                self.assertEqual(self.diagnostics(path, profile, both, files), set())
+                self.assertEqual(
+                    self.diagnostics(path, profile, one, files), {"README-NAV-COMPLETE"}
+                )
+                old = both.replace("Pack Index", "Report Index")
+                self.assertEqual(
+                    self.diagnostics(path, profile, old, files), {"README-NAV-COMPLETE"}
+                )
 
     def test_research_collection_may_not_link_pack_members(self):
         path = "docs/90.references/research/README.md"

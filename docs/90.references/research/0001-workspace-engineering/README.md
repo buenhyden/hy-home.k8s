@@ -1,10 +1,10 @@
 ---
 title: "Workspace Engineering Research Pack"
-version: "0.3.1"
+version: "0.3.2"
 type: "reference/research-pack"
 status: "in-review"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 artifact_id: "RES-0001"
 ---
 # Workspace Engineering Research Pack
@@ -21,7 +21,7 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 이 pack은 아래 연구 계약과 보고서 색인에 명시한 주제와 출처를 포함한다.
 실행 승인, 현재 정책, hosted·provider·live 결과는 증거 범위에서 제외한다.
 
-## Research Contract
+## Pack Contract
 
 제품 동작은 해당 provider·제품 surface의 공식 문서와 구현, 표준·방법론은
 표준기관과 원저자 자료로 확인한다. 구현 사례는 가능한 경우 revision과 license를
@@ -64,7 +64,7 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 직접 멤버와 그 연구 책임은 아래 보고서 색인에서 찾는다. 각 멤버의 날짜와
 판정은 멤버 본문이 소유하며 이 anchor는 별도 실행 상태를 기록하지 않는다.
 
-## Report Index
+## Pack Index
 
 | 보고서 | 연구 책임 |
 | --- | --- |

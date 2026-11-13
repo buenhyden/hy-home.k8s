@@ -693,6 +693,8 @@ DocumentRole = Literal[
     "service-readme",
     "agents",
     "skill",
+    "workspace-readme",
+    "reference-pack-readme",
 ]
 
 
@@ -719,7 +721,8 @@ class TableContract:
 
 @dataclass(frozen=True)
 class FormSection:
-    """One COMMON-DOC-FORM-1 section; link_only is the one local field."""
+    """One section of a form in the COMMON-DOC-FORM-1 list (which also holds
+    Stage 99 local forms); link_only is the one local field."""
 
     section_id: str
     title: str

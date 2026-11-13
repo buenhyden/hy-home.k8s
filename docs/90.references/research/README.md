@@ -1,6 +1,6 @@
 ---
 title: "90.references/research"
-version: "0.2.2"
+version: "0.2.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -70,7 +70,7 @@ research/
 |   [0001-workspace-engineering/](./0001-workspace-engineering/) | 후속 workspace engineering research pack |
 |   [0002-archive-retention-and-provenance/](./0002-archive-retention-and-provenance/) | archive 보존과 출처 research pack |
 
-각 pack README는 보고서별 연구 책임을 안내하는 `## Report Index`를 소유한다.
+각 pack README는 보고서별 연구 책임을 안내하는 `## Pack Index`를 소유한다.
 보고서의 lifecycle·관찰일은 각 보고서가, 출처·주장·요구사항 대응은 pack의
 해당 보고서가 소유한다. 이 collection은 pack 탐색만 안내한다.
 

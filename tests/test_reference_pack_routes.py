@@ -62,6 +62,7 @@ class ReferencePackRouteTest(unittest.TestCase):
                 )
                 self.assertEqual(profile.profile_id, f"reference/{singular}-pack")
                 self.assertEqual(profile.mode, "authored")
+                self.assertEqual(profile.document_role, "reference-pack-readme")
                 self.assertIsNotNone(profile.lifecycle_domain)
                 self.assertEqual(profile.lifecycle_domain.family, "reference")
                 self.assertEqual(
@@ -72,6 +73,24 @@ class ReferencePackRouteTest(unittest.TestCase):
                     PurePosixPath(
                         f"docs/99.templates/templates/references/{singular}-pack.template.md"
                     ),
+                )
+
+    def test_pack_templates_name_the_pack_contract_and_the_pack_index(self) -> None:
+        for kind in ("audit", "data", "research"):
+            template = (
+                ROOT / f"docs/99.templates/templates/references/{kind}-pack.template.md"
+            )
+            headings = [
+                line
+                for line in template.read_text("utf-8").splitlines()
+                if line.startswith("## ")
+            ]
+            with self.subTest(kind=kind):
+                self.assertIn("## Pack Contract", headings)
+                self.assertIn("## Pack Index", headings)
+                self.assertEqual(
+                    [h for h in headings if h.endswith(("Contract", "Index"))],
+                    ["## Pack Contract", "## Pack Index"],
                 )
 
     def test_pack_members_use_the_reference_profile(self) -> None:

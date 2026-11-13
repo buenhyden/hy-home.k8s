@@ -2026,6 +2026,7 @@
       "id": "reference/audit-pack",
       "family": "reference",
       "mode": "authored",
+      "document_role": "reference-pack-readme",
       "path_pattern": "^docs/90\\.references/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
       "artifact_id_pattern": "^AUD-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/audit-pack.template.md",
@@ -2061,20 +2062,8 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Audit Contract",
-          "Structure",
-          "Report Index",
-          "Usage",
-          "Review and Closure",
-          "Evidence Boundary",
-          "Related Documents"
-        ],
-        "optional": [
-          "Method"
-        ],
+        "required": [],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": {
@@ -2096,6 +2085,7 @@
       "id": "reference/data-pack",
       "family": "reference",
       "mode": "authored",
+      "document_role": "reference-pack-readme",
       "path_pattern": "^docs/90\\.references/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
       "artifact_id_pattern": "^DATA-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/data-pack.template.md",
@@ -2131,20 +2121,8 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Data Contract",
-          "Structure",
-          "Item Index",
-          "Usage",
-          "Refresh and Retention",
-          "Evidence Boundary",
-          "Related Documents"
-        ],
-        "optional": [
-          "Method"
-        ],
+        "required": [],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": {
@@ -2166,6 +2144,7 @@
       "id": "reference/research-pack",
       "family": "reference",
       "mode": "authored",
+      "document_role": "reference-pack-readme",
       "path_pattern": "^docs/90\\.references/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
       "artifact_id_pattern": "^RES-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/research-pack.template.md",
@@ -2201,20 +2180,8 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Research Contract",
-          "Structure",
-          "Report Index",
-          "Usage",
-          "Refresh and Succession",
-          "Evidence Boundary",
-          "Related Documents"
-        ],
-        "optional": [
-          "Method"
-        ],
+        "required": [],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": {
@@ -2236,6 +2203,7 @@
       "id": "common/readme-workspace-staging",
       "family": "common",
       "mode": "router",
+      "document_role": "workspace-readme",
       "path_pattern": "^_workspace/(?:diagnostics/(?:ci/|validation/)?|repo-support/(?:analysis/|previews/)?)?README\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
@@ -2267,13 +2235,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -3296,6 +3258,7 @@
       "id": "common/template-readme-audit-pack",
       "family": "common",
       "mode": "template",
+      "document_role": "reference-pack-readme",
       "path_pattern": "^docs/99\\.templates/templates/references/audit\\-pack\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/references/audit-pack.template.md",
@@ -3331,20 +3294,8 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Audit Contract",
-          "Structure",
-          "Report Index",
-          "Usage",
-          "Review and Closure",
-          "Evidence Boundary",
-          "Related Documents"
-        ],
-        "optional": [
-          "Method"
-        ],
+        "required": [],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": null,
@@ -3354,12 +3305,66 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a Reference Pack README, here for a audit pack: a router that states the pack contract, its structure, its Pack Index of members, how it is used, its Review and Closure rule and its evidence boundary.",
+        "responsibility": "A audit pack README owns the router of one Stage 90 pack and lists exactly its members in the Pack Index; the member reports and the adopting Stage 01, 02 or 05 owners keep their own authority.",
+        "non_goals": [
+          "Defining a COMMON-DOC-FORM-1 role: the Reference Pack README is a Stage 99 local role under W03-D10.",
+          "Changing a Stage 90 member report or presenting a pack claim as a requirement, decision or policy.",
+          "Defining a table for the Pack Index, whose contents differ by pack kind."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/document-lifecycle.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every audit pack README under docs/90.references/ and its template; the research, audit and data packs share one form and carry only their own closure section.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/references/audit-pack.template.md",
+          "docs/90.references/audits/0001-sdlc-governance/README.md",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_readme_navigation.py",
+          "tests/test_reference_pack_routes.py"
+        ],
+        "validation": {
+          "positive": [
+            "The pack READMEs and the template pass the form tree, navigation, link and residue checks.",
+            "A audit pack with the Review and Closure section, with the optional Method section, or without either, passes."
+          ],
+          "negative": [
+            "A pack README with the old Contract or Index heading fails BODY-HEADING-REQUIRED.",
+            "A pack Index that omits a member fails README-NAV-COMPLETE."
+          ],
+          "regression": [
+            "The pack profiles keep empty heading lists, derive the required headings from the form and read navigation from Pack Index.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0178 package renames the three pack-kind contract headings to Pack Contract and the three pack-kind index headings to Pack Index without changing section bodies, and makes the three closure sections conditional.",
+          "retained_history": "Git history retains the three pack profiles that listed their own Contract, Index and closure headings.",
+          "rollback": "Revert the SPEC-0178 implementation commit."
+        },
+        "tables": []
+      }
     },
     {
       "id": "common/template-readme-data-pack",
       "family": "common",
       "mode": "template",
+      "document_role": "reference-pack-readme",
       "path_pattern": "^docs/99\\.templates/templates/references/data\\-pack\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/references/data-pack.template.md",
@@ -3395,20 +3400,8 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Data Contract",
-          "Structure",
-          "Item Index",
-          "Usage",
-          "Refresh and Retention",
-          "Evidence Boundary",
-          "Related Documents"
-        ],
-        "optional": [
-          "Method"
-        ],
+        "required": [],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": null,
@@ -3418,12 +3411,66 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a Reference Pack README, here for a data pack: a router that states the pack contract, its structure, its Pack Index of members, how it is used, its Refresh and Retention rule and its evidence boundary.",
+        "responsibility": "A data pack README owns the router of one Stage 90 pack and lists exactly its members in the Pack Index; the member reports and the adopting Stage 01, 02 or 05 owners keep their own authority.",
+        "non_goals": [
+          "Defining a COMMON-DOC-FORM-1 role: the Reference Pack README is a Stage 99 local role under W03-D10.",
+          "Changing a Stage 90 member report or presenting a pack claim as a requirement, decision or policy.",
+          "Defining a table for the Pack Index, whose contents differ by pack kind."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/document-lifecycle.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every data pack README under docs/90.references/ and its template; the research, audit and data packs share one form and carry only their own closure section.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/references/data-pack.template.md",
+          "docs/90.references/data/README.md",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_readme_navigation.py",
+          "tests/test_reference_pack_routes.py"
+        ],
+        "validation": {
+          "positive": [
+            "The pack READMEs and the template pass the form tree, navigation, link and residue checks.",
+            "A data pack with the Refresh and Retention section, with the optional Method section, or without either, passes."
+          ],
+          "negative": [
+            "A pack README with the old Contract or Index heading fails BODY-HEADING-REQUIRED.",
+            "A pack Index that omits a member fails README-NAV-COMPLETE."
+          ],
+          "regression": [
+            "The pack profiles keep empty heading lists, derive the required headings from the form and read navigation from Pack Index.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0178 package renames the three pack-kind contract headings to Pack Contract and the three pack-kind index headings to Pack Index without changing section bodies, and makes the three closure sections conditional.",
+          "retained_history": "Git history retains the three pack profiles that listed their own Contract, Index and closure headings.",
+          "rollback": "Revert the SPEC-0178 implementation commit."
+        },
+        "tables": []
+      }
     },
     {
       "id": "common/template-readme-research-pack",
       "family": "common",
       "mode": "template",
+      "document_role": "reference-pack-readme",
       "path_pattern": "^docs/99\\.templates/templates/references/research\\-pack\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/references/research-pack.template.md",
@@ -3459,20 +3506,8 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Research Contract",
-          "Structure",
-          "Report Index",
-          "Usage",
-          "Refresh and Succession",
-          "Evidence Boundary",
-          "Related Documents"
-        ],
-        "optional": [
-          "Method"
-        ],
+        "required": [],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": null,
@@ -3482,12 +3517,67 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a Reference Pack README, here for a research pack: a router that states the pack contract, its structure, its Pack Index of members, how it is used, its Refresh and Succession rule and its evidence boundary.",
+        "responsibility": "A research pack README owns the router of one Stage 90 pack and lists exactly its members in the Pack Index; the member reports and the adopting Stage 01, 02 or 05 owners keep their own authority.",
+        "non_goals": [
+          "Defining a COMMON-DOC-FORM-1 role: the Reference Pack README is a Stage 99 local role under W03-D10.",
+          "Changing a Stage 90 member report or presenting a pack claim as a requirement, decision or policy.",
+          "Defining a table for the Pack Index, whose contents differ by pack kind."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/document-lifecycle.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every research pack README under docs/90.references/ and its template; the research, audit and data packs share one form and carry only their own closure section.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/references/research-pack.template.md",
+          "docs/90.references/research/0001-workspace-engineering/README.md",
+          "docs/90.references/research/0002-archive-retention-and-provenance/README.md",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_readme_navigation.py",
+          "tests/test_reference_pack_routes.py"
+        ],
+        "validation": {
+          "positive": [
+            "The pack READMEs and the template pass the form tree, navigation, link and residue checks.",
+            "A research pack with the Refresh and Succession section, with the optional Method section, or without either, passes."
+          ],
+          "negative": [
+            "A pack README with the old Contract or Index heading fails BODY-HEADING-REQUIRED.",
+            "A pack Index that omits a member fails README-NAV-COMPLETE."
+          ],
+          "regression": [
+            "The pack profiles keep empty heading lists, derive the required headings from the form and read navigation from Pack Index.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0178 package renames the three pack-kind contract headings to Pack Contract and the three pack-kind index headings to Pack Index without changing section bodies, and makes the three closure sections conditional.",
+          "retained_history": "Git history retains the three pack profiles that listed their own Contract, Index and closure headings.",
+          "rollback": "Revert the SPEC-0178 implementation commit."
+        },
+        "tables": []
+      }
     },
     {
       "id": "common/template-readme-workspace-staging",
       "family": "common",
       "mode": "template",
+      "document_role": "workspace-readme",
       "path_pattern": "^docs/99\\.templates/templates/common/readme\\-workspace\\-staging\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
@@ -3518,13 +3608,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -3535,7 +3619,64 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a Workspace README: a router that states what a repository-local staging area holds, what it forbids, its structure, how its output is promoted or cleaned up, and how Git tracks it.",
+        "responsibility": "A Workspace README owns the short human-facing boundary of one staging folder under _workspace/ and links the owners of anything durable; it holds no secret, no durable policy and no agent-only instruction.",
+        "non_goals": [
+          "Defining a COMMON-DOC-FORM-1 role: the Workspace README is a Stage 99 local role under W03-D09.",
+          "Changing the read-only _workspace/workspace_execution_tasks/ input folder or any text of the seven Workspace READMEs.",
+          "Restating policy, which belongs to its canonical owner document."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/document-lifecycle.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The seven tracked Workspace READMEs under _workspace/ outside the read-only input folder, and their template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/common/readme-workspace-staging.template.md",
+          "_workspace/README.md",
+          "_workspace/diagnostics/README.md",
+          "_workspace/diagnostics/ci/README.md",
+          "_workspace/diagnostics/validation/README.md",
+          "_workspace/repo-support/README.md",
+          "_workspace/repo-support/analysis/README.md",
+          "_workspace/repo-support/previews/README.md",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py"
+        ],
+        "validation": {
+          "positive": [
+            "The seven Workspace READMEs and the template pass the form tree and residue checks with the Scope and Usage H3s.",
+            "A Related Documents section made only of links passes."
+          ],
+          "negative": [
+            "A missing or renamed Workspace form H3 fails BODY-H3-REQUIRED.",
+            "A link-only Structure or Overview section fails BODY-SECTION-EMPTY."
+          ],
+          "regression": [
+            "The Workspace profiles keep empty heading lists and the form carries no extension and no table.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0178 package changes no Workspace README text: the seven READMEs and the template already share the Overview, Scope, Structure, Usage and Related Documents headings, and the form records that tree.",
+          "retained_history": "Git history retains the Workspace README profiles that listed their H2 headings.",
+          "rollback": "Revert the SPEC-0178 implementation commit."
+        },
+        "tables": []
+      }
     },
     {
       "id": "common/template-readme-runtime-governance",
@@ -7195,15 +7336,15 @@
         "complete": false
       },
       "reference/audit-pack": {
-        "section": "Report Index",
+        "section": "Pack Index",
         "complete": true
       },
       "reference/data-pack": {
-        "section": "Item Index",
+        "section": "Pack Index",
         "complete": true
       },
       "reference/research-pack": {
-        "section": "Report Index",
+        "section": "Pack Index",
         "complete": true
       }
     },
@@ -10813,6 +10954,555 @@
             "removal": "when the common Skill form gains an authority H3",
             "parent_id": "skill-purpose-and-trigger",
             "title": "Authority Boundary"
+          }
+        ]
+      },
+      {
+        "form_id": "workspace-readme",
+        "title": "Workspace README",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 이 양식은 W03-D09·W03-D10에 따른 Stage 99 지역 역할의 양식이며 COMMON-DOC-FORM-1 역할이 아니다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "workspace-readme-overview",
+            "level": 2,
+            "parent_id": null,
+            "title": "Overview",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "staging 영역의 목적과 추적 범위",
+            "required_content": [
+              "이 영역이 두는 비밀 아닌 임시 산출물의 성격과 Git이 추적하는 README의 범위를 적는다."
+            ],
+            "prohibited_content": [
+              "오래 유지할 문서, 인증 상태, 개인 로컬 데이터를 이 영역의 내용으로 설명하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "workspace-readme-scope",
+            "level": 2,
+            "parent_id": null,
+            "title": "Scope",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "허용 산출물과 금지 로컬 상태의 경계",
+            "required_content": [
+              "이 영역에 둘 수 있는 산출물과 두면 안 되는 로컬 상태의 경계를 두 절로 나누어 적는다."
+            ],
+            "prohibited_content": [
+              "credential·토큰·키 material·개인 로컬 상태를 예시나 설명에 옮기지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "workspace-readme-scope-permitted-artifacts",
+                "level": 3,
+                "parent_id": "workspace-readme-scope",
+                "title": "Permitted Artifacts",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "허용되는 비밀 아닌 임시 산출물",
+                "required_content": [
+                  "이 영역에 둘 수 있는 산출물 종류와 지워도 안전해야 한다는 조건을 사실로 적는다."
+                ],
+                "prohibited_content": [
+                  "비밀이나 credential이 담긴 runtime 세부 정보를 허용 산출물로 적지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "workspace-readme-scope-forbidden-local-state",
+                "level": 3,
+                "parent_id": "workspace-readme-scope",
+                "title": "Forbidden Local State",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "두면 안 되는 로컬 상태",
+                "required_content": [
+                  "이 영역에 두지 않는 credential, 키 material, 개인 진단 정보 같은 로컬 상태의 종류와 둘 위치를 적는다."
+                ],
+                "prohibited_content": [
+                  "credential·토큰·키 material·개인 로컬 상태를 예시나 설명에 옮기지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "workspace-readme-structure",
+            "level": 2,
+            "parent_id": null,
+            "title": "Structure",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "하위 경로와 그 용도",
+            "required_content": [
+              "이 영역의 직접 하위 경로와 각 경로가 담는 산출물을 실제 경로와 함께 적는다."
+            ],
+            "prohibited_content": [
+              "존재하지 않는 경로나 추적하지 않는 하위 항목의 내용을 구조로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "workspace-readme-usage",
+            "level": 2,
+            "parent_id": null,
+            "title": "Usage",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "산출물의 승격·정리와 추적 규칙",
+            "required_content": [
+              "산출물을 정본 경로로 옮기거나 지우는 방법과 Git 추적 규칙을 두 절로 나누어 적는다."
+            ],
+            "prohibited_content": [
+              "이 영역의 파일을 정본 문서나 현재 권한의 근거로 쓰도록 안내하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "workspace-readme-usage-promotion-and-cleanup",
+                "level": 3,
+                "parent_id": "workspace-readme-usage",
+                "title": "Promotion and Cleanup",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "정본 경로로의 승격과 삭제",
+                "required_content": [
+                  "오래 남길 결과를 옮길 정본 소유 경로와 더 필요 없는 산출물의 삭제 방법을 적는다."
+                ],
+                "prohibited_content": [
+                  "정본 소유자를 정하지 않은 채 산출물을 유지하도록 안내하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "workspace-readme-usage-tracking-rules",
+                "level": 3,
+                "parent_id": "workspace-readme-usage",
+                "title": "Tracking Rules",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "Git 추적과 ignore 규칙",
+                "required_content": [
+                  "추적하는 README와 ignore 상태로 남는 하위 항목의 규칙을 실제 설정과 맞게 적는다."
+                ],
+                "prohibited_content": [
+                  "ignore된 항목을 Git에 강제로 추가하도록 안내하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "workspace-readme-related-documents",
+            "level": 2,
+            "parent_id": null,
+            "title": "Related Documents",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "연결 문서 목록",
+            "required_content": [
+              "이 영역의 정본 소유자와 관련 정책으로 가는 링크를 목록으로 적는다."
+            ],
+            "prohibited_content": [
+              "링크가 가리키는 정책을 이 README에 복사해 정본처럼 쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": true,
+            "children": []
+          }
+        ],
+        "extensions": []
+      },
+      {
+        "form_id": "reference-pack-readme",
+        "title": "Reference Pack README",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 이 양식은 W03-D09·W03-D10에 따른 Stage 99 지역 역할의 양식이며 COMMON-DOC-FORM-1 역할이 아니다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "reference-pack-readme-overview",
+            "level": 2,
+            "parent_id": null,
+            "title": "Overview",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "팩의 목적과 대상",
+            "required_content": [
+              "팩이 모으는 evidence의 종류와 읽는 사람이 얻는 것을 적는다."
+            ],
+            "prohibited_content": [
+              "팩의 주장을 요구·결정·정책으로 제시하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "reference-pack-readme-scope",
+            "level": 2,
+            "parent_id": null,
+            "title": "Scope",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "팩이 다루는 범위와 제외",
+            "required_content": [
+              "팩이 다루는 대상과 다루지 않는 대상을 관찰 기준과 함께 적는다."
+            ],
+            "prohibited_content": [
+              "범위 밖 주제를 팩의 결론에 섞어 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "reference-pack-readme-pack-contract",
+            "level": 2,
+            "parent_id": null,
+            "title": "Pack Contract",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "팩의 종류별 계약",
+            "required_content": [
+              "연구·감사·자료 중 팩의 종류에 맞는 계약, 곧 소유 질문과 멤버가 따를 규칙을 적는다."
+            ],
+            "prohibited_content": [
+              "팩의 주장을 요구·결정·정책으로 제시하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "reference-pack-readme-method",
+            "level": 2,
+            "parent_id": null,
+            "title": "Method",
+            "order": 4,
+            "requiredness": "optional",
+            "condition": "a method needs its own section apart from the pack contract",
+            "content": "수집·분석 방법",
+            "required_content": [
+              "팩이 계약과 따로 밝힐 수집·분석 방법을 사실과 가정으로 나누어 적는다."
+            ],
+            "prohibited_content": [
+              "방법을 확인하지 않은 채 재현 가능하다고 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "omit_when_condition_false",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "reference-pack-readme-structure",
+            "level": 2,
+            "parent_id": null,
+            "title": "Structure",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "팩의 구성과 멤버 배치",
+            "required_content": [
+              "팩 폴더의 README와 멤버 파일 배치를 실제 경로와 맞게 적는다."
+            ],
+            "prohibited_content": [
+              "존재하지 않는 멤버나 폴더를 구성으로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "reference-pack-readme-pack-index",
+            "level": 2,
+            "parent_id": null,
+            "title": "Pack Index",
+            "order": 6,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "멤버 색인",
+            "required_content": [
+              "팩의 모든 직접 멤버로 가는 링크와 각 멤버가 답하는 질문을 하나의 색인에 적는다."
+            ],
+            "prohibited_content": [
+              "멤버의 본문을 색인에 복사하거나 멤버 밖 문서를 멤버로 색인하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "reference-pack-readme-usage",
+            "level": 2,
+            "parent_id": null,
+            "title": "Usage",
+            "order": 7,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "읽는 순서와 사용법",
+            "required_content": [
+              "독자가 계약, 색인, 멤버를 읽는 순서와 팩을 인용할 때의 조건을 적는다."
+            ],
+            "prohibited_content": [
+              "팩의 주장을 요구·결정·정책으로 제시하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "reference-pack-readme-refresh-and-succession",
+            "level": 2,
+            "parent_id": null,
+            "title": "Refresh and Succession",
+            "order": 8,
+            "requiredness": "conditional",
+            "condition": "a research pack",
+            "content": "연구 팩의 갱신과 대체 규칙",
+            "required_content": [
+              "연구 팩의 갱신 시점, 후속 팩으로 대체하는 조건, 대체 뒤 이 팩의 상태를 적는다."
+            ],
+            "prohibited_content": [
+              "발행된 멤버를 이후 이름이나 형식에 맞게 다시 쓰도록 안내하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "omit_when_condition_false",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "reference-pack-readme-review-and-closure",
+            "level": 2,
+            "parent_id": null,
+            "title": "Review and Closure",
+            "order": 9,
+            "requiredness": "conditional",
+            "condition": "an audit pack",
+            "content": "감사 팩의 검토와 종결 규칙",
+            "required_content": [
+              "감사 팩의 검토 순서, 발견 사항의 종결 조건, 종결 기록을 남길 정본 위치를 적는다."
+            ],
+            "prohibited_content": [
+              "발견 사항을 종결했다고 적으면서 종결 근거를 가리키지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "omit_when_condition_false",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "reference-pack-readme-refresh-and-retention",
+            "level": 2,
+            "parent_id": null,
+            "title": "Refresh and Retention",
+            "order": 10,
+            "requiredness": "conditional",
+            "condition": "a data pack",
+            "content": "자료 팩의 갱신과 보존 규칙",
+            "required_content": [
+              "자료 팩의 갱신 주기, 보존 기간, 폐기 조건과 보존 근거를 적는다."
+            ],
+            "prohibited_content": [
+              "보존 근거 없이 자료를 무기한 유지하거나 삭제하도록 안내하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "omit_when_condition_false",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "reference-pack-readme-evidence-boundary",
+            "level": 2,
+            "parent_id": null,
+            "title": "Evidence Boundary",
+            "order": 11,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "증거의 한계와 정본 경계",
+            "required_content": [
+              "팩이 증명하는 것과 증명하지 않는 것, 현재 정본이 따로 있는 영역을 적는다."
+            ],
+            "prohibited_content": [
+              "팩의 주장을 요구·결정·정책으로 제시하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "reference-pack-readme-related-documents",
+            "level": 2,
+            "parent_id": null,
+            "title": "Related Documents",
+            "order": 12,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "연결 문서 목록",
+            "required_content": [
+              "팩의 근거와 이를 채택하는 정본 소유자로 가는 링크를 목록으로 적는다."
+            ],
+            "prohibited_content": [
+              "링크가 가리키는 문서의 내용을 복사해 정본처럼 쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": true,
+            "children": []
+          }
+        ],
+        "extensions": [
+          {
+            "id": "pack-external-finding-vocabulary",
+            "kind": "local_h3",
+            "condition": "a research pack that fixes the external finding vocabulary its reports use",
+            "owner": "platform",
+            "verification": "the form tree check",
+            "review": "when the Reference Pack README form changes",
+            "removal": "when the Reference Pack README form gains a matching section",
+            "parent_id": "reference-pack-readme-pack-contract",
+            "title": "External Finding Vocabulary"
+          },
+          {
+            "id": "pack-separate-evidence-axes",
+            "kind": "local_h3",
+            "condition": "a research pack that keeps its evidence axes apart in its reports",
+            "owner": "platform",
+            "verification": "the form tree check",
+            "review": "when the Reference Pack README form changes",
+            "removal": "when the Reference Pack README form gains a matching section",
+            "parent_id": "reference-pack-readme-pack-contract",
+            "title": "Separate Evidence Axes"
           }
         ]
       }
