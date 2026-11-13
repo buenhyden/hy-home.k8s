@@ -41,6 +41,7 @@ SUITES = {
         "common_agents_document_routes",
         "document_terminal_contract",
         "common_form_tree",
+        "frontmatter_key_contract",
         "document_language",
         "documentation_link_boundary",
     ),

@@ -20,7 +20,9 @@ from document_contracts import (
     TargetInventory,
     classify_path,
     classify_paths,
+    current_registry_diagnostics,
     enumerate_target_markdown,
+    load_internal_payload,
     load_registry,
     shared_edition_mismatches,
     shared_edition_surface_texts,
@@ -642,6 +644,14 @@ def main() -> int:
     try:
         root = _assert_repository_root_directory(args.root)
         registry = load_registry(root)
+        # SPEC-0181: the key, dialect and extension records of the current
+        # registry; a comparison-base registry may lack them, so only this
+        # validator refuses their absence.
+        record_diagnostics = current_registry_diagnostics(
+            root, load_internal_payload(root)
+        )
+        if record_diagnostics:
+            raise DocumentContractError(record_diagnostics)
         _assert_template_source_parity(registry)
         _assert_reference_pack_topology(root, registry)
         edition_mismatches = shared_edition_mismatches(
