@@ -1,6 +1,6 @@
 ---
 title: "W03 Retired Identity Reservation"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-13"
@@ -29,8 +29,8 @@ This Task records handoff W03-H03 (from W02-H01), the reservation of retired ide
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RETIRED-001](../spec.md#success-criteria--verification-plan) | Lineage-identity helper; evidence-context field; reuse check and callers; history memo; tests. | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-RETIRED-002](../spec.md#success-criteria--verification-plan) | Policy sentence; regression and exact-index QA. | platform | in-progress | PASS | EVD-005, EVD-006, EVD-007; exact-index QA at the implementation commit |
+| WORK-001 | [VAL-RETIRED-001](../spec.md#success-criteria--verification-plan) | Lineage-identity helper; evidence-context field; reuse check and callers; history memo; tests. | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-RETIRED-002](../spec.md#success-criteria--verification-plan) | Policy sentence; regression and exact-index QA. | platform | completed | PASS | EVD-005, EVD-006, EVD-007; implementation commit `cb498bcf` passed exact-index QA and the hooks |
 
 ## Task Evidence
 
@@ -43,13 +43,21 @@ This Task records handoff W03-H03 (from W02-H01), the reservation of retired ide
 | EVD-005 | [VAL-RETIRED-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Policy sentence | Staged diff over `2646fd4f` | PASS | `.agents/governance/document-lifecycle.md` 2.9.0 adds one sentence after "Stable identities are append-only and never reused": retired identities are reserved by the first column of the owners' `Archived Lineage` and checked by `LIFECYCLE-IDENTITY-REUSE`. No other document text changed. | yes | none |
 | EVD-006 | [VAL-RETIRED-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Regression over the tree, suites and lint | Author run over the staged index after `2646fd4f`, 2026-11-13 | PASS | The four strict document validators give output byte-identical to the before run at `2646fd4f`. Staged lifecycle PASS; `python3 scripts/qa.py staged` 12 gates PASS. Suites: `agent-governance` 105, `document` 586 (3 skipped), `document-lifecycle` 24, `tooling` 166, `validation-routing` 173 OK. `ruff check scripts tests` and `ruff format --check scripts tests` clean; markdownlint 0 issues; `graphify update .` rc 0. No registry line moved, so `.secrets.baseline` is unchanged. | yes | none |
 | EVD-007 | [VAL-RETIRED-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Semantic review: risk class and core-diff checklist | Diff of 5 files over `2646fd4f` | PASS | Risk class `medium` (a lifecycle validator, its adapter, tests and one policy sentence). Checklist: scope matches the Spec; one writer per file; W03-H03 and W02-H01 applied; only first-cell tokens are read and only identities new at a path are judged, so the current `REQ-0001` to `REQ-0003` pass; the helper reads the identity grammar from the checkout's own `frontmatter.schema.json`; no lineage row or other document text changed; no secret read; recovery is reverting the implementation commit. No permission, trigger, hook or workflow file changed. | yes | none |
+| EVD-008 | [VAL-RETIRED-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 standing approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. This package closes W03-H03 and W02-H01. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RETIRED-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-RETIRED-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-RETIRED-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0180 criterion question naming implementation commit `cb498bcf` and EVD-004 to EVD-007) | platform |
+| [VAL-RETIRED-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-006, EVD-007 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0180 criterion question naming implementation commit `cb498bcf` and EVD-004 to EVD-007) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document lifecycle policy and `scripts/document_lifecycle.py` (Plan Promotion row). No new handoff arises; the SPEC-0161 rows this package added stay there. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes. Code comments and test docstrings that name SPEC-0180 use it as an identifier, not a link, and stay.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 standing approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
 
 ## Approval and Safety Boundaries
 
@@ -64,4 +72,4 @@ This Task records handoff W03-H03 (from W02-H01), the reservation of retired ide
 
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); criterion acceptance pending. Risk class `medium`. When accepted, this package closes W03-H03 and W02-H01.
+Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); implementation commit `cb498bcf`. The user accepted both criteria on 2026-11-13, and the standing approval of commit, push and PR covers the package exit (EVD-008); this package closes W03-H03 and W02-H01. Risk class `medium`. Next owner: W03 for the H07 package.
