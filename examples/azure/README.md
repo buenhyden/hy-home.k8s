@@ -1,16 +1,29 @@
 ---
 title: "Azure Executable Examples"
-version: "0.4.0"
+version: "0.5.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-13"
 ---
 # Azure Executable Examples
 
-## Overview
+## Purpose
 
-### Current authority transfer
+### Service Role
+
+| 경로 | 역할 | 권한 경계 |
+| --- | --- | --- |
+| [`infrastructure/`](infrastructure/) | AKS, AGC, 네트워크, 데이터베이스, 캐시 Bicep 예시 | 실행 가능한 참조 자산. provider 입력값과 승인은 이 저장소 밖에 있다. |
+| [`gitops/`](gitops/) | Managed Identity, Gateway API, secret provider 플랫폼 예시 | 실행 가능한 참조 자산. 로컬 ArgoCD 트리가 reconcile하지 않는다. |
+| [`AGENTS.md`](AGENTS.md) | 이 폴더의 에이전트 지시 | 부트스트랩이나 실행 자산이 아니다. |
+| [`kubernetes/`](kubernetes/) | Workload Identity, 외부 서비스, 애플리케이션 manifest 예시 | 실행 가능한 참조 자산. 소유자가 있는 desired-state 트리로 올리기 전에 검증한다. |
+
+- [Examples index](../README.md)
+- REQ-0004 — 현재 플랫폼 요구사항 (`docs/01.requirements/README.md`)
+- AD-0007 — 현재 플랫폼 아키텍처 (`docs/02.architecture/descriptions/README.md`)
+
+#### Current authority transfer
 
 원래의 REQ-0007 / AD-0010 program 계보는 역사적 맥락으로만 남는다.
 현재 플랫폼 요구사항과 아키텍처는 REQ-0004(`docs/01.requirements/README.md`)와
@@ -22,29 +35,32 @@ AD-0006(`docs/02.architecture/descriptions/README.md`)이 소유한다. package 
 Kubernetes 파일은 참조 구현이다. 활성 로컬 desired state가 아니며 현재의
 Azure 지원, 구독 준비 상태, 비용, provider 최신 설정을 증명하지도 않는다.
 
-## Scope
+### Supported Environment
 
 Azure credential, 공개 승인을 받지 않은 구독 상태, 배포 출력, kubeconfig,
 토큰, 키, 인증서, secret 값은 커밋하지 않는다. 버전 제약은 각 Bicep·GitOps·
 Kubernetes 파일이 직접 소유한다. 매개변수는 검토된 인터페이스로 주입하고
 승인된 용도로 쓰기 전에 Azure 공식 지원 범위를 다시 확인한다.
 
-## Structure
+## Interfaces
 
-| 경로 | 역할 | 권한 경계 |
-| --- | --- | --- |
-| [`infrastructure/`](infrastructure/) | AKS, AGC, 네트워크, 데이터베이스, 캐시 Bicep 예시 | 실행 가능한 참조 자산. provider 입력값과 승인은 이 저장소 밖에 있다. |
-| [`gitops/`](gitops/) | Managed Identity, Gateway API, secret provider 플랫폼 예시 | 실행 가능한 참조 자산. 로컬 ArgoCD 트리가 reconcile하지 않는다. |
-| [`AGENTS.md`](AGENTS.md) | 이 폴더의 에이전트 지시 | 부트스트랩이나 실행 자산이 아니다. |
-| [`kubernetes/`](kubernetes/) | Workload Identity, 외부 서비스, 애플리케이션 manifest 예시 | 실행 가능한 참조 자산. 소유자가 있는 desired-state 트리로 올리기 전에 검증한다. |
+### Inputs and Outputs
 
-## Usage
+이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
+
+### Security Boundary
+
+보안 경계는 Supported Environment에 적혀 있다.
+
+## Development
+
+### Local Workflow
 
 이 자산은 provider 운영 절차를 정의하지 않는다. provider나 live cluster에
 손대기 전에 정확한 소스 diff, 현재 Azure 공식 지원 범위, credential 경계,
 비용, 롤백을 검토하고 사람의 승인을 받는다.
 
-## Verification
+### Checks
 
 먼저 구성 요소별 진입점과 저장소 정적 검사를 사용한다.
 
@@ -61,8 +77,12 @@ python3 scripts/qa.py full
 위 명령은 live 구독, AKS, Managed Identity, Key Vault, 네트워크, 비용, secret,
 provider 준비 상태를 증명하지 않는다.
 
-## Related Documents
+## Operations
 
-- [Examples index](../README.md)
-- REQ-0004 — 현재 플랫폼 요구사항 (`docs/01.requirements/README.md`)
-- AD-0007 — 현재 플랫폼 아키텍처 (`docs/02.architecture/descriptions/README.md`)
+### Runbook Links
+
+이 문서는 참조 전용 예시를 다루므로 runbook 링크가 없다.
+
+### Observability and Recovery
+
+이 문서는 참조 전용 예시를 다루며 live 환경을 변경하지 않으므로 관측과 복구 절차가 없다.

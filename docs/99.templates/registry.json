@@ -2001,6 +2001,7 @@
       "id": "common/readme-implementation",
       "family": "common",
       "mode": "router",
+      "document_role": "service-readme",
       "path_pattern": "^(?:\\.agents/README\\.md|\\.claude/README\\.md|\\.codex/README\\.md|\\.agents/evaluations/README\\.md|examples/README\\.md|examples/sample\\-app/README\\.md|gitops/README\\.md|gitops/platform/README\\.md|gitops/workloads/README\\.md|infrastructure/README\\.md|infrastructure/verify/README\\.md|policy/README\\.md|scripts/README\\.md|secrets/README\\.md|tests/README\\.md|examples/azure/gitops/README\\.md|examples/azure/infrastructure/README\\.md|examples/azure/kubernetes/README\\.md|examples/(?:aws|azure)/README\\.md)$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-implementation.template.md",
@@ -2032,16 +2033,8 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
-        "optional": [
-          "Verification"
-        ],
+        "required": [],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": null,
@@ -2317,6 +2310,7 @@
       "id": "common/readme-runtime-governance",
       "family": "common",
       "mode": "router",
+      "document_role": "service-readme",
       "path_pattern": "^\\.github/repository-surface\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-runtime-governance.template.md",
@@ -2348,13 +2342,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -3183,6 +3171,7 @@
       "id": "common/template-readme-implementation",
       "family": "common",
       "mode": "template",
+      "document_role": "service-readme",
       "path_pattern": "^docs/99\\.templates/templates/common/readme\\-implementation\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-implementation.template.md",
@@ -3213,16 +3202,8 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
-        "optional": [
-          "Verification"
-        ],
+        "required": [],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": null,
@@ -3232,7 +3213,104 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for an implementation README: a human document for a code, configuration, agent or provider folder that states the service role, its supported environment, its interfaces, how to develop and check it, and where to operate it.",
+        "responsibility": "An implementation README owns the human-facing description of its folder and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
+        "non_goals": [
+          "Restating detailed policy, which belongs to its canonical owner document.",
+          "Holding agent instructions, which belong to the folder AGENTS.md.",
+          "Defining the Workspace and Reference Pack README forms, which keep their own profiles, or the Stage and Root README forms."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The 20 implementation READMEs of the code, configuration, agent and provider folders and their template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/common/readme-implementation.template.md",
+          ".agents/README.md",
+          ".claude/README.md",
+          ".codex/README.md",
+          ".agents/evaluations/README.md",
+          "examples/README.md",
+          "examples/sample-app/README.md",
+          "gitops/README.md",
+          "gitops/platform/README.md",
+          "gitops/workloads/README.md",
+          "infrastructure/README.md",
+          "infrastructure/verify/README.md",
+          "policy/README.md",
+          "scripts/README.md",
+          "secrets/README.md",
+          "tests/README.md",
+          "examples/azure/gitops/README.md",
+          "examples/azure/infrastructure/README.md",
+          "examples/azure/kubernetes/README.md",
+          "examples/aws/README.md",
+          "examples/azure/README.md",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validation/document_content.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_readme_navigation.py",
+          "tests/test_repository_quality_rules.py"
+        ],
+        "validation": {
+          "positive": [
+            "The Service README documents and the template pass the form tree, navigation, document-content, author-prompt and residue checks.",
+            "A Commands table with Command and Output columns, in that order, passes the document table check.",
+            "The navigation section Service Role of the implementation profile is read as the H3 of the form, with its H4 subsections, up to the next H3 or H2."
+          ],
+          "negative": [
+            "A Service README missing a form H3 fails BODY-H3-REQUIRED.",
+            "A Commands header that omits Output or reorders its columns fails BODY-TABLE-COLUMNS.",
+            "A child link under Service Role whose folder label does not resolve fails README-NAV-LABEL."
+          ],
+          "regression": [
+            "The loaded Service README profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
+            "tests/test_readme_navigation.py covers a service-style README with child links under Service Role and a broken child link.",
+            "tests/test_repository_quality_rules.py covers a document-content matrix under an H4."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0174 map moves each sentence of the former Overview, Scope, Structure, Usage, Verification and Related Documents sections into Purpose, Interfaces, Development or Operations without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous H2 sections of the implementation and runtime-governance READMEs and their templates.",
+          "rollback": "Revert the SPEC-0174 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Commands",
+            "section": "service-readme-development-checks",
+            "columns": [
+              {
+                "key": "Command",
+                "meaning": "The command a reader runs to check the service.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Output",
+                "meaning": "The result the command prints or the evidence it leaves.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Command"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-readme-audit-pack",
@@ -3483,6 +3561,7 @@
       "id": "common/template-readme-runtime-governance",
       "family": "common",
       "mode": "template",
+      "document_role": "service-readme",
       "path_pattern": "^docs/99\\.templates/templates/common/readme\\-runtime\\-governance\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-runtime-governance.template.md",
@@ -3513,13 +3592,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -3530,7 +3603,85 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for the runtime-governance README: a human document that states the role of the repository GitHub surface, its supported environment, its interfaces, how to develop and check it, and where to operate it.",
+        "responsibility": "The runtime-governance README owns the human-facing description of the GitHub surface and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
+        "non_goals": [
+          "Restating detailed policy, which belongs to its canonical owner document.",
+          "Holding agent instructions, which belong to the folder AGENTS.md.",
+          "Defining the Workspace and Reference Pack README forms, which keep their own profiles, or the Stage and Root README forms."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The .github/repository-surface.md README and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/common/readme-runtime-governance.template.md",
+          ".github/repository-surface.md",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validation/document_content.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_readme_navigation.py",
+          "tests/test_repository_quality_rules.py"
+        ],
+        "validation": {
+          "positive": [
+            "The Service README documents and the template pass the form tree, navigation, document-content, author-prompt and residue checks.",
+            "A Commands table with Command and Output columns, in that order, passes the document table check.",
+            "The navigation section Service Role of the implementation profile is read as the H3 of the form, with its H4 subsections, up to the next H3 or H2."
+          ],
+          "negative": [
+            "A Service README missing a form H3 fails BODY-H3-REQUIRED.",
+            "A Commands header that omits Output or reorders its columns fails BODY-TABLE-COLUMNS.",
+            "A child link under Service Role whose folder label does not resolve fails README-NAV-LABEL."
+          ],
+          "regression": [
+            "The loaded Service README profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
+            "tests/test_readme_navigation.py covers a service-style README with child links under Service Role and a broken child link.",
+            "tests/test_repository_quality_rules.py covers a document-content matrix under an H4."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0174 map moves each sentence of the former Overview, Scope, Structure, Usage, Verification and Related Documents sections into Purpose, Interfaces, Development or Operations without changing meaning; the Task records it.",
+          "retained_history": "Git history retains the previous H2 sections of the implementation and runtime-governance READMEs and their templates.",
+          "rollback": "Revert the SPEC-0174 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Commands",
+            "section": "service-readme-development-checks",
+            "columns": [
+              {
+                "key": "Command",
+                "meaning": "The command a reader runs to check the service.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Output",
+                "meaning": "The result the command prints or the evidence it leaves.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Command"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-reference-audit",
@@ -6527,7 +6678,7 @@
         "complete": true
       },
       "common/readme-implementation": {
-        "section": "Structure",
+        "section": "Service Role",
         "complete": false
       },
       "reference/audit-pack": {
@@ -8759,6 +8910,308 @@
                 ],
                 "prohibited_content": [
                   "Task 상태를 독립적으로 수동 관리하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          }
+        ],
+        "extensions": []
+      },
+      {
+        "form_id": "service-readme",
+        "title": "Service README",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "service-readme-purpose",
+            "level": 2,
+            "parent_id": null,
+            "title": "Purpose",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "서비스 진입 안내",
+            "required_content": [
+              "서비스 진입 안내에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "service-readme-purpose-service-role",
+                "level": 3,
+                "parent_id": "service-readme-purpose",
+                "title": "Service Role",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "서비스 책임·소유자",
+                "required_content": [
+                  "서비스 책임·소유자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "service-readme-purpose-supported-environment",
+                "level": 3,
+                "parent_id": "service-readme-purpose",
+                "title": "Supported Environment",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 환경·지원 범위",
+                "required_content": [
+                  "실제 환경·지원 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "service-readme-interfaces",
+            "level": 2,
+            "parent_id": null,
+            "title": "Interfaces",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "서비스 외부 계약",
+            "required_content": [
+              "서비스 외부 계약에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "service-readme-interfaces-inputs-and-outputs",
+                "level": 3,
+                "parent_id": "service-readme-interfaces",
+                "title": "Inputs and Outputs",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "입출력·API·의존 서비스",
+                "required_content": [
+                  "입출력·API·의존 서비스을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "service-readme-interfaces-security-boundary",
+                "level": 3,
+                "parent_id": "service-readme-interfaces",
+                "title": "Security Boundary",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "접근·네트워크·비밀 입력 경계",
+                "required_content": [
+                  "접근·네트워크·비밀 입력 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "service-readme-development",
+            "level": 2,
+            "parent_id": null,
+            "title": "Development",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "개발·검사 경로",
+            "required_content": [
+              "개발·검사 경로에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "service-readme-development-local-workflow",
+                "level": 3,
+                "parent_id": "service-readme-development",
+                "title": "Local Workflow",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 수정·생성·개발 절차",
+                "required_content": [
+                  "실제 수정·생성·개발 절차을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "service-readme-development-checks",
+                "level": 3,
+                "parent_id": "service-readme-development",
+                "title": "Checks",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "검증 명령·입력·기대 결과",
+                "required_content": [
+                  "검증 명령·입력·기대 결과을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "service-readme-operations",
+            "level": 2,
+            "parent_id": null,
+            "title": "Operations",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "운영 안내",
+            "required_content": [
+              "운영 안내에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "service-readme-operations-runbook-links",
+                "level": 3,
+                "parent_id": "service-readme-operations",
+                "title": "Runbook Links",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "현행 실행·장애·복구 절차",
+                "required_content": [
+                  "현행 실행·장애·복구 절차을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "service-readme-operations-observability-and-recovery",
+                "level": 3,
+                "parent_id": "service-readme-operations",
+                "title": "Observability and Recovery",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "관측·중단 조건·운영 담당",
+                "required_content": [
+                  "관측·중단 조건·운영 담당을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "민감한 운영 상태를 노출하거나 모든 서비스에 미존재 도구를 강제하지 않는다.",
                   "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
                 ],
                 "empty_policy": "explain_none_or_not_applicable",

@@ -1,30 +1,28 @@
 ---
 title: "platform"
-version: "0.2.1"
+version: "0.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-13"
 ---
 # platform
 
 > App-of-Apps가 배포하는 공통 플랫폼 리소스의 Kustomize 진입점을 관리한다.
 
-## Overview
+## Purpose
+
+### Service Role
 
 이 경로의 각 하위 디렉터리는 `apps/root`의 `platform-*` Application 하나가
 가리키는 공통 플랫폼 구성 단위다. 앱 워크로드는 `../workloads/`가 소유한다.
 
-## Scope
-
-각 디렉터리는 desired state만 선언한다. secret 값, 외부 서비스 런타임, live
-cluster 변경은 이 폴더의 범위가 아니며 [gitops](../README.md)의 경계를 따른다.
-
-## Structure
-
 아래 표가 이 폴더의 직접 하위 디렉터리를 안내한다.
 
-### Platform Coverage Matrix
+- [gitops](../README.md)
+- [workloads](../workloads/README.md)
+
+#### Platform Coverage Matrix
 
 이 표는 공통 플랫폼 디렉터리와 운영 책임을 연결한다. `repository-quality`
 게이트는 이 표가 이 폴더의 실제 하위 디렉터리와 순서까지 동기화되어 있는지
@@ -43,17 +41,39 @@ cluster 변경은 이 폴더의 범위가 아니며 [gitops](../README.md)의 �
 | `namespaces` | Namespace desired state owned by platform maintainers.                                          | Kustomize config for platform, apps, ingress, ESO, cert-manager, Istio, Headlamp, Rollouts, and monitoring namespaces. | Dependencies are cluster-scoped namespace resources; no secrets.                                                               | Validate Kustomize completeness and manifest syntax.                                                                                                                                  |
 | `network-policies` | Network egress policy owned by platform/security maintainers.                                   | Kustomize config for apps, monitoring, Kiali, ESO-to-Vault, and ArgoCD-to-Valkey egress.                               | Depends on namespace labels, external service addresses, Vault, Valkey, and observability endpoints.                           | Validate Kustomize completeness and manifests; live behavior requires `verify-network-policies.sh`.                                                                                   |
 
-## Usage
+### Supported Environment
+
+각 디렉터리는 desired state만 선언한다. secret 값, 외부 서비스 런타임, live
+cluster 변경은 이 폴더의 범위가 아니며 [gitops](../README.md)의 경계를 따른다.
+
+## Interfaces
+
+### Inputs and Outputs
+
+이 README는 별도의 외부 입출력 계약을 정의하지 않으며, 각 디렉터리의 의존성과 경로는 Platform Coverage Matrix의 열이 적는다.
+
+### Security Boundary
+
+secret 값과 credential을 다루지 않는 경계는 위 Supported Environment에 적혀 있다.
+
+## Development
+
+### Local Workflow
 
 변경은 reviewed pull request로 반영하고 ArgoCD가 동기화한다. 운영 절차는
 `docs/05.operations/`가 소유한다.
 
-## Verification
+### Checks
 
 각 행의 Validation and operations 열이 해당 디렉터리의 정적 검증 명령을
 명시한다. 저장소 전체 검증은 `python3 scripts/qa.py staged`로 실행한다.
 
-## Related Documents
+## Operations
 
-- [gitops](../README.md)
-- [workloads](../workloads/README.md)
+### Runbook Links
+
+이 README는 별도의 runbook 링크를 두지 않으며, 운영 절차의 소유처는 Local Workflow에 `docs/05.operations/`로 적혀 있다.
+
+### Observability and Recovery
+
+이 README는 별도의 관측·복구 절차를 두지 않으며, 각 디렉터리의 live 확인은 Platform Coverage Matrix의 Validation and operations 열이 적는다.

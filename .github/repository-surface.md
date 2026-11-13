@@ -1,28 +1,20 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.5.2"
+version: "0.6.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-11-13"
 ---
 # GitHub Configuration Hub
 
-## Overview
+## Purpose
+
+### Service Role
 
 이 문서는 `hy-home.k8s`의 GitHub 자동화 surface를 안내하는 routing 문서다.
 정책의 정본은 아니다. `.github/README.md`는 GitHub가 저장소 프로필 페이지로
 해석하므로 이 이름을 사용한다.
-
-## Scope
-
-이 디렉터리는 PR branch·title·새 commit metadata, 선택된 PR style 검사와 저장소 유지보수
-자동화를 제공한다.
-로컬 QA와 release 준비는 별도의 현재 소유자가 수행한다. GitHub Actions는
-full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 또는 release
-게시자가 아니다.
-
-## Structure
 
 - `workflows/` - PR branch·title·새 commit metadata, 선택된 PR style과 유지보수 자동화
 - `ISSUE_TEMPLATE/` - 버그·기능 요청 접수 양식
@@ -32,9 +24,19 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 - `SECURITY.md` - 취약점 신고 안내
 - `AGENTS.md` - 이 폴더의 에이전트 지시
 
-## Usage
+### Supported Environment
 
-### Policy Routing
+이 디렉터리는 PR branch·title·새 commit metadata, 선택된 PR style 검사와 저장소 유지보수
+자동화를 제공한다.
+로컬 QA와 release 준비는 별도의 현재 소유자가 수행한다. GitHub Actions는
+full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 또는 release
+게시자가 아니다.
+
+## Interfaces
+
+### Inputs and Outputs
+
+#### Policy Routing
 
 - branch 전략은 `.agents/governance/git.md`가 소유한다.
   `workflows/ci.yml`의 `ci-summary` job은 PR의 base와 source prefix를
@@ -78,7 +80,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 - PR 작성자와 리뷰어 안내는 `PULL_REQUEST_TEMPLATE.md`에 있다.
 - 전체 SHA로 Action을 고정하는 규칙은 저장소 품질 gate가 강제한다.
 
-### Workflow Roles
+#### Workflow Roles
 
 - `ci.yml`의 `ci-summary`는 main 대상 push·pull request·`workflow_dispatch`
   에서 PR branch·title·새 commit metadata를 처리한다. PR title과 commit
@@ -104,7 +106,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
   GitHub Release는 승인된 정확한 main commit의 단일 producer가 맡는다.
   저장소 파일만으로 실제 게시나 원격 설정을 인증하지 않는다.
 
-### Workflow Responsibility Matrix
+#### Workflow Responsibility Matrix
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
@@ -112,12 +114,32 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on every opened or synchronized pull request; the action matches paths itself. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
 
-## Related Documents
+### Security Boundary
 
-### Source Basis
+이 문서에는 secret, credential, 권한 경계만을 다루는 별도 내용이 없다.
+
+## Development
+
+### Local Workflow
+
+이 문서는 GitHub 자동화 surface를 안내하는 routing 문서이며 로컬 작업 절차를 담지 않는다.
+
+### Checks
+
+#### Source Basis
 
 - 현재 workflow 계약은 `.github/workflows/*.yml`과 공통
   [Quality policy](../.agents/governance/quality.md)가 소유한다.
 - 과거 SPEC-0103과 완료 증거는 Git history에서 복구한다. 완료 Spec을 현재 실행 권위로 사용하지 않는다.
 - 외부 도구 계약이 바뀌면 공식 출처를 확인하고 현재 소유자와 소비자를
   함께 갱신한다.
+
+## Operations
+
+### Runbook Links
+
+이 문서에는 runbook이나 운영 가이드 링크가 없다.
+
+### Observability and Recovery
+
+이 문서에는 운영 관측과 복구만을 다루는 별도 내용이 없다.

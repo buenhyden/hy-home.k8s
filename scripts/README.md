@@ -1,14 +1,16 @@
 ---
 title: "scripts"
-version: "0.12.0"
+version: "0.13.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-13"
 ---
 # scripts
 
-## Overview
+## Purpose
+
+### Service Role
 
 `scripts/`는 저장소의 문서, Agent governance, GitOps, CI, 보안 경계를
 repository-static 방식으로 검증하는 실행 코드의 소유 경로다. 사람에게 보이는
@@ -21,30 +23,73 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 호출하고 결과를 정규화한다. production module은 top-level `tests/`를 import하거나
 `tests/fixtures/`를 runtime input으로 읽지 않는다.
 
-### Audience
+- Validation ownership ADR (`docs/02.architecture/decisions/README.md`)
+- [Tests](../tests/README.md)
+
+검증 책임의 현재 owner는 공통 Quality policy와 `scripts/validation/registry.json`이다.
+과거 결정과 완료 기록은 Git history 탐색을 통해 확인하는 배경 증거이며,
+현재 실행 절차의 선행 조건이 아니다.
+
+#### Audience
 
 - Platform maintainers
 - Quality engineers
 - Documentation maintainers
 
-### Scope
+#### Routing and orchestration
 
-#### In Scope
+| Path | Purpose |
+| --- | --- |
+| `validation/registry.json`과 그 schema | validator, surface, lane, 인자, fallback 계약 |
+| `AGENTS.md` | 이 폴더의 에이전트 지시. 실행 코드가 아니다. |
+| `select-affected-surfaces.py` | 경로를 surface로 고르는 순수 선택 projection |
+| `githooks/chained-hook.sh`와 그 `pre-commit`, `commit-msg`, `pre-push` 링크 | 사용자의 전역 Git hook을 먼저 실행한 뒤 이 workspace의 hook을 실행하고, 처음 나온 0이 아닌 상태를 반환 |
+| `commit-message-exceptions.py` | `.pre-commit-config.yaml`의 commit-msg stage에서 pinned Commitizen 뒤에 실행한다. `.cz.toml`의 생성 메시지 pattern으로 Git Merge/Revert 생성 형식의 구문만 예외로 인정하며 prefix 위조를 거부한다. 같은 형식의 수동 메시지도 통과하므로 실제 생성·merge/revert·provenance를 증명하지 않는다. 일반 메시지 문법은 Commitizen, PR title은 trusted-base authored schema가 소유하고 이 guard를 쓰지 않는다. hook 등록만으로 실제 로딩·실행을 주장하지 않는다. |
+| `validate-affected-surfaces.py` | registry와 추적 경로 coverage 검증 |
+| `run-validation-lane.py` | 현재 v4 소스의 affected·staged 선택 입력을 제한해 실행하고 결과를 정규화한다. 선택된 변경 경로를 문서 reader에 전달하며, 인자 수나 크기 한계를 넘으면 reader의 전체 검사를 사용한다. 구형 all-files 집계 경로 제거의 검증·수용 상태는 [Stage 03 Spec navigation](../docs/03.specs/README.md)에서 찾는 SPEC-0107 Task가 기록한다. |
+| `validate-selected-style.py` | 변경 경로에 검토된 style hook을 일회용 저장소에서 실행해 검사한다. |
+| `validate-selected-nonstyle.py` | 검토된 non-style hook을 격리된 QA 스냅샷의 선택 경로에 실행한다. |
+| `qa.py` | 지원되는 QA 진입점. profile의 gate ID를 registry에서 해석해, 격리된 작업 트리나 정확한 index 스냅샷에서 실행한다. 한 실행에서 캡처한 스냅샷 트리를 gate 입력 identity에도 재사용한다. validator argv나 규칙 구현은 담지 않는다. |
+| `validation/` 규칙 module | 전용 validator가 아직 소유하지 않은 저장소 전체 규칙(repository/quality.py)과, 현재 실행 대상과 Git 우선 역사 복구의 구분(current_executable_references.py) |
 
-- 문서 profile, lifecycle, link, owner 검증
-- Agent registry, provider projection, loop, CI 계약 검증
-- 선택된 affected·staged routing과 목적별 제한된 subprocess 실행
-- GitOps, Kubernetes, Vault/ESO, GitHub Actions, CI Python 검사
-- 아직 더 좁은 전용 owner가 없는 저장소 전체 계약
+#### Document owners
 
-#### Out of Scope
+| 경로 묶음 | 책임 |
+| --- | --- |
+| `document_contracts.py`, `validate-document-contract-registry.py`, `validate-markdown-profiles.py` | route·profile 분류와 작성된 Markdown의 의미 검증. affected·staged의 변경 경로가 본문 검사 대상을 정하며, 현재 문서의 metadata·identity 검사와 English-only 파일 검사는 유지한다. 생산자·reader helper 변경은 Registry의 문서 검사 owner로 연결한다. |
+| `document_authority.py`, `validate-links-and-owners.py` | 현재 owner와 문서 간 관계의 의미 검증. 링크 검사 한 실행의 context가 Registry와 문서 inventory를 보유해 같은 입력의 재조회에 쓰인다. |
+| `document_lifecycle.py`, `validate-document-lifecycle.py` | registry가 분류한 lifecycle과 staged index 전이 |
+| `document_language.py` | 문서의 언어를 판정하는 순수 규칙 |
+| `validate-knowledge-surface.py` | knowledge owner 포인터, Repository Vocabulary 용어 표와 제한된 관찰 출처 검증 |
+| `document-backlinks.py` | 정방향 링크에서 한 문서를 가리키는 추적 문서 목록을 파생하는 탐색 도구(gate 아님) |
+| `json_schema_validation.py` | production validator가 함께 쓰는 오프라인 JSON Schema 로딩 |
+| `run-contract-tests.py` | 이름 있는 suite 하나의 계약 회귀를 그 suite의 목적 gate로 실행한다. suite별 모듈 목록은 이 파일이 소유하며, 각 gate는 Registry에서 `--suite`로 suite 하나를 지정한다. 긴 blanket unit discovery의 간접 `coveredBy`를 현재 완료 조건으로 삼지 않는다. |
 
-- hosted CI, branch protection, provider runtime, credential, 배포, live cluster 증거
-- test fixture, 합성 mutation, 고정된 negative case inventory
-- branch tip, 현재 문서, 현재 스크립트, 줄 번호, corpus 개수를 고정하는 pin
-- Stage 00, SDLC stage, Operations에서 옮겨 온 정책 문장
+`docs/98.archive/`는 검증 대상이 아니다. 문서 검사는 그 경로를 inventory에서
+제외하고, 변경 시에는 secret 검사만 실행한다. 이 경로를 가리키는 링크도 검사하지 않는다.
 
-## Scope
+#### Agent governance owners
+
+| 경로 | 책임 |
+| --- | --- |
+| `validate-agent-governance.py` | role·schema, native metadata, 권한, skill |
+| `prompt-input.py` | 선언된 계약에서 모델 호출 없이 prompt 요청을 조립 |
+| `workspace_memory.py` | Claude와 Codex 세션이 공유하는 workspace memory 저장소. memory는 결정 맥락일 뿐 Task 상태나 증거가 아니다. |
+
+#### Platform and supply-chain owners
+
+| 경로 | 책임 |
+| --- | --- |
+| `validate-gitops-change-set.py`, `validate-gitops-structure.sh` | GitOps identity와 구조 검증 |
+| `validate-k8s-manifests.sh`, `validate-policy-gates.sh` | manifest 문법과 저장소 정책 검사 |
+| `validate-infrastructure-contracts.sh` | 저장소 정적 infrastructure 계약 검사. live cluster 검사는 `infrastructure/verify/`에 있다. |
+| `validate-vault-eso-contracts.py`, `check-secret-handling.sh` | Vault·ESO 참조 계약과, 값을 가린 secret 패턴 검사 |
+| `validate-github-actions-security.py`, `validate-ci-python-contract.py`, `validate-pr-metadata.py` | workflow 공급망과 Python 의존성 계약. `validate-pr-metadata.py`는 `ci-summary`의 PR metadata 검사 원본으로, 신뢰된 base의 `.cz.toml` 문법에 따라 PR title과 새 commit 범위를 확인한다. hosted 결과는 로컬 QA를 대체하지 않는다. |
+| `validate-workspace-boundary.py` | staged workspace 경계와 ignore 경로 계약 |
+| `render-platform-chart-kinds.sh` | 운영자가 직접 실행하는 chart kind 리뷰 보조 도구 |
+| `release.py` | main changelog PR을 준비하고 SemVer GitHub Release 하나를 명시적으로 게시한다. 기본은 로컬 읽기 전용 미리보기이며 `publish --execute`는 운영자 작업이다. |
+
+### Supported Environment
 
 - 문서 route·profile 값은 [Stage 99 계약](../docs/99.templates/README.md)에서만 온다.
 - Agent role, 권한, skill, handoff, projection은
@@ -65,64 +110,40 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 일반 파일이 아닌 경계를 닫힌 쪽으로 실패시킨다. 진단 메시지에는 secret 값을
 담지 않는다.
 
-## Structure
+#### Scope
 
-### Routing and orchestration
+##### In Scope
 
-| Path | Purpose |
-| --- | --- |
-| `validation/registry.json`과 그 schema | validator, surface, lane, 인자, fallback 계약 |
-| `AGENTS.md` | 이 폴더의 에이전트 지시. 실행 코드가 아니다. |
-| `select-affected-surfaces.py` | 경로를 surface로 고르는 순수 선택 projection |
-| `githooks/chained-hook.sh`와 그 `pre-commit`, `commit-msg`, `pre-push` 링크 | 사용자의 전역 Git hook을 먼저 실행한 뒤 이 workspace의 hook을 실행하고, 처음 나온 0이 아닌 상태를 반환 |
-| `commit-message-exceptions.py` | `.pre-commit-config.yaml`의 commit-msg stage에서 pinned Commitizen 뒤에 실행한다. `.cz.toml`의 생성 메시지 pattern으로 Git Merge/Revert 생성 형식의 구문만 예외로 인정하며 prefix 위조를 거부한다. 같은 형식의 수동 메시지도 통과하므로 실제 생성·merge/revert·provenance를 증명하지 않는다. 일반 메시지 문법은 Commitizen, PR title은 trusted-base authored schema가 소유하고 이 guard를 쓰지 않는다. hook 등록만으로 실제 로딩·실행을 주장하지 않는다. |
-| `validate-affected-surfaces.py` | registry와 추적 경로 coverage 검증 |
-| `run-validation-lane.py` | 현재 v4 소스의 affected·staged 선택 입력을 제한해 실행하고 결과를 정규화한다. 선택된 변경 경로를 문서 reader에 전달하며, 인자 수나 크기 한계를 넘으면 reader의 전체 검사를 사용한다. 구형 all-files 집계 경로 제거의 검증·수용 상태는 [Stage 03 Spec navigation](../docs/03.specs/README.md)에서 찾는 SPEC-0107 Task가 기록한다. |
-| `validate-selected-style.py` | 변경 경로에 검토된 style hook을 일회용 저장소에서 실행해 검사한다. |
-| `validate-selected-nonstyle.py` | 검토된 non-style hook을 격리된 QA 스냅샷의 선택 경로에 실행한다. |
-| `qa.py` | 지원되는 QA 진입점. profile의 gate ID를 registry에서 해석해, 격리된 작업 트리나 정확한 index 스냅샷에서 실행한다. 한 실행에서 캡처한 스냅샷 트리를 gate 입력 identity에도 재사용한다. validator argv나 규칙 구현은 담지 않는다. |
-| `validation/` 규칙 module | 전용 validator가 아직 소유하지 않은 저장소 전체 규칙(repository/quality.py)과, 현재 실행 대상과 Git 우선 역사 복구의 구분(current_executable_references.py) |
+- 문서 profile, lifecycle, link, owner 검증
+- Agent registry, provider projection, loop, CI 계약 검증
+- 선택된 affected·staged routing과 목적별 제한된 subprocess 실행
+- GitOps, Kubernetes, Vault/ESO, GitHub Actions, CI Python 검사
+- 아직 더 좁은 전용 owner가 없는 저장소 전체 계약
 
-### Document owners
+##### Out of Scope
 
-| 경로 묶음 | 책임 |
-| --- | --- |
-| `document_contracts.py`, `validate-document-contract-registry.py`, `validate-markdown-profiles.py` | route·profile 분류와 작성된 Markdown의 의미 검증. affected·staged의 변경 경로가 본문 검사 대상을 정하며, 현재 문서의 metadata·identity 검사와 English-only 파일 검사는 유지한다. 생산자·reader helper 변경은 Registry의 문서 검사 owner로 연결한다. |
-| `document_authority.py`, `validate-links-and-owners.py` | 현재 owner와 문서 간 관계의 의미 검증. 링크 검사 한 실행의 context가 Registry와 문서 inventory를 보유해 같은 입력의 재조회에 쓰인다. |
-| `document_lifecycle.py`, `validate-document-lifecycle.py` | registry가 분류한 lifecycle과 staged index 전이 |
-| `document_language.py` | 문서의 언어를 판정하는 순수 규칙 |
-| `validate-knowledge-surface.py` | knowledge owner 포인터, Repository Vocabulary 용어 표와 제한된 관찰 출처 검증 |
-| `document-backlinks.py` | 정방향 링크에서 한 문서를 가리키는 추적 문서 목록을 파생하는 탐색 도구(gate 아님) |
-| `json_schema_validation.py` | production validator가 함께 쓰는 오프라인 JSON Schema 로딩 |
-| `run-contract-tests.py` | 이름 있는 suite 하나의 계약 회귀를 그 suite의 목적 gate로 실행한다. suite별 모듈 목록은 이 파일이 소유하며, 각 gate는 Registry에서 `--suite`로 suite 하나를 지정한다. 긴 blanket unit discovery의 간접 `coveredBy`를 현재 완료 조건으로 삼지 않는다. |
+- hosted CI, branch protection, provider runtime, credential, 배포, live cluster 증거
+- test fixture, 합성 mutation, 고정된 negative case inventory
+- branch tip, 현재 문서, 현재 스크립트, 줄 번호, corpus 개수를 고정하는 pin
+- Stage 00, SDLC stage, Operations에서 옮겨 온 정책 문장
 
-`docs/98.archive/`는 검증 대상이 아니다. 문서 검사는 그 경로를 inventory에서
-제외하고, 변경 시에는 secret 검사만 실행한다. 이 경로를 가리키는 링크도 검사하지 않는다.
+## Interfaces
 
-### Agent governance owners
+### Inputs and Outputs
 
-| 경로 | 책임 |
-| --- | --- |
-| `validate-agent-governance.py` | role·schema, native metadata, 권한, skill |
-| `prompt-input.py` | 선언된 계약에서 모델 호출 없이 prompt 요청을 조립 |
-| `workspace_memory.py` | Claude와 Codex 세션이 공유하는 workspace memory 저장소. memory는 결정 맥락일 뿐 Task 상태나 증거가 아니다. |
+- [Agent execution policy](../.agents/governance/agent-execution.md)
+- [Quality policy](../.agents/governance/quality.md)
+- [Document authoring policy](../.agents/governance/document-authoring.md)
 
-### Platform and supply-chain owners
+### Security Boundary
 
-| 경로 | 책임 |
-| --- | --- |
-| `validate-gitops-change-set.py`, `validate-gitops-structure.sh` | GitOps identity와 구조 검증 |
-| `validate-k8s-manifests.sh`, `validate-policy-gates.sh` | manifest 문법과 저장소 정책 검사 |
-| `validate-infrastructure-contracts.sh` | 저장소 정적 infrastructure 계약 검사. live cluster 검사는 `infrastructure/verify/`에 있다. |
-| `validate-vault-eso-contracts.py`, `check-secret-handling.sh` | Vault·ESO 참조 계약과, 값을 가린 secret 패턴 검사 |
-| `validate-github-actions-security.py`, `validate-ci-python-contract.py`, `validate-pr-metadata.py` | workflow 공급망과 Python 의존성 계약. `validate-pr-metadata.py`는 `ci-summary`의 PR metadata 검사 원본으로, 신뢰된 base의 `.cz.toml` 문법에 따라 PR title과 새 commit 범위를 확인한다. hosted 결과는 로컬 QA를 대체하지 않는다. |
-| `validate-workspace-boundary.py` | staged workspace 경계와 ignore 경로 계약 |
-| `render-platform-chart-kinds.sh` | 운영자가 직접 실행하는 chart kind 리뷰 보조 도구 |
-| `release.py` | main changelog PR을 준비하고 SemVer GitHub Release 하나를 명시적으로 게시한다. 기본은 로컬 읽기 전용 미리보기이며 `publish --execute`는 운영자 작업이다. |
+이 문서에는 secret, credential, 권한 경계만을 다루는 별도 내용이 없다.
 
-## Usage
+## Development
 
-### Working Procedure
+### Local Workflow
+
+#### Working Procedure
 
 1. `validation/registry.json`에서 규칙과 그 전용 의미 owner를 찾는다.
 2. 동작을 바꾸기 전에 독립적인 top-level 테스트를 추가하거나 고친다.
@@ -141,7 +162,7 @@ inventory, 내장 mutation suite를 만들지 않는다. 호스팅 check 이름�
 branch protection의 활성 상태는 실제 원격에서 확인해야 하며, 저장소 파일만으로
 required-check 성공이나 설정을 주장하지 않는다.
 
-## Verification
+### Checks
 
 가장 작은 owner부터 실행하고 현재 작업에 필요한 affected·staged lane을
 선택한다. 로컬 커밋마다 정확한 index 기준의 staged QA가 필요하다. 이 public
@@ -173,7 +194,7 @@ index에는 `qa.py staged`를 쓴다. 하위 runner는 진단용 인터페이스
 제한되고 NUL로 구분되어야 한다. 문서 reader의 `--change-scope`는 이 선택
 입력이 있을 때만 쓰며, 명시적 전체 감사에서는 사용하지 않는다.
 
-### Reproducing the local dependency identity
+#### Reproducing the local dependency identity
 
 validator는 자신을 호출한 interpreter에서 실행된다. 다른 로컬 머신의
 library 차이를 통제하려면 검토된 lock으로 task-owned 환경을 구성하고
@@ -247,14 +268,12 @@ python3 scripts/run-validation-lane.py \
 저장소 정적 PASS는 검사한 저장소 상태만 증명한다. hosted 실행, provider native
 강제, credential, 원격 상태, 배포, live cluster 동작은 증명하지 않는다.
 
-## Related Documents
+## Operations
 
-- [Agent execution policy](../.agents/governance/agent-execution.md)
-- [Quality policy](../.agents/governance/quality.md)
-- [Document authoring policy](../.agents/governance/document-authoring.md)
-- Validation ownership ADR (`docs/02.architecture/decisions/README.md`)
-- [Tests](../tests/README.md)
+### Runbook Links
 
-검증 책임의 현재 owner는 공통 Quality policy와 `scripts/validation/registry.json`이다.
-과거 결정과 완료 기록은 Git history 탐색을 통해 확인하는 배경 증거이며,
-현재 실행 절차의 선행 조건이 아니다.
+이 문서에는 runbook이나 운영 가이드 링크가 없다.
+
+### Observability and Recovery
+
+이 문서에는 운영 관측과 복구만을 다루는 별도 내용이 없으며, 기본 복구 출처는 Git history다.

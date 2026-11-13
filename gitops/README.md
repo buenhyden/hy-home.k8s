@@ -1,16 +1,18 @@
 ---
 title: "gitops"
-version: "0.3.3"
+version: "0.4.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-13"
 ---
 # gitops
 
 > ArgoCD App-of-Apps 기반으로 로컬 클러스터 desired state를 선언형 관리한다.
 
-## Overview
+## Purpose
+
+### Service Role
 
 이 디렉터리는 ArgoCD가 동기화할 GitOps 리소스를 포함한다. 프로젝트 경계(AppProject), ApplicationSet, 루트 애플리케이션, 플랫폼 리소스, 워크로드 리소스를 분리해 로컬 k3d 클러스터의 declarative desired state를 Git에 versioned 상태로 추적한다.
 
@@ -18,17 +20,23 @@ updated: "2026-10-27"
 
 현재 구현 범위는 `clusters/local`의 bootstrap/AppProject/ApplicationSet, `apps/root`의 플랫폼 Application 선언, `platform/*`의 공통 컴포넌트, `workloads/adminer`의 앱 패턴 참조 구현이다.
 
-`platform/external-services`의 `Service`와 `EndpointSlice` 파일은 외부
-management Valkey·Loki·Tempo·Alloy 연결의 Git desired state SSoT다.
-management/development PostgreSQL은 현재 K8s EndpointSlice 소비자가 없는
-호스트 loopback 서비스다.
-OpenBao·Prometheus·Grafana는 외부 HTTPS 이름으로 접근하며 이 디렉터리에서
-Service/EndpointSlice를 선언하지 않는다.
-ArgoCD resource exclusion 또는 runtime drift 때문에 직접 EndpointSlice
-patch/apply가 필요한 경우에도 이는 human-approved break-glass 예외이며,
-실행 후 실제 endpoint 값을 Git과 운영 증적에 되돌려 맞춰야 한다.
+```text
+gitops/
+├── clusters/    # root Application, AppProjects, apps ApplicationSet
+├── apps/        # platform-* Application 선언과 App-of-Apps entry
+├── platform/    # 공통 플랫폼 리소스
+├── workloads/   # ApplicationSet이 스캔하는 앱 워크로드
+├── AGENTS.md    # 폴더 에이전트 지시
+└── README.md
+```
 
-### Audience
+- ADR-0002 (`docs/02.architecture/decisions/README.md`)
+- ADR-0014 (`docs/02.architecture/decisions/README.md`)
+- Architecture (`docs/02.architecture/descriptions/README.md`)
+- [Workloads README](./workloads/README.md)
+- [Examples README](../examples/README.md)
+
+#### Audience
 
 이 README의 주요 독자:
 
@@ -36,30 +44,43 @@ patch/apply가 필요한 경우에도 이는 human-approved break-glass 예외�
 - Operators
 - Documentation Writers
 
-### Scope
+#### Service Coverage Matrix
 
-#### In Scope
+이 표는 `gitops/`의 bootstrap 진입점과 운영 책임을 연결한다.
+`repository-quality` 게이트는 이 표가 실제 `clusters/local`, `apps/root`
+디렉터리와 동기화되어 있는지 검증한다. 공통 플랫폼 리소스는
+[platform/](./platform/)의 Platform Coverage Matrix가, 앱 워크로드는
+[workloads/](./workloads/)의 Workload Coverage Matrix가 소유한다.
 
-- ArgoCD AppProject, ApplicationSet, Application 리소스
-- 플랫폼 공통 리소스와 워크로드 매니페스트
-- 로컬 k3d 클러스터의 GitOps desired state
-- 앱 온보딩을 위한 `gitops/workloads/` 구조
+| Area                         | Purpose and owner                                                                               | Lifecycle and config                                                                                                   | Dependencies, routes, secrets                                                                                                  | Validation and operations                                                                                                                                                             |
+| ---------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `clusters/local`             | Local ArgoCD bootstrap entrypoint owned by platform maintainers.                                | Contains root Application, AppProjects, and workload ApplicationSet.                                                   | Depends on ArgoCD and the repository URL/target revision contract; no application secrets live here.                           | Validate root Application/ApplicationSet hierarchy with `bash scripts/validate-gitops-structure.sh` and static contracts with `bash scripts/validate-infrastructure-contracts.sh`. |
+| `apps/root`                  | App-of-Apps root for platform components owned by platform maintainers.                         | Declares platform Application resources and Kustomize entrypoint.                                                      | Depends on `gitops/platform/*` paths, the self-managed `gitops/clusters/local` config app, and ArgoCD project permissions.     | Validate platform-project and local-source boundaries with GitOps structure and manifest checks before PR merge.                                                                      |
 
-#### Out of Scope
-
-- k3d 클러스터 생성과 ArgoCD 설치 스크립트
-- 외부 Vault/PostgreSQL/Valkey 런타임 자체 운영
-- AWS/Azure 실제 cloud 리소스 프로비저닝
-- live cluster mutation을 기본 운영 경로로 안내하는 문서
-
-## Scope
+### Supported Environment
 
 이 트리의 desired state는 Git이 소유한다. secret 값은 승인된 외부 저장소에
 두고 manifest에는 위 매트릭스에 나온 ExternalSecret, store, route 참조만 둔다.
 클러스터를 직접 바꾸는 일은 명시적으로 승인된 bootstrap이나 break-glass 경로로
 제한하며 그 결과는 다시 Git과 운영 증거에 반영해야 한다.
 
-### Namespace Ownership Matrix
+#### Scope
+
+##### In Scope
+
+- ArgoCD AppProject, ApplicationSet, Application 리소스
+- 플랫폼 공통 리소스와 워크로드 매니페스트
+- 로컬 k3d 클러스터의 GitOps desired state
+- 앱 온보딩을 위한 `gitops/workloads/` 구조
+
+##### Out of Scope
+
+- k3d 클러스터 생성과 ArgoCD 설치 스크립트
+- 외부 Vault/PostgreSQL/Valkey 런타임 자체 운영
+- AWS/Azure 실제 cloud 리소스 프로비저닝
+- live cluster mutation을 기본 운영 경로로 안내하는 문서
+
+#### Namespace Ownership Matrix
 
 이 표는 `CreateNamespace=true` 제거 후 namespace desired-state 소유권을
 고정한다. steady-state GitOps Application/ApplicationSet은 namespace를
@@ -77,7 +98,21 @@ patch/apply가 필요한 경우에도 이는 human-approved break-glass 예외�
 커밋 직전 최종 index 검사는 `python3 scripts/qa.py staged`가 맡는다.
 같은 입력과 설정의 leaf를 수동 명령으로 반복하지 않는다.
 
-### External Service Contract Matrix
+## Interfaces
+
+### Inputs and Outputs
+
+`platform/external-services`의 `Service`와 `EndpointSlice` 파일은 외부
+management Valkey·Loki·Tempo·Alloy 연결의 Git desired state SSoT다.
+management/development PostgreSQL은 현재 K8s EndpointSlice 소비자가 없는
+호스트 loopback 서비스다.
+OpenBao·Prometheus·Grafana는 외부 HTTPS 이름으로 접근하며 이 디렉터리에서
+Service/EndpointSlice를 선언하지 않는다.
+ArgoCD resource exclusion 또는 runtime drift 때문에 직접 EndpointSlice
+patch/apply가 필요한 경우에도 이는 human-approved break-glass 예외이며,
+실행 후 실제 endpoint 값을 Git과 운영 증적에 되돌려 맞춰야 한다.
+
+#### External Service Contract Matrix
 
 이 표는 외부 런타임 자체가 아니라 Kubernetes interface contract만 정리한다.
 `Valkey auth`는 management `mng-valkey`를 소비한다. 이전
@@ -97,45 +132,7 @@ host, port, secret key, TLS/CA, rotation, namespace naming을 바꾸는 작업�
 | `Vault API`        | `openbao.hy.home.arpa` (OpenBao behind the external Traefik); CoreDNS custom zone resolves it to host `192.168.0.13` (ADR-0046). | `443`   | ClusterSecretStore path `secret`; active OpenBao KV paths platform/argocd and platform/notifications. `platform/postgres-app` has no current OpenBao KV entry. | Kubernetes auth role `eso-read-platform`, service account `external-secrets/external-secrets`, audiences `vault` and the API server audience (OpenBao sends the token to TokenReview as its own credential); no secret value is stored in Git. | ESO uses TLS to `https://openbao.hy.home.arpa` and verifies the certificate with the mkcert root CA ConfigMap `external-secrets/openbao-ca`; external Vault management also requires HTTPS and a verified CA. | External Vault operator owns `bound_audiences=vault`, Vault token, policy application, auth mount refresh, and secret rotation evidence. | Service contract lives in `platform`; ESO service account lives in `external-secrets`.                                        | `python3 scripts/validate-vault-eso-contracts.py --root .`; `bash scripts/validate-infrastructure-contracts.sh`; live ESO/Vault checks require trusted kubeconfig. |
 | `Valkey auth`      | `valkey-external.platform.svc.cluster.local`; EndpointSlice host `192.168.0.13` (`mng-valkey`).   | `6379` → host `26379` | Vault path platform/argocd property `valkey_password`.                                                               | ExternalSecret `argocd-external-valkey` writes Kubernetes key `redis-password`.                                                                    | Current repository contract is TCP only; TLS/CA material is owned by the external Valkey service workspace if enabled.                                                                                     | External Valkey owner rotates `valkey_password` in Vault; ESO refreshes the ArgoCD target secret on its configured interval.             | Service contract lives in `platform`; ArgoCD target secret lives in `argocd`.                                                 | `bash scripts/validate-infrastructure-contracts.sh`; live secret readiness uses `infrastructure/verify/verify-secrets.sh`. <!-- pragma: allowlist secret -->        |
 
-### Secret Management Responsibility Matrix
-
-이 표는 External Secrets, Vault, Kubernetes target Secret의 책임 경계를
-정리한다. secret value, Vault KV 값, token, private key는 Git과 문서에
-기록하지 않는다.
-
-| Responsibility                       | Source / auth contract                                                                                                                                                         | Destination / naming rule                                                                                                                                           | Owner boundary                                                                                                                                                     | Value handling                                                                                                                                    | Validation                                                                                                                                                                                                                   |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ClusterSecretStore vault-backend`   | External Secrets Operator uses Vault Kubernetes auth through `vault-backend`, role `eso-read-platform`, exact audiences `vault` and `https://kubernetes.default.svc.cluster.local`, mount path `kubernetes`, and KV path `secret`. | Cluster-scoped store name stays `vault-backend`; service account is `external-secrets` in namespace `external-secrets`. | Platform/security owns the ClusterSecretStore manifest; external Vault operator owns matching `bound_audiences=vault`, auth configuration, and policy application. | No Vault token, reviewer JWT, CA content, or secret value is committed; these values stay outside Git and live auth refresh is operator-approved. | `python3 scripts/validate-vault-eso-contracts.py --root .`; `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live readiness uses `infrastructure/verify/verify-secrets.sh`. |
-| `ArgoCD argocd-external-valkey`      | ExternalSecret reads Vault path platform/argocd property `valkey_password` through `vault-backend`.                                                                          | Kubernetes target Secret name stays `argocd-external-valkey` in namespace `argocd`; target key stays `redis-password`.                                              | Platform maintainers own ArgoCD secret wiring; external Valkey owner rotates `valkey_password` in Vault.                                                           | Secret values remain outside Git; ESO refresh interval controls ArgoCD target Secret updates.                                                     | `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live readiness uses `infrastructure/verify/verify-secrets.sh`.                                                             |
-| `ArgoCD argocd-notifications-secret` | ExternalSecret reads Vault path `platform/notifications` property `slack_token` through `vault-backend`.                                                                       | Kubernetes target Secret name stays `argocd-notifications-secret` in namespace `argocd`; target key stays `slack-token`.                                            | Platform maintainers own notification wiring; notification token owner rotates `slack_token` in Vault.                                                             | Secret values remain outside Git; notification tokens must not appear in manifests, docs, or logs.                                                | `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live readiness uses `infrastructure/verify/verify-secrets.sh`.                                                             |
-| `Sample app ExternalSecret`          | Optional onboarding example uses ESO remoteRef key `apps/<appname>/config` through `vault-backend`; the Vault CLI path remains `secret/apps/<appname>/config`.                 | Kubernetes target Secret name follows `<appname>-secret` in namespace `apps`; sample keys are `db_password` and `api_key`.                                          | App operator owns app-specific Vault path requests; platform/security approves Vault policy changes before enabling the sample.                                    | Sample stays value-free and remains commented out in `examples/sample-app/kustomization.yaml` until an app needs it.                              | `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .`; repo-quality validates the sample boundary.                                                                                           |
-
-## Structure
-
-```text
-gitops/
-├── clusters/    # root Application, AppProjects, apps ApplicationSet
-├── apps/        # platform-* Application 선언과 App-of-Apps entry
-├── platform/    # 공통 플랫폼 리소스
-├── workloads/   # ApplicationSet이 스캔하는 앱 워크로드
-├── AGENTS.md    # 폴더 에이전트 지시
-└── README.md
-```
-
-### Service Coverage Matrix
-
-이 표는 `gitops/`의 bootstrap 진입점과 운영 책임을 연결한다.
-`repository-quality` 게이트는 이 표가 실제 `clusters/local`, `apps/root`
-디렉터리와 동기화되어 있는지 검증한다. 공통 플랫폼 리소스는
-[platform/](./platform/)의 Platform Coverage Matrix가, 앱 워크로드는
-[workloads/](./workloads/)의 Workload Coverage Matrix가 소유한다.
-
-| Area                         | Purpose and owner                                                                               | Lifecycle and config                                                                                                   | Dependencies, routes, secrets                                                                                                  | Validation and operations                                                                                                                                                             |
-| ---------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `clusters/local`             | Local ArgoCD bootstrap entrypoint owned by platform maintainers.                                | Contains root Application, AppProjects, and workload ApplicationSet.                                                   | Depends on ArgoCD and the repository URL/target revision contract; no application secrets live here.                           | Validate root Application/ApplicationSet hierarchy with `bash scripts/validate-gitops-structure.sh` and static contracts with `bash scripts/validate-infrastructure-contracts.sh`. |
-| `apps/root`                  | App-of-Apps root for platform components owned by platform maintainers.                         | Declares platform Application resources and Kustomize entrypoint.                                                      | Depends on `gitops/platform/*` paths, the self-managed `gitops/clusters/local` config app, and ArgoCD project permissions.     | Validate platform-project and local-source boundaries with GitOps structure and manifest checks before PR merge.                                                                      |
-
-### Workload Image and Kind Policy Matrix
+#### Workload Image and Kind Policy Matrix
 
 이 표는 현재 GitOps desired state에서 안전하게 자동 검증할 수 있는 image tag와
 workload kind 정책을 정리한다. `repository-quality` 게이트는 active
@@ -149,7 +146,7 @@ workload kind 정책을 정리한다. `repository-quality` 게이트는 active
 | `gitops/platform/*`     | Raw platform pod templates must use an explicit non-latest tag or digest. | Platform resources stay governed by the platform AppProject and component-specific manifests or charts. | Current raw platform images: `grafana/alloy:v1.18.1`, `registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.19.1`.                                                                                        | AppProject permissions and chart-managed resource-kind tightening remain separate semantic follow-ups.                  | `bash scripts/validate-gitops-structure.sh` and `bash scripts/validate-k8s-manifests.sh .`. |
 | `examples/sample-app/*` | placeholder image values are allowed only in the onboarding template.     | Example manifests are not active desired state until copied into `gitops/workloads/<appname>`.          | Template image placeholder: `ghcr.io/<owner>/<appname>:<tag>`.                                                                                                                                                | Replace placeholders and re-run active workload validation before committing a copied `gitops/workloads/<appname>` app. | `bash scripts/validate-k8s-manifests.sh .`.                                               |
 
-### AppProject Allow-list Rationale Matrix
+#### AppProject Allow-list Rationale Matrix
 
 이 표는 AppProject allow-list tightening 후 현재 허용 항목의 근거를
 고정한다. `apps` AppProject는 cluster-scoped 리소스를 허용하지 않고,
@@ -164,7 +161,7 @@ scan만으로 축소하지 않는다.
 | `apps`     | `policy namespaceResourceWhitelist` | `ExternalSecret`.                                                                                               | `docs/05.operations/policies/README.md` allows optional secret-backed workloads through ESO only.                                   | Remove only if app onboarding policy no longer supports ESO-backed app secrets.                                              | App onboarding policy review.                                                                                                                                                                             |
 | `platform` | `platform AppProject allow-lists`   | Raw platform manifests plus rendered chart-managed platform components.                                         | `bash scripts/render-platform-chart-kinds.sh .` renders Helm charts and confirms kind coverage against the platform AppProject after raw manifest scan review. | New platform chart kinds require chart render review and ArgoCD sync impact review before the AppProject allow-list changes. | `bash scripts/render-platform-chart-kinds.sh .`, `bash scripts/validate-infrastructure-contracts.sh`, `bash scripts/validate-gitops-structure.sh` and `bash scripts/validate-k8s-manifests.sh .`. |
 
-### Platform Chart Render Review Matrix
+#### Platform Chart Render Review Matrix
 
 이 표는 `gitops/apps/root`의 Helm chart Application을 `helm template
 --include-crds`로 렌더링한 결과다. platform AppProject allow-list는 아래
@@ -182,9 +179,28 @@ kind와 raw platform manifest kind를 기준으로 유지한다.
 | `platform-rollouts`                  | `argo-rollouts`    | `2.40.9`        | `argo-rollouts`    | `ConfigMap`, `Service`, `ServiceAccount`, `apiextensions.k8s.io/CustomResourceDefinition`, `apps/Deployment`, `networking.k8s.io/Ingress`, `rbac.authorization.k8s.io/ClusterRole`, `rbac.authorization.k8s.io/ClusterRoleBinding`.                                                                                                                                                                                               |
 | `platform-traefik`                   | `traefik`          | `42.1.3`        | `traefik`          | `ConfigMap`, `Service`, `ServiceAccount`, `apps/Deployment`, `rbac.authorization.k8s.io/ClusterRole`, `rbac.authorization.k8s.io/ClusterRoleBinding`.                                                                                                                                                                                                                                                                             |
 
-## Usage
+### Security Boundary
 
-### Working Procedure
+secret과 credential을 저장소에 커밋하지 않는 경계는 위 Supported Environment의 Scope 문단에 함께 적혀 있다.
+
+#### Secret Management Responsibility Matrix
+
+이 표는 External Secrets, Vault, Kubernetes target Secret의 책임 경계를
+정리한다. secret value, Vault KV 값, token, private key는 Git과 문서에
+기록하지 않는다.
+
+| Responsibility                       | Source / auth contract                                                                                                                                                         | Destination / naming rule                                                                                                                                           | Owner boundary                                                                                                                                                     | Value handling                                                                                                                                    | Validation                                                                                                                                                                                                                   |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ClusterSecretStore vault-backend`   | External Secrets Operator uses Vault Kubernetes auth through `vault-backend`, role `eso-read-platform`, exact audiences `vault` and `https://kubernetes.default.svc.cluster.local`, mount path `kubernetes`, and KV path `secret`. | Cluster-scoped store name stays `vault-backend`; service account is `external-secrets` in namespace `external-secrets`. | Platform/security owns the ClusterSecretStore manifest; external Vault operator owns matching `bound_audiences=vault`, auth configuration, and policy application. | No Vault token, reviewer JWT, CA content, or secret value is committed; these values stay outside Git and live auth refresh is operator-approved. | `python3 scripts/validate-vault-eso-contracts.py --root .`; `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live readiness uses `infrastructure/verify/verify-secrets.sh`. |
+| `ArgoCD argocd-external-valkey`      | ExternalSecret reads Vault path platform/argocd property `valkey_password` through `vault-backend`.                                                                          | Kubernetes target Secret name stays `argocd-external-valkey` in namespace `argocd`; target key stays `redis-password`.                                              | Platform maintainers own ArgoCD secret wiring; external Valkey owner rotates `valkey_password` in Vault.                                                           | Secret values remain outside Git; ESO refresh interval controls ArgoCD target Secret updates.                                                     | `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live readiness uses `infrastructure/verify/verify-secrets.sh`.                                                             |
+| `ArgoCD argocd-notifications-secret` | ExternalSecret reads Vault path `platform/notifications` property `slack_token` through `vault-backend`.                                                                       | Kubernetes target Secret name stays `argocd-notifications-secret` in namespace `argocd`; target key stays `slack-token`.                                            | Platform maintainers own notification wiring; notification token owner rotates `slack_token` in Vault.                                                             | Secret values remain outside Git; notification tokens must not appear in manifests, docs, or logs.                                                | `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live readiness uses `infrastructure/verify/verify-secrets.sh`.                                                             |
+| `Sample app ExternalSecret`          | Optional onboarding example uses ESO remoteRef key `apps/<appname>/config` through `vault-backend`; the Vault CLI path remains `secret/apps/<appname>/config`.                 | Kubernetes target Secret name follows `<appname>-secret` in namespace `apps`; sample keys are `db_password` and `api_key`.                                          | App operator owns app-specific Vault path requests; platform/security approves Vault policy changes before enabling the sample.                                    | Sample stays value-free and remains commented out in `examples/sample-app/kustomization.yaml` until an app needs it.                              | `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .`; repo-quality validates the sample boundary.                                                                                           |
+
+## Development
+
+### Local Workflow
+
+#### Working Procedure
 
 1. 현재 플랫폼 구조는 Architecture (`docs/02.architecture/descriptions/README.md`), 운영 통제는 Operations Policy (`docs/05.operations/policies/README.md`)에서 확인한다.
 2. 새 앱은 [examples/sample-app](../examples/sample-app/README.md)을 복사해 `gitops/workloads/<appname>/`에서 시작한다.
@@ -195,24 +211,7 @@ kind와 raw platform manifest kind를 기준으로 유지한다.
    확인할 때만 골라 실행하며 같은 입력의 gate를 반복하지 않는다.
 5. secret 값은 매니페스트에 직접 쓰지 않고 External Secrets/Vault 계약으로 연결한다.
 
-### Current Hardening Deferrals
-
-현재 GitOps 구조는 정적 검증을 통과하지만, 아래 항목은 별도 검증 증거가
-필요하다.
-
-- `apps` AppProject allow-list 최소화와 `CreateNamespace=true` 제거는
-  desired-state에 반영되었고 위 matrix와 `repository-quality` 게이트가
-  드리프트를 검증한다. live 반영은 ArgoCD reconciliation 증적으로 확인한다.
-- image tag와 workload-kind 정책 스캔: active `gitops/workloads/*`와 raw
-  `gitops/platform/*` pod template의 repo-static guardrail은 현재
-  `repository-quality` 게이트에 포함한다. OPA/Conftest-style policy
-  bundle은 `scripts/validate-policy-gates.sh`와 `policy/conftest/`가 담당한다.
-  CI failure mode와 kube-linter enforcement는 별도 CI hardening에서 다룬다.
-- k8s router runtime proof: Traefik LoadBalancer fallback과
-  `CHECK_K8S_ROUTER=true` router 검증은 이 저장소 live test가 담당하지만,
-  host 주소 `192.168.0.14` 할당과 이름 해석은 operator 경계에서 다룬다.
-
-### Link Basis
+#### Link Basis
 
 이 README의 링크 기준 위치는 `gitops/`다.
 
@@ -220,7 +219,7 @@ kind와 raw platform manifest kind를 기준으로 유지한다.
 - 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
 - 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
 
-## Verification
+### Checks
 
 변경 작업 중에는 `python3 scripts/qa.py quick`로 영향받은 경로를
 검사하고, 커밋 직전에는 최종 index에서 `python3 scripts/qa.py staged`를
@@ -239,10 +238,27 @@ Kustomization 문법과 안전한 단일 토큰 identity·경로 필드만 받�
 고른다. base가 0 마흔 개로만 이루어져 있으면 사용 가능한 HEAD 부모를 쓰고 진짜 root일 때만
 빈 기준으로 다룬다. 얕은 clone처럼 부모를 쓸 수 없으면 닫힌 쪽으로 실패한다.
 
-## Related Documents
+## Operations
 
-- ADR-0002 (`docs/02.architecture/decisions/README.md`)
-- ADR-0014 (`docs/02.architecture/decisions/README.md`)
-- Architecture (`docs/02.architecture/descriptions/README.md`)
-- [Workloads README](./workloads/README.md)
-- [Examples README](../examples/README.md)
+### Runbook Links
+
+이 디렉터리 README는 별도의 runbook 링크를 두지 않으며, 운영 정책과 아키텍처를 확인하는 경로는 Local Workflow의 Working Procedure에 적혀 있다.
+
+### Observability and Recovery
+
+#### Current Hardening Deferrals
+
+현재 GitOps 구조는 정적 검증을 통과하지만, 아래 항목은 별도 검증 증거가
+필요하다.
+
+- `apps` AppProject allow-list 최소화와 `CreateNamespace=true` 제거는
+  desired-state에 반영되었고 위 matrix와 `repository-quality` 게이트가
+  드리프트를 검증한다. live 반영은 ArgoCD reconciliation 증적으로 확인한다.
+- image tag와 workload-kind 정책 스캔: active `gitops/workloads/*`와 raw
+  `gitops/platform/*` pod template의 repo-static guardrail은 현재
+  `repository-quality` 게이트에 포함한다. OPA/Conftest-style policy
+  bundle은 `scripts/validate-policy-gates.sh`와 `policy/conftest/`가 담당한다.
+  CI failure mode와 kube-linter enforcement는 별도 CI hardening에서 다룬다.
+- k8s router runtime proof: Traefik LoadBalancer fallback과
+  `CHECK_K8S_ROUTER=true` router 검증은 이 저장소 live test가 담당하지만,
+  host 주소 `192.168.0.14` 할당과 이름 해석은 operator 경계에서 다룬다.

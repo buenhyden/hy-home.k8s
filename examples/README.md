@@ -1,55 +1,24 @@
 ---
 title: "examples"
-version: "0.3.0"
+version: "0.4.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-13"
 ---
 # examples
 
-> `hy-home.k8s` 플랫폼의 앱 온보딩 예시와 cloud target 참조 구현을 관리한다.
+## Purpose
 
-## Overview
+### Service Role
+
+> `hy-home.k8s` 플랫폼의 앱 온보딩 예시와 cloud target 참조 구현을 관리한다.
 
 이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 최소 온보딩 템플릿이고, `aws/`, `azure/`의 실행 자산과 인접 README는 provider별 참조 구현의 공동 소유자다.
 
 AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 기존 `examples/<provider>/docs/**` 문서는 retired 상태이며 Git history에서 복구할 수 있다. 실제 배포를 계획할 때는 현재 provider 공식 자료와 승인된 runtime 검증으로 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.
 
 활성 desired state의 정본은 `gitops/`이며, `examples/`는 복사하거나 비교하기 위한 reference-only 영역이다.
-
-### Audience
-
-이 README의 주요 독자:
-
-- Developers
-- Operators
-- Cloud Architects
-- Documentation Writers
-
-### Scope
-
-#### In Scope
-
-- GitOps 앱 온보딩 예시와 placeholder 치환 흐름
-- AWS EKS 1.35 target Terraform 참조 구현
-- AKS 1.35 target Bicep/Kubernetes 참조 구현
-- provider별 실행 자산과 인접 운영 경계
-
-#### Out of Scope
-
-- 실제 AWS/Azure 계정 배포
-- live Kubernetes 클러스터 변경
-- production-grade 비용 산정과 SLA 보장
-- secret material 또는 provider credential 저장
-
-## Scope
-
-`examples/`는 자산을 정본 소유 경로로 복사해 검증하기 전까지 참조 전용이다.
-provider credential, secret material, live 계정이나 클러스터 변경은 여기에 두지
-않는다. 활성 로컬 desired state는 계속 [`gitops/`](../gitops/)가 소유한다.
-
-## Structure
 
 ```text
 examples/
@@ -60,30 +29,20 @@ examples/
 └── README.md        # This file
 ```
 
-## Usage
+- [AWS executable example](aws/README.md)
+- [Azure executable example](azure/README.md)
+- [Docs README](../docs/README.md)
 
-### Working Procedure
+#### Audience
 
-1. 로컬 앱 온보딩은 [sample-app](sample-app/README.md)을 복사해 시작한다.
-2. AWS/Azure 예시는 각 provider README와 현재 공식 자료를 함께 검토한다.
-3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README와 실행 자산을 같은 변경에서 갱신한다.
-4. 변경 후 `python3 scripts/qa.py full`와 outdated marker scan을 실행한다.
+이 README의 주요 독자:
 
-### Link Basis
+- Developers
+- Operators
+- Cloud Architects
+- Documentation Writers
 
-이 README의 링크 기준 위치는 `examples/`다.
-
-- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
-- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
-- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
-
-### Reference Links
-
-- [Root README](../README.md)
-- [GitOps README](../gitops/README.md)
-- [Ingress NGINX retirement statement](https://kubernetes.io/blog/2026/01/29/ingress-nginx-statement/)
-
-### 예시 목록
+#### 예시 목록
 
 | 디렉토리 | 설명 | 관련 문서 |
 | --- | --- | --- |
@@ -91,7 +50,7 @@ examples/
 | [`aws`](aws) | EKS 1.35 target, Terraform AWS provider 6.x 기반 AWS migration 참조 예시 | [AWS example boundary](./aws/README.md) |
 | [`azure`](azure) | AKS 1.35 target, Bicep, AGC/Gateway API 기반 Azure migration 참조 예시 | [Azure example boundary](./azure/README.md) |
 
-### Example Role Matrix
+#### Example Role Matrix
 
 | Example path | Role | Active source of truth | Validation |
 | --- | --- | --- | --- |
@@ -99,7 +58,64 @@ examples/
 | `aws/` | Cloud migration reference implementation for AWS. | [`aws/README.md`](aws/README.md) and adjacent executable assets; not live provider-latest guidance. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 | `azure/` | Cloud migration reference implementation for Azure. | [`azure/README.md`](azure/README.md) and adjacent executable assets; not live provider-latest guidance. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 
-### 사용 방법
+### Supported Environment
+
+`examples/`는 자산을 정본 소유 경로로 복사해 검증하기 전까지 참조 전용이다.
+provider credential, secret material, live 계정이나 클러스터 변경은 여기에 두지
+않는다. 활성 로컬 desired state는 계속 [`gitops/`](../gitops/)가 소유한다.
+
+#### Scope
+
+##### In Scope
+
+- GitOps 앱 온보딩 예시와 placeholder 치환 흐름
+- AWS EKS 1.35 target Terraform 참조 구현
+- AKS 1.35 target Bicep/Kubernetes 참조 구현
+- provider별 실행 자산과 인접 운영 경계
+
+##### Out of Scope
+
+- 실제 AWS/Azure 계정 배포
+- live Kubernetes 클러스터 변경
+- production-grade 비용 산정과 SLA 보장
+- secret material 또는 provider credential 저장
+
+## Interfaces
+
+### Inputs and Outputs
+
+이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
+
+### Security Boundary
+
+보안 경계는 Supported Environment에 적혀 있다.
+
+## Development
+
+### Local Workflow
+
+#### Working Procedure
+
+1. 로컬 앱 온보딩은 [sample-app](sample-app/README.md)을 복사해 시작한다.
+2. AWS/Azure 예시는 각 provider README와 현재 공식 자료를 함께 검토한다.
+3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README와 실행 자산을 같은 변경에서 갱신한다.
+4. 변경 후 `python3 scripts/qa.py full`와 outdated marker scan을 실행한다.
+
+#### Link Basis
+
+이 README의 링크 기준 위치는 `examples/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+#### Reference Links
+
+- [Root README](../README.md)
+- [GitOps README](../gitops/README.md)
+- [Ingress NGINX retirement statement](https://kubernetes.io/blog/2026/01/29/ingress-nginx-statement/)
+
+#### 사용 방법
 
 각 예시 디렉터리의 `README.md`를 참조한다. 새 앱 온보딩 시 `sample-app/`은 active onboarding template으로 시작점 역할을 하며, 복사 후 플레이스홀더 교체와 검증을 마쳐야 `gitops/workloads/<appname>` active desired state로 다룬다. fuller active reference는 `gitops/workloads/adminer/`와 비교한다.
 
@@ -107,21 +123,25 @@ examples/
 cp -r examples/sample-app gitops/workloads/<appname>
 ```
 
-### 구현 참조
+#### 구현 참조
 
 로컬 앱 패턴을 확인할 때는 활성 GitOps 구현과 예시 템플릿을 구분한다.
 
 - [`../gitops/workloads/adminer`](../gitops/workloads/adminer) — DB 관리 UI (Rollout + AnalysisTemplate + PeerAuthentication)
 
-## Verification
+### Checks
 
 복사한 예시에 맞춰 `python3 scripts/qa.py full`,
 `bash scripts/validate-k8s-manifests.sh .`,
 `bash scripts/check-secret-handling.sh .`를 실행한다. 이 저장소 정적 검사는
 provider나 live cluster의 준비 상태를 증명하지 않는다.
 
-## Related Documents
+## Operations
 
-- [AWS executable example](aws/README.md)
-- [Azure executable example](azure/README.md)
-- [Docs README](../docs/README.md)
+### Runbook Links
+
+이 문서는 참조 전용 예시를 다루므로 runbook 링크가 없다.
+
+### Observability and Recovery
+
+이 문서는 참조 전용 예시를 다루며 live 환경을 변경하지 않으므로 관측과 복구 절차가 없다.

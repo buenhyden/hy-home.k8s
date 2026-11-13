@@ -1,42 +1,21 @@
 ---
 title: "Common Agent Governance"
-version: "2.5.1"
+version: "2.6.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-13"
 ---
 
 # Common Agent Governance
 
-## Overview
+## Purpose
+
+### Service Role
 
 이 디렉터리는 이 GitOps 작업 공간의 공통 정책, 역할, skill에 대한 유일한
 권한 원본이다. 파일은 명시적인 gateway나 native skill loader를 통해 읽히며,
 디렉터리 전체가 자동으로 지침으로 적재되지는 않는다.
-
-## Scope
-
-provider별 차이와 native adapter는 [.claude/](../.claude/)와
-[.codex/](../.codex/)에 있다. 공통 역할, 권한 등급, skill, 인계의 의미는
-여기서 고치고, 구체적인 model, effort, native 권한 매핑은 각 provider의
-`bindings.json`이 소유한다. 검증되는 역할 projection은 그 값을 소비할 뿐이며,
-공통 registry나 생성기가 native 값의 두 번째 소유자가 되지 않는다.
-`knowledge/`와 `prompts/`의 문서 형식은 Stage 99 profile이, prompt 입력의
-실행은 [`scripts/prompt-input.py`](../scripts/prompt-input.py)가 소유한다. 이 디렉터리들은 affected-surface 범위와 이름 있는 소비자를
-하나 이상 갖춰 도입되므로 읽는 쪽이 없는 디렉터리는 만들지 않는다.
-Evaluations는 같은 작업을 skill 없이와 skill을 써서
-실제로 짝지어 실행한 근거, 즉 원시 관측, 작업 맥락, 기준, 점수, 집계 결과로
-안내한다. 평가는 agent evaluator가, 문서 양식은 Stage 99가 소유한다. 이것은
-근거 영역이지 상시 합성 채점기나 저장소 QA 관문이 아니다.
-gate 선택은 여전히 `scripts/validation/registry.json`이, 공용 검증 helper는
-`scripts/`가 소유한다. rule 디렉터리는 `governance/`와 중복되므로 두지 않고,
-쓰이지 않는 script나 rule 뼈대도 도입하지 않는다. 퇴역한 진행 ledger와
-`memory/` 디렉터리는 되살리지 않는다. 세션과 provider를 넘어 재사용할
-판단 맥락은 `governance/context-and-memory.md`가 정한 공유
-workspace memory store에 둔다.
-
-## Structure
 
 | Path | Purpose |
 | --- | --- |
@@ -48,7 +27,9 @@ workspace memory store에 둔다.
 | [prompts/](prompts/) | 반복 작성 요청의 입력·출력 계약 |
 | [evaluations/](evaluations/) | 관측된 짝 실행 agent 평가 근거의 라우터. 역할, skill, QA 관문 권한은 없다 |
 
-### Skill package
+- [Repository documentation](../docs/README.md)
+
+#### Skill package
 
 package는 `SKILL.md`와 `agents/` sidecar를 담는다. `agents/openai.yaml`은 Codex의
 skill 정책이고, Claude의 명시 호출 정책은 `SKILL.md` frontmatter의
@@ -71,7 +52,40 @@ skill의 `scripts/` 아래 검사기를 선택할 수 있지만, 검사기를 �
 `*.template.md` 출력 양식이 포함될 수 있다. 공용 문서 profile과 template의
 권한은 여전히 Stage 99에 있으며 package asset이 이를 대신할 수 없다.
 
-## Usage
+### Supported Environment
+
+provider별 차이와 native adapter는 [.claude/](../.claude/)와
+[.codex/](../.codex/)에 있다. 공통 역할, 권한 등급, skill, 인계의 의미는
+여기서 고치고, 구체적인 model, effort, native 권한 매핑은 각 provider의
+`bindings.json`이 소유한다. 검증되는 역할 projection은 그 값을 소비할 뿐이며,
+공통 registry나 생성기가 native 값의 두 번째 소유자가 되지 않는다.
+`knowledge/`와 `prompts/`의 문서 형식은 Stage 99 profile이, prompt 입력의
+실행은 [`scripts/prompt-input.py`](../scripts/prompt-input.py)가 소유한다. 이 디렉터리들은 affected-surface 범위와 이름 있는 소비자를
+하나 이상 갖춰 도입되므로 읽는 쪽이 없는 디렉터리는 만들지 않는다.
+Evaluations는 같은 작업을 skill 없이와 skill을 써서
+실제로 짝지어 실행한 근거, 즉 원시 관측, 작업 맥락, 기준, 점수, 집계 결과로
+안내한다. 평가는 agent evaluator가, 문서 양식은 Stage 99가 소유한다. 이것은
+근거 영역이지 상시 합성 채점기나 저장소 QA 관문이 아니다.
+gate 선택은 여전히 `scripts/validation/registry.json`이, 공용 검증 helper는
+`scripts/`가 소유한다. rule 디렉터리는 `governance/`와 중복되므로 두지 않고,
+쓰이지 않는 script나 rule 뼈대도 도입하지 않는다. 퇴역한 진행 ledger와
+`memory/` 디렉터리는 되살리지 않는다. 세션과 provider를 넘어 재사용할
+판단 맥락은 `governance/context-and-memory.md`가 정한 공유
+workspace memory store에 둔다.
+
+## Interfaces
+
+### Inputs and Outputs
+
+- Document profiles and templates (`docs/99.templates/README.md`)
+
+### Security Boundary
+
+이 문서에는 secret, credential, 권한 경계만을 다루는 별도 내용이 없으며, skill이 권한을 주지 않는다는 설명은 Local Workflow의 문단에 적혀 있다.
+
+## Development
+
+### Local Workflow
 
 이 디렉터리를 사용하는 작업은 [work lifecycle](workflows/work-lifecycle.md),
 [agent execution](governance/agent-execution.md), `governance/`의 승인·안전
@@ -82,7 +96,7 @@ package를 명시 호출용으로 노출한다. skill은 쓰기, 전송, 배포,
 권한을 주지 않는다. 근거의 의미는 `governance/`의 quality 정책이, 바뀌는 gate
 명령과 한도는 실행 registry가 소유한다.
 
-## Verification
+### Checks
 
 역할, skill, 권한, native binding, routing 계약의 검증 명령은
 `python3 scripts/validate-agent-governance.py --root .`이다. 이것은
@@ -93,7 +107,12 @@ machinery를 바꾸거나 범위가 명시된 감사를 할 때는 자원 사전
 sweep은 완료 명령이 아니다. 역할 projection 생성기는 쓰이지 않는다. native
 발견, 호출, 권한, hook 전달은 새 세션에서 따로 얻는 근거다.
 
-## Related Documents
+## Operations
 
-- Document profiles and templates (`docs/99.templates/README.md`)
-- [Repository documentation](../docs/README.md)
+### Runbook Links
+
+이 문서에는 runbook이나 운영 가이드 링크가 없다.
+
+### Observability and Recovery
+
+이 문서에는 운영 관측과 복구만을 다루는 별도 내용이 없다.

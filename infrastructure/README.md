@@ -1,84 +1,24 @@
 ---
 title: "infrastructure"
-version: "0.3.2"
+version: "0.4.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-13"
 ---
 # infrastructure
 
 > Linux server + k3d + 외부 서비스 연동 기반 로컬 플랫폼 인프라 자산을 관리한다.
 
-## Overview
+## Purpose
+
+### Service Role
 
 이 디렉터리는 로컬 Kubernetes 플랫폼 부트스트랩에 필요한 인프라 설정을 담는다. Linux server/native Docker Engine/k3d 클러스터, 외부 서비스 연동 계약, ArgoCD 설치 값 파일, bootstrap 검증 스크립트, 정적 계약 테스트를 포함한다.
 
 이 경로는 로컬 k3d 플랫폼을 만들기 위한 실행 자산을 보관하지만, 정상 운영 변경은 `gitops/` 선언과 ArgoCD reconciliation을 통해 처리한다.
 
 MetalLB bootstrap manifest는 별도 `metallb/` 디렉터리가 아니라 이 디렉터리 루트의 `ipaddresspool.yaml`, `l2advertisement.yaml` 두 파일로 관리한다.
-
-### Audience
-
-이 README의 주요 독자:
-
-- Operators
-- Platform Engineers
-- Documentation Writers
-
-### Scope
-
-#### In Scope
-
-- k3d 클러스터 설정과 bootstrap 스크립트
-- ArgoCD Helm values와 초기 GitOps 연결 자산
-- MetalLB/EndpointSlice 같은 로컬 외부 서비스 연결 manifest
-- repo-backed 정적 검증 스크립트와 계약 테스트
-
-#### Out of Scope
-
-- 외부 Vault/PostgreSQL/Valkey 런타임 자체 생성
-- AWS/Azure 실제 cloud 리소스 프로비저닝
-- 애플리케이션 워크로드 매니페스트
-- 정상 운영 변경을 위한 live cluster mutation
-
-## Scope
-
-저장소 파일은 bootstrap 입력과 정적 인터페이스 계약을 소유한다. Linux 서버
-호스트, Docker, kubeconfig, live 클러스터, 외부 서비스, credential, 인증서,
-승인된 bootstrap 시점은 운영자가 소유한다. secret 값과 비공개 runtime 상태는
-이 트리나 검증 증거에 복사하지 않는다.
-
-### Host Runtime Prerequisite Matrix
-
-이 표는 Linux server + native Docker Engine + k3d live validation을 시작하기 전
-확인해야 하는 runtime 전제를 모은다. 정적 검증은 이 표의 SSoT와 failure
-boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자동으로
-수행하지 않는다.
-
-| Prerequisite | Repository SSoT | Owner / responsibility | Validation / evidence | Failure boundary |
-| --- | --- | --- | --- | --- |
-| `Host shell and Docker context` | Linux server (Ubuntu 24.04 LTS) shell with the native Docker Engine; the Docker context is checked on the host. | Operator owns the host Docker daemon/context and external runtime startup. | Run `docker context show` and confirm Docker commands work on the host before bootstrap. | A wrong or remote Docker context blocks bootstrap; this repository records the blocker and does not switch contexts automatically. |
-| `kubectl and k3d context` | Local cluster name and kubectl context are `k3d-hyhome`; cluster shape lives in `k3d/k3d-cluster.yaml`. | Operator owns cluster creation/reuse through `bootstrap-local.sh` and k3d. | Run `k3d cluster list` and `kubectl config current-context`; live proof uses `infrastructure/verify/verify-cluster.sh`. | Missing cluster or wrong context blocks live validation; static gates remain valid. |
-| `kubeconfig and TLS trust` | Default kubeconfig is `~/.kube/config` unless `KUBECONFIG` is intentionally set for a temporary check. | Operator owns kubeconfig CA trust and context repair. | `kubectl version --request-timeout=5s` must reach the API server; `x509: certificate signed by unknown authority` is a TLS trust blocker. | TLS trust repair is an operator action, not an automatic doc/static-gate side effect. |
-| `Port and network contracts` | Current local contracts are Traefik LoadBalancer `172.18.0.240:443`, required management Valkey `192.168.0.13:26379`, and OpenBao through external Traefik `192.168.0.13:443`. Management/development PostgreSQL publish only to host loopback `127.0.0.1:25432/25433`; development Valkey has only its Docker-network `6379`. No current K8s PostgreSQL or development Valkey endpoint is declared. Current AD-0007 is reached through the [architecture stage router](../docs/02.architecture/README.md). | External service workspace owns service containers and addresses; this repository owns the declared K8s interface. | Static proof comes from `scripts/validate-infrastructure-contracts.sh`; live proof uses selected, authorized runtime checks after bootstrap. | Port conflicts or stale addresses block runtime checks and require external-service or bootstrap follow-up; host-loopback TCP does not prove K8s DB reachability. |
-| `Host networking constraints` | k8s hosts are `<name>.hy-k8s.home.arpa` served by the k8s router: the k3d serverlb bound to `192.168.0.14:80/443` (ADR-0043). External service hosts stay on `hy.home.arpa` behind the external Traefik. | Operator owns assigning `192.168.0.14` to the host, `hy-k8s.home.arpa` name resolution, the host firewall, and binding the external Traefik to its own address. | `validate-infrastructure-contracts.sh` checks the serverlb bind, NodePorts, and apex redirects statically; `CHECK_K8S_ROUTER=true` in `verify-ingress-tls.sh` is the explicit runtime check. | Host address, DNS, firewall, or external gateway state is outside repo-static ownership. |
-
-### Bootstrap Boundary Matrix
-
-이 표는 bootstrap-only 예외와 정상 GitOps 운영 경계를 분리한다. 정적 검증은
-이 경계가 문서화되어 있는지 확인하지만, k3d 생성, ArgoCD 설치, root app
-적용, Vault auth refresh, 외부 DB/Valkey runtime 관리를 자동 수행하지 않는다.
-
-| Boundary | Repository responsibility | Operator / external responsibility | Allowed command surface | Verification / evidence | Failure boundary |
-| --- | --- | --- | --- | --- | --- |
-| `k3d cluster creation` | Owns `k3d/k3d-cluster.yaml`, bootstrap prechecks, and documented `k3d-hyhome` context contract. | Operator owns the Linux server shell, native Docker Engine context, port availability, and the human-approved bootstrap run. | `./bootstrap-local.sh` may call `k3d cluster create` during bootstrap-only execution. | Static README guardrails plus `k3d cluster list`, `kubectl config current-context`, and live `infrastructure/verify/verify-cluster.sh`. | Repo-static checks do not create, delete, or repair clusters; wrong Docker/kubectl context remains operator-owned. |
-| `ArgoCD installation` | Owns `argocd/values-local.yaml`, bootstrap script install flow, and ArgoCD ingress/TLS configuration contract. | Operator owns Helm/kubectl execution, certificate inputs, and approved bootstrap timing. | `./bootstrap-local.sh` may run `helm upgrade --install` for ArgoCD before GitOps ownership is established. | `bash scripts/validate-infrastructure-contracts.sh`; live `infrastructure/verify/verify-gitops.sh` after bootstrap. | Agents do not directly install or upgrade ArgoCD outside approved bootstrap/break-glass evidence. |
-| `root app application` | Owns `gitops/clusters/local/root-application.yaml`, `gitops/apps/root`, and App-of-Apps source path/branch contracts. | Operator owns the first root app apply and any approved recovery action before ArgoCD reconciliation is healthy. | `./bootstrap-local.sh` may run `kubectl apply` for the root GitOps Application as a bootstrap-only exception. | `bash scripts/validate-gitops-structure.sh`; live `infrastructure/verify/verify-gitops.sh` after bootstrap. | Steady-state app changes stay in Git PRs and ArgoCD reconciliation; direct apply is not normal operation. |
-| `Vault connection contract` | Owns `coredns-custom.yaml`, `gitops/platform/eso/vault-secret-store.yaml`, the `openbao-ca` ConfigMap bootstrap, Vault policy sample, and no-secret static checks. | External Vault operator owns Vault runtime, unseal, token handling, auth mount configuration, the `vault` audience binding, policy application, and secret rotation. | Bootstrap requires HTTPS plus a readable CA, prompts silently on `/dev/tty`, and has no noninteractive or insecure fallback; secret values are not printed or committed, and ESO reaches OpenBao over TLS through the external Traefik (ADR-0046). | `python3 scripts/validate-vault-eso-contracts.py --root .`; `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live `infrastructure/verify/verify-secrets.sh`. | Repo-static checks do not read secret values, write Vault policy, refresh Vault auth, or repair live Vault state. |
-| `PostgreSQL and Valkey connection contract` | Owns the required management Valkey K8s Service/EndpointSlice and ArgoCD ExternalSecret target; management/development PostgreSQL remain external host-loopback services without K8s route. | External service workspace owns PostgreSQL/Valkey runtime, container/network state, credentials, TLS/CA material if enabled, and rotation evidence. | Bootstrap requires management Valkey TCP reachability, may warn on selected host-loopback PostgreSQL TCP, and creates the initial ArgoCD Valkey Secret from approved Vault source. | `bash scripts/validate-infrastructure-contracts.sh`; live `infrastructure/verify/verify-external-services.sh` and `infrastructure/verify/verify-secrets.sh`. | Repo-static checks do not start external services, change Docker bind addresses, rotate credentials, or prove authenticated DB/K8s reachability. |
-
-## Structure
 
 ```text
 infrastructure/
@@ -93,7 +33,17 @@ infrastructure/
 └── README.md                # This file
 ```
 
-### Infrastructure Coverage Matrix
+- Stage 03 Spec 안내 (`docs/03.specs/README.md`)
+
+#### Audience
+
+이 README의 주요 독자:
+
+- Operators
+- Platform Engineers
+- Documentation Writers
+
+#### Infrastructure Coverage Matrix
 
 이 표는 `infrastructure/`의 현재 bootstrap/runtime-support entrypoint와
 운영 책임을 연결한다. `repository-quality` 게이트는 이 표가 실제
@@ -113,14 +63,71 @@ infrastructure/
 | `coredns-custom.yaml` | CoreDNS zone owned by platform maintainers. | Bootstrap applies it to `kube-system` and restarts CoreDNS; it resolves `openbao`, `prometheus` and `grafana.hy.home.arpa` to the host address `192.168.0.13` (ADR-0046). Bootstrap also creates the gateway CA ConfigMaps `openbao-ca`, `hy-home-root-ca` and `kiali-cabundle`. | Depends on the external Traefik routes for OpenBao, the Prometheus API (Basic Auth) and Grafana, and on the k3s `coredns-custom` import. | Validate with `bash scripts/validate-infrastructure-contracts.sh`; live resolution requires a running cluster. |
 | `ipaddresspool.yaml` and `l2advertisement.yaml` | MetalLB bootstrap manifests owned by platform maintainers. | Bootstrap-time LoadBalancer address pool and L2 advertisement. | Depends on local network range and MetalLB controller. | Validate manifests statically; live behavior requires cluster networking checks. |
 
-### Infrastructure Test Inventory
+### Supported Environment
 
-라이브 검증 스크립트의 유지 계약은 [verify/](./verify/)의 Infrastructure
-Test Inventory가 소유한다.
+저장소 파일은 bootstrap 입력과 정적 인터페이스 계약을 소유한다. Linux 서버
+호스트, Docker, kubeconfig, live 클러스터, 외부 서비스, credential, 인증서,
+승인된 bootstrap 시점은 운영자가 소유한다. secret 값과 비공개 runtime 상태는
+이 트리나 검증 증거에 복사하지 않는다.
 
-## Usage
+#### Scope
 
-### Working Procedure
+##### In Scope
+
+- k3d 클러스터 설정과 bootstrap 스크립트
+- ArgoCD Helm values와 초기 GitOps 연결 자산
+- MetalLB/EndpointSlice 같은 로컬 외부 서비스 연결 manifest
+- repo-backed 정적 검증 스크립트와 계약 테스트
+
+##### Out of Scope
+
+- 외부 Vault/PostgreSQL/Valkey 런타임 자체 생성
+- AWS/Azure 실제 cloud 리소스 프로비저닝
+- 애플리케이션 워크로드 매니페스트
+- 정상 운영 변경을 위한 live cluster mutation
+
+#### Host Runtime Prerequisite Matrix
+
+이 표는 Linux server + native Docker Engine + k3d live validation을 시작하기 전
+확인해야 하는 runtime 전제를 모은다. 정적 검증은 이 표의 SSoT와 failure
+boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자동으로
+수행하지 않는다.
+
+| Prerequisite | Repository SSoT | Owner / responsibility | Validation / evidence | Failure boundary |
+| --- | --- | --- | --- | --- |
+| `Host shell and Docker context` | Linux server (Ubuntu 24.04 LTS) shell with the native Docker Engine; the Docker context is checked on the host. | Operator owns the host Docker daemon/context and external runtime startup. | Run `docker context show` and confirm Docker commands work on the host before bootstrap. | A wrong or remote Docker context blocks bootstrap; this repository records the blocker and does not switch contexts automatically. |
+| `kubectl and k3d context` | Local cluster name and kubectl context are `k3d-hyhome`; cluster shape lives in `k3d/k3d-cluster.yaml`. | Operator owns cluster creation/reuse through `bootstrap-local.sh` and k3d. | Run `k3d cluster list` and `kubectl config current-context`; live proof uses `infrastructure/verify/verify-cluster.sh`. | Missing cluster or wrong context blocks live validation; static gates remain valid. |
+| `kubeconfig and TLS trust` | Default kubeconfig is `~/.kube/config` unless `KUBECONFIG` is intentionally set for a temporary check. | Operator owns kubeconfig CA trust and context repair. | `kubectl version --request-timeout=5s` must reach the API server; `x509: certificate signed by unknown authority` is a TLS trust blocker. | TLS trust repair is an operator action, not an automatic doc/static-gate side effect. |
+| `Port and network contracts` | Current local contracts are Traefik LoadBalancer `172.18.0.240:443`, required management Valkey `192.168.0.13:26379`, and OpenBao through external Traefik `192.168.0.13:443`. Management/development PostgreSQL publish only to host loopback `127.0.0.1:25432/25433`; development Valkey has only its Docker-network `6379`. No current K8s PostgreSQL or development Valkey endpoint is declared. Current AD-0007 is reached through the [architecture stage router](../docs/02.architecture/README.md). | External service workspace owns service containers and addresses; this repository owns the declared K8s interface. | Static proof comes from `scripts/validate-infrastructure-contracts.sh`; live proof uses selected, authorized runtime checks after bootstrap. | Port conflicts or stale addresses block runtime checks and require external-service or bootstrap follow-up; host-loopback TCP does not prove K8s DB reachability. |
+| `Host networking constraints` | k8s hosts are `<name>.hy-k8s.home.arpa` served by the k8s router: the k3d serverlb bound to `192.168.0.14:80/443` (ADR-0043). External service hosts stay on `hy.home.arpa` behind the external Traefik. | Operator owns assigning `192.168.0.14` to the host, `hy-k8s.home.arpa` name resolution, the host firewall, and binding the external Traefik to its own address. | `validate-infrastructure-contracts.sh` checks the serverlb bind, NodePorts, and apex redirects statically; `CHECK_K8S_ROUTER=true` in `verify-ingress-tls.sh` is the explicit runtime check. | Host address, DNS, firewall, or external gateway state is outside repo-static ownership. |
+
+## Interfaces
+
+### Inputs and Outputs
+
+#### Bootstrap Boundary Matrix
+
+이 표는 bootstrap-only 예외와 정상 GitOps 운영 경계를 분리한다. 정적 검증은
+이 경계가 문서화되어 있는지 확인하지만, k3d 생성, ArgoCD 설치, root app
+적용, Vault auth refresh, 외부 DB/Valkey runtime 관리를 자동 수행하지 않는다.
+
+| Boundary | Repository responsibility | Operator / external responsibility | Allowed command surface | Verification / evidence | Failure boundary |
+| --- | --- | --- | --- | --- | --- |
+| `k3d cluster creation` | Owns `k3d/k3d-cluster.yaml`, bootstrap prechecks, and documented `k3d-hyhome` context contract. | Operator owns the Linux server shell, native Docker Engine context, port availability, and the human-approved bootstrap run. | `./bootstrap-local.sh` may call `k3d cluster create` during bootstrap-only execution. | Static README guardrails plus `k3d cluster list`, `kubectl config current-context`, and live `infrastructure/verify/verify-cluster.sh`. | Repo-static checks do not create, delete, or repair clusters; wrong Docker/kubectl context remains operator-owned. |
+| `ArgoCD installation` | Owns `argocd/values-local.yaml`, bootstrap script install flow, and ArgoCD ingress/TLS configuration contract. | Operator owns Helm/kubectl execution, certificate inputs, and approved bootstrap timing. | `./bootstrap-local.sh` may run `helm upgrade --install` for ArgoCD before GitOps ownership is established. | `bash scripts/validate-infrastructure-contracts.sh`; live `infrastructure/verify/verify-gitops.sh` after bootstrap. | Agents do not directly install or upgrade ArgoCD outside approved bootstrap/break-glass evidence. |
+| `root app application` | Owns `gitops/clusters/local/root-application.yaml`, `gitops/apps/root`, and App-of-Apps source path/branch contracts. | Operator owns the first root app apply and any approved recovery action before ArgoCD reconciliation is healthy. | `./bootstrap-local.sh` may run `kubectl apply` for the root GitOps Application as a bootstrap-only exception. | `bash scripts/validate-gitops-structure.sh`; live `infrastructure/verify/verify-gitops.sh` after bootstrap. | Steady-state app changes stay in Git PRs and ArgoCD reconciliation; direct apply is not normal operation. |
+| `Vault connection contract` | Owns `coredns-custom.yaml`, `gitops/platform/eso/vault-secret-store.yaml`, the `openbao-ca` ConfigMap bootstrap, Vault policy sample, and no-secret static checks. | External Vault operator owns Vault runtime, unseal, token handling, auth mount configuration, the `vault` audience binding, policy application, and secret rotation. | Bootstrap requires HTTPS plus a readable CA, prompts silently on `/dev/tty`, and has no noninteractive or insecure fallback; secret values are not printed or committed, and ESO reaches OpenBao over TLS through the external Traefik (ADR-0046). | `python3 scripts/validate-vault-eso-contracts.py --root .`; `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live `infrastructure/verify/verify-secrets.sh`. | Repo-static checks do not read secret values, write Vault policy, refresh Vault auth, or repair live Vault state. |
+| `PostgreSQL and Valkey connection contract` | Owns the required management Valkey K8s Service/EndpointSlice and ArgoCD ExternalSecret target; management/development PostgreSQL remain external host-loopback services without K8s route. | External service workspace owns PostgreSQL/Valkey runtime, container/network state, credentials, TLS/CA material if enabled, and rotation evidence. | Bootstrap requires management Valkey TCP reachability, may warn on selected host-loopback PostgreSQL TCP, and creates the initial ArgoCD Valkey Secret from approved Vault source. | `bash scripts/validate-infrastructure-contracts.sh`; live `infrastructure/verify/verify-external-services.sh` and `infrastructure/verify/verify-secrets.sh`. | Repo-static checks do not start external services, change Docker bind addresses, rotate credentials, or prove authenticated DB/K8s reachability. |
+
+### Security Boundary
+
+secret과 credential을 저장소에 커밋하지 않는 경계는 위 Supported Environment의 Scope 문단에 함께 적혀 있다.
+
+## Development
+
+### Local Workflow
+
+#### Working Procedure
 
 1. bootstrap 전 Runbook (`docs/05.operations/runbooks/README.md`)의 외부 의존성 점검을 확인한다.
 2. `bootstrap-local.sh` 변경 시 bootstrap-only 예외 범위와 GitOps 소유권 전환 지점을 함께 점검한다.
@@ -129,7 +136,7 @@ Test Inventory가 소유한다.
 5. `infrastructure/verify/*.sh`를 추가, 삭제, 리네임, 통합할 때는 이 README의
    Infrastructure Test Inventory와 `run-all.sh` 호출 목록을 함께 갱신한다.
 
-### Link Basis
+#### Link Basis
 
 이 README의 링크 기준 위치는 `infrastructure/`다.
 
@@ -137,7 +144,7 @@ Test Inventory가 소유한다.
 - 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
 - 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
 
-### Reference Links
+#### Reference Links
 
 - PRD (`docs/01.requirements/README.md`)
 - Spec (`docs/03.specs/README.md`)
@@ -145,7 +152,14 @@ Test Inventory가 소유한다.
 - [GitOps README](../gitops/README.md)
 - [Bootstrap version pins](./bootstrap-local.sh)
 
-### Validation Note
+### Checks
+
+저장소 범위의 증거는 `bash scripts/validate-infrastructure-contracts.sh`로
+얻는다. `bash infrastructure/verify/run-all.sh`는 의도적으로 bootstrap한
+환경에서만 실행하며 이때 아래 inventory에 기록된 전제 조건과 live·정적 결과
+경계를 따른다.
+
+#### Validation Note
 
 `infrastructure/verify/`는 라이브 검증 스크립트만 소유한다.
 
@@ -173,7 +187,20 @@ Traefik이 모든 주소의 443을 점유하면 runtime blocker로 기록한다.
 `bash infrastructure/verify/run-all.sh`가 기본 kubeconfig로 통과해야 하며,
 rollback은 백업 파일을 `~/.kube/config`로 되돌리는 방식이다.
 
-### Bootstrap Note
+#### Infrastructure Test Inventory
+
+라이브 검증 스크립트의 유지 계약은 [verify/](./verify/)의 Infrastructure
+Test Inventory가 소유한다.
+
+## Operations
+
+### Runbook Links
+
+- Platform bootstrap runbook (`docs/05.operations/runbooks/README.md`)
+
+### Observability and Recovery
+
+#### Bootstrap Note
 
 - 실행 전 HTTPS Vault 주소와 읽기 가능한 `VAULT_CA_FILE`을 준비한다.
 - `./bootstrap-local.sh`는 토큰을 환경 변수나 명령 인자로 받지 않고
@@ -185,15 +212,3 @@ rollback은 백업 파일을 `~/.kube/config`로 되돌리는 방식이다.
 - `vault-backend`의 HTTP 전송은 local-only k3d 예외이며 production TLS가 아니다.
 - 외부 서비스(Vault/PostgreSQL/Valkey)는 별도 워크스페이스(repo)에서 관리한다.
 - `./bootstrap-local.sh`의 `kubectl apply`는 ArgoCD 소유권이 생기기 전 초기 namespace, secret, MetalLB, root GitOps application 생성을 위한 bootstrap-only 예외다. 정상 운영 변경은 GitOps PR과 ArgoCD reconciliation으로 처리한다.
-
-## Verification
-
-저장소 범위의 증거는 `bash scripts/validate-infrastructure-contracts.sh`로
-얻는다. `bash infrastructure/verify/run-all.sh`는 의도적으로 bootstrap한
-환경에서만 실행하며 이때 아래 inventory에 기록된 전제 조건과 live·정적 결과
-경계를 따른다.
-
-## Related Documents
-
-- Stage 03 Spec 안내 (`docs/03.specs/README.md`)
-- Platform bootstrap runbook (`docs/05.operations/runbooks/README.md`)
