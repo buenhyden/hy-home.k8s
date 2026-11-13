@@ -4,11 +4,11 @@ Agent instructions for `examples/`. The README is for human readers; these
 rules are for AI agents. The repository root gateway (`AGENTS.md` or
 `CLAUDE.md`) and `.agents/governance/` still apply.
 
-## Purpose
+## Scope
+
+### Allowed Surface
 
 Reference-only examples for designing a new app or cloud target: `sample-app/` is the minimal local GitOps onboarding template, and `aws/` and `azure/` are cloud reference implementations. `gitops/` is the active desired state; nothing here is reconciled or deployed.
-
-## Responsibilities and Projections
 
 | Work in `examples/` | Role (`.agents/roles/`) | Skills (`.agents/skills/<id>/SKILL.md`) | Claude | Codex |
 | --- | --- | --- | --- | --- |
@@ -20,17 +20,53 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 [`.codex/provider.md`](../.codex/provider.md); approval boundaries are in
 [approval and safety](../.agents/governance/approval-and-safety.md).
 
-## Rules
+### Non-goals
+
+Non-goals are stated at the end of the Purpose text under Allowed Surface: nothing here is reconciled or deployed.
+
+## Required Policies
+
+### Canonical Sources
+
+Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
+
+### Local Obligations
 
 1. Never change an account or a live cluster from an example.
 2. Promote an example into `gitops/` only through an owned change with its own Spec.
 3. Never commit credentials, kubeconfigs or deployment outputs.
 4. Read a deeper `AGENTS.md` (for example `azure/AGENTS.md`) before working there.
 
-## Checks
+## Workflow
+
+### Inspect and Change
+
+Inspecting and changing files follows the rules under Local Obligations.
+
+### Handoff
+
+This file states no separate handoff rule.
+
+## Verification
+
+### Required Checks
 
 Run the selected checks with `python3 scripts/qa.py staged`, or these
 directly:
 
 - `bash scripts/validate-k8s-manifests.sh .`
 - `bash scripts/validate-policy-gates.sh .`
+
+### Evidence and Limits
+
+This file states no separate evidence or limits rule.
+
+## Safety
+
+### Protected Actions
+
+Protected actions are stated in rules 1 and 3 under Local Obligations.
+
+### Stop and Escalate
+
+This file states no separate stop or escalation rule.

@@ -5,14 +5,14 @@ own `AGENTS.md`. The READMEs in this tree are for human readers; these rules
 are for AI agents. The repository root gateway (`AGENTS.md` or `CLAUDE.md`)
 and `.agents/governance/` still apply.
 
-## Purpose
+## Scope
+
+### Allowed Surface
 
 `docs/` is the staged documentation source of truth: requirements (01),
 architecture (02), change Specs (03), operations (05), references (90), the
 unvalidated archive (98) and the Stage 99 registry and forms. Agents here
 write or review governed documents; they do not change runtime state.
-
-## Responsibilities and Projections
 
 Pick the responsibility first, then read its common role and skills and the
 projection for your provider.
@@ -33,7 +33,17 @@ skill. A documentation change request follows the
 [`.claude/provider.md`](../.claude/provider.md) and
 [`.codex/provider.md`](../.codex/provider.md).
 
-## Rules
+### Non-goals
+
+Non-goals are stated at the end of the Purpose text under Allowed Surface: agents here do not change runtime state.
+
+## Required Policies
+
+### Canonical Sources
+
+Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
+
+### Local Obligations
 
 1. Follow the [work lifecycle](../.agents/workflows/work-lifecycle.md),
    [document authoring](../.agents/governance/document-authoring.md) and
@@ -58,3 +68,33 @@ skill. A documentation change request follows the
    `python3 scripts/validate-markdown-profiles.py --root . --mode strict`,
    `python3 scripts/validate-links-and-owners.py --root . --mode strict` and
    `python3 scripts/validate-document-lifecycle.py --root . --mode strict`.
+
+## Workflow
+
+### Inspect and Change
+
+Inspecting and changing files follows the rules under Local Obligations.
+
+### Handoff
+
+This file states no separate handoff rule.
+
+## Verification
+
+### Required Checks
+
+Required checks are stated in rule 8 under Local Obligations.
+
+### Evidence and Limits
+
+This file states no separate evidence or limits rule.
+
+## Safety
+
+### Protected Actions
+
+Protected actions are stated at the end of the Purpose text under Allowed Surface: agents here do not change runtime state.
+
+### Stop and Escalate
+
+This file states no separate stop or escalation rule.

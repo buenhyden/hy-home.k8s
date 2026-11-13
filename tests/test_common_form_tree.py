@@ -64,6 +64,7 @@ ROLE_BINDINGS = {
     "operation/postmortem": "postmortem",
     "governance/rule": "policy",
     "operation/policy": "policy",
+    "common/folder-agents-guide": "agents",
     "common/readme-repository": "root-readme",
     "common/readme-stage-index": "stage-readme",
     "common/readme-collection-index": "stage-readme",
@@ -232,6 +233,22 @@ POLICY_RULES_TABLE = (
     0,
     "Rule",
 )
+AGENTS = ("common/folder-agents-guide", "common/template-agents-guide")
+AGENTS_TREE = (
+    ("Scope", ("Allowed Surface", "Non-goals")),
+    ("Required Policies", ("Canonical Sources", "Local Obligations")),
+    ("Workflow", ("Inspect and Change", "Handoff")),
+    ("Verification", ("Required Checks", "Evidence and Limits")),
+    ("Safety", ("Protected Actions", "Stop and Escalate")),
+)
+AGENTS_TABLE_KEYS = {
+    "Tool Rules": (
+        "agents-required-policies-local-obligations",
+        ("Rule", "Trigger", "Effect"),
+        0,
+        "Rule",
+    )
+}
 POLICY_GOVERNANCE_TABLE_KEYS = {"Rules": POLICY_RULES_TABLE}
 POLICY_OPERATIONS_TABLE_KEYS = {
     "Rules": POLICY_RULES_TABLE,
@@ -242,7 +259,7 @@ POLICY_OPERATIONS_TABLE_KEYS = {
         "Promoted owner",
     ),
 }
-# The eight roles that carry a form; every other profile keeps its H2 lists.
+# The nine roles that carry a form; every other profile keeps its H2 lists.
 FORM_PROFILES = (
     GUIDE
     + RUNBOOK
@@ -253,6 +270,7 @@ FORM_PROFILES = (
     + SERVICE_FORM
     + POLICY_GOVERNANCE
     + POLICY_OPERATIONS
+    + AGENTS
 )
 FORM_TEMPLATES = (
     GUIDE[1],
@@ -266,8 +284,9 @@ FORM_TEMPLATES = (
     SERVICE_FORM[3],
     POLICY_GOVERNANCE[1],
     POLICY_OPERATIONS[1],
+    AGENTS[1],
 )
-EIGHT_FORMS = [
+NINE_FORMS = [
     "guide",
     "runbook",
     "incident",
@@ -276,6 +295,7 @@ EIGHT_FORMS = [
     "stage-readme",
     "service-readme",
     "policy",
+    "agents",
 ]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
@@ -549,7 +569,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_eight_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_nine_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -568,6 +588,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ("stage-readme", "Stage README"),
                 ("service-readme", "Service README"),
                 ("policy", "Policy"),
+                ("agents", "AGENTS"),
             ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
@@ -644,6 +665,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 POLICY_OPERATIONS,
                 "Ownership",
             ),
+            ("agents", AGENTS_TREE, [], AGENTS_TABLE_KEYS, AGENTS, None),
         ):
             loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
             self.assertEqual(loaded["h1"], "{{document_title}}")
@@ -754,11 +776,11 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_eight_forms(self) -> None:
+    def test_repository_registry_loads_with_exactly_the_nine_forms(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            EIGHT_FORMS,
+            NINE_FORMS,
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -770,6 +792,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             "stage-readme": ["Index"],
             "service-readme": ["Commands"],
             "policy": ["Rules", "Lifecycle Traceability"],
+            "agents": ["Tool Rules"],
         }
         governance_tables = ["Rules"]
         for profile in registry.profiles:
@@ -786,6 +809,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("stage-readme", STAGE_FORM),
                             ("service-readme", SERVICE_FORM),
                             ("policy", POLICY_GOVERNANCE + POLICY_OPERATIONS),
+                            ("agents", AGENTS),
                         )
                         if profile.profile_id in ids
                     ),
@@ -841,7 +865,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            EIGHT_FORMS,
+            NINE_FORMS,
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -2563,6 +2587,149 @@ class OperationsPolicyFormTests(RoleFormBody):
         self.assertEqual(self.tree(empty), ["BODY-SECTION-EMPTY"])
 
 
+AGENTS_PATH = PurePosixPath("scripts/AGENTS.md")
+
+
+def agents_body() -> str:
+    return md(
+        "# AGENTS.md",
+        "Agent instructions for `scripts/`.",
+        "## Scope",
+        "### Allowed Surface\n\nValidators only.",
+        "### Non-goals\n\nThis file states no separate non-goals rule.",
+        "## Required Policies",
+        "### Canonical Sources\n\nThe quality policy.",
+        "### Local Obligations\n\n1. Keep the change small.",
+        "## Workflow",
+        "### Inspect and Change\n\nFollow the rules above.",
+        "### Handoff\n\nThis file states no separate handoff rule.",
+        "## Verification",
+        "### Required Checks\n\nRun the suite.",
+        "### Evidence and Limits\n\nRepository-static only.",
+        "## Safety",
+        "### Protected Actions\n\nNone beyond the policy.",
+        "### Stop and Escalate\n\nStop on a failed check.",
+    )
+
+
+class AgentsFormTests(RoleFormBody):
+    """SPEC-0176 VAL-AGENTS-001: the AGENTS form on every AGENTS.md."""
+
+    PATH = AGENTS_PATH
+    PROFILES = AGENTS
+    FORM_ID = "agents"
+    TREE = AGENTS_TREE
+    TABLE_KEYS = AGENTS_TABLE_KEYS
+    BODY = agents_body()
+    HEADER = ("Rule", "Trigger", "Effect")
+    HOME = "1. Keep the change small."
+
+    def test_the_loaded_heading_lists_equal_the_form_h2_titles(self) -> None:
+        # The AGENTS profiles stay native: they carry no H2 lists, so an empty
+        # section is a review matter, not a BODY-SECTION-EMPTY diagnostic.
+        registry = CONTRACTS.load_registry(ROOT)
+        loaded = next(f for f in registry.common_forms if f.form_id == self.FORM_ID)
+        self.assertEqual(
+            tuple(item.title for item in loaded.sections),
+            tuple(title for title, _ in self.TREE),
+        )
+        by_id = {profile.profile_id: profile for profile in registry.profiles}
+        for profile_id in self.PROFILES:
+            with self.subTest(profile=profile_id):
+                raw = profile_of(load_raw(), profile_id)
+                self.assertEqual(
+                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
+                )
+                self.assertIs(by_id[profile_id].form, loaded)
+
+    def test_the_profiles_are_native_and_the_template_is_exact(self) -> None:
+        raw = load_raw()
+        folder, twin = (profile_of(raw, profile_id) for profile_id in self.PROFILES)
+        self.assertEqual(folder["mode"], "native")
+        self.assertEqual(folder["frontmatter"]["mode"], "absent")
+        self.assertEqual(
+            folder["template_source"],
+            "docs/99.templates/templates/common/agents.template.md",
+        )
+        self.assertEqual(twin["mode"], "template")
+        self.assertEqual(twin["frontmatter"]["mode"], "absent")
+        self.assertEqual(twin["placeholder_policy"], "template-only")
+        self.assertEqual(
+            twin["relationships"]["source_profile_ids"], [self.PROFILES[0]]
+        )
+        self.assertEqual(
+            twin["path_pattern"],
+            "^docs/99\\.templates/templates/common/agents\\.template\\.md$",
+        )
+
+    def test_the_form_has_no_extension_and_no_body_section(self) -> None:
+        form = next(
+            f for f in load_raw()["common_forms"]["forms"] if f["form_id"] == "agents"
+        )
+        self.assertEqual(form["extensions"], [])
+        for profile_id in self.PROFILES:
+            self.assertIsNone(
+                profile_of(load_raw(), profile_id)["relationships"]["body_contract"]
+            )
+
+    def test_the_root_and_every_folder_file_resolve_to_the_agents_profile(
+        self,
+    ) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        for path in (
+            "AGENTS.md",
+            "scripts/AGENTS.md",
+            "docs/03.specs/AGENTS.md",
+            "examples/azure/AGENTS.md",
+        ):
+            with self.subTest(path=path):
+                profile = CONTRACTS.classify_path(registry, PurePosixPath(path))
+                self.assertEqual(profile.profile_id, AGENTS[0])
+                self.assertEqual(profile.document_role, "agents")
+        self.assertEqual(
+            CONTRACTS.classify_path(registry, PurePosixPath("CLAUDE.md")).profile_id,
+            "common/root-provider-shim",
+        )
+        self.assertIsNone(
+            CONTRACTS.classify_path(registry, PurePosixPath("CLAUDE.md")).document_role
+        )
+        self.assertEqual(
+            CONTRACTS.classify_path(
+                registry, PurePosixPath("scripts/CLAUDE.md")
+            ).profile_id,
+            "common/folder-claude-import",
+        )
+
+    def test_the_archive_has_no_agents_profile(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        try:
+            profile = CONTRACTS.classify_path(
+                registry, PurePosixPath("docs/98.archive/AGENTS.md")
+            )
+        except CONTRACTS.DocumentContractError:
+            return
+        self.assertNotEqual(profile.profile_id, AGENTS[0])
+
+    def test_a_missing_or_renamed_form_heading_fails_the_tree(self) -> None:
+        self.assertEqual(
+            self.tree(self.BODY.replace("### Handoff", "### Handover")),
+            ["BODY-H3-REQUIRED", "BODY-H3-UNSUPPORTED"],
+        )
+        self.assertEqual(
+            self.tree(self.BODY.replace("### Handoff\n", "### Handoff\n\n#### Deep\n")),
+            [],
+        )
+        self.assertEqual(
+            self.tree(self.under("## Safety", "### Stray\n\nText.")),
+            ["BODY-H3-UNSUPPORTED"],
+        )
+
+    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
+        wrong = self.table(self.HEADER[:2], ("a", "b"))
+        body = self.with_table(wrong, home="The quality policy.")
+        self.assertEqual(self.tables(body), [])
+
+
 class TemplateTwinTableTests(unittest.TestCase):
     """SPEC-0175 W03-H10: two tabled twins may not name one source profile."""
 
@@ -2695,12 +2862,12 @@ class RetainedFormTests(unittest.TestCase):
         self.assertEqual(body_rules("proposed", self.TREE), [])
 
 
-class CurrentRegistryEightFormsOnlyTests(unittest.TestCase):
-    def test_only_the_eight_form_profiles_use_the_tree(self) -> None:
+class CurrentRegistryNineFormsOnlyTests(unittest.TestCase):
+    def test_only_the_nine_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            EIGHT_FORMS,
+            NINE_FORMS,
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),

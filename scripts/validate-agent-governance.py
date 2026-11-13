@@ -1200,6 +1200,32 @@ def _bound_scope(
     return override.get("scope", binding["permission_scopes"][role["permission_class"]])
 
 
+# SPEC-0176 W03-D18: a thin gateway is bounded by its content, not its form
+# headings: one H1 and the AGENTS form's five H2 and ten H3.
+GATEWAY_MAX_CONTENT_LINES = 30
+GATEWAY_MAX_HEADING_LINES = 16
+_GATEWAY_HEADING = re.compile(r"^ {0,3}#{1,6}(\s|$)")
+_GATEWAY_FENCE = re.compile(r"^ {0,3}(```|~~~)")
+
+
+def _gateway_line_counts(gateway: str) -> tuple[int, int]:
+    """Count non-blank content lines and ATX heading lines outside code fences."""
+    content = headings = 0
+    fence = ""
+    for line in gateway.splitlines():
+        marker = _GATEWAY_FENCE.match(line)
+        if marker and (not fence or marker.group(1) == fence):
+            fence = "" if fence else marker.group(1)
+            content += 1
+        elif not line.strip():
+            continue
+        elif not fence and _GATEWAY_HEADING.match(line):
+            headings += 1
+        else:
+            content += 1
+    return content, headings
+
+
 def _gateway_loader_refs(provider_id: str) -> set[str]:
     return {
         ".agents/workflows/work-lifecycle.md",
@@ -1537,8 +1563,10 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
             f".{provider['id']}/{provider['id'].upper()}.md",
             "RTK.md",
         ]
+        content_lines, heading_lines = _gateway_line_counts(gateway)
         if (
-            len(gateway.splitlines()) > 30
+            content_lines > GATEWAY_MAX_CONTENT_LINES
+            or heading_lines > GATEWAY_MAX_HEADING_LINES
             or any(ref not in gateway for ref in required)
             or any(
                 heading in gateway

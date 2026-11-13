@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.25.0"
+version: "0.26.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -97,9 +97,10 @@ form 경로의 대응은 Registry만 소유한다.
   `Repository Map`, `Getting Started`, `References`를 쓴다. 각 form과 선택
   module은 경로별 Registry profile이 고른다. stage·collection index form은 `updated` 뒤에
   `layer`를 더한다. README는 사람 독자만을 대상으로 한다. 폴더의 agent 지시는 그
-  폴더의 `AGENTS.md`에 두며, 이는 frontmatter와 form이 없는 native
-  `common/folder-agents-guide` 파일이다. 루트 `AGENTS.md`와 `CLAUDE.md`는
-  `common/root-provider-shim` gateway로 유지한다.
+  폴더의 `AGENTS.md`에 두며, 루트 `AGENTS.md`를 포함한 모든 `AGENTS.md`는
+  frontmatter 없이 AGENTS form을 쓰는 native `common/folder-agents-guide`
+  파일이다. 루트 `CLAUDE.md`는 `common/root-provider-shim` gateway로, 폴더의
+  `CLAUDE.md`는 native import로 유지한다.
 - **Governance forms** (`governance/`): 공통 SDLC 계약, provider note, 역할,
   정책, 워크플로, 지식 지도, 프롬프트 계약에 `contract`, `provider`, `role`,
   `rule`, `skill`, `knowledge`, `prompt` form이 대응한다. `rule`은 운영 `policy`와

@@ -4,14 +4,14 @@ Agent instructions for `docs/01.requirements/`. The parent
 [`docs/AGENTS.md`](../AGENTS.md) still applies; this file adds the rules of
 the requirements stage.
 
-## Purpose
+## Scope
+
+### Allowed Surface
 
 Stage 01 holds Requirement Packages: the solution-independent problem, goals,
 stakeholder needs, functional, non-functional and interface requirements,
 constraints and acceptance criteria. Design belongs to Stage 02 and change
 contracts to Stage 03.
-
-## Responsibilities and Projections
 
 | Work here | Role (`.agents/roles/`) | Skills | Claude | Codex |
 | --- | --- | --- | --- | --- |
@@ -19,7 +19,17 @@ contracts to Stage 03.
 | Author the package text and traceability | [doc-writer](../../.agents/roles/doc-writer.md) | `docs-stage-conformance`, `docs-stage-routing`, `requirements-to-design` | `.claude/agents/doc-writer.md` | `.codex/agents/doc-writer.toml` |
 | Keep the README index current | [wiki-curator](../../.agents/roles/wiki-curator.md) | `docs-stage-conformance`, `knowledge-map` | `.claude/agents/wiki-curator.md` | `.codex/agents/wiki-curator.toml` |
 
-## Rules
+### Non-goals
+
+Non-goals are stated at the end of the Purpose text under Allowed Surface: design belongs to Stage 02 and change contracts to Stage 03.
+
+## Required Policies
+
+### Canonical Sources
+
+Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
+
+### Local Obligations
 
 1. Profile `sdlc/requirement`; start from
    `docs/99.templates/templates/requirements/requirement-package.template.md`
@@ -41,7 +51,33 @@ contracts to Stage 03.
 7. When a requirement changes, update the linked AD, ADR and Spec traceability
    and this stage's README index in the same change.
 
-## Checks
+## Workflow
+
+### Inspect and Change
+
+Inspecting and changing files follows the rules under Local Obligations.
+
+### Handoff
+
+This file states no separate handoff rule.
+
+## Verification
+
+### Required Checks
 
 Run the strict document checks listed in the parent `AGENTS.md`; the
 lifecycle check enforces the state edges above.
+
+### Evidence and Limits
+
+This file states no separate evidence or limits rule.
+
+## Safety
+
+### Protected Actions
+
+This file states no separate protected-action rule.
+
+### Stop and Escalate
+
+This file states no separate stop or escalation rule.

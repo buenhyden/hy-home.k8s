@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.13.0"
+version: "3.14.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -129,14 +129,15 @@ This policy marks no subject as excluded from its scope.
    A README is written for human readers: purpose, structure, usage and
    navigation. It names no AI agent audience and carries no agent
    instruction. An `AGENTS.md` is written for AI agents. The root `AGENTS.md`
-   and `CLAUDE.md` stay the provider gateways; the rules below govern folder
-   `AGENTS.md` files.
+   and `CLAUDE.md` stay the provider gateways; the root `CLAUDE.md` stays on
+   `common/root-provider-shim` while the root `AGENTS.md` uses the AGENTS form
+   like every folder file. The rules below govern folder `AGENTS.md` files.
    - **README.md and AGENTS.md together** when a folder is the root of a work
      area that has its own agent responsibilities (a registry role works
      there) and rules an agent must follow that common policy and the parent
      `AGENTS.md` do not already state: forbidden live actions, ownership
      boundaries, required checks. The registry profile
-     `common/folder-agents-guide` governs every such file; list the current
+     `common/folder-agents-guide` governs every such file and the root `AGENTS.md`; list the current
      set with `git ls-files '*/AGENTS.md'` rather than keeping a copy here. A
      folder `AGENTS.md` also carries the rules of subfolders that have none
      of their own, as `examples/azure/` does.
@@ -270,8 +271,8 @@ through that source; an edit made only in the copy is a defect. The Policy
 role, its forms and placement are owned by the
 [SDLC contract](sdlc.md#ownership-and-placement).
 
-Guide, Runbook, Incident, Postmortem, Policy, Root README, Stage README and Service
-README use their registry forms. Guide keeps its classification, readers and
+Guide, Runbook, Incident, Postmortem, Policy, AGENTS, Root README, Stage README and
+Service README use their registry forms. Guide keeps its classification, readers and
 goal under Purpose and its Lifecycle Traceability table under Verification;
 Runbook keeps its Lifecycle Traceability table under Validation; Incident keeps
 its Lifecycle Traceability table under Evidence and Postmortem under Corrective
@@ -279,7 +280,8 @@ Actions; Root README keeps an optional Directory Index table under Directories;
 Stage README, which the stage and collection READMEs use, keeps an optional
 Index table under Current Items; Service README, which the implementation,
 agent and provider, and runtime-governance READMEs use, keeps an optional
-Commands table under Checks. Policy uses the selected
+Commands table under Checks; AGENTS, which every `AGENTS.md` uses, keeps an
+optional Tool Rules table under Local Obligations. Policy uses the selected
 role's ordered sections and keeps its existing Lifecycle Traceability table
 under Related Documents until its package. A
 TemplateDefinition names each table's section, ordered columns, minimum rows and
