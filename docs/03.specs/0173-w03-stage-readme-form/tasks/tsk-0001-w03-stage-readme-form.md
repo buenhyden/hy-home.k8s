@@ -1,6 +1,6 @@
 ---
 title: "W03 Stage README Form"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-13"
@@ -29,8 +29,8 @@ This Task records the fifth phase-2 package of W03, the Stage README form, for [
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-STAGEREADME-001](../spec.md#success-criteria--verification-plan) | Registry form, TemplateDefinitions, tables, binding and navigation; the H4 table reader; tests. | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-STAGEREADME-002](../spec.md#success-criteria--verification-plan) | 22 documents and two templates moved with the map; policy texts; regression and exact-index QA. | platform | in-progress | PASS | EVD-005, EVD-006, EVD-007; exact-index QA at the implementation commit |
+| WORK-001 | [VAL-STAGEREADME-001](../spec.md#success-criteria--verification-plan) | Registry form, TemplateDefinitions, tables, binding and navigation; the H4 table reader; tests. | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-STAGEREADME-002](../spec.md#success-criteria--verification-plan) | 22 documents and two templates moved with the map; policy texts; regression and exact-index QA. | platform | completed | PASS | EVD-005, EVD-006, EVD-007; implementation commit `1a2e25ad` passed exact-index QA and the hooks |
 
 ## Task Evidence
 
@@ -43,13 +43,21 @@ This Task records the fifth phase-2 package of W03, the Stage README form, for [
 | EVD-005 | [VAL-STAGEREADME-002](../spec.md#success-criteria--verification-plan) | WORK-002 | 22 READMEs and two templates meaning map | Seven stage READMEs (`docs/README.md`, 01, 02, 03, 05, 90, 99) and 15 collection READMEs; implementer maps and word-multiset comparison, read by the author | PASS | Every source sentence is kept, moved under the form's H2 and H3 headings; old H3 headings became H4. Word comparison shows no removal; additions are Korean none-with-reason lines under form H3 headings without source text only. Placement calls for owner review: split Usage lists renumbered under Create and Review; Add and Find kept whole under Create and Review; the Stage 90 `In Scope` table moved under Classification; the Stage 99 scope sub-headings under Classification with Inputs and Outputs left as a none-with-reason line; the headingless need tables of the guides, policies and runbooks READMEs under Classification. `docs/05.operations/README.md` line 152 now points at the Operations Mutation Boundary that moved above it. The templates each carry 4 H2 and 8 H3 headings and an optional Index table. | yes | none |
 | EVD-006 | [VAL-STAGEREADME-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Regression over the tree, suites and lint | Author run over the staged working tree after `f777b9a4`, 2026-11-13 | PASS | The four strict document validators exit 0 with output byte-identical to the before run at `f777b9a4`. `quality.py` PASS; markdownlint over the 25 edited Markdown files 0 issues; `ruff check scripts tests` and `ruff format --check scripts tests` clean; `graphify update .` rc 0. Suites: `agent-governance` 104, `ci-metadata` 87, `cluster-gate` 72, `document` 461, `document-lifecycle` 18, `release` 29, `tooling` 166, `validation-routing` 173 OK; `qa-runner` 37 with the known default-branch error (SPEC-0161 W03-H11). `REFERENCE_PACK_INDEX_DRIFT` fails while the reference READMEs are unstaged and clears once staged. `.secrets.baseline` registry `source_revision` line 6437 moves to 6602 in its own commit. | yes | none |
 | EVD-007 | [VAL-STAGEREADME-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Semantic review: risk class and core-diff checklist | Diff of 31 files over `f777b9a4` | PASS | Risk class `medium` (registry, validator code, tests and 22 router READMEs). Checklist: scope matches the Spec; one writer per file; the form equals the external contract; the four agent and provider READMEs stay on their current binding (W03-D16); the H4 reader still requires one match; no check weakened; policy text `document-authoring.md` 3.11.0 and the `docs/99.templates/README.md` Common forms bullet; no secret read; recovery is reverting the implementation commit. No permission, trigger, hook or workflow changed. | yes | none |
+| EVD-008 | [VAL-STAGEREADME-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 exit authority; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-STAGEREADME-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-STAGEREADME-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-STAGEREADME-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0173 criterion question, which listed the five placement calls of EVD-005) | platform |
+| [VAL-STAGEREADME-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-006, EVD-007 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0173 criterion question, which listed the five placement calls of EVD-005) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document authoring policy and the registry (Plan Promotion row). No new handoff arises; the Service README package reuses the H4 reader and the Index table shape, and W03-D16 stays recorded in the SPEC-0161 Task. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes. Registry text, code comments and test docstrings name SPEC-0173 as an identifier, not a link, and stay.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's explicit 2026-11-13 answer "Exit, push and PR" is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
 
 ## Approval and Safety Boundaries
 
@@ -64,4 +72,4 @@ This Task records the fifth phase-2 package of W03, the Stage README form, for [
 
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002) and approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); criterion acceptance pending. Risk class `medium`.
+Spec and Plan reviewed (EVD-001, EVD-002) and approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); implementation commit `1a2e25ad`. The user accepted both criteria and the package exit on 2026-11-13 (EVD-008). Risk class `medium`. Next owner: W03 for the Service README package after the W03-D16 binding decision.
