@@ -1,6 +1,6 @@
 ---
 title: "W03 Explained Empty Sections"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-13"
@@ -30,8 +30,8 @@ This Task records handoff W03-H18, the explained empty sections, for [SPEC-0182]
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-EMPTY-001](../spec.md#success-criteria--verification-plan) | Reason-table rewrites, document-specific sentences, pointers, `BODY-SECTION-BARE`, tests. | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-EMPTY-002](../spec.md#success-criteria--verification-plan) | Policy sentence; gateway counts; regression and exact-index QA. | platform | in-progress | PASS | EVD-005, EVD-006, EVD-007; exact-index QA at the implementation commit |
+| WORK-001 | [VAL-EMPTY-001](../spec.md#success-criteria--verification-plan) | Reason-table rewrites, document-specific sentences, pointers, `BODY-SECTION-BARE`, tests. | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-EMPTY-002](../spec.md#success-criteria--verification-plan) | Policy sentence; gateway counts; regression and exact-index QA. | platform | completed | PASS | EVD-005, EVD-006, EVD-007; implementation commit `7268fbd0` passed exact-index QA and the hooks |
 
 ## Task Evidence
 
@@ -44,13 +44,21 @@ This Task records handoff W03-H18, the explained empty sections, for [SPEC-0182]
 | EVD-005 | [VAL-EMPTY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Policy sentence and version bumps | Staged diff over `b1e8cea7` | PASS | `.agents/governance/document-authoring.md` 3.19.0 states that an empty required section gives its reason and the condition for filling it and that a pointer names an existing location. The 47 other edited documents with frontmatter got a patch bump and `updated` 2026-11-13 (skills through `metadata`); folder `AGENTS.md` files have no frontmatter. | yes | none |
 | EVD-006 | [VAL-EMPTY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Regression over the tree, suites and lint | Author run over the staged index after `b1e8cea7`, 2026-11-13 | PASS | The four strict document validators give output byte-identical to the before run at `b1e8cea7`; staged lifecycle PASS; `python3 scripts/qa.py staged` result recorded at the implementation commit. Suites (implementer): `agent-governance` 105, `validation-routing` 173, `tooling` 166 OK; `document` 643 with one failure only on the unstaged index, passing in a staged copy; `validate-agent-governance.py` PASS; `quality.py` PASS; markdownlint 0 issues over the 64 edited Markdown files; `ruff check` and `ruff format --check` clean; `graphify update .` done. | yes | none |
 | EVD-007 | [VAL-EMPTY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Semantic review: risk class and core-diff checklist | Diff of 66 files over `b1e8cea7` | PASS | Risk class `medium` (about 64 governed documents including native skills, a workflow every session loads and folder agent rules, one validator and tests). Checklist: only bare lines, the seven pointers, one policy sentence, version fields, the rule and its tests changed; no heading, section with content or other frontmatter key changed; the new sentences restate what the owners say; the root gateway counts are unchanged; `secrets/README.md` changed by its two bare lines, which the user checked because the agent's read of that path is denied; no other secret file read; recovery is reverting the implementation commit. No permission, trigger, hook or workflow file changed. | yes | none |
+| EVD-008 | [VAL-EMPTY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. This package closes W03-H18. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-EMPTY-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001, record PASS evidence and show the document-specific sentences at acceptance | platform |
-| [VAL-EMPTY-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-EMPTY-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0182 criterion question naming implementation commit `7268fbd0`, the three deviations of EVD-004 and the ten document-specific sentences) | platform |
+| [VAL-EMPTY-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-006, EVD-007 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0182 criterion question naming implementation commit `7268fbd0`, the three deviations of EVD-004 and the ten document-specific sentences) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document authoring policy and `scripts/validate-markdown-profiles.py` (Plan Promotion row). No new handoff arises. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes. Code comments and test docstrings that name SPEC-0182 use it as an identifier, not a link, and stay.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
 
 ## Approval and Safety Boundaries
 
@@ -65,4 +73,4 @@ This Task records handoff W03-H18, the explained empty sections, for [SPEC-0182]
 
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007), with three recorded deviations; criterion acceptance with the document-specific sentences pending. Risk class `medium`.
+Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007), with three recorded deviations; implementation commit `7268fbd0`. The user accepted both criteria with the deviations and sentences on 2026-11-13, and the approval of commit, push and PR covers the package exit (EVD-008); this package closes W03-H18. Risk class `medium`. Next owner: W03 for SPEC-0183.
