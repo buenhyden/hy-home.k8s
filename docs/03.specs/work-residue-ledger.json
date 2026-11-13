@@ -674,17 +674,6 @@
       }
     },
     {
-      "id": "W03-H33",
-      "kind": "adoption",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "With the W03 closing",
-      "source": {
-        "path": "docs/99.templates/registry.json",
-        "registry_key": "shared_contract"
-      }
-    },
-    {
       "id": "W03-H34",
       "kind": "survey",
       "state": "open",
