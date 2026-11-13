@@ -52,23 +52,21 @@ FORM_IDS = (
     "skill",
     "workspace-readme",
     "reference-pack-readme",
-)
-# W03-D20: nine Stage 99 local roles follow the eighteen form identifiers; none
-# of them has a form.
-LOCAL_ROLE_IDS = (
-    "reference-report",
-    "governance-document",
     "knowledge-map",
     "vocabulary",
     "prompt",
     "evaluation-task",
     "evaluation-score",
     "evaluation-results",
-    "provider-native",
 )
-ROLE_IDS = FORM_IDS + LOCAL_ROLE_IDS
-# The profiles bound to a role: the clear common roles, then the nine local
-# roles on their source profiles; every other profile carries none.
+# W03-D20, W03-D26, W03-D33: three Stage 99 local roles have no form (W03-D34
+# and W03-D36 give the first two one later; provider-native keeps none).
+LOCAL_ROLE_IDS = ("reference-report", "governance-document", "provider-native")
+# The schema role order: the 18 first roles, the two reference and governance
+# roles, the six small local roles, then provider-native.
+ROLE_IDS = FORM_IDS[:18] + LOCAL_ROLE_IDS[:2] + FORM_IDS[18:] + LOCAL_ROLE_IDS[2:]
+# The profiles bound to a role: the clear common roles, then the local roles on
+# their source profiles; every other profile carries none.
 ROLE_BINDINGS = {
     "sdlc/requirement": "requirement",
     "sdlc/architecture-description": "architecture",
@@ -110,7 +108,8 @@ ROLE_BINDINGS = {
     "common/provider-native-command": "provider-native",
     "common/codex-agent-binding": "provider-native",
 }
-# The fourteen templates of the local roles carry a definition and these tables.
+# The nine templates of the roles without a form carry a definition and these
+# tables, each named by its exact heading line.
 LOCAL_TABLES = {
     "common/template-reference-audit": [
         ("Criterion", "### Criteria and Inspected Surface"),
@@ -128,25 +127,8 @@ LOCAL_TABLES = {
         ("Generation command", "### Generation and Refresh"),
     ],
     "common/template-governance-contract": [],
-    "common/template-governance-knowledge": [],
-    "common/template-governance-vocabulary": [("Term ID", "## Repository Vocabulary")],
-    "common/template-governance-prompt": [],
     "common/template-governance-provider": [],
     "common/template-governance-role": [],
-    "common/template-evaluation-task": [
-        ("Field", "## Overview"),
-        ("Trial ID", "## Declared Trials"),
-        ("Criterion ID", "## Signals and Criteria"),
-    ],
-    "common/template-evaluation-score": [
-        ("Field", "## Overview"),
-        ("Trial ID", "## Trial Evidence"),
-        ("Trial ID", "## Criterion Scores"),
-    ],
-    "common/template-evaluation-results": [
-        ("Cycle ID", "## Pair Coverage"),
-        ("Scope", "## Aggregate"),
-    ],
     "common/template-exception-provider-native-metadata": [],
     "common/template-exception-provider-native-command": [],
     "common/template-exception-provider-native-codex": [],
@@ -158,14 +140,8 @@ LOCAL_SOURCES = {
     "common/template-reference-research": "reference/research",
     "common/template-reference-data": "reference/data",
     "common/template-governance-contract": "governance/contract",
-    "common/template-governance-knowledge": "governance/knowledge",
-    "common/template-governance-vocabulary": "governance/vocabulary",
-    "common/template-governance-prompt": "governance/prompt",
     "common/template-governance-provider": "governance/provider",
     "common/template-governance-role": "governance/role",
-    "common/template-evaluation-task": "evaluation/task",
-    "common/template-evaluation-score": "evaluation/score",
-    "common/template-evaluation-results": "evaluation/results",
     "common/template-exception-provider-native-metadata": "common/provider-native-metadata",
     "common/template-exception-provider-native-command": "common/provider-native-command",
     "common/template-exception-provider-native-codex": "common/codex-agent-binding",
@@ -453,7 +429,232 @@ POLICY_OPERATIONS_TABLE_KEYS = {
         "Promoted owner",
     ),
 }
-# The twelve roles that carry a form; every other profile keeps its H2 lists.
+# SPEC-0186: the six small local roles, each (source, twin), its H2 tree with no
+# H3, and its tables as (name, section id, column keys, minimum rows, identity).
+KNOWLEDGE_FORM = (
+    "governance/knowledge",
+    "common/template-governance-knowledge",
+)
+KNOWLEDGE_FORM_TREE = (
+    ("Overview", ()),
+    ("Authority Boundary", ()),
+    ("Pointer Index", ()),
+    ("Validation and Refresh", ()),
+    ("Related Documents", ()),
+)
+VOCABULARY_FORM = (
+    "governance/vocabulary",
+    "common/template-governance-vocabulary",
+)
+VOCABULARY_FORM_TREE = (
+    ("Purpose", ()),
+    ("Scope", ()),
+    ("Normative Language", ()),
+    ("Repository Vocabulary", ()),
+    ("Local Extensions", ()),
+    ("Maintenance", ()),
+    ("References", ()),
+)
+VOCABULARY_TABLES = [
+    (
+        "Term ID",
+        "vocabulary-repository-vocabulary",
+        (
+            "Term ID",
+            "Term",
+            "Korean",
+            "Definition",
+            "Not to Confuse",
+            "Policy Owner",
+            "Contract Version",
+        ),
+        0,
+        "Term ID",
+    )
+]
+PROMPT_FORM = ("governance/prompt", "common/template-governance-prompt")
+PROMPT_FORM_TREE = (
+    ("Overview", ()),
+    ("Authority Boundary", ()),
+    ("Inputs", ()),
+    ("Output", ()),
+    ("Validation", ()),
+    ("Refusal Conditions", ()),
+    ("Related Documents", ()),
+)
+TASK_FORM = ("evaluation/task", "common/template-evaluation-task")
+TASK_FORM_TREE = (
+    ("Overview", ()),
+    ("Declared Trials", ()),
+    ("Signals and Criteria", ()),
+    ("Human Calibration", ()),
+    ("Related Documents", ()),
+)
+TASK_TABLES = [
+    (
+        "Field",
+        "evaluation-task-overview",
+        ("Field", "Declared value"),
+        0,
+        "Field",
+    ),
+    (
+        "Trial ID",
+        "evaluation-task-declared-trials",
+        (
+            "Trial ID",
+            "Baseline output",
+            "With-skill output",
+            "Pair status",
+            "Partial reason",
+        ),
+        0,
+        "Trial ID",
+    ),
+    (
+        "Criterion ID",
+        "evaluation-task-signals-and-criteria",
+        ("Criterion ID", "Observable signal", "Scoring rule", "Scorer ID"),
+        0,
+        "Criterion ID",
+    ),
+]
+SCORE_FORM = ("evaluation/score", "common/template-evaluation-score")
+SCORE_FORM_TREE = (
+    ("Overview", ()),
+    ("Trial Evidence", ()),
+    ("Criterion Scores", ()),
+    ("Human Calibration", ()),
+    ("Related Documents", ()),
+)
+SCORE_TABLES = [
+    (
+        "Field",
+        "evaluation-score-overview",
+        ("Field", "Observed value"),
+        0,
+        "Field",
+    ),
+    (
+        "Trial ID",
+        "evaluation-score-trial-evidence",
+        (
+            "Trial ID",
+            "Baseline output and hash",
+            "With-skill output and hash",
+            "Session references",
+            "Evidence status",
+        ),
+        0,
+        "Trial ID",
+    ),
+    (
+        "Trial ID",
+        "evaluation-score-criterion-scores",
+        (
+            "Trial ID",
+            "Criterion ID",
+            "Baseline observed signal and raw locator",
+            "With-skill observed signal and raw locator",
+            "Baseline score",
+            "With-skill score",
+        ),
+        0,
+        "Criterion ID",
+    ),
+]
+RESULTS_FORM = ("evaluation/results", "common/template-evaluation-results")
+RESULTS_FORM_TREE = (
+    ("Overview", ()),
+    ("Pair Coverage", ()),
+    ("Aggregate", ()),
+    ("Limitations", ()),
+    ("Related Documents", ()),
+)
+RESULTS_TABLES = [
+    (
+        "Cycle ID",
+        "evaluation-results-pair-coverage",
+        (
+            "Cycle ID",
+            "Trial ID",
+            "Declared pairs",
+            "Complete pairs",
+            "Task",
+            "Score",
+            "Partial reason",
+        ),
+        0,
+        "Cycle ID",
+    ),
+    (
+        "Scope",
+        "evaluation-results-aggregate",
+        (
+            "Scope",
+            "Actual pairs",
+            "Criterion ID",
+            "Baseline summary",
+            "With-skill summary",
+            "Calibration reference",
+        ),
+        0,
+        "Criterion ID",
+    ),
+]
+# (form id, title, (source, twin), tree, tables, link-only section title)
+SMALL_FORMS = (
+    (
+        "knowledge-map",
+        "Knowledge Map",
+        KNOWLEDGE_FORM,
+        KNOWLEDGE_FORM_TREE,
+        [],
+        "Related Documents",
+    ),
+    (
+        "vocabulary",
+        "Vocabulary",
+        VOCABULARY_FORM,
+        VOCABULARY_FORM_TREE,
+        VOCABULARY_TABLES,
+        "References",
+    ),
+    ("prompt", "Prompt", PROMPT_FORM, PROMPT_FORM_TREE, [], "Related Documents"),
+    (
+        "evaluation-task",
+        "Evaluation Task",
+        TASK_FORM,
+        TASK_FORM_TREE,
+        TASK_TABLES,
+        "Related Documents",
+    ),
+    (
+        "evaluation-score",
+        "Evaluation Score",
+        SCORE_FORM,
+        SCORE_FORM_TREE,
+        SCORE_TABLES,
+        "Related Documents",
+    ),
+    (
+        "evaluation-results",
+        "Evaluation Results",
+        RESULTS_FORM,
+        RESULTS_FORM_TREE,
+        RESULTS_TABLES,
+        "Related Documents",
+    ),
+)
+LOCAL_LINK_ONLY = {
+    "workspace-readme": "workspace-readme-related-documents",
+    "reference-pack-readme": "reference-pack-readme-related-documents",
+    **{
+        form_id: f"{form_id}-{link.lower().replace(' ', '-')}"
+        for form_id, _, _, _, _, link in SMALL_FORMS
+    },
+}
+# The eighteen roles that carry a form; every other profile keeps its H2 lists.
 FORM_PROFILES = (
     GUIDE
     + RUNBOOK
@@ -469,6 +670,12 @@ FORM_PROFILES = (
     + SKILL_NATIVE
     + WORKSPACE_FORM
     + PACK_FORM
+    + KNOWLEDGE_FORM
+    + VOCABULARY_FORM
+    + PROMPT_FORM
+    + TASK_FORM
+    + SCORE_FORM
+    + RESULTS_FORM
 )
 FORM_TEMPLATES = (
     GUIDE[1],
@@ -489,8 +696,14 @@ FORM_TEMPLATES = (
     PACK_FORM[1],
     PACK_FORM[3],
     PACK_FORM[5],
+    KNOWLEDGE_FORM[1],
+    VOCABULARY_FORM[1],
+    PROMPT_FORM[1],
+    TASK_FORM[1],
+    SCORE_FORM[1],
+    RESULTS_FORM[1],
 )
-TWELVE_FORMS = [
+EIGHTEEN_FORMS = [
     "guide",
     "runbook",
     "incident",
@@ -503,6 +716,12 @@ TWELVE_FORMS = [
     "skill",
     "workspace-readme",
     "reference-pack-readme",
+    "knowledge-map",
+    "vocabulary",
+    "prompt",
+    "evaluation-task",
+    "evaluation-score",
+    "evaluation-results",
 ]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
@@ -776,7 +995,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twelve_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_eighteen_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -799,6 +1018,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ("skill", "Skill"),
                 ("workspace-readme", "Workspace README"),
                 ("reference-pack-readme", "Reference Pack README"),
+                *((form_id, title) for form_id, title, *_ in SMALL_FORMS),
             ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
@@ -908,6 +1128,10 @@ class RepositoryRegistryTests(unittest.TestCase):
                 PACK_FORM,
                 None,
             ),
+            *(
+                (form_id, tree, [], tables, profiles, None)
+                for form_id, _, profiles, tree, tables, _ in SMALL_FORMS
+            ),
         ):
             loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
             self.assertEqual(loaded["h1"], "{{document_title}}")
@@ -965,9 +1189,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             self.assertTrue(all(isinstance(n.get("link_only"), bool) for n in every))
             self.assertEqual(
                 {node["section_id"] for node in every if node.get("link_only")},
-                {f"{form_id}-related-documents"}
-                if form_id in ("workspace-readme", "reference-pack-readme")
-                else set(),
+                {LOCAL_LINK_ONLY[form_id]} if form_id in LOCAL_LINK_ONLY else set(),
             )
             self.assertEqual(loaded["extensions"], extensions)
             for profile_id in profiles:
@@ -984,16 +1206,21 @@ class RepositoryRegistryTests(unittest.TestCase):
                 self.assertNotIn("ordered", profile["sections"])
             for twin in (p for p in profiles if by_id[p]["mode"] == "template"):
                 self.assertEqual(
-                    {
-                        table["name"]: (
+                    sorted(
+                        (
+                            table["name"],
                             table["section"],
                             tuple(column["key"] for column in table["columns"]),
                             table["minimum_rows"],
                             table["row_identity"],
                         )
                         for table in by_id[twin]["template_definition"]["tables"]
-                    },
-                    tables,
+                    ),
+                    sorted(
+                        [(name, *spec) for name, spec in tables.items()]
+                        if isinstance(tables, dict)
+                        else tables
+                    ),
                 )
                 for table in by_id[twin]["template_definition"]["tables"]:
                     for column in table["columns"]:
@@ -1030,11 +1257,11 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_twelve_forms(self) -> None:
+    def test_repository_registry_loads_with_exactly_the_eighteen_forms(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWELVE_FORMS,
+            EIGHTEEN_FORMS,
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -1050,6 +1277,10 @@ class RepositoryRegistryTests(unittest.TestCase):
             "skill": ["Steps"],
             "workspace-readme": [],
             "reference-pack-readme": [],
+            **{
+                form_id: [name for name, *_ in tables]
+                for form_id, _, _, _, tables, _ in SMALL_FORMS
+            },
         }
         governance_tables = ["Rules"]
         for profile in registry.profiles:
@@ -1070,6 +1301,10 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("skill", SKILL_GOVERNANCE + SKILL_NATIVE),
                             ("workspace-readme", WORKSPACE_FORM),
                             ("reference-pack-readme", PACK_FORM),
+                            *(
+                                (form_id, profiles)
+                                for form_id, _, profiles, _, _, _ in SMALL_FORMS
+                            ),
                         )
                         if profile.profile_id in ids
                     ),
@@ -1084,7 +1319,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                         else tables[role],
                     )
                 else:
-                    # A role without a form: a local role or no role at all.
+                    # A role without a form: one of the three local roles or no role.
                     self.assertIsNone(profile.form)
                     self.assertEqual(
                         [(t.name, t.section) for t in profile.tables],
@@ -1098,7 +1333,7 @@ class RepositoryRegistryTests(unittest.TestCase):
         self.assertEqual(by_id["governance/rule"].document_role, "policy")
         self.assertEqual(by_id["governance/role"].document_role, "governance-document")
 
-    def test_schema_role_enum_is_twenty_seven_and_form_enum_stays_eighteen(
+    def test_schema_role_enum_is_twenty_seven_and_form_enum_is_twenty_four(
         self,
     ) -> None:
         schema = json.loads(
@@ -1113,10 +1348,10 @@ class RepositoryRegistryTests(unittest.TestCase):
         self.assertEqual(len(ROLE_IDS), 27)
         self.assertEqual(tuple(profile_role), ROLE_IDS)
         self.assertEqual(tuple(form_id), FORM_IDS)
-        self.assertEqual(len(form_id), 18)
+        self.assertEqual(len(form_id), 24)
         self.assertEqual(
             [item.form_id for item in CONTRACTS.load_registry(ROOT).common_forms],
-            TWELVE_FORMS,
+            EIGHTEEN_FORMS,
         )
         self.assertEqual(
             schema["$defs"]["section"]["properties"]["level"]["enum"], [2, 3]
@@ -1137,7 +1372,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWELVE_FORMS,
+            EIGHTEEN_FORMS,
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -3667,6 +3902,288 @@ class ReferencePackFormTests(LocalReadmeForm):
                 self.assertEqual(profile.document_role, "reference-pack-readme")
 
 
+class SmallLocalFormTests(unittest.TestCase):
+    """SPEC-0186 VAL-SMALLFORMS-001: the six small local forms (W03-D26)."""
+
+    PATHS = {
+        "knowledge-map": PurePosixPath(".agents/knowledge/domains.md"),
+        "vocabulary": PurePosixPath(".agents/knowledge/glossary.md"),
+        "prompt": PurePosixPath(".agents/prompts/doc-update.md"),
+        "evaluation-task": PurePosixPath(".agents/evaluations/harnesses/x/task.md"),
+        "evaluation-score": PurePosixPath(".agents/evaluations/harnesses/x/score.md"),
+        "evaluation-results": PurePosixPath(".agents/evaluations/results.md"),
+    }
+    NONE = "None is stated in this document."
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.raw = load_raw()
+        cls.profiles = typed_profiles(cls.raw)
+
+    @staticmethod
+    def body(tree: tuple, link: str, *, skip: str = "", swap: bool = False) -> str:
+        titles = [title for title, _ in tree if title != skip]
+        if swap:
+            titles[0], titles[1] = titles[1], titles[0]
+        blocks = ["# Document title"]
+        for title in titles:
+            text = "- [Owner](owner.md)" if title == link else f"The {title} text."
+            blocks.append(f"## {title}\n\n{text}")
+        return md(*blocks)
+
+    def tree_rules(self, form_id: str, source: str, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(
+                self.PATHS[form_id], self.profiles[source], text, "active"
+            )
+        )
+
+    def test_the_forms_are_stage_99_local_forms_with_only_required_h2_sections(
+        self,
+    ) -> None:
+        forms = {f["form_id"]: f for f in self.raw["common_forms"]["forms"]}
+        stage = forms["stage-readme"]
+        for form_id, title, _, tree, _, link in SMALL_FORMS:
+            with self.subTest(form=form_id):
+                form = forms[form_id]
+                self.assertEqual(form["title"], title)
+                self.assertEqual(form["h1"], "{{document_title}}")
+                self.assertEqual(form["language_rule"], stage["language_rule"])
+                self.assertEqual(form["extensions"], [])
+                for needle in ("Stage 99", "W03-D09", "W03-D20", "W03-D26"):
+                    self.assertIn(needle, form["extension_policy"])
+                self.assertIn("COMMON-DOC-FORM-1", form["extension_policy"])
+                self.assertNotEqual(form["extension_policy"], stage["extension_policy"])
+                self.assertEqual(
+                    [
+                        (s["section_id"], s["title"], s["order"])
+                        for s in form["sections"]
+                    ],
+                    [
+                        (f"{form_id}-{name.lower().replace(' ', '-')}", name, n)
+                        for n, (name, _) in enumerate(tree, start=1)
+                    ],
+                )
+                for s in form["sections"]:
+                    self.assertEqual(s["level"], 2)
+                    self.assertEqual(s["requiredness"], "required")
+                    self.assertEqual(s["condition"], "always")
+                    self.assertEqual(s["children"], [])
+                    self.assertEqual(
+                        s["empty_policy"], "explain_none_or_not_applicable"
+                    )
+                    self.assertEqual(
+                        s["validation_ids"], ["FORM-STRUCTURE", "FORM-CONTENT-REVIEW"]
+                    )
+                    self.assertTrue(s["required_content"] and s["prohibited_content"])
+                    self.assertIs(s["link_only"], s["title"] == link)
+        self.assertEqual(
+            sum(
+                len(f["sections"])
+                for f in forms.values()
+                if f["form_id"] in {x[0] for x in SMALL_FORMS}
+            ),
+            34,
+        )
+
+    def test_the_twelve_profiles_use_the_form_and_hold_no_h2_list(self) -> None:
+        self.assertEqual(sum(len(x[2]) for x in SMALL_FORMS), 12)
+        for form_id, _, profiles, _, _, _ in SMALL_FORMS:
+            for profile_id in profiles:
+                with self.subTest(profile=profile_id):
+                    raw = profile_of(self.raw, profile_id)
+                    self.assertEqual(raw["document_role"], form_id)
+                    self.assertEqual(
+                        raw["sections"],
+                        {"required": [], "optional": [], "forbidden": []},
+                    )
+                    self.assertEqual(self.profiles[profile_id].form.form_id, form_id)
+        self.assertEqual(
+            profile_of(self.raw, "evaluation/raw-output")["sections"],
+            {"required": [], "optional": [], "forbidden": []},
+        )
+        self.assertIsNone(self.profiles["evaluation/raw-output"].form)
+
+    def test_the_twin_definitions_name_the_form_and_record_section_id_tables(
+        self,
+    ) -> None:
+        for form_id, _, (_, twin), _, tables, _ in SMALL_FORMS:
+            with self.subTest(form=form_id):
+                definition_ = profile_of(self.raw, twin)["template_definition"]
+                self.assertEqual(
+                    [
+                        (
+                            t["name"],
+                            t["section"],
+                            tuple(c["key"] for c in t["columns"]),
+                            t["minimum_rows"],
+                            t["row_identity"],
+                        )
+                        for t in definition_["tables"]
+                    ],
+                    tables,
+                )
+                joined = " ".join(definition_["non_goals"])
+                self.assertIn("W03-D26", joined)
+                self.assertNotIn("has no form", joined)
+                self.assertNotIn("stay as the profile records them", joined)
+                self.assertIn("owned by the form", joined)
+                for path in (
+                    "scripts/validate-document-contract-registry.py",
+                    "scripts/validation/repository/form_contracts.py",
+                    "scripts/validation/repository/quality.py",
+                    "tests/test_common_form_tree.py",
+                ):
+                    self.assertIn(path, definition_["consumer_paths"])
+                for path in definition_["consumer_paths"]:
+                    self.assertTrue((ROOT / path).is_file(), path)
+                checks = " ".join(
+                    definition_["validation"]["positive"]
+                    + definition_["validation"]["negative"]
+                )
+                self.assertNotIn("BODY-TABLE-SECTION", checks)
+                self.assertNotIn("heading line", checks)
+                self.assertEqual("REGISTRY_TABLE_SECTION" in checks, bool(tables))
+                self.assertEqual("BODY-TABLE-COLUMNS" in checks, bool(tables))
+                self.assertEqual("BODY-TABLE-ROWS" in checks, bool(tables))
+                self.assertIn("SPEC-0186", definition_["migration"]["meaning_map"])
+
+    def test_the_repository_registry_is_valid_and_its_twins_match(self) -> None:
+        self.assertEqual(rules_of(load_raw()), set())
+        REGISTRY_CHECK._assert_template_source_parity(CONTRACTS.load_registry(ROOT))
+
+    def test_a_complete_document_passes_the_tree(self) -> None:
+        for form_id, _, (source, twin), tree, _, link in SMALL_FORMS:
+            with self.subTest(form=form_id):
+                text = self.body(tree, link)
+                self.assertEqual(self.tree_rules(form_id, source, text), [])
+                self.assertEqual(self.tree_rules(form_id, twin, text), [])
+
+    def test_a_missing_h2_fails_the_tree(self) -> None:
+        for form_id, _, (source, _), tree, _, link in SMALL_FORMS:
+            with self.subTest(form=form_id):
+                text = self.body(tree, link, skip=tree[1][0])
+                self.assertEqual(
+                    self.tree_rules(form_id, source, text), ["BODY-HEADING-REQUIRED"]
+                )
+
+    def test_a_reordered_required_h2_fails_the_tree(self) -> None:
+        for form_id, _, (source, _), tree, _, link in SMALL_FORMS:
+            with self.subTest(form=form_id):
+                text = self.body(tree, link, swap=True)
+                self.assertEqual(
+                    self.tree_rules(form_id, source, text), ["BODY-H2-ORDER"]
+                )
+
+    def test_a_stray_h3_is_refused(self) -> None:
+        for form_id, _, (source, _), tree, _, link in SMALL_FORMS:
+            with self.subTest(form=form_id):
+                text = self.body(tree, link).replace(
+                    f"## {tree[0][0]}\n\n",
+                    f"## {tree[0][0]}\n\n### Stray\n\nText.\n\n",
+                    1,
+                )
+                self.assertEqual(
+                    self.tree_rules(form_id, source, text), ["BODY-H3-UNSUPPORTED"]
+                )
+
+    def test_a_bare_section_fails_and_a_template_is_not_checked(self) -> None:
+        for form_id, _, (source, twin), tree, _, link in SMALL_FORMS:
+            with self.subTest(form=form_id):
+                name = tree[0][0]
+                text = self.body(tree, link).replace(f"The {name} text.", self.NONE)
+                self.assertEqual(
+                    self.tree_rules(form_id, source, text), ["BODY-SECTION-BARE"]
+                )
+                self.assertEqual(self.tree_rules(form_id, twin, text), [])
+
+    def test_only_the_link_section_may_hold_links_alone(self) -> None:
+        for form_id, _, (source, _), tree, _, link in SMALL_FORMS:
+            with self.subTest(form=form_id):
+                self.assertIn(
+                    f"## {link}\n\n- [Owner](owner.md)", self.body(tree, link)
+                )
+                other = tree[0][0]
+                text = self.body(tree, link).replace(
+                    f"The {other} text.", "- [Owner](owner.md)"
+                )
+                self.assertEqual(
+                    self.tree_rules(form_id, source, text), ["BODY-SECTION-EMPTY"]
+                )
+                self.assertEqual(
+                    self.tree_rules(form_id, source, self.body(tree, link)), []
+                )
+
+    def test_the_h2_titles_two_scripts_read_by_name_stay_literal(self) -> None:
+        titles = {
+            form_id: {name for name, _ in tree}
+            for form_id, _, _, tree, _, _ in SMALL_FORMS
+        }
+        self.assertIn("Pointer Index", titles["knowledge-map"])
+        self.assertLessEqual(
+            {"Repository Vocabulary", "Local Extensions"}, titles["vocabulary"]
+        )
+        self.assertIn("Inputs", titles["prompt"])
+
+    def test_a_table_is_read_by_its_section_id_and_checked_by_column(self) -> None:
+        for form_id, _, (source, _), tree, tables, link in SMALL_FORMS:
+            for name, section_id, keys, _, _ in tables:
+                with self.subTest(form=form_id, section=section_id):
+                    title = next(
+                        n
+                        for n, _ in tree
+                        if f"{form_id}-{n.lower().replace(' ', '-')}" == section_id
+                    )
+                    # The identity column stays first, so a swap needs three.
+                    variants = [(keys, []), (keys[:-1], ["BODY-TABLE-COLUMNS"])]
+                    if len(keys) > 2:
+                        swapped = (*keys[:-2], keys[-1], keys[-2])
+                        variants.append((swapped, ["BODY-TABLE-COLUMNS"]))
+                    for header, expected in variants:
+                        table = "\n".join(
+                            (
+                                "| " + " | ".join(header) + " |",
+                                "| " + " | ".join("---" for _ in header) + " |",
+                                "| " + " | ".join("x" for _ in header) + " |",
+                            )
+                        )
+                        text = self.body(tree, link).replace(
+                            f"## {title}\n\n", f"## {title}\n\n{table}\n\n", 1
+                        )
+                        found = sorted(
+                            item.rule_id
+                            for item in MARKDOWN._table_diagnostics(
+                                self.PATHS[form_id], self.profiles[source], text
+                            )
+                        )
+                        self.assertEqual(found, expected)
+
+    def test_an_unknown_table_section_id_is_refused(self) -> None:
+        for form_id, _, (_, twin), _, tables, _ in SMALL_FORMS:
+            if not tables:
+                continue
+            with self.subTest(form=form_id):
+                raw = load_raw()
+                profile_of(raw, twin)["template_definition"]["tables"][0]["section"] = (
+                    f"{form_id}-no-such-section"
+                )
+                self.assertIn("REGISTRY_TABLE_SECTION", rules_of(raw))
+                raw = load_raw()
+                profile_of(raw, twin)["template_definition"]["tables"][0]["section"] = (
+                    "## Overview"
+                )
+                self.assertIn("REGISTRY_TABLE_SECTION", rules_of(raw))
+
+    def test_a_profile_of_these_roles_with_an_h2_list_is_refused(self) -> None:
+        for form_id, _, (source, twin), _, _, _ in SMALL_FORMS:
+            for profile_id in (source, twin):
+                with self.subTest(profile=profile_id):
+                    raw = load_raw()
+                    profile_of(raw, profile_id)["sections"]["required"] = ["Overview"]
+                    self.assertIn("REGISTRY_FORM_LEGACY_LISTS", rules_of(raw))
+
+
 class TemplateTwinTableTests(unittest.TestCase):
     """SPEC-0175 W03-H10: two tabled twins may not name one source profile."""
 
@@ -3961,11 +4478,11 @@ class LocalRoleTableTests(unittest.TestCase):
 
 
 class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
-    def test_only_the_twelve_form_profiles_use_the_tree(self) -> None:
+    def test_only_the_eighteen_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWELVE_FORMS,
+            EIGHTEEN_FORMS,
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),

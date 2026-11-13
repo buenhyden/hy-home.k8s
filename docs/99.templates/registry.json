@@ -1369,13 +1369,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Pointer Index",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -1437,18 +1431,9 @@
         }
       },
       "sections": {
-        "required": [
-          "Purpose",
-          "Scope",
-          "Normative Language",
-          "Repository Vocabulary",
-          "Local Extensions",
-          "Maintenance",
-          "References"
-        ],
+        "required": [],
         "optional": [],
-        "forbidden": [],
-        "ordered": true
+        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -1508,15 +1493,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Inputs",
-          "Output",
-          "Validation",
-          "Refusal Conditions",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -6316,13 +6293,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Pointer Index",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -6338,8 +6309,8 @@
         "purpose": "Give authors one form for a knowledge map: a pointer index that routes readers to canonical owners.",
         "responsibility": "A knowledge map routes and never decides; the owner it points to holds the rule.",
         "non_goals": [
-          "Being a COMMON-DOC-FORM-1 role: knowledge-map is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
-          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Being a COMMON-DOC-FORM-1 role: knowledge-map has its own local form under W03-D09, W03-D20 and W03-D26 and is not a COMMON-DOC-FORM-1 role.",
+          "Changing the template's headings, which stay as they are and are now owned by the form.",
           "Holding a rule or a definition, which belong to the pointer's owner or to the vocabulary."
         ],
         "policy_refs": [
@@ -6358,28 +6329,32 @@
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
           "tests/test_common_form_tree.py",
           ".agents/knowledge/README.md",
-          ".agents/knowledge/domains.md"
+          ".agents/knowledge/domains.md",
+          "tests/test_validate_knowledge_surface.py"
         ],
         "validation": {
           "positive": [
-            "The template and a document of the knowledge-map role pass the strict Markdown profile check with the H2 list the profile records."
+            "The template and a document of the knowledge-map role pass the form tree check with the form's H2 sections and no H3."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
-            "A document missing a required H2 fails BODY-HEADING-REQUIRED."
+            "A document missing a required H2 fails BODY-HEADING-REQUIRED and a reordered one fails BODY-H2-ORDER."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to knowledge-map, their unchanged H2 lists and this definition's tables.",
-            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+            "tests/test_common_form_tree.py asserts the profiles bound to knowledge-map, their form tree with empty H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed form identifiers with the schema form enum."
           ]
         },
         "migration": {
-          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
-          "retained_history": "Git history retains the registry without this role binding and definition.",
-          "rollback": "Revert the SPEC-0179 implementation commit."
+          "meaning_map": "No heading, column or sentence of the template changes; the form records the template's H2 headings and binds the profiles to it (SPEC-0186).",
+          "retained_history": "Git history retains the profiles that listed their H2 headings.",
+          "rollback": "Revert the SPEC-0186 implementation commit."
         }
       }
     },
@@ -6425,18 +6400,9 @@
         }
       },
       "sections": {
-        "required": [
-          "Purpose",
-          "Scope",
-          "Normative Language",
-          "Repository Vocabulary",
-          "Local Extensions",
-          "Maintenance",
-          "References"
-        ],
+        "required": [],
         "optional": [],
-        "forbidden": [],
-        "ordered": true
+        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -6450,8 +6416,8 @@
         "purpose": "Give authors one form for the repository vocabulary: shared term meanings, each with its policy owner and contract version.",
         "responsibility": "The vocabulary owns the meaning of shared terms; each policy keeps its operating rules and the vocabulary restates none.",
         "non_goals": [
-          "Being a COMMON-DOC-FORM-1 role: vocabulary is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
-          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Being a COMMON-DOC-FORM-1 role: vocabulary has its own local form under W03-D09, W03-D20 and W03-D26 and is not a COMMON-DOC-FORM-1 role.",
+          "Changing the template's headings, which stay as they are and are now owned by the form.",
           "Defining approval steps, state transitions, commands or check algorithms, which stay with the owners each row names."
         ],
         "policy_refs": [
@@ -6465,7 +6431,7 @@
         "tables": [
           {
             "name": "Term ID",
-            "section": "## Repository Vocabulary",
+            "section": "vocabulary-repository-vocabulary",
             "columns": [
               {
                 "key": "Term ID",
@@ -6521,30 +6487,34 @@
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
           "tests/test_common_form_tree.py",
-          ".agents/knowledge/glossary.md"
+          ".agents/knowledge/glossary.md",
+          "tests/test_validate_knowledge_surface.py"
         ],
         "validation": {
           "positive": [
-            "The template and a document of the vocabulary role pass the strict Markdown profile check with the H2 list the profile records.",
-            "A table with the recorded columns in the recorded order under its heading line passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+            "The template and a document of the vocabulary role pass the form tree check with the form's H2 sections and no H3.",
+            "A table with the recorded columns in the recorded order under its section id passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
             "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
-            "A recorded heading line that the template repeats, omits or holds under an H2 outside the required list fails BODY-TABLE-SECTION.",
-            "A recorded section that is not an H2 or H3 heading line, or an H2 title outside the required list, fails REGISTRY_TABLE_SECTION."
+            "A recorded section that is not a section id of the form fails REGISTRY_TABLE_SECTION.",
+            "A document missing a required H2 fails BODY-HEADING-REQUIRED and a reordered one fails BODY-H2-ORDER."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to vocabulary, their unchanged H2 lists and this definition's tables.",
-            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+            "tests/test_common_form_tree.py asserts the profiles bound to vocabulary, their form tree with empty H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed form identifiers with the schema form enum."
           ]
         },
         "migration": {
-          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
-          "retained_history": "Git history retains the registry without this role binding and definition.",
-          "rollback": "Revert the SPEC-0179 implementation commit."
+          "meaning_map": "No heading, column or sentence of the template changes; the form records the template's H2 headings and the table sections move from heading lines to form section ids (SPEC-0186).",
+          "retained_history": "Git history retains the profiles that listed their H2 headings and the tables recorded under heading lines.",
+          "rollback": "Revert the SPEC-0186 implementation commit."
         }
       }
     },
@@ -6590,15 +6560,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Inputs",
-          "Output",
-          "Validation",
-          "Refusal Conditions",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -6614,8 +6576,8 @@
         "purpose": "Give authors one form for a prompt contract: its inputs, output, validation and refusal conditions.",
         "responsibility": "A prompt contract owns one request's inputs, output and refusals and grants no authority beyond its governing policy.",
         "non_goals": [
-          "Being a COMMON-DOC-FORM-1 role: prompt is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
-          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Being a COMMON-DOC-FORM-1 role: prompt has its own local form under W03-D09, W03-D20 and W03-D26 and is not a COMMON-DOC-FORM-1 role.",
+          "Changing the template's headings, which stay as they are and are now owned by the form.",
           "Granting authority or approval, which stays with the active Task and the governance policies."
         ],
         "policy_refs": [
@@ -6634,28 +6596,32 @@
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
           "tests/test_common_form_tree.py",
           ".agents/prompts/README.md",
-          ".agents/prompts/doc-update.md"
+          ".agents/prompts/doc-update.md",
+          "tests/test_prompt_input.py"
         ],
         "validation": {
           "positive": [
-            "The template and a document of the prompt role pass the strict Markdown profile check with the H2 list the profile records."
+            "The template and a document of the prompt role pass the form tree check with the form's H2 sections and no H3."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
-            "A document missing a required H2 fails BODY-HEADING-REQUIRED."
+            "A document missing a required H2 fails BODY-HEADING-REQUIRED and a reordered one fails BODY-H2-ORDER."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to prompt, their unchanged H2 lists and this definition's tables.",
-            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+            "tests/test_common_form_tree.py asserts the profiles bound to prompt, their form tree with empty H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed form identifiers with the schema form enum."
           ]
         },
         "migration": {
-          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
-          "retained_history": "Git history retains the registry without this role binding and definition.",
-          "rollback": "Revert the SPEC-0179 implementation commit."
+          "meaning_map": "No heading, column or sentence of the template changes; the form records the template's H2 headings and binds the profiles to it (SPEC-0186).",
+          "retained_history": "Git history retains the profiles that listed their H2 headings.",
+          "rollback": "Revert the SPEC-0186 implementation commit."
         }
       }
     },
@@ -7467,13 +7433,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Declared Trials",
-          "Signals and Criteria",
-          "Human Calibration",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -7529,13 +7489,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Trial Evidence",
-          "Criterion Scores",
-          "Human Calibration",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -7591,13 +7545,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Pair Coverage",
-          "Aggregate",
-          "Limitations",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -7680,13 +7628,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Declared Trials",
-          "Signals and Criteria",
-          "Human Calibration",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -7702,8 +7644,8 @@
         "purpose": "Give authors one form for an evaluation task declaration.",
         "responsibility": "The task document owns the declared trials and the criteria it fixes before either condition is collected; it does not prove that a provider session ran or that a score is true.",
         "non_goals": [
-          "Being a COMMON-DOC-FORM-1 role: evaluation-task is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
-          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Being a COMMON-DOC-FORM-1 role: evaluation-task has its own local form under W03-D09, W03-D20 and W03-D26 and is not a COMMON-DOC-FORM-1 role.",
+          "Changing the template's headings, which stay as they are and are now owned by the form.",
           "Authenticating a score, a provider session or a repository QA result."
         ],
         "policy_refs": [
@@ -7717,7 +7659,7 @@
         "tables": [
           {
             "name": "Field",
-            "section": "## Overview",
+            "section": "evaluation-task-overview",
             "columns": [
               {
                 "key": "Field",
@@ -7737,7 +7679,7 @@
           },
           {
             "name": "Trial ID",
-            "section": "## Declared Trials",
+            "section": "evaluation-task-declared-trials",
             "columns": [
               {
                 "key": "Trial ID",
@@ -7775,7 +7717,7 @@
           },
           {
             "name": "Criterion ID",
-            "section": "## Signals and Criteria",
+            "section": "evaluation-task-signals-and-criteria",
             "columns": [
               {
                 "key": "Criterion ID",
@@ -7813,31 +7755,35 @@
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
           "tests/test_common_form_tree.py",
           ".agents/evaluations/README.md",
-          ".agents/evaluations/results.md"
+          ".agents/evaluations/results.md",
+          "tests/test_evaluation_document_profiles.py"
         ],
         "validation": {
           "positive": [
-            "The template and a document of the evaluation-task role pass the strict Markdown profile check with the H2 list the profile records.",
-            "A table with the recorded columns in the recorded order under its heading line passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+            "The template and a document of the evaluation-task role pass the form tree check with the form's H2 sections and no H3.",
+            "A table with the recorded columns in the recorded order under its section id passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
             "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
-            "A recorded heading line that the template repeats, omits or holds under an H2 outside the required list fails BODY-TABLE-SECTION.",
-            "A recorded section that is not an H2 or H3 heading line, or an H2 title outside the required list, fails REGISTRY_TABLE_SECTION."
+            "A recorded section that is not a section id of the form fails REGISTRY_TABLE_SECTION.",
+            "A document missing a required H2 fails BODY-HEADING-REQUIRED and a reordered one fails BODY-H2-ORDER."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to evaluation-task, their unchanged H2 lists and this definition's tables.",
-            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+            "tests/test_common_form_tree.py asserts the profiles bound to evaluation-task, their form tree with empty H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed form identifiers with the schema form enum."
           ]
         },
         "migration": {
-          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
-          "retained_history": "Git history retains the registry without this role binding and definition.",
-          "rollback": "Revert the SPEC-0179 implementation commit."
+          "meaning_map": "No heading, column or sentence of the template changes; the form records the template's H2 headings and the table sections move from heading lines to form section ids (SPEC-0186).",
+          "retained_history": "Git history retains the profiles that listed their H2 headings and the tables recorded under heading lines.",
+          "rollback": "Revert the SPEC-0186 implementation commit."
         }
       }
     },
@@ -7877,13 +7823,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Trial Evidence",
-          "Criterion Scores",
-          "Human Calibration",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -7899,8 +7839,8 @@
         "purpose": "Give authors one form for a score for one paired trial.",
         "responsibility": "The score document owns the observed hashes, signals and scores of one paired trial; it does not prove that a provider session ran or that a score is true.",
         "non_goals": [
-          "Being a COMMON-DOC-FORM-1 role: evaluation-score is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
-          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Being a COMMON-DOC-FORM-1 role: evaluation-score has its own local form under W03-D09, W03-D20 and W03-D26 and is not a COMMON-DOC-FORM-1 role.",
+          "Changing the template's headings, which stay as they are and are now owned by the form.",
           "Authenticating a score, a provider session or a repository QA result."
         ],
         "policy_refs": [
@@ -7914,7 +7854,7 @@
         "tables": [
           {
             "name": "Field",
-            "section": "## Overview",
+            "section": "evaluation-score-overview",
             "columns": [
               {
                 "key": "Field",
@@ -7934,7 +7874,7 @@
           },
           {
             "name": "Trial ID",
-            "section": "## Trial Evidence",
+            "section": "evaluation-score-trial-evidence",
             "columns": [
               {
                 "key": "Trial ID",
@@ -7972,7 +7912,7 @@
           },
           {
             "name": "Trial ID",
-            "section": "## Criterion Scores",
+            "section": "evaluation-score-criterion-scores",
             "columns": [
               {
                 "key": "Trial ID",
@@ -8022,31 +7962,35 @@
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
           "tests/test_common_form_tree.py",
           ".agents/evaluations/README.md",
-          ".agents/evaluations/results.md"
+          ".agents/evaluations/results.md",
+          "tests/test_evaluation_document_profiles.py"
         ],
         "validation": {
           "positive": [
-            "The template and a document of the evaluation-score role pass the strict Markdown profile check with the H2 list the profile records.",
-            "A table with the recorded columns in the recorded order under its heading line passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+            "The template and a document of the evaluation-score role pass the form tree check with the form's H2 sections and no H3.",
+            "A table with the recorded columns in the recorded order under its section id passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
             "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
-            "A recorded heading line that the template repeats, omits or holds under an H2 outside the required list fails BODY-TABLE-SECTION.",
-            "A recorded section that is not an H2 or H3 heading line, or an H2 title outside the required list, fails REGISTRY_TABLE_SECTION."
+            "A recorded section that is not a section id of the form fails REGISTRY_TABLE_SECTION.",
+            "A document missing a required H2 fails BODY-HEADING-REQUIRED and a reordered one fails BODY-H2-ORDER."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to evaluation-score, their unchanged H2 lists and this definition's tables.",
-            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+            "tests/test_common_form_tree.py asserts the profiles bound to evaluation-score, their form tree with empty H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed form identifiers with the schema form enum."
           ]
         },
         "migration": {
-          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
-          "retained_history": "Git history retains the registry without this role binding and definition.",
-          "rollback": "Revert the SPEC-0179 implementation commit."
+          "meaning_map": "No heading, column or sentence of the template changes; the form records the template's H2 headings and the table sections move from heading lines to form section ids (SPEC-0186).",
+          "retained_history": "Git history retains the profiles that listed their H2 headings and the tables recorded under heading lines.",
+          "rollback": "Revert the SPEC-0186 implementation commit."
         }
       }
     },
@@ -8086,13 +8030,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Pair Coverage",
-          "Aggregate",
-          "Limitations",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -8108,8 +8046,8 @@
         "purpose": "Give authors one form for the evaluation aggregate.",
         "responsibility": "The results document owns pair coverage and aggregates for the observed cycles; it does not prove that a provider session ran or that a score is true.",
         "non_goals": [
-          "Being a COMMON-DOC-FORM-1 role: evaluation-results is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
-          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Being a COMMON-DOC-FORM-1 role: evaluation-results has its own local form under W03-D09, W03-D20 and W03-D26 and is not a COMMON-DOC-FORM-1 role.",
+          "Changing the template's headings, which stay as they are and are now owned by the form.",
           "Authenticating a score, a provider session or a repository QA result."
         ],
         "policy_refs": [
@@ -8123,7 +8061,7 @@
         "tables": [
           {
             "name": "Cycle ID",
-            "section": "## Pair Coverage",
+            "section": "evaluation-results-pair-coverage",
             "columns": [
               {
                 "key": "Cycle ID",
@@ -8173,7 +8111,7 @@
           },
           {
             "name": "Scope",
-            "section": "## Aggregate",
+            "section": "evaluation-results-aggregate",
             "columns": [
               {
                 "key": "Scope",
@@ -8223,31 +8161,35 @@
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
           "tests/test_common_form_tree.py",
           ".agents/evaluations/README.md",
-          ".agents/evaluations/results.md"
+          ".agents/evaluations/results.md",
+          "tests/test_evaluation_document_profiles.py"
         ],
         "validation": {
           "positive": [
-            "The template and a document of the evaluation-results role pass the strict Markdown profile check with the H2 list the profile records.",
-            "A table with the recorded columns in the recorded order under its heading line passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+            "The template and a document of the evaluation-results role pass the form tree check with the form's H2 sections and no H3.",
+            "A table with the recorded columns in the recorded order under its section id passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
             "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
-            "A recorded heading line that the template repeats, omits or holds under an H2 outside the required list fails BODY-TABLE-SECTION.",
-            "A recorded section that is not an H2 or H3 heading line, or an H2 title outside the required list, fails REGISTRY_TABLE_SECTION."
+            "A recorded section that is not a section id of the form fails REGISTRY_TABLE_SECTION.",
+            "A document missing a required H2 fails BODY-HEADING-REQUIRED and a reordered one fails BODY-H2-ORDER."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to evaluation-results, their unchanged H2 lists and this definition's tables.",
-            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+            "tests/test_common_form_tree.py asserts the profiles bound to evaluation-results, their form tree with empty H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed form identifiers with the schema form enum."
           ]
         },
         "migration": {
-          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
-          "retained_history": "Git history retains the registry without this role binding and definition.",
-          "rollback": "Revert the SPEC-0179 implementation commit."
+          "meaning_map": "No heading, column or sentence of the template changes; the form records the template's H2 headings and the table sections move from heading lines to form section ids (SPEC-0186).",
+          "retained_history": "Git history retains the profiles that listed their H2 headings and the tables recorded under heading lines.",
+          "rollback": "Revert the SPEC-0186 implementation commit."
         }
       }
     }
@@ -12817,6 +12759,885 @@
             "title": "Separate Evidence Axes"
           }
         ]
+      },
+      {
+        "form_id": "knowledge-map",
+        "title": "Knowledge Map",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 이 양식은 W03-D09·W03-D20·W03-D26에 따른 Stage 99 지역 역할의 양식이며 COMMON-DOC-FORM-1 역할이 아니다. 이 역할의 문서는 H3와 확장을 두지 않으며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "knowledge-map-overview",
+            "level": 2,
+            "parent_id": null,
+            "title": "Overview",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "지도가 답하는 방향 질문",
+            "required_content": [
+              "이 지도가 답하는 방향 질문과 그 질문을 하는 독자를 적는다."
+            ],
+            "prohibited_content": [
+              "지도에 정책·설계·절차를 직접 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "knowledge-map-authority-boundary",
+            "level": 2,
+            "parent_id": null,
+            "title": "Authority Boundary",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "지도의 권한 경계",
+            "required_content": [
+              "이 문서가 소유자를 가리킬 뿐 자체 정책·설계·절차를 두지 않는다고 적는다."
+            ],
+            "prohibited_content": [
+              "지도의 안내를 소유자의 결정처럼 제시하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "knowledge-map-pointer-index",
+            "level": 2,
+            "parent_id": null,
+            "title": "Pointer Index",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "영역별 소유자와 진입 경로",
+            "required_content": [
+              "영역마다 정본 소유자 경로, 독자가 먼저 여는 진입 경로, 그 행이 유효한 조건을 적는다."
+            ],
+            "prohibited_content": [
+              "존재하지 않는 경로를 소유자나 진입 경로로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "knowledge-map-validation-and-refresh",
+            "level": 2,
+            "parent_id": null,
+            "title": "Validation and Refresh",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "점검과 갱신",
+            "required_content": [
+              "모든 소유자·진입 경로의 존재를 증명하는 점검과 행을 무효로 만드는 변경을 적는다."
+            ],
+            "prohibited_content": [
+              "실행하지 않은 점검을 통과한 것으로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "knowledge-map-related-documents",
+            "level": 2,
+            "parent_id": null,
+            "title": "Related Documents",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "연결 문서 목록",
+            "required_content": [
+              "표면 README와 이 지도가 가리키는 소유자로 가는 링크를 목록으로 적는다."
+            ],
+            "prohibited_content": [
+              "링크가 가리키는 문서의 내용을 이 지도에 복사해 정본처럼 쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": true,
+            "children": []
+          }
+        ],
+        "extensions": []
+      },
+      {
+        "form_id": "vocabulary",
+        "title": "Vocabulary",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 이 양식은 W03-D09·W03-D20·W03-D26에 따른 Stage 99 지역 역할의 양식이며 COMMON-DOC-FORM-1 역할이 아니다. 이 역할의 문서는 H3와 확장을 두지 않으며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "vocabulary-purpose",
+            "level": 2,
+            "parent_id": null,
+            "title": "Purpose",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "문서의 목적",
+            "required_content": [
+              "이 문서가 공유 용어의 의미를 소유하며 각 정책이 자기 운영 규칙을 유지한다고 적는다."
+            ],
+            "prohibited_content": [
+              "용어 정의에 운영 규칙이나 승인 절차를 섞어 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "vocabulary-scope",
+            "level": 2,
+            "parent_id": null,
+            "title": "Scope",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "다루는 용어와 제외",
+            "required_content": [
+              "이 문서가 다루는 용어와 정책·registry·절차 소유자에게 남는 것을 적는다."
+            ],
+            "prohibited_content": [
+              "범위 밖 용어를 이 문서의 정본 용어로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "vocabulary-normative-language",
+            "level": 2,
+            "parent_id": null,
+            "title": "Normative Language",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "규범 어휘의 읽기",
+            "required_content": [
+              "대문자 MUST, MUST NOT, SHOULD, MAY의 RFC 2119·RFC 8174 읽기와 이 어휘가 권한을 주지 않는다는 점을 적는다."
+            ],
+            "prohibited_content": [
+              "규범 어휘로 새 권한이나 승인을 부여하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "vocabulary-repository-vocabulary",
+            "level": 2,
+            "parent_id": null,
+            "title": "Repository Vocabulary",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "공통 용어 표",
+            "required_content": [
+              "용어마다 계약의 Term ID, 용어, 한국어 이름, 정의, 혼동 대상, 소유자 역할과 기존 경로, 계약 버전을 한 행으로 적는다. 표를 산문으로 바꾸지 않는다."
+            ],
+            "prohibited_content": [
+              "정의에 규칙을 다시 적지 않는다.",
+              "표를 산문으로 바꾸지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "vocabulary-local-extensions",
+            "level": 2,
+            "parent_id": null,
+            "title": "Local Extensions",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "저장소 고유 용어",
+            "required_content": [
+              "공통 표와 같은 열로 저장소 고유 용어를 적고 없으면 그 이유를 적는다."
+            ],
+            "prohibited_content": [
+              "공통 Term ID를 재사용하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "vocabulary-maintenance",
+            "level": 2,
+            "parent_id": null,
+            "title": "Maintenance",
+            "order": 6,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "용어 유지보수",
+            "required_content": [
+              "용어를 바꾸는 주체, 계약 판 채택 방법, 이 파일을 판정하는 점검을 적는다."
+            ],
+            "prohibited_content": [
+              "실행하지 않은 점검을 판정 근거로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "vocabulary-references",
+            "level": 2,
+            "parent_id": null,
+            "title": "References",
+            "order": 7,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "참조 목록",
+            "required_content": [
+              "채택한 계약 출처, 이 문서를 승인한 ADR, 용어가 가리키는 소유자로 가는 링크를 목록으로 적는다."
+            ],
+            "prohibited_content": [
+              "링크가 가리키는 문서의 내용을 이 문서에 복사해 정본처럼 쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": true,
+            "children": []
+          }
+        ],
+        "extensions": []
+      },
+      {
+        "form_id": "prompt",
+        "title": "Prompt",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 이 양식은 W03-D09·W03-D20·W03-D26에 따른 Stage 99 지역 역할의 양식이며 COMMON-DOC-FORM-1 역할이 아니다. 이 역할의 문서는 H3와 확장을 두지 않으며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "prompt-overview",
+            "level": 2,
+            "parent_id": null,
+            "title": "Overview",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "프롬프트 계약의 식별과 용도",
+            "required_content": [
+              "계약 식별자(파일 이름과 같다)와 이 계약이 다루는 반복 요청을 적는다."
+            ],
+            "prohibited_content": [
+              "계약에 요청 처리 결과를 미리 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "prompt-authority-boundary",
+            "level": 2,
+            "parent_id": null,
+            "title": "Authority Boundary",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "계약의 권한 경계",
+            "required_content": [
+              "이 계약이 요청의 모양만 정하며 권한을 주지 않고 registry와 승인 정책이 자기 권한을 유지한다고 적는다."
+            ],
+            "prohibited_content": [
+              "계약으로 권한·승인·실행을 부여하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "prompt-inputs",
+            "level": 2,
+            "parent_id": null,
+            "title": "Inputs",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "필수 입력과 생성 명령",
+            "required_content": [
+              "필수 입력마다 그것을 만드는 읽기 전용 명령을 한 행으로 적는다."
+            ],
+            "prohibited_content": [
+              "쓰기나 외부 접근을 하는 명령을 입력 생성 명령으로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "prompt-output",
+            "level": 2,
+            "parent_id": null,
+            "title": "Output",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "응답의 모양",
+            "required_content": [
+              "응답이 따라야 할 모양과 담아서는 안 되는 것을 적는다."
+            ],
+            "prohibited_content": [
+              "실제 응답 내용을 계약에 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "prompt-validation",
+            "level": 2,
+            "parent_id": null,
+            "title": "Validation",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "초안 판정 기준",
+            "required_content": [
+              "만들어진 초안을 판정하는 규칙이나 명령을 적는다."
+            ],
+            "prohibited_content": [
+              "실행하지 않은 명령을 통과한 것으로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "prompt-refusal-conditions",
+            "level": 2,
+            "parent_id": null,
+            "title": "Refusal Conditions",
+            "order": 6,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "출력하지 않는 조건",
+            "required_content": [
+              "출력을 만들지 않는 조건을 적는다."
+            ],
+            "prohibited_content": [
+              "거절 조건을 권한 부여의 근거로 쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "prompt-related-documents",
+            "level": 2,
+            "parent_id": null,
+            "title": "Related Documents",
+            "order": 7,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "연결 문서 목록",
+            "required_content": [
+              "표면 README, 빌더, 계약이 재사용하는 정책 소유자로 가는 링크를 목록으로 적는다."
+            ],
+            "prohibited_content": [
+              "링크가 가리키는 정책을 이 계약에 복사해 정본처럼 쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": true,
+            "children": []
+          }
+        ],
+        "extensions": []
+      },
+      {
+        "form_id": "evaluation-task",
+        "title": "Evaluation Task",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 이 양식은 W03-D09·W03-D20·W03-D26에 따른 Stage 99 지역 역할의 양식이며 COMMON-DOC-FORM-1 역할이 아니다. 이 역할의 문서는 H3와 확장을 두지 않으며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "evaluation-task-overview",
+            "level": 2,
+            "parent_id": null,
+            "title": "Overview",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "선언 필드 표",
+            "required_content": [
+              "Cycle ID, 과제 출처, 입력 ID와 해시, 두 조건의 입력·모드·도구·설정·신뢰 출처, 스킬 판, 공급자와 세션, 선언한 쌍의 수를 Field 표로 적는다. 표를 산문으로 바꾸지 않는다."
+            ],
+            "prohibited_content": [
+              "표를 산문으로 바꾸지 않는다.",
+              "한 harness 디렉터리를 하나의 짝 시험이 아닌 것으로 선언하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "evaluation-task-declared-trials",
+            "level": 2,
+            "parent_id": null,
+            "title": "Declared Trials",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "선언한 시험",
+            "required_content": [
+              "점수를 매기기 전에 시험 수를 선언하고 시험마다 두 출력, 짝 상태, 부분 사유를 적는다."
+            ],
+            "prohibited_content": [
+              "존재하지 않는 출력 파일을 링크하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "evaluation-task-signals-and-criteria",
+            "level": 2,
+            "parent_id": null,
+            "title": "Signals and Criteria",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "관측 신호와 기준",
+            "required_content": [
+              "두 조건을 수집하기 전에 기준마다 관측 신호, 채점 규칙, 채점자 ID를 적는다."
+            ],
+            "prohibited_content": [
+              "수집한 출력을 본 뒤에 기준을 정하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "evaluation-task-human-calibration",
+            "level": 2,
+            "parent_id": null,
+            "title": "Human Calibration",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "사람 보정",
+            "required_content": [
+              "채점 전에 검토자, 보정 입력, 판정 경계를 적는다."
+            ],
+            "prohibited_content": [
+              "보정 결과를 채점 전에 관측한 것처럼 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "evaluation-task-related-documents",
+            "level": 2,
+            "parent_id": null,
+            "title": "Related Documents",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "연결 문서 목록",
+            "required_content": [
+              "평가 라우터와 평가 대상 스킬의 소유자로 가는 링크를 목록으로 적는다."
+            ],
+            "prohibited_content": [
+              "링크가 가리키는 문서의 내용을 이 문서에 복사해 정본처럼 쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": true,
+            "children": []
+          }
+        ],
+        "extensions": []
+      },
+      {
+        "form_id": "evaluation-score",
+        "title": "Evaluation Score",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 이 양식은 W03-D09·W03-D20·W03-D26에 따른 Stage 99 지역 역할의 양식이며 COMMON-DOC-FORM-1 역할이 아니다. 이 역할의 문서는 H3와 확장을 두지 않으며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "evaluation-score-overview",
+            "level": 2,
+            "parent_id": null,
+            "title": "Overview",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "관측 필드 표",
+            "required_content": [
+              "Cycle ID와 시험 ID, 과제 선언, 채점자 ID와 판, 단위, 선언한 쌍의 수, 관측한 완전한 쌍의 수, 입력 ID와 해시, 부분 사유를 Field 표로 적는다. 표를 산문으로 바꾸지 않는다."
+            ],
+            "prohibited_content": [
+              "표를 산문으로 바꾸지 않는다.",
+              "문서와 점수를 공급자 세션이 실행됐다는 증거로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "evaluation-score-trial-evidence",
+            "level": 2,
+            "parent_id": null,
+            "title": "Trial Evidence",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "시험 증거",
+            "required_content": [
+              "시험마다 두 출력과 해시, 세션 참조, 증거 상태를 적는다."
+            ],
+            "prohibited_content": [
+              "관측하지 않은 조건의 해시나 세션 참조를 지어 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "evaluation-score-criterion-scores",
+            "level": 2,
+            "parent_id": null,
+            "title": "Criterion Scores",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "기준별 점수",
+            "required_content": [
+              "기준마다 두 조건의 관측 신호와 원본 위치, 두 점수를 적는다."
+            ],
+            "prohibited_content": [
+              "과제 선언에 없는 기준으로 점수를 매기지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "evaluation-score-human-calibration",
+            "level": 2,
+            "parent_id": null,
+            "title": "Human Calibration",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "사람 보정 결과",
+            "required_content": [
+              "관측한 보정 판정과 해소되지 않은 불일치를 적는다."
+            ],
+            "prohibited_content": [
+              "관측하지 않은 보정 판정을 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "evaluation-score-related-documents",
+            "level": 2,
+            "parent_id": null,
+            "title": "Related Documents",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "연결 문서 목록",
+            "required_content": [
+              "과제 선언과 평가 라우터로 가는 링크를 목록으로 적는다."
+            ],
+            "prohibited_content": [
+              "링크가 가리키는 문서의 내용을 이 문서에 복사해 정본처럼 쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": true,
+            "children": []
+          }
+        ],
+        "extensions": []
+      },
+      {
+        "form_id": "evaluation-results",
+        "title": "Evaluation Results",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 이 양식은 W03-D09·W03-D20·W03-D26에 따른 Stage 99 지역 역할의 양식이며 COMMON-DOC-FORM-1 역할이 아니다. 이 역할의 문서는 H3와 확장을 두지 않으며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "evaluation-results-overview",
+            "level": 2,
+            "parent_id": null,
+            "title": "Overview",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "집계의 범위와 관측일",
+            "required_content": [
+              "집계의 범위와 관측일을 적는다."
+            ],
+            "prohibited_content": [
+              "정적 기록을 실행 증거로 바꾸어 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "evaluation-results-pair-coverage",
+            "level": 2,
+            "parent_id": null,
+            "title": "Pair Coverage",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "짝 범위 표",
+            "required_content": [
+              "관측한 cycle마다 선언한 쌍과 완전한 쌍의 수, 과제, 점수, 부분 사유를 적는다. 표를 산문으로 바꾸지 않는다."
+            ],
+            "prohibited_content": [
+              "관측하지 않은 쌍을 완전한 쌍으로 세지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "evaluation-results-aggregate",
+            "level": 2,
+            "parent_id": null,
+            "title": "Aggregate",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "집계 표",
+            "required_content": [
+              "선언한 모든 쌍에 실제 증거가 있을 때만 기준별 두 조건의 요약과 보정 참조를 적는다. 표를 산문으로 바꾸지 않는다."
+            ],
+            "prohibited_content": [
+              "증거가 없는 쌍을 집계에 넣지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "evaluation-results-limitations",
+            "level": 2,
+            "parent_id": null,
+            "title": "Limitations",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "한계",
+            "required_content": [
+              "불완전한 시험, 보정 공백, 공급자 관측의 한계를 적는다."
+            ],
+            "prohibited_content": [
+              "한계를 숨기고 집계를 완결된 증거로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "evaluation-results-related-documents",
+            "level": 2,
+            "parent_id": null,
+            "title": "Related Documents",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "연결 문서 목록",
+            "required_content": [
+              "평가 라우터와 정본 품질 정책으로 가는 링크를 목록으로 적는다."
+            ],
+            "prohibited_content": [
+              "링크가 가리키는 정책을 이 문서에 복사해 정본처럼 쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": true,
+            "children": []
+          }
+        ],
+        "extensions": []
       }
     ]
   },

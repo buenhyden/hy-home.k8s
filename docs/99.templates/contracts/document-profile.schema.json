@@ -1294,7 +1294,13 @@
             "agents",
             "skill",
             "workspace-readme",
-            "reference-pack-readme"
+            "reference-pack-readme",
+            "knowledge-map",
+            "vocabulary",
+            "prompt",
+            "evaluation-task",
+            "evaluation-score",
+            "evaluation-results"
           ]
         },
         "title": {
