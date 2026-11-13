@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.9.0"
+version: "2.9.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -43,7 +43,7 @@ evidence is not rewritten to satisfy a later profile.
 
 ### Exclusions
 
-This policy marks no subject as excluded from its scope.
+This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
 ## Rules
 

@@ -21,7 +21,7 @@ criterion acceptance. A package exists only while its change is open.
 
 ### Non-goals
 
-This file states no separate non-goals rule.
+This folder adds no non-goal beyond the parent `AGENTS.md` and the governance policies; if work here must be excluded, state it here.
 
 ## Required Policies
 

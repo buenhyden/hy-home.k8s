@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/descriptions (AD)"
-version: "0.8.0"
+version: "0.8.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -58,7 +58,7 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 
 ### Classification
 
-이 README에는 분류 표가 없다.
+이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
 ## Workflow
 

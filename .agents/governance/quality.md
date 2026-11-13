@@ -1,6 +1,6 @@
 ---
 title: "Quality and Evidence Policy"
-version: "2.6.0"
+version: "2.6.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -43,7 +43,7 @@ metadata; static parity never proves discovery, model resolution, or execution.
 
 ### Exclusions
 
-This policy marks no subject as excluded from its scope.
+This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
 ## Rules
 
@@ -371,7 +371,7 @@ cannot silently advance a task to completion.
 
 ### Exception Conditions
 
-This policy states no exception condition of its own.
+This policy defines no exception condition of its own; exceptions follow the approval and safety policy's operator approval route. If this policy needs its own, state it here.
 
 ### Approval and Review
 

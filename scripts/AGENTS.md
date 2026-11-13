@@ -23,7 +23,7 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 
 ### Non-goals
 
-This file states no separate non-goals rule.
+This folder adds no non-goal beyond the parent `AGENTS.md` and the governance policies; if work here must be excluded, state it here.
 
 ## Required Policies
 
@@ -47,7 +47,7 @@ Inspecting and changing files follows the rules under Local Obligations.
 
 ### Handoff
 
-This file states no separate handoff rule.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
 
 ## Verification
 
@@ -62,13 +62,13 @@ directly:
 
 ### Evidence and Limits
 
-This file states no separate evidence or limits rule.
+This folder adds no evidence rule beyond the quality policy's handoff contract; if a check here has a limit to report, state it here.
 
 ## Safety
 
 ### Protected Actions
 
-This file states no separate protected-action rule.
+This folder adds no protected action beyond the approval and safety policy; if work here can start one, name it here.
 
 ### Stop and Escalate
 

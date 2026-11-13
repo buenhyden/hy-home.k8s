@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.18.0"
+version: "3.19.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -39,7 +39,7 @@ express ownership, not a one-way waterfall.
 
 ### Exclusions
 
-This policy marks no subject as excluded from its scope.
+This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
 ## Rules
 
@@ -299,7 +299,10 @@ the template's own headings, each named by its exact heading line.
 Classifications, prerequisites, controls, observations and recovery stay native
 submodules in their relevant roles. Fill sections with concrete content; a
 heading, comment, placeholder or empty fence is no operating instruction.
-An inapplicable item states why and who owns the remaining boundary. A format
+An inapplicable item states why and who owns the remaining boundary. An empty
+required section states its reason and the condition for filling it, never a
+bare statement that nothing is stated, and a pointer line names a location that
+exists. A format
 check cannot authenticate a current operator, live service or approval.
 
 Joint edition decisions belong to the request owner `buenhyden`; current

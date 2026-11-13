@@ -22,7 +22,7 @@ They describe how operators act; they are not permission for an agent to act.
 
 ### Non-goals
 
-Non-goals are stated at the end of the Purpose text under Allowed Surface: operating documents are not permission for an agent to act.
+Non-goals are stated in the opening text of Allowed Surface: operating documents are not permission for an agent to act.
 
 ## Required Policies
 
@@ -63,7 +63,7 @@ Inspecting and changing files follows the rules under Local Obligations.
 
 ### Handoff
 
-This file states no separate handoff rule.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
 
 ## Verification
 

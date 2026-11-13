@@ -1,6 +1,6 @@
 ---
 title: "Work Lifecycle"
-version: "2.2.1"
+version: "2.2.2"
 type: "governance/skill"
 status: "active"
 owner: "platform"
@@ -23,7 +23,7 @@ Related policy and responsibility documents: [SDLC Flow](../governance/sdlc.md),
 
 ### When Not to Use
 
-None is stated in this document.
+This procedure names no repository work it must not be used for; if such a case is found, state it here.
 
 ### Authority Boundary
 
@@ -137,7 +137,7 @@ state on resume; historical progress and provider-local memory are auxiliary.
 
 ### Outputs
 
-None is stated in this document.
+This procedure defines no output format of its own beyond the results its Steps describe; if it needs one, define it here.
 
 ## Verification
 

@@ -1,6 +1,6 @@
 ---
 title: "Model Selection Policy"
-version: "1.7.0"
+version: "1.7.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -41,7 +41,7 @@ delegation, or approval, and does not change the role's registry membership.
 
 ### Exclusions
 
-This policy marks no subject as excluded from its scope.
+This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
 ## Rules
 
@@ -114,7 +114,7 @@ Exception and escalation conditions are stated under Requirements.
 
 ### Approval and Review
 
-This policy states no exception approval or review step of its own.
+This policy defines no exception approval or review step of its own; the approval and safety policy's operator approval route applies. If it needs its own, state it here.
 
 ## Ownership
 

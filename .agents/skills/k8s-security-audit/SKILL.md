@@ -3,7 +3,7 @@ name: "k8s-security-audit"
 description: "Use when auditing Kubernetes RBAC, NetworkPolicy gaps, Secret handling, container security context, image supply chain, or related cluster security hardening. Real-time intrusion detection and WAF configuration are outside this skill's scope."
 metadata:
   title: "K8s Security Audit"
-  version: "1.0.2"
+  version: "1.0.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -164,7 +164,7 @@ box also carries the invitation to tick it.
 
 ### Checks
 
-None is stated in this document.
+This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
 ### Completion and Handoff
 

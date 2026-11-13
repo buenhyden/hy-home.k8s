@@ -1,6 +1,6 @@
 ---
 title: "Common Knowledge"
-version: "0.6.0"
+version: "0.6.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -43,7 +43,7 @@ validator다.
 
 ### Classification
 
-이 README에는 분류 표가 없다.
+이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
 ## Workflow
 
@@ -65,7 +65,7 @@ validator다.
 
 ### Transition and Exit
 
-이 README에는 상태·승격·종료 규칙이 없다.
+이 README는 상태, 승격, 종료 규칙을 따로 두지 않는다. 그런 규칙을 두게 되면 여기에 적는다.
 
 ## Related Documents
 

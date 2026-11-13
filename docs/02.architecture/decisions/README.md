@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.12.0"
+version: "0.12.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -86,7 +86,7 @@ layer: "architecture"
 
 ### Classification
 
-이 README에는 분류 표가 없다.
+이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
 ## Workflow
 

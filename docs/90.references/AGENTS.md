@@ -73,8 +73,8 @@ Evidence rules are stated in rule 2 under Local Obligations.
 
 ### Protected Actions
 
-This file states no separate protected-action rule.
+This folder adds no protected action beyond the approval and safety policy; if work here can start one, name it here.
 
 ### Stop and Escalate
 
-This file states no separate stop or escalation rule.
+This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.

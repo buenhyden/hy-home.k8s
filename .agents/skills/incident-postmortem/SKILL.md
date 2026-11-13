@@ -3,7 +3,7 @@ name: "incident-postmortem"
 description: "Use when writing a cluster incident postmortem or routing post-incident analysis through timeline reconstruction, root cause analysis, impact assessment, and remediation planning. Real-time on-call response, monitoring setup, and alert configuration are outside this skill's scope."
 metadata:
   title: "Incident Postmortem"
-  version: "1.0.3"
+  version: "1.0.4"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -144,7 +144,7 @@ from the Stage 99 registry entry for the profile being written.
 
 ### Outputs
 
-None is stated in this document.
+This procedure defines no output format of its own beyond the results its Steps describe; if it needs one, define it here.
 
 ## Verification
 

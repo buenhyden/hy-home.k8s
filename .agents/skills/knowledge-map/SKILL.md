@@ -3,7 +3,7 @@ name: "knowledge-map"
 description: "Use when auditing governance navigation, role/skill references, stage indexes, or current cross-links."
 metadata:
   title: "Knowledge Map"
-  version: "1.1.1"
+  version: "1.1.2"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -61,13 +61,13 @@ second policy or role roster.
 
 ### Failure Handling
 
-None is stated in this document.
+This skill has no failure branch of its own beyond recording tool limitations (Step 5); a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
 ## Inputs and Outputs
 
 ### Inputs
 
-None is stated in this document.
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### Outputs
 
@@ -79,7 +79,7 @@ recreate machine roster tables.
 
 ### Checks
 
-None is stated in this document.
+This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
 ### Completion and Handoff
 
