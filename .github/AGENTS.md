@@ -4,11 +4,11 @@ Agent instructions for `.github/`. The README is for human readers; these
 rules are for AI agents. The repository root gateway (`AGENTS.md` or
 `CLAUDE.md`) and `.agents/governance/` still apply.
 
-## Purpose
+## Scope
+
+### Allowed Surface
 
 GitHub automation: the `ci.yml` branch metadata, PR title, commit and changed-file style checks, greetings and labeler workflows, pinned CI requirements, rulesets and repository templates. Repository QA runs locally; hosted checks never certify it.
-
-## Responsibilities and Projections
 
 | Work in `.github/` | Role (`.agents/roles/`) | Skills (`.agents/skills/<id>/SKILL.md`) | Claude | Codex |
 | --- | --- | --- | --- | --- |
@@ -20,7 +20,17 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 [`.codex/provider.md`](../.codex/provider.md); approval boundaries are in
 [approval and safety](../.agents/governance/approval-and-safety.md).
 
-## Rules
+### Non-goals
+
+Non-goals are stated in rule 7 under Local Obligations.
+
+## Required Policies
+
+### Canonical Sources
+
+Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
+
+### Local Obligations
 
 1. Give `GITHUB_TOKEN` least privilege: `contents: read` at workflow level, and only the job-level permission a step needs.
 2. Pin every Action to a full commit SHA, and use only Actions registered in the allowlist recorded in `.github/rulesets/main-protection.md`. To add one, ask the operator to register its pattern in the remote setting before the pull request runs, and list it in `main-protection.md` in the same change.
@@ -32,7 +42,19 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 8. Change `requirements/ci-validation.txt` only with hashes and run the CI Python contract.
 9. Do not change remote settings, rulesets or secrets; document the intended state for the operator.
 
-## Checks
+## Workflow
+
+### Inspect and Change
+
+Inspecting and changing files follows the rules under Local Obligations.
+
+### Handoff
+
+This file states no separate handoff rule.
+
+## Verification
+
+### Required Checks
 
 Run the selected checks with `python3 scripts/qa.py staged`, or these
 directly:
@@ -40,3 +62,17 @@ directly:
 - `python3 scripts/validate-github-actions-security.py --root .`
 - `python3 scripts/validate-ci-python-contract.py --root .`
 - `python3 scripts/run-contract-tests.py --root . --suite ci-metadata`
+
+### Evidence and Limits
+
+Evidence limits are stated at the end of the Allowed Surface text: hosted checks never certify repository QA.
+
+## Safety
+
+### Protected Actions
+
+Protected actions are stated in rules 3, 4, 6 and 9 under Local Obligations.
+
+### Stop and Escalate
+
+Stop and escalation conditions are stated in rules 2 and 9 under Local Obligations.

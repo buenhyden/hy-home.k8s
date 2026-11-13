@@ -4,13 +4,13 @@ Agent instructions for `docs/02.architecture/` and its `descriptions/` and
 `decisions/` collections. The parent [`docs/AGENTS.md`](../AGENTS.md) still
 applies.
 
-## Purpose
+## Scope
+
+### Allowed Surface
 
 Stage 02 holds Architecture Descriptions (AD), which expand requirements into
 system boundaries, views and quality attributes, and Architecture Decision
 Records (ADR), which record durable technical and operating decisions.
-
-## Responsibilities and Projections
 
 | Work here | Role (`.agents/roles/`) | Skills | Claude | Codex |
 | --- | --- | --- | --- | --- |
@@ -19,7 +19,17 @@ Records (ADR), which record durable technical and operating decisions.
 | Review a decision's risk | [code-reviewer](../../.agents/roles/code-reviewer.md) | `risk-report` | `.claude/agents/code-reviewer.md` | `.codex/agents/code-reviewer.toml` |
 | Keep collection indexes current | [wiki-curator](../../.agents/roles/wiki-curator.md) | `docs-stage-conformance`, `knowledge-map` | `.claude/agents/wiki-curator.md` | `.codex/agents/wiki-curator.toml` |
 
-## Rules
+### Non-goals
+
+Non-goals are stated in rules 5 and 6 under Local Obligations.
+
+## Required Policies
+
+### Canonical Sources
+
+Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
+
+### Local Obligations
 
 1. The parent folder decides the type: `descriptions/####-<slug>.md` uses
    `sdlc/architecture-description`, `decisions/####-<slug>.md` uses
@@ -48,6 +58,32 @@ Records (ADR), which record durable technical and operating decisions.
 7. Update `descriptions/README.md` or `decisions/README.md` in the same change
    that adds, retitles or deletes a document.
 
-## Checks
+## Workflow
+
+### Inspect and Change
+
+Inspecting and changing files follows the rules under Local Obligations.
+
+### Handoff
+
+Handoff is stated in rule 6 under Local Obligations.
+
+## Verification
+
+### Required Checks
 
 Run the strict document checks listed in the parent `AGENTS.md`.
+
+### Evidence and Limits
+
+This file states no separate evidence or limits rule.
+
+## Safety
+
+### Protected Actions
+
+Protected actions are stated in rules 2 and 3 under Local Obligations.
+
+### Stop and Escalate
+
+Stop and escalation conditions are stated in rule 2 under Local Obligations.

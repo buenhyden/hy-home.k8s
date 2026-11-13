@@ -4,13 +4,13 @@ Agent instructions for `docs/90.references/` and its `audits/`, `data/` and
 `research/` collections. The parent [`docs/AGENTS.md`](../AGENTS.md) still
 applies.
 
-## Purpose
+## Scope
+
+### Allowed Surface
 
 Stage 90 holds evidence: external research, audits and data packs with their
 observation dates, claims and coverage. It informs Stages 01 to 05 but is
 never policy or current authority by itself.
-
-## Responsibilities and Projections
 
 | Work here | Role (`.agents/roles/`) | Skills | Claude | Codex |
 | --- | --- | --- | --- | --- |
@@ -21,7 +21,17 @@ never policy or current authority by itself.
 `docs-researcher` is read-only (`read-only-research`); a writing role records
 its findings.
 
-## Rules
+### Non-goals
+
+Non-goals are stated in rule 5 under Local Obligations.
+
+## Required Policies
+
+### Canonical Sources
+
+Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
+
+### Local Obligations
 
 1. Every collection keeps three levels: the collection `README.md`, a pack
    router `####-<slug>/README.md` with the `reference/<kind>-pack` profile,
@@ -38,7 +48,33 @@ its findings.
 5. Never present a Stage 90 claim as a requirement, decision or policy; link
    the Stage 01, 02 or 05 owner that adopts it.
 
-## Checks
+## Workflow
+
+### Inspect and Change
+
+Inspecting and changing files follows the rules under Local Obligations.
+
+### Handoff
+
+Handoff is stated in rule 5 under Local Obligations.
+
+## Verification
+
+### Required Checks
 
 Run the strict document checks listed in the parent `AGENTS.md`;
 `validate-document-contract-registry.py` checks pack topology.
+
+### Evidence and Limits
+
+Evidence rules are stated in rule 2 under Local Obligations.
+
+## Safety
+
+### Protected Actions
+
+This file states no separate protected-action rule.
+
+### Stop and Escalate
+
+This file states no separate stop or escalation rule.

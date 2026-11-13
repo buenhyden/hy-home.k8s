@@ -4,14 +4,14 @@ Agent instructions for `docs/99.templates/`: the Document Profile Registry,
 its contracts and the form catalog. The parent
 [`docs/AGENTS.md`](../AGENTS.md) still applies.
 
-## Purpose
+## Scope
+
+### Allowed Surface
 
 Stage 99 is the machine contract every governed document is validated
 against. `registry.json` declares each profile's path pattern, frontmatter,
 sections, lifecycle and relationships; `contracts/` holds the JSON Schemas;
 `templates/` holds the forms that authors copy.
-
-## Responsibilities and Projections
 
 | Work here | Role (`.agents/roles/`) | Skills | Claude | Codex |
 | --- | --- | --- | --- | --- |
@@ -20,7 +20,17 @@ sections, lifecycle and relationships; `contracts/` holds the JSON Schemas;
 | Document form text | [doc-writer](../../.agents/roles/doc-writer.md) | `docs-stage-conformance`, `docs-stage-routing`, `requirements-to-design` | `.claude/agents/doc-writer.md` | `.codex/agents/doc-writer.toml` |
 | Validate the contract change | [quality-engineer](../../.agents/roles/quality-engineer.md) | `k8s-validate`, `workspace-harness-audit` | `.claude/agents/quality-engineer.md` | `.codex/agents/quality-engineer.toml` |
 
-## Rules
+### Non-goals
+
+This file states no separate non-goals rule.
+
+## Required Policies
+
+### Canonical Sources
+
+Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
+
+### Local Obligations
 
 1. A change to `registry.json`, a schema or a form is a contract change, not
    an ordinary document edit. Scope it in a Spec, add the focused regression
@@ -36,8 +46,34 @@ sections, lifecycle and relationships; `contracts/` holds the JSON Schemas;
    When it does, move the `.secrets.baseline` line number in its own commit
    first; the non-style gate scans against the HEAD baseline.
 
-## Checks
+## Workflow
+
+### Inspect and Change
+
+Inspecting and changing files follows the rules under Local Obligations.
+
+### Handoff
+
+This file states no separate handoff rule.
+
+## Verification
+
+### Required Checks
 
 `python3 scripts/validate-document-contract-registry.py --root . --mode strict`,
 the strict Markdown-profile and lifecycle checks from the parent `AGENTS.md`,
 and `python3 scripts/run-contract-tests.py --root . --suite document`.
+
+### Evidence and Limits
+
+This file states no separate evidence or limits rule.
+
+## Safety
+
+### Protected Actions
+
+This file states no separate protected-action rule.
+
+### Stop and Escalate
+
+This file states no separate stop or escalation rule.

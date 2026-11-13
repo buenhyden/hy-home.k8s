@@ -6,15 +6,15 @@ for human readers; these rules are for AI agents. Read
 [`../AGENTS.md`](../AGENTS.md) first; the repository root gateway and
 `.agents/governance/` still apply.
 
-## Purpose
+## Scope
+
+### Allowed Surface
 
 These are executable Azure reference implementations: Bicep for AKS, AGC and
 data services (`infrastructure/`), managed platform GitOps resources
 (`gitops/`), and workload manifests (`kubernetes/`). They are not the active
 local desired state; no local Argo CD tree reconciles them, and they prove no
 current Azure support, subscription readiness or cost.
-
-## Responsibilities and Projections
 
 | Work in `examples/azure/` | Role (`.agents/roles/`) | Skills (`.agents/skills/<id>/SKILL.md`) | Claude | Codex |
 | --- | --- | --- | --- | --- |
@@ -27,7 +27,17 @@ Native loading and permission limits are in
 [`.codex/provider.md`](../../.codex/provider.md). Approval boundaries are in
 [approval and safety](../../.agents/governance/approval-and-safety.md).
 
-## Rules
+### Non-goals
+
+Non-goals are stated at the end of the Purpose text under Allowed Surface: these files are not the active local desired state.
+
+## Required Policies
+
+### Canonical Sources
+
+Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
+
+### Local Obligations
 
 1. Never commit Azure credentials, subscription state, deployment outputs,
    kubeconfigs, tokens, keys, certificates or secret values.
@@ -42,9 +52,7 @@ Native loading and permission limits are in
    `bash scripts/validate-policy-gates.sh .` for manifests, and record what
    was not validated (Bicep build, live AKS) as a limitation.
 
-## Folder Rules
-
-### `infrastructure/`
+#### `infrastructure/`
 
 Bicep definitions for AKS, Application Gateway for Containers, networking,
 Azure Database for PostgreSQL and Azure Cache for Redis.
@@ -58,7 +66,7 @@ Azure Database for PostgreSQL and Azure Cache for Redis.
 4. Do not run `az deployment` or other provider commands; Bicep build and
    what-if results are external evidence.
 
-### `gitops/`
+#### `gitops/`
 
 Managed platform resources for AKS: Azure Managed Identity and federated
 credentials, Gateway API definitions for Application Gateway for Containers,
@@ -72,7 +80,7 @@ and platform controller and Helm settings.
 4. Keep application resources out of this folder; they belong in
    `kubernetes/`.
 
-### `kubernetes/`
+#### `kubernetes/`
 
 Application manifests for the AKS target: Workload Identity service
 accounts, Secret Store CSI volumes, external service references and sample
@@ -84,3 +92,33 @@ workloads.
 3. Follow the resource tag and labeling rules.
 4. Promote a manifest into the active `gitops/` tree only through an owned
    change with its own Spec.
+
+## Workflow
+
+### Inspect and Change
+
+Inspecting and changing files follows the rules under Local Obligations.
+
+### Handoff
+
+This file states no separate handoff rule.
+
+## Verification
+
+### Required Checks
+
+Required checks are stated in rule 5 under Local Obligations.
+
+### Evidence and Limits
+
+Evidence limits are stated in rule 5 under Local Obligations.
+
+## Safety
+
+### Protected Actions
+
+Protected actions are stated in rules 1 and 2 under Local Obligations.
+
+### Stop and Escalate
+
+This file states no separate stop or escalation rule.

@@ -324,7 +324,11 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         )
         owns = self.rules["canonical_markdown_owns_generic_residue"]
         self.assertTrue(owns(ROOT / "docs/01.requirements/9999-projection.md"))
-        self.assertFalse(owns(ROOT / "AGENTS.md"))
+        # The AGENTS form gives the root AGENTS.md headings, so the canonical
+        # Markdown check owns its residue; the native CLAUDE.md gateway stays out.
+        self.assertTrue(owns(ROOT / "AGENTS.md"))
+        self.assertTrue(owns(ROOT / "scripts/AGENTS.md"))
+        self.assertFalse(owns(ROOT / "CLAUDE.md"))
 
     def test_secret_value_output_is_detected_with_or_without_namespace_flag(self):
         rule = next(

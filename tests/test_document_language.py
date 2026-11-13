@@ -113,7 +113,10 @@ class ClassifyTests(unittest.TestCase):
 
     def test_unchecked_documents(self):
         self.assertIsNone(self.kind("docs/03.specs/x/spec.md", terminal=True))
-        self.assertIsNone(self.kind("AGENTS.md", "common/root-provider-shim", "native"))
+        self.assertIsNone(
+            self.kind("AGENTS.md", "common/folder-agents-guide", "native")
+        )
+        self.assertIsNone(self.kind("CLAUDE.md", "common/root-provider-shim", "native"))
         self.assertIsNone(self.kind("t.md", "common/template-x", "template", None))
 
 

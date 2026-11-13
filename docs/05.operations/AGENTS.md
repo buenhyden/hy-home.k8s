@@ -4,13 +4,13 @@ Agent instructions for `docs/05.operations/` and its `guides/`, `policies/`,
 `runbooks/` and `incidents/` collections. The parent
 [`docs/AGENTS.md`](../AGENTS.md) still applies.
 
-## Purpose
+## Scope
+
+### Allowed Surface
 
 Stage 05 holds the operating documents of the platform: stable guides, shared
 policies, executable runbooks, and incident records with their postmortems.
 They describe how operators act; they are not permission for an agent to act.
-
-## Responsibilities and Projections
 
 | Work here | Role (`.agents/roles/`) | Skills | Claude | Codex |
 | --- | --- | --- | --- | --- |
@@ -20,7 +20,17 @@ They describe how operators act; they are not permission for an agent to act.
 | Secret, Vault and access procedures | [security-auditor](../../.agents/roles/security-auditor.md) | `k8s-security-audit`, `vulnerability-patterns` | `.claude/agents/security-auditor.md` | `.codex/agents/security-auditor.toml` |
 | Alerting and observability procedures | [observability-reviewer](../../.agents/roles/observability-reviewer.md) | `risk-report` | `.claude/agents/observability-reviewer.md` | `.codex/agents/observability-reviewer.toml` |
 
-## Rules
+### Non-goals
+
+Non-goals are stated at the end of the Purpose text under Allowed Surface: operating documents are not permission for an agent to act.
+
+## Required Policies
+
+### Canonical Sources
+
+Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
+
+### Local Obligations
 
 1. Profiles: `operation/guide`, `operation/policy`, `operation/runbook`,
    `operation/incident` and `operation/postmortem`, started from
@@ -45,8 +55,34 @@ They describe how operators act; they are not permission for an agent to act.
 7. Update the collection README in the same change that adds, retitles or
    removes a document.
 
-## Checks
+## Workflow
+
+### Inspect and Change
+
+Inspecting and changing files follows the rules under Local Obligations.
+
+### Handoff
+
+This file states no separate handoff rule.
+
+## Verification
+
+### Required Checks
 
 Run the strict document checks listed in the parent `AGENTS.md` and
 `python3 scripts/validation/repository/quality.py --root .`, which checks
 command boundary markers.
+
+### Evidence and Limits
+
+Evidence rules are stated in rules 4 and 5 under Local Obligations.
+
+## Safety
+
+### Protected Actions
+
+Protected actions are stated in rules 2, 3 and 5 under Local Obligations.
+
+### Stop and Escalate
+
+Stop and escalation conditions are stated in rules 2 and 4 under Local Obligations.
