@@ -1,11 +1,10 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.7.0"
+version: "1.7.1"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
-layer: "operations"
+updated: "2026-11-13"
 artifact_id: "GDE-0010"
 ---
 

@@ -1,11 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.8.7"
+version: "1.8.8"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
-layer: "architecture"
+updated: "2026-11-13"
 artifact_id: "AD-0007"
 ---
 

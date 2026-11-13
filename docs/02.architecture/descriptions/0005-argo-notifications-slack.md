@@ -1,11 +1,10 @@
 ---
 title: "Argo Notifications Slack Architecture Description"
-version: "1.1.2"
+version: "1.1.3"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-05"
-layer: "architecture"
+updated: "2026-11-13"
 artifact_id: "AD-0005"
 ---
 

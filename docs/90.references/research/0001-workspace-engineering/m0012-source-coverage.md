@@ -1,11 +1,10 @@
 ---
 title: "Reference: Source Coverage"
-version: "1.2.2"
+version: "1.2.3"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-11-03"
-layer: "references"
+updated: "2026-11-13"
 artifact_id: "RES-0001-m0012"
 ---
 

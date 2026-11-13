@@ -1,11 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture Description (AD)"
-version: "2.4.4"
+version: "2.4.5"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-12"
-layer: "architecture"
+updated: "2026-11-13"
 artifact_id: "AD-0006"
 ---
 

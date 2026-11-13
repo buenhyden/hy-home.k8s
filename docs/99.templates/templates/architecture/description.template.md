@@ -5,7 +5,6 @@ type: "sdlc/architecture-description"
 status: "draft"
 owner: "{{OWNER}}"
 updated: "{{UPDATED}}"
-layer: "architecture"
 artifact_id: "{{ARTIFACT_ID}}"
 ---
 

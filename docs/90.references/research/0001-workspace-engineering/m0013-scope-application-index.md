@@ -1,11 +1,10 @@
 ---
 title: "Reference: Scope Application Index"
-version: "1.3.0"
+version: "1.3.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-05"
-layer: "references"
+updated: "2026-11-13"
 artifact_id: "RES-0001-m0013"
 ---
 

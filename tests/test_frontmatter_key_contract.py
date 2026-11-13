@@ -79,8 +79,17 @@ SPEC = {
     "status": '"draft"',
     "owner": '"platform"',
     "updated": '"2026-11-13"',
-    "layer": '"specs"',
     "artifact_id": '"SPEC-0999"',
+}
+ADR_PATH = "docs/02.architecture/decisions/0999-example.md"
+ADR = {
+    "title": '"Example"',
+    "version": '"1.0.0"',
+    "type": '"sdlc/architecture-decision"',
+    "status": '"accepted"',
+    "owner": '"platform"',
+    "updated": '"2026-11-13"',
+    "artifact_id": '"ADR-0999"',
 }
 PLAN_PATH = "docs/03.specs/0999-example/plan.md"
 PLAN = {
@@ -107,6 +116,16 @@ AGENT = {
 }
 COMMAND_PATH = ".claude/commands/example.md"
 COMMAND = {"description": '"Run one check."'}
+
+
+def layered(fields: dict[str, str]) -> dict[str, str]:
+    """Insert layer after updated, where the profile order puts it."""
+    out: dict[str, str] = {}
+    for key, value in fields.items():
+        out[key] = value
+        if key == "updated":
+            out["layer"] = '"architecture"'
+    return out
 
 
 def doc(fields: dict[str, str]) -> str:
@@ -205,10 +224,21 @@ class KeyProfileCheckTests(unittest.TestCase):
         )
 
     def test_layer_accepted(self) -> None:
-        self.accepted(SPEC_PATH, {**SPEC, "layer": '"specs"'})
+        self.accepted(ADR_PATH, ADR)
+        self.accepted(ADR_PATH, layered(ADR))
 
     def test_layer_refused(self) -> None:
-        self.refused(SPEC_PATH, {**SPEC, "layer": '"wrong"'}, "FM-VALUE-CONSTANT")
+        for status in ("proposed", "rejected", "superseded", "deprecated"):
+            with self.subTest(status=status):
+                self.refused(
+                    ADR_PATH,
+                    layered({**ADR, "status": f'"{status}"'}),
+                    "FM-LAYER-ADR",
+                )
+        self.refused(ADR_PATH, {**ADR, "layer": '"specs"'}, "FM-VALUE-CONSTANT")
+        for path, fields in ((SPEC_PATH, SPEC), (GOV_PATH, GOV)):
+            with self.subTest(path=path):
+                self.refused(path, {**fields, "layer": '"specs"'}, "FM-KEYSET")
 
     def test_cancellation_accepted(self) -> None:
         self.accepted(
@@ -323,8 +353,9 @@ class RegistryKeyContractTests(unittest.TestCase):
         self.assertIn("W03-D23", self.entry(raw, "title")["duplicate_source"])
         layer = self.entry(raw, "layer")
         self.assertIn("stage folder", layer["duplicate_source"])
+        self.assertIn("accepted ADR", layer["condition"])
         self.assertIn("W03-D22", layer["migration"])
-        self.assertIn("W03-H25", layer["migration"])
+        self.assertIn("SPEC-0184", layer["migration"])
         self.assertIn(
             "scripts/validate-document-contract-registry.py", layer["consumer_paths"]
         )
@@ -438,7 +469,9 @@ class RegistryKeyContractTests(unittest.TestCase):
         rows = CONTRACTS.frontmatter_key_table(self.raw(), self.schema, self.bindings)
         table = {(row["document_type"], row["key"]): row for row in rows}
         self.assertIn("sdlc/spec", table[("sdlc/spec", "type")]["allowed_values"])
-        self.assertIn("specs", table[("sdlc/spec", "layer")]["allowed_values"])
+        adr = table[("sdlc/architecture-decision", "layer")]
+        self.assertIn("architecture", adr["allowed_values"])
+        self.assertNotIn(("sdlc/spec", "layer"), table)
         self.assertIn("[0-9]+", table[("sdlc/spec", "version")]["allowed_values"])
         self.assertIn("draft", table[("sdlc/spec", "status")]["allowed_values"])
         self.assertTrue(

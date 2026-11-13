@@ -1,11 +1,10 @@
 ---
 title: "01.requirements"
-version: "0.10.0"
+version: "0.10.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "requirements"
 ---
 # 01.requirements
 

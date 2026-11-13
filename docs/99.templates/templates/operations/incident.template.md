@@ -5,7 +5,6 @@ type: "operation/incident"
 status: "detected"
 owner: "{{OWNER}}"
 updated: "{{UPDATED}}"
-layer: "operations"
 artifact_id: "{{ARTIFACT_ID}}"
 ---
 

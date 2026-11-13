@@ -1,11 +1,10 @@
 ---
 title: "90.references/data"
-version: "0.2.3"
+version: "0.2.4"
 type: "common/readme"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "references"
 ---
 # 90.references/data
 

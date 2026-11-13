@@ -93,7 +93,6 @@ def task_text(status: str, rows: list[str]) -> str:
             f'status: "{status}"',
             'owner: "platform"',
             'updated: "2026-10-04"',
-            'layer: "specs"',
             'artifact_id: "SPEC-0106-TSK-0001"',
             'parent_ids: ["SPEC-0106-PLAN-0001"]',
             "---",
@@ -472,7 +471,6 @@ class CompletionIndexTests(unittest.TestCase):
                     'status: "approved"',
                     'owner: "platform"',
                     'updated: "2026-10-04"',
-                    'layer: "specs"',
                     'artifact_id: "SPEC-0106"',
                     "---",
                     "# Spec",
@@ -500,7 +498,6 @@ class CompletionIndexTests(unittest.TestCase):
                     'status: "approved"',
                     'owner: "platform"',
                     'updated: "2026-10-04"',
-                    'layer: "specs"',
                     'artifact_id: "SPEC-0106-PLAN-0001"',
                     'parent_ids: ["SPEC-0106"]',
                     "---",
@@ -850,7 +847,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             'title: "Fixture Spec"\nversion: "0.1.0"\n'
             f'type: "sdlc/spec"\nstatus: "{status}"\n'
             'owner: "platform"\nupdated: "2026-10-16"\n'
-            'layer: "specs"\nartifact_id: "SPEC-0900"\n'
+            'artifact_id: "SPEC-0900"\n'
             "---\n# Spec\n"
         )
 
@@ -860,7 +857,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             'title: "Fixture Plan"\nversion: "0.1.0"\n'
             f'type: "sdlc/plan"\nstatus: "{status}"\n'
             'owner: "platform"\nupdated: "2026-10-16"\n'
-            'layer: "specs"\nartifact_id: "SPEC-0900-PLAN-0001"\n'
+            'artifact_id: "SPEC-0900-PLAN-0001"\n'
             'parent_ids: ["SPEC-0900"]\n'
             "---\n# Plan\n"
             "## Global Constraints\nKeep the approved [Spec](spec.md#strategic-boundaries--non-goals) parent contract.\n"
@@ -881,7 +878,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             'title: "Fixture Task"\nversion: "0.1.0"\n'
             f'type: "sdlc/task"\nstatus: "{status}"\n'
             'owner: "platform"\nupdated: "2026-10-16"\n'
-            'layer: "specs"\nartifact_id: "SPEC-0900-TSK-0001"\n'
+            'artifact_id: "SPEC-0900-TSK-0001"\n'
             f'parent_ids: ["{parent_id}"]\n'
             "---\n# Task\n"
             "## Task Table\n### Lifecycle Traceability\n"

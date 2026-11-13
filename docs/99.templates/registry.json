@@ -20,7 +20,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -34,13 +33,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "supersedes"
         ],
         "constants": {
-          "type": "sdlc/requirement",
-          "layer": "requirements"
+          "type": "sdlc/requirement"
         }
       },
       "sections": {
@@ -116,7 +113,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -130,13 +126,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "supersedes"
         ],
         "constants": {
-          "type": "sdlc/architecture-description",
-          "layer": "architecture"
+          "type": "sdlc/architecture-description"
         }
       },
       "sections": {
@@ -211,10 +205,10 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
+          "layer",
           "supersedes"
         ],
         "forbidden": [],
@@ -299,7 +293,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -313,13 +306,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "cancellation"
         ],
         "constants": {
-          "type": "sdlc/spec",
-          "layer": "specs"
+          "type": "sdlc/spec"
         }
       },
       "sections": {
@@ -406,7 +397,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "parent_ids"
         ],
@@ -421,14 +411,12 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "parent_ids",
           "cancellation"
         ],
         "constants": {
-          "type": "sdlc/plan",
-          "layer": "specs"
+          "type": "sdlc/plan"
         }
       },
       "sections": {
@@ -514,7 +502,6 @@
           "type",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "parent_ids"
         ],
@@ -531,15 +518,13 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "parent_ids",
           "cancellation",
           "supersedes"
         ],
         "constants": {
-          "type": "sdlc/task",
-          "layer": "specs"
+          "type": "sdlc/task"
         }
       },
       "sections": {
@@ -690,7 +675,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -704,13 +688,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "superseded_by"
         ],
         "constants": {
-          "type": "operation/guide",
-          "layer": "operations"
+          "type": "operation/guide"
         }
       },
       "sections": {
@@ -774,7 +756,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -788,13 +769,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "superseded_by"
         ],
         "constants": {
-          "type": "operation/policy",
-          "layer": "operations"
+          "type": "operation/policy"
         }
       },
       "sections": {
@@ -858,7 +837,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -872,13 +850,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "superseded_by"
         ],
         "constants": {
-          "type": "operation/runbook",
-          "layer": "operations"
+          "type": "operation/runbook"
         }
       },
       "sections": {
@@ -943,7 +919,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -957,13 +932,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "resolved_at"
         ],
         "constants": {
-          "type": "operation/incident",
-          "layer": "operations"
+          "type": "operation/incident"
         }
       },
       "sections": {
@@ -1024,7 +997,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [],
@@ -1036,12 +1008,10 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "constants": {
-          "type": "operation/postmortem",
-          "layer": "operations"
+          "type": "operation/postmortem"
         }
       },
       "sections": {
@@ -1101,7 +1071,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -1116,14 +1085,12 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "supersedes",
           "superseded_by"
         ],
         "constants": {
-          "type": "reference/audit",
-          "layer": "references"
+          "type": "reference/audit"
         }
       },
       "sections": {
@@ -1172,7 +1139,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -1187,14 +1153,12 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "supersedes",
           "superseded_by"
         ],
         "constants": {
-          "type": "reference/research",
-          "layer": "references"
+          "type": "reference/research"
         }
       },
       "sections": {
@@ -1243,7 +1207,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -1258,14 +1221,12 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "supersedes",
           "superseded_by"
         ],
         "constants": {
-          "type": "reference/data",
-          "layer": "references"
+          "type": "reference/data"
         }
       },
       "sections": {
@@ -1902,9 +1863,7 @@
           "owner",
           "updated"
         ],
-        "optional": [
-          "layer"
-        ],
+        "optional": [],
         "forbidden": [
           "artifact_id"
         ],
@@ -1914,8 +1873,7 @@
           "type",
           "status",
           "owner",
-          "updated",
-          "layer"
+          "updated"
         ],
         "constants": {
           "type": "common/readme",
@@ -1952,9 +1910,7 @@
           "owner",
           "updated"
         ],
-        "optional": [
-          "layer"
-        ],
+        "optional": [],
         "forbidden": [
           "artifact_id"
         ],
@@ -1964,8 +1920,7 @@
           "type",
           "status",
           "owner",
-          "updated",
-          "layer"
+          "updated"
         ],
         "constants": {
           "type": "common/readme",
@@ -2850,9 +2805,7 @@
           "owner",
           "updated"
         ],
-        "optional": [
-          "layer"
-        ],
+        "optional": [],
         "forbidden": [
           "artifact_id"
         ],
@@ -2862,8 +2815,7 @@
           "type",
           "status",
           "owner",
-          "updated",
-          "layer"
+          "updated"
         ],
         "constants": {
           "type": "common/readme"
@@ -2990,9 +2942,7 @@
           "owner",
           "updated"
         ],
-        "optional": [
-          "layer"
-        ],
+        "optional": [],
         "forbidden": [
           "artifact_id"
         ],
@@ -3002,8 +2952,7 @@
           "type",
           "status",
           "owner",
-          "updated",
-          "layer"
+          "updated"
         ],
         "constants": {
           "type": "common/readme"
@@ -3833,7 +3782,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -3848,14 +3796,12 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "supersedes",
           "superseded_by"
         ],
         "constants": {
-          "type": "reference/audit",
-          "layer": "references"
+          "type": "reference/audit"
         }
       },
       "sections": {
@@ -4077,7 +4023,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -4092,14 +4037,12 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "supersedes",
           "superseded_by"
         ],
         "constants": {
-          "type": "reference/research",
-          "layer": "references"
+          "type": "reference/research"
         }
       },
       "sections": {
@@ -4251,7 +4194,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -4266,14 +4208,12 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "supersedes",
           "superseded_by"
         ],
         "constants": {
-          "type": "reference/data",
-          "layer": "references"
+          "type": "reference/data"
         }
       },
       "sections": {
@@ -4445,10 +4385,10 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
+          "layer",
           "supersedes"
         ],
         "forbidden": [],
@@ -4529,7 +4469,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -4543,13 +4482,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "supersedes"
         ],
         "constants": {
-          "type": "sdlc/architecture-description",
-          "layer": "architecture"
+          "type": "sdlc/architecture-description"
         }
       },
       "sections": {
@@ -4620,7 +4557,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "parent_ids"
         ],
@@ -4635,14 +4571,12 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "parent_ids",
           "cancellation"
         ],
         "constants": {
-          "type": "sdlc/plan",
-          "layer": "specs"
+          "type": "sdlc/plan"
         }
       },
       "sections": {
@@ -4720,7 +4654,6 @@
           "type",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "parent_ids"
         ],
@@ -4737,15 +4670,13 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "parent_ids",
           "cancellation",
           "supersedes"
         ],
         "constants": {
-          "type": "sdlc/task",
-          "layer": "specs"
+          "type": "sdlc/task"
         }
       },
       "sections": {
@@ -4889,7 +4820,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -4903,13 +4833,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "superseded_by"
         ],
         "constants": {
-          "type": "operation/guide",
-          "layer": "operations"
+          "type": "operation/guide"
         }
       },
       "sections": {
@@ -5068,7 +4996,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -5082,13 +5009,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "resolved_at"
         ],
         "constants": {
-          "type": "operation/incident",
-          "layer": "operations"
+          "type": "operation/incident"
         }
       },
       "sections": {
@@ -5254,7 +5179,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -5268,13 +5192,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "superseded_by"
         ],
         "constants": {
-          "type": "operation/policy",
-          "layer": "operations"
+          "type": "operation/policy"
         }
       },
       "sections": {
@@ -5444,7 +5366,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [],
@@ -5456,12 +5377,10 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "constants": {
-          "type": "operation/postmortem",
-          "layer": "operations"
+          "type": "operation/postmortem"
         }
       },
       "sections": {
@@ -5632,7 +5551,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -5646,13 +5564,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "superseded_by"
         ],
         "constants": {
-          "type": "operation/runbook",
-          "layer": "operations"
+          "type": "operation/runbook"
         }
       },
       "sections": {
@@ -5825,7 +5741,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -5839,13 +5754,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "supersedes"
         ],
         "constants": {
-          "type": "sdlc/requirement",
-          "layer": "requirements"
+          "type": "sdlc/requirement"
         }
       },
       "sections": {
@@ -5917,7 +5830,6 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id"
         ],
         "optional": [
@@ -5931,13 +5843,11 @@
           "status",
           "owner",
           "updated",
-          "layer",
           "artifact_id",
           "cancellation"
         ],
         "constants": {
-          "type": "sdlc/spec",
-          "layer": "specs"
+          "type": "sdlc/spec"
         }
       },
       "sections": {
@@ -13119,9 +13029,9 @@
     },
     {
       "key": "layer",
-      "purpose": "Names the stage a document lives in.",
+      "purpose": "Names the stage a document lives in; kept only on accepted ADRs, which are not edited in place.",
       "data_type": "string",
-      "condition": "Required on a profile that lists it; forbidden on governance and evaluation profiles.",
+      "condition": "Allowed, never required, on the architecture decision profile and only on an accepted ADR (FM-LAYER-ADR); refused on every other profile.",
       "authoring_owner": "derived",
       "derived_from": "The stage folder of the document path.",
       "duplicate_source": "The stage folder of the document path (W03-D22).",
@@ -13129,8 +13039,8 @@
         "scripts/validate-markdown-profiles.py",
         "scripts/validate-document-contract-registry.py"
       ],
-      "lifecycle": "Fixed by the stage folder when the document is created.",
-      "migration": "Removal is planned in a later package (W03-D22, W03-H25); until then the profile constants keep it.",
+      "lifecycle": "Retained on an accepted ADR until a successor replaces it; never added to a new document.",
+      "migration": "Removed from every other document by SPEC-0184 (W03-D22, W03-H25); an accepted ADR keeps it until a successor replaces it.",
       "positive_test": {
         "module": "tests/test_frontmatter_key_contract.py",
         "test": "test_layer_accepted"

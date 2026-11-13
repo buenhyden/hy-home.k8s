@@ -172,14 +172,14 @@ class SpecPlanAuthorityTests(unittest.TestCase):
                 "---\n"
                 'title: "Example Spec"\nversion: "0.1.0"\ntype: "sdlc/spec"\n'
                 'status: "approved"\nowner: "platform"\nupdated: "2026-11-10"\n'
-                'layer: "specs"\nartifact_id: "SPEC-0999"\n---\n\n'
+                'artifact_id: "SPEC-0999"\n---\n\n'
                 "# Example Spec\n\n## Overview\n\nReviewed contract.\n"
             ),
             plan: (
                 "---\n"
                 'title: "Example Plan"\nversion: "0.1.0"\ntype: "sdlc/plan"\n'
                 'status: "approved"\nowner: "platform"\nupdated: "2026-11-10"\n'
-                'layer: "specs"\nartifact_id: "SPEC-0999-PLAN-0001"\n'
+                'artifact_id: "SPEC-0999-PLAN-0001"\n'
                 'parent_ids: ["SPEC-0999"]\n---\n\n'
                 "# Example Plan\n\n## Overview\n\nReviewed order.\n"
             ),
@@ -225,7 +225,7 @@ class SpecPlanAuthorityTests(unittest.TestCase):
             "---\n"
             'title: "Example Task"\nversion: "0.1.0"\ntype: "sdlc/task"\n'
             'status: "draft"\nowner: "platform"\nupdated: "2026-11-10"\n'
-            'layer: "specs"\nartifact_id: "SPEC-0999-TSK-0001"\n'
+            'artifact_id: "SPEC-0999-TSK-0001"\n'
             'parent_ids: ["SPEC-0999-PLAN-0001"]\n---\n\n'
             "# Example Task\n\n## Task Evidence\n\n"
             "| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |\n"

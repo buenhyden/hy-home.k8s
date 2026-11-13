@@ -1,11 +1,10 @@
 ---
 title: "Argo Notifications Slack Requirement Package"
-version: "1.2.2"
+version: "1.2.3"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-06"
-layer: "requirements"
+updated: "2026-11-13"
 artifact_id: "REQ-0002"
 ---
 

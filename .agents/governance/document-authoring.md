@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.20.0"
+version: "3.20.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -66,9 +66,10 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    "title" never repeats the document's "artifact_id": identity is already a
    key, and a title that restates it carries no information.
 5. Treat a key the profile omits as a key the document has no business
-   declaring. `layer` names the numbered stage a document lives in, so common governance
-   sits above that numbering and a Stage 99 form is not the document it
-   produces; neither declares one. A profile that declares no `artifact_id`
+   declaring. `layer` names the numbered stage a document lives in. It is kept only on
+   an accepted architecture decision, which is never edited in place, until a
+   successor replaces it; every other document, common governance and a Stage 99
+   form declare none. A profile that declares no `artifact_id`
    describes something the repository does not give a stable identity. Preserve
    an existing optional governance identity; do not mint one for normalization.
 6. Replace prompts with concrete content, use complete stable IDs for

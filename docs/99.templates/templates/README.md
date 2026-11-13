@@ -5,7 +5,6 @@ type: "common/readme"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "templates"
 ---
 
 # 99.templates/templates

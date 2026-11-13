@@ -1,11 +1,10 @@
 ---
 title: "05.operations/policies"
-version: "0.3.1"
+version: "0.3.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "operations"
 ---
 # 05.operations/policies
 

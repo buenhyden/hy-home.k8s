@@ -5,7 +5,6 @@ type: "sdlc/spec"
 status: "approved"
 owner: "platform"
 updated: "2026-11-12"
-layer: "specs"
 artifact_id: "SPEC-0161"
 ---
 

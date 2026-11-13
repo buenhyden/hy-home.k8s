@@ -537,6 +537,8 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
 # A form declares only what its author must write into the copy. A Stage 99 file
 # is not the document it produces, so it carries neither the document's identity
 # nor the layer that document will live in.
+# `layer` stays here for the architecture decision template, whose profile keeps
+# it optional for accepted ADRs only (SPEC-0184).
 TEMPLATE_OMITTED_KEYS = ("artifact_id", "layer")
 
 

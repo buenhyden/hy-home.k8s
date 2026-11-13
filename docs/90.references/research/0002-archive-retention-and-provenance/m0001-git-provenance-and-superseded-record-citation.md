@@ -1,11 +1,10 @@
 ---
 title: "Reference: Git Provenance and Superseded Record Citation"
-version: "0.2.1"
+version: "0.2.2"
 type: "reference/research"
 status: "draft"
 owner: "platform"
 updated: "2026-11-13"
-layer: "references"
 artifact_id: "RES-0002-m0001"
 ---
 

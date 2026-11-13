@@ -5,7 +5,6 @@ type: "common/readme"
 status: "active"
 owner: "{{OWNER}}"
 updated: "{{UPDATED}}"
-layer: "{{LAYER}}"
 ---
 # {{STAGE_NAME}}
 

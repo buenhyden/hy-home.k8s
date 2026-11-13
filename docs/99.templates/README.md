@@ -1,11 +1,10 @@
 ---
 title: "99.templates"
-version: "0.30.0"
+version: "0.30.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "templates"
 ---
 # 99.templates
 
@@ -96,8 +95,7 @@ form 경로의 대응은 Registry만 소유한다.
   workspace README만 공유하며, workspace README는 W03-D09에 따른 Stage 99
   지역 역할의 자체 Workspace README form을 쓴다. 루트 README는 Registry form의 `Purpose`,
   `Repository Map`, `Getting Started`, `References`를 쓴다. 각 form과 선택
-  module은 경로별 Registry profile이 고른다. stage·collection index form은 `updated` 뒤에
-  `layer`를 더한다. README는 사람 독자만을 대상으로 한다. 폴더의 agent 지시는 그
+  module은 경로별 Registry profile이 고른다. README는 사람 독자만을 대상으로 한다. 폴더의 agent 지시는 그
   폴더의 `AGENTS.md`에 두며, 루트 `AGENTS.md`를 포함한 모든 `AGENTS.md`는
   frontmatter 없이 AGENTS form을 쓰는 native `common/folder-agents-guide`
   파일이다. 루트 `CLAUDE.md`는 `common/root-provider-shim` gateway로, 폴더의
@@ -256,7 +254,7 @@ resolved Incident에는 시간대를 포함한 실제 resolved_at과 해결 증�
 #### Shared Frontmatter Grammar
 
 모든 governed Markdown은 "title", "version", "type", "status", "owner",
-"updated" 순서로 시작한다. 이후 "layer", "artifact_id", relationship,
+"updated" 순서로 시작한다. 이후 "artifact_id", relationship,
 supersession, provenance key는 선택된 profile의 order에만 따라 나타난다.
 모든 string, date, version, ID scalar는 큰따옴표를 사용한다.
 
@@ -268,7 +266,6 @@ supersession, provenance key는 선택된 profile의 order에만 따라 나타�
 | "status" | 항상 | profile lifecycle subset 또는 router constant | profile literal |
 | "owner" | 항상 | 책임 소유자 | "&#123;&#123;OWNER&#125;&#125;" |
 | "updated" | 항상 | ISO date | "&#123;&#123;UPDATED&#125;&#125;" |
-| "layer" | profile이 stage/router layer를 소유할 때 | 숫자 접두어 없는 stage slug | profile literal; stage-index·collection-index README form은 "&#123;&#123;LAYER&#125;&#125;" |
 | "artifact_id" | stable identity profile만 | "artifact_id_pattern" | "&#123;&#123;ARTIFACT_ID&#125;&#125;" |
 
 값의 scalar/array 문법은
@@ -280,8 +277,9 @@ Registry의 `frontmatter_keys`가, YAML과 JSON Schema dialect는 `frontmatter_d
 "&#123;&#123;UPPER_SNAKE_CASE&#125;&#125;", native placeholder는 `__UPPER_SNAKE_CASE__`,
 author guidance는 "<!-- Author prompt: ... -->"만 사용한다.
 
-Template은 만드는 문서의 envelope를 투영하므로 profile이 요구하는 "layer"와
-"artifact_id" placeholder를 포함한다. Template 파일 자체의 revision과 destination
+Template은 만드는 문서의 envelope를 투영하므로 profile이 요구하는
+"artifact_id" placeholder를 포함한다. "layer"는 accepted ADR에만 남으며 어떤
+template도 선언하지 않는다. Template 파일 자체의 revision과 destination
 identity는 Registry contract version과 Git history가 소유한다.
 README router에는 stable "artifact_id"가 없으며 reference pack anchor는
 기존 AUD/RES/DATA identity와 게시 생명주기를 유지한다. governance에는 기존
