@@ -23,7 +23,37 @@ updated: "{{UPDATED}}"
 
 ## Current Contract
 
-<!-- Author prompt: write the intake, execution, and handoff duties this responsibility performs. -->
+### Role
+
+<!-- Author prompt: define what this responsibility decides and where its judgment ends. -->
+
+### When to Use
+
+<!-- Author prompt: name the conditions under which a requester selects this responsibility. -->
+
+### Inputs
+
+<!-- Author prompt: list what this responsibility reads before it starts work. -->
+
+### Outputs
+
+<!-- Author prompt: list what this responsibility returns and the evidence that comes with it. -->
+
+### Guardrails
+
+<!-- Author prompt: state what this responsibility does not do and the conditions that make it stop. -->
+
+### Capability and Evidence
+
+<!-- Author prompt: state the capability this responsibility needs and the evidence it records. -->
+
+### Handoff / Escalation
+
+<!-- Author prompt: name the owners that receive findings this responsibility must not settle. -->
+
+### Postflight
+
+<!-- Author prompt: state what this responsibility completes before it returns its result. -->
 
 ## Validation and Refresh
 

@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.22.0"
+version: "3.23.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -286,7 +286,8 @@ role, its forms and placement are owned by the
 
 Guide, Runbook, Incident, Postmortem, Policy, AGENTS, Skill, Root README, Stage README,
 Service README, Workspace README, Reference Pack README, Knowledge Map, Vocabulary,
-Prompt, Evaluation Task, Evaluation Score and Evaluation Results use their registry forms. Guide keeps its classification, readers and
+Prompt, Evaluation Task, Evaluation Score, Evaluation Results, Governance Document
+and Governance Role use their registry forms. Guide keeps its classification, readers and
 goal under Purpose and its Lifecycle Traceability table under Verification;
 Runbook keeps its Lifecycle Traceability table under Validation; Incident keeps
 its Lifecycle Traceability table under Evidence and Postmortem under Corrective
@@ -307,12 +308,17 @@ W03-D09, W03-D20 and W03-D26 with H2 sections only and no H3; Vocabulary keeps
 a Term ID table under Repository Vocabulary, Evaluation Task three tables
 under Overview, Declared Trials and Signals and Criteria, Evaluation Score three
 under Overview, Trial Evidence and Criterion Scores, and Evaluation Results two
-under Pair Coverage and Aggregate, each named by form section id. Policy uses the selected
+under Pair Coverage and Aggregate, each named by form section id. Governance
+Role, which the 17 `.agents/roles/*.md` role files use with eight H3 under
+Current Contract (Role, When to Use, Inputs, Outputs, Guardrails, Capability and
+Evidence, Handoff / Escalation and Postflight), and Governance Document, which
+the two provider notes use with H2 sections only, are also Stage 99 local roles
+under W03-D09, W03-D20, W03-D26 and W03-D34, not COMMON-DOC-FORM-1 roles, and
+keep no table. Policy uses the selected
 role's ordered sections. A
 TemplateDefinition names each table's section, ordered columns, minimum rows and
 row identity, and the validator checks column order, count and minimum rows. A
-template whose role has no form (`reference-report`, `governance-document` and
-`provider-native`) keeps its H2 lists and records its tables under the
+template whose role has no form (`reference-report` and `provider-native`) keeps its H2 lists and records its tables under the
 template's own headings, each named by its exact heading line.
 Classifications, prerequisites, controls, observations and recovery stay native
 submodules in their relevant roles. Fill sections with concrete content; a
