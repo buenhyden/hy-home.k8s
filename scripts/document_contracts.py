@@ -678,8 +678,8 @@ class DocumentLanguage:
         )
 
 
-# The twenty-six form identifiers a form may carry: sixteen COMMON-DOC-FORM-1
-# roles and ten Stage 99 local roles (W03-D09, W03-D26, W03-D34).
+# The twenty-seven form identifiers a form may carry: sixteen COMMON-DOC-FORM-1
+# roles and eleven Stage 99 local roles (W03-D09, W03-D26, W03-D34, W03-D36).
 FormId = Literal[
     "requirement",
     "architecture",
@@ -707,10 +707,11 @@ FormId = Literal[
     "evaluation-results",
     "governance-document",
     "governance-role",
+    "reference-report",
 ]
 
-# Ten Stage 99 local roles follow (W03-D09, W03-D20, W03-D34); eight have a
-# form, and provider-native has none, plus reference-report until package 3.
+# Ten Stage 99 local roles follow (W03-D09, W03-D20, W03-D34, W03-D36); nine
+# have a form, and provider-native alone has none.
 DocumentRole = Literal[
     "requirement",
     "architecture",
