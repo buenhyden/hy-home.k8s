@@ -1,6 +1,6 @@
 ---
 title: "W03 Work Ledger Contract"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-13"
@@ -27,8 +27,8 @@ This Task records the first half of handoff W03-H30 (W03-D25): requirement, arch
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-LEDGER-001](../spec.md#success-criteria--verification-plan) | Write `ADR-0060` as `proposed` with its README entry and the four dated clarifications; amend REQ-0003 and AD-0006. | platform | in-progress | PASS | EVD-006, EVD-007, EVD-010 |
-| WORK-002 | [VAL-LEDGER-002](../spec.md#success-criteria--verification-plan) | Governance and knowledge-map sentences; the superseding EVD row and refreshed state cells; regression and exact-index QA; then the Task Evidence row with the user's ADR-0060 acceptance answer and the `proposed` to `accepted` flip alone. | platform | in-progress | NOT_RUN | EVD-008, EVD-009, EVD-010, EVD-011; exact-index QA and ADR-0060 acceptance pending |
+| WORK-001 | [VAL-LEDGER-001](../spec.md#success-criteria--verification-plan) | Write `ADR-0060` as `proposed` with its README entry and the four dated clarifications; amend REQ-0003 and AD-0006. | platform | completed | PASS | EVD-006, EVD-007, EVD-013 |
+| WORK-002 | [VAL-LEDGER-002](../spec.md#success-criteria--verification-plan) | Governance and knowledge-map sentences; the superseding EVD row and refreshed state cells; regression and exact-index QA; then the Task Evidence row with the user's ADR-0060 acceptance answer and the `proposed` to `accepted` flip alone. | platform | completed | PASS | EVD-008, EVD-009, EVD-010, EVD-011, EVD-012 |
 
 ## Task Evidence
 
@@ -47,13 +47,21 @@ This Task records the first half of handoff W03-H30 (W03-D25): requirement, arch
 | EVD-011 | [VAL-LEDGER-002](../spec.md#success-criteria--verification-plan) | WORK-002 | `rg` ledger checks read | Working tree over `2f2f9b7f`, uncommitted, 2026-11-13; `rg -n -i ledger docs .agents` and `rg -n -i "work residue ledger" docs .agents` | PASS | Every hit outside Stage 90 and the Task package forbids a progress, competing, separate, recovery or inventory ledger, names the retired progress or migration ledgers, or is a Contracts sentence; Stage 90 hits are excluded evidence. The `work residue ledger` list holds exactly the Contracts sentences plus ADR-0060, this package and the SPEC-0161 rows. | yes | none |
 | EVD-012 | [VAL-LEDGER-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA and commit hooks on the implementation commit | `python3 scripts/qa.py staged` in the pinned validation environment over the final index of `9a072160`, 2026-11-13 | PASS | exit 0, 10 lanes PASS, none failed or skipped; the pre-commit hooks (staged QA snapshot, commitizen, generated message exceptions) passed on `9a072160`. With ADR-0060 tracked, the live-tree link validator no longer sees the untracked-file failure noted in EVD-010. | yes | none |
 | EVD-013 | [VAL-LEDGER-001](../spec.md#success-criteria--verification-plan) | WORK-001 | ADR-0060 acceptance (actor user) | Direct user answer "Accept (Recommended)" to the ADR-0060 acceptance question naming the proposed record at `9a072160`, 2026-11-13 Asia/Seoul | PASS | The user accepts ADR-0060; the `proposed` to `accepted` change follows as its own commit. This row accepts no SPEC-0185 criterion. | yes | none |
+| EVD-014 | [VAL-LEDGER-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. This package closes package 1 of W03-H30; package 2 stays open. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-LEDGER-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-LEDGER-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-LEDGER-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006, EVD-007, EVD-013 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0185 criterion question naming commit `9a072160`) | platform |
+| [VAL-LEDGER-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-008, EVD-009, EVD-010, EVD-011, EVD-012 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0185 criterion question naming commit `9a072160`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to ADR-0060, REQ-0003 FR-0019 and FR-0022, AD-0006 and the governance sentences (Plan Promotion row). ADR-0060's Affected Spec link to this package is replaced by plain text in the closure change, as the ADR-0057 exit check requires. W03-H30 package 2 stays open in the SPEC-0161 Task. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -68,4 +76,4 @@ This Task records the first half of handoff W03-H30 (W03-D25): requirement, arch
 
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). After SPEC-0184 removed the `layer` key, the bytes without that line were reviewed (EVD-004) and approved by the user again (EVD-005); these are the committed bytes. The implementation text is written in the working tree and checked (EVD-006 to EVD-011); exact-index QA, the commit, the user's ADR-0060 acceptance and the `proposed` to `accepted` flip are not done.
+Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). After SPEC-0184 removed the `layer` key, the bytes without that line were reviewed (EVD-004) and approved by the user again (EVD-005); these are the committed bytes. The implementation text is written in the working tree and checked (EVD-006 to EVD-011); implementation commit `9a072160` passed exact-index QA and the hooks (EVD-012); the user accepted ADR-0060 (EVD-013), flipped in `2622f6a8`. The user accepted both criteria on 2026-11-13, and the approval of commit, push, PR and merge covers the package exit (EVD-014). Risk class `medium`. Next owner: W03-H30 package 2 (SPEC-0191) and SPEC-0186.
