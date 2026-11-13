@@ -1,6 +1,6 @@
 ---
 title: "W03 Remove the Layer Frontmatter Key"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-13"
@@ -27,8 +27,8 @@ This Task records handoff W03-H25, the removal of the frontmatter `layer` key fr
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-LAYER-001](../spec.md#success-criteria--verification-plan) | Gate exemptions, `FM-LAYER-ADR`, registry, documents, templates, tests and fixtures. | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-LAYER-002](../spec.md#success-criteria--verification-plan) | Policy texts; open-package evidence rows; regression and exact-index QA; exemption retirement in the final source commit. | platform | in-progress | PASS | EVD-005, EVD-006, EVD-007, EVD-009 (resolves EVD-008), EVD-010 |
+| WORK-001 | [VAL-LAYER-001](../spec.md#success-criteria--verification-plan) | Gate exemptions, `FM-LAYER-ADR`, registry, documents, templates, tests and fixtures. | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-LAYER-002](../spec.md#success-criteria--verification-plan) | Policy texts; open-package evidence rows; regression and exact-index QA; exemption retirement in the final source commit. | platform | completed | PASS | EVD-005, EVD-006, EVD-007, EVD-009 (resolves EVD-008), EVD-010 |
 
 ## Task Evidence
 
@@ -44,13 +44,21 @@ This Task records handoff W03-H25, the removal of the frontmatter `layer` key fr
 | EVD-008 | [VAL-LAYER-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index `python3 scripts/qa.py staged` | Index tree `7d9a731c` over `3ae0b2c3` (94 staged paths); system interpreter `/usr/bin/python3` 3.12 first on `PATH`; 2026-11-13 | FAIL | exit 1: `agent-governance` and `document-contract-tests` (27 loader errors) failed on import, `ModuleNotFoundError: No module named 'ruamel'`. Cause: the interpreter lacked the hashed-lock `ruamel-yaml==0.19.1` that SPEC-0183's loader needs; it was not the pinned environment `hyhome.validationVenv` that `.agents/governance/git.md` names for staged QA and the hooks. No repository defect; no code, check or baseline changed. | yes | none |
 | EVD-009 | [VAL-LAYER-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index `python3 scripts/qa.py staged` | Final index of the implementation commit (tree `7d9a731c` plus these two rows); pinned validation environment `$HOME/.venvs/hyhome-validation/bin` first on `PATH` (`ruamel.yaml` 0.19.1); 2026-11-13 | PASS | exit 0; 12 lanes PASS, none failed or skipped. | yes | EVD-008 |
 | EVD-010 | [VAL-LAYER-002](../spec.md#success-criteria--verification-plan) | WORK-002 | One-use exemption retirement, final source commit | Working tree over `c3196040`; pinned validation environment; 2026-11-13 | PASS | `git grep -n '^layer: '` outside accepted ADRs is empty, so the exemptions had no remaining use. `scripts/document_lifecycle.py`, `tests/test_document_lifecycle_package_exit.py`, `tests/test_reference_pack_routes.py`, `.agents/governance/document-lifecycle.md` and `docs/90.references/AGENTS.md` are restored to their `aaca5a9c` bytes; `scripts/validate-document-contract-registry.py` loses the exemption and keeps only the `TEMPLATE_OMITTED_KEYS` comment; `git grep W03-D32` outside Stage 03 is empty. The two removed exemption tests, run once against the retired code, fail on their layer-only case: R4 refuses `docs/03.specs/0042-sample-change/spec.md` and `REFERENCE_PUBLISHED_REWRITE` refuses the published example member, so both gates refuse a `layer`-only change again. | yes | none |
+| EVD-011 | [VAL-LAYER-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. This package closes W03-H25. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-LAYER-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-LAYER-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-LAYER-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0184 criterion question naming commit `3bc58b8f`) | platform |
+| [VAL-LAYER-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-006, EVD-007, EVD-009, EVD-010 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0184 criterion question naming commit `3bc58b8f`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document authoring policy and the registry profile lists and `frontmatter_keys` `layer` entry (Plan Promotion row). The one-use exemptions were retired in `3bc58b8f`, the last commit that changes code; this acceptance commit changes only this Task. No new handoff arises. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes. The registry `migration` text and the `TEMPLATE_OMITTED_KEYS` comment name SPEC-0184 as an identifier, not a link, and stay.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
 
 ## Approval and Safety Boundaries
 
@@ -65,4 +73,4 @@ This Task records handoff W03-H25, the removal of the frontmatter `layer` key fr
 
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); exact-index QA failed with the system interpreter, which lacks `ruamel.yaml` (EVD-008), and passed in the pinned validation environment (EVD-009); the final source commit retires both exemptions and both gates refuse a `layer`-only change again (EVD-010); criterion acceptance pending. Risk class `medium`.
+Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). WORK-001 and WORK-002 implemented with PASS evidence (EVD-004 to EVD-007); exact-index QA failed with the system interpreter, which lacks `ruamel.yaml` (EVD-008), and passed in the pinned validation environment (EVD-009); commit `3bc58b8f` retires both exemptions and both gates refuse a `layer`-only change again (EVD-010). The user accepted both criteria on 2026-11-13, and the approval of commit, push, PR and merge covers the package exit (EVD-011); this package closes W03-H25. Next owner: W03 for SPEC-0185. Risk class `medium`.
