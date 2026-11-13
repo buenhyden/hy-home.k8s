@@ -851,6 +851,144 @@
           }
         }
       }
+    },
+    "frontmatter_keys": {
+      "description": "One entry per frontmatter key a profile requires, allows, forbids or orders (SPEC-0181).",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/frontmatter_key"
+      }
+    },
+    "frontmatter_dialect": {
+      "description": "The YAML and JSON Schema dialect of frontmatter, as it is and as it is meant to be (SPEC-0181).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current",
+        "target",
+        "schema",
+        "dates"
+      ],
+      "properties": {
+        "current": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "yaml",
+            "library",
+            "loaders"
+          ],
+          "properties": {
+            "yaml": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "library": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "loaders": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "loader",
+                  "scope",
+                  "duplicate_keys",
+                  "timestamps"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "pattern": "^[^/\\s][^\\s]*$"
+                  },
+                  "loader": {
+                    "type": "string",
+                    "pattern": "\\S"
+                  },
+                  "scope": {
+                    "type": "string",
+                    "pattern": "\\S"
+                  },
+                  "duplicate_keys": {
+                    "enum": [
+                      "refused",
+                      "last-wins"
+                    ]
+                  },
+                  "timestamps": {
+                    "enum": [
+                      "resolved",
+                      "kept-as-text"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "yaml",
+            "decision",
+            "asserted_by_check"
+          ],
+          "properties": {
+            "yaml": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "decision": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "asserted_by_check": {
+              "type": "boolean"
+            }
+          }
+        },
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "dialect",
+            "format"
+          ],
+          "properties": {
+            "dialect": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "format": {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          }
+        },
+        "dates": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "rule",
+            "checked_by"
+          ],
+          "properties": {
+            "rule": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "checked_by": {
+              "type": "string",
+              "pattern": "^[^/\\s][^\\s]*$"
+            }
+          }
+        }
+      }
     }
   },
   "$defs": {
@@ -1421,6 +1559,96 @@
         "removal": {
           "type": "string",
           "pattern": "\\S"
+        }
+      }
+    },
+    "test_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "module",
+        "test"
+      ],
+      "properties": {
+        "module": {
+          "type": "string",
+          "pattern": "^tests/test_[a-z0-9_]+\\.py$"
+        },
+        "test": {
+          "type": "string",
+          "pattern": "^test_[a-z0-9_]+$"
+        }
+      }
+    },
+    "frontmatter_key": {
+      "description": "One description per frontmatter key; key set and value grammar stay with the profiles and frontmatter.schema.json.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "purpose",
+        "data_type",
+        "condition",
+        "authoring_owner",
+        "derived_from",
+        "duplicate_source",
+        "consumer_paths",
+        "lifecycle",
+        "migration",
+        "positive_test",
+        "negative_test"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z_-]*$"
+        },
+        "purpose": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "data_type": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "condition": {
+          "type": "string"
+        },
+        "authoring_owner": {
+          "enum": [
+            "author",
+            "tool",
+            "derived"
+          ]
+        },
+        "derived_from": {
+          "type": "string"
+        },
+        "duplicate_source": {
+          "type": "string"
+        },
+        "consumer_paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[^/\\s][^\\s]*$"
+          }
+        },
+        "lifecycle": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "migration": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "positive_test": {
+          "$ref": "#/$defs/test_reference"
+        },
+        "negative_test": {
+          "$ref": "#/$defs/test_reference"
         }
       }
     }

@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.29.0"
+version: "0.30.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -274,7 +274,9 @@ supersession, provenance key는 선택된 profile의 order에만 따라 나타�
 값의 scalar/array 문법은
 [frontmatter schema](./contracts/frontmatter.schema.json)가, profile별
 required, optional, forbidden, order, constant, lifecycle, identity pattern은
-[Registry](./registry.json)가 소유한다. Markdown placeholder는
+[Registry](./registry.json)가 소유한다. 각 key의 의미·작성 주체·소비 경로·테스트는
+Registry의 `frontmatter_keys`가, YAML과 JSON Schema dialect는 `frontmatter_dialect`가
+소유한다. Markdown placeholder는
 "&#123;&#123;UPPER_SNAKE_CASE&#125;&#125;", native placeholder는 `__UPPER_SNAKE_CASE__`,
 author guidance는 "<!-- Author prompt: ... -->"만 사용한다.
 

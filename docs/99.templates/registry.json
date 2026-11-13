@@ -2596,6 +2596,7 @@
       "id": "common/codex-agent-binding",
       "family": "common",
       "mode": "native",
+      "document_role": "provider-native",
       "path_pattern": "^\\.codex/agents/[^/]+\\.toml$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/runtime/codex-agent.template.toml",
@@ -6177,6 +6178,84 @@
       }
     },
     {
+      "id": "common/template-exception-provider-native-codex",
+      "family": "common",
+      "mode": "template",
+      "document_role": "provider-native",
+      "path_pattern": "^docs/99\\.templates/templates/runtime/codex\\-agent\\.template\\.toml$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/runtime/codex-agent.template.toml",
+      "frontmatter": {
+        "mode": "absent",
+        "required": [],
+        "optional": [],
+        "forbidden": [],
+        "order": [],
+        "constants": {}
+      },
+      "sections": {
+        "required": [],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [
+          "common/codex-agent-binding"
+        ],
+        "body_contract": null
+      },
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one native form for a Codex agent binding: a TOML file with no frontmatter and no headings.",
+        "responsibility": "The projection consumes the native values the provider bindings own and restates no shared policy.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: provider-native is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's content, which stays as the TOML file records it.",
+          "Holding frontmatter, headings or tables, which a TOML file does not have."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/agent-execution.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The .codex/agents/*.toml files under the common/codex-agent-binding profile and their template.",
+        "tables": [],
+        "consumer_paths": [
+          "docs/99.templates/templates/runtime/codex-agent.template.toml",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-agent-governance.py",
+          "tests/test_common_form_tree.py",
+          ".codex/agents/quality-engineer.toml",
+          ".codex/bindings.json"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a binding under .codex/agents pass the agent-governance native check, which reads the TOML keys the provider binding owns."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A table recorded for this role fails the table checks, because its template holds no heading line."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to provider-native, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No line of the template changes; this definition records the template as it stands and binds its profile to the local role (SPEC-0181, W03-H14).",
+          "retained_history": "Git history retains the registry without this twin and role binding.",
+          "rollback": "Revert the SPEC-0181 implementation commit."
+        }
+      }
+    },
+    {
       "id": "common/template-governance-contract",
       "family": "common",
       "mode": "template",
@@ -8741,59 +8820,59 @@
     "extensions": [
       {
         "name": "Kubernetes/GitOps/bootstrap/external-service procedures",
-        "condition": "Kubernetes/GitOps/bootstrap/external-service procedures",
-        "owner": "unverified",
-        "verification": "unverified",
-        "review": "unverified",
-        "removal": "unverified"
+        "condition": "Applies when repository work changes Kubernetes manifests, GitOps structure, cluster bootstrap or an external-service contract, procedures the shared contract does not define.",
+        "owner": "buenhyden",
+        "verification": "The gitops-structure, gitops-change-set and external-service-contracts checks and the cluster-gate suite that scripts/validation/registry.json selects through python3 scripts/qa.py staged.",
+        "review": "When shared_contract.version changes and in any change to the k8s-validate, gitops-workflow or external-service-contract-audit skill, recorded in that change's Task.",
+        "removal": "When a shared WGOV-CORE edition defines these procedures or the repository no longer carries Kubernetes or GitOps manifests."
       },
       {
         "name": "Task Table/frontmatter summary",
-        "condition": "Task Table/frontmatter summary",
-        "owner": "unverified",
-        "verification": "unverified",
-        "review": "unverified",
-        "removal": "unverified"
+        "condition": "Applies to every Task: one Task Table and one frontmatter status marker, with the marker derived from the rows of a multi-row Task.",
+        "owner": "buenhyden",
+        "verification": "tests/test_task_summary_derivation.py and the strict Markdown profile check of the sdlc/task profile, both run by the document suite of scripts/run-contract-tests.py.",
+        "review": "When the sdlc/task body contract or its task_execution binding changes, and when shared_contract.version changes.",
+        "removal": "When a shared WGOV-CORE edition defines the Task summary derivation or the registry drops the sdlc/task task_execution binding."
       },
       {
         "name": "Registry document_language, Korean-allowed common agent Markdown, and Codex/Claude native syntax",
-        "condition": "Registry document_language, Korean-allowed common agent Markdown, and Codex/Claude native syntax",
-        "owner": "unverified",
-        "verification": "unverified",
-        "review": "unverified",
-        "removal": "unverified"
+        "condition": "Applies to every governed document: the registry document_language contract selects its language, common agent Markdown under .agents/ may be Korean, and Codex and Claude native files keep their provider syntax.",
+        "owner": "buenhyden",
+        "verification": "tests/test_document_language.py, the REGISTRY_DOCUMENT_LANGUAGE registry check and the strict Markdown profile check.",
+        "review": "When document_language changes and when shared_contract.version changes.",
+        "removal": "When a shared WGOV-CORE edition defines the document language contract or document_language leaves the registry."
       },
       {
         "name": "Local candidate Task first-recording of observed draft, ready, in-progress, or blocked state",
-        "condition": "Local candidate Task first-recording of observed draft, ready, in-progress, or blocked state",
-        "owner": "unverified",
-        "verification": "unverified",
-        "review": "unverified",
-        "removal": "unverified"
+        "condition": "Applies when a new Task's first Git version records an observed nonterminal ready, in-progress or blocked row, under a scoped user request and Task Inputs that name its owner, prerequisites and evidence.",
+        "owner": "buenhyden",
+        "verification": "tests/test_shared_contract_binding.py, the REGISTRY_LIFECYCLE_DOMAIN check of the Task initial states, and python3 scripts/validate-document-lifecycle.py --root . --mode staged.",
+        "review": "When shared_contract.version changes and when the task lifecycle domain changes.",
+        "removal": "When a shared WGOV-CORE edition admits a nonterminal first-recording state for a Task, or Task creation returns to draft only."
       },
       {
         "name": "Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval",
-        "condition": "Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval",
-        "owner": "unverified",
-        "verification": "unverified",
-        "review": "unverified",
-        "removal": "unverified"
+        "condition": "Applies when a scoped user request, an actual batch review and the user's approval are recorded before a Spec and Plan move from draft to approved.",
+        "owner": "buenhyden",
+        "verification": "tests/test_shared_contract_binding.py, the REGISTRY_LIFECYCLE_DOMAIN check that the spec-plan draft-to-approved edge exists exactly when this extension is declared, and the staged lifecycle check.",
+        "review": "When shared_contract.version changes and when the spec-plan lifecycle domain changes.",
+        "removal": "When a shared WGOV-CORE edition admits the direct draft-to-approved transition, or Spec and Plan approval returns to a separate commit after draft."
       },
       {
         "name": "Local candidate Spec/Plan first-recording as approved after actual batch review and approval",
-        "condition": "Local candidate Spec/Plan first-recording as approved after actual batch review and approval",
-        "owner": "unverified",
-        "verification": "unverified",
-        "review": "unverified",
-        "removal": "unverified"
+        "condition": "Applies when a scoped request, an actual batch review and the user's approval precede the first Git record, which then holds the same-package Spec and Plan at approved with the Task Evidence review and approval receipt.",
+        "owner": "buenhyden",
+        "verification": "tests/test_shared_contract_binding.py and the staged lifecycle check, which reads the review and approval receipt rows of the Task.",
+        "review": "When shared_contract.version changes and when the spec-plan lifecycle domain changes.",
+        "removal": "When a shared WGOV-CORE edition admits a first record at approved, or Spec and Plan first records return to draft only."
       },
       {
         "name": "Advisory shared workspace-memory SQLite store with Task and repository authority",
-        "condition": "Advisory shared workspace-memory SQLite store with Task and repository authority",
-        "owner": "unverified",
-        "verification": "unverified",
-        "review": "unverified",
-        "removal": "unverified"
+        "condition": "Applies when an agent keeps reusable context in the shared workspace memory store at .workspace-memory/memory.sqlite3, which stays advisory and never replaces Task or repository authority.",
+        "owner": "buenhyden",
+        "verification": "tests/test_workspace_memory.py, run through the workspace-memory-regressions check in scripts/validation/registry.json.",
+        "review": "When .agents/governance/context-and-memory.md or scripts/workspace_memory.py changes, and when shared_contract.version changes.",
+        "removal": "When the memory store is retired or a shared WGOV-CORE edition defines its own memory store."
       }
     ]
   },
@@ -12830,5 +12909,566 @@
         ]
       }
     ]
+  },
+  "frontmatter_keys": [
+    {
+      "key": "title",
+      "purpose": "Names the document for readers and owner-key derivation.",
+      "data_type": "string",
+      "condition": "",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "The document H1 heading repeats the title in part (W03-D23).",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py",
+        "scripts/validate-links-and-owners.py"
+      ],
+      "lifecycle": "Set when the document is created; changed when its subject is renamed.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_title_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_title_refused"
+      }
+    },
+    {
+      "key": "version",
+      "purpose": "Counts the document's published revisions as semantic version MAJOR.MINOR.PATCH.",
+      "data_type": "semantic version string",
+      "condition": "",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py",
+        "scripts/validate-agent-governance.py"
+      ],
+      "lifecycle": "Starts at 1.0.0 and is bumped in the commit that changes the document.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_version_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_version_refused"
+      }
+    },
+    {
+      "key": "type",
+      "purpose": "Names the document type, which equals the profile that governs the document.",
+      "data_type": "profile identifier string",
+      "condition": "",
+      "authoring_owner": "derived",
+      "derived_from": "The profile constant `type` in docs/99.templates/registry.json for the document path.",
+      "duplicate_source": "",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py",
+        "scripts/document_lifecycle.py",
+        "scripts/validate-links-and-owners.py"
+      ],
+      "lifecycle": "Fixed by the profile route when the document is created; never edited afterwards.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_type_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_type_refused"
+      }
+    },
+    {
+      "key": "status",
+      "purpose": "Places the document in its lifecycle state.",
+      "data_type": "string from the profile status domain",
+      "condition": "",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py",
+        "scripts/document_lifecycle.py",
+        "scripts/validate-links-and-owners.py"
+      ],
+      "lifecycle": "Starts at the profile's initial state and moves along the lifecycle domain's transitions.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_status_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_status_refused"
+      }
+    },
+    {
+      "key": "owner",
+      "purpose": "Names the party accountable for the document.",
+      "data_type": "string",
+      "condition": "",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Set when the document is created; changed when accountability moves.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_owner_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_owner_refused"
+      }
+    },
+    {
+      "key": "updated",
+      "purpose": "Dates the last content change.",
+      "data_type": "date string YYYY-MM-DD",
+      "condition": "",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Set to the date of each edit; FM-DATE refuses an impossible or future date.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_updated_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_document_frontmatter_negatives.py",
+        "test": "test_invalid_date"
+      }
+    },
+    {
+      "key": "artifact_id",
+      "purpose": "Gives a document a stable identity other documents link to.",
+      "data_type": "artifact identifier string",
+      "condition": "",
+      "authoring_owner": "derived",
+      "derived_from": "The stage folder number and file name of the document path (expected_artifact_id).",
+      "duplicate_source": "The number in the document path.",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py",
+        "scripts/document_lifecycle.py",
+        "scripts/validate-document-lifecycle.py"
+      ],
+      "lifecycle": "Assigned when the document is created from its path; never reused.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_artifact_id_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_artifact_id_refused"
+      }
+    },
+    {
+      "key": "supersedes",
+      "purpose": "Names the earlier document or documents this document replaces.",
+      "data_type": "artifact identifier string or array",
+      "condition": "Allowed where the profile lists it; used only when the document replaces another.",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "The reciprocal relationship link that scripts/document_lifecycle.py checks.",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Added when a document replaces an earlier one.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_supersedes_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_supersedes_refused"
+      }
+    },
+    {
+      "key": "superseded_by",
+      "purpose": "Names the later document or documents that replace this document.",
+      "data_type": "artifact identifier string or array",
+      "condition": "Required on a document whose status is superseded.",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "The reciprocal relationship link that scripts/document_lifecycle.py checks.",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Added when the document's status becomes superseded.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_superseded_by_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_superseded_by_refused"
+      }
+    },
+    {
+      "key": "layer",
+      "purpose": "Names the stage a document lives in.",
+      "data_type": "string",
+      "condition": "Required on a profile that lists it; forbidden on governance and evaluation profiles.",
+      "authoring_owner": "derived",
+      "derived_from": "The stage folder of the document path.",
+      "duplicate_source": "The stage folder of the document path (W03-D22).",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py",
+        "scripts/validate-document-contract-registry.py"
+      ],
+      "lifecycle": "Fixed by the stage folder when the document is created.",
+      "migration": "Removal is planned in a later package (W03-D22, W03-H25); until then the profile constants keep it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_layer_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_layer_refused"
+      }
+    },
+    {
+      "key": "cancellation",
+      "purpose": "Records why a Task was cancelled and who authorized it.",
+      "data_type": "mapping with reason, authorization_ref and criteria_disposition",
+      "condition": "Required on a Task whose status is cancelled.",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py",
+        "scripts/validate-document-lifecycle.py"
+      ],
+      "lifecycle": "Added when a Task's status becomes cancelled.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_cancellation_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_task_execution_contract.py",
+        "test": "test_direct_parent_cancellation_and_evidence_table_are_required"
+      }
+    },
+    {
+      "key": "description",
+      "purpose": "States in one sentence what a provider-native file or skill does.",
+      "data_type": "string",
+      "condition": "",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "Provider-owned: the native file's own description is the only place.",
+      "consumer_paths": [
+        "scripts/validate-agent-governance.py",
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Set when the file is created; changed when its responsibility changes.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_description_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_description_refused"
+      }
+    },
+    {
+      "key": "parent_ids",
+      "purpose": "Links a Plan or Task to its direct parent document.",
+      "data_type": "array of one artifact identifier",
+      "condition": "Required on a Plan and a Task, which have a direct parent.",
+      "authoring_owner": "derived",
+      "derived_from": "The package folder and file position of the document path (direct_parent).",
+      "duplicate_source": "The package folder of the document path.",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py",
+        "scripts/validate-document-lifecycle.py"
+      ],
+      "lifecycle": "Set when the Plan or Task is created from its package position.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_parent_ids_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_parent_ids_refused"
+      }
+    },
+    {
+      "key": "name",
+      "purpose": "Names a provider-native agent, skill or command.",
+      "data_type": "string",
+      "condition": "",
+      "authoring_owner": "derived",
+      "derived_from": "The role identifier in .agents/roles/registry.json or the skill folder name.",
+      "duplicate_source": "The role identifier or skill folder name.",
+      "consumer_paths": [
+        "scripts/validate-agent-governance.py",
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Fixed by the role or skill identifier when the file is created.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_name_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_name_refused"
+      }
+    },
+    {
+      "key": "resolved_at",
+      "purpose": "Records when an incident was resolved.",
+      "data_type": "RFC 3339 timestamp string with offset",
+      "condition": "Required on an incident whose status is resolved.",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Added when the incident's status becomes resolved.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_native_skill_envelope.py",
+        "test": "test_resolved_incident_requires_real_zoned_time_and_evidence"
+      },
+      "negative_test": {
+        "module": "tests/test_native_skill_envelope.py",
+        "test": "test_resolved_incident_requires_real_zoned_time_and_evidence"
+      }
+    },
+    {
+      "key": "metadata",
+      "purpose": "Carries a skill's document keys in one nested mapping beside its native keys.",
+      "data_type": "mapping of title, version, type, status, owner and updated",
+      "condition": "",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "",
+      "consumer_paths": [
+        "scripts/validate-agent-governance.py",
+        "scripts/document_lifecycle.py",
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Set when the skill is created; its nested keys follow their own entries.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_native_skill_envelope.py",
+        "test": "test_synthetic_skill_metadata_drives_markdown_and_lifecycle"
+      },
+      "negative_test": {
+        "module": "tests/test_native_skill_envelope.py",
+        "test": "test_synthetic_skill_metadata_drives_markdown_and_lifecycle"
+      }
+    },
+    {
+      "key": "disable-model-invocation",
+      "purpose": "Keeps a skill from running without an explicit request.",
+      "data_type": "boolean",
+      "condition": "",
+      "authoring_owner": "derived",
+      "derived_from": ".claude/bindings.json skill_policy.",
+      "duplicate_source": ".claude/bindings.json skill_policy.",
+      "consumer_paths": [
+        "scripts/validate-agent-governance.py",
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Fixed by the provider skill policy when the skill is created.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_native_skill_envelope.py",
+        "test": "test_canonical_nested_metadata_is_read_without_losing_native_control"
+      },
+      "negative_test": {
+        "module": "tests/test_agent_governance.py",
+        "test": "test_skill_invocation_control_is_required_and_typed"
+      }
+    },
+    {
+      "key": "model",
+      "purpose": "Selects the model alias of a Claude agent projection.",
+      "data_type": "string",
+      "condition": "",
+      "authoring_owner": "derived",
+      "derived_from": ".claude/bindings.json capability_models and role_overrides.",
+      "duplicate_source": ".claude/bindings.json capability_models and role_overrides.",
+      "consumer_paths": [
+        "scripts/validate-agent-governance.py",
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Written by the projection from the capability tier; changes with the provider binding.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_model_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_agent_governance.py",
+        "test": "test_native_model_must_equal_the_registry_capability_binding"
+      }
+    },
+    {
+      "key": "effort",
+      "purpose": "Selects the reasoning effort of a Claude agent projection.",
+      "data_type": "string",
+      "condition": "",
+      "authoring_owner": "derived",
+      "derived_from": ".claude/bindings.json capability_reasoning and role_overrides.",
+      "duplicate_source": ".claude/bindings.json capability_reasoning and role_overrides.",
+      "consumer_paths": [
+        "scripts/validate-agent-governance.py",
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Written by the projection from the capability tier; changes with the provider binding.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_effort_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_effort_refused"
+      }
+    },
+    {
+      "key": "tools",
+      "purpose": "Lists the tools a Claude agent projection may use.",
+      "data_type": "comma-separated tool names string",
+      "condition": "",
+      "authoring_owner": "derived",
+      "derived_from": ".claude/bindings.json permission_scopes.",
+      "duplicate_source": ".claude/bindings.json permission_scopes.",
+      "consumer_paths": [
+        "scripts/validate-agent-governance.py",
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Written by the projection from the permission class; changes with the provider binding.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_agent_governance.py",
+        "test": "test_shipped_registry_reproduces_every_claude_projection"
+      },
+      "negative_test": {
+        "module": "tests/test_agent_governance.py",
+        "test": "test_native_tools_cannot_widen_permission"
+      }
+    },
+    {
+      "key": "argument-hint",
+      "purpose": "Shows a Claude command's expected argument.",
+      "data_type": "string",
+      "condition": "Allowed only on a Claude command; the provider owns its text.",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Set when the command is created; changed when its argument changes.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_argument_hint_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_argument_hint_refused"
+      }
+    },
+    {
+      "key": "allowed-tools",
+      "purpose": "Limits the tools a Claude command may run.",
+      "data_type": "string",
+      "condition": "Allowed only on a Claude command; the provider owns its text.",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "",
+      "consumer_paths": [
+        "scripts/validate-markdown-profiles.py"
+      ],
+      "lifecycle": "Set when the command is created; changed when its tools change.",
+      "migration": "None recorded; the key keeps its meaning and no package changes it.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_allowed_tools_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_allowed_tools_refused"
+      }
+    }
+  ],
+  "frontmatter_dialect": {
+    "current": {
+      "yaml": "YAML 1.1",
+      "library": "PyYAML 6",
+      "loaders": [
+        {
+          "path": "scripts/validate-markdown-profiles.py",
+          "loader": "DuplicateKeyLoader",
+          "scope": "governed document frontmatter",
+          "duplicate_keys": "refused",
+          "timestamps": "kept-as-text"
+        },
+        {
+          "path": "scripts/document_lifecycle.py",
+          "loader": "_UniqueKeyLoader",
+          "scope": "governed document frontmatter",
+          "duplicate_keys": "refused",
+          "timestamps": "resolved"
+        },
+        {
+          "path": "scripts/validate-agent-governance.py",
+          "loader": "UniqueMetadataLoader",
+          "scope": "native agent and skill frontmatter",
+          "duplicate_keys": "refused",
+          "timestamps": "resolved"
+        },
+        {
+          "path": "scripts/validate-links-and-owners.py",
+          "loader": "yaml.safe_load",
+          "scope": "governed document frontmatter",
+          "duplicate_keys": "last-wins",
+          "timestamps": "resolved"
+        },
+        {
+          "path": "scripts/validation/repository/quality.py",
+          "loader": "DuplicateKeyLoader",
+          "scope": "Hookify local rule frontmatter",
+          "duplicate_keys": "refused",
+          "timestamps": "resolved"
+        }
+      ]
+    },
+    "target": {
+      "yaml": "YAML 1.2.2",
+      "decision": "W03-D29",
+      "asserted_by_check": false
+    },
+    "schema": {
+      "dialect": "JSON Schema Draft 2020-12",
+      "format": "annotation-only"
+    },
+    "dates": {
+      "rule": "FM-DATE",
+      "checked_by": "scripts/validate-markdown-profiles.py"
+    }
   }
 }

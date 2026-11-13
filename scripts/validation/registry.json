@@ -1412,6 +1412,10 @@
         },
         {
           "kind": "exact",
+          "value": "tests/test_frontmatter_key_contract.py"
+        },
+        {
+          "kind": "exact",
           "value": "tests/test_document_language.py"
         },
         {

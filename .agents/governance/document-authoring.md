@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.17.0"
+version: "3.18.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -57,6 +57,9 @@ This policy marks no subject as excluded from its scope.
 4. Take the frontmatter key set from the selected profile (the key order is
    stated below), and each key's value grammar from the
    frontmatter schema (`docs/99.templates/contracts/frontmatter.schema.json`).
+   The registry's `frontmatter_keys` owns each key's meaning, author,
+   consumers and tests, and its `frontmatter_dialect` owns the YAML and JSON
+   Schema dialect, so neither is restated here.
    Every string, date, version, and identity scalar uses double quotes. A
    "title" never repeats the document's "artifact_id": identity is already a
    key, and a title that restates it carries no information.
@@ -288,8 +291,7 @@ Reference Pack README, which the research, audit and data pack READMEs use with
 the `Pack Contract` and `Pack Index` sections, are Stage 99 local roles under
 W03-D09 and W03-D10, not COMMON-DOC-FORM-1 roles; each uses its own registry
 form and keeps no table. Policy uses the selected
-role's ordered sections and keeps its existing Lifecycle Traceability table
-under Related Documents until its package. A
+role's ordered sections. A
 TemplateDefinition names each table's section, ordered columns, minimum rows and
 row identity, and the validator checks column order, count and minimum rows. A
 template whose role has no form keeps its H2 lists and records its tables under

@@ -108,6 +108,7 @@ ROLE_BINDINGS = {
     "evaluation/results": "evaluation-results",
     "common/provider-native-metadata": "provider-native",
     "common/provider-native-command": "provider-native",
+    "common/codex-agent-binding": "provider-native",
 }
 # The fourteen templates of the local roles carry a definition and these tables.
 LOCAL_TABLES = {
@@ -148,6 +149,7 @@ LOCAL_TABLES = {
     ],
     "common/template-exception-provider-native-metadata": [],
     "common/template-exception-provider-native-command": [],
+    "common/template-exception-provider-native-codex": [],
 }
 LOCAL_TEMPLATES = tuple(LOCAL_TABLES)
 # A source profile inherits the tables of the template that names it.
@@ -166,6 +168,7 @@ LOCAL_SOURCES = {
     "common/template-evaluation-results": "evaluation/results",
     "common/template-exception-provider-native-metadata": "common/provider-native-metadata",
     "common/template-exception-provider-native-command": "common/provider-native-command",
+    "common/template-exception-provider-native-codex": "common/codex-agent-binding",
 }
 LOCAL_PROFILE_TABLES = {
     **LOCAL_TABLES,
@@ -1310,6 +1313,16 @@ class FormRegistryTests(unittest.TestCase):
             AUTHORITY.validate_registry_authority(raw)
         del raw["common_form"], raw["common_forms"]
         AUTHORITY.validate_registry_authority(raw)
+        # SPEC-0181: the key descriptions and the dialect are admitted top-level
+        # sections, each alone and both absent, as in a comparison-base registry.
+        for section in ("frontmatter_keys", "frontmatter_dialect"):
+            candidate = {**load_raw(), section: {}}
+            AUTHORITY.validate_registry_authority(candidate)
+            del candidate[section]
+            AUTHORITY.validate_registry_authority(candidate)
+        raw = {**load_raw(), "frontmatter_key": {}}
+        with self.assertRaisesRegex(AUTHORITY.AuthorityError, "REGISTRY_TOP_LEVEL"):
+            AUTHORITY.validate_registry_authority(raw)
 
     def test_policy_roles_cannot_differ(self) -> None:
         for mutate in (
@@ -3746,6 +3759,10 @@ class LocalRoleTableTests(unittest.TestCase):
     def template_body(self, profile_id: str | None = None) -> str:
         profile = self.profiles[profile_id or self.RESEARCH[1]]
         text = (ROOT / profile.template).read_text(encoding="utf-8")
+        # A template of a frontmatter-absent profile, such as the Codex TOML
+        # twin, has no envelope to cut off.
+        if profile.frontmatter.mode == "forbidden":
+            return text
         return text.split("\n---\n", 1)[1]
 
     def test_each_local_template_holds_its_recorded_heading_lines(self) -> None:

@@ -29,15 +29,18 @@ TOP_LEVEL_KEYS = frozenset(
     }
 )
 # SPEC-0091 adds the README navigation contract, SPEC-0093 the document
-# language contract and SPEC-0168 the common form model. A comparison-base
-# registry from before any of those decisions has none of them, so the keys
-# are admitted beside the required set.
+# language contract, SPEC-0168 the common form model and SPEC-0181 the
+# frontmatter key descriptions and dialect. A comparison-base registry from
+# before any of those decisions has none of them, so the keys are admitted
+# beside the required set.
 OPTIONAL_TOP_LEVEL_KEYS = frozenset(
     {
         "readme_navigation",
         "document_language",
         "shared_contract",
         "common_forms",
+        "frontmatter_keys",
+        "frontmatter_dialect",
     }
 )
 PROFILE_KEYS = frozenset(

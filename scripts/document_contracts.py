@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import ast
 import copy
+import json
 import re
 import stat
 import subprocess
@@ -905,6 +907,57 @@ def local_extension_names(
 
 
 @dataclass(frozen=True)
+class KeyTestReference:
+    """A test module path and a test name."""
+
+    module: str
+    test: str
+
+
+@dataclass(frozen=True)
+class FrontmatterKey:
+    """SPEC-0181: the one description of a frontmatter key."""
+
+    key: str
+    purpose: str
+    data_type: str
+    condition: str
+    authoring_owner: Literal["author", "tool", "derived"]
+    derived_from: str
+    duplicate_source: str
+    consumer_paths: tuple[str, ...]
+    lifecycle: str
+    migration: str
+    positive_test: KeyTestReference
+    negative_test: KeyTestReference
+
+
+@dataclass(frozen=True)
+class FrontmatterLoader:
+    path: str
+    loader: str
+    scope: str
+    duplicate_keys: Literal["refused", "last-wins"]
+    timestamps: Literal["resolved", "kept-as-text"]
+
+
+@dataclass(frozen=True)
+class FrontmatterDialect:
+    """SPEC-0181: the YAML and JSON Schema dialect of frontmatter."""
+
+    current_yaml: str
+    current_library: str
+    loaders: tuple[FrontmatterLoader, ...]
+    target_yaml: str
+    target_decision: str
+    target_asserted_by_check: bool
+    schema_dialect: str
+    schema_format: str
+    date_rule: str
+    date_checked_by: str
+
+
+@dataclass(frozen=True)
 class Registry:
     schema_version: int
     profiles: tuple[DocumentProfile, ...]
@@ -913,6 +966,9 @@ class Registry:
     document_language: DocumentLanguage | None = None
     shared_contract: SharedContract | None = None
     common_forms: tuple[CommonForm, ...] = ()
+    # A comparison-base registry from before SPEC-0181 has neither section.
+    frontmatter_keys: tuple[FrontmatterKey, ...] = ()
+    frontmatter_dialect: FrontmatterDialect | None = None
 
 
 @dataclass(frozen=True)
@@ -1966,6 +2022,331 @@ def _shared_extension_diagnostics(raw_registry: Mapping[str, Any]) -> list[Diagn
     ]
 
 
+FRONTMATTER_KEY_FIELDS = (
+    "key",
+    "purpose",
+    "data_type",
+    "condition",
+    "authoring_owner",
+    "derived_from",
+    "duplicate_source",
+    "consumer_paths",
+    "lifecycle",
+    "migration",
+    "positive_test",
+    "negative_test",
+)
+KEY_TABLE_COLUMNS = (
+    "document_type",
+    "key",
+    "purpose",
+    "type",
+    "requiredness",
+    "allowed_values",
+    "authoring_owner",
+    "derived_from",
+    "duplicate_source",
+    "consumer_paths",
+    "lifecycle",
+    "migration",
+    "positive_test",
+    "negative_test",
+)
+_EXTENSION_RECORD_FIELDS = ("condition", "owner", "verification", "review", "removal")
+
+
+def _used_frontmatter_keys(raw_registry: Mapping[str, Any]) -> list[str]:
+    """Every key any profile requires, allows, forbids or orders, first seen first."""
+
+    used: dict[str, None] = {}
+    for profile in raw_registry["profiles"]:
+        lists = profile["frontmatter"]
+        for field in ("required", "optional", "forbidden", "order"):
+            used.update(dict.fromkeys(lists[field]))
+    return list(used)
+
+
+@lru_cache(maxsize=64)
+def _test_function_sources(
+    root: str, module: str, state: tuple[int, int]
+) -> dict[str, str]:
+    """Source text of every function in one test module, by name.
+
+    ``state`` is the file's (size, mtime) so a changed module is read again.
+    """
+
+    text = read_repository_text(Path(root), PurePosixPath(module))
+    return {
+        node.name: ast.get_source_segment(text, node) or ""
+        for node in ast.walk(ast.parse(text))
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    }
+
+
+def _test_reference_fault(root: Path, key: str, reference: Mapping[str, Any]) -> str:
+    """Name what is wrong with one test reference, or return an empty string.
+
+    It confirms that the module and the test exist and that the test's source
+    contains the key; it does not claim the test exercises the key correctly.
+    """
+
+    try:
+        module = _normalize_relative_path(reference["module"])
+        file_state = (root.absolute() / module).lstat()
+        sources = _test_function_sources(
+            str(root.absolute()),
+            module.as_posix(),
+            (file_state.st_size, file_state.st_mtime_ns),
+        )
+    except (OSError, ValueError, SyntaxError):
+        return f"module {reference['module']!r} is not a readable test module"
+    source = sources.get(reference["test"])
+    if source is None:
+        return f"{reference['module']} has no test {reference['test']!r}"
+    if key not in source:
+        return f"{reference['test']} never names the key {key!r}"
+    return ""
+
+
+def current_registry_diagnostics(
+    root: Path, raw_registry: Mapping[str, Any]
+) -> tuple[Diagnostic, ...]:
+    """SPEC-0181 checks of the current registry's key, dialect and extension records.
+
+    These refuse what a comparison-base registry legitimately lacks, so they run
+    from the strict registry validator and never on the load path.
+    """
+
+    faults: list[tuple[str, str, str, str]] = []
+    keys = raw_registry.get("frontmatter_keys")
+    if keys is None:
+        faults.append(
+            ("REGISTRY_FRONTMATTER_KEY", "a frontmatter_keys section", "missing", "")
+        )
+    else:
+        names = [item["key"] for item in keys]
+        used = _used_frontmatter_keys(raw_registry)
+        for name in sorted({name for name in names if names.count(name) > 1}):
+            faults.append(
+                (
+                    "REGISTRY_FRONTMATTER_KEY",
+                    "one entry per key",
+                    f"duplicate {name!r}",
+                    "",
+                )
+            )
+        for name in used:
+            if name not in names:
+                faults.append(
+                    (
+                        "REGISTRY_FRONTMATTER_KEY",
+                        "an entry for every key a profile uses",
+                        f"no entry for {name!r}",
+                        "",
+                    )
+                )
+        for name in sorted(set(names) - set(used)):
+            faults.append(
+                (
+                    "REGISTRY_FRONTMATTER_KEY",
+                    "no entry for a key no profile uses",
+                    f"stray entry {name!r}",
+                    "",
+                )
+            )
+        for item in keys:
+            name = item["key"]
+            consumers = item["consumer_paths"]
+            if not consumers:
+                faults.append(
+                    (
+                        "REGISTRY_KEY_CONSUMER",
+                        "at least one consumer path",
+                        f"{name}: none",
+                        "",
+                    )
+                )
+            for named in consumers:
+                try:
+                    normalized = _normalize_relative_path(named)
+                    if normalized.as_posix() != named:
+                        raise ValueError("path is not canonical")
+                    if not stat.S_ISREG(_lstat_named_path(root.absolute(), normalized)):
+                        raise ValueError("not a regular file")
+                except ValueError as exc:
+                    faults.append(
+                        (
+                            "REGISTRY_KEY_CONSUMER",
+                            "consumer paths naming existing regular files",
+                            f"{name}: {named}: {exc}",
+                            "",
+                        )
+                    )
+            for field in ("positive_test", "negative_test"):
+                fault = _test_reference_fault(root, name, item[field])
+                if fault:
+                    faults.append(
+                        (
+                            "REGISTRY_KEY_TEST",
+                            f"a resolvable {field}",
+                            f"{name}: {fault}",
+                            "",
+                        )
+                    )
+    if raw_registry.get("frontmatter_dialect") is None:
+        faults.append(
+            (
+                "REGISTRY_FRONTMATTER_DIALECT",
+                "a frontmatter_dialect section",
+                "missing",
+                "",
+            )
+        )
+    shared = raw_registry.get("shared_contract")
+    for extension in (shared or {}).get("extensions", ()):
+        if isinstance(extension, str):
+            continue
+        for field in _EXTENSION_RECORD_FIELDS:
+            if extension[field] == "unverified":
+                faults.append(
+                    (
+                        "REGISTRY_SHARED_EXTENSION",
+                        f"a recorded {field} for each extension",
+                        f"{extension['name']!r} holds unverified",
+                        "",
+                    )
+                )
+    return tuple(
+        _diagnostic(rule, profile=profile, expected=expected, actual=actual)
+        for rule, expected, actual, profile in faults
+    )
+
+
+def _schema_grammar(prop: Mapping[str, Any], defs: Mapping[str, Any]) -> str:
+    """Render one frontmatter schema property as the grammar a value must meet."""
+
+    if "$ref" in prop:
+        return _schema_grammar(defs[prop["$ref"].rsplit("/", 1)[-1]], defs)
+    if "oneOf" in prop:
+        return " or ".join(_schema_grammar(item, defs) for item in prop["oneOf"])
+    kind = prop.get("type")
+    if kind == "array":
+        return f"array of {_schema_grammar(prop['items'], defs)}"
+    if kind == "object":
+        return "mapping with keys " + ", ".join(
+            prop.get("required", prop["properties"])
+        )
+    if "pattern" in prop:
+        return f"{kind} matching {prop['pattern']}"
+    return f"non-empty {kind}" if prop.get("minLength") else str(kind)
+
+
+def frontmatter_key_table(
+    raw_registry: Mapping[str, Any],
+    frontmatter_schema: Mapping[str, Any],
+    claude_bindings: Mapping[str, Any],
+) -> tuple[dict[str, Any], ...]:
+    """Derive the fourteen-column key table of the W03 task, one row per profile key.
+
+    Nothing here is stored: ``requiredness`` comes from the profile's frontmatter
+    lists and the entry's condition, ``allowed_values`` from the profile
+    constants and status domain, the frontmatter schema grammar for a shared
+    key, the Claude provider binding for ``model``, ``effort`` and ``tools``, and
+    provider-owned free text for any other native key; the remaining columns
+    come from ``frontmatter_keys``. A profile whose frontmatter mode is
+    ``absent`` lists no key and adds no row.
+    """
+
+    entries = {item["key"]: item for item in raw_registry["frontmatter_keys"]}
+    profiles = {item["id"]: item for item in raw_registry["profiles"]}
+    properties = frontmatter_schema["properties"]
+    defs = frontmatter_schema["$defs"]
+    overrides = claude_bindings["role_overrides"].values()
+    bound = {
+        "model": {
+            *claude_bindings["capability_models"].values(),
+            *(item["model"] for item in overrides if "model" in item),
+        },
+        "effort": {
+            *claude_bindings["capability_reasoning"].values(),
+            *(
+                item["reasoning_effort"]
+                for item in overrides
+                if "reasoning_effort" in item
+            ),
+        },
+        "tools": {
+            tool
+            for scope in claude_bindings["permission_scopes"].values()
+            for tool in scope
+        },
+    }
+
+    def status_domain(profile: Mapping[str, Any]) -> list[str]:
+        owner = profile
+        if not (profile.get("lifecycle") or {}).get("status_domain"):
+            sources = profile["relationships"]["source_profile_ids"]
+            owner = profiles[sources[0]] if sources else profile
+        return list((owner.get("lifecycle") or {}).get("status_domain", ()))
+
+    def allowed(profile: Mapping[str, Any], key: str) -> str:
+        constants = profile["frontmatter"]["constants"]
+        if key in constants:
+            return f"constant {json.dumps(constants[key])}"
+        if key == "status" and status_domain(profile):
+            return "one of " + ", ".join(status_domain(profile))
+        if key in properties:
+            return _schema_grammar(properties[key], defs)
+        if key in bound:
+            return (
+                "comma-separated subset of " if key == "tools" else "one of "
+            ) + ", ".join(sorted(bound[key]))
+        return "provider-owned free text"
+
+    rows: list[dict[str, Any]] = []
+    for profile in raw_registry["profiles"]:
+        lists = profile["frontmatter"]
+        listed = {
+            **dict.fromkeys(lists["order"]),
+            **dict.fromkeys(
+                [*lists["required"], *lists["optional"], *lists["forbidden"]]
+            ),
+        }
+        for key in listed:
+            entry = entries[key]
+            if key in lists["required"]:
+                requiredness = "required"
+            elif key in lists["forbidden"]:
+                requiredness = "forbidden"
+            elif entry["condition"]:
+                requiredness = f"conditional: {entry['condition']}"
+            else:
+                requiredness = "optional"
+            rows.append(
+                {
+                    "document_type": profile["id"],
+                    "key": key,
+                    "purpose": entry["purpose"],
+                    "type": entry["data_type"],
+                    "requiredness": requiredness,
+                    "allowed_values": allowed(profile, key),
+                    "authoring_owner": entry["authoring_owner"],
+                    "derived_from": entry["derived_from"],
+                    "duplicate_source": entry["duplicate_source"],
+                    "consumer_paths": list(entry["consumer_paths"]),
+                    "lifecycle": entry["lifecycle"],
+                    "migration": entry["migration"],
+                    "positive_test": "{module}::{test}".format(
+                        **entry["positive_test"]
+                    ),
+                    "negative_test": "{module}::{test}".format(
+                        **entry["negative_test"]
+                    ),
+                }
+            )
+    return tuple(rows)
+
+
 def _form_section_diagnostics(
     form: Mapping[str, Any],
 ) -> list[tuple[str, str, str]]:
@@ -2409,6 +2790,43 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         readme_navigation=_readme_navigation_from_mapping(raw.get("readme_navigation")),
         document_language=_document_language_from_mapping(raw.get("document_language")),
         common_forms=forms,
+        frontmatter_keys=tuple(
+            _frontmatter_key_from_mapping(item)
+            for item in raw.get("frontmatter_keys", ())
+        ),
+        frontmatter_dialect=_frontmatter_dialect_from_mapping(
+            raw.get("frontmatter_dialect")
+        ),
+    )
+
+
+def _frontmatter_key_from_mapping(raw: Mapping[str, Any]) -> FrontmatterKey:
+    return FrontmatterKey(
+        **{
+            **raw,
+            "consumer_paths": tuple(raw["consumer_paths"]),
+            "positive_test": KeyTestReference(**raw["positive_test"]),
+            "negative_test": KeyTestReference(**raw["negative_test"]),
+        }
+    )
+
+
+def _frontmatter_dialect_from_mapping(
+    raw: Mapping[str, Any] | None,
+) -> FrontmatterDialect | None:
+    if raw is None:
+        return None
+    return FrontmatterDialect(
+        current_yaml=raw["current"]["yaml"],
+        current_library=raw["current"]["library"],
+        loaders=tuple(FrontmatterLoader(**item) for item in raw["current"]["loaders"]),
+        target_yaml=raw["target"]["yaml"],
+        target_decision=raw["target"]["decision"],
+        target_asserted_by_check=raw["target"]["asserted_by_check"],
+        schema_dialect=raw["schema"]["dialect"],
+        schema_format=raw["schema"]["format"],
+        date_rule=raw["dates"]["rule"],
+        date_checked_by=raw["dates"]["checked_by"],
     )
 
 

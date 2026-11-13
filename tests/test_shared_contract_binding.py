@@ -22,6 +22,58 @@ from document_contracts import (  # noqa: E402
 
 APPROVAL_FIELDS = ("approved_by", "approved_at", "effective_from")
 EXTENSION_FIELDS = ("name", "condition", "owner", "verification", "review", "removal")
+# SPEC-0181: the accepted texts of the seven WGOV-CORE extensions, in registry order.
+EXTENSION_RECORDS = (
+    (
+        "Kubernetes/GitOps/bootstrap/external-service procedures",
+        "Applies when repository work changes Kubernetes manifests, GitOps structure, cluster bootstrap or an external-service contract, procedures the shared contract does not define.",
+        "The gitops-structure, gitops-change-set and external-service-contracts checks and the cluster-gate suite that scripts/validation/registry.json selects through python3 scripts/qa.py staged.",
+        "When shared_contract.version changes and in any change to the k8s-validate, gitops-workflow or external-service-contract-audit skill, recorded in that change's Task.",
+        "When a shared WGOV-CORE edition defines these procedures or the repository no longer carries Kubernetes or GitOps manifests.",
+    ),
+    (
+        "Task Table/frontmatter summary",
+        "Applies to every Task: one Task Table and one frontmatter status marker, with the marker derived from the rows of a multi-row Task.",
+        "tests/test_task_summary_derivation.py and the strict Markdown profile check of the sdlc/task profile, both run by the document suite of scripts/run-contract-tests.py.",
+        "When the sdlc/task body contract or its task_execution binding changes, and when shared_contract.version changes.",
+        "When a shared WGOV-CORE edition defines the Task summary derivation or the registry drops the sdlc/task task_execution binding.",
+    ),
+    (
+        "Registry document_language, Korean-allowed common agent Markdown, and Codex/Claude native syntax",
+        "Applies to every governed document: the registry document_language contract selects its language, common agent Markdown under .agents/ may be Korean, and Codex and Claude native files keep their provider syntax.",
+        "tests/test_document_language.py, the REGISTRY_DOCUMENT_LANGUAGE registry check and the strict Markdown profile check.",
+        "When document_language changes and when shared_contract.version changes.",
+        "When a shared WGOV-CORE edition defines the document language contract or document_language leaves the registry.",
+    ),
+    (
+        "Local candidate Task first-recording of observed draft, ready, in-progress, or blocked state",
+        "Applies when a new Task's first Git version records an observed nonterminal ready, in-progress or blocked row, under a scoped user request and Task Inputs that name its owner, prerequisites and evidence.",
+        "tests/test_shared_contract_binding.py, the REGISTRY_LIFECYCLE_DOMAIN check of the Task initial states, and python3 scripts/validate-document-lifecycle.py --root . --mode staged.",
+        "When shared_contract.version changes and when the task lifecycle domain changes.",
+        "When a shared WGOV-CORE edition admits a nonterminal first-recording state for a Task, or Task creation returns to draft only.",
+    ),
+    (
+        "Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval",
+        "Applies when a scoped user request, an actual batch review and the user's approval are recorded before a Spec and Plan move from draft to approved.",
+        "tests/test_shared_contract_binding.py, the REGISTRY_LIFECYCLE_DOMAIN check that the spec-plan draft-to-approved edge exists exactly when this extension is declared, and the staged lifecycle check.",
+        "When shared_contract.version changes and when the spec-plan lifecycle domain changes.",
+        "When a shared WGOV-CORE edition admits the direct draft-to-approved transition, or Spec and Plan approval returns to a separate commit after draft.",
+    ),
+    (
+        "Local candidate Spec/Plan first-recording as approved after actual batch review and approval",
+        "Applies when a scoped request, an actual batch review and the user's approval precede the first Git record, which then holds the same-package Spec and Plan at approved with the Task Evidence review and approval receipt.",
+        "tests/test_shared_contract_binding.py and the staged lifecycle check, which reads the review and approval receipt rows of the Task.",
+        "When shared_contract.version changes and when the spec-plan lifecycle domain changes.",
+        "When a shared WGOV-CORE edition admits a first record at approved, or Spec and Plan first records return to draft only.",
+    ),
+    (
+        "Advisory shared workspace-memory SQLite store with Task and repository authority",
+        "Applies when an agent keeps reusable context in the shared workspace memory store at .workspace-memory/memory.sqlite3, which stays advisory and never replaces Task or repository authority.",
+        "tests/test_workspace_memory.py, run through the workspace-memory-regressions check in scripts/validation/registry.json.",
+        "When .agents/governance/context-and-memory.md or scripts/workspace_memory.py changes, and when shared_contract.version changes.",
+        "When the memory store is retired or a shared WGOV-CORE edition defines its own memory store.",
+    ),
+)
 
 
 class SharedContractBindingTests(unittest.TestCase):
@@ -133,11 +185,19 @@ class SharedContractApprovalFieldsTests(unittest.TestCase):
             self.assertEqual(shared[key], "unverified")
         self.assertEqual(shared["consumer_version"], shared["version"])
         self.assertEqual(len(shared["extensions"]), 7)
-        for item in shared["extensions"]:
+        self.assertEqual(len(shared["extensions"]), len(EXTENSION_RECORDS))
+        for item, (name, condition, verification, review, removal) in zip(
+            shared["extensions"], EXTENSION_RECORDS
+        ):
             self.assertEqual(tuple(item), EXTENSION_FIELDS)
-            self.assertEqual(item["condition"], item["name"])
-            for key in ("owner", "verification", "review", "removal"):
-                self.assertEqual(item[key], "unverified")
+            self.assertEqual(item["name"], name)
+            self.assertEqual(item["condition"], condition)
+            self.assertNotEqual(item["condition"], item["name"])
+            # The owner is the recorded contract owner, not a per-extension claim.
+            self.assertEqual(item["owner"], shared["owner"])
+            self.assertEqual(item["verification"], verification)
+            self.assertEqual(item["review"], review)
+            self.assertEqual(item["removal"], removal)
         names = [CONTRACTS.extension_name(item) for item in shared["extensions"]]
         self.assertEqual(
             names[3:6],
