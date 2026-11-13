@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.23.50"
+version: "0.23.51"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -67,12 +67,13 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ```text
 03.specs/
 ├── 0161-w00-v14-7-delta-intake/
+├── 0190-w03-semver-vocabulary/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── README.md
 ```
 
-현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, 그 단계들이 끝날 때까지 남긴다.
+현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, 그 단계들이 끝날 때까지 남긴다. [SPEC-0190 W03 SemVer Vocabulary and Version Fields](./0190-w03-semver-vocabulary/)는 하나의 SemVer 2.0.0 문법으로 버전 값을 검사하고 SemVer 용어 8개를 공통 용어집에 더한다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 

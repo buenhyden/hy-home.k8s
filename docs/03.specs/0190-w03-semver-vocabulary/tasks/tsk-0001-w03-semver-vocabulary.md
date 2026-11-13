@@ -1,0 +1,63 @@
+---
+title: "W03 SemVer Vocabulary and Version Fields"
+version: "0.1.0"
+type: "sdlc/task"
+owner: "platform"
+updated: "2026-11-13"
+artifact_id: "SPEC-0190-TSK-0001"
+parent_ids: ["SPEC-0190-PLAN-0001"]
+---
+
+# Task: W03 SemVer Vocabulary and Version Fields
+
+## Overview
+
+This Task records the SemVer delta of the v14.7 2026-11-13 revision of the W03 task for [SPEC-0190](../spec.md) under its [Plan](../plan.md).
+
+## Inputs
+
+- **Request:** on 2026-11-13 (Asia/Seoul) the user asked to review the remaining W03 items against the current requirements, to fix anything decided or built differently from the requirements up to W03, to follow the requirements when a choice is needed, to start work that can run in parallel, and approved commit, push, PR and merge. The request approves no Spec bytes or criterion.
+- **Base:** branch `claude/w03-semver-vocabulary` from `8231f782` (`main` after PR #250, SPEC-0185).
+- **Decisions recorded with this package:** W03-D45 (the eight glossary terms are common rows at `repository-vocabulary v14.7`; user answer "Common, v14.7 (Recommended)") and W03-D46 (the `adopted` contract-version guard keeps the numeric core of the same grammar, and the validation surface registry and `tests/test_frontmatter_key_contract.py` are edited as consumers; user answer "Accept both (Recommended)"), both 2026-11-13.
+- **Source:** the revision's `dependencies/contracts/SEMVER-POLICY.md` and `SEMVER-CASES.json` (read-only input; not copied into the repository).
+
+## Task Table
+
+### Lifecycle Traceability
+
+| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| WORK-001 | [VAL-SEMVER-001](../spec.md#success-criteria--verification-plan) | Module, release tag pattern, skill envelope check, schema patterns and tests. | platform | ready | NOT_RUN | Pending |
+| WORK-002 | [VAL-SEMVER-002](../spec.md#success-criteria--verification-plan) | Glossary terms, version paragraph, scripts README; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+
+## Task Evidence
+
+| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| EVD-001 | [VAL-SEMVER-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Pre-approval review round 1 | Read-only reviewer that wrote none of the package, over spec.md `7dd10cb7…` and plan.md `ca951bf8…`; 2026-11-13 | FAIL | REJECT: FIX 1, `document-profile.schema.json` has three contract `version` patterns (lines 48, 163, 845), not two; FIX 2, new tests are not run unless registered in a suite, and the `release` suite was missing; FIX 3, the glossary edition `repository-vocabulary v14.7` had no recorded decision and the Korean cells were not named. NITs on capture groups, anchors, precedence cases and the module name. Round 2 confirmed the three fixes and found one more (the Open question sentence); round 3 approved. | no | none |
+| EVD-002 | [VAL-SEMVER-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent semantic review | {"spec_sha256":"a88a04e8903de04e2591adb43a13922266ada92b9ebfb4141e2cd8fc3f7d5203","plan_sha256":"36a48a841d0daf8650585936e65ef07a14e1625cb729bba6f0785ef64a688590"} | PASS | Same reviewer, rounds 2 and 3, 2026-11-13: the three FIX items of EVD-001 and the round-2 FIX (Open question sentence) and NITs are applied; round 3 APPROVE over the bytes named here. This row records a review, not an approval. | yes | none |
+| EVD-003 | [VAL-SEMVER-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-session user answer Approve these bytes to the SPEC-0190 approval question naming spec.md a88a04e8 and plan.md 36a48a84 dated 2026-11-13 Asia/Seoul","review_ref":"EVD-002","scope":["SPEC-0190","SPEC-0190-PLAN-0001"],"reviewed_spec_sha256":"a88a04e8903de04e2591adb43a13922266ada92b9ebfb4141e2cd8fc3f7d5203","reviewed_plan_sha256":"36a48a841d0daf8650585936e65ef07a14e1625cb729bba6f0785ef64a688590","validity":"confirmed","revocation":"none"} | PASS | Approves the Spec and Plan bytes only; accepts no criterion. | yes | none |
+| EVD-004 | [VAL-SEMVER-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent semantic review | {"spec_sha256":"479777c2e3f04d47d4e20cad42b63ca28d2dff56ea842991a4a245714140d265","plan_sha256":"36a48a841d0daf8650585936e65ef07a14e1625cb729bba6f0785ef64a688590"} | PASS | Same reviewer, 2026-11-13: the package commit over the EVD-003 bytes was refused by `LANG-ENGLISH-FIRST` (spec.md Glossary bullet with bare Korean term names); the fix wraps the eight Korean names in code spans, and a character diff shows those 16 backticks as the only change. APPROVE over the bytes named here; this row records a review, not an approval. | yes | none |
+| EVD-005 | [VAL-SEMVER-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-session user answer Approve these bytes to the SPEC-0190 re-approval question naming spec.md 479777c2 and plan.md 36a48a84 dated 2026-11-13 Asia/Seoul","review_ref":"EVD-004","scope":["SPEC-0190","SPEC-0190-PLAN-0001"],"reviewed_spec_sha256":"479777c2e3f04d47d4e20cad42b63ca28d2dff56ea842991a4a245714140d265","reviewed_plan_sha256":"36a48a841d0daf8650585936e65ef07a14e1625cb729bba6f0785ef64a688590","validity":"confirmed","revocation":"none"} | PASS | Approves the Spec and Plan bytes only; accepts no criterion. | yes | none |
+
+## Criterion Acceptance
+
+| Criterion | Acceptance | Evidence | Disposition | Current owner |
+| --- | --- | --- | --- | --- |
+| [VAL-SEMVER-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
+| [VAL-SEMVER-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: the files the Spec's scope names, this package, `docs/03.specs/README.md`, `.secrets.baseline` (this Task's reviewed digests only)
+- **Forbidden Paths**: existing version values, existing glossary rows, `.github/workflows/`, `_workspace/`, `.claude/`, `.codex/`, hooks, `docs/98.archive/`
+- **Approval Required**: Spec and Plan bytes; criterion acceptance; push, PR and merge are approved by the user's 2026-11-13 request in Inputs
+- **Static Validation**: strict document validators, the `document`, `agent-governance`, `release` and `tooling` suites, `ruff check scripts tests`, staged lifecycle check, `python3 scripts/qa.py staged`
+- **Live Validation**: DEFER; no live surface
+- **Secret / Vault Handling**: no secret read or printed
+- **Rollback Plan**: revert the implementation commit; before that, delete the package commit
+- **Evidence Location**: this Task
+
+## Verification Summary
+
+Spec and Plan reviewed (EVD-001 FAIL, EVD-002 PASS) and approved by the user at their exact bytes (EVD-003); after the package commit was refused for bare Korean text, the code-span fix was reviewed (EVD-004) and approved again (EVD-005), and these are the committed bytes. Implementation not started. Risk class `low`.
