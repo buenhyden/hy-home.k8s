@@ -1,6 +1,6 @@
 ---
 title: "W03 SDLC Policy Form"
-version: "0.2.1"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -27,8 +27,8 @@ This Task records the move of `.agents/governance/sdlc.md` to the Policy form (h
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SDLCPOL-001](../spec.md#success-criteria--verification-plan) | Move `sdlc.md` to the Policy form; write the explained-none texts; make the one edit; check the anchor. | platform | in-progress | PASS | EVD-006 |
-| WORK-002 | [VAL-SDLCPOL-002](../spec.md#success-criteria--verification-plan) | Registry consolidation; remove the template; retarget the tests; record W03-D41 to W03-D44. | platform | in-progress | PASS | EVD-007, EVD-008, EVD-009, EVD-010 |
+| WORK-001 | [VAL-SDLCPOL-001](../spec.md#success-criteria--verification-plan) | Move `sdlc.md` to the Policy form; write the explained-none texts; make the one edit; check the anchor. | platform | completed | PASS | EVD-006 |
+| WORK-002 | [VAL-SDLCPOL-002](../spec.md#success-criteria--verification-plan) | Registry consolidation; remove the template; retarget the tests; record W03-D41 to W03-D44. | platform | completed | PASS | EVD-008, EVD-009, EVD-010, EVD-011 |
 
 ## Task Evidence
 
@@ -44,13 +44,22 @@ This Task records the move of `.agents/governance/sdlc.md` to the Policy form (h
 | EVD-008 | [VAL-SDLCPOL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Three-module test run, red before and green after the retarget | The same three modules after the retarget; `python3 scripts/run-contract-tests.py --root . --suite document-lifecycle`, `--suite agent-governance` and `--suite validation-routing` | PASS | `test_common_form_tree` 267 tests OK (skipped 3); `test_document_lifecycle_cumulative_history` 42 OK; `test_task_execution_contract` 32 OK; `document-lifecycle` 24 tests PASS; `agent-governance` 105 tests PASS; `validation-routing` PASS. | yes | EVD-007 |
 | EVD-009 | [VAL-SDLCPOL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Registry, template removal, document suite, lint and affected surfaces | `python3 scripts/validate-document-contract-registry.py --root . --mode strict`; `--suite document`; `python3 scripts/validate-affected-surfaces.py --root .`; `ruff check scripts tests`; `ruff format --check scripts tests`; `graphify update .` | PASS | Registry strict: before 295 paths, after 294 paths, otherwise equal; the working tree has the template deletion unstaged, so tracked-only checks list the removed file until the deletion is staged (run under a scratch copy of the index with the deletion applied: registry PASS, affected surfaces PASS paths=668 surfaces=42/43 uncovered=0). `--suite document` with the unstaged deletion: 688 tests, failures=0, errors=1 (`tests.test_shared_contract_binding...test_current_rule_surfaces_name_the_adopted_edition`, `included path does not exist: contract.template.md`); `tests.test_shared_contract_binding` alone under the scratch index: 19 OK. The exact-index document suite and `python3 scripts/qa.py staged` are NOT_RUN here and belong to the staging step. `ruff check` clean; `ruff format --check`: 113 files already formatted after one wrap-only reformat of `tests/test_document_lifecycle_cumulative_history.py`; `graphify update .` rebuilt the graph. `python3 scripts/validation/repository/quality.py --root .` reports only `ERR .claude/worktrees/agent-a260fbbd5fe4b5005/graphify-out/graph.json is not a bounded strict UTF-8 regular file`, an untracked ignored worktree outside the package; not caused by this change. `.secrets.baseline` registry entry `35bb1b95…` moved from line 8661 to 8483 (detect-secrets confirms 8483), left unstaged for its own commit. | yes | none |
 | EVD-010 | [VAL-SDLCPOL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | W03-D54 lifecycle base read for a removed profile, red then green | `python3 -m unittest tests.test_document_lifecycle_cumulative_history -k base_side` before and after the change to `scripts/document_lifecycle.py` (`document_from_text` keyword `base_side`) and `scripts/validate-document-lifecycle.py` (`_snapshot_projection` and the `_comparison_documents` loader, base side only); the staged and strict `validate-document-lifecycle.py` runs | PASS | Recorded deviation from the Spec scope under W03-D54 (user answer "Fix root cause in SPEC-0187 (Recommended)", 2026-11-14): the staged and strict lifecycle checks failed with `LIFECYCLE-STATE .agents/governance/sdlc.md ... frontmatter type is unknown: 'governance/contract'` because the comparison base is classified with the current registry, which no longer holds the removed profile. Red: new test `test_base_side_removed_profile_type_reads_under_the_classified_profile` in `tests/test_document_lifecycle_cumulative_history.py`, 1 test, failures=1 with that observed text. Green after the base-side-only change: 1 test OK; it also proves a proposed document with an unknown type, and a base unknown type kept by the proposed side, still fail with `frontmatter type is unknown`. Staged and strict lifecycle runs: `PASS lifecycle validation`. | yes | none |
+| EVD-011 | [VAL-SDLCPOL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA and commit hooks on the implementation commit | Pre-commit hooks over the final index of `b9921ed3` in the pinned validation environment, 2026-11-14 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | none |
+| EVD-012 | [VAL-SDLCPOL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-SDLCPOL-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-SDLCPOL-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-SDLCPOL-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the user on 2026-11-14 (direct answer "Accept both" to the SPEC-0187 criterion question naming commit `b9921ed3`) | platform |
+| [VAL-SDLCPOL-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-008, EVD-009, EVD-010, EVD-011 | Accepted by the user on 2026-11-14 (direct answer "Accept both" to the SPEC-0187 criterion question naming commit `b9921ed3`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the Policy form binding of `.agents/governance/sdlc.md` under `governance/rule` and the registry (Plan Promotion row). W03-D42 to W03-D44 stay open for Policy packages 2 to 5 (W03-H29). The W03-D54 lifecycle change stays in `scripts/document_lifecycle.py` and its test. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -65,4 +74,4 @@ This Task records the move of `.agents/governance/sdlc.md` to the Policy form (h
 
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). After SPEC-0184 removed the `layer` key, the bytes without that line were reviewed (EVD-004) and approved by the user again (EVD-005); these are the committed bytes. Implementation in progress: EVD-006 to EVD-009 record the form move, the red and green test runs and the check results; the exact-index staged QA and criterion acceptance are pending.
+Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). After SPEC-0184 removed the `layer` key, the bytes without that line were reviewed (EVD-004) and approved by the user again (EVD-005); these are the committed bytes. Implementation in progress: EVD-006 to EVD-009 record the form move, the red and green test runs and the check results; the exact-index staged QA and criterion acceptance are pending. Implementation commit `b9921ed3` passed exact-index QA in the hooks (EVD-011); the user accepted both criteria on 2026-11-14, and the approval of commit, push, PR and merge covers the package exit (EVD-012).
