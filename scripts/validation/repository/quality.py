@@ -19,6 +19,10 @@ args = parser.parse_args()
 root = args.root.resolve()
 
 sys.path.insert(0, str(root / "scripts"))
+from frontmatter_yaml import (  # noqa: E402 - repository-local frontmatter loader
+    FrontmatterError,
+    load_frontmatter,
+)
 from document_contracts import (  # noqa: E402 - repository-local contract module
     DocumentContractError,
     TARGET_ROOTS,
@@ -447,8 +451,8 @@ for local_rule_path in claude_local_rule_paths:
             fail(f"{local_rule_rel} missing Hookify YAML frontmatter")
             continue
         try:
-            metadata = yaml.load(frontmatter.group(1), Loader=DuplicateKeyLoader) or {}
-        except Exception as exc:
+            metadata = load_frontmatter(frontmatter.group(1)) or {}
+        except FrontmatterError as exc:
             fail(f"{local_rule_rel} Hookify frontmatter parse failed: {exc}")
             continue
         for field in ["name", "enabled", "event"]:

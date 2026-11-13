@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import ast
 import copy
 import datetime as dt
 import importlib.util
@@ -11,13 +10,13 @@ import sys
 import unittest
 from pathlib import Path, PurePosixPath
 
-import yaml
+import ruamel.yaml as ruamel_yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import document_contracts as CONTRACTS  # noqa: E402
-import document_lifecycle as LIFECYCLE  # noqa: E402
+from frontmatter_yaml import FrontmatterError, load_frontmatter  # noqa: E402
 
 
 def _load_script(name: str, filename: str):
@@ -477,60 +476,23 @@ class RegistryKeyContractTests(unittest.TestCase):
 
 
 class FrontmatterDialectTests(unittest.TestCase):
-    """The recorded loader behavior is the behavior of the loaders themselves."""
-
-    SAMPLE = "updated: 2026-11-13\n"
+    """The recorded loader behavior is the behavior of the one loader."""
 
     @staticmethod
-    def loaders() -> dict:
-        return {
-            "scripts/validate-markdown-profiles.py": lambda text: yaml.load(
-                text, Loader=MARKDOWN.DuplicateKeyLoader
-            ),
-            "scripts/document_lifecycle.py": lambda text: yaml.load(
-                text, Loader=LIFECYCLE._UniqueKeyLoader
-            ),
-            "scripts/validate-agent-governance.py": lambda text: yaml.load(
-                text, Loader=AGENT_GOVERNANCE.UniqueMetadataLoader
-            ),
-            "scripts/validate-links-and-owners.py": yaml.safe_load,
-            "scripts/validation/repository/quality.py": FrontmatterDialectTests.quality_loader(),
-        }
-
-    @staticmethod
-    def quality_loader():
-        """quality.py runs on import, so lift its loader definition alone."""
-
-        source = (ROOT / "scripts/validation/repository/quality.py").read_text("utf-8")
-        wanted = []
-        for node in ast.parse(source).body:
-            is_loader = (
-                isinstance(node, ast.ClassDef) and node.name == "DuplicateKeyLoader"
-            )
-            is_constructor = (
-                isinstance(node, ast.FunctionDef)
-                and node.name == "construct_mapping_without_duplicates"
-            )
-            is_binding = isinstance(
-                node, ast.Expr
-            ) and "DuplicateKeyLoader.add_constructor" in ast.unparse(node)
-            if is_loader or is_constructor or is_binding:
-                wanted.append(node)
-        namespace: dict = {"yaml": yaml}
-        exec(  # noqa: S102 - three vetted statements of a tracked repository script
-            compile(ast.Module(body=wanted, type_ignores=[]), "quality.py", "exec"),
-            namespace,
-        )
-        return lambda text: yaml.load(text, Loader=namespace["DuplicateKeyLoader"])
+    def recorded() -> dict:
+        return json.loads(REGISTRY_FILE.read_text("utf-8"))["frontmatter_dialect"]
 
     def test_the_dialect_records_the_current_target_and_schema_dialects(self) -> None:
-        dialect = json.loads(REGISTRY_FILE.read_text("utf-8"))["frontmatter_dialect"]
-        self.assertEqual(dialect["current"]["yaml"], "YAML 1.1")
-        self.assertEqual(dialect["current"]["library"], "PyYAML 6")
-        self.assertTrue(yaml.__version__.startswith("6."))
+        dialect = self.recorded()
+        self.assertEqual(
+            dialect["current"]["yaml"],
+            "YAML 1.2 (ruamel.yaml 0.19.1, with stated refusals)",
+        )
+        self.assertEqual(dialect["current"]["library"], "ruamel.yaml 0.19.1")
+        self.assertEqual(ruamel_yaml.__version__, "0.19.1")
         self.assertEqual(dialect["target"]["yaml"], "YAML 1.2.2")
         self.assertEqual(dialect["target"]["decision"], "W03-D29")
-        self.assertIs(dialect["target"]["asserted_by_check"], False)
+        self.assertIs(dialect["target"]["asserted_by_check"], True)
         self.assertEqual(dialect["schema"]["dialect"], "JSON Schema Draft 2020-12")
         self.assertEqual(dialect["schema"]["format"], "annotation-only")
         self.assertEqual(dialect["dates"]["rule"], "FM-DATE")
@@ -539,24 +501,34 @@ class FrontmatterDialectTests(unittest.TestCase):
             schema["$schema"], "https://json-schema.org/draft/2020-12/schema"
         )
 
-    def test_each_recorded_loader_behaves_as_recorded(self) -> None:
-        recorded = json.loads(REGISTRY_FILE.read_text("utf-8"))["frontmatter_dialect"][
-            "current"
-        ]["loaders"]
-        loaders = self.loaders()
-        self.assertEqual({item["path"] for item in recorded}, set(loaders))
-        for item in recorded:
-            load = loaders[item["path"]]
+    def test_each_recorded_loader_is_the_one_loader(self) -> None:
+        loaders = self.recorded()["current"]["loaders"]
+        self.assertEqual(
+            {item["path"] for item in loaders},
+            {
+                "scripts/validate-markdown-profiles.py",
+                "scripts/document_lifecycle.py",
+                "scripts/validate-agent-governance.py",
+                "scripts/validate-links-and-owners.py",
+                "scripts/validation/repository/quality.py",
+            },
+        )
+        for item in loaders:
             with self.subTest(path=item["path"]):
-                refused = True
-                try:
-                    load("a: 1\na: 2\n")
-                    refused = False
-                except Exception:  # noqa: BLE001 - any refusal is the behavior
-                    pass
-                self.assertEqual(refused, item["duplicate_keys"] == "refused")
-                resolved = isinstance(load(self.SAMPLE)["updated"], dt.date)
-                self.assertEqual(resolved, item["timestamps"] == "resolved")
+                self.assertEqual(item["loader"], "frontmatter_yaml.load_frontmatter")
+                self.assertEqual(item["duplicate_keys"], "refused")
+                self.assertEqual(item["timestamps"], "kept-as-text")
+                source = (ROOT / item["path"]).read_text("utf-8")
+                self.assertRegex(source, r"from frontmatter_yaml import[^\n]*")
+                self.assertIn("load_frontmatter(", source)
+
+    def test_the_one_loader_behaves_as_recorded(self) -> None:
+        with self.assertRaises(FrontmatterError) as caught:
+            load_frontmatter("a: 1\na: 2\n")
+        self.assertEqual(caught.exception.reason, "duplicate-key")
+        self.assertEqual(
+            load_frontmatter("updated: 2026-11-13\n"), {"updated": "2026-11-13"}
+        )
 
 
 if __name__ == "__main__":

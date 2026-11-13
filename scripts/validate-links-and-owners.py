@@ -21,8 +21,7 @@ from pathlib import PurePosixPath
 from typing import Any, Callable, Iterable, Mapping, Sequence
 from urllib.parse import unquote, urlsplit
 
-import yaml
-
+from frontmatter_yaml import FrontmatterError, load_frontmatter
 from document_contracts import (
     Diagnostic,
     DocumentContractError,
@@ -57,8 +56,8 @@ def frontmatter_mapping(text: str) -> Mapping[str, object]:
     if closing < 0:
         return {}
     try:
-        loaded = yaml.safe_load(text[4:closing])
-    except yaml.YAMLError:
+        loaded = load_frontmatter(text[4:closing])
+    except FrontmatterError:
         return {}
     return loaded if isinstance(loaded, dict) else {}
 
@@ -4398,7 +4397,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         DocumentContractError,
         OSError,
         ValueError,
-        yaml.YAMLError,
     ) as exc:
         print(f"configuration error: {exc}", file=sys.stderr)
         return 2

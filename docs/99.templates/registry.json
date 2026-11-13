@@ -13417,50 +13417,50 @@
   ],
   "frontmatter_dialect": {
     "current": {
-      "yaml": "YAML 1.1",
-      "library": "PyYAML 6",
+      "yaml": "YAML 1.2 (ruamel.yaml 0.19.1, with stated refusals)",
+      "library": "ruamel.yaml 0.19.1",
       "loaders": [
         {
           "path": "scripts/validate-markdown-profiles.py",
-          "loader": "DuplicateKeyLoader",
+          "loader": "frontmatter_yaml.load_frontmatter",
           "scope": "governed document frontmatter",
           "duplicate_keys": "refused",
           "timestamps": "kept-as-text"
         },
         {
           "path": "scripts/document_lifecycle.py",
-          "loader": "_UniqueKeyLoader",
+          "loader": "frontmatter_yaml.load_frontmatter",
           "scope": "governed document frontmatter",
           "duplicate_keys": "refused",
-          "timestamps": "resolved"
+          "timestamps": "kept-as-text"
         },
         {
           "path": "scripts/validate-agent-governance.py",
-          "loader": "UniqueMetadataLoader",
+          "loader": "frontmatter_yaml.load_frontmatter",
           "scope": "native agent and skill frontmatter",
           "duplicate_keys": "refused",
-          "timestamps": "resolved"
+          "timestamps": "kept-as-text"
         },
         {
           "path": "scripts/validate-links-and-owners.py",
-          "loader": "yaml.safe_load",
+          "loader": "frontmatter_yaml.load_frontmatter",
           "scope": "governed document frontmatter",
-          "duplicate_keys": "last-wins",
-          "timestamps": "resolved"
+          "duplicate_keys": "refused",
+          "timestamps": "kept-as-text"
         },
         {
           "path": "scripts/validation/repository/quality.py",
-          "loader": "DuplicateKeyLoader",
+          "loader": "frontmatter_yaml.load_frontmatter",
           "scope": "Hookify local rule frontmatter",
           "duplicate_keys": "refused",
-          "timestamps": "resolved"
+          "timestamps": "kept-as-text"
         }
       ]
     },
     "target": {
       "yaml": "YAML 1.2.2",
       "decision": "W03-D29",
-      "asserted_by_check": false
+      "asserted_by_check": true
     },
     "schema": {
       "dialect": "JSON Schema Draft 2020-12",

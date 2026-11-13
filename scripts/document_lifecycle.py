@@ -2,16 +2,14 @@
 
 from __future__ import annotations
 
-import copy
 import functools
 import re
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Literal, Mapping, Sequence
 
-import yaml
-
 from document_authority import AuthorityError, require_reciprocal_supersession
+from frontmatter_yaml import FrontmatterError, load_frontmatter
 from document_contracts import (
     DocumentProfile,
     SPEC_PLAN_FIRST_APPROVED_EXTENSION,
@@ -99,47 +97,6 @@ class LifecycleEvidenceContext:
     ] = field(default_factory=dict)
     local_contract_issues: tuple[tuple[PurePosixPath, str, str, str, str], ...] = ()
     retired_identities: Mapping[str, PurePosixPath] = field(default_factory=dict)
-
-
-class _UniqueKeyLoader(yaml.SafeLoader):
-    """Safe frontmatter loader that rejects duplicate mapping keys."""
-
-
-_UniqueKeyLoader.yaml_implicit_resolvers = copy.deepcopy(
-    yaml.SafeLoader.yaml_implicit_resolvers
-)
-
-
-def _construct_unique_mapping(
-    loader: _UniqueKeyLoader, node: yaml.MappingNode, deep: bool = False
-) -> dict[object, object]:
-    mapping: dict[object, object] = {}
-    for key_node, value_node in node.value:
-        key = loader.construct_object(key_node, deep=deep)
-        try:
-            duplicate = key in mapping
-        except TypeError as exc:
-            raise yaml.constructor.ConstructorError(
-                "while constructing a mapping",
-                node.start_mark,
-                "found an unhashable key",
-                key_node.start_mark,
-            ) from exc
-        if duplicate:
-            raise yaml.constructor.ConstructorError(
-                "while constructing a mapping",
-                node.start_mark,
-                f"found duplicate key {key!r}",
-                key_node.start_mark,
-            )
-        mapping[key] = loader.construct_object(value_node, deep=deep)
-    return mapping
-
-
-_UniqueKeyLoader.add_constructor(
-    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-    _construct_unique_mapping,
-)
 
 
 def lifecycle_diagnostic_sort_key(
@@ -1159,8 +1116,8 @@ def document_from_text(
             state_issue="unterminated YAML frontmatter",
         )
     try:
-        metadata = yaml.load(text[4:closing], Loader=_UniqueKeyLoader)
-    except yaml.YAMLError:
+        metadata = load_frontmatter(text[4:closing])
+    except FrontmatterError:
         metadata = None
     if not isinstance(metadata, dict):
         return LifecycleDocument(

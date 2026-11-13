@@ -21,6 +21,7 @@ import yaml
 from pathlib import Path, PurePosixPath
 from typing import Any, NoReturn, Sequence
 
+from frontmatter_yaml import FrontmatterError, load_frontmatter
 from json_schema_validation import SchemaEvaluationError, schema_errors
 
 
@@ -726,7 +727,7 @@ def validate_registry(
 
 
 class UniqueMetadataLoader(yaml.SafeLoader):
-    """Reject duplicate native metadata keys before applying permissions."""
+    """Reject duplicate keys in the Codex skill policy file (agents/openai.yaml)."""
 
 
 def _metadata_mapping(loader: UniqueMetadataLoader, node: yaml.MappingNode):
@@ -755,8 +756,8 @@ def _frontmatter(text: str) -> tuple[dict[str, Any], str]:
         fail("AGENT-NATIVE-METADATA", "missing native frontmatter")
     raw, body = match.groups()
     try:
-        metadata = yaml.load(raw, Loader=UniqueMetadataLoader)
-    except (ValueError, yaml.YAMLError):
+        metadata = load_frontmatter(raw)
+    except FrontmatterError:
         fail("AGENT-NATIVE-METADATA", "invalid native metadata")
     if not isinstance(metadata, dict):
         fail("AGENT-NATIVE-METADATA", "metadata must be an object")

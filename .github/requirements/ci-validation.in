@@ -1,3 +1,4 @@
 jsonschema==4.26.0
 pre-commit==4.6.1
 PyYAML==6.0.3
+ruamel.yaml==0.19.1

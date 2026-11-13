@@ -246,6 +246,9 @@ rpds-py==2026.6.3 \
     # via
     #   jsonschema
     #   referencing
+ruamel-yaml==0.19.1 \
+    --hash=sha256:27592957fedf6e0b62f281e96effd28043345e0e66001f97683aa9a40c667c93
+    # via -r .github/requirements/ci-validation.in
 typing-extensions==4.16.0 \
     --hash=sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8
     # via referencing

@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.19.0"
+version: "3.20.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -59,7 +59,9 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    frontmatter schema (`docs/99.templates/contracts/frontmatter.schema.json`).
    The registry's `frontmatter_keys` owns each key's meaning, author,
    consumers and tests, and its `frontmatter_dialect` owns the YAML and JSON
-   Schema dialect, so neither is restated here.
+   Schema dialect, so neither is restated here. Frontmatter is read as YAML 1.2
+   through the one loader `scripts/frontmatter_yaml.py`, whose stated refusals
+   that record carries.
    Every string, date, version, and identity scalar uses double quotes. A
    "title" never repeats the document's "artifact_id": identity is already a
    key, and a title that restates it carries no information.
