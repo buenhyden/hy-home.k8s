@@ -1,8 +1,8 @@
 ---
 title: "Work Residue Ledger Amendment"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-11-13"
 artifact_id: "ADR-0060"
@@ -22,7 +22,10 @@ items and survey items. This scoped amendment narrows the no-ledger clauses of
 "no competing progress ledger of execution state". It narrows by dated
 clarification only, replaces no paragraph, and the four ADRs stay accepted for
 every other clause with their bodies as decision history. This record is
-`proposed`; it changes no validator, registry, schema or ledger file.
+`accepted`; it changes no validator, registry, schema or ledger file.
+
+The current user accepted this decision on 2026-11-13. The acceptance is
+recorded in the SPEC-0185 Task. It accepts no SPEC-0185 criterion by itself.
 
 ## Context
 

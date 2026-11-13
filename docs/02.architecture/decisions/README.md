@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.12.3"
+version: "0.12.4"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -82,7 +82,7 @@ updated: "2026-11-13"
 | [`./0057-package-exit-shape-check.md`](./0057-package-exit-shape-check.md) | 끝난 Stage 03 package가 잘못된 모양으로 tree를 떠나는 것을 staged commit에서 막도록 ADR-0056 Decision 6을 좁히는 개정 |
 | [`./0058-repository-vocabulary-in-knowledge-surface.md`](./0058-repository-vocabulary-in-knowledge-surface.md) | `.agents/knowledge/glossary.md` 하나만 용어 의미를 소유하는 Repository Vocabulary로 허용하도록 ADR-0036 Decision 3의 포인터 전용 조항을 좁히는 개정 |
 | [`./0059-registry-common-form-model.md`](./0059-registry-common-form-model.md) | Stage 99 registry(generation 10 유지)에 선택 키를 더해 역할별 공통 문서 양식, 문서 역할, TemplateDefinition, 공유 계약 승인 필드를 담도록 ADR-0033의 현재 상태 키 목록을 개정 |
-| [`./0060-work-residue-ledger-amendment.md`](./0060-work-residue-ledger-amendment.md) | 작업 잔여물(미완료 handoff, conflict, adoption, survey)만 담는 단일 JSON work residue ledger를 허용하도록 ADR-0031, ADR-0036, ADR-0047, ADR-0048의 무원장 조항을 "경쟁하는 progress ledger 금지"로 좁히는 개정(proposed) |
+| [`./0060-work-residue-ledger-amendment.md`](./0060-work-residue-ledger-amendment.md) | 작업 잔여물(미완료 handoff, conflict, adoption, survey)만 담는 단일 JSON work residue ledger를 허용하도록 ADR-0031, ADR-0036, ADR-0047, ADR-0048의 무원장 조항을 "경쟁하는 progress ledger 금지"로 좁히는 개정 |
 
 ### Classification
 
