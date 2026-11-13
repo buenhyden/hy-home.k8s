@@ -990,6 +990,67 @@
           }
         }
       }
+    },
+    "work_residue": {
+      "description": "The Task table that carries live work residue rows and the legacy Task tables exempt from the residue check (SPEC-0191). The ledger and schema paths are constants of the work-residue-ledger gate.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_table",
+        "historical_tables"
+      ],
+      "properties": {
+        "task_table": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "section",
+            "heading",
+            "columns"
+          ],
+          "properties": {
+            "section": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "heading": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "columns": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            }
+          }
+        },
+        "historical_tables": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "heading"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^[^/\\s][^\\s]*$"
+              },
+              "heading": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "$defs": {

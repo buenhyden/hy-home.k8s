@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.15.0"
+version: "0.15.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 ---
 # scripts
 
@@ -62,6 +62,8 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `document_language.py` | 문서의 언어를 판정하는 순수 규칙 |
 | `validate-knowledge-surface.py` | knowledge owner 포인터, Repository Vocabulary 용어 표와 제한된 관찰 출처 검증 |
 | `document-backlinks.py` | 정방향 링크에서 한 문서를 가리키는 추적 문서 목록을 파생하는 탐색 도구(gate 아님) |
+| `validate-work-residue-ledger.py` | work residue ledger와 Task의 `Residue Handoff` 행이 식별자·상태·소유자·재개 조건에서 일치하는지, 닫힌 항목이 PASS EVD 행을 가리키는지 검증하는 gate |
+| `work-residue-ledger.py` | ledger를 종류·상태·소유자로 걸러 한 항목당 한 줄로 출력하는 탐색 도구(gate 아님, 파일을 쓰지 않는다) |
 | `json_schema_validation.py` | production validator가 함께 쓰는 오프라인 JSON Schema 로딩 |
 | `frontmatter_yaml.py` | 거버넌스 문서와 native 에이전트 frontmatter 다섯 loader가 함께 쓰는 YAML 1.2 loader(`ruamel.yaml`, 중복 key·directive·anchor·alias·explicit tag·merge key·복수 문서 거부, timestamp는 text로 유지) |
 | `run-contract-tests.py` | 이름 있는 suite 하나의 계약 회귀를 그 suite의 목적 gate로 실행한다. suite별 모듈 목록은 이 파일이 소유하며, 각 gate는 Registry에서 `--suite`로 suite 하나를 지정한다. 긴 blanket unit discovery의 간접 `coveredBy`를 현재 완료 조건으로 삼지 않는다. |

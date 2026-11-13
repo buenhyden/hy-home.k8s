@@ -96,7 +96,13 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                 selected = self.validator.select_paths(
                     self.contract, [path], "staged", ROOT
                 )
-                self.assertEqual(selected["validators"], expected)
+                # An authored Stage 01 to 90 document also runs the residue gate.
+                wanted = (
+                    expected + ["work-residue-ledger"]
+                    if "03.specs" in path
+                    else expected
+                )
+                self.assertEqual(selected["validators"], wanted)
 
     def test_contract_paths_keep_their_focused_gate_selection(self) -> None:
         for path, required in (

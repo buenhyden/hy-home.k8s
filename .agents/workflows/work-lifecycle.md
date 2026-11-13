@@ -1,10 +1,10 @@
 ---
 title: "Work Lifecycle"
-version: "2.2.3"
+version: "2.2.4"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 ---
 
 # Work Lifecycle
@@ -115,7 +115,9 @@ end the loop.
 3. Review final diff scope and remove task-owned scratch/debug residue.
 4. Record the canonical handoff fields in the active Task; include failures,
    skipped optional tools, unavailable runtime checks, review disposition,
-   rollback, residual risk, and next owner.
+   rollback, residual risk, and next owner. Write residue as a `Residue Handoff`
+   row in that Task and an entry in the work residue ledger in the same change;
+   a terminal entry leaves the ledger before its package exit.
 5. Follow [Git policy](../governance/git.md) for requested logical commits and
    branch finish. Do not infer push, merge, or cleanup approval.
 

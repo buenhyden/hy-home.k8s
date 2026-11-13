@@ -15842,5 +15842,41 @@
       "rule": "FM-DATE",
       "checked_by": "scripts/validate-markdown-profiles.py"
     }
+  },
+  "work_residue": {
+    "task_table": {
+      "section": "Task Evidence",
+      "heading": "Residue Handoff",
+      "columns": [
+        "ID",
+        "Residue",
+        "State",
+        "Owner",
+        "Resume condition",
+        "Closure"
+      ]
+    },
+    "historical_tables": [
+      {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "heading": "Document Form Handoff"
+      },
+      {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "heading": "Stage QA Handoff"
+      },
+      {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "heading": "Conflicts"
+      },
+      {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "heading": "Stage Follow-up Handoffs"
+      },
+      {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "heading": "W03 Decisions"
+      }
+    ]
   }
 }

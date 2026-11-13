@@ -220,6 +220,26 @@
       "name": "folder-agents-guide",
       "path": "docs/AGENTS.md",
       "expectedSurface": "folder-agents-guides"
+    },
+    {
+      "name": "work-residue-ledger-file",
+      "path": "docs/03.specs/work-residue-ledger.json",
+      "expectedSurface": "work-residue-ledger"
+    },
+    {
+      "name": "work-residue-ledger-gate",
+      "path": "scripts/validate-work-residue-ledger.py",
+      "expectedSurface": "work-residue-implementation"
+    },
+    {
+      "name": "work-residue-ledger-view",
+      "path": "scripts/work-residue-ledger.py",
+      "expectedSurface": "work-residue-implementation"
+    },
+    {
+      "name": "work-residue-ledger-tests",
+      "path": "tests/test_work_residue_ledger.py",
+      "expectedSurface": "work-residue-implementation"
     }
   ],
   "selectionCases": [
@@ -534,6 +554,23 @@
       "expected": {
         "validators": [],
         "protectedLevel": "none",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "work-residue-gate-selects-document-tests-and-itself",
+      "lane": "affected",
+      "paths": [
+        "scripts/validate-work-residue-ledger.py"
+      ],
+      "expected": {
+        "validators": [
+          "affected-surface-contract",
+          "document-contract-tests",
+          "repository-quality",
+          "work-residue-ledger"
+        ],
+        "protectedLevel": "protected",
         "unmatchedPaths": []
       }
     }

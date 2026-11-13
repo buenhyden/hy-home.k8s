@@ -46,6 +46,7 @@ SUITES = {
         "document_language",
         "documentation_link_boundary",
         "semver_grammar",
+        "work_residue_ledger",
     ),
     "document-lifecycle": _modules(
         "document_artifact_identity",

@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture Description (AD)"
-version: "2.5.0"
+version: "2.5.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 artifact_id: "AD-0006"
 ---
 
@@ -226,7 +226,7 @@ Reusable decision context may live in the shared workspace memory store
 (`scripts/workspace_memory.py`, Git-ignored `.workspace-memory/`). Both
 providers read and write it, and their native memory is disabled in project
 configuration. It is never Task status, evidence, approval or acceptance, and
-it is not the retired shared progress ledger. The work residue ledger of [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) is a separate repository file holding residue only. The shared store belongs to the
+it is not the retired shared progress ledger. The work residue ledger of [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) is the separate repository file `docs/03.specs/work-residue-ledger.json`, holding residue only. The shared store belongs to the
 representative worktree; source references are checked against the caller
 worktree without following symlinks. Request-bound retries, a capacity bound
 on every store connection, and verified atomic backup replacement protect
