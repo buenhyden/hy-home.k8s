@@ -149,41 +149,6 @@ class PackageExitRuleTest(unittest.TestCase):
             proposed = snapshot("cancelled", texts={path: "changed\n"})
             self.assertEqual(self.rules(base, proposed), [(path, "R4")])
 
-    def test_layer_line_deletion_is_the_only_one_use_exemption(self) -> None:
-        """SPEC-0184 W03-D32: R4 sets the frontmatter layer line aside."""
-        head = '---\ntitle: "S"\nupdated: "2026-11-01"\n'
-        tail = "---\n\n# S\n\nbody\n"
-        with_layer = head + 'layer: "specs"\n' + tail
-        both = {SPEC_PATH: with_layer, PLAN_PATH: with_layer}
-        base = snapshot("completed", texts=both)
-        for path in (SPEC_PATH, PLAN_PATH):
-            self.assertEqual(
-                self.rules(
-                    base, snapshot("completed", texts={**both, path: head + tail})
-                ),
-                [],
-                msg="layer-only deletion",
-            )
-            refused = {
-                "blanked line": head + "\n" + tail,
-                "layer value edit": with_layer.replace("specs", "plans"),
-                "deletion plus version edit": (head + tail).replace(
-                    "2026-11-01", "2026-11-13"
-                ),
-                "deletion plus body edit": (head + tail).replace("body", "other"),
-                "body layer line removed": with_layer.replace("body\n", 'layer: "x"\n'),
-            }
-            for name, text in refused.items():
-                with self.subTest(path=path, case=name):
-                    proposed = snapshot("completed", texts={**both, path: text})
-                    self.assertEqual(self.rules(base, proposed), [(path, "R4")])
-        body_base = snapshot(
-            "completed",
-            texts={SPEC_PATH: with_layer.replace("body\n", 'layer: "x"\nbody\n')},
-        )
-        proposed = snapshot("completed", texts={SPEC_PATH: with_layer})
-        self.assertEqual(self.rules(body_base, proposed), [(SPEC_PATH, "R4")])
-
     def test_admitted_shapes(self) -> None:
         cases = {
             "closure with level-3 lineage": (snapshot(), closed()),

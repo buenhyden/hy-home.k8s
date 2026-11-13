@@ -41,9 +41,7 @@ Canonical sources are the documents linked or named in the opening paragraph and
    state. Prefer official and primary sources, and keep past local
    observations apart from current external knowledge.
 3. Do not rewrite a published member to follow a later rename or form; add a
-   new member or a dated addendum instead. Until SPEC-0184 retires it, one
-   exemption allows deleting the whole frontmatter `layer` line, line ending
-   included, and nothing else (W03-D32).
+   new member or a dated addendum instead.
 4. A pack README lists exactly its members. Stage the pack README together
    with member changes: the registry check compares the staged and worktree
    pack sets.
