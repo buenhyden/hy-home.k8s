@@ -1,6 +1,6 @@
 ---
 title: "W03 Work Ledger Contract"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-13"
@@ -45,6 +45,8 @@ This Task records the first half of handoff W03-H30 (W03-D25): requirement, arch
 | EVD-009 | [VAL-LEDGER-002](../spec.md#success-criteria--verification-plan) | WORK-002 | SPEC-0161 Task superseding row and state cells | Working tree over `2f2f9b7f`, uncommitted, 2026-11-13; SPEC-0161 Task | PASS | One EVD row appended after EVD-045 with `Resolves` none citing EVD-006 to EVD-011; only the state cells of the `LEDGER` conflict row and the W03-H30 row refreshed; version patch bump; no earlier row, decision or handoff edited. | yes | none |
 | EVD-010 | [VAL-LEDGER-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Strict validators, suites, quality gate and markdownlint after the edit | Working tree over `2f2f9b7f`, uncommitted, 2026-11-13; the same four validators, `run-contract-tests.py` suites `document`, `document-lifecycle` and `agent-governance`, `quality.py --root .`, `markdownlint-cli2` over the 14 edited files; run in a copy of the tree whose index added the new ADR, because the link validator reads tracked files only | PASS | Validator output equals EVD-006 except the registry path count (295, the new ADR); suites PASS (667, 24 and 105 tests, 3 skipped in `document`); quality gate PASS; markdownlint 0 issues. In the unstaged tree the link validator reports `BODY-LINK-BROKEN` for the untracked ADR until it is tracked; exact-index QA and commit hooks are not run. | yes | none |
 | EVD-011 | [VAL-LEDGER-002](../spec.md#success-criteria--verification-plan) | WORK-002 | `rg` ledger checks read | Working tree over `2f2f9b7f`, uncommitted, 2026-11-13; `rg -n -i ledger docs .agents` and `rg -n -i "work residue ledger" docs .agents` | PASS | Every hit outside Stage 90 and the Task package forbids a progress, competing, separate, recovery or inventory ledger, names the retired progress or migration ledgers, or is a Contracts sentence; Stage 90 hits are excluded evidence. The `work residue ledger` list holds exactly the Contracts sentences plus ADR-0060, this package and the SPEC-0161 rows. | yes | none |
+| EVD-012 | [VAL-LEDGER-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA and commit hooks on the implementation commit | `python3 scripts/qa.py staged` in the pinned validation environment over the final index of `9a072160`, 2026-11-13 | PASS | exit 0, 10 lanes PASS, none failed or skipped; the pre-commit hooks (staged QA snapshot, commitizen, generated message exceptions) passed on `9a072160`. With ADR-0060 tracked, the live-tree link validator no longer sees the untracked-file failure noted in EVD-010. | yes | none |
+| EVD-013 | [VAL-LEDGER-001](../spec.md#success-criteria--verification-plan) | WORK-001 | ADR-0060 acceptance (actor user) | Direct user answer "Accept (Recommended)" to the ADR-0060 acceptance question naming the proposed record at `9a072160`, 2026-11-13 Asia/Seoul | PASS | The user accepts ADR-0060; the `proposed` to `accepted` change follows as its own commit. This row accepts no SPEC-0185 criterion. | yes | none |
 
 ## Criterion Acceptance
 
