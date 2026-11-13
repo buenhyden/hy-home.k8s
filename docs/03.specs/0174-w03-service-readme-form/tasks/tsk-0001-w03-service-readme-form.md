@@ -1,6 +1,6 @@
 ---
 title: "W03 Service README Form"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-13"
@@ -29,8 +29,8 @@ This Task records the sixth phase-2 package of W03, the Service README form, for
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SERVICEREADME-001](../spec.md#success-criteria--verification-plan) | Registry form, TemplateDefinitions, tables, bindings and navigation; tests. | platform | in-progress | PASS | EVD-006 |
-| WORK-002 | [VAL-SERVICEREADME-002](../spec.md#success-criteria--verification-plan) | 21 documents and two templates moved with the map; policy texts; regression and exact-index QA. | platform | in-progress | PASS | EVD-004, EVD-005, EVD-007, EVD-008, EVD-009; exact-index QA at the implementation commit |
+| WORK-001 | [VAL-SERVICEREADME-001](../spec.md#success-criteria--verification-plan) | Registry form, TemplateDefinitions, tables, bindings and navigation; tests. | platform | completed | PASS | EVD-006 |
+| WORK-002 | [VAL-SERVICEREADME-002](../spec.md#success-criteria--verification-plan) | 21 documents and two templates moved with the map; policy texts; regression and exact-index QA. | platform | completed | PASS | EVD-004, EVD-005, EVD-007, EVD-008, EVD-009; implementation commit `825c36f1` passed exact-index QA and the hooks |
 
 ## Task Evidence
 
@@ -45,13 +45,21 @@ This Task records the sixth phase-2 package of W03, the Service README form, for
 | EVD-007 | [VAL-SERVICEREADME-002](../spec.md#success-criteria--verification-plan) | WORK-002 | 21 documents and two templates meaning map | Implementer maps (three doc-writer subagents; `secrets/README.md` moved by the author from the user-printed source and copied in by the user, because the `secrets/` read deny covers it) and a line comparison of every document against `HEAD`, read by the author | PASS | Every source line is kept; old H2 headings are removed, old H3 and H4 shift one level under the form H3 of the map; plain text precedes the H4s inside each form H3. Added lines are Korean none-with-reason lines or pointers to existing text only; each reason was checked against a sentence already in its document. Placement calls for owner review: Related links of aws and azure now precede `Current authority transfer`; the sample-app Policy link went to Inputs and Outputs and its Runbook link to Runbook Links; the azure/gitops runbook line points to Reference Links; Security Boundary pointer lines where a Scope paragraph forbids committing credentials; in `tests/README.md` the `Operations` H4 is left without body because its `Working Procedure` moved to Local Workflow, which its none line states; the gitops matrix and external-services paragraph as amended (EVD-004). | yes | none |
 | EVD-008 | [VAL-SERVICEREADME-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Regression over the tree, suites and lint | Author run over the staged working tree after `abfc636f`, 2026-11-13 | PASS | The four strict document validators exit 0; output equals the before run at `abfc636f` except the registry path count, which grows by this package's three files. `quality.py` PASS; markdownlint over the edited Markdown 0 issues; `ruff check scripts tests` and `ruff format --check scripts tests` clean; `graphify update .` rc 0. Suites: `agent-governance` 104, `ci-metadata` 87, `cluster-gate` 72, `document` 468, `document-lifecycle` 18, `release` 29, `tooling` 166, `validation-routing` 173 OK; `qa-runner` 37 with the known default-branch error (SPEC-0161 W03-H11). `.secrets.baseline` registry `source_revision` line 6602 moves to 6753 in its own commit. | yes | none |
 | EVD-009 | [VAL-SERVICEREADME-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Semantic review: risk class and core-diff checklist | Diff of 30 files over `abfc636f` | PASS | Risk class `medium` (registry, tests, 21 router documents including `.github/repository-surface.md`). Checklist: scope matches the amended Spec; one writer per file; the form equals the external contract; W03-D17 applied; the matrix titles read by `document_content.py` stay unique at H4; navigation passes with no rule change; the owner references of `.github/repository-surface.md` remain; policy text `document-authoring.md` 3.12.0 and `docs/99.templates/README.md` 0.24.0; templates keep their frontmatter placeholder as in SPEC-0173; no secret read; recovery is reverting the implementation commit. No permission, trigger, hook or workflow changed. | yes | none |
+| EVD-010 | [VAL-SERVICEREADME-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 exit authority; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability, temporary restoration and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-SERVICEREADME-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-SERVICEREADME-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-SERVICEREADME-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0174 criterion question, which listed the six placement calls of EVD-007) | platform |
+| [VAL-SERVICEREADME-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-007, EVD-008, EVD-009 | Accepted by the user on 2026-11-13 (direct answer "Accept both" to the SPEC-0174 criterion question, which listed the six placement calls of EVD-007) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The durable contract is promoted to the document authoring policy and the registry (Plan Promotion row). No new handoff arises; W03-D17 stays recorded in the SPEC-0161 Task, and the navigation-depth placement rule stays in this Spec's recovered text. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes. Registry text, code comments and test docstrings name SPEC-0174 as an identifier, not a link, and stay.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's explicit 2026-11-13 answer "Exit, push and PR" is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a temporary byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted. This Task cannot contain that proof without changing its own bytes.
 
 ## Approval and Safety Boundaries
 
@@ -66,4 +74,4 @@ This Task records the sixth phase-2 package of W03, the Service README form, for
 
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002) and approved by the user at their exact bytes (EVD-003); the Spec amended, reviewed and re-approved at 1.1.0 (EVD-004, EVD-005). WORK-001 and WORK-002 implemented with PASS evidence (EVD-006 to EVD-009); criterion acceptance pending. Risk class `medium`.
+Spec and Plan reviewed (EVD-001, EVD-002) and approved by the user at their exact bytes (EVD-003); the Spec amended, reviewed and re-approved at 1.1.0 (EVD-004, EVD-005). WORK-001 and WORK-002 implemented with PASS evidence (EVD-006 to EVD-009); implementation commit `825c36f1`. The user accepted both criteria and the package exit on 2026-11-13 (EVD-010). Risk class `medium`. Next owner: W03 for the Policy package.
