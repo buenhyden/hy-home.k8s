@@ -5,7 +5,6 @@ type: "operation/runbook"
 status: "draft"
 owner: "{{OWNER}}"
 updated: "{{UPDATED}}"
-layer: "operations"
 artifact_id: "{{ARTIFACT_ID}}"
 ---
 

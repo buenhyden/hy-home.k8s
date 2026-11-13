@@ -1,11 +1,10 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.5.0"
+version: "2.5.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "operations"
 artifact_id: "RUN-0009"
 ---
 

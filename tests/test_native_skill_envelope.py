@@ -139,7 +139,7 @@ class NativeSkillEnvelopeTests(unittest.TestCase):
             "2026-10-05T10:20:30",
             "2026-10-05T10:20:30+99:99",
         ):
-            changed = source.replace("layer:", f'resolved_at: "{value}"\nlayer:')
+            changed = source.replace("updated:", f'resolved_at: "{value}"\nupdated:', 1)
             self.assertIn(
                 "INCIDENT-RESOLVED-AT",
                 {
@@ -150,7 +150,7 @@ class NativeSkillEnvelopeTests(unittest.TestCase):
                 },
             )
         changed = source.replace(
-            "layer:", 'resolved_at: "2026-10-05T10:20:30+09:00"\nlayer:'
+            "updated:", 'resolved_at: "2026-10-05T10:20:30+09:00"\nupdated:', 1
         )
         self.assertIn(
             "INCIDENT-RESOLUTION-EVIDENCE",

@@ -1,11 +1,10 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.4.0"
+version: "1.4.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "operations"
 artifact_id: "RUN-0011"
 ---
 

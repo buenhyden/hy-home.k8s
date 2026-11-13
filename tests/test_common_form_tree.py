@@ -1984,7 +1984,7 @@ class TableCheckTests(unittest.TestCase):
             "---\n"
             'title: "Guide"\nversion: "1.0.0"\ntype: "operation/guide"\n'
             'status: "active"\nowner: "platform"\nupdated: "2026-11-12"\n'
-            'layer: "operations"\nartifact_id: "GDE-0001"\n---\n\n' + guide_body(wrong)
+            'artifact_id: "GDE-0001"\n---\n\n' + guide_body(wrong)
         )
 
         def rules(profile) -> list[str]:
@@ -3774,7 +3774,7 @@ class RetainedFormTests(unittest.TestCase):
                 'title: "Decision title"\nversion: "1.0.0"\n'
                 'type: "sdlc/architecture-decision"\n'
                 f'status: "{status}"\nowner: "platform"\nupdated: "2026-11-12"\n'
-                'layer: "architecture"\nartifact_id: "ADR-0099"\n---\n\n' + body
+                'artifact_id: "ADR-0099"\n---\n\n' + body
             )
 
         def body_rules(status: str, body: str) -> list[str]:

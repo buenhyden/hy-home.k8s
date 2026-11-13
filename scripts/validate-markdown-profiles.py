@@ -1601,6 +1601,20 @@ def _frontmatter_body(
                     )
                 )
         if (
+            "layer" in data
+            and "layer" in contract.allowed
+            and data.get("status") != "accepted"
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "FM-LAYER-ADR",
+                    path,
+                    profile,
+                    "layer only on a document whose status is accepted",
+                    f"layer on status {data.get('status')!r}",
+                )
+            )
+        if (
             profile.profile_id == "operation/incident"
             and data.get("status") == "resolved"
         ):

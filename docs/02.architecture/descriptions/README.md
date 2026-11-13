@@ -1,11 +1,10 @@
 ---
 title: "02.architecture/descriptions (AD)"
-version: "0.8.1"
+version: "0.8.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "architecture"
 ---
 
 # 02.architecture/descriptions (AD)

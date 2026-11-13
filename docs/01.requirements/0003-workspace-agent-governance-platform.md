@@ -1,11 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "3.3.20"
+version: "3.3.21"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-12"
-layer: "requirements"
+updated: "2026-11-13"
 artifact_id: "REQ-0003"
 ---
 

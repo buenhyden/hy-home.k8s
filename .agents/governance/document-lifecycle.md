@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.9.1"
+version: "2.9.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -252,7 +252,9 @@ drift are failures. In `staged` mode `LIFECYCLE-PACKAGE-EXIT` refuses a Stage
 03 package exit in the wrong shape among the package's Markdown files: an
 unfinished package, part of a package, a package that no Requirement changed
 in the same commit names in Archived Lineage, or a Spec or Plan edit in a
-package whose Tasks are all terminal (ADR-0057).
+package whose Tasks are all terminal (ADR-0057). Until SPEC-0184 retires it,
+one exemption sets aside a Spec or Plan's whole frontmatter `layer` line, line
+ending included, and nothing else (W03-D32).
 Recovery proof, holds, consumers and authority stay manual. Review this policy
 whenever the registry lifecycle catalog changes.
 

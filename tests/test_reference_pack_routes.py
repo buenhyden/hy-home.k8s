@@ -361,6 +361,29 @@ class PublishedMemberFreezeTest(unittest.TestCase):
         staged = staged.replace(b'updated: "2026-11-01"', b'updated: "2026-11-06"')
         self.assertEqual(self.errors(base, staged), [])
 
+    def test_layer_line_deletion_is_the_only_one_use_exemption(self) -> None:
+        """SPEC-0184 W03-D32: the whole frontmatter layer line may be deleted."""
+        plain = self.member("published", "Observed once.")
+        line = b'layer: "references"\n'
+        base = plain.replace(b'owner: "platform"\n', b'owner: "platform"\n' + line)
+        self.assertNotEqual(base, plain)
+        newer = plain.replace(b'version: "0.1.0"', b'version: "0.2.0"')
+        self.assertEqual(self.errors(base, plain), [])
+        self.assertEqual(self.errors(base, newer), [])
+        heading = b"\n# Reference: Example\n"
+        body_layer = base.replace(heading, heading + b'layer: "x"\n')
+        refused = {
+            "blanked line": (base, base.replace(line, b"\n")),
+            "value edit": (base, base.replace(b"references", b"specs")),
+            "deletion with a body edit": (base, plain.replace(b"once.", b"twice.")),
+            "other key deleted": (base, base.replace(b'owner: "platform"\n', b"")),
+            "body layer line deleted": (body_layer, base),
+        }
+        for name, (before, after) in refused.items():
+            with self.subTest(case=name):
+                (error,) = self.errors(before, after)
+                self.assertIn("REFERENCE_PUBLISHED_REWRITE", error)
+
     def test_draft_new_and_pack_files_are_not_frozen(self) -> None:
         draft = self.member("draft", "Before.")
         self.assertEqual(self.errors(draft, self.member("draft", "After.")), [])

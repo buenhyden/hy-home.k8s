@@ -5,7 +5,6 @@ type: "sdlc/requirement"
 status: "draft"
 owner: "{{OWNER}}"
 updated: "{{UPDATED}}"
-layer: "requirements"
 artifact_id: "{{ARTIFACT_ID}}"
 ---
 

@@ -1,11 +1,10 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.3.0"
+version: "1.3.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "operations"
 artifact_id: "POL-0003"
 ---
 

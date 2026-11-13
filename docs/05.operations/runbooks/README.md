@@ -1,11 +1,10 @@
 ---
 title: "05.operations/runbooks"
-version: "0.4.1"
+version: "0.4.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "operations"
 ---
 # 05.operations/runbooks
 

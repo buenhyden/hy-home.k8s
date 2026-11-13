@@ -1,11 +1,10 @@
 ---
 title: "Reference: Current-State Addendum 2026-11-05"
-version: "0.1.0"
+version: "0.1.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-05"
-layer: "references"
+updated: "2026-11-13"
 artifact_id: "RES-0001-m0014"
 ---
 

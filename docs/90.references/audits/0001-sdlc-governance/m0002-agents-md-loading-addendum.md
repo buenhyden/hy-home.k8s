@@ -1,11 +1,10 @@
 ---
 title: "AGENTS.md Loading Addendum"
-version: "0.1.0"
+version: "0.1.1"
 type: "reference/audit"
 status: "draft"
 owner: "platform"
-updated: "2026-11-06"
-layer: "references"
+updated: "2026-11-13"
 artifact_id: "AUD-0001-m0002"
 ---
 

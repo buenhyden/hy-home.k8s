@@ -1,11 +1,10 @@
 ---
 title: "Reference: Agent Memory Tiers and Management"
-version: "1.2.0"
+version: "1.2.1"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-27"
-layer: "references"
+updated: "2026-11-13"
 artifact_id: "RES-0001-m0011"
 ---
 

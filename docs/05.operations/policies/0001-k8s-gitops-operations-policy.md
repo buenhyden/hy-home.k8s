@@ -1,11 +1,10 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.6.0"
+version: "1.6.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "operations"
 artifact_id: "POL-0001"
 ---
 

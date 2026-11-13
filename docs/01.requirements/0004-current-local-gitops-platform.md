@@ -1,11 +1,10 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "1.4.0"
+version: "1.4.1"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-05"
-layer: "requirements"
+updated: "2026-11-13"
 artifact_id: "REQ-0004"
 ---
 

@@ -1,11 +1,10 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.21"
+version: "0.1.22"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
 updated: "2026-11-13"
-layer: "specs"
 artifact_id: "SPEC-0161-TSK-0001"
 parent_ids: ["SPEC-0161-PLAN-0001"]
 ---
@@ -78,6 +77,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-041 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D25 to W03-D31 recorded | User request, 2026-11-13 Asia/Seoul, to review whether anything was decided or built differently from the W00 to W03 requirements and to present decisions with options; the conformance audit (EVD-042) and the H18 inventory | PASS | User answers on the GOV-06 ledger, local forms, the Policy role, CI-SCOPE, the YAML dialect, Q-07 timing and pointer lines; recorded as W03-D25 to W03-D31 with handoff rows W03-H25 to W03-H30. | no | none |
 | EVD-042 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W00 to W03 conformance audit recorded | Read-only docs-researcher audit of the W00 to W03 tasks, the package contracts and this Task against the registry, policies and REQ-0003 Archived Lineage at `cb498bcf` and earlier, 2026-11-13 | PASS | Real differences: the GOV-06 ledger (W03-D25), WGOV-CORE extension fields (SPEC-0181), the H2-only local roles (W03-D26) and bare empty sections (W03-H18); mixed: the Policy role (W03-D27); permitted by user decision: W03-D02, D17, D18, D19, D11, GIT-09, CI-SCOPE (W03-D28), W03-D21 and DOC-12; stale records go to W03-H31 and W03-H32; the stale Policy clause in the document authoring policy goes to SPEC-0181. The audit read parts of the sources and ran no suite. | no | none |
 | EVD-043 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D32 recorded | User answer "One-use exemption (Recommended)" to the freeze-gate question for the `layer` removal, 2026-11-13 Asia/Seoul; the SPEC-0184 pre-approval review round 1 | PASS | Recorded as W03-D32; applied by SPEC-0184. | no | none |
+| EVD-044 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | `layer` line removed from this package | SPEC-0184 implementation under W03-D22 and W03-D32, 2026-11-13 | PASS | This package's `spec.md`, `plan.md` and Task lost their frontmatter `layer` line only (spec `5b304a9dfdc19075`→`698da2d295ae2d6b`, plan `e388f9e724ba5bea`→`7395a09a86e2e4e6`, sha256 prefixes); metadata only, no scope or decision change; the package-exit check accepted the Spec and Plan edit through SPEC-0184's one-use exemption. | no | none |
 
 ### Edition Delta
 

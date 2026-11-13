@@ -888,6 +888,11 @@ def lineage_retired_identities(
     return retired
 
 
+# SPEC-0184 W03-D32, one-use: R4 sets the whole frontmatter layer line, line
+# ending included, aside. Retired with that package.
+_LAYER_LINE = re.compile(r"\A(---\n(?:(?!---\n)[^\n]*\n)*?)layer: [^\n]*\n")
+
+
 def package_exit_diagnostics(
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
     proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -975,7 +980,10 @@ def package_exit_diagnostics(
         if tasks and tasks_terminal:
             for document in ("spec.md", "plan.md"):
                 path = root / document
-                if path in base_texts and proposed_texts.get(path) != base_texts[path]:
+                if path in base_texts and proposed_texts.get(path) not in (
+                    base_texts[path],
+                    _LAYER_LINE.sub(r"\1", base_texts[path]),
+                ):
                     refuse(
                         path,
                         "R4",

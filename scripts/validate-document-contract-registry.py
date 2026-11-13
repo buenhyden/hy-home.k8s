@@ -202,6 +202,9 @@ REFERENCE_MEMBER_PROFILES = frozenset(
 _FRONTMATTER_LIFECYCLE = re.compile(r"(?m)^(?:status|version|updated): .*$")
 # One destination token only: a title or prose inside the parentheses is content.
 _LINK_DESTINATION = re.compile(r"\]\((?:<[^<>\n]*>|[^\s()<>]*)\)")
+# SPEC-0184 W03-D32, one-use: deleting the whole frontmatter layer line, line
+# ending included, is not a rewrite. Retired with that package.
+_LAYER_LINE = re.compile(r"(?m)^layer: [^\n]*\n")
 _PUBLISHED_STATUS = re.compile(r'(?m)^status: "published"[ \t]*$')
 
 
@@ -213,10 +216,12 @@ def _split_frontmatter(text: str) -> tuple[str, str]:
     return "", text
 
 
-def _frozen_view(text: str) -> str:
+def _frozen_view(text: str, *, without_layer: bool = False) -> str:
     """Return what a published member may not change: all but lifecycle values
     and link destinations, which stay open for edges and consumer succession."""
     head, body = _split_frontmatter(text)
+    if without_layer:
+        head = _LAYER_LINE.sub("", head + "\n")[:-1]  # head ends before its newline
     return _LINK_DESTINATION.sub("](-)", _FRONTMATTER_LIFECYCLE.sub("", head) + body)
 
 
@@ -251,7 +256,10 @@ def published_rewrite_errors(
                 f"REFERENCE_PUBLISHED_REWRITE: {path.as_posix()} is not UTF-8"
             )
             continue
-        if _frozen_view(base_text) != _frozen_view(staged_text):
+        if _frozen_view(staged_text) not in (
+            _frozen_view(base_text),
+            _frozen_view(base_text, without_layer=True),
+        ):
             errors.append(
                 f"REFERENCE_PUBLISHED_REWRITE: {path.as_posix()} is published; only "
                 "its status, version, updated and link destinations may change. "
@@ -537,6 +545,8 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
 # A form declares only what its author must write into the copy. A Stage 99 file
 # is not the document it produces, so it carries neither the document's identity
 # nor the layer that document will live in.
+# `layer` stays here for the architecture decision template, whose profile keeps
+# it optional for accepted ADRs only (SPEC-0184).
 TEMPLATE_OMITTED_KEYS = ("artifact_id", "layer")
 
 

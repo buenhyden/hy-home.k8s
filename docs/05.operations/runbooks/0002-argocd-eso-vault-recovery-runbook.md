@@ -1,11 +1,10 @@
 ---
 title: "ArgoCD ESO OpenBao Recovery Runbook"
-version: "1.6.0"
+version: "1.6.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "operations"
 artifact_id: "RUN-0002"
 ---
 

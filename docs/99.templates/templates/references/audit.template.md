@@ -5,7 +5,6 @@ type: "reference/audit"
 status: "draft"
 owner: "{{OWNER}}"
 updated: "{{UPDATED}}"
-layer: "references"
 artifact_id: "{{ARTIFACT_ID}}"
 ---
 

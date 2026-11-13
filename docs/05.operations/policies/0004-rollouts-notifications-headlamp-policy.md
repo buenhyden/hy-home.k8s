@@ -1,11 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.4.0"
+version: "1.4.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "operations"
 artifact_id: "POL-0004"
 ---
 

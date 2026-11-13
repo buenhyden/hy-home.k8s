@@ -1,11 +1,10 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.3.0"
+version: "1.3.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "operations"
 artifact_id: "RUN-0010"
 ---
 

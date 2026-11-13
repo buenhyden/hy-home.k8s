@@ -5,7 +5,6 @@ type: "sdlc/plan"
 status: "approved"
 owner: "platform"
 updated: "2026-11-13"
-layer: "specs"
 artifact_id: "SPEC-0184-PLAN-0001"
 parent_ids: ["SPEC-0184"]
 ---

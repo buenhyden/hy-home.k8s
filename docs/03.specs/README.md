@@ -1,11 +1,10 @@
 ---
 title: "03.specs"
-version: "0.23.46"
+version: "0.23.47"
 type: "common/readme"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "specs"
 ---
 # 03.specs
 

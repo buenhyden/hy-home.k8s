@@ -1,11 +1,10 @@
 ---
 title: "Reference: AI Agents and Agency-Agents"
-version: "1.3.1"
+version: "1.3.2"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-10-28"
-layer: "references"
+updated: "2026-11-13"
 artifact_id: "RES-0001-m0009"
 ---
 

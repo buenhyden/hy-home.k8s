@@ -5,7 +5,6 @@ type: "sdlc/plan"
 status: "draft"
 owner: "{{OWNER}}"
 updated: "{{UPDATED}}"
-layer: "specs"
 artifact_id: "{{ARTIFACT_ID}}"
 parent_ids: ["{{PARENT_ID}}"]
 ---

@@ -1,11 +1,10 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.12.1"
+version: "0.12.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
 updated: "2026-11-13"
-layer: "architecture"
 ---
 
 # 02.architecture/decisions (ADR)
