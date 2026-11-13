@@ -1,10 +1,10 @@
 ---
 title: "Local QA and SemVer Release Ownership"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "architecture"
 artifact_id: "ADR-0048"
 ---
@@ -237,6 +237,11 @@ REQ-0003-IF-0001 in [REQ-0003](../../01.requirements/0003-workspace-agent-govern
 [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) carries
 the structural view. SPEC-0107 owned behavior, acceptance and implementation
 and left the tree; Git history recovers it.
+
+**Current-state clarification (2026-11-13).** The Non-goal "permanent progress
+ledger" bars a competing progress ledger of execution state. The work residue
+ledger of [ADR-0060](./0060-work-residue-ledger-amendment.md) is not one. Every
+other clause stays.
 
 **Current-state clarification (2026-11-05).** Under
 [ADR-0053](./0053-unvalidated-archive.md) the archive is unvalidated, so the

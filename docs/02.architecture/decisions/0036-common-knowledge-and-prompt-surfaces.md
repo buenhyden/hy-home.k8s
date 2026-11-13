@@ -1,10 +1,10 @@
 ---
 title: "Common Knowledge and Prompt Surfaces"
-version: "1.0.6"
+version: "1.0.7"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "architecture"
 artifact_id: "ADR-0036"
 supersedes: "ADR-0035"
@@ -21,6 +21,14 @@ restating them here so this decision stands alone rather than by reference.
 Acceptance records the durable choice; it does not establish native discovery,
 permission enforcement, model resolution or hook delivery, which remain
 separately observable evidence.
+
+**Current-state clarification (2026-11-13).** The retired memory structure
+below stays retired and a competing progress ledger of execution state stays
+barred; the work residue ledger of
+[ADR-0060](./0060-work-residue-ledger-amendment.md) is not one. The guards that
+exist are `scripts/validation/repository/quality.py`, which refuses a tracked
+`progress.md`, and `tests/test_common_agents_document_routes.py`; the
+governance validator is not one of them. Every other clause stays.
 
 **Current-state clarification (2026-11-05).** The Decision below records what
 was decided and is not amended. Current ownership differs from the 2026-09-09 note below.

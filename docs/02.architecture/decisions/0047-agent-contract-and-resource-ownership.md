@@ -1,10 +1,10 @@
 ---
 title: "Agent Contract and Resource Ownership"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "architecture"
 artifact_id: "ADR-0047"
 ---
@@ -177,6 +177,12 @@ the current platform. Implementing the approved amendment requires updating
 that view and the current ownership contracts together. SPEC-0102 supplied
 change-specific behavior, and its approved Plan and Tasks recorded execution
 order and evidence. This decision was accepted on 2026-09-29.
+
+**Current-state clarification (2026-11-13).** Decision 4's "without a second
+state ledger" and the Non-goal that creates "no central progress ledger" bar a
+competing progress ledger of execution state. The work residue ledger of
+[ADR-0060](./0060-work-residue-ledger-amendment.md) is not one; the knowledge
+surface of Decision 4 holds no residue state. Every other clause stays.
 
 **Current-state clarification (2026-11-05).** The migration this record
 describes as pending is implemented; the current owners are

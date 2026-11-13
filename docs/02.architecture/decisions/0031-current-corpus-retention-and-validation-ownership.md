@@ -1,10 +1,10 @@
 ---
 title: "Current Corpus Retention and Validation Ownership"
-version: "1.0.5"
+version: "1.0.6"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "architecture"
 artifact_id: "ADR-0031"
 supersedes: ["ADR-0016", "ADR-0017", "ADR-0020", "ADR-0021", "ADR-0022"]
@@ -268,6 +268,12 @@ sealed recovery objects and external dependency pins at the boundary where
 byte identity is meaningful.
 
 ## Traceability
+
+**Current-state clarification (2026-11-13).** The execution-instance and
+"roster" clauses above bar a copy of instance state and a competing progress
+ledger of execution state. The work residue ledger of
+[ADR-0060](./0060-work-residue-ledger-amendment.md) is not one: it holds residue
+pointers only, never instance state. Every other clause stays.
 
 **Current-state clarification (2026-11-05).** The clauses that keep Stage 98
 "under its bounded Archive validator" and give retained records "bounded safety

@@ -1,6 +1,6 @@
 ---
 title: "Context and Memory Policy"
-version: "1.6.1"
+version: "1.6.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -14,7 +14,7 @@ updated: "2026-11-13"
 ### Objective
 
 Retain only the context needed to resume safely. Repository state and the
-owning SDLC document, not a memory ledger, determine current truth.
+owning SDLC document, not a memory ledger, determine current truth; the retired progress ledger stays retired, and the work residue ledger of ADR-0060 is a different, residue-only owner.
 
 ### Authority
 
@@ -71,7 +71,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   configuration, shell history, environment dumps, raw prompts, or complete
   provider transcripts, in the store or its metadata.
 - The `memory/progress.md` ledger and the `memory/` directory are retired and
-  neither is restored; Git history recovers their bytes. Progress and task
+  neither is restored; Git history recovers their bytes. The work residue ledger is not the retired ledger. Progress and task
   status belong to the owning Spec Task, and durable knowledge stays with the
   responsible policy, skill, operating document, or reference owner. `.agents/knowledge/` maps those owners
   without restating them; it is a pointer surface, never a second store of

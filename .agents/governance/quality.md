@@ -1,6 +1,6 @@
 ---
 title: "Quality and Evidence Policy"
-version: "2.6.1"
+version: "2.6.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -250,7 +250,7 @@ integrity apart from historical cutover completion proof.
 Then remove the old caller and registration, remove its dedicated helper,
 fixture and test when no consumer remains, and preserve necessary past results
 in the existing Task or Git history. Do not add a new Spec or
-progress ledger solely to retire old QA. Ordinary document changes select
+progress ledger solely to retire old QA; the work residue ledger is not one. Ordinary document changes select
 profile, relationship, link and state checks; executable behavior changes get
 focused negative and boundary regressions. A one-time Spec or Task migration
 test is not a permanent gate after its outcome is retained.
