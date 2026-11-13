@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "3.4.7"
+version: "3.4.8"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -425,6 +425,7 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0187 | completed spec | W03-H29 package 1 (W03-D41; W03-D42 to W03-D44 recorded for packages 2 to 5): `.agents/governance/sdlc.md` folded into the `governance/rule` profile and moved form-only to the Policy form with one recorded two-phrase meaning edit; the `governance/contract` profile, its template twin and `contract.template.md` were removed and 21 test lines retargeted; the lifecycle check reads a base document whose profile the change removes under its classified profile (W03-D54). VAL-SDLCPOL-001..002 accepted on 2026-11-14. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0187-w03-sdlc-policy-form/` |
 | SPEC-0188 | completed spec | W03 governance role forms: the governance-document and governance-role forms, the role pair rebound and the role template prompts. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0188-w03-governance-role-forms/` |
 | SPEC-0189 | completed spec | W03 reference report form: one reference-report form for the audit, research and data profiles, with the nine tables on section ids. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0189-w03-reference-report-form/` |
+| SPEC-0191 | completed spec | W03 work residue ledger: the residue-only ledger, its schema and registry block, the drift and closure gate and the read-only view, seeded from the SPEC-0161 tables. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0191-w03-work-residue-ledger/` |
 
 **SPEC-0152 recovery proof.** The exact completed source is commit `4033d38e7ac6eac0130700c8cf259ea252f44916`, reachable from retained local `refs/heads/codex/manual-document-disposition-policy` (`git merge-base --is-ancestor` rc 0). The current user authorized this bounded package exit on 2026-11-10; no hold was identified in the current repository documents or request, and the Task's frozen disposition decision names consumers and preservation route. Before any deletion, QA confirmed `git cat-file -e` rc 0 for each `commit:path`, restored each with `git show` to a mode-0600 temporary file, and obtained `cmp -s` rc 0 against its unchanged current source; the temporary files were removed. The three exact paths and Git blob identities are:
 
@@ -698,5 +699,13 @@ This is local retained-ref recovery proof before disposition, not remote or host
 - `58e4c193fd4e52deeb9d01a3031ad2f288acf012:docs/03.specs/0189-w03-reference-report-form/plan.md` — blob/source OID `48d9cedfb7108276a500cc940c58e7e12a604df3`; SHA-256 `70c2426ec5a6a5330d97c76c7f613f873910b4efed921af31e4da4973033c310` (9308 bytes).
 - `58e4c193fd4e52deeb9d01a3031ad2f288acf012:docs/03.specs/0189-w03-reference-report-form/spec.md` — blob/source OID `aed51037fd6a90a71e9afcad5590eb3c9360609c`; SHA-256 `873116156b967590d62db619377bc6169f0518c05821fe52e85814f26cf3ca7a` (18865 bytes).
 - `58e4c193fd4e52deeb9d01a3031ad2f288acf012:docs/03.specs/0189-w03-reference-report-form/tasks/tsk-0001-w03-reference-report-form.md` — blob/source OID `f96817ab960a04346911607118039d075ab26d6d`; SHA-256 `ab10546148d88e92cdf3801bb1f69395a9d2f912a1aebe6d58ad1af3c5890ce9` (17812 bytes).
+
+This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
+
+**SPEC-0191 recovery proof.** The exact completed source is the Task freeze commit `b5490b0331a286603d71e68e2cfa812e95182588`, reachable from local `refs/heads/claude/w03-work-residue-ledger` (`git merge-base --is-ancestor` rc 0) and, after its merge, from `main`. The user authorized this exit, and no hold was identified. Before deleting any file, QA observed HEAD `b5490b03` with a clean index and worktree; for every exact `commit:path` it observed `git cat-file -t` type blob, the same OID from `git hash-object --no-filters` on the current file, and a byte-equal comparison of the `git show` restoration, read through a pipe, with the current file. No temporary file was written, and HEAD, index and worktree were unchanged afterwards.
+
+- `b5490b0331a286603d71e68e2cfa812e95182588:docs/03.specs/0191-w03-work-residue-ledger/plan.md` — blob/source OID `2d547adc7c2545d4b4c8a456df3508f1614790ba`; SHA-256 `c064f0b8fcfa517ac1cc2e98ace759d17b6c24871005be92de2b9f47f452dee0` (12878 bytes).
+- `b5490b0331a286603d71e68e2cfa812e95182588:docs/03.specs/0191-w03-work-residue-ledger/spec.md` — blob/source OID `a7a780ef1c0a9fcbbf294c868012936c804ab1d8`; SHA-256 `d24be3f577cdefceb3817f696ed4e90f1b638970ed68bf341d37a19b793e6742` (20166 bytes).
+- `b5490b0331a286603d71e68e2cfa812e95182588:docs/03.specs/0191-w03-work-residue-ledger/tasks/tsk-0001-w03-work-residue-ledger.md` — blob/source OID `50d30e489fe1f6cc8b7beb4956113768754aebf8`; SHA-256 `d09979bd1908f4fd91599c382849c8a03ee3a9ee79e16f9c9039d56ff5588b20` (23456 bytes).
 
 This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
