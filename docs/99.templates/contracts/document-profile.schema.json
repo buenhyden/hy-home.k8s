@@ -275,6 +275,7 @@
               "reference-pack-readme",
               "reference-report",
               "governance-document",
+              "governance-role",
               "knowledge-map",
               "vocabulary",
               "prompt",
@@ -1300,7 +1301,9 @@
             "prompt",
             "evaluation-task",
             "evaluation-score",
-            "evaluation-results"
+            "evaluation-results",
+            "governance-document",
+            "governance-role"
           ]
         },
         "title": {

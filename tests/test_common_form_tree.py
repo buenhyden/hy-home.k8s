@@ -58,13 +58,21 @@ FORM_IDS = (
     "evaluation-task",
     "evaluation-score",
     "evaluation-results",
+    "governance-document",
+    "governance-role",
 )
-# W03-D20, W03-D26, W03-D33: three Stage 99 local roles have no form (W03-D34
-# and W03-D36 give the first two one later; provider-native keeps none).
-LOCAL_ROLE_IDS = ("reference-report", "governance-document", "provider-native")
-# The schema role order: the 18 first roles, the two reference and governance
-# roles, the six small local roles, then provider-native.
-ROLE_IDS = FORM_IDS[:18] + LOCAL_ROLE_IDS[:2] + FORM_IDS[18:] + LOCAL_ROLE_IDS[2:]
+# W03-D20, W03-D26, W03-D33: two Stage 99 local roles have no form
+# (reference-report gets one in W03-D36; provider-native keeps none).
+LOCAL_ROLE_IDS = ("reference-report", "provider-native")
+# The schema role order: the 18 first roles, reference-report, the governance
+# document and governance role, the six small local roles, then provider-native.
+ROLE_IDS = (
+    FORM_IDS[:18]
+    + LOCAL_ROLE_IDS[:1]
+    + FORM_IDS[24:]
+    + FORM_IDS[18:24]
+    + LOCAL_ROLE_IDS[1:]
+)
 # The profiles bound to a role: the clear common roles, then the local roles on
 # their source profiles; every other profile carries none.
 ROLE_BINDINGS = {
@@ -96,7 +104,7 @@ ROLE_BINDINGS = {
     "reference/research": "reference-report",
     "reference/data": "reference-report",
     "governance/provider": "governance-document",
-    "governance/role": "governance-document",
+    "governance/role": "governance-role",
     "governance/knowledge": "knowledge-map",
     "governance/vocabulary": "vocabulary",
     "governance/prompt": "prompt",
@@ -107,7 +115,7 @@ ROLE_BINDINGS = {
     "common/provider-native-command": "provider-native",
     "common/codex-agent-binding": "provider-native",
 }
-# The eight templates of the roles without a form carry a definition and these
+# The six templates of the roles without a form carry a definition and these
 # tables, each named by its exact heading line.
 LOCAL_TABLES = {
     "common/template-reference-audit": [
@@ -125,8 +133,6 @@ LOCAL_TABLES = {
         ("Source", "### Provenance"),
         ("Generation command", "### Generation and Refresh"),
     ],
-    "common/template-governance-provider": [],
-    "common/template-governance-role": [],
     "common/template-exception-provider-native-metadata": [],
     "common/template-exception-provider-native-command": [],
     "common/template-exception-provider-native-codex": [],
@@ -137,8 +143,6 @@ LOCAL_SOURCES = {
     "common/template-reference-audit": "reference/audit",
     "common/template-reference-research": "reference/research",
     "common/template-reference-data": "reference/data",
-    "common/template-governance-provider": "governance/provider",
-    "common/template-governance-role": "governance/role",
     "common/template-exception-provider-native-metadata": "common/provider-native-metadata",
     "common/template-exception-provider-native-command": "common/provider-native-command",
     "common/template-exception-provider-native-codex": "common/codex-agent-binding",
@@ -643,15 +647,68 @@ SMALL_FORMS = (
         "Related Documents",
     ),
 )
+# SPEC-0188: the governance document (provider note) and governance role forms.
+# The role tree holds the eight H3 of the Current Contract; the provider tree none.
+GOVERNANCE_ROLE_H3 = (
+    "Role",
+    "When to Use",
+    "Inputs",
+    "Outputs",
+    "Guardrails",
+    "Capability and Evidence",
+    "Handoff / Escalation",
+    "Postflight",
+)
+GOVERNANCE_DOCUMENT_FORM = (
+    "governance/provider",
+    "common/template-governance-provider",
+)
+GOVERNANCE_ROLE_FORM = ("governance/role", "common/template-governance-role")
+GOVERNANCE_DOCUMENT_TREE = (
+    ("Overview", ()),
+    ("Authority Boundary", ()),
+    ("Governance Context", ()),
+    ("Current Contract", ()),
+    ("Validation and Refresh", ()),
+    ("Related Documents", ()),
+)
+GOVERNANCE_ROLE_TREE = (
+    ("Overview", ()),
+    ("Authority Boundary", ()),
+    ("Governance Context", ()),
+    ("Current Contract", GOVERNANCE_ROLE_H3),
+    ("Validation and Refresh", ()),
+    ("Related Documents", ()),
+)
+GOVERNANCE_FORMS = (
+    (
+        "governance-document",
+        "Governance Document",
+        GOVERNANCE_DOCUMENT_FORM,
+        GOVERNANCE_DOCUMENT_TREE,
+        [],
+        "Related Documents",
+    ),
+    (
+        "governance-role",
+        "Governance Role",
+        GOVERNANCE_ROLE_FORM,
+        GOVERNANCE_ROLE_TREE,
+        [],
+        "Related Documents",
+    ),
+)
+# Every local form in registry order: the six small forms, then SPEC-0188's two.
+LOCAL_FORMS = SMALL_FORMS + GOVERNANCE_FORMS
 LOCAL_LINK_ONLY = {
     "workspace-readme": "workspace-readme-related-documents",
     "reference-pack-readme": "reference-pack-readme-related-documents",
     **{
         form_id: f"{form_id}-{link.lower().replace(' ', '-')}"
-        for form_id, _, _, _, _, link in SMALL_FORMS
+        for form_id, _, _, _, _, link in LOCAL_FORMS
     },
 }
-# The eighteen roles that carry a form; every other profile keeps its H2 lists.
+# The twenty roles that carry a form; every other profile keeps its H2 lists.
 FORM_PROFILES = (
     GUIDE
     + RUNBOOK
@@ -673,6 +730,8 @@ FORM_PROFILES = (
     + TASK_FORM
     + SCORE_FORM
     + RESULTS_FORM
+    + GOVERNANCE_DOCUMENT_FORM
+    + GOVERNANCE_ROLE_FORM
 )
 FORM_TEMPLATES = (
     GUIDE[1],
@@ -699,8 +758,10 @@ FORM_TEMPLATES = (
     TASK_FORM[1],
     SCORE_FORM[1],
     RESULTS_FORM[1],
+    GOVERNANCE_DOCUMENT_FORM[1],
+    GOVERNANCE_ROLE_FORM[1],
 )
-EIGHTEEN_FORMS = [
+TWENTY_FORMS = [
     "guide",
     "runbook",
     "incident",
@@ -719,6 +780,8 @@ EIGHTEEN_FORMS = [
     "evaluation-task",
     "evaluation-score",
     "evaluation-results",
+    "governance-document",
+    "governance-role",
 ]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
@@ -992,7 +1055,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_eighteen_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twenty_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -1015,7 +1078,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ("skill", "Skill"),
                 ("workspace-readme", "Workspace README"),
                 ("reference-pack-readme", "Reference Pack README"),
-                *((form_id, title) for form_id, title, *_ in SMALL_FORMS),
+                *((form_id, title) for form_id, title, *_ in LOCAL_FORMS),
             ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
@@ -1127,7 +1190,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             ),
             *(
                 (form_id, tree, [], tables, profiles, None)
-                for form_id, _, profiles, tree, tables, _ in SMALL_FORMS
+                for form_id, _, profiles, tree, tables, _ in LOCAL_FORMS
             ),
         ):
             loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
@@ -1153,7 +1216,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                         [
                             (
                                 f"{form_id}-{title.lower().replace(' ', '-')}-"
-                                f"{child.lower().replace(' ', '-')}",
+                                f"{child.lower().replace(' / ', '-').replace(' ', '-')}",
                                 child,
                                 n,
                             )
@@ -1254,11 +1317,11 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_eighteen_forms(self) -> None:
+    def test_repository_registry_loads_with_exactly_the_twenty_forms(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            EIGHTEEN_FORMS,
+            TWENTY_FORMS,
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -1276,7 +1339,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             "reference-pack-readme": [],
             **{
                 form_id: [name for name, *_ in tables]
-                for form_id, _, _, _, tables, _ in SMALL_FORMS
+                for form_id, _, _, _, tables, _ in LOCAL_FORMS
             },
         }
         governance_tables = ["Rules"]
@@ -1300,7 +1363,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("reference-pack-readme", PACK_FORM),
                             *(
                                 (form_id, profiles)
-                                for form_id, _, profiles, _, _, _ in SMALL_FORMS
+                                for form_id, _, profiles, _, _, _ in LOCAL_FORMS
                             ),
                         )
                         if profile.profile_id in ids
@@ -1316,7 +1379,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                         else tables[role],
                     )
                 else:
-                    # A role without a form: one of the three local roles or no role.
+                    # A role without a form: one of the two local roles or no role.
                     self.assertIsNone(profile.form)
                     self.assertEqual(
                         [(t.name, t.section) for t in profile.tables],
@@ -1328,9 +1391,12 @@ class RepositoryRegistryTests(unittest.TestCase):
                     self.assertIsNone(profile.template_definition)
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         self.assertEqual(by_id["governance/rule"].document_role, "policy")
-        self.assertEqual(by_id["governance/role"].document_role, "governance-document")
+        self.assertEqual(by_id["governance/role"].document_role, "governance-role")
+        self.assertEqual(
+            by_id["governance/provider"].document_role, "governance-document"
+        )
 
-    def test_schema_role_enum_is_twenty_seven_and_form_enum_is_twenty_four(
+    def test_schema_role_enum_is_twenty_eight_and_form_enum_is_twenty_six(
         self,
     ) -> None:
         schema = json.loads(
@@ -1342,13 +1408,13 @@ class RepositoryRegistryTests(unittest.TestCase):
             "document_role"
         ]["enum"]
         form_id = schema["$defs"]["common_form"]["properties"]["form_id"]["enum"]
-        self.assertEqual(len(ROLE_IDS), 27)
+        self.assertEqual(len(ROLE_IDS), 28)
         self.assertEqual(tuple(profile_role), ROLE_IDS)
         self.assertEqual(tuple(form_id), FORM_IDS)
-        self.assertEqual(len(form_id), 24)
+        self.assertEqual(len(form_id), 26)
         self.assertEqual(
             [item.form_id for item in CONTRACTS.load_registry(ROOT).common_forms],
-            EIGHTEEN_FORMS,
+            TWENTY_FORMS,
         )
         self.assertEqual(
             schema["$defs"]["section"]["properties"]["level"]["enum"], [2, 3]
@@ -1369,7 +1435,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            EIGHTEEN_FORMS,
+            TWENTY_FORMS,
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -1385,7 +1451,7 @@ class FormRegistryTests(unittest.TestCase):
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         for profile_id in GUIDE:
             self.assertIs(by_id[profile_id].form, loaded)
-        self.assertIsNone(by_id["governance/role"].form)
+        self.assertIsNone(by_id["common/provider-native-command"].form)
 
     def test_valid_extensions_are_typed(self) -> None:
         retained = {
@@ -1633,7 +1699,7 @@ class TemplateDefinitionTests(unittest.TestCase):
             if item["id"] == "common/template-governance-role"
         )
         # The template holds its definition; without a role it is refused.
-        self.assertEqual(twin["document_role"], "governance-document")
+        self.assertEqual(twin["document_role"], "governance-role")
         self.assertEqual(rules_of(raw), set())
         del twin["document_role"]
         self.assertIn("REGISTRY_TEMPLATE_DEFINITION", rules_of(raw))
@@ -4181,6 +4247,232 @@ class SmallLocalFormTests(unittest.TestCase):
                     self.assertIn("REGISTRY_FORM_LEGACY_LISTS", rules_of(raw))
 
 
+class GovernanceRoleFormTests(unittest.TestCase):
+    """SPEC-0188 VAL-GOVROLE-001: the governance role and document forms."""
+
+    PATHS = {
+        "governance-role": PurePosixPath(".agents/roles/quality-engineer.md"),
+        "governance-document": PurePosixPath(".claude/provider.md"),
+    }
+    NONE = "None is stated in this document."
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.raw = load_raw()
+        cls.profiles = typed_profiles(cls.raw)
+
+    @staticmethod
+    def body(tree: tuple, *, mutate=None) -> str:
+        blocks = ["# Document title"]
+        for title, children in tree:
+            text = (
+                "- [Owner](owner.md)"
+                if title == "Related Documents"
+                else f"The {title} text."
+            )
+            blocks.append(f"## {title}\n\n{text}")
+            for child in children:
+                blocks.append(f"### {child}\n\nThe {child} text.")
+        text = md(*blocks)
+        return mutate(text) if mutate else text
+
+    def tree_rules(self, form_id: str, text: str) -> list[str]:
+        source = {"governance-role": "governance/role"}.get(
+            form_id, "governance/provider"
+        )
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(
+                self.PATHS[form_id], self.profiles[source], text, "active"
+            )
+        )
+
+    def test_the_forms_hold_twenty_sections_and_no_extension(self) -> None:
+        forms = {f["form_id"]: f for f in self.raw["common_forms"]["forms"]}
+        stage = forms["stage-readme"]
+        self.assertEqual(len(forms), 20)
+        self.assertEqual(list(forms)[-2:], ["governance-document", "governance-role"])
+        counts = {}
+        for form_id, title, _, tree, _, link in GOVERNANCE_FORMS:
+            with self.subTest(form=form_id):
+                form = forms[form_id]
+                self.assertEqual(form["title"], title)
+                self.assertEqual(form["h1"], "{{document_title}}")
+                self.assertEqual(form["language_rule"], stage["language_rule"])
+                self.assertEqual(form["extensions"], [])
+                for needle in ("Stage 99", "W03-D09", "W03-D20", "W03-D26", "W03-D34"):
+                    self.assertIn(needle, form["extension_policy"])
+                self.assertIn("COMMON-DOC-FORM-1", form["extension_policy"])
+                nodes = [n for s in form["sections"] for n in (s, *s["children"])]
+                counts[form_id] = len(nodes)
+                for node in nodes:
+                    self.assertEqual(node["requiredness"], "required")
+                    self.assertEqual(node["condition"], "always")
+                    self.assertEqual(
+                        node["empty_policy"], "explain_none_or_not_applicable"
+                    )
+                    self.assertEqual(
+                        node["validation_ids"],
+                        ["FORM-STRUCTURE", "FORM-CONTENT-REVIEW"],
+                    )
+                    self.assertTrue(
+                        node["required_content"] and node["prohibited_content"]
+                    )
+                    self.assertIs(node["link_only"], node["title"] == link)
+        self.assertEqual(counts, {"governance-document": 6, "governance-role": 14})
+        role = forms["governance-role"]["sections"][3]
+        self.assertEqual(
+            [c["section_id"] for c in role["children"]][4:7],
+            [
+                "governance-role-current-contract-guardrails",
+                "governance-role-current-contract-capability-and-evidence",
+                "governance-role-current-contract-handoff-escalation",
+            ],
+        )
+        document = forms["governance-document"]["sections"][3]
+        self.assertEqual(document["children"], [])
+        self.assertIn("여덟 H3", " ".join(document["prohibited_content"]))
+
+    def test_the_four_profiles_hold_no_h2_list_and_the_role_pair_is_rebound(
+        self,
+    ) -> None:
+        for form_id, _, profiles, _, _, _ in GOVERNANCE_FORMS:
+            for profile_id in profiles:
+                with self.subTest(profile=profile_id):
+                    raw = profile_of(self.raw, profile_id)
+                    self.assertEqual(raw["document_role"], form_id)
+                    self.assertEqual(
+                        raw["sections"],
+                        {"required": [], "optional": [], "forbidden": []},
+                    )
+                    self.assertEqual(self.profiles[profile_id].form.form_id, form_id)
+        bound = sorted(
+            p["id"]
+            for p in self.raw["profiles"]
+            if p.get("document_role") == "governance-document"
+        )
+        self.assertEqual(
+            bound, ["common/template-governance-provider", "governance/provider"]
+        )
+
+    def test_the_twin_definitions_name_the_forms_and_the_new_consumers(self) -> None:
+        for form_id, _, (_, twin), _, _, _ in GOVERNANCE_FORMS:
+            with self.subTest(form=form_id):
+                definition_ = profile_of(self.raw, twin)["template_definition"]
+                self.assertEqual(definition_["tables"], [])
+                joined = " ".join(definition_["non_goals"])
+                self.assertIn("W03-D26", joined)
+                self.assertNotIn("has no form", joined)
+                self.assertNotIn("stay as the profile records them", joined)
+                self.assertIn("owned by the form", joined)
+                self.assertEqual("W03-D34" in joined, form_id == "governance-role")
+                for path in (
+                    "scripts/validate-document-contract-registry.py",
+                    "scripts/validation/repository/form_contracts.py",
+                    "scripts/validation/repository/quality.py",
+                    "tests/test_common_form_tree.py",
+                ):
+                    self.assertIn(path, definition_["consumer_paths"])
+                for path in definition_["consumer_paths"]:
+                    self.assertTrue((ROOT / path).is_file(), path)
+                checks = " ".join(
+                    definition_["validation"]["positive"]
+                    + definition_["validation"]["negative"]
+                )
+                self.assertNotIn("H2 list the profile records", checks)
+                self.assertIn("form tree", checks)
+                self.assertIn("SPEC-0188", definition_["migration"]["meaning_map"])
+        role = profile_of(self.raw, GOVERNANCE_ROLE_FORM[1])["template_definition"]
+        self.assertIn("eight H3", role["migration"]["meaning_map"])
+
+    def test_the_repository_registry_is_valid_and_its_twins_match(self) -> None:
+        self.assertEqual(rules_of(load_raw()), set())
+        REGISTRY_CHECK._assert_template_source_parity(CONTRACTS.load_registry(ROOT))
+
+    def test_a_complete_document_passes_the_tree(self) -> None:
+        for form_id, _, (source, twin), tree, _, _ in GOVERNANCE_FORMS:
+            with self.subTest(form=form_id):
+                self.assertEqual(self.tree_rules(form_id, self.body(tree)), [])
+
+    def test_a_missing_extra_or_reordered_h3_fails_the_role_tree(self) -> None:
+        tree = GOVERNANCE_ROLE_TREE
+        for name, mutate, expected in (
+            (
+                "missing",
+                lambda t: t.replace("### Inputs\n\nThe Inputs text.\n\n", ""),
+                ["BODY-H3-REQUIRED"],
+            ),
+            (
+                "extra",
+                lambda t: t.replace(
+                    "### Role\n\n", "### Stray\n\nText.\n\n### Role\n\n", 1
+                ),
+                ["BODY-H3-UNSUPPORTED"],
+            ),
+            (
+                "reordered",
+                lambda t: (
+                    t.replace("### Inputs", "### TMP")
+                    .replace("### Outputs", "### Inputs")
+                    .replace("### TMP", "### Outputs")
+                ),
+                ["BODY-H3-ORDER"],
+            ),
+        ):
+            with self.subTest(case=name):
+                found = self.tree_rules(
+                    "governance-role", self.body(tree, mutate=mutate)
+                )
+                self.assertTrue(found, name)
+                self.assertEqual(found, expected)
+
+    def test_a_stray_h3_in_a_governance_document_tree_is_refused(self) -> None:
+        text = self.body(GOVERNANCE_DOCUMENT_TREE).replace(
+            "## Current Contract\n\n",
+            "## Current Contract\n\n### Role\n\nText.\n\n",
+            1,
+        )
+        self.assertEqual(
+            self.tree_rules("governance-document", text), ["BODY-H3-UNSUPPORTED"]
+        )
+
+    def test_a_bare_section_fails_and_only_related_documents_may_be_links(
+        self,
+    ) -> None:
+        for form_id, _, _, tree, _, _ in GOVERNANCE_FORMS:
+            with self.subTest(form=form_id):
+                text = self.body(tree).replace("The Overview text.", self.NONE)
+                self.assertEqual(self.tree_rules(form_id, text), ["BODY-SECTION-BARE"])
+                text = self.body(tree).replace(
+                    "The Overview text.", "- [Owner](owner.md)"
+                )
+                self.assertEqual(self.tree_rules(form_id, text), ["BODY-SECTION-EMPTY"])
+
+    def test_a_profile_of_these_roles_with_an_h2_list_is_refused(self) -> None:
+        for _, _, (source, twin), _, _, _ in GOVERNANCE_FORMS:
+            for profile_id in (source, twin):
+                with self.subTest(profile=profile_id):
+                    raw = load_raw()
+                    profile_of(raw, profile_id)["sections"]["required"] = ["Overview"]
+                    self.assertIn("REGISTRY_FORM_LEGACY_LISTS", rules_of(raw))
+
+    def test_the_role_template_holds_the_eight_h3_each_with_an_author_prompt(
+        self,
+    ) -> None:
+        text = (
+            ROOT / "docs/99.templates/templates/governance/role.template.md"
+        ).read_text(encoding="utf-8")
+        section = text.split("## Current Contract\n", 1)[1].split("\n## ", 1)[0]
+        headings = [x[4:] for x in section.splitlines() if x.startswith("### ")]
+        self.assertEqual(tuple(headings), GOVERNANCE_ROLE_H3)
+        for part in section.split("\n### ")[1:]:
+            self.assertIn("<!-- Author prompt:", part)
+        self.assertEqual(
+            self.tree_rules("governance-role", self.body(GOVERNANCE_ROLE_TREE)),
+            [],
+        )
+
+
 class TemplateTwinTableTests(unittest.TestCase):
     """SPEC-0175 W03-H10: two tabled twins may not name one source profile."""
 
@@ -4475,11 +4767,11 @@ class LocalRoleTableTests(unittest.TestCase):
 
 
 class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
-    def test_only_the_eighteen_form_profiles_use_the_tree(self) -> None:
+    def test_only_the_twenty_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            EIGHTEEN_FORMS,
+            TWENTY_FORMS,
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),

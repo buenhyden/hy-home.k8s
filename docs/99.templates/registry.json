@@ -1486,14 +1486,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -1517,7 +1510,7 @@
       "id": "governance/role",
       "family": "governance",
       "mode": "authored",
-      "document_role": "governance-document",
+      "document_role": "governance-role",
       "path_pattern": "^\\.agents/roles/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/role.template.md",
@@ -1555,14 +1548,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -6489,14 +6475,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -6512,8 +6491,8 @@
         "purpose": "Give authors one form for a provider note: its overview, authority boundary, governance context, current contract and validation.",
         "responsibility": "The provider document owns a provider note and routes readers to its canonical owners; it restates no rule another owner holds.",
         "non_goals": [
-          "Being a COMMON-DOC-FORM-1 role: governance-document is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
-          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Being a COMMON-DOC-FORM-1 role: governance-document has its own local form under W03-D26 and is not a COMMON-DOC-FORM-1 role.",
+          "Changing the template's headings, which stay as they are and are now owned by the form.",
           "Holding a table: this template records none and its documents keep their prose and links."
         ],
         "policy_refs": [
@@ -6532,28 +6511,31 @@
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
           "tests/test_common_form_tree.py",
           ".claude/provider.md",
           ".codex/provider.md"
         ],
         "validation": {
           "positive": [
-            "The template and a document of the governance-document role pass the strict Markdown profile check with the H2 list the profile records."
+            "The template and a document of the governance-document role pass the form tree check with the form's six H2 sections and no H3."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
-            "A document missing a required H2 fails BODY-HEADING-REQUIRED."
+            "A document missing a required H2 fails BODY-HEADING-REQUIRED and a stray H3 fails BODY-H3-UNSUPPORTED."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to governance-document, their unchanged H2 lists and this definition's tables.",
-            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+            "tests/test_common_form_tree.py asserts the profiles bound to governance-document, their form tree with empty H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list and the typed form identifiers with the schema enums."
           ]
         },
         "migration": {
-          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
-          "retained_history": "Git history retains the registry without this role binding and definition.",
-          "rollback": "Revert the SPEC-0179 implementation commit."
+          "meaning_map": "No heading, column or sentence of the template changes; the form records the template's H2 headings and binds the profiles to it (SPEC-0188).",
+          "retained_history": "Git history retains the profiles that listed their H2 headings.",
+          "rollback": "Revert the SPEC-0188 implementation commit."
         }
       }
     },
@@ -6561,7 +6543,7 @@
       "id": "common/template-governance-role",
       "family": "common",
       "mode": "template",
-      "document_role": "governance-document",
+      "document_role": "governance-role",
       "path_pattern": "^docs/99\\.templates/templates/governance/role\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/role.template.md",
@@ -6599,14 +6581,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -6622,8 +6597,8 @@
         "purpose": "Give authors one form for a role responsibility: its overview, authority boundary, governance context, current contract and validation.",
         "responsibility": "The role document owns a role responsibility and routes readers to its canonical owners; it restates no rule another owner holds.",
         "non_goals": [
-          "Being a COMMON-DOC-FORM-1 role: governance-document is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
-          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Being a COMMON-DOC-FORM-1 role: governance-role has its own local form under W03-D09, W03-D20, W03-D26 and W03-D34 and is not a COMMON-DOC-FORM-1 role.",
+          "Changing the template's headings, which stay as they are and are now owned by the form; the template adds the eight H3 of the Current Contract.",
           "Holding a table: this template records none and its documents keep their prose and links."
         ],
         "policy_refs": [
@@ -6642,28 +6617,32 @@
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validation/repository/form_contracts.py",
+          "scripts/validation/repository/quality.py",
           "tests/test_common_form_tree.py",
+          "tests/test_document_terminal_contract.py",
           ".agents/roles/README.md",
           ".agents/roles/quality-engineer.md"
         ],
         "validation": {
           "positive": [
-            "The template and a document of the governance-document role pass the strict Markdown profile check with the H2 list the profile records."
+            "The template and a document of the governance-role role pass the form tree check with the form's six H2 sections and the eight H3 under Current Contract."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
-            "A document missing a required H2 fails BODY-HEADING-REQUIRED."
+            "A document missing a required H3 fails BODY-H3-REQUIRED and a reordered one fails BODY-H3-ORDER."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to governance-document, their unchanged H2 lists and this definition's tables.",
-            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+            "tests/test_common_form_tree.py asserts the profiles bound to governance-role, their form tree with empty H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list and the typed form identifiers with the schema enums."
           ]
         },
         "migration": {
-          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
-          "retained_history": "Git history retains the registry without this role binding and definition.",
-          "rollback": "Revert the SPEC-0179 implementation commit."
+          "meaning_map": "No heading, column or sentence of the role documents changes; the form records the six H2 headings and the eight H3 of the Current Contract and binds the profiles to it, and the role template gains its eight H3 with author prompts (SPEC-0188).",
+          "retained_history": "Git history retains the profiles that listed their H2 headings.",
+          "rollback": "Revert the SPEC-0188 implementation commit."
         }
       }
     },
@@ -13460,6 +13439,508 @@
           }
         ],
         "extensions": []
+      },
+      {
+        "form_id": "governance-document",
+        "title": "Governance Document",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 이 양식은 W03-D09·W03-D20·W03-D26·W03-D34에 따른 Stage 99 지역 역할의 양식이며 COMMON-DOC-FORM-1 역할이 아니다. 이 역할의 문서는 H3와 확장을 두지 않으며 역할 문서의 여덟 H3는 governance-role 양식이 소유하고 다른 역할의 양식을 강제하지 않는다.",
+        "extensions": [],
+        "sections": [
+          {
+            "section_id": "governance-document-overview",
+            "level": 2,
+            "parent_id": null,
+            "title": "Overview",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "제공자 노트의 범위와 독자",
+            "required_content": [
+              "이 제공자 노트가 다루는 범위와 이 문서를 고르는 독자를 적는다."
+            ],
+            "prohibited_content": [
+              "다른 문서가 소유한 규칙을 이 문서에 복사해 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "governance-document-authority-boundary",
+            "level": 2,
+            "parent_id": null,
+            "title": "Authority Boundary",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "쓸 수 있는 표면과 돌려보낼 행동",
+            "required_content": [
+              "이 문서의 대상이 쓸 수 있는 표면과 다른 소유자에게 돌려보내는 행동을 적는다."
+            ],
+            "prohibited_content": [
+              "레지스트리나 공통 정책의 권한을 넓히거나 대체하는 문장을 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "governance-document-governance-context",
+            "level": 2,
+            "parent_id": null,
+            "title": "Governance Context",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "레지스트리 항목·권한·기술",
+            "required_content": [
+              "이 문서를 묶는 레지스트리 항목, 권한 클래스, 기술 참조를 적는다."
+            ],
+            "prohibited_content": [
+              "레지스트리가 소유한 기계 참조를 이 문서에 복제해 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "governance-document-current-contract",
+            "level": 2,
+            "parent_id": null,
+            "title": "Current Contract",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "제공자 노트의 현재 계약",
+            "required_content": [
+              "이 제공자 노트가 정하는 현재 계약을 사실/가정과 구분해 적고 실제 참조로 연결한다."
+            ],
+            "prohibited_content": [
+              "제공자 노트는 역할의 여덟 H3(Role, When to Use, Inputs, Outputs, Guardrails, Capability and Evidence, Handoff / Escalation, Postflight)를 두지 않으며 그 형태는 governance-role 양식이 소유한다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "governance-document-validation-and-refresh",
+            "level": 2,
+            "parent_id": null,
+            "title": "Validation and Refresh",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "검증 점검과 갱신 시점",
+            "required_content": [
+              "이 문서가 가리키는 점검과 결과를 보고하는 구분, 갱신 시점을 적는다."
+            ],
+            "prohibited_content": [
+              "실행하지 않은 점검을 통과한 것으로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "governance-document-related-documents",
+            "level": 2,
+            "parent_id": null,
+            "title": "Related Documents",
+            "order": 6,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "연결 문서 목록",
+            "required_content": [
+              "이 문서가 가리키는 소유자와 검증 문서로 가는 링크를 목록으로 적는다."
+            ],
+            "prohibited_content": [
+              "링크가 가리키는 문서의 내용을 이 문서에 복사해 정본처럼 쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": true,
+            "children": []
+          }
+        ]
+      },
+      {
+        "form_id": "governance-role",
+        "title": "Governance Role",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 이 양식은 W03-D09·W03-D20·W03-D26·W03-D34에 따른 Stage 99 지역 역할의 양식이며 COMMON-DOC-FORM-1 역할이 아니다. 이 역할의 문서는 Current Contract 아래 여덟 H3만 두며 확장을 두지 않고 다른 역할의 양식을 강제하지 않는다.",
+        "extensions": [],
+        "sections": [
+          {
+            "section_id": "governance-role-overview",
+            "level": 2,
+            "parent_id": null,
+            "title": "Overview",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "책임의 결과와 독자",
+            "required_content": [
+              "이 책임이 소유하는 한정된 결과와 이 문서를 고르는 독자를 적는다."
+            ],
+            "prohibited_content": [
+              "다른 문서가 소유한 규칙을 이 문서에 복사해 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "governance-role-authority-boundary",
+            "level": 2,
+            "parent_id": null,
+            "title": "Authority Boundary",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "쓸 수 있는 표면과 돌려보낼 행동",
+            "required_content": [
+              "이 문서의 대상이 쓸 수 있는 표면과 다른 소유자에게 돌려보내는 행동을 적는다."
+            ],
+            "prohibited_content": [
+              "레지스트리나 공통 정책의 권한을 넓히거나 대체하는 문장을 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "governance-role-governance-context",
+            "level": 2,
+            "parent_id": null,
+            "title": "Governance Context",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "레지스트리 항목·권한·기술",
+            "required_content": [
+              "이 문서를 묶는 레지스트리 항목, 권한 클래스, 기술 참조를 적는다."
+            ],
+            "prohibited_content": [
+              "레지스트리가 소유한 기계 참조를 이 문서에 복제해 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "governance-role-current-contract",
+            "level": 2,
+            "parent_id": null,
+            "title": "Current Contract",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "역할 계약의 여덟 절",
+            "required_content": [
+              "아래 여덟 H3 절로 이 책임의 계약을 적는다."
+            ],
+            "prohibited_content": [
+              "여덟 H3 밖의 H3나 H4를 만들지 않는다.",
+              "H3 없이 이 절 본문에 계약을 한 덩어리로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
+              {
+                "section_id": "governance-role-current-contract-role",
+                "level": 3,
+                "parent_id": "governance-role-current-contract",
+                "title": "Role",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "책임의 정의와 판단 경계",
+                "required_content": [
+                  "이 책임이 무엇을 맡고 어디까지 판단하는지를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 책임이 소유한 판단을 이 책임의 몫으로 적지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "governance-role-current-contract-when-to-use",
+                "level": 3,
+                "parent_id": "governance-role-current-contract",
+                "title": "When to Use",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "이 책임을 고르는 조건",
+                "required_content": [
+                  "이 책임을 고르는 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "조건 없이 모든 작업에 이 책임을 적용한다고 적지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "governance-role-current-contract-inputs",
+                "level": 3,
+                "parent_id": "governance-role-current-contract",
+                "title": "Inputs",
+                "order": 3,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "받는 입력",
+                "required_content": [
+                  "이 책임이 작업 전에 읽는 입력을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "입력이 아닌 산출물이나 권한을 입력으로 적지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "governance-role-current-contract-outputs",
+                "level": 3,
+                "parent_id": "governance-role-current-contract",
+                "title": "Outputs",
+                "order": 4,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "내는 결과물",
+                "required_content": [
+                  "이 책임이 내는 결과물을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "승인되지 않은 행동이나 권한을 결과물로 적지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "governance-role-current-contract-guardrails",
+                "level": 3,
+                "parent_id": "governance-role-current-contract",
+                "title": "Guardrails",
+                "order": 5,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "금지와 중단 조건",
+                "required_content": [
+                  "이 책임이 하지 않는 일과 멈추는 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "안전 경계를 완화하는 예외를 적지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "governance-role-current-contract-capability-and-evidence",
+                "level": 3,
+                "parent_id": "governance-role-current-contract",
+                "title": "Capability and Evidence",
+                "order": 6,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "필요한 능력과 증거",
+                "required_content": [
+                  "이 책임에 필요한 능력과 결과를 뒷받침하는 증거를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "관찰하지 않은 결과를 증거로 적지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "governance-role-current-contract-handoff-escalation",
+                "level": 3,
+                "parent_id": "governance-role-current-contract",
+                "title": "Handoff / Escalation",
+                "order": 7,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "인계와 상향 경로",
+                "required_content": [
+                  "이 책임이 다른 책임이나 소유자에게 넘기는 사안과 그 경로를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "레지스트리에 없는 인계 경로를 만들지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              },
+              {
+                "section_id": "governance-role-current-contract-postflight",
+                "level": 3,
+                "parent_id": "governance-role-current-contract",
+                "title": "Postflight",
+                "order": 8,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "마무리 절차",
+                "required_content": [
+                  "이 책임이 결과를 돌려주기 전에 하는 마무리 절차를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "작업 흐름 정책의 완료 절차를 이 문서에서 다시 정의하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "section_id": "governance-role-validation-and-refresh",
+            "level": 2,
+            "parent_id": null,
+            "title": "Validation and Refresh",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "검증 점검과 갱신 시점",
+            "required_content": [
+              "이 문서가 가리키는 점검과 결과를 보고하는 구분, 갱신 시점을 적는다."
+            ],
+            "prohibited_content": [
+              "실행하지 않은 점검을 통과한 것으로 적지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": []
+          },
+          {
+            "section_id": "governance-role-related-documents",
+            "level": 2,
+            "parent_id": null,
+            "title": "Related Documents",
+            "order": 6,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "연결 문서 목록",
+            "required_content": [
+              "이 문서가 가리키는 소유자와 검증 문서로 가는 링크를 목록으로 적는다."
+            ],
+            "prohibited_content": [
+              "링크가 가리키는 문서의 내용을 이 문서에 복사해 정본처럼 쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": true,
+            "children": []
+          }
+        ]
       }
     ]
   },
