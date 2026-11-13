@@ -1,6 +1,6 @@
 ---
 title: "W03 Reference Report Form"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -27,8 +27,8 @@ This Task records the `reference-report` form of handoff W03-H28 (W03-D35, W03-D
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-REFFORM-001](../spec.md#success-criteria--verification-plan) | Form literal and schema; the form and its extensions; profile lists; table sections and definition texts; tests. | platform | in-progress | PASS | EVD-008 |
-| WORK-002 | [VAL-REFFORM-002](../spec.md#success-criteria--verification-plan) | Policy texts; unchanged-document and published-member proof; regression and exact-index QA. | platform | in-progress | DEFER | EVD-009, EVD-010, EVD-011, EVD-012, EVD-013, EVD-014 |
+| WORK-001 | [VAL-REFFORM-001](../spec.md#success-criteria--verification-plan) | Form literal and schema; the form and its extensions; profile lists; table sections and definition texts; tests. | platform | completed | PASS | EVD-006, EVD-008 |
+| WORK-002 | [VAL-REFFORM-002](../spec.md#success-criteria--verification-plan) | Policy texts; unchanged-document and published-member proof; regression and exact-index QA. | platform | completed | PASS | EVD-010, EVD-011, EVD-013, EVD-015, EVD-016, EVD-017 |
 
 ## Task Evidence
 
@@ -48,13 +48,24 @@ This Task records the `reference-report` form of handoff W03-H28 (W03-D35, W03-D
 | EVD-012 | [VAL-REFFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Repository quality gate | `python3 scripts/validation/repository/quality.py --root .` in the author checkout | DEFER | Its only diagnostic is `.claude/worktrees/agent-a260fbbd5fe4b5005/graphify-out/graph.json is not a bounded strict UTF-8 regular file`, a file under a locally excluded (`.git/info/exclude`) agent worktree that no tracked path references; the change itself produced no quality diagnostic. Next owner: the operator or the staged QA on the exact index. | no | none |
 | EVD-013 | [VAL-REFFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Staged lifecycle check and strict validators on the index | `python3 scripts/validate-document-lifecycle.py --root . --mode staged` and the four strict validators over the index holding the implementation files (`.secrets.baseline` left unstaged), 2026-11-14 | PASS | Staged lifecycle PASS (`mode=staged`) over the index holding the nine implementation files and this Task; the four strict validators PASS with the same output as EVD-009 on the final tree. Not run here: `python3 scripts/qa.py staged`, commit hooks (EVD-014). | yes | none |
 | EVD-014 | [VAL-REFFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA and commit hooks | `python3 scripts/qa.py staged` and the commit hooks on the exact index | DEFER | Pending: not run by the implementing agent, which may not run `scripts/qa.py staged` or commit. The `.secrets.baseline` registry line moves from 8462 to 8417 and is left as an unstaged change for its own commit (step 3 of the commit order). Next owner: the main session, which commits through the hooks. | yes | none |
+| EVD-015 | [VAL-REFFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA and commit hooks | `python3 scripts/qa.py staged` and the commit hooks on the exact index of `2a96a42c` in the pinned validation environment, after the baseline line move landed alone as `0ecce06f`, 2026-11-14 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index with all 13 gates passing, then commitizen and the generated message check passed; the commit was created. | yes | EVD-014 |
+| EVD-016 | [VAL-REFFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Repository quality gate | `scripts/validation/repository/quality.py --root .` as the `repository-quality` gate of `scripts/qa.py staged` in the pre-commit hook over the exact index of `2a96a42c`, pinned validation environment, 2026-11-14 | PASS | The gate completed with rc=0; the locally excluded worktree file did not affect the exact-index snapshot; it supersedes the non-required DEFER of EVD-012. | yes | none |
+| EVD-017 | [VAL-REFFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA and commit hooks on the implementation commit | Pre-commit hooks over the final index of `2a96a42c` in the pinned validation environment, 2026-11-14 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | none |
+| EVD-018 | [VAL-REFFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-REFFORM-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-REFFORM-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-REFFORM-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006, EVD-008 | Accepted by the user on 2026-11-14 (direct answer "Accept both" to the SPEC-0189 criterion question naming commit `2a96a42c`) | platform |
+| [VAL-REFFORM-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-011, EVD-013, EVD-015, EVD-016, EVD-017 | Accepted by the user on 2026-11-14 (direct answer "Accept both" to the SPEC-0189 criterion question naming commit `2a96a42c`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: Consumers: the registry, schema and literals that bind the reference-report form; no other package depends on these package files. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -69,4 +80,4 @@ This Task records the `reference-report` form of handoff W03-H28 (W03-D35, W03-D
 
 ## Verification Summary
 
-Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). After SPEC-0184 removed the `layer` key the new bytes were reviewed (EVD-004) and approved again (EVD-005). Implemented in the working tree (EVD-006 to EVD-013): the H3 re-scan matched the Plan, red tests (EVD-007), green tests (EVD-008), equal strict validators, unchanged members and templates, and the suites pass; the quality gate is DEFER in the author checkout because of an excluded local worktree file (EVD-012). Not committed; exact-index QA and the commit hooks (EVD-014) and criterion acceptance are pending.
+Spec and Plan reviewed (EVD-001, EVD-002); approved by the user at their exact bytes (EVD-003). After SPEC-0184 removed the `layer` key the new bytes were reviewed (EVD-004) and approved again (EVD-005). Implemented in the working tree (EVD-006 to EVD-013): the H3 re-scan matched the Plan, red tests (EVD-007), green tests (EVD-008), equal strict validators, unchanged members and templates, and the suites pass; the quality gate is DEFER in the author checkout because of an excluded local worktree file (EVD-012). Not committed; exact-index QA and the commit hooks (EVD-014) and criterion acceptance are pending. Implementation commit `2a96a42c` passed exact-index QA in the hooks (EVD-017); the user accepted both criteria on 2026-11-14, and the approval of commit, push, PR and merge covers the package exit (EVD-018).
