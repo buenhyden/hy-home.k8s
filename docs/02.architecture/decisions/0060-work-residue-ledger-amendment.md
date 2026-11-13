@@ -1,6 +1,6 @@
 ---
 title: "Work Residue Ledger Amendment"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -132,13 +132,13 @@ record.
 - **Requirement**: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
   FR-0019 and FR-0022.
 - **Architecture**: [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md).
-- **Specification**: [SPEC-0185](../../03.specs/0185-w03-work-ledger-contract/spec.md).
+- **Specification**: N/A — SPEC-0185 left the tree; Git history recovers it. Its acceptance and exact source are summarized in [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage).
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Narrows the execution-instance and roster clauses by clarification; every other clause stays | [SPEC-0185](../../03.specs/0185-w03-work-ledger-contract/spec.md) |
-| [ADR-0036](./0036-common-knowledge-and-prompt-surfaces.md) | Narrows the retired-memory-structure paragraph by clarification; every other clause stays | [SPEC-0185](../../03.specs/0185-w03-work-ledger-contract/spec.md) |
-| [ADR-0047](./0047-agent-contract-and-resource-ownership.md) | Narrows Decision 4's second-state-ledger clause and the central-ledger Non-goal by clarification; every other clause stays | [SPEC-0185](../../03.specs/0185-w03-work-ledger-contract/spec.md) |
-| [ADR-0048](./0048-local-qa-and-semver-release-ownership.md) | Narrows the permanent-progress-ledger Non-goal by clarification; every other clause stays | [SPEC-0185](../../03.specs/0185-w03-work-ledger-contract/spec.md) |
+| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Narrows the execution-instance and roster clauses by clarification; every other clause stays | N/A — SPEC-0185 left the tree; Git history recovers it |
+| [ADR-0036](./0036-common-knowledge-and-prompt-surfaces.md) | Narrows the retired-memory-structure paragraph by clarification; every other clause stays | N/A — SPEC-0185 left the tree; Git history recovers it |
+| [ADR-0047](./0047-agent-contract-and-resource-ownership.md) | Narrows Decision 4's second-state-ledger clause and the central-ledger Non-goal by clarification; every other clause stays | N/A — SPEC-0185 left the tree; Git history recovers it |
+| [ADR-0048](./0048-local-qa-and-semver-release-ownership.md) | Narrows the permanent-progress-ledger Non-goal by clarification; every other clause stays | N/A — SPEC-0185 left the tree; Git history recovers it |
