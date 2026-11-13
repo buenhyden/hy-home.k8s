@@ -1,15 +1,17 @@
 ---
 title: "Software Development Lifecycle"
-version: "3.5.1"
-type: "governance/contract"
+version: "3.6.0"
+type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 ---
 
 # Software Development Lifecycle
 
-## Overview
+## Purpose
+
+### Objective
 
 This document owns the human flow from durable requirements through
 architecture, Spec-driven implementation, operations, and historical recovery.
@@ -17,19 +19,25 @@ Authors, agents and reviewers consume it to choose the responsible document
 owner. It guarantees one owner per kind of knowledge; stage numbers express
 ownership and navigation rather than a one-way approval waterfall.
 
-## Authority Boundary
+### Authority
 
 This flow selects the responsible document stage. Exact paths, profile IDs,
 frontmatter, sections, relationships, status classes, and lifecycle edges come
 only from the Stage 99 registry (`docs/99.templates/registry.json`). Provider and
 agent-roster authority is outside Stage 99 and is not defined here.
 
-This document is the one `governance/contract` member because it owns an
+This document is a Policy on the `governance/rule` profile because it owns an
 invariant that other owners consume rather than a procedure: each change kind
 sets a minimum record set, check set and authoring approval (the change-kind
-table under Current Contract).
+table under Requirements).
 
-## Governance Context
+- [Document Lifecycle Policy](document-lifecycle.md)
+- [Document Authoring Policy](document-authoring.md)
+- [Approval and Safety](approval-and-safety.md)
+
+## Scope
+
+### Applies To
 
 Work begins with repository evidence and a testable Requirement Package or a
 directly approved package-local work unit. Architecture Descriptions record
@@ -45,7 +53,15 @@ records. Diátaxis informs Operations reader intent, C4 and arc42 inform
 proportional Architecture Description views, ADR practice preserves decision
 lineage, and Google SRE informs factual incidents and blameless postmortems.
 
-## Current Contract
+[Common Agent Governance](../README.md) is the common agent governance entry point.
+
+### Exclusions
+
+Provider and agent-roster authority is excluded and stated under Authority; if another subject is excluded, name it and its owner here.
+
+## Rules
+
+### Requirements
 
 1. Establish the problem, acceptance boundary, and complete requirement IDs.
 2. Record structural views and durable decisions before implementation when
@@ -80,7 +96,7 @@ interface, so it has no design-system authority and no root design document; if
 one is ever introduced it takes that authority and does not become a Stage 03
 technical-design artifact.
 
-### Ownership and placement
+#### Ownership and placement
 
 The meaning of each term below is owned by the
 [Repository Vocabulary](../knowledge/glossary.md); this table owns only where
@@ -101,7 +117,7 @@ each artifact lives and the rules that govern it.
 | Guide / Runbook | Stage 05. |
 | Evidence / archive | Task and Git own change evidence; Git owns source recovery. Stage 98 is unvalidated history. |
 
-### Proportional transitions
+#### Proportional transitions
 
 | Transition | Entry and output | Approval and evidence | Failure or rollback |
 | --- | --- | --- | --- |
@@ -110,7 +126,7 @@ each artifact lives and the rules that govern it.
 | Execution to handoff | Reviewed final bytes, resolved required checks, accepted criteria and Task handoff; scoped Git commit only when authorized | Local, index, hosted, provider, and live evidence remain distinct | Unresolved required checks block completion; missing external permission is DEFER |
 | Handoff to operations or retention | Stable operating knowledge or terminal work record | Promote only durable meaning; apply the Stage 99 lifecycle contract; recover removed documents from Git history | Keep failures factual; use Git recovery rather than a second active owner |
 
-### Change kinds
+#### Change kinds
 
 The kind of change sets the minimum records, checks and authoring approval.
 A change that fits several rows takes the union. Push, pull request and merge
@@ -137,7 +153,7 @@ need not create a Requirement, ADR, or a new Spec package merely to edit a file.
 An Issue can initiate work and a Project can display its progress without
 becoming a second execution record; the active Task alone records actual work.
 
-### Cross-artifact conformance
+#### Cross-artifact conformance
 
 These rules apply to the Executable behavior and Governance, provider, Stage 99
 rows, and to an Architecture row once it is implemented; a small correction or
@@ -166,7 +182,7 @@ document content change does not trigger them.
   safety](approval-and-safety.md) still binds, and no package or agent
   message counts as user approval.
 
-### Three axes
+#### Three axes
 
 Three separate axes describe where work stands, and one never implies
 another. The document STAGE (Stage 01 to 99) names the owner and place of a
@@ -175,7 +191,7 @@ The Git point names before, during or after commit, push, pull request or
 merge. Status, acceptance, promotion and exit per document role follow the
 [lifecycle policy](document-lifecycle.md).
 
-## Validation and Refresh
+### Enforcement
 
 Run the registry, Markdown profile (`scripts/validate-markdown-profiles.py`),
 link/owner, lifecycle (`scripts/validate-document-lifecycle.py`),
@@ -184,12 +200,24 @@ static results separately from hosted, provider-runtime, remote, or live
 evidence. Review this flow when a stage, the change-kind table or the
 lifecycle catalog in the Stage 99 registry changes.
 
-## Related Documents
+The checks are owned by the [Quality Policy](quality.md), the [Git Policy](git.md) and the Document Profile Registry (docs/99.templates/registry.json).
 
-- [Common Agent Governance](../README.md)
-- [Document Lifecycle Policy](document-lifecycle.md)
-- [Document Authoring Policy](document-authoring.md)
-- [Quality Policy](quality.md)
-- [Git Policy](git.md)
-- [Approval and Safety](approval-and-safety.md)
-- Document Profile Registry (`docs/99.templates/registry.json`)
+## Exceptions
+
+### Exception Conditions
+
+This policy defines no exception condition of its own; exceptions follow the approval and safety policy's operator approval route. If this policy needs its own, state it here.
+
+### Approval and Review
+
+This policy defines no exception approval or review step of its own; the approval and safety policy's operator approval route applies. If it needs its own, state it here.
+
+## Ownership
+
+### Responsibilities
+
+The [Ownership and placement](#ownership-and-placement) table states the owner and placement rule of each artifact.
+
+### Change and Adoption
+
+This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.

@@ -1092,8 +1092,14 @@ def document_from_text(
     registry: Registry,
     path: PurePosixPath,
     text: str,
+    *,
+    base_side: bool = False,
 ) -> LifecycleDocument:
-    """Classify one document and extract only its registry-owned status."""
+    """Classify one document and extract only its registry-owned status.
+
+    A comparison base was valid when committed, so its unknown type can only
+    come from a profile the change removes; it is read under the path's profile.
+    """
 
     selected_profile = classify_path(registry, path)
     if not _stateful(selected_profile):
@@ -1147,7 +1153,7 @@ def document_from_text(
         profile_issue = (
             f"frontmatter type {profile_id!r} differs from route type {expected_type!r}"
         )
-    else:
+    elif not base_side:
         profile_issue = f"frontmatter type is unknown: {claimed_profile_id!r}"
     status = metadata.get("status")
     if status is None:

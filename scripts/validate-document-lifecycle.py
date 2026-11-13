@@ -619,6 +619,7 @@ def _snapshot_projection(
     blobs: Mapping[PurePosixPath, str],
     *,
     reused_texts: Mapping[PurePosixPath, str] | None = None,
+    base_side: bool = False,
 ) -> tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]]:
     documents: dict[PurePosixPath, LifecycleDocument] = {}
     texts: dict[PurePosixPath, str] = {}
@@ -642,9 +643,7 @@ def _snapshot_projection(
         texts[path] = text
         try:
             documents[path] = document_from_text(
-                registry,
-                path,
-                text,
+                registry, path, text, base_side=base_side
             )
         except DocumentContractError:
             documents[path] = LifecycleDocument(
@@ -1391,7 +1390,11 @@ def _comparison_documents(
     renames: list[LifecycleRename] = []
 
     def load(
-        registry: Registry, path: PurePosixPath, oid: str | None
+        registry: Registry,
+        path: PurePosixPath,
+        oid: str | None,
+        *,
+        base_side: bool = False,
     ) -> LifecycleDocument | None:
         try:
             opaque = is_opaque_evaluation_output(registry, path)
@@ -1403,7 +1406,7 @@ def _comparison_documents(
         if text is None:
             return None
         try:
-            return document_from_text(registry, path, text)
+            return document_from_text(registry, path, text, base_side=base_side)
         except DocumentContractError:
             return LifecycleDocument(
                 path=path,
@@ -1415,7 +1418,12 @@ def _comparison_documents(
     for change in changes:
         if change.kind == "R":
             assert change.old_path is not None
-            base = load(base_registry, change.old_path, base_oid(change.old_path))
+            base = load(
+                base_registry,
+                change.old_path,
+                base_oid(change.old_path),
+                base_side=True,
+            )
             proposed = load(proposed_registry, change.path, proposed_oid(change.path))
             if base is None or proposed is None:
                 raise InvocationError("exact rename lacks a base or proposed blob")
@@ -1428,12 +1436,16 @@ def _comparison_documents(
                 raise InvocationError(f"added path lacks proposed blob: {change.path}")
             proposed_documents[change.path] = proposed
         elif change.kind == "D":
-            base = load(base_registry, change.path, base_oid(change.path))
+            base = load(
+                base_registry, change.path, base_oid(change.path), base_side=True
+            )
             if base is None:
                 raise InvocationError(f"deleted path lacks base blob: {change.path}")
             base_documents[change.path] = base
         else:
-            base = load(base_registry, change.path, base_oid(change.path))
+            base = load(
+                base_registry, change.path, base_oid(change.path), base_side=True
+            )
             proposed = load(proposed_registry, change.path, proposed_oid(change.path))
             if base is None or proposed is None:
                 raise InvocationError(
@@ -2549,7 +2561,7 @@ def _evaluate_comparison(
         proposed_oid=proposed_oid,
     )
     base_snapshot, base_texts = _snapshot_projection(
-        root, base_classification_registry, base_blobs
+        root, base_classification_registry, base_blobs, base_side=True
     )
     proposed_snapshot, proposed_texts = _snapshot_projection(
         root, proposed_classification_registry, proposed_blobs

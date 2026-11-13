@@ -1038,7 +1038,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         owner_path = PurePosixPath("docs/00.agent-governance/policies/quality.md")
         owner = LifecycleDocument(
             path=owner_path,
-            profile_id="governance/contract",
+            profile_id="governance/rule",
             status="active",
         )
         plan = self.plan_text()

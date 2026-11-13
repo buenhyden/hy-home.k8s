@@ -49,7 +49,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         registry_path = Path("docs/99.templates/registry.json")
         raw_registry = json.loads((ROOT / registry_path).read_text())
         selected = {
-            "governance/contract",
+            "governance/rule",
             "sdlc/architecture-description",
             "sdlc/spec",
             "sdlc/plan",
@@ -71,7 +71,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         # These synthetic lifecycle documents exercise transitions, not the
         # production contract owner's closed path inventory.
         for profile in raw_registry["profiles"]:
-            if profile["id"] == "governance/contract":
+            if profile["id"] == "governance/rule":
                 profile["path_pattern"] = (
                     r"^\.agents/governance/(?:cumulative-history|"
                     r"cumulative-history-second|source|other|repeated)\.md$"
@@ -139,7 +139,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             "---\n"
             'title: "Cumulative history"\n'
             'version: "0.1.0"\n'
-            'type: "governance/contract"\n'
+            'type: "governance/rule"\n'
             f'status: "{status}"\n'
             'owner: "platform"\n'
             'updated: "2026-08-31"\n'
@@ -1085,13 +1085,11 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         first = self.commit("draft")
         cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
         path = PurePosixPath(self.path)
-        self.assertEqual(
-            cache._snapshot(first)[0][path].profile_id, "governance/contract"
-        )
+        self.assertEqual(cache._snapshot(first)[0][path].profile_id, "governance/rule")
         registry_path = "docs/99.templates/registry.json"
         registry_file = self.root / registry_path
         raw = json.loads(registry_file.read_text())
-        next(p for p in raw["profiles"] if p["id"] == "governance/contract")[
+        next(p for p in raw["profiles"] if p["id"] == "governance/rule")[
             "path_pattern"
         ] = r"^\.agents/governance/other\.md$"
         registry_file.write_text(json.dumps(raw))
@@ -1134,7 +1132,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         registry_path = "docs/99.templates/registry.json"
         registry_file = self.root / registry_path
         raw = json.loads(registry_file.read_text())
-        next(p for p in raw["profiles"] if p["id"] == "governance/contract")[
+        next(p for p in raw["profiles"] if p["id"] == "governance/rule")[
             "path_pattern"
         ] = r"^\.agents/governance/(?:cumulative-history|other|repeated)\.md$"
         registry_file.write_text(json.dumps(raw))
@@ -1146,7 +1144,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         ):
             second_documents, second_texts = cache._snapshot(second)
         source = PurePosixPath(paths[1])
-        self.assertEqual(first_documents[source].profile_id, "governance/contract")
+        self.assertEqual(first_documents[source].profile_id, "governance/rule")
         self.assertEqual(second_documents[source].profile_id, "unclassified")
         self.assertIs(first_texts[source], second_texts[source])
         self.assertEqual(len(cache.snapshots), 2)
@@ -1161,7 +1159,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         registry_path = "docs/99.templates/registry.json"
         registry_file = self.root / registry_path
         raw = json.loads(registry_file.read_text())
-        next(p for p in raw["profiles"] if p["id"] == "governance/contract")[
+        next(p for p in raw["profiles"] if p["id"] == "governance/rule")[
             "path_pattern"
         ] = r"^\.agents/governance/other\.md$"
         registry_file.write_text(json.dumps(raw))
@@ -1173,9 +1171,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         def synthetic_opaque(registry, candidate):
             if candidate == path:
                 profile = next(
-                    p
-                    for p in registry.profiles
-                    if p.profile_id == "governance/contract"
+                    p for p in registry.profiles if p.profile_id == "governance/rule"
                 )
                 return "cumulative-history" in profile.path_pattern
             return original_opaque(registry, candidate)
@@ -1257,7 +1253,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         )
         registry_file = self.root / registry_path
         raw = json.loads(registry_file.read_text())
-        next(p for p in raw["profiles"] if p["id"] == "governance/contract")[
+        next(p for p in raw["profiles"] if p["id"] == "governance/rule")[
             "path_pattern"
         ] = r"^\.agents/governance/other\.md$"
         registry_file.write_text(json.dumps(raw))
@@ -1292,7 +1288,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             "FAIL",
             "LIFECYCLE-CREATE",
             path,
-            "governance/contract",
+            "governance/rule",
             "draft",
             "active",
             "explicit-ref",
@@ -1302,7 +1298,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             "FAIL",
             "LIFECYCLE-CREATE",
             path,
-            "governance/contract",
+            "governance/rule",
             "draft",
             "active",
             "explicit-ref",
@@ -1312,7 +1308,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             "FAIL",
             "LIFECYCLE-EVIDENCE",
             path,
-            "governance/contract",
+            "governance/rule",
             "evidence",
             "missing",
             "explicit-ref",
@@ -1717,7 +1713,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             "FAIL",
             "LIFECYCLE-EVIDENCE",
             PurePosixPath(self.path),
-            "governance/contract",
+            "governance/rule",
             "evidence",
             "missing",
             "explicit-ref",
@@ -1746,7 +1742,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.git.run("reset", "--hard", self.base)
         self.commit("draft")
         mismatched = self.document("draft").replace(
-            b'type: "governance/contract"',
+            b'type: "governance/rule"',
             b'type: "sdlc/architecture-description"',
         )
         self.git.commit(self.path, mismatched)
@@ -1754,6 +1750,32 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         result, output = self.explicit(self.base, active)
         self.assertNotEqual(result, 0, output)
         self.assertIn("LIFECYCLE-CREATE", output)
+
+    def test_base_side_removed_profile_type_reads_under_the_classified_profile(
+        self,
+    ) -> None:
+        removed = self.document("draft").replace(
+            b'type: "governance/rule"', b'type: "governance/removed"'
+        )
+        # The base was valid when committed under a profile the change removes.
+        self.git.commit(self.path, removed)
+        base = self.oid("HEAD")
+        proposed = self.commit("draft", "changed content " + "y" * 4_096)
+        result, output = self.explicit(base, proposed)
+        self.assertEqual(result, 0, output)
+
+        # Only the proposed side keeps the unknown-type issue.
+        self.git.commit(self.path, removed.replace(b"unique", b"other"))
+        unknown = self.oid("HEAD")
+        result, output = self.explicit(base, unknown)
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("frontmatter type is unknown", output)
+
+        self.git.run("reset", "--hard", self.base)
+        self.git.commit(self.path, removed)
+        result, output = self.explicit(self.base, self.oid("HEAD"))
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("frontmatter type is unknown", output)
 
     def test_aggregate_candidate_budget_fails_closed_before_proof_work(self) -> None:
         second = ".agents/governance/cumulative-history-second.md"
@@ -1766,7 +1788,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 "FAIL",
                 "LIFECYCLE-CREATE",
                 PurePosixPath(self.path),
-                "governance/contract",
+                "governance/rule",
                 "draft",
                 "active",
                 "explicit-ref",
@@ -1776,7 +1798,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 "FAIL",
                 "LIFECYCLE-CREATE",
                 PurePosixPath(second),
-                "governance/contract",
+                "governance/rule",
                 "draft",
                 "active",
                 "explicit-ref",

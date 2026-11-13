@@ -95,7 +95,6 @@ ROLE_BINDINGS = {
     "reference/audit": "reference-report",
     "reference/research": "reference-report",
     "reference/data": "reference-report",
-    "governance/contract": "governance-document",
     "governance/provider": "governance-document",
     "governance/role": "governance-document",
     "governance/knowledge": "knowledge-map",
@@ -108,7 +107,7 @@ ROLE_BINDINGS = {
     "common/provider-native-command": "provider-native",
     "common/codex-agent-binding": "provider-native",
 }
-# The nine templates of the roles without a form carry a definition and these
+# The eight templates of the roles without a form carry a definition and these
 # tables, each named by its exact heading line.
 LOCAL_TABLES = {
     "common/template-reference-audit": [
@@ -126,7 +125,6 @@ LOCAL_TABLES = {
         ("Source", "### Provenance"),
         ("Generation command", "### Generation and Refresh"),
     ],
-    "common/template-governance-contract": [],
     "common/template-governance-provider": [],
     "common/template-governance-role": [],
     "common/template-exception-provider-native-metadata": [],
@@ -139,7 +137,6 @@ LOCAL_SOURCES = {
     "common/template-reference-audit": "reference/audit",
     "common/template-reference-research": "reference/research",
     "common/template-reference-data": "reference/data",
-    "common/template-governance-contract": "governance/contract",
     "common/template-governance-provider": "governance/provider",
     "common/template-governance-role": "governance/role",
     "common/template-exception-provider-native-metadata": "common/provider-native-metadata",
