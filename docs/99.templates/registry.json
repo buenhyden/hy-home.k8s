@@ -1088,6 +1088,7 @@
       "id": "reference/audit",
       "family": "reference",
       "mode": "authored",
+      "document_role": "reference-report",
       "path_pattern": "^docs/90\\.references/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^AUD-[0-9]{4}-m[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/audit.template.md",
@@ -1158,6 +1159,7 @@
       "id": "reference/research",
       "family": "reference",
       "mode": "authored",
+      "document_role": "reference-report",
       "path_pattern": "^docs/90\\.references/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^RES-[0-9]{4}-m[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/research.template.md",
@@ -1228,6 +1230,7 @@
       "id": "reference/data",
       "family": "reference",
       "mode": "authored",
+      "document_role": "reference-report",
       "path_pattern": "^docs/90\\.references/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^DATA-[0-9]{4}-m[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/data.template.md",
@@ -1298,6 +1301,7 @@
       "id": "governance/contract",
       "family": "governance",
       "mode": "authored",
+      "document_role": "governance-document",
       "path_pattern": "^\\.agents/governance/sdlc\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/contract.template.md",
@@ -1366,6 +1370,7 @@
       "id": "governance/knowledge",
       "family": "governance",
       "mode": "authored",
+      "document_role": "knowledge-map",
       "path_pattern": "^\\.agents/knowledge/(?!README\\.md$|glossary\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/knowledge.template.md",
@@ -1433,6 +1438,7 @@
       "id": "governance/vocabulary",
       "family": "governance",
       "mode": "authored",
+      "document_role": "vocabulary",
       "path_pattern": "^\\.agents/knowledge/glossary\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/vocabulary.template.md",
@@ -1503,6 +1509,7 @@
       "id": "governance/prompt",
       "family": "governance",
       "mode": "authored",
+      "document_role": "prompt",
       "path_pattern": "^\\.agents/prompts/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/prompt.template.md",
@@ -1572,6 +1579,7 @@
       "id": "governance/provider",
       "family": "governance",
       "mode": "authored",
+      "document_role": "governance-document",
       "path_pattern": "^\\.(?:claude|codex)/provider\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/provider.template.md",
@@ -1640,6 +1648,7 @@
       "id": "governance/role",
       "family": "governance",
       "mode": "authored",
+      "document_role": "governance-document",
       "path_pattern": "^\\.agents/roles/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/role.template.md",
@@ -2509,6 +2518,7 @@
       "id": "common/provider-native-metadata",
       "family": "common",
       "mode": "native",
+      "document_role": "provider-native",
       "path_pattern": "^\\.claude/agents/[^/]+\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/runtime/claude-agent.template.md",
@@ -2549,6 +2559,7 @@
       "id": "common/provider-native-command",
       "family": "common",
       "mode": "native",
+      "document_role": "provider-native",
       "path_pattern": "^\\.claude/commands/[^/]+\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/runtime/claude-command.template.md",
@@ -3808,6 +3819,7 @@
       "id": "common/template-reference-audit",
       "family": "common",
       "mode": "template",
+      "document_role": "reference-report",
       "path_pattern": "^docs/99\\.templates/templates/references/audit\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/references/audit.template.md",
@@ -3866,12 +3878,192 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a Stage 90 audit member that records a dated assurance assessment with its observation boundary and sources.",
+        "responsibility": "A audit member owns its dated evidence and states what it cannot establish; it never becomes policy or current authority by itself.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: reference-report is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Promoting a Stage 90 claim to a requirement, decision or policy, which its Stage 01, 02 or 05 owner adopts."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/document-lifecycle.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Audit members under docs/90.references/audits/ and their template.",
+        "tables": [
+          {
+            "name": "Criterion",
+            "section": "### Criteria and Inspected Surface",
+            "columns": [
+              {
+                "key": "Criterion",
+                "meaning": "The assessed criterion.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "In-scope surface",
+                "meaning": "The inspected boundary or control.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Criterion"
+          },
+          {
+            "name": "Observation",
+            "section": "### Observed Evidence",
+            "columns": [
+              {
+                "key": "Observation",
+                "meaning": "The observed fact.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Source and input",
+                "meaning": "The source and the exact revision or date of the input.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Result",
+                "meaning": "The actual result of the observation.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Observation"
+          },
+          {
+            "name": "ID",
+            "section": "### Findings and Gaps",
+            "columns": [
+              {
+                "key": "ID",
+                "meaning": "A stable finding identifier.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Finding or gap",
+                "meaning": "The deviation or evidence gap.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Requirement",
+                "meaning": "The requirement ID the finding affects, or N/A.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Fact or hypothesis",
+                "meaning": "Whether the finding is an observed fact or a hypothesis.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Severity",
+                "meaning": "The justified impact of the finding.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Evidence",
+                "meaning": "The observation that supports the finding.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Action",
+                "meaning": "The proposed action and its owner.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Acceptance",
+                "meaning": "The evidence that would accept the action.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "ID"
+          },
+          {
+            "name": "Remediation",
+            "section": "### Remediation",
+            "columns": [
+              {
+                "key": "Remediation",
+                "meaning": "A bounded correction or disposition.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Owner",
+                "meaning": "The accountable owner of the remediation.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Due or decision date",
+                "meaning": "An actual date or an accepted deferral.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Remediation"
+          }
+        ],
+        "consumer_paths": [
+          "docs/99.templates/templates/references/audit.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          "docs/90.references/AGENTS.md"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the reference-report role pass the strict Markdown profile check with the H2 list the profile records.",
+            "A table with the recorded columns in the recorded order under its heading line passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
+            "A recorded heading line that the template repeats, omits or holds under an H2 outside the required list fails BODY-TABLE-SECTION.",
+            "A recorded section that is not an H2 or H3 heading line, or an H2 title outside the required list, fails REGISTRY_TABLE_SECTION."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to reference-report, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-reference-research",
       "family": "common",
       "mode": "template",
+      "document_role": "reference-report",
       "path_pattern": "^docs/99\\.templates/templates/references/research\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/references/research.template.md",
@@ -3930,12 +4122,122 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a Stage 90 research member that records a dated inquiry with its observation boundary and sources.",
+        "responsibility": "A research member owns its dated evidence and states what it cannot establish; it never becomes policy or current authority by itself.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: reference-report is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Promoting a Stage 90 claim to a requirement, decision or policy, which its Stage 01, 02 or 05 owner adopts."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/document-lifecycle.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Research members under docs/90.references/research/ and their template.",
+        "tables": [
+          {
+            "name": "Claim",
+            "section": "### Claim-Source Matrix",
+            "columns": [
+              {
+                "key": "Claim",
+                "meaning": "One bounded claim.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Source",
+                "meaning": "The source that gives direct support for the claim.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Verification state",
+                "meaning": "Whether the claim is verified, disputed or unverified.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Claim"
+          },
+          {
+            "name": "Source",
+            "section": "## Sources",
+            "columns": [
+              {
+                "key": "Source",
+                "meaning": "The linked source.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Grade",
+                "meaning": "The evidence grade of the source.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Retrieved",
+                "meaning": "The ISO date the source was retrieved.",
+                "data_type": "date",
+                "required": true
+              },
+              {
+                "key": "Relevance",
+                "meaning": "What the source directly supports.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Source"
+          }
+        ],
+        "consumer_paths": [
+          "docs/99.templates/templates/references/research.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          "docs/90.references/AGENTS.md"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the reference-report role pass the strict Markdown profile check with the H2 list the profile records.",
+            "A table with the recorded columns in the recorded order under its heading line passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
+            "A recorded heading line that the template repeats, omits or holds under an H2 outside the required list fails BODY-TABLE-SECTION.",
+            "A recorded section that is not an H2 or H3 heading line, or an H2 title outside the required list, fails REGISTRY_TABLE_SECTION."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to reference-report, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes. The m0001 research report's Sources table moves from Source, URL, Checked and Result to Source, Grade, Retrieved and Relevance (W03-D21): its Relevance column holds the recorded retrieval result, not a statement of direct support, and its Grade is Not graded because no grade is on record.",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-reference-data",
       "family": "common",
       "mode": "template",
+      "document_role": "reference-report",
       "path_pattern": "^docs/99\\.templates/templates/references/data\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/references/data.template.md",
@@ -3994,7 +4296,136 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a Stage 90 data member that records a reproducible repository-fact snapshot with its observation boundary and sources.",
+        "responsibility": "A data member owns its dated evidence and states what it cannot establish; it never becomes policy or current authority by itself.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: reference-report is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Promoting a Stage 90 claim to a requirement, decision or policy, which its Stage 01, 02 or 05 owner adopts."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/document-lifecycle.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Data members under docs/90.references/data/ and their template.",
+        "tables": [
+          {
+            "name": "Field",
+            "section": "### Schema",
+            "columns": [
+              {
+                "key": "Field",
+                "meaning": "A stable field name.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Meaning and unit",
+                "meaning": "The meaning and unit of the field.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Producer",
+                "meaning": "The surface that produces the field.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Field"
+          },
+          {
+            "name": "Source",
+            "section": "### Provenance",
+            "columns": [
+              {
+                "key": "Source",
+                "meaning": "The source path or object.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Revision or observation",
+                "meaning": "The pinned revision or observation date.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Derivation",
+                "meaning": "The transformation from the source to the data.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Source"
+          },
+          {
+            "name": "Generation command",
+            "section": "### Generation and Refresh",
+            "columns": [
+              {
+                "key": "Generation command",
+                "meaning": "A reproducible command that generates the data.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Refresh trigger",
+                "meaning": "The change that makes the data stale.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Owner",
+                "meaning": "The maintainer of the data.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Generation command"
+          }
+        ],
+        "consumer_paths": [
+          "docs/99.templates/templates/references/data.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          "docs/90.references/AGENTS.md"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the reference-report role pass the strict Markdown profile check with the H2 list the profile records.",
+            "A table with the recorded columns in the recorded order under its heading line passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
+            "A recorded heading line that the template repeats, omits or holds under an H2 outside the required list fails BODY-TABLE-SECTION.",
+            "A recorded section that is not an H2 or H3 heading line, or an H2 title outside the required list, fails REGISTRY_TABLE_SECTION."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to reference-report, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-sdlc-architecture-decision",
@@ -5571,6 +6002,7 @@
       "id": "common/template-exception-provider-native-metadata",
       "family": "common",
       "mode": "template",
+      "document_role": "provider-native",
       "path_pattern": "^docs/99\\.templates/templates/runtime/claude\\-agent\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/runtime/claude-agent.template.md",
@@ -5607,12 +6039,61 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one native form for a Claude agent projection: a provider-native file whose body has no headings.",
+        "responsibility": "The projection consumes the native values the provider bindings own and restates no shared policy.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: provider-native is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Holding headings or tables, which this native body does not have."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/agent-execution.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The .claude/agents/*.md files under the common/provider-native-metadata profile and their template.",
+        "tables": [],
+        "consumer_paths": [
+          "docs/99.templates/templates/runtime/claude-agent.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          ".claude/agents/quality-engineer.md",
+          ".claude/bindings.json"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the provider-native role pass the strict Markdown profile check with the H2 list the profile records."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A table recorded for this role fails BODY-TABLE-SECTION, because its template holds no heading line."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to provider-native, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-exception-provider-native-command",
       "family": "common",
       "mode": "template",
+      "document_role": "provider-native",
       "path_pattern": "^docs/99\\.templates/templates/runtime/claude\\-command\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/runtime/claude-command.template.md",
@@ -5645,12 +6126,61 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one native form for a Claude command projection: a provider-native file whose body has no headings.",
+        "responsibility": "The projection consumes the native values the provider bindings own and restates no shared policy.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: provider-native is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Holding headings or tables, which this native body does not have."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/agent-execution.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The .claude/commands/*.md files under the common/provider-native-command profile and their template.",
+        "tables": [],
+        "consumer_paths": [
+          "docs/99.templates/templates/runtime/claude-command.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          ".claude/commands/doc-update.md",
+          ".claude/bindings.json"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the provider-native role pass the strict Markdown profile check with the H2 list the profile records."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A table recorded for this role fails BODY-TABLE-SECTION, because its template holds no heading line."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to provider-native, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-governance-contract",
       "family": "common",
       "mode": "template",
+      "document_role": "governance-document",
       "path_pattern": "^docs/99\\.templates/templates/governance/contract\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/contract.template.md",
@@ -5706,12 +6236,60 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for the common SDLC contract: its overview, authority boundary, governance context, current contract and validation.",
+        "responsibility": "The contract document owns the common SDLC contract and routes readers to its canonical owners; it restates no rule another owner holds.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: governance-document is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Holding a table: this template records none and its documents keep their prose and links."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The governance/contract profile document and its template.",
+        "tables": [],
+        "consumer_paths": [
+          "docs/99.templates/templates/governance/contract.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          ".agents/governance/sdlc.md"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the governance-document role pass the strict Markdown profile check with the H2 list the profile records."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A document missing a required H2 fails BODY-HEADING-REQUIRED."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to governance-document, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-governance-knowledge",
       "family": "common",
       "mode": "template",
+      "document_role": "knowledge-map",
       "path_pattern": "^docs/99\\.templates/templates/governance/knowledge\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/knowledge.template.md",
@@ -5766,12 +6344,61 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a knowledge map: a pointer index that routes readers to canonical owners.",
+        "responsibility": "A knowledge map routes and never decides; the owner it points to holds the rule.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: knowledge-map is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Holding a rule or a definition, which belong to the pointer's owner or to the vocabulary."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/context-and-memory.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Pointer documents under .agents/knowledge/ other than the README and the glossary, and their template.",
+        "tables": [],
+        "consumer_paths": [
+          "docs/99.templates/templates/governance/knowledge.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          ".agents/knowledge/README.md",
+          ".agents/knowledge/domains.md"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the knowledge-map role pass the strict Markdown profile check with the H2 list the profile records."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A document missing a required H2 fails BODY-HEADING-REQUIRED."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to knowledge-map, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-governance-vocabulary",
       "family": "common",
       "mode": "template",
+      "document_role": "vocabulary",
       "path_pattern": "^docs/99\\.templates/templates/governance/vocabulary\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/vocabulary.template.md",
@@ -5829,12 +6456,114 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for the repository vocabulary: shared term meanings, each with its policy owner and contract version.",
+        "responsibility": "The vocabulary owns the meaning of shared terms; each policy keeps its operating rules and the vocabulary restates none.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: vocabulary is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Defining approval steps, state transitions, commands or check algorithms, which stay with the owners each row names."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/context-and-memory.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The glossary document .agents/knowledge/glossary.md and its template.",
+        "tables": [
+          {
+            "name": "Term ID",
+            "section": "## Repository Vocabulary",
+            "columns": [
+              {
+                "key": "Term ID",
+                "meaning": "The common term identifier from the adopted vocabulary contract.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Term",
+                "meaning": "The term.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Korean",
+                "meaning": "The Korean name of the term.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Definition",
+                "meaning": "The meaning of the term; no rule is restated.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Not to Confuse",
+                "meaning": "The term or concept the term is easily mistaken for.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Policy Owner",
+                "meaning": "The owner role with the backticked path of its existing owner file.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Contract Version",
+                "meaning": "The vocabulary contract version that adopts the term.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Term ID"
+          }
+        ],
+        "consumer_paths": [
+          "docs/99.templates/templates/governance/vocabulary.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          ".agents/knowledge/glossary.md"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the vocabulary role pass the strict Markdown profile check with the H2 list the profile records.",
+            "A table with the recorded columns in the recorded order under its heading line passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
+            "A recorded heading line that the template repeats, omits or holds under an H2 outside the required list fails BODY-TABLE-SECTION.",
+            "A recorded section that is not an H2 or H3 heading line, or an H2 title outside the required list, fails REGISTRY_TABLE_SECTION."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to vocabulary, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-governance-prompt",
       "family": "common",
       "mode": "template",
+      "document_role": "prompt",
       "path_pattern": "^docs/99\\.templates/templates/governance/prompt\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/prompt.template.md",
@@ -5891,12 +6620,61 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a prompt contract: its inputs, output, validation and refusal conditions.",
+        "responsibility": "A prompt contract owns one request's inputs, output and refusals and grants no authority beyond its governing policy.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: prompt is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Granting authority or approval, which stays with the active Task and the governance policies."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/agent-execution.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Prompt contracts under .agents/prompts/ other than the README, and their template.",
+        "tables": [],
+        "consumer_paths": [
+          "docs/99.templates/templates/governance/prompt.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          ".agents/prompts/README.md",
+          ".agents/prompts/doc-update.md"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the prompt role pass the strict Markdown profile check with the H2 list the profile records."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A document missing a required H2 fails BODY-HEADING-REQUIRED."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to prompt, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-governance-provider",
       "family": "common",
       "mode": "template",
+      "document_role": "governance-document",
       "path_pattern": "^docs/99\\.templates/templates/governance/provider\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/provider.template.md",
@@ -5952,12 +6730,61 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a provider note: its overview, authority boundary, governance context, current contract and validation.",
+        "responsibility": "The provider document owns a provider note and routes readers to its canonical owners; it restates no rule another owner holds.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: governance-document is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Holding a table: this template records none and its documents keep their prose and links."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/agent-execution.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The governance/provider profile document and its template.",
+        "tables": [],
+        "consumer_paths": [
+          "docs/99.templates/templates/governance/provider.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          ".claude/provider.md",
+          ".codex/provider.md"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the governance-document role pass the strict Markdown profile check with the H2 list the profile records."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A document missing a required H2 fails BODY-HEADING-REQUIRED."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to governance-document, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-governance-role",
       "family": "common",
       "mode": "template",
+      "document_role": "governance-document",
       "path_pattern": "^docs/99\\.templates/templates/governance/role\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/role.template.md",
@@ -6013,7 +6840,55 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a role responsibility: its overview, authority boundary, governance context, current contract and validation.",
+        "responsibility": "The role document owns a role responsibility and routes readers to its canonical owners; it restates no rule another owner holds.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: governance-document is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Holding a table: this template records none and its documents keep their prose and links."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/agent-execution.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The governance/role profile document and its template.",
+        "tables": [],
+        "consumer_paths": [
+          "docs/99.templates/templates/governance/role.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          ".agents/roles/README.md",
+          ".agents/roles/quality-engineer.md"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the governance-document role pass the strict Markdown profile check with the H2 list the profile records."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A document missing a required H2 fails BODY-HEADING-REQUIRED."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to governance-document, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-governance-rule",
@@ -6571,6 +7446,7 @@
       "id": "evaluation/task",
       "family": "evaluation",
       "mode": "authored",
+      "document_role": "evaluation-task",
       "path_pattern": "^\\.agents/evaluations/harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/task\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/evaluations/evaluation-task.template.md",
@@ -6632,6 +7508,7 @@
       "id": "evaluation/score",
       "family": "evaluation",
       "mode": "authored",
+      "document_role": "evaluation-score",
       "path_pattern": "^\\.agents/evaluations/harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/score\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/evaluations/evaluation-score.template.md",
@@ -6693,6 +7570,7 @@
       "id": "evaluation/results",
       "family": "evaluation",
       "mode": "authored",
+      "document_role": "evaluation-results",
       "path_pattern": "^\\.agents/evaluations/results\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/evaluations/evaluation-results.template.md",
@@ -6781,6 +7659,7 @@
       "id": "common/template-evaluation-task",
       "family": "common",
       "mode": "template",
+      "document_role": "evaluation-task",
       "path_pattern": "^docs/99\\.templates/templates/evaluations/evaluation\\-task\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/evaluations/evaluation-task.template.md",
@@ -6829,12 +7708,155 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for an evaluation task declaration.",
+        "responsibility": "The task document owns the declared trials and the criteria it fixes before either condition is collected; it does not prove that a provider session ran or that a score is true.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: evaluation-task is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Authenticating a score, a provider session or a repository QA result."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/quality.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The evaluation/task profile documents under .agents/evaluations/ and their template.",
+        "tables": [
+          {
+            "name": "Field",
+            "section": "## Overview",
+            "columns": [
+              {
+                "key": "Field",
+                "meaning": "The declared evaluation field.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Declared value",
+                "meaning": "The value declared before scoring.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Field"
+          },
+          {
+            "name": "Trial ID",
+            "section": "## Declared Trials",
+            "columns": [
+              {
+                "key": "Trial ID",
+                "meaning": "The declared paired trial.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Baseline output",
+                "meaning": "The baseline output file, NOT_OBSERVED until captured.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "With-skill output",
+                "meaning": "The with-skill output file, NOT_OBSERVED until captured.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Pair status",
+                "meaning": "Whether the declared pair is pending or complete.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Partial reason",
+                "meaning": "Why the pair is incomplete, when it is.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Trial ID"
+          },
+          {
+            "name": "Criterion ID",
+            "section": "## Signals and Criteria",
+            "columns": [
+              {
+                "key": "Criterion ID",
+                "meaning": "The criterion identifier.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Observable signal",
+                "meaning": "The signal observed for the criterion in either condition.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Scoring rule",
+                "meaning": "How the signal is scored.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Scorer ID",
+                "meaning": "The scorer that applies the rule.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Criterion ID"
+          }
+        ],
+        "consumer_paths": [
+          "docs/99.templates/templates/evaluations/evaluation-task.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          ".agents/evaluations/README.md",
+          ".agents/evaluations/results.md"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the evaluation-task role pass the strict Markdown profile check with the H2 list the profile records.",
+            "A table with the recorded columns in the recorded order under its heading line passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
+            "A recorded heading line that the template repeats, omits or holds under an H2 outside the required list fails BODY-TABLE-SECTION.",
+            "A recorded section that is not an H2 or H3 heading line, or an H2 title outside the required list, fails REGISTRY_TABLE_SECTION."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to evaluation-task, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-evaluation-score",
       "family": "common",
       "mode": "template",
+      "document_role": "evaluation-score",
       "path_pattern": "^docs/99\\.templates/templates/evaluations/evaluation\\-score\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/evaluations/evaluation-score.template.md",
@@ -6883,12 +7905,167 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a score for one paired trial.",
+        "responsibility": "The score document owns the observed hashes, signals and scores of one paired trial; it does not prove that a provider session ran or that a score is true.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: evaluation-score is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Authenticating a score, a provider session or a repository QA result."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/quality.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The evaluation/score profile documents under .agents/evaluations/ and their template.",
+        "tables": [
+          {
+            "name": "Field",
+            "section": "## Overview",
+            "columns": [
+              {
+                "key": "Field",
+                "meaning": "The observed score field.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Observed value",
+                "meaning": "The value observed for the field.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Field"
+          },
+          {
+            "name": "Trial ID",
+            "section": "## Trial Evidence",
+            "columns": [
+              {
+                "key": "Trial ID",
+                "meaning": "The trial the evidence belongs to.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Baseline output and hash",
+                "meaning": "The baseline output file and its actual hash.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "With-skill output and hash",
+                "meaning": "The with-skill output file and its actual hash.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Session references",
+                "meaning": "The provider session references of the trial.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Evidence status",
+                "meaning": "Whether the evidence of the pair is complete or incomplete.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Trial ID"
+          },
+          {
+            "name": "Trial ID",
+            "section": "## Criterion Scores",
+            "columns": [
+              {
+                "key": "Trial ID",
+                "meaning": "The trial that is scored.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Criterion ID",
+                "meaning": "The criterion from the task declaration that is scored.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Baseline observed signal and raw locator",
+                "meaning": "The signal observed in the baseline output and the locator of its raw evidence.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "With-skill observed signal and raw locator",
+                "meaning": "The signal observed in the with-skill output and the locator of its raw evidence.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Baseline score",
+                "meaning": "The baseline score, pending until scored.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "With-skill score",
+                "meaning": "The with-skill score, pending until scored.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Criterion ID"
+          }
+        ],
+        "consumer_paths": [
+          "docs/99.templates/templates/evaluations/evaluation-score.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          ".agents/evaluations/README.md",
+          ".agents/evaluations/results.md"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the evaluation-score role pass the strict Markdown profile check with the H2 list the profile records.",
+            "A table with the recorded columns in the recorded order under its heading line passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
+            "A recorded heading line that the template repeats, omits or holds under an H2 outside the required list fails BODY-TABLE-SECTION.",
+            "A recorded section that is not an H2 or H3 heading line, or an H2 title outside the required list, fails REGISTRY_TABLE_SECTION."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to evaluation-score, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     },
     {
       "id": "common/template-evaluation-results",
       "family": "common",
       "mode": "template",
+      "document_role": "evaluation-results",
       "path_pattern": "^docs/99\\.templates/templates/evaluations/evaluation\\-results\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/evaluations/evaluation-results.template.md",
@@ -6937,7 +8114,153 @@
         ],
         "body_contract": null
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for the evaluation aggregate.",
+        "responsibility": "The results document owns pair coverage and aggregates for the observed cycles; it does not prove that a provider session ran or that a score is true.",
+        "non_goals": [
+          "Being a COMMON-DOC-FORM-1 role: evaluation-results is a Stage 99 local role under W03-D09 and W03-D20 and has no form.",
+          "Changing the template's H2 lists, which stay as the profile records them.",
+          "Authenticating a score, a provider session or a repository QA result."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/quality.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "The evaluation/results profile documents under .agents/evaluations/ and their template.",
+        "tables": [
+          {
+            "name": "Cycle ID",
+            "section": "## Pair Coverage",
+            "columns": [
+              {
+                "key": "Cycle ID",
+                "meaning": "The observed evaluation cycle.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Trial ID",
+                "meaning": "The declared paired trial of the cycle.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Declared pairs",
+                "meaning": "The number of pairs the task declares.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Complete pairs",
+                "meaning": "The number of pairs with actual evidence for both conditions.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Task",
+                "meaning": "The link to the task declaration.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Score",
+                "meaning": "The link to the score.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Partial reason",
+                "meaning": "Why the cycle is incomplete, when it is.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Cycle ID"
+          },
+          {
+            "name": "Scope",
+            "section": "## Aggregate",
+            "columns": [
+              {
+                "key": "Scope",
+                "meaning": "The measured scope of the aggregate row.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Actual pairs",
+                "meaning": "The actual number of complete pairs aggregated.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Criterion ID",
+                "meaning": "The criterion the row summarizes.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Baseline summary",
+                "meaning": "The summary of the baseline observations.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "With-skill summary",
+                "meaning": "The summary of the with-skill observations.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Calibration reference",
+                "meaning": "The human calibration the row refers to.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Criterion ID"
+          }
+        ],
+        "consumer_paths": [
+          "docs/99.templates/templates/evaluations/evaluation-results.template.md",
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/README.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "tests/test_common_form_tree.py",
+          ".agents/evaluations/README.md",
+          ".agents/evaluations/results.md"
+        ],
+        "validation": {
+          "positive": [
+            "The template and a document of the evaluation-results role pass the strict Markdown profile check with the H2 list the profile records.",
+            "A table with the recorded columns in the recorded order under its heading line passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+          ],
+          "negative": [
+            "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
+            "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
+            "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
+            "A recorded heading line that the template repeats, omits or holds under an H2 outside the required list fails BODY-TABLE-SECTION.",
+            "A recorded section that is not an H2 or H3 heading line, or an H2 title outside the required list, fails REGISTRY_TABLE_SECTION."
+          ],
+          "regression": [
+            "tests/test_common_form_tree.py asserts the profiles bound to evaluation-results, their unchanged H2 lists and this definition's tables.",
+            "tests/test_document_terminal_contract.py compares the typed role list with the schema role enum."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No heading, column or sentence of the template changes; this definition records the template as it stands and binds its profiles to the local role (SPEC-0179).",
+          "retained_history": "Git history retains the registry without this role binding and definition.",
+          "rollback": "Revert the SPEC-0179 implementation commit."
+        }
+      }
     }
   ],
   "lifecycle_domains": [

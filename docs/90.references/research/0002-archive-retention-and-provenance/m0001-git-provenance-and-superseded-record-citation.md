@@ -1,10 +1,10 @@
 ---
 title: "Reference: Git Provenance and Superseded Record Citation"
-version: "0.2.0"
+version: "0.2.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-05"
+updated: "2026-11-13"
 layer: "references"
 artifact_id: "RES-0002-m0001"
 ---
@@ -142,23 +142,23 @@ repository's local choices.
 
 ## Sources
 
-| Source                                  | URL                                                                                                                      | Checked    | Result                                                                                                                  |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------- | ----------------------------------------------------------------------------------------------------------------------- |
-| gitrevisions                            | https://git-scm.com/docs/gitrevisions                                                                                    | 2026-09-15 | Fetched                                                                                                                 |
-| git-cat-file                            | https://git-scm.com/docs/git-cat-file                                                                                    | 2026-09-15 | Fetched                                                                                                                 |
-| git-gc                                  | https://git-scm.com/docs/git-gc                                                                                          | 2026-09-15 | Fetched                                                                                                                 |
-| git-clone                               | https://git-scm.com/docs/git-clone                                                                                       | 2026-09-15 | Fetched                                                                                                                 |
-| Documenting Architecture Decisions      | https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions                                                 | 2026-09-15 | Fetched                                                                                                                 |
-| SRE Book, Postmortem Culture            | https://sre.google/sre-book/postmortem-culture/                                                                          | 2026-09-15 | Fetched after one HTTP 403 retry                                                                                        |
-| SRE Workbook, Postmortem Culture        | https://sre.google/workbook/postmortem-culture/                                                                          | 2026-09-15 | Fetched                                                                                                                 |
-| RFC 9110                                | https://www.rfc-editor.org/rfc/rfc9110.html                                                                              | 2026-09-15 | Fetched                                                                                                                 |
-| GitHub, Removing sensitive data         | https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository | 2026-09-15 | Fetched                                                                                                                 |
-| Understanding JSON Schema, Conditionals | https://json-schema.org/understanding-json-schema/reference/conditionals                                                 | 2026-09-15 | Fetched                                                                                                                 |
-| Understanding JSON Schema, Annotations  | https://json-schema.org/understanding-json-schema/reference/annotations                                                  | 2026-09-15 | Fetched                                                                                                                 |
-| Understanding JSON Schema, Type         | https://json-schema.org/understanding-json-schema/reference/type                                                         | 2026-09-15 | Fetched                                                                                                                 |
-| CommonMark Spec 0.31.2                  | https://spec.commonmark.org/0.31.2/                                                                                      | 2026-09-15 | Fetched                                                                                                                 |
-| Diátaxis                                | https://diataxis.fr/                                                                                                     | 2026-09-15 | Fetched                                                                                                                 |
-| PREMIS Ontology                         | https://www.loc.gov/standards/premis/ontology/index.html                                                                 | 2026-09-15 | `unreachable`: HTTP 403 twice, and `https://www.loc.gov/standards/premis/v3/` also returned HTTP 403; no claim recorded |
+| Source                                                                                                                                                      | Grade      | Retrieved  | Relevance                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------- |
+| [gitrevisions](https://git-scm.com/docs/gitrevisions)                                                                                                       | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [git-cat-file](https://git-scm.com/docs/git-cat-file)                                                                                                       | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [git-gc](https://git-scm.com/docs/git-gc)                                                                                                                   | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [git-clone](https://git-scm.com/docs/git-clone)                                                                                                             | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)                                              | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [SRE Book, Postmortem Culture](https://sre.google/sre-book/postmortem-culture/)                                                                             | Not graded | 2026-09-15 | Fetched after one HTTP 403 retry                                                                                        |
+| [SRE Workbook, Postmortem Culture](https://sre.google/workbook/postmortem-culture/)                                                                         | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html)                                                                                                     | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [GitHub, Removing sensitive data](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository) | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [Understanding JSON Schema, Conditionals](https://json-schema.org/understanding-json-schema/reference/conditionals)                                         | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [Understanding JSON Schema, Annotations](https://json-schema.org/understanding-json-schema/reference/annotations)                                           | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [Understanding JSON Schema, Type](https://json-schema.org/understanding-json-schema/reference/type)                                                         | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [CommonMark Spec 0.31.2](https://spec.commonmark.org/0.31.2/)                                                                                               | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [Diátaxis](https://diataxis.fr/)                                                                                                                            | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [PREMIS Ontology](https://www.loc.gov/standards/premis/ontology/index.html)                                                                                 | Not graded | 2026-09-15 | `unreachable`: HTTP 403 twice, and `https://www.loc.gov/standards/premis/v3/` also returned HTTP 403; no claim recorded |
 
 ### Findings
 

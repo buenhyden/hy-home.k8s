@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.16.0"
+version: "3.17.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -291,7 +291,9 @@ form and keeps no table. Policy uses the selected
 role's ordered sections and keeps its existing Lifecycle Traceability table
 under Related Documents until its package. A
 TemplateDefinition names each table's section, ordered columns, minimum rows and
-row identity, and the validator checks column order, count and minimum rows.
+row identity, and the validator checks column order, count and minimum rows. A
+template whose role has no form keeps its H2 lists and records its tables under
+the template's own headings, each named by its exact heading line.
 Classifications, prerequisites, controls, observations and recovery stay native
 submodules in their relevant roles. Fill sections with concrete content; a
 heading, comment, placeholder or empty fence is no operating instruction.
