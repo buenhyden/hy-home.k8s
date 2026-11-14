@@ -67,13 +67,14 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ```text
 03.specs/
 ├── 0161-w00-v14-7-delta-intake/
+├── 0199-w03-governance-policy-rule-ids/
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
 └── work-residue-ledger.json
 ```
 
-현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, W11까지 잔여 소유자로 남고 work residue ledger가 비면 W11에서 종료한다. SPEC-0215는 실행 프로그램을 받는 Git 옵션의 고유 약어(`--rece`, `--e`, `--upl` 등)를 Claude deny 목록에 추가해, SPEC-0214의 push 허용으로 열린 우회 경로를 닫는다.
+현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, W11까지 잔여 소유자로 남고 work residue ledger가 비면 W11에서 종료한다. SPEC-0215는 실행 프로그램을 받는 Git 옵션의 고유 약어(`--rece`, `--e`, `--upl` 등)를 Claude deny 목록에 추가해, SPEC-0214의 push 허용으로 열린 우회 경로를 닫는다. 열린 [SPEC-0199 W03 Governance Policy Rule IDs](./0199-w03-governance-policy-rule-ids/)는 아홉 거버넌스 정책에 규칙 ID, Rules 표와 `adopted` 상태를 부여한다.
 
 [work-residue-ledger.json](./work-residue-ledger.json)은 열린 인계·충돌·채택·조사 잔여 항목을 포인터로만 담는 work residue ledger다. 실행 상태, 증거, 수용은 담지 않고 Task가 소유한다. 종결된 항목은 그 Task가 속한 package의 종료 commit까지 삭제한다.
 
