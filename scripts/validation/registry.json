@@ -1465,6 +1465,10 @@
         },
         {
           "kind": "exact",
+          "value": "tests/test_semver_versions.py"
+        },
+        {
+          "kind": "exact",
           "value": "scripts/document-generator.py"
         },
         {

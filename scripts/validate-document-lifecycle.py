@@ -51,6 +51,7 @@ from document_lifecycle import (
     lineage_retired_identities,
     local_contract_diagnostics,
     package_exit_diagnostics,
+    registry_version_diagnostics,
     validate_current_task_evidence,
     validate_snapshot_documents,
 )
@@ -512,6 +513,17 @@ def _tree_blob_map(root: Path, commit: str) -> Mapping[PurePosixPath, str]:
             raise InvocationError("ambiguous regular Markdown tree entry")
         result[path] = value
     return MappingProxyType(result)
+
+
+def _index_blob_oid(root: Path, path: PurePosixPath) -> str | None:
+    raw = _run_git(root, ("ls-files", "--stage", "-z", "--", path.as_posix()))
+    if raw == b"":
+        return None
+    header, _, _ = raw.partition(b"\t")
+    parts = header.split(b" ")
+    if len(parts) != 3 or parts[2] != b"0":
+        raise InvocationError(f"proposed {path.as_posix()} is not one stage-zero blob")
+    return parts[1].decode("ascii", errors="ignore")
 
 
 def _index_blob_map(root: Path) -> Mapping[PurePosixPath, str]:
@@ -2594,6 +2606,23 @@ def _evaluate_comparison(
         evidence_context,
         base_mode=mode,  # type: ignore[arg-type]
     )
+    # SPEC-0208: scalar version fields only, from the raw registry blobs.
+    base_registry_oid = _tree_blob_oid(root, base_commit, CURRENT_REGISTRY_PATH)
+    proposed_registry_oid = (
+        _index_blob_oid(root, CURRENT_REGISTRY_PATH)
+        if proposed_commit is None
+        else _tree_blob_oid(root, proposed_commit, CURRENT_REGISTRY_PATH)
+    )
+    if (
+        base_registry_oid is not None
+        and proposed_registry_oid is not None
+        and base_registry_oid != proposed_registry_oid
+    ):
+        diagnostics += registry_version_diagnostics(
+            _registry_blob(root, base_registry_oid),
+            _registry_blob(root, proposed_registry_oid),
+            base_mode=mode,  # type: ignore[arg-type]
+        )
     if mode == "staged":
         diagnostics += package_exit_diagnostics(
             base_snapshot,

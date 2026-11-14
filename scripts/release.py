@@ -26,7 +26,7 @@ from urllib.parse import quote
 from typing import Sequence
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from semver_grammar import SEMVER_PATTERN  # noqa: E402
+from semver_grammar import SEMVER_PATTERN, precedence  # noqa: E402
 
 
 REPOSITORY = "github.com/buenhyden/hy-home.k8s"
@@ -74,10 +74,7 @@ def parse_version(raw: str) -> SemVer:
 
 
 def _precedence(version: SemVer) -> tuple[object, ...]:
-    pre = tuple(
-        (0, int(part)) if part.isdecimal() else (1, part) for part in version.prerelease
-    )
-    return (version.major, version.minor, version.patch, 1 if not pre else 0, pre)
+    return precedence(version.label)
 
 
 def _command(root: Path, argv: Sequence[str], *, timeout: int = 20) -> str:
