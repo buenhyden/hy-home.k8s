@@ -18,7 +18,7 @@ This Task records, for [SPEC-0215](../spec.md) under its [Plan](../plan.md):
 - the document checks and the exact-index QA;
 - the criterion decisions.
 
-The implementation is in the worktree and uncommitted. The Spec and Plan stand at `approved` 1.0.0 and await their review and approval receipts.
+The implementation is staged and uncommitted. The Spec and Plan are approved (EVD-005 and EVD-006).
 
 ## Inputs
 
@@ -63,6 +63,9 @@ The implementation is in the worktree and uncommitted. The Spec and Plan stand a
 | EVD-004 | [VAL-EXECOPT-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA: `python3 scripts/validate-affected-surfaces.py --root .`, `ruff check scripts tests`, `python3 scripts/qa.py staged` and the commit hooks | Exact index at commit time | NOT_RUN | Pending | yes | none |
 | EVD-005 | [VAL-EXECOPT-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent semantic review | {"spec_sha256":"493556b6c153ffe0160b91042b1d80054d56dc8a02c37b41386519ec4b9288e3","plan_sha256":"61e51e1baed8cbc28c67ca16b116dbfb10c3a4e9e0e3d409b9020eed6a877fae"} | PASS | Independent read-only review of these bytes, 2026-11-14: APPROVE; prefix derivation correct against Git 2.43 --help-all for push, fetch, pull, ls-remote and clone; every program option reachable from an allowed command covered; counts 29 allow, 2 ask, 262 deny with the first 257 unchanged; residuals and over-denials recorded honestly; the four NITs (test comments, comment wrap, residual list and recorded checks, README opening clause) applied before these digests. | yes | none |
 | EVD-006 | [VAL-EXECOPT-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-session user answer Approve these bytes (Recommended) to the SPEC-0215 approval question naming spec.md 493556b6 and plan.md 61e51e1b, 2026-11-14","review_ref":"EVD-005","scope":["SPEC-0215","SPEC-0215-PLAN-0001"],"reviewed_spec_sha256":"493556b6c153ffe0160b91042b1d80054d56dc8a02c37b41386519ec4b9288e3","reviewed_plan_sha256":"61e51e1baed8cbc28c67ca16b116dbfb10c3a4e9e0e3d409b9020eed6a877fae","validity":"confirmed","revocation":"none"} | PASS | Approves the Spec and Plan bytes only; accepts no criterion. | yes | none |
+| EVD-007 | [VAL-EXECOPT-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Failing-first: decision test on the settings before this change; whole governance validator with the new pin on those settings | `HEAD` `e3ae23a6` (approved Spec `493556b6`, Plan `61e51e1b`) with the worktree test and pin edits (sha256 prefixes `tests/test_agent_governance.py` `db6f8c5e8472`, `scripts/validate-agent-governance.py` `203247b5ddca`); the decision test ran in a scratch root holding that test module and `HEAD:.claude/settings.json` (257 deny rules); for the validator, the five settings lines were removed with the structured edit tool and then restored (`.claude/settings.json` sha256 prefix `57a0576a9c68` before and after); pinned `hyhome-validation` environment; 2026-11-14T13:12Z | PASS | Red as required. (1) `python3 -m unittest tests.test_agent_governance.NativeDenyCoverageTests.test_delivery_commands_are_allowed_and_raw_api_asks` exit 1, 12 of 195 expectations failed, exactly the 11 abbreviation deny cases (push `--rece=sh`, `--recei sh`, `--e=sh`, `--ex=sh`, `--exe sh`; fetch `--upl=sh`, `--uplo sh`; pull `--upl=sh`; ls-remote `--u=sh`, `--up=sh`, `--exe=sh`) and the `feat/a--edit` over-denial, each decided `allow` or, for pull, the default prompt; the three guards passed. (2) With the settings equal to `HEAD`, `python3 scripts/validate-agent-governance.py --root .` exit 1, `ERR AGENT-NATIVE-PERMISSION agent registry validation failed`. | yes | EVD-001 |
+| EVD-008 | [VAL-EXECOPT-001](../spec.md#success-criteria--verification-plan) | WORK-001 | `python3 scripts/validate-agent-governance.py --root .`; `python3 -m unittest tests.test_agent_governance tests.test_validate_agent_registry`; `ruff check` and `ruff format --check` on the two edited Python files | Worktree on `e3ae23a6`; sha256 prefixes `.claude/settings.json` `57a0576a9c68`, `scripts/validate-agent-governance.py` `203247b5ddca`, `tests/test_agent_governance.py` `db6f8c5e8472`; ruff 0.16.10, not the v0.16.5 hook pin; 2026-11-14T13:13Z | PASS | Validator exit 0, `[PASS] agent registry validation passed: providers=2 roles=17 permissionClasses=4 skills=17 handoffs=67 projections=51`; the two modules ran 89 tests, OK; ruff check clean and `2 files already formatted`. The deny list holds 262 unique rules: the 257 at `HEAD` unchanged and in order, then the five prefix rules; allow, ask and the keys outside `permissions` are unchanged. Repository-static only: native rule matching by a Claude client is not observed. | yes | EVD-002 |
+| EVD-009 | [VAL-EXECOPT-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Four strict document validators; staged lifecycle check; `python3 scripts/validation/repository/quality.py --root .`; `markdownlint-cli2` on the edited Markdown; `git diff --check` and `git diff --cached --check` | `e3ae23a6` with the four fix files staged by explicit paths (`.claude/provider.md` sha256 prefix `c9f33028e467`), then also this Task; `markdownlint-cli2` v0.23.3, not the v0.22.1 hook pin, over the package's three documents, `docs/03.specs/README.md` and `.claude/provider.md`; 2026-11-14T13:14Z | PASS | The four strict validators exited 0 (contract registry `295 paths`; markdown profiles, links and owners, and lifecycle with no violation); `python3 scripts/validate-document-lifecycle.py --root . --mode staged` exit 0; the repository quality check exit 0, `[PASS] repository quality gates passed`, no ERR line; markdownlint 0 issues in 5 files; `git diff --check` and `git diff --cached --check` clean. | yes | EVD-003 |
 
 ## Criterion Acceptance
 
@@ -84,11 +87,15 @@ The implementation is in the worktree and uncommitted. The Spec and Plan stand a
 
 ## Verification Summary
 
-No evidence of record has run. Risk class `high` (permission change). The implementation is in the worktree, and its drafting red and green runs are under Inputs.
+Risk class `high` (permission change). The Spec and Plan are approved: EVD-005 records the review and EVD-006 the user's approval of spec.md `493556b6` and plan.md `61e51e1b`.
 
-The Spec and Plan stand at `approved` 1.0.0 without their receipts. The lifecycle check therefore refuses them (`LIFECYCLE-CREATE`: a new Spec or Plan is created at `draft` unless the first-record approval receipts are in this Task). The independent review and the user's approval receipts are added before the first commit.
+Evidence was re-run after approval:
 
-A Task can record PASS evidence only after its Spec and Plan are approved (`TASK-PARENT-APPROVAL`), so EVD-001 to EVD-004 stay NOT_RUN until then. The drafting document checks otherwise passed: the other three strict validators, the repository quality check, markdownlint and both diff checks. Native rule matching is unobserved.
+- EVD-007 resolves EVD-001: red as required.
+- EVD-008 resolves EVD-002: the validator, the unittest modules and ruff pass.
+- EVD-009 resolves EVD-003: the document checks pass.
+
+EVD-004, the exact-index QA, stays NOT_RUN until the commit hooks run on the exact index. The implementation is staged and not committed. Native rule matching is unobserved.
 
 Core-diff checklist of changed permissions:
 

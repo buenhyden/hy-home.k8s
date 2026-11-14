@@ -123,10 +123,10 @@ CLAUDE_ALLOWED_PERMISSIONS = (
 # on an operator request, which is their approval, as merges and pull requests
 # already did (SPEC-0114, Git history). Forced merge, direct pushes to `main`,
 # Release deletion, run cancellation and the matchable push force, delete,
-# mirror and prune, tag force and delete, fetch-into-tag, amend and
-# hook-bypass forms, including unique prefixes and two-letter clusters, stay
-# denied below. Raw API calls and `git -C` keep a prompt because a prefix rule
-# cannot see their effect.
+# mirror and prune, tag force and delete, fetch-into-tag, amend, hook-bypass
+# and executable-carrying option forms, including unique prefixes and
+# two-letter clusters, stay denied below. Raw API calls and `git -C` keep a
+# prompt because a prefix rule cannot see their effect.
 CLAUDE_ASK_PERMISSIONS = (
     "Bash(gh api *)",
     "Bash(git -C *)",
@@ -389,6 +389,11 @@ CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Bash(git fetch *:tags/*)",
     "Bash(git fetch *--stdin*)",
     "Bash(git fetch *--refm*)",
+    "Bash(git *--rece*)",
+    "Bash(git push *--e*)",
+    "Bash(git *--upl*)",
+    "Bash(git ls-remote *--u*)",
+    "Bash(git ls-remote *--exe*)",
 )
 
 

@@ -1,6 +1,6 @@
 ---
 title: "Claude Provider Notes"
-version: "1.9.0"
+version: "1.9.1"
 type: "governance/provider"
 status: "active"
 owner: "platform"
@@ -60,7 +60,10 @@ invocation. The common procedure retains the selected role and user scope.
   or a refspec map; the amend and hook-bypass options; Release deletion and
   run cancellation.
   Executable-carrying Git options (`--upload-pack`, `--receive-pack`,
-  `--exec`, `--output`) are denied. Residual, not coverage: a tag rewrite that
+  `--exec`, `--output`) are denied, together with the unique abbreviations
+  that an allowed command accepts (`--upl`, `--rece`, push `--e`, and
+  ls-remote `--u` and `--exe`); a receive-pack or upload-pack program set in
+  configuration is not seen. Residual, not coverage: a tag rewrite that
   no deny rule matches (for example a longer `git tag` cluster, a refspec
   deletion of a tag, a fetch form the fetch rules miss, or a configured
   tag refspec or tag pruning), a Release or `v` tag made outside the release

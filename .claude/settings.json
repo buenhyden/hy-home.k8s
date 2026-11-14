@@ -293,7 +293,12 @@
       "Bash(git fetch * -P*)",
       "Bash(git fetch *:tags/*)",
       "Bash(git fetch *--stdin*)",
-      "Bash(git fetch *--refm*)"
+      "Bash(git fetch *--refm*)",
+      "Bash(git *--rece*)",
+      "Bash(git push *--e*)",
+      "Bash(git *--upl*)",
+      "Bash(git ls-remote *--u*)",
+      "Bash(git ls-remote *--exe*)"
     ],
     "disableBypassPermissionsMode": "disable"
   },

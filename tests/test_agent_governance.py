@@ -1350,6 +1350,11 @@ class NativeDenyCoverageTests(unittest.TestCase):
                 "git fetch --tags origin",
                 "git fetch -p origin",
                 "git fetch -f origin main:x",
+                # Options that share a prefix with an executable-carrying one
+                # but are not it (SPEC-0215).
+                "git push --recurse-submodules=check origin feat/a",
+                "git fetch --update-shallow origin",
+                "git ls-remote --exit-code origin",
                 # Review text containing ` --approve` matches the approval
                 # rule; that is a review, not a merge.
                 'gh pr review 1 --request-changes -b "ok --approve"',
@@ -1484,6 +1489,19 @@ class NativeDenyCoverageTests(unittest.TestCase):
                 "git fetch --stdin origin < refs.txt",
                 "git fetch --refmap='+refs/*:refs/*' origin refs/tags/v1",
                 "git fetch --refm='+refs/*:refs/*' origin refs/tags/v1",
+                # SPEC-0215: unique abbreviations of the executable-carrying
+                # options, per the Git 2.43 `--help-all` option lists.
+                "git push --rece=sh origin feat/a",
+                "git push origin feat/a --recei sh",
+                "git push --e=sh origin feat/a",
+                "git push --ex=sh origin feat/a",
+                "git push origin feat/a --exe sh",
+                "git fetch --upl=sh origin",
+                "git fetch origin --uplo sh",
+                "git pull --upl=sh origin",
+                "git ls-remote --u=sh origin",
+                "git ls-remote --up=sh origin",
+                "git ls-remote --exe=sh origin",
                 # Documented over-denials: name the branch, rename it, or
                 # reword the text.
                 "git push --tags origin",
@@ -1502,6 +1520,7 @@ class NativeDenyCoverageTests(unittest.TestCase):
                 'git tag -a v1 -m "drop -f"',
                 "git fetch origin 'refs/tags/*:refs/tags/*'",
                 "git fetch origin main:tags/x",  # creates a new tag, no rewrite
+                "git push origin feat/a--edit",  # contains `--e`
             ),
         )
         # Recorded residuals (SPEC-0214): no deny rule matches these.
