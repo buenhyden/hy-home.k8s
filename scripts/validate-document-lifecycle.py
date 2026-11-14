@@ -676,6 +676,27 @@ def _body_text(text: str) -> str:
     return text if closing < 0 else text[closing + 5 :]
 
 
+def _allowed_h2(profile: Any) -> tuple[str, ...]:
+    """The H2 titles an old-shape profile allows: the one reader of the list field."""
+
+    return profile.headings.allowed
+
+
+def _form_heading(registry: Registry, form_id: str, section_id: str) -> str | None:
+    """The heading line (``### Title``) of one form section, or None when it is absent."""
+
+    form = next(
+        (item for item in registry.common_forms if item.form_id == form_id), None
+    )
+    stack = list(form.sections) if form is not None else []
+    while stack:
+        section = stack.pop()
+        if section.section_id == section_id:
+            return "#" * section.level + " " + section.title
+        stack.extend(section.children)
+    return None
+
+
 def _local_plan_task_contract_issues(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -687,8 +708,32 @@ def _local_plan_task_contract_issues(
 
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     plan_profile = profiles.get("sdlc/plan")
-    if plan_profile is None or "Promotion" not in plan_profile.headings.allowed:
+    plan_form = any(item.form_id == "plan" for item in registry.common_forms)
+    if plan_profile is None or (
+        not plan_form and "Promotion" not in _allowed_h2(plan_profile)
+    ):
         return ()  # Older committed registries did not own this local extension.
+    # A Plan form names the headings by section id; an old-list registry names them
+    # by title. A form that lacks a section makes the rule fail instead of skip.
+    if plan_form:
+        promotion_heading = _form_heading(
+            registry, "plan", "plan-promotion-map-owner-and-receipt"
+        )
+        goal_heading = _form_heading(
+            registry, "plan", "plan-overview-goal-and-boundary"
+        )
+        constraints_heading = (
+            "#" * (goal_heading.count("#") + 1) + " Global Constraints"
+            if goal_heading
+            else None
+        )
+        promotion_header = ["Promotion ID", "Target Owner", "Acceptance", "Evidence"]
+        none_row = ["none", "none", "none", "No durable contract was introduced"]
+    else:
+        promotion_heading, goal_heading = "## Promotion", None
+        constraints_heading = "## Global Constraints"
+        promotion_header = ["Durable contract", "Promoted to", "Where"]
+        none_row = ["none", "none", "No durable contract was introduced"]
     adapter = _link_validator_module()
     issues: list[tuple[PurePosixPath, str, str, str, str]] = []
 
@@ -699,24 +744,22 @@ def _local_plan_task_contract_issues(
 
     def promotion_valid(path: PurePosixPath, text: str) -> bool:
         """Check receipt structure and current owner; Where semantics need review."""
-        section = adapter._exact_heading_section(text, "## Promotion")
+        if promotion_heading is None:
+            return False
+        section = adapter._exact_heading_section(text, promotion_heading)
         visible = adapter._visible_markdown(section or "")
         table = adapter._first_visible_table(visible)
         table_count = sum(
             bool(re.fullmatch(r"\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*", line))
             for line in visible.splitlines()
         )
-        if (
-            table_count != 1
-            or table is None
-            or table[0] != ["Durable contract", "Promoted to", "Where"]
-        ):
+        if table_count != 1 or table is None or table[0] != promotion_header:
             return False
         rows = table[1]
-        if not rows or any(len(row) != 3 for row in rows):
+        if not rows or any(len(row) != len(promotion_header) for row in rows):
             return False
         if len(rows) == 1 and rows[0][0] == "none":
-            return rows[0] == ["none", "none", "No durable contract was introduced"]
+            return rows[0] == none_row
         if any(
             any(
                 not cell.strip()
@@ -727,9 +770,9 @@ def _local_plan_task_contract_issues(
         ):
             return False
         seen: set[tuple[str, str]] = set()
-        for contract, promoted_to, where in rows:
+        for contract, promoted_to, *rest in rows:
             links = adapter._extract_links(promoted_to, definitions_text=text)
-            if len(links) != 1 or not where.strip():
+            if len(links) != 1 or not rest[-1].strip():
                 return False
             kind, target = adapter._local_destination(path, links[0])
             if kind not in {"local", "anchor"} or target is None:
@@ -763,10 +806,22 @@ def _local_plan_task_contract_issues(
             or base_texts.get(path) == proposed_texts[path]
         ):
             continue
-        constraints = adapter._exact_heading_section(
-            proposed_texts[path], "## Global Constraints"
+        constraints = (
+            adapter._exact_heading_section(proposed_texts[path], constraints_heading)
+            if constraints_heading
+            else None
         )
         visible_constraints = adapter._visible_markdown(constraints or "").strip()
+        # With a form the H4 is the last block of Goal and Boundary, and the section
+        # reader ends an H4 only at the next heading of its level or higher, so an
+        # H4 placed first would read the goal text after it as constraints.
+        placed_after_text = goal_heading is None
+        if goal_heading is not None and constraints_heading is not None:
+            goal = adapter._exact_heading_section(proposed_texts[path], goal_heading)
+            before, found, _ = (goal or "").partition(constraints_heading)
+            placed_after_text = bool(
+                found and adapter._visible_markdown(before).strip()
+            )
         spec_path, spec_id = direct_parent(path, "sdlc/plan") or (None, None)
         spec = proposed_documents.get(spec_path) if spec_path else None
         linked_spec = any(
@@ -777,6 +832,7 @@ def _local_plan_task_contract_issues(
         )
         if (
             not visible_constraints
+            or not placed_after_text
             or spec is None
             or spec.profile_id != "sdlc/spec"
             or spec.artifact_id != spec_id
@@ -2820,14 +2876,19 @@ def _completion_document_diagnostics(
                 "Plan approval state is not active/completed",
             )
 
+        criteria_heading = _form_heading(
+            registry, "spec", "spec-acceptance-criteria-criteria"
+        )
         success_section = adapter._exact_heading_section(
-            texts[spec_path], "## Success Criteria & Verification Plan"
+            texts[spec_path],
+            criteria_heading or "## Success Criteria & Verification Plan",
         )
         success_table = adapter._first_visible_table(success_section or "")
-        if success_table is None or success_table[0] != [
-            "Criterion",
-            "Acceptance evidence",
-        ]:
+        if success_table is None or success_table[0] != (
+            ["Criterion ID", "Expected Result"]
+            if criteria_heading
+            else ["Criterion", "Acceptance evidence"]
+        ):
             fail(
                 spec_path, "COMPLETION-CRITERIA", "missing exact Success Criteria table"
             )

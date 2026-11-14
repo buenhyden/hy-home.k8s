@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import contextlib
+import dataclasses
 from dataclasses import replace
 import io
 import json
@@ -20,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 from document_contracts import (  # noqa: E402
+    HeadingContract,
     TaskExecution,
     load_registry,
     task_contract_issues,
@@ -50,7 +52,7 @@ TASK = PurePosixPath(
     "docs/03.specs/0106-stage99-lifecycle-normalization/tasks/tsk-0001-example.md"
 )
 SPEC = TASK.parent.parent / "spec.md"
-UPSTREAM = "[VAL-P02-001](../spec.md#success-criteria--verification-plan)"
+UPSTREAM = "[VAL-P02-001](../spec.md#criteria)"
 HEADER = "| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |"
 SEPARATOR = "| --- | --- | --- | --- | --- | --- | --- |"
 CHECK_HEADER = "| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |"
@@ -134,6 +136,99 @@ def row(
     return (
         f"| {work_id} | {criterion} | Verify the change | platform | "
         f"{status} | {result} | {evidence} |"
+    )
+
+
+def _frontmatter(kind: str, artifact: str, extra: str = "") -> list[str]:
+    return [
+        "---",
+        f'title: "{kind.title()}"',
+        'version: "0.1.0"',
+        f'type: "sdlc/{kind}"',
+        'status: "approved"',
+        'owner: "platform"',
+        'updated: "2026-10-04"',
+        f'artifact_id: "{artifact}"',
+        *([extra] if extra else []),
+        "---",
+    ]
+
+
+def form_spec_text() -> str:
+    """A Spec in the COMMON-DOC-FORM-1 shape (SPEC-0200)."""
+
+    def block(title: str, *children: str) -> list[str]:
+        return [f"## {title}"] + [
+            line
+            for child in children
+            for line in (f"### {child}", "Concrete fixture text.")
+        ]
+
+    return "\n".join(
+        [
+            *_frontmatter("spec", "SPEC-0106"),
+            "# Spec",
+            *block("Overview", "Intent", "Owning Requirements"),
+            *block("Scope", "In Scope", "Non-goals"),
+            *block("Behavior Contract", "Normal Behavior", "Failure and Edge Cases"),
+            "## Acceptance Criteria",
+            "### Criteria",
+            "| Criterion ID | Expected Result |",
+            "| --- | --- |",
+            "| VAL-P02-001 | Focused test PASS |",
+            "### Evidence Requirements",
+            "Concrete fixture text.",
+            *block("References", "Normative and Evidence", "Historical and Navigation"),
+            "### Lifecycle Traceability",
+            "| Requirement ID | Spec criterion | Architecture | Verification method |",
+            "| --- | --- | --- | --- |",
+            "| N/A — approved direct package | VAL-P02-001 | None apply: fixture | Focused test |",
+            "",
+        ]
+    )
+
+
+def form_plan_text() -> str:
+    """A Plan in the COMMON-DOC-FORM-1 shape (SPEC-0200)."""
+
+    def block(title: str, *children: str) -> list[str]:
+        return [f"## {title}"] + [
+            line
+            for child in children
+            for line in (f"### {child}", "Concrete fixture text.")
+        ]
+
+    return "\n".join(
+        [
+            *_frontmatter("plan", "SPEC-0106-PLAN-0001", 'parent_ids: ["SPEC-0106"]'),
+            "# Plan",
+            "## Overview",
+            "### Goal and Boundary",
+            "Concrete fixture goal.",
+            "#### Global Constraints",
+            "Keep the approved [Spec](spec.md#scope) parent contract.",
+            "### Assumptions",
+            "Concrete fixture text.",
+            *block("Dependencies", "Prerequisites", "Dependency Order"),
+            "## Implementation Strategy",
+            "### Work Breakdown",
+            "| Work Unit | Criteria | Work | Dependencies | Task | Verification |",
+            "| --- | --- | --- | --- | --- | --- |",
+            "| WORK-001 | [VAL-P02-001](spec.md#criteria) | Verify | none | "
+            "[SPEC-0106-TSK-0001](tasks/tsk-0001-example.md) | Focused test |",
+            "### Change and Rollback",
+            "Concrete fixture text.",
+            *block("Verification Plan", "Verification Matrix", "Stage Placement"),
+            *block("Risks", "Risks and Mitigations", "Escalation"),
+            "## Promotion Map",
+            "### Durable Meaning",
+            "Concrete fixture text.",
+            "### Owner and Receipt",
+            "| Promotion ID | Target Owner | Acceptance | Evidence |",
+            "| --- | --- | --- | --- |",
+            "| none | none | none | No durable contract was introduced |",
+            "",
+        ]
     )
 
 
@@ -283,9 +378,7 @@ class TaskExecutionContractTests(unittest.TestCase):
             "TASK-EXECUTION-STATUS",
             self.rules(task_text("draft", [row(status="done")])),
         )
-        two_links = (
-            UPSTREAM + ", [VAL-P02-002](../spec.md#success-criteria--verification-plan)"
-        )
+        two_links = UPSTREAM + ", [VAL-P02-002](../spec.md#criteria)"
         self.assertEqual(
             self.rules(task_text("draft", [row(criterion=two_links)])), set()
         )
@@ -460,72 +553,8 @@ class CompletionIndexTests(unittest.TestCase):
         self.spec = SPEC
         self.plan = SPEC.parent / "plan.md"
         self.task = TASK
-        self.write(
-            self.spec,
-            "\n".join(
-                [
-                    "---",
-                    'title: "Spec"',
-                    'version: "0.1.0"',
-                    'type: "sdlc/spec"',
-                    'status: "approved"',
-                    'owner: "platform"',
-                    'updated: "2026-10-04"',
-                    'artifact_id: "SPEC-0106"',
-                    "---",
-                    "# Spec",
-                    "## Success Criteria & Verification Plan",
-                    "| Criterion | Acceptance evidence |",
-                    "| --- | --- |",
-                    "| VAL-P02-001 | Focused test PASS |",
-                    "## Traceability",
-                    "### Lifecycle Traceability",
-                    "| Requirement ID | Spec criterion | Architecture | Verification method |",
-                    "| --- | --- | --- | --- |",
-                    "| N/A — approved direct package | VAL-P02-001 | None apply: fixture | Focused test |",
-                    "",
-                ]
-            ),
-        )
-        self.write(
-            self.plan,
-            "\n".join(
-                [
-                    "---",
-                    'title: "Plan"',
-                    'version: "0.1.0"',
-                    'type: "sdlc/plan"',
-                    'status: "approved"',
-                    'owner: "platform"',
-                    'updated: "2026-10-04"',
-                    'artifact_id: "SPEC-0106-PLAN-0001"',
-                    'parent_ids: ["SPEC-0106"]',
-                    "---",
-                    "# Plan",
-                    "## Work Breakdown",
-                    "### Lifecycle Traceability",
-                    "| Work Unit | Criteria | Work | Dependencies | Task | Verification |",
-                    "| --- | --- | --- | --- | --- | --- |",
-                    "| WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | Verify | none | "
-                    "[SPEC-0106-TSK-0001](tasks/tsk-0001-example.md) | Focused test |",
-                    "## Global Constraints",
-                    "Keep the approved [Spec](spec.md#strategic-boundaries--non-goals) parent contract.",
-                    "## Promotion",
-                    "| Durable contract | Promoted to | Where |",
-                    "| --- | --- | --- |",
-                    "| none | none | No durable contract was introduced |",
-                    "",
-                ]
-            ),
-        )
-        registry = load_registry(self.root)
-        for path, profile_id in ((self.spec, "sdlc/spec"), (self.plan, "sdlc/plan")):
-            profile = next(p for p in registry.profiles if p.profile_id == profile_id)
-            text = (self.root / path).read_text()
-            for heading in profile.headings.required:
-                if f"## {heading}\n" not in text:
-                    text += f"\n## {heading}\n\nConcrete fixture context.\n"
-            self.write(path, text)
+        self.write(self.spec, form_spec_text())
+        self.write(self.plan, form_plan_text())
         self.write(self.task, task_text("ready", [row()]))
         subprocess.run(["git", "init", "--quiet"], cwd=self.root, check=True)
         self.stage()
@@ -635,7 +664,7 @@ class CompletionIndexTests(unittest.TestCase):
         second = TASK.parent / "tsk-0002-example.md"
         plan = (self.root / self.plan).read_text(encoding="utf-8")
         extra = (
-            "| WORK-002 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | Verify | none | "
+            "| WORK-002 | [VAL-P02-001](spec.md#criteria) | Verify | none | "
             "[SPEC-0106-TSK-0002](tasks/tsk-0002-example.md) | Focused test |\n"
         )
         first = next(
@@ -674,18 +703,14 @@ class CompletionIndexTests(unittest.TestCase):
             )
         )
         self.write(self.spec, spec)
-        criteria = "[VAL-P02-001](spec.md#success-criteria--verification-plan), [VAL-P02-002](spec.md#success-criteria--verification-plan)"
+        criteria = "[VAL-P02-001](spec.md#criteria), [VAL-P02-002](spec.md#criteria)"
         self.write(
             self.plan,
             (self.root / self.plan)
             .read_text()
-            .replace(
-                "[VAL-P02-001](spec.md#success-criteria--verification-plan)", criteria
-            ),
+            .replace("[VAL-P02-001](spec.md#criteria)", criteria),
         )
-        upstream = (
-            UPSTREAM + ", [VAL-P02-002](../spec.md#success-criteria--verification-plan)"
-        )
+        upstream = UPSTREAM + ", [VAL-P02-002](../spec.md#criteria)"
         self.write(
             self.task,
             task_text(
@@ -836,6 +861,8 @@ class AdoptedExecutionParentTests(unittest.TestCase):
     spec = package / "spec.md"
     plan = package / "plan.md"
     task = package / "tasks/tsk-0001-fixture.md"
+    CONSTRAINTS = "Keep the approved [Spec](spec.md#scope) parent contract.\n"
+    NONE_ROW = "| none | none | none | No durable contract was introduced |"
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -860,11 +887,20 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             'artifact_id: "SPEC-0900-PLAN-0001"\n'
             'parent_ids: ["SPEC-0900"]\n'
             "---\n# Plan\n"
-            "## Global Constraints\nKeep the approved [Spec](spec.md#strategic-boundaries--non-goals) parent contract.\n"
-            "## Promotion\n"
-            "| Durable contract | Promoted to | Where |\n"
-            "| --- | --- | --- |\n"
-            "| none | none | No durable contract was introduced |\n"
+            "## Overview\n"
+            "### Goal and Boundary\n"
+            "The fixture goal and its boundary.\n"
+            "#### Global Constraints\n"
+            f"{self.CONSTRAINTS}"
+            "### Assumptions\n"
+            "The fixture assumptions.\n"
+            "## Promotion Map\n"
+            "### Durable Meaning\n"
+            "Each row of the table below names one durable contract.\n"
+            "### Owner and Receipt\n"
+            "| Promotion ID | Target Owner | Acceptance | Evidence |\n"
+            "| --- | --- | --- | --- |\n"
+            "| none | none | none | No durable contract was introduced |\n"
         )
 
     def task_text(
@@ -925,29 +961,37 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         bad = (
             (
                 plan.replace(
-                    "## Global Constraints\nKeep the approved [Spec](spec.md#strategic-boundaries--non-goals) parent contract.\n",
+                    "#### Global Constraints\n" + self.CONSTRAINTS,
                     "",
                 ),
                 "PLAN-GLOBAL-CONSTRAINTS",
             ),
-            (plan.replace("## Promotion\n", "## Other\n"), "PLAN-PROMOTION"),
             (
-                plan.replace(
-                    "| none | none | No durable contract was introduced |", "| | | |"
-                ),
+                plan.replace("### Owner and Receipt\n", "### Other\n"),
+                "PLAN-PROMOTION",
+            ),
+            (
+                plan.replace(self.NONE_ROW, "| | | | |"),
                 "PLAN-PROMOTION",
             ),
             (
                 plan.replace(
-                    "| none | none | No durable contract was introduced |",
-                    "| Shared lifecycle | [old Task](tasks/tsk-0001-fixture.md) | done |",
+                    self.NONE_ROW,
+                    "| Shared lifecycle | [old Task](tasks/tsk-0001-fixture.md) | done | done |",
                 ),
                 "PLAN-PROMOTION",
             ),
             (
+                plan.replace(self.NONE_ROW, "| none | none | none | none |"),
+                "PLAN-PROMOTION",
+            ),
+            (
                 plan.replace(
+                    "| Promotion ID | Target Owner | Acceptance | Evidence |\n"
+                    "| --- | --- | --- | --- |\n" + self.NONE_ROW,
+                    "| Durable contract | Promoted to | Where |\n"
+                    "| --- | --- | --- |\n"
                     "| none | none | No durable contract was introduced |",
-                    "| none | none | none |",
                 ),
                 "PLAN-PROMOTION",
             ),
@@ -959,10 +1003,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
                 "PLAN-PROMOTION",
             ),
             (
-                plan.replace(
-                    "[Spec](spec.md#strategic-boundaries--non-goals)",
-                    "Spec",
-                ),
+                plan.replace("[Spec](spec.md#scope)", "Spec"),
                 "PLAN-GLOBAL-CONSTRAINTS",
             ),
         )
@@ -971,7 +1012,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
                 proposed = {**base, self.plan: changed}
                 self.assertIn(rule, self.rules(base=base, proposed=proposed))
         completed_without_receipt = self.plan_text("completed").replace(
-            "## Promotion\n", "## Other\n"
+            "### Owner and Receipt\n", "### Other\n"
         )
         self.assertIn(
             "PLAN-PROMOTION",
@@ -981,8 +1022,8 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         )
         self.assertNotIn("PLAN-PROMOTION", self.rules(base=base, proposed=base))
         with_prompt = plan.replace(
-            "## Global Constraints\n",
-            "## Global Constraints\n<!-- Author prompt: link the Spec -->\n",
+            "#### Global Constraints\n",
+            "#### Global Constraints\n<!-- Author prompt: link the Spec -->\n",
         )
         self.assertNotIn(
             "PLAN-GLOBAL-CONSTRAINTS",
@@ -996,11 +1037,9 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         valid_row = (
             "| Lifecycle contract | "
             "[current owner](../../../.agents/governance/document-lifecycle.md) "
-            "| `Current Contract` |"
+            "| The sentence is in force | `Current Contract` |"
         )
-        current = plan.replace(
-            "| none | none | No durable contract was introduced |", valid_row
-        )
+        current = plan.replace(self.NONE_ROW, valid_row)
         base = {self.spec: self.spec_text(), self.plan: plan, owner_path: owner_text}
         self.assertNotIn(
             "PLAN-PROMOTION",
@@ -1015,12 +1054,14 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             self.rules(base=base, proposed={**base, self.plan: member_location}),
         )
         for bad in (
-            current + "| none | none | No durable contract was introduced |\n",
+            current + self.NONE_ROW + "\n",
             current.replace("`Current Contract` |", " |"),
+            current.replace("| The sentence is in force |", "| |"),
+            current.replace("| The sentence is in force |", "| pending |"),
             current
-            + "\n| Durable contract | Promoted to | Where |\n"
-            + "| --- | --- | --- |\n"
-            + "| Other | [current owner](../../../.agents/governance/document-lifecycle.md) | `Current Contract` |\n",
+            + "\n| Promotion ID | Target Owner | Acceptance | Evidence |\n"
+            + "| --- | --- | --- | --- |\n"
+            + "| Other | [current owner](../../../.agents/governance/document-lifecycle.md) | Done | `Current Contract` |\n",
             current.replace(
                 "../../../.agents/governance/document-lifecycle.md",
                 "tasks/tsk-0001-fixture.md",
@@ -1043,10 +1084,10 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         )
         plan = self.plan_text()
         retired = plan.replace(
-            "| none | none | No durable contract was introduced |",
+            self.NONE_ROW,
             "| Lifecycle contract | "
             "[retired owner](../../../docs/00.agent-governance/policies/quality.md) "
-            "| `Current Contract` |",
+            "| The sentence is in force | `Current Contract` |",
         )
         base = {self.spec: self.spec_text(), self.plan: plan, owner_path: "# owner\n"}
         self.assertIn(
@@ -1160,6 +1201,217 @@ class AdoptedExecutionParentTests(unittest.TestCase):
                 },
             ),
         )
+
+    # SPEC-0200 (W03-H10, W03-H24): the Plan and Task rules read the registry shape.
+    OLD_CONSTRAINTS = "Keep the approved [Spec](spec.md#scope) parent contract.\n"
+    OLD_ROW = "| none | none | No durable contract was introduced |"
+
+    def old_plan_text(self) -> str:
+        return (
+            self.plan_text().split("## Overview\n", 1)[0]
+            + "## Overview\nThe fixture.\n"
+            + "## Global Constraints\n"
+            + self.OLD_CONSTRAINTS
+            + "## Promotion\n"
+            + "| Durable contract | Promoted to | Where |\n"
+            + "| --- | --- | --- |\n"
+            + self.OLD_ROW
+            + "\n"
+        )
+
+    def registry_with(self, *, drop_sections: tuple[str, ...] = ()):
+        """The repository registry whose Plan form lacks the named sections."""
+
+        def prune(sections):
+            return tuple(
+                dataclasses.replace(item, children=prune(item.children))
+                for item in sections
+                if item.section_id not in drop_sections
+            )
+
+        forms = tuple(
+            dataclasses.replace(form, sections=prune(form.sections))
+            if form.form_id == "plan"
+            else form
+            for form in self.registry.common_forms
+        )
+        return dataclasses.replace(self.registry, common_forms=forms)
+
+    def old_list_registry(self, allowed: tuple[str, ...] | None):
+        """A registry from before the Plan form: the H2 lists, no form."""
+
+        profiles = tuple(
+            dataclasses.replace(
+                item,
+                headings=HeadingContract(
+                    required=("Overview",), allowed=allowed or ("Overview",)
+                ),
+            )
+            if item.profile_id == "sdlc/plan"
+            else item
+            for item in self.registry.profiles
+        )
+        forms = tuple(
+            form for form in self.registry.common_forms if form.form_id != "plan"
+        )
+        return dataclasses.replace(self.registry, profiles=profiles, common_forms=forms)
+
+    def rules_under(self, registry, base, proposed) -> set[str]:
+        saved = self.registry
+        type(self).registry = registry
+        try:
+            return self.rules(base=base, proposed=proposed)
+        finally:
+            type(self).registry = saved
+
+    def test_three_rules_stay_active_with_the_forms_bound(self) -> None:
+        plan = self.plan_text()
+        base = {self.spec: self.spec_text(), self.plan: plan}
+        self.assertTrue(
+            any(form.form_id == "plan" for form in self.registry.common_forms)
+        )
+        self.assertIn(
+            "PLAN-PROMOTION",
+            self.rules(
+                base=base,
+                proposed={
+                    **base,
+                    self.plan: plan.replace("### Owner and Receipt\n", "### Other\n"),
+                },
+            ),
+        )
+        self.assertIn(
+            "PLAN-GLOBAL-CONSTRAINTS",
+            self.rules(
+                base=base,
+                proposed={
+                    **base,
+                    self.plan: plan.replace(
+                        "#### Global Constraints\n" + self.CONSTRAINTS, ""
+                    ),
+                },
+            ),
+        )
+        draft_parent = {
+            self.spec: self.spec_text("in-review"),
+            self.plan: plan,
+            self.task: self.task_text(),
+        }
+        self.assertIn("TASK-PARENT-APPROVAL", self.rules(proposed=draft_parent))
+
+    def test_constraints_heading_first_does_not_read_goal_text_as_constraints(
+        self,
+    ) -> None:
+        plan = self.plan_text()
+        base = {self.spec: self.spec_text(), self.plan: plan}
+        first = plan.replace(
+            "The fixture goal and its boundary.\n"
+            "#### Global Constraints\n" + self.CONSTRAINTS,
+            "#### Global Constraints\n"
+            "The fixture goal links the [Spec](spec.md#scope).\n",
+        )
+        self.assertNotEqual(first, plan)
+        self.assertIn(
+            "PLAN-GLOBAL-CONSTRAINTS",
+            self.rules(base=base, proposed={**base, self.plan: first}),
+        )
+        after = plan.replace(
+            "#### Global Constraints\n" + self.CONSTRAINTS,
+            "#### Global Constraints\n",
+        ).replace(
+            "The fixture assumptions.\n",
+            "The assumptions link the [Spec](spec.md#scope).\n",
+        )
+        self.assertIn(
+            "PLAN-GLOBAL-CONSTRAINTS",
+            self.rules(base=base, proposed={**base, self.plan: after}),
+        )
+        self.assertNotIn(
+            "PLAN-GLOBAL-CONSTRAINTS",
+            self.rules(base=base, proposed={**base, self.plan: plan + "\nTail.\n"}),
+        )
+
+    def test_a_plan_form_without_a_needed_section_fails_closed(self) -> None:
+        plan = self.plan_text()
+        base = {self.spec: self.spec_text(), self.plan: plan}
+        changed = {**base, self.plan: plan + "\nA changed line.\n"}
+        for dropped, rule in (
+            ("plan-promotion-map-owner-and-receipt", "PLAN-PROMOTION"),
+            ("plan-overview-goal-and-boundary", "PLAN-GLOBAL-CONSTRAINTS"),
+        ):
+            with self.subTest(dropped=dropped):
+                registry = self.registry_with(drop_sections=(dropped,))
+                self.assertIn(rule, self.rules_under(registry, base, changed))
+
+    def test_each_reader_handles_form_old_list_and_neither_registry(self) -> None:
+        form_base = {self.spec: self.spec_text(), self.plan: self.plan_text()}
+        form_bad = {
+            **form_base,
+            self.plan: self.plan_text().replace(
+                "### Owner and Receipt\n", "### Other\n"
+            ),
+        }
+        self.assertIn(
+            "PLAN-PROMOTION", self.rules_under(self.registry, form_base, form_bad)
+        )
+        old = self.old_list_registry(("Overview", "Global Constraints", "Promotion"))
+        old_base = {self.spec: self.spec_text(), self.plan: self.old_plan_text()}
+        old_good = {**old_base, self.plan: self.old_plan_text() + "\nNote.\n"}
+        old_bad = {
+            **old_base,
+            self.plan: self.old_plan_text().replace("## Promotion\n", "## Other\n"),
+        }
+        self.assertEqual(
+            {"PLAN-PROMOTION", "PLAN-GLOBAL-CONSTRAINTS"}
+            & self.rules_under(old, old_base, old_good),
+            set(),
+        )
+        self.assertIn("PLAN-PROMOTION", self.rules_under(old, old_base, old_bad))
+        neither = self.old_list_registry(None)
+        self.assertEqual(
+            {"PLAN-PROMOTION", "PLAN-GLOBAL-CONSTRAINTS", "TASK-PARENT-APPROVAL"}
+            & self.rules_under(
+                neither,
+                old_base,
+                {**old_bad, self.task: self.task_text(parent_id="SPEC-9999-PLAN-0001")},
+            ),
+            set(),
+        )
+
+    def test_the_old_shape_branch_reads_the_list_field_through_one_accessor(
+        self,
+    ) -> None:
+        source = (SCRIPTS / "validate-document-lifecycle.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertEqual(source.count("headings.allowed"), 1)
+        old_base = {self.spec: self.spec_text(), self.plan: self.old_plan_text()}
+        old_bad = {
+            **old_base,
+            self.plan: self.old_plan_text().replace("## Promotion\n", "## Other\n"),
+        }
+        listing_without = self.old_list_registry(None)
+        listing_with = self.old_list_registry(("Overview", "Promotion"))
+        original = LIFECYCLE_CLI._allowed_h2
+        try:
+            LIFECYCLE_CLI._allowed_h2 = lambda profile: ("Promotion",)
+            self.assertIn(
+                "PLAN-PROMOTION", self.rules_under(listing_without, old_base, old_bad)
+            )
+            LIFECYCLE_CLI._allowed_h2 = lambda profile: ()
+            self.assertNotIn(
+                "PLAN-PROMOTION", self.rules_under(listing_with, old_base, old_bad)
+            )
+        finally:
+            LIFECYCLE_CLI._allowed_h2 = original
+        self.assertIn(
+            "PLAN-PROMOTION", self.rules_under(listing_with, old_base, old_bad)
+        )
+
+    def test_text_read_after_the_move_equals_the_old_constraints_body(self) -> None:
+        text = self.plan_text()
+        read = LINKS._exact_heading_section(text, "#### Global Constraints")
+        self.assertEqual((read or "").strip(), self.OLD_CONSTRAINTS.strip())
 
 
 class OptionalMultiRowStatusTests(unittest.TestCase):
@@ -1319,7 +1571,7 @@ class TaskTableRowWidthTests(unittest.TestCase):
     def test_misplaced_evidence_row_is_refused(self) -> None:
         registry = load_registry(ROOT)
         profile = next(p for p in registry.profiles if p.profile_id == "sdlc/task")
-        second = "[VAL-P02-002](../spec.md#success-criteria--verification-plan)"
+        second = "[VAL-P02-002](../spec.md#criteria)"
         good = task_text(
             "in-progress",
             [

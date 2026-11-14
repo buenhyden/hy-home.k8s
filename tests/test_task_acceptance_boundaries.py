@@ -16,8 +16,8 @@ from document_contracts import (  # noqa: E402
 )
 
 
-FIRST = "[VAL-P03-001](../spec.md#success-criteria--verification-plan)"
-SECOND = "[VAL-P03-002](../spec.md#success-criteria--verification-plan)"
+FIRST = "[VAL-P03-001](../spec.md#criteria)"
+SECOND = "[VAL-P03-002](../spec.md#criteria)"
 CRITERION = FIRST
 ROOT = Path(__file__).resolve().parents[1]
 

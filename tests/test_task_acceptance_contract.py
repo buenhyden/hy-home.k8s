@@ -125,6 +125,26 @@ class TaskHistoryRetentionTests(unittest.TestCase):
                 )
         self.assertEqual(self.issues(), set())
 
+    def test_fragment_route_admits_only_the_mapped_fragment_of_a_same_package_link(
+        self,
+    ) -> None:
+        # SPEC-0200 (W03-D59): the base row stands for a historical package and
+        # keeps the old anchor; the route treats the two fragments as equal.
+        mapped = "[VAL-P03-001](../spec.md#criteria)"
+        self.assertEqual(self.issues(evidence_changes={"Criteria": mapped}), set())
+        for cell in (
+            "[VAL-P03-002](../spec.md#criteria)",
+            "[VAL-P03-001](../../0998-other/spec.md#criteria)",
+            "[VAL-P03-001](../spec.md#other)",
+            "[VAL-P03-001](../plan.md#criteria)",
+            "[VAL-P03-001](../spec.md#criteria), [VAL-P03-002](../spec.md#criteria)",
+        ):
+            with self.subTest(cell=cell):
+                self.assertIn(
+                    "TASK-EVIDENCE-RETENTION",
+                    self.issues(evidence_changes={"Criteria": cell}),
+                )
+
     def test_same_status_terminal_without_current_handoff_fails(self) -> None:
         path = self.path
         document = LifecycleDocument(path, "sdlc/task", "cancelled")

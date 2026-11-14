@@ -1,10 +1,10 @@
 ---
 title: "W03 Spec and Plan Forms"
-version: "1.0.0"
+version: "2.0.0"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-15"
 artifact_id: "SPEC-0200"
 ---
 
@@ -12,15 +12,28 @@ artifact_id: "SPEC-0200"
 
 ## Overview
 
+### Intent
+
 This approved change contract is the fifth phase-3 package of the W03 stage of the external v14.7 execution package; W03-D49 puts the Spec and Plan roles in one package and the Task role in the next. It gives both roles their COMMON-DOC-FORM-1 1.0.0 forms in the Stage 99 registry, gives both templates their TemplateDefinition with the full record that SPEC-0196 checks (W03-H13), and moves the templates and every Spec and Plan in the tree to the forms (W03-H02, W03-D01). It closes the Plan part of W03-H10, which W03-H24 makes a precondition of W04: `_local_plan_task_contract_issues` in `scripts/validate-document-lifecycle.py` returns early unless `Promotion` is an allowed Plan H2, and the Plan form names `Promotion Map`, so binding the form would switch off `PLAN-PROMOTION`, `PLAN-GLOBAL-CONSTRAINTS` and `TASK-PARENT-APPROVAL` together without a diagnostic. It applies W03-D03 and W03-D04 (the Spec's `Lifecycle Traceability` stays a registered local H3, under References; the Plan's table sits under the common H3 Work Breakdown), W03-D50 (a one-use form-only exemption for the frozen Spec and Plan of SPEC-0161, retired when this package closes) and W03-D52 as W03-D65 amends it (`Global Constraints` goes to Overview > Goal and Boundary with its check re-pointed; the promotion table goes under Promotion Map > Owner and Receipt), recorded in the [SPEC-0161 Task](../0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md). A read of `main` at `a8c689e5` found one package in the tree, SPEC-0161, whose Task is `completed`, so the package-exit rule R4 refuses any edit to its Spec (7 KB, eleven H2) and Plan (4 KB, ten H2). Only `scripts/validate-document-lifecycle.py` names a Spec or Plan heading (seven lines); every other reader goes through the registry. 69 places name the Spec anchor `success-criteria--verification-plan` that the Spec form removes, counted at that commit and again after each rebase, because every package commit appends evidence rows to the SPEC-0161 Task: 65 in the SPEC-0161 package (2 links in its Plan and 63 places in its Task: 58 links in the 55 evidence rows that `TASK-EVIDENCE-RETENTION` keeps immutable, 2 links in the Task Table, 2 links in Criterion Acceptance and one mention in a code span under `### OPEN Dispositions`) and 4 placeholder links in the templates (1 in the Plan template and 3 in the Task template). On 2026-11-14 the user decided the choices this package raised (W03-D59): R4 admits exactly one reviewed file for each of the two frozen paths, by sha256; a one-use route treats the old and the new fragment as equal in a recorded evidence row and is retired when the package closes; the promotion table keeps its three columns; and the criteria table takes the common column names, the Spec `Architecture` column becomes a checked link column, and the frozen files keep their frontmatter while open packages take a major raise. A requirement audit then compared the package with the W03 prompt, the task file `tasks/TASK-hy-home-k8s-W03.md` of the v14.7 package, and the user resolved its findings on 2026-11-14 with `W03 프롬프트에 작성된대로`, as written in the W03 prompt (W03-D65). One finding changes this package under W03-D65: the promotion table takes the common column names of lines 306 and 738, and line 37 lets a same-role table differ only by a registered conditional extension, which supersedes the unchanged table of W03-D52 and W03-D59. Two further points are not part of the recorded W03-D65 row. They are resolved from the requirements under the user's standing instruction `선택이 필요할 경우, 요구사항을 따른다` (when a choice is needed, follow the requirements) and are recorded in this package's Task Inputs. First, line 113 forbids lowering a guarantee, so `Global Constraints` stays a heading of its own, an H4 under Goal and Boundary, and `PLAN-GLOBAL-CONSTRAINTS` keeps its full strength. Second, lines 306 and 738 name one table shape for the role, and lines 37 and 757 leave no second shape of a same-role table as a permanent compatibility layer, so every promotion table takes the four columns and each recorded row gains its `Acceptance` cell. This package's commit records W03-D59 in the SPEC-0161 Task; W03-D65 is recorded there by the SPEC-0193 package commit. W03-D66, recorded by the SPEC-0207 package commit, binds each registry change to a bump level, and this package's is NO_CHANGE, as the Contracts state. The [Task](tasks/tsk-0001-w03-spec-plan-forms.md) records execution and the [Plan](plan.md) orders the work.
 
-## Strategic Boundaries & Non-goals
+### Owning Requirements
+
+[AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) owns the governance view; no component changes. The registry stays the single machine owner of document form ([ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md) as amended by [ADR-0059](../../02.architecture/decisions/0059-registry-common-form-model.md)), and the package-exit shape check keeps its rule R4 ([ADR-0057](../../02.architecture/decisions/0057-package-exit-shape-check.md)) apart from the one-use exemption; no ADR changes.
+
+## Scope
+
+### In Scope
 
 - In scope (writer W03, with W05 for validator and test code): `docs/99.templates/registry.json` (the Spec and Plan forms, the Spec's local H3 extension, the empty H2 lists and moved body contracts of `sdlc/spec`, `sdlc/plan` and their template twins, both TemplateDefinitions with their tables, and the entries of `relationship_contract` that name a Spec or Plan heading); `scripts/validate-document-lifecycle.py` (the Plan and completion readers); `scripts/document_lifecycle.py` (the two one-use exemptions and their retirement in this package's final source commit); the templates `docs/99.templates/templates/specs/spec.template.md` and `plan.template.md`, and the three placeholder links of `task.template.md`; the Spec and Plan of SPEC-0161 under the exemption; the link fragments of the SPEC-0161 Task; the Spec, Plan and Task link fragments of every other package that is open when the implementation is made, this package included; `tests/test_common_form_tree.py`, `tests/test_document_terminal_contract.py`, `tests/test_task_execution_contract.py`, `tests/test_document_lifecycle_completion.py`, `tests/test_document_lifecycle_cumulative_history.py`, `tests/test_document_lifecycle_package_exit.py`, `tests/fixtures/completion-package.json`, the anchor strings of `tests/test_task_acceptance_contract.py`, `tests/test_task_acceptance_boundaries.py` and `tests/test_documentation_link_boundary.py`, and any test that pins these profiles' H2 lists, body contracts, the form count or the form list; the sentences that name a Spec or Plan section in `.agents/governance/document-lifecycle.md`, `.agents/governance/document-authoring.md`, `.agents/skills/risk-report/SKILL.md`, `docs/99.templates/README.md`, `docs/03.specs/README.md` and rule 7 of `docs/03.specs/AGENTS.md`, which names the Plan's `Promotion` table, with the sentences that state the one-use exemptions until they are retired; each edited document's frontmatter `version` and `updated` where the Contracts allow it; in the SPEC-0161 Task the W03-D59 row, the closure of the Plan part of W03-H10 and of W03-H24, evidence rows and the frontmatter `version` and `updated`, with the matching work residue ledger entries; this package, the Stage 03 README and reviewed `.secrets.baseline` entries.
+
+### Non-goals
+
 - Not in this package: the Task form, the Task headings and the evidence and acceptance tables of any Task (package 6 of W03-D49); the Requirement, Architecture and ADR forms; the removal of the H2-list model (package 7); any change to what a finished package's Spec or Plan says; Q-07 numbering (W03-D30); `_workspace/` (read-only input) and `docs/98.archive/`.
 - Form-only migration (W03-D01): apart from the content changes the Contracts list, no sentence changes meaning, no criterion, work unit or row is invented, and every criterion ID, cell, command and link target file stays. No push, PR or merge without the user's approval. Open question: none.
 
-## Contracts
+## Behavior Contract
+
+### Normal Behavior
 
 - **Forms.** `common_forms.forms` gains the Spec and Plan forms exactly as COMMON-DOC-FORM-1 1.0.0 defines them (`roles[3]` and `roles[4]`). Spec: Overview (Intent, Owning Requirements), Scope (In Scope, Non-goals), Behavior Contract (Normal Behavior, Failure and Edge Cases), Acceptance Criteria (Criteria, Evidence Requirements) and References (Normative and Evidence, Historical and Navigation). Plan: Overview (Goal and Boundary, Assumptions), Dependencies (Prerequisites, Dependency Order), Implementation Strategy (Work Breakdown, Change and Rollback), Verification Plan (Verification Matrix, Stage Placement), Risks (Risks and Mitigations, Escalation) and Promotion Map (Durable Meaning, Owner and Receipt). Every section is required and `link_only` is false everywhere. Templates keep their H1.
 - **Local extension (W03-D03, W03-D04).** The Spec form registers one conditional local H3 `Lifecycle Traceability` under References (`spec-lifecycle-traceability`), verified by the body-contract check. The Plan form registers none: its table sits directly under the common H3 Work Breakdown.
@@ -54,21 +67,13 @@ This approved change contract is the fifth phase-3 package of the W03 stage of t
 - **Templates.** The Spec and Plan templates take their form's H2 and H3 with every former author prompt placed under the H3 it describes, a prompt that restates the form's content where no former prompt fits, the tables above and their frontmatter; the Plan template keeps `Global Constraints` as an H4, the last block of Goal and Boundary. The Task template changes only by its three link fragments.
 - **Policy text.** The lifecycle policy, the document authoring policy, the `risk-report` skill, the Stage 99 README and the Stage 03 README say that `Global Constraints` is an H4 under Goal and Boundary, and name Risks and Mitigations, References and Work Breakdown where they now name `Risks & Mitigations` and the Spec `Traceability` table; rule 7 of the Stage 03 `AGENTS.md` names the promotion table under Promotion Map > Owner and Receipt, with its common column names, where it now names the Plan's `Promotion` table; the lifecycle policy states the two one-use exemptions until they are retired. `.agents/governance/sdlc.md` names the `Architecture` column of the Spec's `Lifecycle Traceability` table on line 164 and is unaffected, because the table and the column keep their names.
 
-## Core Design
-
-[AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) owns the governance view; no component changes. The registry stays the single machine owner of document form ([ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md) as amended by [ADR-0059](../../02.architecture/decisions/0059-registry-common-form-model.md)), and the package-exit shape check keeps its rule R4 ([ADR-0057](../../02.architecture/decisions/0057-package-exit-shape-check.md)) apart from the one-use exemption; no ADR changes.
-
-## Data Modeling & Storage Strategy
-
 Registry data: two forms, one local extension, four profiles' lists and body contracts, two TemplateDefinitions with four tables, and the `relationship_contract` entries that name a heading. Documents: two templates, the frozen Spec and Plan of SPEC-0161, the Spec and Plan of each open package, and 68 or more link fragments. Code: three readers that choose their shape from the registry, two one-use exemptions that are removed again, and tests.
-
-## Interfaces & Data Structures
 
 - `scripts/validate-document-lifecycle.py`: `_local_plan_task_contract_issues` and the criteria reader of the completion check, each with a form shape, read by form section id, and the old shape; the hard-coded lines today are 676, 688, 698, 753, 776, 2764 and 2769, and the guard on line 676 no longer returns for a registry that has a Plan form; the old-shape branch reads the allowed H2 through one accessor function, which SPEC-0205 re-points.
 - `scripts/document_lifecycle.py`: the R4 admission of two reviewed hashes in `package_exit_diagnostics` and the fragment route in `_task_evidence_retention_diagnostics`, both removed by the final source commit.
 - Tests, each failing first: the three Plan and Task rules stay active with the form bound, as regression tests that remain after the package; a Plan form without the promotion section or the constraints section makes the rule fail, not pass; a Plan whose constraints sit under Goal and Boundary without the `Global Constraints` H4, or whose H4 does not link the parent Spec, fails `PLAN-GLOBAL-CONSTRAINTS` as it does today; a Plan whose H4 stands first, with goal text after it, fails, and prose after the constraints section is not read as constraints; a test that replaces the accessor shows that the old-shape branch reads the list field nowhere else; a promotion table with the old header, or without a concrete `Acceptance` cell, fails `PLAN-PROMOTION`; each reader handles a form registry, an old-list registry and a registry with neither; a Spec without the criteria table under `### Criteria` fails `COMPLETION-CRITERIA`; the reviewed frozen file passes R4 and any other content fails; an evidence row whose `Criteria` cell differs only by the mapped fragment passes and any other difference fails; a Spec row whose `Architecture` cell has no link or links a document of another profile fails; after retirement both edits fail again. Fixtures that stand for a historical package keep the old headings and are read with the old shape.
 
-## Edge Cases & Error Handling
+### Failure and Edge Cases
 
 - SPEC-0188, SPEC-0189 and SPEC-0191 have merged. The remaining merge order is SPEC-0207, then SPEC-0192 to SPEC-0199, then this package. This package's own Spec, Plan and Task are written in the forms that hold at its package commit and move in its implementation commit.
 - SPEC-0193 adds `LINK-FRAGMENT`, so a link to the removed anchor fails the link validator from the moment a Spec moves; the frozen Plan and the evidence rows therefore move in the same commit as the Specs they link.
@@ -77,11 +82,18 @@ Registry data: two forms, one local extension, four profiles' lists and body con
 - The generator of SPEC-0192 fills these templates, so its tests for a Spec and a Plan run against the new templates.
 - The hashes of the two reviewed files exist only after the review, so the Spec cannot name them; the Task does.
 
-## Failure Modes & Fallback / Human Escalation
-
 If a sentence of the frozen Spec or Plan cannot be placed without changing its meaning, if the user does not approve the two moved files, if a recorded evidence row would differ by more than the mapped fragment, if another finished package is in the tree, or if a reader cannot tell the shape from the registry, the author stops and asks the user. If any document outside the named scope gains a diagnostic, the change is wrong and is fixed before commit.
 
-## Verification Commands
+## Acceptance Criteria
+
+### Criteria
+
+| Criterion ID | Expected Result |
+| --- | --- |
+| VAL-SPECPLAN-001 | The registry holds the Spec and Plan forms, the Spec's local extension, the moved body contracts with the Spec's `Architecture` link column, and both TemplateDefinitions with their tables and `contract_version`; the four profiles carry no H2 lists and both derived records pass `REGISTRY_TEMPLATE_RECORD`; `PLAN-PROMOTION`, `PLAN-GLOBAL-CONSTRAINTS` and `TASK-PARENT-APPROVAL` are shown active on the repository registry with the forms bound; they and `COMPLETION-CRITERIA` read the form shape by section id and still read the old shape for an old registry; `PLAN-GLOBAL-CONSTRAINTS` keeps its full strength on the `Global Constraints` H4, which is the last block of Goal and Boundary and gives the rule the same text as before the move, the old-shape branch reads the allowed H2 through the accessor, and every promotion table carries the four common columns and each recorded row its one added `Acceptance` cell; the value of `schema_version` is unchanged and the Task records the level NO_CHANGE with its reason; the tests fail first and then pass. |
+| VAL-SPECPLAN-002 | Both templates, the frozen Spec and Plan of SPEC-0161 and the Spec and Plan of every open package pass the tree, body-contract, table, link and markdownlint checks; the frozen files hold the bytes the user reviewed; no link names the old anchor and every recorded evidence row differs at most by the mapped fragment; the texts are updated; the final source commit retires both exemptions and the gates refuse the same edits again; validator output over the tree is otherwise unchanged; exact-index QA and the commit hooks pass. |
+
+### Evidence Requirements
 
 - Before and after, record the four strict document validators over the tree; diagnostics after must equal those before.
 - For the frozen Spec and Plan: the sorted non-heading, non-blank lines before and after, whose only differences are the lines listed in the Task; their sha256 after the move equals the reviewed value.
@@ -91,14 +103,15 @@ If a sentence of the frozen Spec or Plan cannot be placed without changing its m
 - `python3 scripts/run-contract-tests.py --root . --suite document`, `--suite document-lifecycle`, `--suite agent-governance` and `--suite validation-routing`.
 - `python3 scripts/validation/repository/quality.py --root .`; markdownlint over the edited Markdown; `ruff check scripts tests`; `python3 scripts/qa.py staged` and the commit hooks on the exact index.
 
-## Success Criteria & Verification Plan
+## References
 
-| Criterion | Acceptance evidence |
-| --- | --- |
-| VAL-SPECPLAN-001 | The registry holds the Spec and Plan forms, the Spec's local extension, the moved body contracts with the Spec's `Architecture` link column, and both TemplateDefinitions with their tables and `contract_version`; the four profiles carry no H2 lists and both derived records pass `REGISTRY_TEMPLATE_RECORD`; `PLAN-PROMOTION`, `PLAN-GLOBAL-CONSTRAINTS` and `TASK-PARENT-APPROVAL` are shown active on the repository registry with the forms bound; they and `COMPLETION-CRITERIA` read the form shape by section id and still read the old shape for an old registry; `PLAN-GLOBAL-CONSTRAINTS` keeps its full strength on the `Global Constraints` H4, which is the last block of Goal and Boundary and gives the rule the same text as before the move, the old-shape branch reads the allowed H2 through the accessor, and every promotion table carries the four common columns and each recorded row its one added `Acceptance` cell; the value of `schema_version` is unchanged and the Task records the level NO_CHANGE with its reason; the tests fail first and then pass. |
-| VAL-SPECPLAN-002 | Both templates, the frozen Spec and Plan of SPEC-0161 and the Spec and Plan of every open package pass the tree, body-contract, table, link and markdownlint checks; the frozen files hold the bytes the user reviewed; no link names the old anchor and every recorded evidence row differs at most by the mapped fragment; the texts are updated; the final source commit retires both exemptions and the gates refuse the same edits again; validator output over the tree is otherwise unchanged; exact-index QA and the commit hooks pass. |
+### Normative and Evidence
 
-## Traceability
+No separate reference list is kept; the requirement, architecture and decision owners this Spec relies on are linked in [Lifecycle Traceability](#lifecycle-traceability) below.
+
+### Historical and Navigation
+
+No separate reference list is kept; this Spec holds no historical or navigation links beyond the [Plan](plan.md) and the Task that its Overview names.
 
 ### Lifecycle Traceability
 

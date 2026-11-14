@@ -27,7 +27,7 @@ parent_ids: ["{{PARENT_ID}}"]
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan) | One bounded change | {{OWNER}} | frontmatter | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#criteria) | One bounded change | {{OWNER}} | frontmatter | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
@@ -37,7 +37,7 @@ parent_ids: ["{{PARENT_ID}}"]
 
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| EVD-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan) | WORK-001 | Named deterministic check | Exact revision or fixture | NOT_RUN | Pending | yes | none |
+| EVD-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#criteria) | WORK-001 | Named deterministic check | Exact revision or fixture | NOT_RUN | Pending | yes | none |
 
 ## Criterion Acceptance
 
@@ -45,7 +45,7 @@ parent_ids: ["{{PARENT_ID}}"]
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan) | pending | none | Run named deterministic check | {{OWNER}} |
+| [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#criteria) | pending | none | Run named deterministic check | {{OWNER}} |
 
 ## Approval and Safety Boundaries
 

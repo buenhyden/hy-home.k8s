@@ -217,7 +217,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 .replace(
                     "| NOT_RUN | Pending | yes | none |",
                     "| NOT_RUN | Pending | yes | none |\n"
-                    "| EVD-002 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) "
+                    "| EVD-002 | [VAL-P02-004](../spec.md#criteria) "
                     "| WORK-004 | Named deterministic check | Exact revision or fixture "
                     "| PASS | [Synthetic fixture result](#verification-summary) | yes | EVD-001 |",
                 )
@@ -253,8 +253,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 text = text.replace(placeholder, value)
             text = text.replace(
                 "| {{DURABLE_CONTRACT}} | [{{CURRENT_AUTHORITY_TITLE}}]"
-                "({{CURRENT_AUTHORITY_PATH}}) | {{LOCATION_IN_OWNER}} |",
-                "| none | none | No durable contract was introduced |",
+                "({{CURRENT_AUTHORITY_PATH}}) | {{ACCEPTANCE_CONDITION}} "
+                "| {{LOCATION_IN_OWNER}} |",
+                "| none | none | none | No durable contract was introduced |",
             )
             self.assertNotIn("{{", text)
             self.git.commit(f"{package}/{name}", text.encode())
@@ -293,14 +294,20 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 text = text.replace(placeholder, value)
             text = text.replace(
                 "| {{DURABLE_CONTRACT}} | [{{CURRENT_AUTHORITY_TITLE}}]"
-                "({{CURRENT_AUTHORITY_PATH}}) | {{LOCATION_IN_OWNER}} |",
-                "| none | none | No durable contract was introduced |",
+                "({{CURRENT_AUTHORITY_PATH}}) | {{ACCEPTANCE_CONDITION}} "
+                "| {{LOCATION_IN_OWNER}} |",
+                "| none | none | none | No durable contract was introduced |",
             )
             if name == "plan.md":
                 text = text.replace(
-                    "## Global Constraints\n\n",
-                    "## Global Constraints\n\n"
-                    "The approved [Spec](spec.md#strategic-boundaries--non-goals) "
+                    "### Goal and Boundary\n\n",
+                    "### Goal and Boundary\n\nThe synthetic goal and its boundary.\n\n",
+                    1,
+                )
+                text = text.replace(
+                    "#### Global Constraints\n\n",
+                    "#### Global Constraints\n\n"
+                    "The approved [Spec](spec.md#scope) "
                     "defines this synthetic package's scope and review boundary.\n\n",
                     1,
                 )
@@ -332,10 +339,10 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         task = task.replace(
             "| NOT_RUN | Pending | yes | none |",
             "| NOT_RUN | Pending | yes | none |\n"
-            "| EVD-002 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) "
+            "| EVD-002 | [VAL-P02-004](../spec.md#criteria) "
             f"| WORK-004 | Independent semantic review | {review_input} | PASS | "
             "Synthetic reviewer receipt | yes | none |\n"
-            "| EVD-003 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) "
+            "| EVD-003 | [VAL-P02-004](../spec.md#criteria) "
             f"| WORK-004 | Spec/Plan first-record approval | {approval_input} | PASS | "
             "Synthetic user approval receipt | yes | none |",
             1,
