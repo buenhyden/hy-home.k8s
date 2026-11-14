@@ -1,6 +1,6 @@
 ---
 title: "W03 Quality Policy Rule IDs"
-version: "0.1.1"
+version: "0.1.2"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -43,9 +43,9 @@ This Task records Policy package 3b of handoff W03-H29 (W03-D42 to W03-D44, W03-
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-QUALRULE-001](../spec.md#criteria) | Tokens, the Rules table and the `adopted` state for the policy. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-QUALRULE-002](../spec.md#criteria) | The map of each ID to its unit with its Level, Condition and Evidence; the stripped-body comparison; the anchor and slug checks; the lookup of every named check; the version step. | platform | ready | NOT_RUN | Pending |
-| WORK-003 | [VAL-QUALRULE-003](../spec.md#criteria) | W03-D60, the W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-QUALRULE-001](../spec.md#criteria) | Tokens, the Rules table and the `adopted` state for the policy. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-QUALRULE-002](../spec.md#criteria) | The map of each ID to its unit with its Level, Condition and Evidence; the stripped-body comparison; the anchor and slug checks; the lookup of every named check; the version step. | platform | in-progress | NOT_RUN | Pending |
+| WORK-003 | [VAL-QUALRULE-003](../spec.md#criteria) | W03-D60, the W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
 
 ## Task Evidence
 
