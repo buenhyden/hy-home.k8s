@@ -26,7 +26,8 @@ from document_authority import (
     validate_registry_authority,
 )
 from json_schema_validation import SchemaEvaluationError, schema_errors
-from semver_grammar import SEMVER_PATTERN
+from document_language import classify as _document_language_classify
+from semver_grammar import SEMVER_PATTERN, is_semver
 from validation.repository.bounded_io import (
     BoundedInputError,
     read_bytes as read_bounded_bytes,
@@ -2549,17 +2550,19 @@ def _policy_rule_faults(
 def current_registry_diagnostics(
     root: Path, raw_registry: Mapping[str, Any]
 ) -> tuple[Diagnostic, ...]:
-    """SPEC-0181, SPEC-0193 and SPEC-0194 checks of the current registry's records.
+    """SPEC-0181, SPEC-0193, SPEC-0194 and SPEC-0196 checks of the current registry.
 
     The SPEC-0181 checks cover the key, dialect and extension records, the
-    SPEC-0193 checks the relationship contract and the SPEC-0194 checks the
-    policy rule ID section. These refuse what a
+    SPEC-0193 checks the relationship contract, the SPEC-0194 checks the
+    policy rule ID section and the SPEC-0196 checks the TemplateDefinition
+    record of every template. These refuse what a
     comparison-base registry legitimately lacks, so they run from the strict
     registry validator and never on the load path.
     """
 
     faults = _relationship_faults(root, raw_registry)
     faults.extend(_policy_rule_faults(root, raw_registry))
+    faults.extend(_template_record_faults(root, raw_registry))
     keys = raw_registry.get("frontmatter_keys")
     if keys is None:
         faults.append(
@@ -2662,6 +2665,402 @@ def current_registry_diagnostics(
         _diagnostic(rule, profile=profile, expected=expected, actual=actual)
         for rule, expected, actual, profile in faults
     )
+
+
+# SPEC-0196: the package's 19 TemplateDefinition fields, in its required order.
+TEMPLATE_RECORD_FIELDS = (
+    "template_id",
+    "contract_version",
+    "role",
+    "purpose",
+    "responsibility",
+    "non_goals",
+    "policy_refs",
+    "vocabulary_refs",
+    "applicability",
+    "metadata",
+    "headings",
+    "tables",
+    "relationships",
+    "lifecycle",
+    "language",
+    "consumer_paths",
+    "validation",
+    "migration",
+    "extensions",
+)
+TEMPLATE_SCHEMA_PATH = PurePosixPath(
+    "docs/99.templates/contracts/template-definition.schema.json"
+)
+HEADINGS_EXTENSION_ID = "provider-native-empty-headings"
+HEADINGS_EXTENSION_TEXTS = ("condition", "owner", "verification", "review", "removal")
+_CONTRACT_VERSION_ID = re.compile(r"[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+")
+_KEY_CONDITION = {
+    "required": "The key is always present.",
+    "optional": "The key may be omitted.",
+    "forbidden": "The key must never appear.",
+}
+_RECORD_SECTION_FIELDS = (
+    "section_id",
+    "level",
+    "parent_id",
+    "title",
+    "order",
+    "requiredness",
+    "condition",
+    "content",
+    "required_content",
+    "prohibited_content",
+    "empty_policy",
+    "validation_ids",
+)
+
+
+def _join_review(review: Any, removal: Any) -> str:
+    """The review and the removal criterion of an extension as one sentence."""
+
+    return f"{str(review).rstrip('.')}; {removal}"
+
+
+def _record_section(item: Mapping[str, Any]) -> dict[str, Any]:
+    """One form section as a package heading: every field but the local flag."""
+
+    section = {name: copy.deepcopy(item[name]) for name in _RECORD_SECTION_FIELDS}
+    section["children"] = [_record_section(child) for child in item["children"]]
+    return section
+
+
+def _sample_path(pattern: str) -> PurePosixPath:
+    """A path the profile pattern accepts, built from the first alternatives."""
+
+    text = re.sub(r"\(\?![^()]*\)", "", pattern.removeprefix("^").removesuffix("$"))
+    previous = None
+    while previous != text:
+        previous = text
+        text = re.sub(
+            r"\(\?:([^()]*)\)[*?+]?", lambda found: found.group(1).split("|")[0], text
+        )
+    text = re.sub(r"\[[^\]]*\](?:\{[0-9,]+\}|[*+?])?", "x", text)
+    return PurePosixPath(text.replace("\\", ""))
+
+
+def _record_language(
+    raw_registry: Mapping[str, Any],
+    source: Mapping[str, Any],
+    form: Mapping[str, Any] | None,
+) -> str:
+    contract = _document_language_from_mapping(raw_registry.get("document_language"))
+    name = None
+    if contract is not None:
+        name = _document_language_classify(
+            _sample_path(source["path_pattern"]),
+            source["id"],
+            source["mode"],
+            None,
+            False,
+            contract,
+        )
+    text = (
+        f"{source['id']} answers to the {name} language class of document_language."
+        if name
+        else f"{source['id']} answers to no document_language class."
+    )
+    return f"{text} Form language rule: {form['language_rule']}" if form else text
+
+
+def template_definition_record(
+    raw_registry: Mapping[str, Any], profile_id: str
+) -> dict[str, Any]:
+    """SPEC-0196: the 19-field TemplateDefinition record of one template profile.
+
+    Eleven fields are stored in the definition; the other eight are derived from
+    the source profile, the role's form, ``frontmatter_keys``,
+    ``relationship_contract``, ``lifecycle_domains`` and ``document_language``,
+    so a change at that owner changes the record. The function reads the registry
+    mapping only. For a role without a form, ``headings`` is empty and
+    ``extensions`` comes from the definition's ``headings_extension``.
+    """
+
+    profiles = {item["id"]: item for item in raw_registry["profiles"]}
+    profile = profiles.get(profile_id)
+    if (
+        profile is None
+        or profile["mode"] != "template"
+        or "template_definition" not in profile
+    ):
+        raise ValueError(f"{profile_id} is not a template profile with a definition")
+    definition = profile["template_definition"]
+    role = profile["document_role"]
+    source_ids = profile["relationships"]["source_profile_ids"]
+    if len(source_ids) != 1:
+        raise ValueError(f"{profile_id} must name exactly one source profile")
+    source = profiles[source_ids[0]]
+    form = next(
+        (
+            item
+            for item in (raw_registry.get("common_forms") or {}).get("forms", ())
+            if item["form_id"] == role
+        ),
+        None,
+    )
+
+    metadata: list[dict[str, Any]] = []
+    lists = source["frontmatter"]
+    if lists["mode"] != "absent":
+        entries = {item["key"]: item for item in raw_registry["frontmatter_keys"]}
+        for listed, requiredness in (
+            ("required", "required"),
+            ("optional", None),
+            ("forbidden", "forbidden"),
+        ):
+            for name in lists[listed]:
+                entry = entries[name]
+                kind = requiredness or (
+                    "conditional" if entry["condition"] else "optional"
+                )
+                writer = entry["authoring_owner"]
+                if entry["derived_from"]:
+                    writer += f"; derived from {entry['derived_from']}"
+                metadata.append(
+                    {
+                        "name": name,
+                        "meaning": entry["purpose"],
+                        "data_type": entry["data_type"],
+                        "requiredness": kind,
+                        "condition": entry["condition"] or _KEY_CONDITION[kind],
+                        "writer": writer,
+                        "consumers": list(entry["consumer_paths"]),
+                    }
+                )
+
+    named = {profile_id, source["id"]}
+    relationships = []
+    for relation in (raw_registry.get("relationship_contract") or {}).get(
+        "relations", ()
+    ):
+        sources = named & set(relation["source_profile_ids"])
+        targets = named & set(relation["target_profile_ids"])
+        if sources or targets:
+            sides = " and ".join(
+                side
+                for side, found in (("source", sources), ("target", targets))
+                if found
+            )
+            cardinality = relation["cardinality"]
+            relationships.append(
+                f"Relation {relation['id']} (kind {relation['kind']}, direction "
+                f"{relation['direction']}): {', '.join(sorted(sources | targets))} "
+                f"is a {sides}; cardinality {cardinality['per_source']} per source "
+                f"and {cardinality['per_target']} per target."
+            )
+
+    domain = next(
+        (
+            item
+            for item in raw_registry["lifecycle_domains"]
+            if source["id"] in item["profile_ids"]
+        ),
+        None,
+    )
+    if domain is None:
+        lifecycle = (
+            f"{source['id']} binds no lifecycle domain; its documents carry no "
+            "lifecycle state."
+        )
+    else:
+        inbound = {target for _, target in domain["transitions"]}
+        initial = domain.get("initial_states") or [
+            state for state in domain["states"] if state not in inbound
+        ]
+        lifecycle = (
+            f"{source['id']} follows the {domain['family']} lifecycle with states "
+            f"{', '.join(domain['states'])} and initial states {', '.join(initial)}."
+        )
+
+    extensions: list[dict[str, str]] = []
+    if form is not None:
+        for item in form["extensions"]:
+            delta = f"{item['kind']} {item['id']}"
+            if item.get("title"):
+                delta += f" ({item['title']!r} under {item['parent_id']})"
+            extensions.append(
+                {
+                    "condition": item["condition"],
+                    "owner": item["owner"],
+                    "delta": delta,
+                    "validation": item["verification"],
+                    "expiry_or_review": _join_review(item["review"], item["removal"]),
+                }
+            )
+    elif isinstance(definition.get("headings_extension"), Mapping):
+        item = definition["headings_extension"]
+        extensions.append(
+            {
+                "condition": item.get("condition", ""),
+                "owner": item.get("owner", ""),
+                "delta": f"empty_headings {item.get('id', '')}",
+                "validation": item.get("verification", ""),
+                "expiry_or_review": _join_review(
+                    item.get("review", ""), item.get("removal", "")
+                ),
+            }
+        )
+
+    record = {
+        "template_id": profile_id,
+        "contract_version": definition["contract_version"],
+        "role": role,
+        "purpose": definition["purpose"],
+        "responsibility": definition["responsibility"],
+        "non_goals": definition["non_goals"],
+        "policy_refs": definition["policy_refs"],
+        "vocabulary_refs": definition["vocabulary_refs"],
+        "applicability": definition["applicability"],
+        "metadata": metadata,
+        "headings": []
+        if form is None
+        else [_record_section(item) for item in form["sections"]],
+        "tables": definition["tables"],
+        "relationships": relationships,
+        "lifecycle": lifecycle,
+        "language": _record_language(raw_registry, source, form),
+        "consumer_paths": definition["consumer_paths"],
+        "validation": definition["validation"],
+        "migration": definition["migration"],
+        "extensions": extensions,
+    }
+    return copy.deepcopy(record)
+
+
+def _headings_extension_faults(
+    role: str | None,
+    has_form: bool,
+    definition: Mapping[str, Any],
+    owners: set[str],
+) -> list[str]:
+    """SPEC-0196 (W03-D65): what is wrong with a definition's headings_extension."""
+
+    stored = definition.get("headings_extension")
+    if has_form or role != "provider-native":
+        if stored is None:
+            return []
+        return [
+            "no headings_extension on a role with a form or outside provider-native"
+        ]
+    if not isinstance(stored, Mapping):
+        return ["a headings_extension record on a role without a form"]
+    faults: list[str] = []
+    expected = {"id", *HEADINGS_EXTENSION_TEXTS}
+    for name in sorted(expected - set(stored)):
+        faults.append(f"field {name} present")
+    for name in sorted(set(stored) - expected):
+        faults.append(f"no unknown key {name!r}")
+    for name in sorted(expected & set(stored)):
+        value = stored[name]
+        if not isinstance(value, str) or not value.strip():
+            faults.append(f"field {name} non-empty text")
+    if "id" in stored and stored["id"] != HEADINGS_EXTENSION_ID:
+        faults.append(f"id {HEADINGS_EXTENSION_ID}")
+    if isinstance(stored.get("owner"), str) and stored["owner"] not in owners:
+        faults.append(f"an owner of {sorted(owners)}")
+    return faults
+
+
+def _template_record_faults(
+    root: Path, raw_registry: Mapping[str, Any]
+) -> list[tuple[str, str, str, str]]:
+    """SPEC-0196 checks: each definition's contract version and derived record."""
+
+    faults: list[tuple[str, str, str, str]] = []
+    schema = load_json_file(
+        root / TEMPLATE_SCHEMA_PATH, diagnostic_path=TEMPLATE_SCHEMA_PATH
+    )
+    common = raw_registry.get("common_forms") or {}
+    forms = {item["form_id"]: item for item in common.get("forms", ())}
+    owners = {
+        item["owner"] for form in forms.values() for item in form["extensions"]
+    } | {(raw_registry.get("shared_contract") or {}).get("owner")}
+    owners.discard(None)
+    versions: dict[Any, set[str]] = {}
+    for profile in raw_registry["profiles"]:
+        definition = profile.get("template_definition")
+        if definition is None or profile["mode"] != "template":
+            continue
+        profile_id, role = profile["id"], profile.get("document_role")
+        has_form = role in forms
+        version = definition.get("contract_version")
+        if not isinstance(version, str):
+            continue
+        versions.setdefault(role, set()).add(version)
+        name, slash, number = version.partition("/")
+        if not (slash and _CONTRACT_VERSION_ID.fullmatch(name) and is_semver(number)):
+            faults.append(
+                (
+                    "REGISTRY_TEMPLATE_RECORD",
+                    "a contract identifier, a slash and a SemVer value",
+                    f"contract_version {version!r}",
+                    profile_id,
+                )
+            )
+        elif name == common.get("contract_id") and (
+            not has_form or number != common.get("version")
+        ):
+            faults.append(
+                (
+                    "REGISTRY_TEMPLATE_RECORD",
+                    f"{name}/{common.get('version')} only on a role with a form",
+                    f"contract_version {version!r} on role {role}",
+                    profile_id,
+                )
+            )
+        problems = _headings_extension_faults(role, has_form, definition, owners)
+        faults.extend(
+            (
+                "REGISTRY_TEMPLATE_EXTENSION",
+                f"a valid headings_extension: {item}",
+                f"role {role}",
+                profile_id,
+            )
+            for item in problems
+        )
+        try:
+            errors = schema_errors(
+                schema, template_definition_record(raw_registry, profile_id)
+            )
+        except (KeyError, TypeError, ValueError, SchemaEvaluationError) as exc:
+            faults.append(
+                (
+                    "REGISTRY_TEMPLATE_RECORD",
+                    "a record derivable from the registry",
+                    f"{type(exc).__name__}: {exc}"[:200],
+                    profile_id,
+                )
+            )
+            continue
+        tolerate = not has_form and role == "provider-native" and not problems
+        for error in errors:
+            where = ".".join(str(part) for part in error.absolute_path) or "record"
+            if tolerate and error.validator == "minItems" and where == "headings":
+                continue
+            faults.append(
+                (
+                    "REGISTRY_TEMPLATE_RECORD",
+                    "a record valid against the template definition schema",
+                    f"{where}: {error.message}"[:200],
+                    profile_id,
+                )
+            )
+    for role, values in versions.items():
+        if len(values) > 1:
+            faults.append(
+                (
+                    "REGISTRY_TEMPLATE_RECORD",
+                    "one contract_version per role",
+                    f"role {role}: {sorted(values)!r}",
+                    "",
+                )
+            )
+    return faults
 
 
 def _schema_grammar(prop: Mapping[str, Any], defs: Mapping[str, Any]) -> str:
@@ -2892,20 +3291,15 @@ def _form_section_diagnostics(
     return faults
 
 
-_TABLE_HEADING_LINE = re.compile(r"(#{2,3}) (\S(?:.*\S)?)")
-
-
 def _table_diagnostics(
     tables: Sequence[Mapping[str, Any]],
     form: Mapping[str, Any] | None,
     body_contract: Mapping[str, Any] | None,
-    required_h2: Sequence[str] = (),
 ) -> list[tuple[str, str, str]]:
     """Check each template table against its role's form and the body contract.
 
-    A role without a form names a table's section by its template heading line;
-    no template body is read here, so only the line's shape and an H2 title in
-    the profile's required list are checked (BODY-TABLE-SECTION reads the body).
+    A table names a section ID or local H3 extension ID of its role's form; a
+    role without a form records no table.
     """
 
     section_ids: set[str] = set()
@@ -2923,18 +3317,13 @@ def _table_diagnostics(
         name = table["name"]
         keys = [column["key"] for column in table["columns"]]
         if form is None:
-            heading = _TABLE_HEADING_LINE.fullmatch(table["section"])
-            if heading is None or (
-                len(heading.group(1)) == 2 and heading.group(2) not in required_h2
-            ):
-                faults.append(
-                    (
-                        "REGISTRY_TABLE_SECTION",
-                        "an H3 heading line, or an H2 heading line whose title "
-                        "is in the profile's required list",
-                        f"{name}: {table['section']!r}",
-                    )
+            faults.append(
+                (
+                    "REGISTRY_TABLE_SECTION",
+                    "no table on a role without a form",
+                    f"{name}: {table['section']!r}",
                 )
+            )
         elif table["section"] not in section_ids:
             faults.append(
                 (
@@ -3033,7 +3422,6 @@ def _form_registry_diagnostics(
                 definition["tables"],
                 forms_by_role.get(role),
                 profile["relationships"]["body_contract"],
-                profile["sections"]["required"],
             )
         )
         for named in definition["consumer_paths"]:

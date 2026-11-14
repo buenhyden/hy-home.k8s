@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.31.1"
+version: "0.32.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -69,7 +69,7 @@ WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 
 | Surface | Role | Canonical owner |
 | --- | --- | --- |
-| Machine contract | 경로를 정확히 하나의 profile과 form으로 분류하고 lifecycle edge를 검증한다. | [Document Profile Registry](./registry.json)와 [`contracts/`](./contracts/)의 두 schema |
+| Machine contract | 경로를 정확히 하나의 profile과 form으로 분류하고 lifecycle edge를 검증한다. | [Document Profile Registry](./registry.json)와 [`contracts/`](./contracts/)의 네 schema |
 | Human guidance | profile을 고르고 안전하게 작성·검증·복구하는 방법을 설명하며 machine authority가 아니다. | 이 README |
 | Forms | 작성자가 복사한 뒤 topic-specific 사실과 증거로 채우는 최소 구조를 제공한다. | [`templates/`](#physical-form-inventory) |
 | Authored documents | 요구, 결정, 명세, 실행, 운영, 참조를 소유한다. | `docs/01.requirements`부터 `docs/05.operations`, `docs/90.references` |
@@ -133,9 +133,18 @@ form 경로의 대응은 Registry만 소유한다.
   `provider-native`를 뺀 모든 Stage 99 지역 역할은 각자의 지역 form을 쓰며,
   W03-D35와 W03-D36에 따라 `reference-report`는 감사·연구·데이터 보고서가
   함께 쓰는 form 하나를 가진다. `provider-native`만 form 없는 Stage 99 지역
-  역할과 TemplateDefinition을 갖는다. SPEC-0195가 `requirement` 템플릿의
+  역할이며 table을 기록하지 않는다. SPEC-0195가 `requirement` 템플릿의
   TemplateDefinition을 더했고, 나머지 다섯 SDLC 템플릿의
-  TemplateDefinition은 3단계에서 더한다.
+  TemplateDefinition은 3단계에서 더한다. TemplateDefinition은 열한 필드를
+  Registry에 저장하고(`contract_version` 포함) 나머지 여덟 필드는
+  `template_definition_record`가 profile, form, 키·관계·생명주기·언어 소유자에서
+  유도하며, Registry 검증이 모든 record를
+  `contracts/`의 `template-definition.schema.json`(패키지 schema의 바이트 사본,
+  SHA-256으로 고정)에 맞춰 검사한다.
+  `contract_version`은 COMMON-DOC-FORM-1 역할에서 `COMMON-DOC-FORM-1/`과 공통
+  form 버전, Stage 99 지역 역할에서 `STAGE99-LOCAL-FORM-1/1.0.0`이다.
+  `provider-native`의 빈 heading은 조건·소유자·검증·검토·제거 기준을 갖는
+  조건부 확장(`headings_extension`)으로 기록한다.
 - **Core SDLC forms**: physical `requirements/`, `architecture/`, `specs/`
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
   `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의

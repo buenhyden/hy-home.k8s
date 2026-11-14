@@ -20,7 +20,7 @@
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
     "schema_version": {
-      "const": "13.0.0"
+      "const": "14.0.0"
     },
     "shared_contract": {
       "description": "Identifies reviewed common input and the local adapter; structural validity does not authenticate approval or adoption.",
@@ -1512,10 +1512,11 @@
       }
     },
     "template_definition": {
-      "description": "The TemplateDefinition fields a registry stores; role, version, headings and the rest are derived.",
+      "description": "The eleven TemplateDefinition fields a registry stores; the other eight (template_id, role, metadata, headings, relationships, lifecycle, language and extensions) are derived by template_definition_record and validated against template-definition.schema.json. headings_extension, stored only on a role without a form, feeds the derived extensions field.",
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "contract_version",
         "purpose",
         "responsibility",
         "non_goals",
@@ -1528,6 +1529,15 @@
         "migration"
       ],
       "properties": {
+        "contract_version": {
+          "description": "A contract identifier, a slash and a SemVer value: COMMON-DOC-FORM-1 and the common_forms version for a COMMON-DOC-FORM-1 role, STAGE99-LOCAL-FORM-1/1.0.0 for a Stage 99 local role. REGISTRY_TEMPLATE_RECORD owns the grammar.",
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "headings_extension": {
+          "description": "Only on a role without a form (provider-native): the conditional extension that records its empty headings, with an id, condition, owner, verification, review and removal. REGISTRY_TEMPLATE_EXTENSION owns its shape.",
+          "type": "object"
+        },
         "purpose": {
           "type": "string",
           "pattern": "\\S"
@@ -1662,7 +1672,7 @@
           "minLength": 1
         },
         "section": {
-          "description": "For a role with a form, a section ID or local H3 extension ID of that form; for a role without a form, the exact heading line that holds the table in the template, an H2 or H3 such as '## Sources' or '### Claim-Source Matrix'.",
+          "description": "A section ID or local H3 extension ID of the role's form; a role without a form records no table.",
           "type": "string",
           "minLength": 1
         },
