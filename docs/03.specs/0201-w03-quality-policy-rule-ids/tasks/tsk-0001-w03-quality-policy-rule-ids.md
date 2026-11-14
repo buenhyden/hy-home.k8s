@@ -1,6 +1,6 @@
 ---
 title: "W03 Quality Policy Rule IDs"
-version: "0.1.2"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -43,9 +43,9 @@ This Task records Policy package 3b of handoff W03-H29 (W03-D42 to W03-D44, W03-
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-QUALRULE-001](../spec.md#criteria) | Tokens, the Rules table and the `adopted` state for the policy. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-QUALRULE-002](../spec.md#criteria) | The map of each ID to its unit with its Level, Condition and Evidence; the stripped-body comparison; the anchor and slug checks; the lookup of every named check; the version step. | platform | in-progress | NOT_RUN | Pending |
-| WORK-003 | [VAL-QUALRULE-003](../spec.md#criteria) | W03-D60, the W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-QUALRULE-001](../spec.md#criteria) | Tokens, the Rules table and the `adopted` state for the policy. | platform | completed | PASS | EVD-005, EVD-006, EVD-007, EVD-018 |
+| WORK-002 | [VAL-QUALRULE-002](../spec.md#criteria) | The map of each ID to its unit with its Level, Condition and Evidence; the stripped-body comparison; the anchor and slug checks; the lookup of every named check; the version step. | platform | completed | PASS | EVD-008, EVD-009, EVD-010, EVD-011 |
+| WORK-003 | [VAL-QUALRULE-003](../spec.md#criteria) | W03-D60, the W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | completed | PASS | EVD-012, EVD-013, EVD-019, EVD-020, EVD-021 |
 
 ## Task Evidence
 
@@ -71,14 +71,23 @@ This Task records Policy package 3b of handoff W03-H29 (W03-D42 to W03-D44, W03-
 | EVD-018 | [VAL-QUALRULE-001](../spec.md#criteria) | WORK-001 | Replay onto the base after SPEC-0200 | {"base":"9aab4a4bbe203220498f2e282bcfacc5a05368d8","policy_sha256":"ab844630a06a7cbce8cb1ac8523fcb44bd01ebeb3f40d9b43c0185f87e521f2c","registry_sha256":"1aff5006fabb1612a8ec8cb8388fae55b284a86636ca56546e99cdb104b87a31"} | PASS | The implementation of EVD-005 to EVD-013 (base 035143d1) was replayed on main 9aab4a4b, after SPEC-0199 and SPEC-0200: the policy and registry patches applied without conflict, because the policy has no commit between 8daf643f and this base; the QUAL state pending to adopted is the only registry hunk, so ten governance policies are adopted and the five operations policies stay pending. The Spec and Plan moved to the SPEC-0200 forms (EVD-016, EVD-017); the Task links to the Spec criteria use #criteria. The registry schema_version stays 15.0.0. docs/03.specs/README.md lists the package in its tree and open-package sentence. | yes | none |
 | EVD-019 | [VAL-QUALRULE-003](../spec.md#criteria) | WORK-003 | Focused checks after the replay | {"files":["docs/03.specs/0201-w03-quality-policy-rule-ids",".agents/governance/quality.md","docs/99.templates/registry.json"]} | PASS | python3 -m unittest tests.test_policy_rule_ids passes; the four strict validators, the staged lifecycle check, the work residue ledger gate and scripts/validation/repository/quality.py pass; markdownlint reports 0 issues and git diff --check is clean. detect-secrets on a scratchpad copy of HEAD:.secrets.baseline with the pre-commit exclude-lines refuses this Task file for the JSON digests of its Evidence rows, so the Task needs reviewed baseline entries at commit; the policy, the registry, the Spec and the Plan draw none, and the registry.json entry does not move. The shared suites of EVD-012 are not run per package (W03-D83). | yes | none |
 | EVD-020 | [VAL-QUALRULE-003](../spec.md#criteria) | WORK-003 | SPEC-0161 Task rows and residue ledger entry | {"owner_files":["docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md","docs/03.specs/work-residue-ledger.json","docs/03.specs/README.md"]} | PASS | Written for the package commit: the W03-D60 and W03-D84 decision rows with the user's words, evidence rows EVD-101 and EVD-102, the W03-H29 state cell, Residue Handoff row and ledger entry refreshed to name all ten adopted governance policies, the SPEC-0161 Task version 0.1.58, and the README tree line and open-package sentence. The ledger gate passes. Exact-index QA stays with EVD-014. | yes | EVD-015 |
+| EVD-021 | [VAL-QUALRULE-003](../spec.md#criteria) | WORK-003 | Exact-index QA and staged lifecycle check | Pre-commit hooks over the final index of `3beb0e07` in the pinned validation environment, 2026-11-15 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | EVD-014 |
+| EVD-022 | [VAL-QUALRULE-003](../spec.md#criteria) | WORK-003 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-QUALRULE-001](../spec.md#criteria) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-QUALRULE-002](../spec.md#criteria) | pending | none | Implement WORK-002 and record PASS evidence | platform |
-| [VAL-QUALRULE-003](../spec.md#criteria) | pending | none | Implement WORK-003 and record PASS evidence | platform |
+| [VAL-QUALRULE-001](../spec.md#criteria) | accepted | EVD-005, EVD-006, EVD-007, EVD-018 | Accepted by the user on 2026-11-15 (direct answer "Accept (Recommended)" to the SPEC-0201 acceptance question naming commit `3beb0e07`) | platform |
+| [VAL-QUALRULE-002](../spec.md#criteria) | accepted | EVD-008, EVD-009, EVD-010, EVD-011 | Accepted by the user on 2026-11-15 (direct answer "Accept (Recommended)" to the SPEC-0201 acceptance question naming commit `3beb0e07`) | platform |
+| [VAL-QUALRULE-003](../spec.md#criteria) | accepted | EVD-012, EVD-013, EVD-019, EVD-020, EVD-021 | Accepted by the user on 2026-11-15 (direct answer "Accept (Recommended)" to the SPEC-0201 acceptance question naming commit `3beb0e07`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The SPEC-0161 decision rows W03-D60 and W03-D84 and their evidence rows EVD-101 and EVD-102 cite this package by identifier only and stay valid after its retirement. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -93,4 +102,4 @@ This Task records Policy package 3b of handoff W03-H29 (W03-D42 to W03-D44, W03-
 
 ## Verification Summary
 
-Spec and Plan drafted; no review, approval or implementation is recorded yet.
+Spec and Plan drafted; no review, approval or implementation is recorded yet. Implementation commit `3beb0e07` passed exact-index QA in the hooks (EVD-021); the user accepted the package on 2026-11-15, and the approval of commit, push, PR and merge covers the package exit (EVD-022).
