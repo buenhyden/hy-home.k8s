@@ -1,6 +1,6 @@
 ---
 title: "Accepted Decision Retained Form"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -137,4 +137,4 @@ leaves every other clause of it in force.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0059](./0059-registry-common-form-model.md) | Narrows only Decision 5 by dated clarification; replaces no paragraph and every other clause stays | [SPEC-0198](../../03.specs/0198-w03-adr-form/spec.md) |
+| [ADR-0059](./0059-registry-common-form-model.md) | Narrows only Decision 5 by dated clarification; replaces no paragraph and every other clause stays | N/A — SPEC-0198 left the tree; Git history recovers it |
