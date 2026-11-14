@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.23.77"
+version: "0.23.78"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -67,13 +67,14 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ```text
 03.specs/
 ├── 0161-w00-v14-7-delta-intake/
+├── 0196-w03-full-template-definition/
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
 └── work-residue-ledger.json
 ```
 
-현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, W11까지 잔여 소유자로 남고 work residue ledger가 비면 W11에서 종료한다.
+현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, W11까지 잔여 소유자로 남고 work residue ledger가 비면 W11에서 종료한다. [SPEC-0196 W03 Full TemplateDefinition Record](./0196-w03-full-template-definition/)는 모든 template의 전체 TemplateDefinition record를 도출하고 package schema 사본으로 검증한다.
 
 [work-residue-ledger.json](./work-residue-ledger.json)은 열린 인계·충돌·채택·조사 잔여 항목을 포인터로만 담는 work residue ledger다. 실행 상태, 증거, 수용은 담지 않고 Task가 소유한다. 종결된 항목은 그 Task가 속한 package의 종료 commit까지 삭제한다.
 
