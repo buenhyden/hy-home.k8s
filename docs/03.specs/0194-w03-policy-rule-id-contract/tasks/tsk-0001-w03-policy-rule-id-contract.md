@@ -1,6 +1,6 @@
 ---
 title: "W03 Policy Rule ID Contract"
-version: "0.1.2"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -27,9 +27,9 @@ This Task records Policy package 2 of handoff W03-H29 (W03-D42 to W03-D44): the 
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RULEID-001](../spec.md#success-criteria--verification-plan) | The registry section and its schema, the authority key, the loader, `REGISTRY_POLICY_RULE_CODE`, the fifteen records, the table's condition, the `Status` extension, the conditional table in both definitions and both templates, and the changed Policy table tests. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-RULEID-002](../spec.md#success-criteria--verification-plan) | The six document rules and the adoption gate; `tests/test_policy_rule_ids.py`, its suite membership and its surface route; the generator's recorded authoring set if a rule reaches it. | platform | in-progress | NOT_RUN | Pending |
-| WORK-003 | [VAL-RULEID-003](../spec.md#success-criteria--verification-plan) | Policy texts; W03-D53, the W03-H29 state cell and the ledger entry; the unit inventory; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-RULEID-001](../spec.md#success-criteria--verification-plan) | The registry section and its schema, the authority key, the loader, `REGISTRY_POLICY_RULE_CODE`, the fifteen records, the table's condition, the `Status` extension, the conditional table in both definitions and both templates, and the changed Policy table tests. | platform | completed | PASS | EVD-008 |
+| WORK-002 | [VAL-RULEID-002](../spec.md#success-criteria--verification-plan) | The six document rules and the adoption gate; `tests/test_policy_rule_ids.py`, its suite membership and its surface route; the generator's recorded authoring set if a rule reaches it. | platform | completed | PASS | EVD-009, EVD-010 |
+| WORK-003 | [VAL-RULEID-003](../spec.md#success-criteria--verification-plan) | Policy texts; W03-D53, the W03-H29 state cell and the ledger entry; the unit inventory; regression and exact-index QA. | platform | completed | PASS | EVD-012, EVD-013, EVD-014, EVD-015, EVD-019, EVD-020 |
 
 ## Task Evidence
 
@@ -54,14 +54,23 @@ This Task records Policy package 2 of handoff W03-H29 (W03-D42 to W03-D44): the 
 | EVD-017 | [VAL-RULEID-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Final-state checks after the MAJOR step edits | The same focused tests, suites, validators and style checks as EVD-008, EVD-011 and EVD-014, run in the shell after the registry schema_version reads 13.0.0 | NOT_RUN | The author ran them after the last edit and reported the results to the operator, who records them here; the structured edit tools are refused once the registry reads 13.0.0. Next owner: operator. | yes | none |
 | EVD-018 | [VAL-RULEID-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Exact-index QA and commit hooks | python3 scripts/qa.py staged and the active commit hooks over the exact index | NOT_RUN | Not run by the author, by request; the files are staged by explicit path only and nothing is committed. Next owner: operator. | yes | none |
 | EVD-019 | [VAL-RULEID-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Final-state checks after the MAJOR step edits | Working tree at `schema_version` 13.0.0 after the last edit, pinned validation venv, 2026-11-14; the author's shell runs reported to the operator and re-run by the operator for the four strict validators and the `document` suite | PASS | Author: the four strict validators pass with output identical to the before-state; test_policy_rule_ids 46, test_common_form_tree 308, test_shared_contract_binding 19, test_registry_schema_version 26, test_semver_versions 43 and test_document_generator 29 OK; suites document (31 modules, 950 tests), document-lifecycle 28, agent-governance 105 and validation-routing 173 pass; validate-affected-surfaces, quality.py, validate-work-residue-ledger, ruff check, ruff format --check and markdownlint pass; git diff --check clean; staged lifecycle PASS. Operator re-run: the four strict validators PASS and the document suite passes (31 modules, 950 tests). The registry baseline line moved in its own commit (`26fd8fdf`). | yes | EVD-017 |
+| EVD-020 | [VAL-RULEID-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Exact-index QA and commit hooks | Pre-commit hooks over the final index of `cb721294` in the pinned validation environment, 2026-11-14 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | EVD-018 |
+| EVD-021 | [VAL-RULEID-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RULEID-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-RULEID-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
-| [VAL-RULEID-003](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-003 and record PASS evidence | platform |
+| [VAL-RULEID-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accepted by the user on 2026-11-14 (direct answer "Accept all three (Recommended)" to the SPEC-0194 criterion question naming commit `cb721294`) | platform |
+| [VAL-RULEID-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-009, EVD-010 | Accepted by the user on 2026-11-14 (direct answer "Accept all three (Recommended)" to the SPEC-0194 criterion question naming commit `cb721294`) | platform |
+| [VAL-RULEID-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-012, EVD-013, EVD-014, EVD-015, EVD-019, EVD-020 | Accepted by the user on 2026-11-14 (direct answer "Accept all three (Recommended)" to the SPEC-0194 criterion question naming commit `cb721294`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The registry policy_rule_ids section, the Rules table definitions, the POLICY-RULE-* checks and the policy texts stay in the tree and carry the accepted contract; the SPEC-0161 Task keeps W03-D53, W03-D70 to W03-D73, EVD-064 to EVD-066 and the open W03-H29 row. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -76,4 +85,4 @@ This Task records Policy package 2 of handoff W03-H29 (W03-D42 to W03-D44): the 
 
 ## Verification Summary
 
-Spec and Plan reviewed and first-recorded on the earlier bytes (EVD-001/002); revised under W03-D65; awaiting re-approval of the current bytes. Implementation not started.
+Spec and Plan reviewed and first-recorded on the earlier bytes (EVD-001/002); revised under W03-D65; awaiting re-approval of the current bytes. Implementation not started. Implementation commit `cb721294` passed exact-index QA in the hooks (EVD-020); the user accepted the three criteria on 2026-11-14, and the approval of commit, push, PR and merge covers the package exit (EVD-021).
