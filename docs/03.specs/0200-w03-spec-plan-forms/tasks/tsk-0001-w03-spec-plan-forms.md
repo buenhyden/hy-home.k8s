@@ -1,6 +1,6 @@
 ---
 title: "W03 Spec and Plan Forms"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -32,9 +32,9 @@ This Task records the Spec and Plan part of handoffs W03-H02 and W03-H13, the Pl
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SPECPLAN-001](../spec.md#criteria) | The three readers with the form shape and their tests first, so `PLAN-PROMOTION`, `PLAN-GLOBAL-CONSTRAINTS` and `TASK-PARENT-APPROVAL` stay active; then the forms, the extension, the profile lists, the body contracts with the design constraint link, and the TemplateDefinitions and records. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-SPECPLAN-002](../spec.md#criteria) | The two one-use exemptions with their tests; the templates; the frozen Spec and Plan after the user's review; the repointed links, with the anchor strings of `tests/test_task_acceptance_contract.py`, `tests/test_task_acceptance_boundaries.py`, `tests/test_documentation_link_boundary.py` and the other consumer tests; the Spec and Plan of each open package with the inventory. | platform | ready | NOT_RUN | Pending |
-| WORK-003 | [VAL-SPECPLAN-002](../spec.md#criteria) | The texts; the SPEC-0161 Task rows and ledger entries; the retirement of both exemptions in the final source commit; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-SPECPLAN-001](../spec.md#criteria) | The three readers with the form shape and their tests first, so `PLAN-PROMOTION`, `PLAN-GLOBAL-CONSTRAINTS` and `TASK-PARENT-APPROVAL` stay active; then the forms, the extension, the profile lists, the body contracts with the design constraint link, and the TemplateDefinitions and records. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-SPECPLAN-002](../spec.md#criteria) | The two one-use exemptions with their tests; the templates; the frozen Spec and Plan after the user's review; the repointed links, with the anchor strings of `tests/test_task_acceptance_contract.py`, `tests/test_task_acceptance_boundaries.py`, `tests/test_documentation_link_boundary.py` and the other consumer tests; the Spec and Plan of each open package with the inventory. | platform | in-progress | NOT_RUN | Pending |
+| WORK-003 | [VAL-SPECPLAN-002](../spec.md#criteria) | The texts; the SPEC-0161 Task rows and ledger entries; the retirement of both exemptions in the final source commit; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
 
 ## Task Evidence
 
