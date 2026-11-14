@@ -34,13 +34,13 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ### Requirements
 
-<!-- Author prompt: 통제의 의도와 책임을 실제 절차와 구분해 적고, 규칙마다 안정적인 ID와 조건을 둔다. -->
+<!-- Author prompt: 통제의 의도와 책임을 실제 절차와 구분해 적는다. 정책이 규범적 규칙을 진술하면 규칙마다 <CODE>-R<NNN> 형식의 안정적인 ID와 조건, required·recommended·optional 중 하나의 수준을 두고, ID는 규칙의 목록 항목·표 첫 셀·H4 단락 맨 앞에 코드 스팬으로 적는다. -->
 
-<!-- Author prompt: 규칙별로 조건과 증거를 나열하는 편이 읽기 쉬울 때만 아래 Rules 표를 사용하고, 그렇지 않으면 표를 지운다. -->
+<!-- Author prompt: 정책이 규범적 규칙을 진술하면 아래 Rules 표를 유지해 규칙마다 한 행을 두고, 번호는 001부터 빈틈없이 올리며, Status는 active 또는 retired; 뒤에 후속 규칙 ID나 none을 적고, 같은 변경에서 정책의 code를 docs/99.templates/registry.json의 policy_rule_ids에 등록한다. 그렇지 않으면 표를 지운다. -->
 
-| Rule | Condition | Evidence |
-| --- | --- | --- |
-| Name one stable rule ID. | State when the rule applies. | Name where compliance is observed. |
+| Rule ID | Condition | Level | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| CODE-R001 | State when the rule applies. | required | Name where compliance is observed. | active |
 
 #### Control Register
 

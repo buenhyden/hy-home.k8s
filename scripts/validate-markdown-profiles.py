@@ -934,6 +934,314 @@ def _template_table_section_diagnostics(
     return found
 
 
+_RULE_ID_TEXT = r"[A-Z][A-Z0-9]{1,7}-R[0-9]{3}"
+_RULE_TOKEN = re.compile(rf"`({_RULE_ID_TEXT})`(?:\s|$)")
+_RULE_TOKEN_LINE = re.compile(rf"`({_RULE_ID_TEXT})`\s*")
+_RULE_STATUS_RETIRED = re.compile(rf"retired; (none|{_RULE_ID_TEXT})")
+_LIST_ITEM = re.compile(r"^( *)(?:[-*+]|[0-9]{1,9}[.)])[ \t]+(.*)$")
+_H4_HEADING = re.compile(r"^ {0,3}####[ \t]+(.*?)[ \t]*$")
+_THEMATIC_BREAK = re.compile(r"^ {0,3}([-*_])(?:[ \t]*\1){2,}[ \t]*$")
+RULES_COLUMN_FIRST = "Rule ID"
+CONTROL_COLUMN_FIRST = "Control"
+
+
+@dataclass(frozen=True)
+class RuleUnit:
+    """One rule unit read under Requirements and its definition token, if any."""
+
+    kind: str  # "item", "row" or "group"
+    token: str | None
+    covered: bool  # begins with a token or lies in an H4 group that carries one
+    text: str
+
+
+@dataclass(frozen=True)
+class RuleScan:
+    """What the policy rule reader finds under one Requirements section."""
+
+    items: tuple[RuleUnit, ...]  # top-level list items
+    rows: tuple[RuleUnit, ...]  # table rows outside control registers and Rules tables
+    groups: tuple[RuleUnit, ...]  # H4 groups with content beyond those tables
+    control_rows: int
+    tokens: tuple[str, ...]  # every definition token, in reading order
+    rules_tables: tuple[tuple[tuple[str, ...], tuple[tuple[str, ...], ...]], ...]
+
+    @property
+    def units(self) -> tuple[RuleUnit, ...]:
+        return (*self.items, *self.rows, *self.groups)
+
+
+def _scan_requirements(section: str) -> RuleScan:
+    """SPEC-0194: read the rule units, tokens and Rules tables of one section.
+
+    Only visible Markdown is read. A definition token is a code span holding one
+    rule ID as the first content of a list item or of the first cell of a table
+    row, or as a paragraph of its own directly under an H4 heading; it then
+    identifies the whole H4 group. Heading text never carries one.
+    """
+
+    lines = _visible_markdown(section).splitlines()
+    items: list[RuleUnit] = []
+    rows: list[RuleUnit] = []
+    groups: list[RuleUnit] = []
+    tokens: list[str] = []
+    rules_tables: list[tuple[tuple[str, ...], tuple[tuple[str, ...], ...]]] = []
+    control_rows = 0
+    # The open H4 group: its title, token, content flag and the units seen in it.
+    group: dict[str, Any] | None = None
+
+    def close_group() -> None:
+        if group is not None and group["content"]:
+            groups.append(
+                RuleUnit(
+                    "group", group["token"], group["token"] is not None, group["title"]
+                )
+            )
+
+    def covered(token: str | None) -> bool:
+        return token is not None or (group is not None and group["token"] is not None)
+
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        index += 1
+        heading = _H4_HEADING.match(line)
+        if heading is not None:
+            close_group()
+            group = {"title": heading.group(1), "token": None, "content": False}
+            following = index
+            while following < len(lines) and not lines[following].strip():
+                following += 1
+            if following < len(lines):
+                match = _RULE_TOKEN_LINE.fullmatch(lines[following].strip())
+                after = lines[following + 1] if following + 1 < len(lines) else ""
+                if match is not None and not after.strip():
+                    group["token"] = match.group(1)
+                    tokens.append(match.group(1))
+                    index = following + 1
+            continue
+        if not line.strip() or _THEMATIC_BREAK.match(line):
+            continue
+        if re.match(r"^ {0,3}\|", line) and index < len(lines):
+            header = _gfm_table_cells(line)
+            delimiter = _gfm_table_cells(lines[index])
+            if (
+                header
+                and len(header) == len(delimiter)
+                and all(re.fullmatch(r":?-{3,}:?", cell) for cell in delimiter)
+            ):
+                data: list[list[str]] = []
+                cursor = index + 1
+                while cursor < len(lines) and re.match(r"^ {0,3}\|", lines[cursor]):
+                    data.append(_gfm_table_cells(lines[cursor]))
+                    cursor += 1
+                index = cursor
+                if header[0] == CONTROL_COLUMN_FIRST:
+                    control_rows += len(data)
+                elif header[0] == RULES_COLUMN_FIRST:
+                    rules_tables.append(
+                        (tuple(header), tuple(tuple(row) for row in data))
+                    )
+                else:
+                    for row in data:
+                        first = row[0] if row else ""
+                        match = _RULE_TOKEN.match(first)
+                        token = match.group(1) if match else None
+                        if token is not None:
+                            tokens.append(token)
+                        rows.append(RuleUnit("row", token, covered(token), first[:60]))
+                    if group is not None:
+                        group["content"] = True
+                continue
+        item = _LIST_ITEM.match(line)
+        if item is not None:
+            match = _RULE_TOKEN.match(item.group(2))
+            token = match.group(1) if match else None
+            if token is not None:
+                tokens.append(token)
+            if not item.group(1):
+                items.append(
+                    RuleUnit("item", token, covered(token), item.group(2)[:60])
+                )
+        if group is not None:
+            group["content"] = True
+    close_group()
+    return RuleScan(
+        tuple(items),
+        tuple(rows),
+        tuple(groups),
+        control_rows,
+        tuple(tokens),
+        tuple(rules_tables),
+    )
+
+
+def policy_rule_units(text: str, heading: str = "### Requirements") -> RuleScan:
+    """The unit inventory of one policy's Requirements section, empty without it."""
+
+    section = _exact_heading_section(text, heading)
+    return _scan_requirements("" if section is None else section)
+
+
+def _rules_status_fault(
+    status: str, own: str, row_ids: Sequence[str], codes: frozenset[str]
+) -> str | None:
+    if status == "active":
+        return None
+    match = _RULE_STATUS_RETIRED.fullmatch(status)
+    if match is None:
+        return "active, or retired; followed by a successor rule ID or none"
+    successor = match.group(1)
+    if successor == "none":
+        return None
+    if successor.rsplit("-R", 1)[0] not in codes:
+        return "a successor rule ID with a registered code"
+    if successor == own or successor not in row_ids:
+        return "a successor that names another row of this table"
+    return None
+
+
+def _policy_rule_diagnostics(
+    path: PurePosixPath, profile: DocumentProfile, body: str
+) -> list[Diagnostic]:
+    """SPEC-0194: the policy rule ID rules over one authored policy body.
+
+    A pending record applies the adoption gate alone; an adopted one applies the
+    table, ID, inline-token and coverage rules; a document with no record fails
+    POLICY-RULE-CODE when it states normative rules or carries a Rules table.
+    """
+
+    ids = profile.policy_rule_ids
+    table = next((item for item in profile.tables if item.name == "Rules"), None)
+    heading = (
+        None
+        if ids is None or table is None or profile.form is None
+        else _form_heading(profile.form, table.section)
+    )
+    if heading is None or profile.mode != "authored":
+        return []
+    section = _exact_heading_section(body, "#" * heading[0] + " " + heading[1])
+    if section is None:
+        return []
+    scan = _scan_requirements(section)
+    carried = sum(
+        header[0] == RULES_COLUMN_FIRST for header, _ in _visible_tables(body)
+    )
+    record = next((item for item in ids.codes if item.path == path.as_posix()), None)
+
+    def found(rule: str, expected: str, actual: str) -> Diagnostic:
+        return _diagnostic(rule, path, profile, expected, actual)
+
+    if record is None:
+        if scan.units or carried:
+            return [
+                found(
+                    "POLICY-RULE-CODE",
+                    "a rule ID code registered in policy_rule_ids for this policy",
+                    "no record for a policy that states normative rules "
+                    "or carries a Rules table",
+                )
+            ]
+        return []
+    if record.state == "pending":
+        if carried or scan.tokens:
+            return [
+                found(
+                    "POLICY-RULE-ADOPTION",
+                    "no Rules table and no definition token while the record is pending",
+                    f"{carried} Rules tables and {len(scan.tokens)} definition tokens",
+                )
+            ]
+        return []
+
+    found_all: list[Diagnostic] = []
+
+    def add(rule: str, expected: str, actual: str) -> None:
+        found_all.append(found(rule, expected, actual))
+
+    keys = tuple(column.key for column in table.columns)
+    stated = bool(scan.units)
+    if carried != len(scan.rules_tables):
+        add(
+            "POLICY-RULE-TABLE",
+            "the Rules table under Requirements only",
+            f"{carried - len(scan.rules_tables)} outside it",
+        )
+    if len(scan.rules_tables) > 1:
+        add("POLICY-RULE-TABLE", "exactly one Rules table", f"{len(scan.rules_tables)}")
+    if stated and not scan.rules_tables:
+        add(
+            "POLICY-RULE-TABLE",
+            f"a Rules table when {ids.rules_table_condition}",
+            "no Rules table",
+        )
+    row_ids: list[str] = []
+    statuses: list[str] = []
+    readable = not scan.rules_tables
+    if scan.rules_tables:
+        header, data = scan.rules_tables[0]
+        readable = header == keys and all(len(row) == len(keys) for row in data)
+        if header != keys:
+            add("POLICY-RULE-TABLE", json.dumps(keys), json.dumps(header))
+        elif not readable:
+            add("POLICY-RULE-TABLE", f"{len(keys)} cells in every row", "ragged row")
+        if readable:
+            if stated and len(data) < ids.rules_table_minimum_rows:
+                add(
+                    "POLICY-RULE-TABLE",
+                    f"at least {ids.rules_table_minimum_rows} row when "
+                    f"{ids.rules_table_condition}",
+                    f"{len(data)} rows",
+                )
+            level_at, status_at = keys.index("Level"), keys.index("Status")
+            row_ids = [_identifier_text(row[0]) for row in data]
+            statuses = [row[status_at] for row in data]
+            codes = frozenset(item.code for item in ids.codes)
+            for number, (row, own, status) in enumerate(
+                zip(data, row_ids, statuses), start=1
+            ):
+                if own != f"{record.code}-R{number:03d}":
+                    add(
+                        "POLICY-RULE-ID",
+                        f"{record.code}-R{number:03d}: this policy's code, "
+                        "ascending from R001 without a gap or duplicate",
+                        own,
+                    )
+                if row[level_at] not in ids.levels:
+                    add(
+                        "POLICY-RULE-TABLE",
+                        f"{own}: a level of {list(ids.levels)}",
+                        row[level_at],
+                    )
+                fault = _rules_status_fault(status, own, row_ids, codes)
+                if fault is not None:
+                    add("POLICY-RULE-TABLE", f"{own}: Status {fault}", status)
+    if readable:
+        counts = collections.Counter(scan.tokens)
+        active = {own for own, status in zip(row_ids, statuses) if status == "active"}
+        for own in sorted(active):
+            if counts[own] != 1:
+                add(
+                    "POLICY-RULE-INLINE",
+                    f"{own}: one definition token for an active row",
+                    f"{counts[own]} tokens",
+                )
+        for token in sorted(set(counts) - active):
+            add(
+                "POLICY-RULE-INLINE",
+                f"{token}: an active Rules table row for each definition token",
+                "no active row",
+            )
+    for unit in (*scan.items, *scan.rows):
+        if not unit.covered:
+            add(
+                "POLICY-RULE-COVERAGE",
+                f"a definition token on this {unit.kind} or in its H4 group",
+                unit.text,
+            )
+    return found_all
+
+
 def starter_placeholder(value: str) -> str | None:
     """Return one unresolved starter token from a title or H1."""
 
@@ -2159,6 +2467,7 @@ def validate_document_text(
         diagnostics.extend(_body_diagnostics(path, profile, body, status))
         if profile.mode == "authored":
             diagnostics.extend(_table_diagnostics(path, profile, body))
+            diagnostics.extend(_policy_rule_diagnostics(path, profile, body))
         elif profile.mode == "template":
             diagnostics.extend(_template_table_section_diagnostics(path, profile, body))
     diagnostics.extend(artifact_identity_diagnostics(path, profile, metadata))

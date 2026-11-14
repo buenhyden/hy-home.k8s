@@ -823,6 +823,27 @@ class CommonForm:
 
 
 @dataclass(frozen=True)
+class PolicyRuleCode:
+    """One policy's registered rule ID code (SPEC-0194, W03-D53)."""
+
+    path: str
+    code: str
+    state: Literal["pending", "adopted"]
+
+
+@dataclass(frozen=True)
+class PolicyRuleIds:
+    """The rule ID grammar, the Rules table condition and the registered codes."""
+
+    code_pattern: str
+    levels: tuple[str, ...]
+    reserved_codes: tuple[str, ...]
+    rules_table_condition: str
+    rules_table_minimum_rows: int
+    codes: tuple[PolicyRuleCode, ...]
+
+
+@dataclass(frozen=True)
 class DocumentProfile:
     profile_id: str
     profile_class: Literal[
@@ -859,6 +880,8 @@ class DocumentProfile:
         default=None, hash=False
     )
     tables: tuple[TableContract, ...] = ()
+    # SPEC-0194: set on the authored profiles of the policy role only.
+    policy_rule_ids: PolicyRuleIds | None = None
 
 
 @dataclass(frozen=True)
@@ -1038,6 +1061,8 @@ class Registry:
     frontmatter_dialect: FrontmatterDialect | None = None
     # A comparison-base registry from before SPEC-0193 has no such section.
     relationship_contract: RelationshipContract | None = None
+    # A comparison-base registry from before SPEC-0194 has no such section.
+    policy_rule_ids: PolicyRuleIds | None = None
 
 
 @dataclass(frozen=True)
@@ -2464,18 +2489,77 @@ def _relationship_faults(
     return faults
 
 
+POLICY_RULE_LEVELS = ("required", "recommended", "optional")
+
+
+def _policy_rule_faults(
+    root: Path, raw_registry: Mapping[str, Any]
+) -> list[tuple[str, str, str, str]]:
+    """SPEC-0194 checks of the policy rule ID section and its code records."""
+
+    faults: list[tuple[str, str, str, str]] = []
+
+    def fault(expected: str, actual: str) -> None:
+        faults.append(("REGISTRY_POLICY_RULE_CODE", expected, actual, ""))
+
+    section = raw_registry.get("policy_rule_ids")
+    if section is None:
+        fault("a policy_rule_ids section", "missing")
+        return faults
+    if sorted(section["levels"]) != sorted(POLICY_RULE_LEVELS):
+        fault(f"levels {list(POLICY_RULE_LEVELS)}", repr(section["levels"]))
+    try:
+        code_pattern = re.compile(section["code_pattern"])
+    except re.error as exc:
+        fault("a compilable code_pattern", str(exc))
+        return faults
+    reserved = set(section["reserved_codes"])
+    routes = [
+        _compile_route(profile["path_pattern"])
+        for profile in raw_registry["profiles"]
+        if profile["mode"] == "authored" and profile.get("document_role") == "policy"
+    ]
+    seen_paths: set[str] = set()
+    seen_codes: set[str] = set()
+    for item in section["codes"]:
+        path, code = item["path"], item["code"]
+        if path in seen_paths:
+            fault("one record per path", f"repeated path {path}")
+        if code in seen_codes:
+            fault("one record per code", f"repeated code {code} ({path})")
+        seen_paths.add(path)
+        seen_codes.add(code)
+        if code_pattern.fullmatch(code) is None:
+            fault(f"a code matching {section['code_pattern']}", f"{path}: {code!r}")
+        if code in reserved:
+            fault("a code outside the reserved codes", f"{path}: {code!r}")
+        try:
+            normalized = _normalize_relative_path(path)
+            if normalized.as_posix() != path:
+                raise ValueError("path is not canonical")
+            if not any(route.fullmatch(path) for route in routes):
+                raise ValueError("no authored profile of the policy role matches")
+            if not stat.S_ISREG(_lstat_named_path(root.absolute(), normalized)):
+                raise ValueError("not a regular file")
+        except ValueError as exc:
+            fault("a tracked document of an authored policy profile", f"{path}: {exc}")
+    return faults
+
+
 def current_registry_diagnostics(
     root: Path, raw_registry: Mapping[str, Any]
 ) -> tuple[Diagnostic, ...]:
-    """SPEC-0181 and SPEC-0193 checks of the current registry's records.
+    """SPEC-0181, SPEC-0193 and SPEC-0194 checks of the current registry's records.
 
-    The SPEC-0181 checks cover the key, dialect and extension records and the
-    SPEC-0193 checks the relationship contract. These refuse what a
+    The SPEC-0181 checks cover the key, dialect and extension records, the
+    SPEC-0193 checks the relationship contract and the SPEC-0194 checks the
+    policy rule ID section. These refuse what a
     comparison-base registry legitimately lacks, so they run from the strict
     registry validator and never on the load path.
     """
 
     faults = _relationship_faults(root, raw_registry)
+    faults.extend(_policy_rule_faults(root, raw_registry))
     keys = raw_registry.get("frontmatter_keys")
     if keys is None:
         faults.append(
@@ -3136,6 +3220,15 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         else profile
         for profile in profiles
     )
+    # SPEC-0194: the code record reaches the document check through the profile.
+    rule_ids = _policy_rule_ids_from_mapping(raw.get("policy_rule_ids"))
+    if rule_ids is not None:
+        profiles = tuple(
+            replace(profile, policy_rule_ids=rule_ids)
+            if profile.document_role == "policy" and profile.mode == "authored"
+            else profile
+            for profile in profiles
+        )
     return Registry(
         schema_version=registry_schema_version(raw),
         shared_contract=(
@@ -3158,6 +3251,22 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         relationship_contract=_relationship_contract_from_mapping(
             raw.get("relationship_contract")
         ),
+        policy_rule_ids=rule_ids,
+    )
+
+
+def _policy_rule_ids_from_mapping(
+    raw: Mapping[str, Any] | None,
+) -> PolicyRuleIds | None:
+    if raw is None:
+        return None
+    return PolicyRuleIds(
+        code_pattern=raw["code_pattern"],
+        levels=tuple(raw["levels"]),
+        reserved_codes=tuple(raw["reserved_codes"]),
+        rules_table_condition=raw["rules_table"]["condition"],
+        rules_table_minimum_rows=raw["rules_table"]["minimum_rows"],
+        codes=tuple(PolicyRuleCode(**item) for item in raw["codes"]),
     )
 
 

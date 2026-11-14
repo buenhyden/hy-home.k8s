@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": "12.0.0",
+  "schema_version": "13.0.0",
   "profiles": [
     {
       "id": "sdlc/requirement",
@@ -5119,22 +5119,27 @@
           "tests/test_common_form_tree.py",
           "tests/test_document_artifact_identity.py",
           "tests/test_document_language.py",
-          "tests/test_document_terminal_contract.py"
+          "tests/test_document_terminal_contract.py",
+          "tests/test_policy_rule_ids.py"
         ],
         "validation": {
           "positive": [
             "Each operations policy and the template pass the form tree, table, body-contract, author-prompt and residue checks.",
-            "A operations policy whose Rules table keeps the registered columns, or whose Rules table has a header only, passes the document table check."
+            "A operations policy whose Rules table keeps the registered columns, or whose Rules table has a header only, passes the document table check.",
+            "An adopted operations policy that states normative rules and holds a Rules table with one active row and one definition token per rule passes the POLICY-RULE checks."
           ],
           "negative": [
             "A reordered, missing or extra Rules column fails BODY-TABLE-COLUMNS.",
+            "An adopted policy whose Rules table lacks the Status column or holds a Level outside the registered three fails POLICY-RULE-TABLE, and a repeated or skipped rule ID fails POLICY-RULE-ID.",
+            "A pending policy that carries a Rules table or a definition token fails POLICY-RULE-ADOPTION.",
             "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT.",
             "A table section outside the form fails REGISTRY_TABLE_SECTION.",
             "A source profile named by two template twins that carry tables fails REGISTRY_TABLE_TWIN."
           ],
           "regression": [
             "The loaded policy profiles keep heading lists equal to the form H2 titles.",
-            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
+            "tests/test_policy_rule_ids.py asserts each document rule, the registry code record and the Rules table definition."
           ]
         },
         "migration": {
@@ -5148,8 +5153,8 @@
             "section": "policy-rules-requirements",
             "columns": [
               {
-                "key": "Rule",
-                "meaning": "The stable ID or short name of the rule.",
+                "key": "Rule ID",
+                "meaning": "The stable rule ID <CODE>-R<NNN>: the policy's registered code, then three digits issued ascending from 001 without a gap.",
                 "data_type": "string",
                 "required": true
               },
@@ -5160,14 +5165,26 @@
                 "required": true
               },
               {
+                "key": "Level",
+                "meaning": "The rule level: required, recommended or optional.",
+                "data_type": "string",
+                "required": true
+              },
+              {
                 "key": "Evidence",
                 "meaning": "Where compliance with the rule is observed or recorded.",
                 "data_type": "string",
                 "required": true
+              },
+              {
+                "key": "Status",
+                "meaning": "active, or retired; followed by a successor rule ID or none. A retired rule keeps its row.",
+                "data_type": "string",
+                "required": false
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Rule"
+            "row_identity": "Rule ID"
           },
           {
             "name": "Lifecycle Traceability",
@@ -6695,21 +6712,26 @@
           "tests/test_common_form_tree.py",
           "tests/test_document_artifact_identity.py",
           "tests/test_document_language.py",
-          "tests/test_document_terminal_contract.py"
+          "tests/test_document_terminal_contract.py",
+          "tests/test_policy_rule_ids.py"
         ],
         "validation": {
           "positive": [
             "Each governance rule and the template pass the form tree, table, body-contract, author-prompt and residue checks.",
-            "A governance rule whose Rules table keeps the registered columns, or whose Rules table has a header only, passes the document table check."
+            "A governance rule whose Rules table keeps the registered columns, or whose Rules table has a header only, passes the document table check.",
+            "An adopted governance rule that states normative rules and holds a Rules table with one active row and one definition token per rule passes the POLICY-RULE checks."
           ],
           "negative": [
             "A reordered, missing or extra Rules column fails BODY-TABLE-COLUMNS.",
+            "An adopted policy whose Rules table lacks the Status column or holds a Level outside the registered three fails POLICY-RULE-TABLE, and a repeated or skipped rule ID fails POLICY-RULE-ID.",
+            "A pending policy that carries a Rules table or a definition token fails POLICY-RULE-ADOPTION.",
             "A table section outside the form fails REGISTRY_TABLE_SECTION.",
             "A source profile named by two template twins that carry tables fails REGISTRY_TABLE_TWIN."
           ],
           "regression": [
             "The loaded policy profiles keep heading lists equal to the form H2 titles.",
-            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
+            "tests/test_policy_rule_ids.py asserts each document rule, the registry code record and the Rules table definition."
           ]
         },
         "migration": {
@@ -6723,8 +6745,8 @@
             "section": "policy-rules-requirements",
             "columns": [
               {
-                "key": "Rule",
-                "meaning": "The stable ID or short name of the rule.",
+                "key": "Rule ID",
+                "meaning": "The stable rule ID <CODE>-R<NNN>: the policy's registered code, then three digits issued ascending from 001 without a gap.",
                 "data_type": "string",
                 "required": true
               },
@@ -6735,14 +6757,26 @@
                 "required": true
               },
               {
+                "key": "Level",
+                "meaning": "The rule level: required, recommended or optional.",
+                "data_type": "string",
+                "required": true
+              },
+              {
                 "key": "Evidence",
                 "meaning": "Where compliance with the rule is observed or recorded.",
                 "data_type": "string",
                 "required": true
+              },
+              {
+                "key": "Status",
+                "meaning": "active, or retired; followed by a successor rule ID or none. A retired rule keeps its row.",
+                "data_type": "string",
+                "required": false
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Rule"
+            "row_identity": "Rule ID"
           }
         ]
       }
@@ -8481,6 +8515,14 @@
         "verification": "tests/test_workspace_memory.py, run through the workspace-memory-regressions check in scripts/validation/registry.json.",
         "review": "When .agents/governance/context-and-memory.md or scripts/workspace_memory.py changes, and when shared_contract.version changes.",
         "removal": "When the memory store is retired or a shared WGOV-CORE edition defines its own memory store."
+      },
+      {
+        "name": "Rules table Status column for retired policy rules",
+        "condition": "Applies to every Rules table of this repository: a rule ID is never reused until a user-approved new baseline under the Q-07 contract and a retired rule keeps its row, so the table carries an optional Status column whose value is active, or retired; followed by a successor rule ID or none.",
+        "owner": "buenhyden",
+        "verification": "POLICY-RULE-TABLE in the strict Markdown profile check and tests/test_policy_rule_ids.py, run by the document suite of scripts/run-contract-tests.py.",
+        "review": "When shared_contract.version changes and when the Rules table definition of the Policy TemplateDefinitions changes.",
+        "removal": "When a shared WGOV-CORE edition of the Policy form defines rule retirement, when the user ends no-reuse retirement for rule IDs, or at a user-approved new baseline under the Q-07 contract."
       }
     ]
   },
@@ -16979,6 +17021,99 @@
         "gaps": [
           "A fragment into a non-Markdown file or into docs/98.archive/ is not checked."
         ]
+      }
+    ]
+  },
+  "policy_rule_ids": {
+    "code_pattern": "^[A-Z][A-Z0-9]{1,7}$",
+    "levels": [
+      "required",
+      "recommended",
+      "optional"
+    ],
+    "reserved_codes": [
+      "PLAT",
+      "OBS"
+    ],
+    "rules_table": {
+      "condition": "the policy states normative rules",
+      "minimum_rows": 1
+    },
+    "codes": [
+      {
+        "path": ".agents/governance/agent-execution.md",
+        "code": "EXEC",
+        "state": "pending"
+      },
+      {
+        "path": ".agents/governance/approval-and-safety.md",
+        "code": "SAFE",
+        "state": "pending"
+      },
+      {
+        "path": ".agents/governance/context-and-memory.md",
+        "code": "CTX",
+        "state": "pending"
+      },
+      {
+        "path": ".agents/governance/document-authoring.md",
+        "code": "AUTHOR",
+        "state": "pending"
+      },
+      {
+        "path": ".agents/governance/document-lifecycle.md",
+        "code": "DOCLIFE",
+        "state": "pending"
+      },
+      {
+        "path": ".agents/governance/formatting-and-linting.md",
+        "code": "FMT",
+        "state": "pending"
+      },
+      {
+        "path": ".agents/governance/git.md",
+        "code": "GIT",
+        "state": "pending"
+      },
+      {
+        "path": ".agents/governance/model-selection.md",
+        "code": "MODEL",
+        "state": "pending"
+      },
+      {
+        "path": ".agents/governance/quality.md",
+        "code": "QUAL",
+        "state": "pending"
+      },
+      {
+        "path": ".agents/governance/sdlc.md",
+        "code": "SDLC",
+        "state": "pending"
+      },
+      {
+        "path": "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md",
+        "code": "GITOPS",
+        "state": "pending"
+      },
+      {
+        "path": "docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md",
+        "code": "MESH",
+        "state": "pending"
+      },
+      {
+        "path": "docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md",
+        "code": "ROLLOUT",
+        "state": "pending"
+      },
+      {
+        "path": "docs/05.operations/policies/0005-observability-platform-operations-policy.md",
+        "code": "OBSERV",
+        "state": "pending"
+      },
+      {
+        "path": "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
+        "code": "ONBOARD",
+        "state": "pending"
       }
     ]
   }

@@ -140,13 +140,18 @@ SAMPLES: dict[str, tuple[str, str | None, str | None]] = {
     "evaluation/results": (".agents/evaluations/results.md", None, None),
 }
 # A fresh document keeps these authoring findings until the author replaces
-# the prompts, the starter H1, the empty sections and the sample rows.
+# the prompts, the starter H1, the empty sections and the sample rows. A fresh
+# policy carries the sample Rules table, which draws POLICY-RULE-CODE until its
+# code is registered and POLICY-RULE-ADOPTION while its record is pending
+# (SPEC-0194).
 AUTHORING_RULES = frozenset(
     {
         "BODY-AUTHOR-PROMPT",
         "BODY-H1-PLACEHOLDER",
         "BODY-HEADING-EMPTY",
         "BODY-SECTION-EMPTY",
+        "POLICY-RULE-ADOPTION",
+        "POLICY-RULE-CODE",
     }
 )
 IDENTITY_RULES = frozenset(

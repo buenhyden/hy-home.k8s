@@ -285,11 +285,14 @@ POLICY_EXTENSION = {
     "parent_id": "policy-ownership",
     "title": "Lifecycle Traceability",
 }
+# SPEC-0194 (W03-D65): four common columns and the one optional Status extension.
+POLICY_RULES_COLUMNS = ("Rule ID", "Condition", "Level", "Evidence")
+POLICY_RULES_OPTIONAL = ("Status",)
 POLICY_RULES_TABLE = (
     "policy-rules-requirements",
-    ("Rule", "Condition", "Evidence"),
+    (*POLICY_RULES_COLUMNS, *POLICY_RULES_OPTIONAL),
     0,
-    "Rule",
+    "Rule ID",
 )
 AGENTS = ("common/folder-agents-guide", "common/template-agents-guide")
 AGENTS_TREE = (
@@ -1460,6 +1463,8 @@ class RepositoryRegistryTests(unittest.TestCase):
                             not (
                                 form_id in ("root-readme", "stage-readme")
                                 and column["key"] == "Owner"
+                                or form_id == "policy"
+                                and column["key"] in POLICY_RULES_OPTIONAL
                             ),
                         )
         for profile_id, profile in by_id.items():
@@ -1786,7 +1791,8 @@ class FormRegistryTests(unittest.TestCase):
         AUTHORITY.validate_registry_authority(raw)
         # SPEC-0181: the key descriptions and the dialect are admitted top-level
         # sections, each alone and both absent, as in a comparison-base registry.
-        for section in ("frontmatter_keys", "frontmatter_dialect"):
+        # SPEC-0194 admits the policy rule ID section the same way.
+        for section in ("frontmatter_keys", "frontmatter_dialect", "policy_rule_ids"):
             candidate = {**load_raw(), section: {}}
             AUTHORITY.validate_registry_authority(candidate)
             del candidate[section]
@@ -3052,7 +3058,8 @@ class RoleFormBody(unittest.TestCase):
     TREE: tuple
     TABLE_KEYS: dict
     BODY: str
-    HEADER: tuple[str, ...]  # its registered columns
+    HEADER: tuple[str, ...]  # its required columns, in order
+    OPTIONAL: tuple[str, ...] = ()  # its optional trailing columns, in order
     HOME: str  # the H3 line its table belongs under
 
     @classmethod
@@ -3125,7 +3132,10 @@ class RoleFormBody(unittest.TestCase):
             },
             self.TABLE_KEYS,
         )
-        self.assertTrue(all(c.required for t in twin.tables for c in t.columns))
+        self.assertEqual(
+            tuple(c.key for t in twin.tables for c in t.columns if not c.required),
+            self.OPTIONAL,
+        )
 
     def test_the_repository_registry_is_valid_and_its_twin_matches(self) -> None:
         self.assertEqual(rules_of(load_raw()), set())
@@ -3145,17 +3155,30 @@ class RoleFormBody(unittest.TestCase):
         self.assertEqual(self.tables(self.with_table(self.table(self.HEADER))), [])
 
     def test_a_reordered_missing_or_extra_column_fails(self) -> None:
-        first, second, third = self.HEADER
+        first, second, third, *rest = self.HEADER
         for header in (
-            (first, third, second),
-            (first, second),
-            (*self.HEADER, "Note"),
+            (first, third, second, *rest),
+            self.HEADER[:-1],
+            (*self.HEADER, *self.OPTIONAL, "Note"),
         ):
             table = self.table(header, tuple("x" for _ in header))
             with self.subTest(header=header):
                 self.assertEqual(
                     self.tables(self.with_table(table)), ["BODY-TABLE-COLUMNS"]
                 )
+
+    def test_the_optional_trailing_columns_may_be_present_or_omitted(self) -> None:
+        full = (*self.HEADER, *self.OPTIONAL)
+        for header in {self.HEADER, full}:
+            table = self.table(header, tuple("x" for _ in header))
+            with self.subTest(header=header):
+                self.assertEqual(self.tables(self.with_table(table)), [])
+        if self.OPTIONAL:
+            wrong = (self.HEADER[0], *self.OPTIONAL, *self.HEADER[1:])
+            table = self.table(wrong, tuple("x" for _ in wrong))
+            self.assertEqual(
+                self.tables(self.with_table(table)), ["BODY-TABLE-COLUMNS"]
+            )
 
     def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
         wrong = self.table(self.HEADER[:2], ("a", "b"))
@@ -3289,7 +3312,8 @@ class GovernancePolicyFormTests(RoleFormBody):
     TREE = POLICY_TREE
     TABLE_KEYS = POLICY_GOVERNANCE_TABLE_KEYS
     BODY = policy_body()
-    HEADER = ("Rule", "Condition", "Evidence")
+    HEADER = POLICY_RULES_COLUMNS
+    OPTIONAL = POLICY_RULES_OPTIONAL
     HOME = "Review every change."
 
     def test_the_loader_copies_the_tables_to_the_source_profile(self) -> None:
@@ -3311,7 +3335,8 @@ class OperationsPolicyFormTests(RoleFormBody):
     TREE = POLICY_TREE
     TABLE_KEYS = POLICY_OPERATIONS_TABLE_KEYS
     BODY = policy_body()
-    HEADER = ("Rule", "Condition", "Evidence")
+    HEADER = POLICY_RULES_COLUMNS
+    OPTIONAL = POLICY_RULES_OPTIONAL
     HOME = "Review every change."
 
     BLOCK = (
