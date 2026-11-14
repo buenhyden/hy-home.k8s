@@ -644,16 +644,6 @@
       }
     },
     {
-      "id": "W03-H36",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "With phase 3 (W03-H02)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W03-H37",
       "kind": "handoff",
       "state": "open",

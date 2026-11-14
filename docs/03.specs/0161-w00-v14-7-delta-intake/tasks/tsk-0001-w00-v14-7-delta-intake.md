@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.45"
+version: "0.1.46"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -103,6 +103,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-067 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D55 recorded | User answers to the three W03-D55 Requirement form questions, 2026-11-13 (Asia/Seoul): "요구사항대로", "Move them there (Recommended)" and "Rename to common contract (Recommended)" | PASS | Recorded as W03-D55 with the SPEC-0195 package commit; the user approved the SPEC-0195 bytes (spec 69ec0cdb, plan b0d265a1) with the answer "Approve these bytes (Recommended)" on the same day. | no | none |
 | EVD-068 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D74 to W03-D76 recorded | User answers of 2026-11-14 (Asia/Seoul) to the SPEC-0211 closing report questions ("Edit Owner/Resume in place (Recommended)", "SPEC-0161 Task tables (Recommended)", "Stop, fix package first (Recommended)"), to the Q-07 preparation conflict between W03-D30 and REQ:141, REQ:672 and REQ:823 ("Follow REQ: prep package (Recommended)") and to the SPEC-0212 design questions ("Next-number rule (Recommended)", "With Q-07 after W11 (Recommended)") | PASS | Recorded as W03-D74 to W03-D76 with the SPEC-0195 package commit, the next change to this Task; W03-D75 amends W03-D30, whose row stays as recorded. | no | none |
 | EVD-069 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Handoff W03-H44 recorded for the Requirement `Downstream owner` column (W03-D55) | SPEC-0195 implementation, 2026-11-14: the four Requirements and the `Lifecycle Traceability` tables of AD-0004 to AD-0007 at the base `0e6685dc`, and `scripts/document-backlinks.py`; `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv | PASS | Recorded the live row W03-H44 in the Residue Handoff table and its entry in `docs/03.specs/work-residue-ledger.json`. Facts at the base: 91 `Downstream owner` cells; 74 are one architecture description link, 6 add a note after the link and 11 are exclusions that name packages that left the tree; 10 of the 68 members are not cited in their description's `Upstream requirement` column (REQ-0003-FR-0032 in AD-0006 and nine members of REQ-0004 in AD-0007); `scripts/document-backlinks.py` derives the reverse view per document, not per member. The column and its link check stay unchanged in SPEC-0195; the Architecture form package completes the citing rows and then removes the column. W03-H36 is not closed by this row; it closes with the SPEC-0195 acceptance (W03-D70). | no | none |
+| EVD-070 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Closure of W03-H36 through the ledger cycle | User acceptance of both SPEC-0195 criteria (VAL-REQFORM-001 and VAL-REQFORM-002), direct current-session answer "Accept both, close H36 (Recommended)", 2026-11-14 (Asia/Seoul); W03-D70; SPEC-0195 Task EVD-004 to EVD-022; `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv | PASS | The user accepted both SPEC-0195 criteria and, under W03-D70, the closure of the Requirement form row W03-H36. Its live row in the Residue Handoff table is terminal with this row as Closure; its ledger entry was made terminal with this closure and then deleted, the gate passing both times. The legacy row stays as recorded. | no | none |
 
 ### Edition Delta
 
@@ -527,7 +528,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W03-H33 | No legacy row: the six approval facts of shared_contract held as unverified (W03-D05); the row has no recorded handoff, so it takes the next W03 number | terminal | W03 | With the W03 closing | EVD-054 |
 | W03-H34 | Legacy row `registry and schema set` of `Read Denominator`: 2 partial files of docs/99.templates registry and schema | open | W03 | When W03 re-reads its files before editing | none |
 | W03-H35 | Legacy row `templates set` of `Read Denominator`: 18 partial and 19 listed-only templates | open | W03 | When W03 re-reads its files before editing | none |
-| W03-H36 | Legacy row `Requirement` of `Document Form Handoff`: the Requirement form against COMMON-DOC-FORM-1 | open | W03 | With phase 3 (W03-H02) | none |
+| W03-H36 | Legacy row `Requirement` of `Document Form Handoff`: the Requirement form against COMMON-DOC-FORM-1 | terminal | W03 | With phase 3 (W03-H02) | EVD-070 |
 | W03-H37 | Legacy row `Architecture` of `Document Form Handoff`: the Architecture description form | open | W03 | With phase 3 (W03-H02) | none |
 | W03-H38 | Legacy row `ADR` of `Document Form Handoff`: the ADR form | open | W03 | With phase 3 (W03-H02) | none |
 | W03-H39 | Legacy row `Spec` of `Document Form Handoff`: the Spec form | open | W03 | With phase 3 (W03-H02) | none |

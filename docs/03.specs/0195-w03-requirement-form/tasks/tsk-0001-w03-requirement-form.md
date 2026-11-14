@@ -1,6 +1,6 @@
 ---
 title: "W03 Requirement Form"
-version: "0.2.1"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -27,8 +27,8 @@ This Task records the Requirement part of handoffs W03-H02 and W03-H13: the COMM
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-REQFORM-001](../spec.md#success-criteria--verification-plan) | The form, the two local extensions, the profile lists, the TemplateDefinition and its three tables, the `relationship_contract` note and the tests. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-REQFORM-002](../spec.md#success-criteria--verification-plan) | The rationale table and its review; the template and the four Requirements by the heading map with the new columns; the three texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-REQFORM-001](../spec.md#success-criteria--verification-plan) | The form, the two local extensions, the profile lists, the TemplateDefinition and its three tables, the `relationship_contract` note and the tests. | platform | completed | PASS | EVD-005, EVD-006, EVD-013 |
+| WORK-002 | [VAL-REQFORM-002](../spec.md#success-criteria--verification-plan) | The rationale table and its review; the template and the four Requirements by the heading map with the new columns; the three texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | completed | PASS | EVD-008, EVD-010, EVD-014, EVD-018, EVD-019, EVD-021, EVD-022, EVD-023 |
 
 ## Task Evidence
 
@@ -56,6 +56,8 @@ This Task records the Requirement part of handoffs W03-H02 and W03-H13: the COMM
 | EVD-020 | [VAL-REQFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Placements, added lines and corrected words per document | The heading map applied by one scripted pass to the four Requirements at base `0e6685dc`, with the log of each pass, 2026-11-14 | PASS | Added lines: the Verification Method pointer in all four ("No separate verification method is stated: each requirement is verified by the evidence named in its `Acceptance` cell, and the acceptance-criterion column of `Lifecycle Traceability` states the acceptance condition of every member.") and the Downstream Links pointer in REQ-0003 and REQ-0004 ("No downstream link is listed here: the architecture description that owns each member is named in the `Downstream owner` column of `Lifecycle Traceability`, and `scripts/document-backlinks.py` derives the reverse view."). Corrected words: REQ-0003 "the Verification intent column" to "the `Acceptance` column"; REQ-0004 acceptance criterion 05 "below" to "under Quality Requirements"; no other positional word changed meaning. Header renames: `Requirement` to `Statement`, `Verification intent` to `Acceptance`, `Rationale` added, `Priority` last. Placements: REQ-0001 and REQ-0002 split the Scope list by its labelled items (In Scope to In Scope; Out of Scope and Non-goals to Constraints and Exclusions), keep `Agent execution and approval requirements` as an H4 under Constraints and Exclusions and move the upstream `Requirement` list items to Source and Constraints and the AD, Spec and ADR items to Downstream Links; REQ-0002 moves NFR-0001 to Quality Requirements and REQ-0001 omits that H3; REQ-0003 places its one `In scope:` paragraph whole under In Scope, moves `Unfinished execution and original lineage` from Risks and `Reviewed member-ID transfer` to Source and Constraints as H4 and moves its 4 NFR rows; REQ-0004 places its `In scope:` paragraph whole under In Scope, keeps `Delivery assurance coverage and limits` under Constraints and Exclusions, moves `Reviewed member-ID transfer` to Source and Constraints and moves its 3 NFR rows and the seven quality sections (as H4) to Quality Requirements. `Lifecycle Traceability` and `Archived Lineage` stay H3, in that order, after Downstream Links; `Downstream owner` and the body contract are unchanged. | no | none |
 | EVD-021 | [VAL-REQFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Contract suites, affected surfaces, quality gate, ruff and markdownlint | The command set of EVD-013 over the working tree and the index with the four Requirements moved and the Rationale Table section added, 2026-11-14 | PASS | document 963 tests OK (31 modules, 3 skipped); document-lifecycle 28 OK; agent-governance 105 OK (17 roles, 51 projections); validation-routing 173 OK; affected surfaces paths=680 uncovered=0 ambiguous=0; work residue ledger 77 entries; quality gate PASS; ruff check and format clean (122 files); markdownlint 0 issues over the four Requirements, this Task, the SPEC-0161 Task, the template and the three texts; `git diff --check` and `git diff --cached --check` clean; `validate-document-lifecycle.py --mode staged` PASS on the index; `graphify update .` run. Repository-static evidence only. | yes | none |
 | EVD-022 | [VAL-REQFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Secret baseline line moves | `detect-secrets-hook` run against a copy of `.secrets.baseline` over the 13 staged files, 2026-11-14; the real baseline is not edited | PASS | The one move is the `docs/99.templates/registry.json` entry from line 8451 to line 8591; the four Requirements, this Task and the SPEC-0161 Task add no finding and move none. The baseline change is left for its own commit (step 2 of the commit order). Exact-index QA and the commit hooks stay NOT_RUN (EVD-015). Next owner: the operator. | yes | none |
+| EVD-023 | [VAL-REQFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA and commit hooks | Pre-commit hooks over the final index of `8ed78b20` in the pinned validation environment, 2026-11-14 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | EVD-015 |
+| EVD-024 | [VAL-REQFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Rationale Table
 
@@ -136,8 +138,15 @@ The 68 Rationale cells of the four Requirements as the user approved them on 202
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-REQFORM-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-REQFORM-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-REQFORM-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-006, EVD-013 | Accepted by the user on 2026-11-14 (direct answer "Accept both, close H36 (Recommended)" to the SPEC-0195 criterion question naming commit `8ed78b20`) | platform |
+| [VAL-REQFORM-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-008, EVD-010, EVD-014, EVD-018, EVD-019, EVD-021, EVD-022, EVD-023 | Accepted by the user on 2026-11-14 (direct answer "Accept both, close H36 (Recommended)" to the SPEC-0195 criterion question naming commit `8ed78b20`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The Requirement form, its TemplateDefinition, the migrated template and the four Requirements on the common form stay in the tree and carry the accepted contract; the SPEC-0161 Task keeps W03-D55, W03-D74 to W03-D76, EVD-067 to EVD-070, the open W03-H44 row and the closure of W03-H36. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -152,4 +161,4 @@ The 68 Rationale cells of the four Requirements as the user approved them on 202
 
 ## Verification Summary
 
-Spec and Plan drafted; not yet reviewed or approved. Implementation not started.
+Spec and Plan drafted; not yet reviewed or approved. Implementation not started. Implementation commit `8ed78b20` passed exact-index QA in the hooks (EVD-023); the user accepted both criteria on 2026-11-14, and the approval of commit, push, PR and merge covers the package exit (EVD-024).
