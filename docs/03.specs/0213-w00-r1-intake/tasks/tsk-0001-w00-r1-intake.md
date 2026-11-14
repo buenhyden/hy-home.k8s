@@ -1,8 +1,8 @@
 ---
 title: "W00 r1 Intake and Residue Correction"
-version: "0.2.2"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-14"
 artifact_id: "SPEC-0213-TSK-0001"
@@ -28,8 +28,8 @@ This Task will record the r1 hashes and the r1 W00 diff read, the classification
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-INTAKE-001](../spec.md#success-criteria--verification-plan) | The r1 hashes and diff read, `r1 Edition Delta`, `Input Corrections`, `Change Contract Classification` and the five decision rows. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-INTAKE-002](../spec.md#success-criteria--verification-plan) | The still-missing seeds, the two closures, the twelve cell edits, the lifetime record and the negative copy. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-INTAKE-001](../spec.md#success-criteria--verification-plan) | The r1 hashes and diff read, `r1 Edition Delta`, `Input Corrections`, `Change Contract Classification` and the five decision rows. | platform | completed | PASS | EVD-006, EVD-011 |
+| WORK-002 | [VAL-INTAKE-002](../spec.md#success-criteria--verification-plan) | The still-missing seeds, the two closures, the twelve cell edits, the lifetime record and the negative copy. | platform | completed | PASS | EVD-008, EVD-017 |
 
 ## Task Evidence
 
@@ -51,13 +51,22 @@ This Task will record the r1 hashes and the r1 W00 diff read, the classification
 | EVD-014 | [VAL-INTAKE-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Secret scan on a scratch baseline | `detect-secrets-hook` with the pre-commit `--exclude-lines` argument and a copy of `.secrets.baseline` kept in the scratchpad, over the four edited documents, the three package documents and the ledger; the real baseline was not passed to the hook and is not edited; 2026-11-14 | PASS | No finding in the SPEC-0161 Task, REQ-0003, the Stage 03 README or the ledger: the new digests are written in backticks, which the hex detector does not read, and the one baselined line of the SPEC-0161 Task (its EVD-015 row, line 51) did not move because every insertion sits after it. The only findings are the two digests in the JSON of EVD-003 (line 40) of this Task, hashed secrets `2f00ded0` and `3f12f9b9`, which need two reviewed baseline entries before the package commit; with them added to the scratch copy the hook passes. No baselined line moves in any other file. | no | none |
 | EVD-015 | [VAL-INTAKE-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent semantic review | {"spec_sha256":"3aa21956e069665983accbd5a8cbfedfaae0acb7a43acca24d50eafd9103a5c2","plan_sha256":"efb0a0ea22f623d9f08f0ae97adf4834376389effaedc61144a30b051a99b74d"} | PASS | Read-only check of the corrected bytes, 2026-11-14: only repository-check fixes (promotion row, one-criterion traceability rows, code-span wrapping of Korean quotations, code-span spacing); no wording change (checked by diff). | yes | none |
 | EVD-016 | [VAL-INTAKE-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-session user answer Re-approve both (Recommended) to the re-approval question naming the corrected bytes of SPEC-0213 and SPEC-0214, here spec.md 3aa21956 and plan.md efb0a0ea, 2026-11-14","review_ref":"EVD-015","scope":["SPEC-0213","SPEC-0213-PLAN-0001"],"reviewed_spec_sha256":"3aa21956e069665983accbd5a8cbfedfaae0acb7a43acca24d50eafd9103a5c2","reviewed_plan_sha256":"efb0a0ea22f623d9f08f0ae97adf4834376389effaedc61144a30b051a99b74d","validity":"confirmed","revocation":"none"} | PASS | Approves the Spec and Plan bytes only; accepts no criterion. | yes | none |
+| EVD-017 | [VAL-INTAKE-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA and commit hooks on the implementation commit | Pre-commit hooks over the final index of `6206f172` in the pinned validation environment, 2026-11-14 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | none |
+| EVD-018 | [VAL-INTAKE-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-INTAKE-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-INTAKE-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-INTAKE-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006, EVD-011 | Accepted by the user on 2026-11-14 (direct answer "Accept (Recommended)" to the SPEC-0213 acceptance question naming commit `6206f172`) | platform |
+| [VAL-INTAKE-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-008, EVD-017 | Accepted by the user on 2026-11-14 (direct answer "Accept (Recommended)" to the SPEC-0213 acceptance question naming commit `6206f172`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The SPEC-0161 Task evidence rows EVD-071 to EVD-089 and decision rows W03-D77 to W03-D82 cite this package by identifier only and stay valid after its retirement. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -72,4 +81,4 @@ This Task will record the r1 hashes and the r1 W00 diff read, the classification
 
 ## Verification Summary
 
-Draft; no check has run. Next owner: platform, for the Spec and Plan approval.
+Draft; no check has run. Next owner: platform, for the Spec and Plan approval. Implementation commit `6206f172` passed exact-index QA in the hooks (EVD-017); the user accepted the package on 2026-11-14, and the approval of commit, push, PR and merge covers the package exit (EVD-018).
