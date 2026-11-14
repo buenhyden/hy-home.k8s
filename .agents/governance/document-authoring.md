@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.25.0"
+version: "3.26.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -48,7 +48,11 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 1. Identify the owning stage and normalize the final repository-relative path.
 2. Resolve exactly one registry profile and read its canonical template before
    creating or restructuring a document. No match or multiple matches is a
-   stop condition.
+   stop condition. Start a new document with `python3 scripts/document-generator.py`,
+   which copies the template, fills the shared value markers from the inputs and
+   the target path, and refuses a request the registry or the identity rules do
+   not admit; the caller writes the number in the path. A hand copy of the form
+   stays valid, and the validators stay the gate for either.
 3. Use the profile-owned initial status, metadata, sections, and relationships.
    Do not assume every profile starts at "draft". Router READMEs participate in
    the governed envelope with an "active" routing constant, but have neither

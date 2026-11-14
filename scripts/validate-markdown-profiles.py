@@ -534,6 +534,17 @@ def expected_artifact_id(
         incident_number = path.parent.name[4:8]
         suffix = "-PM" if profile_id == "operation/postmortem" else ""
         return f"inc-{year}-{incident_number}{suffix}"
+    if profile_id in {
+        "reference/audit-pack",
+        "reference/research-pack",
+        "reference/data-pack",
+    }:
+        prefix = {
+            "reference/audit-pack": "AUD",
+            "reference/research-pack": "RES",
+            "reference/data-pack": "DATA",
+        }[profile_id]
+        return f"{prefix}-{path.parent.name[:4]}"
     if profile_id in {"reference/audit", "reference/research", "reference/data"}:
         prefix = {
             "reference/audit": "AUD",

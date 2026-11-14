@@ -12,6 +12,7 @@ from document_authority import AuthorityError, require_reciprocal_supersession
 from frontmatter_yaml import FrontmatterError, load_frontmatter
 from document_contracts import (
     DocumentProfile,
+    LifecycleDomain,
     SPEC_PLAN_FIRST_APPROVED_EXTENSION,
     task_status,
     Registry,
@@ -202,6 +203,19 @@ def _state_diagnostic(
     )
 
 
+def creation_states(domain: LifecycleDomain) -> tuple[str, ...]:
+    """Return the states a document may be created in under one lifecycle domain.
+
+    A domain declares them in `initial_states`; otherwise they are the states with
+    no inbound transition, and a domain whose every state has one yields none.
+    """
+
+    inbound = {target for _, target in domain.transitions}
+    return domain.initial_states or tuple(
+        state for state, _ in domain.states if state not in inbound
+    )
+
+
 def _create_diagnostics(
     registry: Registry,
     documents: Sequence[LifecycleDocument],
@@ -238,10 +252,7 @@ def _create_diagnostics(
         domain = profile.lifecycle_domain
         assert domain is not None  # `_stateful` admits only a declared domain.
         observed = f"absent -> {document.status or 'not-applicable'}"
-        inbound = {target for _, target in domain.transitions}
-        initial_states = domain.initial_states or tuple(
-            state for state, _ in domain.states if state not in inbound
-        )
+        initial_states = creation_states(domain)
         if document.status not in initial_states and not (
             document.profile_id in {"sdlc/spec", "sdlc/plan"}
             and document.status == "approved"

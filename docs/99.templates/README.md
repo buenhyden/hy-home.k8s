@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.30.4"
+version: "0.30.5"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -202,8 +202,11 @@ Stage 90 collection contract가 요구하는 audit/data collection·pack 경로�
 
 1. **Classify**: repository-relative target path를 registry로 분류하고 정확히 하나의
    profile이 선택되는지 확인한다.
-2. **Copy**: 선택된 profile의 canonical form을 복사한다. 이웃 파일명이나 README
-   목록으로 form을 추측하지 않는다.
+2. **Copy**: 선택된 profile의 canonical form을 복사한다.
+   `python3 scripts/document-generator.py`가 form을 복사하고 공통 marker 다섯
+   개를 채운다(번호는 호출자가 target path에 쓴다). form을 손으로 복사해도
+   유효하며 validator가 gate다. 이웃 파일명이나 README 목록으로 form을
+   추측하지 않는다.
    Stage 90 pack은 반드시 `audits|data|research/####-<slug>/` 아래에서
    category와 일치하는 pack form을 선택한다.
 3. **Author**: 모든 prompt와 placeholder를 제거하고, 각 section을 문서의 topic에

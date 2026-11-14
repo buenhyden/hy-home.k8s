@@ -48,6 +48,7 @@ SUITES = {
         "semver_grammar",
         "registry_schema_version",
         "work_residue_ledger",
+        "document_generator",
     ),
     "document-lifecycle": _modules(
         "document_artifact_identity",
