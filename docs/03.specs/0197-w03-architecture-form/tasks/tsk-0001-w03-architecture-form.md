@@ -1,6 +1,6 @@
 ---
 title: "W03 Architecture Form"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -27,9 +27,9 @@ This Task records the Architecture part of handoffs W03-H02 and W03-H13 and the 
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-ADFORM-001](../spec.md#success-criteria--verification-plan) | The form, the two local extensions, the description profiles' lists, the TemplateDefinition and its tables, and the form tree tests. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-ADFORM-002](../spec.md#success-criteria--verification-plan) | The description template and the four descriptions by the heading map, with the `arc42 coverage` links and any false positional word corrected. | platform | ready | NOT_RUN | Pending |
-| WORK-003 | [VAL-ADFORM-003](../spec.md#success-criteria--verification-plan) | The reviewed citing rows; `REQUIREMENT-COVERAGE` and its tests; the column removal; the `relationship_contract` entry; the texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-ADFORM-001](../spec.md#success-criteria--verification-plan) | The form, the two local extensions, the description profiles' lists, the TemplateDefinition and its tables, and the form tree tests. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-ADFORM-002](../spec.md#success-criteria--verification-plan) | The description template and the four descriptions by the heading map, with the `arc42 coverage` links and any false positional word corrected. | platform | in-progress | NOT_RUN | Pending |
+| WORK-003 | [VAL-ADFORM-003](../spec.md#success-criteria--verification-plan) | The reviewed citing rows; `REQUIREMENT-COVERAGE` and its tests; the column removal; the `relationship_contract` entry; the texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
 
 ## Task Evidence
 
