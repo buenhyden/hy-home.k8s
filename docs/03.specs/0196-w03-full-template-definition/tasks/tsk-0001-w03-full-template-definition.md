@@ -1,6 +1,6 @@
 ---
 title: "W03 Full TemplateDefinition Record"
-version: "0.3.0"
+version: "0.3.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -27,9 +27,9 @@ This Task records handoff W03-H15 and the rest of W03-H28: the function that der
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-TDREC-001](../spec.md#success-criteria--verification-plan) | The schema copy and its digest pin, `contract_version` in the profile schema and the definitions, the function, `REGISTRY_TEMPLATE_RECORD` and the record and negative tests. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-TDREC-002](../spec.md#success-criteria--verification-plan) | The consumer-zero list, the replacement refusal and the removal of the heading-line rule, branch, helpers, tests and wording. | platform | ready | NOT_RUN | Pending |
-| WORK-003 | [VAL-TDREC-003](../spec.md#success-criteria--verification-plan) | Policy texts; the W03-D56 row of the SPEC-0161 Task, the closure of W03-H15 and W03-H28 and their ledger entries; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-TDREC-001](../spec.md#success-criteria--verification-plan) | The schema copy and its digest pin, `contract_version` in the profile schema and the definitions, the function, `REGISTRY_TEMPLATE_RECORD` and the record and negative tests. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-TDREC-002](../spec.md#success-criteria--verification-plan) | The consumer-zero list, the replacement refusal and the removal of the heading-line rule, branch, helpers, tests and wording. | platform | in-progress | NOT_RUN | Pending |
+| WORK-003 | [VAL-TDREC-003](../spec.md#success-criteria--verification-plan) | Policy texts; the W03-D56 row of the SPEC-0161 Task, the closure of W03-H15 and W03-H28 and their ledger entries; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
 
 ## Task Evidence
 
