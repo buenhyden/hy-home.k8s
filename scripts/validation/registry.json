@@ -1470,6 +1470,10 @@
         {
           "kind": "exact",
           "value": "tests/test_document_generator.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_relationship_contract.py"
         }
       ],
       "validators": [

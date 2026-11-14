@@ -1098,6 +1098,25 @@ def _approved_initial_paths(
     return frozenset(admitted)
 
 
+def _supersession_ids(text: str) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """The identifiers one document names in `supersedes` and `superseded_by`."""
+
+    try:
+        data = frontmatter_mapping(text)
+    except (ValueError, TypeError):
+        return (), ()
+
+    def identifiers(key: str) -> tuple[str, ...]:
+        value = data.get(key)
+        if isinstance(value, str):
+            return (value,)
+        if isinstance(value, list):
+            return tuple(item for item in value if isinstance(item, str))
+        return ()
+
+    return identifiers("supersedes"), identifiers("superseded_by")
+
+
 def _evidence_context(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -1134,6 +1153,7 @@ def _evidence_context(
                 )
     for path, document in proposed_documents.items():
         profile = profile_map.get(document.profile_id)
+        supersedes_ids, superseded_by_ids = _supersession_ids(proposed_texts[path])
         if profile is None or profile.body_contract is None:
             views[path] = LifecycleEvidenceDocument(
                 document=document,
@@ -1144,6 +1164,8 @@ def _evidence_context(
                 relationship_section_valid=profile is not None,
                 body_contract_valid=profile is not None,
                 task_terminal_evidence_valid=False,
+                supersedes_ids=supersedes_ids,
+                superseded_by_ids=superseded_by_ids,
             )
             continue
         rendered = adapter.lifecycle_markdown_evidence(
@@ -1163,6 +1185,8 @@ def _evidence_context(
             body_contract_valid=rendered.body_contract_valid,
             task_terminal_evidence_valid=rendered.task_terminal_evidence_valid,
             body_rows=rendered.body_rows,
+            supersedes_ids=supersedes_ids,
+            superseded_by_ids=superseded_by_ids,
             task_evidence_rows=(
                 tuple(
                     tuple(row.items())

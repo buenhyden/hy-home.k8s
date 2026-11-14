@@ -91,7 +91,12 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    relation once, in the document that cites its parent; never hand-write a
    back-link. Derive the reverse view on demand with
    `scripts/document-backlinks.py`. Supersession pairs (rule 13) stay
-   reciprocal.
+   reciprocal. The Stage 99 registry `relationship_contract` owns the meaning
+   of each relation (kind, direction, cardinality, canonical owner, consumers,
+   checks) and of the four link types (normative, evidence, historical,
+   navigation). A link fragment names a heading slug or an explicit anchor of
+   its Markdown target, and no document is reachable from itself over
+   `supersedes` and `superseded_by`.
    Link the current owner instead of `docs/98.archive/`; that directory is
    unvalidated history, and a link into it is not checked.
 7. Keep a Requirement Package solution-independent. Put executable interface

@@ -49,6 +49,7 @@ SUITES = {
         "registry_schema_version",
         "work_residue_ledger",
         "document_generator",
+        "relationship_contract",
     ),
     "document-lifecycle": _modules(
         "document_artifact_identity",

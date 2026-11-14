@@ -280,7 +280,8 @@ supersession, provenance key는 선택된 profile의 order에만 따라 나타�
 required, optional, forbidden, order, constant, lifecycle, identity pattern은
 [Registry](./registry.json)가 소유한다. 각 key의 의미·작성 주체·소비 경로·테스트는
 Registry의 `frontmatter_keys`가, YAML과 JSON Schema dialect는 `frontmatter_dialect`가
-소유한다. Markdown placeholder는
+소유한다. 각 문서 relation의 종류·방향·cardinality·소유자·소비 경로와 link 유형 네 가지의
+의미는 Registry의 `relationship_contract`가 소유한다. Markdown placeholder는
 "&#123;&#123;UPPER_SNAKE_CASE&#125;&#125;", native placeholder는 `__UPPER_SNAKE_CASE__`,
 author guidance는 "<!-- Author prompt: ... -->"만 사용한다.
 

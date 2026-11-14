@@ -2352,6 +2352,78 @@ def _retired_reference_link(context: Context, target: PurePosixPath) -> bool:
     )
 
 
+_FRONTMATTER_BLOCK = re.compile(r"\A---[ \t]*\r?\n.*?\r?\n---[ \t]*(?:\r?\n|\Z)", re.S)
+_ATX_HEADING = re.compile(r" {0,3}#{1,6}(?:[ \t]+(.*?))?(?:[ \t]+#+)?[ \t]*")
+_EXPLICIT_ANCHOR = re.compile(
+    r"""<[A-Za-z][^<>]*?\b(?:id|name)\s*=\s*(?:"([^"]+)"|'([^']+)')"""
+)
+
+
+def _heading_slug(heading: str) -> str:
+    """The GitHub-style slug of one heading's text, before repeats are numbered."""
+
+    text = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", heading)
+    text = re.sub(r"<[^>]*>", "", text)
+    text = re.sub(r"(?<!\w)_+|_+(?!\w)", "", text)
+    return re.sub(r"[^\w\- ]", "", text.casefold()).strip(" ").replace(" ", "-")
+
+
+@lru_cache(maxsize=2048)
+def _heading_anchors(text: str) -> frozenset[str]:
+    """Anchors a Markdown file offers: heading slugs and explicit id or name anchors.
+
+    Headings come from the rendered block view, so fenced and indented code give
+    none. A repeated slug is numbered `-1`, `-2` in order of appearance.
+    """
+
+    rendered = _rendered_markdown(_FRONTMATTER_BLOCK.sub("", text, count=1))
+    anchors: set[str] = set()
+    seen: dict[str, int] = {}
+    for line in rendered.splitlines():
+        match = _ATX_HEADING.fullmatch(line)
+        if match is None:
+            continue
+        slug = _heading_slug(match.group(1) or "")
+        count = seen.get(slug, 0)
+        seen[slug] = count + 1
+        anchors.add(slug if count == 0 else f"{slug}-{count}")
+    for tag in _EXPLICIT_ANCHOR.finditer(_mask_inline_code_spans(rendered)):
+        anchors.update(name for name in tag.groups() if name)
+    return frozenset(anchors)
+
+
+def _fragment_diagnostic(
+    context: Context,
+    source: PurePosixPath,
+    profile: str,
+    raw: str,
+    target: PurePosixPath,
+) -> Diagnostic | None:
+    """SPEC-0193: a link fragment must name an anchor its Markdown target offers."""
+
+    fragment = unquote(raw.split("#", 1)[1]) if "#" in raw else ""
+    if (
+        not fragment
+        or "{{" in fragment
+        or target.suffix.casefold() != ".md"
+        or target.is_relative_to(ARCHIVE_ROOT)
+    ):
+        return None
+    target = context.adapter_targets.get(target, target)
+    text = context.texts.get(target)
+    if text is None and target in context.tracked_regular_paths:
+        text = read_repository_text(context.root, target)
+    if text is None or fragment in _heading_anchors(text):
+        return None
+    return _diag(
+        "LINK-FRAGMENT",
+        source,
+        profile,
+        "a heading slug or explicit anchor of the target",
+        f"{target.as_posix()}#{fragment}",
+    )
+
+
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     registry = context.current_registry or load_registry(context.root)
@@ -2380,7 +2452,13 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             kind, target = _local_destination(
                 source, raw, template=context.profiles[source].mode == "template"
             )
-            if kind in {"external", "anchor", "template"}:
+            if kind in {"external", "template"}:
+                continue
+            if kind == "anchor":
+                assert target is not None
+                fragment = _fragment_diagnostic(context, source, profile, raw, target)
+                if fragment is not None:
+                    diagnostics.append(fragment)
                 continue
             if kind.startswith("LINK-"):
                 diagnostics.append(
@@ -2414,6 +2492,10 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             boundary = _stage_boundary_diagnostic(source, profile, target)
             if boundary is not None:
                 diagnostics.append(boundary)
+                continue
+            fragment = _fragment_diagnostic(context, source, profile, raw, target)
+            if fragment is not None:
+                diagnostics.append(fragment)
     return diagnostics
 
 

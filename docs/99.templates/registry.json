@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": "11.0.0",
+  "schema_version": "12.0.0",
   "profiles": [
     {
       "id": "sdlc/requirement",
@@ -15876,6 +15876,1109 @@
       {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
         "heading": "W03 Decisions"
+      }
+    ]
+  },
+  "relationship_contract": {
+    "relation_kinds": [
+      {
+        "id": "authority",
+        "meaning": "A document or template names the policy owner whose rule it applies.",
+        "direction": "source_to_target",
+        "owner": "The source document author; the policy owner never lists its dependents."
+      },
+      {
+        "id": "structural-ownership",
+        "meaning": "A child document names the one parent that owns it.",
+        "direction": "source_to_target",
+        "owner": "The child's frontmatter parent_ids, derived from the package path."
+      },
+      {
+        "id": "constraint",
+        "meaning": "A document names the design decision or description that limits it.",
+        "direction": "source_to_target",
+        "owner": "The author of the constrained document."
+      },
+      {
+        "id": "traceability",
+        "meaning": "A document names the requirement it derives from or the criterion it verifies.",
+        "direction": "source_to_target",
+        "owner": "The author of the downstream document."
+      },
+      {
+        "id": "promotion",
+        "meaning": "A Plan names the current owner that receives each durable contract.",
+        "direction": "source_to_target",
+        "owner": "The Plan author; the current owner holds the content and the Task holds the receipt."
+      },
+      {
+        "id": "supersession",
+        "meaning": "A successor names its predecessor, and where the lifecycle domain has a superseded state the predecessor names its successor in the same commit.",
+        "direction": "source_to_target",
+        "owner": "The successor author; an accepted ADR is never edited, so its successor alone carries the relation."
+      },
+      {
+        "id": "change-impact",
+        "meaning": "A frontmatter key or a TemplateDefinition names the paths that must change with it.",
+        "direction": "owner_to_consumer",
+        "owner": "The registry entry of the key or of the definition."
+      }
+    ],
+    "relations": [
+      {
+        "id": "parent",
+        "kind": "structural-ownership",
+        "direction": "source_to_target",
+        "source_profile_ids": [
+          "sdlc/task",
+          "sdlc/plan"
+        ],
+        "target_profile_ids": [
+          "sdlc/plan",
+          "sdlc/spec"
+        ],
+        "cardinality": {
+          "per_source": "exactly-one",
+          "per_target": "any"
+        },
+        "canonical_owners": [
+          {
+            "profile_id": "sdlc/task",
+            "carrier": "frontmatter",
+            "key": "parent_ids"
+          },
+          {
+            "profile_id": "sdlc/plan",
+            "carrier": "frontmatter",
+            "key": "parent_ids"
+          }
+        ],
+        "reverse_view": "Derived by scripts/document-backlinks.py; the parent never lists its children.",
+        "consumer_paths": [
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validate-document-lifecycle.py",
+          "scripts/document-backlinks.py"
+        ],
+        "checks": [
+          {
+            "rule_id": "PARENT-IDENTITY",
+            "path": "scripts/validate-markdown-profiles.py"
+          },
+          {
+            "rule_id": "PARENT-IDENTITY",
+            "path": "scripts/validate-links-and-owners.py"
+          },
+          {
+            "rule_id": "TASK-PARENT-APPROVAL",
+            "path": "scripts/validate-document-lifecycle.py"
+          }
+        ],
+        "positive_test": {
+          "module": "tests/test_task_execution_contract.py",
+          "test": "test_active_task_needs_approved_typed_parents"
+        },
+        "negative_test": {
+          "module": "tests/test_task_execution_contract.py",
+          "test": "test_direct_parent_cancellation_and_evidence_table_are_required"
+        },
+        "gaps": [
+          "The i-th source profile is owned by the i-th target profile. A Spec carries no parent_ids, so the root of the ownership forest has no owner entry."
+        ]
+      },
+      {
+        "id": "requirement-basis",
+        "kind": "traceability",
+        "direction": "source_to_target",
+        "source_profile_ids": [
+          "sdlc/spec",
+          "sdlc/architecture-description"
+        ],
+        "target_profile_ids": [
+          "sdlc/requirement"
+        ],
+        "cardinality": {
+          "per_source": "one-or-more",
+          "per_target": "any"
+        },
+        "canonical_owners": [
+          {
+            "profile_id": "sdlc/spec",
+            "carrier": "body_contract",
+            "key": "Requirement ID"
+          },
+          {
+            "profile_id": "sdlc/architecture-description",
+            "carrier": "body_contract",
+            "key": "Upstream requirement"
+          }
+        ],
+        "reverse_view": "Derived by scripts/document-backlinks.py; the Requirement Downstream owner column is a reciprocal carrier that current checks require and the Architecture form package owns (SPEC-0197).",
+        "consumer_paths": [
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/document-backlinks.py"
+        ],
+        "checks": [
+          {
+            "rule_id": "BODY-CONTRACT-IDENTIFIER",
+            "path": "scripts/validate-markdown-profiles.py"
+          },
+          {
+            "rule_id": "BODY-LINK-BROKEN",
+            "path": "scripts/validate-links-and-owners.py"
+          }
+        ],
+        "positive_test": {
+          "module": "tests/test_documentation_link_boundary.py",
+          "test": "test_forward_relationship_link_still_fails_broken_or_wrong_profile"
+        },
+        "negative_test": {
+          "module": "tests/test_documentation_link_boundary.py",
+          "test": "test_forward_relationship_link_still_fails_broken_or_wrong_profile"
+        },
+        "gaps": [
+          "BODY-LINK-SOURCE and BODY-LINK-SOURCE-PROFILE are formed at run time from the link direction and cannot be named by occurrence; the negative test exercises BODY-LINK-SOURCE-PROFILE."
+        ]
+      },
+      {
+        "id": "design-constraint",
+        "kind": "constraint",
+        "direction": "source_to_target",
+        "source_profile_ids": [
+          "sdlc/spec",
+          "sdlc/architecture-description",
+          "sdlc/architecture-decision"
+        ],
+        "target_profile_ids": [
+          "sdlc/architecture-description",
+          "sdlc/architecture-decision",
+          "sdlc/spec"
+        ],
+        "cardinality": {
+          "per_source": "any",
+          "per_target": "any"
+        },
+        "canonical_owners": [
+          {
+            "profile_id": "sdlc/spec",
+            "carrier": "body_contract",
+            "key": "Architecture"
+          },
+          {
+            "profile_id": "sdlc/architecture-description",
+            "carrier": "body_contract",
+            "key": "ADR / Spec"
+          },
+          {
+            "profile_id": "sdlc/architecture-decision",
+            "carrier": "body_contract",
+            "key": "Decision lineage"
+          },
+          {
+            "profile_id": "sdlc/architecture-decision",
+            "carrier": "body_contract",
+            "key": "Affected Spec"
+          }
+        ],
+        "reverse_view": "Derived by scripts/document-backlinks.py; a constraint is never a second parent.",
+        "consumer_paths": [
+          "scripts/validate-links-and-owners.py",
+          "scripts/document-backlinks.py"
+        ],
+        "checks": [
+          {
+            "rule_id": "BODY-LINK-BROKEN",
+            "path": "scripts/validate-links-and-owners.py"
+          }
+        ],
+        "positive_test": {
+          "module": "tests/test_documentation_link_boundary.py",
+          "test": "test_forward_relationship_link_still_fails_broken_or_wrong_profile"
+        },
+        "negative_test": {
+          "module": "tests/test_documentation_link_boundary.py",
+          "test": "test_forward_relationship_link_still_fails_broken_or_wrong_profile"
+        },
+        "gaps": [
+          "The Spec Architecture column is not a link column of the body contract, so no rule checks its links (W03-D51).",
+          "BODY-LINK-SOURCE and BODY-LINK-SOURCE-PROFILE are formed at run time from the link direction and cannot be named by occurrence."
+        ]
+      },
+      {
+        "id": "promotion",
+        "kind": "promotion",
+        "direction": "source_to_target",
+        "source_profile_ids": [
+          "sdlc/plan"
+        ],
+        "target_profile_ids": [
+          "governance/knowledge",
+          "governance/vocabulary",
+          "governance/prompt",
+          "governance/provider",
+          "governance/role",
+          "governance/rule",
+          "governance/skill",
+          "sdlc/requirement",
+          "sdlc/architecture-description",
+          "sdlc/architecture-decision",
+          "operation/guide",
+          "operation/policy",
+          "operation/runbook",
+          "operation/incident",
+          "operation/postmortem"
+        ],
+        "cardinality": {
+          "per_source": "one-or-more",
+          "per_target": "any"
+        },
+        "canonical_owners": [
+          {
+            "profile_id": "sdlc/plan",
+            "carrier": "section",
+            "key": "Promotion"
+          }
+        ],
+        "reverse_view": "None: the current owner holds the content and the Task holds the receipt.",
+        "consumer_paths": [
+          "scripts/validate-document-lifecycle.py"
+        ],
+        "checks": [
+          {
+            "rule_id": "PLAN-PROMOTION",
+            "path": "scripts/validate-document-lifecycle.py"
+          }
+        ],
+        "positive_test": {
+          "module": "tests/test_task_execution_contract.py",
+          "test": "test_promotion_requires_current_owner_and_sole_none_decision"
+        },
+        "negative_test": {
+          "module": "tests/test_task_execution_contract.py",
+          "test": "test_promotion_requires_current_owner_and_sole_none_decision"
+        },
+        "gaps": [
+          "The Plan Promotion table is read by a script and not by a body contract; the Plan form package changes this entry with the reader (W03-H10)."
+        ]
+      },
+      {
+        "id": "supersession",
+        "kind": "supersession",
+        "direction": "source_to_target",
+        "source_profile_ids": [
+          "sdlc/requirement",
+          "sdlc/architecture-description",
+          "sdlc/architecture-decision",
+          "sdlc/task",
+          "operation/guide",
+          "operation/policy",
+          "operation/runbook",
+          "reference/audit",
+          "reference/research",
+          "reference/data",
+          "governance/knowledge",
+          "governance/vocabulary",
+          "governance/prompt",
+          "governance/provider",
+          "governance/role",
+          "governance/rule",
+          "governance/skill",
+          "reference/audit-pack",
+          "reference/data-pack",
+          "reference/research-pack"
+        ],
+        "target_profile_ids": [
+          "sdlc/requirement",
+          "sdlc/architecture-description",
+          "sdlc/architecture-decision",
+          "sdlc/task",
+          "operation/guide",
+          "operation/policy",
+          "operation/runbook",
+          "reference/audit",
+          "reference/research",
+          "reference/data",
+          "governance/knowledge",
+          "governance/vocabulary",
+          "governance/prompt",
+          "governance/provider",
+          "governance/role",
+          "governance/rule",
+          "governance/skill",
+          "reference/audit-pack",
+          "reference/data-pack",
+          "reference/research-pack"
+        ],
+        "cardinality": {
+          "per_source": "any",
+          "per_target": "any"
+        },
+        "canonical_owners": [
+          {
+            "profile_id": "sdlc/requirement",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "sdlc/architecture-description",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "sdlc/architecture-decision",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "sdlc/task",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "operation/guide",
+            "carrier": "frontmatter",
+            "key": "superseded_by"
+          },
+          {
+            "profile_id": "operation/policy",
+            "carrier": "frontmatter",
+            "key": "superseded_by"
+          },
+          {
+            "profile_id": "operation/runbook",
+            "carrier": "frontmatter",
+            "key": "superseded_by"
+          },
+          {
+            "profile_id": "reference/audit",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "reference/research",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "reference/data",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "governance/knowledge",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "governance/vocabulary",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "governance/prompt",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "governance/provider",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "governance/role",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "governance/rule",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "governance/skill",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "reference/audit-pack",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "reference/data-pack",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          },
+          {
+            "profile_id": "reference/research-pack",
+            "carrier": "frontmatter",
+            "key": "supersedes"
+          }
+        ],
+        "reverse_view": "superseded_by, written with the successor in one commit where the lifecycle domain has a superseded state; an accepted ADR is never edited, so its successor alone carries the relation.",
+        "consumer_paths": [
+          "scripts/document_lifecycle.py",
+          "scripts/document_authority.py",
+          "scripts/validate-document-lifecycle.py",
+          "scripts/validate-markdown-profiles.py"
+        ],
+        "checks": [
+          {
+            "rule_id": "LIFECYCLE-EVIDENCE",
+            "path": "scripts/document_lifecycle.py"
+          }
+        ],
+        "positive_test": {
+          "module": "tests/test_relationship_contract.py",
+          "test": "test_a_linear_chain_and_a_diamond_pass"
+        },
+        "negative_test": {
+          "module": "tests/test_relationship_contract.py",
+          "test": "test_a_self_reference_fails"
+        },
+        "gaps": [
+          "The cycle observation walks artifact identifiers; an identifier that names no document in the tree is not itself refused."
+        ]
+      },
+      {
+        "id": "verification-evidence",
+        "kind": "traceability",
+        "direction": "source_to_target",
+        "source_profile_ids": [
+          "sdlc/task"
+        ],
+        "target_profile_ids": [
+          "sdlc/spec"
+        ],
+        "cardinality": {
+          "per_source": "one-or-more",
+          "per_target": "any"
+        },
+        "canonical_owners": [
+          {
+            "profile_id": "sdlc/task",
+            "carrier": "body_contract",
+            "key": "Criteria"
+          },
+          {
+            "profile_id": "sdlc/task",
+            "carrier": "body_contract",
+            "key": "Criterion"
+          }
+        ],
+        "reverse_view": "Derived by scripts/document-backlinks.py.",
+        "consumer_paths": [
+          "scripts/document_contracts.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/document-backlinks.py"
+        ],
+        "checks": [
+          {
+            "rule_id": "TASK-EVIDENCE-COLUMNS",
+            "path": "scripts/validate-markdown-profiles.py"
+          },
+          {
+            "rule_id": "TASK-EVIDENCE-CRITERION",
+            "path": "scripts/document_contracts.py"
+          },
+          {
+            "rule_id": "BODY-LINK-BROKEN",
+            "path": "scripts/validate-links-and-owners.py"
+          }
+        ],
+        "positive_test": {
+          "module": "tests/test_task_execution_contract.py",
+          "test": "test_direct_parent_cancellation_and_evidence_table_are_required"
+        },
+        "negative_test": {
+          "module": "tests/test_task_execution_contract.py",
+          "test": "test_direct_parent_cancellation_and_evidence_table_are_required"
+        },
+        "gaps": [
+          "No changed-file rule compares a criterion identifier with the criteria its parent Spec defines; the link path is checked by BODY-LINK-BROKEN and its fragment by LINK-FRAGMENT, and the completion mode compares the Plan allocations."
+        ]
+      },
+      {
+        "id": "policy-authority",
+        "kind": "authority",
+        "direction": "source_to_target",
+        "source_profile_ids": [
+          "common/template-readme-repository",
+          "common/template-readme-stage-index",
+          "common/template-readme-collection-index",
+          "common/template-readme-implementation",
+          "common/template-readme-audit-pack",
+          "common/template-readme-data-pack",
+          "common/template-readme-research-pack",
+          "common/template-readme-workspace-staging",
+          "common/template-readme-runtime-governance",
+          "common/template-reference-audit",
+          "common/template-reference-research",
+          "common/template-reference-data",
+          "common/template-operation-guide",
+          "common/template-operation-incident",
+          "common/template-operation-policy",
+          "common/template-operation-postmortem",
+          "common/template-operation-runbook",
+          "common/template-exception-provider-native-metadata",
+          "common/template-exception-provider-native-command",
+          "common/template-exception-provider-native-codex",
+          "common/template-governance-knowledge",
+          "common/template-governance-vocabulary",
+          "common/template-governance-prompt",
+          "common/template-governance-provider",
+          "common/template-governance-role",
+          "common/template-governance-rule",
+          "common/template-governance-skill",
+          "common/template-native-skill",
+          "common/template-agents-guide",
+          "common/template-evaluation-task",
+          "common/template-evaluation-score",
+          "common/template-evaluation-results"
+        ],
+        "target_profile_ids": [
+          "governance/rule",
+          "operation/policy"
+        ],
+        "cardinality": {
+          "per_source": "one-or-more",
+          "per_target": "any"
+        },
+        "canonical_owners": [
+          {
+            "profile_id": "common/template-readme-repository",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-readme-stage-index",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-readme-collection-index",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-readme-implementation",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-readme-audit-pack",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-readme-data-pack",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-readme-research-pack",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-readme-workspace-staging",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-readme-runtime-governance",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-reference-audit",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-reference-research",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-reference-data",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-operation-guide",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-operation-incident",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-operation-policy",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-operation-postmortem",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-operation-runbook",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-exception-provider-native-metadata",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-exception-provider-native-command",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-exception-provider-native-codex",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-governance-knowledge",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-governance-vocabulary",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-governance-prompt",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-governance-provider",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-governance-role",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-governance-rule",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-governance-skill",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-native-skill",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-agents-guide",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-evaluation-task",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-evaluation-score",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-evaluation-results",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          }
+        ],
+        "reverse_view": "None: a policy owner never lists the templates that apply it.",
+        "consumer_paths": [
+          "scripts/document_contracts.py",
+          "docs/99.templates/contracts/document-profile.schema.json"
+        ],
+        "checks": [
+          {
+            "rule_id": "REGISTRY_SCHEMA",
+            "path": "scripts/document_contracts.py"
+          },
+          {
+            "rule_id": "LINK-BROKEN",
+            "path": "scripts/validate-links-and-owners.py"
+          },
+          {
+            "rule_id": "LINK-STAGE-BOUNDARY",
+            "path": "scripts/validate-links-and-owners.py"
+          }
+        ],
+        "positive_test": {
+          "module": "tests/test_relationship_contract.py",
+          "test": "test_policy_authority_is_read_from_template_definition_policy_refs"
+        },
+        "negative_test": {
+          "module": "tests/test_relationship_contract.py",
+          "test": "test_policy_authority_is_read_from_template_definition_policy_refs"
+        },
+        "gaps": [
+          "No rule checks that a policy_refs path exists."
+        ]
+      },
+      {
+        "id": "consumer-impact",
+        "kind": "change-impact",
+        "direction": "owner_to_consumer",
+        "source_profile_ids": [
+          "common/template-readme-repository",
+          "common/template-readme-stage-index",
+          "common/template-readme-collection-index",
+          "common/template-readme-implementation",
+          "common/template-readme-audit-pack",
+          "common/template-readme-data-pack",
+          "common/template-readme-research-pack",
+          "common/template-readme-workspace-staging",
+          "common/template-readme-runtime-governance",
+          "common/template-reference-audit",
+          "common/template-reference-research",
+          "common/template-reference-data",
+          "common/template-operation-guide",
+          "common/template-operation-incident",
+          "common/template-operation-policy",
+          "common/template-operation-postmortem",
+          "common/template-operation-runbook",
+          "common/template-exception-provider-native-metadata",
+          "common/template-exception-provider-native-command",
+          "common/template-exception-provider-native-codex",
+          "common/template-governance-knowledge",
+          "common/template-governance-vocabulary",
+          "common/template-governance-prompt",
+          "common/template-governance-provider",
+          "common/template-governance-role",
+          "common/template-governance-rule",
+          "common/template-governance-skill",
+          "common/template-native-skill",
+          "common/template-agents-guide",
+          "common/template-evaluation-task",
+          "common/template-evaluation-score",
+          "common/template-evaluation-results"
+        ],
+        "target_profile_ids": [],
+        "cardinality": {
+          "per_source": "one-or-more",
+          "per_target": "any"
+        },
+        "canonical_owners": [
+          {
+            "profile_id": "common/template-readme-repository",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-readme-stage-index",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-readme-collection-index",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-readme-implementation",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-readme-audit-pack",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-readme-data-pack",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-readme-research-pack",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-readme-workspace-staging",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-readme-runtime-governance",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-reference-audit",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-reference-research",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-reference-data",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-operation-guide",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-operation-incident",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-operation-policy",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-operation-postmortem",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-operation-runbook",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-exception-provider-native-metadata",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-exception-provider-native-command",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-exception-provider-native-codex",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-governance-knowledge",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-governance-vocabulary",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-governance-prompt",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-governance-provider",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-governance-role",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-governance-rule",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-governance-skill",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-native-skill",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-agents-guide",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-evaluation-task",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-evaluation-score",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-evaluation-results",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          }
+        ],
+        "reverse_view": "Read from the registry entry; scripts/validate-affected-surfaces.py maps a changed path to its validators. The consumer_paths of a frontmatter key are checked by REGISTRY_KEY_CONSUMER and REGISTRY_KEY_TEST (SPEC-0181).",
+        "consumer_paths": [
+          "scripts/document_contracts.py",
+          "scripts/validate-affected-surfaces.py"
+        ],
+        "checks": [
+          {
+            "rule_id": "REGISTRY_KEY_CONSUMER",
+            "path": "scripts/document_contracts.py"
+          },
+          {
+            "rule_id": "REGISTRY_KEY_TEST",
+            "path": "scripts/document_contracts.py"
+          }
+        ],
+        "positive_test": {
+          "module": "tests/test_frontmatter_key_contract.py",
+          "test": "test_repository_registry_describes_exactly_the_used_keys"
+        },
+        "negative_test": {
+          "module": "tests/test_frontmatter_key_contract.py",
+          "test": "test_an_empty_or_missing_consumer_path_is_refused"
+        },
+        "gaps": [
+          "The consumer_paths of a TemplateDefinition are not checked for existence."
+        ]
+      }
+    ],
+    "link_types": [
+      {
+        "id": "normative",
+        "meaning": "Names the current owner whose rule applies, by its identity and, where the owner is versioned, the version or scope that applies; its target is a current document, never history.",
+        "direction": "source_to_target",
+        "requiredness": "required",
+        "carries_authority": true,
+        "pinning": "The owner's identity, and its version or scope where it is versioned.",
+        "checks": [
+          {
+            "rule_id": "BODY-LINK-BROKEN",
+            "path": "scripts/validate-links-and-owners.py"
+          },
+          {
+            "rule_id": "LINK-STAGE-BOUNDARY",
+            "path": "scripts/validate-links-and-owners.py"
+          }
+        ],
+        "positive_test": {
+          "module": "tests/test_documentation_link_boundary.py",
+          "test": "test_forward_relationship_link_still_fails_broken_or_wrong_profile"
+        },
+        "negative_test": {
+          "module": "tests/test_documentation_link_boundary.py",
+          "test": "test_reports_every_numbered_stage_target_written_outside_docs"
+        },
+        "gaps": []
+      },
+      {
+        "id": "evidence",
+        "meaning": "Pins what was observed: the revision, the input, the result and the location.",
+        "direction": "source_to_target",
+        "requiredness": "required",
+        "carries_authority": false,
+        "pinning": "Revision, input, result and location of the observation.",
+        "checks": [
+          {
+            "rule_id": "TASK-EVIDENCE-LOCATION",
+            "path": "scripts/document_contracts.py"
+          }
+        ],
+        "positive_test": {
+          "module": "tests/test_task_acceptance_boundaries.py",
+          "test": "test_failed_check_requires_concrete_provenance"
+        },
+        "negative_test": {
+          "module": "tests/test_task_acceptance_boundaries.py",
+          "test": "test_failed_check_requires_concrete_provenance"
+        },
+        "gaps": [
+          "Only that a cell is concrete is checked, not that the location resolves."
+        ]
+      },
+      {
+        "id": "historical",
+        "meaning": "Names a commit:path or an Archived Lineage row for recovery and is marked non-authoritative.",
+        "direction": "source_to_target",
+        "requiredness": "conditional",
+        "carries_authority": false,
+        "pinning": "The commit and the path that recover the past content.",
+        "checks": [],
+        "positive_test": {
+          "module": "tests/test_documentation_link_boundary.py",
+          "test": "test_an_archive_target_and_its_fragment_are_not_checked"
+        },
+        "negative_test": {
+          "module": "tests/test_documentation_link_boundary.py",
+          "test": "test_an_archive_target_and_its_fragment_are_not_checked"
+        },
+        "gaps": [
+          "Reachability of a commit:path reference stays a manual review (ADR-0056 Decision 6).",
+          "Links into docs/98.archive/ stay unchecked (ADR-0053)."
+        ]
+      },
+      {
+        "id": "navigation",
+        "meaning": "Promises only that the path and the anchor exist.",
+        "direction": "source_to_target",
+        "requiredness": "conditional",
+        "carries_authority": false,
+        "pinning": "The path and the anchor of the target.",
+        "checks": [
+          {
+            "rule_id": "LINK-BROKEN",
+            "path": "scripts/validate-links-and-owners.py"
+          },
+          {
+            "rule_id": "LINK-FRAGMENT",
+            "path": "scripts/validate-links-and-owners.py"
+          },
+          {
+            "rule_id": "README-NAV-COMPLETE",
+            "path": "scripts/validate-links-and-owners.py"
+          }
+        ],
+        "positive_test": {
+          "module": "tests/test_documentation_link_boundary.py",
+          "test": "test_a_heading_slug_a_numbered_repeat_an_explicit_anchor_and_a_korean_heading_pass"
+        },
+        "negative_test": {
+          "module": "tests/test_documentation_link_boundary.py",
+          "test": "test_a_broken_same_file_and_cross_file_fragment_fail"
+        },
+        "gaps": [
+          "A fragment into a non-Markdown file or into docs/98.archive/ is not checked."
+        ]
       }
     ]
   }

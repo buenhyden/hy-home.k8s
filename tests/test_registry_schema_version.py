@@ -195,7 +195,7 @@ class LoaderTests(unittest.TestCase):
         self.assertEqual(rules_of_load(raw_registry()), set())
 
     def test_an_integer_is_refused_with_a_message_that_names_the_mapping(self) -> None:
-        previous = AUTHORITY.REGISTRY_MAJOR - 1
+        previous = LAST_INTEGER_GENERATION
         raw = raw_registry()
         raw["schema_version"] = previous
         diagnostics = load_diagnostics(raw)

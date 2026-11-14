@@ -77,6 +77,10 @@ class LifecycleEvidenceDocument:
     body_rows: tuple[tuple[tuple[str, str], ...], ...] = ()
     task_evidence_rows: tuple[tuple[tuple[str, str], ...], ...] = ()
     task_disposition_valid: bool = True
+    # SPEC-0193: the artifact identifiers named by the `supersedes` and
+    # `superseded_by` frontmatter keys, read for the whole-tree supersession walk.
+    supersedes_ids: tuple[str, ...] = ()
+    superseded_by_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -375,6 +379,60 @@ def _terminal_supersession_evidence(
             evidence_gap="registry lifecycle domain requires reciprocal supersession",
         ),
     )
+
+
+def supersession_cycle_diagnostics(
+    documents: Mapping[PurePosixPath, LifecycleEvidenceDocument],
+    *,
+    base_mode: LifecycleBaseMode,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """SPEC-0193: refuse a document that is reachable from itself.
+
+    `supersedes` and `superseded_by` form one successor graph over the whole
+    proposed tree, so a lifecycle domain without a superseded state is covered
+    too. An edge runs from a predecessor to its successor: a document that names
+    a predecessor in `supersedes` is its successor, and one that names a
+    successor in `superseded_by` is its predecessor, so a reciprocal pair is one
+    edge and never a loop. The walk starts from every document and never counts
+    its start as visited, so a self-reference is found.
+    """
+
+    successors: dict[str, set[str]] = {}
+    for view in documents.values():
+        identity = view.document.artifact_id
+        if identity is None:
+            continue
+        for predecessor in view.supersedes_ids:
+            successors.setdefault(predecessor, set()).add(identity)
+        for successor in view.superseded_by_ids:
+            successors.setdefault(identity, set()).add(successor)
+    diagnostics: list[LifecycleDiagnostic] = []
+    for path, view in sorted(documents.items()):
+        identity = view.document.artifact_id
+        if identity is None or identity not in successors:
+            continue
+        visited: set[str] = set()
+        pending = list(successors[identity])
+        while pending:
+            node = pending.pop()
+            if node == identity:
+                diagnostics.append(
+                    _diagnostic(
+                        "LIFECYCLE-EVIDENCE",
+                        path=path,
+                        profile=view.document.profile_id,
+                        expected="no document reachable from itself over "
+                        "supersedes and superseded_by",
+                        observed="supersession cycle",
+                        base_mode=base_mode,
+                        evidence_gap="whole-tree supersession walk",
+                    )
+                )
+                break
+            if node not in visited:
+                visited.add(node)
+                pending.extend(successors.get(node, ()))
+    return tuple(diagnostics)
 
 
 def artifact_identity_reuse_diagnostics(
@@ -791,6 +849,13 @@ def compare_lifecycle(
     if enforce_task_execution and evidence_context is not None:
         diagnostics.extend(
             local_contract_diagnostics(evidence_context, base_mode=base_mode)
+        )
+
+    if evidence_context is not None:
+        diagnostics.extend(
+            supersession_cycle_diagnostics(
+                evidence_context.proposed_documents, base_mode=base_mode
+            )
         )
 
     return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key))
