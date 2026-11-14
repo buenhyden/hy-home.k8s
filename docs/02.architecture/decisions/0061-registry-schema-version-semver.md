@@ -1,8 +1,8 @@
 ---
 title: "Registry Schema Version SemVer Amendment"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-11-14"
 artifact_id: "ADR-0061"
@@ -12,7 +12,7 @@ artifact_id: "ADR-0061"
 
 ## Overview
 
-This proposed amendment records that the Stage 99 registry value
+This amendment records that the Stage 99 registry value
 `schema_version` is a SemVer string, not an integer. The declared generation 10
 maps to `10.0.0` and the current value is `11.0.0`. It amends the current-state
 sentences of accepted [ADR-0033](./0033-common-document-contract-v9.md) and
@@ -20,9 +20,9 @@ Decision 1 of accepted [ADR-0059](./0059-registry-common-form-model.md) that
 name the integer, as ADR-0059 amended ADR-0033. Both ADRs keep their bodies and
 every other clause stays.
 
-This record is `proposed`, written in the ADR form of its day (W03-D69). It
-becomes `accepted` only by the user's recorded approval; that acceptance
-accepts no criterion of SPEC-0207 by itself.
+This record is written in the ADR form of its day (W03-D69). The current user
+accepted this decision on 2026-11-14. The acceptance is recorded in the
+SPEC-0207 Task. It accepts no SPEC-0207 criterion by itself.
 
 ## Context
 
