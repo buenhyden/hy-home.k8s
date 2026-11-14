@@ -1,6 +1,6 @@
 ---
 title: "Claude Executable Option Abbreviations"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -50,8 +50,8 @@ The implementation is staged and uncommitted. The Spec and Plan are approved (EV
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-EXECOPT-001](../spec.md#success-criteria--verification-plan) | Write the failing decision regressions and the validator pin, then append the five rules to the settings. | platform | draft | NOT_RUN | Pending |
-| WORK-002 | [VAL-EXECOPT-002](../spec.md#success-criteria--verification-plan) | Correct the provider-note sentence, add the Stage 03 README entry, and run the document and exact-index checks. | platform | draft | NOT_RUN | Pending |
+| WORK-001 | [VAL-EXECOPT-001](../spec.md#success-criteria--verification-plan) | Write the failing decision regressions and the validator pin, then append the five rules to the settings. | platform | ready | NOT_RUN | Pending |
+| WORK-002 | [VAL-EXECOPT-002](../spec.md#success-criteria--verification-plan) | Correct the provider-note sentence, add the Stage 03 README entry, and run the document and exact-index checks. | platform | ready | NOT_RUN | Pending |
 
 ## Task Evidence
 
