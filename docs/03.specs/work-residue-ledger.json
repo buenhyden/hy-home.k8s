@@ -543,16 +543,6 @@
       }
     },
     {
-      "id": "W03-H15",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "After phase 3; the H07 package named in the row is closed; W05 consumes the record",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W03-H19",
       "kind": "adoption",
       "state": "open",
