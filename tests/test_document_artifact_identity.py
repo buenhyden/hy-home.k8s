@@ -119,14 +119,6 @@ class PathArtifactIdentityTest(unittest.TestCase):
             ),
         }
 
-        cls.pattern_owned = frozenset(
-            {
-                "reference/audit-pack",
-                "reference/research-pack",
-                "reference/data-pack",
-            }
-        )
-
     def test_registered_numbered_profiles_have_declared_identity_contracts(
         self,
     ) -> None:
@@ -141,8 +133,7 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 profile = self.profiles[profile_id]
                 path = PurePosixPath(raw_path)
                 self.assertEqual(MARKDOWN.classify_path(self.registry, path), profile)
-                derived = None if profile_id in self.pattern_owned else expected
-                self.assertEqual(MARKDOWN.expected_artifact_id(path, profile), derived)
+                self.assertEqual(MARKDOWN.expected_artifact_id(path, profile), expected)
                 self.assertRegex(expected, profile.artifact_id_pattern)
 
     @staticmethod
@@ -172,23 +163,6 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 diagnostics = MARKDOWN.artifact_identity_diagnostics(
                     PurePosixPath(raw_path), profile, {"artifact_id": wrong}
                 )
-                if profile_id in self.pattern_owned:
-                    # These owners declare an identity pattern, without a
-                    # path-derived identity. Exercise the normal value guard.
-                    self.assertEqual(diagnostics, [])
-                    self.assertEqual(
-                        self._pattern_diagnostics(
-                            PurePosixPath(raw_path), profile, wrong
-                        ),
-                        [],
-                    )
-                    malformed = self._pattern_diagnostics(
-                        PurePosixPath(raw_path), profile, "INVALID"
-                    )
-                    self.assertEqual(
-                        [item.rule_id for item in malformed], ["FM-VALUE-PATTERN"]
-                    )
-                    continue
                 expected_rule = (
                     "REQUIREMENT-PACKAGE-IDENTITY"
                     if profile_id == "sdlc/requirement"
@@ -198,6 +172,38 @@ class PathArtifactIdentityTest(unittest.TestCase):
                     [item.rule_id for item in diagnostics], [expected_rule]
                 )
                 self.assertIn(expected, diagnostics[0].expected)
+
+    def test_pack_anchor_identity_follows_the_pack_folder_number(self) -> None:
+        for profile_id in (
+            "reference/audit-pack",
+            "reference/research-pack",
+            "reference/data-pack",
+        ):
+            with self.subTest(profile=profile_id):
+                raw_path, expected = self.cases[profile_id]
+                profile = self.profiles[profile_id]
+                path = PurePosixPath(raw_path)
+                self.assertEqual(
+                    MARKDOWN.artifact_identity_diagnostics(
+                        path, profile, {"artifact_id": expected}
+                    ),
+                    [],
+                )
+                # A pattern-valid identity of another pack no longer passes.
+                other = expected.replace("0072", "0073", 1)
+                self.assertEqual(
+                    [
+                        item.rule_id
+                        for item in MARKDOWN.artifact_identity_diagnostics(
+                            path, profile, {"artifact_id": other}
+                        )
+                    ],
+                    ["ARTIFACT-IDENTITY"],
+                )
+                malformed = self._pattern_diagnostics(path, profile, "INVALID")
+                self.assertEqual(
+                    [item.rule_id for item in malformed], ["FM-VALUE-PATTERN"]
+                )
 
     def test_template_placeholders_are_not_current_ids(self) -> None:
         template_profile = self.profiles["common/template-sdlc-spec"]
@@ -249,6 +255,44 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 )
             self.assertEqual(result, 1, stderr.getvalue() or stdout.getvalue())
             self.assertEqual(stdout.getvalue().count("ARTIFACT-IDENTITY-DUPLICATE"), 2)
+
+
+class CreationStatesTest(unittest.TestCase):
+    """The public creation-state derivation that the lifecycle rule and the generator share."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = MARKDOWN.load_registry(ROOT)
+        cls.domains = {
+            profile.profile_id: profile.lifecycle_domain
+            for profile in cls.registry.profiles
+            if profile.lifecycle_domain is not None
+        }
+
+    def test_declared_initial_states_win(self) -> None:
+        self.assertEqual(
+            LIFECYCLE.creation_states(self.domains["sdlc/spec"]), ("draft",)
+        )
+        self.assertEqual(
+            LIFECYCLE.creation_states(self.domains["sdlc/task"]),
+            ("draft", "ready", "in-progress", "blocked"),
+        )
+
+    def test_undeclared_initial_states_are_the_states_without_an_inbound_edge(
+        self,
+    ) -> None:
+        self.assertEqual(
+            LIFECYCLE.creation_states(self.domains["operation/guide"]), ("draft",)
+        )
+        self.assertEqual(
+            LIFECYCLE.creation_states(self.domains["sdlc/architecture-decision"]),
+            ("proposed",),
+        )
+
+    def test_a_domain_whose_every_state_has_an_inbound_edge_yields_none(self) -> None:
+        self.assertEqual(
+            LIFECYCLE.creation_states(self.domains["sdlc/requirement"]), ()
+        )
 
 
 class RetiredArtifactIdentityTest(unittest.TestCase):

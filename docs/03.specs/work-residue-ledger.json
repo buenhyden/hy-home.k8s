@@ -744,6 +744,16 @@
       }
     },
     {
+      "id": "W03-H43",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03",
+      "resume_condition": "When the registry admits a creation state for the `requirement` lifecycle domain",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
       "id": "W05-H01",
       "kind": "handoff",
       "state": "open",

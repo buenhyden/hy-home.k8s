@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.35"
+version: "0.1.36"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -91,6 +91,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-055 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Closure of W03-H30 and LEDGER through the ledger cycle | User acceptance of both SPEC-0191 criteria (VAL-RESIDUE-001 and VAL-RESIDUE-002), direct current-session answer "Accept both", 2026-11-14 (Asia/Seoul); SPEC-0191 Task EVD-016; `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv | PASS | The user accepted both SPEC-0191 criteria, so the ledger cycle that the Spec names closes W03-H30 (the work residue ledger, its gate and tests) and the LEDGER conflict (the work residue ledger built by SPEC-0191). Their live rows in the Residue Handoff table are terminal with this row as Closure; their entries in `docs/03.specs/work-residue-ledger.json` were made terminal with this closure (gate PASS at 81 entries) and then deleted (gate PASS at 79 entries). The legacy W03-H30 and LEDGER rows stay as recorded, and EVD-053 stays as recorded, its 82 and 81 counts read with EVD-054 and this row. | no | none |
 | EVD-056 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D66 and W03-D69 recorded | User answers to the SPEC-0207 Registry Schema Version questions and to the ADR identity collision question, 2026-11-14 Asia/Seoul | PASS | Recorded as W03-D66 and W03-D69 with the SPEC-0207 package commit. | no | none |
 | EVD-057 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D48 recorded | User answer "Adopt all recommended (Recommended)" to the SPEC-0192 document generator design question with its ten open questions, 2026-11-13 Asia/Seoul | PASS | Recorded as W03-D48 with the SPEC-0192 package commit. | no | none |
+| EVD-058 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Repair handoff W03-H43 recorded (W03-D48) | SPEC-0192 implementation, 2026-11-14: the `requirement` lifecycle domain read in `docs/99.templates/registry.json` (states draft, in-review and approved; transitions in-review to draft, draft to in-review and in-review to approved); `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv | PASS | Recorded the live row W03-H43 in the Residue Handoff table and its entry in `docs/03.specs/work-residue-ledger.json`: every state of the domain has an inbound transition, so the domain yields no creation state, a new Requirement is refused by `LIFECYCLE-CREATE` and the SPEC-0192 generator refuses the profile by its status rule; the repair is a lifecycle contract change that belongs to its own package. W03-H27 is not closed by this row; it stays open until the SPEC-0192 criteria are accepted. | no | none |
 
 ### Edition Delta
 
@@ -507,6 +508,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W03-H40 | Legacy row `Plan` of `Document Form Handoff`: the Plan form | open | W03 | With phase 3 (W03-H02) | none |
 | W03-H41 | Legacy row `Task` of `Document Form Handoff`: the Task form | open | W03 | With phase 3 (W03-H02) | none |
 | W03-H42 | Legacy row `Generator` of `Document Form Handoff`: a document generator or the recorded reason for none | open | W03 | After W03-H25, which SPEC-0184 closed | none |
+| W03-H43 | No legacy row: the `requirement` lifecycle domain yields no creation state, so a new Requirement is refused by the lifecycle creation rule and by the document generator (W03-D48); the repair is a lifecycle contract change of its own | open | W03 | When the registry admits a creation state for the `requirement` lifecycle domain | none |
 | W05-H01 | Legacy row `Link-only section` of `Document Form Handoff`: the hard-coded link-only section list must follow the registry | open | W05 | When W05 starts | none |
 | W05-H02 | Legacy row `scripts set` of `Read Denominator`: 8 partial and 53 listed-only tracked scripts | open | W05 | When W05 re-reads its files before editing | none |
 | W05-H03 | Legacy row `tests set` of `Read Denominator`: 5 partial and 68 listed-only tracked tests | open | W05 | When W05 re-reads its files before editing | none |

@@ -15318,7 +15318,7 @@
         "scripts/validate-markdown-profiles.py",
         "scripts/validate-agent-governance.py"
       ],
-      "lifecycle": "Starts at 1.0.0 and is bumped in the commit that changes the document.",
+      "lifecycle": "Starts at 0.1.0, is raised to 1.0.0 at the first stable approval and is bumped in the commit that changes the document.",
       "migration": "None recorded; the key keeps its meaning and no package changes it.",
       "positive_test": {
         "module": "tests/test_frontmatter_key_contract.py",
