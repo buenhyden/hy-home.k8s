@@ -1,6 +1,6 @@
 ---
 title: "W03 Governance Policy Rule IDs"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -42,9 +42,9 @@ This Task records Policy package 3 of handoff W03-H29 (W03-D42 to W03-D44, W03-D
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-GOVRULE-001](../spec.md#success-criteria--verification-plan) | Tokens, Rules table, added headings and the `adopted` state for each of the nine policies. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-GOVRULE-002](../spec.md#success-criteria--verification-plan) | The final map of each ID to its unit with its Level, Condition and Evidence reading; the stripped-body comparison; the version steps. | platform | ready | NOT_RUN | Pending |
-| WORK-003 | [VAL-GOVRULE-003](../spec.md#success-criteria--verification-plan) | W03-D58, the W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-GOVRULE-001](../spec.md#success-criteria--verification-plan) | Tokens, Rules table, added headings and the `adopted` state for each of the nine policies. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-GOVRULE-002](../spec.md#success-criteria--verification-plan) | The final map of each ID to its unit with its Level, Condition and Evidence reading; the stripped-body comparison; the version steps. | platform | in-progress | NOT_RUN | Pending |
+| WORK-003 | [VAL-GOVRULE-003](../spec.md#success-criteria--verification-plan) | W03-D58, the W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
 
 ## Task Evidence
 
