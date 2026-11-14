@@ -543,6 +543,81 @@ ARCHITECTURE_TABLE_KEYS = {
         "Upstream requirement",
     ),
 }
+# SPEC-0198 (W03-D02, W03-D03, W03-D08, W03-D52, W03-D57, W03-D69): the ADR
+# form, its local H3 extension, its retained form for ADR-0001 to ADR-0061 and
+# its two tables; the decision profiles keep their body contract and carry no
+# H2 list.
+ADR_TREE = (
+    ("Context", ("Problem and Drivers", "Decision Scope")),
+    ("Decision", ("Chosen Option", "Authority and Effect")),
+    ("Alternatives", ("Considered Options", "Trade-offs")),
+    ("Consequences", ("Impacts", "Follow-up")),
+    ("Traceability", ("Sources", "Supersession")),
+)
+# The closed range ADR-0001 to ADR-0061 and nothing else.
+ADR_BOUND = "^ADR-(?:000[1-9]|00[1-5][0-9]|006[01])$"
+ADR_RETAINED_LISTS = {
+    "required": [
+        "Overview",
+        "Context",
+        "Decision",
+        "Explicit Non-goals",
+        "Consequences",
+        "Alternatives",
+        "Traceability",
+    ],
+    "optional": [],
+    "forbidden": [],
+}
+ADR_EXTENSIONS = [
+    {
+        "id": "adr-lifecycle-traceability",
+        "kind": "local_h3",
+        "condition": (
+            "a decision in a status the body contract enforces (proposed) maps "
+            "its lineage, its replacement relation and its affected Spec"
+        ),
+        "owner": "platform",
+        "verification": "the body-contract check",
+        "review": "when the ADR form version changes",
+        "removal": "when decision lineage has another registered owner",
+        "parent_id": "adr-traceability",
+        "title": "Lifecycle Traceability",
+    },
+    {
+        "id": "adr-accepted-retained-form",
+        "kind": "retained_form",
+        "condition": (
+            "an accepted ADR from ADR-0001 to ADR-0061 keeps the seven H2 it was "
+            "accepted with; an ADR outside that range takes the form tree in every "
+            "status"
+        ),
+        "owner": "platform",
+        "verification": "tests/test_common_form_tree.py",
+        "review": "when an ADR in the range is replaced by a successor",
+        "removal": (
+            "when no ADR in the range remains in the tree, each having been "
+            "replaced by a successor; the bound is never widened"
+        ),
+        "statuses": ["accepted"],
+        "identity_bound": ADR_BOUND,
+        "retained_sections": ADR_RETAINED_LISTS,
+    },
+]
+ADR_TABLE_KEYS = {
+    "Alternatives": (
+        "adr-alternatives-trade-offs",
+        ("Alternative", "Trade-off"),
+        0,
+        "Alternative",
+    ),
+    "Lifecycle Traceability": (
+        "adr-lifecycle-traceability",
+        ("Decision lineage", "Replacement relation", "Affected Spec"),
+        1,
+        "Decision lineage",
+    ),
+}
 # SPEC-0186: the six small local roles, each (source, twin), its H2 tree with no
 # H3, and its tables as (name, section id, column keys, minimum rows, identity).
 KNOWLEDGE_FORM = (
@@ -993,10 +1068,11 @@ LOCAL_LINK_ONLY = {
 }
 # The reference-report form also keeps its Sources section link-only (W03-D36).
 LOCAL_LINK_ONLY["reference-report"].add("reference-report-sources")
-# The twenty-three roles that carry a form; every other profile keeps its H2 lists.
+# The twenty-four roles that carry a form; every other profile keeps its H2 lists.
 FORM_PROFILES = (
     REQUIREMENT
     + ARCHITECTURE
+    + ADR
     + GUIDE
     + RUNBOOK
     + INCIDENT
@@ -1024,6 +1100,7 @@ FORM_PROFILES = (
 FORM_TEMPLATES = (
     REQUIREMENT[1],
     ARCHITECTURE[1],
+    ADR[1],
     GUIDE[1],
     RUNBOOK[1],
     INCIDENT[1],
@@ -1054,7 +1131,7 @@ FORM_TEMPLATES = (
     REFERENCE_FORM[3],
     REFERENCE_FORM[5],
 )
-TWENTY_THREE_FORMS = [
+TWENTY_FOUR_FORMS = [
     "guide",
     "runbook",
     "incident",
@@ -1078,6 +1155,7 @@ TWENTY_THREE_FORMS = [
     "reference-report",
     "requirement",
     "architecture",
+    "adr",
 ]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
@@ -1352,7 +1430,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twenty_three_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twenty_four_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -1381,6 +1459,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 *((form_id, title) for form_id, title, *_ in LOCAL_FORMS),
                 ("requirement", "Requirement"),
                 ("architecture", "Architecture"),
+                ("adr", "ADR"),
             ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
@@ -1510,6 +1589,14 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ARCHITECTURE,
                 "Traceability",
             ),
+            (
+                "adr",
+                ADR_TREE,
+                ADR_EXTENSIONS,
+                ADR_TABLE_KEYS,
+                ADR,
+                "Traceability",
+            ),
         ):
             loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
             self.assertEqual(loaded["h1"], "{{document_title}}")
@@ -1562,6 +1649,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                         for title in PACK_NOT_REQUIRED
                     },
                     "requirement": {"requirement-requirements-quality-requirements"},
+                    "adr": {"adr-traceability-supersession"},
                     "reference-report": {
                         f"reference-report-{slug(h2)}-{slug(h3)}"
                         for h2, titles in REFERENCE_H3.items()
@@ -1651,13 +1739,13 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_twenty_three_forms(
+    def test_repository_registry_loads_with_exactly_the_twenty_four_forms(
         self,
     ) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_THREE_FORMS,
+            TWENTY_FOUR_FORMS,
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -1683,6 +1771,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 "Quality Scenarios",
                 "Lifecycle Traceability",
             ],
+            "adr": ["Alternatives", "Lifecycle Traceability"],
             **{
                 form_id: [name for name, *_ in tables]
                 for form_id, _, _, _, tables, _ in LOCAL_FORMS
@@ -1709,6 +1798,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("reference-pack-readme", PACK_FORM),
                             ("requirement", REQUIREMENT),
                             ("architecture", ARCHITECTURE),
+                            ("adr", ADR),
                             *(
                                 (form_id, profiles)
                                 for form_id, _, profiles, _, _, _ in LOCAL_FORMS
@@ -1766,7 +1856,7 @@ class RepositoryRegistryTests(unittest.TestCase):
         self.assertEqual(len(form_id), 27)
         self.assertEqual(
             [item.form_id for item in CONTRACTS.load_registry(ROOT).common_forms],
-            TWENTY_THREE_FORMS,
+            TWENTY_FOUR_FORMS,
         )
         self.assertEqual(
             schema["$defs"]["section"]["properties"]["level"]["enum"], [2, 3]
@@ -1787,7 +1877,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_THREE_FORMS,
+            TWENTY_FOUR_FORMS,
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -4662,8 +4752,8 @@ class GovernanceRoleFormTests(unittest.TestCase):
     def test_the_forms_hold_twenty_sections_and_no_extension(self) -> None:
         forms = {f["form_id"]: f for f in self.raw["common_forms"]["forms"]}
         stage = forms["stage-readme"]
-        self.assertEqual(len(forms), 23)
-        self.assertEqual(list(forms)[-5:-3], ["governance-document", "governance-role"])
+        self.assertEqual(len(forms), 24)
+        self.assertEqual(list(forms)[-6:-4], ["governance-document", "governance-role"])
         counts = {}
         for form_id, title, _, tree, _, link in GOVERNANCE_FORMS:
             with self.subTest(form=form_id):
@@ -5835,9 +5925,11 @@ class TemplateTwinTableTests(unittest.TestCase):
 
 
 class RetainedFormTests(unittest.TestCase):
-    """W03-D02: an ADR keeps its H2 lists for the statuses a retained form names."""
+    """W03-D02, W03-D52: a retained form applies by status and, when bounded, identity."""
 
-    ADR_PATH = PurePosixPath("docs/02.architecture/decisions/0099-temporary.md")
+    INSIDE = PurePosixPath("docs/02.architecture/decisions/0050-temporary.md")
+    OUTSIDE = PurePosixPath("docs/02.architecture/decisions/0062-temporary.md")
+    GUIDE_PATH = PurePosixPath("docs/05.operations/guides/0099-temporary.md")
     LEGACY = md(
         "# Decision title",
         "## Context\n\nWhy we decide.",
@@ -5846,21 +5938,9 @@ class RetainedFormTests(unittest.TestCase):
     )
     TREE = md("# Decision title", "## Decision", "### Decision Statement\n\nWe decide.")
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        sections = [
-            section(
-                "a-decision",
-                "Decision",
-                2,
-                None,
-                1,
-                children=(
-                    section("a-statement", "Decision Statement", 3, "a-decision", 1),
-                ),
-            )
-        ]
-        retained = {
+    @staticmethod
+    def retained(bound: str | None) -> dict:
+        item = {
             "id": "a-legacy",
             "kind": "retained_form",
             "condition": "accepted decisions keep their H2 headings",
@@ -5875,18 +5955,56 @@ class RetainedFormTests(unittest.TestCase):
                 "forbidden": [],
             },
         }
-        raw = with_form(load_raw(), "adr", ADR, sections, extensions=[retained])
-        cls.profile = typed_profiles(raw)[ADR[0]]
+        if bound is not None:
+            item["identity_bound"] = bound
+        return item
 
-    def found(self, text: str, status: str) -> list[str]:
+    @staticmethod
+    def sections() -> list[dict]:
+        return [
+            section(
+                "a-decision",
+                "Decision",
+                2,
+                None,
+                1,
+                children=(
+                    section("a-statement", "Decision Statement", 3, "a-decision", 1),
+                ),
+            )
+        ]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        raw = with_form(
+            load_raw(),
+            "adr",
+            ADR,
+            cls.sections(),
+            extensions=[cls.retained(ADR_BOUND)],
+        )
+        cls.profile = typed_profiles(raw)[ADR[0]]
+        # The kind as SPEC-0168 defined it: no bound, selected by status alone.
+        unbounded = with_form(
+            load_raw(),
+            "guide",
+            GUIDE,
+            cls.sections(),
+            extensions=[cls.retained(None)],
+        )
+        cls.unbounded = typed_profiles(unbounded)[GUIDE[0]]
+
+    def found(
+        self, text: str, status: str, path: PurePosixPath | None = None
+    ) -> list[str]:
         return sorted(
             item.rule_id
             for item in MARKDOWN._body_diagnostics(
-                self.ADR_PATH, self.profile, text, status
+                path or self.INSIDE, self.profile, text, status
             )
         )
 
-    def test_retained_form_applies_to_its_statuses_only(self) -> None:
+    def test_retained_form_applies_to_its_statuses_inside_the_range(self) -> None:
         self.assertEqual(self.found(self.LEGACY, "accepted"), [])
         self.assertEqual(
             self.found(self.LEGACY, "proposed"),
@@ -5897,47 +6015,376 @@ class RetainedFormTests(unittest.TestCase):
             ],
         )
 
-    def test_the_tree_applies_to_every_other_status(self) -> None:
-        self.assertEqual(self.found(self.TREE, "proposed"), [])
-        self.assertEqual(self.found(self.TREE, "rejected"), [])
+    def test_an_accepted_adr_inside_the_range_passes_the_retained_form_and_fails_the_tree(
+        self,
+    ) -> None:
+        self.assertEqual(self.found(self.LEGACY, "accepted", self.INSIDE), [])
         self.assertEqual(
-            self.found(self.TREE, "accepted"),
+            self.found(self.TREE, "accepted", self.INSIDE),
             ["BODY-HEADING-REQUIRED", "BODY-HEADING-REQUIRED"],
         )
 
-    def test_an_unknown_status_uses_the_tree(self) -> None:
-        self.assertEqual(self.found(self.TREE, ""), [])
-
-    def test_status_reaches_the_check_from_the_frontmatter(self) -> None:
-        def document(status: str, body: str) -> str:
-            return (
-                "---\n"
-                'title: "Decision title"\nversion: "1.0.0"\n'
-                'type: "sdlc/architecture-decision"\n'
-                f'status: "{status}"\nowner: "platform"\nupdated: "2026-11-12"\n'
-                'artifact_id: "ADR-0099"\n---\n\n' + body
-            )
-
-        def body_rules(status: str, body: str) -> list[str]:
-            with tempfile.TemporaryDirectory() as root:
-                path = Path(root) / self.ADR_PATH
-                path.parent.mkdir(parents=True)
-                path.write_text(document(status, body), encoding="utf-8")
-                found = MARKDOWN.validate_document(
-                    Path(root), self.ADR_PATH, self.profile, "strict"
-                )
-            return sorted(i.rule_id for i in found if i.rule_id.startswith("BODY-"))
-
-        self.assertEqual(body_rules("accepted", self.LEGACY), [])
+    def test_an_accepted_adr_outside_the_range_passes_the_tree_and_fails_the_retained_form(
+        self,
+    ) -> None:
+        self.assertEqual(self.found(self.TREE, "accepted", self.OUTSIDE), [])
         self.assertEqual(
-            body_rules("proposed", self.LEGACY),
+            self.found(self.LEGACY, "accepted", self.OUTSIDE),
             [
                 "BODY-H3-REQUIRED",
                 "BODY-HEADING-UNSUPPORTED",
                 "BODY-HEADING-UNSUPPORTED",
             ],
         )
-        self.assertEqual(body_rules("proposed", self.TREE), [])
+
+    def test_the_tree_applies_to_every_other_status_whatever_the_identity(self) -> None:
+        for path in (self.INSIDE, self.OUTSIDE):
+            with self.subTest(path=path.name):
+                self.assertEqual(self.found(self.TREE, "proposed", path), [])
+                self.assertEqual(self.found(self.TREE, "rejected", path), [])
+
+    def test_an_unknown_status_uses_the_tree(self) -> None:
+        self.assertEqual(self.found(self.TREE, ""), [])
+
+    def test_a_template_has_no_identity_and_uses_the_tree(self) -> None:
+        template = PurePosixPath(self.profile.template)
+        self.assertEqual(
+            sorted(
+                i.rule_id
+                for i in MARKDOWN._body_diagnostics(
+                    template, self.profile, self.LEGACY, "accepted"
+                )
+            ),
+            [
+                "BODY-H3-REQUIRED",
+                "BODY-HEADING-UNSUPPORTED",
+                "BODY-HEADING-UNSUPPORTED",
+            ],
+        )
+
+    def test_a_retained_form_without_a_bound_still_selects_by_status(self) -> None:
+        def found(text: str, status: str, path: PurePosixPath) -> list[str]:
+            return sorted(
+                i.rule_id
+                for i in MARKDOWN._body_diagnostics(path, self.unbounded, text, status)
+            )
+
+        for path in (self.GUIDE_PATH, self.INSIDE, self.OUTSIDE):
+            with self.subTest(path=path.name):
+                self.assertEqual(found(self.LEGACY, "accepted", path), [])
+                self.assertEqual(
+                    found(self.TREE, "accepted", path),
+                    ["BODY-HEADING-REQUIRED", "BODY-HEADING-REQUIRED"],
+                )
+                self.assertEqual(found(self.TREE, "proposed", path), [])
+
+    def test_status_reaches_the_check_from_the_frontmatter(self) -> None:
+        def document(status: str, number: str, body: str) -> str:
+            return (
+                "---\n"
+                'title: "Decision title"\nversion: "1.0.0"\n'
+                'type: "sdlc/architecture-decision"\n'
+                f'status: "{status}"\nowner: "platform"\nupdated: "2026-11-12"\n'
+                f'artifact_id: "ADR-{number}"\n---\n\n' + body
+            )
+
+        def body_rules(status: str, number: str, body: str) -> list[str]:
+            relative = PurePosixPath(
+                f"docs/02.architecture/decisions/{number}-temporary.md"
+            )
+            with tempfile.TemporaryDirectory() as root:
+                path = Path(root) / relative
+                path.parent.mkdir(parents=True)
+                path.write_text(document(status, number, body), encoding="utf-8")
+                found = MARKDOWN.validate_document(
+                    Path(root), relative, self.profile, "strict"
+                )
+            return sorted(i.rule_id for i in found if i.rule_id.startswith("BODY-"))
+
+        self.assertEqual(body_rules("accepted", "0050", self.LEGACY), [])
+        self.assertEqual(body_rules("accepted", "0062", self.TREE), [])
+        self.assertNotEqual(body_rules("accepted", "0062", self.LEGACY), [])
+        self.assertEqual(
+            body_rules("proposed", "0050", self.LEGACY),
+            [
+                "BODY-H3-REQUIRED",
+                "BODY-HEADING-UNSUPPORTED",
+                "BODY-HEADING-UNSUPPORTED",
+            ],
+        )
+        self.assertEqual(body_rules("proposed", "0050", self.TREE), [])
+
+
+class IdentityBoundTests(unittest.TestCase):
+    """SPEC-0198: the bound is an anchored expression; the ADR role's bound is closed."""
+
+    RULE = "REGISTRY_FORM_EXTENSION"
+
+    @staticmethod
+    def with_bound(bound: str | None) -> dict:
+        raw = load_raw()
+        form_ = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "adr")
+        retained = next(e for e in form_["extensions"] if e["kind"] == "retained_form")
+        if bound is None:
+            retained.pop("identity_bound")
+        else:
+            retained["identity_bound"] = bound
+        return raw
+
+    def test_the_repository_bound_matches_exactly_adr_0001_to_adr_0061(self) -> None:
+        raw = load_raw()
+        form_ = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "adr")
+        retained = next(e for e in form_["extensions"] if e["kind"] == "retained_form")
+        self.assertEqual(retained["identity_bound"], ADR_BOUND)
+        matched = [n for n in range(0, 10000) if re.search(ADR_BOUND, f"ADR-{n:04d}")]
+        self.assertEqual(matched, list(range(1, 62)))
+        self.assertEqual(rules_of(raw), set())
+
+    def test_an_unanchored_or_uncompilable_bound_is_refused(self) -> None:
+        for bound in (
+            "ADR-00[0-5][0-9]",
+            "^ADR-00[0-5][0-9]",
+            "ADR-00[0-5][0-9]$",
+            "^ADR-(0001$",
+        ):
+            with self.subTest(bound=bound):
+                self.assertIn(self.RULE, rules_of(self.with_bound(bound)))
+
+    def test_a_retained_form_of_the_adr_role_without_a_bound_is_refused(self) -> None:
+        self.assertIn(self.RULE, rules_of(self.with_bound(None)))
+
+    def test_a_bound_of_the_adr_role_that_matches_adr_0062_is_refused(self) -> None:
+        for bound in (
+            "^ADR-[0-9]{4}$",
+            "^ADR-006[0-2]$",
+            "^ADR-00(?:0[1-9]|[1-6][0-9])$",
+        ):
+            with self.subTest(bound=bound):
+                self.assertIn(self.RULE, rules_of(self.with_bound(bound)))
+
+    def test_a_retained_form_of_another_role_needs_no_bound(self) -> None:
+        raw = with_form(
+            load_raw(),
+            "guide",
+            GUIDE,
+            RetainedFormTests.sections(),
+            extensions=[RetainedFormTests.retained(None)],
+        )
+        self.assertNotIn(self.RULE, rules_of(raw))
+
+    def test_a_local_h3_extension_cannot_carry_a_bound(self) -> None:
+        raw = load_raw()
+        form_ = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "adr")
+        local = next(e for e in form_["extensions"] if e["kind"] == "local_h3")
+        local["identity_bound"] = ADR_BOUND
+        self.assertNotEqual(rules_of(raw), set())
+
+
+ADR_PATH = PurePosixPath("docs/02.architecture/decisions/0062-example.md")
+
+
+def adr_body(*, supersession: bool = True) -> str:
+    blocks = ["# ADR-0062: Decision title"]
+    for h2, children in ADR_TREE:
+        blocks.append(f"## {h2}")
+        for h3 in children:
+            if h3 != "Supersession" or supersession:
+                blocks.append(f"### {h3}\n\nThe {h3} of the decision.")
+    blocks.append(
+        "### Lifecycle Traceability\n\n"
+        "| Decision lineage | Replacement relation | Affected Spec |\n"
+        "| --- | --- | --- |\n"
+        "| Architecture owner | N/A | N/A |"
+    )
+    return md(*blocks)
+
+
+class AdrFormTests(unittest.TestCase):
+    """SPEC-0198 VAL-ADRFORM-001 and VAL-ADRFORM-002: the ADR form and its template."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.raw = load_raw()
+        cls.registry = CONTRACTS.load_registry(ROOT)
+        cls.profiles = {p.profile_id: p for p in cls.registry.profiles}
+        cls.profile = cls.profiles[ADR[0]]
+        cls.form = next(f for f in cls.registry.common_forms if f.form_id == "adr")
+
+    def test_the_form_has_five_h2_ten_h3_and_one_conditional_h3(self) -> None:
+        self.assertEqual(self.form.title, "ADR")
+        self.assertEqual(
+            [(s.title, tuple(c.title for c in s.children)) for s in self.form.sections],
+            list(ADR_TREE),
+        )
+        every = [n for s in self.form.sections for n in (s, *s.children)]
+        self.assertEqual(
+            [n.title for n in every if n.requiredness != "required"], ["Supersession"]
+        )
+        self.assertFalse(any(n.link_only for n in every))
+
+    def test_the_form_registers_one_local_h3_and_one_bounded_retained_form(
+        self,
+    ) -> None:
+        local, retained = self.form.extensions
+        self.assertEqual(
+            (local.kind, local.parent_id, local.title),
+            ("local_h3", "adr-traceability", "Lifecycle Traceability"),
+        )
+        self.assertEqual(
+            (retained.kind, retained.statuses, retained.identity_bound),
+            ("retained_form", ("accepted",), ADR_BOUND),
+        )
+        self.assertEqual(
+            retained.retained.required, tuple(ADR_RETAINED_LISTS["required"])
+        )
+        self.assertFalse(retained.retained.ordered)
+
+    def test_the_two_profiles_carry_no_h2_list_and_keep_the_body_contract(self) -> None:
+        for profile_id in ADR:
+            with self.subTest(profile=profile_id):
+                raw = next(p for p in self.raw["profiles"] if p["id"] == profile_id)
+                self.assertEqual(
+                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
+                )
+                self.assertEqual(raw["document_role"], "adr")
+                contract = raw["relationships"]["body_contract"]
+                self.assertEqual(contract["section"], "Traceability")
+                self.assertEqual(contract["table_heading"], "Lifecycle Traceability")
+                self.assertEqual(
+                    contract["required_columns"],
+                    ["Decision lineage", "Replacement relation", "Affected Spec"],
+                )
+                self.assertEqual(contract["enforced_statuses"], ["proposed"])
+
+    def test_the_two_tables_are_recorded_on_the_twin_and_copied_to_the_source(
+        self,
+    ) -> None:
+        twin, source = (self.profiles[i] for i in reversed(ADR))
+        self.assertEqual(source.tables, twin.tables)
+        self.assertEqual(
+            {
+                t.name: (
+                    t.section,
+                    tuple(c.key for c in t.columns),
+                    t.minimum_rows,
+                    t.row_identity,
+                )
+                for t in twin.tables
+            },
+            ADR_TABLE_KEYS,
+        )
+        self.assertTrue(all(c.required for t in twin.tables for c in t.columns))
+
+    def test_the_definition_has_eleven_keys_and_the_record_lists_both_extensions(
+        self,
+    ) -> None:
+        definition_ = self.profiles[ADR[1]].template_definition
+        self.assertEqual(
+            sorted(definition_),
+            sorted(
+                [
+                    "purpose",
+                    "responsibility",
+                    "non_goals",
+                    "policy_refs",
+                    "vocabulary_refs",
+                    "applicability",
+                    "consumer_paths",
+                    "validation",
+                    "migration",
+                    "tables",
+                    "contract_version",
+                ]
+            ),
+        )
+        self.assertEqual(definition_["contract_version"], "COMMON-DOC-FORM-1/1.0.0")
+        self.assertEqual(
+            definition_["policy_refs"],
+            [".agents/governance/document-authoring.md", ".agents/governance/sdlc.md"],
+        )
+        for path in definition_["consumer_paths"]:
+            with self.subTest(path=path):
+                self.assertTrue((ROOT / path).is_file())
+        record = CONTRACTS.template_definition_record(self.raw, ADR[1])
+        self.assertEqual(
+            [e["delta"].split(" ")[:2] for e in record["extensions"]],
+            [
+                ["local_h3", "adr-lifecycle-traceability"],
+                ["retained_form", "adr-accepted-retained-form"],
+            ],
+        )
+        self.assertEqual(rules_of(self.raw), set())
+
+    def test_a_complete_document_passes_in_every_status_with_or_without_supersession(
+        self,
+    ) -> None:
+        for status in ("proposed", "accepted", "rejected"):
+            for kwargs in ({}, {"supersession": False}):
+                with self.subTest(status=status, kwargs=kwargs):
+                    body = adr_body(**kwargs)
+                    self.assertEqual(
+                        sorted(
+                            i.rule_id
+                            for i in MARKDOWN._body_diagnostics(
+                                ADR_PATH, self.profile, body, status
+                            )
+                        ),
+                        [],
+                    )
+
+    def test_an_accepted_adr_after_the_range_fails_the_retained_headings(self) -> None:
+        legacy = md(
+            "# ADR-0062: Decision title",
+            *(f"## {h}\n\nThe {h} text." for h in ADR_RETAINED_LISTS["required"]),
+        )
+        found = {
+            i.rule_id
+            for i in MARKDOWN._body_diagnostics(
+                ADR_PATH, self.profile, legacy, "accepted"
+            )
+        }
+        self.assertIn("BODY-HEADING-UNSUPPORTED", found)
+        inside = PurePosixPath("docs/02.architecture/decisions/0061-example.md")
+        self.assertEqual(
+            [
+                i.rule_id
+                for i in MARKDOWN._body_diagnostics(
+                    inside, self.profile, legacy, "accepted"
+                )
+            ],
+            [],
+        )
+
+    def test_the_36_accepted_adrs_and_the_template_gain_no_diagnostic(self) -> None:
+        for path in sorted((ROOT / "docs/02.architecture/decisions").glob("00*.md")):
+            relative = PurePosixPath(path.relative_to(ROOT).as_posix())
+            with self.subTest(adr=relative.name):
+                self.assertEqual(
+                    MARKDOWN.validate_document(ROOT, relative, self.profile, "strict"),
+                    [],
+                )
+        twin = self.profiles[ADR[1]]
+        path = PurePosixPath(twin.template)
+        text = (ROOT / path).read_text(encoding="utf-8")
+        self.assertEqual(
+            [
+                i.rule_id
+                for i in MARKDOWN.validate_document_text(text, path, twin, "strict")
+            ],
+            [],
+        )
+
+    def test_the_template_places_an_author_prompt_under_every_h3(self) -> None:
+        text = (ROOT / self.profiles[ADR[1]].template).read_text(encoding="utf-8")
+        for h2, children in ADR_TREE:
+            self.assertRegex(text, rf"(?m)^## {re.escape(h2)}$")
+            for h3 in children:
+                with self.subTest(h3=h3):
+                    self.assertRegex(
+                        text, rf"(?m)^### {re.escape(h3)}\n\n<!-- Author prompt:"
+                    )
+        for gone in ("## Overview", "## Explicit Non-goals"):
+            self.assertNotIn(gone, text)
 
 
 # SPEC-0196 (W03-D56, W03-D65): the full TemplateDefinition record.
@@ -6122,7 +6569,8 @@ class TemplateRecordTests(unittest.TestCase):
                     CONTRACTS.template_definition_record(self.raw, profile["id"])
         for profile in self.templates:
             self.assertNotIn(
-                profile["document_role"], SDLC_ROLES - {"requirement", "architecture"}
+                profile["document_role"],
+                SDLC_ROLES - {"requirement", "architecture", "adr"},
             )
 
     def test_the_function_refuses_a_profile_that_is_not_a_template(self) -> None:
@@ -6416,11 +6864,11 @@ class FormlessRoleTableTests(unittest.TestCase):
 
 
 class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
-    def test_only_the_twenty_three_form_profiles_use_the_tree(self) -> None:
+    def test_only_the_twenty_four_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_THREE_FORMS,
+            TWENTY_FOUR_FORMS,
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),

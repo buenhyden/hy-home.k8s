@@ -92,6 +92,12 @@ ADR = {
     "updated": '"2026-11-13"',
     "artifact_id": '"ADR-0999"',
 }
+RETAINED_ADR_PATH = "docs/02.architecture/decisions/0050-example.md"
+RETAINED_ADR = {**ADR, "artifact_id": '"ADR-0050"'}
+LAST_ADR_PATH = "docs/02.architecture/decisions/0061-example.md"
+LAST_ADR = {**ADR, "artifact_id": '"ADR-0061"'}
+FIRST_NEW_ADR_PATH = "docs/02.architecture/decisions/0062-example.md"
+FIRST_NEW_ADR = {**ADR, "artifact_id": '"ADR-0062"'}
 PLAN_PATH = "docs/03.specs/0999-example/plan.md"
 PLAN = {
     **SPEC,
@@ -225,18 +231,26 @@ class KeyProfileCheckTests(unittest.TestCase):
         )
 
     def test_layer_accepted(self) -> None:
+        # W03-D22, W03-D52: only an accepted ADR inside ADR-0001 to ADR-0061.
         self.accepted(ADR_PATH, ADR)
-        self.accepted(ADR_PATH, layered(ADR))
+        self.accepted(RETAINED_ADR_PATH, RETAINED_ADR)
+        self.accepted(RETAINED_ADR_PATH, layered(RETAINED_ADR))
+        self.accepted(LAST_ADR_PATH, layered(LAST_ADR))
 
     def test_layer_refused(self) -> None:
         for status in ("proposed", "rejected", "superseded", "deprecated"):
             with self.subTest(status=status):
                 self.refused(
-                    ADR_PATH,
-                    layered({**ADR, "status": f'"{status}"'}),
+                    RETAINED_ADR_PATH,
+                    layered({**RETAINED_ADR, "status": f'"{status}"'}),
                     "FM-LAYER-ADR",
                 )
-        self.refused(ADR_PATH, {**ADR, "layer": '"specs"'}, "FM-VALUE-CONSTANT")
+        # An accepted ADR after the retained range never carries the key.
+        self.refused(ADR_PATH, layered(ADR), "FM-LAYER-ADR")
+        self.refused(FIRST_NEW_ADR_PATH, layered(FIRST_NEW_ADR), "FM-LAYER-ADR")
+        self.refused(
+            RETAINED_ADR_PATH, {**RETAINED_ADR, "layer": '"specs"'}, "FM-VALUE-CONSTANT"
+        )
         for path, fields in ((SPEC_PATH, SPEC), (GOV_PATH, GOV)):
             with self.subTest(path=path):
                 self.refused(path, {**fields, "layer": '"specs"'}, "FM-KEYSET")

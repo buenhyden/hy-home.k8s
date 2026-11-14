@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.33.0"
+version: "0.34.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -135,7 +135,8 @@ form 경로의 대응은 Registry만 소유한다.
   함께 쓰는 form 하나를 가진다. `provider-native`만 form 없는 Stage 99 지역
   역할이며 table을 기록하지 않는다. SPEC-0195가 `requirement` 템플릿의
   TemplateDefinition을, SPEC-0197이 `architecture` 템플릿의
-  TemplateDefinition을 더했고, 나머지 네 SDLC 템플릿의
+  TemplateDefinition을, SPEC-0198이 `adr` 템플릿의
+  TemplateDefinition을 더했고, 나머지 세 SDLC 템플릿의
   TemplateDefinition은 3단계에서 더한다. TemplateDefinition은 열한 필드를
   Registry에 저장하고(`contract_version` 포함) 나머지 여덟 필드는
   `template_definition_record`가 profile, form, 키·관계·생명주기·언어 소유자에서
@@ -156,6 +157,11 @@ form 경로의 대응은 Registry만 소유한다.
   같은 두 지역 H3)을 쓰고 H2 목록을 두지 않으며, 각 요구 member를 자신의
   `Upstream requirement` 열에서 인용한다. Requirement는 downstream 링크 열을
   두지 않고, 파생 역조회와 `REQUIREMENT-COVERAGE` 검사가 그 자리를 대신한다.
+  `sdlc/architecture-decision`은 `adr` form(다섯 H2와 열 개 H3, Traceability
+  아래 지역 H3 `Lifecycle Traceability`)을 쓰고 H2 목록을 두지 않는다.
+  ADR-0001부터 ADR-0061까지의 accepted ADR은 승인된 일곱 H2를 등록된
+  retained form으로 유지하며(W03-D02, W03-D52, W03-D69), 그 범위 뒤의 ADR은
+  accepted를 포함한 모든 상태에서 공통 form을 쓴다.
 - **Spec forms** (`specs/`): `spec`, `plan`, `task` form이 요구 추적,
   실행 계획, 작업 증거를 소유한다. 별도 data-model 및 native contract
   capacity는 현재 consumer가 없어 Spec 본문과 실제 구현 소유자에게 수렴했다.
@@ -308,7 +314,7 @@ Registry의 `frontmatter_keys`가, YAML과 JSON Schema dialect는 `frontmatter_d
 author guidance는 "<!-- Author prompt: ... -->"만 사용한다.
 
 Template은 만드는 문서의 envelope를 투영하므로 profile이 요구하는
-"artifact_id" placeholder를 포함한다. "layer"는 accepted ADR에만 남으며 어떤
+"artifact_id" placeholder를 포함한다. "layer"는 ADR-0001부터 ADR-0061까지의 accepted ADR에만 남으며 어떤
 template도 선언하지 않는다. Template 파일 자체의 revision과 destination
 identity는 Registry contract version과 Git history가 소유한다.
 README router에는 stable "artifact_id"가 없으며 reference pack anchor는

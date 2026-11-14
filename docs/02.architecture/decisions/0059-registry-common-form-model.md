@@ -1,10 +1,10 @@
 ---
 title: "Registry Common Form Model"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-11-12"
+updated: "2026-11-14"
 layer: "architecture"
 artifact_id: "ADR-0059"
 ---
@@ -65,6 +65,14 @@ governance view.
 6. **Decision makers and confirmation.** The current user decides acceptance;
    compliance is confirmed by the registry, Markdown profile and lifecycle
    validators and the SPEC-0168 Task.
+
+**Current-state clarification (2026-11-14).**
+[ADR-0062](./0062-accepted-decision-retained-form.md) narrows Decision 5 for
+the ADR role. The retained H2 lists of the accepted ADRs from ADR-0001 to
+ADR-0061 stay, with their checks, as a registered extension under Decision 2
+until a successor replaces each of those ADRs; the H2 lists of profiles still
+leave with the change that moves the last role. Every other clause of this
+record stays.
 
 ## Explicit Non-goals
 

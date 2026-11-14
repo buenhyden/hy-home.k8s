@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.12.6"
+version: "0.12.8"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -84,6 +84,7 @@ updated: "2026-11-14"
 | [`./0059-registry-common-form-model.md`](./0059-registry-common-form-model.md) | Stage 99 registry(generation 10 유지)에 선택 키를 더해 역할별 공통 문서 양식, 문서 역할, TemplateDefinition, 공유 계약 승인 필드를 담도록 ADR-0033의 현재 상태 키 목록을 개정 |
 | [`./0060-work-residue-ledger-amendment.md`](./0060-work-residue-ledger-amendment.md) | 작업 잔여물(미완료 handoff, conflict, adoption, survey)만 담는 단일 JSON work residue ledger를 허용하도록 ADR-0031, ADR-0036, ADR-0047, ADR-0048의 무원장 조항을 "경쟁하는 progress ledger 금지"로 좁히는 개정 |
 | [`./0061-registry-schema-version-semver.md`](./0061-registry-schema-version-semver.md) | Amendment that makes the Stage 99 registry `schema_version` a SemVer string (generation 10 is `10.0.0`, current `11.0.0`) and states the four-level bump rule, amending the integer sentences of ADR-0033 and ADR-0059 Decision 1 |
+| [`./0062-accepted-decision-retained-form.md`](./0062-accepted-decision-retained-form.md) | Amendment that keeps the seven-H2 form for accepted ADRs in the closed range ADR-0001 to ADR-0061 as a registered retained form, gives every later ADR the common ADR form in every status, and narrows ADR-0059 Decision 5 for the ADR role |
 
 ### Classification
 

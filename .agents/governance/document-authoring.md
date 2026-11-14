@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.30.0"
+version: "3.31.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -71,8 +71,9 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    key, and a title that restates it carries no information.
 5. Treat a key the profile omits as a key the document has no business
    declaring. `layer` names the numbered stage a document lives in. It is kept only on
-   an accepted architecture decision, which is never edited in place, until a
-   successor replaces it; every other document, common governance and a Stage 99
+   an accepted architecture decision from ADR-0001 to ADR-0061, which is never
+   edited in place, until a successor replaces it, and never on an ADR after
+   ADR-0061; every other document, common governance and a Stage 99
    form declare none. A profile that declares no `artifact_id`
    describes something the repository does not give a stable identity. Preserve
    an existing optional governance identity; do not mint one for normalization.
@@ -306,7 +307,11 @@ role, its forms and placement are owned by the
 Guide, Runbook, Incident, Postmortem, Policy, AGENTS, Skill, Root README, Stage README,
 Service README, Workspace README, Reference Pack README, Knowledge Map, Vocabulary,
 Prompt, Evaluation Task, Evaluation Score, Evaluation Results, Governance Document,
-Governance Role, Reference Report, Requirement and Architecture use their registry forms. Architecture keeps its
+Governance Role, Reference Report, Requirement, Architecture and ADR use their registry forms. ADR keeps its
+Lifecycle Traceability table under Traceability and its Alternatives table under Trade-offs; an accepted ADR
+from ADR-0001 to ADR-0061 keeps the seven H2 it was accepted with as a registered retained form, and an ADR
+written after ADR-0061 takes the common ADR form in every status, accepted included (W03-D02, W03-D52,
+W03-D69; ADR-0062). Architecture keeps its
 Lifecycle Traceability table and its Archived Lineage under Traceability, its Constraints table under
 Constraints and its Quality Scenarios table under Quality and Risks; an architecture description cites each
 requirement member in the Upstream requirement column of Lifecycle Traceability, a Requirement writes no

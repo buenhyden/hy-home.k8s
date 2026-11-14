@@ -25,8 +25,8 @@ GIT_TIMEOUT_SECONDS = 10
 # edits REGISTRY_MAJOR, appends its number to the tuple and edits
 # DOC_REGISTRY_MAJOR in scripts/provider_write_guard.py, with the registry value
 # and the schema const.
-REGISTRY_MAJOR = 14
-READABLE_REGISTRY_MAJORS = (10, 11, 12, 13, 14)
+REGISTRY_MAJOR = 15
+READABLE_REGISTRY_MAJORS = (10, 11, 12, 13, 14, 15)
 TOP_LEVEL_KEYS = frozenset(
     {
         "$schema",

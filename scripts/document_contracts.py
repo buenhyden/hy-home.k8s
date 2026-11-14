@@ -800,6 +800,16 @@ class FormExtension:
     title: str | None = None
     statuses: tuple[str, ...] = ()
     retained: HeadingContract | None = None
+    # SPEC-0198 (W03-D52): an anchored expression over the artifact identity that
+    # bounds a retained form; None keeps the kind's selection by status alone.
+    identity_bound: str | None = None
+
+    def keeps_identity(self, identity: str) -> bool:
+        """Whether a retained form's bound admits this artifact identity."""
+
+        return self.identity_bound is None or bool(
+            re.search(self.identity_bound, identity)
+        )
 
 
 @dataclass(frozen=True)
@@ -814,13 +824,32 @@ class CommonForm:
     sections: tuple[FormSection, ...]
     extensions: tuple[FormExtension, ...]
 
-    def retained_headings(self, status: str) -> HeadingContract | None:
-        """The retained H2 lists that replace the tree for this status, if any."""
+    def retained_headings(
+        self, status: str, identity: str = ""
+    ) -> HeadingContract | None:
+        """The retained H2 lists that replace the tree for this status and identity.
+
+        A retained form with an identity bound applies only to a document whose
+        path-derived artifact identity matches it; an empty identity (a template)
+        matches no bound.
+        """
 
         for extension in self.extensions:
-            if extension.kind == "retained_form" and status in extension.statuses:
+            if (
+                extension.kind == "retained_form"
+                and status in extension.statuses
+                and extension.keeps_identity(identity)
+            ):
                 return extension.retained
         return None
+
+    def retains_identity(self, identity: str) -> bool:
+        """Whether any retained form of this form admits the artifact identity."""
+
+        return any(
+            extension.kind == "retained_form" and extension.keeps_identity(identity)
+            for extension in self.extensions
+        )
 
 
 @dataclass(frozen=True)
@@ -3188,6 +3217,56 @@ def frontmatter_key_table(
     return tuple(rows)
 
 
+# The first ADR identity outside the retained range (SPEC-0198, W03-D69): a bound
+# of the ADR role that matches it widens the range, which no ADR may do.
+FIRST_ADR_OUTSIDE_RETAINED_RANGE = "ADR-0062"
+
+
+def _identity_bound_faults(
+    form_id: str, extension: Mapping[str, Any], where: str
+) -> list[tuple[str, str, str]]:
+    """SPEC-0198: a retained form's bound compiles, is anchored and stays closed."""
+
+    bound = extension.get("identity_bound")
+    if bound is None:
+        if form_id == "adr":
+            return [
+                (
+                    "REGISTRY_FORM_EXTENSION",
+                    "an identity_bound on a retained form of the ADR role",
+                    where,
+                )
+            ]
+        return []
+    try:
+        pattern = re.compile(bound)
+    except re.error as error:
+        return [
+            (
+                "REGISTRY_FORM_EXTENSION",
+                "an identity_bound that compiles as a regular expression",
+                f"{where}: {bound!r}: {error}",
+            )
+        ]
+    if not (bound.startswith("^") and bound.endswith("$")):
+        return [
+            (
+                "REGISTRY_FORM_EXTENSION",
+                "an anchored identity_bound (^...$)",
+                f"{where}: {bound!r}",
+            )
+        ]
+    if form_id == "adr" and pattern.search(FIRST_ADR_OUTSIDE_RETAINED_RANGE):
+        return [
+            (
+                "REGISTRY_FORM_EXTENSION",
+                f"an ADR identity_bound that does not match {FIRST_ADR_OUTSIDE_RETAINED_RANGE}",
+                f"{where}: {bound!r}",
+            )
+        ]
+    return []
+
+
 def _form_section_diagnostics(
     form: Mapping[str, Any],
 ) -> list[tuple[str, str, str]]:
@@ -3265,6 +3344,8 @@ def _form_section_diagnostics(
         if extension["id"] in extension_ids:
             faults.append(("REGISTRY_FORM_EXTENSION", "unique extension IDs", where))
         extension_ids.add(extension["id"])
+        if extension["kind"] == "retained_form":
+            faults.extend(_identity_bound_faults(form["form_id"], extension, where))
         if extension["kind"] != "local_h3":
             continue
         parent = top.get(extension["parent_id"])
@@ -3511,6 +3592,7 @@ def _common_form_from_mapping(raw: Mapping[str, Any]) -> CommonForm:
             parent_id=item.get("parent_id"),
             title=item.get("title"),
             statuses=tuple(item.get("statuses", ())),
+            identity_bound=item.get("identity_bound"),
             retained=(
                 None
                 if lists is None
