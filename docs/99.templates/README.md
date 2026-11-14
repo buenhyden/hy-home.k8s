@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.31.0"
+version: "0.31.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -133,12 +133,15 @@ form 경로의 대응은 Registry만 소유한다.
   `provider-native`를 뺀 모든 Stage 99 지역 역할은 각자의 지역 form을 쓰며,
   W03-D35와 W03-D36에 따라 `reference-report`는 감사·연구·데이터 보고서가
   함께 쓰는 form 하나를 가진다. `provider-native`만 form 없는 Stage 99 지역
-  역할과 TemplateDefinition을 갖는다. 여섯 SDLC 템플릿의
+  역할과 TemplateDefinition을 갖는다. SPEC-0195가 `requirement` 템플릿의
+  TemplateDefinition을 더했고, 나머지 다섯 SDLC 템플릿의
   TemplateDefinition은 3단계에서 더한다.
 - **Core SDLC forms**: physical `requirements/`, `architecture/`, `specs/`
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
   `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의
-  form을 담아 단계별 책임과 handoff를 기록한다.
+  form을 담아 단계별 책임과 handoff를 기록한다. `sdlc/requirement`는 이 중
+  처음으로 `requirement` form(다섯 H2와 열 개 H3, Traceability 아래 지역 H3
+  `Lifecycle Traceability`와 `Archived Lineage`)을 쓰며 H2 목록을 두지 않는다.
 - **Spec forms** (`specs/`): `spec`, `plan`, `task` form이 요구 추적,
   실행 계획, 작업 증거를 소유한다. 별도 data-model 및 native contract
   capacity는 현재 consumer가 없어 Spec 본문과 실제 구현 소유자에게 수렴했다.

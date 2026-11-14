@@ -12,51 +12,66 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Overview
 
-<!-- Author prompt: summarize the product outcome, users, and requirement boundary. -->
+### Problem and Outcome
 
-## Vision
+<!-- Author prompt: state the problem with evidence, the cost of leaving it unresolved and the measurable outcome this work enables, separating fact from assumption and linking real references. -->
 
-<!-- Author prompt: describe the durable user or operator outcome this work enables. -->
+### Stakeholders
 
-## Problem Statement
+<!-- Author prompt: identify the affected roles, their goals and constraints, and who writes, reviews and accepts the requirement. -->
 
-<!-- Author prompt: use evidence to state the current problem and cost of leaving it unresolved. -->
+## Scope
 
-## Personas
+### In Scope
 
-<!-- Author prompt: identify affected roles, goals, constraints, and decision authority. -->
+<!-- Author prompt: describe observable user journeys and the authorized scope without prescribing architecture. -->
 
-## Key Use Cases
+### Constraints and Exclusions
 
-<!-- Author prompt: describe observable user journeys without prescribing architecture. -->
+<!-- Author prompt: separate explicit non-goals and future options from constraints, and record product risks, dependencies, assumptions and validation owners. -->
 
-## Functional Requirements
+## Requirements
 
-<!-- Author prompt: assign package-dependent stable IDs to functional, non-functional, and implementation-independent interface requirements. -->
+### Functional Requirements
 
-| Requirement ID | Requirement | Priority | Verification intent |
-| --- | --- | --- | --- |
-| REQ-0001-FR-0001 | State one testable functional requirement. | Must | Name the observable acceptance evidence. |
-| REQ-0001-NFR-0001 | State one measurable non-functional constraint. | Must | Name the observable quality evidence. |
-| REQ-0001-IF-0001 | State one implementation-independent external interface requirement. | Must | Name the observable contract evidence. |
+<!-- Author prompt: assign package-dependent stable IDs to functional and implementation-independent interface requirements; give each a statement, a one-sentence rationale that names its source (or explains why none is recorded), its acceptance evidence and an optional priority. -->
 
-## Success / Acceptance Criteria
+| Requirement ID | Statement | Rationale | Acceptance | Priority |
+| --- | --- | --- | --- | --- |
+| REQ-0001-FR-0001 | State one testable functional requirement. | State the reason and name its source, or explain why none is recorded. | Name the observable acceptance evidence. | Must |
+| REQ-0001-IF-0001 | State one implementation-independent external interface requirement. | State the reason and name its source, or explain why none is recorded. | Name the observable contract evidence. | Must |
+
+### Quality Requirements
+
+<!-- Author prompt: keep this section only when a quality requirement applies; assign stable IDs and state each quality characteristic, its measurement environment and its target or decision-needed value. -->
+
+| Requirement ID | Statement | Rationale | Acceptance | Priority |
+| --- | --- | --- | --- | --- |
+| REQ-0001-NFR-0001 | State one measurable non-functional constraint. | State the reason and name its source, or explain why none is recorded. | Name the observable quality evidence. | Must |
+
+## Acceptance Criteria
+
+### Acceptance Conditions
 
 <!-- Author prompt: define measurable conditions that establish product success. -->
 
-## Scope and Non-goals
+### Verification Method
 
-<!-- Author prompt: separate authorized scope from explicit non-goals and future options. -->
-
-## Risks, Dependencies, and Assumptions
-
-<!-- Author prompt: record product risks, dependencies, assumptions, and validation owners. -->
+<!-- Author prompt: state how each acceptance condition is verified, or point to the Acceptance column and the acceptance-criterion column of Lifecycle Traceability when they state it. -->
 
 ## Traceability
 
-<!-- Author prompt: map each requirement to its acceptance criterion and downstream owner. -->
+### Source and Constraints
+
+<!-- Author prompt: name the upstream requirements, decisions and constraints this requirement derives from or depends on. -->
+
+### Downstream Links
+
+<!-- Author prompt: link the architecture descriptions, decisions and Specs that own the downstream contracts. -->
 
 ### Lifecycle Traceability
+
+<!-- Author prompt: map each requirement to its acceptance criterion and downstream owner. -->
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
