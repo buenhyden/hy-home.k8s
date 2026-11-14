@@ -1,6 +1,6 @@
 ---
 title: "W03 Policy Rule ID Contract"
-version: "0.1.1"
+version: "0.1.2"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -27,9 +27,9 @@ This Task records Policy package 2 of handoff W03-H29 (W03-D42 to W03-D44): the 
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RULEID-001](../spec.md#success-criteria--verification-plan) | The registry section and its schema, the authority key, the loader, `REGISTRY_POLICY_RULE_CODE`, the fifteen records, the table's condition, the `Status` extension, the conditional table in both definitions and both templates, and the changed Policy table tests. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-RULEID-002](../spec.md#success-criteria--verification-plan) | The six document rules and the adoption gate; `tests/test_policy_rule_ids.py`, its suite membership and its surface route; the generator's recorded authoring set if a rule reaches it. | platform | ready | NOT_RUN | Pending |
-| WORK-003 | [VAL-RULEID-003](../spec.md#success-criteria--verification-plan) | Policy texts; W03-D53, the W03-H29 state cell and the ledger entry; the unit inventory; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-RULEID-001](../spec.md#success-criteria--verification-plan) | The registry section and its schema, the authority key, the loader, `REGISTRY_POLICY_RULE_CODE`, the fifteen records, the table's condition, the `Status` extension, the conditional table in both definitions and both templates, and the changed Policy table tests. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-RULEID-002](../spec.md#success-criteria--verification-plan) | The six document rules and the adoption gate; `tests/test_policy_rule_ids.py`, its suite membership and its surface route; the generator's recorded authoring set if a rule reaches it. | platform | in-progress | NOT_RUN | Pending |
+| WORK-003 | [VAL-RULEID-003](../spec.md#success-criteria--verification-plan) | Policy texts; W03-D53, the W03-H29 state cell and the ledger entry; the unit inventory; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
 
 ## Task Evidence
 
