@@ -47,6 +47,7 @@ SUITES = {
         "documentation_link_boundary",
         "semver_grammar",
         "registry_schema_version",
+        "semver_versions",
         "work_residue_ledger",
         "document_generator",
         "relationship_contract",
