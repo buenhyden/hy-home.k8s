@@ -57,6 +57,22 @@ SELECTOR_TIMEOUT_SECONDS = 5
 GUARD_DEADLINE_SECONDS = 25
 SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 
+# SPEC-0207: the one MAJOR number of the Registry Schema Version this guard
+# accepts. Keep it equal to REGISTRY_MAJOR in scripts/document_authority.py; the
+# guard runs from the checkout with the standard library only, so it holds its
+# own copy of the release grammar of scripts/semver_grammar.py.
+DOC_REGISTRY_MAJOR = 11
+_REGISTRY_RELEASE = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
+
+
+def registry_version_major(value: object) -> int | None:
+    """Return the MAJOR number of a release string, or None for any other value."""
+    if type(value) is not str:
+        return None
+    match = _REGISTRY_RELEASE.fullmatch(value)
+    return None if match is None else int(match.group(1))
+
+
 project_dir: str = ""
 paths: list[str] = []
 absolute_roots: set[str] = set()
@@ -376,8 +392,11 @@ def load_document_routes(root: str) -> tuple[dict[str, object], ...]:
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         reject_with_detail("HOOK-DOC-REGISTRY", str(exc))
     generation = registry.get("schema_version") if isinstance(registry, dict) else None
-    if type(generation) is not int or generation != 10:
-        reject_with_detail("HOOK-DOC-REGISTRY", "schema_version must be 10")
+    if registry_version_major(generation) != DOC_REGISTRY_MAJOR:
+        reject_with_detail(
+            "HOOK-DOC-REGISTRY",
+            f"schema_version must be a SemVer string of major {DOC_REGISTRY_MAJOR}",
+        )
     profiles = registry.get("profiles") if isinstance(registry, dict) else None
     if not isinstance(profiles, list) or not profiles:
         reject_with_detail("HOOK-DOC-REGISTRY", "profiles must be a non-empty list")

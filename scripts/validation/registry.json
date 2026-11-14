@@ -1458,6 +1458,10 @@
         {
           "kind": "exact",
           "value": "tests/test_semver_grammar.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_registry_schema_version.py"
         }
       ],
       "validators": [

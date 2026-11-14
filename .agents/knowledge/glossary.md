@@ -1,10 +1,10 @@
 ---
 title: "Repository Vocabulary"
-version: "1.2.0"
+version: "1.3.0"
 type: "governance/vocabulary"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 ---
 
 # Repository Vocabulary
@@ -74,7 +74,7 @@ states no obligation.
 | TERM-PUBLIC-CONTRACT | Public Contract | 공개 계약 | The observable promise a consumer relies on, such as a key, type, requirement, heading, table column, reference direction, state, diagnostic or generated result. A product declares which of these it exposes. | Every internal detail; an implementation choice | [Common contract owner](../governance/sdlc.md) | repository-vocabulary v14.7 |
 | TERM-COMPATIBILITY | Compatibility | 호환성 | Whether earlier valid producers and consumers keep working without breaking the Public Contract. | Having fixed every consumer in the same pull request | [Common contract owner](../governance/sdlc.md) | repository-vocabulary v14.7 |
 | TERM-CONTRACT-VERSION | Contract Version | 계약 판본 | The SemVer version of a shared contract's consumable meaning. One contract ID at one Contract Version means one meaning, so a changed meaning gets a new version. | A document's own revision; a package edition label | [Version rule owner](../governance/document-authoring.md) | repository-vocabulary v14.7 |
-| TERM-REGISTRY-SCHEMA-VERSION | Registry Schema Version | 레지스트리 스키마 판본 | The version of the data structure that code reading the registry expects. It is kept apart from the version of the profile content. | A Contract Version; SemVer | [Version rule owner](../governance/document-authoring.md) | repository-vocabulary v14.7 |
+| TERM-REGISTRY-SCHEMA-VERSION | Registry Schema Version | 레지스트리 스키마 판본 | The version of the data structure that code reading the registry expects. Its value is a SemVer string, kept apart from the version of the profile content. | A Contract Version; a Document Revision | [Version rule owner](../governance/document-authoring.md) | repository-vocabulary v14.7 |
 | TERM-DOCUMENT-REVISION | Document Revision | 문서 개정 판본 | The SemVer `version` of one document's normative content, in the document's frontmatter. | A product release; a status or Task state change | [Version rule owner](../governance/document-authoring.md) | repository-vocabulary v14.7 |
 | TERM-PRERELEASE | Prerelease | 사전 배포판 | The hyphen part of a SemVer value, such as `-rc.1`. It ranks below the same value without it. | A draft status | [Version rule owner](../governance/document-authoring.md) | repository-vocabulary v14.7 |
 | TERM-BUILD-METADATA | Build Metadata | 빌드 메타데이터 | The plus part of a SemVer value, such as `+build.7`. It never affects precedence. | A Prerelease | [Version rule owner](../governance/document-authoring.md) | repository-vocabulary v14.7 |
