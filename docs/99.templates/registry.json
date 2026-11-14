@@ -64,8 +64,7 @@
           ],
           "required_columns": [
             "Requirement ID",
-            "Acceptance criterion",
-            "Downstream owner"
+            "Acceptance criterion"
           ],
           "identifier_columns": [
             {
@@ -74,12 +73,9 @@
             }
           ],
           "source_link_column": null,
-          "target_link_column": "Downstream owner",
+          "target_link_column": null,
           "allowed_source_profile_ids": [],
-          "allowed_target_profile_ids": [
-            "sdlc/architecture-description",
-            "sdlc/spec"
-          ],
+          "allowed_target_profile_ids": [],
           "allow_explicit_exclusion": true
         }
       },
@@ -123,15 +119,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Boundaries & Non-goals",
-          "Quality Attributes",
-          "System Overview & Context",
-          "Data Architecture",
-          "Infrastructure & Deployment",
-          "Traceability"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -4340,15 +4328,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Boundaries & Non-goals",
-          "Quality Attributes",
-          "System Overview & Context",
-          "Data Architecture",
-          "Infrastructure & Deployment",
-          "Traceability"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -4388,7 +4368,157 @@
           "allow_explicit_exclusion": true
         }
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "purpose": "Give authors one form for a current architecture description that states the purpose, system boundary, context and constraints, building blocks, runtime and deployment, interfaces, decisions, quality scenarios and requirement mapping of one system view.",
+        "responsibility": "An architecture description owns the current structure of one system and the requirement-to-architecture relation: it cites every requirement member it serves; requirements, ADR decisions and Spec contracts stay with the Stage 01, Stage 02 decision and Stage 03 owners.",
+        "non_goals": [
+          "Requirement statements or acceptance criteria, which belong to a Requirement.",
+          "Decisions, which belong to an ADR, and implementer-level contracts, which belong to a Spec.",
+          "Kubernetes manifests or GitOps desired state, which the description links instead of copying."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every sdlc/architecture-description document under docs/02.architecture/descriptions/ and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/architecture/description.template.md",
+          "docs/99.templates/README.md",
+          "docs/02.architecture/README.md",
+          "docs/02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md",
+          "docs/02.architecture/descriptions/0005-argo-notifications-slack.md",
+          "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
+          "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md",
+          "scripts/document_contracts.py",
+          "scripts/document_lifecycle.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validate-document-lifecycle.py",
+          "scripts/validation/repository/form_contracts.py",
+          "tests/test_common_form_tree.py"
+        ],
+        "validation": {
+          "positive": [
+            "The four descriptions and the template pass the form tree, table, body-contract, author-prompt and residue checks.",
+            "A description whose Lifecycle Traceability table cites requirement members and ends with an Archived Lineage section passes the form tree.",
+            "The Constraints and Quality Scenarios tables accept zero rows."
+          ],
+          "negative": [
+            "A description that keeps a previous H2 title such as Boundaries & Non-goals fails the form tree.",
+            "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT.",
+            "An H3 under the wrong H2, including Archived Lineage outside Traceability, fails BODY-H3-PARENT."
+          ],
+          "regression": [
+            "The loaded description profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the Architecture form, its two local extensions, its three tables and this definition in the repository registry."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0197 heading map moves each sentence of the four active descriptions and of the template into the six H2 and twelve H3 of the form without changing its meaning, keeping the former H3 titles as H4 with the same anchor; Lifecycle Traceability and Archived Lineage stay H3 under Traceability, and the SPEC-0197 Task records each description's placements.",
+          "retained_history": "Git history retains the seven-heading description layout and its previous template.",
+          "rollback": "Revert the SPEC-0197 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Constraints",
+            "section": "architecture-context-and-constraints-constraints",
+            "columns": [
+              {
+                "key": "Architecture ID",
+                "meaning": "Free-text identifier of the constraint row; no identifier grammar is defined.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Constraint",
+                "meaning": "The constraint that limits the architecture, stated as a checkable fact.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Affected Components",
+                "meaning": "The components, boundaries or views the constraint limits.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Architecture ID"
+          },
+          {
+            "name": "Quality Scenarios",
+            "section": "architecture-decisions-quality-and-risks",
+            "columns": [
+              {
+                "key": "Quality attribute",
+                "meaning": "The quality attribute the scenario exercises.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Stimulus",
+                "meaning": "The event or condition that starts the scenario.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Environment",
+                "meaning": "The operating context in which the stimulus occurs.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Response",
+                "meaning": "What the architecture does in response.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Measure",
+                "meaning": "The observable measure that shows the response.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Quality attribute"
+          },
+          {
+            "name": "Lifecycle Traceability",
+            "section": "architecture-lifecycle-traceability",
+            "columns": [
+              {
+                "key": "Upstream requirement",
+                "meaning": "Link to the cited requirement member, or an N/A reason naming an acceptance-only criterion.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Quality attribute or boundary",
+                "meaning": "The quality attribute or boundary the description states for the member.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "ADR / Spec",
+                "meaning": "Link to the ADR or Spec that records the decision, or an explicit exclusion with its reason.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 1,
+            "row_identity": "Upstream requirement"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-sdlc-plan",
@@ -5653,8 +5783,7 @@
           ],
           "required_columns": [
             "Requirement ID",
-            "Acceptance criterion",
-            "Downstream owner"
+            "Acceptance criterion"
           ],
           "identifier_columns": [
             {
@@ -5663,12 +5792,9 @@
             }
           ],
           "source_link_column": null,
-          "target_link_column": "Downstream owner",
+          "target_link_column": null,
           "allowed_source_profile_ids": [],
-          "allowed_target_profile_ids": [
-            "sdlc/architecture-description",
-            "sdlc/spec"
-          ],
+          "allowed_target_profile_ids": [],
           "allow_explicit_exclusion": true
         }
       },
@@ -5679,8 +5805,7 @@
         "responsibility": "A Requirement owns the user value, its stable member requirements with their rationale and acceptance, and the acceptance boundary; architecture, decisions and change contracts stay with the Stage 02 and Stage 03 owners.",
         "non_goals": [
           "Architecture, decisions or implementation detail, which belong to an architecture description, an ADR or a Spec.",
-          "Task execution state, evidence or approval, which belong to a Task.",
-          "Retiring the Downstream owner column, which the Architecture form package completes (W03-D55)."
+          "Task execution state, evidence or approval, which belong to a Task."
         ],
         "policy_refs": [
           ".agents/governance/document-authoring.md",
@@ -5821,12 +5946,6 @@
               {
                 "key": "Acceptance criterion",
                 "meaning": "The measurable acceptance condition of the member.",
-                "data_type": "string",
-                "required": true
-              },
-              {
-                "key": "Downstream owner",
-                "meaning": "Link to the architecture description or Spec that owns the member, or an explicit exclusion.",
                 "data_type": "string",
                 "required": true
               }
@@ -15896,7 +16015,7 @@
           {
             "id": "requirement-lifecycle-traceability",
             "kind": "local_h3",
-            "condition": "a requirement in a status the body contract enforces (draft, in-review, approved) maps each member to its acceptance criterion and downstream owner",
+            "condition": "a requirement in a status the body contract enforces (draft, in-review, approved) maps each member to its acceptance criterion",
             "owner": "platform",
             "verification": "the body-contract check",
             "review": "when the Requirement form version changes",
@@ -15913,6 +16032,477 @@
             "review": "when the Requirement form version changes",
             "removal": "when requirement lineage has another registered owner",
             "parent_id": "requirement-traceability",
+            "title": "Archived Lineage"
+          }
+        ]
+      },
+      {
+        "form_id": "architecture",
+        "title": "Architecture",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "architecture-overview",
+            "level": 2,
+            "parent_id": null,
+            "title": "Overview",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "현행 구조 설명의 목적",
+            "required_content": [
+              "현행 구조 설명의 목적에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "architecture-overview-purpose-and-readers",
+                "level": 3,
+                "parent_id": "architecture-overview",
+                "title": "Purpose and Readers",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "대상 독자와 구조 설명 책임",
+                "required_content": [
+                  "대상 독자와 구조 설명 책임을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "architecture-overview-system-boundary",
+                "level": 3,
+                "parent_id": "architecture-overview",
+                "title": "System Boundary",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "대상 시스템·판본·환경 경계",
+                "required_content": [
+                  "대상 시스템·판본·환경 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "architecture-context-and-constraints",
+            "level": 2,
+            "parent_id": null,
+            "title": "Context and Constraints",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "구조가 준수하는 맥락과 제약",
+            "required_content": [
+              "구조가 준수하는 맥락과 제약에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "architecture-context-and-constraints-context",
+                "level": 3,
+                "parent_id": "architecture-context-and-constraints",
+                "title": "Context",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "외부 행위자·시스템·데이터 흐름",
+                "required_content": [
+                  "외부 행위자·시스템·데이터 흐름을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "architecture-context-and-constraints-constraints",
+                "level": 3,
+                "parent_id": "architecture-context-and-constraints",
+                "title": "Constraints",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "요구·품질·기술·보안 제약",
+                "required_content": [
+                  "요구·품질·기술·보안 제약을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "architecture-current-structure",
+            "level": 2,
+            "parent_id": null,
+            "title": "Current Structure",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "지금 적용되는 구조",
+            "required_content": [
+              "지금 적용되는 구조에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "architecture-current-structure-building-blocks",
+                "level": 3,
+                "parent_id": "architecture-current-structure",
+                "title": "Building Blocks",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "컴포넌트·책임·소유자",
+                "required_content": [
+                  "컴포넌트·책임·소유자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "architecture-current-structure-runtime-and-deployment",
+                "level": 3,
+                "parent_id": "architecture-current-structure",
+                "title": "Runtime and Deployment",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실행·배치·상호작용과 환경별 차이",
+                "required_content": [
+                  "실행·배치·상호작용과 환경별 차이을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "architecture-interfaces",
+            "level": 2,
+            "parent_id": null,
+            "title": "Interfaces",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "구성요소 간 계약",
+            "required_content": [
+              "구성요소 간 계약에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "architecture-interfaces-contracts",
+                "level": 3,
+                "parent_id": "architecture-interfaces",
+                "title": "Contracts",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "입출력·호출·스키마·호환 조건",
+                "required_content": [
+                  "입출력·호출·스키마·호환 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "architecture-interfaces-failure-boundaries",
+                "level": 3,
+                "parent_id": "architecture-interfaces",
+                "title": "Failure Boundaries",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실패·재시도·격리·복구 경계",
+                "required_content": [
+                  "실패·재시도·격리·복구 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "architecture-decisions",
+            "level": 2,
+            "parent_id": null,
+            "title": "Decisions",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "결정 근거와 미해결 위험",
+            "required_content": [
+              "결정 근거와 미해결 위험에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "architecture-decisions-decision-links",
+                "level": 3,
+                "parent_id": "architecture-decisions",
+                "title": "Decision Links",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "효력 있는 ADR·선택의 이유",
+                "required_content": [
+                  "효력 있는 ADR·선택의 이유을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "architecture-decisions-quality-and-risks",
+                "level": 3,
+                "parent_id": "architecture-decisions",
+                "title": "Quality and Risks",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "품질 시나리오·위험·후속 소유자",
+                "required_content": [
+                  "품질 시나리오·위험·후속 소유자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "architecture-traceability",
+            "level": 2,
+            "parent_id": null,
+            "title": "Traceability",
+            "order": 6,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "현행 구조와 근거의 추적",
+            "required_content": [
+              "현행 구조와 근거의 추적에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "architecture-traceability-requirement-mapping",
+                "level": 3,
+                "parent_id": "architecture-traceability",
+                "title": "Requirement Mapping",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "요구·설계 제약의 연결",
+                "required_content": [
+                  "요구·설계 제약의 연결을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "architecture-traceability-currentness-and-lineage",
+                "level": 3,
+                "parent_id": "architecture-traceability",
+                "title": "Currentness and Lineage",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "현행 판본·대체·역사 참조",
+                "required_content": [
+                  "현행 판본·대체·역사 참조을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "과거 실행 로그를 현행 구조로 취급하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          }
+        ],
+        "extensions": [
+          {
+            "id": "architecture-lifecycle-traceability",
+            "kind": "local_h3",
+            "condition": "an architecture description in a status the body contract enforces (draft, in-review, active) maps each cited requirement to its quality attribute or boundary and its ADR or Spec",
+            "owner": "platform",
+            "verification": "the body-contract check",
+            "review": "when the Architecture form version changes",
+            "removal": "when architecture lineage has another registered owner",
+            "parent_id": "architecture-traceability",
+            "title": "Lifecycle Traceability"
+          },
+          {
+            "id": "architecture-archived-lineage",
+            "kind": "local_h3",
+            "condition": "an architecture description summarizes the deleted or archived documents whose current meaning it owns, so that Git history recovers each of them",
+            "owner": "platform",
+            "verification": "the retired-identity reservation",
+            "review": "when the Architecture form version changes",
+            "removal": "when architecture lineage has another registered owner",
+            "parent_id": "architecture-traceability",
             "title": "Archived Lineage"
           }
         ]
@@ -16651,7 +17241,7 @@
             "key": "Upstream requirement"
           }
         ],
-        "reverse_view": "Derived by scripts/document-backlinks.py; the Requirement Downstream owner column is a reciprocal carrier that current checks require. SPEC-0195 keeps it unchanged; the Architecture form package (SPEC-0197) completes the citing Upstream requirement rows, then removes the column and replaces its link check with a derived coverage check (W03-D55).",
+        "reverse_view": "Derived by scripts/document-backlinks.py; the citing columns are the only owners and there is no reciprocal carrier: a Requirement writes no downstream link column, and REQUIREMENT-COVERAGE refuses an approved Requirement member that no description or Spec cites, unless the Requirement states it under Downstream Links in one explained N/A — exclusion line (W03-D55, W03-D57).",
         "consumer_paths": [
           "scripts/validate-markdown-profiles.py",
           "scripts/validate-links-and-owners.py",
@@ -16665,15 +17255,19 @@
           {
             "rule_id": "BODY-LINK-BROKEN",
             "path": "scripts/validate-links-and-owners.py"
+          },
+          {
+            "rule_id": "REQUIREMENT-COVERAGE",
+            "path": "scripts/validate-links-and-owners.py"
           }
         ],
         "positive_test": {
           "module": "tests/test_documentation_link_boundary.py",
-          "test": "test_forward_relationship_link_still_fails_broken_or_wrong_profile"
+          "test": "test_a_member_cited_by_a_description_or_spec_row_or_excluded_passes"
         },
         "negative_test": {
           "module": "tests/test_documentation_link_boundary.py",
-          "test": "test_forward_relationship_link_still_fails_broken_or_wrong_profile"
+          "test": "test_an_uncited_member_of_an_approved_requirement_fails"
         },
         "gaps": [
           "BODY-LINK-SOURCE and BODY-LINK-SOURCE-PROFILE are formed at run time from the link direction and cannot be named by occurrence; the negative test exercises BODY-LINK-SOURCE-PROFILE."
@@ -17075,7 +17669,8 @@
           "common/template-evaluation-task",
           "common/template-evaluation-score",
           "common/template-evaluation-results",
-          "common/template-sdlc-requirement"
+          "common/template-sdlc-requirement",
+          "common/template-sdlc-architecture-description"
         ],
         "target_profile_ids": [
           "governance/rule",
@@ -17250,6 +17845,11 @@
             "profile_id": "common/template-sdlc-requirement",
             "carrier": "registry_key",
             "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-sdlc-architecture-description",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
           }
         ],
         "reverse_view": "None: a policy owner never lists the templates that apply it.",
@@ -17320,7 +17920,8 @@
           "common/template-evaluation-task",
           "common/template-evaluation-score",
           "common/template-evaluation-results",
-          "common/template-sdlc-requirement"
+          "common/template-sdlc-requirement",
+          "common/template-sdlc-architecture-description"
         ],
         "target_profile_ids": [],
         "cardinality": {
@@ -17490,6 +18091,11 @@
           },
           {
             "profile_id": "common/template-sdlc-requirement",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-sdlc-architecture-description",
             "carrier": "registry_key",
             "key": "template_definition.consumer_paths"
           }

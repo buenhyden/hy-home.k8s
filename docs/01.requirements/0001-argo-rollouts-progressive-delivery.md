@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts Progressive Delivery Requirement Package"
-version: "2.0.0"
+version: "3.0.0"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -115,18 +115,18 @@ No separate verification method is stated: each requirement is verified by the e
 
 ### Lifecycle Traceability
 
-| Requirement ID | Acceptance criterion | Downstream owner |
-| --- | --- | --- |
-| REQ-0001-FR-0001 | GitOps static validation passes the `platform-rollouts` install contract, and an operator can confirm controller availability. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) |
-| REQ-0001-FR-0002 | Dashboard progress is visible over HTTPS on the approved Dashboard local path. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) |
-| REQ-0001-FR-0003 | The controller state and metrics exposure contract are observable in static validation and operational checks. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) |
-| REQ-0001-IF-0001 | ArgoCD can track a `Rollout` as `Healthy` or `Progressing`. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) |
-| REQ-0001-IF-0002 | A per-application deployment using an approved safety check keeps the abort/rollback boundary on failure signals and does not force automatic promotion. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) |
-| REQ-0001-IF-0003 | The shared local entry point's Rollouts path reaches the Dashboard host. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) |
-| N/A — Acceptance criterion 01 remains acceptance-only | An operator can confirm that the Rollouts controller Deployment (`argo-rollouts`) is `Available=True`. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) |
-| N/A — Acceptance criterion 02 remains acceptance-only | HTTPS access to the approved Dashboard local path succeeds and the Dashboard shows progress. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) |
-| N/A — Acceptance criterion 03 remains acceptance-only | ArgoCD shows the reference Rollout resource as `Healthy` or `Progressing`. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) |
-| N/A — Acceptance criterion 04 remains acceptance-only | The repository quality gate and the Rollouts static contract validation PASS. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) |
+| Requirement ID | Acceptance criterion |
+| --- | --- |
+| REQ-0001-FR-0001 | GitOps static validation passes the `platform-rollouts` install contract, and an operator can confirm controller availability. |
+| REQ-0001-FR-0002 | Dashboard progress is visible over HTTPS on the approved Dashboard local path. |
+| REQ-0001-FR-0003 | The controller state and metrics exposure contract are observable in static validation and operational checks. |
+| REQ-0001-IF-0001 | ArgoCD can track a `Rollout` as `Healthy` or `Progressing`. |
+| REQ-0001-IF-0002 | A per-application deployment using an approved safety check keeps the abort/rollback boundary on failure signals and does not force automatic promotion. |
+| REQ-0001-IF-0003 | The shared local entry point's Rollouts path reaches the Dashboard host. |
+| N/A — Acceptance criterion 01 remains acceptance-only | An operator can confirm that the Rollouts controller Deployment (`argo-rollouts`) is `Available=True`. |
+| N/A — Acceptance criterion 02 remains acceptance-only | HTTPS access to the approved Dashboard local path succeeds and the Dashboard shows progress. |
+| N/A — Acceptance criterion 03 remains acceptance-only | ArgoCD shows the reference Rollout resource as `Healthy` or `Progressing`. |
+| N/A — Acceptance criterion 04 remains acceptance-only | The repository quality gate and the Rollouts static contract validation PASS. |
 
 ### Archived Lineage
 

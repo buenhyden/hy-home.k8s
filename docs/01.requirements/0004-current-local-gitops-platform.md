@@ -1,6 +1,6 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "2.0.0"
+version: "3.0.0"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -250,30 +250,30 @@ REQ-0004-FR-0009 also inherits the requirement of the former REQ-0005-FR-0006 (R
 
 ### Downstream Links
 
-No downstream link is listed here: the architecture description that owns each member is named in the `Downstream owner` column of `Lifecycle Traceability`, and `scripts/document-backlinks.py` derives the reverse view.
+No downstream link is listed here: the architecture description or Spec that owns each member cites it in its own requirement column, `scripts/document-backlinks.py` derives the reverse view and the `REQUIREMENT-COVERAGE` check of `scripts/validate-links-and-owners.py` refuses a member that no document cites.
 
 ### Lifecycle Traceability
 
-| Requirement ID | Acceptance criterion | Downstream owner |
-| --- | --- | --- |
-| REQ-0004-FR-0001 | The selected root/platform/workload targets render at a reviewed revision (100% of selected targets). | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0002 | Static validation shows platform components and user workloads reconciled through separate projects with distinct destination and resource permissions. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0003 | Every declared external interface tuple or gateway host/port/CA matches the reviewed desired state. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0004 | Only the currently supported UIs have routes; no removed UI is described as current. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0005 | Every in-scope surface carries changed, unchanged-with-reason, or DEFER-with-owner-and-trigger. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0006 | No temporary branch, stash or generated identity is recorded as current authority. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0007 | The label and code-owner projections route each affected path to exactly one owner. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0008 | Each platform validation result names its depth, tool, fallback, lane and result. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md); custom CRD schemas and live observation remain DEFER with owners above |
-| REQ-0004-FR-0009 | Each cloud example passes provider-native static validation with no credentials and no apply. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0010 | The ingress, resource-kind, GitOps, policy, secret-sync and transport checks fail closed and PASS. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md); generated and live outputs remain DEFER with owner above |
-| REQ-0004-FR-0011 | The final local-only integration is proven after per-package review, validation and rollback. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0012 | Every pinned version is read from the executable source or a reviewed lock. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0013 | The self-source and external release revision rules are recorded separately with revisit triggers. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0014 | Enforced namespaces hold only statically validated workloads; the rest stay audit/warn. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-NFR-0001 | The listed integrations are declared in the desired state and pass the product static contract. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-NFR-0002 | No secret value, token or private key is found in Git, documents or logs. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-NFR-0003 | No blanket digest conversion is made, and each provenance follow-up names consumer, owner and trigger. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-IF-0001 | Current documents link current owners only; no deleted or archived document is cited as guidance. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| Requirement ID | Acceptance criterion |
+| --- | --- |
+| REQ-0004-FR-0001 | The selected root/platform/workload targets render at a reviewed revision (100% of selected targets). |
+| REQ-0004-FR-0002 | Static validation shows platform components and user workloads reconciled through separate projects with distinct destination and resource permissions. |
+| REQ-0004-FR-0003 | Every declared external interface tuple or gateway host/port/CA matches the reviewed desired state. |
+| REQ-0004-FR-0004 | Only the currently supported UIs have routes; no removed UI is described as current. |
+| REQ-0004-FR-0005 | Every in-scope surface carries changed, unchanged-with-reason, or DEFER-with-owner-and-trigger. |
+| REQ-0004-FR-0006 | No temporary branch, stash or generated identity is recorded as current authority. |
+| REQ-0004-FR-0007 | The label and code-owner projections route each affected path to exactly one owner. |
+| REQ-0004-FR-0008 | Each platform validation result names its depth, tool, fallback, lane and result. |
+| REQ-0004-FR-0009 | Each cloud example passes provider-native static validation with no credentials and no apply. |
+| REQ-0004-FR-0010 | The ingress, resource-kind, GitOps, policy, secret-sync and transport checks fail closed and PASS. |
+| REQ-0004-FR-0011 | The final local-only integration is proven after per-package review, validation and rollback. |
+| REQ-0004-FR-0012 | Every pinned version is read from the executable source or a reviewed lock. |
+| REQ-0004-FR-0013 | The self-source and external release revision rules are recorded separately with revisit triggers. |
+| REQ-0004-FR-0014 | Enforced namespaces hold only statically validated workloads; the rest stay audit/warn. |
+| REQ-0004-NFR-0001 | The listed integrations are declared in the desired state and pass the product static contract. |
+| REQ-0004-NFR-0002 | No secret value, token or private key is found in Git, documents or logs. |
+| REQ-0004-NFR-0003 | No blanket digest conversion is made, and each provenance follow-up names consumer, owner and trigger. |
+| REQ-0004-IF-0001 | Current documents link current owners only; no deleted or archived document is cited as guidance. |
 
 ### Archived Lineage
 

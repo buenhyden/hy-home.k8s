@@ -634,16 +634,6 @@
       }
     },
     {
-      "id": "W03-H37",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "With phase 3 (W03-H02)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W03-H38",
       "kind": "handoff",
       "state": "open",
@@ -689,16 +679,6 @@
       "state": "open",
       "owner": "W03",
       "resume_condition": "When the registry admits a creation state for the `requirement` lifecycle domain",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W03-H44",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When the Architecture form package (SPEC-0197) completes the citing rows",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }

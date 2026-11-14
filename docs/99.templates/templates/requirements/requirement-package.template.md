@@ -71,10 +71,10 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ### Lifecycle Traceability
 
-<!-- Author prompt: map each requirement to its acceptance criterion and downstream owner. -->
+<!-- Author prompt: map each requirement to its acceptance criterion; the architecture description or Spec that owns it cites it in its own requirement column. -->
 
-| Requirement ID | Acceptance criterion | Downstream owner |
-| --- | --- | --- |
-| REQ-0001-FR-0001 | State one measurable functional acceptance condition. | Architecture or Specification owner |
-| REQ-0001-NFR-0001 | State one measurable quality acceptance condition. | Architecture or Specification owner |
-| REQ-0001-IF-0001 | State one measurable interface acceptance condition. | Specification owner |
+| Requirement ID | Acceptance criterion |
+| --- | --- |
+| REQ-0001-FR-0001 | State one measurable functional acceptance condition. |
+| REQ-0001-NFR-0001 | State one measurable quality acceptance condition. |
+| REQ-0001-IF-0001 | State one measurable interface acceptance condition. |

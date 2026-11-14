@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.32.0"
+version: "0.33.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -134,7 +134,8 @@ form 경로의 대응은 Registry만 소유한다.
   W03-D35와 W03-D36에 따라 `reference-report`는 감사·연구·데이터 보고서가
   함께 쓰는 form 하나를 가진다. `provider-native`만 form 없는 Stage 99 지역
   역할이며 table을 기록하지 않는다. SPEC-0195가 `requirement` 템플릿의
-  TemplateDefinition을 더했고, 나머지 다섯 SDLC 템플릿의
+  TemplateDefinition을, SPEC-0197이 `architecture` 템플릿의
+  TemplateDefinition을 더했고, 나머지 네 SDLC 템플릿의
   TemplateDefinition은 3단계에서 더한다. TemplateDefinition은 열한 필드를
   Registry에 저장하고(`contract_version` 포함) 나머지 여덟 필드는
   `template_definition_record`가 profile, form, 키·관계·생명주기·언어 소유자에서
@@ -151,6 +152,10 @@ form 경로의 대응은 Registry만 소유한다.
   form을 담아 단계별 책임과 handoff를 기록한다. `sdlc/requirement`는 이 중
   처음으로 `requirement` form(다섯 H2와 열 개 H3, Traceability 아래 지역 H3
   `Lifecycle Traceability`와 `Archived Lineage`)을 쓰며 H2 목록을 두지 않는다.
+  `sdlc/architecture-description`은 `architecture` form(여섯 H2와 열두 개 H3,
+  같은 두 지역 H3)을 쓰고 H2 목록을 두지 않으며, 각 요구 member를 자신의
+  `Upstream requirement` 열에서 인용한다. Requirement는 downstream 링크 열을
+  두지 않고, 파생 역조회와 `REQUIREMENT-COVERAGE` 검사가 그 자리를 대신한다.
 - **Spec forms** (`specs/`): `spec`, `plan`, `task` form이 요구 추적,
   실행 계획, 작업 증거를 소유한다. 별도 data-model 및 native contract
   capacity는 현재 consumer가 없어 Spec 본문과 실제 구현 소유자에게 수렴했다.

@@ -542,5 +542,186 @@ class FragmentLinkTests(unittest.TestCase):
         self.assertEqual(broken, [])
 
 
+REQ_PATH = PurePosixPath("docs/01.requirements/9001-synthetic.md")
+AD_PATH = PurePosixPath("docs/02.architecture/descriptions/9001-synthetic.md")
+SPEC_PATH = PurePosixPath("docs/03.specs/9001-synthetic/spec.md")
+MEMBER = "REQ-9001-FR-0001"
+OTHER = "REQ-9001-NFR-0001"
+EXCLUSION = f"- {OTHER}: N/A — no description covers it yet; ADR-0001 decides it."
+
+
+def _requirement(*, links: str = "", extra: str = "") -> str:
+    section = f"\n### Downstream Links\n\n{links}\n" if links is not None else ""
+    return (
+        "## Traceability\n"
+        f"{section}\n### Lifecycle Traceability\n\n"
+        "| Requirement ID | Acceptance criterion |\n| --- | --- |\n"
+        f"| {MEMBER} | The member is accepted. |\n"
+        f"| {OTHER} | The quality member is accepted. |\n{extra}"
+    )
+
+
+def _ad(*members: str) -> str:
+    rows = "".join(f"| {m} | A boundary. | N/A — none |\n" for m in members)
+    return (
+        "## Traceability\n\n### Lifecycle Traceability\n\n"
+        "| Upstream requirement | Quality attribute or boundary | ADR / Spec |\n"
+        f"| --- | --- | --- |\n{rows}"
+    )
+
+
+def _spec(*members: str) -> str:
+    rows = "".join(f"| {m} | VAL-X-001 | AD | Test. |\n" for m in members)
+    return (
+        "## Traceability\n\n### Lifecycle Traceability\n\n"
+        "| Requirement ID | Spec criterion | Architecture | Verification method |\n"
+        f"| --- | --- | --- | --- |\n{rows}"
+    )
+
+
+class RequirementCoverageTests(unittest.TestCase):
+    """SPEC-0197 VAL-ADFORM-003: REQUIREMENT-COVERAGE over synthetic documents."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.base = validator._build_context(ROOT, ())
+        cls.registry = validator.load_registry(ROOT)
+        cls.profiles = {p.profile_id: p for p in cls.registry.profiles}
+
+    def view(self, profile_id: str):
+        return next(
+            v for v in self.base.profiles.values() if v.profile_id == profile_id
+        )
+
+    def rules(
+        self,
+        requirement: str,
+        *,
+        status: str = "approved",
+        ad: str | None = None,
+        ad_status: str = "active",
+        spec: str | None = None,
+    ) -> list[tuple[str, str]]:
+        paths = [REQ_PATH]
+        texts = {REQ_PATH: requirement}
+        metadata = {REQ_PATH: {"status": status}}
+        views = {REQ_PATH: self.view("sdlc/requirement")}
+        if ad is not None:
+            paths.append(AD_PATH)
+            texts[AD_PATH] = ad
+            metadata[AD_PATH] = {"status": ad_status}
+            views[AD_PATH] = self.view("sdlc/architecture-description")
+        if spec is not None:
+            paths.append(SPEC_PATH)
+            texts[SPEC_PATH] = spec
+            metadata[SPEC_PATH] = {"status": "approved"}
+            views[SPEC_PATH] = self.view("sdlc/spec")
+        context = replace(
+            self.base,
+            paths=tuple(paths),
+            profiles=views,
+            texts=texts,
+            metadata=metadata,
+        )
+        return [
+            (item.rule_id, item.actual)
+            for item in validator._requirement_coverage_diagnostics(
+                context, self.profiles
+            )
+        ]
+
+    def test_an_uncited_member_of_an_approved_requirement_fails(self) -> None:
+        found = self.rules(_requirement(links=EXCLUSION))
+        self.assertEqual(found, [("REQUIREMENT-COVERAGE", f"{MEMBER} uncited")])
+        self.assertEqual(len(self.rules(_requirement(links="Prose only."))), 2)
+
+    def test_a_member_cited_by_a_description_or_spec_row_or_excluded_passes(
+        self,
+    ) -> None:
+        body = _requirement(links=EXCLUSION)
+        self.assertEqual(self.rules(body, ad=_ad(MEMBER)), [])
+        self.assertEqual(self.rules(body, spec=_spec(MEMBER)), [])
+        both = _requirement(links="Prose only.")
+        self.assertEqual(self.rules(both, ad=_ad(MEMBER), spec=_spec(OTHER)), [])
+
+    def test_a_draft_requirement_is_not_checked(self) -> None:
+        self.assertEqual(self.rules(_requirement(links=""), status="draft"), [])
+
+    def test_a_citing_document_in_an_unenforced_status_does_not_count(self) -> None:
+        body = _requirement(links=EXCLUSION)
+        self.assertEqual(
+            self.rules(body, ad=_ad(MEMBER), ad_status="retired"),
+            [("REQUIREMENT-COVERAGE", f"{MEMBER} uncited")],
+        )
+
+    def test_the_explained_exclusion_passes_and_a_bare_one_fails(self) -> None:
+        for line in (
+            f"- {MEMBER}: N/A — AD-0006 does not cover it.",
+            f"{MEMBER}: N/A — a reason.",
+        ):
+            with self.subTest(line=line):
+                body = _requirement(links=f"{line}\n{EXCLUSION}")
+                self.assertEqual(self.rules(body), [])
+        for line in (
+            f"- {MEMBER}: N/A —",
+            f"- {MEMBER}: N/A",
+            f"- Not {MEMBER}: N/A — a reason.",
+            f"- Acceptance criterion 01: N/A — mentions {MEMBER}.",
+        ):
+            with self.subTest(line=line):
+                body = _requirement(links=f"{line}\n{EXCLUSION}")
+                self.assertEqual(
+                    self.rules(body), [("REQUIREMENT-COVERAGE", f"{MEMBER} uncited")]
+                )
+
+    def test_a_requirement_without_downstream_links_names_the_member_and_section(
+        self,
+    ) -> None:
+        found = self.rules(_requirement(links=None), ad=_ad(OTHER))
+        self.assertEqual(
+            found,
+            [
+                (
+                    "REQUIREMENT-COVERAGE",
+                    f"{MEMBER} uncited; no Downstream Links section",
+                )
+            ],
+        )
+
+    def test_the_old_three_column_requirement_table_is_not_read_as_a_contract_row(
+        self,
+    ) -> None:
+        profile = self.profiles["sdlc/requirement"]
+        old = _requirement(links="").replace(
+            "| Requirement ID | Acceptance criterion |\n| --- | --- |",
+            "| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |",
+        )
+        self.assertIsNone(validator._body_contract_rows(old, profile))
+        self.assertIsNotNone(
+            validator._body_contract_rows(_requirement(links=""), profile)
+        )
+
+    def test_a_body_contract_without_a_link_column_is_valid_for_the_link_validator(
+        self,
+    ) -> None:
+        contract = self.profiles["sdlc/requirement"].body_contract
+        self.assertIsNone(contract.target_link_column)
+        self.assertIsNone(contract.source_link_column)
+        self.assertEqual(contract.allowed_target_profile_ids, ())
+        context = replace(
+            self.base,
+            paths=(REQ_PATH,),
+            profiles={REQ_PATH: self.view("sdlc/requirement")},
+            texts={REQ_PATH: _requirement(links=EXCLUSION)},
+            metadata={REQ_PATH: {"status": "approved"}},
+        )
+        self.assertEqual(
+            validator._body_contract_link_diagnostics(
+                context, self.profiles, "registry"
+            ),
+            [],
+        )
+
+
 if __name__ == "__main__":  # pragma: no cover - module entry guard
     unittest.main()

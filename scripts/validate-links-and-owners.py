@@ -3669,6 +3669,119 @@ def _body_contract_link_diagnostics(
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
+_MEMBER_ID = re.compile(r"REQ-[0-9]{4}-(?:FR|NFR|IF)-[0-9]{4}")
+_COVERAGE_BASIS = "requirement-basis"
+_COVERAGE_SECTION_ID = "requirement-traceability-downstream-links"
+_COVERAGE_STATUS = "approved"
+
+
+def _form_section_title(profile: DocumentProfile, section_id: str) -> str | None:
+    """SPEC-0197: the registry heading of one form section, by its section id."""
+
+    pending = list(profile.form.sections) if profile.form is not None else []
+    while pending:
+        item = pending.pop()
+        if item.section_id == section_id:
+            return item.title
+        pending.extend(item.children)
+    return None
+
+
+def _requirement_coverage_diagnostics(
+    context: Context, profiles_by_id: dict[str, DocumentProfile]
+) -> list[Diagnostic]:
+    """SPEC-0197 (W03-D55, W03-D57): every member of an approved Requirement is cited.
+
+    The registry relation `requirement-basis` names the citing profiles and the
+    body-contract column of each. A member that no citing document cites in an
+    enforced status passes only with an explained exclusion line under the
+    Requirement's Downstream Links section, which the form names by section id.
+    """
+
+    registry = context.current_registry or load_registry(context.root)
+    contract = registry.relationship_contract
+    relation = next(
+        (
+            item
+            for item in (contract.relations if contract else ())
+            if item.id == _COVERAGE_BASIS
+        ),
+        None,
+    )
+    if relation is None:
+        return []
+    columns = {
+        profile_id: key
+        for profile_id, carrier, key in relation.canonical_owners
+        if carrier == "body_contract"
+    }
+    cited: set[str] = set()
+    for path in context.paths:
+        profile = profiles_by_id.get(context.profiles[path].profile_id)
+        column = columns.get(profile.profile_id) if profile else None
+        if profile is None or column is None or profile.body_contract is None:
+            continue
+        status = task_status(
+            context.metadata[path], context.texts.get(path, ""), profile
+        )
+        if status not in profile.body_contract.enforced_statuses:
+            continue
+        for row in _body_contract_rows(context.texts[path], profile) or ():
+            cited.update(_MEMBER_ID.findall(row.get(column, "")))
+    diagnostics: list[Diagnostic] = []
+    for path in context.paths:
+        profile = profiles_by_id.get(context.profiles[path].profile_id)
+        if (
+            profile is None
+            or profile.profile_id not in relation.target_profile_ids
+            or profile.body_contract is None
+        ):
+            continue
+        text = context.texts[path]
+        status = task_status(context.metadata[path], text, profile)
+        identifier = next(
+            (
+                item.column
+                for item in profile.body_contract.identifier_columns
+                if item.kind == "requirement"
+            ),
+            None,
+        )
+        if status != _COVERAGE_STATUS or identifier is None:
+            continue
+        title = _form_section_title(profile, _COVERAGE_SECTION_ID)
+        section = (
+            _exact_heading_section(text, f"### {title}") if title is not None else None
+        )
+        excluded = {
+            match.group(1)
+            for line in (section or "").splitlines()
+            if (
+                match := re.match(
+                    rf"^\s*(?:[-*+]\s+)?({_MEMBER_ID.pattern})\b[^\n]*?"
+                    r"(N/A — \S.*)$",
+                    line,
+                )
+            )
+        }
+        for row in _body_contract_rows(text, profile) or ():
+            member = _body_identifier_text(row[identifier])
+            if _MEMBER_ID.fullmatch(member) is None or member in cited | excluded:
+                continue
+            diagnostics.append(
+                _diag(
+                    "REQUIREMENT-COVERAGE",
+                    path,
+                    profile.profile_id,
+                    f"{member} cited in a requirement column of a description or "
+                    f"Spec, or an N/A — exclusion line under {title or 'a Downstream Links section'}",
+                    f"{member} uncited"
+                    + ("" if section is not None else f"; no {title} section"),
+                )
+            )
+    return sorted(diagnostics, key=diagnostic_sort_key)
+
+
 def _owner_candidate(context: Context, path: PurePosixPath) -> bool:
     profile = context.profiles[path]
     status = str(context.metadata[path].get("status", "")).casefold()
@@ -4271,6 +4384,7 @@ def _raw_diagnostics(
             selected_paths=selected_body_paths,
         )
     )
+    diagnostics.extend(_requirement_coverage_diagnostics(context, profiles_by_id))
     diagnostics.extend(_readme_navigation_diagnostics(context))
     diagnostics.extend(_governance_current_owner_diagnostics(context))
     diagnostics.extend(_owner_diagnostics(context))
@@ -4438,6 +4552,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.body_contracts,
                     tuple(args.body_contract_path_prefix),
                 )
+                + _requirement_coverage_diagnostics(context, profiles_by_id)
                 + _readme_navigation_diagnostics(context)
                 + _governance_current_owner_diagnostics(context)
                 + _owner_diagnostics(context)
