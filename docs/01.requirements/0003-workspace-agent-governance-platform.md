@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "5.0.2"
+version: "5.0.4"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -457,6 +457,8 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0196 | completed spec | SPEC-0196 derived and validated the full TemplateDefinition record. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0196-w03-full-template-definition/` |
 | SPEC-0197 | completed spec | SPEC-0197 moved the architecture descriptions to the common Architecture form. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0197-w03-architecture-form/` |
 | SPEC-0198 | completed spec | SPEC-0198 added the common ADR form and the bounded accepted-ADR retained form. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0198-w03-adr-form/` |
+| SPEC-0214 | completed spec | SPEC-0214 set the Claude delivery permissions and the CI/CD governance. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0214-claude-push-permission/` |
+| SPEC-0215 | completed spec | SPEC-0215 denied abbreviated executable Git options. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0215-claude-executable-option-abbreviations/` |
 
 **SPEC-0152 recovery proof.** The exact completed source is commit `4033d38e7ac6eac0130700c8cf259ea252f44916`, reachable from retained local `refs/heads/codex/manual-document-disposition-policy` (`git merge-base --is-ancestor` rc 0). The current user authorized this bounded package exit on 2026-11-10; no hold was identified in the current repository documents or request, and the Task's frozen disposition decision names consumers and preservation route. Before any deletion, QA confirmed `git cat-file -e` rc 0 for each `commit:path`, restored each with `git show` to a mode-0600 temporary file, and obtained `cmp -s` rc 0 against its unchanged current source; the temporary files were removed. The three exact paths and Git blob identities are:
 
@@ -818,5 +820,18 @@ This is local retained-ref recovery proof before disposition, not remote or host
 - `1f7e9e20a406840ffef4bf6df588c19ccc272534:docs/03.specs/0198-w03-adr-form/plan.md` — blob/source OID `6093309db1196eddc2d0b898dde50d4b991e6e41`; SHA-256 `b202899fa71714bd97d37a5bd00c5fa23e859d96f8f8e9fa1fbf8cda7128da0f` (10905 bytes).
 - `1f7e9e20a406840ffef4bf6df588c19ccc272534:docs/03.specs/0198-w03-adr-form/spec.md` — blob/source OID `16dca1dd4a8322bcf2519714eccef7690807a6ec`; SHA-256 `1f096d06b943c640522a1c942ac36f4590e0fd067371f97844dfec7c84f5c991` (19964 bytes).
 - `1f7e9e20a406840ffef4bf6df588c19ccc272534:docs/03.specs/0198-w03-adr-form/tasks/tsk-0001-w03-adr-form.md` — blob/source OID `6c4bf9f8ba1d76cf10348aa71924227bb785c97a`; SHA-256 `56bad59004fc57dbf226c03e2d91a27db8f88e299eed70216b76898e88d5fb06` (29413 bytes).
+**SPEC-0214 recovery proof.** The exact completed source is the Task freeze commit `da799ae4f2cd2ceb4e702e521735bd73d97181c8`, reachable from local `refs/heads/claude/claude-delivery-permissions` (`git merge-base --is-ancestor` rc 0) and, after its merge, from `main`. The user authorized this exit, and no hold was identified. Before deleting any file, QA observed HEAD `da799ae4` with a clean index and worktree; for every exact `commit:path` it observed `git cat-file -t` type blob, the same OID from `git hash-object --no-filters` on the current file, and a byte-equal comparison of the `git show` restoration, read through a pipe, with the current file. No temporary file was written, and HEAD, index and worktree were unchanged afterwards.
+
+- `da799ae4f2cd2ceb4e702e521735bd73d97181c8:docs/03.specs/0214-claude-push-permission/plan.md` — blob/source OID `4fa262cfd98e85555949f53340df721ec058c303`; SHA-256 `438fa65eddf3318bb25109fb26c1f3273da4b4dd3ea46eb435c31fbe1819412c` (13743 bytes).
+- `da799ae4f2cd2ceb4e702e521735bd73d97181c8:docs/03.specs/0214-claude-push-permission/spec.md` — blob/source OID `bce50555e7db8991f8c7117198a6f6e9ca05fb8f`; SHA-256 `60953a602a4fdff8942f9c36e066a84eafea32c94128ca40b94b887575a2e556` (42687 bytes).
+- `da799ae4f2cd2ceb4e702e521735bd73d97181c8:docs/03.specs/0214-claude-push-permission/tasks/tsk-0001-claude-push-permission.md` — blob/source OID `d99554af2c4d808e7e47a71c745b1d58bc000d6b`; SHA-256 `6843f9abd1122177bfcd917792c13a01df9ebfbe8bd5aea2b95d794e0bf90eca` (43385 bytes).
+
+This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
+
+**SPEC-0215 recovery proof.** The exact completed source is the Task freeze commit `b3a643c5a3304671b4d3d29fda943ff71ab4e05d`, reachable from local `refs/heads/claude/claude-delivery-permissions` (`git merge-base --is-ancestor` rc 0) and, after its merge, from `main`. The user authorized this exit, and no hold was identified. Before deleting any file, QA observed HEAD `b3a643c5` with a clean index and worktree; for every exact `commit:path` it observed `git cat-file -t` type blob, the same OID from `git hash-object --no-filters` on the current file, and a byte-equal comparison of the `git show` restoration, read through a pipe, with the current file. No temporary file was written, and HEAD, index and worktree were unchanged afterwards.
+
+- `b3a643c5a3304671b4d3d29fda943ff71ab4e05d:docs/03.specs/0215-claude-executable-option-abbreviations/plan.md` — blob/source OID `dd8c5ae71dd4c7dd73a76d1c5208618915d0ac83`; SHA-256 `61e51e1baed8cbc28c67ca16b116dbfb10c3a4e9e0e3d409b9020eed6a877fae` (5504 bytes).
+- `b3a643c5a3304671b4d3d29fda943ff71ab4e05d:docs/03.specs/0215-claude-executable-option-abbreviations/spec.md` — blob/source OID `58b284c392bb67a061633ba5fffad3176ce7971b`; SHA-256 `493556b6c153ffe0160b91042b1d80054d56dc8a02c37b41386519ec4b9288e3` (11775 bytes).
+- `b3a643c5a3304671b4d3d29fda943ff71ab4e05d:docs/03.specs/0215-claude-executable-option-abbreviations/tasks/tsk-0001-claude-executable-option-abbreviations.md` — blob/source OID `3a5919bbcee75b8b96604869f56ec05cfbb1546b`; SHA-256 `8091fb94c045b4afdb74d5762fed407db04118f635e5384654176af667a4f57b` (17228 bytes).
 
 This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
