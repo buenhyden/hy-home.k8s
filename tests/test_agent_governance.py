@@ -1341,6 +1341,15 @@ class NativeDenyCoverageTests(unittest.TestCase):
                 "git push --porcelain origin feat/a",
                 "git push --atomic origin feat/a",
                 "git push -o ci.skip origin feat/a",
+                # A message file (`-F`) and `--format` are not the force option.
+                "git tag -F notes.txt v1.2.3",
+                "git tag -l --format=%(refname)",
+                # Plain, tag and forced branch fetches stay allowed.
+                "git fetch",
+                "git fetch --tags",
+                "git fetch --tags origin",
+                "git fetch -p origin",
+                "git fetch -f origin main:x",
                 # Review text containing ` --approve` matches the approval
                 # rule; that is a review, not a merge.
                 'gh pr review 1 --request-changes -b "ok --approve"',
@@ -1430,6 +1439,51 @@ class NativeDenyCoverageTests(unittest.TestCase):
                 "git commit --amen -m a",
                 "git commit -m a --amen",
                 "git commit --am",
+                # Tags are immutable history (git.md): force and delete in each
+                # form Git 2.43 accepts, with unique prefixes (`--f`, `--fo` and
+                # `--for` are ambiguous with `--format`) and the two-letter
+                # clusters that act.
+                "git tag -f v1",
+                "git tag -fa v1 -m a",
+                "git tag -a -f v1 -m a",
+                "git tag -m a -f v1",
+                "git tag --forc v1",
+                "git tag --force v1",
+                "git tag -af v1 -m a",
+                "git tag -ef v1 -m a",
+                "git tag -if v1",
+                "git tag -sf v1 -m a",
+                "git tag -m a -af v1",
+                "git tag -d v1",
+                "git tag --d v1",
+                "git tag --del v1",
+                "git tag --delete v1",
+                "git tag -i -d v1",
+                "git tag -ed v1",
+                "git tag -id v1",
+                # A fetch moves a local tag through a `refs/tags/` destination
+                # and deletes one through tag pruning (answer 8).
+                "git fetch . +HEAD:refs/tags/v1",
+                "git fetch -f . HEAD:refs/tags/v1",
+                "git fetch --forc . HEAD:refs/tags/v1",
+                "git fetch origin +refs/tags/v1:refs/tags/v1",
+                "git fetch -p origin 'refs/tags/*:refs/tags/*'",
+                "git fetch --prune-tags origin",
+                "git fetch --prune-t origin",
+                "git fetch -P origin",
+                "git fetch -P -p origin",
+                "git fetch -Pp origin",
+                "git fetch -p -P origin",
+                # Answer 9: an unqualified `tags/<name>` destination and the
+                # shortest tag-pruning prefix.
+                "git fetch -f . HEAD:tags/v1",
+                "git fetch . +HEAD:tags/v1",
+                "git fetch --prune- origin",
+                # Answer 10: refspecs read from standard input and a refspec
+                # map, either of which can write into `refs/tags/`.
+                "git fetch --stdin origin < refs.txt",
+                "git fetch --refmap='+refs/*:refs/*' origin refs/tags/v1",
+                "git fetch --refm='+refs/*:refs/*' origin refs/tags/v1",
                 # Documented over-denials: name the branch, rename it, or
                 # reword the text.
                 "git push --tags origin",
@@ -1444,10 +1498,14 @@ class NativeDenyCoverageTests(unittest.TestCase):
                 'git push -o "x @ y" origin feat/a',
                 'git commit -m "drop --am"',
                 'git commit -m "drop --no-veri"',
+                "git tag main-ef0123",
+                'git tag -a v1 -m "drop -f"',
+                "git fetch origin 'refs/tags/*:refs/tags/*'",
+                "git fetch origin main:tags/x",  # creates a new tag, no rewrite
             ),
         )
-        # Recorded residuals (SPEC-0214): no pattern can express these, or the
-        # user's answers leave them to policy. Changing one is deliberate.
+        # Recorded residuals (SPEC-0214): no deny rule matches these.
+        # Changing one is deliberate.
         expect(
             "allow",
             (
@@ -1456,9 +1514,16 @@ class NativeDenyCoverageTests(unittest.TestCase):
                 "git push -q",  # option-only push
                 "git commit -a -n -m a",  # short hook bypass after an option
                 "git commit -an -m a",  # short hook bypass inside a cluster
-                # Tag rewrites, forbidden by git.md (tags are immutable).
-                "git tag -f v1",
-                "git tag -d v1",
+                "git tag -aef v1 -m a",  # three-letter tag cluster
+                "git tag -ied v1",  # three-letter tag cluster, delete side
+                "git fetch -pP origin",  # tag pruning second in a cluster
+                "git fetch -f --tags origin",  # forced tag fetch
+                "git fetch -ft origin",  # forced tag fetch in a cluster
+                "git fetch -f origin tag v1",  # forced `tag <name>` refspec
+                "git fetch origin '+refs/*:refs/*'",  # glob covering tags
+                "git fetch origin '+refs/t*:refs/t*'",  # glob covering tags
+                "git fetch -p origin 'refs/t*:refs/t*'",  # glob, pruning
+                'git fetch origin +main:"refs/tags/v1"',  # quoted destination
             ),
         )
         # No rule matches, so the client's default prompt decides.

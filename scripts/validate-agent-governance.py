@@ -122,10 +122,11 @@ CLAUDE_ALLOWED_PERMISSIONS = (
 # and workflow commands and the release producer run without a native prompt
 # on an operator request, which is their approval, as merges and pull requests
 # already did (SPEC-0114, Git history). Forced merge, direct pushes to `main`,
-# Release deletion, run cancellation and the matchable force, delete, mirror,
-# prune, amend and hook-bypass forms, including unique prefixes and two-letter
-# clusters, stay denied below. Raw API calls and `git -C` keep a prompt
-# because a prefix rule cannot see their effect.
+# Release deletion, run cancellation and the matchable push force, delete,
+# mirror and prune, tag force and delete, fetch-into-tag, amend and
+# hook-bypass forms, including unique prefixes and two-letter clusters, stay
+# denied below. Raw API calls and `git -C` keep a prompt because a prefix rule
+# cannot see their effect.
 CLAUDE_ASK_PERMISSIONS = (
     "Bash(gh api *)",
     "Bash(git -C *)",
@@ -369,6 +370,25 @@ CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Bash(git commit *--am*)",
     "Bash(git *--no-veri*)",
     "Bash(git commit -n*)",
+    "Bash(git tag -f*)",
+    "Bash(git tag * -f*)",
+    "Bash(git tag *--forc*)",
+    "Bash(git tag *-af*)",
+    "Bash(git tag *-ef*)",
+    "Bash(git tag *-if*)",
+    "Bash(git tag *-sf*)",
+    "Bash(git tag -d*)",
+    "Bash(git tag * -d*)",
+    "Bash(git tag *--d*)",
+    "Bash(git tag *-ed*)",
+    "Bash(git tag *-id*)",
+    "Bash(git fetch *:refs/tags/*)",
+    "Bash(git fetch *--prune-*)",
+    "Bash(git fetch -P*)",
+    "Bash(git fetch * -P*)",
+    "Bash(git fetch *:tags/*)",
+    "Bash(git fetch *--stdin*)",
+    "Bash(git fetch *--refm*)",
 )
 
 

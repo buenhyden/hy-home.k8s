@@ -1,6 +1,6 @@
 ---
 title: "Claude Delivery Permissions and CI/CD Governance Plan"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/plan"
 status: "approved"
 owner: "platform"
@@ -53,7 +53,7 @@ Read at `main` `511e106f`:
 ## Non-Goals & Out-of-Scope
 
 - Ignored personal settings; `gh api` and `git -C`; the Codex rules, configuration, hooks, bindings and projections; workflows; remote protection and rulesets; `scripts/release.py` behavior; ADR-0048 and AD-0006; any registry, so the Registry Schema Version is NO_CHANGE.
-- New denies for tag force and delete, `gh release edit` and `upload`, or `gh workflow enable` and `disable`, which the user's answers leave to policy.
+- New denies for `gh release edit` and `upload`, or `gh workflow enable` and `disable`, which the user's answers leave to policy. Tag force and delete are denied in their matchable forms under the Spec's answer 7.
 - SPEC-0161 rows, its residue ledger entries and any W03 decision number.
 
 ## Work Breakdown
@@ -83,7 +83,7 @@ Read at `main` `511e106f`:
 
 Risks use the risk-report scale (likelihood Likely, Possible or Unlikely; impact Severe, Moderate or Minor).
 
-- **A policy-forbidden command runs without a prompt.** Possible, Severe: HIGH, accept as the user's decision, and mitigate. Owner: platform. This covers a tag rewrite, a Release made outside the producer, and a workflow enable or disable. The git.md subsection and the Claude provider note name each one, and an agent that meets such a request stops and asks. Remote tag rewrites that use a force or delete option or `+` stay denied. Review cue: a moved or missing tag, a Release whose Task lacks a producer record, or a disabled workflow.
+- **A policy-forbidden command runs without a prompt.** Possible, Severe: HIGH, accept as the user's decision, and mitigate. Owner: platform. This covers a tag rewrite that no deny rule matches (for example a longer `git tag` cluster, a refspec deletion of a tag, a fetch form the fetch rules miss, or a configured tag refspec or tag pruning; the Spec's residual list gives more examples and is not complete), a Release made outside the producer, and a workflow enable or disable. The git.md subsection and the Claude provider note name each one, and an agent that meets such a request stops and asks. Local tag force and delete in their matchable forms, fetches into `refs/tags/` or `tags/` and tag pruning in the forms the seven fetch rules match, and remote tag rewrites that use a force or delete option or `+`, stay denied. Review cue: a moved or missing tag, a Release whose Task lacks a producer record, or a disabled workflow.
 - **A force, delete, mirror or prune push slips through an option form the deny list cannot express.** Unlikely, Severe: MEDIUM, mitigate and record. Owner: platform. Unique prefixes and two-letter clusters are denied. Clusters of three or more letters with `f` or `d` after the second position cannot be expressed and stay residual. Hosted protection blocks force pushes and deletion on `main` (observed 2026-11-11, not a current guarantee). Review cue: a forced update or deletion that no Task records.
 - **A feature branch or tag is deleted by a `:<ref>` refspec without a prompt.** Possible, Moderate: MEDIUM, accept and record. Owner: platform. No pattern can express it. The option forms that a pattern can express stay denied, the pushing checkout keeps the branch and its reflog (reflog expiry and pruning stay denied), and git.md lines 67-69 still require explicit approval. Review cue: a missing remote branch or tag.
 - **Allowed commands run working-tree code without a prompt.** Possible, Severe: HIGH, accept and record. Owner: platform. This covers the release producer and the Git hooks that commit, push and merge run. Both are repository files under review and exact-index QA. An edit to `scripts/release.py` or a hook belongs to its own reviewed change before it is run. Review cue: a diff to either surface in the same change as its use.

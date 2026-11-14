@@ -1,6 +1,6 @@
 ---
 title: "Git Policy"
-version: "2.7.0"
+version: "2.7.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -170,8 +170,9 @@ rather than relying on the missing prompt.
 Three enforcement layers apply, and none proves another:
 
 - Claude tracked settings are repository-static intent. They deny the
-  matchable forms and leave tag rewrites, a Release made outside the producer
-  and longer option clusters to policy
+  matchable forms, including tag force and delete and fetches into local
+  tags, and leave to policy a Release made outside the producer, the tag
+  rewrites that no rule matches and longer option clusters
   ([Claude provider notes](../../.claude/provider.md)).
 - Codex asks before every network command and forbids a prefix subset
   ([Codex provider notes](../../.codex/provider.md)).
