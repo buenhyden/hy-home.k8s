@@ -1,8 +1,8 @@
 ---
 title: "W03 SemVer Version Tests"
-version: "0.2.0"
+version: "0.2.1"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-11-14"
 artifact_id: "SPEC-0208-TSK-0001"
@@ -28,8 +28,8 @@ This Task will record the survey of version-bearing objects, the failing-first a
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SEMVERTEST-001](../spec.md#success-criteria--verification-plan) | The survey and mapping, the shared `precedence` function and the downgrade, unchanged and tampered-edition comparison. | platform | draft | NOT_RUN | EVD-004, EVD-009, EVD-010, EVD-012, EVD-013, EVD-014 record the work as PASS; the row state stays draft because the Task lifecycle has no draft to in-progress edge (see the Verification Summary) |
-| WORK-002 | [VAL-SEMVERTEST-002](../spec.md#success-criteria--verification-plan) | The producer and consumer matrix, the numbering separation case, the policy sentence, the suite row and routes. | platform | draft | NOT_RUN | EVD-011, EVD-015, EVD-016, EVD-017, EVD-018, EVD-020 record the work as PASS and EVD-019 is NOT_RUN; the row state stays draft as for WORK-001 |
+| WORK-001 | [VAL-SEMVERTEST-001](../spec.md#success-criteria--verification-plan) | The survey and mapping, the shared `precedence` function and the downgrade, unchanged and tampered-edition comparison. | platform | ready | NOT_RUN | EVD-004, EVD-009, EVD-010, EVD-012, EVD-013, EVD-014 record the work as PASS; the row state stays draft because the Task lifecycle has no draft to in-progress edge (see the Verification Summary) |
+| WORK-002 | [VAL-SEMVERTEST-002](../spec.md#success-criteria--verification-plan) | The producer and consumer matrix, the numbering separation case, the policy sentence, the suite row and routes. | platform | ready | NOT_RUN | EVD-011, EVD-015, EVD-016, EVD-017, EVD-018, EVD-020 record the work as PASS and EVD-019 is NOT_RUN; the row state stays draft as for WORK-001 |
 
 ## Task Evidence
 
