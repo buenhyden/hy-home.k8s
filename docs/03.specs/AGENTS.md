@@ -56,7 +56,8 @@ Canonical sources are the documents linked or named in the opening paragraph and
 6. Criterion acceptance is the operator's decision; an agent records PASS
    evidence and leaves `Acceptance` pending until the operator accepts.
 7. A finished package promotes each durable contract through the Plan's
-   `Promotion` table. Before its final source commit, its Task freezes the
+   promotion table under Promotion Map > Owner and Receipt (Promotion ID,
+   Target Owner, Acceptance, Evidence). Before its final source commit, its Task freezes the
    consumer, hold, authority and method decision. After that commit, the
    Requirement's `Archived Lineage` records each file's recovery proof and
    summary, and the whole package is deleted in that same change with this

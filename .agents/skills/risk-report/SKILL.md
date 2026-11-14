@@ -3,11 +3,11 @@ name: "risk-report"
 description: "Use when identifying, scoring, and reporting cluster-specific operational or security risks as a cluster risk report."
 metadata:
   title: "Risk Report"
-  version: "1.0.4"
+  version: "1.0.5"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
@@ -30,7 +30,7 @@ Define how to identify, score, and report cluster risks in a repeatable format f
 
 #### Constraints
 
-- Record risks in the response or the active Plan's Risks & Mitigations; no
+- Record risks in the response or the active Plan's Risks and Mitigations; no
   separate risk register exists.
 - Keep the report specific to `hy-home.k8s`.
 - Prefer repository and approved inspection evidence over generic risk lists.

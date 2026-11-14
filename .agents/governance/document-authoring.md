@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "3.32.0"
+version: "3.33.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-15"
 ---
 
 # Document Authoring Policy
@@ -360,7 +360,12 @@ role, its forms and placement are owned by the
 Guide, Runbook, Incident, Postmortem, Policy, AGENTS, Skill, Root README, Stage README,
 Service README, Workspace README, Reference Pack README, Knowledge Map, Vocabulary,
 Prompt, Evaluation Task, Evaluation Score, Evaluation Results, Governance Document,
-Governance Role, Reference Report, Requirement, Architecture and ADR use their registry forms. ADR keeps its
+Governance Role, Reference Report, Requirement, Architecture, ADR, Spec and Plan use their registry forms. Spec keeps its
+Lifecycle Traceability table under References and its Criteria table (Criterion ID, Expected Result) under Acceptance
+Criteria, and its Architecture column links an architecture description or an ADR or states an explicit exclusion. Plan keeps its
+Work Breakdown table under Implementation Strategy, `Global Constraints` as an H4 that is the last block of Goal and
+Boundary, and its promotion table (Promotion ID, Target Owner, Acceptance, Evidence) under Promotion Map, Owner and
+Receipt. ADR keeps its
 Lifecycle Traceability table under Traceability and its Alternatives table under Trade-offs; an accepted ADR
 from ADR-0001 to ADR-0061 keeps the seven H2 it was accepted with as a registered retained form, and an ADR
 written after ADR-0061 takes the common ADR form in every status, accepted included (W03-D02, W03-D52,

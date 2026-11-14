@@ -125,6 +125,20 @@ class TaskHistoryRetentionTests(unittest.TestCase):
                 )
         self.assertEqual(self.issues(), set())
 
+    def test_a_changed_fragment_in_a_recorded_evidence_row_is_refused(self) -> None:
+        # SPEC-0200 retired its one-use fragment route: the comparison is a plain
+        # text comparison again, so the mapped fragment reads as a changed criterion.
+        for cell in (
+            "[VAL-P03-001](../spec.md#criteria)",
+            "[VAL-P03-002](../spec.md#success-criteria--verification-plan)",
+            "[VAL-P03-001](../../0998-other/spec.md#success-criteria--verification-plan)",
+        ):
+            with self.subTest(cell=cell):
+                self.assertIn(
+                    "TASK-EVIDENCE-RETENTION",
+                    self.issues(evidence_changes={"Criteria": cell}),
+                )
+
     def test_same_status_terminal_without_current_handoff_fails(self) -> None:
         path = self.path
         document = LifecycleDocument(path, "sdlc/task", "cancelled")

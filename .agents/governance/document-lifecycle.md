@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.10.0"
+version: "2.11.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-15"
 ---
 
 # Document Lifecycle Policy
@@ -83,14 +83,18 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   Approval never asserts implementation completion, criterion acceptance,
   or integration.
 - `DOCLIFE-R002` A newly authored Plan, or one revised for current scope, links the approved
-  Spec's constraints in `Global Constraints`, adds only execution constraints
-  specific to the Plan, and keeps one `Promotion` record. An in-progress Plan
-  does not treat an intended promotion target as approval or completion evidence.
-  When a Spec package is accepted as complete, the Plan's `Promotion` record
+  Spec's constraints in `Global Constraints`, the last block of Goal and
+  Boundary written as an H4, adds only execution constraints specific to the
+  Plan, and keeps one promotion table under Promotion Map, Owner and Receipt. An
+  in-progress Plan does not treat an intended promotion target as approval or
+  completion evidence.
+  When a Spec package is accepted as complete, the Plan's promotion table
+  (Promotion ID, Target Owner, Acceptance, Evidence)
   links every durable contract to its current owner under `.agents/` governance
-  or Stage 01, 02 or 05, and names the concrete location in that owner. If
+  or Stage 01, 02 or 05, states the condition under which the promotion counts
+  as done, and names the concrete location in that owner. If
   there is no durable contract, use exactly one row:
-  `none | none | No durable contract was introduced`. For a form implemented
+  `none | none | none | No durable contract was introduced`. For a form implemented
   by the Registry, name the current rule that delegates the form to Stage 99,
   rather than Stage 99 itself as a separate policy owner. Neither a Task PASS
   nor the parent Spec's `approved` state substitutes for promotion. Do not

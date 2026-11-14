@@ -125,7 +125,7 @@ class RetainedLinkAndTemplateTests(unittest.TestCase):
         # LINK-BROKEN comes only from the link pass, so check just the forms
         # instead of every diagnostic over the whole corpus.
         context = replace(validator._build_context(ROOT, forms), paths=forms)
-        expected = "{{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan"
+        expected = "{{SPEC_RELATIVE_PATH}}#criteria"
         for path in forms:
             spec_links = [
                 raw
@@ -571,12 +571,91 @@ def _ad(*members: str) -> str:
 
 
 def _spec(*members: str) -> str:
-    rows = "".join(f"| {m} | VAL-X-001 | AD | Test. |\n" for m in members)
+    rows = "".join(f"| {m} | VAL-X-001 | N/A — fixture | Test. |\n" for m in members)
     return (
-        "## Traceability\n\n### Lifecycle Traceability\n\n"
+        "## References\n\n### Lifecycle Traceability\n\n"
         "| Requirement ID | Spec criterion | Architecture | Verification method |\n"
         f"| --- | --- | --- | --- |\n{rows}"
     )
+
+
+class SpecArchitectureLinkTests(unittest.TestCase):
+    """SPEC-0200 (W03-D51, W03-D59): the Spec Architecture column is a link column."""
+
+    AD = "../../02.architecture/descriptions/9001-synthetic.md"
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.base = validator._build_context(ROOT, ())
+        cls.registry = validator.load_registry(ROOT)
+        cls.profiles = {p.profile_id: p for p in cls.registry.profiles}
+        cls.views = {
+            profile_id: next(
+                v for v in cls.base.profiles.values() if v.profile_id == profile_id
+            )
+            for profile_id in (
+                "sdlc/spec",
+                "sdlc/architecture-description",
+                "sdlc/requirement",
+            )
+        }
+
+    def rules(self, cell: str, *, target: str = "sdlc/architecture-description"):
+        spec = (
+            "## References\n\n### Lifecycle Traceability\n\n"
+            "| Requirement ID | Spec criterion | Architecture | Verification method |\n"
+            f"| --- | --- | --- | --- |\n| N/A — fixture | VAL-X-001 | {cell} | Test. |\n"
+        )
+        views = {SPEC_PATH: self.views["sdlc/spec"]}
+        texts = {SPEC_PATH: spec}
+        paths = [SPEC_PATH]
+        if target is not None:
+            ad = PurePosixPath("docs/02.architecture/descriptions/9001-synthetic.md")
+            paths.append(ad)
+            views[ad] = self.views[target]
+            texts[ad] = "# Synthetic\n"
+        context = replace(
+            self.base,
+            paths=tuple(paths),
+            profiles=views,
+            texts=texts,
+            metadata={path: {"status": "approved"} for path in paths},
+        )
+        return [
+            item.rule_id
+            for item in validator._body_contract_link_diagnostics(
+                context,
+                self.profiles,
+                "registry",
+                selected_paths=frozenset({SPEC_PATH}),
+            )
+        ]
+
+    def test_spec_architecture_cell_is_a_checked_link_or_an_explicit_exclusion(
+        self,
+    ) -> None:
+        self.assertEqual(self.rules(f"[AD]({self.AD})"), [])
+        self.assertEqual(self.rules("N/A — no boundary changes"), [])
+        profile = self.profiles["sdlc/spec"]
+        self.assertEqual(profile.body_contract.target_link_column, "Architecture")
+        self.assertEqual(
+            profile.body_contract.allowed_target_profile_ids,
+            ("sdlc/architecture-description", "sdlc/architecture-decision"),
+        )
+
+    def test_spec_architecture_cell_without_a_link_or_to_another_profile_fails(
+        self,
+    ) -> None:
+        self.assertIn("BODY-LINK-TARGET", self.rules("None apply"))
+        self.assertIn(
+            "BODY-LINK-BROKEN",
+            self.rules("[AD](../../02.architecture/descriptions/9999-missing.md)"),
+        )
+        self.assertIn(
+            "BODY-LINK-TARGET-PROFILE",
+            self.rules(f"[AD]({self.AD})", target="sdlc/requirement"),
+        )
+        self.assertIn("BODY-LINK-EXCLUSION", self.rules("N/A"))
 
 
 class RequirementCoverageTests(unittest.TestCase):

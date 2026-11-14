@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.23.84"
+version: "0.23.86"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-15"
 ---
 # 03.specs
 
@@ -80,7 +80,7 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
 완료된 package는 그 Requirement Package의 `Archived Lineage` 표가 요약한다.
-최근 것은 SPEC-0162부터 SPEC-0199까지, SPEC-0207, SPEC-0208, SPEC-0213, SPEC-0214, SPEC-0215, SPEC-0154부터 SPEC-0160까지와 SPEC-0153, SPEC-0152다. 이들의 요약은
+최근 것은 SPEC-0162부터 SPEC-0200까지, SPEC-0207, SPEC-0208, SPEC-0213, SPEC-0214, SPEC-0215, SPEC-0154부터 SPEC-0160까지와 SPEC-0153, SPEC-0152다. 이들의 요약은
 [REQ-0003의 Archived Lineage](../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage)에 있다.
 SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-slack.md#archived-lineage)에 있다.
 
@@ -113,7 +113,7 @@ SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-sla
 4. 실행 가능한 인터페이스 계약은 실제 구현 소유 경로에 두고 Spec에서 그 owner와 검증을 추적한다.
 5. Agent 변경은 목표·동작·경계·실패 조건을 Spec에, 구현 순서와 rollback을 Plan에 기록한다.
 6. Feature-local Task records가 해당 work-unit의 실행과 evidence를 소유한다. Validator의 독립 실행 테스트와 fixture는 top-level `tests/`와 `tests/fixtures/` 아래에 두고, production module은 이를 import하거나 runtime data로 읽지 않는다. `validation/tests/` 또는 Spec-package-local test control plane은 만들지 않는다.
-7. Spec의 `Traceability` 표는 Requirement ID를 기준에 잇고, Plan의 `Work Breakdown` 표는 각 work unit을 Task에 잇는다.
+7. Spec의 `Lifecycle Traceability` 표(References 아래)는 Requirement ID를 기준에 잇고, Plan의 `Work Breakdown` 표(Implementation Strategy 아래)는 각 work unit을 Task에 잇는다.
 
 #### Helper Templates
 

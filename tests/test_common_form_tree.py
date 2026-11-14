@@ -1068,11 +1068,78 @@ LOCAL_LINK_ONLY = {
 }
 # The reference-report form also keeps its Sources section link-only (W03-D36).
 LOCAL_LINK_ONLY["reference-report"].add("reference-report-sources")
-# The twenty-four roles that carry a form; every other profile keeps its H2 lists.
+# SPEC-0200 (W03-D03, W03-D04, W03-D08, W03-D65): the Spec and Plan forms, the
+# Spec's local H3 extension and the four tables; the profiles carry no H2 list.
+SPEC_FORM = ("sdlc/spec", "common/template-sdlc-spec")
+SPEC_FORM_TREE = (
+    ("Overview", ("Intent", "Owning Requirements")),
+    ("Scope", ("In Scope", "Non-goals")),
+    ("Behavior Contract", ("Normal Behavior", "Failure and Edge Cases")),
+    ("Acceptance Criteria", ("Criteria", "Evidence Requirements")),
+    ("References", ("Normative and Evidence", "Historical and Navigation")),
+)
+SPEC_FORM_EXTENSIONS = [
+    {
+        "id": "spec-lifecycle-traceability",
+        "kind": "local_h3",
+        "condition": (
+            "a Spec in a status the body contract enforces (draft, in-review, "
+            "approved, in-progress, blocked) maps each requirement member to its "
+            "Spec criterion, its architecture or an explicit exclusion, and its "
+            "verification method"
+        ),
+        "owner": "platform",
+        "verification": "the body-contract check",
+        "review": "when the Spec form version changes",
+        "removal": "when Spec traceability has another registered owner",
+        "parent_id": "spec-references",
+        "title": "Lifecycle Traceability",
+    }
+]
+SPEC_FORM_TABLE_KEYS = {
+    "Criteria": (
+        "spec-acceptance-criteria-criteria",
+        ("Criterion ID", "Expected Result"),
+        1,
+        "Criterion ID",
+    ),
+    "Lifecycle Traceability": (
+        "spec-lifecycle-traceability",
+        ("Requirement ID", "Spec criterion", "Architecture", "Verification method"),
+        1,
+        "Spec criterion",
+    ),
+}
+PLAN_FORM = ("sdlc/plan", "common/template-sdlc-plan")
+PLAN_FORM_TREE = (
+    ("Overview", ("Goal and Boundary", "Assumptions")),
+    ("Dependencies", ("Prerequisites", "Dependency Order")),
+    ("Implementation Strategy", ("Work Breakdown", "Change and Rollback")),
+    ("Verification Plan", ("Verification Matrix", "Stage Placement")),
+    ("Risks", ("Risks and Mitigations", "Escalation")),
+    ("Promotion Map", ("Durable Meaning", "Owner and Receipt")),
+)
+PLAN_FORM_TABLE_KEYS = {
+    "Work Breakdown": (
+        "plan-implementation-strategy-work-breakdown",
+        ("Work Unit", "Criteria", "Work", "Dependencies", "Task", "Verification"),
+        1,
+        "Work Unit",
+    ),
+    "Promotion": (
+        "plan-promotion-map-owner-and-receipt",
+        ("Promotion ID", "Target Owner", "Acceptance", "Evidence"),
+        1,
+        "Promotion ID",
+    ),
+}
+# The twenty-six roles that carry a form; every other profile keeps its H2 lists.
 FORM_PROFILES = (
     REQUIREMENT
     + ARCHITECTURE
     + ADR
+    + SPEC_FORM
+    + PLAN_FORM
     + GUIDE
     + RUNBOOK
     + INCIDENT
@@ -1101,6 +1168,8 @@ FORM_TEMPLATES = (
     REQUIREMENT[1],
     ARCHITECTURE[1],
     ADR[1],
+    SPEC_FORM[1],
+    PLAN_FORM[1],
     GUIDE[1],
     RUNBOOK[1],
     INCIDENT[1],
@@ -1131,7 +1200,7 @@ FORM_TEMPLATES = (
     REFERENCE_FORM[3],
     REFERENCE_FORM[5],
 )
-TWENTY_FOUR_FORMS = [
+TWENTY_SIX_FORMS = [
     "guide",
     "runbook",
     "incident",
@@ -1156,6 +1225,8 @@ TWENTY_FOUR_FORMS = [
     "requirement",
     "architecture",
     "adr",
+    "spec",
+    "plan",
 ]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
@@ -1430,7 +1501,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twenty_four_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twenty_six_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -1460,6 +1531,8 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ("requirement", "Requirement"),
                 ("architecture", "Architecture"),
                 ("adr", "ADR"),
+                ("spec", "Spec"),
+                ("plan", "Plan"),
             ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
@@ -1596,6 +1669,22 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ADR_TABLE_KEYS,
                 ADR,
                 "Traceability",
+            ),
+            (
+                "spec",
+                SPEC_FORM_TREE,
+                SPEC_FORM_EXTENSIONS,
+                SPEC_FORM_TABLE_KEYS,
+                SPEC_FORM,
+                "References",
+            ),
+            (
+                "plan",
+                PLAN_FORM_TREE,
+                [],
+                PLAN_FORM_TABLE_KEYS,
+                PLAN_FORM,
+                "Implementation Strategy",
             ),
         ):
             loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
@@ -1739,13 +1828,13 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_twenty_four_forms(
+    def test_repository_registry_loads_with_exactly_the_twenty_six_forms(
         self,
     ) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_FOUR_FORMS,
+            TWENTY_SIX_FORMS,
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -1772,6 +1861,8 @@ class RepositoryRegistryTests(unittest.TestCase):
                 "Lifecycle Traceability",
             ],
             "adr": ["Alternatives", "Lifecycle Traceability"],
+            "spec": ["Criteria", "Lifecycle Traceability"],
+            "plan": ["Work Breakdown", "Promotion"],
             **{
                 form_id: [name for name, *_ in tables]
                 for form_id, _, _, _, tables, _ in LOCAL_FORMS
@@ -1799,6 +1890,8 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("requirement", REQUIREMENT),
                             ("architecture", ARCHITECTURE),
                             ("adr", ADR),
+                            ("spec", SPEC_FORM),
+                            ("plan", PLAN_FORM),
                             *(
                                 (form_id, profiles)
                                 for form_id, _, profiles, _, _, _ in LOCAL_FORMS
@@ -1856,7 +1949,7 @@ class RepositoryRegistryTests(unittest.TestCase):
         self.assertEqual(len(form_id), 27)
         self.assertEqual(
             [item.form_id for item in CONTRACTS.load_registry(ROOT).common_forms],
-            TWENTY_FOUR_FORMS,
+            TWENTY_SIX_FORMS,
         )
         self.assertEqual(
             schema["$defs"]["section"]["properties"]["level"]["enum"], [2, 3]
@@ -1877,7 +1970,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_FOUR_FORMS,
+            TWENTY_SIX_FORMS,
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -4752,8 +4845,8 @@ class GovernanceRoleFormTests(unittest.TestCase):
     def test_the_forms_hold_twenty_sections_and_no_extension(self) -> None:
         forms = {f["form_id"]: f for f in self.raw["common_forms"]["forms"]}
         stage = forms["stage-readme"]
-        self.assertEqual(len(forms), 24)
-        self.assertEqual(list(forms)[-6:-4], ["governance-document", "governance-role"])
+        self.assertEqual(len(forms), 26)
+        self.assertEqual(list(forms)[-8:-6], ["governance-document", "governance-role"])
         counts = {}
         for form_id, title, _, tree, _, link in GOVERNANCE_FORMS:
             with self.subTest(form=form_id):
@@ -6570,7 +6663,7 @@ class TemplateRecordTests(unittest.TestCase):
         for profile in self.templates:
             self.assertNotIn(
                 profile["document_role"],
-                SDLC_ROLES - {"requirement", "architecture", "adr"},
+                SDLC_ROLES - {"requirement", "architecture", "adr", "spec", "plan"},
             )
 
     def test_the_function_refuses_a_profile_that_is_not_a_template(self) -> None:
@@ -6824,6 +6917,265 @@ class TemplateRecordRuleTests(unittest.TestCase):
         self.assertNotIn("REGISTRY_TEMPLATE_EXTENSION", found)
 
 
+SPEC_PATH = PurePosixPath("docs/03.specs/0900-form-fixture/spec.md")
+PLAN_PATH = PurePosixPath("docs/03.specs/0900-form-fixture/plan.md")
+
+
+def form_table(header: tuple[str, ...], *, rows: int = 1) -> str:
+    lines = [
+        "| " + " | ".join(header) + " |",
+        "| " + " | ".join("---" for _ in header) + " |",
+    ]
+    for number in range(rows):
+        lines.append("| " + " | ".join(f"{key} {number}" for key in header) + " |")
+    return "\n".join(lines)
+
+
+def spec_form_body(*, header: tuple[str, ...] | None = None) -> str:
+    keys = SPEC_FORM_TABLE_KEYS
+    blocks = ["# Spec title"]
+    for h2, children in SPEC_FORM_TREE:
+        blocks.append(f"## {h2}")
+        for h3 in children:
+            text = f"The {h3} of the change."
+            if h3 == "Criteria":
+                text += "\n\n" + form_table(header or keys["Criteria"][1])
+            blocks.append(f"### {h3}\n\n{text}")
+    blocks.append(
+        "### Lifecycle Traceability\n\n" + form_table(keys["Lifecycle Traceability"][1])
+    )
+    return md(*blocks)
+
+
+def plan_form_body(*, constraints_first: bool = False) -> str:
+    keys = PLAN_FORM_TABLE_KEYS
+    blocks = ["# Plan title"]
+    for h2, children in PLAN_FORM_TREE:
+        blocks.append(f"## {h2}")
+        for h3 in children:
+            text = f"The {h3} of the work."
+            if h3 == "Goal and Boundary":
+                text += "\n\n#### Global Constraints\n\nKeep the Spec constraints."
+            if h3 == "Work Breakdown":
+                text += "\n\n" + form_table(keys["Work Breakdown"][1])
+            if h3 == "Owner and Receipt":
+                text += "\n\n" + form_table(keys["Promotion"][1])
+            blocks.append(f"### {h3}\n\n{text}")
+    return md(*blocks)
+
+
+class SpecPlanFormTests(unittest.TestCase):
+    """SPEC-0200 VAL-SPECPLAN-001: the Spec and Plan forms, extension and tables."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.raw = load_raw()
+        cls.registry = CONTRACTS.load_registry(ROOT)
+        cls.profiles = {p.profile_id: p for p in cls.registry.profiles}
+
+    def tree(self, path: PurePosixPath, profile_id: str, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(
+                path, self.profiles[profile_id], text, "active"
+            )
+        )
+
+    def test_each_form_has_the_common_sections_all_required_and_no_link_only(
+        self,
+    ) -> None:
+        for form_id, tree, extensions in (
+            ("spec", SPEC_FORM_TREE, SPEC_FORM_EXTENSIONS),
+            ("plan", PLAN_FORM_TREE, []),
+        ):
+            with self.subTest(form=form_id):
+                form = next(
+                    f for f in self.registry.common_forms if f.form_id == form_id
+                )
+                self.assertEqual(
+                    [
+                        (s.title, tuple(c.title for c in s.children))
+                        for s in form.sections
+                    ],
+                    list(tree),
+                )
+                every = [n for s in form.sections for n in (s, *s.children)]
+                self.assertEqual(
+                    [n.title for n in every if n.requiredness != "required"], []
+                )
+                self.assertFalse(any(n.link_only for n in every))
+                self.assertEqual(
+                    [(e.extension_id, e.parent_id, e.title) for e in form.extensions],
+                    [(e["id"], e["parent_id"], e["title"]) for e in extensions],
+                )
+        self.assertEqual(self.registry.schema_version.split(".")[0], "15")
+
+    def test_the_four_profiles_carry_no_h2_list_and_the_moved_body_contracts(
+        self,
+    ) -> None:
+        for profile_id, section, heading, columns in (
+            (
+                "sdlc/spec",
+                "References",
+                "Lifecycle Traceability",
+                SPEC_FORM_TABLE_KEYS["Lifecycle Traceability"][1],
+            ),
+            (
+                "common/template-sdlc-spec",
+                "References",
+                "Lifecycle Traceability",
+                SPEC_FORM_TABLE_KEYS["Lifecycle Traceability"][1],
+            ),
+            (
+                "sdlc/plan",
+                "Implementation Strategy",
+                "Work Breakdown",
+                PLAN_FORM_TABLE_KEYS["Work Breakdown"][1],
+            ),
+            (
+                "common/template-sdlc-plan",
+                "Implementation Strategy",
+                "Work Breakdown",
+                PLAN_FORM_TABLE_KEYS["Work Breakdown"][1],
+            ),
+        ):
+            with self.subTest(profile=profile_id):
+                raw = next(p for p in self.raw["profiles"] if p["id"] == profile_id)
+                self.assertEqual(
+                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
+                )
+                contract = raw["relationships"]["body_contract"]
+                self.assertEqual(contract["section"], section)
+                self.assertEqual(contract["table_heading"], heading)
+                self.assertEqual(contract["required_columns"], list(columns))
+        for profile_id in SPEC_FORM:
+            contract = next(p for p in self.raw["profiles"] if p["id"] == profile_id)[
+                "relationships"
+            ]["body_contract"]
+            self.assertEqual(contract["target_link_column"], "Architecture")
+            self.assertEqual(
+                contract["allowed_target_profile_ids"],
+                ["sdlc/architecture-description", "sdlc/architecture-decision"],
+            )
+            self.assertTrue(contract["allow_explicit_exclusion"])
+
+    def test_the_tables_are_recorded_on_the_twin_and_copied_to_the_source(self) -> None:
+        for pair, expected in (
+            (SPEC_FORM, SPEC_FORM_TABLE_KEYS),
+            (PLAN_FORM, PLAN_FORM_TABLE_KEYS),
+        ):
+            twin, source = (self.profiles[i] for i in reversed(pair))
+            self.assertEqual(source.tables, twin.tables)
+            self.assertEqual(
+                {
+                    t.name: (
+                        t.section,
+                        tuple(c.key for c in t.columns),
+                        t.minimum_rows,
+                        t.row_identity,
+                    )
+                    for t in twin.tables
+                },
+                expected,
+            )
+            self.assertTrue(all(c.required for t in twin.tables for c in t.columns))
+
+    def test_the_registry_is_valid_and_each_twin_names_the_form_version(self) -> None:
+        self.assertEqual(rules_of(self.raw), set())
+        REGISTRY_CHECK._assert_template_source_parity(self.registry)
+        for twin in (SPEC_FORM[1], PLAN_FORM[1]):
+            with self.subTest(twin=twin):
+                definition_ = self.profiles[twin].template_definition
+                self.assertEqual(
+                    definition_["contract_version"], "COMMON-DOC-FORM-1/1.0.0"
+                )
+                self.assertEqual(
+                    CONTRACTS.template_definition_record(self.raw, twin)[
+                        "contract_version"
+                    ],
+                    "COMMON-DOC-FORM-1/1.0.0",
+                )
+                for path in definition_["consumer_paths"]:
+                    self.assertTrue((ROOT / path).is_file(), path)
+                self.assertIn(
+                    "tests/test_common_form_tree.py", definition_["consumer_paths"]
+                )
+
+    def test_a_complete_document_passes_the_tree_and_a_previous_h2_fails(self) -> None:
+        self.assertEqual(self.tree(SPEC_PATH, "sdlc/spec", spec_form_body()), [])
+        self.assertEqual(self.tree(PLAN_PATH, "sdlc/plan", plan_form_body()), [])
+        old_spec = spec_form_body().replace("## References", "## Traceability")
+        self.assertLessEqual(
+            {"BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"},
+            set(self.tree(SPEC_PATH, "sdlc/spec", old_spec)),
+        )
+        old_plan = plan_form_body().replace("## Promotion Map", "## Promotion")
+        self.assertLessEqual(
+            {"BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"},
+            set(self.tree(PLAN_PATH, "sdlc/plan", old_plan)),
+        )
+
+    def test_lifecycle_traceability_belongs_under_references(self) -> None:
+        body = spec_form_body()
+        block = "### Lifecycle Traceability\n\n" + form_table(
+            SPEC_FORM_TABLE_KEYS["Lifecycle Traceability"][1]
+        )
+        moved = body.replace(block, "").replace("## Scope", block + "\n\n## Scope", 1)
+        self.assertEqual(self.tree(SPEC_PATH, "sdlc/spec", moved), ["BODY-H3-PARENT"])
+
+    def test_the_criteria_and_promotion_headers_take_the_common_names(self) -> None:
+        old = spec_form_body(header=("Criterion", "Acceptance evidence"))
+        found = sorted(
+            item.rule_id
+            for item in MARKDOWN._table_diagnostics(
+                SPEC_PATH, self.profiles["sdlc/spec"], old
+            )
+        )
+        self.assertTrue(
+            found and set(found) <= {"BODY-TABLE-COLUMNS", "BODY-TABLE-ROWS"}
+        )
+        old_plan = plan_form_body().replace(
+            "| Promotion ID | Target Owner | Acceptance | Evidence |",
+            "| Durable contract | Promoted to | Where |",
+        )
+        found = sorted(
+            item.rule_id
+            for item in MARKDOWN._table_diagnostics(
+                PLAN_PATH, self.profiles["sdlc/plan"], old_plan
+            )
+        )
+        self.assertTrue(
+            found and set(found) <= {"BODY-TABLE-COLUMNS", "BODY-TABLE-ROWS"}
+        )
+
+    def test_the_templates_pass_the_form_tree_and_keep_global_constraints_last(
+        self,
+    ) -> None:
+        for twin_id, forbidden in (
+            (SPEC_FORM[1], r"(?m)^## Success Criteria & Verification Plan"),
+            (PLAN_FORM[1], r"(?m)^## Global Constraints"),
+        ):
+            twin = self.profiles[twin_id]
+            path = PurePosixPath(twin.template)
+            text = (ROOT / path).read_text(encoding="utf-8")
+            with self.subTest(template=twin_id):
+                self.assertEqual(
+                    [
+                        item.rule_id
+                        for item in MARKDOWN.validate_document_text(
+                            text, path, twin, "strict"
+                        )
+                    ],
+                    [],
+                )
+                self.assertNotRegex(text, forbidden)
+        plan = (ROOT / self.profiles[PLAN_FORM[1]].template).read_text(encoding="utf-8")
+        goal = plan.split("### Goal and Boundary", 1)[1].split("### Assumptions", 1)[0]
+        self.assertIn("#### Global Constraints", goal)
+        self.assertEqual(goal.count("####"), 1)
+        self.assertIn("| Promotion ID | Target Owner | Acceptance | Evidence |", plan)
+
+
 class FormlessRoleTableTests(unittest.TestCase):
     """VAL-TDREC-002: a role without a form records no table (SPEC-0196, W03-D56)."""
 
@@ -6864,11 +7216,11 @@ class FormlessRoleTableTests(unittest.TestCase):
 
 
 class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
-    def test_only_the_twenty_four_form_profiles_use_the_tree(self) -> None:
+    def test_only_the_twenty_six_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_FOUR_FORMS,
+            TWENTY_SIX_FORMS,
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),
