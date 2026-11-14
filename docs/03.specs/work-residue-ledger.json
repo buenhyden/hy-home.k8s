@@ -493,16 +493,6 @@
       }
     },
     {
-      "id": "W03-H08",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "With phase 3 (the SDLC roles own these relations)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W03-H09",
       "kind": "handoff",
       "state": "open",
@@ -558,16 +548,6 @@
       "state": "open",
       "owner": "W03 with W05",
       "resume_condition": "After phase 3; the H07 package named in the row is closed",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W03-H16",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "With W03-H08 in phase 3",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }

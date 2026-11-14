@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.39"
+version: "0.1.40"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -95,6 +95,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-059 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Closure of W03-H27 and W03-H42 through the ledger cycle | User acceptance of the three SPEC-0192 criteria (VAL-GEN-001, VAL-GEN-002 and VAL-GEN-003), direct current-session answer "Accept all three (Recommended)", and the answer "Close with H27 (Recommended)" for W03-H42, 2026-11-14 (Asia/Seoul); SPEC-0192 Task EVD-004 to EVD-017; `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv | PASS | The user accepted the SPEC-0192 criteria, so the generator handoff W03-H27 that the Spec closes and its duplicate W03-H42 (the `Generator` row of `Document Form Handoff`, same work) close. Their live rows in the Residue Handoff table are terminal with this row as Closure; their entries in `docs/03.specs/work-residue-ledger.json` were made terminal with this closure (gate PASS at 80 entries) and then deleted (gate PASS at 78 entries). The legacy W03-H27 and `Generator` rows stay as recorded; W03-H43 stays open. | no | none |
 | EVD-060 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D65 recorded | User answers "`W03 프롬프트에 작성된대로`" to the four requirement-conflict questions (Task and Plan table columns, Policy Rules table, provider-native headings, registry schema version), 2026-11-14 Asia/Seoul | PASS | Recorded as W03-D65 with the SPEC-0193 package commit. | no | none |
 | EVD-061 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D49 to W03-D52 recorded | User answers to the W03 phase-3 planning questions, 2026-11-13 (Asia/Seoul): "요구사핟대로" to W03-D49, "요구사항대로" to W03-D50, "Adopt all recommended (Recommended)" to W03-D51 and to W03-D52; the session record of that answer | PASS | Recorded as W03-D49 to W03-D52 with the SPEC-0193 implementation, which the approved SPEC-0193 Spec names as the commit that records them; the SPEC-0193 package commit recorded only W03-D65 and left these four rows out, so they are recorded here. The Q8 bound of W03-D52 (ADR-0001 to ADR-0060) is read with W03-D69, which sets it to ADR-0001 to ADR-0061. | no | none |
+| EVD-062 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Closure of W03-H08 and W03-H16 through the ledger cycle | User acceptance of both SPEC-0193 criteria (VAL-RELATION-001 and VAL-RELATION-002), direct current-session answer "Accept both (Recommended)", 2026-11-14 (Asia/Seoul); SPEC-0193 Task EVD-006 to EVD-022 and its acceptance rows; `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv | PASS | The user accepted both SPEC-0193 criteria, so the relationship contract W03-H08 and the link types and relation kinds W03-H16, which the Spec closes, close. Their live rows in the Residue Handoff table are terminal with this row as Closure; their entries in `docs/03.specs/work-residue-ledger.json` were made terminal with this closure (gate PASS at 78 entries) and then deleted (gate PASS at 76 entries). The legacy W03-H08 and W03-H16 rows stay as recorded. | no | none |
 
 ### Edition Delta
 
@@ -489,14 +490,14 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W01-H01 | Legacy row `governance policy set` of `Read Denominator`: 3 partial and 1 listed-only governance policy files | open | W01 | When W01 re-reads its files before editing | none |
 | W03-H02 | Legacy row `W03-H02` of `W03 Decisions`: phase 3 forms for the six SDLC roles and deletion of the heading-list model | open | W03 | After phase 2 is accepted; if W04 starts first, record the slip here | none |
 | W03-H05 | Legacy row `W03-H05` of `W03 Decisions`: keep or remove the stored ADR rejected state | open | W04 | When W04 starts | none |
-| W03-H08 | Legacy row `W03-H08` of `W03 Decisions`: the per-relationship contract | open | W03 | With phase 3 (the SDLC roles own these relations) | none |
+| W03-H08 | Legacy row `W03-H08` of `W03 Decisions`: the per-relationship contract | terminal | W03 | With phase 3 (the SDLC roles own these relations) | EVD-062 |
 | W03-H09 | Legacy row `W03-H09` of `W03 Decisions`: cross-repository equivalence; the owner is W11 by W03-H22 | open | W11 | When another repository's adoption evidence exists | none |
 | W03-H10 | Legacy row `W03-H10` of `W03 Decisions`: heading-list consumers once a role has a form | open | W03 | In the Plan, README and Policy packages respectively | none |
 | W03-H11 | Legacy row `W03-H11` of `W03 Decisions`: qa-runner fixture branch name | open | W05 | When W05 starts | none |
 | W03-H12 | Legacy row `W03-H12` of `W03 Decisions`: staged QA routing of folder AGENTS files | open | W05 | When W05 starts | none |
 | W03-H13 | Legacy row `W03-H13` of `W03 Decisions`: SDLC TemplateDefinitions and H2 lists of local roles | open | W03 | With phase 3 (W03-H02) | none |
 | W03-H15 | Legacy row `W03-H15` of `W03 Decisions`: the full TemplateDefinition record | open | W03 with W05 | After phase 3; the H07 package named in the row is closed | none |
-| W03-H16 | Legacy row `W03-H16` of `W03 Decisions`: link types and relation kinds | open | W03 | With W03-H08 in phase 3 | none |
+| W03-H16 | Legacy row `W03-H16` of `W03 Decisions`: link types and relation kinds | terminal | W03 | With W03-H08 in phase 3 | EVD-062 |
 | W03-H19 | Legacy row `W03-H19` of `W03 Decisions`: the missing adoption record of COMMON-DOC-FORM-1 in common_forms | open | W03 | With the W03 closing | none |
 | W03-H20 | Legacy row `W03-H20` of `W03 Decisions`: the W03 closing report | open | W03 | Last before DOC-12 | none |
 | W03-H21 | Legacy row `W03-H21` of `W03 Decisions`: writer delegation record | open | W03 | With the W03 closing | none |

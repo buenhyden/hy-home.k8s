@@ -1,6 +1,6 @@
 ---
 title: "W03 Relationship and Link Contract"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -28,8 +28,8 @@ This Task records handoffs W03-H08 and W03-H16 (W03-D51): the registry `relation
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RELATION-001](../spec.md#success-criteria--verification-plan) | The registry section with its 19 entries, the schema, the authority guard key, the loader, the four strict registry rules and their tests with suite and surface registration. | platform | in-progress | PASS | EVD-009, EVD-012, EVD-013, EVD-014, EVD-022 (resolves EVD-015) |
-| WORK-002 | [VAL-RELATION-002](../spec.md#success-criteria--verification-plan) | `LINK-FRAGMENT` and the supersession cycle observation with their tests; the fragment repairs; the two policy texts; the SPEC-0161 Task rows and, once the ledger exists, its entries; regression and exact-index QA. | platform | in-progress | DEFER | Reason: EVD-020 and EVD-021 are deferred, the decision text and the closure need the user; Next owner: user |
+| WORK-001 | [VAL-RELATION-001](../spec.md#success-criteria--verification-plan) | The registry section with its 19 entries, the schema, the authority guard key, the loader, the four strict registry rules and their tests with suite and surface registration. | platform | completed | PASS | EVD-009, EVD-012, EVD-013, EVD-014, EVD-022 |
+| WORK-002 | [VAL-RELATION-002](../spec.md#success-criteria--verification-plan) | `LINK-FRAGMENT` and the supersession cycle observation with their tests; the fragment repairs; the two policy texts; the SPEC-0161 Task rows and, once the ledger exists, its entries; regression and exact-index QA. | platform | completed | PASS | EVD-010, EVD-011, EVD-016, EVD-017, EVD-018, EVD-019, EVD-023, EVD-025 |
 
 ## Task Evidence
 
@@ -57,13 +57,23 @@ This Task records handoffs W03-H08 and W03-H16 (W03-D51): the registry `relation
 | EVD-020 | [VAL-RELATION-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA and the commit hooks | Not run: no commit was requested and the request withheld python3 scripts/qa.py staged | DEFER | Pending: python3 scripts/qa.py staged, the staged-qa and commit-msg hooks and the secret-scan baseline over the appended lines of docs/99.templates/registry.json run at commit; next owner: operator | yes | none |
 | EVD-021 | [VAL-RELATION-002](../spec.md#success-criteria--verification-plan) | WORK-002 | SPEC-0161 Task rows and work residue ledger entries | Not written: the Spec names the W03-D49 to W03-D52 rows, the closures of W03-H08 and W03-H16, an evidence row and the ledger entries | DEFER | Pending: the verbatim user decision text of W03-D49 to W03-D52 is in no repository file, and a terminal closure needs the operator's acceptance of both criteria; next owner: user | yes | none |
 | EVD-022 | [VAL-RELATION-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Registry Schema Version tests over the 12.0.0 state (tests/test_registry_schema_version.py) | Working tree with the five edits of the step of EVD-014 applied and the one-line test fix; python3 -m unittest tests.test_registry_schema_version; pinned validation venv, 2026-11-14 | PASS | Ran 26 tests, OK. The fix sets `previous = LAST_INTEGER_GENERATION` (the test module's own constant, 10) in LoaderTests.test_an_integer_is_refused_with_a_message_that_names_the_mapping, so the test names the mapping W03-D66 and REQ:890 fix (an integer from 1 to 10 means N.0.0) instead of REGISTRY_MAJOR - 1, which no longer is an integer generation after this MAJOR step. The assertion is unchanged. The operator applied it under the user's standing instruction that an existing item conflicting with the requirement is corrected to the requirement. `python3 scripts/validation/repository/quality.py --root .` PASS after the Inputs bullet stopped naming the local worktree path | yes | EVD-015 |
+| EVD-023 | [VAL-RELATION-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA and the commit hooks | Pre-commit hooks over the final index of `601a65ca` in the pinned validation environment, 2026-11-14 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | EVD-020 |
+| EVD-024 | [VAL-RELATION-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
+| EVD-025 | [VAL-RELATION-002](../spec.md#success-criteria--verification-plan) | WORK-002 | SPEC-0161 Task rows and work residue ledger entries | The SPEC-0161 Task on branch `claude/w03-relationship-link-contract-r2` after the implementation commit `601a65ca` and this acceptance change; the user's W03-D49 to W03-D52 answers of 2026-11-13 read from the session record; `python3 scripts/validate-work-residue-ledger.py --root .`, 2026-11-14 | PASS | The SPEC-0161 Task records W03-D65 with EVD-060 (package commit), W03-D49 to W03-D52 with EVD-061 (implementation commit) and the closure of W03-H08 and W03-H16 with EVD-062 (this acceptance change): their live rows are terminal and their ledger entries were made terminal (gate PASS at 78 entries) and then deleted (gate PASS at 76 entries). | yes | EVD-021 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RELATION-001](../spec.md#success-criteria--verification-plan) | pending | EVD-009, EVD-012, EVD-013, EVD-014, EVD-015 | PASS evidence recorded for the registry section, its rules and the cycle walk; EVD-015 is unresolved, so the acceptance stays pending until the user decides the one-line test fix | platform |
-| [VAL-RELATION-002](../spec.md#success-criteria--verification-plan) | pending | EVD-010, EVD-011, EVD-016, EVD-017, EVD-018, EVD-019, EVD-020, EVD-021 | PASS evidence recorded for LINK-FRAGMENT, the repairs and the regression runs; EVD-020 and EVD-021 are deferred, so the acceptance stays pending | platform |
+| [VAL-RELATION-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-009, EVD-012, EVD-013, EVD-014, EVD-022 | Accepted by the user on 2026-11-14 (direct answer "Accept both (Recommended)" to the SPEC-0193 criterion question naming commit `601a65ca`) | platform |
+| [VAL-RELATION-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-011, EVD-016, EVD-017, EVD-018, EVD-019, EVD-023, EVD-025 | Accepted by the user on 2026-11-14 (direct answer "Accept both (Recommended)" to the SPEC-0193 criterion question naming commit `601a65ca`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The registry relationship_contract section, its rules, LINK-FRAGMENT and the policy texts stay in the tree and carry the accepted contract; the SPEC-0161 Task keeps W03-D49 to W03-D52, W03-D65 and EVD-060 to EVD-062. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -97,4 +107,4 @@ Per-entry read, one line for each relation and link type (rule, what it enforces
 - normative link: BODY-LINK-BROKEN and LINK-STAGE-BOUNDARY; no gap recorded.
 - evidence link: TASK-EVIDENCE-LOCATION requires a concrete check, input and location; gap: it does not check that the location resolves.
 - historical link: no rule, the archive stays unchecked (ADR-0053); gap: reachability of a commit:path reference is a manual review.
-- navigation link: LINK-BROKEN, README-NAV-COMPLETE and LINK-FRAGMENT; gap: a fragment into a non-Markdown file or into the archive is unchecked.
+- navigation link: LINK-BROKEN, README-NAV-COMPLETE and LINK-FRAGMENT; gap: a fragment into a non-Markdown file or into the archive is unchecked. Implementation commit `601a65ca` passed exact-index QA in the hooks (EVD-023); the user accepted both criteria on 2026-11-14, and the approval of commit, push, PR and merge covers the package exit (EVD-024). EVD-025 resolves EVD-021: the SPEC-0161 Task records W03-D49 to W03-D52 and W03-D65 and closes W03-H08 and W03-H16 (SPEC-0161 EVD-060 to EVD-062); EVD-023 resolves EVD-020; the earlier statements of this summary are read with these rows.
