@@ -1,6 +1,6 @@
 ---
 title: "Claude Delivery Permissions and CI/CD Governance"
-version: "0.1.1"
+version: "0.1.2"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -37,8 +37,8 @@ WORK-001 and WORK-002 are implemented in the worktree and uncommitted; the exact
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-DELIVERYPERM-001](../spec.md#success-criteria--verification-plan) | Write the failing regressions and the validator pin, then the settings lists. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-DELIVERYPERM-002](../spec.md#success-criteria--verification-plan) | Amend the git.md release text and add its delivery subsection; replace the Claude provider note lines and the Codex parity sentence; amend the runbook 0012 executor lines; add the Stage 03 README entry; run the document and exact-index checks. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-DELIVERYPERM-001](../spec.md#success-criteria--verification-plan) | Write the failing regressions and the validator pin, then the settings lists. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-DELIVERYPERM-002](../spec.md#success-criteria--verification-plan) | Amend the git.md release text and add its delivery subsection; replace the Claude provider note lines and the Codex parity sentence; amend the runbook 0012 executor lines; add the Stage 03 README entry; run the document and exact-index checks. | platform | in-progress | NOT_RUN | Pending |
 
 ## Task Evidence
 
