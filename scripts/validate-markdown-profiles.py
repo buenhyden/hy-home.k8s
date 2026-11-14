@@ -10,7 +10,7 @@ import json
 import math
 import re
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path, PurePosixPath
 from typing import Any, Iterator, Mapping, Sequence
 from zoneinfo import ZoneInfo
@@ -893,6 +893,9 @@ _H4_HEADING = re.compile(r"^ {0,3}####[ \t]+(.*?)[ \t]*$")
 _THEMATIC_BREAK = re.compile(r"^ {0,3}([-*_])(?:[ \t]*\1){2,}[ \t]*$")
 RULES_COLUMN_FIRST = "Rule ID"
 CONTROL_COLUMN_FIRST = "Control"
+# W03-D62: an untokened top-level item is covered when it is exactly one of these
+# labels and every nested item under it begins with a definition token.
+RULE_LABELS = frozenset({"Required:", "Allowed:", "Disallowed:"})
 
 
 @dataclass(frozen=True)
@@ -951,12 +954,24 @@ def _scan_requirements(section: str) -> RuleScan:
     def covered(token: str | None) -> bool:
         return token is not None or (group is not None and group["token"] is not None)
 
+    # The open label item: its place in `items`, the indent of its first nested
+    # item and whether every nested item at that indent carries a token so far.
+    label: dict[str, Any] | None = None
+
+    def close_label() -> None:
+        nonlocal label
+        if label is not None and label["count"] and label["tokened"]:
+            at = label["at"]
+            items[at] = replace(items[at], covered=True)
+        label = None
+
     index = 0
     while index < len(lines):
         line = lines[index]
         index += 1
         heading = _H4_HEADING.match(line)
         if heading is not None:
+            close_label()
             close_group()
             group = {"title": heading.group(1), "token": None, "content": False}
             following = index
@@ -973,6 +988,7 @@ def _scan_requirements(section: str) -> RuleScan:
         if not line.strip() or _THEMATIC_BREAK.match(line):
             continue
         if re.match(r"^ {0,3}\|", line) and index < len(lines):
+            close_label()
             header = _gfm_table_cells(line)
             delimiter = _gfm_table_cells(lines[index])
             if (
@@ -1009,12 +1025,30 @@ def _scan_requirements(section: str) -> RuleScan:
             token = match.group(1) if match else None
             if token is not None:
                 tokens.append(token)
-            if not item.group(1):
+            indent = len(item.group(1))
+            if not indent:
+                close_label()
                 items.append(
                     RuleUnit("item", token, covered(token), item.group(2)[:60])
                 )
+                text = item.group(2).strip().replace("*", "").replace("_", "").strip()
+                if not covered(token) and text in RULE_LABELS:
+                    label = {
+                        "at": len(items) - 1,
+                        "indent": None,
+                        "count": 0,
+                        "tokened": True,
+                    }
+            elif label is not None:
+                label["indent"] = indent if label["indent"] is None else label["indent"]
+                if indent <= label["indent"]:
+                    label["count"] += 1
+                    label["tokened"] = label["tokened"] and token is not None
+        elif not line.startswith(" "):
+            close_label()
         if group is not None:
             group["content"] = True
+    close_label()
     close_group()
     return RuleScan(
         tuple(items),

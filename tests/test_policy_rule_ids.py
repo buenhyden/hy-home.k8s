@@ -489,6 +489,63 @@ class CoverageFloorTests(EachLanguage):
 
         self.each(check)
 
+    def test_a_label_over_a_fully_tokened_nested_list_is_covered(self) -> None:
+        def check(f: Fixture) -> None:
+            table = f.table(f.row(1), f.row(2))
+            nested = f"  - `SYN-R001` {f.text['one']}\n  - `SYN-R002` {f.text['two']}"
+            for label in (
+                "**Required**:",
+                "Allowed:",
+                "**Disallowed**:",
+                "__Allowed__:",
+            ):
+                with self.subTest(label=label):
+                    self.assertEqual(f.rules(f"- {label}\n{nested}\n\n{table}"), [])
+
+        self.each(check)
+
+    def test_a_label_over_a_partly_tokened_or_untokened_list_fails(self) -> None:
+        def check(f: Fixture) -> None:
+            table = f.table(f.row(1))
+            partly = (
+                f"- **Required**:\n  - `SYN-R001` {f.text['one']}\n  - {f.text['two']}"
+            )
+            self.assertEqual(f.rules(partly + "\n\n" + table), ["POLICY-RULE-COVERAGE"])
+            plain = f"- **Required**:\n  - {f.text['one']}\n  - {f.text['two']}"
+            self.assertIn("POLICY-RULE-COVERAGE", f.rules(plain + "\n\n" + table))
+            bare = "- **Required**:"
+            self.assertIn("POLICY-RULE-COVERAGE", f.rules(f.good() + "\n" + bare))
+
+        self.each(check)
+
+    def test_an_untokened_parent_that_is_more_than_a_label_fails(self) -> None:
+        def check(f: Fixture) -> None:
+            table = f.table(f.row(1))
+            nested = f"  - `SYN-R001` {f.text['one']}"
+            for parent in (
+                f"{f.text['prose'].rstrip('.')}:",
+                "**Required**: x:",
+                "Required",
+                "**Required**:  x",
+                "Mandatory:",
+            ):
+                with self.subTest(parent=parent):
+                    self.assertEqual(
+                        f.rules(f"- {parent}\n{nested}\n\n{table}"),
+                        ["POLICY-RULE-COVERAGE"],
+                    )
+
+        self.each(check)
+
+    def test_a_tokened_parent_over_untokened_nested_items_is_covered(self) -> None:
+        def check(f: Fixture) -> None:
+            parent = (
+                f"- `SYN-R001` **Required**:\n  - {f.text['one']}\n  - {f.text['two']}"
+            )
+            self.assertEqual(f.rules(parent + "\n\n" + f.table(f.row(1))), [])
+
+        self.each(check)
+
     def test_control_register_and_rules_table_rows_are_exempt(self) -> None:
         def check(f: Fixture) -> None:
             self.assertEqual(f.rules(f.control()), [])
@@ -714,7 +771,7 @@ class RulesTableDefinitionTests(unittest.TestCase):
 
 
 class RealPolicyTests(unittest.TestCase):
-    """The fifteen real policies draw no rule while their records are pending."""
+    """The fifteen real policies draw no rule, pending or adopted."""
 
     def test_the_reader_copes_with_every_registered_policy(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
@@ -729,6 +786,10 @@ class RealPolicyTests(unittest.TestCase):
                         MARKDOWN._policy_rule_diagnostics(path, profile, text), []
                     )
                     self.assertEqual(MARKDOWN.policy_rule_units(text).tokens, ())
+                else:
+                    self.assertEqual(
+                        MARKDOWN._policy_rule_diagnostics(path, profile, text), []
+                    )
 
     def test_the_control_registers_are_not_rule_units(self) -> None:
         counts = [
