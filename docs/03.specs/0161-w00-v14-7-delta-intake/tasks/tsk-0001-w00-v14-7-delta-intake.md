@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.36"
+version: "0.1.37"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -92,6 +92,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-056 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D66 and W03-D69 recorded | User answers to the SPEC-0207 Registry Schema Version questions and to the ADR identity collision question, 2026-11-14 Asia/Seoul | PASS | Recorded as W03-D66 and W03-D69 with the SPEC-0207 package commit. | no | none |
 | EVD-057 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | W03-D48 recorded | User answer "Adopt all recommended (Recommended)" to the SPEC-0192 document generator design question with its ten open questions, 2026-11-13 Asia/Seoul | PASS | Recorded as W03-D48 with the SPEC-0192 package commit. | no | none |
 | EVD-058 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Repair handoff W03-H43 recorded (W03-D48) | SPEC-0192 implementation, 2026-11-14: the `requirement` lifecycle domain read in `docs/99.templates/registry.json` (states draft, in-review and approved; transitions in-review to draft, draft to in-review and in-review to approved); `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv | PASS | Recorded the live row W03-H43 in the Residue Handoff table and its entry in `docs/03.specs/work-residue-ledger.json`: every state of the domain has an inbound transition, so the domain yields no creation state, a new Requirement is refused by `LIFECYCLE-CREATE` and the SPEC-0192 generator refuses the profile by its status rule; the repair is a lifecycle contract change that belongs to its own package. W03-H27 is not closed by this row; it stays open until the SPEC-0192 criteria are accepted. | no | none |
+| EVD-059 | [VAL-DELTA-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Closure of W03-H27 and W03-H42 through the ledger cycle | User acceptance of the three SPEC-0192 criteria (VAL-GEN-001, VAL-GEN-002 and VAL-GEN-003), direct current-session answer "Accept all three (Recommended)", and the answer "Close with H27 (Recommended)" for W03-H42, 2026-11-14 (Asia/Seoul); SPEC-0192 Task EVD-004 to EVD-017; `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv | PASS | The user accepted the SPEC-0192 criteria, so the generator handoff W03-H27 that the Spec closes and its duplicate W03-H42 (the `Generator` row of `Document Form Handoff`, same work) close. Their live rows in the Residue Handoff table are terminal with this row as Closure; their entries in `docs/03.specs/work-residue-ledger.json` were made terminal with this closure (gate PASS at 80 entries) and then deleted (gate PASS at 78 entries). The legacy W03-H27 and `Generator` rows stay as recorded; W03-H43 stays open. | no | none |
 
 ### Edition Delta
 
@@ -493,7 +494,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W03-H20 | Legacy row `W03-H20` of `W03 Decisions`: the W03 closing report | open | W03 | Last before DOC-12 | none |
 | W03-H21 | Legacy row `W03-H21` of `W03 Decisions`: writer delegation record | open | W03 | With the W03 closing | none |
 | W03-H23 | Legacy row `W03-H23` of `W03 Decisions`: root README bootstrap text | open | W10 | When W10 starts | none |
-| W03-H27 | Legacy row `W03-H27` of `W03 Decisions`: the document generator | open | W03 | After W03-H25, which SPEC-0184 closed | none |
+| W03-H27 | Legacy row `W03-H27` of `W03 Decisions`: the document generator | terminal | W03 | After W03-H25, which SPEC-0184 closed | EVD-059 |
 | W03-H29 | Legacy row `W03-H29` of `W03 Decisions`: Policy rule IDs | open | W03 with W05 | Packages 2 to 5 add the rule IDs (W03-D42 to W03-D44) | none |
 | W03-H30 | Legacy row `W03-H30` of `W03 Decisions`: the work residue ledger, its gate and tests | terminal | W03 with W05 | Closes through the ledger cycle of SPEC-0191 | EVD-055 |
 | W03-H31 | Legacy row `W03-H31` of `W03 Decisions`: stale tracking found by the conformance audit | open | W03 | With the W03 closing (W03-H20) | none |
@@ -507,7 +508,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W03-H39 | Legacy row `Spec` of `Document Form Handoff`: the Spec form | open | W03 | With phase 3 (W03-H02) | none |
 | W03-H40 | Legacy row `Plan` of `Document Form Handoff`: the Plan form | open | W03 | With phase 3 (W03-H02) | none |
 | W03-H41 | Legacy row `Task` of `Document Form Handoff`: the Task form | open | W03 | With phase 3 (W03-H02) | none |
-| W03-H42 | Legacy row `Generator` of `Document Form Handoff`: a document generator or the recorded reason for none | open | W03 | After W03-H25, which SPEC-0184 closed | none |
+| W03-H42 | Legacy row `Generator` of `Document Form Handoff`: a document generator or the recorded reason for none | terminal | W03 | After W03-H25, which SPEC-0184 closed | EVD-059 |
 | W03-H43 | No legacy row: the `requirement` lifecycle domain yields no creation state, so a new Requirement is refused by the lifecycle creation rule and by the document generator (W03-D48); the repair is a lifecycle contract change of its own | open | W03 | When the registry admits a creation state for the `requirement` lifecycle domain | none |
 | W05-H01 | Legacy row `Link-only section` of `Document Form Handoff`: the hard-coded link-only section list must follow the registry | open | W05 | When W05 starts | none |
 | W05-H02 | Legacy row `scripts set` of `Read Denominator`: 8 partial and 53 listed-only tracked scripts | open | W05 | When W05 re-reads its files before editing | none |

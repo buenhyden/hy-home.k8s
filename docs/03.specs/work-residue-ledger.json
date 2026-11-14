@@ -614,16 +614,6 @@
       }
     },
     {
-      "id": "W03-H27",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "After W03-H25, which SPEC-0184 closed",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W03-H29",
       "kind": "handoff",
       "state": "open",
@@ -729,16 +719,6 @@
       "state": "open",
       "owner": "W03",
       "resume_condition": "With phase 3 (W03-H02)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W03-H42",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "After W03-H25, which SPEC-0184 closed",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
