@@ -116,7 +116,7 @@
       "id": "GOV-04",
       "kind": "handoff",
       "state": "open",
-      "owner": "W01 policy, W03 registry",
+      "owner": "W03",
       "resume_condition": "When the registry reform finishes with phase 3",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
@@ -166,8 +166,8 @@
       "id": "OPEN-01",
       "kind": "survey",
       "state": "open",
-      "owner": "Shared source research (W00 package level)",
-      "resume_condition": "When a difference shown to affect a current owner is found",
+      "owner": "W00",
+      "resume_condition": "Only on a difference shown to affect a current owner (historical, non-blocking; W00:20, 153)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -176,8 +176,8 @@
       "id": "OPEN-02",
       "kind": "survey",
       "state": "open",
-      "owner": "Shared source research (W00 package level)",
-      "resume_condition": "When a difference shown to affect a current owner is found",
+      "owner": "W00",
+      "resume_condition": "Same as OPEN-01",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -186,8 +186,8 @@
       "id": "OPEN-03",
       "kind": "survey",
       "state": "open",
-      "owner": "Named stages",
-      "resume_condition": "When each named stage closes its DELTA packages",
+      "owner": "W00",
+      "resume_condition": "When each of its 37 DELTA packages is judged item by item at its named stage (PKG W00:153); that stage consumes the judgment",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -196,8 +196,8 @@
       "id": "OPEN-04",
       "kind": "survey",
       "state": "open",
-      "owner": "Holder of the original reports",
-      "resume_condition": "When the original reports are supplied",
+      "owner": "W00",
+      "resume_condition": "Only when the original reports are supplied or a difference shown to affect a current owner (historical, non-blocking)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -206,8 +206,8 @@
       "id": "OPEN-06",
       "kind": "survey",
       "state": "open",
-      "owner": "W01, W03 or W07",
-      "resume_condition": "Only when that stage plans to adopt a named source",
+      "owner": "W00",
+      "resume_condition": "Only when a stage proposes adopting a named source, or on a shown owner difference; that stage consumes the result",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -286,7 +286,7 @@
       "id": "R147-03",
       "kind": "handoff",
       "state": "open",
-      "owner": "W01",
+      "owner": "W03",
       "resume_condition": "Same as GOV-04",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
@@ -406,8 +406,8 @@
       "id": "R45-12",
       "kind": "handoff",
       "state": "open",
-      "owner": "W11, this workspace only",
-      "resume_condition": "When another repository's adoption evidence exists",
+      "owner": "W11",
+      "resume_condition": "When another repository's adoption evidence exists (this workspace only)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -426,8 +426,8 @@
       "id": "SDLC-07",
       "kind": "handoff",
       "state": "open",
-      "owner": "W04 (policy semantics only)",
-      "resume_condition": "When W04 starts",
+      "owner": "W04",
+      "resume_condition": "When W04 starts (policy semantics only)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -456,18 +456,18 @@
       "id": "W00-H01",
       "kind": "survey",
       "state": "open",
-      "owner": "W00 package level",
+      "owner": "W00",
       "resume_condition": "When a difference shown to affect a current owner is found",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
     },
     {
-      "id": "W01-H01",
-      "kind": "survey",
+      "id": "W01-H02",
+      "kind": "handoff",
       "state": "open",
       "owner": "W01",
-      "resume_condition": "When W01 re-reads its files before editing",
+      "resume_condition": "When W01 is run for its r1 differences; W05 consumes the result",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -477,7 +477,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W03",
-      "resume_condition": "After phase 2 is accepted; if W04 starts first, record the slip here",
+      "resume_condition": "After phase 2 is accepted",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -543,16 +543,6 @@
       }
     },
     {
-      "id": "W03-H15",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03 with W05",
-      "resume_condition": "After phase 3; the H07 package named in the row is closed",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W03-H19",
       "kind": "adoption",
       "state": "open",
@@ -597,8 +587,8 @@
       "id": "W03-H29",
       "kind": "handoff",
       "state": "open",
-      "owner": "W03 with W05",
-      "resume_condition": "Packages 3 to 5 add the rule IDs (W03-D42 to W03-D44); the package that adopts the last policy removes the adoption gate, `state` and `POLICY-RULE-ADOPTION` with their tests in its final source commit (W03-D53)",
+      "owner": "W03",
+      "resume_condition": "Packages 3 to 5 add the rule IDs (W03-D42 to W03-D44); the package that adopts the last policy removes the adoption gate, `state` and `POLICY-RULE-ADOPTION` with their tests in its final source commit (W03-D53); W05 consumes the rule IDs",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -744,6 +734,36 @@
       }
     },
     {
+      "id": "W05-H04",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W05-H05",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W05-H06",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
       "id": "W06-H01",
       "kind": "survey",
       "state": "open",
@@ -759,6 +779,26 @@
       "state": "open",
       "owner": "W07",
       "resume_condition": "When W07 re-reads its files before editing",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W07-H02",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W07",
+      "resume_condition": "When W07 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W07-H03",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W07",
+      "resume_condition": "When W07 starts",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
