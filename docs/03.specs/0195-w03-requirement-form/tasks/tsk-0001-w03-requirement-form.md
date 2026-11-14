@@ -1,6 +1,6 @@
 ---
 title: "W03 Requirement Form"
-version: "0.2.0"
+version: "0.2.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -27,8 +27,8 @@ This Task records the Requirement part of handoffs W03-H02 and W03-H13: the COMM
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-REQFORM-001](../spec.md#success-criteria--verification-plan) | The form, the two local extensions, the profile lists, the TemplateDefinition and its three tables, the `relationship_contract` note and the tests. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-REQFORM-002](../spec.md#success-criteria--verification-plan) | The rationale table and its review; the template and the four Requirements by the heading map with the new columns; the three texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-REQFORM-001](../spec.md#success-criteria--verification-plan) | The form, the two local extensions, the profile lists, the TemplateDefinition and its three tables, the `relationship_contract` note and the tests. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-REQFORM-002](../spec.md#success-criteria--verification-plan) | The rationale table and its review; the template and the four Requirements by the heading map with the new columns; the three texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
 
 ## Task Evidence
 
