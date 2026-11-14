@@ -1,6 +1,6 @@
 ---
 title: "W03 Architecture Form"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -27,9 +27,9 @@ This Task records the Architecture part of handoffs W03-H02 and W03-H13 and the 
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-ADFORM-001](../spec.md#success-criteria--verification-plan) | The form, the two local extensions, the description profiles' lists, the TemplateDefinition and its tables, and the form tree tests. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-ADFORM-002](../spec.md#success-criteria--verification-plan) | The description template and the four descriptions by the heading map, with the `arc42 coverage` links and any false positional word corrected. | platform | in-progress | NOT_RUN | Pending |
-| WORK-003 | [VAL-ADFORM-003](../spec.md#success-criteria--verification-plan) | The reviewed citing rows; `REQUIREMENT-COVERAGE` and its tests; the column removal; the `relationship_contract` entry; the texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-ADFORM-001](../spec.md#success-criteria--verification-plan) | The form, the two local extensions, the description profiles' lists, the TemplateDefinition and its tables, and the form tree tests. | platform | completed | PASS | EVD-006, EVD-007, EVD-013, EVD-016 |
+| WORK-002 | [VAL-ADFORM-002](../spec.md#success-criteria--verification-plan) | The description template and the four descriptions by the heading map, with the `arc42 coverage` links and any false positional word corrected. | platform | completed | PASS | EVD-008, EVD-010, EVD-011, EVD-012, EVD-027 |
+| WORK-003 | [VAL-ADFORM-003](../spec.md#success-criteria--verification-plan) | The reviewed citing rows; `REQUIREMENT-COVERAGE` and its tests; the column removal; the `relationship_contract` entry; the texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | completed | PASS | EVD-019, EVD-020, EVD-021, EVD-022, EVD-023, EVD-024, EVD-026 |
 
 ## Task Evidence
 
@@ -61,6 +61,8 @@ This Task records the Architecture part of handoffs W03-H02 and W03-H13 and the 
 | EVD-024 | [VAL-ADFORM-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Secret baseline line moves | `detect-secrets scan` and `detect-secrets-hook` with the repository `--exclude-lines` pattern over the edited files in the final working tree, 2026-11-14; the real baseline is not edited | PASS | The registry entry (hashed secret `35bb1b95…`, the `source_revision` line) moves from line 8648 to line 8767 in the final state (EVD-016 recorded 8782 after WORK-001). The SPEC-0161 Task keeps its two entries on line 51 (unchanged). This Task needs two new Hex High Entropy entries, both on line 39 (EVD-002, hashed secrets `640c3a0b…` and `84a94c5a…`); no other new Task line needs one. The baseline change is left for its own commit. Next owner: the operator. | yes | none |
 | EVD-025 | [VAL-ADFORM-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Contract suites and exact-index QA | `python3 scripts/run-contract-tests.py --root . --suite document`, `document-lifecycle`, `agent-governance` and `validation-routing`; `python3 scripts/qa.py staged` and the commit hooks on the exact index | NOT_RUN | Not run: the instruction for this work forbids full suites before W11 and the implementing agent may not run `scripts/qa.py staged` or commit. The Plan names "suites" for WORK-003 without listing them; the Spec lists the four above. Next owner: the operator. | yes | none |
 | EVD-026 | [VAL-ADFORM-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Contract suites and exact-index QA | Committed clean tree `57ac2b68` on branch claude/w03-architecture-form (main 3c634327 base), pinned validation venv, 2026-11-14: `python3 scripts/run-contract-tests.py --root . --suite document`, `document-lifecycle`, `agent-governance` and `validation-routing`, run one after another; the workspace pre-commit hook ran `scripts/qa.py staged` on the exact index of `57ac2b68` | PASS | document 31 modules, 1001 tests (3 skipped); document-lifecycle 2 modules, 28 tests; agent-governance 4 modules, 105 tests (registry validation passed); validation-routing 7 modules, 173 tests; each exit 0. The implementation commit `57ac2b68` was created only after the hook's exact-index QA and the commit-message checks passed. | yes | EVD-025 |
+| EVD-027 | [VAL-ADFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA and commit hooks | Pre-commit hooks over the final index of `57ac2b68` in the pinned validation environment, 2026-11-14 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | EVD-015 |
+| EVD-028 | [VAL-ADFORM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Description Placements
 
@@ -145,9 +147,16 @@ Open items for the user before WORK-003 touches a document:
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-ADFORM-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-ADFORM-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
-| [VAL-ADFORM-003](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-003 and record PASS evidence | platform |
+| [VAL-ADFORM-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006, EVD-007, EVD-013, EVD-016 | Accepted by the user on 2026-11-14 (direct answer "Accept, close H44 (Recommended)" to the SPEC-0197 acceptance question naming commit `57ac2b68`) | platform |
+| [VAL-ADFORM-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-008, EVD-010, EVD-011, EVD-012, EVD-027 | Accepted by the user on 2026-11-14 (direct answer "Accept, close H44 (Recommended)" to the SPEC-0197 acceptance question naming commit `57ac2b68`) | platform |
+| [VAL-ADFORM-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-019, EVD-020, EVD-021, EVD-022, EVD-023, EVD-024, EVD-026 | Accepted by the user on 2026-11-14 (direct answer "Accept, close H44 (Recommended)" to the SPEC-0197 acceptance question naming commit `57ac2b68`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The SPEC-0161 Task decision row W03-D57, its evidence row EVD-092 and the W03-H37 and W03-H44 closure row cite this package by identifier only and stay valid after its retirement. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -162,4 +171,4 @@ Open items for the user before WORK-003 touches a document:
 
 ## Verification Summary
 
-WORK-001 and WORK-002 are implemented in the working tree and not committed: the Architecture form, its two local H3 extensions, the description TemplateDefinition with its three tables, the empty H2 lists, the description template and the four descriptions moved by the heading map. The strict registry, profile, link and lifecycle validators PASS with no diagnostic (equal to the base), the three focused test modules pass (418 tests), `Archived Lineage` of AD-0006 and AD-0007 and their identity sets are unchanged, and the registry level is NO_CHANGE (EVD-007). WORK-003 stopped at its review gate: the citing-row and removed-cell tables are proposed in Review Tables and no Requirement, requirement template, Requirement description, `REQUIREMENT-COVERAGE` rule, text, SPEC-0161 row or ledger entry has been changed for it. The `WORK` rows keep their status for the operator. Exact-index QA and the commit hooks are NOT_RUN (EVD-015); `.secrets.baseline` is not edited (see the baseline note in EVD-016). Next owner: the user, for the two Review Tables and their two open items.
+WORK-001 and WORK-002 are implemented in the working tree and not committed: the Architecture form, its two local H3 extensions, the description TemplateDefinition with its three tables, the empty H2 lists, the description template and the four descriptions moved by the heading map. The strict registry, profile, link and lifecycle validators PASS with no diagnostic (equal to the base), the three focused test modules pass (418 tests), `Archived Lineage` of AD-0006 and AD-0007 and their identity sets are unchanged, and the registry level is NO_CHANGE (EVD-007). WORK-003 stopped at its review gate: the citing-row and removed-cell tables are proposed in Review Tables and no Requirement, requirement template, Requirement description, `REQUIREMENT-COVERAGE` rule, text, SPEC-0161 row or ledger entry has been changed for it. The `WORK` rows keep their status for the operator. Exact-index QA and the commit hooks are NOT_RUN (EVD-015); `.secrets.baseline` is not edited (see the baseline note in EVD-016). Next owner: the user, for the two Review Tables and their two open items. Implementation commit `57ac2b68` passed exact-index QA in the hooks (EVD-027); the user accepted the package on 2026-11-14, and the approval of commit, push, PR and merge covers the package exit (EVD-028).
