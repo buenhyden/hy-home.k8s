@@ -19882,22 +19882,22 @@
       {
         "path": "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md",
         "code": "GITOPS",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": "docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md",
         "code": "MESH",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": "docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md",
         "code": "ROLLOUT",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": "docs/05.operations/policies/0005-observability-platform-operations-policy.md",
         "code": "OBSERV",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",

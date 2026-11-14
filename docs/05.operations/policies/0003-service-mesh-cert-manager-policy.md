@@ -1,10 +1,10 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.3.1"
+version: "1.4.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 artifact_id: "POL-0003"
 ---
 
@@ -48,56 +48,89 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 
 ### Requirements
 
+| Rule ID | Condition | Level | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| MESH-R001 | Always | required | RUN-0003 | active |
+| MESH-R002 | Always | required | RUN-0003 | active |
+| MESH-R003 | Always | required | `infrastructure-contracts` | active |
+| MESH-R004 | HTTPS 접근 전 | required | RUN-0003 | active |
+| MESH-R005 | Always | required | `secret-handling` | active |
+| MESH-R006 | 운영자 승인 후 | required | RUN-0003 | active |
+| MESH-R007 | Always | optional | RUN-0003 | active |
+| MESH-R008 | Always | required | `policy-gates` | active |
+| MESH-R009 | Always | required | Semantic review | active |
+| MESH-R010 | Always | required | Semantic review | active |
+| MESH-R011 | Always | required | Semantic review | active |
+| MESH-R012 | Always | required | RUN-0003 | active |
+| MESH-R013 | Always | required | RUN-0003 | active |
+| MESH-R014 | Mesh 내 namespace일 때 | optional | Semantic review | active |
+| MESH-R015 | Always | required | Semantic review | active |
+| MESH-R016 | Always | required | Semantic review | active |
+| MESH-R017 | Always | required | Semantic review | active |
+| MESH-R018 | Always | required | Semantic review | active |
+| MESH-R019 | Always | required | Semantic review | active |
+| MESH-R020 | Always | required | RUN-0003 | active |
+| MESH-R021 | Always | required | RUN-0003 | active |
+| MESH-R022 | Always | required | `infrastructure-contracts` | active |
+| MESH-R023 | Always | required | RUN-0003 | active |
+| MESH-R024 | Always | required | `infrastructure-contracts` | active |
+| MESH-R025 | Always | required | RUN-0003 | active |
+| MESH-R026 | Always | required | Semantic review | active |
+| MESH-R027 | Always | required | Semantic review | active |
+| MESH-R028 | 모든 IP/endpoint 변경 시 | required | `infrastructure-contracts` | active |
+| MESH-R029 | bootstrap-local.sh 변경 시 | required | `selected-style` | active |
+| MESH-R030 | Always | required | `infrastructure-contracts` | active |
+
 #### TLS / cert-manager
 
 - **Required**:
-  - ClusterIssuer 단일 운영: `mkcert-ca-issuer` (CA type, mkcert rootCA 참조)
-  - rootCA Secret 이름 고정: `mkcert-root-ca` (namespace: `cert-manager`, key: `tls.crt` / `tls.key`)
-  - ArgoCD TLS는 `argocd-local-tls` Secret 수동 주입 유지 — cert-manager 이관 금지
-  - `rootCA.pem`은 로컬 신뢰 저장소에 등록 후 HTTPS 접근
-  - `secrets/certs/rootCA-key.pem` 파일을 평문 커밋 금지
+  - `MESH-R001` ClusterIssuer 단일 운영: `mkcert-ca-issuer` (CA type, mkcert rootCA 참조)
+  - `MESH-R002` rootCA Secret 이름 고정: `mkcert-root-ca` (namespace: `cert-manager`, key: `tls.crt` / `tls.key`)
+  - `MESH-R003` ArgoCD TLS는 `argocd-local-tls` Secret 수동 주입 유지 — cert-manager 이관 금지
+  - `MESH-R004` `rootCA.pem`은 로컬 신뢰 저장소에 등록 후 HTTPS 접근
+  - `MESH-R005` `secrets/certs/rootCA-key.pem` 파일을 평문 커밋 금지
 - **Allowed**:
-  - cert-manager controller 재시작은 운영자 승인 후 [플랫폼 확장 런북](../runbooks/0003-platform-expansion-bootstrap-runbook.md)의 절차로 수행
-  - ClusterIssuer 상태 확인은 [플랫폼 확장 런북](../runbooks/0003-platform-expansion-bootstrap-runbook.md)의 검증 절차로 수행
+  - `MESH-R006` cert-manager controller 재시작은 운영자 승인 후 [플랫폼 확장 런북](../runbooks/0003-platform-expansion-bootstrap-runbook.md)의 절차로 수행
+  - `MESH-R007` ClusterIssuer 상태 확인은 [플랫폼 확장 런북](../runbooks/0003-platform-expansion-bootstrap-runbook.md)의 검증 절차로 수행
 - **Disallowed**:
-  - `mkcert-root-ca` Secret 평문 커밋
-  - ClusterIssuer 다중 운영 (이름 오염 위험)
+  - `MESH-R008` `mkcert-root-ca` Secret 평문 커밋
+  - `MESH-R009` ClusterIssuer 다중 운영 (이름 오염 위험)
 
 #### Istio / Service Mesh
 
 - **Required**:
-  - IngressGateway를 선언하지 않는다 (istiod Application values에 gateway 없음, ADR-0008)
-  - sidecar 주입 opt-in: namespace `istio-injection=enabled` 레이블 명시적 부여
-  - istiod 자원 예산: `cpu: 100m, memory: 128Mi` (requests)
-  - sync-wave 순서 강제: `istio-base`·`istio-cni`(wave:1) → `istiod`(wave:2, `pilot.cni.enabled: true`)
+  - `MESH-R010` IngressGateway를 선언하지 않는다 (istiod Application values에 gateway 없음, ADR-0008)
+  - `MESH-R011` sidecar 주입 opt-in: namespace `istio-injection=enabled` 레이블 명시적 부여
+  - `MESH-R012` istiod 자원 예산: `cpu: 100m, memory: 128Mi` (requests)
+  - `MESH-R013` sync-wave 순서 강제: `istio-base`·`istio-cni`(wave:1) → `istiod`(wave:2, `pilot.cni.enabled: true`)
 - **Allowed**:
-  - Mesh 내 namespace에 `istio-injection=enabled` 레이블 추가
+  - `MESH-R014` Mesh 내 namespace에 `istio-injection=enabled` 레이블 추가
 - **Disallowed**:
-  - `argocd`, `cert-manager`, `headlamp`, `external-secrets`, `platform` namespace에 `istio-injection=enabled` 레이블 부여
-  - (`apps`와 `traefik`은 mesh 대상이며 `istio-injection=enabled`를 유지한다.)
-  - IngressGateway 활성화
-  - Ambient mesh 전환(로컬 플랫폼 스코프 외)
+  - `MESH-R015` `argocd`, `cert-manager`, `headlamp`, `external-secrets`, `platform` namespace에 `istio-injection=enabled` 레이블 부여
+  - `MESH-R016` (`apps`와 `traefik`은 mesh 대상이며 `istio-injection=enabled`를 유지한다.)
+  - `MESH-R017` IngressGateway 활성화
+  - `MESH-R018` Ambient mesh 전환(로컬 플랫폼 스코프 외)
 
 #### Kiali / Observability
 
 - **Required**:
-  - auth: `anonymous` (로컬 전용)
-  - Prometheus: `https://prometheus.hy.home.arpa`, Basic Auth `secret:kiali-prometheus-auth:*`
-  - Grafana: `in_cluster_url`과 브라우저 링크 `url` 모두 `https://grafana.hy.home.arpa`, bearer `secret:kiali-grafana-auth:token`(Viewer service account)
-  - gateway CA: `istio-system/kiali-cabundle` (bootstrap 생성)
-  - Tempo(Tracing): `in_cluster_url` `http://tempo-external.platform.svc.cluster.local:3200`
-  - egress NetworkPolicy: host 주소 `192.168.0.13/32`의 `443`, `3200` 허용 (ADR-0046)
-  - hostname: `kiali.hy-k8s.home.arpa`, TLS: cert-manager 발급 (`kiali-tls`)
+  - `MESH-R019` auth: `anonymous` (로컬 전용)
+  - `MESH-R020` Prometheus: `https://prometheus.hy.home.arpa`, Basic Auth `secret:kiali-prometheus-auth:*`
+  - `MESH-R021` Grafana: `in_cluster_url`과 브라우저 링크 `url` 모두 `https://grafana.hy.home.arpa`, bearer `secret:kiali-grafana-auth:token`(Viewer service account)
+  - `MESH-R022` gateway CA: `istio-system/kiali-cabundle` (bootstrap 생성)
+  - `MESH-R023` Tempo(Tracing): `in_cluster_url` `http://tempo-external.platform.svc.cluster.local:3200`
+  - `MESH-R024` egress NetworkPolicy: host 주소 `192.168.0.13/32`의 `443`, `3200` 허용 (ADR-0046)
+  - `MESH-R025` hostname: `kiali.hy-k8s.home.arpa`, TLS: cert-manager 발급 (`kiali-tls`)
 - **Disallowed**:
-  - 프로덕션에 anonymous auth 유지
-  - Kiali egress를 `0.0.0.0/0` 등 광역 cidr로 확장
+  - `MESH-R026` 프로덕션에 anonymous auth 유지
+  - `MESH-R027` Kiali egress를 `0.0.0.0/0` 등 광역 cidr로 확장
 
 #### CI Governance
 
-- `scripts/validate-infrastructure-contracts.sh` PASS가 모든 IP/endpoint
+- `MESH-R028` `scripts/validate-infrastructure-contracts.sh` PASS가 모든 IP/endpoint
   변경의 선행 조건이다. 이 검사의 선택과 실행은 QA 실행 레지스트리가 소유한다.
-- shell syntax 정적 검증 후 bootstrap-local.sh 변경을 반영한다.
-- cert-manager/Istio/Kiali GitOps 리소스는 AppProject `platform` 스코프 내에서만 배포된다.
+- `MESH-R029` shell syntax 정적 검증 후 bootstrap-local.sh 변경을 반영한다.
+- `MESH-R030` cert-manager/Istio/Kiali GitOps 리소스는 AppProject `platform` 스코프 내에서만 배포된다.
 
 ### Enforcement
 
