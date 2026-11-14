@@ -41,18 +41,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Vision",
-          "Problem Statement",
-          "Personas",
-          "Key Use Cases",
-          "Functional Requirements",
-          "Success / Acceptance Criteria",
-          "Scope and Non-goals",
-          "Risks, Dependencies, and Assumptions",
-          "Traceability"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -5628,18 +5617,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Vision",
-          "Problem Statement",
-          "Personas",
-          "Key Use Cases",
-          "Functional Requirements",
-          "Success / Acceptance Criteria",
-          "Scope and Non-goals",
-          "Risks, Dependencies, and Assumptions",
-          "Traceability"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -5677,7 +5655,169 @@
           "allow_explicit_exclusion": true
         }
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "purpose": "Give authors one form for a Requirement package that states the problem, scope, functional and quality requirements, acceptance conditions and traceability of one product or system outcome.",
+        "responsibility": "A Requirement owns the user value, its stable member requirements with their rationale and acceptance, and the acceptance boundary; architecture, decisions and change contracts stay with the Stage 02 and Stage 03 owners.",
+        "non_goals": [
+          "Architecture, decisions or implementation detail, which belong to an architecture description, an ADR or a Spec.",
+          "Task execution state, evidence or approval, which belong to a Task.",
+          "Retiring the Downstream owner column, which the Architecture form package completes (W03-D55)."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every sdlc/requirement document under docs/01.requirements/ and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/requirements/requirement-package.template.md",
+          "docs/99.templates/README.md",
+          "docs/01.requirements/README.md",
+          "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md",
+          "docs/01.requirements/0002-argo-notifications-slack.md",
+          "docs/01.requirements/0003-workspace-agent-governance-platform.md",
+          "docs/01.requirements/0004-current-local-gitops-platform.md",
+          "scripts/document_contracts.py",
+          "scripts/document_lifecycle.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validate-document-lifecycle.py",
+          "scripts/validation/repository/form_contracts.py",
+          "tests/test_common_form_tree.py"
+        ],
+        "validation": {
+          "positive": [
+            "The four Requirements and the template pass the form tree, table, body-contract, author-prompt and residue checks.",
+            "A Requirement without a Quality Requirements section passes the form tree.",
+            "A requirement table with the four required columns, with or without the optional trailing Priority, passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+          ],
+          "negative": [
+            "The previous four-column requirement header, whose second and fourth columns are not Statement and Acceptance, fails BODY-TABLE-COLUMNS.",
+            "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT.",
+            "A table section outside the form fails REGISTRY_TABLE_SECTION.",
+            "An H3 under the wrong H2, including Archived Lineage outside Traceability, fails BODY-H3-PARENT."
+          ],
+          "regression": [
+            "The loaded requirement profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the Requirement form, its two local extensions, its three tables and this definition in the repository registry."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0195 heading map moves each sentence of the four approved Requirements and of the template into the five H2 and ten H3 of the form without changing its meaning; the requirement tables take the column names of the common contract with a new Rationale column (W03-D55); the Archived Lineage section stays byte for byte. The SPEC-0195 Task records each document's placements.",
+          "retained_history": "Git history retains the ten-heading Requirement layout, the four-column requirement table and the previous template.",
+          "rollback": "Revert the SPEC-0195 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Functional Requirements",
+            "section": "requirement-requirements-functional-requirements",
+            "columns": [
+              {
+                "key": "Requirement ID",
+                "meaning": "Stable full requirement ID of the functional or interface member.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Statement",
+                "meaning": "The testable requirement statement.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Rationale",
+                "meaning": "One sentence that states why the requirement exists and names its source, or explains why none is recorded.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Acceptance",
+                "meaning": "The observable acceptance evidence or the acceptance criterion that verifies the requirement.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Priority",
+                "meaning": "Optional trailing priority of the requirement.",
+                "data_type": "string",
+                "required": false
+              }
+            ],
+            "minimum_rows": 1,
+            "row_identity": "Requirement ID"
+          },
+          {
+            "name": "Quality Requirements",
+            "section": "requirement-requirements-quality-requirements",
+            "columns": [
+              {
+                "key": "Requirement ID",
+                "meaning": "Stable full requirement ID of the quality member.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Statement",
+                "meaning": "The testable requirement statement.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Rationale",
+                "meaning": "One sentence that states why the requirement exists and names its source, or explains why none is recorded.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Acceptance",
+                "meaning": "The observable acceptance evidence or the acceptance criterion that verifies the requirement.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Priority",
+                "meaning": "Optional trailing priority of the requirement.",
+                "data_type": "string",
+                "required": false
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Requirement ID"
+          },
+          {
+            "name": "Lifecycle Traceability",
+            "section": "requirement-lifecycle-traceability",
+            "columns": [
+              {
+                "key": "Requirement ID",
+                "meaning": "Full requirement ID, or an N/A reason naming an acceptance-only criterion.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Acceptance criterion",
+                "meaning": "The measurable acceptance condition of the member.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Downstream owner",
+                "meaning": "Link to the architecture description or Spec that owns the member, or an explicit exclusion.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 1,
+            "row_identity": "Requirement ID"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-sdlc-spec",
@@ -15321,6 +15461,404 @@
             "children": []
           }
         ]
+      },
+      {
+        "form_id": "requirement",
+        "title": "Requirement",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "requirement-overview",
+            "level": 2,
+            "parent_id": null,
+            "title": "Overview",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "요구의 목적과 이해관계자",
+            "required_content": [
+              "요구의 목적과 이해관계자에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "requirement-overview-problem-and-outcome",
+                "level": 3,
+                "parent_id": "requirement-overview",
+                "title": "Problem and Outcome",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "해결할 문제와 측정 가능한 기대 결과",
+                "required_content": [
+                  "해결할 문제와 측정 가능한 기대 결과을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "requirement-overview-stakeholders",
+                "level": 3,
+                "parent_id": "requirement-overview",
+                "title": "Stakeholders",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "요구 작성·검토·수용 책임",
+                "required_content": [
+                  "요구 작성·검토·수용 책임을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "requirement-scope",
+            "level": 2,
+            "parent_id": null,
+            "title": "Scope",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "요구의 적용 경계",
+            "required_content": [
+              "요구의 적용 경계에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "requirement-scope-in-scope",
+                "level": 3,
+                "parent_id": "requirement-scope",
+                "title": "In Scope",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "대상 사용자·상황·적용 범위",
+                "required_content": [
+                  "대상 사용자·상황·적용 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "requirement-scope-constraints-and-exclusions",
+                "level": 3,
+                "parent_id": "requirement-scope",
+                "title": "Constraints and Exclusions",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "제약·전제·비목표",
+                "required_content": [
+                  "제약·전제·비목표을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "requirement-requirements",
+            "level": 2,
+            "parent_id": null,
+            "title": "Requirements",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "현재 유효한 기능·품질 요구",
+            "required_content": [
+              "현재 유효한 기능·품질 요구에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "requirement-requirements-functional-requirements",
+                "level": 3,
+                "parent_id": "requirement-requirements",
+                "title": "Functional Requirements",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "안정 ID별 결과·근거·우선순위",
+                "required_content": [
+                  "안정 ID별 결과·근거·우선순위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "requirement-requirements-quality-requirements",
+                "level": 3,
+                "parent_id": "requirement-requirements",
+                "title": "Quality Requirements",
+                "order": 2,
+                "requiredness": "conditional",
+                "condition": "품질 요구가 적용됨",
+                "content": "품질 특성·측정 환경·목표 또는 결정 필요 값",
+                "required_content": [
+                  "품질 특성·측정 환경·목표 또는 결정 필요 값을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "omit_when_condition_false",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "requirement-acceptance-criteria",
+            "level": 2,
+            "parent_id": null,
+            "title": "Acceptance Criteria",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "구현과 독립적인 판정 조건",
+            "required_content": [
+              "구현과 독립적인 판정 조건에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "requirement-acceptance-criteria-acceptance-conditions",
+                "level": 3,
+                "parent_id": "requirement-acceptance-criteria",
+                "title": "Acceptance Conditions",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "요구 ID별 관측 가능한 통과·실패 조건",
+                "required_content": [
+                  "요구 ID별 관측 가능한 통과·실패 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "requirement-acceptance-criteria-verification-method",
+                "level": 3,
+                "parent_id": "requirement-acceptance-criteria",
+                "title": "Verification Method",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "판정 방법·필수 근거·판정 주체",
+                "required_content": [
+                  "판정 방법·필수 근거·판정 주체을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "requirement-traceability",
+            "level": 2,
+            "parent_id": null,
+            "title": "Traceability",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "설계·검증으로 이어지는 근거",
+            "required_content": [
+              "설계·검증으로 이어지는 근거에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "requirement-traceability-source-and-constraints",
+                "level": 3,
+                "parent_id": "requirement-traceability",
+                "title": "Source and Constraints",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "사용자 원문·규범 근거와 효력",
+                "required_content": [
+                  "사용자 원문·규범 근거와 효력을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "requirement-traceability-downstream-links",
+                "level": 3,
+                "parent_id": "requirement-traceability",
+                "title": "Downstream Links",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "설계·Spec·검증 소비자로의 파생 역조회",
+                "required_content": [
+                  "설계·Spec·검증 소비자로의 파생 역조회을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          }
+        ],
+        "extensions": [
+          {
+            "id": "requirement-lifecycle-traceability",
+            "kind": "local_h3",
+            "condition": "a requirement in a status the body contract enforces (draft, in-review, approved) maps each member to its acceptance criterion and downstream owner",
+            "owner": "platform",
+            "verification": "the body-contract check",
+            "review": "when the Requirement form version changes",
+            "removal": "when requirement lineage has another registered owner",
+            "parent_id": "requirement-traceability",
+            "title": "Lifecycle Traceability"
+          },
+          {
+            "id": "requirement-archived-lineage",
+            "kind": "local_h3",
+            "condition": "a requirement summarizes the deleted or archived documents whose current meaning it owns, so that Git history recovers each of them",
+            "owner": "platform",
+            "verification": "the package-exit check and the retired-identity reservation",
+            "review": "when the Requirement form version changes",
+            "removal": "when requirement lineage has another registered owner",
+            "parent_id": "requirement-traceability",
+            "title": "Archived Lineage"
+          }
+        ]
       }
     ]
   },
@@ -16056,7 +16594,7 @@
             "key": "Upstream requirement"
           }
         ],
-        "reverse_view": "Derived by scripts/document-backlinks.py; the Requirement Downstream owner column is a reciprocal carrier that current checks require and the Architecture form package owns (SPEC-0197).",
+        "reverse_view": "Derived by scripts/document-backlinks.py; the Requirement Downstream owner column is a reciprocal carrier that current checks require. SPEC-0195 keeps it unchanged; the Architecture form package (SPEC-0197) completes the citing Upstream requirement rows, then removes the column and replaces its link check with a derived coverage check (W03-D55).",
         "consumer_paths": [
           "scripts/validate-markdown-profiles.py",
           "scripts/validate-links-and-owners.py",
@@ -16479,7 +17017,8 @@
           "common/template-agents-guide",
           "common/template-evaluation-task",
           "common/template-evaluation-score",
-          "common/template-evaluation-results"
+          "common/template-evaluation-results",
+          "common/template-sdlc-requirement"
         ],
         "target_profile_ids": [
           "governance/rule",
@@ -16647,6 +17186,11 @@
           },
           {
             "profile_id": "common/template-evaluation-results",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-sdlc-requirement",
             "carrier": "registry_key",
             "key": "template_definition.policy_refs"
           }

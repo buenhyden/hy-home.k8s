@@ -1,10 +1,10 @@
 ---
 title: "01.requirements"
-version: "0.10.1"
+version: "0.10.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 ---
 # 01.requirements
 
@@ -102,7 +102,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 - Requirement Package는 관련 AD, ADR, Spec 링크를 가진다.
 - AD와 Spec은 `REQ-####-(FR|NFR|IF)-####` 전체 요구 ID를 추적한다.
 - Agent 기능인 경우 사용 시나리오, 허용/금지 행동, human-in-the-loop 요구를 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
-- 후속 AD/ADR/Spec이 아직 없으면 없는 링크를 만들지 않고, 문서 인덱스와 Requirement Package의 `Related Documents`에 후속 갭으로 표시한다.
+- 후속 AD/ADR/Spec이 아직 없으면 없는 링크를 만들지 않고, 문서 인덱스와 Requirement Package의 `Traceability` 아래 `Downstream Links`에 후속 갭으로 표시한다. 이미 삭제된 문서의 요약은 같은 `Traceability` 아래 `Archived Lineage`에 둔다.
 - 현재 구현과 맞지 않는 변경 한정 실행 계약을 Stage 01에 보존하지 않는다. 대체·완료된 문서는 현재 소유 문서의 Archived Lineage 표에 요약하고, 처분 조건을 확인한 뒤 삭제한다. 원본은 확인된 Git 이력에서 복구한다.
 
 #### 예시

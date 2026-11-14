@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.28.0"
+version: "3.29.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -306,7 +306,11 @@ role, its forms and placement are owned by the
 Guide, Runbook, Incident, Postmortem, Policy, AGENTS, Skill, Root README, Stage README,
 Service README, Workspace README, Reference Pack README, Knowledge Map, Vocabulary,
 Prompt, Evaluation Task, Evaluation Score, Evaluation Results, Governance Document,
-Governance Role and Reference Report use their registry forms. Guide keeps its classification, readers and
+Governance Role, Reference Report and Requirement use their registry forms. Requirement keeps its
+Lifecycle Traceability table and its Archived Lineage under Traceability, its
+requirement tables (Requirement ID, Statement, Rationale, Acceptance and an optional
+trailing Priority) under Functional Requirements and, where a quality requirement
+applies, Quality Requirements. Guide keeps its classification, readers and
 goal under Purpose and its Lifecycle Traceability table under Verification;
 Runbook keeps its Lifecycle Traceability table under Validation; Incident keeps
 its Lifecycle Traceability table under Evidence and Postmortem under Corrective
