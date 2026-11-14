@@ -727,24 +727,40 @@ class NativeBoundaryTests(unittest.TestCase):
     def test_lost_native_denial_and_wildcard_allow_reject(self):
         import json
 
+        import copy
+
         path = self.root / ".claude/settings.json"
         data = json.loads(path.read_text())
-        for action in ("deny", "allow", "ask", "ask-to-allow"):
-            import copy
-
-            changed = copy.deepcopy(data)
-            if action == "deny":
-                changed["permissions"]["deny"].pop()
-            elif action == "ask":
-                changed["permissions"]["ask"].pop()
-            elif action == "ask-to-allow":
-                changed["permissions"]["allow"].append(
-                    changed["permissions"]["ask"].pop()
-                )
-            else:
-                changed["permissions"]["allow"].append("Bash(*)")
-            path.write_text(json.dumps(changed))
-            self.assert_rejected("AGENT-NATIVE-PERMISSION")
+        for action in (
+            "deny",
+            "allow",
+            "ask",
+            "ask-to-allow",
+            "push-to-ask",
+            "main-push-deny",
+            "admin-merge-deny",
+        ):
+            with self.subTest(action=action):
+                changed = copy.deepcopy(data)
+                permissions = changed["permissions"]
+                if action == "deny":
+                    permissions["deny"].pop()
+                elif action == "ask":
+                    permissions["ask"].pop()
+                elif action == "ask-to-allow":
+                    permissions["allow"].append(permissions["ask"].pop())
+                elif action == "push-to-ask":
+                    # SPEC-0214: push runs on the user's request without a prompt.
+                    permissions["allow"].remove("Bash(git push *)")
+                    permissions["ask"].append("Bash(git push *)")
+                elif action == "main-push-deny":
+                    permissions["deny"].remove("Bash(git push * main)")
+                elif action == "admin-merge-deny":
+                    permissions["deny"].remove("Bash(gh pr merge * --admin*)")
+                else:
+                    permissions["allow"].append("Bash(*)")
+                path.write_text(json.dumps(changed))
+                self.assert_rejected("AGENT-NATIVE-PERMISSION")
 
     def test_bypass_permissions_mode_must_stay_disabled(self):
         import json
@@ -1272,42 +1288,265 @@ class NativeDenyCoverageTests(unittest.TestCase):
                     return kind
             return None
 
-        for command in (
-            "git log --oneline -3",
-            "git show HEAD",
-            "git fetch origin",
-            "git ls-remote --heads origin",
-            "git merge --ff-only origin/main",
-            "gh pr view 1",
-            "gh pr checks 1",
-            "gh pr list",
-            "gh pr diff 1",
-            "gh pr create --base main --title a --body b",
-            "gh pr merge 1 --merge",
-            "gh run view 1",
-            "gh run list",
-        ):
-            with self.subTest(command=command):
-                self.assertEqual(decision(command), "allow")
-        # A refspec deletion (`origin :branch`) cannot be denied by a pattern,
-        # so every push keeps a prompt (operator decision, SPEC-0114 review).
-        for command in (
-            "git push -u origin feat/a",
-            "git push origin :feat/a",
-            "git push origin +main",
-            "gh api repos/a/b",
-            "git -C sub status",
-        ):
-            with self.subTest(command=command):
-                self.assertEqual(decision(command), "ask")
-        for command in (
-            "gh pr merge --admin 1",
-            "gh pr merge 1 --admin",
-            "git push --force-with-lease origin main",
-            "git push -d origin feat/a",
-        ):
-            with self.subTest(command=command):
-                self.assertEqual(decision(command), "deny")
+        def expect(kind, commands):
+            for command in commands:
+                with self.subTest(command=command):
+                    self.assertEqual(decision(command), kind)
+
+        expect(
+            "allow",
+            (
+                "git log --oneline -3",
+                "git show HEAD",
+                "git fetch origin",
+                "git ls-remote --heads origin",
+                "git merge --ff-only origin/main",
+                "gh pr view 1",
+                "gh pr checks 1",
+                "gh pr list",
+                "gh pr diff 1",
+                "gh pr create --base main --title a --body b",
+                "gh pr merge 1 --merge",
+                "gh run view 1",
+                "gh run list",
+                # SPEC-0214: delivery commands run on the user's request, which
+                # is their approval, without a native prompt.
+                "git push origin feat/a",
+                "git push -u origin feat/a",
+                "git push --set-upstream origin feat/a",
+                "git push --follow-tags origin feat/a",
+                "git push origin --tags",
+                "git push origin v1.2.3",
+                "git commit -m a",
+                "git commit -am a",
+                "git tag v1.2.3",
+                "git tag -a v1.2.3 -m a",
+                "gh pr ready 1",
+                "gh pr review --approve 1",
+                "gh pr review 1 --approve",
+                "gh release create v1.2.3 --notes a",
+                "gh workflow run ci.yml",
+                "python3 scripts/release.py --root . publish --version v1.2.3 --execute",
+                # Over-match guards: a source-side or look-alike `main`, a
+                # named branch after `HEAD:`, `+` inside a name, and harmless
+                # options with a named branch.
+                "git push origin main:feat/a",
+                "git push origin refs/heads/main:refs/heads/feat/a",
+                "git push origin domain",
+                "git push origin main-fix",
+                "git push origin HEAD:mainline",
+                "git push origin HEAD:feat/a",
+                "git push origin feat/a+b",
+                "git push --dry-run origin feat/a",
+                "git push --porcelain origin feat/a",
+                "git push --atomic origin feat/a",
+                "git push -o ci.skip origin feat/a",
+                # A message file (`-F`) and `--format` are not the force option.
+                "git tag -F notes.txt v1.2.3",
+                "git tag -l --format=%(refname)",
+                # Plain, tag and forced branch fetches stay allowed.
+                "git fetch",
+                "git fetch --tags",
+                "git fetch --tags origin",
+                "git fetch -p origin",
+                "git fetch -f origin main:x",
+                # Options that share a prefix with an executable-carrying one
+                # but are not it (SPEC-0215).
+                "git push --recurse-submodules=check origin feat/a",
+                "git fetch --update-shallow origin",
+                "git ls-remote --exit-code origin",
+                # Review text containing ` --approve` matches the approval
+                # rule; that is a review, not a merge.
+                'gh pr review 1 --request-changes -b "ok --approve"',
+            ),
+        )
+        # Raw API calls and `git -C` keep a prompt: a prefix rule cannot see
+        # their effect.
+        expect(
+            "ask",
+            (
+                "git -C sub push origin main",
+                "git -C sub status",
+                "gh api repos/a/b",
+            ),
+        )
+        expect(
+            "deny",
+            (
+                # Forced merge and direct pushes to `main` are absolute.
+                "gh pr merge --admin 1",
+                "gh pr merge 1 --admin",
+                "git push origin main",
+                "git push -u origin main",
+                "git push origin feat/a main",
+                "git push origin main --follow-tags",
+                "git push origin HEAD:main",
+                "git push origin :main",
+                "git push origin main:main",
+                "git push origin heads/main",
+                "git push origin refs/heads/main",
+                "git push origin feat/a:heads/main",
+                "git push origin feat/a:refs/heads/main --atomic",
+                # A push with no named destination goes where configuration
+                # sends it, which from the primary checkout is `main`.
+                "git push",
+                "git push origin",
+                "git push -u origin",
+                "git push origin HEAD",
+                "git push origin HEAD --follow-tags",
+                "git push origin @",
+                "git push origin @ --atomic",
+                "git push -u",
+                "git push --set-upstream",
+                "git push --follow-tags",
+                "git push origin -u",
+                "git push origin --follow-tags",
+                # Force refspecs, including a tag.
+                "git push origin +feat/a",
+                "git push origin +refs/tags/v1",
+                # Kept denies.
+                "git push --force-with-lease origin main",
+                "git push -d origin feat/a",
+                "gh release delete v1",
+                "gh release delete-asset v1 a.tgz",
+                "gh run cancel 1",
+                "git commit --amend",
+                "git commit -m a --amend",
+                # Hook bypass (git.md) on commit, push and merge.
+                "git commit --no-verify -m a",
+                "git commit -m a --no-veri",
+                "git push --no-verify origin feat/a",
+                "git merge --no-verify feat/a",
+                "git commit -n -m a",
+                # Git accepts a unique prefix of a long option and clusters
+                # short options, so each acts as the full option.
+                "git push --del origin feat/a",
+                "git push --de origin feat/a",
+                "git push origin feat/a --dele",
+                "git push origin --mirr",
+                "git push origin --m",
+                "git push --pru origin feat/a",
+                "git push origin feat/a --pru",
+                "git push --forc origin feat/a",
+                "git push --force-w origin feat/a",
+                "git push origin feat/a --force-w",
+                "git push -fu origin feat/a",
+                "git push -uf origin feat/a",
+                "git push -qf origin feat/a",
+                "git push -vf origin feat/a",
+                "git push -nf origin feat/a",
+                "git push -ud origin feat/a",
+                "git push -du origin feat/a",
+                "git push origin -qd feat/a",
+                "git push origin --al",
+                "git push origin --b",
+                "git push origin --branches",
+                "git commit --amen -m a",
+                "git commit -m a --amen",
+                "git commit --am",
+                # Tags are immutable history (git.md): force and delete in each
+                # form Git 2.43 accepts, with unique prefixes (`--f`, `--fo` and
+                # `--for` are ambiguous with `--format`) and the two-letter
+                # clusters that act.
+                "git tag -f v1",
+                "git tag -fa v1 -m a",
+                "git tag -a -f v1 -m a",
+                "git tag -m a -f v1",
+                "git tag --forc v1",
+                "git tag --force v1",
+                "git tag -af v1 -m a",
+                "git tag -ef v1 -m a",
+                "git tag -if v1",
+                "git tag -sf v1 -m a",
+                "git tag -m a -af v1",
+                "git tag -d v1",
+                "git tag --d v1",
+                "git tag --del v1",
+                "git tag --delete v1",
+                "git tag -i -d v1",
+                "git tag -ed v1",
+                "git tag -id v1",
+                # A fetch moves a local tag through a `refs/tags/` destination
+                # and deletes one through tag pruning (answer 8).
+                "git fetch . +HEAD:refs/tags/v1",
+                "git fetch -f . HEAD:refs/tags/v1",
+                "git fetch --forc . HEAD:refs/tags/v1",
+                "git fetch origin +refs/tags/v1:refs/tags/v1",
+                "git fetch -p origin 'refs/tags/*:refs/tags/*'",
+                "git fetch --prune-tags origin",
+                "git fetch --prune-t origin",
+                "git fetch -P origin",
+                "git fetch -P -p origin",
+                "git fetch -Pp origin",
+                "git fetch -p -P origin",
+                # Answer 9: an unqualified `tags/<name>` destination and the
+                # shortest tag-pruning prefix.
+                "git fetch -f . HEAD:tags/v1",
+                "git fetch . +HEAD:tags/v1",
+                "git fetch --prune- origin",
+                # Answer 10: refspecs read from standard input and a refspec
+                # map, either of which can write into `refs/tags/`.
+                "git fetch --stdin origin < refs.txt",
+                "git fetch --refmap='+refs/*:refs/*' origin refs/tags/v1",
+                "git fetch --refm='+refs/*:refs/*' origin refs/tags/v1",
+                # SPEC-0215: unique abbreviations of the executable-carrying
+                # options, per the Git 2.43 `--help-all` option lists.
+                "git push --rece=sh origin feat/a",
+                "git push origin feat/a --recei sh",
+                "git push --e=sh origin feat/a",
+                "git push --ex=sh origin feat/a",
+                "git push origin feat/a --exe sh",
+                "git fetch --upl=sh origin",
+                "git fetch origin --uplo sh",
+                "git pull --upl=sh origin",
+                "git ls-remote --u=sh origin",
+                "git ls-remote --up=sh origin",
+                "git ls-remote --exe=sh origin",
+                # Documented over-denials: name the branch, rename it, or
+                # reword the text.
+                "git push --tags origin",
+                "git push --force-if-includes origin feat/a",
+                "git push origin feat/heads/main",
+                "git push origin feat/x-udp",
+                "git push origin feat/a--demo",
+                "git push origin feat/add-nfs",
+                "git push origin feat/add-ufw",
+                'git push -o "x main y" origin feat/a',
+                'git push -o "x HEAD y" origin feat/a',
+                'git push -o "x @ y" origin feat/a',
+                'git commit -m "drop --am"',
+                'git commit -m "drop --no-veri"',
+                "git tag main-ef0123",
+                'git tag -a v1 -m "drop -f"',
+                "git fetch origin 'refs/tags/*:refs/tags/*'",
+                "git fetch origin main:tags/x",  # creates a new tag, no rewrite
+                "git push origin feat/a--edit",  # contains `--e`
+            ),
+        )
+        # Recorded residuals (SPEC-0214): no deny rule matches these.
+        # Changing one is deliberate.
+        expect(
+            "allow",
+            (
+                "git push origin :feat/a",  # refspec deletion
+                "git push -uvf origin feat/a",  # three-letter cluster
+                "git push -q",  # option-only push
+                "git commit -a -n -m a",  # short hook bypass after an option
+                "git commit -an -m a",  # short hook bypass inside a cluster
+                "git tag -aef v1 -m a",  # three-letter tag cluster
+                "git tag -ied v1",  # three-letter tag cluster, delete side
+                "git fetch -pP origin",  # tag pruning second in a cluster
+                "git fetch -f --tags origin",  # forced tag fetch
+                "git fetch -ft origin",  # forced tag fetch in a cluster
+                "git fetch -f origin tag v1",  # forced `tag <name>` refspec
+                "git fetch origin '+refs/*:refs/*'",  # glob covering tags
+                "git fetch origin '+refs/t*:refs/t*'",  # glob covering tags
+                "git fetch -p origin 'refs/t*:refs/t*'",  # glob, pruning
+                'git fetch origin +main:"refs/tags/v1"',  # quoted destination
+            ),
+        )
+        # No rule matches, so the client's default prompt decides.
+        self.assertIsNone(decision('gh pr review 1 --request-changes -b "--approve"'))
         self.assertNotIn("Bash(*)", permissions["allow"])
 
     def test_deletion_and_history_destruction_is_denied(self):

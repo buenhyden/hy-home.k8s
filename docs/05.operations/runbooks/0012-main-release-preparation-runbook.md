@@ -1,10 +1,10 @@
 ---
 title: "Main Release Preparation"
-version: "1.3.1"
+version: "1.4.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 artifact_id: "RUN-0012"
 ---
 
@@ -33,9 +33,11 @@ main에 통합된 공개 계약 변경을 릴리스하려는 경우 사용한다
 ### Authority and Access
 
 - **Type**: Repository release preparation and publication
-- **Executor**: 검토된 main revision과 원격 Release 권한을 확인한 운영자
+- **Executor**: 검토된 main revision과 원격 Release 권한을 확인한 운영자,
+  또는 version과 asset을 명시한 운영자의 현재 요청에 따라 행동하는 agent
 - **Boundary**: PR 준비와 로컬 검사는 저장소 작업이다. tag·Release 게시,
-  원격 설정·자산 조작은 대상과 승인 출처가 확인된 operator 단계다.
+  원격 설정·자산 조작은 대상과 승인 출처가 확인된 operator 단계다. 게시의
+  별도 승인은 그 운영자 요청이며, operator 승인 경로로 해당 Task에 기록한다.
 
 Python과 구현의 trusted resolver가 받아들이는 `git`, `git-cliff`, `gh`
 도구를 사전에 확인한다. 일반 PATH에서 명령이 보이는 것만으로 이 조건이
@@ -63,7 +65,7 @@ Python과 구현의 trusted resolver가 받아들이는 `git`, `git-cliff`, `gh`
 | 2 | main에서 `release/vX.Y.Z` 브랜치를 만들고 release tool의 `prepare` preview로 제안 내용을 확인한 뒤, 명시적 `--write`로 정규 `CHANGELOG.md`를 작성해 release-preparation PR을 연다. 1.0 이후 breaking/additive compatible/compatible fix는 major/minor/patch다. 첫 0.y는 운영자가 version과 호환성 약속을 명시한다. | 릴리스 노트가 실제 통합 내용에 대응한다. | dev push 또는 7일 artifact만으로 정규 이력을 대신하려 한다. |
 | 3 | 변경 입력에 해당하는 focused·affected·exact-index 및 명명된 목적·보안 단위 검사를 수행하고 로컬 커밋 직전 최종 index의 필수 lint·format을 확인한다. 오래 걸리는 full/ci 일괄 검사와 blanket unit discovery는 완료 조건으로 실행하지 않는다. semantic review 결과, 별도 PR SHA/run의 hosted style 결과와 정상 PR/merge 결과를 확인한다. hosted CI는 branch/delivery metadata와 선택된 style 규칙만 확인하며(ADR-0048), `independent-review` required check는 2026-11-03에 제거되었다. | Task에 서로 다른 입력의 결과, 도구, 승인 경계와 최종 main SHA가 기록된다. | 선택된 필수 검사 실패, `NOT_RUN`, 중요한 리뷰 finding, 또는 SHA 불일치가 있다. |
 | 4 | 게시 직전 현재 main commit, 해당 SemVer tag/Release의 부재 또는 동일 대상, 변경된 승인 조건을 원격에서 확인한다. 이전 `main-<full SHA>` tag는 역사로 그대로 둔다. | 정확한 대상과 재시도 가능 조건이 확정된다. | 기존 tag를 이동해야 하거나 remote 설정·권한이 미관측이다. |
-| 5 | release tool의 `publish` preview를 읽고, 원격 대상·승인·자산을 대조한 운영자만 `--execute`를 사용한다. 구현은 정확한 main commit에서 추출한 `CHANGELOG.md`의 릴리스 노트와 모든 자산을 한 draft의 tag·target·prerelease 상태에 묶어 검증한 뒤 게시한다. 게시 후에도 같은 필드·본문과 자산을 재조회한다. immutable Release 설정이 실제 활성이라면 자산 확인 후에만 게시한다. | 하나의 SemVer tag와 Release가 검토된 main commit에 연결된다. | 승인 범위, main blob, 노트 본문, 자산, draft/게시 상태 또는 원격 설정이 다르다. |
+| 5 | release tool의 `publish` preview를 읽고, 원격 대상·승인·자산을 대조한 운영자, 또는 version과 asset을 명시한 운영자의 현재 요청에 따라 같은 대조를 마친 agent가 operator-approved 단계로 `--execute`를 사용한다. 구현은 정확한 main commit에서 추출한 `CHANGELOG.md`의 릴리스 노트와 모든 자산을 한 draft의 tag·target·prerelease 상태에 묶어 검증한 뒤 게시한다. 게시 후에도 같은 필드·본문과 자산을 재조회한다. immutable Release 설정이 실제 활성이라면 자산 확인 후에만 게시한다. | 하나의 SemVer tag와 Release가 검토된 main commit에 연결된다. | 승인 범위, main blob, 노트 본문, 자산, draft/게시 상태 또는 원격 설정이 다르다. |
 | 6 | tag 대상, Release 상태, `CHANGELOG.md`가 반영된 main SHA를 다시 읽고 Task에 관측 사실을 기록한다. | publish 결과 또는 `DEFER` 원인이 한 owner에 남는다. | 원격 결과가 없으면 로컬 파일로 성공을 추정한다. |
 
 ### Stop Conditions
@@ -109,7 +111,10 @@ python3 scripts/release.py --root . prepare --version vX.Y.Z --initial-version -
 python3 scripts/release.py --root . publish --version vX.Y.Z --initial-version --asset relative/path
 ```
 
-다음 `--execute` 명령은 **별도 승인과 원격 검증 후 운영자만** 실행한다.
+다음 `--execute` 명령은 operator-approved 단계다. **별도 승인과 원격 검증
+후** 운영자, 또는 version과 asset을 명시한 운영자의 현재 요청에 따라 agent가
+실행한다. 별도 승인은 그 요청이며 operator 승인 경로로 Task에 기록하고, 원격
+검증은 바뀌지 않는다.
 
 ```bash
 python3 scripts/release.py --root . publish --version vX.Y.Z --asset relative/path --execute
