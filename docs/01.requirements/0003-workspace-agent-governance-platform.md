@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "4.0.0"
+version: "4.0.1"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -449,6 +449,7 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0193 | completed spec | W03 relationship and link contract (W03-H08, W03-H16): the registry `relationship_contract` section records the relations, relation kinds and link types with strict registry rules, and `LINK-FRAGMENT` refuses a broken link fragment. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0193-w03-relationship-link-contract/` |
 | SPEC-0208 | completed spec | W03 SemVer version tests (REQ:898, W03-D68): one shared `precedence` function orders SemVer values, and the lifecycle comparison refuses a document or registry version downgrade and a changed released `shared_contract` edition. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0208-w03-semver-tests/` |
 | SPEC-0194 | completed spec | W03 policy rule ID contract (W03-H29 package 2, W03-D53): the registry `policy_rule_ids` section records fifteen pending policy codes, the two policy TemplateDefinitions carry the Rules table and the `POLICY-RULE-*` checks refuse an unidentified or misnumbered rule. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0194-w03-policy-rule-id-contract/` |
+| SPEC-0195 | completed spec | W03 Requirement form (W03-H36, W03-D55): the four Requirements use the common Requirement form with its TemplateDefinition, the common requirement table columns and the approved Rationale cells. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0195-w03-requirement-form/` |
 
 **SPEC-0152 recovery proof.** The exact completed source is commit `4033d38e7ac6eac0130700c8cf259ea252f44916`, reachable from retained local `refs/heads/codex/manual-document-disposition-policy` (`git merge-base --is-ancestor` rc 0). The current user authorized this bounded package exit on 2026-11-10; no hold was identified in the current repository documents or request, and the Task's frozen disposition decision names consumers and preservation route. Before any deletion, QA confirmed `git cat-file -e` rc 0 for each `commit:path`, restored each with `git show` to a mode-0600 temporary file, and obtained `cmp -s` rc 0 against its unchanged current source; the temporary files were removed. The three exact paths and Git blob identities are:
 
@@ -770,5 +771,13 @@ This is local retained-ref recovery proof before disposition, not remote or host
 - `d0425082685db1d9aa7b847039f06ff1f3ec0a94:docs/03.specs/0194-w03-policy-rule-id-contract/plan.md` — blob/source OID `3a1e5208f04e7f51d235ff2956210aeff0540cad`; SHA-256 `19fa102081d9f11d74bec2139e88f854bdd07153a590514a50c3cab855aed20d` (11242 bytes).
 - `d0425082685db1d9aa7b847039f06ff1f3ec0a94:docs/03.specs/0194-w03-policy-rule-id-contract/spec.md` — blob/source OID `4af2a2cf81bcf0325ffbcb0f35e7df0ab33b1d8e`; SHA-256 `35c8ef63c42dc7cc5a27b7933e338fef655398afbc78e52d2a376d3b7df1c060` (21064 bytes).
 - `d0425082685db1d9aa7b847039f06ff1f3ec0a94:docs/03.specs/0194-w03-policy-rule-id-contract/tasks/tsk-0001-w03-policy-rule-id-contract.md` — blob/source OID `f42a21e20ed0d32fd2d4d7e27d06f1a5eb49c402`; SHA-256 `7a4754bd89d56a09ada4415ec55641692db2ff285ca99527bc33325911cb1dd3` (23418 bytes).
+
+This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
+
+**SPEC-0195 recovery proof.** The exact completed source is the Task freeze commit `6f4c7339028b30f606efa83010509b80c2e56ed4`, reachable from local `refs/heads/claude/w03-requirement-form` (`git merge-base --is-ancestor` rc 0) and, after its merge, from `main`. The user authorized this exit, and no hold was identified. Before deleting any file, QA observed HEAD `6f4c7339` with a clean index and worktree; for every exact `commit:path` it observed `git cat-file -t` type blob, the same OID from `git hash-object --no-filters` on the current file, and a byte-equal comparison of the `git show` restoration, read through a pipe, with the current file. No temporary file was written, and HEAD, index and worktree were unchanged afterwards.
+
+- `6f4c7339028b30f606efa83010509b80c2e56ed4:docs/03.specs/0195-w03-requirement-form/plan.md` — blob/source OID `03306e33e41a096841fe8cff5d35433ca00e3ee5`; SHA-256 `b0d265a1c0a85e3f52debeed9b59c3d535c3dafe5c62a61a7859b00626e9d204` (11812 bytes).
+- `6f4c7339028b30f606efa83010509b80c2e56ed4:docs/03.specs/0195-w03-requirement-form/spec.md` — blob/source OID `901e3c6f8c501cd3decc7b1f4fc04955cbf193ca`; SHA-256 `69ec0cdbb32422cb6d271469a7444b3c717564e5f6a5ab00a5e7466e617a4356` (21458 bytes).
+- `6f4c7339028b30f606efa83010509b80c2e56ed4:docs/03.specs/0195-w03-requirement-form/tasks/tsk-0001-w03-requirement-form.md` — blob/source OID `fab532303402e2cccbf3270ccb00a060ebe33df3`; SHA-256 `bf833d7b2b9baa4f8acf5994dd5ab9e6198708e53ff8a4483547060f726a2a17` (44269 bytes).
 
 This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
