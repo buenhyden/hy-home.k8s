@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.11.0"
+version: "2.11.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -99,13 +99,6 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   rather than Stage 99 itself as a separate policy owner. Neither a Task PASS
   nor the parent Spec's `approved` state substitutes for promotion. Do not
   rewrite a historical Plan to add a new record.
-  SPEC-0200 (W03-D50, W03-D59) holds two one-use exemptions until it closes.
-  The package-exit check admits, for each of the two frozen SPEC-0161 paths,
-  exactly one reviewed file, identified by the sha256 of its whole content. The
-  Task evidence retention check treats the Spec anchors
-  `#success-criteria--verification-plan` and `#criteria` as equal in a link to
-  the same package's `spec.md`. Nothing else in a finished package or a recorded
-  row changes, and the last source commit of SPEC-0200 removes both.
 - `DOCLIFE-R003` A Task carries actual work state: `draft` is proposed, `ready` means the
   approved inputs and execution prerequisites are assembled (it is no new
   approval or live-action permission), `in-progress`

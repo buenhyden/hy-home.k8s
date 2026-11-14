@@ -125,19 +125,13 @@ class TaskHistoryRetentionTests(unittest.TestCase):
                 )
         self.assertEqual(self.issues(), set())
 
-    def test_fragment_route_admits_only_the_mapped_fragment_of_a_same_package_link(
-        self,
-    ) -> None:
-        # SPEC-0200 (W03-D59): the base row stands for a historical package and
-        # keeps the old anchor; the route treats the two fragments as equal.
-        mapped = "[VAL-P03-001](../spec.md#criteria)"
-        self.assertEqual(self.issues(evidence_changes={"Criteria": mapped}), set())
+    def test_a_changed_fragment_in_a_recorded_evidence_row_is_refused(self) -> None:
+        # SPEC-0200 retired its one-use fragment route: the comparison is a plain
+        # text comparison again, so the mapped fragment reads as a changed criterion.
         for cell in (
-            "[VAL-P03-002](../spec.md#criteria)",
-            "[VAL-P03-001](../../0998-other/spec.md#criteria)",
-            "[VAL-P03-001](../spec.md#other)",
-            "[VAL-P03-001](../plan.md#criteria)",
-            "[VAL-P03-001](../spec.md#criteria), [VAL-P03-002](../spec.md#criteria)",
+            "[VAL-P03-001](../spec.md#criteria)",
+            "[VAL-P03-002](../spec.md#success-criteria--verification-plan)",
+            "[VAL-P03-001](../../0998-other/spec.md#success-criteria--verification-plan)",
         ):
             with self.subTest(cell=cell):
                 self.assertIn(

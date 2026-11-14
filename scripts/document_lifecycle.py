@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import functools
-import hashlib
 import re
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
@@ -591,16 +590,6 @@ def _task_item_edge_diagnostics(
     return tuple(issues)
 
 
-# SPEC-0200 (W03-D59): a one-use route, removed when that package closes. It treats
-# the Spec anchor that the Spec form removes and its replacement as equal in a link
-# to the same package's spec.md, and nothing else.
-_FRAGMENT_ROUTE = re.compile(r"\]\(\.\./spec\.md#success-criteria--verification-plan\)")
-
-
-def _fragment_mapped(cell: str) -> str:
-    return _FRAGMENT_ROUTE.sub("](../spec.md#criteria)", cell)
-
-
 def _task_evidence_retention_diagnostics(
     path: PurePosixPath,
     context: LifecycleEvidenceContext,
@@ -640,9 +629,7 @@ def _task_evidence_retention_diagnostics(
             and new.get("Required", "").strip() != "yes"
         ):
             reason = f"{identifier} prior adverse check made optional"
-        elif _fragment_mapped(old.get("Criteria", "").strip()) != _fragment_mapped(
-            new.get("Criteria", "").strip()
-        ):
+        elif old.get("Criteria", "").strip() != new.get("Criteria", "").strip():
             reason = f"{identifier} criterion membership changed"
         if reason:
             issues.append(
@@ -1116,22 +1103,6 @@ def lineage_retired_identities(
     return retired
 
 
-# SPEC-0200 (W03-D50, W03-D59): a one-use admission, removed when that package
-# closes. Each frozen path admits exactly one reviewed file, by the sha256 of its
-# whole content. The user admitted the two moved files on 2026-11-15 (answer
-# "Approve without review").
-_FROZEN_SPEC_SHA256 = "7fb00f535721ae71c8ba4f2713a3d907692411a1608a08a2da0bf8622ee53594"
-_FROZEN_PLAN_SHA256 = "118c9a8b7327c116e44c730eaff17fb11574d9939da6e2393a9787658622fd2a"
-_REVIEWED_FROZEN_FILES: Mapping[PurePosixPath, str] = {
-    PurePosixPath(
-        "docs/03.specs/0161-w00-v14-7-delta-intake/spec.md"
-    ): _FROZEN_SPEC_SHA256,
-    PurePosixPath(
-        "docs/03.specs/0161-w00-v14-7-delta-intake/plan.md"
-    ): _FROZEN_PLAN_SHA256,
-}
-
-
 def package_exit_diagnostics(
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
     proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -1220,15 +1191,6 @@ def package_exit_diagnostics(
             for document in ("spec.md", "plan.md"):
                 path = root / document
                 if path in base_texts and proposed_texts.get(path) != base_texts[path]:
-                    reviewed = _REVIEWED_FROZEN_FILES.get(path)
-                    if (
-                        reviewed is not None
-                        and hashlib.sha256(
-                            proposed_texts.get(path, "").encode("utf-8")
-                        ).hexdigest()
-                        == reviewed
-                    ):
-                        continue
                     refuse(
                         path,
                         "R4",

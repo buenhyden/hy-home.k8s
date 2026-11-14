@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import importlib.util
 import io
 import json
@@ -10,7 +9,6 @@ import sys
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
-from unittest import mock
 from pathlib import Path, PurePosixPath
 
 from tests.git_fixture import GitFixture
@@ -29,7 +27,6 @@ VALIDATOR = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = VALIDATOR
 SPEC.loader.exec_module(VALIDATOR)
 
-import document_lifecycle  # noqa: E402
 from document_lifecycle import (  # noqa: E402
     LifecycleDocument,
     package_exit_diagnostics,
@@ -151,33 +148,6 @@ class PackageExitRuleTest(unittest.TestCase):
         for path in (SPEC_PATH, PLAN_PATH):
             proposed = snapshot("cancelled", texts={path: "changed\n"})
             self.assertEqual(self.rules(base, proposed), [(path, "R4")])
-
-    def test_reviewed_frozen_file_is_admitted_and_any_other_content_refused(
-        self,
-    ) -> None:
-        # SPEC-0200 (W03-D50, W03-D59): one reviewed file per frozen path, by sha256.
-        reviewed = "reviewed moved Spec\n"
-        digest = hashlib.sha256(reviewed.encode("utf-8")).hexdigest()
-        base = snapshot("cancelled")
-        proposed = snapshot("cancelled", texts={SPEC_PATH: reviewed})
-        self.assertEqual(self.rules(base, proposed), [(SPEC_PATH, "R4")])
-        with mock.patch.object(
-            document_lifecycle,
-            "_REVIEWED_FROZEN_FILES",
-            {PurePosixPath(SPEC_PATH): digest},
-        ):
-            self.assertEqual(self.rules(base, proposed), [])
-            one_byte = snapshot("cancelled", texts={SPEC_PATH: reviewed[:-1]})
-            self.assertEqual(self.rules(base, one_byte), [(SPEC_PATH, "R4")])
-            other_path = snapshot("cancelled", texts={PLAN_PATH: reviewed})
-            self.assertEqual(self.rules(base, other_path), [(PLAN_PATH, "R4")])
-
-    def test_admitted_hashes_are_those_of_the_frozen_files_in_the_tree(self) -> None:
-        # Holds until the final source commit of SPEC-0200 removes the admission.
-        for path, digest in document_lifecycle._REVIEWED_FROZEN_FILES.items():
-            self.assertEqual(
-                hashlib.sha256((ROOT / path).read_bytes()).hexdigest(), digest, path
-            )
 
     def test_admitted_shapes(self) -> None:
         cases = {
