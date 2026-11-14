@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "4.0.4"
+version: "5.0.0"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -239,64 +239,67 @@ The table below records the succession of current meaning. Earlier member IDs ar
 
 ### Downstream Links
 
-No downstream link is listed here: the architecture description that owns each member is named in the `Downstream owner` column of `Lifecycle Traceability`, and `scripts/document-backlinks.py` derives the reverse view.
+No downstream link is listed here: the architecture description or Spec that owns each member cites it in its own requirement column, `scripts/document-backlinks.py` derives the reverse view and the `REQUIREMENT-COVERAGE` check of `scripts/validate-links-and-owners.py` refuses a member that no document cites.
+
+- REQ-0003-FR-0032: N/A — AD-0006 does not cover the repository vocabulary, so no description row cites this member; [ADR-0058](../02.architecture/decisions/0058-repository-vocabulary-in-knowledge-surface.md) decides it.
+- Acceptance criterion 13: the release decision is [ADR-0048](../02.architecture/decisions/0048-local-qa-and-semver-release-ownership.md) and the release-preparation procedure is [RUN-0012](../05.operations/runbooks/0012-main-release-preparation-runbook.md).
 
 ### Lifecycle Traceability
 
-| Requirement ID | Acceptance criterion | Downstream owner |
-| --- | --- | --- |
-| REQ-0003-FR-0001 | The common governance and owner graph validate as a single current source. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0002 | Provider gateways keep the thin adapter boundary. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0003 | Registry skill membership and path existence are machine-validated; provenance classes are policy-reviewed. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0004 | Every strategy axis and scope owner can be found. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0005 | A repo-changing handoff leaves its evidence and limitations. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0006 | Template, profile, and cross-link checks pass. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0007 | No GitOps, secret, privilege, or external-action guardrail is violated. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0008 | Registry-admitted surfaces carry native claims separate from the common semantics. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0009 | Registry schema, model and effort bindings validate statically; provider-runtime observation stays separate remote/live evidence, and no MCP server is admitted. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0010 | The machine harness contract/schema validates every role and adapter. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0011 | The bounded runner's timeout, output, child cleanup, and no-progress handoff are validated by Task evidence. | N/A — SPEC-0072 left the tree; Git history recovers it |
-| REQ-0003-FR-0012 | The document contract registry alone defines routes, profiles, metadata, form and lifecycle edges. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0140 (left the tree; Git history recovers it) |
-| REQ-0003-FR-0013 | Every physical form maps to one profile, and template and validator agree. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0014 | Each stage keeps its purpose and copies no execution detail upward. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0015 | A disposition transfers current meaning and reviews all consumer and preservation obligations before removal. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0016 | One machine route selects each applicable leaf once per identical input, configuration, tool, mode and trust while independent validator failure meanings remain distinct. | N/A — SPEC-0117, SPEC-0118, SPEC-0120 left the tree; Git history recovers them |
-| REQ-0003-FR-0017 | Public-repository purpose QA runs locally; hosted branch metadata and PR style have distinct observed inputs and never certify local QA. | N/A — SPEC-0113, SPEC-0115, SPEC-0123 left the tree; Git history recovers them |
-| REQ-0003-FR-0018 | Logical commits get the risk-classed checklist review and owner acceptance, exact-index and pre-commit style checks; named purpose/unit gates replace retired full/ci and blanket discovery. | N/A — SPEC-0140 left the tree; Git history recovers it |
-| REQ-0003-FR-0019 | Execution state lives only in the package-local Plan/Task. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0020 | Eligible non-current documents leave their stage after manual source restoration review; `docs/98.archive/` remains unvalidated. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), ADR-0056, SPEC-0152 and SPEC-0140 (left the tree; Git history recovers them) |
-| REQ-0003-FR-0021 | Each reference, audit or generated artifact names basis, observation time and owner. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0022 | No competing progress ledger exists; the work residue ledger holds residue only, and memory entries are never Task status or evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0023 | Identity, uniqueness and path correspondence checks PASS. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0024 | No compatibility layer remains without a consumer and a unique rule. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0025 | The governance validator checks these obligations at the current Registry and governance owners. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0026 | Each evidence class is reported separately and never promoted without observation. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0027 | Lifecycle validation judges profile, state and edges; body corrections pass semantic and link checks. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), SPEC-0153 and SPEC-0140 (left the tree; Git history recovers them) |
-| REQ-0003-FR-0028 | Each failure class has a direct negative test, and a missing required tool fails. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0029 | A reviewed main release-preparation PR controls canonical changelog and a single SemVer tag/Release producer; historical SHA tags are preserved. Actual publication needs separate observation. | N/A — SPEC-0136, SPEC-0137 left the tree; Git history recovers them |
-| REQ-0003-FR-0030 | Active scripts, tests and hosted surfaces are retired only after ongoing coverage and consumers transfer, with distinct failure meanings preserved. | N/A — SPEC-0140 left the tree; Git history recovers it |
-| REQ-0003-FR-0031 | Representative Skill comparisons retain actual paired outputs, scoped scoring and one aggregate owner; canonical evidence forms neither rerun grading nor establish native behavior. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0032 | One vocabulary owns term meanings with stable IDs and policy-owner links; policies keep the rules. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-NFR-0001 | Role/adapter counts derive from the Registry; eval and model fitness remain reported gaps until observed. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-NFR-0002 | Local selected checks retain exact input/mode boundaries and hosted evidence remains separate. | N/A — SPEC-0107 left the tree; Git history recovers it |
-| REQ-0003-NFR-0003 | Dated primary sources are mapped to claims, applicable scope, local decisions and Task evidence. | N/A — SPEC-0107 left the tree; Git history recovers it |
-| REQ-0003-NFR-0004 | A baseline defect is fixed without weakening a contract, and no false positive, environment limit or unresolved failure is reported as success. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-IF-0001 | No legacy or orphan current owner remains on an active surface. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-IF-0002 | An external role idea is admitted only after it passes a local gap and an eval. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 01 remains acceptance-only | The common `.agents/` owner graph links without contradiction. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 02 remains acceptance-only | Each Requirement Package→AD→ADR link is written once by the citing document and the reverse view is derived; Spec/Plan/Task links are added when a package exists. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 03 remains acceptance-only | Gateways do not copy policy and keep evidence classes distinct. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 04 remains acceptance-only | The repository static quality gate PASSes. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 05 remains acceptance-only | The repository template contract stays the only form authority. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 06 remains acceptance-only | Registry-derived roles and admitted adapters are at parity. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 07 remains acceptance-only | Provider runtime readiness stays remote/live evidence recorded in a Task; no static check claims it. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 08 remains acceptance-only | Contract, schema, and provider metadata parity PASSes. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 09 remains acceptance-only | Bounded failure handling and safe handoff | N/A — SPEC-0072 left the tree; Git history recovers it |
-| N/A — Acceptance criterion 10 remains acceptance-only | Evaluation capacity exists; observed pairs and model fitness remain unmeasured and are reported as gaps. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 11 remains acceptance-only | Applicable local stage checks retain distinct inputs without repeating a successful identical leaf. | N/A — SPEC-0107 left the tree; Git history recovers it |
-| N/A — Acceptance criterion 12 remains acceptance-only | There are zero stale legacy and orphan references. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 13 remains acceptance-only | Canonical main changelog and one SemVer tag/Release producer pass local refusal checks; publication is observed separately. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md); release decision ADR-0048 and RUN-0012 |
-| N/A — Acceptance criterion 14 remains acceptance-only | Proven obsolete callers are retired after ongoing coverage transfer; Issues, Spec, Task and Project retain distinct ownership. | N/A — SPEC-0107 left the tree; Git history recovers it |
+| Requirement ID | Acceptance criterion |
+| --- | --- |
+| REQ-0003-FR-0001 | The common governance and owner graph validate as a single current source. |
+| REQ-0003-FR-0002 | Provider gateways keep the thin adapter boundary. |
+| REQ-0003-FR-0003 | Registry skill membership and path existence are machine-validated; provenance classes are policy-reviewed. |
+| REQ-0003-FR-0004 | Every strategy axis and scope owner can be found. |
+| REQ-0003-FR-0005 | A repo-changing handoff leaves its evidence and limitations. |
+| REQ-0003-FR-0006 | Template, profile, and cross-link checks pass. |
+| REQ-0003-FR-0007 | No GitOps, secret, privilege, or external-action guardrail is violated. |
+| REQ-0003-FR-0008 | Registry-admitted surfaces carry native claims separate from the common semantics. |
+| REQ-0003-FR-0009 | Registry schema, model and effort bindings validate statically; provider-runtime observation stays separate remote/live evidence, and no MCP server is admitted. |
+| REQ-0003-FR-0010 | The machine harness contract/schema validates every role and adapter. |
+| REQ-0003-FR-0011 | The bounded runner's timeout, output, child cleanup, and no-progress handoff are validated by Task evidence. |
+| REQ-0003-FR-0012 | The document contract registry alone defines routes, profiles, metadata, form and lifecycle edges. |
+| REQ-0003-FR-0013 | Every physical form maps to one profile, and template and validator agree. |
+| REQ-0003-FR-0014 | Each stage keeps its purpose and copies no execution detail upward. |
+| REQ-0003-FR-0015 | A disposition transfers current meaning and reviews all consumer and preservation obligations before removal. |
+| REQ-0003-FR-0016 | One machine route selects each applicable leaf once per identical input, configuration, tool, mode and trust while independent validator failure meanings remain distinct. |
+| REQ-0003-FR-0017 | Public-repository purpose QA runs locally; hosted branch metadata and PR style have distinct observed inputs and never certify local QA. |
+| REQ-0003-FR-0018 | Logical commits get the risk-classed checklist review and owner acceptance, exact-index and pre-commit style checks; named purpose/unit gates replace retired full/ci and blanket discovery. |
+| REQ-0003-FR-0019 | Execution state lives only in the package-local Plan/Task. |
+| REQ-0003-FR-0020 | Eligible non-current documents leave their stage after manual source restoration review; `docs/98.archive/` remains unvalidated. |
+| REQ-0003-FR-0021 | Each reference, audit or generated artifact names basis, observation time and owner. |
+| REQ-0003-FR-0022 | No competing progress ledger exists; the work residue ledger holds residue only, and memory entries are never Task status or evidence. |
+| REQ-0003-FR-0023 | Identity, uniqueness and path correspondence checks PASS. |
+| REQ-0003-FR-0024 | No compatibility layer remains without a consumer and a unique rule. |
+| REQ-0003-FR-0025 | The governance validator checks these obligations at the current Registry and governance owners. |
+| REQ-0003-FR-0026 | Each evidence class is reported separately and never promoted without observation. |
+| REQ-0003-FR-0027 | Lifecycle validation judges profile, state and edges; body corrections pass semantic and link checks. |
+| REQ-0003-FR-0028 | Each failure class has a direct negative test, and a missing required tool fails. |
+| REQ-0003-FR-0029 | A reviewed main release-preparation PR controls canonical changelog and a single SemVer tag/Release producer; historical SHA tags are preserved. Actual publication needs separate observation. |
+| REQ-0003-FR-0030 | Active scripts, tests and hosted surfaces are retired only after ongoing coverage and consumers transfer, with distinct failure meanings preserved. |
+| REQ-0003-FR-0031 | Representative Skill comparisons retain actual paired outputs, scoped scoring and one aggregate owner; canonical evidence forms neither rerun grading nor establish native behavior. |
+| REQ-0003-FR-0032 | One vocabulary owns term meanings with stable IDs and policy-owner links; policies keep the rules. |
+| REQ-0003-NFR-0001 | Role/adapter counts derive from the Registry; eval and model fitness remain reported gaps until observed. |
+| REQ-0003-NFR-0002 | Local selected checks retain exact input/mode boundaries and hosted evidence remains separate. |
+| REQ-0003-NFR-0003 | Dated primary sources are mapped to claims, applicable scope, local decisions and Task evidence. |
+| REQ-0003-NFR-0004 | A baseline defect is fixed without weakening a contract, and no false positive, environment limit or unresolved failure is reported as success. |
+| REQ-0003-IF-0001 | No legacy or orphan current owner remains on an active surface. |
+| REQ-0003-IF-0002 | An external role idea is admitted only after it passes a local gap and an eval. |
+| N/A — Acceptance criterion 01 remains acceptance-only | The common `.agents/` owner graph links without contradiction. |
+| N/A — Acceptance criterion 02 remains acceptance-only | Each Requirement Package→AD→ADR link is written once by the citing document and the reverse view is derived; Spec/Plan/Task links are added when a package exists. |
+| N/A — Acceptance criterion 03 remains acceptance-only | Gateways do not copy policy and keep evidence classes distinct. |
+| N/A — Acceptance criterion 04 remains acceptance-only | The repository static quality gate PASSes. |
+| N/A — Acceptance criterion 05 remains acceptance-only | The repository template contract stays the only form authority. |
+| N/A — Acceptance criterion 06 remains acceptance-only | Registry-derived roles and admitted adapters are at parity. |
+| N/A — Acceptance criterion 07 remains acceptance-only | Provider runtime readiness stays remote/live evidence recorded in a Task; no static check claims it. |
+| N/A — Acceptance criterion 08 remains acceptance-only | Contract, schema, and provider metadata parity PASSes. |
+| N/A — Acceptance criterion 09 remains acceptance-only | Bounded failure handling and safe handoff |
+| N/A — Acceptance criterion 10 remains acceptance-only | Evaluation capacity exists; observed pairs and model fitness remain unmeasured and are reported as gaps. |
+| N/A — Acceptance criterion 11 remains acceptance-only | Applicable local stage checks retain distinct inputs without repeating a successful identical leaf. |
+| N/A — Acceptance criterion 12 remains acceptance-only | There are zero stale legacy and orphan references. |
+| N/A — Acceptance criterion 13 remains acceptance-only | Canonical main changelog and one SemVer tag/Release producer pass local refusal checks; publication is observed separately. |
+| N/A — Acceptance criterion 14 remains acceptance-only | Proven obsolete callers are retired after ongoing coverage transfer; Issues, Spec, Task and Project retain distinct ownership. |
 
 ### Archived Lineage
 

@@ -1,6 +1,6 @@
 ---
 title: "02.architecture"
-version: "0.8.1"
+version: "0.9.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -89,6 +89,7 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 - 인접 stage는 `../01.requirements/`, `../03.specs/`, `../05.operations/`로 연결한다.
 - root-level 구현 경로는 `../../gitops/`, `../../infrastructure/`처럼 repository root 기준으로 올라간다.
 - AD/ADR 문서 안의 링크는 각 하위 폴더의 최종 문서 위치 기준으로 다시 계산한다.
+- AD는 자신이 다루는 Requirement의 각 member를 `Lifecycle Traceability`의 `Upstream requirement` 열에서 인용한다. Requirement는 downstream 링크 열을 두지 않으며, 인용되지 않은 member는 `REQUIREMENT-COVERAGE` 검사가 거부한다.
 
 ### Transition and Exit
 

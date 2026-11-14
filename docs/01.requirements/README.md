@@ -1,6 +1,6 @@
 ---
 title: "01.requirements"
-version: "0.10.2"
+version: "0.10.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -99,7 +99,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 
 #### 연결 규칙
 
-- Requirement Package는 관련 AD, ADR, Spec 링크를 가진다.
+- Requirement Package는 관련 AD, ADR, Spec 링크를 가진다. Requirement는 downstream 링크 열을 쓰지 않는다. 각 요구 member는 소유한 AD 또는 Spec이 자신의 요구 열에서 인용하며, 인용하지 않는 member는 `Traceability` 아래 `Downstream Links`에 `N/A —`와 사유를 적은 한 줄로만 허용된다.
 - AD와 Spec은 `REQ-####-(FR|NFR|IF)-####` 전체 요구 ID를 추적한다.
 - Agent 기능인 경우 사용 시나리오, 허용/금지 행동, human-in-the-loop 요구를 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
 - 후속 AD/ADR/Spec이 아직 없으면 없는 링크를 만들지 않고, 문서 인덱스와 Requirement Package의 `Traceability` 아래 `Downstream Links`에 후속 갭으로 표시한다. 이미 삭제된 문서의 요약은 같은 `Traceability` 아래 `Archived Lineage`에 둔다.

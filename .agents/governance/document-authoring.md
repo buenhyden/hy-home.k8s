@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.29.0"
+version: "3.30.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -306,7 +306,11 @@ role, its forms and placement are owned by the
 Guide, Runbook, Incident, Postmortem, Policy, AGENTS, Skill, Root README, Stage README,
 Service README, Workspace README, Reference Pack README, Knowledge Map, Vocabulary,
 Prompt, Evaluation Task, Evaluation Score, Evaluation Results, Governance Document,
-Governance Role, Reference Report and Requirement use their registry forms. Requirement keeps its
+Governance Role, Reference Report, Requirement and Architecture use their registry forms. Architecture keeps its
+Lifecycle Traceability table and its Archived Lineage under Traceability, its Constraints table under
+Constraints and its Quality Scenarios table under Quality and Risks; an architecture description cites each
+requirement member in the Upstream requirement column of Lifecycle Traceability, a Requirement writes no
+downstream link column, and the derived reverse view and the REQUIREMENT-COVERAGE check replace it. Requirement keeps its
 Lifecycle Traceability table and its Archived Lineage under Traceability, its
 requirement tables (Requirement ID, Statement, Rationale, Acceptance and an optional
 trailing Priority) under Functional Requirements and, where a quality requirement

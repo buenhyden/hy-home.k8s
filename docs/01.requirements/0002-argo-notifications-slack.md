@@ -1,6 +1,6 @@
 ---
 title: "Argo Notifications Slack Requirement Package"
-version: "2.0.0"
+version: "3.0.0"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -121,19 +121,19 @@ No separate verification method is stated: each requirement is verified by the e
 
 ### Lifecycle Traceability
 
-| Requirement ID | Acceptance criterion | Downstream owner |
-| --- | --- | --- |
-| REQ-0002-FR-0001 | The ArgoCD Notifications controller is enabled and an operator can check its Pod state. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) |
-| REQ-0002-FR-0002 | The Slack credential syncs from OpenBao through ESO, and no plaintext token appears in Git or logs. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) |
-| REQ-0002-FR-0003 | The ConfigMap defines templates and triggers for deployment, health, sync, Rollouts completion, and abort events. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) |
-| REQ-0002-NFR-0001 | Default subscriptions apply health degradation and sync failure notifications to every app. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) |
-| REQ-0002-IF-0001 | A per-app subscription to an additional Slack channel for deployment completion notifications can be declared. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) |
-| REQ-0002-IF-0002 | Notification credential bootstrap is performed only as a human-approved external task. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) |
-| N/A — Acceptance criterion 01 remains acceptance-only | An operator can confirm that the `argocd-notifications-controller` Pod is `Running`. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) |
-| N/A — Acceptance criterion 02 remains acceptance-only | The `argocd-notifications-secret` ExternalSecret can be confirmed as `Ready=True`. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) |
-| N/A — Acceptance criterion 03 remains acceptance-only | A deliberately triggered sync failure event arrives in the approved Slack channel. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) |
-| N/A — Acceptance criterion 04 remains acceptance-only | A health degraded event arrives in the approved Slack channel. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) |
-| N/A — Acceptance criterion 05 remains acceptance-only | A Rollouts abort event arrives in the approved Slack channel. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) |
+| Requirement ID | Acceptance criterion |
+| --- | --- |
+| REQ-0002-FR-0001 | The ArgoCD Notifications controller is enabled and an operator can check its Pod state. |
+| REQ-0002-FR-0002 | The Slack credential syncs from OpenBao through ESO, and no plaintext token appears in Git or logs. |
+| REQ-0002-FR-0003 | The ConfigMap defines templates and triggers for deployment, health, sync, Rollouts completion, and abort events. |
+| REQ-0002-NFR-0001 | Default subscriptions apply health degradation and sync failure notifications to every app. |
+| REQ-0002-IF-0001 | A per-app subscription to an additional Slack channel for deployment completion notifications can be declared. |
+| REQ-0002-IF-0002 | Notification credential bootstrap is performed only as a human-approved external task. |
+| N/A — Acceptance criterion 01 remains acceptance-only | An operator can confirm that the `argocd-notifications-controller` Pod is `Running`. |
+| N/A — Acceptance criterion 02 remains acceptance-only | The `argocd-notifications-secret` ExternalSecret can be confirmed as `Ready=True`. |
+| N/A — Acceptance criterion 03 remains acceptance-only | A deliberately triggered sync failure event arrives in the approved Slack channel. |
+| N/A — Acceptance criterion 04 remains acceptance-only | A health degraded event arrives in the approved Slack channel. |
+| N/A — Acceptance criterion 05 remains acceptance-only | A Rollouts abort event arrives in the approved Slack channel. |
 
 ### Archived Lineage
 

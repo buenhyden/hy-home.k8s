@@ -12,13 +12,57 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Overview
 
-<!-- Author prompt: identify the architecture subject, stakeholders, and current boundary. -->
+### Purpose and Readers
 
-## Boundaries & Non-goals
+<!-- Author prompt: identify the architecture subject, its stakeholders and the readers this description serves, and state who owns the structure description. -->
 
-<!-- Author prompt: define system boundaries, external dependencies, and explicit non-goals. -->
+### System Boundary
 
-## Quality Attributes
+<!-- Author prompt: define system boundaries, what the system owns and does not own, and explicit non-goals. -->
+
+## Context and Constraints
+
+### Context
+
+<!-- Author prompt: name the external dependencies, actors and trust boundaries the system consumes or serves. -->
+
+### Constraints
+
+<!-- Author prompt: state the constraints that limit the architecture; a description without a constraints table explains where its constraints are recorded. -->
+
+| Architecture ID | Constraint | Affected Components |
+| --- | --- | --- |
+| <!-- Author prompt: Name a free-text constraint identifier. --> | <!-- Author prompt: State the constraint as a checkable fact. --> | <!-- Author prompt: Name the components or views it limits. --> |
+
+## Current Structure
+
+### Building Blocks
+
+<!-- Author prompt: Describe components, actors, trust boundaries, and major interactions. -->
+<!-- Author prompt: Use proportionate context and container views to show responsibilities, labels, and relationships, or explain an omitted view. -->
+<!-- Author prompt: Give every diagram a title, scope, intended reader, legend, and editable source. Label each element with its name, type and responsibility, and give each relationship a direction and a label that states its purpose and protocol. -->
+
+### Runtime and Deployment
+
+<!-- Author prompt: define deployment topology, configuration owners, runtime platform and operational evidence. -->
+
+## Interfaces
+
+### Contracts
+
+<!-- Author prompt: state data ownership, flow, retention, integrity constraints and the contracts between components. -->
+
+### Failure Boundaries
+
+<!-- Author prompt: define failure boundaries and what each failure leaves intact. -->
+
+## Decisions
+
+### Decision Links
+
+<!-- Author prompt: State core structural choices and link each significant decision to its owning ADR. -->
+
+### Quality and Risks
 
 <!-- Author prompt: make quality attributes measurable and link each to a requirement. -->
 
@@ -29,27 +73,19 @@ artifact_id: "{{ARTIFACT_ID}}"
 | --- | --- | --- | --- | --- |
 | <!-- Author prompt: Name the requirement-backed attribute. --> | <!-- Author prompt: State the triggering event. --> | <!-- Author prompt: State the operating condition. --> | <!-- Author prompt: State the system response. --> | <!-- Author prompt: State a measurable threshold. --> |
 
-## System Overview & Context
-
-<!-- Author prompt: Describe components, actors, trust boundaries, and major interactions. -->
-<!-- Author prompt: State core structural choices and link each significant decision to its owning ADR. -->
-<!-- Author prompt: Use proportionate context and container views to show responsibilities, labels, and relationships, or explain an omitted view. -->
-<!-- Author prompt: Give every diagram a title, scope, intended reader, legend, and editable source. Label each element with its name, type and responsibility, and give each relationship a direction and a label that states its purpose and protocol. -->
-
-## Data Architecture
-
-<!-- Author prompt: state data ownership, flow, retention, and integrity constraints. -->
-
-## Infrastructure & Deployment
-
-<!-- Author prompt: define deployment topology, configuration owners, and failure boundaries. -->
-
 ## Traceability
 
-<!-- Author prompt: map requirements and boundaries to the decisions or specifications that own them. -->
-<!-- Author prompt: optionally map the twelve arc42 sections to where this description, an ADR or a requirement covers them, with a reason for each omitted section; link instead of copying. -->
+### Requirement Mapping
+
+<!-- Author prompt: name the requirement this description serves and cite each of its members in the Lifecycle Traceability table. -->
+
+### Currentness and Lineage
+
+<!-- Author prompt: state what is current, which Specs or evidence left the tree, and optionally map the twelve arc42 sections to where this description, an ADR or a requirement covers them, with a reason for each omitted section; link instead of copying. -->
 
 ### Lifecycle Traceability
+
+<!-- Author prompt: map requirements and boundaries to the decisions or specifications that own them. -->
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |

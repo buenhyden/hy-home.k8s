@@ -430,8 +430,7 @@ REQUIREMENT_EXTENSIONS = [
         "kind": "local_h3",
         "condition": (
             "a requirement in a status the body contract enforces (draft, "
-            "in-review, approved) maps each member to its acceptance criterion "
-            "and downstream owner"
+            "in-review, approved) maps each member to its acceptance criterion"
         ),
         "owner": "platform",
         "verification": "the body-contract check",
@@ -472,9 +471,76 @@ REQUIREMENT_TABLE_KEYS = {
     ),
     "Lifecycle Traceability": (
         "requirement-lifecycle-traceability",
-        ("Requirement ID", "Acceptance criterion", "Downstream owner"),
+        ("Requirement ID", "Acceptance criterion"),
         1,
         "Requirement ID",
+    ),
+}
+# SPEC-0197 (W03-D03, W03-D08, W03-D57): the Architecture form, its two local H3
+# extensions and its three tables; the description profiles keep their body
+# contract and carry no H2 list.
+ARCHITECTURE = (
+    "sdlc/architecture-description",
+    "common/template-sdlc-architecture-description",
+)
+ARCHITECTURE_TREE = (
+    ("Overview", ("Purpose and Readers", "System Boundary")),
+    ("Context and Constraints", ("Context", "Constraints")),
+    ("Current Structure", ("Building Blocks", "Runtime and Deployment")),
+    ("Interfaces", ("Contracts", "Failure Boundaries")),
+    ("Decisions", ("Decision Links", "Quality and Risks")),
+    ("Traceability", ("Requirement Mapping", "Currentness and Lineage")),
+)
+ARCHITECTURE_EXTENSIONS = [
+    {
+        "id": "architecture-lifecycle-traceability",
+        "kind": "local_h3",
+        "condition": (
+            "an architecture description in a status the body contract enforces "
+            "(draft, in-review, active) maps each cited requirement to its "
+            "quality attribute or boundary and its ADR or Spec"
+        ),
+        "owner": "platform",
+        "verification": "the body-contract check",
+        "review": "when the Architecture form version changes",
+        "removal": "when architecture lineage has another registered owner",
+        "parent_id": "architecture-traceability",
+        "title": "Lifecycle Traceability",
+    },
+    {
+        "id": "architecture-archived-lineage",
+        "kind": "local_h3",
+        "condition": (
+            "an architecture description summarizes the deleted or archived "
+            "documents whose current meaning it owns, so that Git history "
+            "recovers each of them"
+        ),
+        "owner": "platform",
+        "verification": "the retired-identity reservation",
+        "review": "when the Architecture form version changes",
+        "removal": "when architecture lineage has another registered owner",
+        "parent_id": "architecture-traceability",
+        "title": "Archived Lineage",
+    },
+]
+ARCHITECTURE_TABLE_KEYS = {
+    "Constraints": (
+        "architecture-context-and-constraints-constraints",
+        ("Architecture ID", "Constraint", "Affected Components"),
+        0,
+        "Architecture ID",
+    ),
+    "Quality Scenarios": (
+        "architecture-decisions-quality-and-risks",
+        ("Quality attribute", "Stimulus", "Environment", "Response", "Measure"),
+        0,
+        "Quality attribute",
+    ),
+    "Lifecycle Traceability": (
+        "architecture-lifecycle-traceability",
+        ("Upstream requirement", "Quality attribute or boundary", "ADR / Spec"),
+        1,
+        "Upstream requirement",
     ),
 }
 # SPEC-0186: the six small local roles, each (source, twin), its H2 tree with no
@@ -927,9 +993,10 @@ LOCAL_LINK_ONLY = {
 }
 # The reference-report form also keeps its Sources section link-only (W03-D36).
 LOCAL_LINK_ONLY["reference-report"].add("reference-report-sources")
-# The twenty-two roles that carry a form; every other profile keeps its H2 lists.
+# The twenty-three roles that carry a form; every other profile keeps its H2 lists.
 FORM_PROFILES = (
     REQUIREMENT
+    + ARCHITECTURE
     + GUIDE
     + RUNBOOK
     + INCIDENT
@@ -956,6 +1023,7 @@ FORM_PROFILES = (
 )
 FORM_TEMPLATES = (
     REQUIREMENT[1],
+    ARCHITECTURE[1],
     GUIDE[1],
     RUNBOOK[1],
     INCIDENT[1],
@@ -986,7 +1054,7 @@ FORM_TEMPLATES = (
     REFERENCE_FORM[3],
     REFERENCE_FORM[5],
 )
-TWENTY_TWO_FORMS = [
+TWENTY_THREE_FORMS = [
     "guide",
     "runbook",
     "incident",
@@ -1009,6 +1077,7 @@ TWENTY_TWO_FORMS = [
     "governance-role",
     "reference-report",
     "requirement",
+    "architecture",
 ]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
@@ -1283,7 +1352,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twenty_two_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twenty_three_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -1311,6 +1380,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ("reference-pack-readme", "Reference Pack README"),
                 *((form_id, title) for form_id, title, *_ in LOCAL_FORMS),
                 ("requirement", "Requirement"),
+                ("architecture", "Architecture"),
             ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
@@ -1430,6 +1500,14 @@ class RepositoryRegistryTests(unittest.TestCase):
                 REQUIREMENT_EXTENSIONS,
                 REQUIREMENT_TABLE_KEYS,
                 REQUIREMENT,
+                "Traceability",
+            ),
+            (
+                "architecture",
+                ARCHITECTURE_TREE,
+                ARCHITECTURE_EXTENSIONS,
+                ARCHITECTURE_TABLE_KEYS,
+                ARCHITECTURE,
                 "Traceability",
             ),
         ):
@@ -1573,11 +1651,13 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_twenty_two_forms(self) -> None:
+    def test_repository_registry_loads_with_exactly_the_twenty_three_forms(
+        self,
+    ) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_TWO_FORMS,
+            TWENTY_THREE_FORMS,
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -1596,6 +1676,11 @@ class RepositoryRegistryTests(unittest.TestCase):
             "requirement": [
                 "Functional Requirements",
                 "Quality Requirements",
+                "Lifecycle Traceability",
+            ],
+            "architecture": [
+                "Constraints",
+                "Quality Scenarios",
                 "Lifecycle Traceability",
             ],
             **{
@@ -1623,6 +1708,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("workspace-readme", WORKSPACE_FORM),
                             ("reference-pack-readme", PACK_FORM),
                             ("requirement", REQUIREMENT),
+                            ("architecture", ARCHITECTURE),
                             *(
                                 (form_id, profiles)
                                 for form_id, _, profiles, _, _, _ in LOCAL_FORMS
@@ -1680,7 +1766,7 @@ class RepositoryRegistryTests(unittest.TestCase):
         self.assertEqual(len(form_id), 27)
         self.assertEqual(
             [item.form_id for item in CONTRACTS.load_registry(ROOT).common_forms],
-            TWENTY_TWO_FORMS,
+            TWENTY_THREE_FORMS,
         )
         self.assertEqual(
             schema["$defs"]["section"]["properties"]["level"]["enum"], [2, 3]
@@ -1701,7 +1787,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_TWO_FORMS,
+            TWENTY_THREE_FORMS,
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -4576,8 +4662,8 @@ class GovernanceRoleFormTests(unittest.TestCase):
     def test_the_forms_hold_twenty_sections_and_no_extension(self) -> None:
         forms = {f["form_id"]: f for f in self.raw["common_forms"]["forms"]}
         stage = forms["stage-readme"]
-        self.assertEqual(len(forms), 22)
-        self.assertEqual(list(forms)[-4:-2], ["governance-document", "governance-role"])
+        self.assertEqual(len(forms), 23)
+        self.assertEqual(list(forms)[-5:-3], ["governance-document", "governance-role"])
         counts = {}
         for form_id, title, _, tree, _, link in GOVERNANCE_FORMS:
             with self.subTest(form=form_id):
@@ -5202,9 +5288,9 @@ def requirement_body(*, quality: bool = True, lineage: bool = True) -> str:
         "### Source and Constraints\n\nNo upstream requirement exists.",
         "### Downstream Links\n\n- **AD**: [AD 0004](../02.architecture/x.md)",
         "### Lifecycle Traceability\n\n"
-        "| Requirement ID | Acceptance criterion | Downstream owner |\n"
-        "| --- | --- | --- |\n"
-        "| REQ-0001-FR-0001 | The controller is available. | AD 0004 |",
+        "| Requirement ID | Acceptance criterion |\n"
+        "| --- | --- |\n"
+        "| REQ-0001-FR-0001 | The controller is available. |",
     ]
     if lineage:
         blocks.append("### Archived Lineage\n\nSPEC-0004 left the tree.")
@@ -5275,14 +5361,16 @@ class RequirementFormTests(unittest.TestCase):
                 self.assertEqual(contract["table_heading"], "Lifecycle Traceability")
                 self.assertEqual(
                     contract["required_columns"],
-                    ["Requirement ID", "Acceptance criterion", "Downstream owner"],
+                    ["Requirement ID", "Acceptance criterion"],
                 )
+                self.assertIsNone(contract["target_link_column"])
+                self.assertIsNone(contract["source_link_column"])
                 self.assertEqual(
                     contract["enforced_statuses"], ["draft", "in-review", "approved"]
                 )
                 self.assertEqual(
                     contract["allowed_target_profile_ids"],
-                    ["sdlc/architecture-description", "sdlc/spec"],
+                    [],
                 )
 
     def test_the_three_tables_are_recorded_on_the_twin_and_copied_to_the_source(
@@ -5430,10 +5518,32 @@ class RequirementFormTests(unittest.TestCase):
 
     def test_the_body_contract_table_is_not_read_as_a_requirement_table(self) -> None:
         body = requirement_body()
-        self.assertIn(
-            "| Requirement ID | Acceptance criterion | Downstream owner |", body
-        )
+        self.assertIn("| Requirement ID | Acceptance criterion |", body)
+        self.assertNotIn("Downstream owner", body)
         self.assertEqual(self.tables(body), [])
+
+    def test_the_old_three_column_body_contract_table_fails_the_column_check(
+        self,
+    ) -> None:
+        old = requirement_body().replace(
+            "| Requirement ID | Acceptance criterion |\n| --- | --- |\n"
+            "| REQ-0001-FR-0001 | The controller is available. |",
+            "| Requirement ID | Acceptance criterion | Downstream owner |\n"
+            "| --- | --- | --- |\n"
+            "| REQ-0001-FR-0001 | The controller is available. | AD 0004 |",
+        )
+        self.assertIn("Downstream owner", old)
+
+        def contract(text: str) -> list[str]:
+            return sorted(
+                item.rule_id
+                for item in MARKDOWN._body_contract_diagnostics(
+                    REQUIREMENT_PATH, self.profile, text, "approved", "registry"
+                )
+            )
+
+        self.assertEqual(contract(requirement_body()), [])
+        self.assertIn("BODY-CONTRACT-COLUMNS", contract(old))
 
     def test_the_template_passes_the_form_tree_and_carries_no_archived_lineage(
         self,
@@ -5452,6 +5562,246 @@ class RequirementFormTests(unittest.TestCase):
         self.assertNotIn("Verification intent", text)
         self.assertNotIn("| Requirement | Priority |", text)
         for h3 in (h for _, children in REQUIREMENT_TREE for h in children):
+            with self.subTest(h3=h3):
+                self.assertRegex(
+                    text, rf"(?m)^### {re.escape(h3)}\n\n<!-- Author prompt:"
+                )
+
+
+ARCHITECTURE_PATH = PurePosixPath(
+    "docs/02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md"
+)
+
+
+def architecture_table(header: tuple[str, ...], *, rows: int = 1) -> str:
+    lines = [
+        "| " + " | ".join(header) + " |",
+        "| " + " | ".join("---" for _ in header) + " |",
+    ]
+    for number in range(rows):
+        lines.append("| " + " | ".join(f"{key} {number}" for key in header) + " |")
+    return "\n".join(lines)
+
+
+def architecture_body(
+    *,
+    constraints: int = 0,
+    scenarios: int = 1,
+    lineage: bool = True,
+    quality_header: tuple[str, ...] = ARCHITECTURE_TABLE_KEYS["Quality Scenarios"][1],
+) -> str:
+    blocks = ["# Description title"]
+    for h2, children in ARCHITECTURE_TREE:
+        blocks.append(f"## {h2}")
+        for h3 in children:
+            text = f"The {h3} of the system."
+            if h3 == "Constraints":
+                text += "\n\n" + architecture_table(
+                    ARCHITECTURE_TABLE_KEYS["Constraints"][1], rows=constraints
+                )
+            if h3 == "Quality and Risks":
+                text += "\n\n" + architecture_table(quality_header, rows=scenarios)
+            blocks.append(f"### {h3}\n\n{text}")
+    blocks.append(
+        "### Lifecycle Traceability\n\n"
+        + architecture_table(ARCHITECTURE_TABLE_KEYS["Lifecycle Traceability"][1])
+    )
+    if lineage:
+        blocks.append("### Archived Lineage\n\nSPEC-0004 left the tree.")
+    return md(*blocks)
+
+
+class ArchitectureFormTests(unittest.TestCase):
+    """SPEC-0197 VAL-ADFORM-001: the Architecture form, extensions and tables."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.raw = load_raw()
+        cls.registry = CONTRACTS.load_registry(ROOT)
+        cls.profiles = {p.profile_id: p for p in cls.registry.profiles}
+        cls.profile = cls.profiles[ARCHITECTURE[0]]
+
+    def tree(self, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(
+                ARCHITECTURE_PATH, self.profile, text, "active"
+            )
+        )
+
+    def tables(self, text: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._table_diagnostics(
+                ARCHITECTURE_PATH, self.profile, text
+            )
+        )
+
+    def test_the_form_has_six_h2_twelve_h3_all_required_and_two_extensions(
+        self,
+    ) -> None:
+        form = next(
+            f for f in self.registry.common_forms if f.form_id == "architecture"
+        )
+        self.assertEqual(form.title, "Architecture")
+        self.assertEqual(
+            [(s.title, tuple(c.title for c in s.children)) for s in form.sections],
+            list(ARCHITECTURE_TREE),
+        )
+        every = [n for s in form.sections for n in (s, *s.children)]
+        self.assertEqual([n.title for n in every if n.requiredness != "required"], [])
+        self.assertFalse(any(n.link_only for n in every))
+        self.assertEqual(
+            [(e.extension_id, e.parent_id, e.title) for e in form.extensions],
+            [(e["id"], e["parent_id"], e["title"]) for e in ARCHITECTURE_EXTENSIONS],
+        )
+
+    def test_the_two_profiles_derive_their_headings_and_keep_the_body_contract(
+        self,
+    ) -> None:
+        titles = tuple(title for title, _ in ARCHITECTURE_TREE)
+        for profile_id in ARCHITECTURE:
+            with self.subTest(profile=profile_id):
+                raw = next(p for p in self.raw["profiles"] if p["id"] == profile_id)
+                self.assertEqual(
+                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
+                )
+                self.assertEqual(raw["document_role"], "architecture")
+                headings = self.profiles[profile_id].headings
+                self.assertEqual(headings.required, titles)
+                self.assertEqual(headings.allowed, titles)
+                contract = raw["relationships"]["body_contract"]
+                self.assertEqual(contract["section"], "Traceability")
+                self.assertEqual(contract["table_heading"], "Lifecycle Traceability")
+                self.assertEqual(
+                    contract["required_columns"],
+                    [
+                        "Upstream requirement",
+                        "Quality attribute or boundary",
+                        "ADR / Spec",
+                    ],
+                )
+                self.assertEqual(contract["source_link_column"], "Upstream requirement")
+                self.assertEqual(contract["target_link_column"], "ADR / Spec")
+                self.assertEqual(
+                    contract["enforced_statuses"], ["draft", "in-review", "active"]
+                )
+
+    def test_the_three_tables_are_recorded_on_the_twin_and_copied_to_the_source(
+        self,
+    ) -> None:
+        twin, source = (self.profiles[i] for i in reversed(ARCHITECTURE))
+        self.assertEqual(source.tables, twin.tables)
+        self.assertEqual(
+            {
+                t.name: (
+                    t.section,
+                    tuple(c.key for c in t.columns),
+                    t.minimum_rows,
+                    t.row_identity,
+                )
+                for t in twin.tables
+            },
+            ARCHITECTURE_TABLE_KEYS,
+        )
+        self.assertTrue(all(c.required for t in twin.tables for c in t.columns))
+
+    def test_the_repository_registry_is_valid_and_its_twin_matches(self) -> None:
+        self.assertEqual(rules_of(self.raw), set())
+        REGISTRY_CHECK._assert_template_source_parity(self.registry)
+
+    def test_the_twin_definition_names_the_form_version_and_every_real_consumer(
+        self,
+    ) -> None:
+        definition_ = self.profiles[ARCHITECTURE[1]].template_definition
+        self.assertEqual(definition_["contract_version"], "COMMON-DOC-FORM-1/1.0.0")
+        for path in (
+            "docs/99.templates/registry.json",
+            "docs/99.templates/contracts/document-profile.schema.json",
+            "docs/99.templates/templates/architecture/description.template.md",
+            "docs/02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md",
+            "docs/02.architecture/descriptions/0005-argo-notifications-slack.md",
+            "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
+            "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md",
+            "docs/02.architecture/README.md",
+            "docs/99.templates/README.md",
+            "scripts/document_contracts.py",
+            "scripts/document_lifecycle.py",
+            "scripts/validate-document-contract-registry.py",
+            "scripts/validate-markdown-profiles.py",
+            "scripts/validate-links-and-owners.py",
+            "scripts/validate-document-lifecycle.py",
+            "tests/test_common_form_tree.py",
+        ):
+            with self.subTest(path=path):
+                self.assertIn(path, definition_["consumer_paths"])
+                self.assertTrue((ROOT / path).is_file())
+        self.assertEqual(
+            definition_["policy_refs"],
+            [".agents/governance/document-authoring.md", ".agents/governance/sdlc.md"],
+        )
+        self.assertEqual(
+            definition_["vocabulary_refs"], [".agents/knowledge/glossary.md"]
+        )
+
+    def test_a_complete_document_passes_with_and_without_rows_or_lineage(self) -> None:
+        for kwargs in ({}, {"constraints": 2}, {"scenarios": 0}, {"lineage": False}):
+            with self.subTest(kwargs=kwargs):
+                body = architecture_body(**kwargs)
+                self.assertEqual(self.tree(body), [])
+                self.assertEqual(self.tables(body), [])
+
+    def test_a_previous_h2_or_a_missing_h3_fails_the_tree(self) -> None:
+        old = architecture_body().replace("## Interfaces", "## Data Architecture")
+        self.assertLessEqual(
+            {"BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"}, set(self.tree(old))
+        )
+        lost = architecture_body().replace(
+            "### Failure Boundaries\n\nThe Failure Boundaries of the system.\n\n", ""
+        )
+        self.assertEqual(self.tree(lost), ["BODY-H3-REQUIRED"])
+
+    def test_archived_lineage_and_lifecycle_traceability_belong_under_traceability(
+        self,
+    ) -> None:
+        body = architecture_body()
+        lineage = "### Archived Lineage\n\nSPEC-0004 left the tree.\n"
+        for heading in ("## Overview", "## Interfaces", "## Decisions"):
+            with self.subTest(before=heading):
+                moved = body.replace(lineage, "").replace(
+                    heading, lineage + "\n" + heading, 1
+                )
+                self.assertEqual(self.tree(moved), ["BODY-H3-PARENT"])
+
+    def test_a_wrong_quality_scenarios_or_constraints_header_is_refused(self) -> None:
+        keys = ARCHITECTURE_TABLE_KEYS["Quality Scenarios"][1]
+        for header in (keys[:-1], (*keys, "Note")):
+            with self.subTest(header=header):
+                body = architecture_body(quality_header=header)
+                self.assertEqual(self.tables(body), ["BODY-TABLE-COLUMNS"])
+        wrong = architecture_body(constraints=1).replace(
+            "| Architecture ID | Constraint | Affected Components |",
+            "| Architecture ID | Constraint | Owner |",
+        )
+        self.assertEqual(self.tables(wrong), ["BODY-TABLE-COLUMNS"])
+
+    def test_the_template_passes_the_form_tree_and_carries_no_archived_lineage(
+        self,
+    ) -> None:
+        twin = self.profiles[ARCHITECTURE[1]]
+        path = PurePosixPath(twin.template)
+        text = (ROOT / path).read_text(encoding="utf-8")
+        self.assertEqual(
+            [
+                item.rule_id
+                for item in MARKDOWN.validate_document_text(text, path, twin, "strict")
+            ],
+            [],
+        )
+        self.assertNotIn("Archived Lineage", text)
+        for h2 in ("Boundaries & Non-goals", "System Overview & Context"):
+            self.assertNotIn(f"## {h2}", text)
+        for h3 in (h for _, children in ARCHITECTURE_TREE for h in children):
             with self.subTest(h3=h3):
                 self.assertRegex(
                     text, rf"(?m)^### {re.escape(h3)}\n\n<!-- Author prompt:"
@@ -5771,7 +6121,9 @@ class TemplateRecordTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     CONTRACTS.template_definition_record(self.raw, profile["id"])
         for profile in self.templates:
-            self.assertNotIn(profile["document_role"], SDLC_ROLES - {"requirement"})
+            self.assertNotIn(
+                profile["document_role"], SDLC_ROLES - {"requirement", "architecture"}
+            )
 
     def test_the_function_refuses_a_profile_that_is_not_a_template(self) -> None:
         for profile_id in ("operation/guide", "no/such-profile"):
@@ -6064,11 +6416,11 @@ class FormlessRoleTableTests(unittest.TestCase):
 
 
 class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
-    def test_only_the_twenty_two_form_profiles_use_the_tree(self) -> None:
+    def test_only_the_twenty_three_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_TWO_FORMS,
+            TWENTY_THREE_FORMS,
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),
