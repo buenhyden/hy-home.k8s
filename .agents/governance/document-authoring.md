@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.31.0"
+version: "3.32.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -45,20 +45,45 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 
 ### Requirements
 
-1. Identify the owning stage and normalize the final repository-relative path.
-2. Resolve exactly one registry profile and read its canonical template before
+| Rule ID | Condition | Level | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| AUTHOR-R001 | Always | required | `markdown-profiles` | active |
+| AUTHOR-R002 | Before creating or restructuring a document | required | `markdown-profiles` | active |
+| AUTHOR-R003 | Always | required | `document-lifecycle` | active |
+| AUTHOR-R004 | Always | required | `markdown-profiles` | active |
+| AUTHOR-R005 | Always | required | `markdown-profiles` | active |
+| AUTHOR-R006 | Always | required | `links-and-owners` | active |
+| AUTHOR-R007 | Always | required | `document-lifecycle` | active |
+| AUTHOR-R008 | Always | required | Semantic review | active |
+| AUTHOR-R009 | After content or path changes | required | `links-and-owners` | active |
+| AUTHOR-R010 | Always | required | Semantic review | active |
+| AUTHOR-R011 | Always | required | `document-contract-registry` | active |
+| AUTHOR-R012 | Always | required | `document-lifecycle` | active |
+| AUTHOR-R013 | Always | required | `document-lifecycle` | active |
+| AUTHOR-R014 | Always | required | `scripts/qa.py` | active |
+| AUTHOR-R015 | Always | required | `markdown-profiles` | active |
+| AUTHOR-R016 | Always | required | `markdown-profiles` | active |
+| AUTHOR-R017 | Always | required | `document-contract-registry` | active |
+| AUTHOR-R018 | Always | required | `document-contract-registry` | active |
+| AUTHOR-R019 | Always | required | `document-contract-registry` | active |
+| AUTHOR-R020 | Always | required | Semantic review | active |
+| AUTHOR-R021 | Always | required | `markdown-profiles` | active |
+| AUTHOR-R022 | Always | required | Semantic review | active |
+
+1. `AUTHOR-R001` Identify the owning stage and normalize the final repository-relative path.
+2. `AUTHOR-R002` Resolve exactly one registry profile and read its canonical template before
    creating or restructuring a document. No match or multiple matches is a
    stop condition. Start a new document with `python3 scripts/document-generator.py`,
    which copies the template, fills the shared value markers from the inputs and
    the target path, and refuses a request the registry or the identity rules do
    not admit; the caller writes the number in the path. A hand copy of the form
    stays valid, and the validators stay the gate for either.
-3. Use the profile-owned initial status, metadata, sections, and relationships.
+3. `AUTHOR-R003` Use the profile-owned initial status, metadata, sections, and relationships.
    Do not assume every profile starts at "draft". Router READMEs participate in
    the governed envelope with an "active" routing constant, but have neither
    artifact identity nor lifecycle binding. Stable reference pack anchors keep
    their reference identity and publication lifecycle even when named README.md.
-4. Take the frontmatter key set from the selected profile (the key order is
+4. `AUTHOR-R004` Take the frontmatter key set from the selected profile (the key order is
    stated below), and each key's value grammar from the
    frontmatter schema (`docs/99.templates/contracts/frontmatter.schema.json`).
    The registry's `frontmatter_keys` owns each key's meaning, author,
@@ -69,7 +94,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    Every string, date, version, and identity scalar uses double quotes. A
    "title" never repeats the document's "artifact_id": identity is already a
    key, and a title that restates it carries no information.
-5. Treat a key the profile omits as a key the document has no business
+5. `AUTHOR-R005` Treat a key the profile omits as a key the document has no business
    declaring. `layer` names the numbered stage a document lives in. It is kept only on
    an accepted architecture decision from ADR-0001 to ADR-0061, which is never
    edited in place, until a successor replaces it, and never on an ADR after
@@ -77,7 +102,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    form declare none. A profile that declares no `artifact_id`
    describes something the repository does not give a stable identity. Preserve
    an existing optional governance identity; do not mint one for normalization.
-6. Replace prompts with concrete content, use complete stable IDs for
+6. `AUTHOR-R006` Replace prompts with concrete content, use complete stable IDs for
    traceability, and calculate links from the final target path. A file outside
    `docs/` links to current owners and stage or collection README navigation,
    never directly to an individual numbered-stage document, including historical
@@ -100,7 +125,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    `supersedes` and `superseded_by`.
    Link the current owner instead of `docs/98.archive/`; that directory is
    unvalidated history, and a link into it is not checked.
-7. Keep a Requirement Package solution-independent. Put executable interface
+7. `AUTHOR-R007` Keep a Requirement Package solution-independent. Put executable interface
    contracts and change-scoped Technical Approach and Acceptance Contract in
    the owning Spec package; put order, risks, verification, and rollback in its
    Plan and execution evidence in its Task records. A fresh Spec and Plan
@@ -135,12 +160,12 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    An observed `FAIL` needs concrete Check, Input and Location just as `PASS`
    does. Unrun `NOT_RUN` or unavailable `DEFER` may retain `Pending` in a
    location until real evidence exists, with the reason and next owner stated.
-8. Promote durable cross-change decisions to an Architecture Decision and
+8. `AUTHOR-R008` Promote durable cross-change decisions to an Architecture Decision and
    current system views to an Architecture Description. Do not create parallel
    design, test, release, or progress authority. This repository uses external
    release evidence: Task and Git own local work, while tags, hosted CI, and
    provider/live results remain external evidence.
-9. Review the owning README after content or path changes and update stale
+9. `AUTHOR-R009` Review the owning README after content or path changes and update stale
    navigation in the same logical change.
    A README is written for human readers: purpose, structure, usage and
    navigation. It names no AI agent audience and carries no agent
@@ -179,20 +204,20 @@ This policy excludes no subject within its scope; if one is excluded, name it an
      instead of repeating it.
    - Add or remove a folder `AGENTS.md` in the same change that creates or
      retires the responsibility, and update this list.
-10. Do not add a router to a Spec package. `spec.md` owns the change contract,
+10. `AUTHOR-R010` Do not add a router to a Spec package. `spec.md` owns the change contract,
     `plan.md` owns order and risk, and `tasks/` is the Task inventory; a
     package-level index only restates them and drifts from `tasks/`.
-11. Keep a Stage 90 collection complete at all three of its levels. The
+11. `AUTHOR-R011` Keep a Stage 90 collection complete at all three of its levels. The
     registry routes each level and names its form; the reason they are distinct
     is that a collection outlives any one pack, a pack owns its own observation
     boundary and refresh trigger, and a member carries one dated observation or
     finding with its source. A
     collection with a missing level pushes one of those three jobs onto a
     document that does not own it.
-12. Treat a retirement as retiring a document, not a location. A reviewed,
+12. `AUTHOR-R012` Treat a retirement as retiring a document, not a location. A reviewed,
     tracked document may later occupy a retired path; never restore the
     retired bytes there.
-13. Preserve accepted decisions and completed evidence. Use successors,
+13. `AUTHOR-R013` Preserve accepted decisions and completed evidence. Use successors,
     reciprocal lifecycle relationships and the Archived Lineage summary in the
     owning current document; recover removed bytes from Git history rather than
     rewriting history, leaving redirects, or keeping a second recovery ledger; a closed work residue ledger entry is recovered from Git history.
@@ -203,7 +228,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
     Keep the decision and applicable recovery evidence in the existing Task
     and current owner;
     unresolved conditions defer only that disposition.
-14. Run the checks selected by the affected paths and record evidence in the
+14. `AUTHOR-R014` Run the checks selected by the affected paths and record evidence in the
     owning Task using [quality policy](quality.md).
 
 An Architecture Description explains requirement-linked quality scenarios,
@@ -217,6 +242,10 @@ method, field meanings and units, observed facts, and staleness bounds. The
 Registry owns local headings and form, and templates provide a starting point;
 each document's actual evidence and owner determine its facts, decisions, and
 current authority.
+
+#### Frontmatter order and versions
+
+`AUTHOR-R015`
 
 Governed Markdown uses the ordered common prefix "title", "version",
 "type", "status", "owner", and "updated"; later keys appear only when the
@@ -245,6 +274,10 @@ chooses the level of an increase. Native Skill packages keep name and descriptio
 place that six-key document envelope inside metadata. Preserve native
 invocation, tool and model controls; metadata does not grant execution authority.
 
+#### Template markers and language
+
+`AUTHOR-R016`
+
 Markdown templates use the double-braced UPPER_SNAKE_CASE value grammar,
 native templates use double-underscore UPPER_SNAKE_CASE markers, and author
 guidance uses the registered HTML comment form. The shared value markers are
@@ -264,6 +297,10 @@ remain English, as do agent requirement sections. Template author prompts
 follow the registered language. Do not hand-edit generated current artifacts
 or create authored trees outside the taxonomy.
 
+#### Shared contract edition
+
+`AUTHOR-R017`
+
 The Stage 99 Registry's optional `shared_contract` identifies the approved
 shared edition and this local adapter. Its pinned source revision and digest
 identify the reviewed bytes; `approval_ref` records a separate shared
@@ -275,6 +312,10 @@ adoption also requires application evidence from each repository. Keep this
 adapter's status, language, and native extensions explicit. A new shared
 edition requires an actual owner decision and adoption evidence; do not create
 a separate local WGOV core.
+
+#### Approval and adoption
+
+`AUTHOR-R018`
 
 Approval and adoption are separate facts. An approved or adopted edition
 records past authority and does not freeze the contract; a later approved
@@ -292,6 +333,10 @@ and `consumer_version`; an approved or adopted record needs the approval facts,
 and a fact no record states is `unverified` and is admitted only beside an
 `approval_ref`.
 
+#### Regional extensions
+
+`AUTHOR-R019`
+
 A regional extension may bind paths, commands, environments, native syntax,
 quality targets and deployment. Each extension states its condition, owner,
 verification, review point and removal criterion. An extension
@@ -299,10 +344,18 @@ never weakens or removes a common required condition, and a path or edition
 difference alone is no permanent exception. Standardization never forces one language,
 folder layout, CLI or quality number on every product.
 
+#### Derived and generated copies
+
+`AUTHOR-R020`
+
 A derived or generated copy names its source and edition and changes only
 through that source; an edit made only in the copy is a defect. The Policy
 role, its forms and placement are owned by the
 [SDLC contract](sdlc.md#ownership-and-placement).
+
+#### Registry forms
+
+`AUTHOR-R021`
 
 Guide, Runbook, Incident, Postmortem, Policy, AGENTS, Skill, Root README, Stage README,
 Service README, Workspace README, Reference Pack README, Knowledge Map, Vocabulary,
@@ -382,6 +435,10 @@ required section states its reason and the condition for filling it, never a
 bare statement that nothing is stated, and a pointer line names a location that
 exists. A format
 check cannot authenticate a current operator, live service or approval.
+
+#### Joint edition decisions
+
+`AUTHOR-R022`
 
 Joint edition decisions belong to the request owner `buenhyden`; current
 documentation, QA and operations owners review their scope. Verify an existing

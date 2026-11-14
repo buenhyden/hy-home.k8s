@@ -18768,42 +18768,42 @@
       {
         "path": ".agents/governance/agent-execution.md",
         "code": "EXEC",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": ".agents/governance/approval-and-safety.md",
         "code": "SAFE",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": ".agents/governance/context-and-memory.md",
         "code": "CTX",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": ".agents/governance/document-authoring.md",
         "code": "AUTHOR",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": ".agents/governance/document-lifecycle.md",
         "code": "DOCLIFE",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": ".agents/governance/formatting-and-linting.md",
         "code": "FMT",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": ".agents/governance/git.md",
         "code": "GIT",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": ".agents/governance/model-selection.md",
         "code": "MODEL",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": ".agents/governance/quality.md",
@@ -18813,7 +18813,7 @@
       {
         "path": ".agents/governance/sdlc.md",
         "code": "SDLC",
-        "state": "pending"
+        "state": "adopted"
       },
       {
         "path": "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md",

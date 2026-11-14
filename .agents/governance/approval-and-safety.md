@@ -1,10 +1,10 @@
 ---
 title: "Approval and Safety Policy"
-version: "1.4.1"
+version: "1.5.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 ---
 
 # Approval and Safety Policy
@@ -44,16 +44,42 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 
 ### Requirements
 
+| Rule ID | Condition | Level | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| SAFE-R001 | Always | required | Semantic review | active |
+| SAFE-R002 | Always | required | Semantic review | active |
+| SAFE-R003 | Always | required | `github-actions-security` | active |
+| SAFE-R004 | Always | required | Semantic review | active |
+| SAFE-R005 | Always | required | Semantic review | active |
+| SAFE-R006 | Always | required | `secret-handling` | active |
+| SAFE-R007 | Always | required | Semantic review | active |
+| SAFE-R008 | Before a protected operation | required | Semantic review | active |
+| SAFE-R009 | Before a protected operation | required | Semantic review | active |
+| SAFE-R010 | Before a protected operation | required | Semantic review | active |
+| SAFE-R011 | Immediately before execution and again on resume | required | Semantic review | active |
+| SAFE-R012 | Always | required | Semantic review | active |
+| SAFE-R013 | Always | required | Semantic review | active |
+| SAFE-R014 | Always | required | `secret-handling` | active |
+| SAFE-R015 | When reviewing an ExternalSecret | required | `vault-eso-contracts` | active |
+| SAFE-R016 | Always | required | Semantic review | active |
+| SAFE-R017 | Always | required | `scripts/provider_write_guard.py` | active |
+| SAFE-R018 | Always | required | `agent-governance` | active |
+| SAFE-R019 | Always | required | `agent-governance` | active |
+| SAFE-R020 | When authority is missing | required | Semantic review | active |
+| SAFE-R021 | Always | required | Semantic review | active |
+
 | Surface                                        | Default                                         | Approval boundary                                                                        |
 | ---------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Repository docs, manifests, tests, and scripts | Scoped edits and deterministic local validation | Scope expansion or weakened security/gate failure semantics                              |
-| Bootstrap and recovery assets                  | Edit and review only                            | Running against a cluster or external service                                            |
-| CI configuration                               | Scoped static edits                             | Permission expansion, protected triggers, publishing, paid execution, or remote dispatch |
-| Git history and worktrees                      | Inspect; make requested logical commits         | Push, PR creation, merge, destructive cleanup, history rewrite, or worktree removal      |
-| Live cluster, Argo CD, Vault, and cloud        | No mutation                                     | Explicit operator action with target, command class, rollback, and evidence              |
-| Secrets and private runtime data               | Do not read or record values                    | Stop and use the approved secret/incident process; never expose values                   |
+| `SAFE-R001` Repository docs, manifests, tests, and scripts | Scoped edits and deterministic local validation | Scope expansion or weakened security/gate failure semantics                              |
+| `SAFE-R002` Bootstrap and recovery assets                  | Edit and review only                            | Running against a cluster or external service                                            |
+| `SAFE-R003` CI configuration                               | Scoped static edits                             | Permission expansion, protected triggers, publishing, paid execution, or remote dispatch |
+| `SAFE-R004` Git history and worktrees                      | Inspect; make requested logical commits         | Push, PR creation, merge, destructive cleanup, history rewrite, or worktree removal      |
+| `SAFE-R005` Live cluster, Argo CD, Vault, and cloud        | No mutation                                     | Explicit operator action with target, command class, rollback, and evidence              |
+| `SAFE-R006` Secrets and private runtime data               | Do not read or record values                    | Stop and use the approved secret/incident process; never expose values                   |
 
 #### Authoring and execution
+
+`SAFE-R007`
 
 Scoped local authoring includes development and operating documents, redacted
 examples, synthetic inputs and non-secret management metadata. A dangerous
@@ -78,18 +104,20 @@ than asking the human to repeat a completed routine review.
 
 #### Operator approval route
 
+`SAFE-R008`
+
 There is no repository mechanism that authenticates an approving actor.
 The request owner/operator verifies approval through the original trusted
 interaction or native approval interface. Before a protected operation:
 
-1. Bind the approving actor and responsible executor, exact operation, subject
+1. `SAFE-R009` Bind the approving actor and responsible executor, exact operation, subject
    or target, reviewed revision/snapshot, and applicable validity conditions.
-2. Verify the original approval and current revocation state through that
+2. `SAFE-R010` Verify the original approval and current revocation state through that
    trusted interaction. Record its non-secret reference and the operator's
    verification result in the owning Task or incident; do not copy credentials
    or transcripts. A writer may record supplied facts but cannot invent an
    actor, approval, authentication result or revocation check.
-3. Compare the intended invocation against those bound inputs immediately
+3. `SAFE-R011` Compare the intended invocation against those bound inputs immediately
    before execution and again on resume. Missing/unavailable source, mismatch,
    expiry or revocation does not authorize the dependent action. Continue
    independent safe work and route the blocked action to the operator.
@@ -105,25 +133,25 @@ delegate live/secret operations to a subagent.
 
 #### Execution controls
 
-- Subagents never mutate live clusters. Approved bootstrap or break-glass
+- `SAFE-R012` Subagents never mutate live clusters. Approved bootstrap or break-glass
   actions remain operator-bound, not delegated background work.
-- `kubectl apply/patch/delete`, Helm installation or upgrade, forced Argo CD
+- `SAFE-R013` `kubectl apply/patch/delete`, Helm installation or upgrade, forced Argo CD
   reconciliation, and external secret writes are not default agent actions.
-- Never read or record tokens, authentication files, private keys, plaintext
+- `SAFE-R014` Never read or record tokens, authentication files, private keys, plaintext
   Kubernetes secrets, shell history, raw transcripts, or environment dumps.
   Secret-bearing scratch needs human-directed handling; do not destroy local
   evidence under a generic cleanup request.
-- ExternalSecret reviews use only secret references, mount, and property names,
+- `SAFE-R015` ExternalSecret reviews use only secret references, mount, and property names,
   never their values. Follow existing isolation and AppProject controls.
-- GitHub Actions is repository QA/CI, not live deployment CD.
-- Write-path guards observe structured file tools, patch envelopes, and the
+- `SAFE-R016` GitHub Actions is repository QA/CI, not live deployment CD.
+- `SAFE-R017` Write-path guards observe structured file tools, patch envelopes, and the
   obvious write targets of a shell command. A patch envelope's file headers
   reach the same evaluation a structured write reaches. A shell target does
   not: it is reported and never blocked. A program that opens files itself,
   such as a Python or Node script, stays outside the observation entirely, and
   so do permission rules that match shell file commands. Treat
   instruction-level and rule-level controls as advisory for that class.
-- `read-only-evidence` names what the registry grants, not what an operating
+- `SAFE-R018` `read-only-evidence` names what the registry grants, not what an operating
   system enforces, and the two supported providers differ under that one name.
   On Codex the class binds an operating-system `read-only` sandbox, which is a
   real boundary. On Claude it withholds the structured write tools and, for a
@@ -134,7 +162,7 @@ delegate live/secret operations to a subagent.
   confines its shell to read-only repository search by policy. This difference
   is documented and accepted; do not describe it as parity, and do not report
   the weaker side's policy prohibition as an enforced control.
-- A neutral permission class sets the maximum reach. A provider binding may
+- `SAFE-R019` A neutral permission class sets the maximum reach. A provider binding may
   choose a narrower native scope within that ceiling, and a native
   `role_overrides.scope` may narrow the provider binding for one role. The
   projection must match the resulting binding exactly. The validator rejects
@@ -143,9 +171,9 @@ delegate live/secret operations to a subagent.
   reach is therefore its own read-only class rather than an exception on the
   ordinary one: the role that researches primary sources carries it, and no
   other read-only role gains it by default.
-- Missing authority stops the protected operation at its local draft, not
+- `SAFE-R020` Missing authority stops the protected operation at its local draft, not
   independent approved authoring.
-- Safety denial is an authorization boundary. Cost, time and output limits,
+- `SAFE-R021` Safety denial is an authorization boundary. Cost, time and output limits,
   and the rule that a technical resource limit is no secret/live approval,
   business deadline, session timebox or validation reserve, belong to
   [quality](quality.md#validation-runner-envelope). Preserve failures and

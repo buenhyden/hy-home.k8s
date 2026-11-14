@@ -1,6 +1,6 @@
 ---
 title: "Git Policy"
-version: "2.7.1"
+version: "2.8.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -46,37 +46,57 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 
 ### Requirements
 
-- Before staging, inspect status and the relevant unstaged diff. Stage only
+| Rule ID | Condition | Level | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| GIT-R001 | Before staging | required | Semantic review | active |
+| GIT-R002 | Always | required | `commitizen` hook of `.pre-commit-config.yaml` | active |
+| GIT-R003 | When committing | required | `staged-qa` hook of `.pre-commit-config.yaml` | active |
+| GIT-R004 | For a prose-only authored document or README router commit | required | `document-contract-tests` | active |
+| GIT-R005 | Without explicit approval for that operation | required | Semantic review | active |
+| GIT-R006 | When opening or merging a pull request | required | Semantic review | active |
+| GIT-R007 | After verified implementation | required | Semantic review | active |
+| GIT-R008 | Before a destructive discard | required | Semantic review | active |
+| GIT-R009 | Always | required | `ci-python-contract` | active |
+| GIT-R010 | Always | required | `release-tests` | active |
+| GIT-R011 | Always | required | Semantic review | active |
+| GIT-R012 | Always | required | Semantic review | active |
+| GIT-R013 | Always | required | Semantic review | active |
+| GIT-R014 | Always | required | Semantic review | active |
+| GIT-R015 | Always | required | `commit-message-exceptions` hook of `.pre-commit-config.yaml` | active |
+
+- `GIT-R001` Before staging, inspect status and the relevant unstaged diff. Stage only
   the logical change and inspect `git diff --cached`.
-- Use Conventional Commits with an imperative, specific summary; include the
+- `GIT-R002` Use Conventional Commits with an imperative, specific summary; include the
   reason when it is not obvious. Keep commits aligned to Plan/Task units.
-- Commit through the active hooks: the `staged-qa` hook validates the exact
+- `GIT-R003` Commit through the active hooks: the `staged-qa` hook validates the exact
   index with the selected staged profile, which includes the selected lint and
   format gate, as one run. Local QA owns selected repository-static quality
   evidence. Follow the
   [quality sequence](quality.md#canonical-completion-sequence) and do not repeat
   an identical leaf across hook, command, push or delivery phases. Never use
   `--no-verify`.
-- For a prose-only authored document or README router commit, keep the common
+- `GIT-R004` For a prose-only authored document or README router commit, keep the common
   diff, applicable style and Commitizen message checks and the selected
   document-content checks. Follow
   [ordinary document selection](quality.md#ordinary-document-selection); a
   governance, provider, native, schema, registry or executable change needs
   the focused contract checks its actual consumer selects. Preserve active
   hooks.
-- Do not reset, restore away edits, clean, amend, rebase, force-push, delete
+- `GIT-R005` Do not reset, restore away edits, clean, amend, rebase, force-push, delete
   branches, or remove worktrees without explicit approval for that operation.
   Prefer a forward corrective commit to rewriting shared history.
-- Determine the PR base and inspect its diff. State scope, motivation, risk,
+- `GIT-R006` Determine the PR base and inspect its diff. State scope, motivation, risk,
   validation, rollback, and limitations. Creating a PR or merging it requires
   the user's selection; a passing check is not permission.
-- After verified implementation, honor the user's already selected finish action.
+- `GIT-R007` After verified implementation, honor the user's already selected finish action.
   If none is selected, ask; no passing check grants integration or cleanup authority.
-- Before destructive discard, identify the branch, commits, and worktree and
+- `GIT-R008` Before destructive discard, identify the branch, commits, and worktree and
   obtain exact confirmation. Clean only workflow-owned worktrees, never the
   user's main or host-managed workspace.
 
 #### Branch and integration routing
+
+`GIT-R009`
 
 `main` is the only long-lived branch; feature branches and the
 `release/<tag>` preparation branch are short-lived (ADR-0052 in the
@@ -110,6 +130,8 @@ or signature replaces the owner's approval. A deployment style result requires
 an actual deployment workflow and run; absent that input, keep it unobserved.
 
 #### Release ownership
+
+`GIT-R010`
 
 Use one producer, `scripts/release.py` (ADR-0048 in the
 [ADR log](../../docs/02.architecture/decisions/README.md)), for a `v`-prefixed
@@ -146,6 +168,8 @@ Claude settings no longer prompt for it.
 
 #### Agent delivery commands
 
+`GIT-R011`
+
 This subsection states the delivery boundary once for every agent. On the
 user's current request, an agent may commit, push a feature branch, create,
 inspect, mark ready, approve and merge a pull request, create a tag, run the
@@ -169,18 +193,20 @@ rather than relying on the missing prompt.
 
 Three enforcement layers apply, and none proves another:
 
-- Claude tracked settings are repository-static intent. They deny the
+- `GIT-R012` Claude tracked settings are repository-static intent. They deny the
   matchable forms, including tag force and delete and fetches into local
   tags, and leave to policy a Release made outside the producer, the tag
   rewrites that no rule matches and longer option clusters
   ([Claude provider notes](../../.claude/provider.md)).
-- Codex asks before every network command and forbids a prefix subset
+- `GIT-R013` Codex asks before every network command and forbids a prefix subset
   ([Codex provider notes](../../.codex/provider.md)).
-- Remote protection and rulesets are recorded in
+- `GIT-R014` Remote protection and rulesets are recorded in
   [`.github/rulesets/main-protection.md`](../../.github/rulesets/main-protection.md)
   and are proven only by a dated read-back.
 
 #### Commit-message validation
+
+`GIT-R015`
 
 [`.cz.toml`](../../.cz.toml) is the single Commitizen grammar owner for
 supported types, optional scope, subject and body/footer syntax of ordinary
