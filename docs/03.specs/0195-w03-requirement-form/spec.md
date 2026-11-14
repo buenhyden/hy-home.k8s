@@ -1,0 +1,107 @@
+---
+title: "W03 Requirement Form"
+version: "1.0.0"
+type: "sdlc/spec"
+status: "approved"
+owner: "platform"
+updated: "2026-11-14"
+artifact_id: "SPEC-0195"
+---
+
+# W03 Requirement Form Technical Specification (Spec)
+
+## Overview
+
+This approved change contract is the second phase-3 package of the W03 stage of the external v14.7 execution package, in the order W03-D49 fixes. It gives the Requirement role its COMMON-DOC-FORM-1 1.0.0 form in the Stage 99 registry, gives the requirement template its TemplateDefinition (the first of the six that W03-H13 names) and moves the template and the four approved Requirements to the form (W03-H02, W03-D01). It applies the user's decisions W03-D03 (`Lifecycle Traceability` and `Archived Lineage` stay registered local H3 under Traceability), W03-D08 (table contracts) and W03-D52 (every other existing H3 becomes an H4 and keeps its anchor), recorded in the [SPEC-0161 Task](../0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md), and it reuses the model of SPEC-0169 to SPEC-0189 (recovery in [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage)). A read of `main` at `de64c58d` found the four Requirements at 216 KB together. REQ-0003 alone is 164 KB, of which its `Archived Lineage` section is 122 KB with 136 rows; the four documents hold 154 lineage rows, 68 requirement rows (52 FR, 8 NFR, 8 IF) and 91 `Lifecycle Traceability` rows. Each document has the same ten H2 against the form's five, and 16 H3 other than the two local ones. All 54 fragment links into these documents name an anchor that the move keeps, and no script names any of the seven H2 titles the move removes or any requirement table column. On 2026-11-14 the user decided the three choices this package raised (W03-D55): the `Downstream owner` column is retired in two steps and stays unchanged here; the quality content moves under Quality Requirements; and the requirement tables take the column names of the common contract with a new rationale column. This package's commit records W03-D55 in the SPEC-0161 Task. Because of the third choice the package is not purely form-only, and the Contracts state exactly which content changes. The [Task](tasks/tsk-0001-w03-requirement-form.md) records execution and the [Plan](plan.md) orders the work.
+
+## Strategic Boundaries & Non-goals
+
+- In scope (writer W03, with W05 for test code): `docs/99.templates/registry.json` (the Requirement form with two local H3 extensions, the empty H2 lists of `sdlc/requirement` and `common/template-sdlc-requirement`, the twin's TemplateDefinition with its tables, and the reverse-view note of the `requirement-basis` entry of `relationship_contract`); `docs/99.templates/templates/requirements/requirement-package.template.md`; the four documents `docs/01.requirements/0001-argo-rollouts-progressive-delivery.md`, `0002-argo-notifications-slack.md`, `0003-workspace-agent-governance-platform.md` and `0004-current-local-gitops-platform.md`; `tests/test_common_form_tree.py`, `tests/test_document_terminal_contract.py` and any test that pins these profiles' H2 lists, the form count or the form list; the forms sentence of `.agents/governance/document-authoring.md`, the SDLC forms bullet of `docs/99.templates/README.md` and the linking rules of `docs/01.requirements/README.md`, which still name a `Related Documents` section; each edited document's frontmatter `version` and `updated`; in the SPEC-0161 Task the W03-D55 row, the handoff row for the `Downstream owner` column, an evidence row and the frontmatter `version` and `updated` (appended rows only), with the matching work residue ledger entries; this package, the Stage 03 README and reviewed `.secrets.baseline` entries.
+- Not in this package: the other five SDLC forms; any architecture description, ADR, Spec, Plan or Task; the body contract of `sdlc/requirement` and its `Downstream owner` column, which the Architecture form package retires (W03-D55); the lifecycle domain of the Requirement and the repair of its missing creation state, which is SPEC-0192's handoff (W03-D48); the document generator; the H2-list model and its checks (package 7 of W03-D49); Q-07 numbering (W03-D30); `_workspace/` (read-only input) and `docs/98.archive/`.
+- Form-only migration (W03-D01) with one decided exception (W03-D55): apart from the content changes the Contracts list, no sentence changes meaning, no requirement, criterion or row is invented, and every requirement ID, statement, priority, acceptance cell, command and link target stays byte for byte. Where a form H3 has no source text, one English line states where the content lives or that none exists and why (W03-D31), and each such line is listed in the Task for the user. No script is expected to change. No push, PR or merge without the user's approval. Open question: none.
+
+## Contracts
+
+- **Requirement form.** `common_forms.forms` gains the Requirement form exactly as COMMON-DOC-FORM-1 1.0.0 defines it (`roles[0]`): `form_id` `requirement`, `title` `Requirement`, Overview (Problem and Outcome, Stakeholders), Scope (In Scope, Constraints and Exclusions), Requirements (Functional Requirements, and Quality Requirements, which is conditional on a quality requirement applying), Acceptance Criteria (Acceptance Conditions, Verification Method) and Traceability (Source and Constraints, Downstream Links), with `link_only` false everywhere. Templates keep their H1.
+- **Local extensions (W03-D03).** Two registered conditional local H3 under Traceability, after Downstream Links: `Lifecycle Traceability` (`requirement-lifecycle-traceability`), whose verification is the body-contract check, and `Archived Lineage` (`requirement-archived-lineage`), whose verification is the package-exit check and the retired-identity reservation. Each records its condition, owner, review (when the Requirement form version changes) and removal (when requirement lineage has another registered owner).
+- **Profiles and binding.** `sdlc/requirement` and its template twin keep `document_role` `requirement` and carry empty H2 lists; heading lists are derived from the form. The body contract stays as it is: section `Traceability`, table heading `Lifecycle Traceability`, its three columns, its enforced statuses and its target profiles. No path pattern, frontmatter list or lifecycle domain changes.
+- **Downstream owner (W03-D55).** The column is retired in two steps, and this package is the first: it keeps the column and its link check unchanged. The relation is written once by the citing document and its reverse view is derived (DOC-09, SPEC-0164, the `requirement-basis` entry of `relationship_contract`), and a reciprocal field is removed only after its consumers have moved and the user has approved. Facts at `de64c58d`: 80 of the 91 cells link an architecture description and each Requirement links exactly one; 11 cells are exclusions that name packages that left the tree; 6 cells carry a note after the link; 10 of the 68 members are not cited in their description's own `Upstream requirement` column (REQ-0003-FR-0032 in AD-0006 and nine members of REQ-0004 in AD-0007); and `scripts/document-backlinks.py` derives the reverse view per document, not per member. This package records in the Task the uncited members and the 17 cells that are not a single link, updates the reverse-view note of the `requirement-basis` entry, and adds a handoff row: the Architecture form package completes the citing rows and then removes the column, with a derived coverage check in place of its link check.
+- **Tables (W03-D08, W03-D55).** The TemplateDefinition records three tables. `Functional Requirements` in `requirement-requirements-functional-requirements` has the keys `Requirement ID`, `Statement`, `Rationale` and `Acceptance` (all required), which are the common contract's requirement id, statement, rationale and acceptance, then `Priority` as an optional trailing column; `minimum_rows` 1 and row identity `Requirement ID`. `Quality Requirements` in `requirement-requirements-quality-requirements` has the same columns, `minimum_rows` 0 and row identity `Requirement ID`. `Lifecycle Traceability` in `requirement-lifecycle-traceability` keeps its three body-contract columns, `minimum_rows` 1 and row identity `Requirement ID`.
+- **Content changes (W03-D55).** These are the only changes to what the four Requirements and the template say.
+  - In the requirement tables the header `Requirement` becomes `Statement` and `Verification intent` becomes `Acceptance`; every cell under them is unchanged.
+  - A `Rationale` column is added after `Statement`, with one new cell for each of the 68 rows.
+  - The `Priority` column moves to the end of the table with its cells unchanged; all 68 are `Must`. It is kept because the form's Functional Requirements content names priority and W03-D55 names no column to drop.
+  - The one sentence of REQ-0003 that names "the Verification intent column" names the `Acceptance` column instead.
+  - The 8 NFR rows move to the Quality Requirements table, and "below" in acceptance criterion 05 of REQ-0004 is corrected to name the heading (see Quality Requirements).
+  - The pointer lines the heading map names are added.
+- **Rationale cells.** Each cell is one short sentence. It either restates a reason that the same Requirement, its architecture description or an accepted ADR already states, and names that source, or it is an explained none: why no rationale is recorded and the condition under which one is added, as SPEC-0182 requires. A bare `N/A`, `None` or `TBD` is refused, no reason is invented, and a cell holds no pipe character. The Task holds the table of all 68 rows (requirement ID, proposed cell, source), and the user reviews it before any document changes.
+- **Byte preservation.** For each document a map keyed by requirement ID holds that row's requirement ID, statement, priority and acceptance cells, read from its requirement tables. The map before and the map after have the same keys and byte-identical cells, whichever table a row sits in: the NFR rows sit between other rows today (after the FR rows and before the IF rows in REQ-0002, REQ-0003 and REQ-0004) and move to the Quality Requirements table, so an ordered list cannot be compared. The sha256 of the map serialized in requirement ID order is recorded in the Task. This is a one-use comparison for this migration and is not registered as a gate.
+- **Version level.** Removing required H2 titles and renaming table columns is an incompatible contract change, which the document authoring policy rates major, so each of the four Requirements takes one major raise. The template keeps `version` `0.1.0`, the starting value of a new document, because the same policy places template history in the registry contract version and Git.
+- **Quality Requirements (W03-D55).** The 8 NFR rows of REQ-0002, REQ-0003 and REQ-0004 move to the `Quality Requirements` table under that H3, and the seven quality H3 of REQ-0004 (`Product quality measurement boundary` and six `Quality scenario` sections) become H4 there in their order. REQ-0001 has no quality requirement and omits the H3.
+- **TemplateDefinition (W03-H13).** `common/template-sdlc-requirement` carries purpose, responsibility, non-goals, policy references (`document-authoring.md`, `sdlc.md`), vocabulary reference (`.agents/knowledge/glossary.md`), applicability, every real consumer path for its profile (registry, schema, its template, the four documents, the Stage 01 and Stage 99 READMEs, the profile, link, lifecycle and registry validators, `scripts/document_lifecycle.py` and the tests), validation cases, migration and `tables`.
+- **Heading map, applied per document.** The old H2 headings other than Overview and Traceability are removed and their bodies move under the form H3 named below in their old order. A row that names a heading wins over the row for its old H2; a paragraph is never split; a list is split only by items the source itself labels.
+  - Overview > Problem and Outcome: the `Overview` text, `Current requirement status` as an H4 in place, then the `Vision` and `Problem Statement` bodies.
+  - Overview > Stakeholders: the `Personas` body.
+  - Scope > In Scope: the `Key Use Cases` body, then the item or paragraph of `Scope and Non-goals` that the source labels in scope.
+  - Scope > Constraints and Exclusions: the rest of `Scope and Non-goals`, then the `Risks, Dependencies, and Assumptions` body with `Agent execution and approval requirements` and `Delivery assurance coverage and limits` as H4.
+  - Requirements > Functional Requirements: the FR and IF rows of the `Functional Requirements` table, with the text that precedes it. Requirements > Quality Requirements: the NFR rows and, in REQ-0004, the seven quality H3 as H4.
+  - Acceptance Criteria > Acceptance Conditions: the rest of the `Success / Acceptance Criteria` body. Acceptance Criteria > Verification Method: one pointer line that names the `Acceptance` column and the acceptance-criterion column of `Lifecycle Traceability`, because no document states a method apart from them.
+  - Traceability > Source and Constraints: the text that now opens `Traceability`, `Unfinished execution and original lineage` and `Reviewed member-ID transfer` as H4 with their whole sections, and a list item that names an upstream Requirement.
+  - Traceability > Downstream Links: the list items that follow the `Lifecycle Traceability` table and name an architecture description, an ADR or a Spec; where a document has none, one pointer line that names the `Downstream owner` column and the derived view of `scripts/document-backlinks.py`.
+  - `Lifecycle Traceability` and `Archived Lineage` stay H3, in that order, after Downstream Links. The `Archived Lineage` section of each document is byte-identical before and after.
+  - The Task records each document's placements, added lines and corrected positional words.
+- **Template.** The requirement template takes the form's H2 and H3 with an author prompt for each H3, the `Functional Requirements` and `Quality Requirements` tables with the new columns, the `Lifecycle Traceability` table and no `Archived Lineage` section, and keeps its frontmatter.
+- **Policy text.** The document authoring policy adds the Requirement to the roles that use their registry forms; the Stage 99 README says so for the SDLC forms; the Stage 01 README names Traceability, Downstream Links and `Archived Lineage` where it now names `Related Documents`.
+
+## Core Design
+
+[AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) owns the governance view; no component changes. The registry stays the single machine owner of document form ([ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md) as amended by [ADR-0059](../../02.architecture/decisions/0059-registry-common-form-model.md)); no ADR changes.
+
+## Data Modeling & Storage Strategy
+
+Registry data: one form with two local extensions, one TemplateDefinition with three tables, two profiles' lists and one `relationship_contract` note. Documents: four Requirements and one template, with 68 new rationale cells and two renamed headers. Code: tests only.
+
+## Interfaces & Data Structures
+
+- Requirement table header after the change: `Requirement ID`, `Statement`, `Rationale`, `Acceptance`, `Priority`. Consumers of the old header names at `de64c58d`: the four Requirements, the requirement template and one REQ-0003 sentence; no script or test reads them. The new names gain three consumers: the TemplateDefinition tables, the table check `BODY-TABLE-COLUMNS` that reads them, and the form tree tests.
+- `tests/test_common_form_tree.py`: the requirement profiles gain their form in the registry tests, whose exact form count grows by one; `FORM_TEMPLATES` gains the requirement template; the per-form loop gets a Requirement row with its body section `Traceability`, its three tables and its two local H3; synthetic cases cover a document without Quality Requirements, an H3 under the wrong H2, `Archived Lineage` outside Traceability, the old four-column header refused by `BODY-TABLE-COLUMNS`, and the new header accepted with and without the trailing `Priority`.
+- `tests/test_document_terminal_contract.py`: the pins of the requirement profile's H2 lists and template sections are rewritten for the form.
+- `scripts/document_lifecycle.py` is not edited: `lineage_retired_identities` and the package-exit rule R3 read a level-2 or level-3 `Archived Lineage` heading, which the form keeps at level 3.
+
+## Edge Cases & Error Handling
+
+- Every later package exit appends a row to REQ-0003 `Archived Lineage`, and SPEC-0191 edits two verification cells of REQ-0003, which become `Acceptance` cells and are preserved byte for byte from the rebased file. This package therefore merges after SPEC-0194, with SPEC-0187, SPEC-0188, SPEC-0189, SPEC-0191, SPEC-0192, SPEC-0193 and SPEC-0194 merged before it in that order, and the document move is made on the then-current REQ-0003 after a rebase on `main`.
+- SPEC-0193 adds `LINK-FRAGMENT`, so a fragment link the move breaks fails the link validator; the pre-approval read expects none.
+- A positional word (`below`, `above`, `following`) that a move makes false is corrected to name the heading, and each correction is listed in the Task. The read found eleven such words outside `Archived Lineage`; only the one in acceptance criterion 05 of REQ-0004 changes.
+- The template's NFR sample row moves to its Quality Requirements table, and its sample rows gain a rationale placeholder.
+- The body contract's `Lifecycle Traceability` table also starts with `Requirement ID`; it sits in its own H3 and is owned by the body contract, so the table check does not read it as a requirement table.
+- These authored profiles are checked for empty sections, so each added line is real prose and never a bare statement (`BODY-SECTION-BARE`).
+
+## Failure Modes & Fallback / Human Escalation
+
+If a sentence cannot be placed without changing its meaning, if a rationale has no source to name and the user does not accept its explained none, if a requirement ID, statement, priority or acceptance cell differs after the change, if the `Archived Lineage` bytes or the reserved identity set of any document differ, or if a script would have to change, the author stops and asks the user. If any document outside the four Requirements, the template and the three named texts gains a diagnostic, the change is wrong and is fixed before commit.
+
+## Verification Commands
+
+- Before and after, record the four strict document validators over the tree; diagnostics after must equal those before.
+- For each of the four documents: the sha256 of its `Archived Lineage` section and the set returned by `lineage_retired_identities`, before and after; the sha256 of its map of requirement ID, statement, priority and acceptance cells keyed by requirement ID and serialized in that order, before and after; and the sorted non-heading, non-blank lines outside the requirement tables before and after, whose only differences are the lines listed in the Task.
+- `git grep -n -e 'Verification intent' -e 'Requirement ID | Requirement |' -- docs/01.requirements docs/99.templates` returns nothing after the change.
+- `git grep -n -E '0[1-4]-[a-z-]+\.md#' -- ':!docs/98.archive'` before and after; every fragment names a heading that exists in its target.
+- `python3 scripts/run-contract-tests.py --root . --suite document`, `--suite document-lifecycle`, `--suite agent-governance` and `--suite validation-routing`.
+- `python3 scripts/validation/repository/quality.py --root .`; markdownlint over the edited Markdown; `ruff check scripts tests`; `python3 scripts/qa.py staged` and the commit hooks on the exact index.
+
+## Success Criteria & Verification Plan
+
+| Criterion | Acceptance evidence |
+| --- | --- |
+| VAL-REQFORM-001 | The registry holds the Requirement form, its two local extensions and the TemplateDefinition with its three tables; the two profiles carry no H2 lists; the body contract is unchanged; the tests fail first and then pass. |
+| VAL-REQFORM-002 | The four Requirements and the template pass the tree, body-contract, table, language, link, author-prompt, residue and markdownlint checks; the requirement IDs, statements, priorities and acceptance cells are byte-identical and the 68 rationale cells equal the table the user reviewed; each document's map, added lines and corrected words are recorded in the Task; every `Archived Lineage` section is byte-identical and the reserved identity sets are equal; the three texts are updated; validator output over the tree is unchanged; exact-index QA and the commit hooks pass. |
+
+## Traceability
+
+### Lifecycle Traceability
+
+| Requirement ID | Spec criterion | Architecture | Verification method |
+| --- | --- | --- | --- |
+| [REQ-0003-FR-0012](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-REQFORM-001 | [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) | Registry and form tree tests; the strict registry validator. |
+| [REQ-0003-FR-0013](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-REQFORM-002 | [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) | Strict validators over the tree; the cell, lineage and identity comparisons; exact-index QA. |
