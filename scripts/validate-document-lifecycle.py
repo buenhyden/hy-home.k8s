@@ -35,6 +35,7 @@ from document_contracts import (
     task_execution_issues,
     task_contract_issues,
     direct_parent,
+    registry_schema_version,
     _typed_registry_from_mapping,
 )
 from document_lifecycle import (
@@ -55,6 +56,7 @@ from document_lifecycle import (
 )
 from document_authority import (
     AuthorityError,
+    READABLE_REGISTRY_MAJORS,
     REGISTRY_PATH as CURRENT_REGISTRY_PATH,
     assert_staged_authority_matches_worktree,
     staged_authority_bytes,
@@ -1957,7 +1959,12 @@ class _CumulativeHistoryCache:
         """
         oid = _tree_blob_oid(self.root, commit, CURRENT_REGISTRY_PATH)
         raw = _registry_blob(self.root, oid) if oid is not None else {}
-        if raw.get("schema_version") != 10:
+        try:
+            major = registry_schema_version(raw).split(".")[0]
+        except DocumentContractError:
+            return self.registry
+        # Digit strings compare without int(): the grammar has no leading zero.
+        if major not in {str(readable) for readable in READABLE_REGISTRY_MAJORS}:
             return self.registry
         try:
             return _typed_registry_from_mapping(raw)

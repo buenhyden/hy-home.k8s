@@ -1214,7 +1214,10 @@ class RepositoryRegistryTests(unittest.TestCase):
         self,
     ) -> None:
         raw = load_raw()
-        self.assertEqual(raw["schema_version"], 10)
+        self.assertIsInstance(raw["schema_version"], str)
+        self.assertEqual(
+            int(raw["schema_version"].split(".")[0]), AUTHORITY.REGISTRY_MAJOR
+        )
         common = raw["common_forms"]
         self.assertEqual(common["contract_id"], "COMMON-DOC-FORM-1")
         self.assertEqual(common["version"], "1.0.0")

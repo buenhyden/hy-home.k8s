@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.24.0"
+version: "3.25.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -217,7 +217,15 @@ major means an incompatible role or contract change. Status and version are
 independent. A version value is a SemVer 2.0.0 string without a "v" prefix,
 checked by the one grammar in `scripts/semver_grammar.py`. Document Revision,
 Contract Version and Registry Schema Version are separate objects; an artifact
-identity or a package edition label is not a version. In "0.y.z" an
+identity or a package edition label is not a version. The Registry Schema Version
+is a SemVer string without prerelease or build metadata, and an integer of an
+earlier registry means `N.0.0`. The loader and the write guard read its MAJOR
+number only and accept the one they implement; the history reader also reads
+each MAJOR number it lists. A registry change takes MAJOR when it breaks a
+registry or consumer that was valid before, MINOR for a compatible addition that
+every consumer tolerates, PATCH for a compatible fix of a declared contract, and
+NO_CHANGE when the serialization shape stays; its Task records the level and the
+reason. In "0.y.z" an
 incompatible change and a feature raise the minor and a compatible fix raises
 the patch. One edit raises the highest affected level once, and an unchanged
 object keeps its version. A commit type such as `docs:` does not by itself

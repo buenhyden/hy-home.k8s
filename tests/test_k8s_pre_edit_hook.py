@@ -12,7 +12,9 @@ from __future__ import annotations
 import io
 import json
 import os
+import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -20,6 +22,10 @@ from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+
+import document_authority as AUTHORITY  # noqa: E402
+
 HOOK_PATH = ROOT / ".claude/hooks/k8s-pre-edit.sh"
 GUARD_PATH = ROOT / "scripts/provider_write_guard.py"
 CODEX_ADAPTER_PATH = ROOT / ".codex/hooks/pre-tool-use.sh"
@@ -127,6 +133,15 @@ def setUpModule():
             capture_output=True,
             timeout=60,
         )
+        # The guard reads each checkout's registry, and a checkout of HEAD
+        # holds the registry of the previous commit while a registry change is
+        # in flight. Carry the registry this tree carries so the fixture stays a
+        # matching revision of it (SPEC-0207).
+        for checkout in (main, linked):
+            shutil.copyfile(
+                ROOT / "docs/99.templates/registry.json",
+                checkout / "docs/99.templates/registry.json",
+            )
     except BaseException:
         _LINKED_FIXTURE.cleanup()
         _LINKED_FIXTURE = None
@@ -314,7 +329,7 @@ class PreEditRejectionTest(unittest.TestCase):
             (registry_dir / "registry.json").write_text(
                 json.dumps(
                     {
-                        "schema_version": 10,
+                        "schema_version": f"{AUTHORITY.REGISTRY_MAJOR}.0.0",
                         "profiles": [
                             {
                                 "id": "sdlc/requirement",
@@ -348,14 +363,24 @@ class PreEditRejectionTest(unittest.TestCase):
             project = Path(directory) / "repository"
             (project / "docs/99.templates").mkdir(parents=True)
             (project / "docs/99.templates/registry.json").write_text(
-                json.dumps({"schema_version": 9, "profiles": []}), encoding="utf-8"
+                json.dumps(
+                    {
+                        "schema_version": f"{AUTHORITY.REGISTRY_MAJOR + 1}.0.0",
+                        "profiles": [],
+                    }
+                ),
+                encoding="utf-8",
             )
             result = run_hook(
                 scalar_payload("docs/01.requirements/9999-example-feature.md"),
                 project,
             )
         self.assertEqual(result.returncode, 2, result.stdout)
-        self.assertIn("schema_version must be 10", result.stderr)
+        self.assertIn(
+            f"schema_version must be a SemVer string of major "
+            f"{AUTHORITY.REGISTRY_MAJOR}",
+            result.stderr,
+        )
 
     def test_registry_parent_symlink_is_rejected(self):
         import json

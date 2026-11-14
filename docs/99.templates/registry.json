@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": 10,
+  "schema_version": "11.0.0",
   "profiles": [
     {
       "id": "sdlc/requirement",

@@ -18,6 +18,7 @@ import yaml
 
 from document_authority import (
     AuthorityError,
+    REGISTRY_MAJOR,
     REGISTRY_MAX_BYTES,
     load_bounded_json,
     read_bounded_utf8,
@@ -25,6 +26,7 @@ from document_authority import (
     validate_registry_authority,
 )
 from json_schema_validation import SchemaEvaluationError, schema_errors
+from semver_grammar import SEMVER_PATTERN
 from validation.repository.bounded_io import (
     BoundedInputError,
     read_bytes as read_bounded_bytes,
@@ -971,7 +973,7 @@ class FrontmatterDialect:
 
 @dataclass(frozen=True)
 class Registry:
-    schema_version: int
+    schema_version: str
     profiles: tuple[DocumentProfile, ...]
     lifecycle_domains: tuple[LifecycleDomain, ...]
     readme_navigation: ReadmeNavigation | None = None
@@ -1064,6 +1066,37 @@ def _diagnostic(
 def _fail(rule_id: str, *, expected: str, actual: str) -> NoReturn:
     raise DocumentContractError(
         (_diagnostic(rule_id, expected=expected, actual=actual),)
+    )
+
+
+_REGISTRY_VERSION = re.compile(SEMVER_PATTERN)
+# SPEC-0207: generations 1 to 10 were integers; generation N means `N.0.0`.
+_LAST_INTEGER_GENERATION = 10
+
+
+def registry_schema_version(raw: Mapping[str, Any]) -> str:
+    """Return the Registry Schema Version of a registry mapping as a SemVer string.
+
+    A release string of the repository grammar is returned as is. An integer
+    generation 1 to 10 is the one case of a registry read from history and maps
+    to `N.0.0` (SPEC-0207, REQ:890). Anything else is refused.
+    """
+
+    value = raw.get("schema_version") if isinstance(raw, Mapping) else None
+    if type(value) is int and 1 <= value <= _LAST_INTEGER_GENERATION:
+        return f"{value}.0.0"
+    if type(value) is str:
+        match = _REGISTRY_VERSION.fullmatch(value)
+        if match is not None and match.group(4) is None and match.group(5) is None:
+            return value
+    _fail(
+        "REGISTRY_SCHEMA",
+        expected=(
+            "schema_version as a SemVer string MAJOR.MINOR.PATCH without "
+            "prerelease or build metadata (a history blob may hold an integer "
+            f"1 to {_LAST_INTEGER_GENERATION}, meaning N.0.0)"
+        ),
+        actual=f"schema_version={value!r}",
     )
 
 
@@ -2791,7 +2824,7 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         for profile in profiles
     )
     return Registry(
-        schema_version=raw["schema_version"],
+        schema_version=registry_schema_version(raw),
         shared_contract=(
             _shared_contract_from_mapping(raw["shared_contract"])
             if "shared_contract" in raw
@@ -3131,14 +3164,27 @@ def _load_published_contract(
             actual=type(payload).__name__,
         )
     expected_id = f"https://hy-home.k8s/{path.as_posix()}"
-    if payload.get("schema_version") != 10 or payload.get("$id") != expected_id:
+    version = payload.get("schema_version")
+    if type(version) is int:
         _fail(
             "REGISTRY_SCHEMA",
-            expected=f"schema_version=10 $id={expected_id!r}",
+            expected=f"schema_version as a SemVer string of major {REGISTRY_MAJOR}",
             actual=(
-                f"schema_version={payload.get('schema_version')!r} "
-                f"$id={payload.get('$id')!r}"
+                f"schema_version={version!r}; an integer is refused"
+                + (
+                    f" (an integer of an earlier registry means '{version}.0.0')"
+                    if 1 <= version <= _LAST_INTEGER_GENERATION
+                    else ""
+                )
             ),
+        )
+    major = registry_schema_version(payload).split(".")[0]
+    # Digit strings compare without int(): the grammar has no leading zero.
+    if major != str(REGISTRY_MAJOR) or payload.get("$id") != expected_id:
+        _fail(
+            "REGISTRY_SCHEMA",
+            expected=f"schema_version of major {REGISTRY_MAJOR} $id={expected_id!r}",
+            actual=f"schema_version={version!r} $id={payload.get('$id')!r}",
         )
     schema = (
         load_json_file(root / schema_path, diagnostic_path=schema_path)
