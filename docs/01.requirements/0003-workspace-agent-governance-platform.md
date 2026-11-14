@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "5.0.0"
+version: "5.0.1"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -455,6 +455,7 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0195 | completed spec | W03 Requirement form (W03-H36, W03-D55): the four Requirements use the common Requirement form with its TemplateDefinition, the common requirement table columns and the approved Rationale cells. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0195-w03-requirement-form/` |
 | SPEC-0213 | completed spec | SPEC-0213 applied the v14.7 r1 delta intake to W00. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0213-w00-r1-intake/` |
 | SPEC-0196 | completed spec | SPEC-0196 derived and validated the full TemplateDefinition record. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0196-w03-full-template-definition/` |
+| SPEC-0197 | completed spec | SPEC-0197 moved the architecture descriptions to the common Architecture form. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0197-w03-architecture-form/` |
 
 **SPEC-0152 recovery proof.** The exact completed source is commit `4033d38e7ac6eac0130700c8cf259ea252f44916`, reachable from retained local `refs/heads/codex/manual-document-disposition-policy` (`git merge-base --is-ancestor` rc 0). The current user authorized this bounded package exit on 2026-11-10; no hold was identified in the current repository documents or request, and the Task's frozen disposition decision names consumers and preservation route. Before any deletion, QA confirmed `git cat-file -e` rc 0 for each `commit:path`, restored each with `git show` to a mode-0600 temporary file, and obtained `cmp -s` rc 0 against its unchanged current source; the temporary files were removed. The three exact paths and Git blob identities are:
 
@@ -800,5 +801,13 @@ This is local retained-ref recovery proof before disposition, not remote or host
 - `480041f937d6e23237671921848b4b99c26ba127:docs/03.specs/0196-w03-full-template-definition/plan.md` — blob/source OID `a0020f45cbcea4d1dd4e7d28cf25ccbd9537e432`; SHA-256 `aba1606e876f2b81e3ac3c174916b5f429e4d04d6e4acba86954af2ab98384cb` (11471 bytes).
 - `480041f937d6e23237671921848b4b99c26ba127:docs/03.specs/0196-w03-full-template-definition/spec.md` — blob/source OID `4e6c89194fd0222f9ace5d3498ce856156e1d48f`; SHA-256 `6e13a77cbf1a6ec5e8144a121f4039580cef1cf51d2348185da44bb9bddc1000` (27089 bytes).
 - `480041f937d6e23237671921848b4b99c26ba127:docs/03.specs/0196-w03-full-template-definition/tasks/tsk-0001-w03-full-template-definition.md` — blob/source OID `31687f35cc47ce80df4366aaafe1cb4b9197b7c8`; SHA-256 `9f53e7f7b4473706bd3415892e7cd262d379ba58fefac721344c0aedf75eb3e2` (33680 bytes).
+
+This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
+
+**SPEC-0197 recovery proof.** The exact completed source is the Task freeze commit `ad9981302a081feae0c23a5651f10a5634af4962`, reachable from local `refs/heads/claude/w03-architecture-form` (`git merge-base --is-ancestor` rc 0) and, after its merge, from `main`. The user authorized this exit, and no hold was identified. Before deleting any file, QA observed HEAD `ad998130` with a clean index and worktree; for every exact `commit:path` it observed `git cat-file -t` type blob, the same OID from `git hash-object --no-filters` on the current file, and a byte-equal comparison of the `git show` restoration, read through a pipe, with the current file. No temporary file was written, and HEAD, index and worktree were unchanged afterwards.
+
+- `ad9981302a081feae0c23a5651f10a5634af4962:docs/03.specs/0197-w03-architecture-form/plan.md` — blob/source OID `dccf862330cd1e8d248a4e57862cda654f26b3a9`; SHA-256 `742e4b520a7ae8aff1f72e2efee3198dc6ac9af0ccb5360fdfd565090730320e` (12031 bytes).
+- `ad9981302a081feae0c23a5651f10a5634af4962:docs/03.specs/0197-w03-architecture-form/spec.md` — blob/source OID `1656763ecdaf69467e7f3271144804bb2b724f79`; SHA-256 `bc244aa2bf11b5e2b9a0820f886986f5510d7296fd29576d00099e2c3fecc762` (25345 bytes).
+- `ad9981302a081feae0c23a5651f10a5634af4962:docs/03.specs/0197-w03-architecture-form/tasks/tsk-0001-w03-architecture-form.md` — blob/source OID `e60f545c1c91fd4c2a90db7565caa5ff11fd690f`; SHA-256 `e083e7c3397a2ef382c9b463c9f77fd9bf5d06f71b3e0128c6be143f4967da9e` (49394 bytes).
 
 This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
