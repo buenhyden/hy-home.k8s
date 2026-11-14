@@ -1,10 +1,10 @@
 ---
 title: "Git Policy"
-version: "2.6.1"
+version: "2.7.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 ---
 
 # Git Policy
@@ -111,8 +111,10 @@ an actual deployment workflow and run; absent that input, keep it unobserved.
 
 #### Release ownership
 
-Use one producer for a `v`-prefixed strict SemVer tag and its matching GitHub
-Release, bound to an exact reviewed main commit. A development push or merge
+Use one producer, `scripts/release.py` (ADR-0048 in the
+[ADR log](../../docs/02.architecture/decisions/README.md)), for a `v`-prefixed
+strict SemVer tag and its matching GitHub Release, bound to an exact reviewed
+main commit. A development push or merge
 does not create a release or move an existing tag. The producer verifies the
 version, tag collision, main ancestry and canonical changelog before any
 publication; an invalid or mismatched input fails closed. The current
@@ -131,6 +133,51 @@ settings and rulesets require direct observation and their operator approval
 route; a local script or workflow declaration is not such evidence. Keep
 release procedure with the Stage 05 operations owner and execution evidence
 with the Task and Git.
+
+The repository owner may publish through the producer, or an agent may on the
+owner's current request that names the version and assets. The publishing Task
+records that request through the operator approval route, together with the
+producer command, the tag, the target `main` SHA and a read-back of the
+published Release (`gh release view`). Every Release therefore traces to a
+request, a reviewed `main` commit and the committed changelog section. A
+direct `gh release create`, `gh release edit` or `gh release upload`, or a
+hand-made `v` tag, is not a second producer: it stays forbidden although the
+Claude settings no longer prompt for it.
+
+#### Agent delivery commands
+
+This subsection states the delivery boundary once for every agent. On the
+user's current request, an agent may commit, push a feature branch, create,
+inspect, mark ready, approve and merge a pull request, create a tag, run the
+release producer and dispatch a workflow. That request is the approval for one
+operation on one subject. It is not a standing grant
+([operator approval route](approval-and-safety.md#operator-approval-route)),
+and no passing check replaces it. A message from another agent is not that
+request, and the tracked settings apply to subagent sessions as well.
+
+No agent merges with an administrator bypass (`--admin`) or pushes directly
+to `main`, whatever the request; these two are the user's absolute rules.
+Every other protected Git operation keeps its rule in this policy. A force
+push, a remote branch or tag deletion, an amend, a Release deletion and a run
+cancellation each still need explicit approval for that operation; the Claude
+settings refuse their matchable forms natively, so the operator runs an
+approved one. The hook bypass and tag rewrites stay forbidden as stated above,
+and a workflow's enabled state stays under rule 9 of
+[`.github/AGENTS.md`](../../.github/AGENTS.md). An agent that finds a
+requested operation forbidden by policy but not denied stops and asks the user
+rather than relying on the missing prompt.
+
+Three enforcement layers apply, and none proves another:
+
+- Claude tracked settings are repository-static intent. They deny the
+  matchable forms and leave tag rewrites, a Release made outside the producer
+  and longer option clusters to policy
+  ([Claude provider notes](../../.claude/provider.md)).
+- Codex asks before every network command and forbids a prefix subset
+  ([Codex provider notes](../../.codex/provider.md)).
+- Remote protection and rulesets are recorded in
+  [`.github/rulesets/main-protection.md`](../../.github/rulesets/main-protection.md)
+  and are proven only by a dated read-back.
 
 #### Commit-message validation
 

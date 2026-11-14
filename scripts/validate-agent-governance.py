@@ -108,16 +108,27 @@ CLAUDE_ALLOWED_PERMISSIONS = (
     "Bash(gh pr merge *)",
     "Bash(gh run view *)",
     "Bash(gh run list *)",
+    "Bash(git commit *)",
+    "Bash(git push *)",
+    "Bash(git tag *)",
+    "Bash(gh pr ready *)",
+    "Bash(gh pr review --approve*)",
+    "Bash(gh pr review * --approve*)",
+    "Bash(gh release *)",
+    "Bash(gh workflow *)",
+    "Bash(python3 scripts/release.py *)",
 )
-# SPEC-0114 (Git history): merges and pull requests run without a native
-# prompt because an operator request is their approval; force, delete, mirror
-# and admin forms stay denied below. Raw API calls, `git -C` and every push
-# keep a prompt because a prefix rule cannot see their effect; a refspec
-# deletion such as `origin :branch` has no expressible deny pattern.
+# SPEC-0214: commit, push, tag, pull request readiness and approval, Release
+# and workflow commands and the release producer run without a native prompt
+# on an operator request, which is their approval, as merges and pull requests
+# already did (SPEC-0114, Git history). Forced merge, direct pushes to `main`,
+# Release deletion, run cancellation and the matchable force, delete, mirror,
+# prune, amend and hook-bypass forms, including unique prefixes and two-letter
+# clusters, stay denied below. Raw API calls and `git -C` keep a prompt
+# because a prefix rule cannot see their effect.
 CLAUDE_ASK_PERMISSIONS = (
     "Bash(gh api *)",
     "Bash(git -C *)",
-    "Bash(git push *)",
 )
 CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Read(./.env)",
@@ -134,8 +145,6 @@ CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Bash(kubectl get secrets:*)",
     "Bash(kubectl describe secret:*)",
     "Bash(kubectl describe secrets:*)",
-    "Bash(gh release create:*)",
-    "Bash(gh workflow run:*)",
     "Bash(kubectl delete:*)",
     "Bash(kubectl apply:*)",
     "Bash(kubectl create:*)",
@@ -317,6 +326,49 @@ CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Bash(git push --force-with-lease*)",
     "Bash(git push -d *)",
     "Bash(git push --prune*)",
+    "Bash(git push * +*)",
+    "Bash(git push *--for*)",
+    "Bash(git push -f*)",
+    "Bash(git push *-uf*)",
+    "Bash(git push *-qf*)",
+    "Bash(git push *-vf*)",
+    "Bash(git push *-nf*)",
+    "Bash(git push *-4f*)",
+    "Bash(git push *-6f*)",
+    "Bash(git push *--de*)",
+    "Bash(git push -d*)",
+    "Bash(git push * -d*)",
+    "Bash(git push *-ud*)",
+    "Bash(git push *-qd*)",
+    "Bash(git push *-vd*)",
+    "Bash(git push *-nd*)",
+    "Bash(git push *-4d*)",
+    "Bash(git push *-6d*)",
+    "Bash(git push *--m*)",
+    "Bash(git push *--pru*)",
+    "Bash(git push * main)",
+    "Bash(git push * main *)",
+    "Bash(git push *:main)",
+    "Bash(git push *:main *)",
+    "Bash(git push *heads/main)",
+    "Bash(git push *heads/main *)",
+    "Bash(git push)",
+    "Bash(git push origin)",
+    "Bash(git push * origin)",
+    "Bash(git push * HEAD)",
+    "Bash(git push * HEAD *)",
+    "Bash(git push * @)",
+    "Bash(git push * @ *)",
+    "Bash(git push *--al*)",
+    "Bash(git push *--b*)",
+    "Bash(git push -u)",
+    "Bash(git push --set-upstream)",
+    "Bash(git push --follow-tags)",
+    "Bash(git push origin -u)",
+    "Bash(git push origin --follow-tags)",
+    "Bash(git commit *--am*)",
+    "Bash(git *--no-veri*)",
+    "Bash(git commit -n*)",
 )
 
 

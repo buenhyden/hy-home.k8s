@@ -61,9 +61,11 @@ team document, not a special automatic entry filename.
   layer is parsed. A later session observed that a dummy secret-named variable
   was absent, but did not isolate which setting removed it.
   `.codex/rules/default.rules` forbids, as argv prefixes, a subset of the
-  command families the Claude deny list covers, and the validator pins its
-  digest; option-first and reordered forms are not expressible as prefixes,
-  so without sandbox network a network command still needs approval. The hook
+  command families the Claude deny list covers plus `gh release create` and
+  `gh workflow run`, which the Claude settings allow, so Codex is stricter
+  there; the validator pins its digest; option-first and reordered forms are
+  not expressible as prefixes, so without sandbox network a network command
+  still needs approval. The hook
   registration exits 2 when its adapter cannot be found, and a changed hook
   needs the user's review through `/hooks`. The memory keys were
   found in the installed `codex-cli 0.162.1` binary on 2026-10-13 (static evidence);

@@ -46,12 +46,27 @@ invocation. The common procedure retains the selected role and user scope.
   override it. A rule matches command text from its first character, so deny
   carries option-first forms (`kubectl * delete *`), positional push forms and
   Bash path patterns for secret files: in a session probe a `Read` deny did not
-  stop `cat` on the same path. Read-only Git and GitHub commands, pull
-  request creation and merge are allowed because an operator request is their
-  approval; every push, `gh api` and `git -C` ask, because a refspec
-  `:branch` or `+branch` push cannot be matched by a deny pattern;
-  `disableBypassPermissionsMode` is `disable`. Executable-carrying Git options
-  (`--upload-pack`, `--receive-pack`, `--exec`, `--output`) are denied.
+  stop `cat` on the same path. Read-only Git and GitHub commands, commit,
+  push, tag, pull request creation, readiness, approval and merge, Release and
+  workflow commands and the release producer are allowed because an operator
+  request is their approval; `gh api` and `git -C` ask, because a prefix rule
+  cannot see their effect; `disableBypassPermissionsMode` is `disable`. The
+  deny list carries forced merge; a push to `main` by name, `heads/main` or an implicit destination (a
+  bare push, a remote alone, `HEAD`, `@`, `--all`, `--branches` and the common
+  option-only forms); the `+` force refspec; the force, delete, mirror and
+  prune options with their unique prefixes and two-letter clusters; the amend
+  and hook-bypass options; Release deletion and run cancellation.
+  Executable-carrying Git options (`--upload-pack`, `--receive-pack`,
+  `--exec`, `--output`) are denied. Residual, not coverage: tag rewrites, a
+  Release or `v` tag made outside the release producer, and
+  `gh workflow enable` or `disable` are forbidden by policy but not denied;
+  the release producer and the Git hooks that commit, push and merge run are
+  working-tree code that runs without a prompt; a refspec deletion such as
+  `origin :branch`, option clusters of three or more letters, the short
+  hook-bypass form after other options or in a cluster, quoted or variable
+  refspecs and configured push destinations cannot be matched. The
+  [Git policy](../.agents/governance/git.md#agent-delivery-commands) states
+  the delivery boundary once for every agent.
   Programs that open files themselves and text-obfuscated paths cannot be
   matched; they stay residual risk, not coverage.
 - Tracked settings register `.claude/hooks/k8s-pre-edit.sh` for pre-action

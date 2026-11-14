@@ -1,6 +1,6 @@
 ---
 title: "Claude Delivery Permissions and CI/CD Governance Plan"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/plan"
 status: "approved"
 owner: "platform"
@@ -31,13 +31,13 @@ Read at `main` `511e106f`:
 
 - **Settings and pin.** `.claude/settings.json` holds 20 allow, 3 ask and 197 deny rules plus `disableBypassPermissionsMode`. `scripts/validate-agent-governance.py` pins the three lists by ordered equality (lines 90-320 and 1537-1547); the two denies the user lifted sit at settings lines 46-47 and validator lines 137-138.
 - **Tests.** `tests/test_agent_governance.py` asserts push as `ask` (lines 1292-1302), keeps `gh release delete` and `gh run cancel` denied (lines 1355-1356), and decides commands with the matcher model `_bash_rule_matches` (lines 1107-1123).
-- **Provider notes.** `.claude/provider.md` lines 50-53 say that every push, `gh api` and `git -C` ask, because a `:branch` or `+branch` refspec cannot be matched. That holds for `:branch`, but `+branch` is matchable as `git push * +*`. `.codex/provider.md` lines 63-64 call the Codex rules a subset of the Claude deny families, which the lifted denies make untrue.
+- **Provider notes.** `.claude/provider.md` lines 50-53 say that every push, `gh api` and `git -C` ask, because a `:branch` or `+branch` refspec cannot be matched. That holds for `:branch`, but `+branch` is matchable by a push rule with argument part `* +*`. `.codex/provider.md` lines 63-64 call the Codex rules a subset of the Claude deny families, which the lifted denies make untrue.
 - **Git option parsing.** Git accepts a unique prefix of a long option and clusters short options. The kept push denies therefore miss `--de`, `--m`, `--pru`, `--al`, `--b`, `--force-w`, `-uf`, `-ud` and similar forms once push is allowed. Scratch dry runs on Git 2.43 confirmed the cases the Spec lists.
 - **Policy.**
   - The policy files require the user's decision for push, PR creation and merge (git.md line 22; approval-and-safety.md line 52; work-lifecycle line 122), but no per-call native prompt; PR creation and merge are already allowed on that basis.
   - Git.md lines 67-69 require explicit approval for each force push, branch deletion and amend, and git.md lines 58-59 and 127 forbid hook bypass and tag rewrites outright.
   - Git.md lines 112-133 and ADR-0048 lines 146-147 make `scripts/release.py` the sole producer.
-- **Release runbook.** Runbook 0012 lines 35-38 and 112-116 name the operator as the only executor of `publish --execute`, while ADR-0048 lines 174-175 require only the applicable authority.
+- **Release runbook.** Runbook 0012 lines 35-38, Step 5 of its Actions table (line 66) and lines 112-116, and the `release.py` row of `scripts/README.md` (line 94), name the operator as the only executor of `publish --execute`, while ADR-0048 lines 174-175 require only the applicable authority.
 - **Codex.** Codex asks before every network command (`.codex/config.toml` lines 3-6, 8 and 12) and forbids a prefix subset that includes `gh release create` and `gh workflow run` (rules lines 72-73), with a pinned digest (validator line 37).
 - **Hosted protection.** Hosted `main` protection was read back on 2026-11-11T23:46Z (SPEC-0161 Task lines 230 and 235). Tag rulesets and feature branches have no read-back.
 - **Local configuration.** `push.default` is `current` in this clone, and the primary checkout is on `main` (observed 2026-11-14).
@@ -47,7 +47,7 @@ Read at `main` `511e106f`:
 ## Goals & In-Scope
 
 - The final allow, ask and deny lists, with their validator pin and failing-first regressions, including the unique-prefix and cluster cases.
-- The amended git.md release-ownership text and the `#### Agent delivery commands` subsection; the Claude provider note replacement; the Codex provider note's parity sentence; the runbook 0012 executor lines; the Stage 03 README entry.
+- The amended git.md release-ownership text and the `#### Agent delivery commands` subsection; the Claude provider note replacement; the Codex provider note's parity sentence; the runbook 0012 executor lines, including Step 5; the `release.py` row of `scripts/README.md`; the Stage 03 README entry.
 - The residual risk, including what policy forbids but no rule denies and the code the allowed commands run, and the three enforcement layers, recorded once and linked.
 
 ## Non-Goals & Out-of-Scope
@@ -63,7 +63,7 @@ Read at `main` `511e106f`:
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-DELIVERYPERM-001](spec.md#success-criteria--verification-plan) | Write the failing decision and mutation tests and update the three validator tuples and their comment, show the whole validator failing on the old settings, then change the three settings lists. | Spec and Plan approval. | [Task 0001](tasks/tsk-0001-claude-push-permission.md) | Failing then passing tests and validator; `agent-governance` suite. |
-| WORK-002 | [VAL-DELIVERYPERM-002](spec.md#success-criteria--verification-plan) | Amend the git.md release-ownership text and add the delivery subsection (as `GIT-R###` rows if SPEC-0199 has merged), replace the Claude provider note lines and the Codex parity sentence, amend the runbook 0012 executor lines and add the Stage 03 README entry; run the document and exact-index checks. | WORK-001; the merge state of SPEC-0199 at rebase. | [Task 0001](tasks/tsk-0001-claude-push-permission.md) | Strict document validators, affected-surface routing, ruff, staged QA and commit hooks. |
+| WORK-002 | [VAL-DELIVERYPERM-002](spec.md#success-criteria--verification-plan) | Amend the git.md release-ownership text and add the delivery subsection (as `GIT-R###` rows if SPEC-0199 has merged), replace the Claude provider note lines and the Codex parity sentence, amend the runbook 0012 executor lines and the `release.py` row of `scripts/README.md`, and add the Stage 03 README entry; run the document and exact-index checks. | WORK-001; the merge state of SPEC-0199 at rebase. | [Task 0001](tasks/tsk-0001-claude-push-permission.md) | Strict document validators, affected-surface routing, ruff, staged QA and commit hooks. |
 
 ## Verification Plan
 
