@@ -1,6 +1,6 @@
 ---
 title: "Registry Schema Version SemVer Amendment"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -127,11 +127,11 @@ governance view.
 
 - **Requirements:** [REQ-0003-FR-0012](../../01.requirements/0003-workspace-agent-governance-platform.md), [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md).
 - **Architecture:** [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md).
-- **Change:** [SPEC-0207](../../03.specs/0207-w03-registry-schema-version/spec.md).
+- **Change:** N/A — SPEC-0207 left the tree; Git history recovers it. Its acceptance and exact source are summarized in [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage).
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0033](./0033-common-document-contract-v9.md) | Amends only the current-state sentence that names the integer; every other clause stays | [SPEC-0207](../../03.specs/0207-w03-registry-schema-version/spec.md) |
-| [ADR-0059](./0059-registry-common-form-model.md) | Amends only Decision 1's integer sentence; every other clause stays | [SPEC-0207](../../03.specs/0207-w03-registry-schema-version/spec.md) |
+| [ADR-0033](./0033-common-document-contract-v9.md) | Amends only the current-state sentence that names the integer; every other clause stays | N/A — SPEC-0207 left the tree; Git history recovers it |
+| [ADR-0059](./0059-registry-common-form-model.md) | Amends only Decision 1's integer sentence; every other clause stays | N/A — SPEC-0207 left the tree; Git history recovers it |
