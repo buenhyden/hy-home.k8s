@@ -22,7 +22,8 @@ from document_contracts import (  # noqa: E402
 
 APPROVAL_FIELDS = ("approved_by", "approved_at", "effective_from")
 EXTENSION_FIELDS = ("name", "condition", "owner", "verification", "review", "removal")
-# SPEC-0181: the accepted texts of the seven WGOV-CORE extensions, in registry order.
+# SPEC-0181 and SPEC-0194: the accepted texts of the eight WGOV-CORE extensions, in
+# registry order.
 EXTENSION_RECORDS = (
     (
         "Kubernetes/GitOps/bootstrap/external-service procedures",
@@ -72,6 +73,13 @@ EXTENSION_RECORDS = (
         "tests/test_workspace_memory.py, run through the workspace-memory-regressions check in scripts/validation/registry.json.",
         "When .agents/governance/context-and-memory.md or scripts/workspace_memory.py changes, and when shared_contract.version changes.",
         "When the memory store is retired or a shared WGOV-CORE edition defines its own memory store.",
+    ),
+    (
+        "Rules table Status column for retired policy rules",
+        "Applies to every Rules table of this repository: a rule ID is never reused until a user-approved new baseline under the Q-07 contract and a retired rule keeps its row, so the table carries an optional Status column whose value is active, or retired; followed by a successor rule ID or none.",
+        "POLICY-RULE-TABLE in the strict Markdown profile check and tests/test_policy_rule_ids.py, run by the document suite of scripts/run-contract-tests.py.",
+        "When shared_contract.version changes and when the Rules table definition of the Policy TemplateDefinitions changes.",
+        "When a shared WGOV-CORE edition of the Policy form defines rule retirement, when the user ends no-reuse retirement for rule IDs, or at a user-approved new baseline under the Q-07 contract.",
     ),
 )
 
@@ -184,7 +192,7 @@ class SharedContractApprovalFieldsTests(unittest.TestCase):
         for key in ("scope", "migration", "rollback"):
             self.assertEqual(shared[key], "unverified")
         self.assertEqual(shared["consumer_version"], shared["version"])
-        self.assertEqual(len(shared["extensions"]), 7)
+        self.assertEqual(len(shared["extensions"]), 8)
         self.assertEqual(len(shared["extensions"]), len(EXTENSION_RECORDS))
         for item, (name, condition, verification, review, removal) in zip(
             shared["extensions"], EXTENSION_RECORDS

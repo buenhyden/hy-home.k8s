@@ -33,13 +33,13 @@ updated: "{{UPDATED}}"
 
 ### Requirements
 
-<!-- Author prompt: write enforceable responsibilities and boundaries for this topic with a stable ID and condition for each rule. -->
+<!-- Author prompt: write enforceable responsibilities and boundaries for this topic. When the policy states normative rules, give each rule one stable ID of the form <CODE>-R<NNN>, a condition and a level of required, recommended or optional, and write the ID as a code span at the start of the rule's list item, table cell or H4 paragraph. -->
 
-<!-- Author prompt: use the Rules table below only when listing each rule with its condition and evidence helps the reader; otherwise delete the table. -->
+<!-- Author prompt: when the policy states normative rules, keep the Rules table below with one row per rule, numbers ascending from 001 without a gap and a Status of active or retired; followed by a successor rule ID or none, and register the policy's code in policy_rule_ids of docs/99.templates/registry.json in the same change; otherwise delete the table. -->
 
-| Rule | Condition | Evidence |
-| --- | --- | --- |
-| Name one stable rule ID. | State when the rule applies. | Name where compliance is observed. |
+| Rule ID | Condition | Level | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| CODE-R001 | State when the rule applies. | required | Name where compliance is observed. | active |
 
 ### Enforcement
 

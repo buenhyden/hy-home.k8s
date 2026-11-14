@@ -51,6 +51,7 @@ SUITES = {
         "work_residue_ledger",
         "document_generator",
         "relationship_contract",
+        "policy_rule_ids",
     ),
     "document-lifecycle": _modules(
         "document_artifact_identity",

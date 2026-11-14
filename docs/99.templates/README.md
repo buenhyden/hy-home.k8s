@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.30.5"
+version: "0.31.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -153,7 +153,12 @@ form 경로의 대응은 Registry만 소유한다.
   `Corrective Actions` 아래에 둔다. Policy의 목적·범위·규칙·예외·소유는 form의
   `Purpose`, `Scope`, `Rules`, `Exceptions`, `Ownership`에 배치하고, Policy의
   `Lifecycle Traceability` 관계 표는 `Ownership` 아래에서 같은 source·열·상호 참조
-  의미를 유지한다.
+  의미를 유지한다. Policy가 규범적 규칙을 진술하면 `Requirements` 아래에
+  `Rules` 표(Rule ID·Condition·Level·Evidence, 선택 열 Status)를 두고, 규칙 ID는
+  정책의 등록 code로 만든 `<CODE>-R<NNN>`이며 같은 ID를 규칙의 목록 항목·표
+  첫 셀·H4 단락 맨 앞에 코드 스팬으로 적는다. `Status`는 `retired;` 뒤에 후속
+  ID나 `none`을 적어 폐기한 규칙의 행을 남기는 이 저장소의 조건부 확장이며,
+  정확한 값과 code 기록은 Registry의 `policy_rule_ids`가 소유한다.
   기계가 읽는 정확한 heading과 순서·내용 경계는 Registry가 소유한다. 빈 heading이나
   placeholder만 채운 항목은 실질 내용이 아니며, 형식 PASS는 live 증거가 아니다.
 - **Reference forms** (`references/`): Stage 90 collection 세 곳은 모두 같은 3단

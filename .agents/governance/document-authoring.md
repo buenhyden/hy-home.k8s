@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.27.0"
+version: "3.28.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -338,7 +338,13 @@ keep no table. Reference Report, which the audit, research and data reports unde
 titles per report kind, a link-only Sources section and the nine template tables
 named by form section id, is also a Stage 99 local role under W03-D20, W03-D26,
 W03-D35 and W03-D36, not a COMMON-DOC-FORM-1 role. Policy uses the selected
-role's ordered sections. A
+role's ordered sections and, when it states normative rules, a Rules table
+under Requirements: each rule has an ID `<CODE>-R<NNN>` built on the policy's
+registered code, a condition and a required, recommended or optional level, the
+table's optional Status column keeps a retired rule as `retired;` with a
+successor ID or `none`, the ID also stands as a code span at the start of the
+rule's list item, table cell or H4 paragraph, and the registry
+`policy_rule_ids` owns the exact values and the code records. A
 TemplateDefinition names each table's section, ordered columns, minimum rows and
 row identity, and the validator checks column order, count and minimum rows. A
 template whose role has no form (`provider-native`) keeps its H2 lists and

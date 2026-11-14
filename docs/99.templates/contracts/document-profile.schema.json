@@ -20,7 +20,7 @@
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
     "schema_version": {
-      "const": "12.0.0"
+      "const": "13.0.0"
     },
     "shared_contract": {
       "description": "Identifies reviewed common input and the local adapter; structural validity does not authenticate approval or adoption.",
@@ -1078,6 +1078,88 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/link_type"
+          }
+        }
+      }
+    },
+    "policy_rule_ids": {
+      "description": "The policy rule ID grammar, the levels, the reserved codes, the condition and minimum of the Rules table and one registered code per policy (SPEC-0194).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code_pattern",
+        "levels",
+        "reserved_codes",
+        "rules_table",
+        "codes"
+      ],
+      "properties": {
+        "code_pattern": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "levels": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "reserved_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "rules_table": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "condition",
+            "minimum_rows"
+          ],
+          "properties": {
+            "condition": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "minimum_rows": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "codes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "code",
+              "state"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^[^/\\s][^\\s]*$"
+              },
+              "code": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "state": {
+                "enum": [
+                  "pending",
+                  "adopted"
+                ]
+              }
+            }
           }
         }
       }

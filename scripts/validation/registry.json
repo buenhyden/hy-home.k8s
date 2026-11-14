@@ -1478,6 +1478,10 @@
         {
           "kind": "exact",
           "value": "tests/test_relationship_contract.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_policy_rule_ids.py"
         }
       ],
       "validators": [

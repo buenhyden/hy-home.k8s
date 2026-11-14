@@ -25,8 +25,8 @@ GIT_TIMEOUT_SECONDS = 10
 # edits REGISTRY_MAJOR, appends its number to the tuple and edits
 # DOC_REGISTRY_MAJOR in scripts/provider_write_guard.py, with the registry value
 # and the schema const.
-REGISTRY_MAJOR = 12
-READABLE_REGISTRY_MAJORS = (10, 11, 12)
+REGISTRY_MAJOR = 13
+READABLE_REGISTRY_MAJORS = (10, 11, 12, 13)
 TOP_LEVEL_KEYS = frozenset(
     {
         "$schema",
@@ -39,9 +39,9 @@ TOP_LEVEL_KEYS = frozenset(
 # SPEC-0091 adds the README navigation contract, SPEC-0093 the document
 # language contract, SPEC-0168 the common form model and SPEC-0181 the
 # frontmatter key descriptions and dialect, SPEC-0191 the work residue
-# block and SPEC-0193 the relationship contract. A comparison-base registry from
-# before any of those decisions has none of them, so the keys are admitted
-# beside the required set.
+# block, SPEC-0193 the relationship contract and SPEC-0194 the policy rule ID
+# section. A comparison-base registry from before any of those decisions has
+# none of them, so the keys are admitted beside the required set.
 OPTIONAL_TOP_LEVEL_KEYS = frozenset(
     {
         "readme_navigation",
@@ -52,6 +52,7 @@ OPTIONAL_TOP_LEVEL_KEYS = frozenset(
         "frontmatter_dialect",
         "work_residue",
         "relationship_contract",
+        "policy_rule_ids",
     }
 )
 PROFILE_KEYS = frozenset(

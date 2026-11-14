@@ -598,7 +598,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W03 with W05",
-      "resume_condition": "Packages 2 to 5 add the rule IDs (W03-D42 to W03-D44)",
+      "resume_condition": "Packages 3 to 5 add the rule IDs (W03-D42 to W03-D44); the package that adopts the last policy removes the adoption gate, `state` and `POLICY-RULE-ADOPTION` with their tests in its final source commit (W03-D53)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
