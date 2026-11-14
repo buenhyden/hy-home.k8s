@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.23.84"
+version: "0.23.85"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-15"
 ---
 # 03.specs
 
@@ -67,13 +67,14 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ```text
 03.specs/
 ├── 0161-w00-v14-7-delta-intake/
+├── 0200-w03-spec-plan-forms/
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
 └── work-residue-ledger.json
 ```
 
-현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, W11까지 잔여 소유자로 남고 work residue ledger가 비면 W11에서 종료한다.
+현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)와 [SPEC-0200 W03 Spec and Plan Forms](./0200-w03-spec-plan-forms/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, W11까지 잔여 소유자로 남고 work residue ledger가 비면 W11에서 종료한다. SPEC-0200은 Spec과 Plan의 공통 form(COMMON-DOC-FORM-1)을 Stage 99 registry에 등록하고, 두 템플릿과 현행 Spec·Plan을 그 form으로 옮기며, 닫힐 때 일회용 예외 둘을 제거한다.
 
 [work-residue-ledger.json](./work-residue-ledger.json)은 열린 인계·충돌·채택·조사 잔여 항목을 포인터로만 담는 work residue ledger다. 실행 상태, 증거, 수용은 담지 않고 Task가 소유한다. 종결된 항목은 그 Task가 속한 package의 종료 commit까지 삭제한다.
 
@@ -113,7 +114,7 @@ SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-sla
 4. 실행 가능한 인터페이스 계약은 실제 구현 소유 경로에 두고 Spec에서 그 owner와 검증을 추적한다.
 5. Agent 변경은 목표·동작·경계·실패 조건을 Spec에, 구현 순서와 rollback을 Plan에 기록한다.
 6. Feature-local Task records가 해당 work-unit의 실행과 evidence를 소유한다. Validator의 독립 실행 테스트와 fixture는 top-level `tests/`와 `tests/fixtures/` 아래에 두고, production module은 이를 import하거나 runtime data로 읽지 않는다. `validation/tests/` 또는 Spec-package-local test control plane은 만들지 않는다.
-7. Spec의 `Traceability` 표는 Requirement ID를 기준에 잇고, Plan의 `Work Breakdown` 표는 각 work unit을 Task에 잇는다.
+7. Spec의 `Lifecycle Traceability` 표(References 아래)는 Requirement ID를 기준에 잇고, Plan의 `Work Breakdown` 표(Implementation Strategy 아래)는 각 work unit을 Task에 잇는다.
 
 #### Helper Templates
 
