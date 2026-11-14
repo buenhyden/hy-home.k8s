@@ -3178,8 +3178,9 @@ def _load_published_contract(
                 )
             ),
         )
-    major = int(registry_schema_version(payload).split(".")[0])
-    if major != REGISTRY_MAJOR or payload.get("$id") != expected_id:
+    major = registry_schema_version(payload).split(".")[0]
+    # Digit strings compare without int(): the grammar has no leading zero.
+    if major != str(REGISTRY_MAJOR) or payload.get("$id") != expected_id:
         _fail(
             "REGISTRY_SCHEMA",
             expected=f"schema_version of major {REGISTRY_MAJOR} $id={expected_id!r}",

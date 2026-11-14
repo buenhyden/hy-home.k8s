@@ -66,11 +66,16 @@ _REGISTRY_RELEASE = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]
 
 
 def registry_version_major(value: object) -> int | None:
-    """Return the MAJOR number of a release string, or None for any other value."""
+    """Return the MAJOR number of a release string, or None for any other value.
+
+    A MAJOR with more digits than the accepted one is no match, so a huge digit
+    string is never converted (Python limits int conversion to 4300 digits)."""
     if type(value) is not str:
         return None
     match = _REGISTRY_RELEASE.fullmatch(value)
-    return None if match is None else int(match.group(1))
+    if match is None or len(match.group(1)) > len(str(DOC_REGISTRY_MAJOR)):
+        return None
+    return int(match.group(1))
 
 
 project_dir: str = ""

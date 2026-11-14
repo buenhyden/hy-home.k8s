@@ -1960,10 +1960,11 @@ class _CumulativeHistoryCache:
         oid = _tree_blob_oid(self.root, commit, CURRENT_REGISTRY_PATH)
         raw = _registry_blob(self.root, oid) if oid is not None else {}
         try:
-            major = int(registry_schema_version(raw).split(".")[0])
+            major = registry_schema_version(raw).split(".")[0]
         except DocumentContractError:
             return self.registry
-        if major not in READABLE_REGISTRY_MAJORS:
+        # Digit strings compare without int(): the grammar has no leading zero.
+        if major not in {str(readable) for readable in READABLE_REGISTRY_MAJORS}:
             return self.registry
         try:
             return _typed_registry_from_mapping(raw)

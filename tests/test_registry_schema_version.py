@@ -8,7 +8,9 @@ fact, the mapping of the earlier generations (REQ:890).
 
 from __future__ import annotations
 
+import contextlib
 import copy
+import io
 import importlib.util
 import json
 import re
@@ -28,6 +30,8 @@ from tests.git_fixture import GitFixture  # noqa: E402
 REGISTRY_FILE = ROOT / "docs/99.templates/registry.json"
 SCHEMA_FILE = ROOT / "docs/99.templates/contracts/document-profile.schema.json"
 LAST_INTEGER_GENERATION = 10
+# Past Python's int-conversion limit of 4300 digits; the grammar allows it.
+HUGE_MAJOR_VALUE = "1" * 5000 + ".0.0"
 
 
 def _load_script(name: str, filename: str):
@@ -221,6 +225,11 @@ class LoaderTests(unittest.TestCase):
                 raw["schema_version"] = value
                 self.assertEqual(rules_of_load(raw), {"REGISTRY_SCHEMA"})
 
+    def test_a_huge_major_is_refused_with_the_contract_error(self) -> None:
+        raw = raw_registry()
+        raw["schema_version"] = HUGE_MAJOR_VALUE
+        self.assertEqual(rules_of_load(raw), {"REGISTRY_SCHEMA"})
+
     def test_the_strict_schema_pins_the_exact_current_value(self) -> None:
         raw = raw_registry()
         raw["schema_version"] = f"{AUTHORITY.REGISTRY_MAJOR}.1.0"
@@ -317,6 +326,7 @@ class HistoryReaderTests(unittest.TestCase):
             "above-mapping": LAST_INTEGER_GENERATION + 1,
             "prerelease": f"{AUTHORITY.REGISTRY_MAJOR}.0.0-rc.1",
             "null": None,
+            "huge-major": HUGE_MAJOR_VALUE,
         }.items():
             cases[label] = lambda raw, value=value: raw.update(schema_version=value)
         for label, mutate in cases.items():
@@ -332,26 +342,39 @@ class HistoryReaderTests(unittest.TestCase):
 class GuardTests(unittest.TestCase):
     """The write guard runs from the checkout with the standard library only."""
 
-    def routes_for(self, value: object) -> object:
+    def routes_for_payload(self, payload: object) -> object:
         with tempfile.TemporaryDirectory(prefix="registry-guard-") as directory:
             root = Path(directory)
             (root / "docs/99.templates").mkdir(parents=True)
             (root / "docs/99.templates/registry.json").write_text(
-                json.dumps(
-                    {
-                        "schema_version": value,
-                        "profiles": [
-                            {
-                                "id": "sdlc/requirement",
-                                "path_pattern": r"^docs/01\.requirements/[a-z-]+\.md$",
-                                "template_source": None,
-                            }
-                        ],
-                    }
-                ),
-                encoding="utf-8",
+                json.dumps(payload), encoding="utf-8"
             )
             return GUARD.load_document_routes(str(root))
+
+    def routes_for(self, value: object) -> object:
+        return self.routes_for_payload(
+            {
+                "schema_version": value,
+                "profiles": [
+                    {
+                        "id": "sdlc/requirement",
+                        "path_pattern": r"^docs/01\.requirements/[a-z-]+\.md$",
+                        "template_source": None,
+                    }
+                ],
+            }
+        )
+
+    def assert_refused(self, attempt) -> None:
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr):
+            with self.assertRaises(SystemExit) as caught:
+                attempt()
+        self.assertEqual(caught.exception.code, 2)
+        self.assertTrue(
+            stderr.getvalue().startswith("[FAIL] HOOK-DOC-REGISTRY: schema_version"),
+            stderr.getvalue(),
+        )
 
     def test_one_major_number_is_shared_by_the_guard_the_code_and_the_files(
         self,
@@ -389,11 +412,22 @@ class GuardTests(unittest.TestCase):
             f"{major}.0.0-rc.1",
             True,
             None,
+            "\u0661\u0661.0.0",
+            "\uff11\uff11.0.0",
+            HUGE_MAJOR_VALUE,
         ):
             with self.subTest(value=value):
-                with self.assertRaises(SystemExit) as caught:
-                    self.routes_for(value)
-                self.assertEqual(caught.exception.code, 2)
+                self.assert_refused(lambda value=value: self.routes_for(value))
+
+    def test_the_guard_refuses_a_registry_without_the_key_or_an_object(self) -> None:
+        for payload in ({"profiles": []}, [{"schema_version": current_value()}]):
+            with self.subTest(payload=payload):
+                self.assert_refused(
+                    lambda payload=payload: self.routes_for_payload(payload)
+                )
+
+    def test_the_guard_reads_a_huge_major_as_no_major(self) -> None:
+        self.assertIsNone(GUARD.registry_version_major(HUGE_MAJOR_VALUE))
 
     def test_the_guard_grammar_matches_the_repository_grammar_over_a_corpus(
         self,
@@ -418,6 +452,8 @@ class GuardTests(unittest.TestCase):
             f" {major}.0.0",
             f"{major}.0.0 ",
             f"{major}.0.0\n",
+            "\u0661\u0661.0.0",
+            "\uff11\uff11.0.0",
             "",
             "a.b.c",
             True,
