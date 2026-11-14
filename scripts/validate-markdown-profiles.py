@@ -1869,18 +1869,28 @@ def _frontmatter_body(
                         "missing or invalid cancellation",
                     )
                 )
+        # W03-D22, W03-D52: the key stays only on an accepted ADR inside the
+        # retained range, so the identity bound of the form is its discriminator.
         if (
             "layer" in data
             and "layer" in contract.allowed
-            and data.get("status") != "accepted"
+            and (
+                data.get("status") != "accepted"
+                or (
+                    profile.form is not None
+                    and not profile.form.retains_identity(
+                        expected_artifact_id(path, profile) or ""
+                    )
+                )
+            )
         ):
             diagnostics.append(
                 _diagnostic(
                     "FM-LAYER-ADR",
                     path,
                     profile,
-                    "layer only on a document whose status is accepted",
-                    f"layer on status {data.get('status')!r}",
+                    "layer only on an accepted document inside the retained range",
+                    f"layer on status {data.get('status')!r} of {path.name}",
                 )
             )
         if (
@@ -2123,11 +2133,14 @@ def _body_diagnostics(
             _diagnostic(rule, path, profile, "all fenced blocks are closed", "unclosed")
         )
     # SPEC-0168: a profile whose role has a form is checked against its section
-    # tree, unless a retained form names this status and supplies H2 lists.
+    # tree, unless a retained form names this status (and, when it carries an
+    # identity bound, the path-derived identity) and supplies H2 lists.
     headings = profile.headings
     tree = profile.form is not None
     if profile.form is not None:
-        retained = profile.form.retained_headings(status)
+        retained = profile.form.retained_headings(
+            status, expected_artifact_id(path, profile) or ""
+        )
         if retained is not None:
             headings, tree = retained, False
     if not tree and not headings.required and not headings.allowed:

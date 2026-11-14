@@ -34,7 +34,8 @@ Canonical sources are the documents linked or named in the opening paragraph and
 1. The parent folder decides the type: `descriptions/####-<slug>.md` uses
    `sdlc/architecture-description`, `decisions/####-<slug>.md` uses
    `sdlc/architecture-decision`. Start from the matching form in
-   `docs/99.templates/templates/architecture/`.
+   `docs/99.templates/templates/architecture/`; a new ADR starts from the
+   common ADR form, in every status.
 2. AD states are `draft`, `in-review` and `active`; ADR states are
    `proposed`, `accepted` and `rejected`. Moving an ADR to `accepted` needs
    the operator's recorded approval. `rejected` is the decision outcome that
@@ -43,7 +44,9 @@ Canonical sources are the documents linked or named in the opening paragraph and
    `Archived Lineage` and delete it in the same change, as the
    [document lifecycle policy](../../.agents/governance/document-lifecycle.md)
    requires; otherwise defer.
-3. Never edit an accepted decision in place. Write a successor ADR whose
+3. Never edit an accepted decision in place; an accepted ADR from ADR-0001 to
+   ADR-0061 keeps the form it was accepted in until a successor replaces it.
+   Write a successor ADR whose
    `supersedes` and Traceability keep the predecessor ID, summarize the
    predecessor in the owning AD's `Archived Lineage` table, and delete it in
    the same change. There is no `superseded` state in this stage.

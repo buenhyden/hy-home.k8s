@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": "14.0.0",
+  "schema_version": "15.0.0",
   "profiles": [
     {
       "id": "sdlc/requirement",
@@ -206,15 +206,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Context",
-          "Decision",
-          "Explicit Non-goals",
-          "Consequences",
-          "Alternatives",
-          "Traceability"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -4247,15 +4239,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Context",
-          "Decision",
-          "Explicit Non-goals",
-          "Consequences",
-          "Alternatives",
-          "Traceability"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -4288,7 +4272,110 @@
           "allow_explicit_exclusion": true
         }
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "purpose": "Give authors one form for an architecture decision record that states the context, the chosen option and its authority, the alternatives, the consequences and the traceability of one durable decision.",
+        "responsibility": "An ADR owns one durable decision, its decision maker, effect and lineage; the current structure it changes stays with the Architecture Description, requirements with the Requirement and implementer-level contracts with the Spec.",
+        "non_goals": [
+          "The current system structure, which belongs to an Architecture Description.",
+          "Requirement statements or acceptance criteria, which belong to a Requirement.",
+          "Implementer-level contracts, work orders or execution evidence, which belong to a Spec, Plan or Task."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every sdlc/architecture-decision document under docs/02.architecture/decisions/ and its template; an accepted ADR from ADR-0001 to ADR-0061 keeps the seven H2 it was accepted with under the retained form.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/templates/architecture/decision.template.md",
+          "docs/99.templates/README.md",
+          "docs/02.architecture/README.md",
+          "docs/02.architecture/decisions/README.md",
+          "docs/02.architecture/decisions/0062-accepted-decision-retained-form.md",
+          "scripts/document_contracts.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validation/repository/form_contracts.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_frontmatter_key_contract.py"
+        ],
+        "validation": {
+          "positive": [
+            "The 36 accepted ADRs of ADR-0001 to ADR-0061 pass the retained form and ADR-0062 and the template pass the form tree, body-contract, table, author-prompt and residue checks.",
+            "An accepted ADR inside the identity bound passes the retained H2 lists and an accepted ADR outside it passes the form tree.",
+            "The Alternatives table accepts zero rows."
+          ],
+          "negative": [
+            "An accepted ADR after ADR-0061 that keeps the retained H2 lists fails the form tree.",
+            "A retained form of the ADR role without an anchored identity bound, or with one that matches ADR-0062, fails REGISTRY_FORM_EXTENSION.",
+            "A layer key on an accepted ADR after ADR-0061 fails FM-LAYER-ADR.",
+            "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT."
+          ],
+          "regression": [
+            "The loaded decision profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_common_form_tree.py asserts exactly the ADR form, its two extensions, its two tables and this definition in the repository registry."
+          ]
+        },
+        "migration": {
+          "meaning_map": "No accepted ADR changes form (W03-D02): the retained form keeps the seven H2 of ADR-0001 to ADR-0061 and the decision template moves its former prompts into the five H2 and ten H3 of the form, with the Overview prompt under Chosen Option and the Traceability prompt above the Lifecycle Traceability table; the SPEC-0198 Task records each placement.",
+          "retained_history": "Git history retains the seven-heading decision layout and its previous template.",
+          "rollback": "Revert the SPEC-0198 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Alternatives",
+            "section": "adr-alternatives-trade-offs",
+            "columns": [
+              {
+                "key": "Alternative",
+                "meaning": "The alternative that was considered, named as the option it is.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Trade-off",
+                "meaning": "What choosing that alternative would gain, risk or cost, and why it was not selected.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Alternative"
+          },
+          {
+            "name": "Lifecycle Traceability",
+            "section": "adr-lifecycle-traceability",
+            "columns": [
+              {
+                "key": "Decision lineage",
+                "meaning": "Link to the architecture description or ADR the decision follows from, or the owner that holds its lineage.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Replacement relation",
+                "meaning": "Whether the decision supersedes a predecessor decision, or N/A for a first decision.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Affected Spec",
+                "meaning": "Link to the Spec the decision affects, or an N/A reason when the Spec left the tree.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 1,
+            "row_identity": "Decision lineage"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-sdlc-architecture-description",
@@ -16506,6 +16593,419 @@
             "title": "Archived Lineage"
           }
         ]
+      },
+      {
+        "form_id": "adr",
+        "title": "ADR",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "adr-context",
+            "level": 2,
+            "parent_id": null,
+            "title": "Context",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "결정이 필요한 상황",
+            "required_content": [
+              "결정이 필요한 상황에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "accepted를 구현·인수 완료로 치환하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "adr-context-problem-and-drivers",
+                "level": 3,
+                "parent_id": "adr-context",
+                "title": "Problem and Drivers",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "문제·결정 동인·제약",
+                "required_content": [
+                  "문제·결정 동인·제약을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "accepted를 구현·인수 완료로 치환하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "adr-context-decision-scope",
+                "level": 3,
+                "parent_id": "adr-context",
+                "title": "Decision Scope",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "결정 범위·영향받는 소비자",
+                "required_content": [
+                  "결정 범위·영향받는 소비자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "accepted를 구현·인수 완료로 치환하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "adr-decision",
+            "level": 2,
+            "parent_id": null,
+            "title": "Decision",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "선택한 결정과 효력",
+            "required_content": [
+              "선택한 결정과 효력에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "accepted를 구현·인수 완료로 치환하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "adr-decision-chosen-option",
+                "level": 3,
+                "parent_id": "adr-decision",
+                "title": "Chosen Option",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "선택·적용 조건·규범 소유자",
+                "required_content": [
+                  "선택·적용 조건·규범 소유자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "accepted를 구현·인수 완료로 치환하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "adr-decision-authority-and-effect",
+                "level": 3,
+                "parent_id": "adr-decision",
+                "title": "Authority and Effect",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "결정자·승인 증거·효력 시점",
+                "required_content": [
+                  "결정자·승인 증거·효력 시점을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "accepted를 구현·인수 완료로 치환하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "adr-alternatives",
+            "level": 2,
+            "parent_id": null,
+            "title": "Alternatives",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "대안 비교",
+            "required_content": [
+              "대안 비교에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "accepted를 구현·인수 완료로 치환하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "adr-alternatives-considered-options",
+                "level": 3,
+                "parent_id": "adr-alternatives",
+                "title": "Considered Options",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 고려한 대안",
+                "required_content": [
+                  "실제 고려한 대안을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "accepted를 구현·인수 완료로 치환하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "adr-alternatives-trade-offs",
+                "level": 3,
+                "parent_id": "adr-alternatives",
+                "title": "Trade-offs",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "장점·위험·비용·비채택 사유",
+                "required_content": [
+                  "장점·위험·비용·비채택 사유을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "accepted를 구현·인수 완료로 치환하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "adr-consequences",
+            "level": 2,
+            "parent_id": null,
+            "title": "Consequences",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "결정의 결과와 책임",
+            "required_content": [
+              "결정의 결과와 책임에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "accepted를 구현·인수 완료로 치환하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "adr-consequences-impacts",
+                "level": 3,
+                "parent_id": "adr-consequences",
+                "title": "Impacts",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "구현·운영·품질 영향",
+                "required_content": [
+                  "구현·운영·품질 영향을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "accepted를 구현·인수 완료로 치환하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "adr-consequences-follow-up",
+                "level": 3,
+                "parent_id": "adr-consequences",
+                "title": "Follow-up",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "이행·회복·후속 책임과 검증",
+                "required_content": [
+                  "이행·회복·후속 책임과 검증을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "accepted를 구현·인수 완료로 치환하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "adr-traceability",
+            "level": 2,
+            "parent_id": null,
+            "title": "Traceability",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "요구와 후속 결정 연결",
+            "required_content": [
+              "요구와 후속 결정 연결에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "accepted를 구현·인수 완료로 치환하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "adr-traceability-sources",
+                "level": 3,
+                "parent_id": "adr-traceability",
+                "title": "Sources",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "요구·외부 근거·관련 구조",
+                "required_content": [
+                  "요구·외부 근거·관련 구조을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "accepted를 구현·인수 완료로 치환하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "adr-traceability-supersession",
+                "level": 3,
+                "parent_id": "adr-traceability",
+                "title": "Supersession",
+                "order": 2,
+                "requiredness": "conditional",
+                "condition": "실제 선행·후속 결정이 존재하거나 대체하는 변경",
+                "content": "선행·후속 결정의 현재/역사 참조 및 계보",
+                "required_content": [
+                  "선행·후속 결정의 현재/역사 참조 및 계보을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "accepted를 구현·인수 완료로 치환하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "omit_when_condition_false",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          }
+        ],
+        "extensions": [
+          {
+            "id": "adr-lifecycle-traceability",
+            "kind": "local_h3",
+            "condition": "a decision in a status the body contract enforces (proposed) maps its lineage, its replacement relation and its affected Spec",
+            "owner": "platform",
+            "verification": "the body-contract check",
+            "review": "when the ADR form version changes",
+            "removal": "when decision lineage has another registered owner",
+            "parent_id": "adr-traceability",
+            "title": "Lifecycle Traceability"
+          },
+          {
+            "id": "adr-accepted-retained-form",
+            "kind": "retained_form",
+            "condition": "an accepted ADR from ADR-0001 to ADR-0061 keeps the seven H2 it was accepted with; an ADR outside that range takes the form tree in every status",
+            "owner": "platform",
+            "verification": "tests/test_common_form_tree.py",
+            "review": "when an ADR in the range is replaced by a successor",
+            "removal": "when no ADR in the range remains in the tree, each having been replaced by a successor; the bound is never widened",
+            "statuses": [
+              "accepted"
+            ],
+            "identity_bound": "^ADR-(?:000[1-9]|00[1-5][0-9]|006[01])$",
+            "retained_sections": {
+              "required": [
+                "Overview",
+                "Context",
+                "Decision",
+                "Explicit Non-goals",
+                "Consequences",
+                "Alternatives",
+                "Traceability"
+              ],
+              "optional": [],
+              "forbidden": []
+            }
+          }
+        ]
       }
     ]
   },
@@ -16718,9 +17218,9 @@
     },
     {
       "key": "layer",
-      "purpose": "Names the stage a document lives in; kept only on accepted ADRs, which are not edited in place.",
+      "purpose": "Names the stage a document lives in; kept only on accepted ADRs from ADR-0001 to ADR-0061, which are not edited in place.",
       "data_type": "string",
-      "condition": "Allowed, never required, on the architecture decision profile and only on an accepted ADR (FM-LAYER-ADR); refused on every other profile.",
+      "condition": "Allowed, never required, on the architecture decision profile and only on an accepted ADR whose identity matches the retained form's bound, ADR-0001 to ADR-0061 (FM-LAYER-ADR); refused on every other profile and on every ADR after ADR-0061.",
       "authoring_owner": "derived",
       "derived_from": "The stage folder of the document path.",
       "duplicate_source": "The stage folder of the document path (W03-D22).",
@@ -16728,8 +17228,8 @@
         "scripts/validate-markdown-profiles.py",
         "scripts/validate-document-contract-registry.py"
       ],
-      "lifecycle": "Retained on an accepted ADR until a successor replaces it; never added to a new document.",
-      "migration": "Removed from every other document by SPEC-0184 (W03-D22, W03-H25); an accepted ADR keeps it until a successor replaces it.",
+      "lifecycle": "Retained on an accepted ADR in the range until a successor replaces it; never added to a new document.",
+      "migration": "Removed from every other document by SPEC-0184 (W03-D22, W03-H25); an accepted ADR in the range keeps it until a successor replaces it, and SPEC-0198 bounds it by the retained form's identity (W03-D52).",
       "positive_test": {
         "module": "tests/test_frontmatter_key_contract.py",
         "test": "test_layer_accepted"
@@ -17670,7 +18170,8 @@
           "common/template-evaluation-score",
           "common/template-evaluation-results",
           "common/template-sdlc-requirement",
-          "common/template-sdlc-architecture-description"
+          "common/template-sdlc-architecture-description",
+          "common/template-sdlc-architecture-decision"
         ],
         "target_profile_ids": [
           "governance/rule",
@@ -17850,6 +18351,11 @@
             "profile_id": "common/template-sdlc-architecture-description",
             "carrier": "registry_key",
             "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-sdlc-architecture-decision",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
           }
         ],
         "reverse_view": "None: a policy owner never lists the templates that apply it.",
@@ -17921,7 +18427,8 @@
           "common/template-evaluation-score",
           "common/template-evaluation-results",
           "common/template-sdlc-requirement",
-          "common/template-sdlc-architecture-description"
+          "common/template-sdlc-architecture-description",
+          "common/template-sdlc-architecture-decision"
         ],
         "target_profile_ids": [],
         "cardinality": {
@@ -18096,6 +18603,11 @@
           },
           {
             "profile_id": "common/template-sdlc-architecture-description",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-sdlc-architecture-decision",
             "carrier": "registry_key",
             "key": "template_definition.consumer_paths"
           }
