@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.9.1"
+version: "2.10.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 ---
 
 # Document Lifecycle Policy
@@ -49,7 +49,31 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 
 ### Requirements
 
-- A proposed status change must be one directed edge declared by the selected
+| Rule ID | Condition | Level | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| DOCLIFE-R001 | Always | required | `document-lifecycle` | active |
+| DOCLIFE-R002 | When a Plan is newly authored or revised for current scope | required | `markdown-profiles` | active |
+| DOCLIFE-R003 | Always | required | `document-lifecycle` | active |
+| DOCLIFE-R004 | For a newly recorded Task | required | `document-lifecycle` | active |
+| DOCLIFE-R005 | When a scoped user request, actual batch review and approval are recorded | required | `document-lifecycle` | active |
+| DOCLIFE-R006 | When a scoped request, actual batch review and user approval occurred before the first commit | required | `document-lifecycle` | active |
+| DOCLIFE-R007 | Always | required | `document-contract-registry` | active |
+| DOCLIFE-R008 | Always | required | `document-lifecycle` | active |
+| DOCLIFE-R009 | Always | required | `document-lifecycle` | active |
+| DOCLIFE-R010 | When a document is cancelled | required | `document-lifecycle` | active |
+| DOCLIFE-R011 | On supersession of an operations, governance, reference or evaluation document | required | `document-lifecycle` | active |
+| DOCLIFE-R012 | Always | required | Semantic review | active |
+| DOCLIFE-R013 | Always | required | Semantic review | active |
+| DOCLIFE-R014 | Before a current document is deleted or moved into `docs/98.archive/` | required | Semantic review | active |
+| DOCLIFE-R015 | When Git-history-only disposition is chosen | required | Semantic review | active |
+| DOCLIFE-R016 | Always | required | `markdown-profiles` | active |
+| DOCLIFE-R017 | Always | required | `document-contract-registry` | active |
+| DOCLIFE-R018 | Always | required | `document-lifecycle` | active |
+| DOCLIFE-R019 | Always | required | `document-lifecycle` | active |
+| DOCLIFE-R020 | Always | required | `.markdownlint-cli2.yaml` | active |
+| DOCLIFE-R021 | Always | required | Semantic review | active |
+
+- `DOCLIFE-R001` A proposed status change must be one directed edge declared by the selected
   profile family. For a new Spec or Plan, `draft` states unreviewed intent,
   `in-review` is the review interval, and `approved` establishes the current
   authorized contract. Changed scope or contradicting evidence sends the
@@ -58,7 +82,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   actual authority and disposition of remaining criteria.
   Approval never asserts implementation completion, criterion acceptance,
   or integration.
-- A newly authored Plan, or one revised for current scope, links the approved
+- `DOCLIFE-R002` A newly authored Plan, or one revised for current scope, links the approved
   Spec's constraints in `Global Constraints`, adds only execution constraints
   specific to the Plan, and keeps one `Promotion` record. An in-progress Plan
   does not treat an intended promotion target as approval or completion evidence.
@@ -71,7 +95,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   rather than Stage 99 itself as a separate policy owner. Neither a Task PASS
   nor the parent Spec's `approved` state substitutes for promotion. Do not
   rewrite a historical Plan to add a new record.
-- A Task carries actual work state: `draft` is proposed, `ready` means the
+- `DOCLIFE-R003` A Task carries actual work state: `draft` is proposed, `ready` means the
   approved inputs and execution prerequisites are assembled (it is no new
   approval or live-action permission), `in-progress`
   records started execution, and `blocked` names the obstacle and next owner.
@@ -86,7 +110,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   no waiver. Active and completed Tasks cannot use that verdict.
   QA `NOT_APPLICABLE` describes a check without a target, not a criterion
   waiver.
-- For a newly recorded Task in this k8s regional adapter, the first Git
+- `DOCLIFE-R004` For a newly recorded Task in this k8s regional adapter, the first Git
   version may carry an actual nonterminal `ready`, `in-progress` or `blocked`
   row when the current scoped user authorization and Task Inputs identify the
   owner, prerequisites and evidence of preparation, execution or obstacle.
@@ -95,7 +119,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   protected-action approval remain unchanged. This is an explicit local
   `shared_contract.extensions` rule, not a new WGOV-CORE 3.0.0 edition
   or, by itself, proof of full regional adoption.
-- The `shared_contract.extensions` entry `Local candidate Spec/Plan direct
+- `DOCLIFE-R005` The `shared_contract.extensions` entry `Local candidate Spec/Plan direct
   draft-to-approved transition after actual batch review and approval`
   admits the direct edge for this k8s regional
   adapter when a scoped user request, actual batch review and approval are
@@ -107,7 +131,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   Git state that was not observed solely to satisfy a transition reader.
   This local extension does not change WGOV-CORE 3.0.0 or, by itself, claim
   regional adoption; all later transitions retain their existing checks.
-- The `shared_contract.extensions` entry `Local candidate Spec/Plan
+- `DOCLIFE-R006` The `shared_contract.extensions` entry `Local candidate Spec/Plan
   first-recording as approved after actual batch review and approval` admits a
   narrow first Git record at `approved` when a scoped request, actual batch
   review and user approval occurred before the first commit. The same-package
@@ -130,12 +154,12 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   integration evidence. Do not fabricate a draft commit or remove observed
   Task evidence to satisfy the normal route. The shared WGOV-CORE edition and
   ordinary later transitions remain intact.
-- Current rule documents under `.agents/`, `docs/99.templates/`, `.claude/`
+- `DOCLIFE-R007` Current rule documents under `.agents/`, `docs/99.templates/`, `.claude/`
   and `.codex/` name only the `shared_contract.version` the Stage 99 registry
   adopts; the registry validator refuses another edition as
   `REGISTRY_SHARED_EDITION_MISMATCH`. Spec packages, the archive and
   `CHANGELOG.md` are history and may name older editions.
-- Stage 01, 02 and 03 documents have no `superseded`, `retired` or
+- `DOCLIFE-R008` Stage 01, 02 and 03 documents have no `superseded`, `retired` or
   `deprecated` state and no older form. A replaced or withdrawn document, or a
   completed Spec package, is summarized in the owning current document's
   `Archived Lineage` table and deleted in the same change; Git history recovers
@@ -149,7 +173,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   `in-progress`, or executing it, requires its current owning `approved` Spec
   and Plan. No status alone grants
   disposition, removal or new-execution authority.
-- Document approval, Task execution, criterion acceptance, QA result,
+- `DOCLIFE-R009` Document approval, Task execution, criterion acceptance, QA result,
   publication, integration and archival disposition are separate claims. A
   Requirement's `approved`, an ADR's `accepted`, an operating document's
   `active`, an Incident's `resolved`, and a Postmortem's `published` retain
@@ -168,22 +192,22 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   resolves. A required `FAIL`, `DEFER` or `NOT_RUN` remains visible until a
   later matching PASS explicitly resolves its evidence ID. Unrelated PASS
   cannot satisfy the criterion.
-- Nonrequired cancellation does not waive required work. A cancelled document
+- `DOCLIFE-R010` Nonrequired cancellation does not waive required work. A cancelled document
   records reason, authorization_ref and criteria_disposition. The reference
   leads to original approval evidence and does not authenticate it: verify the
   actual actor, target, action, time and revocation through the trusted approval
   route. Preserve all observed results, including failures, when cancelling.
   A resolved Incident records its actual zoned resolved_at and body evidence;
   a placeholder or date alone cannot establish resolution.
-- Meaningful supersession of an operations, governance, reference or evaluation
+- `DOCLIFE-R011` Meaningful supersession of an operations, governance, reference or evaluation
   document requires the old owner to link `superseded_by` to the successor and
   the successor to link `supersedes` back in the same change.
-- A mutable or current owner cannot disappear without replacement coverage
+- `DOCLIFE-R012` A mutable or current owner cannot disappear without replacement coverage
   and consumer disposition.
-- These disposition rules govern repository development documents only.
+- `DOCLIFE-R013` These disposition rules govern repository development documents only.
   Service and operations data, backups, credentials, Vault records and the
   shared memory store keep their own owners and are never removed under them.
-- Before a current document is deleted or moved into `docs/98.archive/`,
+- `DOCLIFE-R014` Before a current document is deleted or moved into `docs/98.archive/`,
   manually assess its current normative, historical, audit and recovery
   consumers; preservation value and access need; holds; and actual disposition
   authority. Record the target, basis, approval scope, disposition method and
@@ -206,7 +230,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   After the final source commit, the frozen decision and evidence text is
   not reformatted, translated or normalized; a correction goes to a current
   document.
-- Choose Git-history-only disposition only after proving that the exact
+- `DOCLIFE-R015` Choose Git-history-only disposition only after proving that the exact
   `commit:path` containing the bytes of the current source is reachable from
   the intended retained history and that a temporary restoration matches the
   current source byte for byte. An older Git object that loses uncommitted
@@ -220,20 +244,20 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   transfer or applicable recovery evidence remains unresolved, defer that
   disposition without changing or deleting the source. Do not retrospectively
   rewrite completed records or rerun past dispositions under this procedure.
-- Navigation READMEs carry an "active" routing constant without artifact
+- `DOCLIFE-R016` Navigation READMEs carry an "active" routing constant without artifact
   identity or lifecycle binding. Stable reference
   pack anchors named README retain their IDs and publication lifecycle.
-- Templates project their source profile, start no lifecycle of their own, and
+- `DOCLIFE-R017` Templates project their source profile, start no lifecycle of their own, and
   do not own a destination path.
-- Material Stage 99 index/worktree drift fails staged validation; the staged
+- `DOCLIFE-R018` Material Stage 99 index/worktree drift fails staged validation; the staged
   registry is the commit claim.
-- A governed document that is no longer current leaves its stage. A stage
+- `DOCLIFE-R019` A governed document that is no longer current leaves its stage. A stage
   other than 01, 02 or 03 may delete it or move it under a `docs/98.archive/`
   disposition directory. In every case Git history is its record, recovered with
   `git show <commit>:<path>`.
   Stage 99 forms leave through Git history only, and a stage or collection
   index is retained in place.
-- `docs/98.archive/` is unvalidated history. It is outside the document
+- `DOCLIFE-R020` `docs/98.archive/` is unvalidated history. It is outside the document
   inventory: no profile, lifecycle, link, catalog, retention, citation or
   migration check reads it, and its files carry no envelope, digest or ledger.
   A change to an Archive body reruns only secret scanning; its README keeps the
@@ -241,7 +265,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   README and disposition structure.
   A current document links the current owner rather than an archived file; a
   link into it is not checked, not even for existence.
-- A document that moves between active stages keeps no migration record.
+- `DOCLIFE-R021` A document that moves between active stages keeps no migration record.
 
 ### Enforcement
 

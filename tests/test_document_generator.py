@@ -152,6 +152,8 @@ AUTHORING_RULES = frozenset(
         "BODY-SECTION-EMPTY",
         "POLICY-RULE-ADOPTION",
         "POLICY-RULE-CODE",
+        "POLICY-RULE-ID",
+        "POLICY-RULE-INLINE",
     }
 )
 IDENTITY_RULES = frozenset(
