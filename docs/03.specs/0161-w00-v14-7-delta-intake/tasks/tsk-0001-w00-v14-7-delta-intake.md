@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.56"
+version: "0.1.57"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -133,6 +133,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-097 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Read-back of `main` protection and tag rulesets (SPEC-0214 EVD-004, deferred at that package's exit) | `gh api repos/buenhyden/hy-home.k8s/branches/main/protection` and `gh api repos/buenhyden/hy-home.k8s/rulesets`, read-only, run at the user's prompt, 2026-11-15 | PASS | `main`: a pull request is required (0 approvals, one-account repository), required status checks `ci-summary` and `style-pr` with up-to-date branches, `enforce_admins` on, force pushes and deletions blocked, conversation resolution required. Four active tag rulesets: `immutable-main-sha-tags`, `immutable-semver-tags`, `publisher-only-main-sha-tag-creation`, `publisher-only-semver-tag-creation`. This is the server-side layer behind the SPEC-0214 and SPEC-0215 client rules; SPEC-0214 has left the tree, so its EVD-004 is answered here. | no | none |
 | EVD-098 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-D59 recorded | User answers to the four SPEC-0200 questions, 2026-11-14 (Asia/Seoul; 2026-11-13T17:35Z): "Exact sha256 (Recommended)", "One-use route (Recommended)", "Keep as D52 says (Recommended)" and "Accept all three (Recommended)" | PASS | Recorded as W03-D59 with the SPEC-0200 package commit. | no | none |
 | EVD-099 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Rule 4 carve-out: Spec anchor fragment repointed in the recorded rows (W03-D59) | SPEC-0200 implementation, 2026-11-15 (Asia/Seoul), base `81832607`: every line of this Task compared with its base before and after the edit, cell by cell for the evidence rows; the Spec form removed the anchor `#success-criteria--verification-plan` and the criteria table now sits under `#criteria` | PASS | The fragment of 104 links was repointed from `#success-criteria--verification-plan` to `#criteria`: 100 links in 97 rows in the `Criteria` cell of recorded evidence rows (EVD-001 to EVD-097) and 4 links outside the evidence rows (the Task Table and Criterion Acceptance). Every recorded evidence row differs from its base in the fragment of its `Criteria` cell alone and in no other cell; no link path or criterion identifier changed. The one code-span mention under `### OPEN Dispositions` (OPEN-09) is not a link and is unchanged. This is the one carve-out from rule 4 of `docs/03.specs/AGENTS.md` that W03-D59 decides; it covers the fragment alone and rule 4 itself is not edited. | no | none |
+| EVD-100 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Closure of W03-H39 and W03-H40 through the ledger cycle | User acceptance of the SPEC-0200 criteria, direct current-session answer "Accept, close H39/H40 (Recommended)", 2026-11-15 (Asia/Seoul); W03-D59; W03-D70; SPEC-0200 Task EVD-005 to EVD-027; `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv | PASS | The user accepted the SPEC-0200 criteria and, under W03-D70, the closure of W03-H39 (the Spec form) and W03-H40 (the Plan form): both roles have the common form with their TemplateDefinitions and the lifecycle checks read them by section ID. Their live rows in the Residue Handoff table are terminal with this row as Closure; their ledger entries were made terminal with this closure and then deleted, the gate passing both times. W03-H10 stays open: its Plan part is delivered, its README and Policy parts stay with W03-D72. The legacy rows stay as recorded. | no | none |
 
 ### Edition Delta
 
@@ -572,8 +573,8 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W03-H36 | Legacy row `Requirement` of `Document Form Handoff`: the Requirement form against COMMON-DOC-FORM-1 | terminal | W03 | With phase 3 (W03-H02) | EVD-070 |
 | W03-H37 | Legacy row `Architecture` of `Document Form Handoff`: the Architecture description form | terminal | W03 | With phase 3 (W03-H02) | EVD-093 |
 | W03-H38 | Legacy row `ADR` of `Document Form Handoff`: the ADR form | terminal | W03 | With phase 3 (W03-H02) | EVD-094 |
-| W03-H39 | Legacy row `Spec` of `Document Form Handoff`: the Spec form | open | W03 | With phase 3 (W03-H02) | none |
-| W03-H40 | Legacy row `Plan` of `Document Form Handoff`: the Plan form | open | W03 | With phase 3 (W03-H02) | none |
+| W03-H39 | Legacy row `Spec` of `Document Form Handoff`: the Spec form | terminal | W03 | With phase 3 (W03-H02) | EVD-100 |
+| W03-H40 | Legacy row `Plan` of `Document Form Handoff`: the Plan form | terminal | W03 | With phase 3 (W03-H02) | EVD-100 |
 | W03-H41 | Legacy row `Task` of `Document Form Handoff`: the Task form | open | W03 | With phase 3 (W03-H02) | none |
 | W03-H42 | Legacy row `Generator` of `Document Form Handoff`: a document generator or the recorded reason for none | terminal | W03 | After W03-H25, which SPEC-0184 closed | EVD-059 |
 | W03-H43 | No legacy row: the `requirement` lifecycle domain yields no creation state, so a new Requirement is refused by the lifecycle creation rule and by the document generator (W03-D48); the repair is a lifecycle contract change of its own | open | W03 | When the registry admits a creation state for the `requirement` lifecycle domain | none |

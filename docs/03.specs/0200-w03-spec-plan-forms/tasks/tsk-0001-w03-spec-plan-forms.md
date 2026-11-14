@@ -1,6 +1,6 @@
 ---
 title: "W03 Spec and Plan Forms"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -32,9 +32,9 @@ This Task records the Spec and Plan part of handoffs W03-H02 and W03-H13, the Pl
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SPECPLAN-001](../spec.md#criteria) | The three readers with the form shape and their tests first, so `PLAN-PROMOTION`, `PLAN-GLOBAL-CONSTRAINTS` and `TASK-PARENT-APPROVAL` stay active; then the forms, the extension, the profile lists, the body contracts with the design constraint link, and the TemplateDefinitions and records. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-SPECPLAN-002](../spec.md#criteria) | The two one-use exemptions with their tests; the templates; the frozen Spec and Plan after the user's review; the repointed links, with the anchor strings of `tests/test_task_acceptance_contract.py`, `tests/test_task_acceptance_boundaries.py`, `tests/test_documentation_link_boundary.py` and the other consumer tests; the Spec and Plan of each open package with the inventory. | platform | in-progress | NOT_RUN | Pending |
-| WORK-003 | [VAL-SPECPLAN-002](../spec.md#criteria) | The texts; the SPEC-0161 Task rows and ledger entries; the retirement of both exemptions in the final source commit; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-SPECPLAN-001](../spec.md#criteria) | The three readers with the form shape and their tests first, so `PLAN-PROMOTION`, `PLAN-GLOBAL-CONSTRAINTS` and `TASK-PARENT-APPROVAL` stay active; then the forms, the extension, the profile lists, the body contracts with the design constraint link, and the TemplateDefinitions and records. | platform | completed | PASS | EVD-005, EVD-006, EVD-007, EVD-010 |
+| WORK-002 | [VAL-SPECPLAN-002](../spec.md#criteria) | The two one-use exemptions with their tests; the templates; the frozen Spec and Plan after the user's review; the repointed links, with the anchor strings of `tests/test_task_acceptance_contract.py`, `tests/test_task_acceptance_boundaries.py`, `tests/test_documentation_link_boundary.py` and the other consumer tests; the Spec and Plan of each open package with the inventory. | platform | completed | PASS | EVD-008, EVD-009, EVD-011, EVD-013, EVD-022, EVD-024, EVD-025 |
+| WORK-003 | [VAL-SPECPLAN-002](../spec.md#criteria) | The texts; the SPEC-0161 Task rows and ledger entries; the retirement of both exemptions in the final source commit; regression and exact-index QA. | platform | completed | PASS | EVD-017, EVD-026, EVD-027, EVD-028 |
 
 ## Task Evidence
 
@@ -67,13 +67,22 @@ This Task records the Spec and Plan part of handoffs W03-H02 and W03-H13, the Pl
 | EVD-025 | [VAL-SPECPLAN-002](../spec.md#criteria) | WORK-002 | Staged lifecycle check over the exact index | `python3 scripts/validate-document-lifecycle.py --root . --mode staged` over the final index with the package commit as base, in a scratch clone (the package itself is not yet a base commit in this worktree); pinned validation venv | PASS | PASS: R4 admits the two reviewed hashes, the retention route admits the mapped fragment, and PLAN-GLOBAL-CONSTRAINTS, PLAN-PROMOTION and TASK-PARENT-APPROVAL are active. In this worktree, without a package commit, the same check reports only LIFECYCLE-CREATE for this package's Spec and Plan. | yes | EVD-016 |
 | EVD-026 | [VAL-SPECPLAN-002](../spec.md#criteria) | WORK-003 | Focused checks on the replayed base `81832607` | The 11 focused unittest modules of EVD-010 (no shared contract suite, W03-D83), `validate-work-residue-ledger.py`, `quality.py`, `markdownlint-cli2` over the edited Markdown, `ruff check` and `ruff format --check` over the edited Python, `git diff --check`; pinned validation venv | PASS | 607 tests OK (skipped=3); ledger PASS at 77 entries; repository quality gates passed; markdownlint 0 issues; ruff clean; no whitespace error. `.secrets.baseline` is not edited. | yes | none |
 | EVD-027 | [VAL-SPECPLAN-002](../spec.md#criteria) | WORK-003 | Retirement of both one-use exemptions | The final source commit of this package | PASS | Both exemptions are removed: `_FRAGMENT_ROUTE`, `_fragment_mapped`, the two frozen-file hash constants, `_REVIEWED_FROZEN_FILES`, the R4 admission block and the unused `hashlib` import in `scripts/document_lifecycle.py`; the two admission tests and the fragment-route test; and the exemptions sentence of `DOCLIFE-R002` (policy 2.11.1). Failing first: the new `test_a_changed_fragment_in_a_recorded_evidence_row_is_refused` failed while the route still admitted the mapped fragment and passes after the removal. R4 refuses an edit to the Spec or Plan of a finished package again (`test_spec_or_plan_edit_after_terminal_task_is_refused`, unchanged), and the retention rule refuses a changed fragment again. | yes | EVD-018 |
+| EVD-028 | [VAL-SPECPLAN-002](../spec.md#criteria) | WORK-003 | Exact-index QA and commit hooks | Pre-commit hooks over the final indexes of `74c001d7` (implementation) and `de6349ff` (exemption retirement) in the pinned validation environment: the workspace hook ran `scripts/qa.py staged` on each exact index, 2026-11-15 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | EVD-019 |
+| EVD-029 | [VAL-SPECPLAN-002](../spec.md#criteria) | WORK-003 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-SPECPLAN-001](../spec.md#criteria) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-SPECPLAN-002](../spec.md#criteria) | pending | none | Implement WORK-002 and WORK-003 and record PASS evidence | platform |
+| [VAL-SPECPLAN-001](../spec.md#criteria) | accepted | EVD-005, EVD-006, EVD-007, EVD-010 | Accepted by the user on 2026-11-15 (direct answer "Accept, close H39/H40 (Recommended)" to the SPEC-0200 acceptance question naming commit `74c001d7`) | platform |
+| [VAL-SPECPLAN-002](../spec.md#criteria) | accepted | EVD-008, EVD-009, EVD-011, EVD-013, EVD-017, EVD-022, EVD-024, EVD-025, EVD-026, EVD-027, EVD-028 | Accepted by the user on 2026-11-15 (direct answer "Accept, close H39/H40 (Recommended)" to the SPEC-0200 acceptance question naming commit `74c001d7`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The SPEC-0161 decision row W03-D59, its evidence rows EVD-098 and EVD-099 and the W03-H39 and W03-H40 closure row EVD-100 cite this package by identifier only and stay valid after its retirement. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -88,4 +97,4 @@ This Task records the Spec and Plan part of handoffs W03-H02 and W03-H13, the Pl
 
 ## Verification Summary
 
-The Spec and Plan keep `status: approved` and were revised after the recorded review and approval receipts (W03-D65, W03-D66); they are awaiting re-approval of the current bytes. Implementation is partly done in the working tree and nothing is committed: the readers, the registry forms, the templates, the frozen SPEC-0161 files, the exemptions, the texts and the tests are in place with their evidence, and the moves of this package's Spec and Plan and of the two frozen files are applied on the user's answer "Approve without review" of 2026-11-15, and the retirement of both exemptions (EVD-018) waits for the final source commit.
+The Spec and Plan keep `status: approved` and were revised after the recorded review and approval receipts (W03-D65, W03-D66); they are awaiting re-approval of the current bytes. Implementation is partly done in the working tree and nothing is committed: the readers, the registry forms, the templates, the frozen SPEC-0161 files, the exemptions, the texts and the tests are in place with their evidence, and the moves of this package's Spec and Plan and of the two frozen files are applied on the user's answer "Approve without review" of 2026-11-15, and the retirement of both exemptions (EVD-018) waits for the final source commit. Implementation commit `74c001d7` passed exact-index QA in the hooks (EVD-028); the user accepted the package on 2026-11-15, and the approval of commit, push, PR and merge covers the package exit (EVD-029).
