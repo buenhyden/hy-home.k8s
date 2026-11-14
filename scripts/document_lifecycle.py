@@ -8,9 +8,14 @@ from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Literal, Mapping, Sequence
 
-from document_authority import AuthorityError, require_reciprocal_supersession
+from document_authority import (
+    AuthorityError,
+    REGISTRY_PATH,
+    require_reciprocal_supersession,
+)
 from frontmatter_yaml import FrontmatterError, load_frontmatter
 from document_contracts import (
+    DocumentContractError,
     DocumentProfile,
     LifecycleDomain,
     SPEC_PLAN_FIRST_APPROVED_EXTENSION,
@@ -19,8 +24,10 @@ from document_contracts import (
     classify_path,
     load_json_file,
     local_extension_names,
+    registry_schema_version,
     task_criterion_ids,
 )
+from semver_grammar import is_semver, precedence
 
 
 LifecycleSeverity = Literal["FAIL", "DEFER"]
@@ -52,6 +59,7 @@ class LifecycleDocument:
     status: str | None
     state_issue: str | None = None
     artifact_id: str | None = None
+    version: str | None = None
 
 
 @dataclass(frozen=True)
@@ -638,6 +646,127 @@ def _task_evidence_retention_diagnostics(
     return tuple(issues)
 
 
+def _release_order(value: object) -> tuple[object, ...] | None:
+    """The precedence key of a grammar-valid version string, else None."""
+
+    if type(value) is not str or not is_semver(value):
+        return None
+    try:
+        return precedence(value)
+    except ValueError:  # a numeric identifier past Python's int-conversion limit
+        return None
+
+
+def version_downgrade(
+    path: PurePosixPath,
+    profile: str,
+    field: str,
+    base: object,
+    proposed: object,
+    *,
+    base_mode: LifecycleBaseMode,
+) -> LifecycleDiagnostic | None:
+    """Refuse a proposed version of lower precedence than its base (SPEC-0208).
+
+    A value outside the grammar is not compared: the strict profile check or the
+    registry schema reports it. Build metadata never changes precedence, and the
+    comparison never asks for a bump or chooses its level.
+    """
+
+    before, after = _release_order(base), _release_order(proposed)
+    if before is None or after is None or after >= before:
+        return None
+    return _diagnostic(
+        "LIFECYCLE-VERSION-DOWNGRADE",
+        path=path,
+        profile=profile,
+        expected=f"{field} not lower than {base}",
+        observed=f"{base} -> {proposed}",
+        base_mode=base_mode,
+        evidence_gap="a version never falls; build metadata never changes precedence",
+    )
+
+
+_RELEASED_STAGES = frozenset({"approved", "adopted"})
+_EDITION_FIELDS = ("content_digest", "source_revision", "source")
+
+
+def _registry_schema_release(raw: Mapping[str, object]) -> str | None:
+    try:
+        return registry_schema_version(raw)
+    except DocumentContractError:  # reported by the registry loader, not compared
+        return None
+
+
+def registry_version_diagnostics(
+    base: Mapping[str, object],
+    proposed: Mapping[str, object],
+    *,
+    base_mode: LifecycleBaseMode,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Compare the scalar version fields of two raw Stage 99 registry mappings.
+
+    Only scalar fields are read, so a historical registry is never parsed.
+    """
+
+    path = REGISTRY_PATH
+    found: list[LifecycleDiagnostic | None] = [
+        version_downgrade(
+            path,
+            "",
+            "schema_version",
+            _registry_schema_release(base),
+            _registry_schema_release(proposed),
+            base_mode=base_mode,
+        )
+    ]
+    sections = {
+        name: (base.get(name), proposed.get(name))
+        for name in ("shared_contract", "common_forms")
+    }
+    for name, (before, after) in sections.items():
+        if not isinstance(before, Mapping) or not isinstance(after, Mapping):
+            continue
+        found.append(
+            version_downgrade(
+                path,
+                "",
+                f"{name}.version",
+                before.get("version"),
+                after.get("version"),
+                base_mode=base_mode,
+            )
+        )
+    released, current = sections["shared_contract"]
+    if (
+        isinstance(released, Mapping)
+        and isinstance(current, Mapping)
+        and released.get("stage") in _RELEASED_STAGES
+        and released.get("contract_id") == current.get("contract_id")
+        and type(released.get("version")) is str
+        and released.get("version") == current.get("version")
+    ):
+        changed = [
+            name for name in _EDITION_FIELDS if released.get(name) != current.get(name)
+        ]
+        if changed:
+            found.append(
+                _diagnostic(
+                    "LIFECYCLE-VERSION-EDITION-CHANGED",
+                    path=path,
+                    profile="",
+                    expected=(
+                        f"released shared_contract {released['version']} "
+                        f"keeps {', '.join(_EDITION_FIELDS)}"
+                    ),
+                    observed=f"{', '.join(changed)} changed under the same version",
+                    base_mode=base_mode,
+                    evidence_gap="a released edition never changes; raise the version",
+                )
+            )
+    return tuple(item for item in found if item is not None)
+
+
 def compare_lifecycle(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -752,6 +881,16 @@ def compare_lifecycle(
                 )
             )
             continue
+        version_failure = version_downgrade(
+            path,
+            proposed.profile_id,
+            "document version",
+            base.version,
+            proposed.version,
+            base_mode=base_mode,
+        )
+        if version_failure is not None:
+            diagnostics.append(version_failure)
         profile = proposed_profile
         base_state_failure = _state_diagnostic(
             base, base_profile, base_mode=base_mode, side="base"
@@ -1164,6 +1303,20 @@ def validate_snapshot_documents(
     return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key))
 
 
+def _frontmatter_version(text: str) -> str | None:
+    """The frontmatter `version` of a document, or None when it has none."""
+
+    closing = text.find("\n---\n", 4)
+    if not text.startswith("---\n") or closing < 0:
+        return None
+    try:
+        metadata = load_frontmatter(text[4:closing])
+    except FrontmatterError:
+        return None
+    version = metadata.get("version") if isinstance(metadata, dict) else None
+    return version if isinstance(version, str) else None
+
+
 def document_from_text(
     registry: Registry,
     path: PurePosixPath,
@@ -1180,7 +1333,10 @@ def document_from_text(
     selected_profile = classify_path(registry, path)
     if not _stateful(selected_profile):
         return LifecycleDocument(
-            path=path, profile_id=selected_profile.profile_id, status=None
+            path=path,
+            profile_id=selected_profile.profile_id,
+            status=None,
+            version=_frontmatter_version(text),
         )
     if not text.startswith("---\n"):
         return LifecycleDocument(
@@ -1208,9 +1364,12 @@ def document_from_text(
             status=None,
             state_issue="frontmatter is not a unique-key mapping",
         )
+    version = metadata.get("version")
     if selected_profile.profile_id == "common/native-skill-package":
+        # The envelope version is a different object (SKILL-REV), not compared.
         nested = metadata.get("metadata")
         metadata = nested if isinstance(nested, dict) else {}
+        version = None
     claimed_profile_id = metadata.get("type")
     known_profile_ids = {profile.profile_id for profile in registry.profiles}
     expected_type = (
@@ -1250,4 +1409,5 @@ def document_from_text(
         status=status,
         state_issue=profile_issue,
         artifact_id=artifact_id,
+        version=version if isinstance(version, str) else None,
     )

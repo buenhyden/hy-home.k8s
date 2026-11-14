@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.26.0"
+version: "3.27.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -238,7 +238,9 @@ reason. In "0.y.z" an
 incompatible change and a feature raise the minor and a compatible fix raises
 the patch. One edit raises the highest affected level once, and an unchanged
 object keeps its version. A commit type such as `docs:` does not by itself
-decide the level. Native Skill packages keep name and description at the top and
+decide the level. A check refuses a lower version and a changed released
+edition, accepts an unchanged version without demanding a bump, and never
+chooses the level of an increase. Native Skill packages keep name and description at the top and
 place that six-key document envelope inside metadata. Preserve native
 invocation, tool and model controls; metadata does not grant execution authority.
 
