@@ -1,6 +1,6 @@
 ---
 title: "W03 Governance Policy Rule IDs"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -42,9 +42,9 @@ This Task records Policy package 3 of handoff W03-H29 (W03-D42 to W03-D44, W03-D
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-GOVRULE-001](../spec.md#success-criteria--verification-plan) | Tokens, Rules table, added headings and the `adopted` state for each of the nine policies. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-GOVRULE-002](../spec.md#success-criteria--verification-plan) | The final map of each ID to its unit with its Level, Condition and Evidence reading; the stripped-body comparison; the version steps. | platform | in-progress | NOT_RUN | Pending |
-| WORK-003 | [VAL-GOVRULE-003](../spec.md#success-criteria--verification-plan) | W03-D58, the W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-GOVRULE-001](../spec.md#success-criteria--verification-plan) | Tokens, Rules table, added headings and the `adopted` state for each of the nine policies. | platform | completed | PASS | EVD-005, EVD-016, EVD-019 |
+| WORK-002 | [VAL-GOVRULE-002](../spec.md#success-criteria--verification-plan) | The final map of each ID to its unit with its Level, Condition and Evidence reading; the stripped-body comparison; the version steps. | platform | completed | PASS | EVD-006, EVD-007, EVD-008, EVD-020 |
+| WORK-003 | [VAL-GOVRULE-003](../spec.md#success-criteria--verification-plan) | W03-D58, the W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | completed | PASS | EVD-010, EVD-012, EVD-015, EVD-017, EVD-023, EVD-024, EVD-025, EVD-026, EVD-027 |
 
 ## Task Evidence
 
@@ -76,14 +76,23 @@ This Task records Policy package 3 of handoff W03-H29 (W03-D42 to W03-D44, W03-D
 | EVD-024 | [VAL-GOVRULE-003](../spec.md#success-criteria--verification-plan) | WORK-003 | detect-secrets over a copy of the baseline | `detect-secrets-hook` with the pre-commit `--exclude-lines` pattern over every file changed against origin/main, against a scratch copy of `HEAD:.secrets.baseline` after the baseline commit `f7a3889f`; Committed clean tree `abf15de2` on branch claude/w03-governance-policy-rule-ids-r2 (main 19f14646 base), pinned validation venv, 2026-11-15 | PASS | Exit 0 and the copy unchanged: the three Task review digests (lines 53 and 55) are baselined in `f7a3889f`; no other finding. | yes | EVD-013 |
 | EVD-025 | [VAL-GOVRULE-003](../spec.md#success-criteria--verification-plan) | WORK-003 | detect-secrets over a copy of the baseline at the new base | `detect-secrets-hook` with the pre-commit `--exclude-lines` pattern over every file changed against origin/main, against a scratch copy of `HEAD:.secrets.baseline` after the baseline commit `f7a3889f`; Committed clean tree `abf15de2` on branch claude/w03-governance-policy-rule-ids-r2 (main 19f14646 base), pinned validation venv, 2026-11-15 | PASS | Exit 0 and the copy unchanged: the three Task review digests (lines 53 and 55) are baselined in `f7a3889f`; no other finding. | yes | EVD-018 |
 | EVD-026 | [VAL-GOVRULE-003](../spec.md#success-criteria--verification-plan) | WORK-003 | detect-secrets over a copy of the baseline at the second replay base | `detect-secrets-hook` with the pre-commit `--exclude-lines` pattern over every file changed against origin/main, against a scratch copy of `HEAD:.secrets.baseline` after the baseline commit `f7a3889f`; Committed clean tree `abf15de2` on branch claude/w03-governance-policy-rule-ids-r2 (main 19f14646 base), pinned validation venv, 2026-11-15 | PASS | Exit 0 and the copy unchanged: the three Task review digests (lines 53 and 55) are baselined in `f7a3889f`; no other finding. | yes | EVD-022 |
+| EVD-027 | [VAL-GOVRULE-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Exact-index QA and commit hooks | Pre-commit hooks over the final index of `abf15de2` in the pinned validation environment, 2026-11-15 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | EVD-014 |
+| EVD-028 | [VAL-GOVRULE-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-GOVRULE-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-GOVRULE-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
-| [VAL-GOVRULE-003](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-003 and record PASS evidence | platform |
+| [VAL-GOVRULE-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-016, EVD-019 | Accepted by the user on 2026-11-15 (direct answer "Accept (Recommended)" to the SPEC-0199 acceptance question naming commit `abf15de2`) | platform |
+| [VAL-GOVRULE-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-006, EVD-007, EVD-008, EVD-020 | Accepted by the user on 2026-11-15 (direct answer "Accept (Recommended)" to the SPEC-0199 acceptance question naming commit `abf15de2`) | platform |
+| [VAL-GOVRULE-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-012, EVD-015, EVD-017, EVD-023, EVD-024, EVD-025, EVD-026, EVD-027 | Accepted by the user on 2026-11-15 (direct answer "Accept (Recommended)" to the SPEC-0199 acceptance question naming commit `abf15de2`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The SPEC-0161 decision row W03-D58 and its evidence row EVD-095 cite this package by identifier only and stay valid after its retirement. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -98,4 +107,4 @@ This Task records Policy package 3 of handoff W03-H29 (W03-D42 to W03-D44, W03-D
 
 ## Verification Summary
 
-Spec and Plan drafted; no review, approval or implementation is recorded yet.
+Spec and Plan drafted; no review, approval or implementation is recorded yet. Implementation commit `abf15de2` passed exact-index QA in the hooks (EVD-027); the user accepted the package on 2026-11-15, and the approval of commit, push, PR and merge covers the package exit (EVD-028).
