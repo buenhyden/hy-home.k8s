@@ -1,6 +1,6 @@
 ---
 title: "Claude Executable Option Abbreviations"
-version: "0.1.2"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -50,8 +50,8 @@ The implementation is staged and uncommitted. The Spec and Plan are approved (EV
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-EXECOPT-001](../spec.md#success-criteria--verification-plan) | Write the failing decision regressions and the validator pin, then append the five rules to the settings. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-EXECOPT-002](../spec.md#success-criteria--verification-plan) | Correct the provider-note sentence, add the Stage 03 README entry, and run the document and exact-index checks. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-EXECOPT-001](../spec.md#success-criteria--verification-plan) | Write the failing decision regressions and the validator pin, then append the five rules to the settings. | platform | completed | PASS | EVD-007, EVD-008 |
+| WORK-002 | [VAL-EXECOPT-002](../spec.md#success-criteria--verification-plan) | Correct the provider-note sentence, add the Stage 03 README entry, and run the document and exact-index checks. | platform | completed | PASS | EVD-009, EVD-010 |
 
 ## Task Evidence
 
@@ -66,13 +66,22 @@ The implementation is staged and uncommitted. The Spec and Plan are approved (EV
 | EVD-007 | [VAL-EXECOPT-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Failing-first: decision test on the settings before this change; whole governance validator with the new pin on those settings | `HEAD` `e3ae23a6` (approved Spec `493556b6`, Plan `61e51e1b`) with the worktree test and pin edits (sha256 prefixes `tests/test_agent_governance.py` `db6f8c5e8472`, `scripts/validate-agent-governance.py` `203247b5ddca`); the decision test ran in a scratch root holding that test module and `HEAD:.claude/settings.json` (257 deny rules); for the validator, the five settings lines were removed with the structured edit tool and then restored (`.claude/settings.json` sha256 prefix `57a0576a9c68` before and after); pinned `hyhome-validation` environment; 2026-11-14T13:12Z | PASS | Red as required. (1) `python3 -m unittest tests.test_agent_governance.NativeDenyCoverageTests.test_delivery_commands_are_allowed_and_raw_api_asks` exit 1, 12 of 195 expectations failed, exactly the 11 abbreviation deny cases (push `--rece=sh`, `--recei sh`, `--e=sh`, `--ex=sh`, `--exe sh`; fetch `--upl=sh`, `--uplo sh`; pull `--upl=sh`; ls-remote `--u=sh`, `--up=sh`, `--exe=sh`) and the `feat/a--edit` over-denial, each decided `allow` or, for pull, the default prompt; the three guards passed. (2) With the settings equal to `HEAD`, `python3 scripts/validate-agent-governance.py --root .` exit 1, `ERR AGENT-NATIVE-PERMISSION agent registry validation failed`. | yes | EVD-001 |
 | EVD-008 | [VAL-EXECOPT-001](../spec.md#success-criteria--verification-plan) | WORK-001 | `python3 scripts/validate-agent-governance.py --root .`; `python3 -m unittest tests.test_agent_governance tests.test_validate_agent_registry`; `ruff check` and `ruff format --check` on the two edited Python files | Worktree on `e3ae23a6`; sha256 prefixes `.claude/settings.json` `57a0576a9c68`, `scripts/validate-agent-governance.py` `203247b5ddca`, `tests/test_agent_governance.py` `db6f8c5e8472`; ruff 0.16.10, not the v0.16.5 hook pin; 2026-11-14T13:13Z | PASS | Validator exit 0, `[PASS] agent registry validation passed: providers=2 roles=17 permissionClasses=4 skills=17 handoffs=67 projections=51`; the two modules ran 89 tests, OK; ruff check clean and `2 files already formatted`. The deny list holds 262 unique rules: the 257 at `HEAD` unchanged and in order, then the five prefix rules; allow, ask and the keys outside `permissions` are unchanged. Repository-static only: native rule matching by a Claude client is not observed. | yes | EVD-002 |
 | EVD-009 | [VAL-EXECOPT-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Four strict document validators; staged lifecycle check; `python3 scripts/validation/repository/quality.py --root .`; `markdownlint-cli2` on the edited Markdown; `git diff --check` and `git diff --cached --check` | `e3ae23a6` with the four fix files staged by explicit paths (`.claude/provider.md` sha256 prefix `c9f33028e467`), then also this Task; `markdownlint-cli2` v0.23.3, not the v0.22.1 hook pin, over the package's three documents, `docs/03.specs/README.md` and `.claude/provider.md`; 2026-11-14T13:14Z | PASS | The four strict validators exited 0 (contract registry `295 paths`; markdown profiles, links and owners, and lifecycle with no violation); `python3 scripts/validate-document-lifecycle.py --root . --mode staged` exit 0; the repository quality check exit 0, `[PASS] repository quality gates passed`, no ERR line; markdownlint 0 issues in 5 files; `git diff --check` and `git diff --cached --check` clean. | yes | EVD-003 |
+| EVD-010 | [VAL-EXECOPT-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Exact-index QA: `python3 scripts/validate-affected-surfaces.py --root .`, `ruff check scripts tests`, `python3 scripts/qa.py staged` and the commit hooks | Pre-commit hooks over the final index of `de8a69ac` in the pinned validation environment: the workspace hook ran `scripts/qa.py staged` (affected-surface routing, selected style including ruff over the staged Python, strict document validators, staged lifecycle, selected non-style hooks) on the exact index, 2026-11-14 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | EVD-004 |
+| EVD-011 | [VAL-EXECOPT-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-EXECOPT-001](../spec.md#success-criteria--verification-plan) | pending | none | Approve the Spec and Plan, then record WORK-001 under them | platform |
-| [VAL-EXECOPT-002](../spec.md#success-criteria--verification-plan) | pending | none | Run the exact-index QA and the commit hooks and record PASS evidence | platform |
+| [VAL-EXECOPT-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-007, EVD-008 | Accepted by the user on 2026-11-14 (direct answer "Accept (Recommended)" to the SPEC-0215 acceptance question naming commit `de8a69ac`) | platform |
+| [VAL-EXECOPT-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-009, EVD-010 | Accepted by the user on 2026-11-14 (direct answer "Accept (Recommended)" to the SPEC-0215 acceptance question naming commit `de8a69ac`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: No other document cites this package by path; the settings, the validator pin, the tests and the provider note state the rules on their own. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -108,4 +117,4 @@ Open question: none. Next owner:
 
 1. the reviewer and the user, for the Spec and Plan review and approval;
 2. platform, for the exact-index QA and the commit hooks;
-3. the operator, for criterion acceptance.
+3. the operator, for criterion acceptance. Implementation commit `de8a69ac` passed exact-index QA in the hooks (EVD-010); the user accepted the package on 2026-11-14, and the approval of commit, push, PR and merge covers the package exit (EVD-011).
