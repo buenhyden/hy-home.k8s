@@ -20,7 +20,7 @@
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
     "schema_version": {
-      "const": "11.0.0"
+      "const": "12.0.0"
     },
     "shared_contract": {
       "description": "Identifies reviewed common input and the local adapter; structural validity does not authenticate approval or adoption.",
@@ -1051,6 +1051,36 @@
           }
         }
       }
+    },
+    "relationship_contract": {
+      "description": "The relation kinds, document relations and link types with their direction, cardinality, owner, consumers, checks and tests (SPEC-0193).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relation_kinds",
+        "relations",
+        "link_types"
+      ],
+      "properties": {
+        "relation_kinds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relation_kind"
+          }
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relation"
+          }
+        },
+        "link_types": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/link_type"
+          }
+        }
+      }
     }
   },
   "$defs": {
@@ -1720,6 +1750,262 @@
         },
         "negative_test": {
           "$ref": "#/$defs/test_reference"
+        }
+      }
+    },
+    "rule_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule_id",
+        "path"
+      ],
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[^/\\s][^\\s]*$"
+        }
+      }
+    },
+    "relation_owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "carrier",
+        "key"
+      ],
+      "properties": {
+        "profile_id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "carrier": {
+          "enum": [
+            "frontmatter",
+            "body_contract",
+            "section",
+            "registry_key"
+          ]
+        },
+        "key": {
+          "type": "string",
+          "pattern": "\\S"
+        }
+      }
+    },
+    "relation_kind": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "meaning",
+        "direction",
+        "owner"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "meaning": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "direction": {
+          "enum": [
+            "source_to_target",
+            "owner_to_consumer"
+          ]
+        },
+        "owner": {
+          "type": "string",
+          "pattern": "\\S"
+        }
+      }
+    },
+    "relation": {
+      "description": "One document relation with its direction, cardinality, owner, consumers, checks and tests (SPEC-0193).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "direction",
+        "source_profile_ids",
+        "target_profile_ids",
+        "cardinality",
+        "canonical_owners",
+        "reverse_view",
+        "consumer_paths",
+        "checks",
+        "positive_test",
+        "negative_test",
+        "gaps"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "kind": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "direction": {
+          "enum": [
+            "source_to_target",
+            "owner_to_consumer"
+          ]
+        },
+        "source_profile_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9/-]*$"
+          },
+          "minItems": 1
+        },
+        "target_profile_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9/-]*$"
+          }
+        },
+        "cardinality": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "per_source",
+            "per_target"
+          ],
+          "properties": {
+            "per_source": {
+              "enum": [
+                "exactly-one",
+                "one-or-more",
+                "any"
+              ]
+            },
+            "per_target": {
+              "enum": [
+                "exactly-one",
+                "one-or-more",
+                "any"
+              ]
+            }
+          }
+        },
+        "canonical_owners": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/relation_owner"
+          }
+        },
+        "reverse_view": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "consumer_paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[^/\\s][^\\s]*$"
+          }
+        },
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/rule_check"
+          }
+        },
+        "positive_test": {
+          "$ref": "#/$defs/test_reference"
+        },
+        "negative_test": {
+          "$ref": "#/$defs/test_reference"
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      }
+    },
+    "link_type": {
+      "description": "One link type with its meaning, direction, requiredness, authority, pinning, checks and tests (SPEC-0193).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "meaning",
+        "direction",
+        "requiredness",
+        "carries_authority",
+        "pinning",
+        "checks",
+        "positive_test",
+        "negative_test",
+        "gaps"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "meaning": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "direction": {
+          "enum": [
+            "source_to_target",
+            "owner_to_consumer"
+          ]
+        },
+        "requiredness": {
+          "enum": [
+            "required",
+            "conditional"
+          ]
+        },
+        "carries_authority": {
+          "type": "boolean"
+        },
+        "pinning": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule_check"
+          }
+        },
+        "positive_test": {
+          "$ref": "#/$defs/test_reference"
+        },
+        "negative_test": {
+          "$ref": "#/$defs/test_reference"
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
         }
       }
     }

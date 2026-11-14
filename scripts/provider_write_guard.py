@@ -61,7 +61,7 @@ SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 # accepts. Keep it equal to REGISTRY_MAJOR in scripts/document_authority.py; the
 # guard runs from the checkout with the standard library only, so it holds its
 # own copy of the release grammar of scripts/semver_grammar.py.
-DOC_REGISTRY_MAJOR = 11
+DOC_REGISTRY_MAJOR = 12
 _REGISTRY_RELEASE = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
 
 

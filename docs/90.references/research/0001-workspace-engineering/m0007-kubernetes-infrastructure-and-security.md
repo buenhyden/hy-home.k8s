@@ -1,10 +1,10 @@
 ---
 title: "Reference: Kubernetes, Infrastructure, and Security"
-version: "1.1.1"
+version: "1.1.2"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 artifact_id: "RES-0001-m0007"
 ---
 
@@ -782,7 +782,7 @@ pod/container `securityContext`; twelve GitOps files still declare
 `targetRevision: main`; and `infrastructure/bootstrap-local.sh` still runs
 `helm upgrade --install argocd argo/argo-cd` with no `--version`. These are
 the same selectors the [Kubernetes baseline](#kubernetes-baseline), the
-[2026-08-10 refresh](#2026-08-10-gap-only-kubernetesecurity-refresh), and
+[2026-08-10 refresh](#2026-08-10-gap-only-kubernetessecurity-refresh), and
 the [2026-08-11 refresh](#2026-08-11-partialdefer-incremental-refresh)
 already cite.
 

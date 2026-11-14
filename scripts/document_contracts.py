@@ -972,6 +972,59 @@ class FrontmatterDialect:
 
 
 @dataclass(frozen=True)
+class RelationKind:
+    """SPEC-0193: one of the seven relation kinds."""
+
+    id: str
+    meaning: str
+    direction: str
+    owner: str
+
+
+@dataclass(frozen=True)
+class Relation:
+    """SPEC-0193: one document relation; owners and checks are tuples of values."""
+
+    id: str
+    kind: str
+    direction: str
+    source_profile_ids: tuple[str, ...]
+    target_profile_ids: tuple[str, ...]
+    per_source: str
+    per_target: str
+    canonical_owners: tuple[tuple[str, str, str], ...]
+    reverse_view: str
+    consumer_paths: tuple[str, ...]
+    checks: tuple[tuple[str, str], ...]
+    positive_test: KeyTestReference
+    negative_test: KeyTestReference
+    gaps: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class LinkType:
+    """SPEC-0193: one of the four link types."""
+
+    id: str
+    meaning: str
+    direction: str
+    requiredness: str
+    carries_authority: bool
+    pinning: str
+    checks: tuple[tuple[str, str], ...]
+    positive_test: KeyTestReference
+    negative_test: KeyTestReference
+    gaps: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class RelationshipContract:
+    relation_kinds: tuple[RelationKind, ...]
+    relations: tuple[Relation, ...]
+    link_types: tuple[LinkType, ...]
+
+
+@dataclass(frozen=True)
 class Registry:
     schema_version: str
     profiles: tuple[DocumentProfile, ...]
@@ -983,6 +1036,8 @@ class Registry:
     # A comparison-base registry from before SPEC-0181 has neither section.
     frontmatter_keys: tuple[FrontmatterKey, ...] = ()
     frontmatter_dialect: FrontmatterDialect | None = None
+    # A comparison-base registry from before SPEC-0193 has no such section.
+    relationship_contract: RelationshipContract | None = None
 
 
 @dataclass(frozen=True)
@@ -2128,11 +2183,14 @@ def _test_function_sources(
     }
 
 
-def _test_reference_fault(root: Path, key: str, reference: Mapping[str, Any]) -> str:
+def _test_reference_fault(
+    root: Path, key: str | None, reference: Mapping[str, Any]
+) -> str:
     """Name what is wrong with one test reference, or return an empty string.
 
-    It confirms that the module and the test exist and that the test's source
-    contains the key; it does not claim the test exercises the key correctly.
+    It confirms that the module and the test exist and, when ``key`` is given,
+    that the test's source contains it; it does not claim the test exercises the
+    key correctly.
     """
 
     try:
@@ -2148,21 +2206,276 @@ def _test_reference_fault(root: Path, key: str, reference: Mapping[str, Any]) ->
     source = sources.get(reference["test"])
     if source is None:
         return f"{reference['module']} has no test {reference['test']!r}"
-    if key not in source:
+    if key is not None and key not in source:
         return f"{reference['test']} never names the key {key!r}"
     return ""
+
+
+RELATION_KIND_IDS = (
+    "authority",
+    "structural-ownership",
+    "constraint",
+    "traceability",
+    "promotion",
+    "supersession",
+    "change-impact",
+)
+RELATION_IDS = (
+    "parent",
+    "requirement-basis",
+    "design-constraint",
+    "promotion",
+    "supersession",
+    "verification-evidence",
+    "policy-authority",
+    "consumer-impact",
+)
+LINK_TYPE_IDS = ("normative", "evidence", "historical", "navigation")
+RELATION_DIRECTIONS = frozenset({"source_to_target", "owner_to_consumer"})
+
+
+def _declared_columns(profile: Mapping[str, Any]) -> set[str]:
+    contract = (profile.get("relationships") or {}).get("body_contract") or {}
+    execution = contract.get("task_execution") or {}
+    return {
+        *contract.get("required_columns", ()),
+        *execution.get("evidence_columns", ()),
+        *execution.get("criterion_acceptance_columns", ()),
+    }
+
+
+def _owner_fault(owner: Mapping[str, str], profiles: Mapping[str, Any]) -> str:
+    """Name what a canonical owner entry declares that its profile does not."""
+
+    profile = profiles.get(owner.get("profile_id"))
+    if profile is None:
+        return f"profile {owner.get('profile_id')!r} is not declared"
+    carrier, key = owner.get("carrier"), owner.get("key")
+    if carrier == "frontmatter":
+        lists = profile["frontmatter"]
+        declared = key in {*lists["required"], *lists["optional"]}
+    elif carrier == "body_contract":
+        declared = key in _declared_columns(profile)
+    elif carrier == "section":
+        sections = profile["sections"]
+        declared = key in {*sections["required"], *sections["optional"]}
+    elif carrier == "registry_key":
+        head, _, leaf = str(key).partition(".")
+        definition = profile.get("template_definition")
+        declared = (
+            head == "template_definition"
+            and isinstance(definition, Mapping)
+            and leaf in definition
+        )
+    else:
+        declared = False
+    return "" if declared else f"{owner['profile_id']}: {carrier} {key!r}"
+
+
+def _ownership_cycle(edges: Sequence[tuple[str, str]]) -> bool:
+    """Whether the directed profile graph holds a cycle (iterative depth-first)."""
+
+    graph: dict[str, list[str]] = {}
+    for source, target in edges:
+        graph.setdefault(source, []).append(target)
+    done: set[str] = set()
+    for start in graph:
+        on_path = {start}
+        pending = [(start, iter(graph[start]))]
+        while pending:
+            node, successors = pending[-1]
+            following = next(successors, None)
+            if following is None:
+                pending.pop()
+                on_path.discard(node)
+                done.add(node)
+            elif following in on_path:
+                return True
+            elif following not in done:
+                on_path.add(following)
+                pending.append((following, iter(graph.get(following, ()))))
+    return False
+
+
+def _relationship_faults(
+    root: Path, raw_registry: Mapping[str, Any]
+) -> list[tuple[str, str, str, str]]:
+    """SPEC-0193 checks of the relationship contract's entries, owners and graph."""
+
+    faults: list[tuple[str, str, str, str]] = []
+
+    def fault(rule: str, expected: str, actual: str) -> None:
+        faults.append((rule, expected, actual, ""))
+
+    contract = raw_registry.get("relationship_contract")
+    if contract is None:
+        fault("REGISTRY_RELATION", "a relationship_contract section", "missing")
+        return faults
+    profiles = {item["id"]: item for item in raw_registry["profiles"]}
+    for section, expected in (
+        ("relation_kinds", RELATION_KIND_IDS),
+        ("relations", RELATION_IDS),
+        ("link_types", LINK_TYPE_IDS),
+    ):
+        names = [item["id"] for item in contract[section]]
+        if sorted(names) != sorted(expected):
+            fault("REGISTRY_RELATION", f"{section} {list(expected)}", str(names))
+    kinds = {item["id"]: item for item in contract["relation_kinds"]}
+    for label, item in (
+        *(("kind", item) for item in contract["relation_kinds"]),
+        *(("link type", item) for item in contract["link_types"]),
+        *(("relation", item) for item in contract["relations"]),
+    ):
+        if item["direction"] not in RELATION_DIRECTIONS:
+            fault(
+                "REGISTRY_RELATION",
+                f"a direction of {sorted(RELATION_DIRECTIONS)}",
+                f"{label} {item['id']}: {item['direction']!r}",
+            )
+
+    owned_sources: list[str] = []
+    edges: list[tuple[str, str]] = []
+    for item in contract["relations"]:
+        name = item["id"]
+        kind = kinds.get(item["kind"])
+        if kind is None:
+            fault("REGISTRY_RELATION", "a declared kind", f"{name}: {item['kind']!r}")
+        elif kind["direction"] != item["direction"]:
+            fault(
+                "REGISTRY_RELATION",
+                f"the direction {kind['direction']!r} of kind {item['kind']}",
+                f"{name}: {item['direction']!r}",
+            )
+        for field in ("source_profile_ids", "target_profile_ids"):
+            for profile_id in item[field]:
+                if profile_id not in profiles:
+                    fault(
+                        "REGISTRY_RELATION",
+                        "a declared profile",
+                        f"{name}: {field} names {profile_id!r}",
+                    )
+        for owner in item["canonical_owners"]:
+            problem = _owner_fault(owner, profiles)
+            if problem:
+                fault(
+                    "REGISTRY_RELATION",
+                    "an owner its profile declares",
+                    f"{name}: {problem}",
+                )
+        if not item["consumer_paths"]:
+            fault(
+                "REGISTRY_RELATION_CONSUMER",
+                "at least one consumer path",
+                f"{name}: none",
+            )
+        if item["kind"] != "structural-ownership":
+            continue
+        # The i-th source profile is owned by the i-th target profile.
+        sources, targets = item["source_profile_ids"], item["target_profile_ids"]
+        if len(sources) == len(targets):
+            edges.extend(zip(sources, targets))
+        else:
+            fault(
+                "REGISTRY_RELATION_CYCLE",
+                "each source profile paired with the one target that owns it",
+                f"{name}: {len(sources)} sources, {len(targets)} targets",
+            )
+        owned_sources.extend(sources)
+        owners = [owner["profile_id"] for owner in item["canonical_owners"]]
+        for source in sources:
+            if owners.count(source) != 1:
+                fault(
+                    "REGISTRY_RELATION_CYCLE",
+                    "one direct owner entry for each source profile",
+                    f"{name}: {source} has {owners.count(source)}",
+                )
+
+    texts: dict[str, str | None] = {}
+
+    def script_text(path: str) -> str | None:
+        if path not in texts:
+            try:
+                texts[path] = read_repository_text(root, _normalize_relative_path(path))
+            except ValueError:
+                texts[path] = None
+        return texts[path]
+
+    for label, item in (
+        *(("relation", item) for item in contract["relations"]),
+        *(("link type", item) for item in contract["link_types"]),
+    ):
+        name = f"{label} {item['id']}"
+        for named in item.get("consumer_paths", ()):
+            try:
+                normalized = _normalize_relative_path(named)
+                if normalized.as_posix() != named:
+                    raise ValueError("path is not canonical")
+                if not stat.S_ISREG(_lstat_named_path(root.absolute(), normalized)):
+                    raise ValueError("not a regular file")
+            except ValueError as exc:
+                fault(
+                    "REGISTRY_RELATION_CONSUMER",
+                    "consumer paths naming existing regular files",
+                    f"{name}: {named}: {exc}",
+                )
+        for entry in item["checks"]:
+            text = script_text(entry["path"])
+            if text is None:
+                fault(
+                    "REGISTRY_RELATION_CONSUMER",
+                    "a check path naming an existing regular file",
+                    f"{name}: {entry['path']}",
+                )
+            elif entry["rule_id"] not in text:
+                fault(
+                    "REGISTRY_RELATION_CONSUMER",
+                    "a rule identifier that occurs in its script",
+                    f"{name}: {entry['rule_id']} not in {entry['path']}",
+                )
+        for field in ("positive_test", "negative_test"):
+            problem = _test_reference_fault(root, None, item[field])
+            if problem:
+                fault(
+                    "REGISTRY_RELATION_TEST",
+                    f"a resolvable {field}",
+                    f"{name}: {problem}",
+                )
+
+    for source, target in edges:
+        if source == target:
+            fault(
+                "REGISTRY_RELATION_CYCLE",
+                "no profile that is its own parent",
+                f"self-edge on {source}",
+            )
+    for source in sorted(set(owned_sources)):
+        if owned_sources.count(source) > 1:
+            fault(
+                "REGISTRY_RELATION_CYCLE",
+                "one structural-ownership relation for each source profile",
+                f"{source} is the source of {owned_sources.count(source)}",
+            )
+    if _ownership_cycle(edges):
+        fault(
+            "REGISTRY_RELATION_CYCLE",
+            "an ownership graph that is a forest",
+            "a cycle among profiles",
+        )
+    return faults
 
 
 def current_registry_diagnostics(
     root: Path, raw_registry: Mapping[str, Any]
 ) -> tuple[Diagnostic, ...]:
-    """SPEC-0181 checks of the current registry's key, dialect and extension records.
+    """SPEC-0181 and SPEC-0193 checks of the current registry's records.
 
-    These refuse what a comparison-base registry legitimately lacks, so they run
-    from the strict registry validator and never on the load path.
+    The SPEC-0181 checks cover the key, dialect and extension records and the
+    SPEC-0193 checks the relationship contract. These refuse what a
+    comparison-base registry legitimately lacks, so they run from the strict
+    registry validator and never on the load path.
     """
 
-    faults: list[tuple[str, str, str, str]] = []
+    faults = _relationship_faults(root, raw_registry)
     keys = raw_registry.get("frontmatter_keys")
     if keys is None:
         faults.append(
@@ -2841,6 +3154,57 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         ),
         frontmatter_dialect=_frontmatter_dialect_from_mapping(
             raw.get("frontmatter_dialect")
+        ),
+        relationship_contract=_relationship_contract_from_mapping(
+            raw.get("relationship_contract")
+        ),
+    )
+
+
+def _relationship_contract_from_mapping(
+    raw: Mapping[str, Any] | None,
+) -> RelationshipContract | None:
+    if raw is None:
+        return None
+
+    def checks(items: Sequence[Mapping[str, str]]) -> tuple[tuple[str, str], ...]:
+        return tuple((item["rule_id"], item["path"]) for item in items)
+
+    return RelationshipContract(
+        relation_kinds=tuple(RelationKind(**item) for item in raw["relation_kinds"]),
+        relations=tuple(
+            Relation(
+                id=item["id"],
+                kind=item["kind"],
+                direction=item["direction"],
+                source_profile_ids=tuple(item["source_profile_ids"]),
+                target_profile_ids=tuple(item["target_profile_ids"]),
+                per_source=item["cardinality"]["per_source"],
+                per_target=item["cardinality"]["per_target"],
+                canonical_owners=tuple(
+                    (owner["profile_id"], owner["carrier"], owner["key"])
+                    for owner in item["canonical_owners"]
+                ),
+                reverse_view=item["reverse_view"],
+                consumer_paths=tuple(item["consumer_paths"]),
+                checks=checks(item["checks"]),
+                positive_test=KeyTestReference(**item["positive_test"]),
+                negative_test=KeyTestReference(**item["negative_test"]),
+                gaps=tuple(item["gaps"]),
+            )
+            for item in raw["relations"]
+        ),
+        link_types=tuple(
+            LinkType(
+                **{
+                    **item,
+                    "checks": checks(item["checks"]),
+                    "positive_test": KeyTestReference(**item["positive_test"]),
+                    "negative_test": KeyTestReference(**item["negative_test"]),
+                    "gaps": tuple(item["gaps"]),
+                }
+            )
+            for item in raw["link_types"]
         ),
     )
 

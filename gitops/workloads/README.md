@@ -1,10 +1,10 @@
 ---
 title: "workloads"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 ---
 # workloads
 
@@ -99,7 +99,7 @@ secret과 credential을 저장소에 커밋하지 않는 경계는 위 Supported
 ### Checks
 
 workload coverage 매트릭스와 상위
-[GitOps validation section](../README.md#verification)에 적힌 정적 명령을 그대로
+[GitOps validation section](../README.md#checks)에 적힌 정적 명령을 그대로
 실행한다. 저장소 정적 검사가 성공해도 live rollout, route, 데이터베이스, Vault,
 ESO의 준비 상태는 증명되지 않는다.
 

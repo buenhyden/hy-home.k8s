@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "3.4.10"
+version: "3.4.11"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -428,6 +428,7 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0191 | completed spec | W03 work residue ledger: the residue-only ledger, its schema and registry block, the drift and closure gate and the read-only view, seeded from the SPEC-0161 tables. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0191-w03-work-residue-ledger/` |
 | SPEC-0207 | completed spec | W03 registry schema version: the Stage 99 registry schema_version as a SemVer string (generation 10 is 10.0.0, now 11.0.0), the bump rule, one REGISTRY_MAJOR constant with readable-MAJOR history replay, and ADR-0061. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0207-w03-registry-schema-version/` |
 | SPEC-0192 | completed spec | W03 document generator (W03-H27): `scripts/document-generator.py` creates a governed document from its registry profile and template and refuses what the registry and identity rules do not admit. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0192-w03-document-generator/` |
+| SPEC-0193 | completed spec | W03 relationship and link contract (W03-H08, W03-H16): the registry `relationship_contract` section records the relations, relation kinds and link types with strict registry rules, and `LINK-FRAGMENT` refuses a broken link fragment. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0193-w03-relationship-link-contract/` |
 
 **SPEC-0152 recovery proof.** The exact completed source is commit `4033d38e7ac6eac0130700c8cf259ea252f44916`, reachable from retained local `refs/heads/codex/manual-document-disposition-policy` (`git merge-base --is-ancestor` rc 0). The current user authorized this bounded package exit on 2026-11-10; no hold was identified in the current repository documents or request, and the Task's frozen disposition decision names consumers and preservation route. Before any deletion, QA confirmed `git cat-file -e` rc 0 for each `commit:path`, restored each with `git show` to a mode-0600 temporary file, and obtained `cmp -s` rc 0 against its unchanged current source; the temporary files were removed. The three exact paths and Git blob identities are:
 
@@ -725,5 +726,13 @@ This is local retained-ref recovery proof before disposition, not remote or host
 - `ddb9c9111b70ca72a1f47fd8dbf74c2c8c74f93a:docs/03.specs/0192-w03-document-generator/plan.md` — blob/source OID `023675299242c704edcee49be9259e5c060acd40`; SHA-256 `b711f42860f56bc5d8fb9d1c418c48e0fe89d02378efbfc9ee13272ce5585680` (13071 bytes).
 - `ddb9c9111b70ca72a1f47fd8dbf74c2c8c74f93a:docs/03.specs/0192-w03-document-generator/spec.md` — blob/source OID `898903ea54b89f02260a84977e64196d95576607`; SHA-256 `9115fd9a14acaeee90fcf3d10851d260ed397bde76deac6086b3f9304c0ed2a7` (18280 bytes).
 - `ddb9c9111b70ca72a1f47fd8dbf74c2c8c74f93a:docs/03.specs/0192-w03-document-generator/tasks/tsk-0001-w03-document-generator.md` — blob/source OID `65baa7137a6ff2458ce2ba3f4fd414a644212ac8`; SHA-256 `76ae79357f5415701d370391ce1500f909c16ff2d24e52744167df6050432d54` (24366 bytes).
+
+This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
+
+**SPEC-0193 recovery proof.** The exact completed source is the Task freeze commit `038f9b2b5b0d1c0000fc4054c4cd5bfbe2b7352d`, reachable from local `refs/heads/claude/w03-relationship-link-contract-r2` (`git merge-base --is-ancestor` rc 0) and, after its merge, from `main`. The user authorized this exit, and no hold was identified. Before deleting any file, QA observed HEAD `038f9b2b` with a clean index and worktree; for every exact `commit:path` it observed `git cat-file -t` type blob, the same OID from `git hash-object --no-filters` on the current file, and a byte-equal comparison of the `git show` restoration, read through a pipe, with the current file. No temporary file was written, and HEAD, index and worktree were unchanged afterwards.
+
+- `038f9b2b5b0d1c0000fc4054c4cd5bfbe2b7352d:docs/03.specs/0193-w03-relationship-link-contract/plan.md` — blob/source OID `7b1b02ea47a2469a3ff39064c1eb5ecbfd68508d`; SHA-256 `240be11460ec14fb626890ffd89acab14eaf438b01cf61d6211e8282735ba566` (11752 bytes).
+- `038f9b2b5b0d1c0000fc4054c4cd5bfbe2b7352d:docs/03.specs/0193-w03-relationship-link-contract/spec.md` — blob/source OID `040bee564935027523815c9b68f3caf6515d2da0`; SHA-256 `b460afe65c8dfd4f3341f88df3ab924f01f53469ea5583ff168b8a0eba5fba57` (27521 bytes).
+- `038f9b2b5b0d1c0000fc4054c4cd5bfbe2b7352d:docs/03.specs/0193-w03-relationship-link-contract/tasks/tsk-0001-w03-relationship-link-contract.md` — blob/source OID `00478d445fbfe15855f3e5cd7328883d02ecd5e9`; SHA-256 `74e59a4654ec15b873a17d183c1216c246b1265dbc199f4c79859a1e6fa911e0` (27654 bytes).
 
 This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.

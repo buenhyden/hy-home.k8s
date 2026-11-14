@@ -1,10 +1,10 @@
 ---
 title: "sample-app"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 ---
 # sample-app
 
@@ -138,7 +138,7 @@ PR review 후 `main`에 병합되면 ArgoCD `apps-generator` ApplicationSet이 �
 ### Checks
 
 복사본을 desired state로 다루기 전에 placeholder가 남지 않았는지 확인하고
-상위 [examples contract](../README.md#verification)에 나열된 저장소 품질,
+상위 [examples contract](../README.md#checks)에 나열된 저장소 품질,
 Kubernetes manifest, secret 처리 검사를 실행한다.
 
 ## Operations

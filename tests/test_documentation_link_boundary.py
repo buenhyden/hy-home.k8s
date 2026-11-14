@@ -438,5 +438,109 @@ class StagePathGrammarTests(unittest.TestCase):
         self.assertEqual(_grammar(body, source=source), [])
 
 
+class FragmentLinkTests(unittest.TestCase):
+    """SPEC-0193: a link fragment names a heading slug or an explicit anchor."""
+
+    source = PurePosixPath("docs/README.md")
+    target = PurePosixPath("docs/03.specs/README.md")
+    archive = "docs/98.archive/README.md"
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.context = validator._build_context(ROOT, (cls.source, cls.target))
+
+    def fragments(self, source_text: str, target_text: str = "# Target\n") -> list[str]:
+        context = replace(
+            self.context,
+            paths=(self.source,),
+            texts={
+                **self.context.texts,
+                self.source: source_text,
+                self.target: target_text,
+            },
+        )
+        return [
+            item.actual
+            for item in validator._link_diagnostics(context)
+            if item.rule_id == "LINK-FRAGMENT"
+        ]
+
+    def test_a_broken_same_file_and_cross_file_fragment_fail(self) -> None:
+        self.assertEqual(
+            self.fragments("# Here\n\n[x](#missing)\n"), ["docs/README.md#missing"]
+        )
+        self.assertEqual(
+            self.fragments("[x](03.specs/README.md#missing)\n"),
+            ["docs/03.specs/README.md#missing"],
+        )
+        self.assertEqual(
+            self.fragments("[x](03.specs/README.md#missing)\n[y](#gone)\n"),
+            ["docs/03.specs/README.md#missing", "docs/README.md#gone"],
+        )
+
+    def test_a_heading_slug_a_numbered_repeat_an_explicit_anchor_and_a_korean_heading_pass(
+        self,
+    ) -> None:
+        target = (
+            "# Title\n\n## Success Criteria & Verification Plan\n\n"
+            "## Dup\n\n## Dup\n\n## 한글 제목\n\n## Back_tick `code` Part\n\n"
+            '<a id="explicit"></a>\n\n<a name="named"></a>\n'
+        )
+        source = "\n".join(
+            f"[x](03.specs/README.md#{fragment})"
+            for fragment in (
+                "title",
+                "success-criteria--verification-plan",
+                "dup",
+                "dup-1",
+                "한글-제목",
+                "back_tick-code-part",
+                "explicit",
+                "named",
+            )
+        )
+        self.assertEqual(self.fragments(source, target), [])
+        self.assertEqual(
+            self.fragments("[x](03.specs/README.md#dup-2)\n", target),
+            ["docs/03.specs/README.md#dup-2"],
+        )
+
+    def test_a_fenced_or_indented_heading_is_no_anchor(self) -> None:
+        target = "# Title\n\n```md\n## Fenced Heading\n```\n\n    ## Indented\n"
+        self.assertEqual(
+            self.fragments("[x](03.specs/README.md#fenced-heading)\n", target),
+            ["docs/03.specs/README.md#fenced-heading"],
+        )
+        self.assertEqual(
+            self.fragments("[x](03.specs/README.md#indented)\n", target),
+            ["docs/03.specs/README.md#indented"],
+        )
+
+    def test_a_template_placeholder_an_external_link_and_a_non_markdown_target_are_not_checked(
+        self,
+    ) -> None:
+        for link in (
+            "{{SPEC_RELATIVE_PATH}}#anything",
+            "https://example.com/page#missing",
+            "../scripts/validate-links-and-owners.py#L10",
+            "#",
+            "03.specs/README.md",
+        ):
+            with self.subTest(link=link):
+                self.assertEqual(self.fragments(f"[x]({link})\n"), [])
+
+    def test_an_archive_target_and_its_fragment_are_not_checked(self) -> None:
+        self.assertEqual(self.fragments(f"[x](../{self.archive}#missing)\n"), [])
+
+    def test_the_tree_holds_no_broken_fragment(self) -> None:
+        context = validator._build_context(ROOT)
+        broken = [
+            f"{item.path.as_posix()} {item.actual}"
+            for item in validator._link_diagnostics(context)
+            if item.rule_id == "LINK-FRAGMENT"
+        ]
+        self.assertEqual(broken, [])
+
+
 if __name__ == "__main__":  # pragma: no cover - module entry guard
     unittest.main()
