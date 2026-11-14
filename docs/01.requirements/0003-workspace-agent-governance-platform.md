@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "4.0.1"
+version: "4.0.2"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -48,7 +48,7 @@ In scope: current owner boundaries, approval, document lifecycle, validation res
 Out of scope: new provider admission, vendoring an external role catalog, collecting secrets, live changes, or creating a Release family.
 The removed shared progress ledger and the past proposal's `agentSystems`/`evidenceOwnerPolicies` are not
 claimed as current implementation or restored as a new parallel registry; the work residue ledger is neither claimed as the removed ledger nor a parallel registry. FR-0025's ongoing obligations are validated at their current owners.
-The external v14.2 execution package is evidence only; the clauses below conflicted with accepted requirements and were not adopted; on 2026-11-12 the user decided that the current v14.7 requirements prevail, so the review clause is adopted through SPEC-0162, generated reverse traceability in place of hand-written back-links through SPEC-0164, and renumbering as display numbers only is recorded in SPEC-0161; the single machine ledger for unfinished, adoption and survey state (FR-0019, FR-0022) agrees with v14.7 and is adopted through SPEC-0185 and W03-H30 package 2.
+The external v14.2 execution package is evidence only; the clauses below conflicted with accepted requirements and were not adopted; on 2026-11-12 the user decided that the current v14.7 requirements prevail, so the review clause is adopted through SPEC-0162, generated reverse traceability in place of hand-written back-links through SPEC-0164, and renumbering as display numbers only is recorded in SPEC-0161; the single machine ledger for unfinished, adoption and survey state (FR-0019, FR-0022) agrees with v14.7 and is adopted through SPEC-0185 and W03-H30 package 2. SPEC-0161 stays the workspace's residue owner until W11 and exits with its exit commit at W11 once the work residue ledger is empty; it is the single deliberate exception to the exit of a finished package with its final change.
 
 ### Constraints and Exclusions
 
