@@ -1,6 +1,6 @@
 ---
 title: "Claude Delivery Permissions and CI/CD Governance"
-version: "0.1.2"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -37,8 +37,8 @@ WORK-001 and WORK-002 are implemented in the worktree and uncommitted; the exact
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-DELIVERYPERM-001](../spec.md#success-criteria--verification-plan) | Write the failing regressions and the validator pin, then the settings lists. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-DELIVERYPERM-002](../spec.md#success-criteria--verification-plan) | Amend the git.md release text and add its delivery subsection; replace the Claude provider note lines and the Codex parity sentence; amend the runbook 0012 executor lines; add the Stage 03 README entry; run the document and exact-index checks. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-DELIVERYPERM-001](../spec.md#success-criteria--verification-plan) | Write the failing regressions and the validator pin, then the settings lists. | platform | completed | PASS | EVD-009, EVD-010, EVD-016, EVD-017, EVD-019, EVD-020, EVD-022, EVD-023, EVD-025, EVD-026 |
+| WORK-002 | [VAL-DELIVERYPERM-002](../spec.md#success-criteria--verification-plan) | Amend the git.md release text and add its delivery subsection; replace the Claude provider note lines and the Codex parity sentence; amend the runbook 0012 executor lines; add the Stage 03 README entry; run the document and exact-index checks. | platform | completed | PASS | EVD-030 |
 
 ## Task Evidence
 
@@ -73,13 +73,22 @@ WORK-001 and WORK-002 are implemented in the worktree and uncommitted; the exact
 | EVD-027 | [VAL-DELIVERYPERM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Four strict document validators before and after; staged lifecycle check; `python3 scripts/validation/repository/quality.py --root .`; `markdownlint-cli2` on the edited Markdown; `git diff --check` and `git diff --cached --check` | `0d3992ee` before any edit, then the staged snapshot with sha256 prefixes spec.md `60953a602a4f`, plan.md `438fa65eddf3`, `.claude/provider.md` `3fc1e1fb1b5b`, `.agents/governance/git.md` `934e8fc7f169` and this Task; `markdownlint-cli2` v0.23.3, not the v0.22.1 hook pin; 2026-11-14 | PASS | The four strict validators exited 0 before and after with identical output (contract registry `295 paths`); `python3 scripts/validate-document-lifecycle.py --root . --mode staged` exit 0; the repository quality check exit 0, no ERR line; markdownlint 0 issues in 5 files; both diff checks clean. Affected-surface routing, `ruff check scripts tests`, `python3 scripts/qa.py staged` and the commit hooks were not run in this delegated run. | no | none |
 | EVD-028 | [VAL-DELIVERYPERM-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent semantic review | {"spec_sha256":"60953a602a4fdff8942f9c36e066a84eafea32c94128ca40b94b887575a2e556","plan_sha256":"438fa65eddf3318bb25109fb26c1f3273da4b4dd3ea46eb435c31fbe1819412c"} | PASS | Independent read-only reviews of the tag and fetch hardening, 2026-11-14: the first review rejected one completeness claim about fetch into local tags (B1); the second confirmed B1 resolved in substance and rejected two remaining completeness sentences; the final review of these bytes returned APPROVE: the blockers and NITs fixed, no text claims the denied or residual set is complete, 29 allow, 2 ask and 257 deny with the 238 earlier rules in order, the validator pin equal to the lists, the validator, 89 unit tests and the repository quality gate passing. | yes | none |
 | EVD-029 | [VAL-DELIVERYPERM-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Spec/Plan first-record approval | {"actor":"user","approval_ref":"Direct current-session user message approve spec 60953a60 / plan 438fa65e (bytes after answers 7 to 10), 2026-11-14","review_ref":"EVD-028","scope":["SPEC-0214","SPEC-0214-PLAN-0001"],"reviewed_spec_sha256":"60953a602a4fdff8942f9c36e066a84eafea32c94128ca40b94b887575a2e556","reviewed_plan_sha256":"438fa65eddf3318bb25109fb26c1f3273da4b4dd3ea46eb435c31fbe1819412c","validity":"confirmed","revocation":"none"} | PASS | Approves the Spec and Plan bytes only; accepts no criterion. | yes | none |
+| EVD-030 | [VAL-DELIVERYPERM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Four strict document validators before and after; staged lifecycle check; affected-surface routing; ruff; `python3 scripts/qa.py staged` and the commit hooks | Pre-commit hooks over the final indexes of `407e0348` and `9e0a5293` in the pinned validation environment: the workspace hook ran `scripts/qa.py staged` (strict document validators, staged lifecycle, affected-surface routing, selected style including ruff, selected non-style hooks) on each exact index, 2026-11-14 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | EVD-003 |
+| EVD-031 | [VAL-DELIVERYPERM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-DELIVERYPERM-001](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-DELIVERYPERM-002](../spec.md#success-criteria--verification-plan) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-DELIVERYPERM-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-009, EVD-010, EVD-016, EVD-017, EVD-019, EVD-020, EVD-022, EVD-023, EVD-025, EVD-026 | Accepted by the user on 2026-11-14 (direct answer "Accept (Recommended)" to the SPEC-0214 acceptance question naming commit `9e0a5293`) | platform |
+| [VAL-DELIVERYPERM-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-030 | Accepted by the user on 2026-11-14 (direct answer "Accept (Recommended)" to the SPEC-0214 acceptance question naming commit `9e0a5293`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: No other document cites this package by path; git.md, the provider notes, runbook 0012 and the scripts README state the boundary on their own. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -126,4 +135,4 @@ Open question: none. Next owner:
 
 1. the reviewer and the user, for the re-review and re-approval of the changed Spec and Plan;
 2. platform, for the exact-index QA and the commit hooks;
-3. the operator, for criterion acceptance.
+3. the operator, for criterion acceptance. Implementation commit `9e0a5293` passed exact-index QA in the hooks (EVD-030); the user accepted the package on 2026-11-14, and the approval of commit, push, PR and merge covers the package exit (EVD-031).
