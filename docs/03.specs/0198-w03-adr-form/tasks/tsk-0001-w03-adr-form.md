@@ -1,6 +1,6 @@
 ---
 title: "W03 ADR Form"
-version: "0.3.0"
+version: "0.3.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -27,8 +27,8 @@ This Task records the ADR part of handoffs W03-H02 and W03-H13 with W03-D02 and 
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-ADRFORM-001](../spec.md#success-criteria--verification-plan) | The form, both extensions, the identity bound, the retained-form selection, the registry check, the profile lists, the TemplateDefinition and record, the `layer` rule and the tests. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-ADRFORM-002](../spec.md#success-criteria--verification-plan) | The decision template; ADR-0062 in the common form, its README row and the user's acceptance; the texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-ADRFORM-001](../spec.md#success-criteria--verification-plan) | The form, both extensions, the identity bound, the retained-form selection, the registry check, the profile lists, the TemplateDefinition and record, the `layer` rule and the tests. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-ADRFORM-002](../spec.md#success-criteria--verification-plan) | The decision template; ADR-0062 in the common form, its README row and the user's acceptance; the texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
 
 ## Task Evidence
 
