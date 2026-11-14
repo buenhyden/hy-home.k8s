@@ -1,8 +1,8 @@
 ---
 title: "W00 r1 Intake and Residue Correction"
-version: "0.2.1"
+version: "0.2.2"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-11-14"
 artifact_id: "SPEC-0213-TSK-0001"
@@ -28,8 +28,8 @@ This Task will record the r1 hashes and the r1 W00 diff read, the classification
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-INTAKE-001](../spec.md#success-criteria--verification-plan) | The r1 hashes and diff read, `r1 Edition Delta`, `Input Corrections`, `Change Contract Classification` and the five decision rows. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-INTAKE-002](../spec.md#success-criteria--verification-plan) | The still-missing seeds, the two closures, the twelve cell edits, the lifetime record and the negative copy. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-INTAKE-001](../spec.md#success-criteria--verification-plan) | The r1 hashes and diff read, `r1 Edition Delta`, `Input Corrections`, `Change Contract Classification` and the five decision rows. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-INTAKE-002](../spec.md#success-criteria--verification-plan) | The still-missing seeds, the two closures, the twelve cell edits, the lifetime record and the negative copy. | platform | in-progress | NOT_RUN | Pending |
 
 ## Task Evidence
 
