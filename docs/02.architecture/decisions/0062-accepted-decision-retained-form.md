@@ -1,8 +1,8 @@
 ---
 title: "Accepted Decision Retained Form"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-11-14"
 artifact_id: "ADR-0062"
@@ -68,11 +68,11 @@ the list-mode checks stays with the change that moves the last role.
 
 ### Authority and Effect
 
-The current user is the decision maker and decides acceptance of this record;
-it is `proposed` until the user's approval is recorded in the SPEC-0198 Task and
-in the commit that sets it `accepted`. That acceptance accepts no SPEC-0198
-criterion by itself. Once accepted, the narrowing applies from that commit, and
-ADR-0059 gains one dated current-state clarification that links this record.
+The current user is the decision maker and accepted this decision on
+2026-11-14. The acceptance is recorded in the SPEC-0198 Task. It accepts no
+SPEC-0198 criterion by itself. The narrowing applies from the commit that set
+this record `accepted`, and ADR-0059 carries one dated current-state
+clarification that links this record.
 Compliance is confirmed by the registry, Markdown profile, links and lifecycle
 validators, the SPEC-0198 regression tests and the SPEC-0198 Task.
 
