@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.35.0"
+version: "0.36.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -258,9 +258,9 @@ Registry가 소유한다. Governed README도 공통 envelope를 사용하지만
 constant다. Template은 실제 destination path를 hardcode하지 않는다.
 Spec은 변경 계약과 수용 기준을, Plan은 실행 순서와 위험·예정 검증을
 소유한다. 새 Spec·Plan의 `approved`는 현재 계약의 승인·유효성을 뜻하며
-구현 완료를 뜻하지 않는다. Task의 단일 Task Table은 실행 상태·결과와
-증거 포인터를 기록하고, Criterion Acceptance 표가 기준별 수용 판정의
-유일한 작성 원본이다. Task Evidence는 검사 사실을 보존한다. 기존 완료
+구현 완료를 뜻하지 않는다. Task의 단일 Lifecycle Traceability 표(Execution Log 아래)는 실행 상태·결과와
+증거 포인터를 기록하고, Criterion Decisions 표가 기준별 수용 판정의
+유일한 작성 원본이다. Results 표는 검사 사실을 보존한다. 기존 완료
 Spec·Plan·Task는 당시의 `completed`와 승인·검사 근거를 소급 변경하지 않는다.
 새로 작성하거나 현행 내용을 바꾸는 Plan은 승인된 Spec의 제약을
 `Global Constraints`에서 연결하고 Plan에만 필요한 추가 실행 제약을 적으며,
@@ -272,7 +272,7 @@ lifecycle reader는 두 위치를 form의 section id로 읽고, 현행 Plan의
 작성·완료 의무는 선택한 입력에 대해 검사한다. Stage 99
 형식 구현은 해당 형식을 위임하는 현행 정책 소유자를 가리킨다.
 
-Plan, Task Table, Criterion Acceptance, Task Evidence 표의 열 이름과 순서, 수용
+Plan, Task Lifecycle Traceability, Criterion Decisions, Results 표의 열 이름과 순서, 수용
 값 집합은 Registry의 `body_contract`가 소유하며 이 README는 복제하지 않는다.
 `not-required`는 취소된 Task와 같은 package의 취소된 Spec에서 해당 기준의
 실제 범위 변경과 승인 근거를 확인한 때만 쓴다. 두 취소 처분 모두 정확한
@@ -290,7 +290,7 @@ PASS로 미해소 필수 결과를 숨기지 않는다. 완료 인계는 필수 
 의미의 현재 owner를 함께 확인한다. QA 결과, 기준 수용, 원본 승인,
 통합과 보관은 서로의 대체값이 아니다. 취소·대체는 남은 필수 기준의
 후속 Task의 Plan 배정을 명시하고, 관측 결과를 보존한다.
-관측된 `FAIL`은 `PASS`처럼 구체적인 Check·Input·Location을 적는다.
+관측된 `FAIL`은 `PASS`처럼 구체적인 Command·Input·Location을 적는다.
 `NOT_RUN`·`DEFER`에는 아직 실제 결과 위치가 없으면 `Pending`을 쓸 수
 있지만 사유와 다음 owner를 남긴다.
 resolved Incident에는 시간대를 포함한 실제 resolved_at과 해결 증거가 필요하다.

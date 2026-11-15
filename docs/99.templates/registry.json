@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": "15.0.0",
+  "schema_version": "16.0.0",
   "profiles": [
     {
       "id": "sdlc/requirement",
@@ -476,15 +476,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Inputs",
-          "Task Table",
-          "Task Evidence",
-          "Criterion Acceptance",
-          "Approval and Safety Boundaries",
-          "Verification Summary"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -501,7 +493,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Task Table",
+          "section": "Execution Log",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -574,12 +566,12 @@
               "not-required"
             ],
             "summary_rule": "task-items-v2",
-            "evidence_section": "Task Evidence",
+            "evidence_section": "Verification Evidence",
             "evidence_columns": [
-              "Evidence",
-              "Criteria",
+              "Evidence ID",
+              "Consumer",
               "Work Unit",
-              "Check",
+              "Command",
               "Input",
               "Result",
               "Location",
@@ -593,7 +585,7 @@
               "DEFER",
               "NOT_APPLICABLE"
             ],
-            "criterion_acceptance_section": "Criterion Acceptance",
+            "criterion_acceptance_section": "Acceptance Decision",
             "criterion_acceptance_columns": [
               "Criterion",
               "Acceptance",
@@ -4848,15 +4840,7 @@
         }
       },
       "sections": {
-        "required": [
-          "Overview",
-          "Inputs",
-          "Task Table",
-          "Task Evidence",
-          "Criterion Acceptance",
-          "Approval and Safety Boundaries",
-          "Verification Summary"
-        ],
+        "required": [],
         "optional": [],
         "forbidden": []
       },
@@ -4866,7 +4850,7 @@
           "sdlc/task"
         ],
         "body_contract": {
-          "section": "Task Table",
+          "section": "Execution Log",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4939,12 +4923,12 @@
               "not-required"
             ],
             "summary_rule": "task-items-v2",
-            "evidence_section": "Task Evidence",
+            "evidence_section": "Verification Evidence",
             "evidence_columns": [
-              "Evidence",
-              "Criteria",
+              "Evidence ID",
+              "Consumer",
               "Work Unit",
-              "Check",
+              "Command",
               "Input",
               "Result",
               "Location",
@@ -4958,7 +4942,7 @@
               "DEFER",
               "NOT_APPLICABLE"
             ],
-            "criterion_acceptance_section": "Criterion Acceptance",
+            "criterion_acceptance_section": "Acceptance Decision",
             "criterion_acceptance_columns": [
               "Criterion",
               "Acceptance",
@@ -4969,7 +4953,221 @@
           }
         }
       },
-      "placeholder_policy": "template-only"
+      "placeholder_policy": "template-only",
+      "template_definition": {
+        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "purpose": "Give authors one form for the execution of one Plan work unit set that records its scope and authority, its work and decisions, its observed evidence, its criterion decisions and its handoff.",
+        "responsibility": "A Task owns the actual execution of the work its Plan orders: the inputs and authority it ran under, what was done and decided, each observed result with its evidence, the decision on each assigned Spec criterion and the residue and next owner it hands off; the change contract stays with the Spec and the work order with the Plan.",
+        "non_goals": [
+          "The change contract or acceptance criteria, which belong to the Spec.",
+          "The work order, risks or promotion of durable contracts, which belong to the Plan.",
+          "A progress ledger separate from the Task rows; the work residue ledger holds residue pointers only."
+        ],
+        "policy_refs": [
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/document-lifecycle.md",
+          ".agents/governance/quality.md",
+          ".agents/governance/sdlc.md"
+        ],
+        "vocabulary_refs": [
+          ".agents/knowledge/glossary.md"
+        ],
+        "applicability": "Every sdlc/task document under docs/03.specs/ and its template.",
+        "consumer_paths": [
+          "docs/99.templates/registry.json",
+          "docs/99.templates/README.md",
+          "docs/03.specs/README.md",
+          "docs/03.specs/AGENTS.md",
+          ".agents/governance/document-authoring.md",
+          ".agents/governance/document-lifecycle.md",
+          ".agents/governance/quality.md",
+          ".agents/workflows/work-lifecycle.md",
+          "scripts/document_contracts.py",
+          "scripts/document_lifecycle.py",
+          "scripts/validate-document-contract-registry.py",
+          "scripts/validate-markdown-profiles.py",
+          "scripts/validate-links-and-owners.py",
+          "scripts/validate-document-lifecycle.py",
+          "scripts/validate-work-residue-ledger.py",
+          "scripts/validation/repository/quality.py",
+          "tests/test_common_form_tree.py",
+          "tests/test_task_execution_contract.py",
+          "docs/99.templates/templates/specs/task.template.md"
+        ],
+        "validation": {
+          "positive": [
+            "A Task in the form, with its Lifecycle Traceability table under Execution Log, its evidence table under Results, its criterion decisions under Criterion Decisions and its Approval and Safety Boundaries block under Inputs and Authority, passes the form tree, table, body-contract and lifecycle checks.",
+            "A Task whose evidence table carries the common names Evidence ID, Consumer, Command, Input and Result and the registered columns Work Unit, Location, Required and Resolves passes the evidence rules."
+          ],
+          "negative": [
+            "A Task that keeps a previous H2 title such as Task Evidence fails the form tree.",
+            "A Task whose evidence table keeps the old header names, or adds a column that is neither common nor registered, fails the table check.",
+            "An edited, removed or reordered recorded evidence cell fails TASK-EVIDENCE-RETENTION and a removed work row fails TASK-ITEM-DELETE."
+          ],
+          "regression": [
+            "The loaded Task profiles keep heading lists equal to the form H2 titles.",
+            "tests/test_task_execution_contract.py keeps every TASK- rule active on the repository registry with the form bound and reads each side of a comparison with its own registry.",
+            "tests/test_common_form_tree.py asserts exactly the Task form, its extensions, its three tables and this definition in the repository registry."
+          ]
+        },
+        "migration": {
+          "meaning_map": "The SPEC-0203 heading map moves each body of the Task template and of every current Task into the five H2 and ten H3 of the form without splitting a paragraph and without changing a recorded row; the evidence table takes the common names Evidence ID, Command and Consumer by a recorded header map, and the Approval and Safety Boundaries block moves whole under Inputs and Authority.",
+          "retained_history": "Git history retains the seven-heading Task layout, the previous evidence header and the previous template.",
+          "rollback": "Revert the SPEC-0203 implementation commit."
+        },
+        "tables": [
+          {
+            "name": "Lifecycle Traceability",
+            "section": "task-lifecycle-traceability",
+            "columns": [
+              {
+                "key": "ID",
+                "meaning": "The stable work item identifier, WORK- followed by three digits, unique within the Task.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Upstream criterion",
+                "meaning": "Link to each Spec criterion the work item serves.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Work item",
+                "meaning": "The bounded change the item makes.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Owner",
+                "meaning": "The responsible role of the item.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Status",
+                "meaning": "The frontmatter marker for a one-row Task, else the item state.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Result",
+                "meaning": "The observed execution result of the item.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Evidence",
+                "meaning": "Where the evidence of the item is recorded, or Pending.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 1,
+            "row_identity": "ID"
+          },
+          {
+            "name": "Results",
+            "section": "task-verification-evidence-results",
+            "columns": [
+              {
+                "key": "Evidence ID",
+                "meaning": "The stable identifier of one evidence row, EVD- followed by a three-digit number, unique within the Task.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Consumer",
+                "meaning": "Link to each Spec criterion whose acceptance uses the row.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Work Unit",
+                "meaning": "The work item of the Task that the check serves.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Command",
+                "meaning": "The named check or command that was run.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Input",
+                "meaning": "The exact revision, fixture or approval receipt the check ran over.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Result",
+                "meaning": "The observed result: NOT_RUN, PASS, FAIL, DEFER or NOT_APPLICABLE.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Location",
+                "meaning": "Where the evidence can be read again.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Required",
+                "meaning": "yes when a required PASS is needed for the criterion, else no.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Resolves",
+                "meaning": "none, or the earlier evidence IDs, comma-space separated, that this PASS row closes.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 1,
+            "row_identity": "Evidence ID"
+          },
+          {
+            "name": "Criterion Decisions",
+            "section": "task-acceptance-decision-criterion-decisions",
+            "columns": [
+              {
+                "key": "Criterion",
+                "meaning": "Link to the one assigned Spec criterion the row decides.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Acceptance",
+                "meaning": "pending, accepted, rejected or not-required.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Evidence",
+                "meaning": "none, or the evidence IDs the decision rests on.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Disposition",
+                "meaning": "The concrete next step or basis of the decision.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Current owner",
+                "meaning": "The owner of the criterion until it is accepted.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 1,
+            "row_identity": "Criterion"
+          }
+        ]
+      }
     },
     {
       "id": "common/template-operation-guide",
@@ -9074,7 +9272,7 @@
       },
       {
         "name": "Task Table/frontmatter summary",
-        "condition": "Applies to every Task: one Task Table and one frontmatter status marker, with the marker derived from the rows of a multi-row Task.",
+        "condition": "Applies to every Task: one Task Table (the Lifecycle Traceability table under Execution Log) and one frontmatter status marker, with the marker derived from the rows of a multi-row Task.",
         "owner": "buenhyden",
         "verification": "tests/test_task_summary_derivation.py and the strict Markdown profile check of the sdlc/task profile, both run by the document suite of scripts/run-contract-tests.py.",
         "review": "When the sdlc/task body contract or its task_execution binding changes, and when shared_contract.version changes.",
@@ -9106,7 +9304,7 @@
       },
       {
         "name": "Local candidate Spec/Plan first-recording as approved after actual batch review and approval",
-        "condition": "Applies when a scoped request, an actual batch review and the user's approval precede the first Git record, which then holds the same-package Spec and Plan at approved with the Task Evidence review and approval receipt.",
+        "condition": "Applies when a scoped request, an actual batch review and the user's approval precede the first Git record, which then holds the same-package Spec and Plan at approved with the review and approval receipt rows of the Task's evidence table.",
         "owner": "buenhyden",
         "verification": "tests/test_shared_contract_binding.py and the staged lifecycle check, which reads the review and approval receipt rows of the Task.",
         "review": "When shared_contract.version changes and when the spec-plan lifecycle domain changes.",
@@ -18042,6 +18240,420 @@
           }
         ],
         "extensions": []
+      },
+      {
+        "form_id": "task",
+        "title": "Task",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "sections": [
+          {
+            "section_id": "task-scope",
+            "level": 2,
+            "parent_id": null,
+            "title": "Scope",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "실제 실행 단위와 권한",
+            "required_content": [
+              "실제 실행 단위와 권한에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "task-scope-objective-and-parent",
+                "level": 3,
+                "parent_id": "task-scope",
+                "title": "Objective and Parent",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "직접 Plan·작업 단위·수용 기준",
+                "required_content": [
+                  "직접 Plan·작업 단위·수용 기준을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "task-scope-inputs-and-authority",
+                "level": 3,
+                "parent_id": "task-scope",
+                "title": "Inputs and Authority",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 입력 판본·허용 파일·결정·권한",
+                "required_content": [
+                  "실제 입력 판본·허용 파일·결정·권한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "task-execution-log",
+            "level": 2,
+            "parent_id": null,
+            "title": "Execution Log",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "진행과 차단의 단일 작성 원본",
+            "required_content": [
+              "진행과 차단의 단일 작성 원본에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "task-execution-log-work-performed",
+                "level": 3,
+                "parent_id": "task-execution-log",
+                "title": "Work Performed",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 변경·명령·시점·담당",
+                "required_content": [
+                  "실제 변경·명령·시점·담당을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "task-execution-log-blockers-and-decisions",
+                "level": 3,
+                "parent_id": "task-execution-log",
+                "title": "Blockers and Decisions",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실패·질문·답변·재개 조건",
+                "required_content": [
+                  "실패·질문·답변·재개 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "task-verification-evidence",
+            "level": 2,
+            "parent_id": null,
+            "title": "Verification Evidence",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "관측 결과와 해소 연결",
+            "required_content": [
+              "관측 결과와 해소 연결에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "task-verification-evidence-results",
+                "level": 3,
+                "parent_id": "task-verification-evidence",
+                "title": "Results",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "입력·도구·설정·명령·exit·증거 위치",
+                "required_content": [
+                  "입력·도구·설정·명령·exit·증거 위치을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "task-verification-evidence-resolution-links",
+                "level": 3,
+                "parent_id": "task-verification-evidence",
+                "title": "Resolution Links",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "이전 실패와 후속 증거의 같은 보장·입력·Resolves",
+                "required_content": [
+                  "이전 실패와 후속 증거의 같은 보장·입력·Resolves을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "task-acceptance-decision",
+            "level": 2,
+            "parent_id": null,
+            "title": "Acceptance Decision",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "관측과 구별된 인수",
+            "required_content": [
+              "관측과 구별된 인수에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "task-acceptance-decision-criterion-decisions",
+                "level": 3,
+                "parent_id": "task-acceptance-decision",
+                "title": "Criterion Decisions",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "기준별 수용·미수용·판정자·근거",
+                "required_content": [
+                  "기준별 수용·미수용·판정자·근거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "task-acceptance-decision-remaining-conditions",
+                "level": 3,
+                "parent_id": "task-acceptance-decision",
+                "title": "Remaining Conditions",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "미실행·미수용·운영 잔여·담당",
+                "required_content": [
+                  "미실행·미수용·운영 잔여·담당을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "task-handoff",
+            "level": 2,
+            "parent_id": null,
+            "title": "Handoff",
+            "order": 5,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "승격과 후속 전달",
+            "required_content": [
+              "승격과 후속 전달에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "task-handoff-promotion-receipt",
+                "level": 3,
+                "parent_id": "task-handoff",
+                "title": "Promotion Receipt",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "Plan 승격 매핑의 실제 반영·검증 영수증",
+                "required_content": [
+                  "Plan 승격 매핑의 실제 반영·검증 영수증을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "task-handoff-next-owner",
+                "level": 3,
+                "parent_id": "task-handoff",
+                "title": "Next Owner",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "다음 작업·현재 소유자·재개·종료 조건",
+                "required_content": [
+                  "다음 작업·현재 소유자·재개·종료 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "새 수용 기준·정책을 임의 생성하거나 실패 원문을 덮어쓰지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          }
+        ],
+        "extensions": [
+          {
+            "id": "task-lifecycle-traceability",
+            "kind": "local_h3",
+            "condition": "a Task in a status the body contract enforces (draft, ready, in-progress, blocked) maps each work item to its upstream Spec criterion, its owner, its status, its result and its evidence",
+            "owner": "platform",
+            "verification": "the body-contract check",
+            "review": "when the Task form version changes",
+            "removal": "when Task work items have another registered owner",
+            "parent_id": "task-execution-log",
+            "title": "Lifecycle Traceability"
+          },
+          {
+            "id": "task-residue-handoff",
+            "kind": "local_h3",
+            "condition": "a Task that records residue (an open handoff, conflict, adoption or survey item) keeps it in one table of this name, after the evidence table, with a matching entry in the work residue ledger",
+            "owner": "platform",
+            "verification": "the work residue ledger check of scripts/validate-work-residue-ledger.py",
+            "review": "when the work residue ledger design changes or the Task form version changes",
+            "removal": "when the work residue ledger has another registered host for residue",
+            "parent_id": "task-verification-evidence",
+            "title": "Residue Handoff"
+          },
+          {
+            "id": "task-evidence-local-columns",
+            "kind": "local_columns",
+            "condition": "a Task whose evidence the acceptance and resolution rules of this repository read: each row names its work unit, where the evidence can be read again, whether it is required and which earlier row it resolves",
+            "owner": "platform",
+            "verification": "TASK-EVIDENCE-WORK, TASK-EVIDENCE-LOCATION, TASK-EVIDENCE-REQUIRED, TASK-EVIDENCE-RESOLUTION and TASK-EVIDENCE-UNRESOLVED of scripts/document_contracts.py",
+            "review": "when the Task form or the common Task table changes",
+            "removal": "when the common contract names these columns or the rules that read them are retired",
+            "table": "Results",
+            "columns": [
+              "Work Unit",
+              "Location",
+              "Required",
+              "Resolves"
+            ]
+          }
+        ]
       }
     ]
   },
@@ -18608,7 +19220,7 @@
   },
   "work_residue": {
     "task_table": {
-      "section": "Task Evidence",
+      "section": "Verification Evidence",
       "heading": "Residue Handoff",
       "columns": [
         "ID",
@@ -19131,7 +19743,7 @@
           {
             "profile_id": "sdlc/task",
             "carrier": "body_contract",
-            "key": "Criteria"
+            "key": "Consumer"
           },
           {
             "profile_id": "sdlc/task",
@@ -19213,7 +19825,8 @@
           "common/template-sdlc-architecture-description",
           "common/template-sdlc-architecture-decision",
           "common/template-sdlc-spec",
-          "common/template-sdlc-plan"
+          "common/template-sdlc-plan",
+          "common/template-sdlc-task"
         ],
         "target_profile_ids": [
           "governance/rule",
@@ -19408,6 +20021,11 @@
             "profile_id": "common/template-sdlc-plan",
             "carrier": "registry_key",
             "key": "template_definition.policy_refs"
+          },
+          {
+            "profile_id": "common/template-sdlc-task",
+            "carrier": "registry_key",
+            "key": "template_definition.policy_refs"
           }
         ],
         "reverse_view": "None: a policy owner never lists the templates that apply it.",
@@ -19482,7 +20100,8 @@
           "common/template-sdlc-architecture-description",
           "common/template-sdlc-architecture-decision",
           "common/template-sdlc-spec",
-          "common/template-sdlc-plan"
+          "common/template-sdlc-plan",
+          "common/template-sdlc-task"
         ],
         "target_profile_ids": [],
         "cardinality": {
@@ -19672,6 +20291,11 @@
           },
           {
             "profile_id": "common/template-sdlc-plan",
+            "carrier": "registry_key",
+            "key": "template_definition.consumer_paths"
+          },
+          {
+            "profile_id": "common/template-sdlc-task",
             "carrier": "registry_key",
             "key": "template_definition.consumer_paths"
           }

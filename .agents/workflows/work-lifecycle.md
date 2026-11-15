@@ -1,10 +1,10 @@
 ---
 title: "Work Lifecycle"
-version: "2.2.4"
+version: "2.3.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-15"
 ---
 
 # Work Lifecycle
@@ -50,8 +50,7 @@ The procedure parts are Intake, Resume, Implementation and Completion.
    delegated role and skills from the agent registry, and load the provider
    note only for native behavior.
 4. Resolve the Stage 99 profile and template before authored document changes.
-   Record the current scoped request in the existing Task Inputs and Approval
-   and Safety Boundaries. Keep the Spec acceptance contract, Plan work mapping
+   Record the current scoped request in the existing Task Inputs and Authority. Keep the Spec acceptance contract, Plan work mapping
    and actual Task execution/evidence separate; no extra progress ledger (the work residue ledger of ADR-0060 holds residue, not a progress record).
 5. Resolve selected required-check tools, environment, actual resource/output
    needs, technical command limits and necessary native execution approval through
@@ -65,9 +64,9 @@ The procedure parts are Intake, Resume, Implementation and Completion.
 
 Apply the [context policy resume decision](../governance/context-and-memory.md#resume-decision)
 before dependent writes. Put worktree identity and relevant file hashes under
-Task Evidence, and current approval/revocation and writer ownership under
-Approval and Safety Boundaries. Carry command limits, partial output and known
-budget state with the lane results and limitations of the Verification Summary
+Results, and current approval/revocation and writer ownership under
+Inputs and Authority. Carry command limits, partial output and known
+budget state with the lane results and limitations of the Next Owner section
 (the [handoff fields](../governance/quality.md#handoff-evidence-contract)). On conflict, retain completed work and name the
 next owner; refresh the affected evidence before resuming.
 

@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "2.7.0"
+version: "2.8.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-15"
 ---
 
 # Quality and Evidence Policy
@@ -210,7 +210,7 @@ or pipes held by descendants after the leader exits as `FAIL`.
   owner, with its fallback classified separately. This is a visible limitation,
   never a pass.
 
-A modern Task Evidence `FAIL` records concrete Check, Input and Location as a
+A modern Task evidence `FAIL` records concrete Command, Input and Location as a
 `PASS` does. `NOT_RUN` and `DEFER` may use `Pending` where no result artifact
 exists, while naming the reason and next owner. QA `NOT_APPLICABLE` judges a
 check's target; it is never the Task criterion verdict `not-required`, which
@@ -221,7 +221,7 @@ When a Task records a required `FAIL`, `DEFER`, or `NOT_RUN`, keep the original
 observation. A later `PASS` closes it only when the new evidence explicitly
 names the earlier evidence ID and concerns the same check, work unit and
 criterion. An unrelated PASS cannot hide a required unresolved result. The
-Task's Criterion Acceptance table owns the single criterion verdict; check
+Task's Criterion Decisions table owns the single criterion verdict; check
 results, approval, integration and publication are distinct facts.
 
 #### Semantic review

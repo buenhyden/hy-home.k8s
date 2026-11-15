@@ -73,10 +73,10 @@ class TaskHistoryRetentionTests(unittest.TestCase):
             "Evidence": "Reason: check failed; Next owner: platform",
         }
         base_check = {
-            "Evidence": "EVD-001",
-            "Criteria": CRITERION,
+            "Evidence ID": "EVD-001",
+            "Consumer": CRITERION,
             "Work Unit": "WORK-001",
-            "Check": "Focused test",
+            "Command": "Focused test",
             "Input": "revision one",
             "Result": "FAIL",
             "Location": "tests/fixture.py",
@@ -118,7 +118,7 @@ class TaskHistoryRetentionTests(unittest.TestCase):
 
     def test_adverse_evidence_cannot_be_deleted_or_rewritten(self) -> None:
         self.assertIn("TASK-EVIDENCE-RETENTION", self.issues(drop=True))
-        for change in ({"Result": "PASS"}, {"Required": "no"}, {"Check": "Other"}):
+        for change in ({"Result": "PASS"}, {"Required": "no"}, {"Command": "Other"}):
             with self.subTest(change=change):
                 self.assertIn(
                     "TASK-EVIDENCE-RETENTION", self.issues(evidence_changes=change)
@@ -136,7 +136,7 @@ class TaskHistoryRetentionTests(unittest.TestCase):
             with self.subTest(cell=cell):
                 self.assertIn(
                     "TASK-EVIDENCE-RETENTION",
-                    self.issues(evidence_changes={"Criteria": cell}),
+                    self.issues(evidence_changes={"Consumer": cell}),
                 )
 
     def test_same_status_terminal_without_current_handoff_fails(self) -> None:
@@ -241,8 +241,8 @@ class SpecPlanAuthorityTests(unittest.TestCase):
             'status: "draft"\nowner: "platform"\nupdated: "2026-11-10"\n'
             'artifact_id: "SPEC-0999-TSK-0001"\n'
             'parent_ids: ["SPEC-0999-PLAN-0001"]\n---\n\n'
-            "# Example Task\n\n## Task Evidence\n\n"
-            "| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |\n"
+            "# Example Task\n\n## Verification Evidence\n\n### Results\n\n"
+            "| Evidence ID | Consumer | Work Unit | Command | Input | Result | Location | Required | Resolves |\n"
             "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
             f"| EVD-001 | {CRITERION} | WORK-001 | Independent semantic review | {prior_review_input} | PASS | older synthetic review | yes | none |\n"
             f"| EVD-002 | {CRITERION} | WORK-001 | Spec/Plan first-record approval | {prior_approval_input} | PASS | older synthetic approval | yes | none |\n"

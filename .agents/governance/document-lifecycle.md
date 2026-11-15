@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.11.1"
+version: "2.12.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -116,7 +116,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   waiver.
 - `DOCLIFE-R004` For a newly recorded Task in this k8s regional adapter, the first Git
   version may carry an actual nonterminal `ready`, `in-progress` or `blocked`
-  row when the current scoped user authorization and Task Inputs identify the
+  row when the current scoped user authorization and the Task's Inputs and Authority identify the
   owner, prerequisites and evidence of preparation, execution or obstacle.
   A new terminal Task is refused. Do not invent a draft-only commit to simulate an unobserved
   transition. Later transitions, required evidence, criterion acceptance and
@@ -140,7 +140,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   narrow first Git record at `approved` when a scoped request, actual batch
   review and user approval occurred before the first commit. The same-package
   Spec and Plan must be recorded together with their typed parent identities
-  and Task link. The Task Evidence holds a separate `Independent semantic
+  and Task link. The Task's Results table holds a separate `Independent semantic
   review` PASS row, which records the exact-byte checklist review by the
   approving owner or an optional separate reviewer, and a `Spec/Plan first-record approval` PASS receipt. Both
   rows identify SHA-256 hashes of the exact reviewed approved Spec and Plan
@@ -182,7 +182,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   Requirement's `approved`, an ADR's `accepted`, an operating document's
   `active`, an Incident's `resolved`, and a Postmortem's `published` retain
   their different role meanings; none is Task `completed`. A
-  current Task keeps execution in one Task Table and one frontmatter status
+  current Task keeps execution in one Lifecycle Traceability table (under Execution Log) and one frontmatter status
   marker. For one row, the marker is the human source; for multiple rows, the
   row states are the human source, frontmatter `status` is omitted and the
   validators derive the summary from the rows. A multi-row Task that already
@@ -191,8 +191,8 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   yields no derived summary and fails as a missing status.
   The Registry owns state/result values and summary binding; the lifecycle
   checker reads the Git index for completion handoff. Each assigned criterion
-  has one authored verdict in Criterion Acceptance, and each factual Task
-  Evidence row records its required status and any earlier observation it
+  has one authored verdict in Criterion Decisions, and each factual Task
+  evidence row records its required status and any earlier observation it
   resolves. A required `FAIL`, `DEFER` or `NOT_RUN` remains visible until a
   later matching PASS explicitly resolves its evidence ID. Unrelated PASS
   cannot satisfy the criterion.
@@ -215,8 +215,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   manually assess its current normative, historical, audit and recovery
   consumers; preservation value and access need; holds; and actual disposition
   authority. Record the target, basis, approval scope, disposition method and
-  unresolved conditions in the existing Task's Inputs, Approval and Safety
-  Boundaries, and Task Evidence. Transfer current meaning to its canonical
+  unresolved conditions in the existing Task's Inputs and Authority and Results. Transfer current meaning to its canonical
   owner first. For Stage 01–03 documents, retain source identity and recovery
   route in the current owner's existing `Archived Lineage`; other document
   types use their existing relationships or disposition record. Do not impose

@@ -212,14 +212,14 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             text = (
                 text.replace(
                     "| frontmatter | NOT_RUN | Pending named repository evidence |",
-                    "| frontmatter | PASS | [Synthetic fixture result](#verification-summary) |",
+                    "| frontmatter | PASS | [Synthetic fixture result](#next-owner) |",
                 )
                 .replace(
                     "| NOT_RUN | Pending | yes | none |",
                     "| NOT_RUN | Pending | yes | none |\n"
                     "| EVD-002 | [VAL-P02-004](../spec.md#criteria) "
                     "| WORK-004 | Named deterministic check | Exact revision or fixture "
-                    "| PASS | [Synthetic fixture result](#verification-summary) | yes | EVD-001 |",
+                    "| PASS | [Synthetic fixture result](#next-owner) | yes | EVD-001 |",
                 )
                 .replace(
                     "| pending | none | Run named deterministic check |",
@@ -822,6 +822,67 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 completed,
             )
         )
+
+    def test_a_task_move_across_the_old_column_names_is_replayed_by_header_map(
+        self,
+    ) -> None:
+        """SPEC-0203: an earlier commit binds the old evidence names and the old Task
+        layout, a later commit binds the form and holds the moved Task. Each side is
+        read with its own registry, so identical rows pass and one edited cell fails."""
+
+        from tests.test_task_execution_contract import (
+            SPEC as OWNER_SPEC,
+            TASK as OWNER_TASK,
+            form_plan_text,
+            form_spec_text,
+            old_registry_json,
+            row,
+            task_text,
+        )
+
+        registry_path = "docs/99.templates/registry.json"
+        current = (self.root / registry_path).read_text()
+        earlier_registry = json.dumps(old_registry_json(json.loads(current)))
+        rows = [
+            row(status="completed", result="PASS", evidence="focused test PASS"),
+            row("WORK-002", status="in-progress"),
+        ]
+        owners = {
+            OWNER_SPEC.as_posix(): form_spec_text().encode(),
+            (OWNER_SPEC.parent / "plan.md").as_posix(): form_plan_text().encode(),
+        }
+        earlier, _ = self.git.commit_many(
+            {
+                registry_path: earlier_registry.encode(),
+                **owners,
+                OWNER_TASK.as_posix(): task_text(
+                    "in-progress", rows, old_form=True
+                ).encode(),
+            }
+        )
+        moved = task_text("in-progress", rows)
+        edited = moved.replace("Synthetic fixture", "Edited fixture", 1)
+        for label, text, passes in (
+            ("identical", moved, True),
+            ("edited", edited, False),
+        ):
+            with self.subTest(rows=label):
+                self.git.run("checkout", "--quiet", "--detach", earlier)
+                later, _ = self.git.commit_many(
+                    {
+                        registry_path: current.encode(),
+                        OWNER_TASK.as_posix(): text.encode(),
+                    }
+                )
+                for mode in ("ci", "explicit-ref"):
+                    result, output = (
+                        self.invoke(mode, base_ref=earlier, to_ref=later)
+                        if mode == "ci"
+                        else self.explicit(earlier, later)
+                    )
+                    self.assertEqual(result == 0, passes, (mode, output))
+                    if not passes:
+                        self.assertIn("TASK-EVIDENCE-RETENTION", output)
 
     def test_registered_task_history_is_admitted_by_real_staged_merge(self) -> None:
         self.git.run("checkout", "--quiet", "-b", "side", self.base)

@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.34.0"
+version: "3.35.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -131,19 +131,19 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    Plan and execution evidence in its Task records. A fresh Spec and Plan
    describe authorized, current intent when approved; Task execution and
    criterion acceptance remain separate from that approval. Keep one Task
-   Table with criterion links, row state, result and evidence. Its frontmatter status is
+   Lifecycle Traceability table with criterion links, row state, result and evidence. Its frontmatter status is
    the sole document status marker. For one row, author its state only in
    frontmatter and use literal `frontmatter` in the row. For a multi-row Task,
    author only row states and omit frontmatter `status`; the validators derive
    the summary from the Registry-bound rows on each read (see the document
    lifecycle policy), so no writer exists and no second human-maintained state is kept.
    Record each criterion's sole authored `pending`, `accepted`, `rejected`, or
-   `not-required` disposition in the Task's Criterion Acceptance table, with
+   `not-required` disposition in the Task's Criterion Decisions table, with
    evidence, disposition rationale and current owner. Neither the execution
    row nor a factual check row repeats that verdict. A row's PASS alone is not
    completion: required work needs a completed execution state, concrete PASS
    evidence and an accepted criterion verdict, with no unresolved required
-   adverse result. Keep failed or deferred observations in Task Evidence; a
+   adverse result. Keep failed or deferred observations in the Task's Results table; a
    later PASS resolves an earlier required result only when it names that
    evidence ID and matches the check, work unit and criterion.
    `not-required` is reserved for a cancelled Task whose same-package Spec is
@@ -157,7 +157,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    Evidence with exact inputs, results, locations, whether each check is
    required, and any earlier evidence it resolves; these facts do not replace
    execution rows, the sole criterion verdict or authorization.
-   An observed `FAIL` needs concrete Check, Input and Location just as `PASS`
+   An observed `FAIL` needs concrete Command, Input and Location just as `PASS`
    does. Unrun `NOT_RUN` or unavailable `DEFER` may retain `Pending` in a
    location until real evidence exists, with the reason and next owner stated.
 8. `AUTHOR-R008` Promote durable cross-change decisions to an Architecture Decision and

@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.59"
+version: "0.2.1"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -11,18 +11,37 @@ parent_ids: ["SPEC-0161-PLAN-0001"]
 
 # Task: W00 v14.7 Delta Intake
 
-## Overview
+## Scope
+
+### Objective and Parent
 
 This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under its [Plan](../plan.md). EVD-001 to EVD-006, EVD-010 and EVD-011 were observed before approval and are marked not required. The user approved the Spec and Plan on 2026-11-12 (EVD-013) and confirmed the exact reviewed bytes (EVD-015, EVD-016).
 
-## Inputs
+### Inputs and Authority
 
 - **Request:** on 2026-11-12 (Asia/Seoul) the user pasted the v14.7 W00 prompt (`TASK-hy-home-k8s-W00.md`) and named the package directory `_workspace/workspace_execution_tasks/{dependencies, reports, tools}`. The request does not approve this Spec or Plan, accept a criterion, or authorize a commit, push or merge.
 - **Workspace:** WORKSPACE_ROOT is the repository root; PACKAGE_ROOT `_workspace/workspace_execution_tasks/`, git-ignored by `.gitignore` line 74. Base `main` at `4a47cb40`, clean worktree and index, no open pull request; branch `claude/w00-v14-7-intake`.
 - **Inputs (SHA-256):** W00 prompt `65d1cc62db9e2aae2476138d4285d4138a65202309bb4e6167b694758abbd1e7`; `INPUT-REPORT-ORIGINAL.txt` `dc348e7fc67f77ab8667cc4b1eecb50dbac2857d30617eff1246dd23d8748d23` (same as SPEC-0154); `REQUIREMENTS.json` `4c9da241ba185310048f3231815c04ed42dc7ce54c44e201f97e469f5945084b`; `PROFILE-REQUIREMENTS.json` `079f07c13b7c54391366185d0fd0ce543ec81c4877a4fbef9df0a82790ed2e75` (same as SPEC-0154); `REVISION-v14_7.json` `67c42631cf48f3fc4e7c84329c0eb87dfb7775fb000a7381696c931161541463`; `REQUEST-AMENDMENTS-v14_5.json` `02342b6b15d12de00e7880c8a161a3e418acd12324e3b8330eb66594adc90a27`; `COMMON-SECTION-CONTRACT.json` `4f79183d59c34ee87d1cab35c5ffc86eb7012f5df1db4dc4b91a8fd412e8c618`; `STAGE-QA-MATRIX.json` `12d8962c96c769cd3bbc12bcc2e9d29b31d4e60e9a48190c2d1ad6934030e873`; `QA-CHANGE-PROTOCOL.md` `106ee35cba6b2ea0313168541cce11f4b73573125b261be296f854d295f8826d`; `REPOSITORY-VOCABULARY.json` `b03ae3c00a4228de90d90b48c9a7af4b716492651d83b6deab128d9e3bc92fce`; `TEMPLATE-DEFINITION-CONTRACT.md` `ff7e35b8b75406c9bedb603f8fb4d0449401564b3eae79138b9f9b222c61eb10`; `OPEN-01-14.json` `4dde48c427323cd6a1cdef9280fd281f1bab019c07ea5fd947728639aa6b8677`.
 - **Upstream:** completed SPEC-0154 to SPEC-0160, recoverable from the REQ-0003 Archived Lineage.
 
-## Task Table
+- **Allowed Paths**: `docs/03.specs/0161-w00-v14-7-delta-intake/`, `docs/03.specs/README.md`, one back-link sentence in `docs/01.requirements/0003-workspace-agent-governance-platform.md` Traceability, `.secrets.baseline` (reviewed digest entries only, if the secret scan flags this Task's digests)
+- **Forbidden Paths**: every file named in a handoff table; `_workspace/workspace_execution_tasks/` (read-only input)
+- **Approval Required**: Spec and Plan approval; any commit, push, PR, merge or package exit; the CI-SCOPE and POLICY-ROLE decisions belong to W01
+- **Static Validation**: strict document validators, staged lifecycle check, `python3 scripts/qa.py staged`
+- **Live Validation**: DEFER; no live surface in scope
+- **Secret / Vault Handling**: no secret read or printed
+- **Rollback Plan**: delete the branch `claude/w00-v14-7-intake`; `main` is unchanged
+- **Evidence Location**: this Task
+
+## Execution Log
+
+### Work Performed
+
+The work of this Task is recorded in the rows of [Lifecycle Traceability](#lifecycle-traceability) below and in the evidence rows under Verification Evidence.
+
+### Blockers and Decisions
+
+No separate blocker or decision list is kept here; a blocker and its resume condition are recorded in the Result and Evidence cells of the work rows, and each decision in the evidence rows and tables under Verification Evidence.
 
 ### Lifecycle Traceability
 
@@ -30,9 +49,11 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-DELTA-001](../spec.md#criteria), [VAL-DELTA-002](../spec.md#criteria) | Record the delta tables, check completeness, obtain independent review. | platform | frontmatter | PASS | Required checks pass: EVD-014 (completeness, resolves EVD-007), EVD-012 and EVD-015 (independent review, EVD-012 resolves EVD-008), EVD-017 (exact-index QA, resolves EVD-009). The user accepted both criteria on 2026-11-12. |
 
-## Task Evidence
+## Verification Evidence
 
-| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
+### Results
+
+| Evidence ID | Consumer | Work Unit | Command | Input | Result | Location | Required | Resolves |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Pre-approval edition comparison | Package v14.7 against the v14.1, v14.4, v14.5 and v14.6 history archives; prompt diff against v14.6; workspace HEAD `4a47cb40`; 2026-11-12 | PASS | Edition Delta table below. The exact v14.2 `REQUIREMENTS.json` (SPEC-0154 input, prefix `8af753f1`) is not in any history archive; v14.1 is the base. Same 106 IDs since v14.1; 16 rows changed only `implementation` or `verification` text (18 field changes). | no | none |
 | EVD-002 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Pre-approval requirement-change links | `REVISION-v14_7.json`, `REQUEST-AMENDMENTS-v14_5.json`, the 16 changed rows, REQ-0003 Scope and Non-goals, and repository searches at `4a47cb40`; 2026-11-12 | PASS | Requirement Changes table below: 50 rows (16 changed requirements, 12 R45, 20 R147, RS-09, CI-SCOPE). | no | none |
@@ -138,8 +159,11 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-102 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-D84 recorded | User answer "Mechanical move + check, blanket OK (Recommended)", 2026-11-15 (Asia/Seoul), to the question on moving the approved Spec and Plan of the ten remaining W03 packages to the SPEC-0200 forms | PASS | Recorded as W03-D84 with the SPEC-0201 package commit, whose Task EVD-016 and EVD-017 hold the first receipt: the mechanical check of the moved Spec and Plan and the approval quoting this answer. Each later package records its own receipt. No recorded decision, handoff or evidence row was rewritten. | no | none |
 | EVD-103 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-D62 recorded | The user's answers of 2026-11-14 (Asia/Seoul) to the SPEC-0202 questions Q1 to Q7, the readings and the approval of the bytes, quoted in the W03-D62 row | PASS | Recorded as W03-D62 with the SPEC-0202 package commit, whose Task EVD-018 and EVD-019 hold the form-move receipt and EVD-020 the user's readings answer. | no | none |
 | EVD-104 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-H29 state cell, live row and ledger entry refreshed | SPEC-0202 Spec contract (decision and handoff rows) | PASS | The state cell, the live Residue Handoff row and the ledger entry of W03-H29 read the same: fourteen policies are adopted after SPEC-0202 (the ten governance policies and `GITOPS`, `MESH`, `ROLLOUT`, `OBSERV`), `ONBOARD` stays pending with the gate retirement in the following package, and package 5 follows. No recorded decision row is edited. | no | none |
+| EVD-105 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-D61 recorded | User answers to the three SPEC-0203 questions, 2026-11-14 (Asia/Seoul; 2026-11-13T22:24Z): "Keep nine columns (Recommended)", "H3 under Evidence (Recommended)" and "Move under Scope (Recommended)" | PASS | Recorded as W03-D61 with the SPEC-0203 package commit. W03-D65 later supersedes its first choice, the unchanged column names, with the common column names under a recorded header map; the second and third choices stand. | no | none |
+| EVD-106 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Move of this Task to the SPEC-0203 Task form | SPEC-0203 implementation: this Task before (file c7059968cfaac5eb, 775 lines, version 0.1.60) and after (file 9696e58bc8046804, 800 lines, version 0.2.0) the heading map; SPEC-0203 Task EVD-017, EVD-018 and EVD-025 | PASS | Form-only move by the SPEC-0203 heading map (W03-D01, W03-D50): the old H2 removed, every body under its form H3, the 17 other H3 under `Task Evidence` as H4 in place, while `Residue Handoff` stays an H3 as the registered local extension and is placed last, after Resolution Links, as the user decided on 2026-11-15 (SPEC-0203 Task EVD-025). Every data row of every one of the 22 tables is byte-identical and in the same order (each table's data-row hash equal before and after); only the evidence header line changed (`Evidence`, `Criteria`, `Check` to `Evidence ID`, `Consumer`, `Command`) and five pointer lines were added (Work Performed, Blockers and Decisions, Resolution Links, Remaining Conditions, Promotion Receipt; sha256 prefixes in SPEC-0203 Task EVD-018). The work residue ledger validator reports the same 75 entries before and after and resolves the five registered historical tables and the live table. No decision, handoff or evidence row was rewritten. | no | none |
+| EVD-107 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Closure of W03-H41, W03-H13, DOC-11 and R45-10 through the ledger cycle | User acceptance of the SPEC-0203 criteria, direct current-session answer "Accept, close all four (Recommended)", 2026-11-15 (Asia/Seoul); W03-D61; W03-D70; SPEC-0203 Task EVD-007 to EVD-027; `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv | PASS | The user accepted the SPEC-0203 criteria and closed W03-H41 (the Task form, under W03-D70), W03-H13 (all six SDLC templates now have a form and a TemplateDefinition, and the local roles have forms), and DOC-11 and R45-10 (every real template has its TemplateDefinition, W03-H13 and W03-H15 being closed). Their live rows in the Residue Handoff table are terminal with this row as Closure; their ledger entries were made terminal with this closure and then deleted, the gate passing both times. The legacy rows stay as recorded. | no | none |
 
-### Edition Delta
+#### Edition Delta
 
 | Input | v14.2 consumed by SPEC-0154..0160 | v14.7 | Effect |
 | --- | --- | --- | --- |
@@ -150,7 +174,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | Clauses | none | R45-01..12 (v14.5), R147-01..20 (v14.7) | Linked below. |
 | Contracts | none | COMMON-DOC-FORM-1, QA-STAGES-1, QA-ALIGNMENT-v14_7, Repository Vocabulary, TemplateDefinition, Q-08 path decision | Handoff tables below. |
 
-### Requirement Changes
+#### Requirement Changes
 
 State: COVERED (current owner already conforms, evidence named; for a clause a later stage also applies, COVERED means only that W00's own conduct conforms and that stage still applies it), OPEN (writer stage named), REJECTED_BY_CONTRACT (an accepted requirement and a same-scope user decision exclude it), DECISION_NEEDED (an unresolved conflict for the named stage).
 
@@ -209,7 +233,7 @@ State: COVERED (current owner already conforms, evidence named; for a clause a l
 | DOC-12 | Contiguous display numbers for Stage 01, 02 and 03 after the open work closes; `artifact_id` stays the stable trace ID; no retired ID reissued | File and folder names under `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`; registry `path_pattern` and identity rules | OPEN | W03 (last, after open packages close); decision EVD-018 |
 | CI-SCOPE | PR-DURING runs affected implementation and product leaves in hosted CI | `.agents/governance/quality.md` hosted lane; `git.md`; `.github/workflows/ci.yml` | OPEN | W06 (`ci.yml`), W01 (policy text); decision EVD-018 |
 
-### Related Pull Requests
+#### Related Pull Requests
 
 | PR | Base | Head branch | Head | Merge | Merged (UTC) | Scope | Read |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -224,7 +248,7 @@ State: COVERED (current owner already conforms, evidence named; for a clause a l
 
 All eight are merged; merge is not criterion acceptance. Their acceptance lives in the archived Tasks. PR #220's lifecycle replay and ADR-0056 manual review are kept, as the prompt directs, and not re-registered.
 
-### Document Form Handoff
+#### Document Form Handoff
 
 Target: COMMON-DOC-FORM-1 1.0.0. Every current template lacks the target H3 set; the registry models H2 names only.
 
@@ -251,7 +275,7 @@ Target: COMMON-DOC-FORM-1 1.0.0. Every current template lacks the target H3 set;
 | Vocabulary | `.agents/knowledge/glossary.md` (SPEC-0163) | Done: 33 common terms, local extensions, validator check | none | W05 consumers in place |
 | Policy versus `governance/rule` | `operation/policy`, `governance/{role,rule,skill}` | Target Policy role owner undecided; `governance/*` not in the 16 target roles | W01 then W03 | none yet |
 
-### Stage QA Handoff
+#### Stage QA Handoff
 
 Target: QA-STAGES-1. PASS means the current binding already gives the target guarantee.
 
@@ -278,7 +302,7 @@ Target: QA-STAGES-1. PASS means the current binding already gives the target gua
 | DOC-DOMAINS | Vault ESO surfaces; no content or site domain | PASS; N/A for site | none |
 | Old-rule tests | `tests/test_validate_ci_python_contract.py`, `scripts/validate-ci-python-contract.py`, `tests/test_ci_branch_metadata.py`; `scripts/validate-pr-metadata.py` mirrors the `ci.yml` inline script | Move only with CI-SCOPE | See Primary Writers |
 
-### Primary Writers
+#### Primary Writers
 
 One primary writer per file; other stages consume through the named interface.
 
@@ -292,7 +316,7 @@ One primary writer per file; other stages consume through the named interface.
 | `.claude/hooks/`, `.claude/provider.md`, `.codex/provider.md` | W07 | none |
 | Kubernetes manifests and their consumers | W10 | none |
 
-### External Evidence
+#### External Evidence
 
 | Source | Access | Applied to | Result |
 | --- | --- | --- | --- |
@@ -303,7 +327,7 @@ One primary writer per file; other stages consume through the named interface.
 | RS-49 `git diff --cached` | Direct relevant sections (package) | COMMIT-BEFORE | Index snapshot and partial-stage test exist |
 | RS-50 GitHub events | Direct relevant sections (package) | PR-DURING | Merge SHA checked out; head and base asserted |
 
-### OPEN Dispositions
+#### OPEN Dispositions
 
 | ID | Verdict | Basis | Next owner |
 | --- | --- | --- | --- |
@@ -322,7 +346,7 @@ One primary writer per file; other stages consume through the named interface.
 | OPEN-13 | CLOSED_BY_EVIDENCE | Read back 2026-11-11T23:46Z: required `ci-summary` and `style-pr` (app 15368, strict); both passed on PR #227 head; on `main` `4a47cb40` `ci-summary` succeeded and `style-pr` skipped by design | none |
 | OPEN-14 | NOT_APPLICABLE | hy-home-docker runner only | none |
 
-### OPEN Disposition Corrections
+#### OPEN Disposition Corrections
 
 Added 2026-11-12 under the user's W00 follow-up correction request (EVD-022). The table above stays as recorded; for the IDs below, this section replaces its `Basis` and `Next owner` wording. OPEN-01..14 are historical audit identifiers of the earlier prompt packages, not open product work: the historical verdict, the current product effect, execution state and user acceptance are separate fields, and no historical verdict blocks W01..W11.
 
@@ -347,7 +371,7 @@ OPEN-07 denominators at `d623681f`:
 
 The other IDs keep the verdicts above: OPEN-03 RESIDUAL_CONFIRMED at the named stages, OPEN-05 and OPEN-13 CLOSED_BY_EVIDENCE, OPEN-08 UNVERIFIED for W10, OPEN-09 RESIDUAL_CONFIRMED for W05, and OPEN-10 to OPEN-12 and OPEN-14 NOT_APPLICABLE.
 
-### Conflicts
+#### Conflicts
 
 | ID | Files | Current | Package | Decision |
 | --- | --- | --- | --- | --- |
@@ -358,7 +382,7 @@ The other IDs keep the verdicts above: OPEN-03 RESIDUAL_CONFIRMED at the named s
 | DOC-12 | Stage 01/02/03 file and folder numbers | Number equals stable ID; gaps kept | Contiguous numbering from 1 | Adopt as display numbers only (Q-07, EVD-018); `artifact_id` unchanged; after open work closes |
 | LEDGER | REQ-0003 Scope and Non-goals (FR-0019, FR-0022) | No machine ledger | v14.7 also forbids a competing ledger (GOV-03, SDLC-04) | Superseded by EVD-046: adopted as the work residue ledger (SPEC-0185, ADR-0060 proposed); built by W03-H30 package 2 |
 
-### Read Denominator
+#### Read Denominator
 
 | Set | Listed | Read | Partial | Listed only |
 | --- | --- | --- | --- | --- |
@@ -373,7 +397,7 @@ The other IDs keep the verdicts above: OPEN-03 RESIDUAL_CONFIRMED at the named s
 
 Listed-only files are not semantically reviewed. Each writer stage re-reads its files before editing.
 
-### Stage Follow-up Handoffs
+#### Stage Follow-up Handoffs
 
 Added 2026-11-12 under the user's W02 follow-up request (EVD-023). SPEC-0167 left the tree with its Task frozen, so a hand-off found afterwards is recorded here, the open owner of the W01 to W10 hand-off tables.
 
@@ -381,7 +405,7 @@ Added 2026-11-12 under the user's W02 follow-up request (EVD-023). SPEC-0167 lef
 | --- | --- | --- | --- | --- | --- |
 | W02-H01 | W02 section 3 item 1 (registry retention and identity reservation reviewed, changes to W03); `document-lifecycle.md:26` | `LIFECYCLE-IDENTITY-REUSE` reserves only identities present in the comparison base; an ID whose document left through Git history can be minted again | W03 registry author, then W05 validator author | W03 decides where retired identities are reserved (for example the owners' `Archived Lineage` rows or a registry key); W05 extends the reuse check to that source with a refusal test for a retired SPEC ID | W03 starts |
 
-### W03 Decisions
+#### W03 Decisions
 
 Added 2026-11-12 under the user's W03 request (EVD-025). W03 runs as several Stage 03 packages; each reads these decisions.
 
@@ -467,6 +491,7 @@ Added 2026-11-12 under the user's W03 request (EVD-025). W03 runs as several Sta
 | W03-D84 | Form move of each remaining package's approved Spec and Plan (W03-D59 Q4) | Each remaining W03 package's approved Spec and Plan move to the Spec and Plan forms by the heading map of SPEC-0200 at that package's turn, with a major raise to 2.0.0 and a mechanical check that the sorted non-heading lines of the old and new files are equal except the listed added lines; the user approves these moves in principle, and each package's Task records this answer and the check as its receipt. User answer "Mechanical move + check, blanket OK (Recommended)", 2026-11-15 (Asia/Seoul) | The ten remaining W03 packages; first recorded with SPEC-0201 |
 | W03-D62 | SPEC-0202 operations policy rule IDs (W03-H29 package 4; Q1 to Q7) | (Q1) POL-0007 moves to its own following package, which adopts the last policy and carries the gate retirement; (Q2) the W03-D58 rules and the SPEC-0199 contracts are reused unchanged; (Q3) in POL-0003 and POL-0004 each nested item under a `Required:`, `Allowed:` or `Disallowed:` label is one rule (30 and 27 IDs), and the coverage floor accepts a pure label over a fully tokened nested list; (Q4) POL-0007 takes 45 IDs, bound at its own approval; (Q5) the Level is read by meaning and by the labels; (Q6) Evidence cites the control ID first, then the runbook or guide under `Enforcement`, then an existing check, otherwise the judging review; (Q7) a rule with no condition reads the ASCII value `Always`. POL-0001, POL-0003, POL-0004 and POL-0005 take 82 IDs (`GITOPS` 18, `MESH` 30, `ROLLOUT` 27, `OBSERV` 7). User answers on 2026-11-14 (Asia/Seoul): Q1 "Split POL-0007 off (Recommended)", Q2 "Reuse D58 rules (Recommended)", Q3 "Nested items (Recommended)", Q4 "45 IDs, bound at approval (Recommended)", Q5 "Read by meaning (Recommended)", Q6 "Control ID first (Recommended)", Q7 "ASCII `Always` (Recommended)"; the readings "Adopt draft readings (Recommended)"; the bytes "Approve all six (Recommended)" (spec 4f23e12b, plan c89e76b8, moved to the SPEC-0200 forms under W03-D84) | SPEC-0202 |
 | W03-D59 | SPEC-0200 Spec and Plan form decisions (R4 admission, fragment route, promotion table, criteria table, version level) | (Q1) R4 admits, for each of the two frozen SPEC-0161 paths, exactly one reviewed file identified by the sha256 of its whole content, entered into the code only after the user reviews the two moved files; any other content and any other finished package stay refused. (Q2) `TASK-EVIDENCE-RETENTION` gains a one-use route that treats `#success-criteria--verification-plan` and `#criteria` as equal in a link to the same package's `spec.md` and nothing else, retired when SPEC-0200 closes; the repointed fragment of the links in the recorded evidence rows is the one carve-out from rule 4 of `docs/03.specs/AGENTS.md`. (Q3) The promotion table keeps `Durable contract`, `Promoted to` and `Where` as W03-D52 says; W03-D65 later amended it to the common names. (Q4) The Spec criteria table takes `Criterion ID` and `Expected Result`, the Spec `Architecture` column becomes the body contract's checked target link column, and the frozen files keep their frontmatter while the Spec and Plan of every open package take one major raise. User answers "Exact sha256 (Recommended)", "One-use route (Recommended)", "Keep as D52 says (Recommended)" and "Accept all three (Recommended)", 2026-11-14 (Asia/Seoul) | W03; SPEC-0200 |
+| W03-D61 | SPEC-0203 Task form decisions (W03-H02, W03-H13; Q1 to Q3) | (Q1) The Task evidence table keeps its nine columns and their names; W03-D65 later supersedes this and takes the common names `Evidence ID`, `Command` and `Consumer` by a recorded header map, with `Work Unit`, `Location`, `Required` and `Resolves` kept as a registered column extension. (Q2) The `Residue Handoff` table is a registered local H3 under Verification Evidence, so only the registry changes and the table stays in place. (Q3) The `Approval and Safety Boundaries` block moves whole under Scope > Inputs and Authority, with the `quality.py` Task template check re-pointed, as W03-D52 did for the Plan's `Global Constraints`. User answers "Keep nine columns (Recommended)", "H3 under Evidence (Recommended)" and "Move under Scope (Recommended)", 2026-11-14 (Asia/Seoul) | SPEC-0203 |
 | W03-H01 | Phase 2 forms: Guide, Runbook, Policy, Incident, Postmortem, READMEs, `AGENTS.md`, `SKILL.md`; table column contracts; README rule IDs in tree mode; roles for the unclear profiles | One role form per change in `common_forms`, TemplateDefinitions filled, documents moved form-only | W03; resume now (SPEC-0168 accepted) |
 | W03-H02 | Phase 3 forms: Requirement, Architecture, ADR with W03-D02, Spec, Plan, Task; delete the H2-list model, list-built `HeadingContract.allowed` and `BODY-HEADING-EMPTY` for form profiles | Consumer renames and the `TASK-EVIDENCE-RETENTION` heading map | W03; resume after phase 2 is accepted; if W04 starts first, record the slip here |
 | W03-H03 | Retired-identity reservation (W02-H01) | Reserve IDs named in the owners' `Archived Lineage`; refusal test for a retired SPEC ID | W05; resume now |
@@ -500,105 +525,7 @@ Added 2026-11-12 under the user's W03 request (EVD-025). W03 runs as several Sta
 | W03-H31 | Stale tracking found by the 2026-11-13 conformance audit | The Requirement Changes states of this Task still show OPEN rows that SPEC-0166 and later closed; its Verification Summary still names W01 next; W03-H01, W03-H04 and W03-H06 rows are stale (W03-H04 is resolved by W03-D24); EVD-025 counts 33 accepted ADRs where the tree has 34; registry `migration.meaning_map` strings say the Task records a map that left with the deleted Task | Correct by appended rows and a closing summary; record the 34-ADR exception and point the meaning maps to REQ-0003 Archived Lineage recovery | W03; with the W03 closing (W03-H20) |
 | W03-H32 | Glossary definitions across repositories (conformance audit D5) | The glossary translates the Korean shared vocabulary definitions, so identity across the four repositories cannot be shown byte for byte | Record the translation and compare meaning in the cross-repository check | W11 |
 
-### Residue Handoff
-
-Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each row is residue that is open in current truth in any table above; `Residue` cites its legacy row, and the legacy residue tables stay as recorded and are registered historical in `docs/99.templates/registry.json`. `State`, `Owner` and `Resume condition` equal the matching entry of `docs/03.specs/work-residue-ledger.json`; a row closes in place with `State` terminal and a PASS `EVD` ID in `Closure`. EVD-053 records the read.
-
-| ID | Residue | State | Owner | Resume condition | Closure |
-| --- | --- | --- | --- | --- | --- |
-| AGENT-04 | Legacy row `AGENT-04` of `Requirement Changes`: direct, wrapper and nested hook delivery | open | W07 | When W07 starts | none |
-| CI-SCOPE | Legacy row `CI-SCOPE` of `Conflicts`: PR-DURING hosted CI scope; also an OPEN row of Requirement Changes | open | W06 | When W06 starts (W03-D28) | none |
-| COMMIT-AFTER | Legacy row `COMMIT-AFTER` of `Stage QA Handoff`: no post-commit record; decide no blocking hook | open | W06 | When W06 starts | none |
-| COMMIT-BEFORE | Legacy row `COMMIT-BEFORE` of `Stage QA Handoff`: surface selection gap for governance policy changes | open | W06 | When W06 starts | none |
-| DOC-04 | Legacy row `DOC-04` of `Requirement Changes`: profile field, state, relation and table definitions reformed | open | W03 | When the registry reform finishes with phase 3 | none |
-| DOC-05 | Legacy row `DOC-05` of `Requirement Changes`: section and body contracts match target H2 and H3 and tables | open | W03 | When the registry reform finishes with phase 3 | none |
-| DOC-11 | Legacy row `DOC-11` of `Requirement Changes`: a TemplateDefinition for every real template | open | W03 | When every template has its TemplateDefinition (W03-H13, W03-H15) | none |
-| DOC-12 | Legacy row `DOC-12` of `Conflicts`: display renumbering of Stage 01, 02 and 03; also an OPEN row of Requirement Changes | open | W03 | Last, after all docs work is finished (W03-D30) | none |
-| DOC-S00 | Legacy row `DOC-S00` of `Stage QA Handoff`: vocabulary rule_id binding | open | W05 | When W05 starts | none |
-| DOC-S90 | Legacy row `DOC-S90` of `Stage QA Handoff`: Stage 90 source, edition and freshness checks | open | W05 | When W05 starts | none |
-| DOC-S99 | Legacy row `DOC-S99` of `Stage QA Handoff`: tests hard-code current headings | open | W03 | When phase 3 and W05 move the hard-coded headings (OPEN-09) | none |
-| GOV-04 | Legacy row `GOV-04` of `Requirement Changes`: the approved registry as a reform target | open | W03 | When the registry reform finishes with phase 3 | none |
-| GOV-06 | Legacy row `GOV-06` of `Requirement Changes`: single-writer registry reformed | open | W03 | When the registry reform finishes with phase 3 | none |
-| LEDGER | Legacy row `LEDGER` of `Conflicts`: the work residue ledger; built by this package | terminal | W03 | After the user accepts the SPEC-0191 criteria | EVD-055 |
-| MERGE-AFTER | Legacy row `MERGE-AFTER` of `Stage QA Handoff`: no post-merge regression run | open | W06 | When W06 starts | none |
-| MERGE-BEFORE | Legacy row `MERGE-BEFORE` of `Stage QA Handoff`: record strict in the main protection note | open | W06 | When W06 starts | none |
-| OLD-RULE-TESTS | Legacy row `Old-rule tests` of `Stage QA Handoff`: CI branch and Python contract tests move only with CI-SCOPE | open | W06 | With CI-SCOPE | none |
-| OPEN-01 | Legacy row `OPEN-01` of `OPEN Dispositions`: semantic atomization of the original report lines | open | W00 | Only on a difference shown to affect a current owner (historical, non-blocking; W00:20, 153) | none |
-| OPEN-02 | Legacy row `OPEN-02` of `OPEN Dispositions`: review of the relation candidates | open | W00 | Same as OPEN-01 | none |
-| OPEN-03 | Legacy row `OPEN-03` of `OPEN Dispositions`: 37 DELTA packages open at their stages; the 37 are the rows with Current state DELTA in the `SUP-01 Legacy Lineage` table of the SPEC-0155 Task (`git show a6f44976:docs/03.specs/0155-designated-source-applicability/tasks/tsk-0001-designated-source-applicability.md`; REQ-0003 Archived Lineage, SPEC-0155 row and its recovery proof) | open | W00 | When each of its 37 DELTA packages is judged item by item at its named stage (PKG W00:153); that stage consumes the judgment | none |
-| OPEN-04 | Legacy row `OPEN-04` of `OPEN Dispositions`: byte comparison with two original reports | open | W00 | Only when the original reports are supplied or a difference shown to affect a current owner (historical, non-blocking) | none |
-| OPEN-06 | Legacy row `OPEN-06` of `OPEN Dispositions`: perspective rows of an external source | open | W00 | Only when a stage proposes adopting a named source, or on a shown owner difference; that stage consumes the result | none |
-| OPEN-07 | Legacy row `OPEN-07` of `OPEN Dispositions`: full survey of the local workspace | open | W03, W05, W06, W07, W10 by file set | Each writer stage reads its whole file set before editing | none |
-| OPEN-08 | Legacy row `OPEN-08` of `OPEN Dispositions`: live, native and cluster authority | open | W10 | When W10 starts | none |
-| OPEN-09 | Legacy row `OPEN-09` of `OPEN Dispositions`: hard-coded current headings in tests | open | W05 | When W05 moves the hard-coded headings | none |
-| PR-DURING | Legacy row `PR-DURING` of `Stage QA Handoff`: PR-DURING scope decision (CI-SCOPE) | open | W06 | When CI-SCOPE closes | none |
-| PUSH-BEFORE | Legacy row `PUSH-BEFORE` of `Stage QA Handoff`: pre-push has no target | open | W06 | When W06 starts | none |
-| QA-03 | Legacy row `QA-03` of `Requirement Changes`: validator input is the reformed registry edition | open | W05 | When W05 starts | none |
-| QA-17 | Legacy row `QA-17` of `Requirement Changes`: validators changed for the reformed registry | open | W05 | When W05 starts | none |
-| R147-03 | Legacy row `R147-03` of `Requirement Changes`: approved norms are reform targets | open | W03 | Same as GOV-04 | none |
-| R147-04 | Legacy row `R147-04` of `Requirement Changes`: common H2 and H3 forms in templates and consumers | open | W03 | When the common forms reach every role (phase 3) | none |
-| R147-05 | Legacy row `R147-05` of `Requirement Changes`: tests, QA and scripts follow QA-ALIGNMENT | open | W05 | When W05 starts | none |
-| R147-06 | Legacy row `R147-06` of `Requirement Changes`: bind Git before, during and after cells | open | W06 | When W06 starts | none |
-| R147-07 | Legacy row `R147-07` of `Requirement Changes`: separate SDLC stage from document STAGE | open | W04 | When W04 starts | none |
-| R147-10 | Legacy row `R147-10` of `Requirement Changes`: migrate the registry to the CI chain | open | W03 | When the registry reform finishes with phase 3 | none |
-| R147-16 | Legacy row `R147-16` of `Requirement Changes`: Kubernetes impact of governance changes | open | W10 | When W10 starts | none |
-| R147-17 | Legacy row `R147-17` of `Requirement Changes`: harness static versus live provider evidence | open | W07 | When W07 starts | none |
-| R147-20 | Legacy row `R147-20` of `Requirement Changes`: reuse only equivalent results | open | W05 | When W05 starts | none |
-| R45-06 | Legacy row `R45-06` of `Requirement Changes`: reform the approved registry itself | open | W03 | When the registry reform finishes with phase 3 | none |
-| R45-07 | Legacy row `R45-07` of `Requirement Changes`: reform forms and consumers in place | open | W03 | When the registry reform finishes with phase 3 | none |
-| R45-10 | Legacy row `R45-10` of `Requirement Changes`: a TemplateDefinition per real template | open | W03 | When every template has its TemplateDefinition (W03-H13, W03-H15) | none |
-| R45-12 | Legacy row `R45-12` of `Requirement Changes`: verify common adoption across four purposes | open | W11 | When another repository's adoption evidence exists (this workspace only) | none |
-| SCOPE-10 | Legacy row `SCOPE-10` of `Requirement Changes`: current-copy migration against historical bytes | open | W03 | With the migration map of the form change (phase 3) | none |
-| SDLC-07 | Legacy row `SDLC-07` of `Requirement Changes`: transition rules in the registry | open | W04 | When W04 starts (policy semantics only) | none |
-| SDLC-08 | Legacy row `SDLC-08` of `Requirement Changes`: old approved registry edition is not a pass basis | open | W05 | When W05 starts | none |
-| SDLC-ROWS | Legacy row `SDLC rows` of `Stage QA Handoff`: PLAN-PROMOTION anchor, member and receipt cross-check | open | W05 | When W05 starts | none |
-| W00-H01 | Legacy row `package contracts set` of `Read Denominator`: 3 partial and 2 listed-only package contract files | open | W00 | When a difference shown to affect a current owner is found | none |
-| W01-H01 | Legacy row `governance policy set` of `Read Denominator`: 3 partial and 1 listed-only governance policy files | terminal | W01 | When W01 re-reads its files before editing | EVD-074 |
-| W01-H02 | No legacy row: DOC-S00, W01 part, the `rule_id` binding of the vocabulary in `.agents/knowledge/glossary.md` that W05 consumes; the DOC-S00 row holds the W05 part only. W01 stays the owner (the legacy `Stage QA Handoff` row DOC-S00 says "W01 (`.agents/knowledge/glossary.md`); W05 consumes"; PKG W06:331 names W01 the normative canon). Seeded under W03-D78 and W03-D82 by SPEC-0213 | open | W01 | When W01 is run for its r1 differences; W05 consumes the result | none |
-| W03-H02 | Legacy row `W03-H02` of `W03 Decisions`: phase 3 forms for the six SDLC roles and deletion of the heading-list model | open | W03 | After phase 2 is accepted | none |
-| W03-H05 | Legacy row `W03-H05` of `W03 Decisions`: keep or remove the stored ADR rejected state | open | W04 | When W04 starts | none |
-| W03-H08 | Legacy row `W03-H08` of `W03 Decisions`: the per-relationship contract | terminal | W03 | With phase 3 (the SDLC roles own these relations) | EVD-062 |
-| W03-H09 | Legacy row `W03-H09` of `W03 Decisions`: cross-repository equivalence; the owner is W11 by W03-H22 | open | W11 | When another repository's adoption evidence exists | none |
-| W03-H10 | Legacy row `W03-H10` of `W03 Decisions`: heading-list consumers once a role has a form | open | W03 | In the Plan, README and Policy packages respectively | none |
-| W03-H11 | Legacy row `W03-H11` of `W03 Decisions`: qa-runner fixture branch name | open | W05 | When W05 starts | none |
-| W03-H12 | Legacy row `W03-H12` of `W03 Decisions`: staged QA routing of folder AGENTS files | open | W05 | When W05 starts | none |
-| W03-H13 | Legacy row `W03-H13` of `W03 Decisions`: SDLC TemplateDefinitions and H2 lists of local roles | open | W03 | With phase 3 (W03-H02) | none |
-| W03-H15 | Legacy row `W03-H15` of `W03 Decisions`: the full TemplateDefinition record | terminal | W03 | After phase 3; the H07 package named in the row is closed; W05 consumes the record | EVD-091 |
-| W03-H16 | Legacy row `W03-H16` of `W03 Decisions`: link types and relation kinds | terminal | W03 | With W03-H08 in phase 3 | EVD-062 |
-| W03-H19 | Legacy row `W03-H19` of `W03 Decisions`: the missing adoption record of COMMON-DOC-FORM-1 in common_forms | open | W03 | With the W03 closing | none |
-| W03-H20 | Legacy row `W03-H20` of `W03 Decisions`: the W03 closing report | open | W03 | Last before DOC-12 | none |
-| W03-H21 | Legacy row `W03-H21` of `W03 Decisions`: writer delegation record | open | W03 | With the W03 closing | none |
-| W03-H23 | Legacy row `W03-H23` of `W03 Decisions`: root README bootstrap text | open | W10 | When W10 starts | none |
-| W03-H27 | Legacy row `W03-H27` of `W03 Decisions`: the document generator | terminal | W03 | After W03-H25, which SPEC-0184 closed | EVD-059 |
-| W03-H29 | Legacy row `W03-H29` of `W03 Decisions`: Policy rule IDs | open | W03 | SPEC-0199 adopts nine policies (W03-D58) and SPEC-0201 adopts `quality.md` (W03-D60), so all ten governance policies are adopted; SPEC-0202 adopts four operations policies (W03-D62), so fourteen are adopted; POL-0007 adds the rule IDs (W03-D42 to W03-D44); the package that adopts POL-0007 removes the adoption gate, `state` and `POLICY-RULE-ADOPTION` with their tests in its final source commit (W03-D53, W03-D62); package 5 adds the history check and code permanence; W05 consumes the rule IDs | none |
-| W03-H30 | Legacy row `W03-H30` of `W03 Decisions`: the work residue ledger, its gate and tests | terminal | W03 with W05 | Closes through the ledger cycle of SPEC-0191 | EVD-055 |
-| W03-H31 | Legacy row `W03-H31` of `W03 Decisions`: stale tracking found by the conformance audit | open | W03 | With the W03 closing (W03-H20) | none |
-| W03-H32 | Legacy row `W03-H32` of `W03 Decisions`: glossary definitions across repositories | open | W11 | In the cross-repository check | none |
-| W03-H33 | No legacy row: the six approval facts of shared_contract held as unverified (W03-D05); the row has no recorded handoff, so it takes the next W03 number | terminal | W03 | With the W03 closing | EVD-054 |
-| W03-H34 | Legacy row `registry and schema set` of `Read Denominator`: 2 partial files of docs/99.templates registry and schema | open | W03 | When W03 re-reads its files before editing | none |
-| W03-H35 | Legacy row `templates set` of `Read Denominator`: 18 partial and 19 listed-only templates | open | W03 | When W03 re-reads its files before editing | none |
-| W03-H36 | Legacy row `Requirement` of `Document Form Handoff`: the Requirement form against COMMON-DOC-FORM-1 | terminal | W03 | With phase 3 (W03-H02) | EVD-070 |
-| W03-H37 | Legacy row `Architecture` of `Document Form Handoff`: the Architecture description form | terminal | W03 | With phase 3 (W03-H02) | EVD-093 |
-| W03-H38 | Legacy row `ADR` of `Document Form Handoff`: the ADR form | terminal | W03 | With phase 3 (W03-H02) | EVD-094 |
-| W03-H39 | Legacy row `Spec` of `Document Form Handoff`: the Spec form | terminal | W03 | With phase 3 (W03-H02) | EVD-100 |
-| W03-H40 | Legacy row `Plan` of `Document Form Handoff`: the Plan form | terminal | W03 | With phase 3 (W03-H02) | EVD-100 |
-| W03-H41 | Legacy row `Task` of `Document Form Handoff`: the Task form | open | W03 | With phase 3 (W03-H02) | none |
-| W03-H42 | Legacy row `Generator` of `Document Form Handoff`: a document generator or the recorded reason for none | terminal | W03 | After W03-H25, which SPEC-0184 closed | EVD-059 |
-| W03-H43 | No legacy row: the `requirement` lifecycle domain yields no creation state, so a new Requirement is refused by the lifecycle creation rule and by the document generator (W03-D48); the repair is a lifecycle contract change of its own | open | W03 | When the registry admits a creation state for the `requirement` lifecycle domain | none |
-| W03-H44 | No legacy row: the Requirement `Downstream owner` column is a hand-written reciprocal field, 10 of the 68 members are not cited in their description's own `Upstream requirement` column and 17 of its 91 cells are not a single link (W03-D55); the Architecture form package completes the citing rows and then removes the column with a derived coverage check in place of its link check | terminal | W03 | When the Architecture form package (SPEC-0197) completes the citing rows | EVD-093 |
-| W05-H01 | Legacy row `Link-only section` of `Document Form Handoff`: the hard-coded link-only section list must follow the registry | open | W05 | When W05 starts | none |
-| W05-H02 | Legacy row `scripts set` of `Read Denominator`: 8 partial and 53 listed-only tracked scripts | open | W05 | When W05 re-reads its files before editing | none |
-| W05-H03 | Legacy row `tests set` of `Read Denominator`: 5 partial and 68 listed-only tracked tests | open | W05 | When W05 re-reads its files before editing | none |
-| W05-H04 | No legacy row: derived-copy drift check, a derived body changed alone is refused (source requirement GOV-06, not the legacy `GOV-06` row, which is the registry reform). Frozen SPEC-0166 Handoffs, W05 row, and Trace GOV-06; PKG W01:396-402. Recover the frozen Task with `git show 579280f2:docs/03.specs/0166-w01-governance-alignment/tasks/tsk-0001-w01-governance-alignment.md`. Seeded under W03-D78 by SPEC-0213 | open | W05 | When W05 starts | none |
-| W05-H05 | No legacy row: refusal of contradictory approval text, and refusal tests for rule, code and validator contradictions (source requirement GOV-07). Frozen SPEC-0166 Handoffs, W05 row, and Trace GOV-07; PKG W01:405-411. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | open | W05 | When W05 starts | none |
-| W05-H06 | No legacy row: ARC-08, trace and remove the `done` and `archived` branches of `scripts/validate-links-and-owners.py` and the terminal statuses of `scripts/validation/current_executable_references.py` with their tests when no registry domain reaches them. Frozen SPEC-0167 Handoffs, W05 row, and ARC-08 row; PKG W02:340-343. Recover with `git show 3270cb00:docs/03.specs/0167-w02-safe-disposition/tasks/tsk-0001-w02-safe-disposition.md`. Seeded under W03-D78 by SPEC-0213 | open | W05 | When W05 starts | none |
-| W06-H01 | Legacy row `workflows set` of `Read Denominator`: 2 listed-only workflow files | open | W06 | When W06 re-reads its files before editing | none |
-| W07-H01 | Legacy row `hooks set` of `Read Denominator`: 2 listed-only hook files | open | W07 | When W07 re-reads its files before editing | none |
-| W07-H02 | No legacy row: GOV-08, allow tests for approved local reads, reversible edits and narrow tests, and deny tests for secret access and out-of-scope writes. Frozen SPEC-0166 Handoffs, W07 row, and Trace GOV-08; PKG W01:414-420. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | open | W07 | When W07 starts | none |
-| W07-H03 | No legacy row: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash). Frozen SPEC-0166 Requirement Trace, W01-B row; its Handoffs table does not list it. Recover the frozen Task as for W05-H04. Seeded under W03-D81 by SPEC-0213 | open | W07 | When W07 starts | none |
-
-
-### r1 Edition Delta
+#### r1 Edition Delta
 
 Added 2026-11-14 under SPEC-0213 (W03-D77, W03-D82). The v14.7 `Edition Delta` and the `Inputs` cells above stay as recorded; where a row below differs, it supersedes them for the r1 revision of 2026-11-13 and says so. The r1 root was read from the main checkout's `_workspace/` (git-ignored, so the implementation worktree has none); SHA-256 values were taken with `sha256sum` on 2026-11-14.
 
@@ -620,7 +547,7 @@ Added 2026-11-14 under SPEC-0213 (W03-D77, W03-D82). The v14.7 `Edition Delta` a
 | SCOPE-10 (W00:673-680) | Completed-document handling | Added clause at W00:675: a conflicting Spec, Plan or Task is revised, superseded or removed only after its valid obligations, failures and acceptance are handed over; a cancellation does not hide unfinished work (취소로 미완료를 숨기지 않는다) | No repository change; it feeds the classification rules below |
 | Current-purpose paragraph (W00:191, hunk `@@ -128 +188`) | KEEP of the completed PR #220 and ADR-0056 exit check (v14.7 diff) | Check the current contract; a past PR state is not a current gap (paraphrase) | No new obligation |
 
-### Input Corrections
+#### Input Corrections
 
 Added 2026-11-14 under SPEC-0213 (W03-D77). A correction row supersedes the recorded cell it names; the recorded cell stays as written and stays true as a statement about the v14.7 edition of 2026-11-12. The v14.7 root `_workspace/workspace_execution_tasks/` is absent from `_workspace/` on 2026-11-14, which holds only the r1 root, `diagnostics/` and `repo-support/`.
 
@@ -631,7 +558,7 @@ Added 2026-11-14 under SPEC-0213 (W03-D77). A correction row supersedes the reco
 | `Approval and Safety Boundaries`, Forbidden Paths | "`_workspace/workspace_execution_tasks/` (read-only input)" | The read-only input is the r1 root; the rule is unchanged: nothing is written under `_workspace/` and nothing from it is copied into `docs/90.references/` or `docs/98.archive/` | PKG W00:125; r1 `README.md` |
 | `OPEN Disposition Corrections`, OPEN-04 `Checked` | "Searched: file names and contents under `_workspace/workspace_execution_tasks/` (only the package's own references … no original); every path in this repository's Git history over all 21 refs (no match). Not searched: other machines, accounts or archives" | Searched again on 2026-11-14 over the r1 root: no file name contains `WMC`, `20261102` or `20261110`; a content search of the 228 files and of the nine history archives (entry names and entry contents) for `WMC-20261110-03` and `20261102` finds only the package's own references (the task prompts, `OPEN-01-14.json`, its guide, `SUPPLEMENTS.json`, `REMAINING-14.csv`, `REMAINING-WORK.csv`, `PRIOR-V11-REMAINING-WORK.json`, `v11-SUPPLEMENT-CLAUSES.json`, `TASK-CHANGES.diff`) and no original report. The Git-history search is not repeated. BLOCKED_EVIDENCE stands | `grep` and a read-only `zipfile` scan run outside the repository |
 
-### Change Contract Classification
+#### Change Contract Classification
 
 Added 2026-11-14 under SPEC-0213 (W03-D77, PKG W00:822-831). One row for every open row of `Residue Handoff` as read before this package's closure and cell edits (76 rows, equal to the 76 open ledger entries), for the six seeds that this package adds, and for each other package in the tree. The class names are analysis labels only (W00:824); none is a registry state or a lifecycle state. Only `CANCEL_OBSOLETE` is defined by the PKG (W00:828: a requirement the user removed, never a PASS); the other four are this Spec's operational reading for residue rows: `KEEP_VALID` the obligation is valid and its owner is right, `REVISE` the valid part is kept and a cell is corrected, `SUPERSEDE` a new owner replaces it, `REMOVE_AFTER_TRANSFER` the obligation is closed or transferred and its entry leaves the ledger. In the PKG (W00:827) `REMOVE_AFTER_TRANSFER` means removing an old package after its obligations are transferred; applied to a ledger row it is a stretch of that meaning. One owner rule holds for every row (W00:831): the Owner cell names exactly one stage; another stage a cell names moves to the Resume condition as a consumer. "W00" as an owner means the SPEC-0161 Task's W00 intake record, the workspace's existing Task, not a W00 stage run. The Current owner column shows the owner after the corrections of this package. Result: `REMOVE_AFTER_TRANSFER` 1 (W01-H01); `REVISE` 16 (13 edited here, W00-H01, W03-H02, GOV-04, R147-03, OPEN-01, OPEN-02, OPEN-03, OPEN-04, OPEN-06, W03-H15, W03-H29, SDLC-07 and R45-12, and 3 edited later by SPEC-0211, OPEN-07, DOC-12 and DOC-S99); `KEEP_VALID` 66 (59 open rows, 6 seeds and SPEC-0213); `SUPERSEDE` 0 and `CANCEL_OBSOLETE` 0, so their absence is a result. A `KEEP_VALID` row without a named PKG line is decided by the live row, its recorded decision and W00:831. The eight terminal rows (LEDGER, W03-H08, W03-H16, W03-H27, W03-H30, W03-H33, W03-H36 and W03-H42) are not live obligations and are not classified. The first column is a running number, not a residue ID. The W00 completion test (W00:831: every live obligation has exactly one owner; no deleted package keeps an active link, check input or Task reference) is shown only after the last W03 package: this package claims only the rows it classifies, OPEN-07 is shown to have one owner only after SPEC-0211, and SPEC-0211's closing report reads and re-classifies this table.
 
@@ -721,7 +648,7 @@ Added 2026-11-14 under SPEC-0213 (W03-D77, PKG W00:822-831). One row for every o
 | 82 | `W01-H02`: DOC-S00, W01 part, the `rule_id` binding of the vocabulary in `.agents/knowledge/glossary.md` that W05 consumes | `KEEP_VALID` | W01 | Seeded here (W03-D78, W03-D82); owner stays W01, W05 consumes; legacy DOC-S00 row; PKG W06:331 (EVD-073) | None here; the owner acts at the resume condition |
 | 83 | `SPEC-0213`: this W00 r1 intake and residue correction package, written by W03 | `KEEP_VALID` | W00 | Its own Task owns the work and the evidence; the tables it appends are analysis and residue, not a progress record | Operator acceptance of VAL-INTAKE-001 and VAL-INTAKE-002 |
 
-### Residue Corrections
+#### Residue Corrections
 
 Added 2026-11-14 under SPEC-0213 (W03-D78, W03-D81, W03-D82). One row for each seed, covered finding, closure and cell edit of this package; the first column is a running number, not a residue ID. Rows 1 to 6 are the seeds, 7 and 8 the covered findings, 9 the closure, 10 the W00-H01 owner edit (its read is not evidenced, so the row stays open) and 11 to 22 the other twelve cell edits. Each "before" cell is the recorded text; the live table cells it names were edited in place and the legacy rows stay as recorded. OPEN-01, OPEN-02, OPEN-04 and OPEN-06 are not closed (W03-D82).
 
@@ -750,24 +677,126 @@ Added 2026-11-14 under SPEC-0213 (W03-D78, W03-D81, W03-D82). One row for each s
 | 21 | `SDLC-07` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner W04 (policy semantics only); Resume When W04 starts | Owner W04; Resume When W04 starts (policy semantics only) | EVD-086 |
 | 22 | `R45-12` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner W11, this workspace only; Resume When another repository's adoption evidence exists | Owner W11; Resume When another repository's adoption evidence exists (this workspace only) | EVD-087 |
 
-## Criterion Acceptance
+### Resolution Links
+
+The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
+
+### Residue Handoff
+
+Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each row is residue that is open in current truth in any table above; `Residue` cites its legacy row, and the legacy residue tables stay as recorded and are registered historical in `docs/99.templates/registry.json`. `State`, `Owner` and `Resume condition` equal the matching entry of `docs/03.specs/work-residue-ledger.json`; a row closes in place with `State` terminal and a PASS `EVD` ID in `Closure`. EVD-053 records the read.
+
+| ID | Residue | State | Owner | Resume condition | Closure |
+| --- | --- | --- | --- | --- | --- |
+| AGENT-04 | Legacy row `AGENT-04` of `Requirement Changes`: direct, wrapper and nested hook delivery | open | W07 | When W07 starts | none |
+| CI-SCOPE | Legacy row `CI-SCOPE` of `Conflicts`: PR-DURING hosted CI scope; also an OPEN row of Requirement Changes | open | W06 | When W06 starts (W03-D28) | none |
+| COMMIT-AFTER | Legacy row `COMMIT-AFTER` of `Stage QA Handoff`: no post-commit record; decide no blocking hook | open | W06 | When W06 starts | none |
+| COMMIT-BEFORE | Legacy row `COMMIT-BEFORE` of `Stage QA Handoff`: surface selection gap for governance policy changes | open | W06 | When W06 starts | none |
+| DOC-04 | Legacy row `DOC-04` of `Requirement Changes`: profile field, state, relation and table definitions reformed | open | W03 | When the registry reform finishes with phase 3 | none |
+| DOC-05 | Legacy row `DOC-05` of `Requirement Changes`: section and body contracts match target H2 and H3 and tables | open | W03 | When the registry reform finishes with phase 3 | none |
+| DOC-11 | Legacy row `DOC-11` of `Requirement Changes`: a TemplateDefinition for every real template | terminal | W03 | When every template has its TemplateDefinition (W03-H13, W03-H15) | EVD-107 |
+| DOC-12 | Legacy row `DOC-12` of `Conflicts`: display renumbering of Stage 01, 02 and 03; also an OPEN row of Requirement Changes | open | W03 | Last, after all docs work is finished (W03-D30) | none |
+| DOC-S00 | Legacy row `DOC-S00` of `Stage QA Handoff`: vocabulary rule_id binding | open | W05 | When W05 starts | none |
+| DOC-S90 | Legacy row `DOC-S90` of `Stage QA Handoff`: Stage 90 source, edition and freshness checks | open | W05 | When W05 starts | none |
+| DOC-S99 | Legacy row `DOC-S99` of `Stage QA Handoff`: tests hard-code current headings | open | W03 | When phase 3 and W05 move the hard-coded headings (OPEN-09) | none |
+| GOV-04 | Legacy row `GOV-04` of `Requirement Changes`: the approved registry as a reform target | open | W03 | When the registry reform finishes with phase 3 | none |
+| GOV-06 | Legacy row `GOV-06` of `Requirement Changes`: single-writer registry reformed | open | W03 | When the registry reform finishes with phase 3 | none |
+| LEDGER | Legacy row `LEDGER` of `Conflicts`: the work residue ledger; built by this package | terminal | W03 | After the user accepts the SPEC-0191 criteria | EVD-055 |
+| MERGE-AFTER | Legacy row `MERGE-AFTER` of `Stage QA Handoff`: no post-merge regression run | open | W06 | When W06 starts | none |
+| MERGE-BEFORE | Legacy row `MERGE-BEFORE` of `Stage QA Handoff`: record strict in the main protection note | open | W06 | When W06 starts | none |
+| OLD-RULE-TESTS | Legacy row `Old-rule tests` of `Stage QA Handoff`: CI branch and Python contract tests move only with CI-SCOPE | open | W06 | With CI-SCOPE | none |
+| OPEN-01 | Legacy row `OPEN-01` of `OPEN Dispositions`: semantic atomization of the original report lines | open | W00 | Only on a difference shown to affect a current owner (historical, non-blocking; W00:20, 153) | none |
+| OPEN-02 | Legacy row `OPEN-02` of `OPEN Dispositions`: review of the relation candidates | open | W00 | Same as OPEN-01 | none |
+| OPEN-03 | Legacy row `OPEN-03` of `OPEN Dispositions`: 37 DELTA packages open at their stages; the 37 are the rows with Current state DELTA in the `SUP-01 Legacy Lineage` table of the SPEC-0155 Task (`git show a6f44976:docs/03.specs/0155-designated-source-applicability/tasks/tsk-0001-designated-source-applicability.md`; REQ-0003 Archived Lineage, SPEC-0155 row and its recovery proof) | open | W00 | When each of its 37 DELTA packages is judged item by item at its named stage (PKG W00:153); that stage consumes the judgment | none |
+| OPEN-04 | Legacy row `OPEN-04` of `OPEN Dispositions`: byte comparison with two original reports | open | W00 | Only when the original reports are supplied or a difference shown to affect a current owner (historical, non-blocking) | none |
+| OPEN-06 | Legacy row `OPEN-06` of `OPEN Dispositions`: perspective rows of an external source | open | W00 | Only when a stage proposes adopting a named source, or on a shown owner difference; that stage consumes the result | none |
+| OPEN-07 | Legacy row `OPEN-07` of `OPEN Dispositions`: full survey of the local workspace | open | W03, W05, W06, W07, W10 by file set | Each writer stage reads its whole file set before editing | none |
+| OPEN-08 | Legacy row `OPEN-08` of `OPEN Dispositions`: live, native and cluster authority | open | W10 | When W10 starts | none |
+| OPEN-09 | Legacy row `OPEN-09` of `OPEN Dispositions`: hard-coded current headings in tests | open | W05 | When W05 moves the hard-coded headings | none |
+| PR-DURING | Legacy row `PR-DURING` of `Stage QA Handoff`: PR-DURING scope decision (CI-SCOPE) | open | W06 | When CI-SCOPE closes | none |
+| PUSH-BEFORE | Legacy row `PUSH-BEFORE` of `Stage QA Handoff`: pre-push has no target | open | W06 | When W06 starts | none |
+| QA-03 | Legacy row `QA-03` of `Requirement Changes`: validator input is the reformed registry edition | open | W05 | When W05 starts | none |
+| QA-17 | Legacy row `QA-17` of `Requirement Changes`: validators changed for the reformed registry | open | W05 | When W05 starts | none |
+| R147-03 | Legacy row `R147-03` of `Requirement Changes`: approved norms are reform targets | open | W03 | Same as GOV-04 | none |
+| R147-04 | Legacy row `R147-04` of `Requirement Changes`: common H2 and H3 forms in templates and consumers | open | W03 | When the common forms reach every role (phase 3) | none |
+| R147-05 | Legacy row `R147-05` of `Requirement Changes`: tests, QA and scripts follow QA-ALIGNMENT | open | W05 | When W05 starts | none |
+| R147-06 | Legacy row `R147-06` of `Requirement Changes`: bind Git before, during and after cells | open | W06 | When W06 starts | none |
+| R147-07 | Legacy row `R147-07` of `Requirement Changes`: separate SDLC stage from document STAGE | open | W04 | When W04 starts | none |
+| R147-10 | Legacy row `R147-10` of `Requirement Changes`: migrate the registry to the CI chain | open | W03 | When the registry reform finishes with phase 3 | none |
+| R147-16 | Legacy row `R147-16` of `Requirement Changes`: Kubernetes impact of governance changes | open | W10 | When W10 starts | none |
+| R147-17 | Legacy row `R147-17` of `Requirement Changes`: harness static versus live provider evidence | open | W07 | When W07 starts | none |
+| R147-20 | Legacy row `R147-20` of `Requirement Changes`: reuse only equivalent results | open | W05 | When W05 starts | none |
+| R45-06 | Legacy row `R45-06` of `Requirement Changes`: reform the approved registry itself | open | W03 | When the registry reform finishes with phase 3 | none |
+| R45-07 | Legacy row `R45-07` of `Requirement Changes`: reform forms and consumers in place | open | W03 | When the registry reform finishes with phase 3 | none |
+| R45-10 | Legacy row `R45-10` of `Requirement Changes`: a TemplateDefinition per real template | terminal | W03 | When every template has its TemplateDefinition (W03-H13, W03-H15) | EVD-107 |
+| R45-12 | Legacy row `R45-12` of `Requirement Changes`: verify common adoption across four purposes | open | W11 | When another repository's adoption evidence exists (this workspace only) | none |
+| SCOPE-10 | Legacy row `SCOPE-10` of `Requirement Changes`: current-copy migration against historical bytes | open | W03 | With the migration map of the form change (phase 3) | none |
+| SDLC-07 | Legacy row `SDLC-07` of `Requirement Changes`: transition rules in the registry | open | W04 | When W04 starts (policy semantics only) | none |
+| SDLC-08 | Legacy row `SDLC-08` of `Requirement Changes`: old approved registry edition is not a pass basis | open | W05 | When W05 starts | none |
+| SDLC-ROWS | Legacy row `SDLC rows` of `Stage QA Handoff`: PLAN-PROMOTION anchor, member and receipt cross-check | open | W05 | When W05 starts | none |
+| W00-H01 | Legacy row `package contracts set` of `Read Denominator`: 3 partial and 2 listed-only package contract files | open | W00 | When a difference shown to affect a current owner is found | none |
+| W01-H01 | Legacy row `governance policy set` of `Read Denominator`: 3 partial and 1 listed-only governance policy files | terminal | W01 | When W01 re-reads its files before editing | EVD-074 |
+| W01-H02 | No legacy row: DOC-S00, W01 part, the `rule_id` binding of the vocabulary in `.agents/knowledge/glossary.md` that W05 consumes; the DOC-S00 row holds the W05 part only. W01 stays the owner (the legacy `Stage QA Handoff` row DOC-S00 says "W01 (`.agents/knowledge/glossary.md`); W05 consumes"; PKG W06:331 names W01 the normative canon). Seeded under W03-D78 and W03-D82 by SPEC-0213 | open | W01 | When W01 is run for its r1 differences; W05 consumes the result | none |
+| W03-H02 | Legacy row `W03-H02` of `W03 Decisions`: phase 3 forms for the six SDLC roles and deletion of the heading-list model | open | W03 | After phase 2 is accepted | none |
+| W03-H05 | Legacy row `W03-H05` of `W03 Decisions`: keep or remove the stored ADR rejected state | open | W04 | When W04 starts | none |
+| W03-H08 | Legacy row `W03-H08` of `W03 Decisions`: the per-relationship contract | terminal | W03 | With phase 3 (the SDLC roles own these relations) | EVD-062 |
+| W03-H09 | Legacy row `W03-H09` of `W03 Decisions`: cross-repository equivalence; the owner is W11 by W03-H22 | open | W11 | When another repository's adoption evidence exists | none |
+| W03-H10 | Legacy row `W03-H10` of `W03 Decisions`: heading-list consumers once a role has a form | open | W03 | In the Plan, README and Policy packages respectively | none |
+| W03-H11 | Legacy row `W03-H11` of `W03 Decisions`: qa-runner fixture branch name | open | W05 | When W05 starts | none |
+| W03-H12 | Legacy row `W03-H12` of `W03 Decisions`: staged QA routing of folder AGENTS files | open | W05 | When W05 starts | none |
+| W03-H13 | Legacy row `W03-H13` of `W03 Decisions`: SDLC TemplateDefinitions and H2 lists of local roles | terminal | W03 | With phase 3 (W03-H02) | EVD-107 |
+| W03-H15 | Legacy row `W03-H15` of `W03 Decisions`: the full TemplateDefinition record | terminal | W03 | After phase 3; the H07 package named in the row is closed; W05 consumes the record | EVD-091 |
+| W03-H16 | Legacy row `W03-H16` of `W03 Decisions`: link types and relation kinds | terminal | W03 | With W03-H08 in phase 3 | EVD-062 |
+| W03-H19 | Legacy row `W03-H19` of `W03 Decisions`: the missing adoption record of COMMON-DOC-FORM-1 in common_forms | open | W03 | With the W03 closing | none |
+| W03-H20 | Legacy row `W03-H20` of `W03 Decisions`: the W03 closing report | open | W03 | Last before DOC-12 | none |
+| W03-H21 | Legacy row `W03-H21` of `W03 Decisions`: writer delegation record | open | W03 | With the W03 closing | none |
+| W03-H23 | Legacy row `W03-H23` of `W03 Decisions`: root README bootstrap text | open | W10 | When W10 starts | none |
+| W03-H27 | Legacy row `W03-H27` of `W03 Decisions`: the document generator | terminal | W03 | After W03-H25, which SPEC-0184 closed | EVD-059 |
+| W03-H29 | Legacy row `W03-H29` of `W03 Decisions`: Policy rule IDs | open | W03 | SPEC-0199 adopts nine policies (W03-D58) and SPEC-0201 adopts `quality.md` (W03-D60), so all ten governance policies are adopted; SPEC-0202 adopts four operations policies (W03-D62), so fourteen are adopted; POL-0007 adds the rule IDs (W03-D42 to W03-D44); the package that adopts POL-0007 removes the adoption gate, `state` and `POLICY-RULE-ADOPTION` with their tests in its final source commit (W03-D53, W03-D62); package 5 adds the history check and code permanence; W05 consumes the rule IDs | none |
+| W03-H30 | Legacy row `W03-H30` of `W03 Decisions`: the work residue ledger, its gate and tests | terminal | W03 with W05 | Closes through the ledger cycle of SPEC-0191 | EVD-055 |
+| W03-H31 | Legacy row `W03-H31` of `W03 Decisions`: stale tracking found by the conformance audit | open | W03 | With the W03 closing (W03-H20) | none |
+| W03-H32 | Legacy row `W03-H32` of `W03 Decisions`: glossary definitions across repositories | open | W11 | In the cross-repository check | none |
+| W03-H33 | No legacy row: the six approval facts of shared_contract held as unverified (W03-D05); the row has no recorded handoff, so it takes the next W03 number | terminal | W03 | With the W03 closing | EVD-054 |
+| W03-H34 | Legacy row `registry and schema set` of `Read Denominator`: 2 partial files of docs/99.templates registry and schema | open | W03 | When W03 re-reads its files before editing | none |
+| W03-H35 | Legacy row `templates set` of `Read Denominator`: 18 partial and 19 listed-only templates | open | W03 | When W03 re-reads its files before editing | none |
+| W03-H36 | Legacy row `Requirement` of `Document Form Handoff`: the Requirement form against COMMON-DOC-FORM-1 | terminal | W03 | With phase 3 (W03-H02) | EVD-070 |
+| W03-H37 | Legacy row `Architecture` of `Document Form Handoff`: the Architecture description form | terminal | W03 | With phase 3 (W03-H02) | EVD-093 |
+| W03-H38 | Legacy row `ADR` of `Document Form Handoff`: the ADR form | terminal | W03 | With phase 3 (W03-H02) | EVD-094 |
+| W03-H39 | Legacy row `Spec` of `Document Form Handoff`: the Spec form | terminal | W03 | With phase 3 (W03-H02) | EVD-100 |
+| W03-H40 | Legacy row `Plan` of `Document Form Handoff`: the Plan form | terminal | W03 | With phase 3 (W03-H02) | EVD-100 |
+| W03-H41 | Legacy row `Task` of `Document Form Handoff`: the Task form | terminal | W03 | With phase 3 (W03-H02) | EVD-107 |
+| W03-H42 | Legacy row `Generator` of `Document Form Handoff`: a document generator or the recorded reason for none | terminal | W03 | After W03-H25, which SPEC-0184 closed | EVD-059 |
+| W03-H43 | No legacy row: the `requirement` lifecycle domain yields no creation state, so a new Requirement is refused by the lifecycle creation rule and by the document generator (W03-D48); the repair is a lifecycle contract change of its own | open | W03 | When the registry admits a creation state for the `requirement` lifecycle domain | none |
+| W03-H44 | No legacy row: the Requirement `Downstream owner` column is a hand-written reciprocal field, 10 of the 68 members are not cited in their description's own `Upstream requirement` column and 17 of its 91 cells are not a single link (W03-D55); the Architecture form package completes the citing rows and then removes the column with a derived coverage check in place of its link check | terminal | W03 | When the Architecture form package (SPEC-0197) completes the citing rows | EVD-093 |
+| W05-H01 | Legacy row `Link-only section` of `Document Form Handoff`: the hard-coded link-only section list must follow the registry | open | W05 | When W05 starts | none |
+| W05-H02 | Legacy row `scripts set` of `Read Denominator`: 8 partial and 53 listed-only tracked scripts | open | W05 | When W05 re-reads its files before editing | none |
+| W05-H03 | Legacy row `tests set` of `Read Denominator`: 5 partial and 68 listed-only tracked tests | open | W05 | When W05 re-reads its files before editing | none |
+| W05-H04 | No legacy row: derived-copy drift check, a derived body changed alone is refused (source requirement GOV-06, not the legacy `GOV-06` row, which is the registry reform). Frozen SPEC-0166 Handoffs, W05 row, and Trace GOV-06; PKG W01:396-402. Recover the frozen Task with `git show 579280f2:docs/03.specs/0166-w01-governance-alignment/tasks/tsk-0001-w01-governance-alignment.md`. Seeded under W03-D78 by SPEC-0213 | open | W05 | When W05 starts | none |
+| W05-H05 | No legacy row: refusal of contradictory approval text, and refusal tests for rule, code and validator contradictions (source requirement GOV-07). Frozen SPEC-0166 Handoffs, W05 row, and Trace GOV-07; PKG W01:405-411. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | open | W05 | When W05 starts | none |
+| W05-H06 | No legacy row: ARC-08, trace and remove the `done` and `archived` branches of `scripts/validate-links-and-owners.py` and the terminal statuses of `scripts/validation/current_executable_references.py` with their tests when no registry domain reaches them. Frozen SPEC-0167 Handoffs, W05 row, and ARC-08 row; PKG W02:340-343. Recover with `git show 3270cb00:docs/03.specs/0167-w02-safe-disposition/tasks/tsk-0001-w02-safe-disposition.md`. Seeded under W03-D78 by SPEC-0213 | open | W05 | When W05 starts | none |
+| W06-H01 | Legacy row `workflows set` of `Read Denominator`: 2 listed-only workflow files | open | W06 | When W06 re-reads its files before editing | none |
+| W07-H01 | Legacy row `hooks set` of `Read Denominator`: 2 listed-only hook files | open | W07 | When W07 re-reads its files before editing | none |
+| W07-H02 | No legacy row: GOV-08, allow tests for approved local reads, reversible edits and narrow tests, and deny tests for secret access and out-of-scope writes. Frozen SPEC-0166 Handoffs, W07 row, and Trace GOV-08; PKG W01:414-420. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | open | W07 | When W07 starts | none |
+| W07-H03 | No legacy row: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash). Frozen SPEC-0166 Requirement Trace, W01-B row; its Handoffs table does not list it. Recover the frozen Task as for W05-H04. Seeded under W03-D81 by SPEC-0213 | open | W07 | When W07 starts | none |
+
+## Acceptance Decision
+
+### Criterion Decisions
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
 | [VAL-DELTA-001](../spec.md#criteria) | accepted | EVD-014, EVD-015, EVD-016 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
 | [VAL-DELTA-002](../spec.md#criteria) | accepted | EVD-012, EVD-015, EVD-016, EVD-017, EVD-020 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
 
-## Approval and Safety Boundaries
+### Remaining Conditions
 
-- **Allowed Paths**: `docs/03.specs/0161-w00-v14-7-delta-intake/`, `docs/03.specs/README.md`, one back-link sentence in `docs/01.requirements/0003-workspace-agent-governance-platform.md` Traceability, `.secrets.baseline` (reviewed digest entries only, if the secret scan flags this Task's digests)
-- **Forbidden Paths**: every file named in a handoff table; `_workspace/workspace_execution_tasks/` (read-only input)
-- **Approval Required**: Spec and Plan approval; any commit, push, PR, merge or package exit; the CI-SCOPE and POLICY-ROLE decisions belong to W01
-- **Static Validation**: strict document validators, staged lifecycle check, `python3 scripts/qa.py staged`
-- **Live Validation**: DEFER; no live surface in scope
-- **Secret / Vault Handling**: no secret read or printed
-- **Rollback Plan**: delete the branch `claude/w00-v14-7-intake`; `main` is unchanged
-- **Evidence Location**: this Task
+No separate remaining-condition list is kept here; the Disposition and Current owner columns of the criterion decisions state what remains and who owns it.
 
-## Verification Summary
+## Handoff
+
+### Promotion Receipt
+
+No separate promotion receipt is kept here; the receipt of each Plan promotion row, where the Plan has one, is recorded in the evidence rows under Results.
+
+### Next Owner
 
 Required completeness (EVD-014), independent review (EVD-012, EVD-015) and exact-index QA (EVD-017) pass; the user accepted every criterion on 2026-11-12. Residual risk: the survey read large validators and tests in part; writers must re-read before editing. The core-diff checklist is EVD-020 (risk class `low`). GOV-01 vocabulary, GIT-09 review path and DOC-09 are done in SPEC-0163, SPEC-0162 and SPEC-0164. Next owners: W01 (GOV-02 to GOV-08, CI-SCOPE policy text, POLICY-ROLE), then W03, W04, W05, W06, W07 and W10 per the handoff tables; DOC-12 display renumbering last.

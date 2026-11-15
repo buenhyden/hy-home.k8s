@@ -22,8 +22,19 @@ REGISTRY_REL = "docs/99.templates/registry.json"
 TASK = "docs/03.specs/0001-x/tasks/tsk-0001-x.md"
 OTHER_TASK = "docs/03.specs/0002-y/tasks/tsk-0001-y.md"
 COLUMNS = ["ID", "Residue", "State", "Owner", "Resume condition", "Closure"]
+EVIDENCE_COLUMNS = [
+    "Evidence ID",
+    "Consumer",
+    "Work Unit",
+    "Command",
+    "Input",
+    "Result",
+    "Location",
+    "Required",
+    "Resolves",
+]
 EVIDENCE_HEADER = (
-    "| Evidence | Criteria | Work Unit | Check | Input | Result | Location "
+    "| Evidence ID | Consumer | Work Unit | Command | Input | Result | Location "
     "| Required | Resolves |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
 )
 HANDOFF_TABLE = "| ID | Gap |\n| --- | --- |\n| X-1 | gap |\n"
@@ -90,7 +101,7 @@ def task_text(
     extra: str = "",
 ) -> str:
     evidence = {"EVD-001": "PASS", "EVD-002": "FAIL"} if evidence is None else evidence
-    text = "# Task\n\n## Task Evidence\n\n" + EVIDENCE_HEADER
+    text = "# Task\n\n## Verification Evidence\n\n### Results\n\n" + EVIDENCE_HEADER
     text += "".join(
         f"| {key} | c | w | k | i | {value} | l | yes | none |\n"
         for key, value in evidence.items()
@@ -107,9 +118,22 @@ class Tree:
         self.root = Path(directory.name)
         self.write(SCHEMA_REL, (REPOSITORY_ROOT / SCHEMA_REL).read_text("utf-8"))
         self.registry = {
+            "profiles": [
+                {
+                    "id": "sdlc/task",
+                    "relationships": {
+                        "body_contract": {
+                            "task_execution": {
+                                "evidence_section": "Verification Evidence",
+                                "evidence_columns": EVIDENCE_COLUMNS,
+                            }
+                        }
+                    },
+                }
+            ],
             "work_residue": {
                 "task_table": {
-                    "section": "Task Evidence",
+                    "section": "Verification Evidence",
                     "heading": "Residue Handoff",
                     "columns": COLUMNS,
                 },
@@ -221,6 +245,35 @@ class AgreementTests(GateCase):
         lines = (out.getvalue() + err.getvalue()).splitlines()
         self.assertEqual(len(lines), 1)
         self.assertTrue(lines[0].startswith("FAIL RESIDUE-MARKDOWN-ONLY H-1 "))
+
+
+class EvidenceReadTests(GateCase):
+    """SPEC-0203: the evidence rows are read through the binding and never as empty."""
+
+    def test_a_moved_task_is_read_by_evidence_id_and_result(self) -> None:
+        self.agree(entries=[], rows=[row(state="terminal", closure="EVD-001")])
+        self.assertEqual(self.rules(), [])
+        self.agree(entries=[], rows=[row(state="terminal", closure="EVD-002")])
+        self.assertRefused("RESIDUE-CLOSURE")
+
+    def test_a_task_without_an_evidence_table_is_an_error(self) -> None:
+        self.tree.ledger([])
+        self.tree.write(TASK, "# Task\n\n## Verification Evidence\n\nNo table.\n")
+        self.assertRefused("RESIDUE-EVIDENCE")
+
+    def test_a_task_without_the_result_column_is_an_error(self) -> None:
+        self.tree.ledger([])
+        bad = task_text().replace("| Result |", "| Outcome |")
+        self.tree.write(TASK, bad)
+        self.assertRefused("RESIDUE-EVIDENCE")
+
+    def test_a_task_under_the_old_section_is_an_error(self) -> None:
+        self.tree.ledger([])
+        old = task_text().replace(
+            "## Verification Evidence\n\n### Results", "## Task Evidence"
+        )
+        self.tree.write(TASK, old)
+        self.assertRefused("RESIDUE-EVIDENCE")
 
 
 class SchemaTests(GateCase):
