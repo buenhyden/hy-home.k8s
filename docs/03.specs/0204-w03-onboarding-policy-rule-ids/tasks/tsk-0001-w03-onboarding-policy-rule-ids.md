@@ -1,8 +1,8 @@
 ---
 title: "W03 Onboarding Policy Rule IDs"
-version: "0.2.1"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-14"
 artifact_id: "SPEC-0204-TSK-0001"
@@ -69,10 +69,10 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-ONBRULE-001](../spec.md#criteria) | Tokens, the Rules table and the `adopted` state for the policy, as the binding table lists them. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-ONBRULE-002](../spec.md#criteria) | The map of each ID to its unit with its Level, Condition and Evidence, listed for review before the record flips with the opening paragraph as a no-ID reading; the stripped-body comparison; the anchor and slug checks; the lookup of every named artifact and check; the version step. | platform | in-progress | NOT_RUN | Pending |
-| WORK-003 | [VAL-ONBRULE-003](../spec.md#criteria) | The gate retirement in the final source commit: `state`, `POLICY-RULE-ADOPTION` and their tests removed, the sentences that name the gate, the three refusal tests and the acceptance of a policy without normative rules. | platform | in-progress | NOT_RUN | Pending |
-| WORK-004 | [VAL-ONBRULE-004](../spec.md#criteria) | The W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-ONBRULE-001](../spec.md#criteria) | Tokens, the Rules table and the `adopted` state for the policy, as the binding table lists them. | platform | completed | PASS | EVD-005, EVD-015, EVD-016, EVD-018, EVD-019, EVD-020 |
+| WORK-002 | [VAL-ONBRULE-002](../spec.md#criteria) | The map of each ID to its unit with its Level, Condition and Evidence, listed for review before the record flips with the opening paragraph as a no-ID reading; the stripped-body comparison; the anchor and slug checks; the lookup of every named artifact and check; the version step. | platform | completed | PASS | EVD-006, EVD-007 |
+| WORK-003 | [VAL-ONBRULE-003](../spec.md#criteria) | The gate retirement in the final source commit: `state`, `POLICY-RULE-ADOPTION` and their tests removed, the sentences that name the gate, the three refusal tests and the acceptance of a policy without normative rules. | platform | completed | PASS | EVD-021, EVD-023 |
+| WORK-004 | [VAL-ONBRULE-004](../spec.md#criteria) | The W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | completed | PASS | EVD-009, EVD-010, EVD-024 |
 
 ## Verification Evidence
 
@@ -103,6 +103,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-021 | [VAL-ONBRULE-003](../spec.md#criteria) | WORK-003 | Gate retirement in the final source commit | {"base":"8d0700e1","tests_first":"tests.test_policy_rule_ids.GateRetiredTests","records":15} | PASS | The four new tests failed first (2 failures from the state key accepted and 6 errors from the record constructor that still required a state) and then passed (4 of 4) after the change. The change removes `state` from the record, the schema and the 15 registry records, removes the `pending` branch of `POLICY-RULE-ADOPTION` from the profile check and the tests of the gate, and rewrites the 3 registry template sentences that named the states; `minimum_rows` stays 0 in both Policy definitions and 1 in `rules_table`. The refusal of a record with a `state` key, of rules with a record and no Rules table, of a header-only Rules table and the acceptance of a policy that states no normative rule are tested. All fifteen policies pass the profile check without the gate. The comparison-base reader of the lifecycle check refused a base registry whose records carry `state`; the loader of the record now reads its path and code only (one line of `scripts/document_contracts.py`), and the current registry keeps refusing a `state` key by schema. tests.test_policy_rule_ids 51 OK; tests.test_common_form_tree 384 OK (3 skipped); tests.test_registry_schema_version 26 OK; tests.test_document_generator 29 OK; tests.test_shared_contract_binding 19 OK. Repository-static lane. | yes | EVD-011 |
 | EVD-022 | [VAL-ONBRULE-003](../spec.md#criteria) | WORK-003 | Registry Schema Version level of the gate retirement | {"schema_version":"16.0.0","level":"MAJOR","next":"17.0.0"} | NOT_RUN | Rated MAJOR: removing `state` breaks a registry that was valid before. The step to 17.0.0 (REGISTRY_MAJOR and READABLE_REGISTRY_MAJORS, DOC_REGISTRY_MAJOR of the write guard, the schema const and the registry value last) is not applied in this change. Next owner: the operator. | yes | none |
 | EVD-023 | [VAL-ONBRULE-003](../spec.md#criteria) | WORK-003 | Registry Schema Version level of the gate retirement | {"schema_version_before":"16.0.0","schema_version_after":"17.0.0","approval_ref":"Direct current-session user answer Approve MAJOR 16→17 (Recommended)"} | PASS | Applied in the final source commit: `REGISTRY_MAJOR = 17` and `READABLE_REGISTRY_MAJORS` ending in 17 in `scripts/document_authority.py`, `DOC_REGISTRY_MAJOR = 17` in `scripts/provider_write_guard.py`, the schema const `17.0.0` and the registry `schema_version` `17.0.0`, written last. The five focused modules pass at 17. Repository-static lane. | yes | EVD-022 |
+| EVD-024 | [VAL-ONBRULE-004](../spec.md#criteria) | WORK-004 | Exact-index QA and commit hooks | Pre-commit hooks over the final index of `f5dd0eba` in the pinned validation environment, 2026-11-15 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | EVD-012 |
+| EVD-025 | [VAL-ONBRULE-004](../spec.md#criteria) | WORK-004 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Resolution Links
 
@@ -114,12 +116,19 @@ The Resolves column of the evidence table under Results names the earlier eviden
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-ONBRULE-001](../spec.md#criteria) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-ONBRULE-002](../spec.md#criteria) | pending | none | Implement WORK-002 and record PASS evidence | platform |
-| [VAL-ONBRULE-003](../spec.md#criteria) | pending | none | Implement WORK-003 and record PASS evidence | platform |
-| [VAL-ONBRULE-004](../spec.md#criteria) | pending | none | Implement WORK-004 and record PASS evidence | platform |
+| [VAL-ONBRULE-001](../spec.md#criteria) | accepted | EVD-005, EVD-015, EVD-016, EVD-018, EVD-019, EVD-020 | Accepted by the user on 2026-11-15 (direct answer "Accept, keep H29 for 0206 (Recommended)" to the SPEC-0204 acceptance question naming commit `f5dd0eba`) | platform |
+| [VAL-ONBRULE-002](../spec.md#criteria) | accepted | EVD-006, EVD-007 | Accepted by the user on 2026-11-15 (direct answer "Accept, keep H29 for 0206 (Recommended)" to the SPEC-0204 acceptance question naming commit `f5dd0eba`) | platform |
+| [VAL-ONBRULE-003](../spec.md#criteria) | accepted | EVD-021, EVD-023 | Accepted by the user on 2026-11-15 (direct answer "Accept, keep H29 for 0206 (Recommended)" to the SPEC-0204 acceptance question naming commit `f5dd0eba`) | platform |
+| [VAL-ONBRULE-004](../spec.md#criteria) | accepted | EVD-009, EVD-010, EVD-024 | Accepted by the user on 2026-11-15 (direct answer "Accept, keep H29 for 0206 (Recommended)" to the SPEC-0204 acceptance question naming commit `f5dd0eba`) | platform |
 
 ### Remaining Conditions
+
+Frozen package disposition decision:
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: POL-0007 keeps its 45 rule IDs, definition tokens and Rules table; the registry keeps the ONBOARD record without a state; W03-H29 stays open for SPEC-0206 (history check and code permanence). Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 No separate remaining-condition list is kept here; the Disposition and Current owner columns of the criterion decisions state what remains and who owns it.
 
@@ -131,4 +140,4 @@ No separate promotion receipt is kept here; the receipt of each Plan promotion r
 
 ### Next Owner
 
-Spec and Plan drafted with the W03-D62 answers written in; no review, approval or implementation is recorded yet.
+Spec and Plan drafted with the W03-D62 answers written in; no review, approval or implementation is recorded yet. Implementation commit `f5dd0eba` passed exact-index QA in the hooks (EVD-024); the user accepted all four criteria on 2026-11-15, and the approval of commit, push, PR and merge covers the package exit (EVD-025).
