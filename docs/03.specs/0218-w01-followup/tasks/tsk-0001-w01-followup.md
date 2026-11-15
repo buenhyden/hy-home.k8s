@@ -53,9 +53,9 @@ The independent review passed (EVD-004), and the user approved the Spec and Plan
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-W01F-001](../spec.md#criteria) | One canon for the skill-authority, progress-ledger and intake rules and the provider and role links. | platform | ready | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-W01F-002](../spec.md#criteria) | Vocabulary form to the link form. | platform | ready | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-W01F-003](../spec.md#criteria) | Follow-up record in the SPEC-0161 Task. | platform | ready | NOT_RUN | EVD-003 |
+| WORK-001 | [VAL-W01F-001](../spec.md#criteria) | One canon for the skill-authority, progress-ledger and intake rules and the provider and role links. | platform | in-progress | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-W01F-002](../spec.md#criteria) | Vocabulary form to the link form. | platform | in-progress | NOT_RUN | EVD-002 |
+| WORK-003 | [VAL-W01F-003](../spec.md#criteria) | Follow-up record in the SPEC-0161 Task. | platform | in-progress | NOT_RUN | EVD-003 |
 
 ## Verification Evidence
 
