@@ -47,7 +47,7 @@ Read-only survey and the background evidence run on 2026-11-15. No file outside 
 
 ### Blockers and Decisions
 
-Waiting for Spec and Plan approval after the independent review.
+The independent review passed (EVD-004), and the user approved the Spec and Plan (EVD-005). No question is open.
 
 ### Lifecycle Traceability
 
@@ -66,6 +66,8 @@ Waiting for Spec and Plan approval after the independent review.
 | EVD-001 | [VAL-W01F-001](../spec.md#criteria) | WORK-001 | Governance, profile and link validators | Implementation snapshot | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-W01F-002](../spec.md#criteria) | WORK-002 | Contract registry, `document` contract tests and links validators | Implementation snapshot | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-W01F-003](../spec.md#criteria) | WORK-003 | Ledger gate and strict document validators | Implementation snapshot | NOT_RUN | Pending | yes | none |
+| EVD-004 | [VAL-W01F-001](../spec.md#criteria) | WORK-001 | Independent semantic review | Draft commit `9024dee9`: spec.md sha256 `887c822ebab5b0bd79cfa8b426cb97459782a85de4e261825d6487788bb5f2d7`, plan.md sha256 `f5dc985673ccac55bfb78015a230eb3896bf2e42c9bed44321ac70635c132b13` | PASS | Read-only `code-reviewer` subagent, separate context, 2026-11-15. The first pass on spec `8dd60ef8` returned REQUEST_CHANGES with two MAJOR findings (EXEC-R001 list mapping; KEEP list, read scope and step 5 and 6 mapping), one minor (W05 routing) and three nits (kept skill fact, anchors, placeholder pins). All six were applied, and the second pass on spec `887c822e` returned APPROVE. Review only; it approves nothing. | yes | none |
+| EVD-005 | [VAL-W01F-001](../spec.md#criteria) | WORK-001 | Spec/Plan approval | {"actor":"user","approval_ref":"Direct current-session user answer Approve these bytes (Recommended) to the SPEC-0218 approval question naming spec.md 887c822e and plan.md f5dc9856, 2026-11-15","review_ref":"EVD-004","scope":["SPEC-0218","SPEC-0218-PLAN-0001"],"reviewed_spec_sha256":"887c822ebab5b0bd79cfa8b426cb97459782a85de4e261825d6487788bb5f2d7","reviewed_plan_sha256":"f5dc985673ccac55bfb78015a230eb3896bf2e42c9bed44321ac70635c132b13","validity":"confirmed","revocation":"none"} | PASS | Approves the reviewed Spec and Plan content of draft commit `9024dee9`; the approved files differ from it only in `status` and `version`. It accepts no criterion. | yes | none |
 
 ### Resolution Links
 
