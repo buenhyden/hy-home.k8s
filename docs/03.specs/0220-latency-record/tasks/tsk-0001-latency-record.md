@@ -2,7 +2,7 @@
 title: "QA Latency Record"
 version: "0.1.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0220-TSK-0001"
