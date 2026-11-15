@@ -43,26 +43,6 @@
       }
     },
     {
-      "id": "DOC-04",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When the registry reform finishes with phase 3",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "DOC-05",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When the registry reform finishes with phase 3",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "DOC-12",
       "kind": "conflict",
       "state": "open",
@@ -98,26 +78,6 @@
       "state": "open",
       "owner": "W03",
       "resume_condition": "When phase 3 and W05 move the hard-coded headings (OPEN-09)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "GOV-04",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When the registry reform finishes with phase 3",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "GOV-06",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When the registry reform finishes with phase 3",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -273,26 +233,6 @@
       }
     },
     {
-      "id": "R147-03",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "Same as GOV-04",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "R147-04",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When the common forms reach every role (phase 3)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "R147-05",
       "kind": "handoff",
       "state": "open",
@@ -318,16 +258,6 @@
       "state": "open",
       "owner": "W04",
       "resume_condition": "When W04 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "R147-10",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When the registry reform finishes with phase 3",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -363,41 +293,11 @@
       }
     },
     {
-      "id": "R45-06",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When the registry reform finishes with phase 3",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "R45-07",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When the registry reform finishes with phase 3",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "R45-12",
       "kind": "handoff",
       "state": "open",
       "owner": "W11",
       "resume_condition": "When another repository's adoption evidence exists (this workspace only)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "SCOPE-10",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "With the migration map of the form change (phase 3)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -458,16 +358,6 @@
       "state": "open",
       "owner": "W01",
       "resume_condition": "When W01 is run for its r1 differences; W05 consumes the result",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W03-H02",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "After phase 2 is accepted",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
