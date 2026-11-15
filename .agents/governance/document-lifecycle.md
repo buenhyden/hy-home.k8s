@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.12.0"
+version: "2.13.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -72,6 +72,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | DOCLIFE-R019 | Always | required | `document-lifecycle` | active |
 | DOCLIFE-R020 | Always | required | `.markdownlint-cli2.yaml` | active |
 | DOCLIFE-R021 | Always | required | Semantic review | active |
+| DOCLIFE-R022 | When a policy document leaves its profile path | required | `document-lifecycle` | active |
 
 - `DOCLIFE-R001` A proposed status change must be one directed edge declared by the selected
   profile family. For a new Spec or Plan, `draft` states unreviewed intent,
@@ -269,6 +270,10 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   A current document links the current owner rather than an archived file; a
   link into it is not checked, not even for existence.
 - `DOCLIFE-R021` A document that moves between active stages keeps no migration record.
+- `DOCLIFE-R022` A policy document that leaves its profile path moves its registered code to
+  `reserved_codes` in the same change, and only then may its rule IDs leave their Rules tables.
+  The reserved list never shrinks until a user-approved new baseline under the Q-07 contract,
+  so the code and its IDs are never issued again.
 
 ### Enforcement
 
