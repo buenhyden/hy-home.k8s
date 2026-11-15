@@ -1,6 +1,6 @@
 ---
 title: "W01 3.0.1 Follow-up"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-15"
@@ -53,9 +53,9 @@ The independent review passed (EVD-004), and the user approved the Spec and Plan
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-W01F-001](../spec.md#criteria) | One canon for the skill-authority, progress-ledger and intake rules and the provider and role links. | platform | in-progress | PASS | EVD-006 |
-| WORK-002 | [VAL-W01F-002](../spec.md#criteria) | Vocabulary form to the link form. | platform | in-progress | PASS | EVD-007 |
-| WORK-003 | [VAL-W01F-003](../spec.md#criteria) | Follow-up record in the SPEC-0161 Task. | platform | in-progress | PASS | EVD-008 |
+| WORK-001 | [VAL-W01F-001](../spec.md#criteria) | One canon for the skill-authority, progress-ledger and intake rules and the provider and role links. | platform | completed | PASS | EVD-006 |
+| WORK-002 | [VAL-W01F-002](../spec.md#criteria) | Vocabulary form to the link form. | platform | completed | PASS | EVD-007 |
+| WORK-003 | [VAL-W01F-003](../spec.md#criteria) | Follow-up record in the SPEC-0161 Task. | platform | completed | PASS | EVD-008 |
 
 ## Verification Evidence
 
@@ -71,6 +71,7 @@ The independent review passed (EVD-004), and the user approved the Spec and Plan
 | EVD-006 | [VAL-W01F-001](../spec.md#criteria) | WORK-001 | Governance, profile and link validators | Commit `33b66640`: EXEC-R001 and EXEC-R005 (`agent-execution.md` 1.11.0), 17 skills, `AGENTS.md`, both workflows, `.claude/provider.md`, two role bodies; pinned `hyhome-validation` environment, 2026-11-15 | PASS | `validate-agent-governance.py`: `[PASS] agent registry validation passed: providers=2 roles=17 permissionClasses=4 skills=17 handoffs=67 projections=51` (projections unchanged). Markdown profiles strict, links and owners strict, lifecycle strict and staged and knowledge surface PASS; the commit hooks passed on the exact index. Every replaced sentence links to its canon: EXEC-R005 for skill authority, `context-and-memory.md#objective` for the progress ledger, `work-lifecycle.md#intake` for EXEC-R001, and agent-execution Authority, SAFE-R019 and SAFE-R018 for the provider and role passages. | yes | EVD-001 |
 | EVD-007 | [VAL-W01F-002](../spec.md#criteria) | WORK-002 | Contract registry, `document` contract tests and links validators | Commit `33b66640`: vocabulary Policy Owner meaning in `docs/99.templates/registry.json` and the link form in `vocabulary.template.md`; the `document` suite on `d7f92d93`, 2026-11-15T11:00:37Z | PASS | Contract registry strict `PASS document contract registry: 296 paths`; `run-contract-tests.py --suite document`: rc 0 in 723 s, `[PASS] document contract regressions passed: modules=31 tests=1096`; links and owners strict PASS. | yes | EVD-002 |
 | EVD-008 | [VAL-W01F-003](../spec.md#criteria) | WORK-003 | Ledger gate and strict document validators | Commit `32a9d3cf` (SPEC-0161 Task `W01 Follow-up Record` and EVD-134) after `59ae4833` (two moved baseline lines) | PASS | `PASS work residue ledger: 57 entries`; four strict document validators PASS. The record holds the five corrections, the `KEEP_VERIFIED` update to 164, the read scope, the step 5 and 6 mapping, the surface audit, the 16 executed checks (15 rc 0, `qa-runner-tests` rc 1 from an environment-dependent test owned by W05-GATES) and the latency comparison. | yes | EVD-003 |
+| EVD-009 | [VAL-W01F-003](../spec.md#criteria) | WORK-003 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-15 instruction to commit, push, open a PR and merge on completion; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Resolution Links
 
@@ -82,13 +83,20 @@ The Resolves column names the earlier row each PASS row closes: EVD-006 to EVD-0
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-W01F-001](../spec.md#criteria) | pending | EVD-006 | PASS evidence recorded; awaiting the operator's acceptance | platform |
-| [VAL-W01F-002](../spec.md#criteria) | pending | EVD-007 | PASS evidence recorded; awaiting the operator's acceptance | platform |
-| [VAL-W01F-003](../spec.md#criteria) | pending | EVD-008 | PASS evidence recorded; awaiting the operator's acceptance | platform |
+| [VAL-W01F-001](../spec.md#criteria) | accepted | EVD-006 | Accepted by the user on 2026-11-15 (direct answer "Accept all three (Recommended)" to the SPEC-0218 acceptance question naming commits `33b66640` to `e4446ea1`) | platform |
+| [VAL-W01F-002](../spec.md#criteria) | accepted | EVD-007 | Accepted by the user on 2026-11-15 (direct answer "Accept all three (Recommended)" to the SPEC-0218 acceptance question naming commits `33b66640` to `e4446ea1`) | platform |
+| [VAL-W01F-003](../spec.md#criteria) | accepted | EVD-008 | Accepted by the user on 2026-11-15 (direct answer "Accept all three (Recommended)" to the SPEC-0218 acceptance question naming commits `33b66640` to `e4446ea1`) | platform |
 
 ### Remaining Conditions
 
-Criterion acceptance of VAL-W01F-001 to VAL-W01F-003 remains with the user.
+None remains for this package. On 2026-11-15 the user left the `qa-runner-tests` environment dependence to W05-GATES (answer "Leave to W05-GATES (Recommended)"), as the SPEC-0161 `W01 Follow-up Record` row 9 records. W01-H02 stays open by the user's earlier choice.
+
+Frozen package disposition decision:
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The edited policies, skills, workflows, roles, provider note, registry, template and the SPEC-0161 Task hold the lasting result and name SPEC-0218 by ID only. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The disposition authority is the user's 2026-11-15 instruction to commit, push, open a PR and merge on completion. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Handoff
 
@@ -98,4 +106,4 @@ The Plan promotes none.
 
 ### Next Owner
 
-The independent reviewer and the user, for Spec and Plan review and approval; then platform.
+WORK-001 to WORK-003 passed (EVD-006 to EVD-008); the review of record is EVD-004 and the risk class is `high`. The user accepted all three criteria. Next: platform closes the package; W05-GATES takes the `qa-runner-tests` environment dependence at its intake.
