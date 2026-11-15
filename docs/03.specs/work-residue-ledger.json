@@ -393,16 +393,6 @@
       }
     },
     {
-      "id": "W03-H10",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "In the Plan, README and Policy packages respectively",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W03-H11",
       "kind": "handoff",
       "state": "open",
@@ -423,16 +413,6 @@
       }
     },
     {
-      "id": "W03-H20",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "Last before DOC-12",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W03-H23",
       "kind": "handoff",
       "state": "open",
@@ -448,26 +428,6 @@
       "state": "open",
       "owner": "W11",
       "resume_condition": "In the cross-repository check",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W03-H34",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When W03 re-reads its files before editing",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W03-H35",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When W03 re-reads its files before editing",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
