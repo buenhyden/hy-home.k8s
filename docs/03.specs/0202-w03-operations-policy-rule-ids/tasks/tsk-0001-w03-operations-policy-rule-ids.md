@@ -1,6 +1,6 @@
 ---
 title: "W03 Operations Policy Rule IDs"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-14"
@@ -58,10 +58,10 @@ This Task records Policy package 4 of handoff W03-H29 (W03-D42 to W03-D44, W03-D
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-OPSRULE-001](../spec.md#criteria) | The amended coverage floor and its six tests; the sentence that states the floor, where one exists. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-OPSRULE-002](../spec.md#criteria) | Tokens, Rules table and the `adopted` state for each of the four policies, as the binding table lists them. | platform | in-progress | NOT_RUN | Pending |
-| WORK-003 | [VAL-OPSRULE-003](../spec.md#criteria) | The map of each ID to its unit with its Level, Condition and Evidence, listed for review before each record flips; the stripped-body comparison; the anchor and slug checks; the lookup of every named control, artifact and check; the version steps. | platform | in-progress | NOT_RUN | Pending |
-| WORK-004 | [VAL-OPSRULE-004](../spec.md#criteria) | W03-D62, the W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-OPSRULE-001](../spec.md#criteria) | The amended coverage floor and its six tests; the sentence that states the floor, where one exists. | platform | completed | PASS | EVD-005, EVD-010 |
+| WORK-002 | [VAL-OPSRULE-002](../spec.md#criteria) | Tokens, Rules table and the `adopted` state for each of the four policies, as the binding table lists them. | platform | completed | PASS | EVD-006, EVD-011 |
+| WORK-003 | [VAL-OPSRULE-003](../spec.md#criteria) | The map of each ID to its unit with its Level, Condition and Evidence, listed for review before each record flips; the stripped-body comparison; the anchor and slug checks; the lookup of every named control, artifact and check; the version steps. | platform | completed | PASS | EVD-007, EVD-012 |
+| WORK-004 | [VAL-OPSRULE-004](../spec.md#criteria) | W03-D62, the W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | completed | PASS | EVD-008, EVD-013, EVD-015, EVD-016, EVD-017, EVD-021, EVD-022, EVD-023 |
 
 ## Task Evidence
 
@@ -89,15 +89,24 @@ This Task records Policy package 4 of handoff W03-H29 (W03-D42 to W03-D44, W03-D
 | EVD-020 | [VAL-OPSRULE-003](../spec.md#criteria) | WORK-003 | Per-policy unit review before adoption: user answer on the readings | Direct current-session user answer "Adopt draft readings (Recommended)" to the SPEC-0202 question on the 27 doubtful IDs (six Allowed items read required, six read optional, the borderline MESH-R007, MESH-R014 and ROLLOUT-R010), 2026-11-14 15:02 Asia/Seoul (2026-11-14T06:02:37Z) | PASS | The user settled the Level, Condition and Evidence readings of GITOPS, MESH, ROLLOUT and OBSERV before the records flipped to adopted; the Rules tables hold exactly those readings (EVD-011). This row records the user's own answer, which EVD-011 had only as relayed. It is not a criterion acceptance. | yes | none |
 | EVD-021 | [VAL-OPSRULE-004](../spec.md#criteria) | WORK-004 | Third replay onto main 24411a9a after SPEC-0200 and SPEC-0201 | Staged diff applied with git apply --3way to a new worktree; the registry state of the four records read by script; the Spec and Plan moved to the SPEC-0200 forms (EVD-018, EVD-019) | PASS | The policies, registry, validator and tests applied cleanly; docs/03.specs/README.md, the work residue ledger and the SPEC-0161 Task were taken from main and the package rows re-applied (W03-D62, EVD-103, EVD-104, the W03-H29 refresh); document-authoring.md takes 3.34.0 over main's 3.33.0; the Stage 03 README lists the package. The four strict validators, the staged lifecycle check, the ledger gate, quality.py and tests.test_policy_rule_ids pass; shared suites are deferred to the single W03 run (W03-D83). EVD-014 stays open until the three Task digests have reviewed baseline entries. | yes | none |
 | EVD-022 | [VAL-OPSRULE-004](../spec.md#criteria) | WORK-004 | Correction of the secret-scan statement of EVD-008 | `detect-secrets-hook` with the pre-commit `--exclude-lines` pattern over every file changed against origin/main, against a scratch copy of `HEAD:.secrets.baseline` after the baseline commits `3f92d649` and `9b15108d`; committed tree `afc97d65`, pinned validation venv, 2026-11-15 | PASS | Exit 0 with no finding and the copy unchanged: the Task digests at lines 70, 72 and 87 are baselined; no other file draws a finding. | yes | EVD-014 |
+| EVD-023 | [VAL-OPSRULE-004](../spec.md#criteria) | WORK-004 | Exact-index QA and commit hooks | Pre-commit hooks over the final indexes of `596d8d8c` (floor amendment) and `afc97d65` (adoptions) in the pinned validation environment: the workspace hook ran `scripts/qa.py staged` on each exact index, 2026-11-15 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | EVD-009 |
+| EVD-024 | [VAL-OPSRULE-004](../spec.md#criteria) | WORK-004 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-OPSRULE-001](../spec.md#criteria) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-OPSRULE-002](../spec.md#criteria) | pending | none | Implement WORK-002 and record PASS evidence | platform |
-| [VAL-OPSRULE-003](../spec.md#criteria) | pending | none | Implement WORK-003 and record PASS evidence | platform |
-| [VAL-OPSRULE-004](../spec.md#criteria) | pending | none | Implement WORK-004 and record PASS evidence | platform |
+| [VAL-OPSRULE-001](../spec.md#criteria) | accepted | EVD-005, EVD-010 | Accepted by the user on 2026-11-15 (direct answer "Accept (Recommended)" to the SPEC-0202 acceptance question naming commit `afc97d65`) | platform |
+| [VAL-OPSRULE-002](../spec.md#criteria) | accepted | EVD-006, EVD-011 | Accepted by the user on 2026-11-15 (direct answer "Accept (Recommended)" to the SPEC-0202 acceptance question naming commit `afc97d65`) | platform |
+| [VAL-OPSRULE-003](../spec.md#criteria) | accepted | EVD-007, EVD-012 | Accepted by the user on 2026-11-15 (direct answer "Accept (Recommended)" to the SPEC-0202 acceptance question naming commit `afc97d65`) | platform |
+| [VAL-OPSRULE-004](../spec.md#criteria) | accepted | EVD-008, EVD-013, EVD-015, EVD-016, EVD-017, EVD-021, EVD-022, EVD-023 | Accepted by the user on 2026-11-15 (direct answer "Accept (Recommended)" to the SPEC-0202 acceptance question naming commit `afc97d65`) | platform |
+
+### Frozen Package Disposition Decision
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The SPEC-0161 decision row W03-D62 and its evidence rows EVD-103 and EVD-104 cite this package by identifier only and stay valid after its retirement. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Approval and Safety Boundaries
 
@@ -112,4 +121,4 @@ This Task records Policy package 4 of handoff W03-H29 (W03-D42 to W03-D44, W03-D
 
 ## Verification Summary
 
-Spec and Plan drafted with the W03-D62 answers written in; no review, approval or implementation is recorded yet.
+Spec and Plan drafted with the W03-D62 answers written in; no review, approval or implementation is recorded yet. Implementation commit `afc97d65` passed exact-index QA in the hooks (EVD-023); the user accepted the package on 2026-11-15, and the approval of commit, push, PR and merge covers the package exit (EVD-024).
