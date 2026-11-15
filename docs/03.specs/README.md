@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.23.96"
+version: "0.23.97"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -67,7 +67,6 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ```text
 03.specs/
 ├── 0161-w00-v14-7-delta-intake/
-├── 0212-w03-q07-renumbering-preparation/
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
@@ -76,14 +75,12 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 
 현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, W11까지 잔여 소유자로 남고 work residue ledger가 비면 W11에서 종료한다.
 
-또 하나의 열린 package는 [SPEC-0212 W03 Q-07 Renumbering Preparation](./0212-w03-q07-renumbering-preparation/)이다. SPEC-0212는 현재 번호 공간을 유지한 채 Q-07 번호 재부여를 위한 조사, 전환 설계, 격리 리허설과 비재사용 확인만 기록하며, 실제 경로와 문서 ID는 바꾸지 않는다.
-
 [work-residue-ledger.json](./work-residue-ledger.json)은 열린 인계·충돌·채택·조사 잔여 항목을 포인터로만 담는 work residue ledger다. 실행 상태, 증거, 수용은 담지 않고 Task가 소유한다. 종결된 항목은 그 Task가 속한 package의 종료 commit까지 삭제한다.
 
 [AGENTS.md](./AGENTS.md)는 이 stage에 적용되는 AI 에이전트 지시다. [CLAUDE.md](./CLAUDE.md)는 Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다.
 
 완료된 package는 그 Requirement Package의 `Archived Lineage` 표가 요약한다.
-최근 것은 SPEC-0162부터 SPEC-0205까지, SPEC-0207, SPEC-0208, SPEC-0213, SPEC-0214, SPEC-0215, SPEC-0154부터 SPEC-0160까지와 SPEC-0153, SPEC-0152다. 이들의 요약은
+최근 것은 SPEC-0162부터 SPEC-0205까지, SPEC-0207, SPEC-0208, SPEC-0212, SPEC-0213, SPEC-0214, SPEC-0215, SPEC-0154부터 SPEC-0160까지와 SPEC-0153, SPEC-0152다. 이들의 요약은
 [REQ-0003의 Archived Lineage](../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage)에 있다.
 SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-slack.md#archived-lineage)에 있다.
 

@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "5.0.12"
+version: "5.0.13"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -466,6 +466,7 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0203 | completed spec | SPEC-0203 moved Tasks to the common Task form. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0203-w03-task-form/` |
 | SPEC-0204 | completed spec | Gave POL-0007 its 45 ONBOARD rule IDs and Rules table, adopted ONBOARD, and retired the policy rule adoption gate with the registry step to 17.0.0. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0204-w03-onboarding-policy-rule-ids/` |
 | SPEC-0205 | completed spec | Removed the H2 heading lists from every registry profile so that headings come from the forms, kept the retained ADR lists under ADR-0062, and stepped the registry to 18.0.0. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0205-w03-h2-list-removal/` |
+| SPEC-0212 | completed spec | Prepared the Q-07 renumbering without changing the number space: surveyed the number spaces, recorded the transition design and rehearsal, and added the Archived Lineage rows that keep every deleted identity from reuse. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0212-w03-q07-renumbering-preparation/` |
 | SPEC-0006 | deleted spec | Workspace Harness Gap Analysis Technical Specification. Deleted from the tree on 2026-09-16 at commit `38bec742`; recover it with `git show 38bec742^:docs/03.specs/0006-workspace-harness-gap-analysis/spec.md`. Its row was added under SPEC-0212 after the survey found its identity reserved by no lineage row. | `docs/03.specs/0006-workspace-harness-gap-analysis/` |
 | SPEC-0047 | deleted spec | Current Surface and Stash Reconciliation Technical Specification. Deleted from the tree on 2026-09-24 at commit `27c1045d`; recover it with `git show 27c1045d^:docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md`. Its row was added under SPEC-0212 after the survey found its identity reserved by no lineage row. | `docs/03.specs/0047-current-surface-and-stash-reconciliation/` |
 | SPEC-0048 | deleted spec | GitHub Routing and CI Evidence Technical Specification. Deleted from the tree on 2026-09-24 at commit `27c1045d`; recover it with `git show 27c1045d^:docs/03.specs/0048-github-routing-and-ci-evidence/spec.md`. Its row was added under SPEC-0212 after the survey found its identity reserved by no lineage row. | `docs/03.specs/0048-github-routing-and-ci-evidence/` |
@@ -949,5 +950,13 @@ This is local retained-ref recovery proof before disposition, not remote or host
 - `f8747586beeeb84c6a105659fdda7314afc073fb:docs/03.specs/0205-w03-h2-list-removal/plan.md` — blob/source OID `95e32a9ee14520a49e566b788576ba8121ff8bc5`; SHA-256 `3190a496172cf29e54a1746d01bea5d34a28681aba987cb09cb1c22af52da6a9` (20547 bytes).
 - `f8747586beeeb84c6a105659fdda7314afc073fb:docs/03.specs/0205-w03-h2-list-removal/spec.md` — blob/source OID `58e06e49621a8e31a3485c149bfdd52b30ab6bd2`; SHA-256 `bf66fd96dc9c60a19bffb1e04da8fe85e3eabfb2008fd0fec1cab109a4b72730` (30741 bytes).
 - `f8747586beeeb84c6a105659fdda7314afc073fb:docs/03.specs/0205-w03-h2-list-removal/tasks/tsk-0001-w03-h2-list-removal.md` — blob/source OID `f3d731efad549eb4df3984affaec795703e68df5`; SHA-256 `c9b9a3ae6617a87d4114e4b90a5eb9eb13ec04ba2cf32f36bb746acb59c85f13` (41952 bytes).
+
+This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
+
+**SPEC-0212 recovery proof.** The exact completed source is the Task freeze commit `f186bb19c8ef635fa4b84614e4b75a53cd4d2cdc`, reachable from local `refs/heads/claude/w03-q07-renumbering-preparation` (`git merge-base --is-ancestor` rc 0) and, after its merge, from `main`. The user authorized this exit, and no hold was identified. Before deleting any file, QA observed HEAD `f186bb19` with a clean index and worktree; for every exact `commit:path` it observed `git cat-file -t` type blob, the same OID from `git hash-object --no-filters` on the current file, and a byte-equal comparison of the `git show` restoration, read through a pipe, with the current file. No temporary file was written, and HEAD, index and worktree were unchanged afterwards.
+
+- `f186bb19c8ef635fa4b84614e4b75a53cd4d2cdc:docs/03.specs/0212-w03-q07-renumbering-preparation/plan.md` — blob/source OID `3abb79ee992abdf167a7b62e5a837afea63dce1d`; SHA-256 `88fd3cb2dfe22c78c8b171b7166783dfa0e230fe9a92f380d01b4365c5227b43` (11867 bytes).
+- `f186bb19c8ef635fa4b84614e4b75a53cd4d2cdc:docs/03.specs/0212-w03-q07-renumbering-preparation/spec.md` — blob/source OID `e42289201a14f1e28b462fd85f818dafe2261811`; SHA-256 `0f620689ab73b669c3e6d91d6822068b3473ccefa7015df34f96763defdb5e01` (30063 bytes).
+- `f186bb19c8ef635fa4b84614e4b75a53cd4d2cdc:docs/03.specs/0212-w03-q07-renumbering-preparation/tasks/tsk-0001-w03-q07-renumbering-preparation.md` — blob/source OID `20b245a480b35fd35427d7c88540ff0ee5cc2eb3`; SHA-256 `3f016cd52e7228f543ee8cd8751f30225f13d0d2fad2bbcfde46afcd4b08b2af` (38016 bytes).
 
 This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
