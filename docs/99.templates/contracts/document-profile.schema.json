@@ -20,7 +20,7 @@
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
     "schema_version": {
-      "const": "16.0.0"
+      "const": "17.0.0"
     },
     "shared_contract": {
       "description": "Identifies reviewed common input and the local adapter; structural validity does not authenticate approval or adoption.",
@@ -1141,8 +1141,7 @@
             "additionalProperties": false,
             "required": [
               "path",
-              "code",
-              "state"
+              "code"
             ],
             "properties": {
               "path": {
@@ -1152,12 +1151,6 @@
               "code": {
                 "type": "string",
                 "pattern": "\\S"
-              },
-              "state": {
-                "enum": [
-                  "pending",
-                  "adopted"
-                ]
               }
             }
           }

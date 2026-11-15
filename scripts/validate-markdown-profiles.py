@@ -1090,9 +1090,9 @@ def _policy_rule_diagnostics(
 ) -> list[Diagnostic]:
     """SPEC-0194: the policy rule ID rules over one authored policy body.
 
-    A pending record applies the adoption gate alone; an adopted one applies the
-    table, ID, inline-token and coverage rules; a document with no record fails
-    POLICY-RULE-CODE when it states normative rules or carries a Rules table.
+    A policy with a record applies the table, ID, inline-token and coverage
+    rules; a document with no record fails POLICY-RULE-CODE when it states
+    normative rules or carries a Rules table.
     """
 
     ids = profile.policy_rule_ids
@@ -1127,17 +1127,6 @@ def _policy_rule_diagnostics(
                 )
             ]
         return []
-    if record.state == "pending":
-        if carried or scan.tokens:
-            return [
-                found(
-                    "POLICY-RULE-ADOPTION",
-                    "no Rules table and no definition token while the record is pending",
-                    f"{carried} Rules tables and {len(scan.tokens)} definition tokens",
-                )
-            ]
-        return []
-
     found_all: list[Diagnostic] = []
 
     def add(rule: str, expected: str, actual: str) -> None:

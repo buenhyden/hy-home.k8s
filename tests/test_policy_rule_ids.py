@@ -77,18 +77,14 @@ def load_rules(raw: dict) -> set[str]:
     return set()
 
 
-def policy_profile(profile_id: str, path: PurePosixPath, state: str | None, code="SYN"):
-    """The loaded profile with one synthetic record, or none when state is None."""
+def policy_profile(profile_id: str, path: PurePosixPath, recorded: bool, code="SYN"):
+    """The loaded profile with one synthetic record, or none when not recorded."""
 
     profile = {p.profile_id: p for p in CONTRACTS.load_registry(ROOT).profiles}[
         profile_id
     ]
     ids = profile.policy_rule_ids
-    codes = (
-        ()
-        if state is None
-        else (CONTRACTS.PolicyRuleCode(path.as_posix(), code, state),)
-    )
+    codes = (CONTRACTS.PolicyRuleCode(path.as_posix(), code),) if recorded else ()
     return dataclasses.replace(
         profile, policy_rule_ids=dataclasses.replace(ids, codes=codes)
     )
@@ -123,10 +119,10 @@ LANGUAGES = {
 class Fixture:
     """One synthetic policy for a language; runs the document rules over a body."""
 
-    def __init__(self, language: str, state: str | None = "adopted", code="SYN"):
+    def __init__(self, language: str, recorded: bool = True, code="SYN"):
         self.text = LANGUAGES[language]
         self.path = self.text["path"]
-        self.profile = policy_profile(self.text["profile"], self.path, state, code)
+        self.profile = policy_profile(self.text["profile"], self.path, recorded, code)
 
     def item(self, number: int, text: str, token: bool = True) -> str:
         lead = f"`SYN-R{number:03d}` " if token else ""
@@ -179,10 +175,10 @@ class Fixture:
 
 
 class EachLanguage(unittest.TestCase):
-    def each(self, check, state: str | None = "adopted") -> None:
+    def each(self, check, recorded: bool = True) -> None:
         for language in LANGUAGES:
             with self.subTest(language=language):
-                check(Fixture(language, state))
+                check(Fixture(language, recorded))
 
 
 class RuleCodeTests(EachLanguage):
@@ -194,7 +190,7 @@ class RuleCodeTests(EachLanguage):
             lambda f: self.assertEqual(
                 f.rules(f.item(1, f.text["one"], token=False)), ["POLICY-RULE-CODE"]
             ),
-            state=None,
+            recorded=False,
         )
 
     def test_a_policy_with_a_table_and_no_record_fails(self) -> None:
@@ -202,15 +198,17 @@ class RuleCodeTests(EachLanguage):
             lambda f: self.assertEqual(
                 f.rules(f.table(f.row(1))), ["POLICY-RULE-CODE"]
             ),
-            state=None,
+            recorded=False,
         )
 
     def test_a_policy_that_states_no_rule_needs_no_record(self) -> None:
-        self.each(lambda f: self.assertEqual(f.rules(f.text["prose"]), []), state=None)
+        self.each(
+            lambda f: self.assertEqual(f.rules(f.text["prose"]), []), recorded=False
+        )
 
     def test_a_policy_without_a_requirements_section_is_not_read(self) -> None:
         body = "# Policy\n\n## Rules\n\n### Enforcement\n\nChecks run in CI.\n"
-        self.each(lambda f: self.assertEqual(f.found(body), []), state=None)
+        self.each(lambda f: self.assertEqual(f.found(body), []), recorded=False)
 
     def test_a_profile_without_the_section_is_not_read(self) -> None:
         f = Fixture("en")
@@ -559,31 +557,38 @@ class CoverageFloorTests(EachLanguage):
         )
 
 
-class AdoptionGateTests(EachLanguage):
-    def test_a_pending_policy_with_neither_table_nor_token_passes(self) -> None:
-        def check(f: Fixture) -> None:
-            plain = f.item(1, f.text["one"], token=False)
-            self.assertEqual(f.rules(plain + "\n" + f.text["prose"]), [])
-            self.assertEqual(f.rules(f.text["prose"]), [])
+class GateRetiredTests(EachLanguage):
+    """SPEC-0204: no adoption state stands between a policy and the contract."""
 
-        self.each(check, state="pending")
+    def test_a_record_with_a_state_key_is_refused(self) -> None:
+        for state in ("pending", "adopted"):
+            with self.subTest(state=state):
+                raw = raw_registry()
+                raw["policy_rule_ids"]["codes"][0]["state"] = state
+                self.assertIn("REGISTRY_SCHEMA", load_rules(raw))
 
-    def test_a_pending_policy_with_a_table_or_a_token_fails(self) -> None:
-        def check(f: Fixture) -> None:
-            plain = f.item(1, f.text["one"], token=False)
-            gate = ["POLICY-RULE-ADOPTION"]
-            self.assertEqual(f.rules(plain + "\n\n" + f.table(f.row(1))), gate)
-            self.assertEqual(f.rules(f.table()), gate)
-            self.assertEqual(f.rules(f.item(1, f.text["one"])), gate)
-            self.assertEqual(
-                f.rules(f"#### Group\n\n`SYN-R001`\n\n{f.text['one']}"), gate
+    def test_rules_with_a_record_and_no_rules_table_are_refused(self) -> None:
+        self.each(
+            lambda f: self.assertIn(
+                "POLICY-RULE-TABLE", f.rules(f.item(1, f.text["one"]))
             )
+        )
 
-        self.each(check, state="pending")
+    def test_a_header_only_rules_table_is_refused_when_rules_are_stated(self) -> None:
+        self.each(
+            lambda f: self.assertIn(
+                "POLICY-RULE-TABLE",
+                f.rules(f.item(1, f.text["one"]) + "\n\n" + f.table()),
+            )
+        )
 
-    def test_a_pending_policy_applies_no_other_rule(self) -> None:
-        row = "| Item | Meaning |\n| --- | --- |\n| plain | x |"
-        self.each(lambda f: self.assertEqual(f.rules(row), []), state="pending")
+    def test_a_policy_that_states_no_normative_rule_needs_no_table_or_record(
+        self,
+    ) -> None:
+        self.each(lambda f: self.assertEqual(f.rules(f.text["prose"]), []))
+        self.each(
+            lambda f: self.assertEqual(f.rules(f.text["prose"]), []), recorded=False
+        )
 
 
 class RegistryRecordTests(unittest.TestCase):
@@ -600,8 +605,7 @@ class RegistryRecordTests(unittest.TestCase):
         self.assertEqual({i["path"]: i["code"] for i in section["codes"]}, CODES)
         self.assertEqual(len({i["code"] for i in section["codes"]}), 15)
         for item in section["codes"]:
-            self.assertEqual(set(item), {"path", "code", "state"})
-            self.assertIn(item["state"], {"pending", "adopted"})
+            self.assertEqual(set(item), {"path", "code"})
             self.assertRegex(item["code"], section["code_pattern"])
             self.assertNotIn(item["code"], section["reserved_codes"])
         self.assertEqual(record_rules(raw), set())
@@ -673,7 +677,7 @@ class RegistryRecordTests(unittest.TestCase):
             "minimum zero": lambda s: s["rules_table"].update(minimum_rows=0),
             "no minimum": lambda s: s["rules_table"].pop("minimum_rows"),
             "no table": lambda s: s.pop("rules_table"),
-            "unknown state": lambda s: s["codes"][0].update(state="draft"),
+            "a state key": lambda s: s["codes"][0].update(state="adopted"),
             "extra record field": lambda s: s["codes"][0].update(extra="x"),
             "extra section field": lambda s: s.update(extra="x"),
         }.items():
@@ -759,7 +763,7 @@ class RulesTableDefinitionTests(unittest.TestCase):
     def test_a_table_headed_by_the_former_key_is_no_longer_the_rules_table(
         self,
     ) -> None:
-        f = Fixture("en", "adopted")
+        f = Fixture("en")
         former = f.table("| a | b | c |", header=("Rule", "Condition", "Evidence"))
         scan = MARKDOWN.policy_rule_units(f.body(former))
         self.assertEqual((scan.rules_tables, len(scan.rows)), ((), 1))
@@ -771,7 +775,7 @@ class RulesTableDefinitionTests(unittest.TestCase):
 
 
 class RealPolicyTests(unittest.TestCase):
-    """The fifteen real policies draw no rule, pending or adopted."""
+    """The fifteen real policies pass the document rules without an adoption state."""
 
     def test_the_reader_copes_with_every_registered_policy(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
@@ -781,15 +785,9 @@ class RealPolicyTests(unittest.TestCase):
             text = (ROOT / path).read_text("utf-8")
             with self.subTest(path=record.path):
                 self.assertIsNotNone(profile.policy_rule_ids)
-                if record.state == "pending":
-                    self.assertEqual(
-                        MARKDOWN._policy_rule_diagnostics(path, profile, text), []
-                    )
-                    self.assertEqual(MARKDOWN.policy_rule_units(text).tokens, ())
-                else:
-                    self.assertEqual(
-                        MARKDOWN._policy_rule_diagnostics(path, profile, text), []
-                    )
+                self.assertEqual(
+                    MARKDOWN._policy_rule_diagnostics(path, profile, text), []
+                )
 
     def test_the_control_registers_are_not_rule_units(self) -> None:
         counts = [
