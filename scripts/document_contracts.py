@@ -998,6 +998,24 @@ class SharedContract:
     consumer_version: str | None = None
 
 
+@dataclass(frozen=True)
+class CommonFormsRecord:
+    """SPEC-0209: the reviewed-input identity of the common form edition.
+
+    It reuses the candidate fields of the shared-contract record and carries no
+    approval fact; it identifies reviewed bytes and proves no approval.
+    """
+
+    contract_id: str
+    version: str
+    stage: Literal["candidate", "approved", "adopted"] | None = None
+    owner: str | None = None
+    source: str | None = None
+    source_revision: str | None = None
+    content_digest: str | None = None
+    approval_ref: str | None = None
+
+
 def extension_name(extension: Mapping[str, Any] | SharedExtension) -> str:
     """The one reader of a shared-contract extension's name."""
 
@@ -1135,6 +1153,8 @@ class Registry:
     document_language: DocumentLanguage | None = None
     shared_contract: SharedContract | None = None
     common_forms: tuple[CommonForm, ...] = ()
+    # A comparison-base registry from before SPEC-0209 has no such record.
+    common_forms_record: CommonFormsRecord | None = None
     # A comparison-base registry from before SPEC-0181 has neither section.
     frontmatter_keys: tuple[FrontmatterKey, ...] = ()
     frontmatter_dialect: FrontmatterDialect | None = None
@@ -3794,6 +3814,16 @@ def _shared_contract_from_mapping(raw: Mapping[str, Any]) -> SharedContract:
     )
 
 
+def _common_forms_record_from_mapping(
+    raw: Mapping[str, Any] | None,
+) -> CommonFormsRecord | None:
+    if not raw:
+        return None
+    return CommonFormsRecord(
+        **{key: value for key, value in raw.items() if key != "forms"}
+    )
+
+
 def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
     # SPEC-0205: a registry below REGISTRY_MAJOR is read by the history reading, which
     # builds the H2 lists it carried; the current MAJOR is read with none.
@@ -3877,6 +3907,7 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         readme_navigation=_readme_navigation_from_mapping(raw.get("readme_navigation")),
         document_language=_document_language_from_mapping(raw.get("document_language")),
         common_forms=forms,
+        common_forms_record=_common_forms_record_from_mapping(raw.get("common_forms")),
         frontmatter_keys=tuple(
             _frontmatter_key_from_mapping(item)
             for item in raw.get("frontmatter_keys", ())

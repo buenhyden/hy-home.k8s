@@ -413,17 +413,6 @@
       }
     },
     {
-      "id": "W03-H19",
-      "kind": "adoption",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "With the W03 closing",
-      "source": {
-        "path": "docs/99.templates/registry.json",
-        "registry_key": "common_forms"
-      }
-    },
-    {
       "id": "W03-H20",
       "kind": "handoff",
       "state": "open",
@@ -434,31 +423,11 @@
       }
     },
     {
-      "id": "W03-H21",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "With the W03 closing",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W03-H23",
       "kind": "handoff",
       "state": "open",
       "owner": "W10",
       "resume_condition": "When W10 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W03-H31",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "With the W03 closing (W03-H20)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
