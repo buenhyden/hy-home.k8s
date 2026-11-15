@@ -1061,8 +1061,18 @@ if "## 8. Harness Impact" not in pr_template_text:
 canonical_task_form_text = read_text(
     root / "docs/99.templates/templates/specs/task.template.md"
 )
+# SPEC-0203 (W03-D61): the eight approval and safety fields stand under the form
+# section Inputs and Authority, the H3 that replaced the old H2.
+_task_authority_heading = "### Inputs and Authority"
+_task_authority_start = canonical_task_form_text.find(_task_authority_heading)
+_task_authority_text = (
+    ""
+    if _task_authority_start < 0
+    else canonical_task_form_text[_task_authority_start:].split("\n## ", 1)[0]
+)
+if not _task_authority_text:
+    fail(f"canonical Task form missing the section: {_task_authority_heading}")
 for phrase in [
-    "## Approval and Safety Boundaries",
     "**Allowed Paths**:",
     "**Forbidden Paths**:",
     "**Approval Required**:",
@@ -1072,8 +1082,11 @@ for phrase in [
     "**Rollback Plan**:",
     "**Evidence Location**:",
 ]:
-    if phrase not in canonical_task_form_text:
-        fail(f"canonical Task form missing approval/safety contract field: {phrase}")
+    if phrase not in _task_authority_text:
+        fail(
+            "canonical Task form missing approval/safety contract field under "
+            f"{_task_authority_heading}: {phrase}"
+        )
 
 pr_branch_prefixes = extract_pr_template_prefixes(pr_template_text)
 if pr_branch_prefixes != branch_prefixes:

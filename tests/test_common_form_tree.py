@@ -1133,13 +1133,114 @@ PLAN_FORM_TABLE_KEYS = {
         "Promotion ID",
     ),
 }
-# The twenty-six roles that carry a form; every other profile keeps its H2 lists.
+SDLC_TASK_FORM = ("sdlc/task", "common/template-sdlc-task")
+SDLC_TASK_FORM_TREE = (
+    ("Scope", ("Objective and Parent", "Inputs and Authority")),
+    ("Execution Log", ("Work Performed", "Blockers and Decisions")),
+    ("Verification Evidence", ("Results", "Resolution Links")),
+    ("Acceptance Decision", ("Criterion Decisions", "Remaining Conditions")),
+    ("Handoff", ("Promotion Receipt", "Next Owner")),
+)
+SDLC_TASK_FORM_EXTENSIONS = [
+    {
+        "id": "task-lifecycle-traceability",
+        "kind": "local_h3",
+        "condition": (
+            "a Task in a status the body contract enforces (draft, ready, "
+            "in-progress, blocked) maps each work item to its upstream Spec "
+            "criterion, its owner, its status, its result and its evidence"
+        ),
+        "owner": "platform",
+        "verification": "the body-contract check",
+        "review": "when the Task form version changes",
+        "removal": "when Task work items have another registered owner",
+        "parent_id": "task-execution-log",
+        "title": "Lifecycle Traceability",
+    },
+    {
+        "id": "task-residue-handoff",
+        "kind": "local_h3",
+        "condition": (
+            "a Task that records residue (an open handoff, conflict, adoption or "
+            "survey item) keeps it in one table of this name, after the evidence "
+            "table, with a matching entry in the work residue ledger"
+        ),
+        "owner": "platform",
+        "verification": "the work residue ledger check of scripts/validate-work-residue-ledger.py",
+        "review": "when the work residue ledger design changes or the Task form version changes",
+        "removal": "when the work residue ledger has another registered host for residue",
+        "parent_id": "task-verification-evidence",
+        "title": "Residue Handoff",
+    },
+    {
+        "id": "task-evidence-local-columns",
+        "kind": "local_columns",
+        "condition": (
+            "a Task whose evidence the acceptance and resolution rules of this "
+            "repository read: each row names its work unit, where the evidence can "
+            "be read again, whether it is required and which earlier row it resolves"
+        ),
+        "owner": "platform",
+        "verification": (
+            "TASK-EVIDENCE-WORK, TASK-EVIDENCE-LOCATION, TASK-EVIDENCE-REQUIRED, "
+            "TASK-EVIDENCE-RESOLUTION and TASK-EVIDENCE-UNRESOLVED of "
+            "scripts/document_contracts.py"
+        ),
+        "review": "when the Task form or the common Task table changes",
+        "removal": (
+            "when the common contract names these columns or the rules that read "
+            "them are retired"
+        ),
+        "table": "Results",
+        "columns": ["Work Unit", "Location", "Required", "Resolves"],
+    },
+]
+SDLC_TASK_FORM_TABLE_KEYS = {
+    "Lifecycle Traceability": (
+        "task-lifecycle-traceability",
+        (
+            "ID",
+            "Upstream criterion",
+            "Work item",
+            "Owner",
+            "Status",
+            "Result",
+            "Evidence",
+        ),
+        1,
+        "ID",
+    ),
+    "Results": (
+        "task-verification-evidence-results",
+        (
+            "Evidence ID",
+            "Consumer",
+            "Work Unit",
+            "Command",
+            "Input",
+            "Result",
+            "Location",
+            "Required",
+            "Resolves",
+        ),
+        1,
+        "Evidence ID",
+    ),
+    "Criterion Decisions": (
+        "task-acceptance-decision-criterion-decisions",
+        ("Criterion", "Acceptance", "Evidence", "Disposition", "Current owner"),
+        1,
+        "Criterion",
+    ),
+}
+# The twenty-seven roles that carry a form; every other profile keeps its H2 lists.
 FORM_PROFILES = (
     REQUIREMENT
     + ARCHITECTURE
     + ADR
     + SPEC_FORM
     + PLAN_FORM
+    + SDLC_TASK_FORM
     + GUIDE
     + RUNBOOK
     + INCIDENT
@@ -1170,6 +1271,7 @@ FORM_TEMPLATES = (
     ADR[1],
     SPEC_FORM[1],
     PLAN_FORM[1],
+    SDLC_TASK_FORM[1],
     GUIDE[1],
     RUNBOOK[1],
     INCIDENT[1],
@@ -1200,7 +1302,7 @@ FORM_TEMPLATES = (
     REFERENCE_FORM[3],
     REFERENCE_FORM[5],
 )
-TWENTY_SIX_FORMS = [
+TWENTY_SEVEN_FORMS = [
     "guide",
     "runbook",
     "incident",
@@ -1227,6 +1329,7 @@ TWENTY_SIX_FORMS = [
     "adr",
     "spec",
     "plan",
+    "task",
 ]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
@@ -1501,7 +1604,7 @@ def rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twenty_six_forms(
+    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twenty_seven_forms(
         self,
     ) -> None:
         raw = load_raw()
@@ -1533,6 +1636,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ("adr", "ADR"),
                 ("spec", "Spec"),
                 ("plan", "Plan"),
+                ("task", "Task"),
             ],
         )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
@@ -1686,6 +1790,14 @@ class RepositoryRegistryTests(unittest.TestCase):
                 PLAN_FORM,
                 "Implementation Strategy",
             ),
+            (
+                "task",
+                SDLC_TASK_FORM_TREE,
+                SDLC_TASK_FORM_EXTENSIONS,
+                SDLC_TASK_FORM_TABLE_KEYS,
+                SDLC_TASK_FORM,
+                "Execution Log",
+            ),
         ):
             loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
             self.assertEqual(loaded["h1"], "{{document_title}}")
@@ -1828,13 +1940,13 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_twenty_six_forms(
+    def test_repository_registry_loads_with_exactly_the_twenty_seven_forms(
         self,
     ) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_SIX_FORMS,
+            TWENTY_SEVEN_FORMS,
         )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
@@ -1863,6 +1975,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             "adr": ["Alternatives", "Lifecycle Traceability"],
             "spec": ["Criteria", "Lifecycle Traceability"],
             "plan": ["Work Breakdown", "Promotion"],
+            "task": ["Lifecycle Traceability", "Results", "Criterion Decisions"],
             **{
                 form_id: [name for name, *_ in tables]
                 for form_id, _, _, _, tables, _ in LOCAL_FORMS
@@ -1892,6 +2005,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("adr", ADR),
                             ("spec", SPEC_FORM),
                             ("plan", PLAN_FORM),
+                            ("task", SDLC_TASK_FORM),
                             *(
                                 (form_id, profiles)
                                 for form_id, _, profiles, _, _, _ in LOCAL_FORMS
@@ -1949,7 +2063,7 @@ class RepositoryRegistryTests(unittest.TestCase):
         self.assertEqual(len(form_id), 27)
         self.assertEqual(
             [item.form_id for item in CONTRACTS.load_registry(ROOT).common_forms],
-            TWENTY_SIX_FORMS,
+            TWENTY_SEVEN_FORMS,
         )
         self.assertEqual(
             schema["$defs"]["section"]["properties"]["level"]["enum"], [2, 3]
@@ -1970,7 +2084,7 @@ class FormRegistryTests(unittest.TestCase):
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_SIX_FORMS,
+            TWENTY_SEVEN_FORMS,
         )
         loaded = registry.common_forms[0]
         self.assertEqual(
@@ -4845,8 +4959,8 @@ class GovernanceRoleFormTests(unittest.TestCase):
     def test_the_forms_hold_twenty_sections_and_no_extension(self) -> None:
         forms = {f["form_id"]: f for f in self.raw["common_forms"]["forms"]}
         stage = forms["stage-readme"]
-        self.assertEqual(len(forms), 26)
-        self.assertEqual(list(forms)[-8:-6], ["governance-document", "governance-role"])
+        self.assertEqual(len(forms), 27)
+        self.assertEqual(list(forms)[-9:-7], ["governance-document", "governance-role"])
         counts = {}
         for form_id, title, _, tree, _, link in GOVERNANCE_FORMS:
             with self.subTest(form=form_id):
@@ -6648,23 +6762,22 @@ class TemplateRecordTests(unittest.TestCase):
                     profile["template_definition"]["contract_version"], expected
                 )
 
-    def test_the_templates_without_a_definition_are_the_sdlc_templates(self) -> None:
+    def test_every_template_carries_a_definition_since_the_task_form(self) -> None:
+        # SPEC-0203 gave the last SDLC template (the Task) its definition, so no
+        # template is left without one and the record is derived for each.
         without = [
             item
             for item in self.raw["profiles"]
             if item["mode"] == "template" and "template_definition" not in item
         ]
-        self.assertTrue(without)
-        for profile in without:
-            with self.subTest(template=profile["id"]):
-                self.assertIn(profile["document_role"], SDLC_ROLES)
-                with self.assertRaises(ValueError):
-                    CONTRACTS.template_definition_record(self.raw, profile["id"])
+        self.assertEqual(without, [])
         for profile in self.templates:
-            self.assertNotIn(
-                profile["document_role"],
-                SDLC_ROLES - {"requirement", "architecture", "adr", "spec", "plan"},
-            )
+            with self.subTest(template=profile["id"]):
+                self.assertIsInstance(
+                    CONTRACTS.template_definition_record(self.raw, profile["id"]),
+                    dict,
+                )
+        self.assertIn(SDLC_TASK_FORM[1], {item["id"] for item in self.templates})
 
     def test_the_function_refuses_a_profile_that_is_not_a_template(self) -> None:
         for profile_id in ("operation/guide", "no/such-profile"):
@@ -7008,7 +7121,9 @@ class SpecPlanFormTests(unittest.TestCase):
                     [(e.extension_id, e.parent_id, e.title) for e in form.extensions],
                     [(e["id"], e["parent_id"], e["title"]) for e in extensions],
                 )
-        self.assertEqual(self.registry.schema_version.split(".")[0], "15")
+        self.assertEqual(
+            self.registry.schema_version.split(".")[0], str(AUTHORITY.REGISTRY_MAJOR)
+        )
 
     def test_the_four_profiles_carry_no_h2_list_and_the_moved_body_contracts(
         self,
@@ -7216,11 +7331,11 @@ class FormlessRoleTableTests(unittest.TestCase):
 
 
 class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
-    def test_only_the_twenty_six_form_profiles_use_the_tree(self) -> None:
+    def test_only_the_twenty_seven_form_profiles_use_the_tree(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         self.assertEqual(
             [item.form_id for item in registry.common_forms],
-            TWENTY_SIX_FORMS,
+            TWENTY_SEVEN_FORMS,
         )
         self.assertEqual(
             sorted(p.profile_id for p in registry.profiles if p.form is not None),
@@ -7230,6 +7345,154 @@ class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
             sorted(p.profile_id for p in registry.profiles if p.template_definition),
             sorted(FORM_TEMPLATES + LOCAL_TEMPLATES),
         )
+
+
+TASK_PATH = PurePosixPath("docs/03.specs/0900-form-fixture/tasks/tsk-0001-fixture.md")
+
+
+def task_form_body(*, evidence_header: tuple[str, ...] | None = None) -> str:
+    keys = SDLC_TASK_FORM_TABLE_KEYS
+    blocks = ["# Task title"]
+    for h2, children in SDLC_TASK_FORM_TREE:
+        blocks.append(f"## {h2}")
+        for h3 in children:
+            text = f"The {h3} of the execution."
+            if h3 == "Results":
+                text += "\n\n" + form_table(evidence_header or keys["Results"][1])
+            if h3 == "Criterion Decisions":
+                text += "\n\n" + form_table(keys["Criterion Decisions"][1])
+            blocks.append(f"### {h3}\n\n{text}")
+            if h3 == "Blockers and Decisions":
+                blocks.append(
+                    "### Lifecycle Traceability\n\n"
+                    + form_table(keys["Lifecycle Traceability"][1])
+                )
+    return md(*blocks)
+
+
+class TaskFormTests(unittest.TestCase):
+    """SPEC-0203 VAL-TASKFORM-001: the Task form, its extensions and its tables."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.raw = load_raw()
+        cls.registry = CONTRACTS.load_registry(ROOT)
+        cls.profiles = {p.profile_id: p for p in cls.registry.profiles}
+
+    def test_the_form_has_the_common_sections_and_three_registered_extensions(
+        self,
+    ) -> None:
+        form = next(f for f in self.registry.common_forms if f.form_id == "task")
+        self.assertEqual(
+            [(s.title, tuple(c.title for c in s.children)) for s in form.sections],
+            list(SDLC_TASK_FORM_TREE),
+        )
+        every = [n for s in form.sections for n in (s, *s.children)]
+        self.assertEqual([n.title for n in every if n.requiredness != "required"], [])
+        self.assertFalse(any(n.link_only for n in every))
+        raw_form = next(
+            f for f in self.raw["common_forms"]["forms"] if f["form_id"] == "task"
+        )
+        self.assertEqual(raw_form["extensions"], SDLC_TASK_FORM_EXTENSIONS)
+        columns = next(e for e in form.extensions if e.kind == "local_columns")
+        self.assertEqual(
+            (columns.table, columns.columns),
+            ("Results", ("Work Unit", "Location", "Required", "Resolves")),
+        )
+
+    def test_the_two_profiles_carry_no_h2_list_and_the_moved_contract_and_binding(
+        self,
+    ) -> None:
+        for profile_id in SDLC_TASK_FORM:
+            with self.subTest(profile=profile_id):
+                raw = next(p for p in self.raw["profiles"] if p["id"] == profile_id)
+                self.assertEqual(
+                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
+                )
+                contract = raw["relationships"]["body_contract"]
+                self.assertEqual(contract["section"], "Execution Log")
+                self.assertEqual(contract["table_heading"], "Lifecycle Traceability")
+                binding = contract["task_execution"]
+                self.assertEqual(binding["evidence_section"], "Verification Evidence")
+                self.assertEqual(
+                    binding["criterion_acceptance_section"], "Acceptance Decision"
+                )
+                self.assertEqual(
+                    binding["evidence_columns"],
+                    list(SDLC_TASK_FORM_TABLE_KEYS["Results"][1]),
+                )
+        self.assertEqual(
+            self.raw["work_residue"]["task_table"]["section"], "Verification Evidence"
+        )
+
+    def test_the_tables_and_the_definition_are_recorded_on_the_twin(self) -> None:
+        twin, source = (self.profiles[i] for i in reversed(SDLC_TASK_FORM))
+        self.assertEqual(source.tables, twin.tables)
+        self.assertEqual(
+            {
+                t.name: (
+                    t.section,
+                    tuple(c.key for c in t.columns),
+                    t.minimum_rows,
+                    t.row_identity,
+                )
+                for t in twin.tables
+            },
+            SDLC_TASK_FORM_TABLE_KEYS,
+        )
+        self.assertEqual(
+            twin.template_definition["contract_version"], "COMMON-DOC-FORM-1/1.0.0"
+        )
+        self.assertEqual(rules_of(self.raw), set())
+        record = CONTRACTS.template_definition_record(self.raw, SDLC_TASK_FORM[1])
+        self.assertEqual(record["contract_version"], "COMMON-DOC-FORM-1/1.0.0")
+        for path in twin.template_definition["consumer_paths"]:
+            self.assertTrue((ROOT / path).is_file(), path)
+
+    def test_a_complete_task_passes_the_tree_and_a_previous_h2_fails(self) -> None:
+        def tree(text: str) -> set[str]:
+            return {
+                item.rule_id
+                for item in MARKDOWN._body_diagnostics(
+                    TASK_PATH, self.profiles["sdlc/task"], text, "active"
+                )
+            }
+
+        self.assertEqual(
+            {r for r in tree(task_form_body()) if r.startswith("BODY-HEADING")}, set()
+        )
+        old = task_form_body().replace("## Verification Evidence", "## Task Evidence")
+        self.assertLessEqual(
+            {"BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"}, tree(old)
+        )
+
+    def test_a_column_extension_without_its_table_or_columns_is_refused(self) -> None:
+        for drop in ("table", "columns"):
+            with self.subTest(drop=drop):
+                raw = copy.deepcopy(self.raw)
+                form = next(
+                    f for f in raw["common_forms"]["forms"] if f["form_id"] == "task"
+                )
+                extension = next(
+                    e for e in form["extensions"] if e["kind"] == "local_columns"
+                )
+                del extension[drop]
+                self.assertTrue(rules_of(raw))
+        raw = copy.deepcopy(self.raw)
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "task")
+        next(e for e in form["extensions"] if e["id"] == "task-lifecycle-traceability")[
+            "columns"
+        ] = ["Extra"]
+        self.assertTrue(rules_of(raw))
+
+    def test_the_version_before_the_column_extension_kind_refuses_it(self) -> None:
+        schema = json.loads(
+            (
+                ROOT / "docs/99.templates/contracts/document-profile.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+        kinds = schema["$defs"]["form_extension"]["properties"]["kind"]["enum"]
+        self.assertEqual(kinds, ["local_h3", "retained_form", "local_columns"])
 
 
 if __name__ == "__main__":

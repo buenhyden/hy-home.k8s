@@ -1,10 +1,10 @@
 ---
 title: "Software Development Lifecycle"
-version: "3.7.0"
+version: "3.8.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-15"
 ---
 
 # Software Development Lifecycle
@@ -109,8 +109,8 @@ Provider and agent-roster authority is excluded and stated under Authority; if a
    approval establishes current authority, not an implementation result.
    Implement through Task records in that package. Changed executable behavior
    uses a focused failing case followed by a passing case; narrative changes
-   use selected document checks. The Task Table owns execution state and
-   result, Task Evidence owns factual checks, and one Criterion Acceptance
+   use selected document checks. The Task's Lifecycle Traceability table owns execution state and
+   result, its Results table owns factual checks, and one Criterion Decisions
    table owns each criterion verdict.
 4. `SDLC-R004` Promote stable operator controls to Guide, Policy, or Runbook owners and
    preserve incident learning in Incident and Postmortem records.

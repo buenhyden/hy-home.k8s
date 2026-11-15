@@ -15,6 +15,7 @@ import re
 import sys
 from collections.abc import Iterator, Sequence
 from pathlib import Path, PurePosixPath
+from types import SimpleNamespace
 from typing import Any, NamedTuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -61,7 +62,7 @@ class Table(NamedTuple):
 
 class TaskDoc(NamedTuple):
     tables: list[Table]
-    evidence: dict[str, str]
+    evidence: dict[str, str] | None
     live: Table | None
     rows: list[dict[str, str]]
 
@@ -138,12 +139,40 @@ def _is_residue_table(table: Table) -> bool:
     )
 
 
-def _task_doc(links: Any, text: str, block: dict[str, Any]) -> TaskDoc:
+def _evidence_binding(registry: dict[str, Any]) -> SimpleNamespace | None:
+    """The evidence binding of the sdlc/task profile of the registry it loads."""
+
+    for profile in registry.get("profiles") or []:
+        if isinstance(profile, dict) and profile.get("id") == "sdlc/task":
+            body = (profile.get("relationships") or {}).get("body_contract") or {}
+            binding = body.get("task_execution") or {}
+            section, columns = (
+                binding.get("evidence_section"),
+                binding.get("evidence_columns"),
+            )
+            if isinstance(section, str) and _texts(columns):
+                return SimpleNamespace(
+                    evidence_section=section, evidence_columns=tuple(columns)
+                )
+    return None
+
+
+def _evidence_results(
+    links: Any, text: str, binding: SimpleNamespace
+) -> dict[str, str] | None:
+    """Evidence ID to Result for one Task, or None when a table or column is missing."""
+
+    rows = links.task_base_evidence_rows(text, binding)
+    if rows is None or any("Evidence ID" not in r or "Result" not in r for r in rows):
+        return None
+    return {row["Evidence ID"].strip(): row["Result"].strip() for row in rows}
+
+
+def _task_doc(
+    links: Any, text: str, block: dict[str, Any], binding: SimpleNamespace
+) -> TaskDoc:
     tables = list(_tables(links, text))
-    evidence = {
-        row["Evidence"].strip(): row["Result"].strip()
-        for row in links.task_base_evidence_rows(text) or []
-    }
+    evidence = _evidence_results(links, text, binding)
     spec = block["task_table"]
     columns = tuple(spec["columns"])
     named = [table for table in tables if table.heading == spec["heading"]]
@@ -274,6 +303,15 @@ def check(root: Path) -> list[Finding]:
     found = _schema_findings(root, data)
     if found:
         return found
+    binding = _evidence_binding(registry)
+    if binding is None:
+        return [
+            Finding(
+                "RESIDUE-SCHEMA",
+                REGISTRY,
+                "the registry has no sdlc/task evidence binding to read the evidence rows",
+            )
+        ]
     links = _link_validator()
     historical = {
         (item["path"], item["heading"]) for item in block["historical_tables"]
@@ -282,7 +320,15 @@ def check(root: Path) -> list[Finding]:
     for path in sorted(root.glob(TASK_GLOB)):
         if path.is_file():
             rel = path.relative_to(root).as_posix()
-            docs[rel] = _task_doc(links, _read(root, rel), block)
+            docs[rel] = _task_doc(links, _read(root, rel), block, binding)
+            if docs[rel].evidence is None:
+                found.append(
+                    Finding(
+                        "RESIDUE-EVIDENCE",
+                        rel,
+                        "the Task has no evidence table with the Evidence ID and Result columns",
+                    )
+                )
 
     for rel, heading in sorted(historical):
         if rel not in docs:
@@ -338,7 +384,7 @@ def check(root: Path) -> list[Finding]:
                     )
                 )
             elif state == "terminal":
-                if doc.evidence.get(closure) != "PASS":
+                if (doc.evidence or {}).get(closure) != "PASS":
                     found.append(
                         Finding(
                             "RESIDUE-CLOSURE",
@@ -431,7 +477,7 @@ def check(root: Path) -> list[Finding]:
                 found.append(Finding("RESIDUE-SOURCE", ident, f"closure {problem}"))
             elif (
                 closed not in docs
-                or docs[closed].evidence.get(closure["evidence"]) != "PASS"
+                or (docs[closed].evidence or {}).get(closure["evidence"]) != "PASS"
             ):
                 found.append(
                     Finding(

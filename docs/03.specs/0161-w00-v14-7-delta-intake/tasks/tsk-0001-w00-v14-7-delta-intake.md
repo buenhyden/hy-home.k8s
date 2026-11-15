@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.1.60"
+version: "0.2.0"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -11,18 +11,37 @@ parent_ids: ["SPEC-0161-PLAN-0001"]
 
 # Task: W00 v14.7 Delta Intake
 
-## Overview
+## Scope
+
+### Objective and Parent
 
 This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under its [Plan](../plan.md). EVD-001 to EVD-006, EVD-010 and EVD-011 were observed before approval and are marked not required. The user approved the Spec and Plan on 2026-11-12 (EVD-013) and confirmed the exact reviewed bytes (EVD-015, EVD-016).
 
-## Inputs
+### Inputs and Authority
 
 - **Request:** on 2026-11-12 (Asia/Seoul) the user pasted the v14.7 W00 prompt (`TASK-hy-home-k8s-W00.md`) and named the package directory `_workspace/workspace_execution_tasks/{dependencies, reports, tools}`. The request does not approve this Spec or Plan, accept a criterion, or authorize a commit, push or merge.
 - **Workspace:** WORKSPACE_ROOT is the repository root; PACKAGE_ROOT `_workspace/workspace_execution_tasks/`, git-ignored by `.gitignore` line 74. Base `main` at `4a47cb40`, clean worktree and index, no open pull request; branch `claude/w00-v14-7-intake`.
 - **Inputs (SHA-256):** W00 prompt `65d1cc62db9e2aae2476138d4285d4138a65202309bb4e6167b694758abbd1e7`; `INPUT-REPORT-ORIGINAL.txt` `dc348e7fc67f77ab8667cc4b1eecb50dbac2857d30617eff1246dd23d8748d23` (same as SPEC-0154); `REQUIREMENTS.json` `4c9da241ba185310048f3231815c04ed42dc7ce54c44e201f97e469f5945084b`; `PROFILE-REQUIREMENTS.json` `079f07c13b7c54391366185d0fd0ce543ec81c4877a4fbef9df0a82790ed2e75` (same as SPEC-0154); `REVISION-v14_7.json` `67c42631cf48f3fc4e7c84329c0eb87dfb7775fb000a7381696c931161541463`; `REQUEST-AMENDMENTS-v14_5.json` `02342b6b15d12de00e7880c8a161a3e418acd12324e3b8330eb66594adc90a27`; `COMMON-SECTION-CONTRACT.json` `4f79183d59c34ee87d1cab35c5ffc86eb7012f5df1db4dc4b91a8fd412e8c618`; `STAGE-QA-MATRIX.json` `12d8962c96c769cd3bbc12bcc2e9d29b31d4e60e9a48190c2d1ad6934030e873`; `QA-CHANGE-PROTOCOL.md` `106ee35cba6b2ea0313168541cce11f4b73573125b261be296f854d295f8826d`; `REPOSITORY-VOCABULARY.json` `b03ae3c00a4228de90d90b48c9a7af4b716492651d83b6deab128d9e3bc92fce`; `TEMPLATE-DEFINITION-CONTRACT.md` `ff7e35b8b75406c9bedb603f8fb4d0449401564b3eae79138b9f9b222c61eb10`; `OPEN-01-14.json` `4dde48c427323cd6a1cdef9280fd281f1bab019c07ea5fd947728639aa6b8677`.
 - **Upstream:** completed SPEC-0154 to SPEC-0160, recoverable from the REQ-0003 Archived Lineage.
 
-## Task Table
+- **Allowed Paths**: `docs/03.specs/0161-w00-v14-7-delta-intake/`, `docs/03.specs/README.md`, one back-link sentence in `docs/01.requirements/0003-workspace-agent-governance-platform.md` Traceability, `.secrets.baseline` (reviewed digest entries only, if the secret scan flags this Task's digests)
+- **Forbidden Paths**: every file named in a handoff table; `_workspace/workspace_execution_tasks/` (read-only input)
+- **Approval Required**: Spec and Plan approval; any commit, push, PR, merge or package exit; the CI-SCOPE and POLICY-ROLE decisions belong to W01
+- **Static Validation**: strict document validators, staged lifecycle check, `python3 scripts/qa.py staged`
+- **Live Validation**: DEFER; no live surface in scope
+- **Secret / Vault Handling**: no secret read or printed
+- **Rollback Plan**: delete the branch `claude/w00-v14-7-intake`; `main` is unchanged
+- **Evidence Location**: this Task
+
+## Execution Log
+
+### Work Performed
+
+The work of this Task is recorded in the rows of [Lifecycle Traceability](#lifecycle-traceability) below and in the evidence rows under Verification Evidence.
+
+### Blockers and Decisions
+
+No separate blocker or decision list is kept here; a blocker and its resume condition are recorded in the Result and Evidence cells of the work rows, and each decision in the evidence rows and tables under Verification Evidence.
 
 ### Lifecycle Traceability
 
@@ -30,9 +49,11 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-DELTA-001](../spec.md#criteria), [VAL-DELTA-002](../spec.md#criteria) | Record the delta tables, check completeness, obtain independent review. | platform | frontmatter | PASS | Required checks pass: EVD-014 (completeness, resolves EVD-007), EVD-012 and EVD-015 (independent review, EVD-012 resolves EVD-008), EVD-017 (exact-index QA, resolves EVD-009). The user accepted both criteria on 2026-11-12. |
 
-## Task Evidence
+## Verification Evidence
 
-| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
+### Results
+
+| Evidence ID | Consumer | Work Unit | Command | Input | Result | Location | Required | Resolves |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Pre-approval edition comparison | Package v14.7 against the v14.1, v14.4, v14.5 and v14.6 history archives; prompt diff against v14.6; workspace HEAD `4a47cb40`; 2026-11-12 | PASS | Edition Delta table below. The exact v14.2 `REQUIREMENTS.json` (SPEC-0154 input, prefix `8af753f1`) is not in any history archive; v14.1 is the base. Same 106 IDs since v14.1; 16 rows changed only `implementation` or `verification` text (18 field changes). | no | none |
 | EVD-002 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Pre-approval requirement-change links | `REVISION-v14_7.json`, `REQUEST-AMENDMENTS-v14_5.json`, the 16 changed rows, REQ-0003 Scope and Non-goals, and repository searches at `4a47cb40`; 2026-11-12 | PASS | Requirement Changes table below: 50 rows (16 changed requirements, 12 R45, 20 R147, RS-09, CI-SCOPE). | no | none |
@@ -139,8 +160,9 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | EVD-103 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-D62 recorded | The user's answers of 2026-11-14 (Asia/Seoul) to the SPEC-0202 questions Q1 to Q7, the readings and the approval of the bytes, quoted in the W03-D62 row | PASS | Recorded as W03-D62 with the SPEC-0202 package commit, whose Task EVD-018 and EVD-019 hold the form-move receipt and EVD-020 the user's readings answer. | no | none |
 | EVD-104 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-H29 state cell, live row and ledger entry refreshed | SPEC-0202 Spec contract (decision and handoff rows) | PASS | The state cell, the live Residue Handoff row and the ledger entry of W03-H29 read the same: fourteen policies are adopted after SPEC-0202 (the ten governance policies and `GITOPS`, `MESH`, `ROLLOUT`, `OBSERV`), `ONBOARD` stays pending with the gate retirement in the following package, and package 5 follows. No recorded decision row is edited. | no | none |
 | EVD-105 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-D61 recorded | User answers to the three SPEC-0203 questions, 2026-11-14 (Asia/Seoul; 2026-11-13T22:24Z): "Keep nine columns (Recommended)", "H3 under Evidence (Recommended)" and "Move under Scope (Recommended)" | PASS | Recorded as W03-D61 with the SPEC-0203 package commit. W03-D65 later supersedes its first choice, the unchanged column names, with the common column names under a recorded header map; the second and third choices stand. | no | none |
+| EVD-106 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Move of this Task to the SPEC-0203 Task form | SPEC-0203 implementation: this Task before (file c7059968cfaac5eb, 775 lines, version 0.1.60) and after (file 9696e58bc8046804, 800 lines, version 0.2.0) the heading map; SPEC-0203 Task EVD-017, EVD-018 and EVD-025 | PASS | Form-only move by the SPEC-0203 heading map (W03-D01, W03-D50): the old H2 removed, every body under its form H3, the 17 other H3 under `Task Evidence` as H4 in place, while `Residue Handoff` stays an H3 as the registered local extension and is placed last, after Resolution Links, as the user decided on 2026-11-15 (SPEC-0203 Task EVD-025). Every data row of every one of the 22 tables is byte-identical and in the same order (each table's data-row hash equal before and after); only the evidence header line changed (`Evidence`, `Criteria`, `Check` to `Evidence ID`, `Consumer`, `Command`) and five pointer lines were added (Work Performed, Blockers and Decisions, Resolution Links, Remaining Conditions, Promotion Receipt; sha256 prefixes in SPEC-0203 Task EVD-018). The work residue ledger validator reports the same 75 entries before and after and resolves the five registered historical tables and the live table. No decision, handoff or evidence row was rewritten. | no | none |
 
-### Edition Delta
+#### Edition Delta
 
 | Input | v14.2 consumed by SPEC-0154..0160 | v14.7 | Effect |
 | --- | --- | --- | --- |
@@ -151,7 +173,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 | Clauses | none | R45-01..12 (v14.5), R147-01..20 (v14.7) | Linked below. |
 | Contracts | none | COMMON-DOC-FORM-1, QA-STAGES-1, QA-ALIGNMENT-v14_7, Repository Vocabulary, TemplateDefinition, Q-08 path decision | Handoff tables below. |
 
-### Requirement Changes
+#### Requirement Changes
 
 State: COVERED (current owner already conforms, evidence named; for a clause a later stage also applies, COVERED means only that W00's own conduct conforms and that stage still applies it), OPEN (writer stage named), REJECTED_BY_CONTRACT (an accepted requirement and a same-scope user decision exclude it), DECISION_NEEDED (an unresolved conflict for the named stage).
 
@@ -210,7 +232,7 @@ State: COVERED (current owner already conforms, evidence named; for a clause a l
 | DOC-12 | Contiguous display numbers for Stage 01, 02 and 03 after the open work closes; `artifact_id` stays the stable trace ID; no retired ID reissued | File and folder names under `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`; registry `path_pattern` and identity rules | OPEN | W03 (last, after open packages close); decision EVD-018 |
 | CI-SCOPE | PR-DURING runs affected implementation and product leaves in hosted CI | `.agents/governance/quality.md` hosted lane; `git.md`; `.github/workflows/ci.yml` | OPEN | W06 (`ci.yml`), W01 (policy text); decision EVD-018 |
 
-### Related Pull Requests
+#### Related Pull Requests
 
 | PR | Base | Head branch | Head | Merge | Merged (UTC) | Scope | Read |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -225,7 +247,7 @@ State: COVERED (current owner already conforms, evidence named; for a clause a l
 
 All eight are merged; merge is not criterion acceptance. Their acceptance lives in the archived Tasks. PR #220's lifecycle replay and ADR-0056 manual review are kept, as the prompt directs, and not re-registered.
 
-### Document Form Handoff
+#### Document Form Handoff
 
 Target: COMMON-DOC-FORM-1 1.0.0. Every current template lacks the target H3 set; the registry models H2 names only.
 
@@ -252,7 +274,7 @@ Target: COMMON-DOC-FORM-1 1.0.0. Every current template lacks the target H3 set;
 | Vocabulary | `.agents/knowledge/glossary.md` (SPEC-0163) | Done: 33 common terms, local extensions, validator check | none | W05 consumers in place |
 | Policy versus `governance/rule` | `operation/policy`, `governance/{role,rule,skill}` | Target Policy role owner undecided; `governance/*` not in the 16 target roles | W01 then W03 | none yet |
 
-### Stage QA Handoff
+#### Stage QA Handoff
 
 Target: QA-STAGES-1. PASS means the current binding already gives the target guarantee.
 
@@ -279,7 +301,7 @@ Target: QA-STAGES-1. PASS means the current binding already gives the target gua
 | DOC-DOMAINS | Vault ESO surfaces; no content or site domain | PASS; N/A for site | none |
 | Old-rule tests | `tests/test_validate_ci_python_contract.py`, `scripts/validate-ci-python-contract.py`, `tests/test_ci_branch_metadata.py`; `scripts/validate-pr-metadata.py` mirrors the `ci.yml` inline script | Move only with CI-SCOPE | See Primary Writers |
 
-### Primary Writers
+#### Primary Writers
 
 One primary writer per file; other stages consume through the named interface.
 
@@ -293,7 +315,7 @@ One primary writer per file; other stages consume through the named interface.
 | `.claude/hooks/`, `.claude/provider.md`, `.codex/provider.md` | W07 | none |
 | Kubernetes manifests and their consumers | W10 | none |
 
-### External Evidence
+#### External Evidence
 
 | Source | Access | Applied to | Result |
 | --- | --- | --- | --- |
@@ -304,7 +326,7 @@ One primary writer per file; other stages consume through the named interface.
 | RS-49 `git diff --cached` | Direct relevant sections (package) | COMMIT-BEFORE | Index snapshot and partial-stage test exist |
 | RS-50 GitHub events | Direct relevant sections (package) | PR-DURING | Merge SHA checked out; head and base asserted |
 
-### OPEN Dispositions
+#### OPEN Dispositions
 
 | ID | Verdict | Basis | Next owner |
 | --- | --- | --- | --- |
@@ -323,7 +345,7 @@ One primary writer per file; other stages consume through the named interface.
 | OPEN-13 | CLOSED_BY_EVIDENCE | Read back 2026-11-11T23:46Z: required `ci-summary` and `style-pr` (app 15368, strict); both passed on PR #227 head; on `main` `4a47cb40` `ci-summary` succeeded and `style-pr` skipped by design | none |
 | OPEN-14 | NOT_APPLICABLE | hy-home-docker runner only | none |
 
-### OPEN Disposition Corrections
+#### OPEN Disposition Corrections
 
 Added 2026-11-12 under the user's W00 follow-up correction request (EVD-022). The table above stays as recorded; for the IDs below, this section replaces its `Basis` and `Next owner` wording. OPEN-01..14 are historical audit identifiers of the earlier prompt packages, not open product work: the historical verdict, the current product effect, execution state and user acceptance are separate fields, and no historical verdict blocks W01..W11.
 
@@ -348,7 +370,7 @@ OPEN-07 denominators at `d623681f`:
 
 The other IDs keep the verdicts above: OPEN-03 RESIDUAL_CONFIRMED at the named stages, OPEN-05 and OPEN-13 CLOSED_BY_EVIDENCE, OPEN-08 UNVERIFIED for W10, OPEN-09 RESIDUAL_CONFIRMED for W05, and OPEN-10 to OPEN-12 and OPEN-14 NOT_APPLICABLE.
 
-### Conflicts
+#### Conflicts
 
 | ID | Files | Current | Package | Decision |
 | --- | --- | --- | --- | --- |
@@ -359,7 +381,7 @@ The other IDs keep the verdicts above: OPEN-03 RESIDUAL_CONFIRMED at the named s
 | DOC-12 | Stage 01/02/03 file and folder numbers | Number equals stable ID; gaps kept | Contiguous numbering from 1 | Adopt as display numbers only (Q-07, EVD-018); `artifact_id` unchanged; after open work closes |
 | LEDGER | REQ-0003 Scope and Non-goals (FR-0019, FR-0022) | No machine ledger | v14.7 also forbids a competing ledger (GOV-03, SDLC-04) | Superseded by EVD-046: adopted as the work residue ledger (SPEC-0185, ADR-0060 proposed); built by W03-H30 package 2 |
 
-### Read Denominator
+#### Read Denominator
 
 | Set | Listed | Read | Partial | Listed only |
 | --- | --- | --- | --- | --- |
@@ -374,7 +396,7 @@ The other IDs keep the verdicts above: OPEN-03 RESIDUAL_CONFIRMED at the named s
 
 Listed-only files are not semantically reviewed. Each writer stage re-reads its files before editing.
 
-### Stage Follow-up Handoffs
+#### Stage Follow-up Handoffs
 
 Added 2026-11-12 under the user's W02 follow-up request (EVD-023). SPEC-0167 left the tree with its Task frozen, so a hand-off found afterwards is recorded here, the open owner of the W01 to W10 hand-off tables.
 
@@ -382,7 +404,7 @@ Added 2026-11-12 under the user's W02 follow-up request (EVD-023). SPEC-0167 lef
 | --- | --- | --- | --- | --- | --- |
 | W02-H01 | W02 section 3 item 1 (registry retention and identity reservation reviewed, changes to W03); `document-lifecycle.md:26` | `LIFECYCLE-IDENTITY-REUSE` reserves only identities present in the comparison base; an ID whose document left through Git history can be minted again | W03 registry author, then W05 validator author | W03 decides where retired identities are reserved (for example the owners' `Archived Lineage` rows or a registry key); W05 extends the reuse check to that source with a refusal test for a retired SPEC ID | W03 starts |
 
-### W03 Decisions
+#### W03 Decisions
 
 Added 2026-11-12 under the user's W03 request (EVD-025). W03 runs as several Stage 03 packages; each reads these decisions.
 
@@ -502,6 +524,162 @@ Added 2026-11-12 under the user's W03 request (EVD-025). W03 runs as several Sta
 | W03-H31 | Stale tracking found by the 2026-11-13 conformance audit | The Requirement Changes states of this Task still show OPEN rows that SPEC-0166 and later closed; its Verification Summary still names W01 next; W03-H01, W03-H04 and W03-H06 rows are stale (W03-H04 is resolved by W03-D24); EVD-025 counts 33 accepted ADRs where the tree has 34; registry `migration.meaning_map` strings say the Task records a map that left with the deleted Task | Correct by appended rows and a closing summary; record the 34-ADR exception and point the meaning maps to REQ-0003 Archived Lineage recovery | W03; with the W03 closing (W03-H20) |
 | W03-H32 | Glossary definitions across repositories (conformance audit D5) | The glossary translates the Korean shared vocabulary definitions, so identity across the four repositories cannot be shown byte for byte | Record the translation and compare meaning in the cross-repository check | W11 |
 
+#### r1 Edition Delta
+
+Added 2026-11-14 under SPEC-0213 (W03-D77, W03-D82). The v14.7 `Edition Delta` and the `Inputs` cells above stay as recorded; where a row below differs, it supersedes them for the r1 revision of 2026-11-13 and says so. The r1 root was read from the main checkout's `_workspace/` (git-ignored, so the implementation worktree has none); SHA-256 values were taken with `sha256sum` on 2026-11-14.
+
+| Input | Recorded edition (v14.7) | r1 | Effect |
+| --- | --- | --- | --- |
+| Package root | `_workspace/workspace_execution_tasks/` (absent on disk) | `_workspace/workspace_execution_tasks_v14_7_revision_20261113_r1/`, git-ignored by `/_workspace/*` (`.gitignore` line 74) | The r1 root is PACKAGE_ROOT. The v14.7 archive `workspace_execution_tasks_20261112_v14_7.zip` (`dd4eb60d7fdb92ec7d7d3692259f1bebe3d189db6fe032b494e69836ec37e22e`) is the baseline identity and `new_input_sha256` `8adefe7e0259e670cc479d48274f66367fd3d47c4ac1566b7a0efd326c14b25e` names the user's 2026-11-13 input (`dependencies/input/BASELINE-IDENTITY.json`, `306e9695…`) |
+| W00 prompt `tasks/TASK-hy-home-k8s-W00.md` | `65d1cc62db9e2aae2476138d4285d4138a65202309bb4e6167b694758abbd1e7` | `fb8e6305c60c7458e353a3a53fdf01758490a19a510c6d593db3e090c5d53771` | `EDIT` of the recorded hash (`reports/TASK-CHANGE-REGISTER.csv` line 42); new content in the rows below |
+| `dependencies/source/REQUIREMENTS.json` | `4c9da241ba185310048f3231815c04ed42dc7ce54c44e201f97e469f5945084b` | `21371ac53c7594b73aec908e2c25b6e26f164eb40a5eac55fc5a983d40495a75`, 106 rows | Hash changed. The v14.7 bytes are absent, and `reports/TASK-CHANGES.diff` covers only the 52 task prompts, so a changed requirement row is visible only where a prompt hunk quotes it; the eight W00 hunks quote none. The delta is partial, as it was for v14.2 |
+| The other ten recorded inputs (`INPUT-REPORT-ORIGINAL.txt`, `PROFILE-REQUIREMENTS.json`, `REVISION-v14_7.json`, `REQUEST-AMENDMENTS-v14_5.json`, `COMMON-SECTION-CONTRACT.json`, `STAGE-QA-MATRIX.json`, `QA-CHANGE-PROTOCOL.md`, `REPOSITORY-VOCABULARY.json`, `TEMPLATE-DEFINITION-CONTRACT.md`, `OPEN-01-14.json`) | the ten hashes of the `Inputs` bullet | Re-hashed 2026-11-14; each equals its recorded value | No change |
+| Inputs the r1 W00 prompt names and SPEC-0161 did not hash | none | `dependencies/source/SUPPLEMENTS.json` `0a40f47486bfaa5109be35aa882392c5d3b4cbebe00262ea296f54915c960473`; `contracts/OPEN-01-14-GUIDE.md` `98caa4945bbf42319b4bbe2998151ac53c5bfc0d60c424bd05a11d8ffa50d560`; `contracts/SPEC-DISPOSITION.md` `4aae652c095b5113d641e720f1855cac6ec4670eb188c6b90a03f053bab7de53`; `contracts/SEMVER-POLICY.md` `921d2fbae6acdf527286c77e95346ca943db5daaaa8629d7774165851c5fc06c`; `contracts/CONTINUATION-CONTRACT.md` `84696972b796b1ed9ffd9a8dbf3281164f243386376d1ba2ddabef878cf5119b`; `contracts/Q07-FINAL-CUTOVER.md` `12a8564ae958a3856e1ebcbc11168bded8c41a2026a22bdb014540a7136e3050`; `contracts/TEMPLATE-PATH-DECISION.md` `b03ae0a667ca40b0602946cc46785335b282523e07ba5c0426b48182a024ed9c`; `carryforward/REMAINING-14.csv` `8017334dc420c49769182f92ca896fc85017f1003f86886b3e70b92df593ec79`; `carryforward/V13_4-REMAINING-7.csv` `1cf07137e455c4821ef1602266717f4cfc2fe2333a178dff9f0391af81c38091` | New hashed inputs, read-only |
+| Other task prompts (W01 to W11 and Q07; `EDIT` or `ADD_POST_W11_TASK` in `reports/TASK-CHANGE-REGISTER.csv`) | not recorded | changed or added in r1: 48 `EDIT` and 4 `ADD_POST_W11_TASK` rows over the four purposes | Each is taken in by its own stage when that stage runs (`INDEX-hy-home-k8s.md` lines 15 and 17: new differences only, completed work reused); this package records none of their content |
+| W00 current position (PKG W00:7-23, diff hunk 1) | Stage and pull request state of 2026-11-12 | Current stage W03; reuse evidence and add only real new differences (W00:12); PR #249 open draft, head `3ae0b2c3`, main observed at `a56fa757` (an observation, not an acceptance; W00:18, 722) | No W00 re-run; the observation is not a repository state |
+| Direct tokens (W00:20) | none | `KEEP_VERIFIED`, `Q07_AFTER_W11_ONLY`, `SEMVER_INDEPENDENT_FROM_NUMBERING`, `HISTORICAL_AUDIT_NOT_GLOBAL_BLOCKER` | Names of verdicts in this analysis; none is added as a registry state |
+| Historical OPEN-01 to OPEN-14 (W00:151-153, 274, 759-771) | Verdict carried as "inheritance instruction" | "Observation at the time" (당시 관측); the current state is assessed separately; OPEN-01, OPEN-02 and OPEN-04 are no shared user wait | Drives the owner and resume corrections in `Residue Corrections`; none of OPEN-01, OPEN-02, OPEN-04 and OPEN-06 closes (W03-D82) |
+| OPEN-LOCAL (W00:773; alias OPEN-07) | none | `NOT_RUN_THIS_REVISION`; ends with the real local scope, read denominator, edits, tests and acceptance | The live OPEN-07 row stays; its owner edit is SPEC-0211's; no new row |
+| OPEN-SOURCES (W00:775; aliases OPEN-05, OPEN-06) | none | `PARTIAL_RECOVERY_NOT_FULL_ADOPTION_REVIEW`; ends only with the adoption scope's exact version, code, licence, consumer and tests, or an explicit non-adoption rationale | OPEN-05 is already closed by evidence (OPEN Dispositions). OPEN-06 stays open with one owner and ends only with an adoption scope or a non-adoption rationale, which the W11 exit row states (nothing is adopted now) |
+| OPEN-LEGACY-SEMANTIC (W00:777; aliases OPEN-01 to OPEN-04) | none | `NOT_CERTIFIED_BY_PACKAGE_TESTS`; do not automatically reopen or close all | Nothing closes automatically: OPEN-01, OPEN-02 and OPEN-04 get an owner and a resume correction, OPEN-03 an owner correction (W03-D82) |
+| OPEN-Q03 and OPEN-ARCHIVE (`V13_4-REMAINING-7.csv`) | none | OPEN-Q03: exact adoption of the common form edition pending; OPEN-ARCHIVE: conditional conflict only, Git-only exit of Stage 01 to 03 and 99 kept | OPEN-Q03 is carried by the live W03-H19 row and needs no new row; OPEN-ARCHIVE names no hold and no obligation here, so no row |
+| SCOPE-10 (W00:673-680) | Completed-document handling | Added clause at W00:675: a conflicting Spec, Plan or Task is revised, superseded or removed only after its valid obligations, failures and acceptance are handed over; a cancellation does not hide unfinished work (취소로 미완료를 숨기지 않는다) | No repository change; it feeds the classification rules below |
+| Current-purpose paragraph (W00:191, hunk `@@ -128 +188`) | KEEP of the completed PR #220 and ADR-0056 exit check (v14.7 diff) | Check the current contract; a past PR state is not a current gap (paraphrase) | No new obligation |
+
+#### Input Corrections
+
+Added 2026-11-14 under SPEC-0213 (W03-D77). A correction row supersedes the recorded cell it names; the recorded cell stays as written and stays true as a statement about the v14.7 edition of 2026-11-12. The v14.7 root `_workspace/workspace_execution_tasks/` is absent from `_workspace/` on 2026-11-14, which holds only the r1 root, `diagnostics/` and `repo-support/`.
+
+| Superseded cell | Recorded text | Correction | Basis |
+| --- | --- | --- | --- |
+| `Inputs`, Workspace bullet (PACKAGE_ROOT) | "PACKAGE_ROOT `_workspace/workspace_execution_tasks/`, git-ignored by `.gitignore` line 74" | PACKAGE_ROOT is `_workspace/workspace_execution_tasks_v14_7_revision_20261113_r1/`, git-ignored by the same line 74 (`/_workspace/*`) | r1 `README.md`; `dependencies/input/BASELINE-IDENTITY.json`; the directory listing of `_workspace/` |
+| `Inputs`, SHA-256 bullet | "W00 prompt `65d1cc62…`; … `REQUIREMENTS.json` `4c9da241…`" | The r1 values are `fb8e6305…` and `21371ac5…` (`r1 Edition Delta`); the other ten recorded hashes re-hash equal | `sha256sum` over the r1 files, 2026-11-14 |
+| `Approval and Safety Boundaries`, Forbidden Paths | "`_workspace/workspace_execution_tasks/` (read-only input)" | The read-only input is the r1 root; the rule is unchanged: nothing is written under `_workspace/` and nothing from it is copied into `docs/90.references/` or `docs/98.archive/` | PKG W00:125; r1 `README.md` |
+| `OPEN Disposition Corrections`, OPEN-04 `Checked` | "Searched: file names and contents under `_workspace/workspace_execution_tasks/` (only the package's own references … no original); every path in this repository's Git history over all 21 refs (no match). Not searched: other machines, accounts or archives" | Searched again on 2026-11-14 over the r1 root: no file name contains `WMC`, `20261102` or `20261110`; a content search of the 228 files and of the nine history archives (entry names and entry contents) for `WMC-20261110-03` and `20261102` finds only the package's own references (the task prompts, `OPEN-01-14.json`, its guide, `SUPPLEMENTS.json`, `REMAINING-14.csv`, `REMAINING-WORK.csv`, `PRIOR-V11-REMAINING-WORK.json`, `v11-SUPPLEMENT-CLAUSES.json`, `TASK-CHANGES.diff`) and no original report. The Git-history search is not repeated. BLOCKED_EVIDENCE stands | `grep` and a read-only `zipfile` scan run outside the repository |
+
+#### Change Contract Classification
+
+Added 2026-11-14 under SPEC-0213 (W03-D77, PKG W00:822-831). One row for every open row of `Residue Handoff` as read before this package's closure and cell edits (76 rows, equal to the 76 open ledger entries), for the six seeds that this package adds, and for each other package in the tree. The class names are analysis labels only (W00:824); none is a registry state or a lifecycle state. Only `CANCEL_OBSOLETE` is defined by the PKG (W00:828: a requirement the user removed, never a PASS); the other four are this Spec's operational reading for residue rows: `KEEP_VALID` the obligation is valid and its owner is right, `REVISE` the valid part is kept and a cell is corrected, `SUPERSEDE` a new owner replaces it, `REMOVE_AFTER_TRANSFER` the obligation is closed or transferred and its entry leaves the ledger. In the PKG (W00:827) `REMOVE_AFTER_TRANSFER` means removing an old package after its obligations are transferred; applied to a ledger row it is a stretch of that meaning. One owner rule holds for every row (W00:831): the Owner cell names exactly one stage; another stage a cell names moves to the Resume condition as a consumer. "W00" as an owner means the SPEC-0161 Task's W00 intake record, the workspace's existing Task, not a W00 stage run. The Current owner column shows the owner after the corrections of this package. Result: `REMOVE_AFTER_TRANSFER` 1 (W01-H01); `REVISE` 16 (13 edited here, W00-H01, W03-H02, GOV-04, R147-03, OPEN-01, OPEN-02, OPEN-03, OPEN-04, OPEN-06, W03-H15, W03-H29, SDLC-07 and R45-12, and 3 edited later by SPEC-0211, OPEN-07, DOC-12 and DOC-S99); `KEEP_VALID` 66 (59 open rows, 6 seeds and SPEC-0213); `SUPERSEDE` 0 and `CANCEL_OBSOLETE` 0, so their absence is a result. A `KEEP_VALID` row without a named PKG line is decided by the live row, its recorded decision and W00:831. The eight terminal rows (LEDGER, W03-H08, W03-H16, W03-H27, W03-H30, W03-H33, W03-H36 and W03-H42) are not live obligations and are not classified. The first column is a running number, not a residue ID. The W00 completion test (W00:831: every live obligation has exactly one owner; no deleted package keeps an active link, check input or Task reference) is shown only after the last W03 package: this package claims only the rows it classifies, OPEN-07 is shown to have one owner only after SPEC-0211, and SPEC-0211's closing report reads and re-classifies this table.
+
+| No. | Obligation | Class | Current owner | Basis | Next action |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `AGENT-04`: direct, wrapper and nested hook delivery | `KEEP_VALID` | W07 | PKG W07:311; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 2 | `CI-SCOPE`: PR-DURING hosted CI scope; also an OPEN row of Requirement Changes | `KEEP_VALID` | W06 | PKG W06:16; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 3 | `COMMIT-AFTER`: no post-commit record; decide no blocking hook | `KEEP_VALID` | W06 | PKG W06:288; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 4 | `COMMIT-BEFORE`: surface selection gap for governance policy changes | `KEEP_VALID` | W06 | PKG W06:286; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 5 | `DOC-04`: profile field, state, relation and table definitions reformed | `KEEP_VALID` | W03 | PKG W03:598; owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
+| 6 | `DOC-05`: section and body contracts match target H2 and H3 and tables | `KEEP_VALID` | W03 | PKG W03:607; owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
+| 7 | `DOC-11`: a TemplateDefinition for every real template | `KEEP_VALID` | W03 | PKG W03:661; owner and resume read from the live row and valid; closes when W03-H13 and W03-H15 close (W03-D70) | None here; the owner acts at the resume condition |
+| 8 | `DOC-12`: display renumbering of Stage 01, 02 and 03; also an OPEN row of Requirement Changes | `REVISE` | W03 | REVISE, edited later: SPEC-0211 moves it to after W11 as the requirement assigns (W03-D72, W03-D74) | SPEC-0211 edits the cells |
+| 9 | `DOC-S00`: vocabulary rule_id binding | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 10 | `DOC-S90`: Stage 90 source, edition and freshness checks | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 11 | `DOC-S99`: tests hard-code current headings | `REVISE` | W03 | REVISE, edited later: SPEC-0211 moves it to W05 as the requirement assigns (W03-D72, W03-D74) | SPEC-0211 edits the cells |
+| 12 | `GOV-04`: the approved registry as a reform target | `REVISE` | W03 | REVISE: owner `W01 policy, W03 registry` becomes `W03`; the W01 policy text is in place and only the registry reform remains (EVD-077; PKG W01:378); SPEC-0205 closes it (W03-D70, W03-D78) | Owner acts at the corrected resume condition; the row is not closed here |
+| 13 | `GOV-06`: single-writer registry reformed | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
+| 14 | `MERGE-AFTER`: no post-merge regression run | `KEEP_VALID` | W06 | PKG W06:297; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 15 | `MERGE-BEFORE`: record strict in the main protection note | `KEEP_VALID` | W06 | PKG W06:295; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 16 | `OLD-RULE-TESTS`: CI branch and Python contract tests move only with CI-SCOPE | `KEEP_VALID` | W06 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 17 | `OPEN-01`: semantic atomization of the original report lines | `REVISE` | W00 | REVISE: one owner and a resume that only a shown owner difference triggers (EVD-079; W00:20, 153; `REMAINING-14.csv`); stays open, non-blocking, `HISTORICAL_AUDIT_NOT_GLOBAL_BLOCKER`; closes only at the W11 exit (W03-D82) | Owner acts at the corrected resume condition; the row is not closed here |
+| 18 | `OPEN-02`: review of the relation candidates | `REVISE` | W00 | REVISE: same as OPEN-01 (EVD-080; W00:153, 777) | Owner acts at the corrected resume condition; the row is not closed here |
+| 19 | `OPEN-03`: 37 DELTA packages open at their stages | `REVISE` | W00 | REVISE: owner `Named stages` becomes `W00`, the SPEC-0161 Task; its 37 DELTA packages stay tracked item by item at their named stages (EVD-081; W00:153, 763; W03-D82) | Owner acts at the corrected resume condition; the row is not closed here |
+| 20 | `OPEN-04`: byte comparison with two original reports | `REVISE` | W00 | REVISE: owner `Holder of the original reports` becomes `W00`, which records the blocked direct comparison; the r1 root holds no original (EVD-082, `Input Corrections`; W00:153, 765; W03-D82) | Owner acts at the corrected resume condition; the row is not closed here |
+| 21 | `OPEN-06`: perspective rows of an external source | `REVISE` | W00 | REVISE: owner `W01, W03 or W07` becomes `W00`; the proposing stage is a consumer; ends with an adoption scope or a non-adoption rationale (EVD-083; W00:769, 775; W03-D82) | Owner acts at the corrected resume condition; the row is not closed here |
+| 22 | `OPEN-07`: full survey of the local workspace | `REVISE` | W03, W05, W06, W07, W10 by file set | REVISE, edited later: SPEC-0211 edits the Owner and Resume cells (W03-D72, W03-D74); the one-owner test for this row is shown only after that edit and the last W03 package | SPEC-0211 edits the cells |
+| 23 | `OPEN-08`: live, native and cluster authority | `KEEP_VALID` | W10 | PKG W10:153; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 24 | `OPEN-09`: hard-coded current headings in tests | `KEEP_VALID` | W05 | PKG W05:529; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 25 | `PR-DURING`: PR-DURING scope decision (CI-SCOPE) | `KEEP_VALID` | W06 | PKG W06:293; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 26 | `PUSH-BEFORE`: pre-push has no target | `KEEP_VALID` | W06 | PKG W06:289; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 27 | `QA-03`: validator input is the reformed registry edition | `KEEP_VALID` | W05 | PKG W05:336; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 28 | `QA-17`: validators changed for the reformed registry | `KEEP_VALID` | W05 | PKG W05:435; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 29 | `R147-03`: approved norms are reform targets | `REVISE` | W03 | REVISE: owner `W01` becomes `W03`, same basis as GOV-04 (EVD-078; PKG W01:334); SPEC-0205 closes it (W03-D70, W03-D78) | Owner acts at the corrected resume condition; the row is not closed here |
+| 30 | `R147-04`: common H2 and H3 forms in templates and consumers | `KEEP_VALID` | W03 | PKG W03:382; owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
+| 31 | `R147-05`: tests, QA and scripts follow QA-ALIGNMENT | `KEEP_VALID` | W05 | PKG W05:273; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 32 | `R147-06`: bind Git before, during and after cells | `KEEP_VALID` | W06 | PKG W06:273; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 33 | `R147-07`: separate SDLC stage from document STAGE | `KEEP_VALID` | W04 | PKG W04:272; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 34 | `R147-10`: migrate the registry to the CI chain | `KEEP_VALID` | W03 | PKG W03:385; owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
+| 35 | `R147-16`: Kubernetes impact of governance changes | `KEEP_VALID` | W10 | PKG W10:269; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 36 | `R147-17`: harness static versus live provider evidence | `KEEP_VALID` | W07 | PKG W07:273; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 37 | `R147-20`: reuse only equivalent results | `KEEP_VALID` | W05 | PKG W05:276; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 38 | `R45-06`: reform the approved registry itself | `KEEP_VALID` | W03 | PKG W03:264; owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
+| 39 | `R45-07`: reform forms and consumers in place | `KEEP_VALID` | W03 | PKG W03:267; owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
+| 40 | `R45-10`: a TemplateDefinition per real template | `KEEP_VALID` | W03 | PKG W03:270; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 41 | `R45-12`: verify common adoption across four purposes | `REVISE` | W11 | REVISE: owner qualifier `, this workspace only` moves to the Resume cell (EVD-087; PKG W11:262; W00:831) | Owner acts at the corrected resume condition; the row is not closed here |
+| 42 | `SCOPE-10`: current-copy migration against historical bytes | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
+| 43 | `SDLC-07`: transition rules in the registry | `REVISE` | W04 | REVISE: owner qualifier `(policy semantics only)` moves to the Resume cell (EVD-086; PKG W04:402; W00:831) | Owner acts at the corrected resume condition; the row is not closed here |
+| 44 | `SDLC-08`: old approved registry edition is not a pass basis | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 45 | `SDLC-ROWS`: PLAN-PROMOTION anchor, member and receipt cross-check | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 46 | `W00-H01`: 3 partial and 2 listed-only package contract files | `REVISE` | W00 | REVISE: the read is not evidenced, so the row is not closed (EVD-075); owner `W00 package level` becomes `W00` (W00:831); PKG W00:153 | Owner acts at the corrected resume condition; the row is not closed here |
+| 47 | `W01-H01`: 3 partial and 1 listed-only governance policy files | `REMOVE_AFTER_TRANSFER` | W01 | REMOVE_AFTER_TRANSFER: SPEC-0166 read in full and edited the four policy files; closed by EVD-074, entry made terminal and deleted (W03-D78); PKG W00:153 for the reopen rule | None; the entry left the ledger (EVD-074) |
+| 48 | `W03-H02`: phase 3 forms for the six SDLC roles and deletion of the heading-list model | `REVISE` | W03 | REVISE: the resume clause on a W04 slip is deleted to match the W04 ban (PKG W03:16; W03-D80; EVD-076); closes with SPEC-0205 (W03-D70) | Owner acts at the corrected resume condition; the row is not closed here |
+| 49 | `W03-H05`: keep or remove the stored ADR rejected state | `KEEP_VALID` | W04 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 50 | `W03-H09`: cross-repository equivalence; the owner is W11 by W03-H22 | `KEEP_VALID` | W11 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 51 | `W03-H10`: heading-list consumers once a role has a form | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; the W03 closing report, SPEC-0211, closes the remaining parts after reading the final tree (W03-D72) | None here; the owner acts at the resume condition |
+| 52 | `W03-H11`: qa-runner fixture branch name | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 53 | `W03-H12`: staged QA routing of folder AGENTS files | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 54 | `W03-H13`: SDLC TemplateDefinitions and H2 lists of local roles | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; with phase 3 (W03-H02), which SPEC-0205 closes (W03-D70) | None here; the owner acts at the resume condition |
+| 55 | `W03-H15`: the full TemplateDefinition record | `REVISE` | W03 | REVISE: owner `W03 with W05` becomes `W03`; W05 is a consumer (EVD-084; W00:831) | Owner acts at the corrected resume condition; the row is not closed here |
+| 56 | `W03-H19`: the missing adoption record of COMMON-DOC-FORM-1 in common_forms | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; carries OPEN-Q03; SPEC-0209 (SPEC-0213 Spec, `r1 Edition Delta`) | None here; the owner acts at the resume condition |
+| 57 | `W03-H20`: the W03 closing report | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; SPEC-0211 is the W03 closing report (W03-D74) | None here; the owner acts at the resume condition |
+| 58 | `W03-H21`: writer delegation record | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; SPEC-0209 makes the writer delegation correction (SPEC-0213 Spec, Not in this package) | None here; the owner acts at the resume condition |
+| 59 | `W03-H23`: root README bootstrap text | `KEEP_VALID` | W10 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 60 | `W03-H29`: Policy rule IDs | `REVISE` | W03 | REVISE: owner `W03 with W05` becomes `W03`; W05 consumes the rule IDs (EVD-085; W00:831) | Owner acts at the corrected resume condition; the row is not closed here |
+| 61 | `W03-H31`: stale tracking found by the conformance audit | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; SPEC-0209 makes the stale-tracking correction (SPEC-0213 Spec, Not in this package) | None here; the owner acts at the resume condition |
+| 62 | `W03-H32`: glossary definitions across repositories | `KEEP_VALID` | W11 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 63 | `W03-H34`: 2 partial files of docs/99.templates registry and schema | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; the W03 closing report, SPEC-0211, closes it (W03-D72) | None here; the owner acts at the resume condition |
+| 64 | `W03-H35`: 18 partial and 19 listed-only templates | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; the W03 closing report, SPEC-0211, closes it (W03-D72) | None here; the owner acts at the resume condition |
+| 65 | `W03-H37`: the Architecture description form | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0197 (W03-D70) | None here; the owner acts at the resume condition |
+| 66 | `W03-H38`: the ADR form | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0198 (W03-D70) | None here; the owner acts at the resume condition |
+| 67 | `W03-H39`: the Spec form | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0200 (W03-D70) | None here; the owner acts at the resume condition |
+| 68 | `W03-H40`: the Plan form | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0200 (W03-D70) | None here; the owner acts at the resume condition |
+| 69 | `W03-H41`: the Task form | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0203 (W03-D70) | None here; the owner acts at the resume condition |
+| 70 | `W03-H43`: the `requirement` lifecycle domain yields no creation state, so a new Requirement is refused by the lifecycle creation rule and by the document generator (W03-D48); the repair is a lifecycle contract change of its own | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; SPEC-0210 adds the creation state (W03-D71, W03-D73) | None here; the owner acts at the resume condition |
+| 71 | `W03-H44`: the Requirement `Downstream owner` column is a hand-written reciprocal field, 10 of the 68 members are not cited in their description's own `Upstream requirement` column and 17 of its 91 cells are not a single link (W03-D55); the Architecture form package completes the citing rows and then removes the column with a derived coverage check in place of its link check | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; the Architecture form package, SPEC-0197, completes the citing rows and then removes the column (the row text, W03-D55) | None here; the owner acts at the resume condition |
+| 72 | `W05-H01`: the hard-coded link-only section list must follow the registry | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 73 | `W05-H02`: 8 partial and 53 listed-only tracked scripts | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 74 | `W05-H03`: 5 partial and 68 listed-only tracked tests | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 75 | `W06-H01`: 2 listed-only workflow files | `KEEP_VALID` | W06 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 76 | `W07-H01`: 2 listed-only hook files | `KEEP_VALID` | W07 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
+| 77 | `W05-H04`: derived-copy drift check, a derived body changed alone is refused (source requirement GOV-06, not the legacy `GOV-06` row, which is the registry reform) | `KEEP_VALID` | W05 | Seeded here (W03-D78); frozen SPEC-0166 Handoffs, W05 row; PKG W01:396-402 (EVD-073) | None here; the owner acts at the resume condition |
+| 78 | `W05-H05`: refusal of contradictory approval text, and refusal tests for rule, code and validator contradictions (source requirement GOV-07) | `KEEP_VALID` | W05 | Seeded here (W03-D78); frozen SPEC-0166 Handoffs, W05 row; PKG W01:405-411 (EVD-073) | None here; the owner acts at the resume condition |
+| 79 | `W05-H06`: ARC-08, trace and remove the `done` and `archived` branches of `scripts/validate-links-and-owners.py` and the terminal statuses of `scripts/validation/current_executable_references.py` with their tests when no registry domain reaches them | `KEEP_VALID` | W05 | Seeded here (W03-D78); frozen SPEC-0167 Handoffs, W05 row and ARC-08 row; PKG W02:340-343 (EVD-073) | None here; the owner acts at the resume condition |
+| 80 | `W07-H02`: GOV-08, allow tests for approved local reads, reversible edits and narrow tests, and deny tests for secret access and out-of-scope writes | `KEEP_VALID` | W07 | Seeded here (W03-D78); frozen SPEC-0166 Handoffs, W07 row; PKG W01:414-420 (EVD-073) | None here; the owner acts at the resume condition |
+| 81 | `W07-H03`: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash) | `KEEP_VALID` | W07 | Seeded here (W03-D81); frozen SPEC-0166 Requirement Trace, W01-B row (EVD-073) | None here; the owner acts at the resume condition |
+| 82 | `W01-H02`: DOC-S00, W01 part, the `rule_id` binding of the vocabulary in `.agents/knowledge/glossary.md` that W05 consumes | `KEEP_VALID` | W01 | Seeded here (W03-D78, W03-D82); owner stays W01, W05 consumes; legacy DOC-S00 row; PKG W06:331 (EVD-073) | None here; the owner acts at the resume condition |
+| 83 | `SPEC-0213`: this W00 r1 intake and residue correction package, written by W03 | `KEEP_VALID` | W00 | Its own Task owns the work and the evidence; the tables it appends are analysis and residue, not a progress record | Operator acceptance of VAL-INTAKE-001 and VAL-INTAKE-002 |
+
+#### Residue Corrections
+
+Added 2026-11-14 under SPEC-0213 (W03-D78, W03-D81, W03-D82). One row for each seed, covered finding, closure and cell edit of this package; the first column is a running number, not a residue ID. Rows 1 to 6 are the seeds, 7 and 8 the covered findings, 9 the closure, 10 the W00-H01 owner edit (its read is not evidenced, so the row stays open) and 11 to 22 the other twelve cell edits. Each "before" cell is the recorded text; the live table cells it names were edited in place and the legacy rows stay as recorded. OPEN-01, OPEN-02, OPEN-04 and OPEN-06 are not closed (W03-D82).
+
+| No. | Residue | Change | Cells before | Cells after | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `W05-H04`: GOV-06 derived-copy drift check | Seeded under W03-D78: live row and ledger entry added together | none (no live row, no entry) | State open; Owner W05; Resume When W05 starts; Closure none | EVD-073 |
+| 2 | `W05-H05`: GOV-07 refusal tests | Seeded under W03-D78: live row and ledger entry added together | none (no live row, no entry) | State open; Owner W05; Resume When W05 starts; Closure none | EVD-073 |
+| 3 | `W05-H06`: ARC-08 `done` and `archived` branches | Seeded under W03-D78: live row and ledger entry added together | none (no live row, no entry) | State open; Owner W05; Resume When W05 starts; Closure none | EVD-073 |
+| 4 | `W07-H02`: GOV-08 allow and deny tests | Seeded under W03-D78: live row and ledger entry added together | none (no live row, no entry) | State open; Owner W07; Resume When W07 starts; Closure none | EVD-073 |
+| 5 | `W07-H03`: W01-B rejection tests | Seeded under W03-D78 and W03-D81: live row and ledger entry added together | none (no live row, no entry) | State open; Owner W07; Resume When W07 starts; Closure none | EVD-073 |
+| 6 | `W01-H02`: DOC-S00 W01 part | Seeded under W03-D78 and W03-D82: live row and ledger entry added together | none (no live row, no entry) | State open; Owner W01; Resume When W01 is run for its r1 differences; W05 consumes the result; Closure none | EVD-073 |
+| 7 | `shared_contract` binding tests (frozen SPEC-0166 W05 row) | Covered, no row and no entry (W03-D78, W03-D82) | none | none: every field of the frozen W03 row is tested in `tests/test_shared_contract_binding.py` | EVD-073 (test names there) |
+| 8 | W04 per-role status row of the frozen SPEC-0166 (`document-lifecycle.md`) | Covered by R147-07, no row and no entry (W03-D81) | none | none: the live R147-07 row, owner W04, resume When W04 starts | EVD-073 (PKG W04:272) |
+| 9 | `W01-H01` | Closed through the ledger cycle (W03-D78) | State open; Closure none; entry open | State terminal; Closure EVD-074; entry made terminal, gate PASS, entry deleted, gate PASS | EVD-074 |
+| 10 | `W00-H01` | Cell edit in place in the live row and the ledger entry (Owner) | Owner W00 package level; Resume When a difference shown to affect a current owner is found | Owner W00; Resume When a difference shown to affect a current owner is found | EVD-075 |
+| 11 | `W03-H02` | Cell edit in place in the live row and the ledger entry (Resume) | Owner W03; Resume After phase 2 is accepted; if W04 starts first, record the slip here | Owner W03; Resume After phase 2 is accepted | EVD-076 |
+| 12 | `GOV-04` | Cell edit in place in the live row and the ledger entry (Owner) | Owner W01 policy, W03 registry; Resume When the registry reform finishes with phase 3 | Owner W03; Resume When the registry reform finishes with phase 3 | EVD-077 |
+| 13 | `R147-03` | Cell edit in place in the live row and the ledger entry (Owner) | Owner W01; Resume Same as GOV-04 | Owner W03; Resume Same as GOV-04 | EVD-078 |
+| 14 | `OPEN-01` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner Shared source research (W00 package level); Resume When a difference shown to affect a current owner is found | Owner W00; Resume Only on a difference shown to affect a current owner (historical, non-blocking; W00:20, 153) | EVD-079 |
+| 15 | `OPEN-02` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner Shared source research (W00 package level); Resume When a difference shown to affect a current owner is found | Owner W00; Resume Same as OPEN-01 | EVD-080 |
+| 16 | `OPEN-03` | Cell edit in place in the live row and the ledger entry (Owner, Resume, Residue) | Owner Named stages; Resume When each named stage closes its DELTA packages; Residue (end) 37 DELTA packages open at their stages | Owner W00; Resume When each of its 37 DELTA packages is judged item by item at its named stage (PKG W00:153); that stage consumes the judgment; Residue (end) 37 DELTA packages open at their stages; the 37 are the rows with Current state DELTA in the `SUP-01 Legacy Lineage` table of the SPEC-0155 Task (`git show a6f44976:docs/03.specs/0155-designated-source-applicability/tasks/tsk-0001-designated-source-applicability.md`; REQ-0003 Archived Lineage, SPEC-0155 row and its recovery proof) | EVD-081 |
+| 17 | `OPEN-04` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner Holder of the original reports; Resume When the original reports are supplied | Owner W00; Resume Only when the original reports are supplied or a difference shown to affect a current owner (historical, non-blocking) | EVD-082 |
+| 18 | `OPEN-06` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner W01, W03 or W07; Resume Only when that stage plans to adopt a named source | Owner W00; Resume Only when a stage proposes adopting a named source, or on a shown owner difference; that stage consumes the result | EVD-083 |
+| 19 | `W03-H15` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner W03 with W05; Resume After phase 3; the H07 package named in the row is closed | Owner W03; Resume After phase 3; the H07 package named in the row is closed; W05 consumes the record | EVD-084 |
+| 20 | `W03-H29` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner W03 with W05; Resume Packages 3 to 5 add the rule IDs (W03-D42 to W03-D44); the package that adopts the last policy removes the adoption gate, `state` and `POLICY-RULE-ADOPTION` with their tests in its final source commit (W03-D53) | Owner W03; Resume Packages 3 to 5 add the rule IDs (W03-D42 to W03-D44); the package that adopts the last policy removes the adoption gate, `state` and `POLICY-RULE-ADOPTION` with their tests in its final source commit (W03-D53); W05 consumes the rule IDs | EVD-085 |
+| 21 | `SDLC-07` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner W04 (policy semantics only); Resume When W04 starts | Owner W04; Resume When W04 starts (policy semantics only) | EVD-086 |
+| 22 | `R45-12` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner W11, this workspace only; Resume When another repository's adoption evidence exists | Owner W11; Resume When another repository's adoption evidence exists (this workspace only) | EVD-087 |
+
+### Resolution Links
+
+The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
+
 ### Residue Handoff
 
 Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each row is residue that is open in current truth in any table above; `Residue` cites its legacy row, and the legacy residue tables stay as recorded and are registered historical in `docs/99.templates/registry.json`. `State`, `Owner` and `Resume condition` equal the matching entry of `docs/03.specs/work-residue-ledger.json`; a row closes in place with `State` terminal and a PASS `EVD` ID in `Closure`. EVD-053 records the read.
@@ -599,177 +777,25 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W07-H02 | No legacy row: GOV-08, allow tests for approved local reads, reversible edits and narrow tests, and deny tests for secret access and out-of-scope writes. Frozen SPEC-0166 Handoffs, W07 row, and Trace GOV-08; PKG W01:414-420. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | open | W07 | When W07 starts | none |
 | W07-H03 | No legacy row: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash). Frozen SPEC-0166 Requirement Trace, W01-B row; its Handoffs table does not list it. Recover the frozen Task as for W05-H04. Seeded under W03-D81 by SPEC-0213 | open | W07 | When W07 starts | none |
 
+## Acceptance Decision
 
-### r1 Edition Delta
-
-Added 2026-11-14 under SPEC-0213 (W03-D77, W03-D82). The v14.7 `Edition Delta` and the `Inputs` cells above stay as recorded; where a row below differs, it supersedes them for the r1 revision of 2026-11-13 and says so. The r1 root was read from the main checkout's `_workspace/` (git-ignored, so the implementation worktree has none); SHA-256 values were taken with `sha256sum` on 2026-11-14.
-
-| Input | Recorded edition (v14.7) | r1 | Effect |
-| --- | --- | --- | --- |
-| Package root | `_workspace/workspace_execution_tasks/` (absent on disk) | `_workspace/workspace_execution_tasks_v14_7_revision_20261113_r1/`, git-ignored by `/_workspace/*` (`.gitignore` line 74) | The r1 root is PACKAGE_ROOT. The v14.7 archive `workspace_execution_tasks_20261112_v14_7.zip` (`dd4eb60d7fdb92ec7d7d3692259f1bebe3d189db6fe032b494e69836ec37e22e`) is the baseline identity and `new_input_sha256` `8adefe7e0259e670cc479d48274f66367fd3d47c4ac1566b7a0efd326c14b25e` names the user's 2026-11-13 input (`dependencies/input/BASELINE-IDENTITY.json`, `306e9695…`) |
-| W00 prompt `tasks/TASK-hy-home-k8s-W00.md` | `65d1cc62db9e2aae2476138d4285d4138a65202309bb4e6167b694758abbd1e7` | `fb8e6305c60c7458e353a3a53fdf01758490a19a510c6d593db3e090c5d53771` | `EDIT` of the recorded hash (`reports/TASK-CHANGE-REGISTER.csv` line 42); new content in the rows below |
-| `dependencies/source/REQUIREMENTS.json` | `4c9da241ba185310048f3231815c04ed42dc7ce54c44e201f97e469f5945084b` | `21371ac53c7594b73aec908e2c25b6e26f164eb40a5eac55fc5a983d40495a75`, 106 rows | Hash changed. The v14.7 bytes are absent, and `reports/TASK-CHANGES.diff` covers only the 52 task prompts, so a changed requirement row is visible only where a prompt hunk quotes it; the eight W00 hunks quote none. The delta is partial, as it was for v14.2 |
-| The other ten recorded inputs (`INPUT-REPORT-ORIGINAL.txt`, `PROFILE-REQUIREMENTS.json`, `REVISION-v14_7.json`, `REQUEST-AMENDMENTS-v14_5.json`, `COMMON-SECTION-CONTRACT.json`, `STAGE-QA-MATRIX.json`, `QA-CHANGE-PROTOCOL.md`, `REPOSITORY-VOCABULARY.json`, `TEMPLATE-DEFINITION-CONTRACT.md`, `OPEN-01-14.json`) | the ten hashes of the `Inputs` bullet | Re-hashed 2026-11-14; each equals its recorded value | No change |
-| Inputs the r1 W00 prompt names and SPEC-0161 did not hash | none | `dependencies/source/SUPPLEMENTS.json` `0a40f47486bfaa5109be35aa882392c5d3b4cbebe00262ea296f54915c960473`; `contracts/OPEN-01-14-GUIDE.md` `98caa4945bbf42319b4bbe2998151ac53c5bfc0d60c424bd05a11d8ffa50d560`; `contracts/SPEC-DISPOSITION.md` `4aae652c095b5113d641e720f1855cac6ec4670eb188c6b90a03f053bab7de53`; `contracts/SEMVER-POLICY.md` `921d2fbae6acdf527286c77e95346ca943db5daaaa8629d7774165851c5fc06c`; `contracts/CONTINUATION-CONTRACT.md` `84696972b796b1ed9ffd9a8dbf3281164f243386376d1ba2ddabef878cf5119b`; `contracts/Q07-FINAL-CUTOVER.md` `12a8564ae958a3856e1ebcbc11168bded8c41a2026a22bdb014540a7136e3050`; `contracts/TEMPLATE-PATH-DECISION.md` `b03ae0a667ca40b0602946cc46785335b282523e07ba5c0426b48182a024ed9c`; `carryforward/REMAINING-14.csv` `8017334dc420c49769182f92ca896fc85017f1003f86886b3e70b92df593ec79`; `carryforward/V13_4-REMAINING-7.csv` `1cf07137e455c4821ef1602266717f4cfc2fe2333a178dff9f0391af81c38091` | New hashed inputs, read-only |
-| Other task prompts (W01 to W11 and Q07; `EDIT` or `ADD_POST_W11_TASK` in `reports/TASK-CHANGE-REGISTER.csv`) | not recorded | changed or added in r1: 48 `EDIT` and 4 `ADD_POST_W11_TASK` rows over the four purposes | Each is taken in by its own stage when that stage runs (`INDEX-hy-home-k8s.md` lines 15 and 17: new differences only, completed work reused); this package records none of their content |
-| W00 current position (PKG W00:7-23, diff hunk 1) | Stage and pull request state of 2026-11-12 | Current stage W03; reuse evidence and add only real new differences (W00:12); PR #249 open draft, head `3ae0b2c3`, main observed at `a56fa757` (an observation, not an acceptance; W00:18, 722) | No W00 re-run; the observation is not a repository state |
-| Direct tokens (W00:20) | none | `KEEP_VERIFIED`, `Q07_AFTER_W11_ONLY`, `SEMVER_INDEPENDENT_FROM_NUMBERING`, `HISTORICAL_AUDIT_NOT_GLOBAL_BLOCKER` | Names of verdicts in this analysis; none is added as a registry state |
-| Historical OPEN-01 to OPEN-14 (W00:151-153, 274, 759-771) | Verdict carried as "inheritance instruction" | "Observation at the time" (당시 관측); the current state is assessed separately; OPEN-01, OPEN-02 and OPEN-04 are no shared user wait | Drives the owner and resume corrections in `Residue Corrections`; none of OPEN-01, OPEN-02, OPEN-04 and OPEN-06 closes (W03-D82) |
-| OPEN-LOCAL (W00:773; alias OPEN-07) | none | `NOT_RUN_THIS_REVISION`; ends with the real local scope, read denominator, edits, tests and acceptance | The live OPEN-07 row stays; its owner edit is SPEC-0211's; no new row |
-| OPEN-SOURCES (W00:775; aliases OPEN-05, OPEN-06) | none | `PARTIAL_RECOVERY_NOT_FULL_ADOPTION_REVIEW`; ends only with the adoption scope's exact version, code, licence, consumer and tests, or an explicit non-adoption rationale | OPEN-05 is already closed by evidence (OPEN Dispositions). OPEN-06 stays open with one owner and ends only with an adoption scope or a non-adoption rationale, which the W11 exit row states (nothing is adopted now) |
-| OPEN-LEGACY-SEMANTIC (W00:777; aliases OPEN-01 to OPEN-04) | none | `NOT_CERTIFIED_BY_PACKAGE_TESTS`; do not automatically reopen or close all | Nothing closes automatically: OPEN-01, OPEN-02 and OPEN-04 get an owner and a resume correction, OPEN-03 an owner correction (W03-D82) |
-| OPEN-Q03 and OPEN-ARCHIVE (`V13_4-REMAINING-7.csv`) | none | OPEN-Q03: exact adoption of the common form edition pending; OPEN-ARCHIVE: conditional conflict only, Git-only exit of Stage 01 to 03 and 99 kept | OPEN-Q03 is carried by the live W03-H19 row and needs no new row; OPEN-ARCHIVE names no hold and no obligation here, so no row |
-| SCOPE-10 (W00:673-680) | Completed-document handling | Added clause at W00:675: a conflicting Spec, Plan or Task is revised, superseded or removed only after its valid obligations, failures and acceptance are handed over; a cancellation does not hide unfinished work (취소로 미완료를 숨기지 않는다) | No repository change; it feeds the classification rules below |
-| Current-purpose paragraph (W00:191, hunk `@@ -128 +188`) | KEEP of the completed PR #220 and ADR-0056 exit check (v14.7 diff) | Check the current contract; a past PR state is not a current gap (paraphrase) | No new obligation |
-
-### Input Corrections
-
-Added 2026-11-14 under SPEC-0213 (W03-D77). A correction row supersedes the recorded cell it names; the recorded cell stays as written and stays true as a statement about the v14.7 edition of 2026-11-12. The v14.7 root `_workspace/workspace_execution_tasks/` is absent from `_workspace/` on 2026-11-14, which holds only the r1 root, `diagnostics/` and `repo-support/`.
-
-| Superseded cell | Recorded text | Correction | Basis |
-| --- | --- | --- | --- |
-| `Inputs`, Workspace bullet (PACKAGE_ROOT) | "PACKAGE_ROOT `_workspace/workspace_execution_tasks/`, git-ignored by `.gitignore` line 74" | PACKAGE_ROOT is `_workspace/workspace_execution_tasks_v14_7_revision_20261113_r1/`, git-ignored by the same line 74 (`/_workspace/*`) | r1 `README.md`; `dependencies/input/BASELINE-IDENTITY.json`; the directory listing of `_workspace/` |
-| `Inputs`, SHA-256 bullet | "W00 prompt `65d1cc62…`; … `REQUIREMENTS.json` `4c9da241…`" | The r1 values are `fb8e6305…` and `21371ac5…` (`r1 Edition Delta`); the other ten recorded hashes re-hash equal | `sha256sum` over the r1 files, 2026-11-14 |
-| `Approval and Safety Boundaries`, Forbidden Paths | "`_workspace/workspace_execution_tasks/` (read-only input)" | The read-only input is the r1 root; the rule is unchanged: nothing is written under `_workspace/` and nothing from it is copied into `docs/90.references/` or `docs/98.archive/` | PKG W00:125; r1 `README.md` |
-| `OPEN Disposition Corrections`, OPEN-04 `Checked` | "Searched: file names and contents under `_workspace/workspace_execution_tasks/` (only the package's own references … no original); every path in this repository's Git history over all 21 refs (no match). Not searched: other machines, accounts or archives" | Searched again on 2026-11-14 over the r1 root: no file name contains `WMC`, `20261102` or `20261110`; a content search of the 228 files and of the nine history archives (entry names and entry contents) for `WMC-20261110-03` and `20261102` finds only the package's own references (the task prompts, `OPEN-01-14.json`, its guide, `SUPPLEMENTS.json`, `REMAINING-14.csv`, `REMAINING-WORK.csv`, `PRIOR-V11-REMAINING-WORK.json`, `v11-SUPPLEMENT-CLAUSES.json`, `TASK-CHANGES.diff`) and no original report. The Git-history search is not repeated. BLOCKED_EVIDENCE stands | `grep` and a read-only `zipfile` scan run outside the repository |
-
-### Change Contract Classification
-
-Added 2026-11-14 under SPEC-0213 (W03-D77, PKG W00:822-831). One row for every open row of `Residue Handoff` as read before this package's closure and cell edits (76 rows, equal to the 76 open ledger entries), for the six seeds that this package adds, and for each other package in the tree. The class names are analysis labels only (W00:824); none is a registry state or a lifecycle state. Only `CANCEL_OBSOLETE` is defined by the PKG (W00:828: a requirement the user removed, never a PASS); the other four are this Spec's operational reading for residue rows: `KEEP_VALID` the obligation is valid and its owner is right, `REVISE` the valid part is kept and a cell is corrected, `SUPERSEDE` a new owner replaces it, `REMOVE_AFTER_TRANSFER` the obligation is closed or transferred and its entry leaves the ledger. In the PKG (W00:827) `REMOVE_AFTER_TRANSFER` means removing an old package after its obligations are transferred; applied to a ledger row it is a stretch of that meaning. One owner rule holds for every row (W00:831): the Owner cell names exactly one stage; another stage a cell names moves to the Resume condition as a consumer. "W00" as an owner means the SPEC-0161 Task's W00 intake record, the workspace's existing Task, not a W00 stage run. The Current owner column shows the owner after the corrections of this package. Result: `REMOVE_AFTER_TRANSFER` 1 (W01-H01); `REVISE` 16 (13 edited here, W00-H01, W03-H02, GOV-04, R147-03, OPEN-01, OPEN-02, OPEN-03, OPEN-04, OPEN-06, W03-H15, W03-H29, SDLC-07 and R45-12, and 3 edited later by SPEC-0211, OPEN-07, DOC-12 and DOC-S99); `KEEP_VALID` 66 (59 open rows, 6 seeds and SPEC-0213); `SUPERSEDE` 0 and `CANCEL_OBSOLETE` 0, so their absence is a result. A `KEEP_VALID` row without a named PKG line is decided by the live row, its recorded decision and W00:831. The eight terminal rows (LEDGER, W03-H08, W03-H16, W03-H27, W03-H30, W03-H33, W03-H36 and W03-H42) are not live obligations and are not classified. The first column is a running number, not a residue ID. The W00 completion test (W00:831: every live obligation has exactly one owner; no deleted package keeps an active link, check input or Task reference) is shown only after the last W03 package: this package claims only the rows it classifies, OPEN-07 is shown to have one owner only after SPEC-0211, and SPEC-0211's closing report reads and re-classifies this table.
-
-| No. | Obligation | Class | Current owner | Basis | Next action |
-| --- | --- | --- | --- | --- | --- |
-| 1 | `AGENT-04`: direct, wrapper and nested hook delivery | `KEEP_VALID` | W07 | PKG W07:311; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 2 | `CI-SCOPE`: PR-DURING hosted CI scope; also an OPEN row of Requirement Changes | `KEEP_VALID` | W06 | PKG W06:16; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 3 | `COMMIT-AFTER`: no post-commit record; decide no blocking hook | `KEEP_VALID` | W06 | PKG W06:288; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 4 | `COMMIT-BEFORE`: surface selection gap for governance policy changes | `KEEP_VALID` | W06 | PKG W06:286; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 5 | `DOC-04`: profile field, state, relation and table definitions reformed | `KEEP_VALID` | W03 | PKG W03:598; owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
-| 6 | `DOC-05`: section and body contracts match target H2 and H3 and tables | `KEEP_VALID` | W03 | PKG W03:607; owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
-| 7 | `DOC-11`: a TemplateDefinition for every real template | `KEEP_VALID` | W03 | PKG W03:661; owner and resume read from the live row and valid; closes when W03-H13 and W03-H15 close (W03-D70) | None here; the owner acts at the resume condition |
-| 8 | `DOC-12`: display renumbering of Stage 01, 02 and 03; also an OPEN row of Requirement Changes | `REVISE` | W03 | REVISE, edited later: SPEC-0211 moves it to after W11 as the requirement assigns (W03-D72, W03-D74) | SPEC-0211 edits the cells |
-| 9 | `DOC-S00`: vocabulary rule_id binding | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 10 | `DOC-S90`: Stage 90 source, edition and freshness checks | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 11 | `DOC-S99`: tests hard-code current headings | `REVISE` | W03 | REVISE, edited later: SPEC-0211 moves it to W05 as the requirement assigns (W03-D72, W03-D74) | SPEC-0211 edits the cells |
-| 12 | `GOV-04`: the approved registry as a reform target | `REVISE` | W03 | REVISE: owner `W01 policy, W03 registry` becomes `W03`; the W01 policy text is in place and only the registry reform remains (EVD-077; PKG W01:378); SPEC-0205 closes it (W03-D70, W03-D78) | Owner acts at the corrected resume condition; the row is not closed here |
-| 13 | `GOV-06`: single-writer registry reformed | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
-| 14 | `MERGE-AFTER`: no post-merge regression run | `KEEP_VALID` | W06 | PKG W06:297; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 15 | `MERGE-BEFORE`: record strict in the main protection note | `KEEP_VALID` | W06 | PKG W06:295; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 16 | `OLD-RULE-TESTS`: CI branch and Python contract tests move only with CI-SCOPE | `KEEP_VALID` | W06 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 17 | `OPEN-01`: semantic atomization of the original report lines | `REVISE` | W00 | REVISE: one owner and a resume that only a shown owner difference triggers (EVD-079; W00:20, 153; `REMAINING-14.csv`); stays open, non-blocking, `HISTORICAL_AUDIT_NOT_GLOBAL_BLOCKER`; closes only at the W11 exit (W03-D82) | Owner acts at the corrected resume condition; the row is not closed here |
-| 18 | `OPEN-02`: review of the relation candidates | `REVISE` | W00 | REVISE: same as OPEN-01 (EVD-080; W00:153, 777) | Owner acts at the corrected resume condition; the row is not closed here |
-| 19 | `OPEN-03`: 37 DELTA packages open at their stages | `REVISE` | W00 | REVISE: owner `Named stages` becomes `W00`, the SPEC-0161 Task; its 37 DELTA packages stay tracked item by item at their named stages (EVD-081; W00:153, 763; W03-D82) | Owner acts at the corrected resume condition; the row is not closed here |
-| 20 | `OPEN-04`: byte comparison with two original reports | `REVISE` | W00 | REVISE: owner `Holder of the original reports` becomes `W00`, which records the blocked direct comparison; the r1 root holds no original (EVD-082, `Input Corrections`; W00:153, 765; W03-D82) | Owner acts at the corrected resume condition; the row is not closed here |
-| 21 | `OPEN-06`: perspective rows of an external source | `REVISE` | W00 | REVISE: owner `W01, W03 or W07` becomes `W00`; the proposing stage is a consumer; ends with an adoption scope or a non-adoption rationale (EVD-083; W00:769, 775; W03-D82) | Owner acts at the corrected resume condition; the row is not closed here |
-| 22 | `OPEN-07`: full survey of the local workspace | `REVISE` | W03, W05, W06, W07, W10 by file set | REVISE, edited later: SPEC-0211 edits the Owner and Resume cells (W03-D72, W03-D74); the one-owner test for this row is shown only after that edit and the last W03 package | SPEC-0211 edits the cells |
-| 23 | `OPEN-08`: live, native and cluster authority | `KEEP_VALID` | W10 | PKG W10:153; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 24 | `OPEN-09`: hard-coded current headings in tests | `KEEP_VALID` | W05 | PKG W05:529; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 25 | `PR-DURING`: PR-DURING scope decision (CI-SCOPE) | `KEEP_VALID` | W06 | PKG W06:293; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 26 | `PUSH-BEFORE`: pre-push has no target | `KEEP_VALID` | W06 | PKG W06:289; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 27 | `QA-03`: validator input is the reformed registry edition | `KEEP_VALID` | W05 | PKG W05:336; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 28 | `QA-17`: validators changed for the reformed registry | `KEEP_VALID` | W05 | PKG W05:435; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 29 | `R147-03`: approved norms are reform targets | `REVISE` | W03 | REVISE: owner `W01` becomes `W03`, same basis as GOV-04 (EVD-078; PKG W01:334); SPEC-0205 closes it (W03-D70, W03-D78) | Owner acts at the corrected resume condition; the row is not closed here |
-| 30 | `R147-04`: common H2 and H3 forms in templates and consumers | `KEEP_VALID` | W03 | PKG W03:382; owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
-| 31 | `R147-05`: tests, QA and scripts follow QA-ALIGNMENT | `KEEP_VALID` | W05 | PKG W05:273; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 32 | `R147-06`: bind Git before, during and after cells | `KEEP_VALID` | W06 | PKG W06:273; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 33 | `R147-07`: separate SDLC stage from document STAGE | `KEEP_VALID` | W04 | PKG W04:272; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 34 | `R147-10`: migrate the registry to the CI chain | `KEEP_VALID` | W03 | PKG W03:385; owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
-| 35 | `R147-16`: Kubernetes impact of governance changes | `KEEP_VALID` | W10 | PKG W10:269; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 36 | `R147-17`: harness static versus live provider evidence | `KEEP_VALID` | W07 | PKG W07:273; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 37 | `R147-20`: reuse only equivalent results | `KEEP_VALID` | W05 | PKG W05:276; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 38 | `R45-06`: reform the approved registry itself | `KEEP_VALID` | W03 | PKG W03:264; owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
-| 39 | `R45-07`: reform forms and consumers in place | `KEEP_VALID` | W03 | PKG W03:267; owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
-| 40 | `R45-10`: a TemplateDefinition per real template | `KEEP_VALID` | W03 | PKG W03:270; owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 41 | `R45-12`: verify common adoption across four purposes | `REVISE` | W11 | REVISE: owner qualifier `, this workspace only` moves to the Resume cell (EVD-087; PKG W11:262; W00:831) | Owner acts at the corrected resume condition; the row is not closed here |
-| 42 | `SCOPE-10`: current-copy migration against historical bytes | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0205 (W03-D70) | None here; the owner acts at the resume condition |
-| 43 | `SDLC-07`: transition rules in the registry | `REVISE` | W04 | REVISE: owner qualifier `(policy semantics only)` moves to the Resume cell (EVD-086; PKG W04:402; W00:831) | Owner acts at the corrected resume condition; the row is not closed here |
-| 44 | `SDLC-08`: old approved registry edition is not a pass basis | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 45 | `SDLC-ROWS`: PLAN-PROMOTION anchor, member and receipt cross-check | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 46 | `W00-H01`: 3 partial and 2 listed-only package contract files | `REVISE` | W00 | REVISE: the read is not evidenced, so the row is not closed (EVD-075); owner `W00 package level` becomes `W00` (W00:831); PKG W00:153 | Owner acts at the corrected resume condition; the row is not closed here |
-| 47 | `W01-H01`: 3 partial and 1 listed-only governance policy files | `REMOVE_AFTER_TRANSFER` | W01 | REMOVE_AFTER_TRANSFER: SPEC-0166 read in full and edited the four policy files; closed by EVD-074, entry made terminal and deleted (W03-D78); PKG W00:153 for the reopen rule | None; the entry left the ledger (EVD-074) |
-| 48 | `W03-H02`: phase 3 forms for the six SDLC roles and deletion of the heading-list model | `REVISE` | W03 | REVISE: the resume clause on a W04 slip is deleted to match the W04 ban (PKG W03:16; W03-D80; EVD-076); closes with SPEC-0205 (W03-D70) | Owner acts at the corrected resume condition; the row is not closed here |
-| 49 | `W03-H05`: keep or remove the stored ADR rejected state | `KEEP_VALID` | W04 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 50 | `W03-H09`: cross-repository equivalence; the owner is W11 by W03-H22 | `KEEP_VALID` | W11 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 51 | `W03-H10`: heading-list consumers once a role has a form | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; the W03 closing report, SPEC-0211, closes the remaining parts after reading the final tree (W03-D72) | None here; the owner acts at the resume condition |
-| 52 | `W03-H11`: qa-runner fixture branch name | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 53 | `W03-H12`: staged QA routing of folder AGENTS files | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 54 | `W03-H13`: SDLC TemplateDefinitions and H2 lists of local roles | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; with phase 3 (W03-H02), which SPEC-0205 closes (W03-D70) | None here; the owner acts at the resume condition |
-| 55 | `W03-H15`: the full TemplateDefinition record | `REVISE` | W03 | REVISE: owner `W03 with W05` becomes `W03`; W05 is a consumer (EVD-084; W00:831) | Owner acts at the corrected resume condition; the row is not closed here |
-| 56 | `W03-H19`: the missing adoption record of COMMON-DOC-FORM-1 in common_forms | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; carries OPEN-Q03; SPEC-0209 (SPEC-0213 Spec, `r1 Edition Delta`) | None here; the owner acts at the resume condition |
-| 57 | `W03-H20`: the W03 closing report | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; SPEC-0211 is the W03 closing report (W03-D74) | None here; the owner acts at the resume condition |
-| 58 | `W03-H21`: writer delegation record | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; SPEC-0209 makes the writer delegation correction (SPEC-0213 Spec, Not in this package) | None here; the owner acts at the resume condition |
-| 59 | `W03-H23`: root README bootstrap text | `KEEP_VALID` | W10 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 60 | `W03-H29`: Policy rule IDs | `REVISE` | W03 | REVISE: owner `W03 with W05` becomes `W03`; W05 consumes the rule IDs (EVD-085; W00:831) | Owner acts at the corrected resume condition; the row is not closed here |
-| 61 | `W03-H31`: stale tracking found by the conformance audit | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; SPEC-0209 makes the stale-tracking correction (SPEC-0213 Spec, Not in this package) | None here; the owner acts at the resume condition |
-| 62 | `W03-H32`: glossary definitions across repositories | `KEEP_VALID` | W11 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 63 | `W03-H34`: 2 partial files of docs/99.templates registry and schema | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; the W03 closing report, SPEC-0211, closes it (W03-D72) | None here; the owner acts at the resume condition |
-| 64 | `W03-H35`: 18 partial and 19 listed-only templates | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; the W03 closing report, SPEC-0211, closes it (W03-D72) | None here; the owner acts at the resume condition |
-| 65 | `W03-H37`: the Architecture description form | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0197 (W03-D70) | None here; the owner acts at the resume condition |
-| 66 | `W03-H38`: the ADR form | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0198 (W03-D70) | None here; the owner acts at the resume condition |
-| 67 | `W03-H39`: the Spec form | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0200 (W03-D70) | None here; the owner acts at the resume condition |
-| 68 | `W03-H40`: the Plan form | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0200 (W03-D70) | None here; the owner acts at the resume condition |
-| 69 | `W03-H41`: the Task form | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; closes with SPEC-0203 (W03-D70) | None here; the owner acts at the resume condition |
-| 70 | `W03-H43`: the `requirement` lifecycle domain yields no creation state, so a new Requirement is refused by the lifecycle creation rule and by the document generator (W03-D48); the repair is a lifecycle contract change of its own | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; SPEC-0210 adds the creation state (W03-D71, W03-D73) | None here; the owner acts at the resume condition |
-| 71 | `W03-H44`: the Requirement `Downstream owner` column is a hand-written reciprocal field, 10 of the 68 members are not cited in their description's own `Upstream requirement` column and 17 of its 91 cells are not a single link (W03-D55); the Architecture form package completes the citing rows and then removes the column with a derived coverage check in place of its link check | `KEEP_VALID` | W03 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid; the Architecture form package, SPEC-0197, completes the citing rows and then removes the column (the row text, W03-D55) | None here; the owner acts at the resume condition |
-| 72 | `W05-H01`: the hard-coded link-only section list must follow the registry | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 73 | `W05-H02`: 8 partial and 53 listed-only tracked scripts | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 74 | `W05-H03`: 5 partial and 68 listed-only tracked tests | `KEEP_VALID` | W05 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 75 | `W06-H01`: 2 listed-only workflow files | `KEEP_VALID` | W06 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 76 | `W07-H01`: 2 listed-only hook files | `KEEP_VALID` | W07 | no PKG prompt line names this ID; the live row and its recorded decision decide it (W00:831); owner and resume read from the live row and valid | None here; the owner acts at the resume condition |
-| 77 | `W05-H04`: derived-copy drift check, a derived body changed alone is refused (source requirement GOV-06, not the legacy `GOV-06` row, which is the registry reform) | `KEEP_VALID` | W05 | Seeded here (W03-D78); frozen SPEC-0166 Handoffs, W05 row; PKG W01:396-402 (EVD-073) | None here; the owner acts at the resume condition |
-| 78 | `W05-H05`: refusal of contradictory approval text, and refusal tests for rule, code and validator contradictions (source requirement GOV-07) | `KEEP_VALID` | W05 | Seeded here (W03-D78); frozen SPEC-0166 Handoffs, W05 row; PKG W01:405-411 (EVD-073) | None here; the owner acts at the resume condition |
-| 79 | `W05-H06`: ARC-08, trace and remove the `done` and `archived` branches of `scripts/validate-links-and-owners.py` and the terminal statuses of `scripts/validation/current_executable_references.py` with their tests when no registry domain reaches them | `KEEP_VALID` | W05 | Seeded here (W03-D78); frozen SPEC-0167 Handoffs, W05 row and ARC-08 row; PKG W02:340-343 (EVD-073) | None here; the owner acts at the resume condition |
-| 80 | `W07-H02`: GOV-08, allow tests for approved local reads, reversible edits and narrow tests, and deny tests for secret access and out-of-scope writes | `KEEP_VALID` | W07 | Seeded here (W03-D78); frozen SPEC-0166 Handoffs, W07 row; PKG W01:414-420 (EVD-073) | None here; the owner acts at the resume condition |
-| 81 | `W07-H03`: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash) | `KEEP_VALID` | W07 | Seeded here (W03-D81); frozen SPEC-0166 Requirement Trace, W01-B row (EVD-073) | None here; the owner acts at the resume condition |
-| 82 | `W01-H02`: DOC-S00, W01 part, the `rule_id` binding of the vocabulary in `.agents/knowledge/glossary.md` that W05 consumes | `KEEP_VALID` | W01 | Seeded here (W03-D78, W03-D82); owner stays W01, W05 consumes; legacy DOC-S00 row; PKG W06:331 (EVD-073) | None here; the owner acts at the resume condition |
-| 83 | `SPEC-0213`: this W00 r1 intake and residue correction package, written by W03 | `KEEP_VALID` | W00 | Its own Task owns the work and the evidence; the tables it appends are analysis and residue, not a progress record | Operator acceptance of VAL-INTAKE-001 and VAL-INTAKE-002 |
-
-### Residue Corrections
-
-Added 2026-11-14 under SPEC-0213 (W03-D78, W03-D81, W03-D82). One row for each seed, covered finding, closure and cell edit of this package; the first column is a running number, not a residue ID. Rows 1 to 6 are the seeds, 7 and 8 the covered findings, 9 the closure, 10 the W00-H01 owner edit (its read is not evidenced, so the row stays open) and 11 to 22 the other twelve cell edits. Each "before" cell is the recorded text; the live table cells it names were edited in place and the legacy rows stay as recorded. OPEN-01, OPEN-02, OPEN-04 and OPEN-06 are not closed (W03-D82).
-
-| No. | Residue | Change | Cells before | Cells after | Evidence |
-| --- | --- | --- | --- | --- | --- |
-| 1 | `W05-H04`: GOV-06 derived-copy drift check | Seeded under W03-D78: live row and ledger entry added together | none (no live row, no entry) | State open; Owner W05; Resume When W05 starts; Closure none | EVD-073 |
-| 2 | `W05-H05`: GOV-07 refusal tests | Seeded under W03-D78: live row and ledger entry added together | none (no live row, no entry) | State open; Owner W05; Resume When W05 starts; Closure none | EVD-073 |
-| 3 | `W05-H06`: ARC-08 `done` and `archived` branches | Seeded under W03-D78: live row and ledger entry added together | none (no live row, no entry) | State open; Owner W05; Resume When W05 starts; Closure none | EVD-073 |
-| 4 | `W07-H02`: GOV-08 allow and deny tests | Seeded under W03-D78: live row and ledger entry added together | none (no live row, no entry) | State open; Owner W07; Resume When W07 starts; Closure none | EVD-073 |
-| 5 | `W07-H03`: W01-B rejection tests | Seeded under W03-D78 and W03-D81: live row and ledger entry added together | none (no live row, no entry) | State open; Owner W07; Resume When W07 starts; Closure none | EVD-073 |
-| 6 | `W01-H02`: DOC-S00 W01 part | Seeded under W03-D78 and W03-D82: live row and ledger entry added together | none (no live row, no entry) | State open; Owner W01; Resume When W01 is run for its r1 differences; W05 consumes the result; Closure none | EVD-073 |
-| 7 | `shared_contract` binding tests (frozen SPEC-0166 W05 row) | Covered, no row and no entry (W03-D78, W03-D82) | none | none: every field of the frozen W03 row is tested in `tests/test_shared_contract_binding.py` | EVD-073 (test names there) |
-| 8 | W04 per-role status row of the frozen SPEC-0166 (`document-lifecycle.md`) | Covered by R147-07, no row and no entry (W03-D81) | none | none: the live R147-07 row, owner W04, resume When W04 starts | EVD-073 (PKG W04:272) |
-| 9 | `W01-H01` | Closed through the ledger cycle (W03-D78) | State open; Closure none; entry open | State terminal; Closure EVD-074; entry made terminal, gate PASS, entry deleted, gate PASS | EVD-074 |
-| 10 | `W00-H01` | Cell edit in place in the live row and the ledger entry (Owner) | Owner W00 package level; Resume When a difference shown to affect a current owner is found | Owner W00; Resume When a difference shown to affect a current owner is found | EVD-075 |
-| 11 | `W03-H02` | Cell edit in place in the live row and the ledger entry (Resume) | Owner W03; Resume After phase 2 is accepted; if W04 starts first, record the slip here | Owner W03; Resume After phase 2 is accepted | EVD-076 |
-| 12 | `GOV-04` | Cell edit in place in the live row and the ledger entry (Owner) | Owner W01 policy, W03 registry; Resume When the registry reform finishes with phase 3 | Owner W03; Resume When the registry reform finishes with phase 3 | EVD-077 |
-| 13 | `R147-03` | Cell edit in place in the live row and the ledger entry (Owner) | Owner W01; Resume Same as GOV-04 | Owner W03; Resume Same as GOV-04 | EVD-078 |
-| 14 | `OPEN-01` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner Shared source research (W00 package level); Resume When a difference shown to affect a current owner is found | Owner W00; Resume Only on a difference shown to affect a current owner (historical, non-blocking; W00:20, 153) | EVD-079 |
-| 15 | `OPEN-02` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner Shared source research (W00 package level); Resume When a difference shown to affect a current owner is found | Owner W00; Resume Same as OPEN-01 | EVD-080 |
-| 16 | `OPEN-03` | Cell edit in place in the live row and the ledger entry (Owner, Resume, Residue) | Owner Named stages; Resume When each named stage closes its DELTA packages; Residue (end) 37 DELTA packages open at their stages | Owner W00; Resume When each of its 37 DELTA packages is judged item by item at its named stage (PKG W00:153); that stage consumes the judgment; Residue (end) 37 DELTA packages open at their stages; the 37 are the rows with Current state DELTA in the `SUP-01 Legacy Lineage` table of the SPEC-0155 Task (`git show a6f44976:docs/03.specs/0155-designated-source-applicability/tasks/tsk-0001-designated-source-applicability.md`; REQ-0003 Archived Lineage, SPEC-0155 row and its recovery proof) | EVD-081 |
-| 17 | `OPEN-04` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner Holder of the original reports; Resume When the original reports are supplied | Owner W00; Resume Only when the original reports are supplied or a difference shown to affect a current owner (historical, non-blocking) | EVD-082 |
-| 18 | `OPEN-06` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner W01, W03 or W07; Resume Only when that stage plans to adopt a named source | Owner W00; Resume Only when a stage proposes adopting a named source, or on a shown owner difference; that stage consumes the result | EVD-083 |
-| 19 | `W03-H15` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner W03 with W05; Resume After phase 3; the H07 package named in the row is closed | Owner W03; Resume After phase 3; the H07 package named in the row is closed; W05 consumes the record | EVD-084 |
-| 20 | `W03-H29` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner W03 with W05; Resume Packages 3 to 5 add the rule IDs (W03-D42 to W03-D44); the package that adopts the last policy removes the adoption gate, `state` and `POLICY-RULE-ADOPTION` with their tests in its final source commit (W03-D53) | Owner W03; Resume Packages 3 to 5 add the rule IDs (W03-D42 to W03-D44); the package that adopts the last policy removes the adoption gate, `state` and `POLICY-RULE-ADOPTION` with their tests in its final source commit (W03-D53); W05 consumes the rule IDs | EVD-085 |
-| 21 | `SDLC-07` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner W04 (policy semantics only); Resume When W04 starts | Owner W04; Resume When W04 starts (policy semantics only) | EVD-086 |
-| 22 | `R45-12` | Cell edit in place in the live row and the ledger entry (Owner, Resume) | Owner W11, this workspace only; Resume When another repository's adoption evidence exists | Owner W11; Resume When another repository's adoption evidence exists (this workspace only) | EVD-087 |
-
-## Criterion Acceptance
+### Criterion Decisions
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
 | [VAL-DELTA-001](../spec.md#criteria) | accepted | EVD-014, EVD-015, EVD-016 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
 | [VAL-DELTA-002](../spec.md#criteria) | accepted | EVD-012, EVD-015, EVD-016, EVD-017, EVD-020 | Accepted by the user on 2026-11-12 (direct answer "ok" to the 12-criterion acceptance question) | platform |
 
-## Approval and Safety Boundaries
+### Remaining Conditions
 
-- **Allowed Paths**: `docs/03.specs/0161-w00-v14-7-delta-intake/`, `docs/03.specs/README.md`, one back-link sentence in `docs/01.requirements/0003-workspace-agent-governance-platform.md` Traceability, `.secrets.baseline` (reviewed digest entries only, if the secret scan flags this Task's digests)
-- **Forbidden Paths**: every file named in a handoff table; `_workspace/workspace_execution_tasks/` (read-only input)
-- **Approval Required**: Spec and Plan approval; any commit, push, PR, merge or package exit; the CI-SCOPE and POLICY-ROLE decisions belong to W01
-- **Static Validation**: strict document validators, staged lifecycle check, `python3 scripts/qa.py staged`
-- **Live Validation**: DEFER; no live surface in scope
-- **Secret / Vault Handling**: no secret read or printed
-- **Rollback Plan**: delete the branch `claude/w00-v14-7-intake`; `main` is unchanged
-- **Evidence Location**: this Task
+No separate remaining-condition list is kept here; the Disposition and Current owner columns of the criterion decisions state what remains and who owns it.
 
-## Verification Summary
+## Handoff
+
+### Promotion Receipt
+
+No separate promotion receipt is kept here; the receipt of each Plan promotion row, where the Plan has one, is recorded in the evidence rows under Results.
+
+### Next Owner
 
 Required completeness (EVD-014), independent review (EVD-012, EVD-015) and exact-index QA (EVD-017) pass; the user accepted every criterion on 2026-11-12. Residual risk: the survey read large validators and tests in part; writers must re-read before editing. The core-diff checklist is EVD-020 (risk class `low`). GOV-01 vocabulary, GIT-09 review path and DOC-09 are done in SPEC-0163, SPEC-0162 and SPEC-0164. Next owners: W01 (GOV-02 to GOV-08, CI-SCOPE policy text, POLICY-ROLE), then W03, W04, W05, W06, W07 and W10 per the handoff tables; DOC-12 display renumbering last.

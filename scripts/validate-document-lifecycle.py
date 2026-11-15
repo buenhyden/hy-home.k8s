@@ -24,7 +24,9 @@ from document_contracts import (
     ROOT_FILES,
     TARGET_ROOTS,
     DocumentContractError,
+    DocumentProfile,
     Registry,
+    TaskExecution,
     classify_path,
     enumerate_target_markdown,
     is_opaque_evaluation_output,
@@ -697,15 +699,40 @@ def _form_heading(registry: Registry, form_id: str, section_id: str) -> str | No
     return None
 
 
+def _task_execution_binding(registry: Registry | None) -> TaskExecution | None:
+    """The sdlc/task execution binding of one registry, which a side is read with."""
+
+    for profile in registry.profiles if registry is not None else ():
+        if profile.profile_id == "sdlc/task" and profile.body_contract is not None:
+            return profile.body_contract.task_execution
+    return None
+
+
+def _task_profile(registry: Registry | None) -> DocumentProfile | None:
+    return (
+        next((p for p in registry.profiles if p.profile_id == "sdlc/task"), None)
+        if registry is not None
+        else None
+    )
+
+
 def _local_plan_task_contract_issues(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
     proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
     base_texts: Mapping[PurePosixPath, str],
     proposed_texts: Mapping[PurePosixPath, str],
+    base_registry: Registry | None = None,
 ) -> tuple[tuple[PurePosixPath, str, str, str, str], ...]:
-    """Check only this local adopter's changed Plan and execution inputs."""
+    """Check only this local adopter's changed Plan and execution inputs.
 
+    Each side of a Task comparison is read with the registry of that side: the base
+    text with `base_registry`, the proposed text with `registry` (SPEC-0203).
+    """
+
+    base_registry = base_registry or registry
+    base_binding = _task_execution_binding(base_registry)
+    binding = _task_execution_binding(registry)
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     plan_profile = profiles.get("sdlc/plan")
     plan_form = any(item.form_id == "plan" for item in registry.common_forms)
@@ -873,13 +900,17 @@ def _local_plan_task_contract_issues(
             for row in rows
         )
         base_evidence = {
-            row.get("Evidence", "").strip(): row
-            for row in adapter.task_base_evidence_rows(base_texts.get(path, "")) or ()
+            row.get("Evidence ID", "").strip(): row
+            for row in adapter.task_base_evidence_rows(
+                base_texts.get(path, ""), base_binding
+            )
+            or ()
         }
         active = active or any(
             row.get("Result", "").strip() == "PASS"
-            and base_evidence.get(row.get("Evidence", "").strip()) != row
-            for row in adapter.task_base_evidence_rows(proposed_texts[path]) or ()
+            and base_evidence.get(row.get("Evidence ID", "").strip()) != row
+            for row in adapter.task_base_evidence_rows(proposed_texts[path], binding)
+            or ()
         )
         if not active:
             continue
@@ -894,9 +925,10 @@ def _local_plan_task_contract_issues(
             else {}
         )
         prior_task = base_documents.get(path)
+        base_task_profile = _task_profile(base_registry)
         prior_rows = (
-            adapter._body_contract_rows(base_texts[path], task_profile) or ()
-            if prior_task is not None and task_profile is not None
+            adapter._body_contract_rows(base_texts[path], base_task_profile) or ()
+            if prior_task is not None and base_task_profile is not None
             else ()
         )
         same_existing_work = bool(
@@ -997,15 +1029,22 @@ def _new_approval_receipts(
     plan_hash: str,
     spec_id: str,
     plan_id: str,
+    base_binding: TaskExecution | None = None,
 ) -> bool:
-    """Check structure and exact review bytes; actor truth remains human-owned."""
+    """Check structure and exact review bytes; actor truth remains human-owned.
+
+    The proposed rows were read with the proposed registry; the base rows are read
+    with the binding of the base registry and carried under the current names.
+    """
 
     view = views.get(task_path)
     if view is None or view.document.profile_id != "sdlc/task":
         return False
     rows = [dict(cells) for cells in view.task_evidence_rows]
     old_rows = (
-        _link_validator_module().task_base_evidence_rows(base_texts[task_path])
+        _link_validator_module().task_base_evidence_rows(
+            base_texts[task_path], base_binding
+        )
         if task_path in base_texts
         else []
     )
@@ -1023,12 +1062,12 @@ def _new_approval_receipts(
             "revocation",
         }
     )
-    old_ids = {row.get("Evidence", "").strip() for row in old_rows}
+    old_ids = {row.get("Evidence ID", "").strip() for row in old_rows}
     current_approvals = [
         (row, receipt)
         for row in rows
-        if row.get("Check", "").strip() == "Spec/Plan first-record approval"
-        and row.get("Evidence", "").strip() not in old_ids
+        if row.get("Command", "").strip() == "Spec/Plan first-record approval"
+        and row.get("Evidence ID", "").strip() not in old_ids
         for receipt in (_receipt_object(row.get("Input", ""), approval_keys),)
         if receipt is not None
         and receipt["reviewed_spec_sha256"] == spec_hash
@@ -1042,8 +1081,8 @@ def _new_approval_receipts(
     reviews = [
         row
         for row in rows
-        if row.get("Check", "").strip() == "Independent semantic review"
-        and row.get("Evidence", "").strip() == approval_input["review_ref"]
+        if row.get("Command", "").strip() == "Independent semantic review"
+        and row.get("Evidence ID", "").strip() == approval_input["review_ref"]
     ]
     if len(reviews) != 1:
         return False
@@ -1058,17 +1097,17 @@ def _new_approval_receipts(
             )
         ):
             return False
-    review_id = review.get("Evidence", "").strip()
-    approval_id = approval.get("Evidence", "").strip()
+    review_id = review.get("Evidence ID", "").strip()
+    approval_id = approval.get("Evidence ID", "").strip()
     evidence_id = r"EVD-(?:[A-Z0-9]+-)*[0-9]{3}"
     if not all(re.fullmatch(evidence_id, item) for item in (review_id, approval_id)):
         return False
     if (
         review_id == approval_id
-        or sum(row.get("Evidence", "").strip() == review_id for row in rows) != 1
-        or sum(row.get("Evidence", "").strip() == approval_id for row in rows) != 1
+        or sum(row.get("Evidence ID", "").strip() == review_id for row in rows) != 1
+        or sum(row.get("Evidence ID", "").strip() == approval_id for row in rows) != 1
         or any(
-            row.get("Evidence", "").strip() in {review_id, approval_id}
+            row.get("Evidence ID", "").strip() in {review_id, approval_id}
             for row in old_rows
         )
     ):
@@ -1103,6 +1142,7 @@ def _approved_initial_paths(
     proposed_texts: Mapping[PurePosixPath, str],
     base_texts: Mapping[PurePosixPath, str],
     views: Mapping[PurePosixPath, LifecycleEvidenceDocument],
+    base_binding: TaskExecution | None = None,
 ) -> frozenset[PurePosixPath]:
     """Admit only one newly approved, typed package pair per exact snapshot."""
 
@@ -1159,7 +1199,14 @@ def _approved_initial_paths(
             if task_metadata.get("parent_ids") != [plan_id]:
                 continue
             if _new_approval_receipts(
-                task_path, views, base_texts, spec_hash, plan_hash, spec_id, plan_id
+                task_path,
+                views,
+                base_texts,
+                spec_hash,
+                plan_hash,
+                spec_id,
+                plan_id,
+                base_binding,
             ):
                 admitted.update((spec_path, plan_path))
                 break
@@ -1191,7 +1238,20 @@ def _evidence_context(
     proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
     base_texts: Mapping[PurePosixPath, str],
     proposed_texts: Mapping[PurePosixPath, str],
+    base_registry: Registry | None = None,
 ) -> LifecycleEvidenceContext:
+    """Read each side of every Task with the registry of that side (SPEC-0203).
+
+    `base_registry` reads the base documents; without it the one registry reads both,
+    which is right only when the two sides share their Task shape.
+    """
+
+    base_registry = base_registry or registry
+    base_profile_map = {
+        profile.profile_id: profile for profile in base_registry.profiles
+    }
+    base_binding = _task_execution_binding(base_registry)
+    binding = _task_execution_binding(registry)
     profile_map = {profile.profile_id: profile for profile in registry.profiles}
     snapshot_profiles = MappingProxyType(
         {path: document.profile_id for path, document in proposed_documents.items()}
@@ -1203,7 +1263,7 @@ def _evidence_context(
         PurePosixPath, tuple[tuple[tuple[str, str], ...], ...]
     ] = {}
     for path, document in base_documents.items():
-        profile = profile_map.get(document.profile_id)
+        profile = base_profile_map.get(document.profile_id)
         if (
             document.profile_id == "sdlc/task"
             and profile is not None
@@ -1214,7 +1274,7 @@ def _evidence_context(
             rows = adapter.task_base_rows(base_texts[path], profile)
             if rows:
                 base_task_rows[path] = rows
-            evidence = adapter.task_base_evidence_rows(base_texts[path])
+            evidence = adapter.task_base_evidence_rows(base_texts[path], base_binding)
             if evidence:
                 base_task_evidence_rows[path] = tuple(
                     tuple(row.items()) for row in evidence
@@ -1258,10 +1318,13 @@ def _evidence_context(
             task_evidence_rows=(
                 tuple(
                     tuple(row.items())
-                    for row in adapter.task_base_evidence_rows(proposed_texts[path])
+                    for row in adapter.task_base_evidence_rows(
+                        proposed_texts[path], binding
+                    )
                 )
                 if document.profile_id == "sdlc/task"
-                and adapter.task_base_evidence_rows(proposed_texts[path]) is not None
+                and adapter.task_base_evidence_rows(proposed_texts[path], binding)
+                is not None
                 else ()
             ),
         )
@@ -1416,12 +1479,22 @@ def _evidence_context(
         body_changed_paths=body_changed | created,
         created_paths=created,
         approved_initial_paths=_approved_initial_paths(
-            base_documents, proposed_documents, proposed_texts, base_texts, views
+            base_documents,
+            proposed_documents,
+            proposed_texts,
+            base_texts,
+            views,
+            base_binding,
         ),
         base_task_rows=MappingProxyType(base_task_rows),
         base_task_evidence_rows=MappingProxyType(base_task_evidence_rows),
         local_contract_issues=_local_plan_task_contract_issues(
-            registry, base_documents, proposed_documents, base_texts, proposed_texts
+            registry,
+            base_documents,
+            proposed_documents,
+            base_texts,
+            proposed_texts,
+            base_registry,
         ),
         retired_identities=(
             lineage_retired_identities(proposed_texts)
@@ -1983,6 +2056,29 @@ def _snapshot_blob_size(root: Path, blobs: Mapping[PurePosixPath, str]) -> int:
     return total
 
 
+def _history_registry(root: Path, commit: str, current: Registry) -> Registry:
+    """The typed registry one commit carried, else the current one.
+
+    A blob whose MAJOR is not in READABLE_REGISTRY_MAJORS falls back to the current
+    registry; a readable one is read with its own typed reading (SPEC-0203 reads the
+    base side of a comparison with it, so a moving commit finds the base rows).
+    """
+
+    oid = _tree_blob_oid(root, commit, CURRENT_REGISTRY_PATH)
+    raw = _registry_blob(root, oid) if oid is not None else {}
+    try:
+        major = registry_schema_version(raw).split(".")[0]
+    except DocumentContractError:
+        return current
+    # Digit strings compare without int(): the grammar has no leading zero.
+    if major not in {str(readable) for readable in READABLE_REGISTRY_MAJORS}:
+        return current
+    try:
+        return _typed_registry_from_mapping(raw)
+    except (KeyError, TypeError, ValueError, re.error) as exc:
+        raise InvocationError("history registry is malformed") from exc
+
+
 @dataclass
 class _CumulativeHistoryCache:
     """Share bounded snapshot and evidence work across one comparison's paths."""
@@ -2049,19 +2145,7 @@ class _CumulativeHistoryCache:
         A historical registry still carrying keys the current schema retired
         loads unchanged, because the typed reader takes only the fields it owns.
         """
-        oid = _tree_blob_oid(self.root, commit, CURRENT_REGISTRY_PATH)
-        raw = _registry_blob(self.root, oid) if oid is not None else {}
-        try:
-            major = registry_schema_version(raw).split(".")[0]
-        except DocumentContractError:
-            return self.registry
-        # Digit strings compare without int(): the grammar has no leading zero.
-        if major not in {str(readable) for readable in READABLE_REGISTRY_MAJORS}:
-            return self.registry
-        try:
-            return _typed_registry_from_mapping(raw)
-        except (KeyError, TypeError, ValueError, re.error) as exc:
-            raise InvocationError("history registry is malformed") from exc
+        return _history_registry(self.root, commit, self.registry)
 
     def _snapshot(
         self, commit: str
@@ -2200,6 +2284,7 @@ class _CumulativeHistoryCache:
                 proposed_snapshot,
                 base_texts,
                 proposed_texts,
+                base_registry=self.registry_at(parent),
             )
         return self.evidence[key]
 
@@ -2671,6 +2756,7 @@ def _evaluate_comparison(
         proposed_snapshot,
         base_texts,
         proposed_texts,
+        base_registry=_history_registry(root, base_commit, registry),
     )
     diagnostics = compare_lifecycle(
         proposed_classification_registry,

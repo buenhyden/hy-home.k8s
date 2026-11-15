@@ -1,10 +1,10 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.4.1"
+version: "1.5.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-15"
 artifact_id: "RUN-0011"
 ---
 
@@ -86,7 +86,7 @@ Reference
    따라 판단과 승인 범위를 기존 Task에 기록한다. Git-history-only 방식을
    고르면 삭제·이동 전에 현재 처분할 원형과 일치하는 정확한 원문
    `commit:path`의 도달 가능성을 확인하고 임시 위치에 복구해 현재 원형의
-   bytes와 비교한다. 미커밋 차이는 오래된 Git 객체로 보호되지 않는다. 해당 Task Evidence와
+   bytes와 비교한다. 미커밋 차이는 오래된 Git 객체로 보호되지 않는다. 해당 Task의 Results 표와
    Stage 01~03은 현재 owner의 기존 Archived Lineage에, 다른 유형은 기존
    관계·처분 기록에 복구 근거를 남긴 뒤 대상만 처분한다.
    완료된 Stage 03 package에 증거 소유 Task 자체가 포함되면, 그 Task에는
@@ -131,7 +131,7 @@ Reference
    복구본의 차이, 미확인 hold 또는 권한은 해당 처분 `DEFER`다. 여기서 확인한
    도달성은 입력한 로컬 ref에 한정되므로 원격 보존은 별도 관측 없이 주장하지
    않는다. Git 객체와 현재 원형의 해시, 검사 대상 ref, 명령 결과를 기존
-   Task Evidence에 남기되, 종료 단위에 Task 자체가 포함된 경우 위의 살아남는
+   Task의 Results 표에 남기되, 종료 단위에 Task 자체가 포함된 경우 위의 살아남는
    Archived Lineage에 남긴다. 문서 본문은 로그에 복사하지 않는다.
 
 ### Stop Conditions

@@ -599,23 +599,35 @@ def _task_evidence_retention_diagnostics(
     """Keep prior factual check rows immutable while allowing new resolution rows."""
 
     before = {
-        dict(cells)["Evidence"].strip(): dict(cells)
+        dict(cells)["Evidence ID"].strip(): dict(cells)
         for cells in context.base_task_evidence_rows.get(path, ())
     }
     view = context.proposed_documents[path]
     after = {
-        dict(cells)["Evidence"].strip(): dict(cells)
+        dict(cells)["Evidence ID"].strip(): dict(cells)
         for cells in view.task_evidence_rows
     }
     issues: list[LifecycleDiagnostic] = []
     for identifier, old in before.items():
         new = after.get(identifier)
         reason = ""
+        missing = (
+            ()
+            if new is None
+            else tuple(
+                key
+                for key in ("Consumer", "Work Unit", "Command", "Input", "Result")
+                if key not in old or key not in new
+            )
+        )
         if new is None:
             reason = f"{identifier} deleted"
+        elif missing:
+            # A column a rule reads is an error when absent, never an empty value.
+            reason = f"{identifier} lacks the column {missing[0]}"
         elif any(
             old.get(key, "").strip() != new.get(key, "").strip()
-            for key in ("Work Unit", "Check", "Input", "Result", "Location")
+            for key in ("Work Unit", "Command", "Input", "Result", "Location")
         ):
             reason = f"{identifier} factual check changed"
         elif "Required" in old and any(
@@ -629,7 +641,7 @@ def _task_evidence_retention_diagnostics(
             and new.get("Required", "").strip() != "yes"
         ):
             reason = f"{identifier} prior adverse check made optional"
-        elif old.get("Criteria", "").strip() != new.get("Criteria", "").strip():
+        elif old.get("Consumer", "").strip() != new.get("Consumer", "").strip():
             reason = f"{identifier} criterion membership changed"
         if reason:
             issues.append(
@@ -640,7 +652,7 @@ def _task_evidence_retention_diagnostics(
                     expected="prior EVD IDs and factual fields retained; new PASS rows append resolution",
                     observed=reason,
                     base_mode=base_mode,
-                    evidence_gap="base and proposed Task Evidence rows",
+                    evidence_gap="base and proposed Task evidence rows",
                 )
             )
     return tuple(issues)
@@ -1234,7 +1246,7 @@ def validate_current_task_evidence(
             expected="every completed Task row has PASS and concrete evidence",
             observed="current completed Task table is missing or invalid",
             base_mode=base_mode,
-            evidence_gap="parsed current Task Table evidence",
+            evidence_gap="parsed current Task evidence",
         )
         for path, view in sorted(context.proposed_documents.items())
         if path.parts[:2] == ("docs", "03.specs")

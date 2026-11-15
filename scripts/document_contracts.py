@@ -149,13 +149,49 @@ def direct_parent(
     )
 
 
+# SPEC-0203 (W03-D65): the evidence table of a registry below the Task form binds the
+# names Evidence, Check and Criteria; the current names are Evidence ID, Command and
+# Consumer. This map is a history reading, not a current name set: the current
+# registry and a current Task carry the new names only. Consumers: the evidence
+# reader task_base_evidence_rows in scripts/validate-links-and-owners.py and, through
+# its rows, the six call sites and _evidence_context in
+# scripts/validate-document-lifecycle.py and the retention, evidence and TASK-ITEM-
+# rules of scripts/document_lifecycle.py. Remove it, with its tests, when
+# READABLE_REGISTRY_MAJORS holds no MAJOR below the one that introduced the form.
+TASK_EVIDENCE_HEADER_MAP = {
+    "Evidence": "Evidence ID",
+    "Check": "Command",
+    "Criteria": "Consumer",
+}
+
+
+def carry_evidence_rows(
+    rows: Sequence[Mapping[str, str]] | None, binding: TaskExecution | None
+) -> list[dict[str, str]] | None:
+    """Carry the rows of a side that binds the old names under the current names.
+
+    `binding` is the evidence binding of the registry of the side that is read; None
+    is a registry from before the binding existed, which also read the old names.
+    A side whose binding already lists the current names is returned unchanged.
+    """
+
+    if rows is None:
+        return None
+    if binding is not None and "Evidence" not in binding.evidence_columns:
+        return [dict(row) for row in rows]
+    return [
+        {TASK_EVIDENCE_HEADER_MAP.get(key, key): value for key, value in row.items()}
+        for row in rows
+    ]
+
+
 def task_evidence_issues(
     rows: Sequence[Mapping[str, str]], binding: TaskExecution
 ) -> tuple[tuple[str, str], ...]:
     issues: list[tuple[str, str]] = []
     seen: set[str] = set()
     for number, row in enumerate(rows, 1):
-        identifier = row["Evidence"].strip()
+        identifier = row["Evidence ID"].strip()
         if (
             re.fullmatch(r"EVD-(?:[A-Z0-9]+-)*[0-9]{3}", identifier) is None
             or identifier in seen
@@ -167,7 +203,7 @@ def task_evidence_issues(
                 )
             )
         seen.add(identifier)
-        if task_criterion_ids(row["Criteria"]) is None:
+        if task_criterion_ids(row["Consumer"]) is None:
             issues.append(
                 ("TASK-EVIDENCE-CRITERION", f"row {number}: invalid criterion")
             )
@@ -185,7 +221,7 @@ def task_evidence_issues(
                 ("TASK-EVIDENCE-RESULT", f"row {number}: invalid result {result!r}")
             )
         placeholder_keys = (
-            ("Check", "Input", "Location") if result in {"PASS", "FAIL"} else ()
+            ("Command", "Input", "Location") if result in {"PASS", "FAIL"} else ()
         )
         if any(not cell.strip() for cell in row.values()) or any(
             _TASK_EVIDENCE_PLACEHOLDER.fullmatch(row[key].strip())
@@ -236,9 +272,9 @@ def task_contract_issues(
     checks: dict[str, tuple[int, Mapping[str, str]]] = {}
     closed: set[str] = set()
     for index, check in enumerate(evidence_rows):
-        identifier = check["Evidence"].strip()
+        identifier = check["Evidence ID"].strip()
         work = work_by_id.get(check["Work Unit"].strip())
-        criteria = task_criterion_ids(check["Criteria"])
+        criteria = task_criterion_ids(check["Consumer"])
         work_criteria = (
             task_criterion_ids(work["Upstream criterion"]) if work is not None else None
         )
@@ -271,7 +307,7 @@ def task_contract_issues(
                 or previous[1]["Result"].strip() not in {"FAIL", "DEFER", "NOT_RUN"}
                 or any(
                     check[key].strip() != previous[1][key].strip()
-                    for key in ("Criteria", "Work Unit", "Check")
+                    for key in ("Consumer", "Work Unit", "Command")
                 )
             ):
                 issues.append(
@@ -284,7 +320,9 @@ def task_contract_issues(
                 closed.add(target_id)
         checks[identifier] = (index, check)
     if not evidence_rows:
-        issues.append(("TASK-EVIDENCE-COLUMNS", "Task Evidence requires a check row"))
+        issues.append(
+            ("TASK-EVIDENCE-COLUMNS", "the evidence table requires a check row")
+        )
 
     decisions: set[str] = set()
     accepted: set[str] = set()
@@ -329,7 +367,7 @@ def task_contract_issues(
             )
             continue
         if any(
-            criterion not in (task_criterion_ids(checks[item][1]["Criteria"]) or ())
+            criterion not in (task_criterion_ids(checks[item][1]["Consumer"]) or ())
             for item in cited
         ):
             issues.append(
@@ -340,7 +378,7 @@ def task_contract_issues(
             if not cited or not any(
                 checks[item][1]["Result"].strip() == "PASS"
                 and checks[item][1]["Required"].strip() == "yes"
-                and criterion in (task_criterion_ids(checks[item][1]["Criteria"]) or ())
+                and criterion in (task_criterion_ids(checks[item][1]["Consumer"]) or ())
                 for item in cited
             ):
                 issues.append(
@@ -374,7 +412,7 @@ def task_contract_issues(
                 status == "completed"
                 or any(
                     criterion in accepted
-                    for criterion in (task_criterion_ids(check["Criteria"]) or ())
+                    for criterion in (task_criterion_ids(check["Consumer"]) or ())
                 )
             )
         ]
@@ -787,10 +825,11 @@ class FormSection:
 
 @dataclass(frozen=True)
 class FormExtension:
-    """A registered departure from a form: a local H3 or a retained H2 list."""
+    """A registered departure from a form: a local H3, a retained H2 list or the
+    columns a role's table carries beside the common ones (SPEC-0203, W03-D65)."""
 
     extension_id: str
-    kind: Literal["local_h3", "retained_form"]
+    kind: Literal["local_h3", "retained_form", "local_columns"]
     condition: str
     owner: str
     verification: str
@@ -803,6 +842,9 @@ class FormExtension:
     # SPEC-0198 (W03-D52): an anchored expression over the artifact identity that
     # bounds a retained form; None keeps the kind's selection by status alone.
     identity_bound: str | None = None
+    # SPEC-0203: a local_columns extension names its table and its extra columns.
+    table: str | None = None
+    columns: tuple[str, ...] = ()
 
     def keeps_identity(self, identity: str) -> bool:
         """Whether a retained form's bound admits this artifact identity."""
@@ -3372,6 +3414,54 @@ def _form_section_diagnostics(
     return faults
 
 
+# The common names of the Task evidence table (COMMON-ROLE-FORMS: evidence id, input,
+# command, result and consumer); the other columns of the table are registered by a
+# local_columns extension (SPEC-0203, W03-D65).
+TASK_COMMON_RESULT_COLUMNS = ("Evidence ID", "Input", "Command", "Result", "Consumer")
+
+
+def _task_binding_diagnostics(
+    profile: Mapping[str, Any], form: Mapping[str, Any] | None, has_form: bool
+) -> list[tuple[str, str, str]]:
+    """A Task binding names required H2 sections of its form and no other column."""
+
+    binding = ((profile.get("relationships") or {}).get("body_contract") or {}).get(
+        "task_execution"
+    ) or {}
+    if not binding or not has_form or form is None:
+        return []
+    faults: list[tuple[str, str, str]] = []
+    required_h2 = {
+        item["title"] for item in form["sections"] if item["requiredness"] == "required"
+    }
+    for key in ("evidence_section", "criterion_acceptance_section"):
+        name = binding.get(key)
+        if name is not None and name not in required_h2:
+            faults.append(
+                (
+                    "REGISTRY_TASK_BINDING",
+                    f"{key} naming a required H2 section of the role's form",
+                    f"{key}: {name!r}",
+                )
+            )
+    extra = {
+        column
+        for extension in form["extensions"]
+        if extension["kind"] == "local_columns"
+        for column in extension["columns"]
+    }
+    for column in binding.get("evidence_columns", ()):
+        if column not in {*TASK_COMMON_RESULT_COLUMNS, *extra}:
+            faults.append(
+                (
+                    "REGISTRY_TASK_BINDING",
+                    "evidence columns that are common names or registered in the column extension",
+                    f"evidence column {column!r}",
+                )
+            )
+    return faults
+
+
 def _table_diagnostics(
     tables: Sequence[Mapping[str, Any]],
     form: Mapping[str, Any] | None,
@@ -3421,6 +3511,20 @@ def _table_diagnostics(
                     f"{name}: keys {keys!r}, row_identity {table['row_identity']!r}",
                 )
             )
+        if form is not None:
+            for extension in form["extensions"]:
+                if extension["kind"] == "local_columns" and extension["table"] == name:
+                    allowed = {*TASK_COMMON_RESULT_COLUMNS, *extension["columns"]}
+                    for key in keys:
+                        if key not in allowed:
+                            faults.append(
+                                (
+                                    "REGISTRY_TABLE_COLUMNS",
+                                    "a column that is a common name or registered in the "
+                                    f"column extension {extension['id']!r}",
+                                    f"{name}: {key!r}",
+                                )
+                            )
         flags = [column["required"] for column in table["columns"]]
         if False in flags and True in flags[flags.index(False) :]:
             faults.append(
@@ -3476,6 +3580,12 @@ def _form_registry_diagnostics(
                     profile_id,
                 )
             )
+        faults.extend(
+            (*fault, profile_id)
+            for fault in _task_binding_diagnostics(
+                profile, forms_by_role.get(role), role in roles_with_form
+            )
+        )
         definition = profile.get("template_definition")
         if definition is None:
             if profile["mode"] == "template" and role in roles_with_form:
@@ -3593,6 +3703,8 @@ def _common_form_from_mapping(raw: Mapping[str, Any]) -> CommonForm:
             title=item.get("title"),
             statuses=tuple(item.get("statuses", ())),
             identity_bound=item.get("identity_bound"),
+            table=item.get("table"),
+            columns=tuple(item.get("columns", ())),
             retained=(
                 None
                 if lists is None

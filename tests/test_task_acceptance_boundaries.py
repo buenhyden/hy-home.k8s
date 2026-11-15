@@ -33,12 +33,12 @@ BINDING = TaskExecution(
     },
     summary_rule="task-items-v2",
     acceptance_states=("pending", "accepted", "rejected", "not-required"),
-    evidence_section="Task Evidence",
+    evidence_section="Verification Evidence",
     evidence_columns=(
-        "Evidence",
-        "Criteria",
+        "Evidence ID",
+        "Consumer",
         "Work Unit",
-        "Check",
+        "Command",
         "Input",
         "Result",
         "Location",
@@ -46,7 +46,7 @@ BINDING = TaskExecution(
         "Resolves",
     ),
     evidence_result_states=("NOT_RUN", "PASS", "FAIL", "DEFER", "NOT_APPLICABLE"),
-    criterion_acceptance_section="Criterion Acceptance",
+    criterion_acceptance_section="Acceptance Decision",
     criterion_acceptance_columns=(
         "Criterion",
         "Acceptance",
@@ -86,10 +86,10 @@ def check(
     resolves: str = "none",
 ) -> dict[str, str]:
     return {
-        "Evidence": identifier,
-        "Criteria": criterion,
+        "Evidence ID": identifier,
+        "Consumer": criterion,
         "Work Unit": work_unit,
-        "Check": name,
+        "Command": name,
         "Input": "fixed fixture and revision",
         "Result": result,
         "Location": "tests/test_task_acceptance_boundaries.py",
@@ -192,8 +192,8 @@ class TaskAcceptanceBoundaries(unittest.TestCase):
         works = [row | {"Status": "completed", "Result": "PASS"} for row in works]
         failed = check("EVD-001", "FAIL")
         for changed in (
-            {"Work Unit": "WORK-002", "Criteria": SECOND},
-            {"Criteria": SECOND},
+            {"Work Unit": "WORK-002", "Consumer": SECOND},
+            {"Consumer": SECOND},
         ):
             with self.subTest(changed=changed):
                 attempted = check("EVD-002", "PASS", resolves="EVD-001") | changed
@@ -330,12 +330,12 @@ class TaskAcceptanceTests(unittest.TestCase):
         },
         summary_rule="task-items-v2",
         acceptance_states=("pending", "accepted", "rejected", "not-required"),
-        evidence_section="Task Evidence",
+        evidence_section="Verification Evidence",
         evidence_columns=(
-            "Evidence",
-            "Criteria",
+            "Evidence ID",
+            "Consumer",
             "Work Unit",
-            "Check",
+            "Command",
             "Input",
             "Result",
             "Location",
@@ -343,7 +343,7 @@ class TaskAcceptanceTests(unittest.TestCase):
             "Resolves",
         ),
         evidence_result_states=("NOT_RUN", "PASS", "FAIL", "DEFER", "NOT_APPLICABLE"),
-        criterion_acceptance_section="Criterion Acceptance",
+        criterion_acceptance_section="Acceptance Decision",
         criterion_acceptance_columns=(
             "Criterion",
             "Acceptance",
@@ -366,10 +366,10 @@ class TaskAcceptanceTests(unittest.TestCase):
 
     def evidence(self, identifier: str, result: str, **changes: str) -> dict[str, str]:
         return {
-            "Evidence": identifier,
-            "Criteria": CRITERION,
+            "Evidence ID": identifier,
+            "Consumer": CRITERION,
             "Work Unit": "WORK-001",
-            "Check": "Focused test",
+            "Command": "Focused test",
             "Input": "same fixture and revision",
             "Result": result,
             "Location": "tests/test_task_acceptance_contract.py",
@@ -410,7 +410,7 @@ class TaskAcceptanceTests(unittest.TestCase):
             "TASK-EVIDENCE-RESOLUTION",
             self.rules(
                 work,
-                [failed, passed | {"Check": "Unrelated", "Resolves": "EVD-001"}],
+                [failed, passed | {"Command": "Unrelated", "Resolves": "EVD-001"}],
                 decision,
             ),
         )
@@ -498,7 +498,7 @@ class TaskAcceptanceTests(unittest.TestCase):
         )
 
     def test_failed_check_requires_concrete_provenance(self) -> None:
-        for key in ("Check", "Input", "Location"):
+        for key in ("Command", "Input", "Location"):
             with self.subTest(key=key):
                 self.assertIn(
                     "TASK-EVIDENCE-LOCATION",
@@ -525,10 +525,10 @@ class TaskAcceptanceTests(unittest.TestCase):
 class EvidencePlaceholderTests(unittest.TestCase):
     def test_checked_result_keeps_placeholder_guard(self) -> None:
         row = {
-            "Evidence": "EVD-001",
-            "Criteria": CRITERION,
+            "Evidence ID": "EVD-001",
+            "Consumer": CRITERION,
             "Work Unit": "WORK-001",
-            "Check": "Focused test",
+            "Command": "Focused test",
             "Input": "revision one",
             "Result": "PASS",
             "Location": "tests/focused_fixture.py",
@@ -540,7 +540,7 @@ class EvidencePlaceholderTests(unittest.TestCase):
             {rule for rule, _ in task_evidence_issues((row,), modern)}, set()
         )
         for result in ("PASS", "FAIL"):
-            for key in ("Check", "Input", "Location"):
+            for key in ("Command", "Input", "Location"):
                 with self.subTest(result=result, key=key):
                     self.assertIn(
                         "TASK-EVIDENCE-LOCATION",

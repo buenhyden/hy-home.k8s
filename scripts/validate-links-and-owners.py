@@ -39,6 +39,7 @@ from document_contracts import (
     read_repository_text,
     scoped_document_content_paths,
     validated_changed_paths,
+    carry_evidence_rows,
     task_execution_issues,
     task_status,
     task_contract_issues,
@@ -2796,19 +2797,37 @@ def task_evidence_rows(text: str, binding: object) -> list[dict[str, str]] | Non
     return [dict(zip(table[0], row, strict=True)) for row in table[1]]
 
 
-def task_base_evidence_rows(text: str) -> list[dict[str, str]] | None:
-    """Read Task evidence without changing its cells."""
+def task_base_evidence_rows(
+    text: str, binding: object | None = None
+) -> list[dict[str, str]] | None:
+    """Read Task evidence without changing its cells, under the current names.
 
-    section = _exact_heading_section(text, "## Task Evidence")
+    `binding` is the evidence binding of the registry of the side that is read
+    (SPEC-0203). Its section selects the table, and a side whose registry binds the
+    old names is carried under the current names by the header map, so a rule sees
+    the same cells before and after the rename. Only a registry from before the
+    binding existed, which passes none, reads the literal `## Task Evidence`. The
+    table must hold the identity column that the binding names; the exact columns
+    are the profile validator's rule, and the retention rule refuses a recorded
+    cell whose column is missing instead of reading it as empty.
+    """
+
+    section_name = getattr(binding, "evidence_section", None) or "Task Evidence"
+    columns = tuple(getattr(binding, "evidence_columns", ()) or ())
+    identity = "Evidence ID" if columns and "Evidence" not in columns else "Evidence"
+    section = _exact_heading_section(text, f"## {section_name}")
     table = _first_visible_table(section or "")
     if (
         table is None
         or not table[1]
-        or "Evidence" not in table[0]
+        or identity not in table[0]
         or any(len(row) != len(table[0]) for row in table[1])
     ):
         return None
-    return [dict(zip(table[0], row, strict=True)) for row in table[1]]
+    return carry_evidence_rows(
+        [dict(zip(table[0], row, strict=True)) for row in table[1]],
+        binding if columns else None,
+    )
 
 
 def lifecycle_markdown_evidence(

@@ -20,7 +20,7 @@
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
     "schema_version": {
-      "const": "15.0.0"
+      "const": "16.0.0"
     },
     "shared_contract": {
       "description": "Identifies reviewed common input and the local adapter; structural validity does not authenticate approval or adoption.",
@@ -1325,7 +1325,8 @@
         "kind": {
           "enum": [
             "local_h3",
-            "retained_form"
+            "retained_form",
+            "local_columns"
           ]
         },
         "condition": {
@@ -1371,6 +1372,19 @@
         "identity_bound": {
           "type": "string",
           "pattern": "\\S"
+        },
+        "table": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "columns": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
         }
       },
       "allOf": [
@@ -1406,6 +1420,16 @@
                   "required": [
                     "identity_bound"
                   ]
+                },
+                {
+                  "required": [
+                    "table"
+                  ]
+                },
+                {
+                  "required": [
+                    "columns"
+                  ]
                 }
               ]
             }
@@ -1437,6 +1461,63 @@
                 {
                   "required": [
                     "title"
+                  ]
+                },
+                {
+                  "required": [
+                    "table"
+                  ]
+                },
+                {
+                  "required": [
+                    "columns"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "local_columns"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "table",
+              "columns"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "parent_id"
+                  ]
+                },
+                {
+                  "required": [
+                    "title"
+                  ]
+                },
+                {
+                  "required": [
+                    "statuses"
+                  ]
+                },
+                {
+                  "required": [
+                    "retained_sections"
+                  ]
+                },
+                {
+                  "required": [
+                    "identity_bound"
                   ]
                 }
               ]

@@ -40,8 +40,8 @@ Canonical sources are the documents linked or named in the opening paragraph and
    precede their first Git record, the local first-record approval extension
    in the [document lifecycle policy](../../.agents/governance/document-lifecycle.md)
    permits both same-package documents to enter at `approved` together only
-   with the exact Task Evidence review and approval receipt. Keep the user's
-   request in Task Inputs; do not invent a draft-only commit or omit observed
+   with the exact review and approval receipt in the Task's Results table. Keep
+   the user's request in the Task's Inputs and Authority; do not invent a draft-only commit or omit observed
    evidence. Approval never claims implementation, criterion acceptance, ADR
    acceptance, or protected-action authority.
 3. Task rows move `draft` → `ready` → `in-progress` → `completed`. A row is
@@ -49,7 +49,9 @@ Canonical sources are the documents linked or named in the opening paragraph and
    resume condition and next owner.
 4. Task evidence is append-only. Keep every recorded `EVD-###` row and its
    factual fields unchanged; add a new row whose `Resolves` cell names the
-   row it closes. Never rewrite completed evidence to fit a later form.
+   row it closes. Never rewrite completed evidence to fit a later form. The evidence column
+   names follow the common contract by a recorded header map, while every
+   recorded row and its factual fields stay unchanged.
 5. Record only observed results with their exact revision or run identity.
    An unobserved hosted or live check stays `NOT_RUN` or `DEFER` with a named
    next owner.

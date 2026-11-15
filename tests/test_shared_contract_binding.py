@@ -34,7 +34,7 @@ EXTENSION_RECORDS = (
     ),
     (
         "Task Table/frontmatter summary",
-        "Applies to every Task: one Task Table and one frontmatter status marker, with the marker derived from the rows of a multi-row Task.",
+        "Applies to every Task: one Task Table (the Lifecycle Traceability table under Execution Log) and one frontmatter status marker, with the marker derived from the rows of a multi-row Task.",
         "tests/test_task_summary_derivation.py and the strict Markdown profile check of the sdlc/task profile, both run by the document suite of scripts/run-contract-tests.py.",
         "When the sdlc/task body contract or its task_execution binding changes, and when shared_contract.version changes.",
         "When a shared WGOV-CORE edition defines the Task summary derivation or the registry drops the sdlc/task task_execution binding.",
@@ -62,7 +62,7 @@ EXTENSION_RECORDS = (
     ),
     (
         "Local candidate Spec/Plan first-recording as approved after actual batch review and approval",
-        "Applies when a scoped request, an actual batch review and the user's approval precede the first Git record, which then holds the same-package Spec and Plan at approved with the Task Evidence review and approval receipt.",
+        "Applies when a scoped request, an actual batch review and the user's approval precede the first Git record, which then holds the same-package Spec and Plan at approved with the review and approval receipt rows of the Task's evidence table.",
         "tests/test_shared_contract_binding.py and the staged lifecycle check, which reads the review and approval receipt rows of the Task.",
         "When shared_contract.version changes and when the spec-plan lifecycle domain changes.",
         "When a shared WGOV-CORE edition admits a first record at approved, or Spec and Plan first records return to draft only.",
