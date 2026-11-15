@@ -1,8 +1,8 @@
 ---
 title: "W03 Task Form"
-version: "0.2.1"
+version: "0.2.2"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0203-TSK-0001"
@@ -52,8 +52,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-TASKFORM-001](../spec.md#criteria) | The readers first, so every `TASK-` rule stays active: the evidence reader by binding, the header map with its replay test, the ledger validator's read of the evidence rows, the two-registry read, the registry check and the rule tests; then the form, the extensions, the profile lists, the body contract and binding, and the TemplateDefinition and record, with the MAJOR step of `schema_version`, `REGISTRY_MAJOR`, `READABLE_REGISTRY_MAJORS` and the guard's `DOC_REGISTRY_MAJOR` in the same commit. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-TASKFORM-002](../spec.md#criteria) | The Task template and its quality check; the headings of the SPEC-0161 Task and of every other Task in the tree with the inventory; the `work_residue` host; the eight texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-TASKFORM-001](../spec.md#criteria) | The readers first, so every `TASK-` rule stays active: the evidence reader by binding, the header map with its replay test, the ledger validator's read of the evidence rows, the two-registry read, the registry check and the rule tests; then the form, the extensions, the profile lists, the body contract and binding, and the TemplateDefinition and record, with the MAJOR step of `schema_version`, `REGISTRY_MAJOR`, `READABLE_REGISTRY_MAJORS` and the guard's `DOC_REGISTRY_MAJOR` in the same commit. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-TASKFORM-002](../spec.md#criteria) | The Task template and its quality check; the headings of the SPEC-0161 Task and of every other Task in the tree with the inventory; the `work_residue` host; the eight texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
 
 ## Verification Evidence
 
