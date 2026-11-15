@@ -1112,7 +1112,7 @@ def validate_provider_hooks(root: Path, provider: str, hooks: Any) -> None:
                 f"{provider}: SessionStart runs beyond {SESSION_START_SCRIPT} "
                 "on compact|resume",
             )
-    for groups in hooks.values():
+    for event, groups in hooks.items():
         if not isinstance(groups, list) or not groups:
             fail("AGENT-NATIVE-HOOK", f"{provider}: empty hook event")
         for group in groups:
@@ -1126,18 +1126,24 @@ def validate_provider_hooks(root: Path, provider: str, hooks: Any) -> None:
             ):
                 fail("AGENT-NATIVE-HOOK", f"{provider}: invalid hook matcher group")
             for handler in group["hooks"]:
-                _validate_hook_handler(root, provider, handler)
+                _validate_hook_handler(root, provider, event, handler)
 
 
-def _validate_hook_handler(root: Path, provider: str, handler: Any) -> None:
+def _validate_hook_handler(root: Path, provider: str, event: str, handler: Any) -> None:
     """Check one handler's class, execution bound, and executable location."""
 
+    fields = {"type", "command", "timeout", "statusMessage", "onFailure"}
     if (
         not isinstance(handler, dict)
-        or not set(handler) <= {"type", "command", "timeout", "statusMessage"}
+        or not set(handler) <= fields
         or handler.get("type") != "command"
     ):
         fail("AGENT-NATIVE-HOOK", f"{provider}: handler is not a bounded command")
+    if provider == "claude" and event == "PreToolUse":
+        if handler.get("onFailure") != "block":
+            fail("AGENT-NATIVE-HOOK", "claude: PreToolUse must block on hook failure")
+    elif "onFailure" in handler:
+        fail("AGENT-NATIVE-HOOK", f"{provider}: onFailure is not adopted for {event}")
     if handler.get("timeout") not in PROVIDER_HOOK_TIMEOUT_RANGE:
         fail("AGENT-NATIVE-HOOK", f"{provider}: handler execution is unbounded")
     command = handler.get("command")

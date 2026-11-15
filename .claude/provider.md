@@ -1,10 +1,10 @@
 ---
 title: "Claude Provider Notes"
-version: "1.9.3"
+version: "1.9.4"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-16"
 ---
 
 # Claude Provider Notes
@@ -82,9 +82,13 @@ invocation. The common procedure retains the selected role and user scope.
 - Tracked settings register `.claude/hooks/k8s-pre-edit.sh` for pre-action
   safety, on the shell, structured file and notebook tools, and
   `.claude/hooks/session-start.sh` on `SessionStart` for `compact|resume`, which
-  only prints the reading instruction, runs no QA and never blocks. It fails closed:
-  an adapter or guard failure exits 2 with a reason on stderr. That file is
-  this provider's thin adapter; the boundary itself is owned by
+  only prints the reading instruction and runs no QA. The pre-tool adapter
+  exits 2 with a reason on stderr when it refuses a call. Its command also
+  sets `onFailure: "block"` on Claude Code 2.1.295 and later so startup
+  failure, timeouts and invalid JSON count as refusals in a client that
+  loads the hook. The [hook reference](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails)
+  defines those cases. The pre-tool script is this provider's thin adapter;
+  the boundary itself is owned by
   `scripts/provider_write_guard.py`, which the adapter resolves from its own
   checkout so a project directory pointed at another tree supplies data and
   never the program. It enforces a boundary only when the intended runtime
