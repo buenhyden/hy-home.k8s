@@ -53,16 +53,6 @@
       }
     },
     {
-      "id": "DOC-S00",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W05",
-      "resume_condition": "When W05 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "DOC-S90",
       "kind": "handoff",
       "state": "open",
@@ -113,66 +103,6 @@
       }
     },
     {
-      "id": "OPEN-01",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W00",
-      "resume_condition": "Only on a difference shown to affect a current owner (historical, non-blocking; W00:20, 153)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "OPEN-02",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W00",
-      "resume_condition": "Same as OPEN-01",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "OPEN-03",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W00",
-      "resume_condition": "When each of its 37 DELTA packages is judged item by item at its named stage (PKG W00:153); that stage consumes the judgment",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "OPEN-04",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W00",
-      "resume_condition": "Only when the original reports are supplied or a difference shown to affect a current owner (historical, non-blocking)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "OPEN-06",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W00",
-      "resume_condition": "Only when a stage proposes adopting a named source, or on a shown owner difference; that stage consumes the result",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "OPEN-07",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W05, W06, W07, W10 by file set",
-      "resume_condition": "Each writer stage reads its whole file set before editing",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "OPEN-08",
       "kind": "survey",
       "state": "open",
@@ -183,31 +113,21 @@
       }
     },
     {
-      "id": "OPEN-09",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W05",
-      "resume_condition": "When W05 moves the hard-coded headings",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "PR-DURING",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W06",
-      "resume_condition": "When CI-SCOPE closes",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "PUSH-BEFORE",
       "kind": "handoff",
       "state": "open",
       "owner": "W06",
       "resume_condition": "When W06 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "Q07-H01",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "Q07",
+      "resume_condition": "In the Q07-CUTOVER task, after W11",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -293,16 +213,6 @@
       }
     },
     {
-      "id": "R45-12",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W11",
-      "resume_condition": "When another repository's adoption evidence exists (this workspace only)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "SDLC-07",
       "kind": "handoff",
       "state": "open",
@@ -353,41 +263,11 @@
       }
     },
     {
-      "id": "W00-H01",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W00",
-      "resume_condition": "When a difference shown to affect a current owner is found",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W01-H02",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W01",
-      "resume_condition": "When the user decides its per-item withdrawal (Q04); W05 consumes any result",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W03-H05",
       "kind": "handoff",
       "state": "open",
       "owner": "W04",
       "resume_condition": "When W04 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W03-H09",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W11",
-      "resume_condition": "When another repository's adoption evidence exists",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -423,16 +303,6 @@
       }
     },
     {
-      "id": "W03-H32",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W11",
-      "resume_condition": "In the cross-repository check",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W04-H01",
       "kind": "handoff",
       "state": "open",
@@ -448,26 +318,6 @@
       "state": "open",
       "owner": "W05",
       "resume_condition": "When W05 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W05-H02",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W05",
-      "resume_condition": "When W05 re-reads its files before editing",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W05-H03",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W05",
-      "resume_condition": "When W05 re-reads its files before editing",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -523,21 +373,11 @@
       }
     },
     {
-      "id": "W06-H01",
-      "kind": "survey",
+      "id": "W05-H09",
+      "kind": "handoff",
       "state": "open",
-      "owner": "W06",
-      "resume_condition": "When W06 re-reads its files before editing",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W07-H01",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W07",
-      "resume_condition": "When W07 re-reads its files before editing",
+      "owner": "W05",
+      "resume_condition": "When W05 starts",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }

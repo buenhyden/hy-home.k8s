@@ -59,8 +59,8 @@ The user approved the Spec and Plan (EVD-003). No question is open.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-W02D-001](../spec.md#criteria) | Close the 18 approved or transferred entries. | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-W02D-002](../spec.md#criteria) | Seeds, disposition table and cutover targets. | platform | draft | NOT_RUN | EVD-002 |
+| WORK-001 | [VAL-W02D-001](../spec.md#criteria) | Close the 18 approved or transferred entries. | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-W02D-002](../spec.md#criteria) | Seeds, disposition table and cutover targets. | platform | ready | NOT_RUN | EVD-002 |
 
 ## Verification Evidence
 
