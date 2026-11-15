@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": "16.0.0",
+  "schema_version": "17.0.0",
   "profiles": [
     {
       "id": "sdlc/requirement",
@@ -5646,12 +5646,12 @@
           "positive": [
             "Each operations policy and the template pass the form tree, table, body-contract, author-prompt and residue checks.",
             "A operations policy whose Rules table keeps the registered columns, or whose Rules table has a header only, passes the document table check.",
-            "An adopted operations policy that states normative rules and holds a Rules table with one active row and one definition token per rule passes the POLICY-RULE checks."
+            "An operations policy that states normative rules and holds a Rules table with one active row and one definition token per rule passes the POLICY-RULE checks."
           ],
           "negative": [
             "A reordered, missing or extra Rules column fails BODY-TABLE-COLUMNS.",
-            "An adopted policy whose Rules table lacks the Status column or holds a Level outside the registered three fails POLICY-RULE-TABLE, and a repeated or skipped rule ID fails POLICY-RULE-ID.",
-            "A pending policy that carries a Rules table or a definition token fails POLICY-RULE-ADOPTION.",
+            "A policy whose Rules table lacks the Status column or holds a Level outside the registered three fails POLICY-RULE-TABLE, and a repeated or skipped rule ID fails POLICY-RULE-ID.",
+            "A policy that states normative rules or carries a Rules table and holds no registered code fails POLICY-RULE-CODE.",
             "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT.",
             "A table section outside the form fails REGISTRY_TABLE_SECTION.",
             "A source profile named by two template twins that carry tables fails REGISTRY_TABLE_TWIN."
@@ -7515,12 +7515,12 @@
           "positive": [
             "Each governance rule and the template pass the form tree, table, body-contract, author-prompt and residue checks.",
             "A governance rule whose Rules table keeps the registered columns, or whose Rules table has a header only, passes the document table check.",
-            "An adopted governance rule that states normative rules and holds a Rules table with one active row and one definition token per rule passes the POLICY-RULE checks."
+            "A governance rule that states normative rules and holds a Rules table with one active row and one definition token per rule passes the POLICY-RULE checks."
           ],
           "negative": [
             "A reordered, missing or extra Rules column fails BODY-TABLE-COLUMNS.",
-            "An adopted policy whose Rules table lacks the Status column or holds a Level outside the registered three fails POLICY-RULE-TABLE, and a repeated or skipped rule ID fails POLICY-RULE-ID.",
-            "A pending policy that carries a Rules table or a definition token fails POLICY-RULE-ADOPTION.",
+            "A policy whose Rules table lacks the Status column or holds a Level outside the registered three fails POLICY-RULE-TABLE, and a repeated or skipped rule ID fails POLICY-RULE-ID.",
+            "A policy that states normative rules or carries a Rules table and holds no registered code fails POLICY-RULE-CODE.",
             "A table section outside the form fails REGISTRY_TABLE_SECTION.",
             "A source profile named by two template twins that carry tables fails REGISTRY_TABLE_TWIN."
           ],
@@ -20455,78 +20455,63 @@
     "codes": [
       {
         "path": ".agents/governance/agent-execution.md",
-        "code": "EXEC",
-        "state": "adopted"
+        "code": "EXEC"
       },
       {
         "path": ".agents/governance/approval-and-safety.md",
-        "code": "SAFE",
-        "state": "adopted"
+        "code": "SAFE"
       },
       {
         "path": ".agents/governance/context-and-memory.md",
-        "code": "CTX",
-        "state": "adopted"
+        "code": "CTX"
       },
       {
         "path": ".agents/governance/document-authoring.md",
-        "code": "AUTHOR",
-        "state": "adopted"
+        "code": "AUTHOR"
       },
       {
         "path": ".agents/governance/document-lifecycle.md",
-        "code": "DOCLIFE",
-        "state": "adopted"
+        "code": "DOCLIFE"
       },
       {
         "path": ".agents/governance/formatting-and-linting.md",
-        "code": "FMT",
-        "state": "adopted"
+        "code": "FMT"
       },
       {
         "path": ".agents/governance/git.md",
-        "code": "GIT",
-        "state": "adopted"
+        "code": "GIT"
       },
       {
         "path": ".agents/governance/model-selection.md",
-        "code": "MODEL",
-        "state": "adopted"
+        "code": "MODEL"
       },
       {
         "path": ".agents/governance/quality.md",
-        "code": "QUAL",
-        "state": "adopted"
+        "code": "QUAL"
       },
       {
         "path": ".agents/governance/sdlc.md",
-        "code": "SDLC",
-        "state": "adopted"
+        "code": "SDLC"
       },
       {
         "path": "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md",
-        "code": "GITOPS",
-        "state": "adopted"
+        "code": "GITOPS"
       },
       {
         "path": "docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md",
-        "code": "MESH",
-        "state": "adopted"
+        "code": "MESH"
       },
       {
         "path": "docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md",
-        "code": "ROLLOUT",
-        "state": "adopted"
+        "code": "ROLLOUT"
       },
       {
         "path": "docs/05.operations/policies/0005-observability-platform-operations-policy.md",
-        "code": "OBSERV",
-        "state": "adopted"
+        "code": "OBSERV"
       },
       {
         "path": "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
-        "code": "ONBOARD",
-        "state": "pending"
+        "code": "ONBOARD"
       }
     ]
   }

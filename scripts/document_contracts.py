@@ -900,7 +900,6 @@ class PolicyRuleCode:
 
     path: str
     code: str
-    state: Literal["pending", "adopted"]
 
 
 @dataclass(frozen=True)
@@ -3848,7 +3847,9 @@ def _policy_rule_ids_from_mapping(
         reserved_codes=tuple(raw["reserved_codes"]),
         rules_table_condition=raw["rules_table"]["condition"],
         rules_table_minimum_rows=raw["rules_table"]["minimum_rows"],
-        codes=tuple(PolicyRuleCode(**item) for item in raw["codes"]),
+        codes=tuple(
+            PolicyRuleCode(item["path"], item["code"]) for item in raw["codes"]
+        ),
     )
 
 
