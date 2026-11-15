@@ -367,7 +367,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W01",
-      "resume_condition": "When W01 is run for its r1 differences; W05 consumes the result",
+      "resume_condition": "When the user decides its per-item withdrawal (Q04); W05 consumes any result",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }

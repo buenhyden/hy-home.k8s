@@ -1,10 +1,10 @@
 ---
 title: "Agent Execution Policy"
-version: "1.9.0"
+version: "1.10.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-15"
 ---
 
 # Agent Execution Policy
@@ -61,7 +61,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | EXEC-R009 | Always | required | Semantic review | active |
 | EXEC-R010 | When an explicit current scoped policy-repair request exists | required | Semantic review | active |
 | EXEC-R011 | On unresolved conflicting or ambiguous protected authority, unmet approval, unsafe input or unexplained changes | required | Semantic review | active |
-| EXEC-R012 | When adopting a shared edition | required | Semantic review | active |
+| EXEC-R012 | When adopting a shared edition | required | Semantic review | retired; none |
 
 - `EXEC-R001` State the requested outcome, acceptance criteria, affected paths, assumptions,
   validation, and exclusions before substantial work.
@@ -72,26 +72,17 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 - `EXEC-R004` READMEs are for human readers; `AGENTS.md` files are for AI agents. Before
   working in a directory, read every `AGENTS.md` from the repository root down
   to that directory; a deeper file adds to, and never widens, the rules above
-  it. Codex loads the chain from the root to its working directory natively,
-  and the shared guard `scripts/provider_write_guard.py` supplies the rest of
-  a write target's chain once per session (delivery unobserved on Codex).
-  Claude loads a folder's `AGENTS.md` through the sibling `CLAUDE.md` that
-  imports it, with the result of its first read, write or edit there (read
-  and write observed; edit per the documentation), so a
-  first write in a folder precedes the text. On every write the guard also
-  names the target's `AGENTS.md` paths before the call, and after a compaction or resume
-  a Claude session-start hook asks for them to be read again. Each folder
-  `AGENTS.md` keeps its one-line `CLAUDE.md` import.
+  it. How each provider delivers that chain natively, and what is observed of
+  that delivery, belongs to its provider note:
+  [Claude](../../.claude/provider.md) and [Codex](../../.codex/provider.md).
 - `EXEC-R005` Use [work lifecycle](../workflows/work-lifecycle.md) for intake and completion,
   and [delegated development](../workflows/delegated-development.md) when
   delegation is authorized. A role name alone grants neither writes nor
   delegation.
-- `EXEC-R006` Write policies under `.agents/governance/` in English. New common agent
-  descriptions elsewhere in `.agents/` default to Korean; existing English
-  prose remains valid. Preserve machine keys, required headings, commands,
-  quotations, and raw evidence in their original form. Native contracts under
-  `.codex/` and `.claude/` remain English, and responses to the user are in
-  Korean. Follow the document-authoring policy for each document's language.
+- `EXEC-R006` Each document's language follows the
+  [document-authoring policy](document-authoring.md#template-markers-and-language).
+  Preserve commands, quotations and raw evidence in their original form, and
+  respond to the user in Korean.
 - `EXEC-R007` Order work as repository change, review, then operator-controlled
   reconciliation; command examples must identify any operator-only step.
 - `EXEC-R008` Fix recurring failures at their smallest durable owner: policy, skill,
@@ -112,14 +103,6 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   authority, unmet approval,
   unsafe input, or unexplained changes. State the blocker and continue
   independent safe work within the current request.
-
-#### Shared source and adoption
-
-`EXEC-R012`
-
-Shared-edition adoption follows
-[document authoring](document-authoring.md#requirements); this policy adds
-no second copy of that procedure.
 
 ### Enforcement
 

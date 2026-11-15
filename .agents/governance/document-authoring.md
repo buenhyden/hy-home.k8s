@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.37.0"
+version: "3.37.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -134,10 +134,9 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    criterion acceptance remain separate from that approval. Keep one Task
    Lifecycle Traceability table with criterion links, row state, result and evidence. Its frontmatter status is
    the sole document status marker. For one row, author its state only in
-   frontmatter and use literal `frontmatter` in the row. For a multi-row Task,
-   author only row states and omit frontmatter `status`; the validators derive
-   the summary from the Registry-bound rows on each read (see the document
-   lifecycle policy), so no writer exists and no second human-maintained state is kept.
+   frontmatter and use literal `frontmatter` in the row. A multi-row Task
+   follows the row-derived status of
+   [DOCLIFE-R009](document-lifecycle.md#requirements).
    Record each criterion's sole authored `pending`, `accepted`, `rejected`, or
    `not-required` disposition in the Task's Criterion Decisions table, with
    evidence, disposition rationale and current owner. Neither the execution
@@ -147,12 +146,8 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    adverse result. Keep failed or deferred observations in the Task's Results table; a
    later PASS resolves an earlier required result only when it names that
    evidence ID and matches the check, work unit and criterion.
-   `not-required` is reserved for a cancelled Task whose same-package Spec is
-   also cancelled with actual criterion-specific scope and authorization proof.
-   Both cancellation dispositions name the exact criterion, and the Task's
-   authorization reference points to that Spec decision.
-   A successor-only handoff, active or completed Task, or QA
-   `NOT_APPLICABLE` result does not waive a criterion.
+   When `not-required` applies, and what does not waive a criterion, follows
+   [DOCLIFE-R003](document-lifecycle.md#requirements).
    Keep ordered work, dependencies, Task links and verification intent in the
    Plan, without copied execution status. Attach factual checks in Task
    Evidence with exact inputs, results, locations, whether each check is
