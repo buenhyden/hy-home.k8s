@@ -20526,7 +20526,7 @@
       {
         "path": "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
         "code": "ONBOARD",
-        "state": "pending"
+        "state": "adopted"
       }
     ]
   }
