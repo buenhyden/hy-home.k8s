@@ -55,10 +55,10 @@ The independent review passed (EVD-005), and the user approved the Spec and Plan
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-W01C-001](../spec.md#criteria) | Glossary to vocabulary 3.0.1. | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-W01C-002](../spec.md#criteria) | One author for the four duplicates; retire EXEC-R012. | platform | draft | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-W01C-003](../spec.md#criteria) | Rule-fit, disposition and owner-correction records; W01-H02 row and entry. | platform | draft | NOT_RUN | EVD-003 |
-| WORK-004 | [VAL-W01C-004](../spec.md#criteria) | Rule explanation and three violation cases. | platform | draft | NOT_RUN | EVD-004 |
+| WORK-001 | [VAL-W01C-001](../spec.md#criteria) | Glossary to vocabulary 3.0.1. | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-W01C-002](../spec.md#criteria) | One author for the four duplicates; retire EXEC-R012. | platform | ready | NOT_RUN | EVD-002 |
+| WORK-003 | [VAL-W01C-003](../spec.md#criteria) | Rule-fit, disposition and owner-correction records; W01-H02 row and entry. | platform | ready | NOT_RUN | EVD-003 |
+| WORK-004 | [VAL-W01C-004](../spec.md#criteria) | Rule explanation and three violation cases. | platform | ready | NOT_RUN | EVD-004 |
 
 ## Verification Evidence
 

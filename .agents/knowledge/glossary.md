@@ -118,8 +118,8 @@ stay in the SDLC contract's ownership and placement table.
 A term changes only through a change package that names it; the policy owner
 in its row reviews the meaning. Adopting a later contract edition updates the
 common rows and their Contract Version together, keeping Term IDs stable. The
-knowledge validator judges this file: well-formed unique Term IDs, existing
-owner paths and no span copied from an owner.
+knowledge validator judges well-formed unique Term IDs and no span copied from
+an owner; the link validator judges that each owner link exists.
 
 ## References
 

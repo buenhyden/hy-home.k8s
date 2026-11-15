@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.19"
+version: "0.2.20"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -187,6 +187,7 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-130 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Closure of W03-H35 through the ledger cycle | User acceptance of the SPEC-0211 criteria, direct answer "Pre-accept when green (Recommended)" of 2026-11-15 to the advance acceptance question for the remaining W03 packages, applied with PR #283 CI green; the SPEC-0211 Task, frozen as `00349663:docs/03.specs/0211-w03-closing-report/tasks/tsk-0001-w03-closing-report.md`; `python3 scripts/validate-work-residue-ledger.py --root .` | PASS | W03-H35 closes on the template set read: State terminal and Closure this row in the live row; the ledger entry made terminal, gate PASS, entry deleted, gate PASS. | yes | none |
 | EVD-131 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Closure of W03-H20 through the ledger cycle | User acceptance of the SPEC-0211 criteria, direct answer "Pre-accept when green (Recommended)" of 2026-11-15 to the advance acceptance question for the remaining W03 packages, applied with PR #283 CI green; the SPEC-0211 Task, frozen as `00349663:docs/03.specs/0211-w03-closing-report/tasks/tsk-0001-w03-closing-report.md`; `python3 scripts/validate-work-residue-ledger.py --root .` | PASS | W03-H20 closes on the W03 closing report: State terminal and Closure this row in the live row; the ledger entry made terminal, gate PASS, entry deleted, gate PASS. | yes | none |
 | EVD-132 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W00-DELTA intake of PKG 3.0.1 (SPEC-0216, approved spec `66a23a96`, plan `80478cf1`) | `main` `003b8350`; PKG `manifest.json` `22f93d73`; `gh pr view` of PR #283 and Project-Template PR #202; `sha256sum` and line-scoped reads named in the Read scope column; ledger gate; 2026-11-15T08:31:58Z | PASS | The `3.0.1 Edition Delta` and `3.0.1 Verdicts` tables under Results record the inputs, the design summary and 14 verdicts (6 `KEEP_VERIFIED`, 8 `CHANGE`, 0 `UNVERIFIED`) with their read scope and one owner each. This row records the intake only: it accepts no criterion, closes no residue, adds no ledger entry and certifies no item beyond its stated read scope. | no | none |
+| EVD-133 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W01-CONTRACT rule fit of PKG 3.0.1 (SPEC-0217, approved spec `8355a723`, plan `456fff03`) | `main` `588257c9` plus SPEC-0217 commits through `c104f154`; three read-only subagent audits of the ten governance policies; spot reads named in the SPEC-0217 Task; PKG `coverage.json`, `current-requirements.json`, `revision-requirements.json` and `repository-vocabulary.json` | PASS | The `W01 3.0.1 Rule Fit` table records 58 non-KEEP rules with one owning stage each, 160 `KEEP_VERIFIED` rules by file, the GOV-07 glossary conflicts, the corrected glossary maintenance claim and W01-H02. The `W00 Verdict Owner Corrections` table moves verdict row 9 to W04. Text-level only; the evidence checks named in the Rules tables were not run. This row accepts no criterion and closes no residue. | no | none |
 
 #### Edition Delta
 
@@ -1303,6 +1304,100 @@ Design summary (PKG W00-DELTA). Designs D00, D15 and D17, edition 3.0.1, with ex
 | 13 | Native hooks, capture and live deny | `CHANGE` | read (`.claude/settings.json` hook, permission and memory keys); observed (this Claude session) | Configured: `autoMemoryEnabled` false; `PreToolUse` on `Bash\|Write\|Edit\|MultiEdit\|NotebookEdit` runs `k8s-pre-edit.sh`; `SessionStart` only on `compact\|resume`; 29 allow, 2 ask and 262 deny rules; bypass mode disabled. Observed: the pre-edit hook's context was delivered on this session's writes. Not present: any prompt or session capture hook, or a `startup` SessionStart. Not tested: a live deny, nested or subagent delivery, and Codex. A hook's existence does not prove it blocks (S22, S20) | W07 | `AGENT-04` |
 | 14 | Reviewer does not run validators again | `KEEP_VERIFIED` | partial read (`.agents/roles/code-reviewer.md` lines 18, 51, 68) | The role holds no structured write tool and runs no validator of its own; it reads recorded results. Its shell write remains prohibited by policy only, as `.claude/provider.md` records (row 13 enforcement scope) | none | none |
 
+#### W01 3.0.1 Rule Fit
+
+Added 2026-11-15 under SPEC-0217 (EVD-133). This is the W01-CONTRACT rule-fit record against PKG 3.0.1 and its confirmed decisions. It is analysis, not a residue table and not a progress record. The first column is a running number, never a residue ID. Each row names one owning stage, which takes the row in at its own intake under its own PKG prompt; no ledger entry is added.
+
+How each rule's purpose, owner, consumer and enforcement are explained: purpose by the rule's body text; owner by its policy file; consumer and enforcement by the Evidence column of its Rules table. A named check is a mechanical control, and `Semantic review` is not mechanically enforced. The 218 rules of the ten governance policies all carry these, and this table judges their fit only.
+
+Limits: verdicts are text-level. Three read-only subagents read every rule, this session spot-read the duplicates and the overstated findings, and the evidence checks named in the Rules tables were not run. GIT-R012, GIT-R013, FMT-R002, FMT-R003 and FMT-R010 were found to be links or permitted mirrors and are `KEEP_VERIFIED`. GIT-R011 (one approval per commit or push) is kept, because Q08 removes repeated approval of edits, not of outward delivery.
+
+| No. | Rule | Verdict | Reason | File and line | Owner |
+| --- | --- | --- | --- | --- | --- |
+| 1 | EXEC-R004 | CHANGE (done here) | Restated native AGENTS-chain delivery owned by the provider notes; now links to them | `.agents/governance/agent-execution.md` line 72 | W01 |
+| 2 | EXEC-R006 | CHANGE (done here) | Restated the AUTHOR-R016 language rule; now links to it and keeps only the evidence-form and response-language sentences | `.agents/governance/agent-execution.md` line 82 | W01 |
+| 3 | EXEC-R012 | REMOVE (retired here) | Link-only rule with no content of its own; row kept as `retired; none` | `.agents/governance/agent-execution.md` line 64 | W01 |
+| 4 | AUTHOR-R007 | CHANGE (done here) | Restated DOCLIFE-R003 and DOCLIFE-R009; now links to them and keeps the literal `frontmatter` instruction | `.agents/governance/document-authoring.md` line 129 | W01 |
+| 5 | SAFE-R004 | CHANGE | No exception for the remote-history deletion of the final cutover (Q01) | `.agents/governance/approval-and-safety.md` line 76 | Q07-CUTOVER |
+| 6 | SAFE-R008 | CHANGE | "rollback or backup" before every protected operation conflicts with Q10 at the final cutover | `.agents/governance/approval-and-safety.md` line 107 | Q07-CUTOVER |
+| 7 | SAFE-R020 | CHANGE | States only that missing authority stops at a local draft; the Q-DRAFT boundary (a draft never authorizes implementation, operation or completion) is not stated | `.agents/governance/approval-and-safety.md` line 174 | W04-LIFECYCLE |
+| 8 | GIT-R005 | CHANGE | Force-push, delete and amend rules have no binding to the final cutover target list (Q01, Q10) | `.agents/governance/git.md` line 85 | Q07-CUTOVER |
+| 9 | GIT-R006 | CHANGE | PR creation and merge authority is also written in GIT-R009, GIT-R011 and QUAL-R031; one author needed | `.agents/governance/git.md` line 88 | W06-DELIVERY |
+| 10 | GIT-R009 | CHANGE | "protection blocks force pushes" has no cutover exception (Q01); the high-risk independent review (Q08) is not required | `.agents/governance/git.md` line 99 | Q07-CUTOVER |
+| 11 | GIT-R010 | CHANGE | Tags are immutable with no cutover exception (Q01) | `.agents/governance/git.md` line 134 | Q07-CUTOVER |
+| 12 | GIT-R015 | CHANGE | Restates the commit grammar that `.cz.toml` owns and carries hook environment setup that is operating detail | `.agents/governance/git.md` line 209 | W06-DELIVERY |
+| 13 | MODEL-R003 | UNVERIFIED | Provider account limits and Retry-After handling; no repository consumer was found | `.agents/governance/model-selection.md` line 78 | W07-ADAPTER |
+| 14 | QUAL-R006 | CHANGE | Hosted CI runs metadata and style only; remote affected product verification is the current requirement | `.agents/governance/quality.md` line 125 | W06-DELIVERY |
+| 15 | QUAL-R031 | CHANGE | The PR route observes metadata and style only and fixes the review count at zero | `.agents/governance/quality.md` line 354 | W06-DELIVERY |
+| 16 | QUAL-R032 | CHANGE | Deployment evidence is style at the SHA, not the actual artifact or environment | `.agents/governance/quality.md` line 355 | W06-DELIVERY |
+| 17 | QUAL-R039 | CHANGE | Delivery validation records hosted metadata and style only | `.agents/governance/quality.md` line 380 | W06-DELIVERY |
+| 18 | QUAL-R015 | CHANGE | Forbids any required agent reviewer; Q08 requires an independent review for high-risk changes | `.agents/governance/quality.md` line 229 | W10-REVIEW |
+| 19 | QUAL-R018 | CHANGE | The full core-diff checklist applies to every change, including low risk (Q08) | `.agents/governance/quality.md` line 248 | W10-REVIEW |
+| 20 | QUAL-R019 | CHANGE | "Optional reviewer" wording; a high-risk independent reviewer identity and separation is not recorded | `.agents/governance/quality.md` line 255 | W10-REVIEW |
+| 21 | QUAL-R020 | CHANGE | Same as QUAL-R019 | `.agents/governance/quality.md` line 261 | W10-REVIEW |
+| 22 | QUAL-R021 | CHANGE | A recovery path is required for every change, including low risk (Q08) | `.agents/governance/quality.md` line 266 | W10-REVIEW |
+| 23 | QUAL-R022 | CHANGE | Owner acceptance is required for every change; Q08 keeps it for high risk and protected actions | `.agents/governance/quality.md` line 268 | W10-REVIEW |
+| 24 | QUAL-R048 | CHANGE | "Optional reviewer" wording, as QUAL-R019 | `.agents/governance/quality.md` line 414 | W10-REVIEW |
+| 25 | QUAL-R025 | CHANGE | Past results are preserved "in Git history", which Q01 deletes at the final cutover | `.agents/governance/quality.md` line 302 | Q07-CUTOVER |
+| 26 | QUAL-R049 | CHANGE | A rollback commit or procedure is mandatory; Q10 keeps no recovery copy at the final cutover | `.agents/governance/quality.md` line 415 | Q07-CUTOVER |
+| 27 | QUAL-R051 | CHANGE | Keeps Git-backed recovery objects with no cutover exception (Q01, Q10) | `.agents/governance/quality.md` line 429 | Q07-CUTOVER |
+| 28 | FMT-R012 | UNVERIFIED | The `docs/98.archive/` exclusion may become obsolete once that folder is empty after the cutover | `.agents/governance/formatting-and-linting.md` line 117 | Q07-CUTOVER |
+| 29 | CTX-R006 | CHANGE | Forbids raw prompts and complete provider transcripts; Q06 requires local deterministic capture and search | `.agents/governance/context-and-memory.md` line 93 | W08-CAPTURE |
+| 30 | CTX-R012 | CHANGE | Never deletes a memory and keeps every revision; Q05 requires an itemized deletion path | `.agents/governance/context-and-memory.md` line 130 | W08-MEMORY |
+| 31 | CTX-R016 | CHANGE | Backup and restore detail and a fixed size constant in policy; Q05 and Q10 govern backup and restore targets | `.agents/governance/context-and-memory.md` line 148 | W08-MEMORY |
+| 32 | CTX-R017 | UNVERIFIED | Accepts only `public` or `internal` data; the data grade of the one approved analysis path is not yet set (Q06) | `.agents/governance/context-and-memory.md` line 157 | W08-ANALYSIS |
+| 33 | CTX-R007 | CHANGE | "Git history recovers their bytes", which Q01 ends at the final cutover | `.agents/governance/context-and-memory.md` line 96 | Q07-CUTOVER |
+| 34 | CTX-R009 | CHANGE | A recovery pointer to a past commit dangles after the final cutover | `.agents/governance/context-and-memory.md` line 109 | Q07-CUTOVER |
+| 35 | AUTHOR-R013 | CHANGE | Requires exact Git recovery, which is false after the final cutover (Q01, Q10) | `.agents/governance/document-authoring.md` line 216 | Q07-CUTOVER |
+| 36 | AUTHOR-R015 | CHANGE | Accepts any SemVer 2.0.0 string; Q03 and vocabulary 3.0.1 (`TERM-PRERELEASE`, `TERM-BUILD-METADATA`, `TERM-CONTRACT-VERSION`, `TERM-DOCUMENT-REVISION`) allow three numeric components only | `.agents/governance/document-authoring.md` line 244 | W03-VERSION |
+| 37 | AUTHOR-R016 | CHANGE | Stores a contract ID and its version as one string; Q03 keeps them in separate fields | `.agents/governance/document-authoring.md` line 275 | W03-VERSION |
+| 38 | AUTHOR-R005 | CHANGE | Hard-codes ADR numbers that the cutover renumbering will change | `.agents/governance/document-authoring.md` line 98 | Q07-CUTOVER |
+| 39 | AUTHOR-R021 | CHANGE | Restates registry machine content and fixed counts (roles, READMEs, fields, tables); D01 forbids count targets and the registry owns that content | `.agents/governance/document-authoring.md` line 354 | W03-FORMS |
+| 40 | AUTHOR-R017 | UNVERIFIED | Shared-edition machinery; no current requirement or consumer confirmed (D00 requires independent operation) | `.agents/governance/document-authoring.md` line 298 | W05-GATES |
+| 41 | AUTHOR-R022 | UNVERIFIED | Joint-adoption machinery; same as AUTHOR-R017 | `.agents/governance/document-authoring.md` line 451 | W05-GATES |
+| 42 | DOCLIFE-R008 | CHANGE | Disposition rests on Git recovery and byte-identical restoration with no cutover path (Q01, Q10); `TERM-ARCHIVE` and `TERM-REMOVAL` now carry the 3.0.1 meaning | `.agents/governance/document-lifecycle.md` line 167 | Q07-CUTOVER |
+| 43 | DOCLIFE-R014 | CHANGE | Same recovery premise as DOCLIFE-R008 | `.agents/governance/document-lifecycle.md` line 215 | Q07-CUTOVER |
+| 44 | DOCLIFE-R015 | CHANGE | "Intended retained history" has no cutover exception | `.agents/governance/document-lifecycle.md` line 237 | Q07-CUTOVER |
+| 45 | DOCLIFE-R019 | CHANGE | Same recovery premise as DOCLIFE-R008 | `.agents/governance/document-lifecycle.md` line 258 | Q07-CUTOVER |
+| 46 | DOCLIFE-R009 | CHANGE | Covers Spec and Plan drafts only; a draft Requirement or Runbook used alone for implementation, operation or completion is not refused (Q-DRAFT) | `.agents/governance/document-lifecycle.md` line 181 | W04-LIFECYCLE |
+| 47 | DOCLIFE-R006 | CHANGE | Lets the approving owner fill the "Independent semantic review" row, naming a self-check as independent (Q08) | `.agents/governance/document-lifecycle.md` line 139 | W10-REVIEW |
+| 48 | DOCLIFE-R007 | UNVERIFIED | Shared-edition machinery; same as AUTHOR-R017 | `.agents/governance/document-lifecycle.md` line 162 | W05-GATES |
+| 49 | SDLC-R005 | CHANGE | "Git owns source recovery" with no cutover exception (Q01) | `.agents/governance/sdlc.md` line 117 | Q07-CUTOVER |
+| 50 | SDLC-R019 | CHANGE | Same as SDLC-R005 | `.agents/governance/sdlc.md` line 160 | Q07-CUTOVER |
+| 51 | SDLC-R023 | CHANGE | Same as SDLC-R005 | `.agents/governance/sdlc.md` line 169 | Q07-CUTOVER |
+| 52 | SDLC-R003 | CHANGE | No refusal of implementation, operation or completion based on a draft alone (Q-DRAFT) | `.agents/governance/sdlc.md` line 107 | W04-LIFECYCLE |
+| 53 | SDLC-R021 | CHANGE | Same as SDLC-R003 | `.agents/governance/sdlc.md` line 167 | W04-LIFECYCLE |
+| 54 | SDLC-R027 | CHANGE | Same as SDLC-R003 | `.agents/governance/sdlc.md` line 183 | W04-LIFECYCLE |
+| 55 | SDLC-R028 | CHANGE | Same as SDLC-R003 | `.agents/governance/sdlc.md` line 184 | W04-LIFECYCLE |
+| 56 | SDLC-R030 | CHANGE | Same as SDLC-R003 | `.agents/governance/sdlc.md` line 186 | W04-LIFECYCLE |
+| 57 | SDLC-R006 | CHANGE | Allows a Release Record under conditions, against AUTHOR-R008 and the removed Release document role (U19) | `.agents/governance/sdlc.md` line 126 | W03-FORMS |
+| 58 | SDLC-R016 | UNVERIFIED | Names hosted job names not read against `.github/` here | `.agents/governance/sdlc.md` line 157 | W06-DELIVERY |
+| 59 | GOV-07 conflict | CHANGE (recorded) | `TERM-PRERELEASE`, `TERM-BUILD-METADATA`, `TERM-CONTRACT-VERSION` and `TERM-DOCUMENT-REVISION` (3.0.1 numeric profile) differ from AUTHOR-R015; the glossary carries the 3.0.1 meaning until the policy follows | `.agents/knowledge/glossary.md` | W03-VERSION |
+| 60 | GOV-07 conflict | CHANGE (recorded) | `TERM-ARCHIVE` and `TERM-REMOVAL` (no recovery copy at the final cutover) differ from AUTHOR-R013 and DOCLIFE-R008, R014, R015 and R019 | `.agents/knowledge/glossary.md` | Q07-CUTOVER |
+| 61 | Glossary maintenance claim | CHANGE (done here) | The Maintenance text said the knowledge validator checks owner paths; a scratch copy with a missing owner path passed it, and the link validator refused it (EVD-004 of SPEC-0217). The sentence now names the link validator | `.agents/knowledge/glossary.md` Maintenance | W01 |
+| 62 | W01-H02 | Open, no current basis | The "rule_id binding" has no basis in the 3.0.1 requirements (U13 fixes the seven columns, definition, owner and numeric version; the W05 prompt reads no binding). Its resume condition is met. Q04 requires an explicit per-item approval to withdraw it, so it stays open and non-blocking; the user decides | Live `Residue Handoff` row W01-H02 and its ledger entry | W01 |
+
+`KEEP_VERIFIED` rules (text-level), by file:
+
+- `agent-execution.md` (9 of 12): EXEC-R001, EXEC-R002, EXEC-R003, EXEC-R005, EXEC-R007, EXEC-R008, EXEC-R009, EXEC-R010, EXEC-R011.
+- `approval-and-safety.md` (18 of 21): SAFE-R001, SAFE-R002, SAFE-R003, SAFE-R005, SAFE-R006, SAFE-R007, SAFE-R009, SAFE-R010, SAFE-R011, SAFE-R012, SAFE-R013, SAFE-R014, SAFE-R015, SAFE-R016, SAFE-R017, SAFE-R018, SAFE-R019, SAFE-R021.
+- `git.md` (10 of 15): GIT-R001, GIT-R002, GIT-R003, GIT-R004, GIT-R007, GIT-R008, GIT-R011, GIT-R012, GIT-R013, GIT-R014.
+- `model-selection.md` (6 of 7): MODEL-R001, MODEL-R002, MODEL-R004, MODEL-R005, MODEL-R006, MODEL-R007.
+- `quality.md` (37 of 51): QUAL-R001, QUAL-R002, QUAL-R003, QUAL-R004, QUAL-R005, QUAL-R007, QUAL-R008, QUAL-R009, QUAL-R010, QUAL-R011, QUAL-R012, QUAL-R013, QUAL-R014, QUAL-R016, QUAL-R017, QUAL-R023, QUAL-R024, QUAL-R026, QUAL-R027, QUAL-R028, QUAL-R029, QUAL-R030, QUAL-R033, QUAL-R034, QUAL-R035, QUAL-R036, QUAL-R037, QUAL-R038, QUAL-R040, QUAL-R041, QUAL-R042, QUAL-R043, QUAL-R044, QUAL-R045, QUAL-R046, QUAL-R047, QUAL-R050.
+- `formatting-and-linting.md` (11 of 12): FMT-R001, FMT-R002, FMT-R003, FMT-R004, FMT-R005, FMT-R006, FMT-R007, FMT-R008, FMT-R009, FMT-R010, FMT-R011.
+- `context-and-memory.md` (14 of 20): CTX-R001, CTX-R002, CTX-R003, CTX-R004, CTX-R005, CTX-R008, CTX-R010, CTX-R011, CTX-R013, CTX-R014, CTX-R015, CTX-R018, CTX-R019, CTX-R020.
+- `document-authoring.md` (15 of 23): AUTHOR-R001, AUTHOR-R002, AUTHOR-R003, AUTHOR-R004, AUTHOR-R006, AUTHOR-R008, AUTHOR-R009, AUTHOR-R010, AUTHOR-R011, AUTHOR-R012, AUTHOR-R014, AUTHOR-R018, AUTHOR-R019, AUTHOR-R020, AUTHOR-R023.
+- `document-lifecycle.md` (15 of 22): DOCLIFE-R001, DOCLIFE-R002, DOCLIFE-R003, DOCLIFE-R004, DOCLIFE-R005, DOCLIFE-R010, DOCLIFE-R011, DOCLIFE-R012, DOCLIFE-R013, DOCLIFE-R016, DOCLIFE-R017, DOCLIFE-R018, DOCLIFE-R020, DOCLIFE-R021, DOCLIFE-R022.
+- `sdlc.md` (25 of 35): SDLC-R001, SDLC-R002, SDLC-R004, SDLC-R007, SDLC-R008, SDLC-R009, SDLC-R010, SDLC-R011, SDLC-R012, SDLC-R013, SDLC-R014, SDLC-R015, SDLC-R017, SDLC-R018, SDLC-R020, SDLC-R022, SDLC-R024, SDLC-R025, SDLC-R026, SDLC-R029, SDLC-R031, SDLC-R032, SDLC-R033, SDLC-R034, SDLC-R035.
+
+#### W00 Verdict Owner Corrections
+
+Added 2026-11-15 under SPEC-0217 (EVD-133). A correction row supersedes the Owner cell it names in the `3.0.1 Verdicts` table above; that row stays as recorded.
+
+| No. | Verdict row | Owner as recorded | Owner now | Basis |
+| --- | --- | --- | --- | --- |
+| 1 | 9 (REQ-0003-FR-0020 and AD-0006 recovery premise) | W01 | W04 (W04-CONTENT) | PKG W04-CONTENT step 6 owns conflicting history-recovery text in the 01 and 02 documents (R09); Q07-CUTOVER (U55, R20) consumes it |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -1363,7 +1458,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | SPEC-0211-REGISTRY-TEXT | No legacy row: wording faults found by the W03-H34 read of `docs/99.templates/registry.json` at `d0ae8cf6` (SPEC-0211 Task EVD-019), beyond `SPEC-0205-STALE-TEXT`: four "keep empty heading lists" pack strings, one "listed their H2 headings" and the provider-native twin "H2 lists" strings; copied or wrong TemplateDefinition and profile text (the data-pack consumer path names the collection README, the collection and runtime-governance template texts copy the stage and implementation texts, the postmortem extension removal names incident lineage, two `review` strings do not name their form, the governance-document form calls itself a provider note); one failure named by both `BODY-HEADING-REQUIRED` and `BODY-H3-REQUIRED`; "A audit" and "a operations policy"; about 28 Korean object particles (을 for 를) in generated `required_content`. Recorded under SPEC-0211 (user answer "Residue to owners, close H34 (Recommended)", 2026-11-15) | open | W04+ platform | When the owner of those registry TemplateDefinition, form and profile texts next edits them in its own package | none |
 | W00-H01 | Legacy row `package contracts set` of `Read Denominator`: 3 partial and 2 listed-only package contract files | open | W00 | When a difference shown to affect a current owner is found | none |
 | W01-H01 | Legacy row `governance policy set` of `Read Denominator`: 3 partial and 1 listed-only governance policy files | terminal | W01 | When W01 re-reads its files before editing | EVD-074 |
-| W01-H02 | No legacy row: DOC-S00, W01 part, the `rule_id` binding of the vocabulary in `.agents/knowledge/glossary.md` that W05 consumes; the DOC-S00 row holds the W05 part only. W01 stays the owner (the legacy `Stage QA Handoff` row DOC-S00 says "W01 (`.agents/knowledge/glossary.md`); W05 consumes"; PKG W06:331 names W01 the normative canon). Seeded under W03-D78 and W03-D82 by SPEC-0213 | open | W01 | When W01 is run for its r1 differences; W05 consumes the result | none |
+| W01-H02 | No legacy row: DOC-S00, W01 part, the `rule_id` binding of the vocabulary in `.agents/knowledge/glossary.md` that W05 consumes; the DOC-S00 row holds the W05 part only. W01 stays the owner (the legacy `Stage QA Handoff` row DOC-S00 says "W01 (`.agents/knowledge/glossary.md`); W05 consumes"; PKG W06:331 names W01 the normative canon). Seeded under W03-D78 and W03-D82 by SPEC-0213 | open | W01 | When the user decides its per-item withdrawal (Q04); W05 consumes any result | none |
 | W03-H02 | Legacy row `W03-H02` of `W03 Decisions`: phase 3 forms for the six SDLC roles and deletion of the heading-list model | terminal | W03 | After phase 2 is accepted | EVD-110 |
 | W03-H05 | Legacy row `W03-H05` of `W03 Decisions`: keep or remove the stored ADR rejected state | open | W04 | When W04 starts | none |
 | W03-H08 | Legacy row `W03-H08` of `W03 Decisions`: the per-relationship contract | terminal | W03 | With phase 3 (the SDLC roles own these relations) | EVD-062 |
