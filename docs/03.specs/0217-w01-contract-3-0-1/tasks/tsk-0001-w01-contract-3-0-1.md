@@ -49,7 +49,7 @@ Read-only survey on 2026-11-15: the W01 prompt, D00, D01, D03, D15, the S-items 
 
 ### Blockers and Decisions
 
-Waiting for Spec and Plan approval. Resume when the user approves the exact bytes after the independent review.
+The independent review passed (EVD-005), and the user approved the Spec and Plan (EVD-006). No question is open.
 
 ### Lifecycle Traceability
 
@@ -70,6 +70,8 @@ Waiting for Spec and Plan approval. Resume when the user approves the exact byte
 | EVD-002 | [VAL-W01C-002](../spec.md#criteria) | WORK-002 | Governance and lifecycle validators and link check | Implementation snapshot | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-W01C-003](../spec.md#criteria) | WORK-003 | Ledger gate and strict document validators | Implementation snapshot | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-W01C-004](../spec.md#criteria) | WORK-004 | Three violation cases on scratch copies | Implementation snapshot | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-W01C-001](../spec.md#criteria) | WORK-001 | Independent semantic review | Draft commit `202bf87d`: spec.md sha256 `8355a723a264242cfe6b416557a5e2df209e68999e8d127496cd0542b8622ded`, plan.md sha256 `456fff03f06392fc82f56b3e9e0575d09f60a7bd027eef907339ae43f2089d11` | PASS | Read-only `code-reviewer` subagent, separate context, 2026-11-15. The first pass on spec `7345f092` and plan `bb439ee1` returned REQUEST_CHANGES with five MAJOR and two NIT findings: per-requirement dispositions, a rule-explanation criterion with violation cases, facts only the duplicates held, the W01-H02 location and resume condition, the W04-CONTENT ownership of the recovery text, the Korean column with owner links and version, and the Task design summary. All seven were applied. The second pass on spec `f9c6c937` and plan `456fff03` returned APPROVE with one non-blocking NIT (also-consumed-by note for rows 10 and 11), which produced spec `8355a723`. Review only; it approves nothing. | yes | none |
+| EVD-006 | [VAL-W01C-001](../spec.md#criteria) | WORK-001 | Spec/Plan approval | {"actor":"user","approval_ref":"Direct current-session user answer Approve these bytes (Recommended) to the SPEC-0217 approval question naming spec.md 8355a723 and plan.md 456fff03, 2026-11-15","review_ref":"EVD-005","scope":["SPEC-0217","SPEC-0217-PLAN-0001"],"reviewed_spec_sha256":"8355a723a264242cfe6b416557a5e2df209e68999e8d127496cd0542b8622ded","reviewed_plan_sha256":"456fff03f06392fc82f56b3e9e0575d09f60a7bd027eef907339ae43f2089d11","validity":"confirmed","revocation":"none"} | PASS | Approves the reviewed Spec and Plan content of draft commit `202bf87d`; the approved files differ from it only in `status` and `version`. It accepts no criterion and authorizes no push or merge. | yes | none |
 
 ### Resolution Links
 
