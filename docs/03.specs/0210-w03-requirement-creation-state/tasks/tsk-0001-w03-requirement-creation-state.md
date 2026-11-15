@@ -1,8 +1,8 @@
 ---
 title: "W03 Requirement Creation State"
-version: "0.1.8"
+version: "0.1.9"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0210-TSK-0001"
@@ -47,8 +47,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-REQCREATE-001](../spec.md#criteria) | The survey; the failing-first creation-state, registry check and `LIFECYCLE-CREATE` tests; the registry entry; the two clauses of the registry check. | platform | draft | NOT_RUN | Pending |
-| WORK-002 | [VAL-REQCREATE-002](../spec.md#criteria) | The Requirement sample and completeness assertion of the generator tests; the MAJOR raise; the policy survey; the SPEC-0161 Task rows and, at acceptance, the ledger cycle; regression and exact-index QA. | platform | draft | NOT_RUN | Pending |
+| WORK-001 | [VAL-REQCREATE-001](../spec.md#criteria) | The survey; the failing-first creation-state, registry check and `LIFECYCLE-CREATE` tests; the registry entry; the two clauses of the registry check. | platform | ready | NOT_RUN | Pending |
+| WORK-002 | [VAL-REQCREATE-002](../spec.md#criteria) | The Requirement sample and completeness assertion of the generator tests; the MAJOR raise; the policy survey; the SPEC-0161 Task rows and, at acceptance, the ledger cycle; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
 
 ## Verification Evidence
 
