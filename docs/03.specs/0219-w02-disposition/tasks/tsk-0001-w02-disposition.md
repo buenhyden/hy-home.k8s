@@ -53,7 +53,7 @@ Read-only survey on 2026-11-15. No file outside this package is edited yet.
 
 ### Blockers and Decisions
 
-Waiting for Spec and Plan approval.
+The user approved the Spec and Plan (EVD-003). No question is open.
 
 ### Lifecycle Traceability
 
@@ -70,6 +70,7 @@ Waiting for Spec and Plan approval.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-W02D-001](../spec.md#criteria) | WORK-001 | Ledger gate after each closure step | Implementation snapshot | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-W02D-002](../spec.md#criteria) | WORK-002 | Ledger gate and strict document validators | Implementation snapshot | NOT_RUN | Pending | yes | none |
+| EVD-003 | [VAL-W02D-001](../spec.md#criteria) | WORK-001 | Spec/Plan approval | Direct current-session user answer "Approve these bytes (Recommended)" to the SPEC-0219 approval question naming spec.md `890fa960` and plan.md `bab60654` of draft commit `11957e4a`, 2026-11-15; risk class `low`, so no independent review (Q08) | PASS | Approves the reviewed Spec and Plan content of `11957e4a`; the approved files differ from it only in `status` and `version`. It accepts no criterion. | yes | none |
 
 ### Resolution Links
 
