@@ -45,7 +45,7 @@ The measurement ran on 2026-11-15. No file outside this package is edited yet.
 
 ### Blockers and Decisions
 
-Waiting for Spec and Plan approval.
+The user approved the Spec and Plan (EVD-002), with acceptance on green checks. No question is open.
 
 ### Lifecycle Traceability
 
@@ -60,6 +60,7 @@ Waiting for Spec and Plan approval.
 | Evidence ID | Consumer | Work Unit | Command | Input | Result | Location | Required | Resolves |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-LAT-001](../spec.md#criteria) | WORK-001 | Strict document validators and ledger gate | Implementation snapshot | NOT_RUN | Pending | yes | none |
+| EVD-002 | [VAL-LAT-001](../spec.md#criteria) | WORK-001 | Spec/Plan approval | Direct current-session user answer "Approve bytes, accept when green (Recommended)" to the SPEC-0220 approval question naming spec.md `00a21a36` and plan.md `2302db8d` of draft commit `e1bed33b`, 2026-11-15; risk class `low`, no independent review (Q08) | PASS | Approves the reviewed Spec and Plan content of `e1bed33b`; the approved files differ from it only in `status` and `version`. The same answer accepts VAL-LAT-001 on the condition that the strict validators, the ledger gate and the commit hooks pass; that condition is checked in a later row. | yes | none |
 
 ### Resolution Links
 

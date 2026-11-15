@@ -1,8 +1,8 @@
 ---
 title: "QA Latency Record"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/spec"
-status: "in-review"
+status: "approved"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0220"
