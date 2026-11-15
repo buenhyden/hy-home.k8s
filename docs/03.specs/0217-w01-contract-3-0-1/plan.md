@@ -2,7 +2,7 @@
 title: "W01 3.0.1 Governance Contract Fit Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "in-review"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0217-PLAN-0001"
