@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "5.0.17"
+version: "5.0.18"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-15"
 artifact_id: "REQ-0003"
 ---
 
@@ -471,6 +471,7 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0210 | completed spec | Declared the draft creation state of the requirement lifecycle domain so that a new Requirement can be created, closing W03-H43, and stepped the registry to 19.0.0. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0210-w03-requirement-creation-state/` |
 | SPEC-0209 | completed spec | Recorded the COMMON-DOC-FORM-1 adoption facts, the W03 writer delegation and writer state, and the corrections of stale tracking, closing W03-H19, W03-H21 and W03-H31, and stepped the registry to 20.0.0. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0209-w03-closing-records/` |
 | SPEC-0211 | completed spec | Wrote the W03 closing report, reassigned DOC-12 to Q07 and DOC-S99 to W05, closed W03-H10, W03-H34, W03-H35 and W03-H20 on final-tree reads, and left no work residue entry carrying W03. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0211-w03-closing-report/` |
+| SPEC-0216 | completed spec | Recorded the W00-DELTA intake of the external workspace governance package 3.0.1 in the SPEC-0161 Task: the 3.0.1 edition inputs, a design summary and 14 verdicts (6 `KEEP_VERIFIED`, 8 `CHANGE`) with their read scope and one owning stage each, adding no work residue entry. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0216-w00-3-0-1-delta/` |
 | SPEC-0006 | deleted spec | Workspace Harness Gap Analysis Technical Specification. Deleted from the tree on 2026-09-16 at commit `38bec742`; recover it with `git show 38bec742^:docs/03.specs/0006-workspace-harness-gap-analysis/spec.md`. Its row was added under SPEC-0212 after the survey found its identity reserved by no lineage row. | `docs/03.specs/0006-workspace-harness-gap-analysis/` |
 | SPEC-0047 | deleted spec | Current Surface and Stash Reconciliation Technical Specification. Deleted from the tree on 2026-09-24 at commit `27c1045d`; recover it with `git show 27c1045d^:docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md`. Its row was added under SPEC-0212 after the survey found its identity reserved by no lineage row. | `docs/03.specs/0047-current-surface-and-stash-reconciliation/` |
 | SPEC-0048 | deleted spec | GitHub Routing and CI Evidence Technical Specification. Deleted from the tree on 2026-09-24 at commit `27c1045d`; recover it with `git show 27c1045d^:docs/03.specs/0048-github-routing-and-ci-evidence/spec.md`. Its row was added under SPEC-0212 after the survey found its identity reserved by no lineage row. | `docs/03.specs/0048-github-routing-and-ci-evidence/` |
@@ -994,5 +995,13 @@ This is local retained-ref recovery proof before disposition, not remote or host
 - `7b827d715b40b173c2e8ca87c772189da049808c:docs/03.specs/0211-w03-closing-report/plan.md` — blob/source OID `66170f717f7439fb14b09296d5307c6e491a7b50`; SHA-256 `dfe9b2fa75213defd65267594bdcd45d575a53464e4754f1f90a53d67996a72d` (9911 bytes).
 - `7b827d715b40b173c2e8ca87c772189da049808c:docs/03.specs/0211-w03-closing-report/spec.md` — blob/source OID `9ce8e44299cec68cb564cb08becac01186825d1a`; SHA-256 `53b66848d6bc4ebd1dcba436fdc1ed32b52f31518bd473d208bda430036c3fc1` (27806 bytes).
 - `7b827d715b40b173c2e8ca87c772189da049808c:docs/03.specs/0211-w03-closing-report/tasks/tsk-0001-w03-closing-report.md` — blob/source OID `587e628834e05c0bebfa3b4805a22edfc46afc20`; SHA-256 `9934a732757125465e1d2bc6d289b1699efc5b631e4b2f894f2f5c40f161d16f` (30091 bytes).
+
+This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
+
+**SPEC-0216 recovery proof.** The exact completed source is the Task freeze commit `a4e9149331a5707d826419e8d8a0ab10f9298089`, reachable from local `refs/heads/claude/w00-3-0-1-delta-intake` (`git merge-base --is-ancestor` rc 0) and, after its merge, from `main`. The user authorized this exit, and no hold was identified. Before deleting any file, QA observed HEAD `a4e91493` with a clean index and worktree; for every exact `commit:path` it observed `git cat-file -t` type blob, the same OID from `git hash-object --no-filters` on the current file, and a byte-equal comparison of the `git show` restoration, read through a pipe, with the current file. No temporary file was written, and HEAD, index and worktree were unchanged afterwards.
+
+- `a4e9149331a5707d826419e8d8a0ab10f9298089:docs/03.specs/0216-w00-3-0-1-delta/plan.md` — blob/source OID `81ce5b740c0261beda4a4b657f4a6071fb69f239`; SHA-256 `80478cf1cca6789910c8a332402661486ee58311047a383e9f93f257ea936e2e` (4008 bytes).
+- `a4e9149331a5707d826419e8d8a0ab10f9298089:docs/03.specs/0216-w00-3-0-1-delta/spec.md` — blob/source OID `69b0f0ebcbc07959938322abca2b69dde2783d9b`; SHA-256 `66a23a96fcea83d70e637f7a752c9aa8d327adcedfdc0cdcc1b15d3bc0bf2d05` (10746 bytes).
+- `a4e9149331a5707d826419e8d8a0ab10f9298089:docs/03.specs/0216-w00-3-0-1-delta/tasks/tsk-0001-w00-3-0-1-delta.md` — blob/source OID `82903e2a4de1c9b276c3f36ccf1d1886b02e5f80`; SHA-256 `e0eba888954f8281ea1fd6ffa245978c3472ee0c04bee5c4ef17a6019c98e7e0` (11328 bytes).
 
 This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
