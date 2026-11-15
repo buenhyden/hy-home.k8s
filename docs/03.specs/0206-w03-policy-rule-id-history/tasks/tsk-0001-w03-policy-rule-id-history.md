@@ -1,8 +1,8 @@
 ---
 title: "W03 Policy Rule ID History"
-version: "0.2.2"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0206-TSK-0001"
@@ -47,9 +47,9 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RULEHIST-001](../spec.md#criteria) | `POLICY-RULE-DELETE` and `POLICY-RULE-REISSUE` in the lifecycle check, the base Rules tables in the evidence context, the shared reader, and their tests. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-RULEHIST-002](../spec.md#criteria) | `POLICY-CODE-CHANGE`, the base code section, the rule for a departing policy and the reserved list, and their tests; suite membership and surface route of the new module. | platform | in-progress | NOT_RUN | Pending |
-| WORK-003 | [VAL-RULEHIST-003](../spec.md#criteria) | The landing audit; the policy texts with their new rule IDs and rows; W03-D64, the closure of W03-H29 and its ledger entry; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-RULEHIST-001](../spec.md#criteria) | `POLICY-RULE-DELETE` and `POLICY-RULE-REISSUE` in the lifecycle check, the base Rules tables in the evidence context, the shared reader, and their tests. | platform | completed | PASS | EVD-005, EVD-006, EVD-017 |
+| WORK-002 | [VAL-RULEHIST-002](../spec.md#criteria) | `POLICY-CODE-CHANGE`, the base code section, the rule for a departing policy and the reserved list, and their tests; suite membership and surface route of the new module. | platform | completed | PASS | EVD-007, EVD-011, EVD-018 |
+| WORK-003 | [VAL-RULEHIST-003](../spec.md#criteria) | The landing audit; the policy texts with their new rule IDs and rows; W03-D64, the closure of W03-H29 and its ledger entry; regression and exact-index QA. | platform | completed | PASS | EVD-008, EVD-009, EVD-010, EVD-012, EVD-014, EVD-015, EVD-016, EVD-019 |
 
 ## Verification Evidence
 
@@ -73,6 +73,10 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-014 | [VAL-RULEHIST-003](../spec.md#criteria) | WORK-003 | Rebase of the package onto `main` | Staged package of 16 files at af81204d saved as a patch outside the index; new base `main` f7b55d4f (after SPEC-0212); `git switch -m` merge of the working tree | PASS | Two conflicts, each resolved by keeping both changes: the SPEC-0161 Task keeps `main`'s EVD-112 (the SPEC-0212 row), the W03-D64 recording row is renumbered from EVD-112 (EVD-010) to EVD-113 and the Task version is 0.2.7 on top of `main`'s 0.2.6; `docs/03.specs/README.md` takes `main`'s 0.23.97 with this package's tree line and open-package sentence as 0.23.98. `main` changed no policy, registry, schema or script between af81204d and f7b55d4f, so the landing audit (EVD-012) and the version level (EVD-011) stand. The work residue ledger still equals `main`. | no | none |
 | EVD-015 | [VAL-RULEHIST-003](../spec.md#criteria) | WORK-003 | Scope decision on the pinned `verification` text | Direct user answer "Allow the test update (Recommended)", 2026-11-15 (Asia/Seoul), to the question allowing the one-line update of the expected `verification` string at `tests/test_shared_contract_binding.py:80` to the new registry text | PASS | The user allowed the one expected string in `EXTENSION_RECORDS` to take the registry text this package writes; no other line of the test changed, and the test asserts the record as strictly as before. The file joins the implementation commit. | no | none |
 | EVD-016 | [VAL-RULEHIST-003](../spec.md#criteria) | WORK-003 | Focused checks on the staged index | Base `main` f7b55d4f with the 17 changed files staged, `tests/test_shared_contract_binding.py` among them (EVD-015; the ledger equals `main`); pinned validation venv; modules `tests.test_policy_rule_history`, `tests.test_policy_rule_ids`, `tests.test_common_form_tree`, `tests.test_registry_schema_version`, `tests.test_document_generator`, `tests.test_shared_contract_binding`, `tests.test_document_lifecycle_cumulative_history`; `python3 scripts/run-contract-tests.py --root . --suite tooling`; strict registry, Markdown-profile, link/owner and lifecycle validators, `--mode staged` lifecycle, work residue ledger gate, `scripts/validation/repository/quality.py`, ruff check and format check of the edited Python, markdownlint-cli2 of the edited Markdown, `git diff --cached --check` | PASS | History 15, rule IDs 51, common form tree 399 (3 skipped), registry schema version 26, document generator 29, shared contract binding 19, cumulative history 47 and the tooling suite 166 in 8 modules pass; every validator, the ledger gate (61 entries), quality, ruff, markdownlint and the diff check pass. Shared suites other than `tooling` are deferred to W03's single run (W03-D83). | yes | EVD-013 |
+| EVD-017 | [VAL-RULEHIST-001](../spec.md#criteria) | WORK-001 | History rules at the implementation commit | `python3 -m unittest tests.test_policy_rule_history -v` on the committed tree of implementation commit `b5e5d293` (branch head `fef41a77`, code identical), 2026-11-15; pinned validation venv | PASS | 15 tests OK, including the rule ID cases: the last row deleted, deleted and reissued, a retired row made active, a rule moved to another policy, a missing table, a new policy issuing from R001, a rename, retirement with successor correction and the staged mode against HEAD. Repository-static lane. | yes | none |
+| EVD-018 | [VAL-RULEHIST-002](../spec.md#criteria) | WORK-002 | Code permanence at the implementation commit | `python3 -m unittest tests.test_policy_rule_history -v` on the committed tree of implementation commit `b5e5d293` (branch head `fef41a77`, code identical), 2026-11-15; pinned validation venv | PASS | The same run of 15 tests OK covers code permanence: a changed code, a code given to another policy, a removed reserved code, a departing policy that passes only with its code reserved, and a reserved code that a record still carries. Repository-static lane. | yes | none |
+| EVD-019 | [VAL-RULEHIST-003](../spec.md#criteria) | WORK-003 | Exact-index QA and commit hooks on the implementation commit | Pre-commit hooks over the final index of `b5e5d293` in the pinned validation environment, 2026-11-15 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | none |
+| EVD-020 | [VAL-RULEHIST-003](../spec.md#criteria) | WORK-003 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Resolution Links
 
@@ -84,11 +88,18 @@ The required failure EVD-013 is resolved by EVD-016, with the same Command and W
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RULEHIST-001](../spec.md#criteria) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-RULEHIST-002](../spec.md#criteria) | pending | none | Implement WORK-002 and record PASS evidence | platform |
-| [VAL-RULEHIST-003](../spec.md#criteria) | pending | none | Implement WORK-003 and record PASS evidence | platform |
+| [VAL-RULEHIST-001](../spec.md#criteria) | accepted | EVD-005, EVD-006, EVD-017 | Accepted by the user on 2026-11-15 (direct answer "Pre-accept when green (Recommended)" of 2026-11-15 to the advance acceptance question for the remaining W03 packages; green at commit `b5e5d293`) | platform |
+| [VAL-RULEHIST-002](../spec.md#criteria) | accepted | EVD-007, EVD-011, EVD-018 | Accepted by the user on 2026-11-15 (direct answer "Pre-accept when green (Recommended)" of 2026-11-15 to the advance acceptance question for the remaining W03 packages; green at commit `b5e5d293`) | platform |
+| [VAL-RULEHIST-003](../spec.md#criteria) | accepted | EVD-008, EVD-009, EVD-010, EVD-012, EVD-014, EVD-015, EVD-016, EVD-019 | Accepted by the user on 2026-11-15 (direct answer "Pre-accept when green (Recommended)" of 2026-11-15 to the advance acceptance question for the remaining W03 packages; green at commit `b5e5d293`) | platform |
 
 ### Remaining Conditions
+
+Frozen package disposition decision:
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: All fifteen policies keep their rule IDs and codes; the lifecycle check refuses a reused or rewritten rule ID or code across commits (AUTHOR-R023, DOCLIFE-R022); W03-H29 closes with this acceptance; W05 consumes the rule IDs. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 No separate remaining-condition list is kept here; the Disposition and Current owner columns of the criterion decisions state what remains and who owns it.
 
@@ -100,4 +111,4 @@ No separate promotion receipt is kept here; the Plan's promotion rows are reflec
 
 ### Next Owner
 
-The history rules, the landing audit of all fifteen policies with `ONBOARD` and the policy texts are implemented and staged on `main` `f7b55d4f` (EVD-006 to EVD-016), and the focused checks pass (EVD-016). The WORK rows stay `ready` until the user's acceptance. SPEC-0204 has adopted `ONBOARD`, so this package completes packages 1 to 5 of W03-H29, which closes through the ledger cycle at the acceptance of these criteria. Next owner: the user, for criterion acceptance; then platform, for the W03-H29 closure.
+The history rules, the landing audit of all fifteen policies with `ONBOARD` and the policy texts are committed in `b5e5d293` on `main` `f7b55d4f` (EVD-006 to EVD-018), and the focused checks pass (EVD-016). SPEC-0204 adopted `ONBOARD`, so this package completes packages 1 to 5 of W03-H29, which closes through the ledger cycle with this acceptance (SPEC-0161 Task EVD-114). Next owner: W05, which consumes the rule IDs. Implementation commit `b5e5d293` passed exact-index QA in the hooks (EVD-019); the user accepted all criteria in advance, applied on 2026-11-15, and the approval of commit, push, PR and merge covers the package exit (EVD-020).
