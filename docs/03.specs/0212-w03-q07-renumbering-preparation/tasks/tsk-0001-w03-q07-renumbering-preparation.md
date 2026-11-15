@@ -1,8 +1,8 @@
 ---
 title: "W03 Q-07 Renumbering Preparation"
-version: "0.2.0"
+version: "0.2.1"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0212-TSK-0001"
@@ -48,9 +48,9 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-Q07PREP-001](../spec.md#criteria) | The survey record of number spaces, allocators, references and consumer classes, with denominators, exclusions, absences and the sentences the transition must amend. | platform | draft | NOT_RUN | Pending |
-| WORK-002 | [VAL-Q07PREP-001](../spec.md#criteria), [VAL-Q07PREP-002](../spec.md#criteria) | The transition design record and the scratch rehearsal with eight cases; proof the real tree is unchanged. | platform | draft | NOT_RUN | Pending |
-| WORK-003 | [VAL-Q07PREP-002](../spec.md#criteria) | The non-reuse confirmation (coverage, enforcement, limit), the conditional completion if a hole is found, the Registry Schema Version record, the SPEC-0161 Task rows and regression and exact-index QA. | platform | draft | NOT_RUN | Pending |
+| WORK-001 | [VAL-Q07PREP-001](../spec.md#criteria) | The survey record of number spaces, allocators, references and consumer classes, with denominators, exclusions, absences and the sentences the transition must amend. | platform | ready | NOT_RUN | Pending |
+| WORK-002 | [VAL-Q07PREP-001](../spec.md#criteria), [VAL-Q07PREP-002](../spec.md#criteria) | The transition design record and the scratch rehearsal with eight cases; proof the real tree is unchanged. | platform | ready | NOT_RUN | Pending |
+| WORK-003 | [VAL-Q07PREP-002](../spec.md#criteria) | The non-reuse confirmation (coverage, enforcement, limit), the conditional completion if a hole is found, the Registry Schema Version record, the SPEC-0161 Task rows and regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
 
 ## Verification Evidence
 
