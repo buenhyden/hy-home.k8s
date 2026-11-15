@@ -1,6 +1,6 @@
 ---
 title: "W01 3.0.1 Governance Contract Fit"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-15"
@@ -45,20 +45,20 @@ This Task executes WORK-001 to WORK-004 of the [Plan](../plan.md) for [SPEC-0217
 
 ### Work Performed
 
-Read-only survey on 2026-11-15: the W01 prompt, D00, D01, D03, D15, the S-items the prompt names, the PKG vocabulary and the requirement mapping; three subagent rule audits; spot reads of EXEC-R001 to R012, SAFE-R017 to R020, GIT-R012 to R014, FMT-R001 to R011, AUTHOR-R007, DOCLIFE-R003 and DOCLIFE-R009; and searches of `scripts/` and `tests/` for pinned text. No file outside this package is edited yet.
+Read-only survey on 2026-11-15: the W01 prompt, D00, D01, D03, D15, the S-items the prompt names, the PKG vocabulary and the requirement mapping; three subagent rule audits; spot reads of EXEC-R001 to R012, SAFE-R017 to R020, GIT-R012 to R014, FMT-R001 to R011, AUTHOR-R007, DOCLIFE-R003 and DOCLIFE-R009; and searches of `scripts/` and `tests/` for pinned text. The edits are in commits `c104f154`, `e2cdbd4d` and `c9c89b44`.
 
 ### Blockers and Decisions
 
-The independent review passed (EVD-005), and the user approved the Spec and Plan (EVD-006). No question is open.
+The independent review passed (EVD-005), and the user approved the Spec and Plan (EVD-006). Open for the user: the per-item W01-H02 decision (keep, withdraw, or implement it as Policy Owner anchors).
 
 ### Lifecycle Traceability
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-W01C-001](../spec.md#criteria) | Glossary to vocabulary 3.0.1. | platform | in-progress | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-W01C-002](../spec.md#criteria) | One author for the four duplicates; retire EXEC-R012. | platform | in-progress | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-W01C-003](../spec.md#criteria) | Rule-fit, disposition and owner-correction records; W01-H02 row and entry. | platform | in-progress | NOT_RUN | EVD-003 |
-| WORK-004 | [VAL-W01C-004](../spec.md#criteria) | Rule explanation and three violation cases. | platform | in-progress | NOT_RUN | EVD-004 |
+| WORK-001 | [VAL-W01C-001](../spec.md#criteria) | Glossary to vocabulary 3.0.1. | platform | in-progress | PASS | EVD-007 |
+| WORK-002 | [VAL-W01C-002](../spec.md#criteria) | One author for the four duplicates; retire EXEC-R012. | platform | in-progress | PASS | EVD-008 |
+| WORK-003 | [VAL-W01C-003](../spec.md#criteria) | Rule-fit, disposition and owner-correction records; W01-H02 row and entry. | platform | in-progress | PASS | EVD-009 |
+| WORK-004 | [VAL-W01C-004](../spec.md#criteria) | Rule explanation and three violation cases. | platform | in-progress | PASS | EVD-010 |
 
 ## Verification Evidence
 
@@ -72,10 +72,14 @@ The independent review passed (EVD-005), and the user approved the Spec and Plan
 | EVD-004 | [VAL-W01C-004](../spec.md#criteria) | WORK-004 | Three violation cases on scratch copies | Implementation snapshot | NOT_RUN | Pending | yes | none |
 | EVD-005 | [VAL-W01C-001](../spec.md#criteria) | WORK-001 | Independent semantic review | Draft commit `202bf87d`: spec.md sha256 `8355a723a264242cfe6b416557a5e2df209e68999e8d127496cd0542b8622ded`, plan.md sha256 `456fff03f06392fc82f56b3e9e0575d09f60a7bd027eef907339ae43f2089d11` | PASS | Read-only `code-reviewer` subagent, separate context, 2026-11-15. The first pass on spec `7345f092` and plan `bb439ee1` returned REQUEST_CHANGES with five MAJOR and two NIT findings: per-requirement dispositions, a rule-explanation criterion with violation cases, facts only the duplicates held, the W01-H02 location and resume condition, the W04-CONTENT ownership of the recovery text, the Korean column with owner links and version, and the Task design summary. All seven were applied. The second pass on spec `f9c6c937` and plan `456fff03` returned APPROVE with one non-blocking NIT (also-consumed-by note for rows 10 and 11), which produced spec `8355a723`. Review only; it approves nothing. | yes | none |
 | EVD-006 | [VAL-W01C-001](../spec.md#criteria) | WORK-001 | Spec/Plan approval | {"actor":"user","approval_ref":"Direct current-session user answer Approve these bytes (Recommended) to the SPEC-0217 approval question naming spec.md 8355a723 and plan.md 456fff03, 2026-11-15","review_ref":"EVD-005","scope":["SPEC-0217","SPEC-0217-PLAN-0001"],"reviewed_spec_sha256":"8355a723a264242cfe6b416557a5e2df209e68999e8d127496cd0542b8622ded","reviewed_plan_sha256":"456fff03f06392fc82f56b3e9e0575d09f60a7bd027eef907339ae43f2089d11","validity":"confirmed","revocation":"none"} | PASS | Approves the reviewed Spec and Plan content of draft commit `202bf87d`; the approved files differ from it only in `status` and `version`. It accepts no criterion and authorizes no push or merge. | yes | none |
+| EVD-007 | [VAL-W01C-001](../spec.md#criteria) | WORK-001 | Knowledge validator and row comparison with the PKG vocabulary | Commits `c104f154` (glossary to 3.0.1) and `c9c89b44` (maintenance sentence); PKG `repository-vocabulary.json` `a8f595f5`; pinned `hyhome-validation` environment, 2026-11-15 | PASS | `scripts/validate-knowledge-surface.py --root .`: `[PASS] knowledge surface: 3 documents, 0 violations`. A row-by-row script comparison found the 43 common Term IDs equal to 3.0.1 with no missing or extra ID, every Term and Korean cell equal to 3.0.1, every common Contract Version `3.0.1` and every Contract Version numeric. `TERM-HISTORICAL-AUDIT` is gone; the glossary is at version 2.0.0. | yes | EVD-001 |
+| EVD-008 | [VAL-W01C-002](../spec.md#criteria) | WORK-002 | Governance and lifecycle validators and link check | Commit `c104f154`: EXEC-R004, EXEC-R006 and the retired EXEC-R012 in `agent-execution.md` (1.10.0), AUTHOR-R007 in `document-authoring.md` (3.37.1), the read-only bullet in `.claude/provider.md` (1.9.2); pinned environment, 2026-11-15 | PASS | `validate-agent-governance.py`: `[PASS] agent registry validation passed: providers=2 roles=17 permissionClasses=4 skills=17 handoffs=67 projections=51`. Lifecycle strict and staged PASS, including the rule-ID history check. Links and owners strict PASS. EXEC-R012 is `retired; none` and its body definition was removed, because `POLICY-RULE-INLINE` refuses a definition token without an active row. The Codex chain facts were confirmed in `.codex/provider.md` lines 152 and 155 before EXEC-R004 lost them. | yes | EVD-002 |
+| EVD-009 | [VAL-W01C-003](../spec.md#criteria) | WORK-003 | Ledger gate and strict document validators | Commit `c9c89b44` (SPEC-0161 Task `W01 3.0.1 Rule Fit`, `W00 Verdict Owner Corrections`, EVD-133, W01-H02 row) after `e2cdbd4d` (two moved baseline lines); pinned environment, 2026-11-15 | PASS | `validate-work-residue-ledger.py`: `PASS work residue ledger: 57 entries`, with the W01-H02 row and entry agreeing on the new resume condition. The four strict document validators PASS. The table lists 58 non-KEEP rules with one owner each and 160 `KEEP_VERIFIED` rules, 218 in all; every W01 requirement ID has a disposition in the Spec. | yes | EVD-003 |
+| EVD-010 | [VAL-W01C-004](../spec.md#criteria) | WORK-004 | Three violation cases on scratch copies | Three local clones of commit `c104f154` in the session scratchpad (`negA`, `negB`, `negC`), outside the repository; pinned environment, 2026-11-15 | PASS | (A) EXEC-R012 changed from `retired; none` to `active` and staged: lifecycle staged refused it with `POLICY-RULE-REISSUE` (`EXEC-R012 stays retired`). (B) A duplicated `TERM-DRAFT` row: the knowledge validator refused it with `KNOWLEDGE-TERM-DUPLICATE`. (C) The `TERM-DESIGN-FIT` owner link pointed at a missing file: the knowledge validator passed it, and the links validator refused it with `LINK-BROKEN`. That corrected the glossary's maintenance claim in `c9c89b44`. No common rule remains restated in `.claude/provider.md` or `.codex/provider.md`; the only match left is the new link sentence. The rule explanation is in the lead text of the SPEC-0161 `W01 3.0.1 Rule Fit` table. The scratch clones were left in the session scratchpad, because the delete command was denied by the permission mode. | yes | EVD-004 |
 
 ### Resolution Links
 
-No earlier failure is open.
+The Resolves column names the earlier row each PASS row closes: EVD-007 to EVD-010 close EVD-001 to EVD-004.
 
 ## Acceptance Decision
 
@@ -83,14 +87,14 @@ No earlier failure is open.
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-W01C-001](../spec.md#criteria) | pending | none | Run WORK-001 after approval | platform |
-| [VAL-W01C-002](../spec.md#criteria) | pending | none | Run WORK-002 after approval | platform |
-| [VAL-W01C-003](../spec.md#criteria) | pending | none | Run WORK-003 after approval | platform |
-| [VAL-W01C-004](../spec.md#criteria) | pending | none | Run WORK-004 after approval | platform |
+| [VAL-W01C-001](../spec.md#criteria) | pending | EVD-007 | PASS evidence recorded; awaiting the operator's acceptance | platform |
+| [VAL-W01C-002](../spec.md#criteria) | pending | EVD-008 | PASS evidence recorded; awaiting the operator's acceptance | platform |
+| [VAL-W01C-003](../spec.md#criteria) | pending | EVD-009 | PASS evidence recorded; awaiting the operator's acceptance | platform |
+| [VAL-W01C-004](../spec.md#criteria) | pending | EVD-010 | PASS evidence recorded; awaiting the operator's acceptance | platform |
 
 ### Remaining Conditions
 
-Spec and Plan approval, the four work units and criterion acceptance remain.
+Criterion acceptance of VAL-W01C-001 to VAL-W01C-004 remains with the user. W01-H02 waits for the user's per-item decision.
 
 ## Handoff
 
@@ -100,4 +104,4 @@ The Plan promotes none.
 
 ### Next Owner
 
-The independent reviewer and then the user, for Spec and Plan review and approval; then platform for WORK-001 to WORK-004.
+WORK-001 to WORK-004 passed (EVD-007 to EVD-010); the review of record is EVD-005, and the risk class is `high`. Next: the user, for criterion acceptance and the W01-H02 decision; then platform for the package exit.
