@@ -1,8 +1,8 @@
 ---
 title: "W03 Policy Rule ID History"
-version: "0.2.1"
+version: "0.2.2"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0206-TSK-0001"
@@ -47,9 +47,9 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RULEHIST-001](../spec.md#criteria) | `POLICY-RULE-DELETE` and `POLICY-RULE-REISSUE` in the lifecycle check, the base Rules tables in the evidence context, the shared reader, and their tests. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-RULEHIST-002](../spec.md#criteria) | `POLICY-CODE-CHANGE`, the base code section, the rule for a departing policy and the reserved list, and their tests; suite membership and surface route of the new module. | platform | ready | NOT_RUN | Pending |
-| WORK-003 | [VAL-RULEHIST-003](../spec.md#criteria) | The landing audit; the policy texts with their new rule IDs and rows; W03-D64, the closure of W03-H29 and its ledger entry; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-RULEHIST-001](../spec.md#criteria) | `POLICY-RULE-DELETE` and `POLICY-RULE-REISSUE` in the lifecycle check, the base Rules tables in the evidence context, the shared reader, and their tests. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-RULEHIST-002](../spec.md#criteria) | `POLICY-CODE-CHANGE`, the base code section, the rule for a departing policy and the reserved list, and their tests; suite membership and surface route of the new module. | platform | in-progress | NOT_RUN | Pending |
+| WORK-003 | [VAL-RULEHIST-003](../spec.md#criteria) | The landing audit; the policy texts with their new rule IDs and rows; W03-D64, the closure of W03-H29 and its ledger entry; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
 
 ## Verification Evidence
 
