@@ -18,8 +18,11 @@ parent_ids: ["SPEC-0217"]
 This Plan executes [SPEC-0217](spec.md). When it is complete:
 
 - the glossary carries vocabulary 3.0.1;
-- the four named duplicates have one author each, and EXEC-R012 is retired;
-- the SPEC-0161 Task holds the W01 rule-fit record and the W00 owner corrections.
+- the four named duplicates have one author each, and the facts only they held stay in place;
+- EXEC-R012 is retired;
+- the SPEC-0161 Task holds the W01 rule-fit record, the requirement dispositions and the W00 owner correction;
+- W01-H02 waits for the user's per-item decision, with its live row and ledger entry agreeing;
+- three violation cases have been refused.
 
 Every item that the Spec assigns to another stage is excluded.
 
@@ -33,7 +36,7 @@ Every work unit inherits the constraints of the approved [Spec](spec.md). Additi
 
 ### Assumptions
 
-- `main` is `588257c9`, and the ledger holds 57 entries.
+- `main` is `588257c9`, and the ledger holds 57 entries. The draft package commit is `59db20f1`.
 - No validator or test pins the text of EXEC-R004, EXEC-R006, EXEC-R012, AUTHOR-R007 or the `.claude/provider.md` read-only bullet. A search of `scripts/` and `tests/` found none.
 - `TERM-HISTORICAL-AUDIT` has no consumer outside the glossary.
 - ADR-0058 and AD-0006 are touched by no work unit.
@@ -47,7 +50,7 @@ Every work unit inherits the constraints of the approved [Spec](spec.md). Additi
 
 ### Dependency Order
 
-WORK-001 (glossary) and WORK-002 (single author) are independent. WORK-003 (records) runs last, so it can name the final line numbers.
+WORK-001 (glossary) and WORK-002 (single author) are independent. WORK-003 (records) and WORK-004 (violation cases) run after them, so they read the final text.
 
 ## Implementation Strategy
 
@@ -57,7 +60,8 @@ WORK-001 (glossary) and WORK-002 (single author) are independent. WORK-003 (reco
 | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-W01C-001](spec.md#criteria) | Rewrite the glossary rows to vocabulary 3.0.1: meanings, owner roles, three new terms, removed audit term, numeric versions. | Approval | [Task 0001](tasks/tsk-0001-w01-contract-3-0-1.md) | Knowledge validator; row-by-row comparison with `repository-vocabulary.json`. |
 | WORK-002 | [VAL-W01C-002](spec.md#criteria) | Reduce EXEC-R004, EXEC-R006, AUTHOR-R007 and the `.claude/provider.md` read-only bullet to one author each; retire EXEC-R012. | Approval | [Task 0001](tasks/tsk-0001-w01-contract-3-0-1.md) | Governance validator, lifecycle validator with its rule-ID history check, link check. |
-| WORK-003 | [VAL-W01C-003](spec.md#criteria) | Append `W01 3.0.1 Rule Fit`, `W00 Verdict Owner Corrections` and one EVD row to the SPEC-0161 Task. | WORK-001, WORK-002 | [Task 0001](tasks/tsk-0001-w01-contract-3-0-1.md) | Ledger gate at 57 entries; strict validators. |
+| WORK-003 | [VAL-W01C-003](spec.md#criteria) | Append `W01 3.0.1 Rule Fit` (with the requirement dispositions and the KEEP list), `W00 Verdict Owner Corrections` and one EVD row to the SPEC-0161 Task; edit the W01-H02 live row and ledger entry together. | WORK-001, WORK-002 | [Task 0001](tasks/tsk-0001-w01-contract-3-0-1.md) | Ledger gate at 57 entries after the edit; strict validators. |
+| WORK-004 | [VAL-W01C-004](spec.md#criteria) | Confirm the rule explanation and the absence of restated common rules in the provider notes; run the three violation cases on scratch copies outside the repository. | WORK-001, WORK-002 | [Task 0001](tasks/tsk-0001-w01-contract-3-0-1.md) | Each case refused with its named diagnostic; scratch copies deleted. |
 
 ### Change and Rollback
 
@@ -72,6 +76,7 @@ Each work unit is a text edit. Undo one by restoring its files from `main`; undo
 | WORK-001 | `scripts/validate-knowledge-surface.py --root .` | local static |
 | WORK-002 | `scripts/validate-agent-governance.py --root .`; `scripts/validate-document-lifecycle.py --root . --mode strict` | local static |
 | WORK-003 | `scripts/validate-work-residue-ledger.py --root .` | local static |
+| WORK-004 | Lifecycle, knowledge and link validators on three scratch copies | local static, negative |
 | All | Four strict document validators; `scripts/qa.py staged` through the commit hooks | local static, at commit |
 
 Architecture compliance: no AD, ADR, registry, validator or test changes.
