@@ -1,8 +1,8 @@
 ---
 title: "W03 Q-07 Renumbering Preparation"
-version: "0.2.2"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0212-TSK-0001"
@@ -48,9 +48,9 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-Q07PREP-001](../spec.md#criteria) | The survey record of number spaces, allocators, references and consumer classes, with denominators, exclusions, absences and the sentences the transition must amend. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-Q07PREP-001](../spec.md#criteria), [VAL-Q07PREP-002](../spec.md#criteria) | The transition design record and the scratch rehearsal with eight cases; proof the real tree is unchanged. | platform | in-progress | NOT_RUN | Pending |
-| WORK-003 | [VAL-Q07PREP-002](../spec.md#criteria) | The non-reuse confirmation (coverage, enforcement, limit), the conditional completion if a hole is found, the Registry Schema Version record, the SPEC-0161 Task rows and regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-Q07PREP-001](../spec.md#criteria) | The survey record of number spaces, allocators, references and consumer classes, with denominators, exclusions, absences and the sentences the transition must amend. | platform | completed | PASS | EVD-012, EVD-027, EVD-031 |
+| WORK-002 | [VAL-Q07PREP-001](../spec.md#criteria), [VAL-Q07PREP-002](../spec.md#criteria) | The transition design record and the scratch rehearsal with eight cases; proof the real tree is unchanged. | platform | completed | PASS | EVD-016, EVD-022, EVD-023, EVD-024, EVD-032 |
+| WORK-003 | [VAL-Q07PREP-002](../spec.md#criteria) | The non-reuse confirmation (coverage, enforcement, limit), the conditional completion if a hole is found, the Registry Schema Version record, the SPEC-0161 Task rows and regression and exact-index QA. | platform | completed | PASS | EVD-015, EVD-017, EVD-019, EVD-025, EVD-026, EVD-028, EVD-029, EVD-030, EVD-033, EVD-034, EVD-037 |
 
 ## Verification Evidence
 
@@ -88,6 +88,14 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-028 | [VAL-Q07PREP-002](../spec.md#criteria) | WORK-003 | Non-reuse confirmation | Replay at `aa3cce7c` (registry 17.0.0, SPEC-0203 and SPEC-0204 merged): read-only coverage comparison re-run on the replayed tree (284 lineage tokens, 253 deleted identity-like paths); REQ-0003 now 5.0.11 with the SPEC-0204 row kept and the 53 rows of this package added | PASS | The numbered remainder is still empty; only the year-named paths REQ-2026, AUD-2026 and RES-2026 of the pre-numbering layout are listed and are not numbered identities. The generator and lifecycle samples of EVD-026 were not re-run, because no script, test or rule changed in the replay. | yes | none |
 | EVD-029 | [VAL-Q07PREP-002](../spec.md#criteria) | WORK-003 | Focused checks at the replay base | Pinned venv, base `aa3cce7c`, staged index: `validate-markdown-profiles`, `validate-links-and-owners`, `validate-document-lifecycle` and `validate-document-contract-registry` (`--mode strict`), `validate-document-lifecycle --mode staged`, `validate-work-residue-ledger --root .`, `scripts/validation/repository/quality.py --root .`, `markdownlint-cli2` over the edited Markdown, `git diff --cached --check`; no shared suite (W03-D83) | PASS | Every command passed; the ledger gate reports 71 entries. The identity test modules were not re-run in the replay, because no script or test changed. | yes | none |
 | EVD-030 | [VAL-Q07PREP-002](../spec.md#criteria) | WORK-003 | Rebase onto `main` after SPEC-0205 | `origin/main` `af81204d` (PR #277: SPEC-0205 merged, registry 18.0.0, SPEC-0204 and SPEC-0205 packages closed with their REQ-0003 lineage rows); the staged index of EVD-029; pinned venv | PASS | The branch moved from `aa3cce7c` to `af81204d` with a merge of the staged changes; three files conflicted only where both sides appended: REQ-0003 keeps the SPEC-0205 lineage row of `main` and the 53 rows of this package (version 5.0.12), the Stage 03 README keeps both open-package sentences (0.23.96), and the SPEC-0161 Task keeps EVD-109 to EVD-111 of `main` with this package's row renumbered EVD-112 (0.2.6). The two packages closed since EVD-028, SPEC-0204 and SPEC-0205, each have their own lineage row on `main`, so the non-reuse comparison of EVD-028 gains no unlisted identity. The four strict validators, the staged lifecycle check, the ledger gate and markdownlint pass on the rebased index. Repository-static lane. | yes | none |
+| EVD-031 | [VAL-Q07PREP-001](../spec.md#criteria) | WORK-001 | Survey of number spaces, allocators, references and consumers | The PASS evidence EVD-012 of this Task for the pending row EVD-001 | PASS | The work of EVD-001 is recorded and passed in EVD-012; this row links that evidence to the pending row so that the acceptance graph resolves it. No new run. | yes | EVD-001 |
+| EVD-032 | [VAL-Q07PREP-002](../spec.md#criteria) | WORK-002 | Scratch rehearsal | The PASS evidence EVD-022 of this Task for the pending row EVD-003 | PASS | The work of EVD-003 is recorded and passed in EVD-022; this row links that evidence to the pending row so that the acceptance graph resolves it. No new run. | yes | EVD-003 |
+| EVD-033 | [VAL-Q07PREP-002](../spec.md#criteria) | WORK-003 | Non-reuse confirmation | The PASS evidence EVD-019, EVD-025, EVD-026 and EVD-028 of this Task for the pending row EVD-004 | PASS | The work of EVD-004 is recorded and passed in EVD-019, EVD-025, EVD-026 and EVD-028; this row links that evidence to the pending row so that the acceptance graph resolves it. No new run. | yes | EVD-004 |
+| EVD-034 | [VAL-Q07PREP-002](../spec.md#criteria) | WORK-003 | Registry Schema Version level | The PASS evidence EVD-015 of this Task for the pending row EVD-005 | PASS | The work of EVD-005 is recorded and passed in EVD-015; this row links that evidence to the pending row so that the acceptance graph resolves it. No new run. | yes | EVD-005 |
+| EVD-035 | [VAL-Q07PREP-001](../spec.md#criteria) | WORK-001 | Independent semantic review | The PASS evidence EVD-010 of this Task for the pending row EVD-006 | PASS | The work of EVD-006 is recorded and passed in EVD-010; this row links that evidence to the pending row so that the acceptance graph resolves it. No new run. | yes | EVD-006 |
+| EVD-036 | [VAL-Q07PREP-001](../spec.md#criteria) | WORK-001 | Spec/Plan first-record approval | The PASS evidence EVD-011 of this Task for the pending row EVD-007 | PASS | The work of EVD-007 is recorded and passed in EVD-011; this row links that evidence to the pending row so that the acceptance graph resolves it. No new run. | yes | EVD-007 |
+| EVD-037 | [VAL-Q07PREP-002](../spec.md#criteria) | WORK-003 | Exact-index QA and commit hooks on the implementation commit | Pre-commit hooks over the final index of `06be8ddc` in the pinned validation environment, 2026-11-15 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | none |
+| EVD-038 | [VAL-Q07PREP-002](../spec.md#criteria) | WORK-003 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Resolution Links
 
@@ -99,10 +107,17 @@ The Resolves column of the evidence table under Results names the earlier eviden
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-Q07PREP-001](../spec.md#criteria) | pending | none | Implement WORK-001 and WORK-002 and record PASS evidence | platform |
-| [VAL-Q07PREP-002](../spec.md#criteria) | pending | none | Implement WORK-002 and WORK-003 and record PASS evidence | platform |
+| [VAL-Q07PREP-001](../spec.md#criteria) | accepted | EVD-012, EVD-023, EVD-027, EVD-031 | Accepted by the user on 2026-11-15 (direct answer "Pre-accept when green (Recommended)" of 2026-11-15 to the advance acceptance question for the remaining W03 packages; green at commit `06be8ddc`) | platform |
+| [VAL-Q07PREP-002](../spec.md#criteria) | accepted | EVD-015, EVD-016, EVD-017, EVD-019, EVD-022, EVD-024, EVD-025, EVD-026, EVD-028, EVD-029, EVD-030, EVD-032, EVD-033, EVD-034, EVD-037 | Accepted by the user on 2026-11-15 (direct answer "Pre-accept when green (Recommended)" of 2026-11-15 to the advance acceptance question for the remaining W03 packages; green at commit `06be8ddc`) | platform |
 
 ### Remaining Conditions
+
+Frozen package disposition decision:
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: REQ-0003 and AD-0006 keep the Archived Lineage rows of every deleted identity; the Q-07 cutover after W11 derives its mapping again from the tree; DOC-12 moves to Q07 with the W03 closing (SPEC-0211). Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 No separate remaining-condition list is kept here; the Disposition and Current owner columns of the criterion decisions state what remains and who owns it.
 
@@ -114,4 +129,4 @@ The Plan promotes no durable contract (its Promotion table holds the `none` row)
 
 ### Next Owner
 
-The survey, design record, rehearsal cases 1 to 8, the real-tree check, the registry level and the lineage rows for 41 identities are recorded; the non-reuse remainder is empty (EVD-025, EVD-026). No criterion is accepted. Next owner: the user, for criterion acceptance, after the replay onto the new main.
+The survey, design record, rehearsal cases 1 to 8, the real-tree check, the registry level and the lineage rows for 55 identities (53 in REQ-0003, 2 in AD-0006) are recorded; the non-reuse remainder is empty (EVD-025, EVD-026). The package was rebased onto `af81204d` (EVD-030) and its pending rows are linked to their PASS evidence (EVD-031 to EVD-036). Next owner: the W03 closing (SPEC-0211), which moves DOC-12 to Q07. Implementation commit `06be8ddc` passed exact-index QA in the hooks (EVD-037); the user accepted all criteria in advance, applied on 2026-11-15, and the approval of commit, push, PR and merge covers the package exit (EVD-038).
