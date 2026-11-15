@@ -19,7 +19,7 @@ This Spec closes the gaps that a re-audit of the W01-CONTRACT prompt of the exte
 The re-audit on `main` at `c0af5a76` (2026-11-15) compared SPEC-0217's result with the W01 prompt and found the following:
 
 - **Step 1 surfaces not audited.** SPEC-0217 audited only the ten governance policies. A read-only audit of roles, workflows, skills, provider notes and gateways found:
-  - "skill invocation grants no authority", written in 17 skills and in `AGENTS.md`, with no canonical owner;
+  - "skill invocation grants no authority", written in 17 skills and in `AGENTS.md`. No governance rule owns it: EXEC-R005 covers only a role name, and the adjacent text (glossary `TERM-AUTHORITY`, `document-authoring.md` line 271 on metadata) is not that rule;
   - the progress-ledger prohibition, written in two workflows and four skills besides its owner (`context-and-memory.md` Objective);
   - the intake list, authored both in EXEC-R001 and in work-lifecycle Intake step 1;
   - three restatements in `.claude/provider.md`: line 21 (agent-execution Authority), line 30 (SAFE-R019) and lines 148 to 151 (SAFE-R018 shell confinement);
@@ -42,15 +42,16 @@ PKG requirements GOV-06 (one canon, controlled projection), U12 (common governan
 
 - `.agents/governance/agent-execution.md`:
   - EXEC-R005 states the canon: a role name or a skill invocation alone grants no write, delegation or approval.
-  - EXEC-R001 points to work-lifecycle Intake step 1 instead of restating its list.
-- The 17 `.agents/skills/*/SKILL.md` and root `AGENTS.md`: the skill-authority sentence links to EXEC-R005.
+  - EXEC-R001 keeps a one-clause trigger (before substantial work, follow [work-lifecycle Intake](../../../.agents/workflows/work-lifecycle.md#intake)) instead of restating its list. No meaning is lost, because Intake covers every item of the old list: the outcome and acceptance criteria and assumptions are in step 1, affected paths are the exact write boundary of step 2, validation is step 5, and exclusions are the out-of-scope of step 1.
+- The 17 `.agents/skills/*/SKILL.md` and root `AGENTS.md`: the skill-authority sentence links to EXEC-R005 at `agent-execution.md#requirements`. The separate fact of `external-service-contract-audit/SKILL.md` line 57 (its invocation never adds a gate or changes an approval) stays.
 - `.agents/workflows/work-lifecycle.md` (lines 54 and 125), `.agents/workflows/delegated-development.md` (line 60), and the skills `docs-stage-conformance`, `execution-plan`, `task-breakdown` and `knowledge-map`: each progress-ledger prohibition links to [context and memory](../../../.agents/governance/context-and-memory.md#objective) instead of restating it.
-- `.claude/provider.md`: lines 21, 30 and 148 to 151 keep only native facts and link to agent-execution Authority, SAFE-R019 and SAFE-R018.
-- `.agents/roles/incident-responder.md` and `.agents/roles/observability-reviewer.md`: the rationale link points to SAFE-R018.
+- `.claude/provider.md`: lines 21, 30 and 148 to 151 keep only native facts (including SPEC-0098 and the `Grep` and `Glob` facts that SAFE-R018 cites) and link to `agent-execution.md#authority` and to SAFE-R019 and SAFE-R018 at `approval-and-safety.md#execution-controls`.
+- `.agents/roles/incident-responder.md` and `.agents/roles/observability-reviewer.md`: the rationale link points to SAFE-R018 at `approval-and-safety.md#execution-controls`.
 - `docs/99.templates/registry.json`: the vocabulary Policy Owner column meaning becomes "the owner role, linked with a relative Markdown link to its existing owner file".
-- `docs/99.templates/templates/governance/vocabulary.template.md`: its author prompt and example row take the link form.
+- `docs/99.templates/templates/governance/vocabulary.template.md`: its author prompt and example row take the link form `[{{OWNER_ROLE}}]({{OWNER_PATH}})`. No script, test or registry entry pins the placeholder shape (search of `scripts/`, `tests/` and the registry).
 - The SPEC-0161 Task: an appended `W01 Follow-up Record` table, one EVD row, and its frontmatter `version` and `updated`. The table records:
-  - four rule-fit corrections: SDLC-R016 to `CHANGE` (W06); AUTHOR-R017, AUTHOR-R022, DOCLIFE-R007 and MODEL-R003 to `KEEP_VERIFIED`;
+  - five rule-fit corrections: SDLC-R016 to `CHANGE` (W06); AUTHOR-R017, AUTHOR-R022, DOCLIFE-R007 and MODEL-R003 to `KEEP_VERIFIED`, which ends the W05-GATES routing of the first three;
+  - the resulting `KEEP_VERIFIED` count (160 plus 4) with the list of added IDs, the read scope of each surface (fully read, section read, or grep only), and the mapping of prompt step 5 (risk-based approval: SPEC-0217 GOV-08 disposition) and step 6 (conforming and violating cases: SPEC-0217 EVD-010);
   - the surface audit;
   - the executed evidence checks with exit codes and durations;
   - the latency comparison.
@@ -93,7 +94,7 @@ Decisions applied, not asked again: PKG `decisions.json` and the user's SPEC-021
 | --- | --- |
 | VAL-W01F-001 | The skill-authority, progress-ledger and intake rules each have one author. The other places link to it, and the provider note and two role bodies link to their canon. The governance, profile and link validators pass. |
 | VAL-W01F-002 | The registry vocabulary meaning and the template use the link form. The contract registry, contract tests and links validators pass. |
-| VAL-W01F-003 | The SPEC-0161 Task records the four corrections, the surface audit, the executed checks with exit codes and durations, and the latency comparison. The ledger gate passes at 57 entries. |
+| VAL-W01F-003 | The SPEC-0161 Task records the five corrections, the `KEEP_VERIFIED` update, the read scope, the step 5 and 6 mapping, the surface audit, the executed checks with exit codes and durations, and the latency comparison. The ledger gate passes at 57 entries. |
 
 ### Evidence Requirements
 
