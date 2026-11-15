@@ -1,6 +1,6 @@
 ---
 title: "W01 3.0.1 Governance Contract Fit"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-15"
@@ -49,16 +49,16 @@ Read-only survey on 2026-11-15: the W01 prompt, D00, D01, D03, D15, the S-items 
 
 ### Blockers and Decisions
 
-The independent review passed (EVD-005), and the user approved the Spec and Plan (EVD-006). Open for the user: the per-item W01-H02 decision (keep, withdraw, or implement it as Policy Owner anchors).
+The independent review passed (EVD-005), and the user approved the Spec and Plan (EVD-006). The user kept W01-H02 open for now. No question is open.
 
 ### Lifecycle Traceability
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-W01C-001](../spec.md#criteria) | Glossary to vocabulary 3.0.1. | platform | in-progress | PASS | EVD-007 |
-| WORK-002 | [VAL-W01C-002](../spec.md#criteria) | One author for the four duplicates; retire EXEC-R012. | platform | in-progress | PASS | EVD-008 |
-| WORK-003 | [VAL-W01C-003](../spec.md#criteria) | Rule-fit, disposition and owner-correction records; W01-H02 row and entry. | platform | in-progress | PASS | EVD-009 |
-| WORK-004 | [VAL-W01C-004](../spec.md#criteria) | Rule explanation and three violation cases. | platform | in-progress | PASS | EVD-010 |
+| WORK-001 | [VAL-W01C-001](../spec.md#criteria) | Glossary to vocabulary 3.0.1. | platform | completed | PASS | EVD-007 |
+| WORK-002 | [VAL-W01C-002](../spec.md#criteria) | One author for the four duplicates; retire EXEC-R012. | platform | completed | PASS | EVD-008 |
+| WORK-003 | [VAL-W01C-003](../spec.md#criteria) | Rule-fit, disposition and owner-correction records; W01-H02 row and entry. | platform | completed | PASS | EVD-009 |
+| WORK-004 | [VAL-W01C-004](../spec.md#criteria) | Rule explanation and three violation cases. | platform | completed | PASS | EVD-010 |
 
 ## Verification Evidence
 
@@ -76,6 +76,7 @@ The independent review passed (EVD-005), and the user approved the Spec and Plan
 | EVD-008 | [VAL-W01C-002](../spec.md#criteria) | WORK-002 | Governance and lifecycle validators and link check | Commit `c104f154`: EXEC-R004, EXEC-R006 and the retired EXEC-R012 in `agent-execution.md` (1.10.0), AUTHOR-R007 in `document-authoring.md` (3.37.1), the read-only bullet in `.claude/provider.md` (1.9.2); pinned environment, 2026-11-15 | PASS | `validate-agent-governance.py`: `[PASS] agent registry validation passed: providers=2 roles=17 permissionClasses=4 skills=17 handoffs=67 projections=51`. Lifecycle strict and staged PASS, including the rule-ID history check. Links and owners strict PASS. EXEC-R012 is `retired; none` and its body definition was removed, because `POLICY-RULE-INLINE` refuses a definition token without an active row. The Codex chain facts were confirmed in `.codex/provider.md` lines 152 and 155 before EXEC-R004 lost them. | yes | EVD-002 |
 | EVD-009 | [VAL-W01C-003](../spec.md#criteria) | WORK-003 | Ledger gate and strict document validators | Commit `c9c89b44` (SPEC-0161 Task `W01 3.0.1 Rule Fit`, `W00 Verdict Owner Corrections`, EVD-133, W01-H02 row) after `e2cdbd4d` (two moved baseline lines); pinned environment, 2026-11-15 | PASS | `validate-work-residue-ledger.py`: `PASS work residue ledger: 57 entries`, with the W01-H02 row and entry agreeing on the new resume condition. The four strict document validators PASS. The table lists 58 non-KEEP rules with one owner each and 160 `KEEP_VERIFIED` rules, 218 in all; every W01 requirement ID has a disposition in the Spec. | yes | EVD-003 |
 | EVD-010 | [VAL-W01C-004](../spec.md#criteria) | WORK-004 | Three violation cases on scratch copies | Three local clones of commit `c104f154` in the session scratchpad (`negA`, `negB`, `negC`), outside the repository; pinned environment, 2026-11-15 | PASS | (A) EXEC-R012 changed from `retired; none` to `active` and staged: lifecycle staged refused it with `POLICY-RULE-REISSUE` (`EXEC-R012 stays retired`). (B) A duplicated `TERM-DRAFT` row: the knowledge validator refused it with `KNOWLEDGE-TERM-DUPLICATE`. (C) The `TERM-DESIGN-FIT` owner link pointed at a missing file: the knowledge validator passed it, and the links validator refused it with `LINK-BROKEN`. That corrected the glossary's maintenance claim in `c9c89b44`. No common rule remains restated in `.claude/provider.md` or `.codex/provider.md`; the only match left is the new link sentence. The rule explanation is in the lead text of the SPEC-0161 `W01 3.0.1 Rule Fit` table. The scratch clones were left in the session scratchpad, because the delete command was denied by the permission mode. | yes | EVD-004 |
+| EVD-011 | [VAL-W01C-003](../spec.md#criteria) | WORK-003 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-15 instruction to commit, push, open a PR and merge on completion; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Resolution Links
 
@@ -87,14 +88,21 @@ The Resolves column names the earlier row each PASS row closes: EVD-007 to EVD-0
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-W01C-001](../spec.md#criteria) | pending | EVD-007 | PASS evidence recorded; awaiting the operator's acceptance | platform |
-| [VAL-W01C-002](../spec.md#criteria) | pending | EVD-008 | PASS evidence recorded; awaiting the operator's acceptance | platform |
-| [VAL-W01C-003](../spec.md#criteria) | pending | EVD-009 | PASS evidence recorded; awaiting the operator's acceptance | platform |
-| [VAL-W01C-004](../spec.md#criteria) | pending | EVD-010 | PASS evidence recorded; awaiting the operator's acceptance | platform |
+| [VAL-W01C-001](../spec.md#criteria) | accepted | EVD-007 | Accepted by the user on 2026-11-15 (direct answer "Accept all four (Recommended)" to the SPEC-0217 acceptance question naming commits `c104f154` to `4fd8d40d`) | platform |
+| [VAL-W01C-002](../spec.md#criteria) | accepted | EVD-008 | Accepted by the user on 2026-11-15 (direct answer "Accept all four (Recommended)" to the SPEC-0217 acceptance question naming commits `c104f154` to `4fd8d40d`) | platform |
+| [VAL-W01C-003](../spec.md#criteria) | accepted | EVD-009 | Accepted by the user on 2026-11-15 (direct answer "Accept all four (Recommended)" to the SPEC-0217 acceptance question naming commits `c104f154` to `4fd8d40d`) | platform |
+| [VAL-W01C-004](../spec.md#criteria) | accepted | EVD-010 | Accepted by the user on 2026-11-15 (direct answer "Accept all four (Recommended)" to the SPEC-0217 acceptance question naming commits `c104f154` to `4fd8d40d`) | platform |
 
 ### Remaining Conditions
 
-Criterion acceptance of VAL-W01C-001 to VAL-W01C-004 remains with the user. W01-H02 waits for the user's per-item decision.
+None remains for this package. On 2026-11-15 the user chose to keep W01-H02 open for now (answer "Keep open for now"). It stays in the ledger with owner W01 and the resume condition "When the user decides its per-item withdrawal (Q04)". The non-KEEP rules of the SPEC-0161 `W01 3.0.1 Rule Fit` table stay with their owning stages.
+
+Frozen package disposition decision:
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The glossary, the three policy files, the Claude provider note and the SPEC-0161 Task hold the lasting result, and they name SPEC-0217 by ID only. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The disposition authority is the user's 2026-11-15 instruction to commit, push, open a PR and merge on completion. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Handoff
 
@@ -104,4 +112,4 @@ The Plan promotes none.
 
 ### Next Owner
 
-WORK-001 to WORK-004 passed (EVD-007 to EVD-010); the review of record is EVD-005, and the risk class is `high`. Next: the user, for criterion acceptance and the W01-H02 decision; then platform for the package exit.
+WORK-001 to WORK-004 passed (EVD-007 to EVD-010); the review of record is EVD-005, and the risk class is `high`. The user accepted all four criteria and kept W01-H02 open. Next: platform closes the package. After that, W02, W04, W05, W06, W07, W08, W10 and Q07-CUTOVER take their rule-fit rows in at their own intake.
