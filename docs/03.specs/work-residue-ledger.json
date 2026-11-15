@@ -63,16 +63,6 @@
       }
     },
     {
-      "id": "DOC-11",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When every template has its TemplateDefinition (W03-H13, W03-H15)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "DOC-12",
       "kind": "conflict",
       "state": "open",
@@ -393,16 +383,6 @@
       }
     },
     {
-      "id": "R45-10",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When every template has its TemplateDefinition (W03-H13, W03-H15)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "R45-12",
       "kind": "handoff",
       "state": "open",
@@ -533,16 +513,6 @@
       }
     },
     {
-      "id": "W03-H13",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "With phase 3 (W03-H02)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W03-H19",
       "kind": "adoption",
       "state": "open",
@@ -629,16 +599,6 @@
       "state": "open",
       "owner": "W03",
       "resume_condition": "When W03 re-reads its files before editing",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W03-H41",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "With phase 3 (W03-H02)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }

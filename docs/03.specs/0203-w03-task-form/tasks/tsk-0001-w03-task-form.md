@@ -1,8 +1,8 @@
 ---
 title: "W03 Task Form"
-version: "0.2.2"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0203-TSK-0001"
@@ -52,8 +52,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-TASKFORM-001](../spec.md#criteria) | The readers first, so every `TASK-` rule stays active: the evidence reader by binding, the header map with its replay test, the ledger validator's read of the evidence rows, the two-registry read, the registry check and the rule tests; then the form, the extensions, the profile lists, the body contract and binding, and the TemplateDefinition and record, with the MAJOR step of `schema_version`, `REGISTRY_MAJOR`, `READABLE_REGISTRY_MAJORS` and the guard's `DOC_REGISTRY_MAJOR` in the same commit. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-TASKFORM-002](../spec.md#criteria) | The Task template and its quality check; the headings of the SPEC-0161 Task and of every other Task in the tree with the inventory; the `work_residue` host; the eight texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-TASKFORM-001](../spec.md#criteria) | The readers first, so every `TASK-` rule stays active: the evidence reader by binding, the header map with its replay test, the ledger validator's read of the evidence rows, the two-registry read, the registry check and the rule tests; then the form, the extensions, the profile lists, the body contract and binding, and the TemplateDefinition and record, with the MAJOR step of `schema_version`, `REGISTRY_MAJOR`, `READABLE_REGISTRY_MAJORS` and the guard's `DOC_REGISTRY_MAJOR` in the same commit. | platform | completed | PASS | EVD-007, EVD-008, EVD-009, EVD-011, EVD-012, EVD-013, EVD-014, EVD-015, EVD-016, EVD-022, EVD-027 |
+| WORK-002 | [VAL-TASKFORM-002](../spec.md#criteria) | The Task template and its quality check; the headings of the SPEC-0161 Task and of every other Task in the tree with the inventory; the `work_residue` host; the eight texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | completed | PASS | EVD-017, EVD-018, EVD-019, EVD-020, EVD-021, EVD-023, EVD-025, EVD-026, EVD-028 |
 
 ## Verification Evidence
 
@@ -88,6 +88,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-025 | [VAL-TASKFORM-002](../spec.md#criteria) | WORK-002 | Residue Handoff placed last in the SPEC-0161 Task (user decision on EVD-019) | User answer of 2026-11-15 (Asia/Seoul) `Move Residue Handoff last (Recommended)`; SPEC-0161 Task re-moved from its package-commit text; `python3 scripts/validate-work-residue-ledger.py --root .` | PASS | `Residue Handoff` now follows `r1 Edition Delta`, `Input Corrections`, `Change Contract Classification` and `Residue Corrections`, which stay H4 under Results (a form H3 would be unregistered under Verification Evidence), so the H3 of the section read Results, Resolution Links, Residue Handoff. Re-measured: file 9696e58bc8046804 (800 lines, after the replay) is the measure of EVD-017 and of the SPEC-0161 move row; 22 tables, each table's data-row hash equal before and after (only the block order changed, so the hash of all rows in file order differs, 5a2dacd9b24f345e against 71ab9a71c2e773b5); sorted non-heading lines differ only by the five pointer lines and the mapped evidence header. The ledger gate reports 75 entries with the five historical tables and the live table resolved. This row answers EVD-019. | yes | none |
 | EVD-026 | [VAL-TASKFORM-002](../spec.md#criteria) | WORK-002 | Confirmation of the Plan promotion Acceptance cells | User answer of 2026-11-15 (Asia/Seoul) `Confirm restatements (Recommended)` | PASS | The two `Acceptance` cells added to the Plan promotion table restate the condition each row already gives and are kept as written. | yes | none |
 | EVD-027 | [VAL-TASKFORM-001](../spec.md#criteria) | WORK-001 | Security-auditor read of the guard diff | The staged diff of `scripts/provider_write_guard.py` recorded in EVD-009; risk class high | PASS | Independent `security-auditor` read-only read of the staged diff in this worktree on 2026-11-15: PASS, no CRITICAL, HIGH or MEDIUM finding. (1) `scripts/provider_write_guard.py` line 64 is the only hunk, `DOC_REGISTRY_MAJOR` 15 to 16; strict equality and the fail-closed exit are unchanged and the MAJOR matches `scripts/document_authority.py` line 28, the schema const and the registry. (2) `READABLE_REGISTRY_MAJORS` (10 to 16) is used only by the history reader; the loader and the guard accept a single MAJOR (ADR-0061 decision 4). (3) No `.claude/`, `.codex/`, hook, githook or `.github/` file changed. (4) The header map and the two-registry read cannot admit an edit of a recorded row: `carry_evidence_rows` renames keys only, retention refuses deleted IDs, missing columns, changed cells and Required downgrades, and a probe kept all 100 SPEC-0161 base IDs with 0 changed cells. (5) `quality.py` and the ledger validator became stricter. LOW notes, non-blocking: L1 `_completion_document_diagnostics` reads the HEAD baseline with the current binding (not an admission path); L2 a fallback for an unreadable base MAJOR exists for when MAJORs 10 to 15 leave the readable set. The auditor's run: 724 tests OK (3 skipped) over 10 modules. | yes | EVD-010 |
+| EVD-028 | [VAL-TASKFORM-002](../spec.md#criteria) | WORK-002 | Staged QA, commit hooks, `.secrets.baseline` and delivery | Pre-commit hooks over the final indexes of `6711c843` (Task status) and `4e928d3c` (implementation) in the pinned validation environment: the workspace hook ran `scripts/qa.py staged` on each exact index; the baseline commits f1c2cf83, 5aa43570, 49985d95 and ad85be85 hold the reviewed digest lines; push, PR and merge follow the user's standing approval, 2026-11-15 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | EVD-024 |
+| EVD-029 | [VAL-TASKFORM-002](../spec.md#criteria) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Resolution Links
 
@@ -99,10 +101,17 @@ The Resolves column of the evidence table under Results names the earlier eviden
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-TASKFORM-001](../spec.md#criteria) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-TASKFORM-002](../spec.md#criteria) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-TASKFORM-001](../spec.md#criteria) | accepted | EVD-007, EVD-008, EVD-009, EVD-011, EVD-012, EVD-013, EVD-014, EVD-015, EVD-016, EVD-022, EVD-027 | Accepted by the user on 2026-11-15 (direct answer "Accept, close all four (Recommended)" to the SPEC-0203 acceptance question naming commit `4e928d3c`) | platform |
+| [VAL-TASKFORM-002](../spec.md#criteria) | accepted | EVD-017, EVD-018, EVD-019, EVD-020, EVD-021, EVD-023, EVD-025, EVD-026, EVD-028 | Accepted by the user on 2026-11-15 (direct answer "Accept, close all four (Recommended)" to the SPEC-0203 acceptance question naming commit `4e928d3c`) | platform |
 
 ### Remaining Conditions
+
+Frozen package disposition decision:
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The SPEC-0161 decision row W03-D61, its evidence rows and the W03-H41, W03-H13, DOC-11 and R45-10 closure row cite this package by identifier only and stay valid after its retirement. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 No separate remaining-condition list is kept here; the Disposition and Current owner columns of the criterion decisions state what remains and who owns it.
 
@@ -114,4 +123,4 @@ No separate promotion receipt is kept here; the receipt of each Plan promotion r
 
 ### Next Owner
 
-The Spec and Plan keep `status: approved`, are in the common Spec and Plan forms at version 2.0.0, and carry the review and approval receipts of EVD-005 and EVD-006. Implementation is complete in the working tree and not committed: the readers, the registry with the Task form at 16.0.0, the template, the two moved Tasks and the texts are staged for the implementation commit. The two WORK rows keep their status. Open: exact-index QA and the commit hooks, the `.secrets.baseline` entries, and the push, PR and merge, none of which was run or approved. W03-H13's condition is met (every SDLC template now has a TemplateDefinition); W03-H13 and W03-H41 stay open until the acceptance of the criteria (W03-D70).
+The Spec and Plan keep `status: approved`, are in the common Spec and Plan forms at version 2.0.0, and carry the review and approval receipts of EVD-005 and EVD-006. Implementation is complete in the working tree and not committed: the readers, the registry with the Task form at 16.0.0, the template, the two moved Tasks and the texts are staged for the implementation commit. The two WORK rows keep their status. Open: exact-index QA and the commit hooks, the `.secrets.baseline` entries, and the push, PR and merge, none of which was run or approved. W03-H13's condition is met (every SDLC template now has a TemplateDefinition); W03-H13 and W03-H41 stay open until the acceptance of the criteria (W03-D70). Implementation commit `4e928d3c` passed exact-index QA in the hooks (EVD-028); the user accepted the package on 2026-11-15, and the approval of commit, push, PR and merge covers the package exit (EVD-029).
