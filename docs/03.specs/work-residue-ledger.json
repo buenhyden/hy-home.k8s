@@ -46,8 +46,8 @@
       "id": "DOC-12",
       "kind": "conflict",
       "state": "open",
-      "owner": "W03",
-      "resume_condition": "Last, after all docs work is finished (W03-D30)",
+      "owner": "Q07",
+      "resume_condition": "After W11 and every applicable docs task, in the separate Q07 task",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -76,8 +76,8 @@
       "id": "DOC-S99",
       "kind": "handoff",
       "state": "open",
-      "owner": "W03",
-      "resume_condition": "When phase 3 and W05 move the hard-coded headings (OPEN-09)",
+      "owner": "W05",
+      "resume_condition": "When W05 moves the hard-coded headings of tests (OPEN-09)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -166,7 +166,7 @@
       "id": "OPEN-07",
       "kind": "survey",
       "state": "open",
-      "owner": "W03, W05, W06, W07, W10 by file set",
+      "owner": "W05, W06, W07, W10 by file set",
       "resume_condition": "Each writer stage reads its whole file set before editing",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
@@ -343,6 +343,16 @@
       }
     },
     {
+      "id": "SPEC-0211-REGISTRY-TEXT",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W04+ platform",
+      "resume_condition": "When the owner of those registry TemplateDefinition, form and profile texts next edits them in its own package",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
       "id": "W00-H01",
       "kind": "survey",
       "state": "open",
@@ -383,16 +393,6 @@
       }
     },
     {
-      "id": "W03-H10",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "In the Plan, README and Policy packages respectively",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
       "id": "W03-H11",
       "kind": "handoff",
       "state": "open",
@@ -408,16 +408,6 @@
       "state": "open",
       "owner": "W05",
       "resume_condition": "When W05 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W03-H20",
-      "kind": "handoff",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "Last before DOC-12",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -443,21 +433,11 @@
       }
     },
     {
-      "id": "W03-H34",
-      "kind": "survey",
+      "id": "W04-H01",
+      "kind": "handoff",
       "state": "open",
-      "owner": "W03",
-      "resume_condition": "When W03 re-reads its files before editing",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      }
-    },
-    {
-      "id": "W03-H35",
-      "kind": "survey",
-      "state": "open",
-      "owner": "W03",
-      "resume_condition": "When W03 re-reads its files before editing",
+      "owner": "W04",
+      "resume_condition": "When W04 starts (policy and lifecycle semantics)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -523,6 +503,26 @@
       }
     },
     {
+      "id": "W05-H07",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts (validators)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W05-H08",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When W05 starts (validators and schema)",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
       "id": "W06-H01",
       "kind": "survey",
       "state": "open",
@@ -558,6 +558,16 @@
       "state": "open",
       "owner": "W07",
       "resume_condition": "When W07 starts",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W07-H04",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W07",
+      "resume_condition": "When W07 starts (provider projections)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
