@@ -3,16 +3,17 @@ name: "deployment-strategies"
 description: "Use when comparing or designing Kubernetes and ArgoCD deployment strategies, including Blue-Green, Canary, Rolling update, rollback, zero-downtime deployment, progressive delivery, probes, and DORA metrics. Monitoring tool setup and actual CI pipeline configuration are outside this skill's scope."
 metadata:
   title: "Deployment Strategies"
-  version: "1.0.3"
+  version: "1.0.4"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation does not authorize additional actions.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # Deployment Strategies — Choosing and Verifying a Rollout
 

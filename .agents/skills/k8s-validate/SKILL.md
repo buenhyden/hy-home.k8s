@@ -3,16 +3,17 @@ name: "k8s-validate"
 description: "Use when validating Kubernetes manifests, GitOps structure, and secret-handling checks in this cluster repository."
 metadata:
   title: "K8s Validate"
-  version: "1.0.4"
+  version: "1.0.5"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation does not authorize additional actions.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # k8s-validate
 

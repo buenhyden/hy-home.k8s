@@ -3,16 +3,17 @@ name: "rca-methodology"
 description: "Use when performing root cause analysis with 5 Whys, Fishbone diagrams, Fault Tree Analysis, change analysis, incident cause analysis, or cognitive-bias checks. Timeline reconstruction and remediation planning are outside this skill's scope."
 metadata:
   title: "RCA Methodology"
-  version: "1.0.3"
+  version: "1.0.4"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation does not authorize additional actions.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # RCA Methodology — Tracing an Incident to Its Cause
 

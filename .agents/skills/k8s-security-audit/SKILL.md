@@ -3,16 +3,17 @@ name: "k8s-security-audit"
 description: "Use when auditing Kubernetes RBAC, NetworkPolicy gaps, Secret handling, container security context, image supply chain, or related cluster security hardening. Real-time intrusion detection and WAF configuration are outside this skill's scope."
 metadata:
   title: "K8s Security Audit"
-  version: "1.0.3"
+  version: "1.0.4"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation does not authorize additional actions.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # k8s Security Audit — Cluster Security Assessment
 

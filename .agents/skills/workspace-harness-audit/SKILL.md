@@ -3,16 +3,17 @@ name: "workspace-harness-audit"
 description: "Use when auditing workspace-wide SDLC, agent governance, GitOps, scripts, and QA ownership against an approved request."
 metadata:
   title: "Workspace Harness Audit"
-  version: "1.0.3"
+  version: "1.0.4"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation does not authorize additional actions.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # workspace-harness-audit
 

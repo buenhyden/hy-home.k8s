@@ -40,7 +40,8 @@ This gateway is a thin provider gateway and adds no obligation beyond the reads 
 ### Inspect and Change
 
 Read each selected role and its required `.agents/skills/<id>/SKILL.md`
-procedures explicitly before acting; explicit reads complement native discovery; invocation grants no authority.
+procedures explicitly before acting; explicit reads complement native discovery; invocation grants no authority
+([EXEC-R005](.agents/governance/agent-execution.md#requirements)).
 
 ### Handoff
 

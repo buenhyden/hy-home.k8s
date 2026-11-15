@@ -3,7 +3,7 @@ name: "risk-report"
 description: "Use when identifying, scoring, and reporting cluster-specific operational or security risks as a cluster risk report."
 metadata:
   title: "Risk Report"
-  version: "1.0.5"
+  version: "1.0.6"
   type: "governance/skill"
   status: "active"
   owner: "platform"
@@ -12,7 +12,8 @@ disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation does not authorize additional actions.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # risk-report
 

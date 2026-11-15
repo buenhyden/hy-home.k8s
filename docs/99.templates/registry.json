@@ -6682,7 +6682,7 @@
               },
               {
                 "key": "Policy Owner",
-                "meaning": "The owner role with the backticked path of its existing owner file.",
+                "meaning": "The owner role, linked with a relative Markdown link to its existing owner file.",
                 "data_type": "string",
                 "required": true
               },

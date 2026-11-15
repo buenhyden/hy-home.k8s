@@ -1,10 +1,10 @@
 ---
 title: "Incident Responder Responsibility"
-version: "1.2.2"
+version: "1.2.3"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-15"
 ---
 
 # incident-responder Responsibility
@@ -50,7 +50,7 @@ Live response, monitoring changes, and alert configuration are not this role.
 
 - This role holds no structured write tool. Its shell is for
   read-only repository search only (rationale in
-  [Claude provider notes](../../.claude/provider.md)). Analysis stays
+  [SAFE-R018](../governance/approval-and-safety.md#execution-controls)). Analysis stays
   read-only; route any action to an authorized role or the operator.
 - Do not run a command to gather state for the account. An incident record
   rests on evidence captured while the incident was live, and state read
