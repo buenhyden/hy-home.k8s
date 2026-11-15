@@ -1,7 +1,8 @@
 ---
 title: "W03 Task Form"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
+status: "ready"
 owner: "platform"
 updated: "2026-11-14"
 artifact_id: "SPEC-0203-TSK-0001"
