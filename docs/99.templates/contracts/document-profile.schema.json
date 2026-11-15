@@ -20,7 +20,7 @@
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
     "schema_version": {
-      "const": "17.0.0"
+      "const": "18.0.0"
     },
     "shared_contract": {
       "description": "Identifies reviewed common input and the local adapter; structural validity does not authenticate approval or adoption.",
@@ -224,7 +224,6 @@
           "artifact_id_pattern",
           "template_source",
           "frontmatter",
-          "sections",
           "lifecycle",
           "relationships",
           "placeholder_policy"
@@ -358,44 +357,6 @@
                     "null"
                   ]
                 }
-              }
-            }
-          },
-          "sections": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "required",
-              "optional",
-              "forbidden"
-            ],
-            "properties": {
-              "required": {
-                "type": "array",
-                "uniqueItems": true,
-                "items": {
-                  "type": "string"
-                }
-              },
-              "optional": {
-                "type": "array",
-                "uniqueItems": true,
-                "items": {
-                  "type": "string"
-                }
-              },
-              "forbidden": {
-                "type": "array",
-                "uniqueItems": true,
-                "items": {
-                  "type": "string"
-                }
-              },
-              "substantive_body": {
-                "type": "boolean"
-              },
-              "ordered": {
-                "type": "boolean"
               }
             }
           },

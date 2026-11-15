@@ -33,6 +33,7 @@ from document_contracts import (
     classify_path,
     diagnostic_sort_key,
     enumerate_target_markdown,
+    heading_contract,
     is_opaque_evaluation_output,
     verify_opaque_evaluation_output,
     load_registry,
@@ -2861,13 +2862,12 @@ def lifecycle_markdown_evidence(
         and line.text.startswith("## ")
         and not line.text.startswith("### ")
     )
+    headings = heading_contract(profile)
     required_headings_valid = all(
         _exact_rendered_heading_section(text, f"## {heading}") is not None
-        for heading in profile.headings.required
+        for heading in headings.required
     )
-    allowed_headings_valid = all(
-        heading in profile.headings.allowed for heading in root_h2
-    )
+    allowed_headings_valid = all(heading in headings.allowed for heading in root_h2)
     relationship_links: tuple[PurePosixPath, ...] = ()
     unresolved_relationship_links: tuple[PurePosixPath, ...] = ()
     relationship_section_valid = False

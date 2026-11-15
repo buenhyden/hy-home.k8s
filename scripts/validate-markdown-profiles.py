@@ -2157,16 +2157,17 @@ def _body_diagnostics(
         )
     # SPEC-0168: a profile whose role has a form is checked against its section
     # tree, unless a retained form names this status (and, when it carries an
-    # identity bound, the path-derived identity) and supplies H2 lists.
-    headings = profile.headings
+    # identity bound, the path-derived identity) and supplies H2 lists. A profile
+    # without a form has no heading rule (SPEC-0205).
+    headings = None
     tree = profile.form is not None
     if profile.form is not None:
-        retained = profile.form.retained_headings(
+        headings = profile.form.retained_headings(
             status, expected_artifact_id(path, profile) or ""
         )
-        if retained is not None:
-            headings, tree = retained, False
-    if not tree and not headings.required and not headings.allowed:
+        if headings is not None:
+            tree = False
+    if not tree and headings is None:
         return diagnostics
     h1 = [title for level, title in scan.headings if level == 1]
     h2 = [title for level, title in scan.headings if level == 2]
@@ -2193,9 +2194,8 @@ def _body_diagnostics(
         diagnostics.extend(_template_residue_diagnostics(path, profile, body))
         return diagnostics
     missing = [heading for heading in headings.required if heading not in h2]
-    required_rule = "README_H2_REQUIRED" if readme else "BODY-HEADING-REQUIRED"
     diagnostics.extend(
-        _diagnostic(required_rule, path, profile, "required H2", heading)
+        _diagnostic("BODY-HEADING-REQUIRED", path, profile, "required H2", heading)
         for heading in missing
     )
     if headings.ordered and not missing:
@@ -2241,15 +2241,13 @@ def _body_diagnostics(
     duplicate = sorted(
         heading for heading, count in collections.Counter(h2).items() if count > 1
     )
-    duplicate_rule = "README_H2_DUPLICATE" if readme else "BODY-H2-DUPLICATE"
     diagnostics.extend(
-        _diagnostic(duplicate_rule, path, profile, "unique H2", heading)
+        _diagnostic("BODY-H2-DUPLICATE", path, profile, "unique H2", heading)
         for heading in duplicate
     )
     represented = set(headings.allowed)
-    unsupported_rule = "README_H2_UNSUPPORTED" if readme else "BODY-HEADING-UNSUPPORTED"
     diagnostics.extend(
-        _diagnostic(unsupported_rule, path, profile, "allowed H2", heading)
+        _diagnostic("BODY-HEADING-UNSUPPORTED", path, profile, "allowed H2", heading)
         for heading in h2
         if heading not in represented
     )

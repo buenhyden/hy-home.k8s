@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.36.0"
+version: "0.37.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -146,7 +146,14 @@ form 경로의 대응은 Registry만 소유한다.
   `contract_version`은 COMMON-DOC-FORM-1 역할에서 `COMMON-DOC-FORM-1/`과 공통
   form 버전, Stage 99 지역 역할에서 `STAGE99-LOCAL-FORM-1/1.0.0`이다.
   `provider-native`의 빈 heading은 조건·소유자·검증·검토·제거 기준을 갖는
-  조건부 확장(`headings_extension`)으로 기록한다.
+  조건부 확장(`headings_extension`)으로 기록한다. profile의 heading은 role의
+  form에서 오며 어떤 profile도 H2 목록(`sections`)을 두지 않는다. schema와 엄격
+  Registry 검사가 `sections` key를 거부하고, mode가 `authored`, `router`,
+  `template`인 profile은 `provider-native` role을 뺀 모든 경우에 form을 가져야
+  한다(`REGISTRY_FORM_REQUIRED`). `native`나 `non-target` profile은 form이 없어도
+  되며, 그때 Markdown profile 검증은 fence·frontmatter·placeholder 검사만 적용하고
+  heading 규칙은 적용하지 않는다. ADR-0001부터 ADR-0061까지의 accepted ADR은
+  등록된 retained form의 H2 목록과 그 검사를 ADR-0062에 따라 유지한다.
 - **Core SDLC forms**: physical `requirements/`, `architecture/`, `specs/`
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
   `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의

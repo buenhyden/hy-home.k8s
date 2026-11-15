@@ -29,6 +29,7 @@ from document_contracts import (
     TaskExecution,
     classify_path,
     enumerate_target_markdown,
+    heading_contract,
     is_opaque_evaluation_output,
     verify_opaque_evaluation_output,
     load_registry,
@@ -679,9 +680,9 @@ def _body_text(text: str) -> str:
 
 
 def _allowed_h2(profile: Any) -> tuple[str, ...]:
-    """The H2 titles an old-shape profile allows: the one reader of the list field."""
+    """The H2 titles an old-shape profile allows, through the heading accessor."""
 
-    return profile.headings.allowed
+    return heading_contract(profile).allowed
 
 
 def _form_heading(registry: Registry, form_id: str, section_id: str) -> str | None:

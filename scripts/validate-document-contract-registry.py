@@ -22,6 +22,7 @@ from document_contracts import (
     classify_paths,
     current_registry_diagnostics,
     enumerate_target_markdown,
+    heading_contract,
     load_internal_payload,
     load_registry,
     shared_edition_mismatches,
@@ -591,7 +592,7 @@ def _assert_template_source_parity(registry: Registry) -> None:
         inherited = (
             profile.profile_class,
             profile.frontmatter,
-            profile.headings,
+            heading_contract(profile),
             profile.body_contract,
             profile.document_role,
             profile.form,
@@ -599,7 +600,7 @@ def _assert_template_source_parity(registry: Registry) -> None:
         expected = (
             source.profile_class,
             source_frontmatter,
-            source.headings,
+            heading_contract(source),
             source.body_contract,
             source.document_role,
             source.form,

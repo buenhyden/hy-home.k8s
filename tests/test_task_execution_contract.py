@@ -1294,7 +1294,8 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         profiles = tuple(
             dataclasses.replace(
                 item,
-                headings=HeadingContract(
+                form=None,
+                listed_headings=HeadingContract(
                     required=("Overview",), allowed=allowed or ("Overview",)
                 ),
             )
@@ -1435,7 +1436,9 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         source = (SCRIPTS / "validate-document-lifecycle.py").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(source.count("headings.allowed"), 1)
+        # SPEC-0205: the one accessor function reads the list through heading_contract.
+        self.assertEqual(source.count("heading_contract(profile).allowed"), 1)
+        self.assertEqual(source.count("profile.headings"), 0)
         old_base = {self.spec: self.spec_text(), self.plan: self.old_plan_text()}
         old_bad = {
             **old_base,
@@ -1704,7 +1707,9 @@ def old_task_registry(registry):
             )
             profile = replace(
                 profile,
-                headings=HeadingContract(required=OLD_TASK_H2, allowed=OLD_TASK_H2),
+                listed_headings=HeadingContract(
+                    required=OLD_TASK_H2, allowed=OLD_TASK_H2
+                ),
                 body_contract=replace(
                     profile.body_contract, section="Task Table", task_execution=binding
                 ),
@@ -1722,11 +1727,18 @@ def old_registry_json(raw: dict) -> dict:
     """The same undoing on the registry JSON, for a temporary repository."""
 
     raw = json.loads(json.dumps(raw))
+    # MAJOR 15 is the registry before the Task form; the history reading builds the
+    # H2 lists such a registry carried (SPEC-0205).
+    raw["schema_version"] = "15.0.0"
     forms = raw["common_forms"]["forms"]
     raw["common_forms"]["forms"] = [f for f in forms if f["form_id"] != "task"]
     for profile in raw["profiles"]:
         if profile["id"] in ("sdlc/task", "common/template-sdlc-task"):
-            profile["sections"]["required"] = list(OLD_TASK_H2)
+            profile["sections"] = {
+                "required": list(OLD_TASK_H2),
+                "optional": [],
+                "forbidden": [],
+            }
             contract = profile["relationships"]["body_contract"]
             contract["section"] = "Task Table"
             binding = contract["task_execution"]

@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.35.0"
+version: "3.36.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -431,9 +431,16 @@ copy of the package schema pinned by its SHA-256. `contract_version` is
 and `STAGE99-LOCAL-FORM-1/1.0.0` for a Stage 99 local role. Each table names a
 section ID or local H3 extension ID of its role's form, and the validator checks
 column order, count and minimum rows. `provider-native` has no form (W03-D33),
-keeps its H2 lists, records no table, and records its empty headings as a
+carries no H2 list, records no table, and records its empty headings as a
 conditional extension (`headings_extension`) with its condition, owner,
-verification, review and removal criteria (W03-D65).
+verification, review and removal criteria (W03-D65). A profile's headings come
+from its role's form and no profile carries an H2 list: the schema and the
+strict registry check refuse a `sections` key. A profile whose mode is
+authored, router or template has a form, except the `provider-native` role
+(`REGISTRY_FORM_REQUIRED`); a native or non-target profile may have none, and
+the profile validator then applies its fence, frontmatter and placeholder
+checks but no heading rule. The accepted ADRs from ADR-0001 to ADR-0061 keep
+the retained H2 lists of their registered form and its checks (ADR-0062).
 Classifications, prerequisites, controls, observations and recovery stay native
 submodules in their relevant roles. Fill sections with concrete content; a
 heading, comment, placeholder or empty fence is no operating instruction.

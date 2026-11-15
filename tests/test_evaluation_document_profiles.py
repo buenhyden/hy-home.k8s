@@ -119,7 +119,7 @@ class EvaluationDocumentProfilesTests(unittest.TestCase):
                 self.assertEqual(
                     MARKDOWN.validate_document_text(text, path, profile, "strict"), []
                 )
-                first_heading = profile.headings.required[1]
+                first_heading = contracts.heading_contract(profile).required[1]
                 malformed = text.replace(
                     f"## {first_heading}", "## Unsupported Heading", 1
                 )
