@@ -77,7 +77,7 @@ EXTENSION_RECORDS = (
     (
         "Rules table Status column for retired policy rules",
         "Applies to every Rules table of this repository: a rule ID is never reused until a user-approved new baseline under the Q-07 contract and a retired rule keeps its row, so the table carries an optional Status column whose value is active, or retired; followed by a successor rule ID or none.",
-        "POLICY-RULE-TABLE in the strict Markdown profile check and tests/test_policy_rule_ids.py, run by the document suite of scripts/run-contract-tests.py.",
+        "POLICY-RULE-TABLE in the strict Markdown profile check and tests/test_policy_rule_ids.py, run by the document suite of scripts/run-contract-tests.py; POLICY-RULE-REISSUE in the document lifecycle check, which refuses a retired row that becomes active again, and tests/test_policy_rule_history.py, run by the document-lifecycle suite.",
         "When shared_contract.version changes and when the Rules table definition of the Policy TemplateDefinitions changes.",
         "When a shared WGOV-CORE edition of the Policy form defines rule retirement, when the user ends no-reuse retirement for rule IDs, or at a user-approved new baseline under the Q-07 contract.",
     ),

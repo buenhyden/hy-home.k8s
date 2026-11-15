@@ -47,6 +47,7 @@ from document_lifecycle import (
     LifecycleEvidenceContext,
     LifecycleEvidenceDocument,
     LifecycleRename,
+    PolicyCodeSection,
     artifact_identity_reuse_diagnostics,
     compare_lifecycle,
     document_from_text,
@@ -2682,6 +2683,42 @@ def _admit_cumulative_create_diagnostics(
     )
 
 
+def _policy_code_section(
+    registry_blob: Mapping[str, object],
+) -> PolicyCodeSection | None:
+    """SPEC-0206: the code records and reserved codes of one registry blob.
+
+    Only the `policy_rule_ids` section is read, as plain JSON (W03-D64), so no
+    typed historical registry is built; a blob without it yields no section.
+    """
+
+    section = registry_blob.get("policy_rule_ids")
+    if section is None:
+        return None
+    try:
+        codes = {item["code"]: item["path"] for item in section["codes"]}
+        reserved = frozenset(section["reserved_codes"])
+    except (KeyError, TypeError) as exc:
+        raise InvocationError("policy_rule_ids section is malformed") from exc
+    return PolicyCodeSection(codes=MappingProxyType(codes), reserved=reserved)
+
+
+def _policy_rules(
+    section: PolicyCodeSection | None, texts: Mapping[PurePosixPath, str]
+) -> Mapping[str, tuple[PurePosixPath, str]]:
+    """The Rules table rows of every registered policy, read by the profile check."""
+
+    rows: dict[str, tuple[PurePosixPath, str]] = {}
+    if section is None:
+        return rows
+    reader = _load_canonical_markdown_module().policy_rule_rows
+    for raw in sorted(section.codes.values()):
+        path = PurePosixPath(raw)
+        for rule_id, status in reader(texts.get(path, "")):
+            rows.setdefault(rule_id, (path, status))
+    return rows
+
+
 def _evaluate_comparison(
     root: Path,
     registry: Registry,
@@ -2759,6 +2796,31 @@ def _evaluate_comparison(
         proposed_texts,
         base_registry=_history_registry(root, base_commit, registry),
     )
+    base_registry_oid = _tree_blob_oid(root, base_commit, CURRENT_REGISTRY_PATH)
+    proposed_registry_oid = (
+        _index_blob_oid(root, CURRENT_REGISTRY_PATH)
+        if proposed_commit is None
+        else _tree_blob_oid(root, proposed_commit, CURRENT_REGISTRY_PATH)
+    )
+    base_section = (
+        None
+        if base_registry_oid is None
+        else _policy_code_section(_registry_blob(root, base_registry_oid))
+    )
+    proposed_section = (
+        None
+        if proposed_registry_oid is None
+        else _policy_code_section(_registry_blob(root, proposed_registry_oid))
+    )
+    evidence_context = replace(
+        evidence_context,
+        base_policy_rules=MappingProxyType(_policy_rules(base_section, base_texts)),
+        proposed_policy_rules=MappingProxyType(
+            _policy_rules(proposed_section, proposed_texts)
+        ),
+        base_policy_section=base_section,
+        proposed_policy_section=proposed_section,
+    )
     diagnostics = compare_lifecycle(
         proposed_classification_registry,
         base_documents,
@@ -2774,12 +2836,6 @@ def _evaluate_comparison(
         base_mode=mode,  # type: ignore[arg-type]
     )
     # SPEC-0208: scalar version fields only, from the raw registry blobs.
-    base_registry_oid = _tree_blob_oid(root, base_commit, CURRENT_REGISTRY_PATH)
-    proposed_registry_oid = (
-        _index_blob_oid(root, CURRENT_REGISTRY_PATH)
-        if proposed_commit is None
-        else _tree_blob_oid(root, proposed_commit, CURRENT_REGISTRY_PATH)
-    )
     if (
         base_registry_oid is not None
         and proposed_registry_oid is not None

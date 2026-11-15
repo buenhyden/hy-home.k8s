@@ -92,6 +92,14 @@ class LifecycleEvidenceDocument:
 
 
 @dataclass(frozen=True)
+class PolicyCodeSection:
+    """The `policy_rule_ids` codes of one registry snapshot, read as plain JSON."""
+
+    codes: Mapping[str, str]  # code -> path of its record
+    reserved: frozenset[str]
+
+
+@dataclass(frozen=True)
 class LifecycleEvidenceContext:
     """Immutable inputs resolved from one Git base/proposed snapshot pair."""
 
@@ -110,6 +118,16 @@ class LifecycleEvidenceContext:
     ] = field(default_factory=dict)
     local_contract_issues: tuple[tuple[PurePosixPath, str, str, str, str], ...] = ()
     retired_identities: Mapping[str, PurePosixPath] = field(default_factory=dict)
+    # SPEC-0206: rule ID -> (path, Status) of every Rules table at each snapshot,
+    # and the code section of each registry; `None` is a registry without one.
+    base_policy_rules: Mapping[str, tuple[PurePosixPath, str]] = field(
+        default_factory=dict
+    )
+    proposed_policy_rules: Mapping[str, tuple[PurePosixPath, str]] = field(
+        default_factory=dict
+    )
+    base_policy_section: PolicyCodeSection | None = None
+    proposed_policy_section: PolicyCodeSection | None = None
 
 
 def lifecycle_diagnostic_sort_key(
@@ -779,6 +797,77 @@ def registry_version_diagnostics(
     return tuple(item for item in found if item is not None)
 
 
+def policy_history_diagnostics(
+    context: LifecycleEvidenceContext, *, base_mode: LifecycleBaseMode
+) -> tuple[LifecycleDiagnostic, ...]:
+    """SPEC-0206: a rule ID never leaves its table or returns from `retired`, and
+    a registered code never changes, across the base and the proposal.
+
+    A base registry without the code section has no record to keep, so no rule.
+    """
+
+    base = context.base_policy_section
+    if base is None:
+        return ()
+    proposed = context.proposed_policy_section or PolicyCodeSection({}, frozenset())
+    found: list[LifecycleDiagnostic] = []
+
+    def refuse(rule: str, path: PurePosixPath, expected: str, observed: str) -> None:
+        found.append(
+            _diagnostic(
+                rule,
+                path=path,
+                profile="",
+                expected=expected,
+                observed=observed,
+                base_mode=base_mode,
+                evidence_gap="base and proposed policy Rules tables and code section",
+            )
+        )
+
+    for rule_id, (path, status) in sorted(context.base_policy_rules.items()):
+        code = rule_id.rsplit("-R", 1)[0]
+        kept = context.proposed_policy_rules.get(rule_id)
+        if kept is None:
+            if code in proposed.reserved and code not in proposed.codes:
+                continue  # the policy left the tree and its code is reserved
+            refuse(
+                "POLICY-RULE-DELETE",
+                path,
+                f"{rule_id} stays in a Rules table",
+                f"{rule_id} removed",
+            )
+        elif status.startswith("retired") and not kept[1].startswith("retired"):
+            refuse(
+                "POLICY-RULE-REISSUE",
+                kept[0],
+                f"{rule_id} stays retired",
+                f"{rule_id}: {status} -> {kept[1]}",
+            )
+    by_path = {path: code for code, path in proposed.codes.items()}
+    for code, path in sorted(base.codes.items()):
+        if code not in proposed.codes and code not in proposed.reserved:
+            observed = f"{code} ({path}) neither registered nor reserved"
+        elif by_path.get(path, code) != code:
+            observed = f"{path}: {code} -> {by_path[path]}"
+        else:
+            continue
+        refuse(
+            "POLICY-CODE-CHANGE",
+            REGISTRY_PATH,
+            "every registered code is kept or reserved and never changes",
+            observed,
+        )
+    for code in sorted(base.reserved - proposed.reserved):
+        refuse(
+            "POLICY-CODE-CHANGE",
+            REGISTRY_PATH,
+            "the reserved codes never shrink",
+            f"{code} left reserved_codes",
+        )
+    return tuple(found)
+
+
 def compare_lifecycle(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -1000,6 +1089,9 @@ def compare_lifecycle(
     if enforce_task_execution and evidence_context is not None:
         diagnostics.extend(
             local_contract_diagnostics(evidence_context, base_mode=base_mode)
+        )
+        diagnostics.extend(
+            policy_history_diagnostics(evidence_context, base_mode=base_mode)
         )
 
     if evidence_context is not None:

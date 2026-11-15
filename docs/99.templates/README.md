@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.37.0"
+version: "0.38.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -196,7 +196,10 @@ form 경로의 대응은 Registry만 소유한다.
   정책의 등록 code로 만든 `<CODE>-R<NNN>`이며 같은 ID를 규칙의 목록 항목·표
   첫 셀·H4 단락 맨 앞에 코드 스팬으로 적는다. `Status`는 `retired;` 뒤에 후속
   ID나 `none`을 적어 폐기한 규칙의 행을 남기는 이 저장소의 조건부 확장이며,
-  정확한 값과 code 기록은 Registry의 `policy_rule_ids`가 소유한다.
+  정확한 값과 code 기록은 Registry의 `policy_rule_ids`가 소유한다. 규칙 ID와 code는
+  사용자가 승인한 Q-07 새 baseline까지 영구하다. ID는 삭제하거나 폐기 뒤 다시 `active`로
+  되돌리지 않고, 등록된 code는 바꾸거나 다른 정책에 주지 않으며, 트리를 떠나는 정책의
+  code는 줄어들지 않는 `reserved_codes`로 옮긴다.
   기계가 읽는 정확한 heading과 순서·내용 경계는 Registry가 소유한다. 빈 heading이나
   placeholder만 채운 항목은 실질 내용이 아니며, 형식 PASS는 live 증거가 아니다.
 - **Reference forms** (`references/`): Stage 90 collection 세 곳은 모두 같은 3단

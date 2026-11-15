@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.36.0"
+version: "3.37.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -69,6 +69,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | AUTHOR-R020 | Always | required | Semantic review | active |
 | AUTHOR-R021 | Always | required | `markdown-profiles` | active |
 | AUTHOR-R022 | Always | required | Semantic review | active |
+| AUTHOR-R023 | Always | required | `document-lifecycle` | active |
 
 1. `AUTHOR-R001` Identify the owning stage and normalize the final repository-relative path.
 2. `AUTHOR-R002` Resolve exactly one registry profile and read its canonical template before
@@ -465,6 +466,18 @@ joint adoption separately in the current Task, and do not claim an unread
 adapter adopted an edition. Bind final approval to the reviewed edition's actual
 content, revision and digest only after its real decision, and do not create a
 competing normative core.
+
+#### Rule ID permanence
+
+`AUTHOR-R023`
+
+A rule ID and a policy code are permanent until a user-approved new baseline
+under the Q-07 contract. An ID is issued once, never renumbered and never
+reused. A retired rule keeps its row and never becomes `active` again; a
+restored rule takes a new ID, which the retired row may name as its successor.
+A registered code never changes and is never given to another policy, and the
+document lifecycle check refuses a missing ID, a retired row made active, a
+changed code and a shrunken `reserved_codes` list.
 
 ### Enforcement
 

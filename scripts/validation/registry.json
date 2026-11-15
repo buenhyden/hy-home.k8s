@@ -1325,6 +1325,10 @@
         {
           "kind": "exact",
           "value": "tests/test_document_lifecycle_package_exit.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_policy_rule_history.py"
         }
       ],
       "validators": [

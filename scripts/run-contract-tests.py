@@ -56,6 +56,7 @@ SUITES = {
     "document-lifecycle": _modules(
         "document_artifact_identity",
         "document_lifecycle_package_exit",
+        "policy_rule_history",
     ),
     "validation-routing": _modules(
         "validate_affected_surfaces",

@@ -1067,6 +1067,23 @@ def policy_rule_units(text: str, heading: str = "### Requirements") -> RuleScan:
     return _scan_requirements("" if section is None else section)
 
 
+def policy_rule_rows(text: str) -> tuple[tuple[str, str], ...]:
+    """SPEC-0206: the (Rule ID, Status) of each Rules table row of one policy.
+
+    The lifecycle check reads policy history through this one reader. A table
+    with no Status column reads every row as `active`; no table reads no row.
+    """
+
+    rows: list[tuple[str, str]] = []
+    for header, data in policy_rule_units(text).rules_tables:
+        at = header.index("Status") if "Status" in header else None
+        for row in data:
+            if row:
+                status = row[at] if at is not None and at < len(row) else "active"
+                rows.append((_identifier_text(row[0]), status))
+    return tuple(rows)
+
+
 def _rules_status_fault(
     status: str, own: str, row_ids: Sequence[str], codes: frozenset[str]
 ) -> str | None:
