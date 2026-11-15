@@ -20,7 +20,7 @@
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
     "schema_version": {
-      "const": "19.0.0"
+      "const": "20.0.0"
     },
     "shared_contract": {
       "description": "Identifies reviewed common input and the local adapter; structural validity does not authenticate approval or adoption.",
@@ -790,7 +790,7 @@
       }
     },
     "common_forms": {
-      "description": "The opt-in section tree per document role; a role has a form only once it is listed.",
+      "description": "The opt-in section tree per document role; a role has a form only once it is listed. The optional candidate record carries no approval fact; an approved or adopted stage needs a revision and an approval reference.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -811,8 +811,57 @@
           "items": {
             "$ref": "#/$defs/common_form"
           }
+        },
+        "stage": {
+          "$ref": "#/properties/shared_contract/properties/stage"
+        },
+        "owner": {
+          "$ref": "#/properties/shared_contract/properties/owner"
+        },
+        "source": {
+          "$ref": "#/properties/shared_contract/properties/source"
+        },
+        "source_revision": {
+          "$ref": "#/properties/shared_contract/properties/source_revision"
+        },
+        "content_digest": {
+          "$ref": "#/properties/shared_contract/properties/content_digest"
+        },
+        "approval_ref": {
+          "$ref": "#/properties/shared_contract/properties/approval_ref"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "stage": {
+                "enum": [
+                  "approved",
+                  "adopted"
+                ]
+              }
+            },
+            "required": [
+              "stage"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source_revision": {
+                "type": "string"
+              },
+              "approval_ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "source_revision",
+              "approval_ref"
+            ]
+          }
+        }
+      ]
     },
     "frontmatter_keys": {
       "description": "One entry per frontmatter key a profile requires, allows, forbids or orders (SPEC-0181).",

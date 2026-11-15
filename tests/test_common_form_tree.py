@@ -7727,5 +7727,41 @@ class HeadingListRemovalTests(unittest.TestCase):
         self.assertIn("BODY-HEADING-REQUIRED", rules)
 
 
+class MeaningMapRecoveryPointerTests(unittest.TestCase):
+    """SPEC-0209: no meaning map points at a Task that left the tree."""
+
+    @staticmethod
+    def meaning_maps(node: object) -> list[str]:
+        found: list[str] = []
+        if isinstance(node, dict):
+            migration = node.get("migration")
+            if isinstance(migration, dict) and "meaning_map" in migration:
+                found.append(migration["meaning_map"])
+            for value in node.values():
+                found.extend(MeaningMapRecoveryPointerTests.meaning_maps(value))
+        elif isinstance(node, list):
+            for value in node:
+                found.extend(MeaningMapRecoveryPointerTests.meaning_maps(value))
+        return found
+
+    def test_no_meaning_map_ends_with_the_dangling_task_clause(self) -> None:
+        maps = self.meaning_maps(load_raw())
+        self.assertGreaterEqual(len(maps), 32)
+        self.assertEqual([item for item in maps if "the Task records it" in item], [])
+
+    def test_a_recovery_pointer_names_the_package_of_its_own_token(self) -> None:
+        pointer = re.compile(
+            r"recover the map from the (SPEC-[0-9]{4}) recovery proof "
+            r"in the REQ-0003 Archived Lineage\.$"
+        )
+        pointed = 0
+        for text in self.meaning_maps(load_raw()):
+            match = pointer.search(text)
+            if match is not None:
+                pointed += 1
+                self.assertEqual(re.search(r"SPEC-[0-9]{4}", text).group(0), match[1])
+        self.assertGreaterEqual(pointed, 14)
+
+
 if __name__ == "__main__":
     unittest.main()

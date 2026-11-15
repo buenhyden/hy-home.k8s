@@ -434,5 +434,97 @@ class SharedEditionConsistencyTests(unittest.TestCase):
         )
 
 
+class CommonFormsAdoptionRecordTests(unittest.TestCase):
+    """SPEC-0209: `common_forms` holds a candidate record and refuses approval facts."""
+
+    DIGEST = "sha256:" + "a" * 64
+
+    def setUp(self) -> None:
+        self.raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
+
+    def record(self, **changes: object) -> dict:
+        raw = copy.deepcopy(self.raw)
+        raw["common_forms"].update(changes)
+        return raw
+
+    def rules(self, raw: dict) -> set[str]:
+        try:
+            validate_registry(ROOT, raw)
+        except DocumentContractError as error:
+            return {item.rule_id for item in error.diagnostics}
+        return set()
+
+    def candidate(self, **changes: object) -> dict:
+        return self.record(
+            **{
+                "stage": "candidate",
+                "owner": self.raw["shared_contract"]["owner"],
+                "source": "package/dependencies/contracts/COMMON-SECTION-CONTRACT.json",
+                "source_revision": None,
+                "content_digest": self.DIGEST,
+                "approval_ref": None,
+                **changes,
+            }
+        )
+
+    def test_repository_record_is_a_candidate_with_no_approval_fact(self) -> None:
+        common = self.raw["common_forms"]
+        self.assertEqual(common["stage"], "candidate")
+        self.assertEqual(common["owner"], self.raw["shared_contract"]["owner"])
+        self.assertIsNone(common["source_revision"])
+        self.assertIsNone(common["approval_ref"])
+        self.assertRegex(common["content_digest"], r"^sha256:[0-9a-f]{64}$")
+        for key in (*APPROVAL_FIELDS, "scope", "migration", "rollback"):
+            self.assertNotIn(key, common)
+        loaded = validate_registry(ROOT, self.raw).common_forms_record
+        self.assertEqual((loaded.stage, loaded.approval_ref), ("candidate", None))
+
+    def test_a_candidate_with_a_null_reference_and_no_approval_fact_passes(
+        self,
+    ) -> None:
+        self.assertEqual(self.rules(self.candidate()), set())
+
+    def test_an_approval_fact_on_common_forms_is_a_schema_error(self) -> None:
+        for key in (*APPROVAL_FIELDS, "scope", "migration", "rollback"):
+            with self.subTest(key=key):
+                self.assertIn(
+                    "REGISTRY_SCHEMA", self.rules(self.candidate(**{key: "unverified"}))
+                )
+
+    def test_an_approved_or_adopted_stage_needs_a_revision_and_a_reference(
+        self,
+    ) -> None:
+        for stage in ("approved", "adopted"):
+            with self.subTest(stage=stage, missing="both"):
+                self.assertIn(
+                    "REGISTRY_SCHEMA", self.rules(self.candidate(stage=stage))
+                )
+            with self.subTest(stage=stage, missing="reference"):
+                raw = self.candidate(stage=stage, source_revision="a" * 40)
+                self.assertIn("REGISTRY_SCHEMA", self.rules(raw))
+            with self.subTest(stage=stage, missing="revision"):
+                raw = self.candidate(stage=stage, approval_ref="a recorded reference")
+                self.assertIn("REGISTRY_SCHEMA", self.rules(raw))
+
+    def test_a_malformed_digest_is_refused(self) -> None:
+        for value in ("sha256:abc", "4f79" * 16, "sha256:" + "G" * 64, ""):
+            with self.subTest(value=value):
+                self.assertIn(
+                    "REGISTRY_SCHEMA",
+                    self.rules(self.candidate(content_digest=value)),
+                )
+
+    def test_the_version_pattern_is_the_one_the_semver_pin_expects(self) -> None:
+        schema = json.loads(
+            (
+                ROOT / "docs/99.templates/contracts/document-profile.schema.json"
+            ).read_text()
+        )
+        self.assertEqual(
+            schema["properties"]["common_forms"]["properties"]["version"],
+            schema["properties"]["shared_contract"]["properties"]["version"],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

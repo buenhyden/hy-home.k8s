@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": "19.0.0",
+  "schema_version": "20.0.0",
   "profiles": [
     {
       "id": "sdlc/requirement",
@@ -2341,7 +2341,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0172 map moves each sentence of the former eight-section README.md into the Purpose, Repository Map, Getting Started or References section without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0172 map moves each sentence of the former eight-section README.md into the Purpose, Repository Map, Getting Started or References section without changing meaning; recover the map from the SPEC-0172 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous eight-section README.md and root README template.",
           "rollback": "Revert the SPEC-0172 implementation commit."
         },
@@ -2474,7 +2474,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0173 map moves each sentence of the former five-section stage READMEs into Stage Responsibility, Contents, Workflow or Related Documents without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0173 map moves each sentence of the former five-section stage READMEs into Stage Responsibility, Contents, Workflow or Related Documents without changing meaning; recover the map from the SPEC-0173 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous five-section stage READMEs and template.",
           "rollback": "Revert the SPEC-0173 implementation commit."
         },
@@ -2616,7 +2616,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0173 map moves each sentence of the former five-section collection READMEs into Stage Responsibility, Contents, Workflow or Related Documents without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0173 map moves each sentence of the former five-section collection READMEs into Stage Responsibility, Contents, Workflow or Related Documents without changing meaning; recover the map from the SPEC-0173 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous five-section collection READMEs and template.",
           "rollback": "Revert the SPEC-0173 implementation commit."
         },
@@ -2763,7 +2763,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0174 map moves each sentence of the former Overview, Scope, Structure, Usage, Verification and Related Documents sections into Purpose, Interfaces, Development or Operations without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0174 map moves each sentence of the former Overview, Scope, Structure, Usage, Verification and Related Documents sections into Purpose, Interfaces, Development or Operations without changing meaning; recover the map from the SPEC-0174 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous H2 sections of the implementation and runtime-governance READMEs and their templates.",
           "rollback": "Revert the SPEC-0174 implementation commit."
         },
@@ -3293,7 +3293,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0174 map moves each sentence of the former Overview, Scope, Structure, Usage, Verification and Related Documents sections into Purpose, Interfaces, Development or Operations without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0174 map moves each sentence of the former Overview, Scope, Structure, Usage, Verification and Related Documents sections into Purpose, Interfaces, Development or Operations without changing meaning; recover the map from the SPEC-0174 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous H2 sections of the implementation and runtime-governance READMEs and their templates.",
           "rollback": "Revert the SPEC-0174 implementation commit."
         },
@@ -4986,7 +4986,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0169 meaning map moves each GDE-0010 sentence into its Purpose, Prerequisites, Procedure or Verification section without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0169 meaning map moves each GDE-0010 sentence into its Purpose, Prerequisites, Procedure or Verification section without changing meaning; recover the map from the SPEC-0169 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous six-section guide layout and its template.",
           "rollback": "Revert the SPEC-0169 implementation commit."
         },
@@ -5165,7 +5165,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0171 incident template map moves each of the ten former H2 sections into the Summary, Impact, Timeline, Resolution or Evidence section without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0171 incident template map moves each of the ten former H2 sections into the Summary, Impact, Timeline, Resolution or Evidence section without changing meaning; recover the map from the SPEC-0171 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous ten-section incident template; no incident document exists.",
           "rollback": "Revert the SPEC-0171 implementation commit."
         },
@@ -5353,7 +5353,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0175 meaning map moves each sentence of the former six-section operations policy layout into its Purpose, Scope, Rules, Exceptions or Ownership section without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0175 meaning map moves each sentence of the former six-section operations policy layout into its Purpose, Scope, Rules, Exceptions or Ownership section without changing meaning; recover the map from the SPEC-0175 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous six-section operations policy layout and its template.",
           "rollback": "Revert the SPEC-0175 implementation commit."
         },
@@ -5540,7 +5540,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0171 postmortem template map moves each of the twelve former H2 sections into the Summary, Root Cause, Impact, Corrective Actions or Evidence section without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0171 postmortem template map moves each of the twelve former H2 sections into the Summary, Root Cause, Impact, Corrective Actions or Evidence section without changing meaning; recover the map from the SPEC-0171 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous twelve-section postmortem template; no postmortem document exists.",
           "rollback": "Revert the SPEC-0171 implementation commit."
         },
@@ -5732,7 +5732,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0170 meaning map moves each runbook sentence into its Purpose, Preconditions, Steps, Validation or Recovery section without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0170 meaning map moves each runbook sentence into its Purpose, Preconditions, Steps, Validation or Recovery section without changing meaning; recover the map from the SPEC-0170 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous six-section runbook layout, its four-column step table and its template.",
           "rollback": "Revert the SPEC-0170 implementation commit."
         },
@@ -7156,7 +7156,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0175 meaning map moves each sentence of the former six-section governance rule layout into its Purpose, Scope, Rules, Exceptions or Ownership section without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0175 meaning map moves each sentence of the former six-section governance rule layout into its Purpose, Scope, Rules, Exceptions or Ownership section without changing meaning; recover the map from the SPEC-0175 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous six-section governance rule layout and its template.",
           "rollback": "Revert the SPEC-0175 implementation commit."
         },
@@ -7301,7 +7301,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0177 meaning map moves each sentence of the former six-heading workflow layout into the Skill form without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0177 meaning map moves each sentence of the former six-heading workflow layout into the Skill form without changing meaning; recover the map from the SPEC-0177 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous six-heading workflow layout and its template.",
           "rollback": "Revert the SPEC-0177 implementation commit."
         },
@@ -7438,7 +7438,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0177 meaning map moves each sentence of the 17 SKILL.md packages into the Skill form without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0177 meaning map moves each sentence of the 17 SKILL.md packages into the Skill form without changing meaning; recover the map from the SPEC-0177 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous section layout of the 17 SKILL.md packages.",
           "rollback": "Revert the SPEC-0177 implementation commit."
         },
@@ -7563,7 +7563,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0176 meaning map moves each sentence of the former Purpose, Responsibilities and Projections, Rules and Checks layout of the 16 AGENTS.md files into the AGENTS form without changing meaning; the Task records it.",
+          "meaning_map": "The SPEC-0176 meaning map moves each sentence of the former Purpose, Responsibilities and Projections, Rules and Checks layout of the 16 AGENTS.md files into the AGENTS form without changing meaning; recover the map from the SPEC-0176 recovery proof in the REQ-0003 Archived Lineage.",
           "retained_history": "Git history retains the previous AGENTS.md layout of the 16 files.",
           "rollback": "Revert the SPEC-0176 implementation commit."
         },
@@ -8909,6 +8909,12 @@
   "common_forms": {
     "contract_id": "COMMON-DOC-FORM-1",
     "version": "1.0.0",
+    "stage": "candidate",
+    "owner": "buenhyden",
+    "source": "workspace_execution_tasks_v14_7_revision_20261113_r1/dependencies/contracts/COMMON-SECTION-CONTRACT.json",
+    "source_revision": null,
+    "content_digest": "sha256:4f79183d59c34ee87d1cab35c5ffc86eb7012f5df1db4dc4b91a8fd412e8c618",
+    "approval_ref": null,
     "forms": [
       {
         "form_id": "guide",
