@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture Description (AD)"
-version: "3.0.0"
+version: "3.0.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-15"
 artifact_id: "AD-0006"
 ---
 
@@ -506,3 +506,5 @@ The ADR-0013 to ADR-0025 and ADR-0035 rows were already deleted from `docs/98.ar
 | MIG-0021 | migration ledger | Applied ADR-0035 to the former Stage 00 authority sources and closed intermediate endpoints left by earlier transitions; deleted unused forms have no successor. Current owner is common governance under `.agents/governance/`. | `docs/98.archive/migrations/0021-common-agent-authority-routing.md` |
 | MIG-0022 | migration ledger | Retained the completed Spec 0052 package (Spec, Plan and seventeen Tasks) at mirrored `completed/` paths under ADR-0032. Superseded by ADR-0053. | `docs/98.archive/migrations/0022-document-taxonomy-package-retention.md` |
 | MIG-0023 | migration ledger | Absorbed seven responsibility documents under `.agents/roles/` into the responsibility router, each reduced to a boundary statement and a few contract bullets. Current owner is `.agents/roles/README.md`. | `docs/98.archive/migrations/0023-responsibility-document-router-absorption.md` |
+| ADR-0034 | deleted decision | Stage 00 Governance and Unified Quality Gates. Deleted from the tree on 2026-09-15 at commit `8a76bd3b`; recover it with `git show 8a76bd3b^:docs/02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md`. Its row was added under SPEC-0212 after the survey found its identity reserved by no lineage row. | `docs/02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md` |
+| ADR-0038 | deleted decision | Six-Disposition Archive Stage. Deleted from the tree on 2026-09-16 at commit `3473cc85`; recover it with `git show 3473cc85^:docs/02.architecture/decisions/0038-six-disposition-archive-stage.md`. Its row was added under SPEC-0212 after the survey found its identity reserved by no lineage row. | `docs/02.architecture/decisions/0038-six-disposition-archive-stage.md` |
