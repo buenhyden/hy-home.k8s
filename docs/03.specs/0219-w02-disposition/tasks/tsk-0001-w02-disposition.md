@@ -1,6 +1,6 @@
 ---
 title: "W02 3.0.1 Disposition"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-15"
@@ -59,8 +59,8 @@ The user approved the Spec and Plan (EVD-003). No question is open.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-W02D-001](../spec.md#criteria) | Close the 18 approved or transferred entries. | platform | in-progress | PASS | EVD-004 |
-| WORK-002 | [VAL-W02D-002](../spec.md#criteria) | Seeds, disposition table and cutover targets. | platform | in-progress | PASS | EVD-005 |
+| WORK-001 | [VAL-W02D-001](../spec.md#criteria) | Close the 18 approved or transferred entries. | platform | completed | PASS | EVD-004 |
+| WORK-002 | [VAL-W02D-002](../spec.md#criteria) | Seeds, disposition table and cutover targets. | platform | completed | PASS | EVD-005 |
 
 ## Verification Evidence
 
@@ -73,6 +73,7 @@ The user approved the Spec and Plan (EVD-003). No question is open.
 | EVD-003 | [VAL-W02D-001](../spec.md#criteria) | WORK-001 | Spec/Plan approval | Direct current-session user answer "Approve these bytes (Recommended)" to the SPEC-0219 approval question naming spec.md `890fa960` and plan.md `bab60654` of draft commit `11957e4a`, 2026-11-15; risk class `low`, so no independent review (Q08) | PASS | Approves the reviewed Spec and Plan content of `11957e4a`; the approved files differ from it only in `status` and `version`. It accepts no criterion. | yes | none |
 | EVD-004 | [VAL-W02D-001](../spec.md#criteria) | WORK-001 | Ledger gate after each closure step | Commit `e89248af` after `7534d459` (two moved baseline lines); pinned `hyhome-validation` environment, 2026-11-15 | PASS | SPEC-0161 Task EVD-135 to EVD-139 appended. The 18 live rows OPEN-01, OPEN-02, OPEN-04, OPEN-06, W00-H01, OPEN-03, OPEN-07, W05-H02, W05-H03, W06-H01, W07-H01, R45-12, W03-H09, W03-H32, W01-H02, DOC-S00, OPEN-09 and PR-DURING were set terminal with their closure, and their entries were made terminal with a `closure` pointer: gate `PASS work residue ledger: 57 entries`. The entries were then deleted: gate `PASS work residue ledger: 39 entries`. No other entry changed. The first gate run without `closure` failed with `RESIDUE-SCHEMA` ('closure' is a required property) before the pointers were added. | yes | EVD-001 |
 | EVD-005 | [VAL-W02D-002](../spec.md#criteria) | WORK-002 | Ledger gate and strict document validators | Commit `e89248af`; pinned environment, 2026-11-15 | PASS | W05-H09 and Q07-H01 seeded as a live row and an entry each: gate `PASS work residue ledger: 41 entries`. The `W02 Disposition` table has 41 rows, one for each open entry, with function, owner and completion condition. The `Q07 Target Preparation` table lists nine target groups with counts observed at `c6513839` and deletes nothing. The four strict document validators PASS, and the commit hooks passed on the exact index. | yes | EVD-002 |
+| EVD-006 | [VAL-W02D-002](../spec.md#criteria) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-15 instruction to commit, push, open a PR and merge on completion; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Resolution Links
 
@@ -84,12 +85,19 @@ The Resolves column names the earlier row each PASS row closes: EVD-004 and EVD-
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-W02D-001](../spec.md#criteria) | pending | EVD-004 | PASS evidence recorded; awaiting the operator's acceptance | platform |
-| [VAL-W02D-002](../spec.md#criteria) | pending | EVD-005 | PASS evidence recorded; awaiting the operator's acceptance | platform |
+| [VAL-W02D-001](../spec.md#criteria) | accepted | EVD-004 | Accepted by the user on 2026-11-15 (direct answer "Accept both (Recommended)" to the SPEC-0219 acceptance question naming commits `7534d459` to `4155c0e4`) | platform |
+| [VAL-W02D-002](../spec.md#criteria) | accepted | EVD-005 | Accepted by the user on 2026-11-15 (direct answer "Accept both (Recommended)" to the SPEC-0219 acceptance question naming commits `7534d459` to `4155c0e4`) | platform |
 
 ### Remaining Conditions
 
-Criterion acceptance of VAL-W02D-001 and VAL-W02D-002 remains with the user.
+None remains for this package. The 41 open entries stay with their owners as the SPEC-0161 `W02 Disposition` table states.
+
+Frozen package disposition decision:
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The SPEC-0161 Task and the work residue ledger hold the lasting result and name SPEC-0219 by ID only. Current consumers: the Stage 03 README entry, which the closure change removes. This Task carries no `.secrets.baseline` entry.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The disposition authority is the user's 2026-11-15 instruction to commit, push, open a PR and merge on completion. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Handoff
 
@@ -99,4 +107,4 @@ The Plan promotes none.
 
 ### Next Owner
 
-The user, for Spec and Plan approval; then platform.
+WORK-001 and WORK-002 passed (EVD-004 and EVD-005); the risk class is `low` (focused checks and author self-check). The user accepted both criteria. Next: platform closes the package; each owner takes its entries of the `W02 Disposition` table at its intake.
