@@ -1,8 +1,8 @@
 ---
 title: "W03 Onboarding Policy Rule IDs"
-version: "0.2.0"
+version: "0.2.1"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-11-14"
 artifact_id: "SPEC-0204-TSK-0001"
@@ -69,10 +69,10 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-ONBRULE-001](../spec.md#criteria) | Tokens, the Rules table and the `adopted` state for the policy, as the binding table lists them. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-ONBRULE-002](../spec.md#criteria) | The map of each ID to its unit with its Level, Condition and Evidence, listed for review before the record flips with the opening paragraph as a no-ID reading; the stripped-body comparison; the anchor and slug checks; the lookup of every named artifact and check; the version step. | platform | ready | NOT_RUN | Pending |
-| WORK-003 | [VAL-ONBRULE-003](../spec.md#criteria) | The gate retirement in the final source commit: `state`, `POLICY-RULE-ADOPTION` and their tests removed, the sentences that name the gate, the three refusal tests and the acceptance of a policy without normative rules. | platform | ready | NOT_RUN | Pending |
-| WORK-004 | [VAL-ONBRULE-004](../spec.md#criteria) | The W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-ONBRULE-001](../spec.md#criteria) | Tokens, the Rules table and the `adopted` state for the policy, as the binding table lists them. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-ONBRULE-002](../spec.md#criteria) | The map of each ID to its unit with its Level, Condition and Evidence, listed for review before the record flips with the opening paragraph as a no-ID reading; the stripped-body comparison; the anchor and slug checks; the lookup of every named artifact and check; the version step. | platform | in-progress | NOT_RUN | Pending |
+| WORK-003 | [VAL-ONBRULE-003](../spec.md#criteria) | The gate retirement in the final source commit: `state`, `POLICY-RULE-ADOPTION` and their tests removed, the sentences that name the gate, the three refusal tests and the acceptance of a policy without normative rules. | platform | in-progress | NOT_RUN | Pending |
+| WORK-004 | [VAL-ONBRULE-004](../spec.md#criteria) | The W03-H29 state cell and the ledger entry; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
 
 ## Verification Evidence
 
