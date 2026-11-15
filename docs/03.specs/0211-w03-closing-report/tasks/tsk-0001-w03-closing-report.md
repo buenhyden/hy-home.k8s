@@ -1,8 +1,8 @@
 ---
 title: "W03 Closing Report"
-version: "0.1.9"
+version: "0.1.10"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0211-TSK-0001"
@@ -49,9 +49,9 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-W03REPORT-001](../spec.md#criteria) | The report tables, the dispositions of OPEN-Q03 and the eight WP rows, the old-obligation classification and the exit exceptions. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-W03REPORT-002](../spec.md#criteria) | The D72 duties: W03-H10 (README and Policy), W03-H34, W03-H35, R45-10, DOC-11, the DOC-12 and DOC-S99 reassignments, the multi-stage owner edits (OPEN-07, OPEN-06, GOV-04, W03-H15, W03-H29), the ledger edits. | platform | ready | NOT_RUN | Pending |
-| WORK-003 | [VAL-W03REPORT-003](../spec.md#criteria) | The W04 entry statement, the Final check and the closure of W03-H10, W03-H34, W03-H35, R45-10, DOC-11 and W03-H20. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-W03REPORT-001](../spec.md#criteria) | The report tables, the dispositions of OPEN-Q03 and the eight WP rows, the old-obligation classification and the exit exceptions. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-W03REPORT-002](../spec.md#criteria) | The D72 duties: W03-H10 (README and Policy), W03-H34, W03-H35, R45-10, DOC-11, the DOC-12 and DOC-S99 reassignments, the multi-stage owner edits (OPEN-07, OPEN-06, GOV-04, W03-H15, W03-H29), the ledger edits. | platform | in-progress | NOT_RUN | Pending |
+| WORK-003 | [VAL-W03REPORT-003](../spec.md#criteria) | The W04 entry statement, the Final check and the closure of W03-H10, W03-H34, W03-H35, R45-10, DOC-11 and W03-H20. | platform | in-progress | NOT_RUN | Pending |
 
 ## Verification Evidence
 
