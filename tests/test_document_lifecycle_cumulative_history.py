@@ -1397,6 +1397,30 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
         self.assertEqual(actual, (duplicate, other))
 
+    def test_new_requirement_is_created_in_draft_only(self) -> None:
+        path = "docs/01.requirements/0999-sample.md"
+
+        def requirement(status: str) -> bytes:
+            return (
+                "---\n"
+                'title: "Sample"\nversion: "0.1.0"\ntype: "sdlc/requirement"\n'
+                f'status: "{status}"\nowner: "platform"\nupdated: "2026-11-14"\n'
+                'artifact_id: "REQ-0999"\n---\n\n# Sample\n'
+            ).encode()
+
+        for status, refused in (
+            ("draft", False),
+            ("in-review", True),
+            ("approved", True),
+        ):
+            with self.subTest(status=status):
+                self.git.run("reset", "--hard", self.base)
+                self.git.commit(path, requirement(status))
+                _, output = self.explicit(self.base, self.oid("HEAD"))
+                self.assertEqual("LIFECYCLE-CREATE" in output, refused, output)
+                if refused:
+                    self.assertIn("('draft',)", output)
+
     def test_direct_active_creation_remains_rejected(self) -> None:
         active = self.commit("active")
 

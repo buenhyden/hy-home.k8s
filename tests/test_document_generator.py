@@ -63,6 +63,7 @@ SAMPLES: dict[str, tuple[str, str | None, str | None]] = {
         "ADR-9001",
         None,
     ),
+    "sdlc/requirement": ("docs/01.requirements/9001-sample.md", "REQ-9001", None),
     "sdlc/spec": (f"{SPEC}/spec.md", "SPEC-9001", None),
     "sdlc/plan": (f"{SPEC}/plan.md", "SPEC-9001-PLAN-0001", "SPEC-9001"),
     "sdlc/task": (
@@ -142,7 +143,9 @@ SAMPLES: dict[str, tuple[str, str | None, str | None]] = {
 # A fresh document keeps these authoring findings until the author replaces
 # the prompts, the starter H1, the empty sections and the sample rows. A fresh
 # policy carries the sample Rules table, which draws POLICY-RULE-CODE until its
-# code is registered (SPEC-0194).
+# code is registered (SPEC-0194). A fresh Requirement carries sample member IDs
+# that the author replaces, so it draws REQUIREMENT-PACKAGE-MEMBER-ID
+# (SPEC-0210).
 AUTHORING_RULES = frozenset(
     {
         "BODY-AUTHOR-PROMPT",
@@ -152,6 +155,7 @@ AUTHORING_RULES = frozenset(
         "POLICY-RULE-CODE",
         "POLICY-RULE-ID",
         "POLICY-RULE-INLINE",
+        "REQUIREMENT-PACKAGE-MEMBER-ID",
     }
 )
 IDENTITY_RULES = frozenset(
@@ -305,10 +309,7 @@ class RoundTripTests(TreeCase):
     def test_sample_set_equals_the_generable_set_computed_from_the_registry(
         self,
     ) -> None:
-        # The Requirement profile is generable by form but refused by its status rule.
-        self.assertEqual(
-            set(SAMPLES) | {"sdlc/requirement"}, set(expected_generable_ids())
-        )
+        self.assertEqual(set(SAMPLES), set(expected_generable_ids()))
         for profile_id in SAMPLES:
             self.assertIn(profile_id, self.profiles)
 
@@ -529,13 +530,6 @@ class IdentityParentAndStatusRefusalTests(TreeCase):
         (self.root / SPEC / "plan.md").mkdir()
         self.refuse("GENERATOR-PARENT", "sdlc/task", SAMPLES["sdlc/task"][0])
 
-    def test_requirement_has_no_creation_state_and_is_refused(self) -> None:
-        self.refuse(
-            "GENERATOR-STATUS",
-            "sdlc/requirement",
-            "docs/01.requirements/9001-sample.md",
-        )
-
     def test_template_status_outside_the_creation_states_is_refused(self) -> None:
         self.edit(
             "docs/99.templates/templates/specs/spec.template.md",
@@ -543,6 +537,18 @@ class IdentityParentAndStatusRefusalTests(TreeCase):
             'status: "approved"',
         )
         self.refuse("GENERATOR-STATUS", "sdlc/spec", SAMPLES["sdlc/spec"][0])
+
+    def test_requirement_template_status_outside_the_creation_states_is_refused(
+        self,
+    ) -> None:
+        self.edit(
+            "docs/99.templates/templates/requirements/requirement-package.template.md",
+            'status: "draft"',
+            'status: "approved"',
+        )
+        self.refuse(
+            "GENERATOR-STATUS", "sdlc/requirement", SAMPLES["sdlc/requirement"][0]
+        )
 
     def test_template_without_status_in_a_stateful_domain_is_refused(self) -> None:
         self.edit(
