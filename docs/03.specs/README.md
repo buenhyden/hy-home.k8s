@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.23.89"
+version: "0.23.90"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -67,13 +67,14 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ```text
 03.specs/
 ├── 0161-w00-v14-7-delta-intake/
+├── 0203-w03-task-form/
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
 └── work-residue-ledger.json
 ```
 
-현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, W11까지 잔여 소유자로 남고 work residue ledger가 비면 W11에서 종료한다.
+현재 열린 package는 [SPEC-0161 W00 v14.7 Delta Intake](./0161-w00-v14-7-delta-intake/)와 [SPEC-0203 W03 Task Form](./0203-w03-task-form/)다. SPEC-0161은 외부 v14.7 실행 패키지의 W00 변경분과 W01~W10이 읽는 담당·인계 표를 기록하며, W11까지 잔여 소유자로 남고 work residue ledger가 비면 W11에서 종료한다. SPEC-0203은 Task의 공통 form(COMMON-DOC-FORM-1)을 Stage 99 registry에 등록하고, Task 템플릿과 현행 모든 Task를 그 form으로 옮기며, 기록된 행은 한 글자도 바꾸지 않는다.
 
 [work-residue-ledger.json](./work-residue-ledger.json)은 열린 인계·충돌·채택·조사 잔여 항목을 포인터로만 담는 work residue ledger다. 실행 상태, 증거, 수용은 담지 않고 Task가 소유한다. 종결된 항목은 그 Task가 속한 package의 종료 commit까지 삭제한다.
 
