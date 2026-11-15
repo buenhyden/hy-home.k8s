@@ -3,16 +3,17 @@ name: "task-breakdown"
 description: "Use when decomposing an approved implementation Plan into bounded executable Task records."
 metadata:
   title: "Task Breakdown"
-  version: "1.0.3"
+  version: "1.0.4"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation does not authorize additional actions.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # task-breakdown
 
@@ -47,7 +48,7 @@ reviewability determine the unit. Delegation still requires authorization.
    than a generic draft/completed convention. A role without write permission returns the draft and routes the write to `doc-writer`.
 5. Link the Task, Plan, and Spec as required by their profiles.
 6. Keep status, validation evidence, review, rollback, residual risk, and next
-   owner in that Task. Do not create a parallel monolithic task/progress record.
+   owner in that Task. Progress follows [context and memory](../../governance/context-and-memory.md#objective).
 
 ### Failure Handling
 

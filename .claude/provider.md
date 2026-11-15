@@ -1,6 +1,6 @@
 ---
 title: "Claude Provider Notes"
-version: "1.9.2"
+version: "1.9.3"
 type: "governance/provider"
 status: "active"
 owner: "platform"
@@ -19,7 +19,8 @@ shared execution policy or the agent roster.
 Root `CLAUDE.md` is the thin Claude gateway and must not import the Codex
 gateway. `.claude/CLAUDE.md` is the local baseline;
 `.claude/settings.json` carries native permission and hook declarations.
-These may restrict but never expand common approval boundaries.
+Their limit is set in
+[agent execution](../.agents/governance/agent-execution.md#authority).
 
 ## Governance Context
 
@@ -27,8 +28,8 @@ Load the gateway, [work lifecycle](../.agents/workflows/work-lifecycle.md), rele
 responsibility, and current Task. [Claude bindings](bindings.json) own native
 model, effort, skill and tool values; Markdown role projections consume those
 values. The neutral registry owns responsibility and permission-class meaning.
-The `tools` allowlist is checked against its neutral class ceiling; a role's
-native departure is declared in the binding table and cannot widen the class.
+A role's native departure is declared in the binding table; its ceiling is
+[SAFE-R019](../.agents/governance/approval-and-safety.md#execution-controls).
 
 ## Current Contract
 
@@ -146,9 +147,9 @@ the newest generation of its family. Only supervisor and architect bind
 a changed projection from a new session. Native macOS and Linux builds from
 2.1.117 removed `Grep` and `Glob`, moved search into Bash, and drop the unknown
 names silently. SPEC-0098 therefore gives every role's Claude scope `Bash`, and
-`Grep` and `Glob` stay for the builds that still ship them. The two read-only
-roles that held no shell now confine it to read-only repository search by
-policy. The SPEC-0097 and SPEC-0098 Tasks recorded that evidence; recover
+`Grep` and `Glob` stay for the builds that still ship them. How the two read-only
+roles that held no shell confine it is owned by
+[SAFE-R018](../.agents/governance/approval-and-safety.md#execution-controls). The SPEC-0097 and SPEC-0098 Tasks recorded that evidence; recover
 them with
 `git show bc8e8125:docs/98.archive/completed/03.specs/0097-claude-model-and-effort-binding/tasks/tsk-0001-bind-claude-model-and-effort.md`
 and

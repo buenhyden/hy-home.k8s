@@ -3,16 +3,17 @@ name: "ops-runbook"
 description: "Use when authoring or reviewing operations runbooks for bootstrap, recovery, deployment, backup, and incident procedures in hy-home.k8s."
 metadata:
   title: "Ops Runbook"
-  version: "1.1.2"
+  version: "1.1.3"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation does not authorize additional actions.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # ops-runbook
 

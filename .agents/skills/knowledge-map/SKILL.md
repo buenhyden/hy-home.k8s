@@ -3,16 +3,17 @@ name: "knowledge-map"
 description: "Use when auditing governance navigation, role/skill references, stage indexes, or current cross-links."
 metadata:
   title: "Knowledge Map"
-  version: "1.1.3"
+  version: "1.1.4"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation does not authorize additional actions.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # knowledge-map
 
@@ -72,8 +73,8 @@ This skill takes no input beyond the user's request and the files its Steps name
 ### Outputs
 
 A bounded gap list with current owners, verification results, limitations, and
-next owner in the active Task. Do not append a separate progress ledger or
-recreate machine roster tables. Once the work residue ledger exists, the supervisor records an open gap with no Task owner as a work residue ledger entry.
+next owner in the active Task. Do not recreate machine roster tables; progress
+follows [context and memory](../../governance/context-and-memory.md#objective). Once the work residue ledger exists, the supervisor records an open gap with no Task owner as a work residue ledger entry.
 
 ## Verification
 

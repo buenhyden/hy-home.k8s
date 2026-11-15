@@ -1,6 +1,6 @@
 ---
 title: "Agent Execution Policy"
-version: "1.10.0"
+version: "1.11.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -63,8 +63,8 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | EXEC-R011 | On unresolved conflicting or ambiguous protected authority, unmet approval, unsafe input or unexplained changes | required | Semantic review | active |
 | EXEC-R012 | When adopting a shared edition | required | Semantic review | retired; none |
 
-- `EXEC-R001` State the requested outcome, acceptance criteria, affected paths, assumptions,
-  validation, and exclusions before substantial work.
+- `EXEC-R001` Before substantial work, follow
+  [work lifecycle Intake](../workflows/work-lifecycle.md#intake).
 - `EXEC-R002` Preserve unrelated staged and unstaged work. Make the smallest change that
   closes the approved requirement; do not add speculative runtime surfaces.
 - `EXEC-R003` Keep root `AGENTS.md` and `CLAUDE.md` as thin gateways. Shared norms belong
@@ -77,8 +77,8 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   [Claude](../../.claude/provider.md) and [Codex](../../.codex/provider.md).
 - `EXEC-R005` Use [work lifecycle](../workflows/work-lifecycle.md) for intake and completion,
   and [delegated development](../workflows/delegated-development.md) when
-  delegation is authorized. A role name alone grants neither writes nor
-  delegation.
+  delegation is authorized. A role name or a skill invocation alone grants no
+  write, delegation or approval.
 - `EXEC-R006` Each document's language follows the
   [document-authoring policy](document-authoring.md#template-markers-and-language).
   Preserve commands, quotations and raw evidence in their original form, and

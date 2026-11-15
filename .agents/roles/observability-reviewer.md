@@ -1,10 +1,10 @@
 ---
 title: "Observability Reviewer Responsibility"
-version: "1.3.2"
+version: "1.3.3"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-15"
 ---
 
 # observability-reviewer Responsibility
@@ -55,7 +55,7 @@ coverage and wiring. Reading live telemetry is not this role.
 - No live cluster scraping, querying, or dashboard probing; manifest-static
   review only.
 - The shell is for read-only repository search only (rationale in
-  [Claude provider notes](../../.claude/provider.md)). Its subject puts live
+  [SAFE-R018](../governance/approval-and-safety.md#execution-controls)). Its subject puts live
   telemetry closer to hand than any other review, and a live reading answers a
   different question from the desired state under review, so never use the
   shell to query a cluster, scrape an endpoint, or probe a dashboard. This

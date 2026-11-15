@@ -3,16 +3,17 @@ name: "execution-plan"
 description: "Use when turning an approved Spec and architecture constraints into ordered, testable implementation work."
 metadata:
   title: "Execution Plan"
-  version: "1.0.3"
+  version: "1.0.4"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation does not authorize additional actions.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # execution-plan
 
@@ -47,7 +48,7 @@ order, verification, risk, and rollback. Use `task-breakdown` for executable uni
 4. Resolve profile `sdlc/plan` and its current template through the Stage 99
    registry, then author the package's plan.md beside its Spec. A role without write permission returns the draft and routes the write to `doc-writer`.
 5. Link the ordered work to Task records and the package Spec/Plan. Execution
-   state and evidence belong to those Tasks, not a separate progress ledger.
+   state and evidence belong to those Tasks ([context and memory](../../governance/context-and-memory.md#objective)).
 6. Review the direction and ownership boundary with the user when the request
    requires design approval; then follow the authorized execution workflow.
 

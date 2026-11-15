@@ -3,16 +3,17 @@ name: "external-service-contract-audit"
 description: "Use when auditing selectorless external Service/EndpointSlice mappings or repository consumers of external HTTP, database and OTLP endpoints."
 metadata:
   title: "External Service Contract Audit"
-  version: "1.0.3"
+  version: "1.0.4"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation grants no additional authority.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # external-service-contract-audit
 

@@ -3,16 +3,17 @@ name: "docs-stage-routing"
 description: "Use when selecting the canonical owner and template for an authored document or rejecting parallel document trees."
 metadata:
   title: "Docs Stage Routing"
-  version: "1.1.3"
+  version: "1.1.4"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation does not authorize additional actions.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # docs-stage-routing
 

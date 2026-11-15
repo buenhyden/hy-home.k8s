@@ -23,11 +23,11 @@ updated: "{{UPDATED}}"
 
 ## Repository Vocabulary
 
-<!-- Author prompt: one row per common term with the contract's Term ID, term, Korean name, definition, confusion, owner role with a backticked existing path, and contract version; restate no rule. -->
+<!-- Author prompt: one row per common term with the contract's Term ID, term, Korean name, definition, confusion, owner role linked to its existing owner file, and contract version; restate no rule. -->
 
 | Term ID | Term | Korean | Definition | Not to Confuse | Policy Owner | Contract Version |
 | --- | --- | --- | --- | --- | --- | --- |
-| {{TERM_ID}} | {{TERM}} | {{KOREAN}} | {{DEFINITION}} | {{NOT_TO_CONFUSE}} | {{OWNER_ROLE}} (`{{OWNER_PATH}}`) | {{CONTRACT_VERSION}} |
+| {{TERM_ID}} | {{TERM}} | {{KOREAN}} | {{DEFINITION}} | {{NOT_TO_CONFUSE}} | [{{OWNER_ROLE}}]({{OWNER_PATH}}) | {{CONTRACT_VERSION}} |
 
 ## Local Extensions
 

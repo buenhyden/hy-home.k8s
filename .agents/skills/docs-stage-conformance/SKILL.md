@@ -3,16 +3,17 @@ name: "docs-stage-conformance"
 description: "Use when repairing scoped document-profile, README, heading, or cross-link drift without changing historical meaning."
 metadata:
   title: "Docs Stage Conformance"
-  version: "1.0.3"
+  version: "1.0.4"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-13"
+  updated: "2026-11-15"
 disable-model-invocation: true
 ---
 
 Read `.agents/governance/approval-and-safety.md` and the selected role before
-using this procedure. Skill invocation does not authorize additional actions.
+using this procedure. Skill invocation grants no authority
+([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
 # docs-stage-conformance
 
@@ -48,8 +49,8 @@ unclear ownership or required semantic change before expanding the task.
 5. Run the applicable strict document validators, link/owner and knowledge-surface checks,
    then the quality-policy completion sequence.
 6. Record scope, commands, results, limitations, and next owner in the active
-   Task. Do not create a new package or parallel progress ledger merely for a
-   narrow cleanup.
+   Task. Do not create a new package merely for a narrow cleanup;
+   progress follows [context and memory](../../governance/context-and-memory.md#objective).
 
 ### Failure Handling
 

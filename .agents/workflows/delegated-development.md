@@ -1,10 +1,10 @@
 ---
 title: "Delegated Development"
-version: "1.1.2"
+version: "1.1.3"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-15"
 ---
 
 # Delegated Development
@@ -57,7 +57,7 @@ roster or tool inventory.
    A partial result or conflicting writer stops dependent work; preserve its
    verified subset, command limits, approval state and next owner in the Task.
 7. Keep durable results in the owning Task and bounded temporary coordination
-   in approved ignored scratch. Do not create another progress authority.
+   in approved ignored scratch. Progress authority follows [context and memory](../governance/context-and-memory.md#objective).
 
 Subagents never perform live mutation or secret-value operations. A higher
 capability tier does not grant broader permission. Provider-native runtime
