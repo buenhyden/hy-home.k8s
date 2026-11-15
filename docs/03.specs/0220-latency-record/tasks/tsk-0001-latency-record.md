@@ -1,8 +1,8 @@
 ---
 title: "QA Latency Record"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0220-TSK-0001"
@@ -41,7 +41,7 @@ This Task executes WORK-001 of the [Plan](../plan.md) for [SPEC-0220](../spec.md
 
 ### Work Performed
 
-The measurement ran on 2026-11-15. No file outside this package is edited yet.
+The measurement ran on 2026-11-15; the record is in commits `9c59ab70` and `bd204a74`.
 
 ### Blockers and Decisions
 
@@ -51,7 +51,7 @@ The user approved the Spec and Plan (EVD-002), with acceptance on green checks. 
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-LAT-001](../spec.md#criteria) | Record the latency comparison and the target 6 correction. | platform | frontmatter | NOT_RUN | EVD-001 |
+| WORK-001 | [VAL-LAT-001](../spec.md#criteria) | Record the latency comparison and the target 6 correction. | platform | frontmatter | PASS | EVD-003 |
 
 ## Verification Evidence
 
@@ -61,10 +61,11 @@ The user approved the Spec and Plan (EVD-002), with acceptance on green checks. 
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-LAT-001](../spec.md#criteria) | WORK-001 | Strict document validators and ledger gate | Implementation snapshot | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-LAT-001](../spec.md#criteria) | WORK-001 | Spec/Plan approval | Direct current-session user answer "Approve bytes, accept when green (Recommended)" to the SPEC-0220 approval question naming spec.md `00a21a36` and plan.md `2302db8d` of draft commit `e1bed33b`, 2026-11-15; risk class `low`, no independent review (Q08) | PASS | Approves the reviewed Spec and Plan content of `e1bed33b`; the approved files differ from it only in `status` and `version`. The same answer accepts VAL-LAT-001 on the condition that the strict validators, the ledger gate and the commit hooks pass; that condition is checked in a later row. | yes | none |
+| EVD-003 | [VAL-LAT-001](../spec.md#criteria) | WORK-001 | Strict document validators and ledger gate | Commit `bd204a74` after `9c59ab70` (two moved baseline lines); pinned `hyhome-validation` environment, 2026-11-15 | PASS | The SPEC-0161 Task holds the `QA Latency Record` (rows 1 to 4 commit QA, rows 5 and 6 full run, rows 7 to 10 limits), the target 6 correction and EVD-141. Contract registry, markdown profiles, links and owners and lifecycle strict PASS; ledger gate `PASS work residue ledger: 41 entries`; the commit hooks passed on the exact index. | yes | EVD-001 |
 
 ### Resolution Links
 
-No earlier failure is open.
+The Resolves column names the earlier row each PASS row closes: EVD-003 closes EVD-001.
 
 ## Acceptance Decision
 
@@ -72,7 +73,7 @@ No earlier failure is open.
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-LAT-001](../spec.md#criteria) | pending | none | Run WORK-001 after approval | platform |
+| [VAL-LAT-001](../spec.md#criteria) | pending | EVD-003 | PASS evidence recorded; acceptance condition of EVD-002 is checked next | platform |
 
 ### Remaining Conditions
 
