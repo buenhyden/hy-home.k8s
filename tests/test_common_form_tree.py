@@ -34,6 +34,7 @@ REGISTRY_CHECK = _load_script(
     "common_form_registry_check", "validate-document-contract-registry.py"
 )
 MARKDOWN = _load_script("common_form_markdown", "validate-markdown-profiles.py")
+LINKS = _load_script("common_form_links", "validate-links-and-owners.py")
 
 FORM_IDS = (
     "requirement",
@@ -1577,7 +1578,6 @@ def with_form(
     for profile in candidate["profiles"]:
         if profile["id"] in profile_ids:
             profile["document_role"] = role
-            profile["sections"].update(required=[], optional=[], forbidden=[])
             profile["relationships"]["body_contract"] = None
             if profile["mode"] == "template":
                 profile.pop("template_definition", None)
@@ -1601,6 +1601,21 @@ def rules_of(raw: dict) -> set[str]:
     except CONTRACTS.DocumentContractError as error:
         return {item.rule_id for item in error.diagnostics}
     return set()
+
+
+def lists_of(**lists: list[str]) -> dict:
+    """A `sections` value as a registry of an earlier MAJOR carried it."""
+
+    return {"required": [], "optional": [], "forbidden": [], **lists}
+
+
+def semantic_rules_of(raw: dict) -> set[str]:
+    """The rules of the semantic registry check, which runs past the schema: the
+    schema refuses a `sections` key first, so its own rule is read directly."""
+
+    return {
+        item.rule_id for item in CONTRACTS._terminal_semantic_diagnostics(ROOT, raw)
+    }
 
 
 class RepositoryRegistryTests(unittest.TestCase):
@@ -1867,16 +1882,10 @@ class RepositoryRegistryTests(unittest.TestCase):
                 self.assertEqual(loaded["extensions"], extensions)
             for profile_id in profiles:
                 profile = by_id[profile_id]
-                self.assertEqual(
-                    profile["sections"]["required"]
-                    + profile["sections"]["optional"]
-                    + profile["sections"]["forbidden"],
-                    [],
-                )
+                # SPEC-0205: no profile carries an H2 list.
+                self.assertNotIn("sections", profile)
                 contract = profile["relationships"]["body_contract"]
                 self.assertEqual(contract and contract["section"], body_section)
-                self.assertNotIn("substantive_body", profile["sections"])
-                self.assertNotIn("ordered", profile["sections"])
             for twin in (p for p in profiles if by_id[p]["mode"] == "template"):
                 self.assertEqual(
                     sorted(
@@ -2170,12 +2179,13 @@ class FormRegistryTests(unittest.TestCase):
     def test_legacy_h2_lists_beside_a_form_are_refused(self) -> None:
         raw = self.candidate()
         profile = next(item for item in raw["profiles"] if item["id"] == GUIDE[0])
-        profile["sections"]["required"] = ["Overview"]
-        self.assertIn("REGISTRY_FORM_LEGACY_LISTS", rules_of(raw))
+        profile["sections"] = lists_of(required=["Overview"])
+        self.assertIn("REGISTRY_FORM_LEGACY_LISTS", semantic_rules_of(raw))
+        self.assertEqual(rules_of(raw), {"REGISTRY_SCHEMA"})
         raw = self.candidate()
         profile = next(item for item in raw["profiles"] if item["id"] == GUIDE[1])
-        profile["sections"]["forbidden"] = ["Scratch"]
-        self.assertIn("REGISTRY_FORM_LEGACY_LISTS", rules_of(raw))
+        profile["sections"] = lists_of(forbidden=["Scratch"])
+        self.assertIn("REGISTRY_FORM_LEGACY_LISTS", semantic_rules_of(raw))
 
     def test_duplicate_form_ids_are_refused(self) -> None:
         raw = self.candidate()
@@ -2289,7 +2299,9 @@ class FormRegistryTests(unittest.TestCase):
                 # A local role's template holds a definition, which needs a role.
                 profile.pop("document_role", None)
                 profile.pop("template_definition", None)
-        self.assertEqual(rules_of(raw), set())
+        # SPEC-0205: only the new rule fires; an authored, router or template profile
+        # without a role has no form.
+        self.assertEqual(rules_of(raw), {"REGISTRY_FORM_REQUIRED"})
 
     def test_template_twin_must_share_its_sources_role(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
@@ -2303,7 +2315,8 @@ class FormRegistryTests(unittest.TestCase):
         twin = profile_of(raw, GUIDE[1])
         twin.pop("document_role")
         twin.pop("template_definition")
-        loaded = CONTRACTS.validate_registry(ROOT, raw)
+        self.assertEqual(rules_of(raw), {"REGISTRY_FORM_REQUIRED"})
+        loaded = CONTRACTS._typed_registry_from_mapping(raw)
         with self.assertRaisesRegex(AssertionError, "template/source contract differs"):
             REGISTRY_CHECK._assert_template_source_parity(loaded)
 
@@ -2400,7 +2413,7 @@ class GuideFormRegistryTests(unittest.TestCase):
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         for profile_id in GUIDE:
             with self.subTest(profile=profile_id):
-                headings = by_id[profile_id].headings
+                headings = CONTRACTS.heading_contract(by_id[profile_id])
                 self.assertEqual(headings.required, titles)
                 self.assertEqual(headings.allowed, titles)
                 self.assertFalse(headings.substantive_body)
@@ -2413,9 +2426,13 @@ class GuideFormRegistryTests(unittest.TestCase):
         profile = typed_profiles(with_form(load_raw(), "guide", GUIDE, sections))[
             GUIDE[0]
         ]
-        self.assertEqual(profile.headings.required, ("Overview", "Related Documents"))
         self.assertEqual(
-            profile.headings.allowed, ("Overview", "Procedure", "Related Documents")
+            CONTRACTS.heading_contract(profile).required,
+            ("Overview", "Related Documents"),
+        )
+        self.assertEqual(
+            CONTRACTS.heading_contract(profile).allowed,
+            ("Overview", "Procedure", "Related Documents"),
         )
 
     def test_the_loader_types_the_tables_and_copies_them_to_the_source(self) -> None:
@@ -2450,9 +2467,11 @@ class GuideFormRegistryTests(unittest.TestCase):
         for key in ("required", "optional", "forbidden"):
             for profile_id in GUIDE:
                 raw = load_raw()
-                profile_of(raw, profile_id)["sections"][key] = ["Verification"]
+                profile_of(raw, profile_id)["sections"] = lists_of(
+                    **{key: ["Verification"]}
+                )
                 with self.subTest(list=key, profile=profile_id):
-                    self.assertIn("REGISTRY_FORM_LEGACY_LISTS", rules_of(raw))
+                    self.assertIn("REGISTRY_FORM_LEGACY_LISTS", semantic_rules_of(raw))
 
     def test_a_table_section_must_be_a_form_section_or_extension(self) -> None:
         raw = load_raw()
@@ -2470,8 +2489,6 @@ class GuideFormRegistryTests(unittest.TestCase):
     def test_a_table_needs_a_form_to_name_a_section(self) -> None:
         raw = load_raw()
         raw["common_forms"]["forms"] = []
-        for profile_id in GUIDE:
-            profile_of(raw, profile_id)["sections"]["required"] = ["Verification"]
         self.assertIn("REGISTRY_TABLE_SECTION", rules_of(raw))
 
     def test_column_keys_must_be_unique_and_name_the_row_identity(self) -> None:
@@ -3041,8 +3058,9 @@ class RootReadmeFormTests(unittest.TestCase):
 
     def test_the_heading_lists_equal_the_form_h2_titles(self) -> None:
         titles = tuple(title for title, _ in ROOT_FORM_TREE)
-        self.assertEqual(self.profile.headings.required, titles)
-        self.assertEqual(self.profile.headings.allowed, titles)
+        headings = CONTRACTS.heading_contract(self.profile)
+        self.assertEqual(headings.required, titles)
+        self.assertEqual(headings.allowed, titles)
 
     def test_a_complete_body_passes_the_tree_and_an_h4_is_allowed(self) -> None:
         self.assertEqual(self.tree(self.BODY), [])
@@ -3108,7 +3126,7 @@ class StageReadmeFormTests(unittest.TestCase):
         titles = tuple(title for title, _ in STAGE_FORM_TREE)
         for profile_id in STAGE_FORM:
             with self.subTest(profile=profile_id):
-                headings = self.by_id[profile_id].headings
+                headings = CONTRACTS.heading_contract(self.by_id[profile_id])
                 self.assertEqual(headings.required, titles)
                 self.assertEqual(headings.allowed, titles)
 
@@ -3223,7 +3241,7 @@ class ServiceReadmeFormTests(unittest.TestCase):
         titles = tuple(title for title, _ in SERVICE_FORM_TREE)
         for profile_id in SERVICE_FORM:
             with self.subTest(profile=profile_id):
-                headings = self.by_id[profile_id].headings
+                headings = CONTRACTS.heading_contract(self.by_id[profile_id])
                 self.assertEqual(headings.required, titles)
                 self.assertEqual(headings.allowed, titles)
 
@@ -3369,7 +3387,7 @@ class RunbookFormTests(unittest.TestCase):
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         for profile_id in RUNBOOK:
             with self.subTest(profile=profile_id):
-                headings = by_id[profile_id].headings
+                headings = CONTRACTS.heading_contract(by_id[profile_id])
                 self.assertEqual(headings.required, titles)
                 self.assertEqual(headings.allowed, titles)
                 self.assertFalse(headings.substantive_body)
@@ -3581,7 +3599,7 @@ class RoleFormBody(unittest.TestCase):
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         for profile_id in self.PROFILES:
             with self.subTest(profile=profile_id):
-                headings = by_id[profile_id].headings
+                headings = CONTRACTS.heading_contract(by_id[profile_id])
                 self.assertEqual(headings.required, titles)
                 self.assertEqual(headings.allowed, titles)
                 self.assertFalse(headings.substantive_body)
@@ -3906,9 +3924,7 @@ class AgentsFormTests(RoleFormBody):
         for profile_id in self.PROFILES:
             with self.subTest(profile=profile_id):
                 raw = profile_of(load_raw(), profile_id)
-                self.assertEqual(
-                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
-                )
+                self.assertNotIn("sections", raw)
                 self.assertIs(by_id[profile_id].form, loaded)
 
     def test_the_profiles_are_native_and_the_template_is_exact(self) -> None:
@@ -4207,10 +4223,7 @@ class GovernanceSkillFormTests(SkillFormBody):
         registry = CONTRACTS.load_registry(ROOT)
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         self.assertEqual(by_id[self.PROFILES[0]].mode, "authored")
-        self.assertEqual(
-            profile_of(load_raw(), self.PROFILES[0])["sections"],
-            {"required": [], "optional": [], "forbidden": []},
-        )
+        self.assertNotIn("sections", profile_of(load_raw(), self.PROFILES[0]))
 
     def test_an_absent_authority_boundary_passes_and_an_empty_one_fails(self) -> None:
         self.assertNotIn("Authority Boundary", self.BODY)
@@ -4248,9 +4261,7 @@ class NativeSkillFormTests(SkillFormBody):
         for profile_id in self.PROFILES:
             with self.subTest(profile=profile_id):
                 raw = profile_of(load_raw(), profile_id)
-                self.assertEqual(
-                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
-                )
+                self.assertNotIn("sections", raw)
                 self.assertIs(by_id[profile_id].form, loaded)
 
     def test_the_package_is_native_and_its_template_is_the_exact_twin(self) -> None:
@@ -4411,10 +4422,7 @@ class LocalReadmeForm(unittest.TestCase):
             with self.subTest(profile=profile_id):
                 profile = profile_of(load_raw(), profile_id)
                 self.assertEqual(profile["document_role"], self.FORM_ID)
-                self.assertEqual(
-                    profile["sections"],
-                    {"required": [], "optional": [], "forbidden": []},
-                )
+                self.assertNotIn("sections", profile)
                 self.assertIsNone(profile["relationships"]["body_contract"])
 
     def test_the_repository_registry_is_valid_and_its_twins_match(self) -> None:
@@ -4547,7 +4555,7 @@ class ReferencePackFormTests(LocalReadmeForm):
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         for profile_id in PACK_FORM:
             with self.subTest(profile=profile_id):
-                headings = by_id[profile_id].headings
+                headings = CONTRACTS.heading_contract(by_id[profile_id])
                 self.assertEqual(headings.required, required)
                 self.assertEqual(headings.allowed, every)
 
@@ -4727,15 +4735,9 @@ class SmallLocalFormTests(unittest.TestCase):
                 with self.subTest(profile=profile_id):
                     raw = profile_of(self.raw, profile_id)
                     self.assertEqual(raw["document_role"], form_id)
-                    self.assertEqual(
-                        raw["sections"],
-                        {"required": [], "optional": [], "forbidden": []},
-                    )
+                    self.assertNotIn("sections", raw)
                     self.assertEqual(self.profiles[profile_id].form.form_id, form_id)
-        self.assertEqual(
-            profile_of(self.raw, "evaluation/raw-output")["sections"],
-            {"required": [], "optional": [], "forbidden": []},
-        )
+        self.assertNotIn("sections", profile_of(self.raw, "evaluation/raw-output"))
         self.assertIsNone(self.profiles["evaluation/raw-output"].form)
 
     def test_the_twin_definitions_name_the_form_and_record_section_id_tables(
@@ -4912,8 +4914,10 @@ class SmallLocalFormTests(unittest.TestCase):
             for profile_id in (source, twin):
                 with self.subTest(profile=profile_id):
                     raw = load_raw()
-                    profile_of(raw, profile_id)["sections"]["required"] = ["Overview"]
-                    self.assertIn("REGISTRY_FORM_LEGACY_LISTS", rules_of(raw))
+                    profile_of(raw, profile_id)["sections"] = lists_of(
+                        required=["Overview"]
+                    )
+                    self.assertIn("REGISTRY_FORM_LEGACY_LISTS", semantic_rules_of(raw))
 
 
 class GovernanceRoleFormTests(unittest.TestCase):
@@ -5010,10 +5014,7 @@ class GovernanceRoleFormTests(unittest.TestCase):
                 with self.subTest(profile=profile_id):
                     raw = profile_of(self.raw, profile_id)
                     self.assertEqual(raw["document_role"], form_id)
-                    self.assertEqual(
-                        raw["sections"],
-                        {"required": [], "optional": [], "forbidden": []},
-                    )
+                    self.assertNotIn("sections", raw)
                     self.assertEqual(self.profiles[profile_id].form.form_id, form_id)
         bound = sorted(
             p["id"]
@@ -5122,8 +5123,10 @@ class GovernanceRoleFormTests(unittest.TestCase):
             for profile_id in (source, twin):
                 with self.subTest(profile=profile_id):
                     raw = load_raw()
-                    profile_of(raw, profile_id)["sections"]["required"] = ["Overview"]
-                    self.assertIn("REGISTRY_FORM_LEGACY_LISTS", rules_of(raw))
+                    profile_of(raw, profile_id)["sections"] = lists_of(
+                        required=["Overview"]
+                    )
+                    self.assertIn("REGISTRY_FORM_LEGACY_LISTS", semantic_rules_of(raw))
 
     def test_the_role_template_holds_the_eight_h3_each_with_an_author_prompt(
         self,
@@ -5356,12 +5359,12 @@ class ReferenceReportFormTests(unittest.TestCase):
             with self.subTest(profile=profile_id):
                 raw = profile_of(self.raw, profile_id)
                 self.assertEqual(raw["document_role"], "reference-report")
-                self.assertEqual(
-                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
-                )
+                self.assertNotIn("sections", raw)
                 typed = self.profiles[profile_id]
                 self.assertEqual(typed.form.form_id, "reference-report")
-                self.assertEqual(typed.headings.required, REFERENCE_H2)
+                self.assertEqual(
+                    CONTRACTS.heading_contract(typed).required, REFERENCE_H2
+                )
         for profile_id in PACK_FORM:
             self.assertEqual(
                 profile_of(self.raw, profile_id)["document_role"],
@@ -5527,10 +5530,10 @@ class ReferenceReportFormTests(unittest.TestCase):
 
     def test_the_old_h2_lists_are_refused_on_a_profile_with_a_form(self) -> None:
         raw = load_raw()
-        profile_of(raw, "reference/research")["sections"]["required"] = list(
-            REFERENCE_H2
+        profile_of(raw, "reference/research")["sections"] = lists_of(
+            required=list(REFERENCE_H2)
         )
-        self.assertIn("REGISTRY_FORM_LEGACY_LISTS", rules_of(raw))
+        self.assertIn("REGISTRY_FORM_LEGACY_LISTS", semantic_rules_of(raw))
 
 
 REQUIREMENT_PATH = PurePosixPath(
@@ -5645,12 +5648,9 @@ class RequirementFormTests(unittest.TestCase):
         for profile_id in REQUIREMENT:
             with self.subTest(profile=profile_id):
                 raw = next(p for p in self.raw["profiles"] if p["id"] == profile_id)
-                self.assertEqual(
-                    raw["sections"],
-                    {"required": [], "optional": [], "forbidden": []},
-                )
+                self.assertNotIn("sections", raw)
                 self.assertEqual(raw["document_role"], "requirement")
-                headings = self.profiles[profile_id].headings
+                headings = CONTRACTS.heading_contract(self.profiles[profile_id])
                 self.assertEqual(headings.required, titles)
                 self.assertEqual(headings.allowed, titles)
                 contract = raw["relationships"]["body_contract"]
@@ -5960,11 +5960,9 @@ class ArchitectureFormTests(unittest.TestCase):
         for profile_id in ARCHITECTURE:
             with self.subTest(profile=profile_id):
                 raw = next(p for p in self.raw["profiles"] if p["id"] == profile_id)
-                self.assertEqual(
-                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
-                )
+                self.assertNotIn("sections", raw)
                 self.assertEqual(raw["document_role"], "architecture")
-                headings = self.profiles[profile_id].headings
+                headings = CONTRACTS.heading_contract(self.profiles[profile_id])
                 self.assertEqual(headings.required, titles)
                 self.assertEqual(headings.allowed, titles)
                 contract = raw["relationships"]["body_contract"]
@@ -6450,9 +6448,7 @@ class AdrFormTests(unittest.TestCase):
         for profile_id in ADR:
             with self.subTest(profile=profile_id):
                 raw = next(p for p in self.raw["profiles"] if p["id"] == profile_id)
-                self.assertEqual(
-                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
-                )
+                self.assertNotIn("sections", raw)
                 self.assertEqual(raw["document_role"], "adr")
                 contract = raw["relationships"]["body_contract"]
                 self.assertEqual(contract["section"], "Traceability")
@@ -7156,9 +7152,7 @@ class SpecPlanFormTests(unittest.TestCase):
         ):
             with self.subTest(profile=profile_id):
                 raw = next(p for p in self.raw["profiles"] if p["id"] == profile_id)
-                self.assertEqual(
-                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
-                )
+                self.assertNotIn("sections", raw)
                 contract = raw["relationships"]["body_contract"]
                 self.assertEqual(contract["section"], section)
                 self.assertEqual(contract["table_heading"], heading)
@@ -7406,9 +7400,7 @@ class TaskFormTests(unittest.TestCase):
         for profile_id in SDLC_TASK_FORM:
             with self.subTest(profile=profile_id):
                 raw = next(p for p in self.raw["profiles"] if p["id"] == profile_id)
-                self.assertEqual(
-                    raw["sections"], {"required": [], "optional": [], "forbidden": []}
-                )
+                self.assertNotIn("sections", raw)
                 contract = raw["relationships"]["body_contract"]
                 self.assertEqual(contract["section"], "Execution Log")
                 self.assertEqual(contract["table_heading"], "Lifecycle Traceability")
@@ -7493,6 +7485,246 @@ class TaskFormTests(unittest.TestCase):
         )
         kinds = schema["$defs"]["form_extension"]["properties"]["kind"]["enum"]
         self.assertEqual(kinds, ["local_h3", "retained_form", "local_columns"])
+
+
+class HeadingListRemovalTests(unittest.TestCase):
+    """SPEC-0205 (W03-D63): no profile carries an H2 list; every reader takes its H2
+    from the form of the profile's role through one accessor."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.raw = load_raw()
+        cls.registry = CONTRACTS.load_registry(ROOT)
+        cls.schema = json.loads(
+            (
+                ROOT / "docs/99.templates/contracts/document-profile.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+
+    def test_the_registry_schema_and_guard_carry_no_sections_key(self) -> None:
+        for profile in self.raw["profiles"]:
+            self.assertNotIn("sections", profile)
+        item = self.schema["properties"]["profiles"]["items"]
+        self.assertNotIn("sections", item["properties"])
+        self.assertNotIn("sections", item["required"])
+        self.assertNotIn("sections", AUTHORITY.PROFILE_KEYS)
+        # The list definition stays for the retained form of the accepted ADRs.
+        self.assertIn("heading_lists", self.schema["$defs"])
+
+    def test_a_sections_key_is_refused_by_the_schema_the_guard_and_the_check(
+        self,
+    ) -> None:
+        for profile_id in ("sdlc/spec", "common/provider-native-metadata"):
+            with self.subTest(profile=profile_id):
+                raw = load_raw()
+                profile_of(raw, profile_id)["sections"] = lists_of()
+                self.assertEqual(rules_of(raw), {"REGISTRY_SCHEMA"})
+                with self.assertRaises(AUTHORITY.AuthorityError):
+                    AUTHORITY.validate_registry_authority(raw)
+                self.assertIn("REGISTRY_FORM_LEGACY_LISTS", semantic_rules_of(raw))
+
+    def test_the_accessor_gives_each_form_profile_its_form_titles(self) -> None:
+        for profile in self.registry.profiles:
+            headings = CONTRACTS.heading_contract(profile)
+            with self.subTest(profile=profile.profile_id):
+                if profile.form is None:
+                    self.assertEqual((headings.required, headings.allowed), ((), ()))
+                    continue
+                self.assertEqual(
+                    headings.required,
+                    tuple(
+                        item.title
+                        for item in profile.form.sections
+                        if item.requiredness == "required"
+                    ),
+                )
+                self.assertEqual(
+                    headings.allowed,
+                    tuple(item.title for item in profile.form.sections),
+                )
+
+    def test_the_old_field_is_gone_so_a_reader_of_it_fails_loudly(self) -> None:
+        for profile in self.registry.profiles:
+            with self.subTest(profile=profile.profile_id):
+                with self.assertRaises(AttributeError):
+                    profile.headings
+                self.assertIsNone(profile.listed_headings)
+
+    def test_a_registry_of_an_earlier_major_is_read_with_its_lists(self) -> None:
+        raw = load_raw()
+        earlier = f"{AUTHORITY.REGISTRY_MAJOR - 1}.0.0"
+        raw["schema_version"] = earlier
+        for profile in raw["profiles"]:
+            profile["sections"] = lists_of()
+        bare = profile_of(raw, "governance/provider")
+        bare["document_role"] = None
+        bare.pop("document_role")
+        bare["sections"] = lists_of(
+            required=["Overview", "Scope"], optional=["Notes"], ordered=True
+        )
+        # A profile whose role has a form keeps the form's titles over any list.
+        profile_of(raw, "sdlc/spec")["sections"] = lists_of(required=["Stale"])
+        loaded = CONTRACTS._typed_registry_from_mapping(raw)
+        by_id = {profile.profile_id: profile for profile in loaded.profiles}
+        listed = CONTRACTS.heading_contract(by_id["governance/provider"])
+        self.assertEqual(listed.required, ("Overview", "Scope"))
+        self.assertEqual(listed.allowed, ("Overview", "Scope", "Notes"))
+        self.assertTrue(listed.ordered)
+        spec = CONTRACTS.heading_contract(by_id["sdlc/spec"])
+        self.assertNotIn("Stale", spec.required)
+        self.assertEqual(loaded.schema_version, earlier)
+
+    def test_a_registry_of_the_current_major_is_read_with_no_list(self) -> None:
+        raw = load_raw()
+        for profile in raw["profiles"]:
+            profile["sections"] = lists_of(required=["Stale"])
+            profile.pop("document_role", None)
+        loaded = CONTRACTS._typed_registry_from_mapping(raw)
+        for profile in loaded.profiles:
+            with self.subTest(profile=profile.profile_id):
+                self.assertIsNone(profile.listed_headings)
+                self.assertEqual(
+                    CONTRACTS.heading_contract(profile),
+                    CONTRACTS.HeadingContract(required=(), allowed=()),
+                )
+
+    def test_every_profile_meets_the_form_requirement(self) -> None:
+        by_id = {profile.profile_id: profile for profile in self.registry.profiles}
+        self.assertEqual(len(by_id), len(self.raw["profiles"]))
+        self.assertEqual(semantic_rules_of(self.raw), set())
+        for profile_id, profile in by_id.items():
+            with self.subTest(profile=profile_id):
+                if profile.form is not None:
+                    continue
+                self.assertTrue(
+                    profile.mode in {"native", "non-target"}
+                    or profile.document_role == "provider-native"
+                )
+
+    def test_the_form_requirement_refuses_an_authored_profile_without_a_form(
+        self,
+    ) -> None:
+        for profile_id in (
+            "sdlc/spec",
+            "common/template-sdlc-spec",
+            "common/readme-repository",
+        ):
+            with self.subTest(profile=profile_id):
+                raw = load_raw()
+                profile_of(raw, profile_id).pop("document_role")
+                self.assertIn("REGISTRY_FORM_REQUIRED", semantic_rules_of(raw))
+        raw = load_raw()
+        for profile in raw["profiles"]:
+            if profile.get("document_role") == "provider-native":
+                profile.pop("document_role")
+                profile["mode"] = "native"
+                profile.pop("template_definition", None)
+        self.assertNotIn("REGISTRY_FORM_REQUIRED", semantic_rules_of(raw))
+        raw = load_raw()
+        native = next(p for p in raw["profiles"] if p["mode"] == "native")
+        native.pop("document_role", None)
+        self.assertNotIn("REGISTRY_FORM_REQUIRED", semantic_rules_of(raw))
+
+    def test_the_provider_native_role_is_admitted_without_a_form(self) -> None:
+        roles = {
+            profile["id"]: (profile["mode"], profile.get("document_role"))
+            for profile in self.raw["profiles"]
+            if profile.get("document_role") == "provider-native"
+        }
+        self.assertEqual(len(roles), 6)
+        self.assertIn("template", {mode for mode, _ in roles.values()})
+        self.assertNotIn("REGISTRY_FORM_REQUIRED", semantic_rules_of(self.raw))
+
+    def test_a_body_section_must_be_a_required_h2_of_the_form(self) -> None:
+        raw = load_raw()
+        profile_of(raw, "sdlc/spec")["relationships"]["body_contract"]["section"] = (
+            "Nope"
+        )
+        self.assertIn("REGISTRY_BODY_SECTION", semantic_rules_of(raw))
+
+    def test_the_link_reader_refuses_a_document_without_a_required_h2(self) -> None:
+        policy = next(
+            p for p in self.registry.profiles if p.profile_id == "governance/rule"
+        )
+        path = PurePosixPath(".agents/governance/agent-execution.md")
+        text = (ROOT / path).read_text(encoding="utf-8")
+        mapping = {path: "governance/rule"}
+        self.assertTrue(
+            LINKS.lifecycle_markdown_evidence(
+                path, text, policy, mapping
+            ).relationship_section_valid
+        )
+        required = CONTRACTS.heading_contract(policy).required[0]
+        missing = re.sub(
+            rf"(?m)^## {re.escape(required)}\s*$", "## Elsewhere", text, count=1
+        )
+        self.assertNotEqual(missing, text)
+        for broken in (missing, text + "\n## Not In The Form\n"):
+            self.assertFalse(
+                LINKS.lifecycle_markdown_evidence(
+                    path, broken, policy, mapping
+                ).relationship_section_valid
+            )
+
+    def test_the_parity_check_reads_the_form_through_the_accessor(self) -> None:
+        by_id = {profile.profile_id: profile for profile in self.registry.profiles}
+        twin = by_id["common/template-sdlc-spec"]
+        shorter = dataclasses.replace(twin.form, sections=twin.form.sections[:-1])
+        profiles = tuple(
+            dataclasses.replace(profile, form=shorter) if profile is twin else profile
+            for profile in self.registry.profiles
+        )
+        with self.assertRaisesRegex(AssertionError, "template/source contract differs"):
+            REGISTRY_CHECK._assert_template_source_parity(
+                dataclasses.replace(self.registry, profiles=profiles)
+            )
+
+    def test_the_quality_gate_test_for_a_heading_contract_follows_the_form(
+        self,
+    ) -> None:
+        for profile in self.registry.profiles:
+            headings = CONTRACTS.heading_contract(profile)
+            with self.subTest(profile=profile.profile_id):
+                self.assertEqual(
+                    bool(headings.required or headings.allowed),
+                    profile.form is not None,
+                )
+
+    def test_a_profile_without_a_form_keeps_its_fence_and_frontmatter_checks(
+        self,
+    ) -> None:
+        profile = next(
+            p
+            for p in self.registry.profiles
+            if p.profile_id == "common/provider-native-metadata"
+        )
+        self.assertIsNone(profile.form)
+        path = PurePosixPath(".claude/agents/example.md")
+        unclosed = MARKDOWN._body_diagnostics(
+            path, profile, "# Example\n\n```text\nopen\n"
+        )
+        self.assertEqual({item.rule_id for item in unclosed}, {"BODY-FENCE-UNCLOSED"})
+        self.assertEqual(
+            MARKDOWN._body_diagnostics(path, profile, "# Example\n\nBody text.\n"), []
+        )
+
+    def test_an_accepted_adr_in_the_range_keeps_its_retained_lists(self) -> None:
+        adr = next(
+            p
+            for p in self.registry.profiles
+            if p.profile_id == "sdlc/architecture-decision"
+        )
+        path = PurePosixPath(
+            "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md"
+        )
+        body = (ROOT / path).read_text(encoding="utf-8").split("\n---\n", 1)[1]
+        self.assertEqual(MARKDOWN._body_diagnostics(path, adr, body, "accepted"), [])
+        broken = re.sub(r"(?m)^## Context\s*\n", "", body, count=1)
+        rules = {
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(path, adr, broken, "accepted")
+        }
+        self.assertIn("BODY-HEADING-REQUIRED", rules)
 
 
 if __name__ == "__main__":

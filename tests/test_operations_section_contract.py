@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import copy
 import dataclasses
 import importlib.util
 import json
@@ -30,91 +29,132 @@ def load_markdown_validator():
 
 
 markdown = load_markdown_validator()
-REGISTRY = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
 SCHEMA = json.loads(
     (ROOT / "docs/99.templates/contracts/document-profile.schema.json").read_text()
-)
-GUIDE = next(
-    profile for profile in REGISTRY["profiles"] if profile["id"] == "operation/guide"
 )
 GUIDE_PATH = PurePosixPath("docs/05.operations/guides/9999-section-example.md")
 
 
-def guide_profile(*, substantive_body: bool):
-    raw = copy.deepcopy(GUIDE)
-    raw["sections"] = {
-        "required": ["Purpose"],
-        "optional": [],
-        "forbidden": [],
-        "substantive_body": substantive_body,
+RETAINED_STATUS = "accepted"
+
+
+def retained_extension(**lists):
+    """A registered retained form whose H2 lists are the one place a list survives."""
+
+    return {
+        "id": "example-retained-form",
+        "kind": "retained_form",
+        "condition": "an example",
+        "owner": "platform",
+        "verification": "this test",
+        "review": "never",
+        "removal": "never",
+        "statuses": [RETAINED_STATUS],
+        "retained_sections": {
+            "required": ["Purpose"],
+            "optional": [],
+            "forbidden": [],
+            **lists,
+        },
     }
-    return contracts._profile_from_mapping(raw, lifecycle_domain=None)
+
+
+def guide_profile(*, substantive_body: bool, **lists):
+    """The guide profile with a retained form (SPEC-0205): a profile list branch is
+    reachable only through a retained form, so the list rules are checked there."""
+
+    profile = contracts.load_registry(ROOT).profiles
+    profile = next(item for item in profile if item.profile_id == "operation/guide")
+    extension = contracts._common_form_from_mapping(
+        {
+            "form_id": "guide",
+            "title": "guide form",
+            "h1": "{{document_title}}",
+            "language_rule": "English body",
+            "extension_policy": "Register every local heading.",
+            "sections": [],
+            "extensions": [
+                retained_extension(substantive_body=substantive_body, **lists)
+            ],
+        }
+    ).extensions
+    return dataclasses.replace(
+        profile,
+        form=dataclasses.replace(
+            profile.form, extensions=(*profile.form.extensions, *extension)
+        ),
+    )
 
 
 def rules(body: str, *, substantive_body: bool = True) -> list[str]:
     profile = guide_profile(substantive_body=substantive_body)
     diagnostics = markdown._body_diagnostics(
-        GUIDE_PATH, profile, f"# Example\n\n## Purpose\n{body}\n"
+        GUIDE_PATH, profile, f"# Example\n\n## Purpose\n{body}\n", RETAINED_STATUS
     )
     return [item.rule_id for item in diagnostics]
 
 
 class OperationsSectionContractTests(unittest.TestCase):
     def test_schema_and_loader_accept_only_boolean_opt_in(self) -> None:
-        profile_schema = SCHEMA["properties"]["profiles"]["items"]
-        profile = copy.deepcopy(GUIDE)
-        profile["sections"]["substantive_body"] = True
-        profile["sections"]["ordered"] = True
+        lists_schema = {"$ref": "#/$defs/heading_lists", "$defs": SCHEMA["$defs"]}
+        extension = retained_extension(substantive_body=True, ordered=True)
         self.assertFalse(
-            list(Draft202012Validator(profile_schema).iter_errors(profile))
+            list(
+                Draft202012Validator(lists_schema).iter_errors(
+                    extension["retained_sections"]
+                )
+            )
         )
+        retained = guide_profile(substantive_body=True, ordered=True).form.extensions[
+            -1
+        ]
+        self.assertTrue(retained.retained.substantive_body)
+        self.assertTrue(retained.retained.ordered)
+
+        extension["retained_sections"]["substantive_body"] = "true"
         self.assertTrue(
-            contracts._profile_from_mapping(
-                profile, lifecycle_domain=None
-            ).headings.substantive_body
-        )
-        self.assertTrue(
-            contracts._profile_from_mapping(
-                profile, lifecycle_domain=None
-            ).headings.ordered
+            list(
+                Draft202012Validator(lists_schema).iter_errors(
+                    extension["retained_sections"]
+                )
+            )
         )
 
-        profile["sections"]["substantive_body"] = "true"
-        self.assertTrue(list(Draft202012Validator(profile_schema).iter_errors(profile)))
-
-        profile["sections"].pop("substantive_body")
-        profile["sections"].pop("ordered")
-        self.assertFalse(
-            contracts._profile_from_mapping(
-                profile, lifecycle_domain=None
-            ).headings.substantive_body
-        )
-        self.assertFalse(
-            contracts._profile_from_mapping(
-                profile, lifecycle_domain=None
-            ).headings.ordered
-        )
+        extension["retained_sections"].pop("substantive_body")
+        extension["retained_sections"].pop("ordered")
+        loaded = contracts._common_form_from_mapping(
+            {
+                "form_id": "guide",
+                "title": "guide form",
+                "h1": "{{document_title}}",
+                "language_rule": "English body",
+                "extension_policy": "Register every local heading.",
+                "sections": [],
+                "extensions": [extension],
+            }
+        ).extensions[0]
+        self.assertFalse(loaded.retained.substantive_body)
+        self.assertFalse(loaded.retained.ordered)
 
     def test_opted_in_required_h2_follows_declared_relative_order(self) -> None:
-        profile = guide_profile(substantive_body=False)
-        profile = dataclasses.replace(
-            profile,
-            headings=dataclasses.replace(
-                profile.headings,
-                required=("Purpose", "Evidence"),
-                allowed=("Purpose", "Evidence"),
-                ordered=True,
-            ),
+        profile = guide_profile(
+            substantive_body=False,
+            required=["Purpose", "Evidence"],
+            ordered=True,
         )
         source = "# Example\n\n## Evidence\nActual evidence.\n\n## Purpose\nActual purpose.\n"
-        diagnostics = markdown._body_diagnostics(GUIDE_PATH, profile, source)
+        diagnostics = markdown._body_diagnostics(
+            GUIDE_PATH, profile, source, RETAINED_STATUS
+        )
         self.assertIn("BODY-H2-ORDER", [item.rule_id for item in diagnostics])
 
         reordered = source.replace(
             "## Evidence\nActual evidence.\n\n## Purpose\nActual purpose.",
             "## Purpose\nActual purpose.\n\n## Evidence\nActual evidence.",
         )
-        diagnostics = markdown._body_diagnostics(GUIDE_PATH, profile, reordered)
+        diagnostics = markdown._body_diagnostics(
+            GUIDE_PATH, profile, reordered, RETAINED_STATUS
+        )
         self.assertNotIn("BODY-H2-ORDER", [item.rule_id for item in diagnostics])
 
     def test_subheadings_placeholders_and_table_header_do_not_fill_required_section(

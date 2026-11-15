@@ -49,7 +49,10 @@ class CanonicalFormContractTests(unittest.TestCase):
             "docs/99.templates/templates/common/example.template.md"
         )
         profile = SimpleNamespace(
-            headings=SimpleNamespace(required=("Overview",)),
+            form=SimpleNamespace(
+                sections=(SimpleNamespace(title="Overview", requiredness="required"),)
+            ),
+            listed_headings=None,
             body_contract=SimpleNamespace(
                 table_heading="Lifecycle Traceability",
                 required_columns=("ID", "Status"),
@@ -81,6 +84,9 @@ class CanonicalFormContractTests(unittest.TestCase):
                 ),
                 "useful Author prompt",
             ),
+            # SPEC-0205: a template that lacks a required H2 of its form is refused,
+            # the H2 being read from the form through the accessor.
+            (source.replace("## Overview", "## Elsewhere"), "useful Author prompt"),
             (source + "<!-- Target: docs/example.md -->\n", "retired form residue"),
             (source + "<!-- unclosed", "unbalanced HTML comment"),
         )

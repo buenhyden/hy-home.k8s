@@ -311,15 +311,31 @@ class ReadmeNavigationRegistryTests(unittest.TestCase):
             "exempt_paths": [],
         }
         contract.update(changes)
-        return {"readme_navigation": contract}
+        # SPEC-0205: a section is a required title of the form of the profile's role.
+        return {
+            "readme_navigation": contract,
+            "common_forms": {
+                "forms": [
+                    self.form("stage-readme", "Overview", "Document Index"),
+                    self.form("spec", "Overview"),
+                ]
+            },
+        }
+
+    @staticmethod
+    def form(role, *titles):
+        return {
+            "form_id": role,
+            "sections": [
+                {"title": title, "level": 2, "requiredness": "required", "children": []}
+                for title in titles
+            ],
+        }
 
     def profiles(self):
         return {
-            ROUTER: {
-                "mode": "router",
-                "sections": {"required": ["Overview", "Document Index"]},
-            },
-            "sdlc/spec": {"mode": "authored", "sections": {"required": ["Overview"]}},
+            ROUTER: {"mode": "router", "document_role": "stage-readme"},
+            "sdlc/spec": {"mode": "authored", "document_role": "spec"},
         }
 
     def faults(self, **changes):
@@ -386,7 +402,7 @@ class ReadmeNavigationFormRegistryTests(unittest.TestCase):
         }
         if with_forms:
             raw["common_forms"] = {"forms": [form or self.form()]}
-        profile = {"mode": "router", "sections": {"required": []}}
+        profile = {"mode": "router"}
         if role:
             profile["document_role"] = role
         return [

@@ -4,6 +4,8 @@ import collections
 import pathlib
 import re
 
+from document_contracts import heading_contract
+
 
 def collect_physical_form_paths(
     repository_root: pathlib.Path,
@@ -183,7 +185,7 @@ def canonical_form_content_errors(
         source = form_sources.get(form_path)
         if source is None or form_path.suffix != ".md":
             continue
-        required_section_groups = [(2, profile.headings.required, False)]
+        required_section_groups = [(2, heading_contract(profile).required, False)]
         for (
             heading_level,
             required_headings,

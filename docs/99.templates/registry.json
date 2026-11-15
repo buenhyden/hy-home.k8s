@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": "17.0.0",
+  "schema_version": "18.0.0",
   "profiles": [
     {
       "id": "sdlc/requirement",
@@ -39,11 +39,6 @@
         "constants": {
           "type": "sdlc/requirement"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -117,11 +112,6 @@
         "constants": {
           "type": "sdlc/architecture-description"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -205,11 +195,6 @@
           "layer": "architecture"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "proposed",
@@ -281,11 +266,6 @@
         "constants": {
           "type": "sdlc/spec"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -379,11 +359,6 @@
           "type": "sdlc/plan"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -474,11 +449,6 @@
         "constants": {
           "type": "sdlc/task"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -635,11 +605,6 @@
           "type": "operation/guide"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -716,11 +681,6 @@
           "type": "operation/policy"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -796,11 +756,6 @@
         "constants": {
           "type": "operation/runbook"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -879,11 +834,6 @@
           "type": "operation/incident"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "detected",
@@ -953,11 +903,6 @@
         "constants": {
           "type": "operation/postmortem"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -1033,11 +978,6 @@
           "type": "reference/audit"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -1092,11 +1032,6 @@
           "type": "reference/research"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -1150,11 +1085,6 @@
         "constants": {
           "type": "reference/data"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -1211,11 +1141,6 @@
         "constants": {
           "type": "governance/knowledge"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -1274,11 +1199,6 @@
           "type": "governance/vocabulary"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -1335,11 +1255,6 @@
         "constants": {
           "type": "governance/prompt"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -1398,11 +1313,6 @@
           "type": "governance/provider"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -1459,11 +1369,6 @@
         "constants": {
           "type": "governance/role"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -1522,11 +1427,6 @@
           "type": "governance/rule"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -1584,11 +1484,6 @@
           "type": "governance/skill"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -1640,11 +1535,6 @@
           "status": "active"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [],
@@ -1686,11 +1576,6 @@
           "type": "common/readme",
           "status": "active"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -1734,11 +1619,6 @@
           "status": "active"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [],
@@ -1780,11 +1660,6 @@
           "type": "common/readme",
           "status": "active"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -1831,11 +1706,6 @@
         "constants": {
           "type": "reference/audit-pack"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -1891,11 +1761,6 @@
           "type": "reference/data-pack"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -1950,11 +1815,6 @@
           "type": "reference/research-pack"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -2005,11 +1865,6 @@
           "status": "active"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [],
@@ -2052,11 +1907,6 @@
           "status": "active"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [],
@@ -2078,11 +1928,6 @@
         "forbidden": [],
         "order": [],
         "constants": {}
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -2107,11 +1952,6 @@
         "order": [],
         "constants": {}
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [],
@@ -2133,11 +1973,6 @@
         "forbidden": [],
         "order": [],
         "constants": {}
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -2174,11 +2009,6 @@
           "disable-model-invocation": true
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -2210,11 +2040,6 @@
         "order": [],
         "constants": {}
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [],
@@ -2237,11 +2062,6 @@
         "order": [],
         "constants": {}
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [],
@@ -2263,11 +2083,6 @@
         "forbidden": [],
         "order": [],
         "constants": {}
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -2305,11 +2120,6 @@
         ],
         "constants": {}
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [],
@@ -2342,11 +2152,6 @@
         ],
         "constants": {}
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [],
@@ -2370,11 +2175,6 @@
         "order": [],
         "constants": {}
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [],
@@ -2396,11 +2196,6 @@
         "forbidden": [],
         "order": [],
         "constants": {}
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -2424,11 +2219,6 @@
         "order": [],
         "constants": {}
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [],
@@ -2450,11 +2240,6 @@
         "forbidden": [],
         "order": [],
         "constants": {}
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -2496,11 +2281,6 @@
         "constants": {
           "type": "common/readme"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -2628,11 +2408,6 @@
         "constants": {
           "type": "common/readme"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -2766,11 +2541,6 @@
         "constants": {
           "type": "common/readme"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -2913,11 +2683,6 @@
         "constants": {
           "type": "common/readme"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -3065,11 +2830,6 @@
           "type": "reference/audit-pack"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -3171,11 +2931,6 @@
         "constants": {
           "type": "reference/data-pack"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -3279,11 +3034,6 @@
           "type": "reference/research-pack"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -3381,11 +3131,6 @@
         "constants": {
           "type": "common/readme"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -3487,11 +3232,6 @@
         "constants": {
           "type": "common/readme"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -3619,11 +3359,6 @@
         "constants": {
           "type": "reference/audit"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -3856,11 +3591,6 @@
           "type": "reference/research"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -4021,11 +3751,6 @@
         "constants": {
           "type": "reference/data"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -4209,11 +3934,6 @@
           "layer": "architecture"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -4384,11 +4104,6 @@
         "constants": {
           "type": "sdlc/architecture-description"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -4617,11 +4332,6 @@
           "type": "sdlc/plan"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -4838,11 +4548,6 @@
         "constants": {
           "type": "sdlc/task"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -5206,11 +4911,6 @@
           "type": "operation/guide"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -5382,11 +5082,6 @@
         "constants": {
           "type": "operation/incident"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -5566,11 +5261,6 @@
         "constants": {
           "type": "operation/policy"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -5769,11 +5459,6 @@
           "type": "operation/postmortem"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -5957,11 +5642,6 @@
         "constants": {
           "type": "operation/runbook"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -6148,11 +5828,6 @@
         "constants": {
           "type": "sdlc/requirement"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -6379,11 +6054,6 @@
           "type": "sdlc/spec"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -6567,11 +6237,6 @@
         ],
         "constants": {}
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -6663,11 +6328,6 @@
         ],
         "constants": {}
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -6749,11 +6409,6 @@
         "forbidden": [],
         "order": [],
         "constants": {}
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -6862,11 +6517,6 @@
           "type": "governance/knowledge"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -6969,11 +6619,6 @@
         "constants": {
           "type": "governance/vocabulary"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -7131,11 +6776,6 @@
           "type": "governance/prompt"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -7239,11 +6879,6 @@
           "type": "governance/provider"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -7345,11 +6980,6 @@
         "constants": {
           "type": "governance/role"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -7453,11 +7083,6 @@
         "constants": {
           "type": "governance/rule"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -7618,11 +7243,6 @@
           "type": "governance/skill"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
@@ -7742,11 +7362,6 @@
         "constants": {
           "disable-model-invocation": true
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -7872,11 +7487,6 @@
         "forbidden": [],
         "order": [],
         "constants": {}
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -8022,11 +7632,6 @@
           "type": "evaluation/task"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -8077,11 +7682,6 @@
         "constants": {
           "type": "evaluation/score"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
@@ -8134,11 +7734,6 @@
           "type": "evaluation/results"
         }
       },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
       "lifecycle": {
         "status_domain": [
           "draft",
@@ -8169,11 +7764,6 @@
         "forbidden": [],
         "order": [],
         "constants": {}
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -8216,11 +7806,6 @@
         "constants": {
           "type": "evaluation/task"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -8412,11 +7997,6 @@
         "constants": {
           "type": "evaluation/score"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {
@@ -8620,11 +8200,6 @@
         "constants": {
           "type": "evaluation/results"
         }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
       },
       "lifecycle": null,
       "relationships": {

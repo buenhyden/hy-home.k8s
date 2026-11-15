@@ -932,7 +932,6 @@ class DocumentProfile:
     frontmatter: FrontmatterContract
     constants: tuple[tuple[str, str | int | float | bool | None], ...]
     status_domain: tuple[str, ...]
-    headings: HeadingContract
     template: PurePosixPath | None
     mode: Literal[
         "authored",
@@ -953,6 +952,15 @@ class DocumentProfile:
     tables: tuple[TableContract, ...] = ()
     # SPEC-0194: set on the authored profiles of the policy role only.
     policy_rule_ids: PolicyRuleIds | None = None
+    # SPEC-0205 (W03-D63): the H2 lists a registry of an earlier MAJOR carried, for
+    # the replay of an earlier commit only (line 778 of the W03 prompt keeps that
+    # replay). The current registry has none; read the headings of a profile through
+    # heading_contract, never this field. Its only readers are the history reading in
+    # _typed_registry_from_mapping, reached from registry_at of
+    # scripts/validate-document-lifecycle.py (the cumulative-history replay and the
+    # base side of the staged check). Remove it, with its tests, when
+    # READABLE_REGISTRY_MAJORS holds no MAJOR below the one that removed `sections`.
+    listed_headings: HeadingContract | None = None
 
 
 @dataclass(frozen=True)
@@ -1774,15 +1782,27 @@ def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
     )
 
 
-def _form_headings(form: CommonForm) -> HeadingContract:
-    """The H2 lists a form implies: required titles in order, all titles allowed."""
+def heading_contract(profile: DocumentProfile) -> HeadingContract:
+    """The H2 titles a profile requires and allows: the one accessor of the heading
+    contract (SPEC-0205, W03-D63).
 
-    return HeadingContract(
-        required=tuple(
-            item.title for item in form.sections if item.requiredness == "required"
-        ),
-        allowed=tuple(item.title for item in form.sections),
-    )
+    A profile with a form takes them from its form: required titles in order, every
+    title allowed. A profile without one has none, except a profile of a registry of
+    an earlier MAJOR, which returns the lists that registry carried (history replay
+    only; the current registry carries no list). A retained form of an accepted ADR
+    keeps its own lists in the form extension, read through the form.
+    """
+
+    if profile.form is not None:
+        return HeadingContract(
+            required=tuple(
+                item.title
+                for item in profile.form.sections
+                if item.requiredness == "required"
+            ),
+            allowed=tuple(item.title for item in profile.form.sections),
+        )
+    return profile.listed_headings or HeadingContract(required=(), allowed=())
 
 
 def _tables_from_definition(
@@ -1813,7 +1833,10 @@ def _profile_from_mapping(
     *,
     lifecycle_domain: LifecycleDomain | None,
     form: CommonForm | None = None,
+    history: bool = False,
 ) -> DocumentProfile:
+    """Type one profile; `history` reads the H2 lists of a registry of an earlier MAJOR."""
+
     frontmatter = raw["frontmatter"]
     lifecycle = raw["lifecycle"]
     constants = frontmatter["constants"]
@@ -1848,10 +1871,8 @@ def _profile_from_mapping(
         ),
         constants=tuple(constants.items()),
         status_domain=status_domain,
-        headings=(
-            _form_headings(form)
-            if form is not None
-            else HeadingContract(
+        listed_headings=(
+            HeadingContract(
                 required=tuple(raw["sections"]["required"]),
                 allowed=tuple(
                     raw["sections"]["required"] + raw["sections"]["optional"]
@@ -1859,6 +1880,8 @@ def _profile_from_mapping(
                 substantive_body=raw["sections"].get("substantive_body", False),
                 ordered=raw["sections"].get("ordered", False),
             )
+            if history and "sections" in raw
+            else None
         ),
         template=_normalize_relative_path(template) if template is not None else None,
         mode=raw["mode"],
@@ -1954,7 +1977,7 @@ def _terminal_semantic_diagnostics(
                     if item["requiredness"] == "required"
                 ]
                 if role_form is not None
-                else raw_profile["sections"]["required"]
+                else []
             )
             if body_contract["section"] not in required_headings:
                 diagnostics.append(
@@ -2340,7 +2363,11 @@ def _declared_columns(profile: Mapping[str, Any]) -> set[str]:
     }
 
 
-def _owner_fault(owner: Mapping[str, str], profiles: Mapping[str, Any]) -> str:
+def _owner_fault(
+    owner: Mapping[str, str],
+    profiles: Mapping[str, Any],
+    forms: Mapping[str, Any],
+) -> str:
     """Name what a canonical owner entry declares that its profile does not."""
 
     profile = profiles.get(owner.get("profile_id"))
@@ -2353,8 +2380,10 @@ def _owner_fault(owner: Mapping[str, str], profiles: Mapping[str, Any]) -> str:
     elif carrier == "body_contract":
         declared = key in _declared_columns(profile)
     elif carrier == "section":
-        sections = profile["sections"]
-        declared = key in {*sections["required"], *sections["optional"]}
+        form = forms.get(profile.get("document_role"))
+        declared = form is not None and key in {
+            item["title"] for item in form["sections"]
+        }
     elif carrier == "registry_key":
         head, _, leaf = str(key).partition(".")
         definition = profile.get("template_definition")
@@ -2408,6 +2437,10 @@ def _relationship_faults(
         fault("REGISTRY_RELATION", "a relationship_contract section", "missing")
         return faults
     profiles = {item["id"]: item for item in raw_registry["profiles"]}
+    forms = {
+        item["form_id"]: item
+        for item in (raw_registry.get("common_forms") or {}).get("forms", ())
+    }
     for section, expected in (
         ("relation_kinds", RELATION_KIND_IDS),
         ("relations", RELATION_IDS),
@@ -2451,7 +2484,7 @@ def _relationship_faults(
                         f"{name}: {field} names {profile_id!r}",
                     )
         for owner in item["canonical_owners"]:
-            problem = _owner_fault(owner, profiles)
+            problem = _owner_fault(owner, profiles, forms)
             if problem:
                 fault(
                     "REGISTRY_RELATION",
@@ -3567,15 +3600,26 @@ def _form_registry_diagnostics(
     forms_by_role = {form["form_id"]: form for form in forms}
     for profile_id, profile in profiles_by_id.items():
         role = profile.get("document_role")
-        lists = profile["sections"]
-        if role in roles_with_form and (
-            lists["required"] or lists["optional"] or lists["forbidden"]
-        ):
+        if "sections" in profile:
             faults.append(
                 (
                     "REGISTRY_FORM_LEGACY_LISTS",
-                    "a profile whose role has a form carries no H2 lists",
+                    "a profile carries no sections key (its headings come from its role's form)",
                     f"role {role}",
+                    profile_id,
+                )
+            )
+        if (
+            profile["mode"] in {"authored", "router", "template"}
+            and role not in roles_with_form
+            and role != "provider-native"
+        ):
+            faults.append(
+                (
+                    "REGISTRY_FORM_REQUIRED",
+                    "an authored, router or template profile whose role has a form "
+                    "(except the provider-native role)",
+                    f"mode {profile['mode']}, role {role}",
                     profile_id,
                 )
             )
@@ -3744,6 +3788,9 @@ def _shared_contract_from_mapping(raw: Mapping[str, Any]) -> SharedContract:
 
 
 def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
+    # SPEC-0205: a registry below REGISTRY_MAJOR is read by the history reading, which
+    # builds the H2 lists it carried; the current MAJOR is read with none.
+    history = int(registry_schema_version(raw).split(".")[0]) < REGISTRY_MAJOR
     domains = tuple(
         LifecycleDomain(
             family=item["family"],
@@ -3771,6 +3818,7 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
             profile,
             lifecycle_domain=domains_by_profile.get(profile["id"]),
             form=forms_by_role.get(profile.get("document_role")),
+            history=history,
         )
 
     profiles = tuple(typed_profile(profile) for profile in raw["profiles"])
@@ -3961,8 +4009,8 @@ def _readme_navigation_registry_diagnostics(
 ) -> list[Diagnostic]:
     """Require navigation entries to name README roles and their own sections.
 
-    A section is a required H2 of the profile lists or, for a profile whose
-    role has a form, a required H2 or H3 title unique among the form's titles.
+    A section is a required H2 or H3 title unique among the titles of the form
+    of the profile's role.
     """
 
     contract = raw_registry.get("readme_navigation")
@@ -3989,7 +4037,7 @@ def _readme_navigation_registry_diagnostics(
         )
         if profile.get("mode") != "router" and not pack_anchor:
             faults.append(f"{profile_id} is not a README navigation profile")
-        allowed = set(profile.get("sections", {}).get("required", ()))
+        allowed: set[str] = set()
         form = forms.get(profile.get("document_role"))
         if form is not None:
             titles = [

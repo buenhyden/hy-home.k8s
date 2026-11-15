@@ -31,7 +31,8 @@ VALIDATOR = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = VALIDATOR
 SPEC.loader.exec_module(VALIDATOR)
 
-from document_contracts import load_registry  # noqa: E402
+import document_authority as AUTHORITY  # noqa: E402
+from document_contracts import heading_contract, load_registry  # noqa: E402
 from document_lifecycle import LifecycleDiagnostic  # noqa: E402
 
 
@@ -2031,6 +2032,62 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 proposed_blobs=blobs,
             )
         self.assertEqual(actual, candidates)
+
+
+class RegistryHistoryHeadingTest(unittest.TestCase):
+    """SPEC-0205: the replay of an earlier commit reads the H2 lists its registry
+    carried; a registry of the current MAJOR is read with none."""
+
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory(prefix="registry-history-")
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name) / "repository"
+        self.root.mkdir()
+        self.git = GitFixture(self.root)
+        self.current = load_registry(ROOT)
+
+    def registry_at(self, schema_version: object) -> object:
+        raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
+        raw["schema_version"] = schema_version
+        for profile in raw["profiles"]:
+            profile["sections"] = {"required": [], "optional": [], "forbidden": []}
+            if profile["id"] == "governance/provider":
+                profile.pop("document_role")
+                profile["sections"]["required"] = ["Overview", "Scope"]
+        commit, _ = self.git.commit(
+            "docs/99.templates/registry.json", json.dumps(raw).encode()
+        )
+        cache = VALIDATOR._CumulativeHistoryCache(self.root, self.current)
+        return cache.registry_at(commit)
+
+    def listed(self, registry: object) -> tuple[str, ...]:
+        profile = next(
+            item
+            for item in registry.profiles
+            if item.profile_id == "governance/provider"
+        )
+        return heading_contract(profile).required
+
+    def test_every_earlier_readable_major_replays_with_its_lists(self) -> None:
+        for major in AUTHORITY.READABLE_REGISTRY_MAJORS:
+            if major >= AUTHORITY.REGISTRY_MAJOR:
+                continue
+            with self.subTest(major=major):
+                result = self.registry_at(f"{major}.0.0")
+                self.assertIsNot(result, self.current)
+                self.assertEqual(self.listed(result), ("Overview", "Scope"))
+
+    def test_a_blob_that_holds_the_integer_generation_replays_with_its_lists(
+        self,
+    ) -> None:
+        result = self.registry_at(10)
+        self.assertEqual(result.schema_version, "10.0.0")
+        self.assertEqual(self.listed(result), ("Overview", "Scope"))
+
+    def test_a_registry_of_the_current_major_builds_no_list(self) -> None:
+        result = self.registry_at(f"{AUTHORITY.REGISTRY_MAJOR}.0.0")
+        self.assertIsNot(result, self.current)
+        self.assertEqual(self.listed(result), ())
 
 
 if __name__ == "__main__":  # pragma: no cover

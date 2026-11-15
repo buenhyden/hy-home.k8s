@@ -800,23 +800,24 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
                 # form now declares none and the loader hands it the authored
                 # one, so sharing is inherited rather than copied and checked.
                 self.assertIsNone(template["lifecycle"])
+                contracts = load_document_contracts()
                 loaded_profiles = {
                     item.profile_id: item
-                    for item in load_document_contracts()
-                    .load_registry(REPOSITORY_ROOT)
-                    .profiles
+                    for item in contracts.load_registry(REPOSITORY_ROOT).profiles
                 }
                 loaded = loaded_profiles[template_id]
                 self.assertEqual(
                     loaded.status_domain,
                     tuple(authored["lifecycle"]["status_domain"]),
                 )
-                # A form-backed role keeps no raw H2 list; the loader derives
+                # A form-backed role keeps no raw H2 list; the accessor derives
                 # the heading lists from the form, so read those.
                 for profile_id in (authored_id, template_id):
                     self.assertTrue(
                         set(sections).issubset(
-                            loaded_profiles[profile_id].headings.required
+                            contracts.heading_contract(
+                                loaded_profiles[profile_id]
+                            ).required
                         )
                     )
                 self.assertIn(

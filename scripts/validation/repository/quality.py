@@ -27,6 +27,7 @@ from document_contracts import (  # noqa: E402 - repository-local contract modul
     DocumentContractError,
     TARGET_ROOTS,
     classify_path,
+    heading_contract,
     is_opaque_evaluation_output,
     verify_opaque_evaluation_output,
     load_registry,
@@ -617,7 +618,8 @@ def canonical_markdown_owns_generic_residue(path: pathlib.Path) -> bool:
         return False
     if profile.placeholder_policy != "forbidden":
         return False
-    return bool(profile.headings.required or profile.headings.allowed)
+    headings = heading_contract(profile)
+    return bool(headings.required or headings.allowed)
 
 
 authored_template_residue = ("Target: " + "docs/", "Use this " + "template")

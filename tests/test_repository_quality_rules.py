@@ -74,6 +74,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             "root": ROOT,
             "document_registry": contracts.load_registry(ROOT),
             "classify_path": contracts.classify_path,
+            "heading_contract": contracts.heading_contract,
             "DocumentContractError": contracts.DocumentContractError,
         }
         exec(

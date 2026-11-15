@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "5.0.10"
+version: "5.0.11"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -465,6 +465,7 @@ These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under S
 | SPEC-0202 | completed spec | SPEC-0202 added rule IDs to the four operations policies. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0202-w03-operations-policy-rule-ids/` |
 | SPEC-0203 | completed spec | SPEC-0203 moved Tasks to the common Task form. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0203-w03-task-form/` |
 | SPEC-0204 | completed spec | Gave POL-0007 its 45 ONBOARD rule IDs and Rules table, adopted ONBOARD, and retired the policy rule adoption gate with the registry step to 17.0.0. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0204-w03-onboarding-policy-rule-ids/` |
+| SPEC-0205 | completed spec | Removed the H2 heading lists from every registry profile so that headings come from the forms, kept the retained ADR lists under ADR-0062, and stepped the registry to 18.0.0. The frozen completed Task records consumers, preservation, no reported hold, the user's exit authority and the Git-history-only method; the recovery proof is below. | `docs/03.specs/0205-w03-h2-list-removal/` |
 
 **SPEC-0152 recovery proof.** The exact completed source is commit `4033d38e7ac6eac0130700c8cf259ea252f44916`, reachable from retained local `refs/heads/codex/manual-document-disposition-policy` (`git merge-base --is-ancestor` rc 0). The current user authorized this bounded package exit on 2026-11-10; no hold was identified in the current repository documents or request, and the Task's frozen disposition decision names consumers and preservation route. Before any deletion, QA confirmed `git cat-file -e` rc 0 for each `commit:path`, restored each with `git show` to a mode-0600 temporary file, and obtained `cmp -s` rc 0 against its unchanged current source; the temporary files were removed. The three exact paths and Git blob identities are:
 
@@ -887,5 +888,13 @@ This is local retained-ref recovery proof before disposition, not remote or host
 - `94399721ac6bd88abc107a353bbfa4b98772744d:docs/03.specs/0204-w03-onboarding-policy-rule-ids/plan.md` — blob/source OID `44179a3f466206b4e7d77481bb6b229c3d05673c`; SHA-256 `b22019e6cb4d837152014d79972d68e18f930a4c5c659f6f8fbb55e162db6936` (11483 bytes).
 - `94399721ac6bd88abc107a353bbfa4b98772744d:docs/03.specs/0204-w03-onboarding-policy-rule-ids/spec.md` — blob/source OID `8a6ef07d7514c81cdcdcfda572cfc041865d3dd2`; SHA-256 `c0e722db427615bd87bdd5b2f2c2501783b934e593205b553a99e1f67d186fb4` (18887 bytes).
 - `94399721ac6bd88abc107a353bbfa4b98772744d:docs/03.specs/0204-w03-onboarding-policy-rule-ids/tasks/tsk-0001-w03-onboarding-policy-rule-ids.md` — blob/source OID `4f2da2bedf7367beee4c616f7487f70ca3bfe760`; SHA-256 `7582155c63a4be7b4fff2d3d174cce626b1cbcef43db5d4ce5d4baf4cc6ee5dd` (31552 bytes).
+
+This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
+
+**SPEC-0205 recovery proof.** The exact completed source is the Task freeze commit `f8747586beeeb84c6a105659fdda7314afc073fb`, reachable from local `refs/heads/claude/w03-h2-list-removal` (`git merge-base --is-ancestor` rc 0) and, after its merge, from `main`. The user authorized this exit, and no hold was identified. Before deleting any file, QA observed HEAD `f8747586` with a clean index and worktree; for every exact `commit:path` it observed `git cat-file -t` type blob, the same OID from `git hash-object --no-filters` on the current file, and a byte-equal comparison of the `git show` restoration, read through a pipe, with the current file. No temporary file was written, and HEAD, index and worktree were unchanged afterwards.
+
+- `f8747586beeeb84c6a105659fdda7314afc073fb:docs/03.specs/0205-w03-h2-list-removal/plan.md` — blob/source OID `95e32a9ee14520a49e566b788576ba8121ff8bc5`; SHA-256 `3190a496172cf29e54a1746d01bea5d34a28681aba987cb09cb1c22af52da6a9` (20547 bytes).
+- `f8747586beeeb84c6a105659fdda7314afc073fb:docs/03.specs/0205-w03-h2-list-removal/spec.md` — blob/source OID `58e06e49621a8e31a3485c149bfdd52b30ab6bd2`; SHA-256 `bf66fd96dc9c60a19bffb1e04da8fe85e3eabfb2008fd0fec1cab109a4b72730` (30741 bytes).
+- `f8747586beeeb84c6a105659fdda7314afc073fb:docs/03.specs/0205-w03-h2-list-removal/tasks/tsk-0001-w03-h2-list-removal.md` — blob/source OID `f3d731efad549eb4df3984affaec795703e68df5`; SHA-256 `c9b9a3ae6617a87d4114e4b90a5eb9eb13ec04ba2cf32f36bb746acb59c85f13` (41952 bytes).
 
 This is local retained-ref recovery proof before disposition, not remote or hosted evidence. The closure commit is itself checked by `LIFECYCLE-PACKAGE-EXIT`. A newly discovered consumer or hold defers the affected disposition.
