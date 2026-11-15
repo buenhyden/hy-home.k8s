@@ -1,8 +1,8 @@
 ---
 title: "W03 Closing Records"
-version: "0.2.3"
+version: "0.2.4"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0209-TSK-0001"
@@ -49,8 +49,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CLOSING-001](../spec.md#criteria) | The `common_forms` candidate record, schema properties, reader and refusal test; the adoption facts and the approval evidence request; the ledger closure of W03-H19. | platform | draft | NOT_RUN | Pending |
-| WORK-002 | [VAL-CLOSING-002](../spec.md#criteria) | The writer delegation table and current writer state, the 14 `meaning_map` corrections, the corrections and closing summary, the ledger closure of W03-H21 and W03-H31. | platform | draft | NOT_RUN | Pending |
+| WORK-001 | [VAL-CLOSING-001](../spec.md#criteria) | The `common_forms` candidate record, schema properties, reader and refusal test; the adoption facts and the approval evidence request; the ledger closure of W03-H19. | platform | ready | NOT_RUN | Pending |
+| WORK-002 | [VAL-CLOSING-002](../spec.md#criteria) | The writer delegation table and current writer state, the 14 `meaning_map` corrections, the corrections and closing summary, the ledger closure of W03-H21 and W03-H31. | platform | ready | NOT_RUN | Pending |
 
 ## Verification Evidence
 
