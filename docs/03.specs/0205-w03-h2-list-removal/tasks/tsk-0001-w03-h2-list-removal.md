@@ -1,8 +1,8 @@
 ---
 title: "W03 H2-List Model Removal"
-version: "0.2.1"
+version: "0.2.2"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0205-TSK-0001"
@@ -50,9 +50,9 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-LISTREMOVAL-002](../spec.md#criteria) | Transfer first: the table that maps each list rule to the tree rule or retained form that covers the same documents; the accessor; the four readers and the accessor function of the old-shape Plan branch on it; the renamed field; the recorded replays of a commit of the retired MAJOR and of a commit that holds the integer; the tests that show each reader and each role still refused. | platform | ready | NOT_RUN | Pending |
-| WORK-002 | [VAL-LISTREMOVAL-001](../spec.md#criteria) | Callers and registration: the `sections` key of every profile, the schema property, the guard entry, `_form_headings`, the two registry rules, the three README identifiers, `REGISTRY_FORM_REQUIRED`; the MAJOR step of `schema_version` in the registry, the schema `const`, `REGISTRY_MAJOR`, `READABLE_REGISTRY_MAJORS` and the guard's `DOC_REGISTRY_MAJOR`, with the history reading of earlier registries in `registry_at`; the bump level and its reason recorded as evidence. | platform | ready | NOT_RUN | Pending |
-| WORK-003 | [VAL-LISTREMOVAL-002](../spec.md#criteria) | Helpers, fixtures and tests that lost their last consumer, each after a recorded search; the two policy texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | ready | NOT_RUN | Pending |
+| WORK-001 | [VAL-LISTREMOVAL-002](../spec.md#criteria) | Transfer first: the table that maps each list rule to the tree rule or retained form that covers the same documents; the accessor; the four readers and the accessor function of the old-shape Plan branch on it; the renamed field; the recorded replays of a commit of the retired MAJOR and of a commit that holds the integer; the tests that show each reader and each role still refused. | platform | in-progress | NOT_RUN | Pending |
+| WORK-002 | [VAL-LISTREMOVAL-001](../spec.md#criteria) | Callers and registration: the `sections` key of every profile, the schema property, the guard entry, `_form_headings`, the two registry rules, the three README identifiers, `REGISTRY_FORM_REQUIRED`; the MAJOR step of `schema_version` in the registry, the schema `const`, `REGISTRY_MAJOR`, `READABLE_REGISTRY_MAJORS` and the guard's `DOC_REGISTRY_MAJOR`, with the history reading of earlier registries in `registry_at`; the bump level and its reason recorded as evidence. | platform | in-progress | NOT_RUN | Pending |
+| WORK-003 | [VAL-LISTREMOVAL-002](../spec.md#criteria) | Helpers, fixtures and tests that lost their last consumer, each after a recorded search; the two policy texts; the SPEC-0161 Task rows and ledger entries; regression and exact-index QA. | platform | in-progress | NOT_RUN | Pending |
 
 ## Verification Evidence
 
