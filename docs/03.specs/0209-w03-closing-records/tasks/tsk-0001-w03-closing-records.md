@@ -1,8 +1,8 @@
 ---
 title: "W03 Closing Records"
-version: "0.2.5"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0209-TSK-0001"
@@ -49,8 +49,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CLOSING-001](../spec.md#criteria) | The `common_forms` candidate record, schema properties, reader and refusal test; the adoption facts and the approval evidence request; the ledger closure of W03-H19. | platform | in-progress | NOT_RUN | Pending |
-| WORK-002 | [VAL-CLOSING-002](../spec.md#criteria) | The writer delegation table and current writer state, the 14 `meaning_map` corrections, the corrections and closing summary, the ledger closure of W03-H21 and W03-H31. | platform | in-progress | NOT_RUN | Pending |
+| WORK-001 | [VAL-CLOSING-001](../spec.md#criteria) | The `common_forms` candidate record, schema properties, reader and refusal test; the adoption facts and the approval evidence request; the ledger closure of W03-H19. | platform | completed | PASS | EVD-010, EVD-012, EVD-013, EVD-017, EVD-018, EVD-019, EVD-020, EVD-021, EVD-022, EVD-025, EVD-026 |
+| WORK-002 | [VAL-CLOSING-002](../spec.md#criteria) | The writer delegation table and current writer state, the 14 `meaning_map` corrections, the corrections and closing summary, the ledger closure of W03-H21 and W03-H31. | platform | completed | PASS | EVD-011, EVD-023, EVD-024, EVD-027 |
 
 ## Verification Evidence
 
@@ -83,6 +83,10 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-023 | [VAL-CLOSING-002](../spec.md#criteria) | WORK-002 | Writer Delegation scope and placement answers | User answers, 2026-11-15 (Asia/Seoul): (1) "0168–0208 + 0212 (Recommended)" for the packages; (2) "Unassigned (Recommended)" for the three Stage 99 schemas other than `document-profile.schema.json` and for the `docs/90.references` READMEs; (3) "Unassigned (Recommended)" for `docs/03.specs/work-residue-ledger.json`; (4) "W03 + note to W05 (Recommended)" for `scripts/document_contracts.py` | PASS | The Writer Delegation table covers SPEC-0168 to SPEC-0208 and SPEC-0212, with SPEC-0210 and this package added at the end and SPEC-0213 excluded; the named files are placed as answered, and `scripts/document_contracts.py` stays W03 with a stated handoff note to W05 in Current Writer State. The answers accept no criterion and approve no commit, push or merge. | yes | none |
 | EVD-024 | [VAL-CLOSING-002](../spec.md#criteria) | WORK-002 | Writer Delegation, Current Writer State, Corrections, Disposition Input and closing summary appended to the SPEC-0161 Task | Plan dependency of WORK-002 met: every package that writes `migration` strings has landed, SPEC-0210 (implementation `18a8fc6d`, merged at `6bba64d9`) being the last W03 package before this one; `git diff-tree --name-only` of each implementation commit; the `Primary Writers` table; EVD-023 | PASS | Appended after the recorded sections of the SPEC-0161 Task, with SPEC-0161 EVD-118: Writer Delegation, 44 rows (SPEC-0168 to SPEC-0208, SPEC-0212, SPEC-0210 and this package), 284 files placed W03 158, W05 41, W01 6, W04 1 and unassigned 78; Current Writer State, 58 `scripts/` and `tests/` files (W05 41, unassigned 14, W03 3) with the `document_contracts.py` note to W05 and OPEN-09 as the open W05 consumer; Corrections C-01 to C-19 (12 of the 26 recorded OPEN Requirement Changes rows closed by EVD-110 or EVD-107, 14 still OPEN; W03-H01, W03-H04 and W03-H06; EVD-025's 33 accepted ADRs against 37, 34 with `layer`; the superseded next-owner sentence; the 14 `meaning_map` strings); Disposition Input; Closing Summary of the 59 open rows by owner at `2499646f`, after W03-H43 closed at the SPEC-0210 acceptance (SPEC-0161 EVD-116). No recorded row or cell is edited. | yes | EVD-014 |
 | EVD-025 | [VAL-CLOSING-001](../spec.md#criteria) | WORK-001 | Replay onto `main` `2499646f`: focused unittest modules, the `tooling` suite and the static checks | `python3 -m unittest tests.test_common_form_tree tests.test_shared_contract_binding tests.test_registry_schema_version tests.test_document_generator tests.test_policy_rule_ids tests.test_semver_versions tests.test_document_lifecycle_cumulative_history`; `python3 scripts/run-contract-tests.py --root . --suite tooling`; the four strict validators, the staged lifecycle check, the ledger gate, `scripts/validation/repository/quality.py`, ruff, markdownlint-cli2 and `git diff --cached --check`; no other shared suite (W03-D83); pinned validation venv | PASS | Ran 623 tests in 437 s, OK (skipped=3), with the registry at 20.0.0; `tooling` passed, 8 modules and 166 tests; the registry validator passed 296 paths, the profile validator 0 violations, links and owners valid, lifecycle strict and staged PASS, ledger 59 entries PASS, quality gates PASS, ruff clean, markdownlint 0 issues and the diff check clean. The package was replayed from `f7b55d4f` through the SPEC-0210 branch `22e716e3` onto `main` `2499646f` (registry 19.0.0; SPEC-0206 merged at `bb0c5168`, SPEC-0210 at `6bba64d9`): the version sites keep 20, so the registry, schema, `REGISTRY_MAJOR`, `READABLE_REGISTRY_MAJORS` (now ending 18, 19, 20 with 19 present in the tree) and `DOC_REGISTRY_MAJOR` read 20.0.0 as EVD-020 recorded, the registry value written last by shell Python. | yes | none |
+| EVD-026 | [VAL-CLOSING-001](../spec.md#criteria) | WORK-001 | Counts and figures re-read from the tree and the Git diffs | The PASS evidence EVD-022 and EVD-024 of this Task for the pending row EVD-001, re-read at `2499646f` (the final base: SPEC-0210 and the templates README fix merged) | PASS | The counts and figures are re-read at the final base: 27 forms in `common_forms` (all 16 source roles, 11 local), 38 `meaning_map` strings with 14 pointing to the REQ-0003 Archived Lineage recovery, 59 ledger entries, 26 OPEN and 26 COVERED Requirement Changes rows (12 of the OPEN rows now closed), 37 accepted ADRs with 34 carrying `layer`, and the Writer Delegation of 44 packages and 284 files (EVD-022, EVD-024). No new run. | yes | EVD-001 |
+| EVD-027 | [VAL-CLOSING-002](../spec.md#criteria) | WORK-002 | Exact-index QA and commit hooks on the implementation commit | Pre-commit hooks over the final index of `b59603ed` in the pinned validation environment, 2026-11-15 | PASS | The workspace hook ran `scripts/qa.py staged` on the exact index and passed, then commitizen and the generated message check passed; the commit was created. | yes | none |
+| EVD-028 | [VAL-CLOSING-002](../spec.md#criteria) | WORK-002 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-13 approval of commit, push, PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
+| EVD-029 | [VAL-CLOSING-001](../spec.md#criteria) | WORK-001 | Closure of W03-H19 through the ledger cycle | SPEC-0161 Task EVD-119 at the acceptance of this package (PR #282, implementation commit `b59603ed`); `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv | PASS | W03-H19 is closed through the ledger cycle by SPEC-0161 Task EVD-119; W03-H21 and W03-H31 close in the same change by EVD-120 and EVD-121. The gate passed before and after each step (59, 58, 57, 56 entries). | yes | EVD-015 |
 
 ### Resolution Links
 
@@ -94,10 +98,17 @@ The Resolves column of the evidence table under Results names the earlier eviden
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-CLOSING-001](../spec.md#criteria) | pending | none | Implement WORK-001 and record PASS evidence | platform |
-| [VAL-CLOSING-002](../spec.md#criteria) | pending | none | Implement WORK-002 and record PASS evidence | platform |
+| [VAL-CLOSING-001](../spec.md#criteria) | accepted | EVD-010, EVD-012, EVD-013, EVD-017, EVD-018, EVD-019, EVD-020, EVD-021, EVD-022, EVD-025, EVD-026 | Accepted by the user on 2026-11-15 (direct answer "Pre-accept when green (Recommended)" of 2026-11-15 to the advance acceptance question for the remaining W03 packages; green at commit `b59603ed`) | platform |
+| [VAL-CLOSING-002](../spec.md#criteria) | accepted | EVD-011, EVD-023, EVD-024, EVD-027 | Accepted by the user on 2026-11-15 (direct answer "Pre-accept when green (Recommended)" of 2026-11-15 to the advance acceptance question for the remaining W03 packages; green at commit `b59603ed`) | platform |
 
 ### Remaining Conditions
+
+Frozen package disposition decision:
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The SPEC-0161 Task keeps the closing records tables; the registry keeps the common_forms adoption record at 20.0.0 with unverified facts where no record exists; scripts/document_contracts.py stays W03 with a handoff note to W05; W03-H19, W03-H21 and W03-H31 close with this acceptance. Current consumers: the Stage 03 README entry and this Task's `.secrets.baseline` entries, which the closure change removes.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The user's 2026-11-13 approval of commit, push, PR and merge is the disposition authority. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 No separate remaining-condition list is kept here; the Disposition and Current owner columns of the criterion decisions state what remains and who owns it.
 
@@ -109,4 +120,4 @@ No separate promotion receipt is kept here; the receipt of the Plan promotion ro
 
 ### Next Owner
 
-Draft; no check has run. Next owner: the user, for the records that would verify the six `WGOV-CORE` approval facts.
+The registry commit `b59603ed` and the SPEC-0161 tables commit `7bce4c7d` are on PR #282; W03-H19, W03-H21 and W03-H31 are closed by SPEC-0161 Task EVD-119 to EVD-121 (EVD-029). Next owner: the user, for the records that would verify the six `WGOV-CORE` approval facts. Implementation commit `b59603ed` passed exact-index QA in the hooks (EVD-027); the user accepted all criteria in advance, applied on 2026-11-15, and the approval of commit, push, PR and merge covers the package exit (EVD-028).
