@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.22"
+version: "0.2.23"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -195,6 +195,7 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-138 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Withdrawal of group D (rule_id binding): W01-H02, DOC-S00 | User approval, direct answer "A: closed audit questions, B: superseded old-package surveys, C: cross-repository checks, D: rule_id binding" of 2026-11-15 to the SPEC-0219 withdrawal question (the per-item approval of Q04); `python3 scripts/validate-work-residue-ledger.py --root .` | PASS | Withdrawn by the user's approval, not completed. Basis: no 3.0.1 requirement asks for a vocabulary rule_id binding (U13 fixes the seven columns, definition, owner and numeric version), and the W05 prompt reads none. The glossary keeps owner links (SPEC-0217, SPEC-0218). | yes | none |
 | EVD-139 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Transfer of duplicates: OPEN-09 into DOC-S99, PR-DURING into CI-SCOPE | The live rows DOC-S99 (hard-coded headings in tests, owner W05) and CI-SCOPE (PR-DURING hosted CI scope, owner W06); `python3 scripts/validate-work-residue-ledger.py --root .` | PASS | Transferred, not completed and not withdrawn: the obligation stays open in the receiving row, which carries the same function. DOC-S99 already names OPEN-09 in its resume condition, and PR-DURING resumed only when CI-SCOPE closed. | yes | none |
 | EVD-140 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W02 disposition of PKG 3.0.1 (SPEC-0219, approved spec `890fa960`, plan `bab60654`) | The ledger after EVD-135 to EVD-139; the SPEC-0219 code audit; `git ls-remote`, `gh release list` and `gh pr list` counts at `c6513839` | PASS | Seeds W05-H09 and Q07-H01; the `W02 Disposition` table states the 41 open entries by function, owner and completion condition; the `Q07 Target Preparation` table lists nine target groups and deletes nothing. It accepts no criterion. | no | none |
+| EVD-141 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | QA latency record (SPEC-0220, approved spec `00a21a36`, plan `2302db8d`) | Four `scripts/qa.py staged` runs in a clone of `e879e58e`, 2026-11-15; the full run of the `W01 Follow-up Record` | PASS | The `QA Latency Record` holds the commit QA, full run and limits parts, and corrects target 6 of the `Q07 Target Preparation` table. It accepts no criterion and closes no residue. | no | none |
 
 #### Edition Delta
 
@@ -1488,6 +1489,27 @@ Added 2026-11-15 under SPEC-0219 (EVD-140). PKG W02 step 6 prepares the final cu
 | 7 | Checks bound to history or numbering | See Q07-H01 | Q07 | Converted or removed before the rewrite |
 | 8 | Stage 03 packages and the SPEC-0161 Task | 1 open package | Q07 | SPEC-0161 exits at W11 when the ledger is empty; the next real new Spec takes 0001 (Q02) |
 | 9 | External copies (forks, clones, caches) | Not observed | Q07 | Reported as unverified residue, never claimed deleted (D14, S25) |
+
+#### QA Latency Record
+
+Added 2026-11-15 under SPEC-0220 (EVD-141). This is the actual latency comparison that the result section of each PKG 3.0.1 stage prompt asks for. It holds measurements only and no rule; reducing the latency is W05-GATES's (U27). The first column is a running number.
+
+| No. | Part | Case | Measurement | Reading |
+| --- | --- | --- | --- | --- |
+| 1 | Commit QA | Nothing staged | `scripts/qa.py staged`: 0 gates, 13.8 s | Fixed cost of every commit run (index snapshot and setup) |
+| 2 | Commit QA | One sentence in `docs/90.references/README.md` | 6 gates, 64.4 s, PASS | An ordinary document commit costs about one minute |
+| 3 | Commit QA | One sentence in `.agents/governance/model-selection.md` | 9 gates, 69.3 s, PASS | Three more gates than row 2 added about 5 s |
+| 4 | Commit QA | One sentence in this Task | 7 gates, 69.9 s, PASS | The ledger gate is the added gate |
+| 5 | Full run | The 16 registered checks of the `W01 Follow-up Record`, run once | About 1,198 s; 15 rc 0, 1 rc 1 | 17 to 19 times one commit run |
+| 6 | Full run | Its two largest parts | `document` suite 774.9 s, `qa-runner` suite 316.7 s, 91 percent of the total | None of rows 2 to 4 selected them, so commit QA stays near one minute; this is the observed basis for not running the full suite on every Git event |
+| 7 | Limits | Sampling | One run per case, on one host, with no warm-up control | Not a stable benchmark; no mean or spread |
+| 8 | Limits | Lanes | Local only; hosted CI time not measured | A hosted run has a different cost |
+| 9 | Limits | Coverage | Changes under `scripts/` or `tests/` not measured | They may select the contract suites and take much longer |
+| 10 | Limits | Full-run input | The last eight checks of row 5 started after edits began, as the `W01 Follow-up Record` states | They may have read a tree in mid-edit; the same validators passed again on the edited tree |
+
+Rows 1 to 4 were measured on 2026-11-15 in a clone of `main` `e879e58e` with the pinned `hyhome-validation` environment, each case staging one change. The clone was deleted afterwards.
+
+Correction to the `Q07 Target Preparation` table, target 6 (session scratch clones): `negA`, `negB` and `negC`, and the later `latency` clone, were deleted by the user on 2026-11-15, and their absence was confirmed. None remains, and the target is no longer residue.
 
 ### Resolution Links
 
