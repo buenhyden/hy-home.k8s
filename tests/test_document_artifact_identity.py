@@ -289,10 +289,18 @@ class CreationStatesTest(unittest.TestCase):
             ("proposed",),
         )
 
-    def test_a_domain_whose_every_state_has_an_inbound_edge_yields_none(self) -> None:
+    def test_the_requirement_domain_declares_draft_as_its_creation_state(self) -> None:
         self.assertEqual(
-            LIFECYCLE.creation_states(self.domains["sdlc/requirement"]), ()
+            LIFECYCLE.creation_states(self.domains["sdlc/requirement"]), ("draft",)
         )
+
+    def test_a_domain_whose_every_state_has_an_inbound_edge_yields_none(self) -> None:
+        # No registry domain keeps this shape, so the value is synthetic: the
+        # Requirement domain without its declared creation state.
+        synthetic = dataclasses.replace(
+            self.domains["sdlc/requirement"], initial_states=None
+        )
+        self.assertEqual(LIFECYCLE.creation_states(synthetic), ())
 
 
 class RetiredArtifactIdentityTest(unittest.TestCase):

@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": "18.0.0",
+  "schema_version": "19.0.0",
   "profiles": [
     {
       "id": "sdlc/requirement",
@@ -8365,6 +8365,9 @@
   "lifecycle_domains": [
     {
       "family": "requirement",
+      "initial_states": [
+        "draft"
+      ],
       "profile_ids": [
         "sdlc/requirement"
       ],

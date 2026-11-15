@@ -575,6 +575,41 @@ class SpecPlanAuthorityTests(unittest.TestCase):
                     issues(registry | {"lifecycle_domains": domains}),
                 )
 
+    def test_requirement_creation_state_is_exactly_draft_and_only_there(self) -> None:
+        registry = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
+
+        def refusals(family, initial_states, extra_edge=None):
+            domains = [dict(item) for item in registry["lifecycle_domains"]]
+            domain = next(item for item in domains if item["family"] == family)
+            if initial_states is None:
+                domain.pop("initial_states", None)
+            else:
+                domain["initial_states"] = initial_states
+            if extra_edge is not None:
+                domain["transitions"] = [*domain["transitions"], extra_edge]
+            return [
+                item
+                for item in _terminal_semantic_diagnostics(
+                    ROOT, registry | {"lifecycle_domains": domains}
+                )
+                if item.rule_id == "REGISTRY_LIFECYCLE_DOMAIN"
+            ]
+
+        # The repository registry raises none once the entry exists.
+        self.assertEqual(refusals("requirement", ["draft"]), [])
+        for invalid in (None, ["in-review"], ["approved"], ["draft", "in-review"]):
+            with self.subTest(requirement=invalid):
+                self.assertTrue(refusals("requirement", invalid))
+        # The exemption is narrow: another family with an inbound edge to draft
+        # that declares ["draft"] stays refused.
+        for domain in registry["lifecycle_domains"]:
+            family, states = domain["family"], domain["states"]
+            if family in {"requirement", "spec-plan", "task"} or "draft" not in states:
+                continue
+            other = next(state for state in states if state != "draft")
+            with self.subTest(family=family):
+                self.assertTrue(refusals(family, ["draft"], [other, "draft"]))
+
     def test_local_lifecycle_extensions_remain_effective_after_adoption(self) -> None:
         raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
         spec = PurePosixPath("docs/03.specs/0999-new-package/spec.md")
@@ -606,6 +641,52 @@ class SpecPlanAuthorityTests(unittest.TestCase):
                             {},
                             {task: LifecycleDocument(task, "sdlc/task", "blocked")},
                             base_mode="staged",
+                        )
+                    },
+                )
+
+    def test_new_requirement_is_created_in_draft_and_keeps_its_transitions(
+        self,
+    ) -> None:
+        registry = load_registry(ROOT)
+        path = PurePosixPath("docs/01.requirements/0999-sample.md")
+
+        def document(status):
+            return {path: LifecycleDocument(path, "sdlc/requirement", status)}
+
+        def created(status):
+            return [
+                item
+                for item in compare_lifecycle(
+                    registry, {}, document(status), base_mode="staged"
+                )
+                if item.rule_id == "LIFECYCLE-CREATE"
+            ]
+
+        self.assertEqual(created("draft"), [])
+        for status in ("in-review", "approved"):
+            with self.subTest(status=status):
+                refused = created(status)
+                self.assertEqual(len(refused), 1)
+                self.assertIn("('draft',)", refused[0].expected_transition)
+        # The three transitions are unchanged and the rework edge is accepted.
+        domain = next(
+            profile.lifecycle_domain
+            for profile in registry.profiles
+            if profile.profile_id == "sdlc/requirement"
+        )
+        self.assertEqual(
+            domain.transitions,
+            {("draft", "in-review"), ("in-review", "draft"), ("in-review", "approved")},
+        )
+        for old, new in (("draft", "in-review"), ("in-review", "draft")):
+            with self.subTest(edge=(old, new)):
+                self.assertNotIn(
+                    "LIFECYCLE-EDGE",
+                    {
+                        item.rule_id
+                        for item in compare_lifecycle(
+                            registry, document(old), document(new), base_mode="staged"
                         )
                     },
                 )

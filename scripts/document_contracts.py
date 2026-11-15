@@ -2112,19 +2112,26 @@ def _terminal_semantic_diagnostics(
             and local_task_recording
             and initial_states == list(TASK_INITIAL_STATES)
         )
+        # SPEC-0210: the Requirement draft state is created in and may be
+        # returned to, so its rework edge is the one other inbound exception.
+        requirement_initial = family == "requirement" and initial_states == ["draft"]
         if initial_states is not None and (
             not initial_states
             or any(
                 state not in domain["states"]
                 or domain["states"][state] == "terminal"
-                or (state in inbound and not observed_task_initial)
+                or (
+                    state in inbound
+                    and not observed_task_initial
+                    and not requirement_initial
+                )
                 for state in initial_states
             )
         ):
             diagnostics.append(
                 _diagnostic(
                     "REGISTRY_LIFECYCLE_DOMAIN",
-                    expected="nonempty nonterminal creation states; zero-indegree except the local Task first-recording extension",
+                    expected="nonempty nonterminal creation states; zero-indegree except the local Task first-recording extension and the Requirement draft rework edge",
                     actual=f"invalid initial_states for {family}: {initial_states!r}",
                 )
             )
@@ -2134,7 +2141,7 @@ def _terminal_semantic_diagnostics(
             else ["draft"]
         )
         if (
-            family in {"spec-plan", "task"}
+            family in {"spec-plan", "task", "requirement"}
             and initial_states != expected_initial_states
         ):
             diagnostics.append(
