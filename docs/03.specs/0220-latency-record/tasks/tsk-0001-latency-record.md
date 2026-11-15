@@ -1,8 +1,8 @@
 ---
 title: "QA Latency Record"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-11-15"
 artifact_id: "SPEC-0220-TSK-0001"
@@ -45,7 +45,7 @@ The measurement ran on 2026-11-15; the record is in commits `9c59ab70` and `bd20
 
 ### Blockers and Decisions
 
-The user approved the Spec and Plan (EVD-002), with acceptance on green checks. No question is open.
+The user approved the Spec and Plan (EVD-002), with acceptance on green checks; the condition held (EVD-003). No question is open.
 
 ### Lifecycle Traceability
 
@@ -62,6 +62,7 @@ The user approved the Spec and Plan (EVD-002), with acceptance on green checks. 
 | EVD-001 | [VAL-LAT-001](../spec.md#criteria) | WORK-001 | Strict document validators and ledger gate | Implementation snapshot | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-LAT-001](../spec.md#criteria) | WORK-001 | Spec/Plan approval | Direct current-session user answer "Approve bytes, accept when green (Recommended)" to the SPEC-0220 approval question naming spec.md `00a21a36` and plan.md `2302db8d` of draft commit `e1bed33b`, 2026-11-15; risk class `low`, no independent review (Q08) | PASS | Approves the reviewed Spec and Plan content of `e1bed33b`; the approved files differ from it only in `status` and `version`. The same answer accepts VAL-LAT-001 on the condition that the strict validators, the ledger gate and the commit hooks pass; that condition is checked in a later row. | yes | none |
 | EVD-003 | [VAL-LAT-001](../spec.md#criteria) | WORK-001 | Strict document validators and ledger gate | Commit `bd204a74` after `9c59ab70` (two moved baseline lines); pinned `hyhome-validation` environment, 2026-11-15 | PASS | The SPEC-0161 Task holds the `QA Latency Record` (rows 1 to 4 commit QA, rows 5 and 6 full run, rows 7 to 10 limits), the target 6 correction and EVD-141. Contract registry, markdown profiles, links and owners and lifecycle strict PASS; ledger gate `PASS work residue ledger: 41 entries`; the commit hooks passed on the exact index. | yes | EVD-001 |
+| EVD-004 | [VAL-LAT-001](../spec.md#criteria) | WORK-001 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-15 instruction to commit, push, open a PR and merge; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | no | none |
 
 ### Resolution Links
 
@@ -73,11 +74,18 @@ The Resolves column names the earlier row each PASS row closes: EVD-003 closes E
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-LAT-001](../spec.md#criteria) | pending | EVD-003 | PASS evidence recorded; acceptance condition of EVD-002 is checked next | platform |
+| [VAL-LAT-001](../spec.md#criteria) | accepted | EVD-003 | Accepted by the user's answer "Approve bytes, accept when green (Recommended)" of 2026-11-15 (EVD-002); its condition holds: the strict validators, the ledger gate and the commit hooks passed (EVD-003) | platform |
 
 ### Remaining Conditions
 
-Spec and Plan approval, WORK-001 and criterion acceptance remain.
+None remains for this package. Reducing the measured latency remains with W05-GATES (U27).
+
+Frozen package disposition decision:
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: The SPEC-0161 Task holds the lasting record and names SPEC-0220 by ID only. Current consumer: the Stage 03 README entry, which the closure change removes. This Task carries no `.secrets.baseline` entry.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The disposition authority is the user's 2026-11-15 instruction to commit, push, open a PR and merge. If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Handoff
 
@@ -87,4 +95,4 @@ The Plan promotes none.
 
 ### Next Owner
 
-The user, for Spec and Plan approval; then platform.
+WORK-001 passed (EVD-003), and the criterion is accepted on the user's green-check condition. Next: platform closes the package; W05-GATES takes the latency record at its intake.
