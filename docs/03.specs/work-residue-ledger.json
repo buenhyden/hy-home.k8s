@@ -588,7 +588,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W03",
-      "resume_condition": "SPEC-0199 adopts nine policies (W03-D58) and SPEC-0201 adopts `quality.md` (W03-D60), so all ten governance policies are adopted; the five operations policies add the rule IDs (W03-D42 to W03-D44); the package that adopts the last policy removes the adoption gate, `state` and `POLICY-RULE-ADOPTION` with their tests in its final source commit (W03-D53); W05 consumes the rule IDs",
+      "resume_condition": "SPEC-0199 adopts nine policies (W03-D58) and SPEC-0201 adopts `quality.md` (W03-D60), so all ten governance policies are adopted; SPEC-0202 adopts four operations policies (W03-D62), so fourteen are adopted; POL-0007 adds the rule IDs (W03-D42 to W03-D44); the package that adopts POL-0007 removes the adoption gate, `state` and `POLICY-RULE-ADOPTION` with their tests in its final source commit (W03-D53, W03-D62); package 5 adds the history check and code permanence; W05 consumes the rule IDs",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }

@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.33.0"
+version: "3.34.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -414,7 +414,9 @@ under Requirements: each rule has an ID `<CODE>-R<NNN>` built on the policy's
 registered code, a condition and a required, recommended or optional level, the
 table's optional Status column keeps a retired rule as `retired;` with a
 successor ID or `none`, the ID also stands as a code span at the start of the
-rule's list item, table cell or H4 paragraph, and the registry
+rule's list item, table cell or H4 paragraph (a bare `Required:`, `Allowed:` or
+`Disallowed:` label item carries none when every nested item under it carries
+one, each nested item then being one rule), and the registry
 `policy_rule_ids` owns the exact values and the code records. A
 TemplateDefinition stores eleven fields (`contract_version`, purpose,
 responsibility, non-goals, policy and vocabulary references, applicability,

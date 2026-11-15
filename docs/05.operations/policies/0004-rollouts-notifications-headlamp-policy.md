@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.4.1"
+version: "1.5.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-14"
 artifact_id: "POL-0004"
 ---
 
@@ -47,52 +47,82 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 
 ### Requirements
 
+| Rule ID | Condition | Level | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| ROLLOUT-R001 | Always | required | RUN-0004 | active |
+| ROLLOUT-R002 | Always | required | RUN-0004 | active |
+| ROLLOUT-R003 | Always | required | Semantic review | active |
+| ROLLOUT-R004 | skipAnalysis: true를 쓸 때 | required | Semantic review | active |
+| ROLLOUT-R005 | Always | required | RUN-0004 | active |
+| ROLLOUT-R006 | Always | required | RUN-0004 | active |
+| ROLLOUT-R007 | Always | required | RUN-0004 | active |
+| ROLLOUT-R008 | 승인/증적 절차를 따를 때 | required | RUN-0004 | active |
+| ROLLOUT-R009 | Always | optional | Semantic review | active |
+| ROLLOUT-R010 | Always | optional | Semantic review | active |
+| ROLLOUT-R011 | Always | required | Semantic review | active |
+| ROLLOUT-R012 | Always | required | Semantic review | active |
+| ROLLOUT-R013 | Always | required | RUN-0004 | active |
+| ROLLOUT-R014 | Always | required | RUN-0004 | active |
+| ROLLOUT-R015 | Always | required | RUN-0004 | active |
+| ROLLOUT-R016 | Always | required | Semantic review | active |
+| ROLLOUT-R017 | Always | optional | Semantic review | active |
+| ROLLOUT-R018 | GitOps PR을 통할 때 | required | Semantic review | active |
+| ROLLOUT-R019 | Always | required | `secret-handling` | active |
+| ROLLOUT-R020 | Always | required | RUN-0004 | active |
+| ROLLOUT-R021 | Always | required | RUN-0004 | active |
+| ROLLOUT-R022 | Always | required | RUN-0004 | active |
+| ROLLOUT-R023 | Always | required | RUN-0004 | active |
+| ROLLOUT-R024 | Always | required | RUN-0004 | active |
+| ROLLOUT-R025 | Always | optional | Semantic review | active |
+| ROLLOUT-R026 | 검토 후 | required | Semantic review | active |
+| ROLLOUT-R027 | Always | required | Semantic review | active |
+
 #### Argo Rollouts
 
 - **Required**:
-  - Rollouts Controller namespace: `argo-rollouts` 고정
-  - Rollouts Dashboard 항상 활성화 (`dashboard.enabled: true`)
-  - canary 단계는 AnalysisTemplate으로 gate한다. 단계 사이 pause는 앱별로 timed pause(`pause: {duration: ...}`) 또는 수동 pause(`pause: {}`)를 선택하며, 플랫폼이 자동 promotion을 강제하지 않는다 (ADR-0011)
-  - Analysis 결과 무시(`skipAnalysis: true`)는 플랫폼 오너 승인 필요
-  - CRD 설치: `installCRDs: true` 유지
-  - Rollouts Dashboard는 `rollouts.hy-k8s.home.arpa` + Traefik(`nginx` IngressClass) + TLS(`rollouts-dashboard-tls`) 유지
-  - 완료·중단 알림은 Rollouts 컨트롤러의 notification engine이 보낸다([ADR-0054](../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md) 조항 2). `platform-rollouts-app.yaml` chart values가 `service.slack`, `trigger.on-rollout-completed`/`on-rollout-aborted`, 대응 template과 `slack:hy-home-alerts` 구독을 소유하며, 이 알림에 ArgoCD Notifications 컨트롤러를 쓰지 않는다
+  - `ROLLOUT-R001` Rollouts Controller namespace: `argo-rollouts` 고정
+  - `ROLLOUT-R002` Rollouts Dashboard 항상 활성화 (`dashboard.enabled: true`)
+  - `ROLLOUT-R003` canary 단계는 AnalysisTemplate으로 gate한다. 단계 사이 pause는 앱별로 timed pause(`pause: {duration: ...}`) 또는 수동 pause(`pause: {}`)를 선택하며, 플랫폼이 자동 promotion을 강제하지 않는다 (ADR-0011)
+  - `ROLLOUT-R004` Analysis 결과 무시(`skipAnalysis: true`)는 플랫폼 오너 승인 필요
+  - `ROLLOUT-R005` CRD 설치: `installCRDs: true` 유지
+  - `ROLLOUT-R006` Rollouts Dashboard는 `rollouts.hy-k8s.home.arpa` + Traefik(`nginx` IngressClass) + TLS(`rollouts-dashboard-tls`) 유지
+  - `ROLLOUT-R007` 완료·중단 알림은 Rollouts 컨트롤러의 notification engine이 보낸다([ADR-0054](../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md) 조항 2). `platform-rollouts-app.yaml` chart values가 `service.slack`, `trigger.on-rollout-completed`/`on-rollout-aborted`, 대응 template과 `slack:hy-home-alerts` 구독을 소유하며, 이 알림에 ArgoCD Notifications 컨트롤러를 쓰지 않는다
 - **Allowed**:
-  - 수동 Rollout promotion은 [Rollouts/Notifications/Headlamp 런북](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)의 승인/증적 절차로 실행
-  - canary/blue-green 전략 선택
-  - Prometheus AnalysisTemplate 정의 (`https://prometheus.hy.home.arpa`, `apps/prometheus-api-auth`의 Basic Auth header, controller의 `hy-home-root-ca` 신뢰; ADR-0046)
+  - `ROLLOUT-R008` 수동 Rollout promotion은 [Rollouts/Notifications/Headlamp 런북](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)의 승인/증적 절차로 실행
+  - `ROLLOUT-R009` canary/blue-green 전략 선택
+  - `ROLLOUT-R010` Prometheus AnalysisTemplate 정의 (`https://prometheus.hy.home.arpa`, `apps/prometheus-api-auth`의 Basic Auth header, controller의 `hy-home-root-ca` 신뢰; ADR-0046)
 - **Disallowed**:
-  - `argo-rollouts` namespace에 Rollouts 외 워크로드 배치
-  - `skipAnalysis: true` 임의 사용
+  - `ROLLOUT-R011` `argo-rollouts` namespace에 Rollouts 외 워크로드 배치
+  - `ROLLOUT-R012` `skipAnalysis: true` 임의 사용
 
 #### Argo Notifications
 
 - **Required**:
-  - Slack app token(`service.slack`의 `$slack-token`): OpenBao `platform/notifications` 속성 `slack_token` → ESO → `argocd/argocd-notifications-secret`. Rollouts 컨트롤러는 같은 OpenBao 항목을 `gitops/platform/eso/rollouts-notification-secret.yaml`의 ExternalSecret으로 받아 `argo-rollouts/argo-rollouts-notification-secret`에 둔다
-  - templates/triggers: `argocd-notifications-cm` (GitOps 관리)
-  - `defaultTriggers`: `on-health-degraded`, `on-sync-failed`; `subscriptions`는
+  - `ROLLOUT-R013` Slack app token(`service.slack`의 `$slack-token`): OpenBao `platform/notifications` 속성 `slack_token` → ESO → `argocd/argocd-notifications-secret`. Rollouts 컨트롤러는 같은 OpenBao 항목을 `gitops/platform/eso/rollouts-notification-secret.yaml`의 ExternalSecret으로 받아 `argo-rollouts/argo-rollouts-notification-secret`에 둔다
+  - `ROLLOUT-R014` templates/triggers: `argocd-notifications-cm` (GitOps 관리)
+  - `ROLLOUT-R015` `defaultTriggers`: `on-health-degraded`, `on-sync-failed`; `subscriptions`는
     `on-health-degraded`, `on-sync-failed`, `on-deployed`를
     `slack:hy-home-alerts`로 보내며 `argocd-notifications-cm`이 소유한다
-  - 앱별 opt-in: annotation `notifications.argoproj.io/subscribe.<trigger>.slack: <channel>`
+  - `ROLLOUT-R016` 앱별 opt-in: annotation `notifications.argoproj.io/subscribe.<trigger>.slack: <channel>`
 - **Allowed**:
-  - 앱 annotation으로 개별 채널 지정
-  - template 추가 (GitOps PR 통해)
+  - `ROLLOUT-R017` 앱 annotation으로 개별 채널 지정
+  - `ROLLOUT-R018` template 추가 (GitOps PR 통해)
 - **Disallowed**:
-  - `argocd-notifications-secret`과 `argo-rollouts-notification-secret`에 Slack token 평문 커밋
-  - ArgoCD chart의 notifications controller 비활성화(`notifications.enabled: false`) 임의 적용 (Rollouts chart의 별도 값과 무관)
+  - `ROLLOUT-R019` `argocd-notifications-secret`과 `argo-rollouts-notification-secret`에 Slack token 평문 커밋
+  - `ROLLOUT-R020` ArgoCD chart의 notifications controller 비활성화(`notifications.enabled: false`) 임의 적용 (Rollouts chart의 별도 값과 무관)
 
 #### Headlamp
 
 - **Required**:
-  - Headlamp namespace: `headlamp` 고정
-  - Ingress hostname: `headlamp.hy-k8s.home.arpa`
-  - TLS Secret: `headlamp-tls` (cert-manager `mkcert-ca-issuer` 자동 발급) # pragma: allowlist secret
-  - k8s router 경로는 [POL-0001](./0001-k8s-gitops-operations-policy.md)의 ingress 통제를 따른다
+  - `ROLLOUT-R021` Headlamp namespace: `headlamp` 고정
+  - `ROLLOUT-R022` Ingress hostname: `headlamp.hy-k8s.home.arpa`
+  - `ROLLOUT-R023` TLS Secret: `headlamp-tls` (cert-manager `mkcert-ca-issuer` 자동 발급) # pragma: allowlist secret
+  - `ROLLOUT-R024` k8s router 경로는 [POL-0001](./0001-k8s-gitops-operations-policy.md)의 ingress 통제를 따른다
 - **Allowed**:
-  - ServiceAccount Token 방식 인증 (로컬 플랫폼 기본)
-  - Headlamp 플러그인 설치 (검토 후)
+  - `ROLLOUT-R025` ServiceAccount Token 방식 인증 (로컬 플랫폼 기본)
+  - `ROLLOUT-R026` Headlamp 플러그인 설치 (검토 후)
 - **Disallowed**:
-  - 대체된 클러스터 UI 재설치 (ADR-0014의 Headlamp 계약과 충돌)
+  - `ROLLOUT-R027` 대체된 클러스터 UI 재설치 (ADR-0014의 Headlamp 계약과 충돌)
 
 ### Enforcement
 
