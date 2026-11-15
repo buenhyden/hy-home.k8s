@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.14"
+version: "0.2.17"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -176,6 +176,12 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-119 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Closure of W03-H19 through the ledger cycle | User advance acceptance "Pre-accept when green (Recommended)", 2026-11-15 (Asia/Seoul), applied to SPEC-0209 with PR #282 CI green; W03-D70; `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv; SPEC-0209 implementation commit `b59603ed`; SPEC-0209 Task EVD-010, EVD-020 and EVD-024; the registry `common_forms` adoption record (candidate, approval_ref null) | PASS | The adoption facts of COMMON-DOC-FORM-1 are recorded: the registry `common_forms` record holds the candidate, approval and local-adoption facts with the source digest, `unverified` where no record exists, and the SPEC-0161 Common Form Adoption Facts table appends a local adoption row for the 16 source roles without rewriting the recorded row. The live row W03-H19 is terminal with this row as Closure; its ledger entry was made terminal and then deleted, the gate passing both times. The legacy row stays as recorded. | no | none |
 | EVD-120 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Closure of W03-H21 through the ledger cycle | User advance acceptance "Pre-accept when green (Recommended)", 2026-11-15 (Asia/Seoul), applied to SPEC-0209 with PR #282 CI green; W03-D70; `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv; the SPEC-0161 tables commit `7bce4c7d`; SPEC-0209 Task EVD-023 and EVD-024 | PASS | The Writer Delegation table places every file the W03 packages SPEC-0168 to SPEC-0212 edited by the Primary Writers table, with each package's own basis, and the Current Writer State list hands the W05 files to W05 with the last editing package. The live row W03-H21 is terminal with this row as Closure; its ledger entry was made terminal and then deleted, the gate passing both times. The legacy row stays as recorded. | no | none |
 | EVD-121 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Closure of W03-H31 through the ledger cycle | User advance acceptance "Pre-accept when green (Recommended)", 2026-11-15 (Asia/Seoul), applied to SPEC-0209 with PR #282 CI green; W03-D70; `python3 scripts/validate-work-residue-ledger.py --root .`; pinned validation venv; the SPEC-0161 tables commit `7bce4c7d`; SPEC-0209 Task EVD-011 and EVD-024 | PASS | The stale tracking is corrected by appended rows only: the Corrections table classifies the 26 OPEN Requirement Changes rows (12 closed, 14 still open), corrects W03-H01, W03-H04, W03-H06 and the EVD-025 ADR count (37 accepted, 34 with layer), and the 14 meaning_map strings point to the REQ-0003 Archived Lineage recovery; the Closing Summary replaces the stale next-owner sentence. The live row W03-H31 is terminal with this row as Closure; its ledger entry was made terminal and then deleted, the gate passing both times. The legacy row stays as recorded. | no | none |
+| EVD-122 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Correction: DOC-12 reassigned to Q07 (W03-D72, W03-D74 Q1, W03-D75) | SPEC-0211 implementation at base `d0ae8cf6`: the live `Residue Handoff` row and the ledger entry `DOC-12`; REQ:141, REQ:672 and REQ:918 (Q07 after W11, in a separate task; W03 completion does not include Q07 execution) and REQ:823 (`artifact_id` and current numbering unchanged); the Q-07 preparation of SPEC-0212 (EVD-112); `python3 scripts/validate-work-residue-ledger.py --root .` | PASS | Owner `W03` to `Q07` and Resume condition `Last, after all docs work is finished (W03-D30)` to `After W11 and every applicable docs task, in the separate Q07 task`, edited in place in the live row and the ledger entry together; State stays `open` and Closure `none`, so DOC-12 is not shown done (REQ:913). The legacy rows `DOC-12` of `Conflicts` ("W03 (last, after open packages close)") and of `Requirement Changes` are superseded by this row, not edited. Preparation is done by SPEC-0212 (EVD-112); the current number space is kept. Ledger gate PASS. | yes | none |
+| EVD-123 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Correction: DOC-S99 reassigned to W05 (W03-D72, W03-D74 Q1) | SPEC-0211 implementation at base `d0ae8cf6`: the live `Residue Handoff` row and the ledger entry `DOC-S99`; REQ:160 and REQ:896 (tests and validators are W05's); OPEN-09 (owner W05); `python3 scripts/validate-work-residue-ledger.py --root .` | PASS | Owner `W03` to `W05` and Resume condition `When phase 3 and W05 move the hard-coded headings (OPEN-09)` to `When W05 moves the hard-coded headings of tests (OPEN-09)`, edited in place in the live row and the ledger entry together; State stays `open`. Phase 3 is closed (EVD-110), so only the W05 part remains. The legacy row `DOC-S99` of `Stage QA Handoff` ("W03 (`docs/99.templates/`); W05 consumes") is superseded by this row, not edited. Ledger gate PASS. | yes | none |
+| EVD-124 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-H35 template set read (final tree) | SPEC-0211 Task EVD-017: the 39 tracked files under `docs/99.templates/templates/` read in full at `bb0c5168`; `git diff bb0c5168..2499646f -- docs/99.templates/templates` (only the README fix of PR #281, merge `2499646f`); that README re-read at `2499646f`; SPEC-0209 does not touch the set | PASS | Denominator 39 (the legacy row counted 37): 39 READ, 0 SEMANTICALLY_REVIEWED, 0 PARTIAL, 0 EXCLUDED, 0 BLOCKED. Every form-bearing template carries the required H2 and H3 of its role form and no unregistered heading. Findings: the README sentence (fixed by PR #281), W07-H04 and W05-H07 (residue). Basis for closing W03-H35 at acceptance. | yes | none |
+| EVD-125 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-H10 README and Policy consumer read (final tree) | SPEC-0211 Task EVD-018 and its re-check at `d0ae8cf6` after SPEC-0209: in `scripts/document_contracts.py` `heading_contract`, `_readme_navigation_registry_diagnostics` and the `REGISTRY_TABLE_TWIN` and `REGISTRY_POLICY_ROLE` block; the `readme_navigation` record and the two policy twin profiles of `docs/99.templates/registry.json`; `python3 -m unittest tests.test_readme_navigation tests.test_common_form_tree.TemplateTwinTableTests` | PASS | README part: navigation sections come from the role form (required, unique H2 or H3 titles), not from a heading list, and every README navigation profile has a form. Policy part: a source named by more than one tabled twin is refused and the policy group shares the `policy` role. The Plan part closed with SPEC-0200. 41 tests OK. No defect, so W03-D74 answer 3 does not apply. Basis for closing W03-H10 at acceptance. | yes | none |
+| EVD-126 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Correction: W03 dropped from the OPEN-07 owner (W03-D74 Q1) | SPEC-0211 implementation at base `d0ae8cf6`: the live `Residue Handoff` row and the ledger entry `OPEN-07`; the W03 file-set reads of W03-H35 (SPEC-0211 Task EVD-017) and W03-H34 (its read row below); REQ:153 (OPEN-07 is not exempted as a historical ID); `python3 scripts/validate-work-residue-ledger.py --root .` | PASS | Owner `W03, W05, W06, W07, W10 by file set` to `W05, W06, W07, W10 by file set`, edited in place in the live row and the ledger entry together, because the W03 part of OPEN-07, the full read of the W03 file set (template set, registry and schema set), is evidenced; Resume condition and State unchanged; the later stages keep their file sets. Ledger gate PASS. | yes | none |
+| EVD-127 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-H34 registry and schema set read (final tree) | `docs/99.templates/registry.json` and `docs/99.templates/contracts/document-profile.schema.json` at `d0ae8cf6`; `python3 scripts/validate-document-contract-registry.py --root .` | PASS | Denominator 2 (registry blob `1b668ac9`, 20,102 lines, 20.0.0; schema blob `d8388d24`, 2,199 lines): 2 READ, 0 SEMANTICALLY_REVIEWED, 0 PARTIAL, 0 EXCLUDED, 0 BLOCKED; every line read by six read-only reader passes (SPEC-0211 Task EVD-019). The read finds gaps, each handed to a named owner and not closed here: `SPEC-0211-REGISTRY-TEXT` (W04+ platform, wording), `W04-H01` (W04, supersession direction and `spec-plan` inbound edges) and `W05-H08` (W05, relation consumer paths, link tests and schema), with `SPEC-0205-STALE-TEXT` and `W05-H07` already open. User answer "Residue to owners, close H34 (Recommended)", 2026-11-15. Basis for closing W03-H34 at acceptance. | yes | none |
 
 #### Edition Delta
 
@@ -895,6 +901,366 @@ Added 2026-11-15 under SPEC-0209; supersedes the next-owner sentence of `Next Ow
 W03-H19, W03-H21 and W03-H31 leave at the SPEC-0209 closing commit.
 Within W03 the order is the SPEC-0209 closing, then SPEC-0211 (W03-H20), then the W03 exit; DOC-12 renumbering comes after W11 (W03-D30 as amended by W03-D75).
 
+#### W03 Closing Report
+
+Added 2026-11-15 under SPEC-0211 (W03-H20, W03-D72, W03-D74), read at `main` `d0ae8cf6` (registry 20.0.0) after SPEC-0194 to SPEC-0210, SPEC-0212 and SPEC-0213 merged. The report states results and their owners by ID, `commit:path` or evidence row; it copies no decision, registry value or ledger cell, tracks no work and accepts nothing. Stage acceptance is the user's decision on the SPEC-0211 criteria.
+
+##### Execution Boundary
+
+| Field | Value |
+| --- | --- |
+| `WORKSPACE_ROOT` | The hy-home.k8s repository root, worktree of branch `claude/w03-closing-report` |
+| `PACKAGE_ROOT` and edition | `_workspace/workspace_execution_tasks_v14_7_revision_20261113_r1/` (r1 of v14.7, 2026-11-13; see the r1 Edition Delta table), read-only |
+| Selected scope | W03 for this workspace (hy-home.k8s); the Project-Template purpose stays at W03 (REQ:135) |
+| HEAD and index at the base | HEAD `d0ae8cf6`; the index holds only the SPEC-0211 change (this Task, the work residue ledger, the SPEC-0211 package and the Stage 03 README) |
+| Existing changes protected | No other change in the worktree; other worktrees and `_workspace/` untouched |
+| Read denominator | W03 file sets (REQ:53): templates 39 DISCOVERED, 39 READ (SPEC-0211 Task EVD-017); registry and schema 2 DISCOVERED, 2 READ (every line, by six read-only reader passes; findings handed as SPEC-0211-REGISTRY-TEXT, W04-H01 and W05-H08, EVD-127); SEMANTICALLY_REVIEWED 0 (no recorded independent review of these files); PARTIAL 0; BLOCKED 0; EXCLUDED: the `scripts/`, `tests/`, workflow and hook file sets, which are W05, W06 and W07's (OPEN-07, W05-H02, W05-H03, W06-H01, W07-H01), and the W03-H10 consumer code beyond the named functions |
+
+##### W03 Item Outcomes
+
+Observation class per REQ:67; authority, recovery and the external basis are cited from the Task that did the work through its REQ-0003 Archived Lineage row. The workspace adopted edition and the migration transition (REQ:37) are owned by the SPEC-0209 `Common Form Adoption Facts` rows and the registry `migration` record.
+
+| No. | Source ID and line | Meaning and condition | Selected | Actual files and consumers | Action | Evidence scope and edition | Acceptance state | Open owner | Exit condition | Observation |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | DOC-01 (REQ:571) | One form for READMEs of the same role | yes | Root, stage, collection, service, workspace and pack README profiles, their templates and README navigation (SPEC-0172, SPEC-0173, SPEC-0174, SPEC-0178) | CHANGE | This workspace; COMMON-DOC-FORM-1 1.0.0 local forms; registry 20.0.0 | accepted by the user on the package criteria | none | Met: every README role has a form | PASS |
+| 2 | DOC-02 (REQ:580) | Separate duties of README, AGENTS and native start instructions | yes | AGENTS form and folder `AGENTS.md` files (SPEC-0176), provider READMEs bound to the Service README form (W03-D17), provider-native exceptions (SPEC-0186) | CHANGE | This workspace; registry 20.0.0 | accepted by the user on the package criteria | W07 for native discovery (AGENT-04) | Met for the W03 forms; native delivery is W07's | PASS |
+| 3 | DOC-03 (REQ:589) | Separate standing rules from invoked procedures | yes | Policy form (SPEC-0175, SPEC-0187) and Skill form (SPEC-0177) | CHANGE | This workspace; registry 20.0.0 | accepted by the user on the package criteria | none | Met | PASS |
+| 4 | DOC-04 (REQ:598) | Required and forbidden fields and links of document profiles | yes | `frontmatter_keys` (SPEC-0181), `layer` removal (SPEC-0184), `relationship_contract` (SPEC-0193), validators of `scripts/document_contracts.py` | CHANGE | This workspace; registry 20.0.0 | accepted by the user on the package criteria | none | Met; DOC-04 terminal (EVD-110) | PASS |
+| 5 | DOC-05 (REQ:607) | Concrete heading hierarchy and body guidance | yes | The 27 role forms of `common_forms`, H2-list removal (SPEC-0205), phase-3 forms (SPEC-0195, SPEC-0197, SPEC-0198, SPEC-0200, SPEC-0203) | CHANGE | This workspace; registry 20.0.0 | accepted by the user on the package criteria | none | Met; DOC-05 terminal (EVD-110) | PASS |
+| 6 | DOC-06 (REQ:616) | Authoring language per role | yes | The `document_language` registry section and the `language_rule` of each form | KEEP | This workspace; registry 20.0.0 | accepted by the user on the package criteria | none | Met; no change needed beyond the forms | PASS |
+| 7 | DOC-07 (REQ:625) | Vault links and plain Markdown links validated separately | yes | Link types and relation kinds of `relationship_contract` and `scripts/validate-links-and-owners.py` (SPEC-0193; W03-H16 terminal, EVD-062) | CHANGE | This workspace; registry 20.0.0 | accepted by the user on the package criteria | W05 for the link-only section list (W05-H01) | Met for the W03 contract | PASS |
+| 8 | DOC-08 (REQ:634) | Executable documents carry the content they need | yes | Guide and Runbook forms (SPEC-0169, SPEC-0170), empty-section reasons (SPEC-0182) | CHANGE | This workspace; registry 20.0.0 | accepted by the user on the package criteria | none | Met | PASS |
+| 9 | DOC-09 (REQ:643) | Trace links kept with the executable body | yes | `Lifecycle Traceability` local H3 (W03-D03, W03-D12), relationship contract (SPEC-0193; W03-H08 terminal, EVD-062) | CHANGE | This workspace; registry 20.0.0 | accepted by the user on the package criteria | none | Met | PASS |
+| 10 | DOC-10 (REQ:652) | Controlled update path of copied norms | yes | `shared_contract` and the `common_forms` candidate record with its adoption facts (SPEC-0209) | CHANGE | This workspace; local candidate only | accepted by the user on the package criteria | W05 (derived-copy drift check, W05-H04); W11 (joint adoption) | Met for the W03 record; the drift check and joint adoption remain | GAP |
+| 11 | DOC-11 (REQ:661) | Template changes applied across the whole consumer chain | yes | TemplateDefinitions (SPEC-0179, SPEC-0196, SPEC-0203), generator (SPEC-0192) | CHANGE | This workspace; registry 20.0.0 | accepted by the user on the package criteria | none | Met; DOC-11 terminal (EVD-107) | PASS |
+| 12 | DOC-12 (REQ:670) | One number-space transition in Q-07 after W11 | yes | Preparation by the Q-07 preparation package (W03-D75); current number space kept; real transition owned by Q07 after W11 | DEFER | SPEC-0212 records (EVD-112) | preparation accepted (SPEC-0212); transition not started | Q07 | After W11 and every applicable docs task, in the separate Q07 task | N/A |
+| 13 | SUP-11 (REQ:682) | Form and history correction | yes | Form-only moves with the registry `migration.meaning_map` records; stale tracking corrected (SPEC-0209, C-01 to C-19) | CHANGE | This workspace; registry 20.0.0 | accepted by the user on the package criteria | none | Met | PASS |
+| 14 | SemVer change contract (REQ:846 to REQ:904) | New SemVer change contract | yes | `scripts/semver_grammar.py` (SPEC-0190), Registry Schema Version (SPEC-0207, ADR-0061), version tests (SPEC-0208), registry 20.0.0 | CHANGE | This workspace | accepted by the user on the package criteria | none | Met | PASS |
+| 15 | Workflow item 1 (REQ:169) | Connect the real registry, schema, templates, generator, parsers, validators, tests and CI callers per role | yes | The SPEC-0209 `Writer Delegation` and `Current Writer State` tables | CHANGE | This workspace | accepted by the user on the package criteria | none | Met | PASS |
+| 16 | Workflow item 2 (REQ:170) | Record each key's meaning, type, obligation, writer, consumers, lifecycle and migration | yes | `frontmatter_keys` (SPEC-0181) and the registry `migration` records | CHANGE | This workspace; registry 20.0.0 | accepted by the user on the package criteria | none | Met | PASS |
+| 17 | Workflow item 3 (REQ:171) | Distinguish relationship kinds | yes | `relationship_contract` (SPEC-0193) | CHANGE | This workspace; registry 20.0.0 | accepted by the user on the package criteria | none | Met | PASS |
+| 18 | Workflow item 4 (REQ:172) | Adopted YAML and JSON Schema dialect: real parser support and refusals | yes | YAML 1.2 loader `scripts/frontmatter_yaml.py` (SPEC-0183), `frontmatter_dialect` | CHANGE | This workspace | accepted by the user on the package criteria | none | Met | PASS |
+| 19 | Workflow item 5 (REQ:173) | Generate, parse and validate per role and migrate current documents; Q-07 after W11 | yes | Document generator (SPEC-0192), the form moves of phase 2 and 3, creation state of Requirement (SPEC-0210) | CHANGE | This workspace; registry 20.0.0 | accepted by the user on the package criteria | Q07 for the number transition | Met; Q-07 deferred to Q07 | PASS |
+| 20 | Workflow item 6 (REQ:174) | Common reform of the approved registry to the common target edition | yes | Phase-3 reform (EVD-110), registry 20.0.0 | CHANGE | This workspace; local adoption only | accepted by the user on the package criteria | none | Met | PASS |
+| 21 | Workflow item 7 (REQ:175) | COMMON-DOC-FORM-1 role forms bound to registry, templates and consumers | yes | 27 forms in `common_forms`; adoption facts of SPEC-0209 (final approval `unverified`) | CHANGE | This workspace; COMMON-DOC-FORM-1 1.0.0 candidate | accepted locally; final approval `unverified` (W03-D05) | The user, for the approval records; W11 for joint adoption | Met locally | UNVERIFIED |
+| 22 | Workflow item 8 (REQ:176) | Continued-execution revision: exclusions, residue handoffs, SemVer, role content, conflict-package cleanup | yes | Work residue ledger (SPEC-0191), classification (SPEC-0213), this report | CHANGE | This workspace | accepted by the user on the package criteria | See the open entries below | Met by this report and the ledger | PASS |
+
+##### Modification Result
+
+| Element | Pointer |
+| --- | --- |
+| Changed files and code and document diff | The Git diffs of the W03 packages SPEC-0168 to SPEC-0213 by their merge commits on `main` up to `d0ae8cf6`; their REQ-0003 Archived Lineage rows |
+| Actual consumers | The SPEC-0209 `Writer Delegation` and `Current Writer State` tables (W03-H21) |
+| Generated-artifact consistency | The generator check of SPEC-0192 in the `document` suite of the verification run below |
+| Work retained as KEEP_VERIFIED | The accepted ADRs in their retained form (W03-D02, W03-D52, W03-D69); DOC-06 (no change needed) |
+
+##### W03 Decision Ledger
+
+One row per W03 decision number in the order of the `W03 Decisions` table; `Applied by` names the package that applied it, by ID.
+
+| No. | Decision | Applied by | Owner of an open part |
+| --- | --- | --- | --- |
+| 1 | W03-D01 | SPEC-0168 to SPEC-0205 | none |
+| 2 | W03-D02 | SPEC-0198 (retained form), SPEC-0207 | none |
+| 3 | W03-D03 | SPEC-0168, SPEC-0169 | none |
+| 4 | W03-D04 | SPEC-0168 | none |
+| 5 | W03-D05 | SPEC-0209 | The user (approval records `unverified`) |
+| 6 | W03-D06 | SPEC-0175 | none |
+| 7 | W03-D07 | SPEC-0177 | W07 (native discovery) |
+| 8 | W03-D08 | SPEC-0168, SPEC-0196 | none |
+| 9 | W03-D09 | SPEC-0178, SPEC-0179 | none |
+| 10 | W03-D10 | SPEC-0178, SPEC-0179 | W07 (native discovery) |
+| 11 | W03-D11 | SPEC-0169, SPEC-0175 | none |
+| 12 | W03-D12 | SPEC-0171 | none |
+| 13 | W03-D13 | SPEC-0170 | none |
+| 14 | W03-D14 | SPEC-0171 | none |
+| 15 | W03-D15 | SPEC-0171 | none |
+| 16 | W03-D16 | superseded by W03-D17 | none |
+| 17 | W03-D17 | SPEC-0174 | none |
+| 18 | W03-D18 | SPEC-0176 | none |
+| 19 | W03-D19 | SPEC-0178 | none |
+| 20 | W03-D20 | SPEC-0179 | none |
+| 21 | W03-D21 | SPEC-0179 | none |
+| 22 | W03-D22 | SPEC-0181, SPEC-0184 | none |
+| 23 | W03-D23 | SPEC-0181 | none |
+| 24 | W03-D24 | SPEC-0192 | none |
+| 25 | W03-D25 | SPEC-0185, SPEC-0191 | W05 (derived-copy drift check, W05-H04) |
+| 26 | W03-D26 | SPEC-0186, SPEC-0188, SPEC-0189 | none |
+| 27 | W03-D27 | SPEC-0187, SPEC-0194, SPEC-0199, SPEC-0201, SPEC-0202, SPEC-0204, SPEC-0206 | none |
+| 28 | W03-D28 | none in W03 | W06 (CI-SCOPE) |
+| 29 | W03-D29 | SPEC-0183 | none |
+| 30 | W03-D30 | SPEC-0212 (as amended by W03-D75) | Q07 after W11 |
+| 31 | W03-D31 | SPEC-0182 | none |
+| 32 | W03-D32 | SPEC-0184 | none |
+| 33 | W03-D33 | SPEC-0186 | none |
+| 34 | W03-D34 | SPEC-0188 | none |
+| 35 | W03-D35 | SPEC-0189 | none |
+| 36 | W03-D36 | SPEC-0189 | none |
+| 37 | W03-D37 | SPEC-0185 | none |
+| 38 | W03-D38 | SPEC-0191 | none |
+| 39 | W03-D39 | SPEC-0191 | none |
+| 40 | W03-D40 | SPEC-0185 | none |
+| 41 | W03-D41 | SPEC-0187 | none |
+| 42 | W03-D42 | SPEC-0194, SPEC-0199, SPEC-0201, SPEC-0202, SPEC-0204, SPEC-0206 | none |
+| 43 | W03-D43 | SPEC-0194, SPEC-0199, SPEC-0201, SPEC-0202, SPEC-0204, SPEC-0206 | none |
+| 44 | W03-D44 | SPEC-0194, SPEC-0206 | none |
+| 45 | W03-D45 | SPEC-0190 | none |
+| 46 | W03-D46 | SPEC-0190 | none |
+| 47 | W03-D54 | SPEC-0187 | none |
+| 48 | W03-D47 | SPEC-0191 | none |
+| 49 | W03-D66 | SPEC-0207 | none |
+| 50 | W03-D69 | SPEC-0198, SPEC-0207 | none |
+| 51 | W03-D48 | SPEC-0192 | none |
+| 52 | W03-D65 | SPEC-0193, SPEC-0196, SPEC-0200, SPEC-0203 | none |
+| 53 | W03-D49 | SPEC-0195 to SPEC-0205 | none |
+| 54 | W03-D50 | SPEC-0200, SPEC-0203 | none |
+| 55 | W03-D51 | SPEC-0193 | none |
+| 56 | W03-D52 | SPEC-0195, SPEC-0197, SPEC-0198, SPEC-0200, SPEC-0203 | none |
+| 57 | W03-D68 | SPEC-0208 | none |
+| 58 | W03-D53 | SPEC-0194 | none |
+| 59 | W03-D70 | SPEC-0209, SPEC-0211 | none |
+| 60 | W03-D71 | SPEC-0210 | none |
+| 61 | W03-D72 | SPEC-0211 | none |
+| 62 | W03-D73 | SPEC-0210 | none |
+| 63 | W03-D55 | SPEC-0195, SPEC-0197 | none |
+| 64 | W03-D74 | SPEC-0211 | none |
+| 65 | W03-D75 | SPEC-0211 | Q07 after W11 |
+| 66 | W03-D76 | SPEC-0212 | Q07 after W11 |
+| 67 | W03-D77 | SPEC-0213 | none |
+| 68 | W03-D78 | SPEC-0213, SPEC-0205 | none |
+| 69 | W03-D79 | SPEC-0213 | W00 (historical OPEN entries) |
+| 70 | W03-D80 | SPEC-0213 | none |
+| 71 | W03-D81 | SPEC-0209, SPEC-0211, SPEC-0213 | none |
+| 72 | W03-D82 | SPEC-0213 | W00 (OPEN-01 to OPEN-06) |
+| 73 | W03-D56 | SPEC-0196 | none |
+| 74 | W03-D57 | SPEC-0197 | none |
+| 75 | W03-D58 | SPEC-0199 | none |
+| 76 | W03-D60 | SPEC-0201 | none |
+| 77 | W03-D83 | SPEC-0211 (single shared-suite run) | none |
+| 78 | W03-D84 | SPEC-0201 to SPEC-0212 form moves | none |
+| 79 | W03-D67 | SPEC-0209 | none |
+| 80 | W03-D62 | SPEC-0202 | none |
+| 81 | W03-D64 | SPEC-0206 | none |
+| 82 | W03-D59 | SPEC-0200 | none |
+| 83 | W03-D61 | SPEC-0203 | none |
+| 84 | W03-D63 | SPEC-0205 | none |
+
+##### Key, Section and Table Migration
+
+One row per profile that carries a registry `migration` record at `d0ae8cf6` (38 rows; the grain of REQ:759 is the profile, and its field and section rows stay in that record). Every cell points to the record, the REQ-0003 Archived Lineage recovery proof, the regression test or the acceptance; no value is copied.
+
+| No. | profile | document_type | current_contract | target_contract | field_or_section | current_shape | target_shape | meaning_preserved | consumer_path | migration_action | negative_case | rollback | owner | approval_ref |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | `common/template-readme-repository` | `common/readme-repository` | `retained_history` of its `migration` record | form `root-readme` | the H2 and H3 of form `root-readme` | `retained_history` | form `root-readme` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-readme-repository` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0172 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 2 | `common/template-readme-stage-index` | `common/readme-stage-index` | `retained_history` of its `migration` record | form `stage-readme` | the H2 and H3 of form `stage-readme` | `retained_history` | form `stage-readme` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-readme-stage-index` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0173 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 3 | `common/template-readme-collection-index` | `common/readme-collection-index` | `retained_history` of its `migration` record | form `stage-readme` | the H2 and H3 of form `stage-readme` | `retained_history` | form `stage-readme` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-readme-collection-index` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0173 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 4 | `common/template-readme-implementation` | `common/readme-implementation` | `retained_history` of its `migration` record | form `service-readme` | the H2 and H3 of form `service-readme` | `retained_history` | form `service-readme` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-readme-implementation` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0174 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 5 | `common/template-readme-audit-pack` | `reference/audit-pack` | `retained_history` of its `migration` record | form `reference-pack-readme` | the H2 and H3 of form `reference-pack-readme` | `retained_history` | form `reference-pack-readme` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-readme-audit-pack` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0178 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 6 | `common/template-readme-data-pack` | `reference/data-pack` | `retained_history` of its `migration` record | form `reference-pack-readme` | the H2 and H3 of form `reference-pack-readme` | `retained_history` | form `reference-pack-readme` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-readme-data-pack` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0178 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 7 | `common/template-readme-research-pack` | `reference/research-pack` | `retained_history` of its `migration` record | form `reference-pack-readme` | the H2 and H3 of form `reference-pack-readme` | `retained_history` | form `reference-pack-readme` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-readme-research-pack` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0178 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 8 | `common/template-readme-workspace-staging` | `common/readme-workspace-staging` | `retained_history` of its `migration` record | form `workspace-readme` | the H2 and H3 of form `workspace-readme` | `retained_history` | form `workspace-readme` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-readme-workspace-staging` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0178 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 9 | `common/template-readme-runtime-governance` | `common/readme-runtime-governance` | `retained_history` of its `migration` record | form `service-readme` | the H2 and H3 of form `service-readme` | `retained_history` | form `service-readme` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-readme-runtime-governance` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0174 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 10 | `common/template-reference-audit` | `reference/audit` | `retained_history` of its `migration` record | form `reference-report` | the H2 and H3 of form `reference-report` | `retained_history` | form `reference-report` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-reference-audit` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0189 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 11 | `common/template-reference-research` | `reference/research` | `retained_history` of its `migration` record | form `reference-report` | the H2 and H3 of form `reference-report` | `retained_history` | form `reference-report` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-reference-research` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0189 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 12 | `common/template-reference-data` | `reference/data` | `retained_history` of its `migration` record | form `reference-report` | the H2 and H3 of form `reference-report` | `retained_history` | form `reference-report` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-reference-data` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0189 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 13 | `common/template-sdlc-architecture-decision` | `sdlc/architecture-decision` | `retained_history` of its `migration` record | form `adr` | the H2 and H3 of form `adr` | `retained_history` | form `adr` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-sdlc-architecture-decision` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0198 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 14 | `common/template-sdlc-architecture-description` | `sdlc/architecture-description` | `retained_history` of its `migration` record | form `architecture` | the H2 and H3 of form `architecture` | `retained_history` | form `architecture` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-sdlc-architecture-description` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0197 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 15 | `common/template-sdlc-plan` | `sdlc/plan` | `retained_history` of its `migration` record | form `plan` | the H2 and H3 of form `plan` | `retained_history` | form `plan` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-sdlc-plan` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0200 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 16 | `common/template-sdlc-task` | `sdlc/task` | `retained_history` of its `migration` record | form `task` | the H2 and H3 of form `task` | `retained_history` | form `task` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-sdlc-task` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0203 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 17 | `common/template-operation-guide` | `operation/guide` | `retained_history` of its `migration` record | form `guide` | the H2 and H3 of form `guide` | `retained_history` | form `guide` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-operation-guide` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0169 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 18 | `common/template-operation-incident` | `operation/incident` | `retained_history` of its `migration` record | form `incident` | the H2 and H3 of form `incident` | `retained_history` | form `incident` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-operation-incident` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0171 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 19 | `common/template-operation-policy` | `operation/policy` | `retained_history` of its `migration` record | form `policy` | the H2 and H3 of form `policy` | `retained_history` | form `policy` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-operation-policy` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0175 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 20 | `common/template-operation-postmortem` | `operation/postmortem` | `retained_history` of its `migration` record | form `postmortem` | the H2 and H3 of form `postmortem` | `retained_history` | form `postmortem` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-operation-postmortem` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0171 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 21 | `common/template-operation-runbook` | `operation/runbook` | `retained_history` of its `migration` record | form `runbook` | the H2 and H3 of form `runbook` | `retained_history` | form `runbook` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-operation-runbook` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0170 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 22 | `common/template-sdlc-requirement` | `sdlc/requirement` | `retained_history` of its `migration` record | form `requirement` | the H2 and H3 of form `requirement` | `retained_history` | form `requirement` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-sdlc-requirement` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0195 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 23 | `common/template-sdlc-spec` | `sdlc/spec` | `retained_history` of its `migration` record | form `spec` | the H2 and H3 of form `spec` | `retained_history` | form `spec` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-sdlc-spec` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0200 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 24 | `common/template-exception-provider-native-metadata` | `common/provider-native-metadata` | `retained_history` of its `migration` record | form `provider-native` | the H2 and H3 of form `provider-native` | `retained_history` | form `provider-native` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-exception-provider-native-metadata` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0179 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 25 | `common/template-exception-provider-native-command` | `common/provider-native-command` | `retained_history` of its `migration` record | form `provider-native` | the H2 and H3 of form `provider-native` | `retained_history` | form `provider-native` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-exception-provider-native-command` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0179 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 26 | `common/template-exception-provider-native-codex` | `common/codex-agent-binding` | `retained_history` of its `migration` record | form `provider-native` | the H2 and H3 of form `provider-native` | `retained_history` | form `provider-native` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-exception-provider-native-codex` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0181 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 27 | `common/template-governance-knowledge` | `governance/knowledge` | `retained_history` of its `migration` record | form `knowledge-map` | the H2 and H3 of form `knowledge-map` | `retained_history` | form `knowledge-map` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-governance-knowledge` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0186 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 28 | `common/template-governance-vocabulary` | `governance/vocabulary` | `retained_history` of its `migration` record | form `vocabulary` | the H2 and H3 of form `vocabulary` | `retained_history` | form `vocabulary` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-governance-vocabulary` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0186 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 29 | `common/template-governance-prompt` | `governance/prompt` | `retained_history` of its `migration` record | form `prompt` | the H2 and H3 of form `prompt` | `retained_history` | form `prompt` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-governance-prompt` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0186 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 30 | `common/template-governance-provider` | `governance/provider` | `retained_history` of its `migration` record | form `governance-document` | the H2 and H3 of form `governance-document` | `retained_history` | form `governance-document` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-governance-provider` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0188 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 31 | `common/template-governance-role` | `governance/role` | `retained_history` of its `migration` record | form `governance-role` | the H2 and H3 of form `governance-role` | `retained_history` | form `governance-role` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-governance-role` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0188 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 32 | `common/template-governance-rule` | `governance/rule` | `retained_history` of its `migration` record | form `policy` | the H2 and H3 of form `policy` | `retained_history` | form `policy` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-governance-rule` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0175 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 33 | `common/template-governance-skill` | `governance/skill` | `retained_history` of its `migration` record | form `skill` | the H2 and H3 of form `skill` | `retained_history` | form `skill` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-governance-skill` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0177 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 34 | `common/template-native-skill` | `common/native-skill-package` | `retained_history` of its `migration` record | form `skill` | the H2 and H3 of form `skill` | `retained_history` | form `skill` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-native-skill` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0177 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 35 | `common/template-agents-guide` | `common/folder-agents-guide` | `retained_history` of its `migration` record | form `agents` | the H2 and H3 of form `agents` | `retained_history` | form `agents` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-agents-guide` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0176 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 36 | `common/template-evaluation-task` | `evaluation/task` | `retained_history` of its `migration` record | form `evaluation-task` | the H2 and H3 of form `evaluation-task` | `retained_history` | form `evaluation-task` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-evaluation-task` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0186 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 37 | `common/template-evaluation-score` | `evaluation/score` | `retained_history` of its `migration` record | form `evaluation-score` | the H2 and H3 of form `evaluation-score` | `retained_history` | form `evaluation-score` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-evaluation-score` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0186 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+| 38 | `common/template-evaluation-results` | `evaluation/results` | `retained_history` of its `migration` record | form `evaluation-results` | the H2 and H3 of form `evaluation-results` | `retained_history` | form `evaluation-results` sections | `meaning_map` | TemplateDefinition `consumer_paths` of `common/template-evaluation-results` | form-only move by `meaning_map` | form tree check, `tests/test_common_form_tree.py` | `rollback` of the record | W03 (SPEC-0209 Writer Delegation) | SPEC-0186 acceptance; recovery proof in the REQ-0003 Archived Lineage |
+
+##### Verification Results
+
+The final candidate, run once after the last W03 package landed (W03-D83): the five shared suites `document`, `document-lifecycle`, `agent-governance`, `tooling` and `validation-routing`, plus the strict document validators and the ledger gate. Recorded in the SPEC-0211 Task.
+
+| Command | Tool edition | Environment | Exit | Original result | Resolves | Reason if not run |
+| --- | --- | --- | --- | --- | --- | --- |
+| `python3 scripts/run-contract-tests.py --root . --suite document` (2026-11-15T06:10:59Z to 06:22:45Z) | repository script at `d0ae8cf6` | Pinned validation venv, Python 3.12.3, worktree of `claude/w03-closing-report` with the staged SPEC-0211 index on `d0ae8cf6` | 0 | 1096 tests, 31 modules, OK (skipped=3) | none | none |
+| `python3 scripts/run-contract-tests.py --root . --suite document-lifecycle` (06:15:43Z to 06:15:58Z) | repository script at `d0ae8cf6` | Pinned validation venv, Python 3.12.3, worktree of `claude/w03-closing-report` with the staged SPEC-0211 index on `d0ae8cf6` | 0 | 44 tests, 3 modules, OK | none | none |
+| `python3 scripts/run-contract-tests.py --root . --suite agent-governance` (06:15:44Z to 06:16:09Z) | repository script at `d0ae8cf6` | Pinned validation venv, Python 3.12.3, worktree of `claude/w03-closing-report` with the staged SPEC-0211 index on `d0ae8cf6` | 0 | 105 tests, 4 modules, OK; agent registry validation PASS | none | none |
+| `python3 scripts/run-contract-tests.py --root . --suite tooling` (06:15:45Z to 06:16:10Z) | repository script at `d0ae8cf6` | Pinned validation venv, Python 3.12.3, worktree of `claude/w03-closing-report` with the staged SPEC-0211 index on `d0ae8cf6` | 0 | 166 tests, 8 modules, OK | none | none |
+| `python3 scripts/run-contract-tests.py --root . --suite validation-routing` (06:15:45Z to 06:16:14Z) | repository script at `d0ae8cf6` | Pinned validation venv, Python 3.12.3, worktree of `claude/w03-closing-report` with the staged SPEC-0211 index on `d0ae8cf6` | 0 | 173 tests, 7 modules, OK | none | none |
+| The four strict document validators (staged lifecycle included), `python3 scripts/validate-work-residue-ledger.py --root .`, `python3 scripts/validation/repository/quality.py --root .` | repository scripts at `d0ae8cf6` | Pinned validation venv, Python 3.12.3, worktree of `claude/w03-closing-report` with the staged SPEC-0211 index on `d0ae8cf6` | 0 | PASS; ledger 58 entries at the run, 61 after the W03-H34 residue; SPEC-0211 Task EVD-020 | none | none |
+
+##### Acceptance and Unfinished Work
+
+| Statement | Basis |
+| --- | --- |
+| Approval, acceptance, merge and operation are separate | Each W03 package's approval receipt, criterion decision and merge commit; no operation is claimed |
+| Unfinished requirements | The 61 open ledger entries at the implementation commit, listed below with owner, resume condition and next action, from `python3 scripts/work-residue-ledger.py --root . --state open` |
+| A report with an approved modification still pending is not complete | REQ:838; no approved W03 modification is pending at `d0ae8cf6` |
+| A no-change closure states its basis | REQ:838; only DOC-06 is KEEP, with its basis above |
+| A blocked, unread or NOT_SELECTED item is never recorded complete or N/A without a real basis | REQ:838, REQ:67; DOC-12 is N/A for W03 because REQ:672 assigns it to Q07 |
+| Closing this Task does not close the whole package | W04 to W11 remain (REQ:137) |
+| Structure-check success is not product completion | REQ:838, REQ:129 |
+
+| No. | Entry | Owner | Resume condition | Next action |
+| --- | --- | --- | --- | --- |
+| 1 | `DOC-12` | Q07 | After W11 and every applicable docs task, in the separate Q07 task | The owner acts at the resume condition |
+| 2 | `OPEN-01` | W00 | Only on a difference shown to affect a current owner (historical, non-blocking; W00:20, 153) | The owner acts at the resume condition |
+| 3 | `OPEN-02` | W00 | Same as OPEN-01 | The owner acts at the resume condition |
+| 4 | `OPEN-03` | W00 | When each of its 37 DELTA packages is judged item by item at its named stage (PKG W00:153); that stage consumes the judgment | The owner acts at the resume condition |
+| 5 | `OPEN-04` | W00 | Only when the original reports are supplied or a difference shown to affect a current owner (historical, non-blocking) | The owner acts at the resume condition |
+| 6 | `OPEN-06` | W00 | Only when a stage proposes adopting a named source, or on a shown owner difference; that stage consumes the result | The owner acts at the resume condition |
+| 7 | `W00-H01` | W00 | When a difference shown to affect a current owner is found | The owner acts at the resume condition |
+| 8 | `W01-H02` | W01 | When W01 is run for its r1 differences; W05 consumes the result | The owner acts at the resume condition |
+| 9 | `W03-H10` | W03 | In the Plan, README and Policy packages respectively | The owner acts at the resume condition |
+| 10 | `W03-H20` | W03 | Last before DOC-12 | The owner acts at the resume condition |
+| 11 | `W03-H34` | W03 | When W03 re-reads its files before editing | The owner acts at the resume condition |
+| 12 | `W03-H35` | W03 | When W03 re-reads its files before editing | The owner acts at the resume condition |
+| 13 | `R147-07` | W04 | When W04 starts | The owner acts at the resume condition |
+| 14 | `SDLC-07` | W04 | When W04 starts (policy semantics only) | The owner acts at the resume condition |
+| 15 | `W03-H05` | W04 | When W04 starts | The owner acts at the resume condition |
+| 16 | `W04-H01` | W04 | When W04 starts (policy and lifecycle semantics) | The owner acts at the resume condition |
+| 17 | `SPEC-0205-STALE-TEXT` | W04+ platform | When the owner of the Plan text, of the Stage 99 `AGENTS.md` and of the registry TemplateDefinition text next edits them in its own package | The owner acts at the resume condition |
+| 18 | `SPEC-0211-REGISTRY-TEXT` | W04+ platform | When the owner of those registry TemplateDefinition, form and profile texts next edits them in its own package | The owner acts at the resume condition |
+| 19 | `DOC-S00` | W05 | When W05 starts | The owner acts at the resume condition |
+| 20 | `DOC-S90` | W05 | When W05 starts | The owner acts at the resume condition |
+| 21 | `DOC-S99` | W05 | When W05 moves the hard-coded headings of tests (OPEN-09) | The owner acts at the resume condition |
+| 22 | `OPEN-09` | W05 | When W05 moves the hard-coded headings | The owner acts at the resume condition |
+| 23 | `QA-03` | W05 | When W05 starts | The owner acts at the resume condition |
+| 24 | `QA-17` | W05 | When W05 starts | The owner acts at the resume condition |
+| 25 | `R147-05` | W05 | When W05 starts | The owner acts at the resume condition |
+| 26 | `R147-20` | W05 | When W05 starts | The owner acts at the resume condition |
+| 27 | `SDLC-08` | W05 | When W05 starts | The owner acts at the resume condition |
+| 28 | `SDLC-ROWS` | W05 | When W05 starts | The owner acts at the resume condition |
+| 29 | `W03-H11` | W05 | When W05 starts | The owner acts at the resume condition |
+| 30 | `W03-H12` | W05 | When W05 starts | The owner acts at the resume condition |
+| 31 | `W05-H01` | W05 | When W05 starts | The owner acts at the resume condition |
+| 32 | `W05-H02` | W05 | When W05 re-reads its files before editing | The owner acts at the resume condition |
+| 33 | `W05-H03` | W05 | When W05 re-reads its files before editing | The owner acts at the resume condition |
+| 34 | `W05-H04` | W05 | When W05 starts | The owner acts at the resume condition |
+| 35 | `W05-H05` | W05 | When W05 starts | The owner acts at the resume condition |
+| 36 | `W05-H06` | W05 | When W05 starts | The owner acts at the resume condition |
+| 37 | `W05-H07` | W05 | When W05 starts (validators) | The owner acts at the resume condition |
+| 38 | `W05-H08` | W05 | When W05 starts (validators and schema) | The owner acts at the resume condition |
+| 39 | `OPEN-07` | W05, W06, W07, W10 by file set | Each writer stage reads its whole file set before editing | The owner acts at the resume condition |
+| 40 | `CI-SCOPE` | W06 | When W06 starts (W03-D28) | The owner acts at the resume condition |
+| 41 | `COMMIT-AFTER` | W06 | When W06 starts | The owner acts at the resume condition |
+| 42 | `COMMIT-BEFORE` | W06 | When W06 starts | The owner acts at the resume condition |
+| 43 | `MERGE-AFTER` | W06 | When W06 starts | The owner acts at the resume condition |
+| 44 | `MERGE-BEFORE` | W06 | When W06 starts | The owner acts at the resume condition |
+| 45 | `OLD-RULE-TESTS` | W06 | With CI-SCOPE | The owner acts at the resume condition |
+| 46 | `PR-DURING` | W06 | When CI-SCOPE closes | The owner acts at the resume condition |
+| 47 | `PUSH-BEFORE` | W06 | When W06 starts | The owner acts at the resume condition |
+| 48 | `R147-06` | W06 | When W06 starts | The owner acts at the resume condition |
+| 49 | `W06-H01` | W06 | When W06 re-reads its files before editing | The owner acts at the resume condition |
+| 50 | `AGENT-04` | W07 | When W07 starts | The owner acts at the resume condition |
+| 51 | `R147-17` | W07 | When W07 starts | The owner acts at the resume condition |
+| 52 | `W07-H01` | W07 | When W07 re-reads its files before editing | The owner acts at the resume condition |
+| 53 | `W07-H02` | W07 | When W07 starts | The owner acts at the resume condition |
+| 54 | `W07-H03` | W07 | When W07 starts | The owner acts at the resume condition |
+| 55 | `W07-H04` | W07 | When W07 starts (provider projections) | The owner acts at the resume condition |
+| 56 | `OPEN-08` | W10 | When W10 starts | The owner acts at the resume condition |
+| 57 | `R147-16` | W10 | When W10 starts | The owner acts at the resume condition |
+| 58 | `W03-H23` | W10 | When W10 starts | The owner acts at the resume condition |
+| 59 | `R45-12` | W11 | When another repository's adoption evidence exists (this workspace only) | The owner acts at the resume condition |
+| 60 | `W03-H09` | W11 | When another repository's adoption evidence exists | The owner acts at the resume condition |
+| 61 | `W03-H32` | W11 | In the cross-repository check | The owner acts at the resume condition |
+
+##### Carried Obligation Dispositions
+
+KEEP, DELTA, BLOCKED or RETIRED_ALIAS against the current Task, later `Resolves` and acceptance (REQ:793 to REQ:804).
+
+| No. | Obligation | Disposition | Basis | Owner |
+| --- | --- | --- | --- | --- |
+| 1 | OPEN-Q03 (REQ:804) | DELTA, `PARTIAL` | Local candidate record and adoption facts (SPEC-0209); final approval `unverified` (W03-D05); joint adoption not claimed; a local adoption fact is not joint adoption | W11 (W03-H09, W03-H32, R45-12); the user for the approval records |
+| 2 | WP-10 (REQ:795) | KEEP | Stage 99 canon, templates and lifecycle read and reformed: phase 3 (EVD-110), W03-H35 read (SPEC-0211 Task EVD-017), registry read (W03-H34) | none |
+| 3 | WP-11 (REQ:796) | KEEP | Template, document and validator chain: SPEC-0192, SPEC-0196, SPEC-0203 | none |
+| 4 | WP-12 (REQ:797) | DELTA | Number transition state: prepared by SPEC-0212 (EVD-112); transition after W11 | Q07 |
+| 5 | WP-13 (REQ:798) | DELTA | Ledger (SPEC-0191) and Requirement creation state (SPEC-0210) done; common transition semantics are W04's (SDLC-07) | W04 |
+| 6 | WP-17 (REQ:799) | KEEP | README and operations document forms and language (phase 2, SPEC-0169 to SPEC-0178) | none |
+| 7 | WP-18 (REQ:800) | DELTA | Link, anchor and relation contract (SPEC-0193); the link-only section list is W05's | W05 (W05-H01) |
+| 8 | WP-47 (REQ:801) | DELTA | Reorganization done by the W03 forms; numbering and archive disposition with Q-07 | Q07 |
+| 9 | WP-52 (REQ:802) | DELTA | Final stage numbering after every related task is accepted | Q07 after W11 |
+
+##### Audit Identifiers
+
+Each judged on later evidence as its own observation (REQ:808, REQ:806, REQ:153); OPEN-03 remainders stay individual; OPEN-07 (full content review), OPEN-08 and OPEN-10 (live) and OPEN-13 (required checks) are not exempted as historical IDs.
+
+| No. | Identifier | Disposition | Basis |
+| --- | --- | --- | --- |
+| 1 | OPEN-01 | Open, non-blocking, owner W00 | W03-D82; live row OPEN-01 |
+| 2 | OPEN-02 | Open, non-blocking, owner W00 | W03-D82; live row OPEN-02 |
+| 3 | OPEN-03 | Open, owner W00; 37 DELTA packages judged item by item at their stages | W03-D82; live row OPEN-03 |
+| 4 | OPEN-04 | Open, non-blocking, owner W00 (`SOURCE_BYTES_NOT_AVAILABLE`) | W03-D82; live row OPEN-04 |
+| 5 | OPEN-05 | Closed by evidence | `OPEN Dispositions` row OPEN-05 |
+| 6 | OPEN-06 | Open, non-blocking, owner W00 | W03-D82; live row OPEN-06 |
+| 7 | OPEN-07 | Open; the W03 file-set part read (templates, registry and schema); the later stages keep their file sets | Live row OPEN-07; W03-H34, W03-H35 reads |
+| 8 | OPEN-08 | Open, owner W10 (live authority) | Live row OPEN-08 |
+| 9 | OPEN-09 | Open, owner W05 (hard-coded headings in tests) | Live row OPEN-09 |
+| 10 | OPEN-10 | Not applicable to this workspace (hy-home-docker only); not exempted as historical | `OPEN Dispositions` row OPEN-10 |
+| 11 | OPEN-11 | Not applicable to this workspace (hy-home-docker only) | `OPEN Dispositions` row OPEN-11 |
+| 12 | OPEN-12 | Not applicable to this workspace (hy-home-docker SPEC-0212 only) | `OPEN Dispositions` row OPEN-12 |
+| 13 | OPEN-13 | Closed by evidence (required checks read back); later required-check changes are W06's | `OPEN Dispositions` row OPEN-13 |
+| 14 | OPEN-14 | Not applicable to this workspace (hy-home-docker runner only) | `OPEN Dispositions` row OPEN-14 |
+| 15 | V13_4-REMAINING-7 (REQ:806) | The seven follow-up observations are state observations of existing OPEN rows and Tasks, not separate work; their current actions are the OPEN rows above | REQ:806 |
+
+##### Old-Obligation Classification
+
+The classification of every live W03 obligation is the `Change Contract Classification` table above (SPEC-0213; W03-D77, W03-D81) with the status rows of the SPEC-0209 `Disposition Input` table. Changed after them, classified here:
+
+| No. | Obligation | Class | Basis |
+| --- | --- | --- | --- |
+| 1 | DOC-12 | REVISE (owner Q07) | W03-D75; this package's correction row |
+| 2 | DOC-S99 | REVISE (owner W05) | W03-D74; this package's correction row |
+| 3 | OPEN-07 | REVISE (W03 dropped from the owner; W03 file-set part read) | This package's correction row (EVD-126) |
+| 4 | W03-H10, W03-H20, W03-H34, W03-H35 | KEEP_VALID until their closure rows | This package |
+| 5 | W05-H07, W07-H04, SPEC-0211-REGISTRY-TEXT, W04-H01, W05-H08 | KEEP_VALID (new residue) | SPEC-0211 Task EVD-014 and EVD-019 |
+| 6 | Cancelled requirements | none (`CANCEL_OBSOLETE` not used) | The user cancelled none |
+
+The dispositions of W03-H01 and W03-H06 are those of the SPEC-0209 `Corrections` rows C-14 and C-16, cited and not restated.
+
+##### Exit Exceptions
+
+| No. | Exception | Bound and owner | Basis |
+| --- | --- | --- | --- |
+| 1 | Accepted ADRs keep their form until replaced | W03-D02 with the bound W03-D52 as amended by W03-D69; 37 accepted ADRs at `d0ae8cf6`, 34 of them carrying `layer` | W03-D02, W03-D52, W03-D69; SPEC-0209 C-17 |
+| 2 | The six `WGOV-CORE` approval facts stay `unverified` | W03-D05; the SPEC-0209 `Approval Evidence Request` table; the user | W03-D05, SPEC-0209 |
+| 3 | Local adoption is not joint adoption | W11 (W03-H09, W03-H32, R45-12) | The SPEC-0209 `Common Form Adoption Facts` rows |
+| 4 | Conditional extensions permitted by REQ:37 | Each named form extension in `common_forms` carries its condition, owner, verification, review and removal | REQ:37; registry `common_forms` extensions |
+| 5 | Q-07 renumbering outside W03 | Q07 after W11 | W03-D75, REQ:141 |
+
+##### Closure Reads and Findings
+
+One row for each read or finding the user decided on 2026-11-15; the first column is a running number, not a residue ID. A read changes no closure cell.
+
+| No. | Item | Read or finding | Basis |
+| --- | --- | --- | --- |
+| 1 | `R45-10` | Read only: terminal, closed by EVD-107 at the SPEC-0203 acceptance; closure cell unchanged | User answer "Read only, cite EVD-107 (Recommended)", 2026-11-15; EVD-107 |
+| 2 | `DOC-11` | Read only: terminal, closed by EVD-107 at the SPEC-0203 acceptance; closure cell unchanged | User answer "Read only, cite EVD-107 (Recommended)", 2026-11-15; EVD-107 |
+| 3 | Stale Codex TOML sentence, `docs/99.templates/templates/README.md` line 70 | Finding of the W03-H35 read at `bb0c5168`: fixed in W03 by its own ordinary document change (README 0.6.2 to 0.6.3, branch `claude/w03-templates-readme-codex`, PR #281, commit `e4f43270`, merge commit `2499646f`); no residue row or ledger entry is created | User answer "Fix it in W03 now", 2026-11-15, which supersedes "Residue to Stage 99 owner (Recommended)" and "W04+ platform (Recommended)" |
+| 4 | `W07-H04` | Finding of the W03-H35 read: `__READ_GREP_GLOB__` placeholder of the Claude agent template; live row and ledger entry, owner W07 | User answer "Record both as residue (Recommended)", 2026-11-15 |
+| 5 | `W05-H07` | No pinned transition edge set for the `requirement` lifecycle family in the registry validator; live row and ledger entry, owner W05 | User answer "Record both as residue (Recommended)", 2026-11-15; SPEC-0210 Task EVD-029 |
+| 6 | `SPEC-0211-REGISTRY-TEXT` | Finding of the W03-H34 read: registry wording faults; live row and ledger entry, owner W04+ platform | User answer "Residue to owners, close H34 (Recommended)", 2026-11-15; SPEC-0211 Task EVD-019 |
+| 7 | `W04-H01` | Finding of the W03-H34 read: `superseded_by` against the relation kind, and `spec-plan` states with no inbound edge; live row and ledger entry, owner W04 | Same answer; SPEC-0211 Task EVD-019 |
+| 8 | `W05-H08` | Finding of the W03-H34 read: policy-authority consumer paths, link test naming and reuse, schema `carrier` and `relation.kind`; live row and ledger entry, owner W05 | Same answer; SPEC-0211 Task EVD-019 |
+
+##### W04 Entry Statement
+
+W04 may start for this workspace (hy-home.k8s; REQ:135 keeps the Project-Template purpose at W03) only when every item of REQ:16 is accepted and merged or handed to a named owner (SPEC-0185 to SPEC-0189, the local forms, ledger, policy and generator packages, phase 3, and the closing of W03-H19, W03-H20, W03-H21 and W03-H31), no approved modification is pending (REQ:838), SPEC-0211 has exited with W03-H20 terminal, the Final check shows no ledger entry whose owner carries `W03`, W03-H10 is closed (W03-H24), and the user selects W04 (REQ:135). W04 inherits the open entries whose owner names W04: R147-07, SDLC-07, SPEC-0205-STALE-TEXT, SPEC-0211-REGISTRY-TEXT, W03-H05, W04-H01. No W05 to W11 work is started; entries assigned to them are pointers only. Q-07 stays after W11 (REQ:141). Handing work to another stage does not complete the whole (REQ:137). This statement starts nothing and approves nothing.
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -912,10 +1278,10 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | DOC-04 | Legacy row `DOC-04` of `Requirement Changes`: profile field, state, relation and table definitions reformed | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | DOC-05 | Legacy row `DOC-05` of `Requirement Changes`: section and body contracts match target H2 and H3 and tables | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | DOC-11 | Legacy row `DOC-11` of `Requirement Changes`: a TemplateDefinition for every real template | terminal | W03 | When every template has its TemplateDefinition (W03-H13, W03-H15) | EVD-107 |
-| DOC-12 | Legacy row `DOC-12` of `Conflicts`: display renumbering of Stage 01, 02 and 03; also an OPEN row of Requirement Changes | open | W03 | Last, after all docs work is finished (W03-D30) | none |
+| DOC-12 | Legacy row `DOC-12` of `Conflicts`: display renumbering of Stage 01, 02 and 03; also an OPEN row of Requirement Changes | open | Q07 | After W11 and every applicable docs task, in the separate Q07 task | none |
 | DOC-S00 | Legacy row `DOC-S00` of `Stage QA Handoff`: vocabulary rule_id binding | open | W05 | When W05 starts | none |
 | DOC-S90 | Legacy row `DOC-S90` of `Stage QA Handoff`: Stage 90 source, edition and freshness checks | open | W05 | When W05 starts | none |
-| DOC-S99 | Legacy row `DOC-S99` of `Stage QA Handoff`: tests hard-code current headings | open | W03 | When phase 3 and W05 move the hard-coded headings (OPEN-09) | none |
+| DOC-S99 | Legacy row `DOC-S99` of `Stage QA Handoff`: tests hard-code current headings | open | W05 | When W05 moves the hard-coded headings of tests (OPEN-09) | none |
 | GOV-04 | Legacy row `GOV-04` of `Requirement Changes`: the approved registry as a reform target | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | GOV-06 | Legacy row `GOV-06` of `Requirement Changes`: single-writer registry reformed | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | LEDGER | Legacy row `LEDGER` of `Conflicts`: the work residue ledger; built by this package | terminal | W03 | After the user accepts the SPEC-0191 criteria | EVD-055 |
@@ -927,7 +1293,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | OPEN-03 | Legacy row `OPEN-03` of `OPEN Dispositions`: 37 DELTA packages open at their stages; the 37 are the rows with Current state DELTA in the `SUP-01 Legacy Lineage` table of the SPEC-0155 Task (`git show a6f44976:docs/03.specs/0155-designated-source-applicability/tasks/tsk-0001-designated-source-applicability.md`; REQ-0003 Archived Lineage, SPEC-0155 row and its recovery proof) | open | W00 | When each of its 37 DELTA packages is judged item by item at its named stage (PKG W00:153); that stage consumes the judgment | none |
 | OPEN-04 | Legacy row `OPEN-04` of `OPEN Dispositions`: byte comparison with two original reports | open | W00 | Only when the original reports are supplied or a difference shown to affect a current owner (historical, non-blocking) | none |
 | OPEN-06 | Legacy row `OPEN-06` of `OPEN Dispositions`: perspective rows of an external source | open | W00 | Only when a stage proposes adopting a named source, or on a shown owner difference; that stage consumes the result | none |
-| OPEN-07 | Legacy row `OPEN-07` of `OPEN Dispositions`: full survey of the local workspace | open | W03, W05, W06, W07, W10 by file set | Each writer stage reads its whole file set before editing | none |
+| OPEN-07 | Legacy row `OPEN-07` of `OPEN Dispositions`: full survey of the local workspace | open | W05, W06, W07, W10 by file set | Each writer stage reads its whole file set before editing | none |
 | OPEN-08 | Legacy row `OPEN-08` of `OPEN Dispositions`: live, native and cluster authority | open | W10 | When W10 starts | none |
 | OPEN-09 | Legacy row `OPEN-09` of `OPEN Dispositions`: hard-coded current headings in tests | open | W05 | When W05 moves the hard-coded headings | none |
 | PR-DURING | Legacy row `PR-DURING` of `Stage QA Handoff`: PR-DURING scope decision (CI-SCOPE) | open | W06 | When CI-SCOPE closes | none |
@@ -952,6 +1318,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | SDLC-08 | Legacy row `SDLC-08` of `Requirement Changes`: old approved registry edition is not a pass basis | open | W05 | When W05 starts | none |
 | SDLC-ROWS | Legacy row `SDLC rows` of `Stage QA Handoff`: PLAN-PROMOTION anchor, member and receipt cross-check | open | W05 | When W05 starts | none |
 | SPEC-0205-STALE-TEXT | No legacy row: three texts left stale by the H2-list removal of SPEC-0205 and outside its Spec scope: the Plan sentence "a draft until its review and approval receipts exist", the word `sections` in `docs/99.templates/AGENTS.md`, and the TemplateDefinition `validation` strings of `docs/99.templates/registry.json` that say "keep heading lists". Transferred from the closed SPEC-0205 Task (EVD-111) | open | W04+ platform | When the owner of the Plan text, of the Stage 99 `AGENTS.md` and of the registry TemplateDefinition text next edits them in its own package | none |
+| SPEC-0211-REGISTRY-TEXT | No legacy row: wording faults found by the W03-H34 read of `docs/99.templates/registry.json` at `d0ae8cf6` (SPEC-0211 Task EVD-019), beyond `SPEC-0205-STALE-TEXT`: four "keep empty heading lists" pack strings, one "listed their H2 headings" and the provider-native twin "H2 lists" strings; copied or wrong TemplateDefinition and profile text (the data-pack consumer path names the collection README, the collection and runtime-governance template texts copy the stage and implementation texts, the postmortem extension removal names incident lineage, two `review` strings do not name their form, the governance-document form calls itself a provider note); one failure named by both `BODY-HEADING-REQUIRED` and `BODY-H3-REQUIRED`; "A audit" and "a operations policy"; about 28 Korean object particles (을 for 를) in generated `required_content`. Recorded under SPEC-0211 (user answer "Residue to owners, close H34 (Recommended)", 2026-11-15) | open | W04+ platform | When the owner of those registry TemplateDefinition, form and profile texts next edits them in its own package | none |
 | W00-H01 | Legacy row `package contracts set` of `Read Denominator`: 3 partial and 2 listed-only package contract files | open | W00 | When a difference shown to affect a current owner is found | none |
 | W01-H01 | Legacy row `governance policy set` of `Read Denominator`: 3 partial and 1 listed-only governance policy files | terminal | W01 | When W01 re-reads its files before editing | EVD-074 |
 | W01-H02 | No legacy row: DOC-S00, W01 part, the `rule_id` binding of the vocabulary in `.agents/knowledge/glossary.md` that W05 consumes; the DOC-S00 row holds the W05 part only. W01 stays the owner (the legacy `Stage QA Handoff` row DOC-S00 says "W01 (`.agents/knowledge/glossary.md`); W05 consumes"; PKG W06:331 names W01 the normative canon). Seeded under W03-D78 and W03-D82 by SPEC-0213 | open | W01 | When W01 is run for its r1 differences; W05 consumes the result | none |
@@ -986,16 +1353,20 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W03-H42 | Legacy row `Generator` of `Document Form Handoff`: a document generator or the recorded reason for none | terminal | W03 | After W03-H25, which SPEC-0184 closed | EVD-059 |
 | W03-H43 | No legacy row: the `requirement` lifecycle domain yields no creation state, so a new Requirement is refused by the lifecycle creation rule and by the document generator (W03-D48); the repair is a lifecycle contract change of its own | terminal | W03 | When the registry admits a creation state for the `requirement` lifecycle domain | EVD-116 |
 | W03-H44 | No legacy row: the Requirement `Downstream owner` column is a hand-written reciprocal field, 10 of the 68 members are not cited in their description's own `Upstream requirement` column and 17 of its 91 cells are not a single link (W03-D55); the Architecture form package completes the citing rows and then removes the column with a derived coverage check in place of its link check | terminal | W03 | When the Architecture form package (SPEC-0197) completes the citing rows | EVD-093 |
+| W04-H01 | No legacy row: lifecycle and relation semantics found by the W03-H34 read at `d0ae8cf6` (SPEC-0211 Task EVD-019): `operation/guide`, `operation/policy` and `operation/runbook` carry supersession by the frontmatter key `superseded_by`, so the predecessor owns the relation, against the relation kind "a successor names its predecessor" that every other owner follows; the `spec-plan` lifecycle family declares `in-progress`, `blocked` and `completed` with no inbound edge and no edge from `approved` to `in-progress`. Recorded under SPEC-0211 (user answer "Residue to owners, close H34 (Recommended)", 2026-11-15) | open | W04 | When W04 starts (policy and lifecycle semantics) | none |
 | W05-H01 | Legacy row `Link-only section` of `Document Form Handoff`: the hard-coded link-only section list must follow the registry | open | W05 | When W05 starts | none |
 | W05-H02 | Legacy row `scripts set` of `Read Denominator`: 8 partial and 53 listed-only tracked scripts | open | W05 | When W05 re-reads its files before editing | none |
 | W05-H03 | Legacy row `tests set` of `Read Denominator`: 5 partial and 68 listed-only tracked tests | open | W05 | When W05 re-reads its files before editing | none |
 | W05-H04 | No legacy row: derived-copy drift check, a derived body changed alone is refused (source requirement GOV-06, not the legacy `GOV-06` row, which is the registry reform). Frozen SPEC-0166 Handoffs, W05 row, and Trace GOV-06; PKG W01:396-402. Recover the frozen Task with `git show 579280f2:docs/03.specs/0166-w01-governance-alignment/tasks/tsk-0001-w01-governance-alignment.md`. Seeded under W03-D78 by SPEC-0213 | open | W05 | When W05 starts | none |
 | W05-H05 | No legacy row: refusal of contradictory approval text, and refusal tests for rule, code and validator contradictions (source requirement GOV-07). Frozen SPEC-0166 Handoffs, W05 row, and Trace GOV-07; PKG W01:405-411. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | open | W05 | When W05 starts | none |
 | W05-H06 | No legacy row: ARC-08, trace and remove the `done` and `archived` branches of `scripts/validate-links-and-owners.py` and the terminal statuses of `scripts/validation/current_executable_references.py` with their tests when no registry domain reaches them. Frozen SPEC-0167 Handoffs, W05 row, and ARC-08 row; PKG W02:340-343. Recover with `git show 3270cb00:docs/03.specs/0167-w02-safe-disposition/tasks/tsk-0001-w02-safe-disposition.md`. Seeded under W03-D78 by SPEC-0213 | open | W05 | When W05 starts | none |
+| W05-H07 | No legacy row: the registry validator fixes no transition edge set for the `requirement` lifecycle family, so an added `draft` to `approved` edge gives no diagnostic; pre-existing, found by the SPEC-0210 security read (SPEC-0210 Task EVD-029). Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | open | W05 | When W05 starts (validators) | none |
+| W05-H08 | No legacy row: validator and schema points found by the W03-H34 read at `d0ae8cf6` (SPEC-0211 Task EVD-019): the policy-authority relation lists only `scripts/document_contracts.py` and the schema as consumer paths while its checks `LINK-BROKEN` and `LINK-STAGE-BOUNDARY` run in `scripts/validate-links-and-owners.py`, and its gap text says no rule checks a `policy_refs` path; the positive normative link test is named as a negative case, and seven relations use one test as both positive and negative; the schema `relation_owner.carrier` allows `section`, which no relation uses, and `relation.kind` is a free string not tied to the relation kind IDs. Recorded under SPEC-0211 (user answer "Residue to owners, close H34 (Recommended)", 2026-11-15) | open | W05 | When W05 starts (validators and schema) | none |
 | W06-H01 | Legacy row `workflows set` of `Read Denominator`: 2 listed-only workflow files | open | W06 | When W06 re-reads its files before editing | none |
 | W07-H01 | Legacy row `hooks set` of `Read Denominator`: 2 listed-only hook files | open | W07 | When W07 re-reads its files before editing | none |
 | W07-H02 | No legacy row: GOV-08, allow tests for approved local reads, reversible edits and narrow tests, and deny tests for secret access and out-of-scope writes. Frozen SPEC-0166 Handoffs, W07 row, and Trace GOV-08; PKG W01:414-420. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | open | W07 | When W07 starts | none |
 | W07-H03 | No legacy row: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash). Frozen SPEC-0166 Requirement Trace, W01-B row; its Handoffs table does not list it. Recover the frozen Task as for W05-H04. Seeded under W03-D81 by SPEC-0213 | open | W07 | When W07 starts | none |
+| W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | open | W07 | When W07 starts (provider projections) | none |
 
 ## Acceptance Decision
 
