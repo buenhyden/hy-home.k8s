@@ -1,10 +1,10 @@
 ---
 title: "Claude Provider Notes"
-version: "1.9.1"
+version: "1.9.2"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-15"
 ---
 
 # Claude Provider Notes
@@ -91,12 +91,11 @@ invocation. The common procedure retains the selected role and user scope.
   never blocked. A program that opens files itself stays outside it; see
   [approval and safety](../.agents/governance/approval-and-safety.md).
   Run QA explicitly; edit, Stop, and compaction events do not run whole QA.
-- The `read-only-evidence` permission class does not mean the same enforcement
-  on both providers. Here it withholds the structured write tools while leaving
-  a shell available, so a shell write is prohibited by policy and observed
-  advisorily rather than blocked. On Codex the same class binds an
-  operating-system `read-only` sandbox. That difference is documented and
-  accepted; it is not parity, and neither side is described as the other.
+- Here the `read-only-evidence` permission class withholds the structured
+  write tools while leaving a shell available, so a shell write is prohibited
+  by policy and observed advisorily rather than blocked. How this differs from
+  Codex, and why it is not parity, is owned by
+  [SAFE-R018](../.agents/governance/approval-and-safety.md#execution-controls).
 - Claude loads root `CLAUDE.md`, not a folder `AGENTS.md`: with a `CLAUDE.md`
   present, Claude Code 2.1.319 reads no `AGENTS.md`, and the setting that loads
   both is ignored in project settings (observed 2026-11-06). Each folder that
