@@ -83,7 +83,9 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
   the current implementation, without replaying the eleven reported W00–W07
   items or treating attached proposals as approval. The user identified the
   uncommitted W00–W07 residual audit candidate as leftover work to continue.
-  Drafts do not decide implementation, operation or completion.
+  Drafts do not decide implementation, operation or completion. A later
+  request the same day adds the W00-DELTA prompt with the same limits and
+  asks for commit, push, PR and merge of both results.
 
 ## Execution Log
 
@@ -282,6 +284,7 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-173 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | MERGE-BEFORE strict note | `.github/rulesets/main-protection.md` candidate and the EVD-166 read-back, 2026-11-16 | PASS | The intended-state note now names `strict: true` for the latest-head rule and points to the EVD-166 read-back instead of claiming no read-back. No remote setting changed. | no | none |
 | EVD-174 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W05-H01 link-only sections follow the registry | Source read of `scripts/validate-markdown-profiles.py` and `scripts/document_contracts.py` at `16f05183`, 2026-11-16 | PASS | No hard-coded `_LINK_ONLY_SECTIONS` list remains. The profile validator builds link-only headings from each registry form section's `link_only` field. | no | none |
 | EVD-175 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-H11 QA runner fixture branch | Source read of `tests/test_qa_runner.py` at `16f05183`, 2026-11-16 | PASS | The fixture repository is created with `--initial-branch=qa-fixture`, so the remote-tracking test no longer depends on a local `master` default. | no | none |
+| EVD-176 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W00 hosted job description against the current workflow | `.github/workflows/ci.yml` `style-pr` plan and GitOps steps, `.agents/governance/sdlc.md` SDLC-R016 and `.agents/governance/quality.md` QUAL-R006 at `16f05183`, 2026-11-16 | PASS | Both policy statements described `style-pr` as style plus lock only, while the workflow also selects the reviewed base's GitOps identity check for GitOps data. Both now name that leaf and its pending ADR-0063 adoption. No workflow or remote setting changed. | no | none |
 
 #### Edition Delta
 
@@ -2296,6 +2299,29 @@ file. W05-H09 still holds compatibility majors and retired aliases that the
 `scripts/AGENTS.md` rule 3 forbids. Removing them needs a separate scoped
 change with its consumer trace. Entries owned by W10 and Q07 and the
 user-acceptance entries are unchanged.
+
+#### W00 Delta Recheck (4.2.0)
+
+The 2026-11-16 request applies the 4.2.0 W00-DELTA prompt to this workspace
+as a difference-only check. The repository had one Git worktree, with HEAD
+at merged `16f05183`. No reset,
+stash or clean was used. The designs read were D00, D15, D17, D18 and D25.
+The package observations read were the k8s repository, PR and CI entries.
+PR #290 read back as merged, with head `c2243ef9`, merge `16f05183` and five
+successful checks. The API listed 100 files, which is its page limit. That
+matches the package observation and the completion baseline.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| W00 intake tables and verdict vocabulary | KEEP_VERIFIED | Accepted intake; the R00 disposition above | none |
+| REQ-0003 renumbering, transcript and final no-recovery clauses | KEEP_VERIFIED | FR-0023, the session capture clause and FR-0020 already match Q02, Q06 and Q10 | none |
+| SDLC-R016 and QUAL-R006 hosted job description | CHANGE | F42-01: both omitted the GitOps identity leaf that `ci.yml` runs in `style-pr`; EVD-176 | none |
+| ADR-0063 adoption of that leaf | UNVERIFIED | ADR proposed; no leaf-positive hosted run (EVD-166) | operator decision, W06 |
+| Native, Desktop and receipt residue | UNVERIFIED | EVD-163, EVD-167 and the R00 table | RUNTIME-CLOSE, W11-ACCEPT |
+
+The policy text now states the current workflow behavior and leaves adoption
+pending. It does not accept ADR-0063. The source observations are static
+reads and do not establish host, native or user acceptance.
 
 ### Resolution Links
 

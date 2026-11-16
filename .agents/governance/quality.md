@@ -1,6 +1,6 @@
 ---
 title: "Quality and Evidence Policy"
-version: "3.0.0"
+version: "3.0.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -129,7 +129,10 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   style job also runs the reviewed base's CI Python contract check against the
   PR files, because a bot-authored lock update never passes local staged QA
   (SPEC-0123; Git history: package `0123-hosted-lock-check` under
-  `docs/03.specs/` at commit `69445fca`). A
+  `docs/03.specs/` at commit `69445fca`). When a PR changes GitOps data, the
+  same job runs the reviewed base's static GitOps identity check against the
+  PR files. That leaf is a candidate under the proposed ADR-0063 and is not
+  yet adopted. A
   deployment style route applies only if a real
   deployment workflow exists. Hosted automation does not run local unit or
   document-content QA. A hosted result reports only what its jobs actually
