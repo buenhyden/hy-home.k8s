@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.27"
+version: "0.2.28"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -89,7 +89,7 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
   A further request applies the W01-CONTRACT prompt under the same limits
   and asks the agent to continue until completion and fix errors at their
   cause. The 2026-11-17 request applies the W02-DISPOSITION prompt under the
-  same limits.
+  same limits, and a later request applies the W03-VERSION prompt.
 
 ## Execution Log
 
@@ -292,6 +292,7 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-177 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | SDLC-07 lifecycle edge ownership | `.agents/governance/document-lifecycle.md` Authority, DOCLIFE-R002 and DOCLIFE-R003, the Stage 99 registry `lifecycle` domains and `scripts/document_contracts.py` REGISTRY_LIFECYCLE_DOMAIN at `c6d997fb`, 2026-11-16 | PASS | The policy explains each family's state meanings and names the registry as the sole machine owner of directed transitions. The validators enforce the edges, and the Requirement edge set is fixed. The legacy criterion that the policy restate each family's edges conflicts with the single-owner requirement in the W01 contract and package D24, so the registry stays the only edge owner. | no | none |
 | EVD-178 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W01 vocabulary and contract recheck | `.agents/knowledge/glossary.md`, `.agents/governance/quality.md` QUAL-R015 and QUAL-R016, `.agents/governance/document-lifecycle.md` draft boundary and `.claude/provider.md` binding ownership at `c6d997fb`, 2026-11-16 | PASS | All 64 vocabulary rows use the seven common columns, with numeric contract versions. TERM-REMOVAL cited closed package decision IDs, and now cites REQ-0003-FR-0020. Risk-based review, the draft boundary and the provider binding ownership already matched the confirmed decisions. | no | none |
 | EVD-179 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W02 owner and resume condition recheck | The work residue ledger, the W02 Disposition table and the Residue Handoff rows at `84d2e981`, read against the 4.2.0 package prompt list, 2026-11-17 | PASS | The 4.2.0 package splits W10 into seven tasks, so the owner `W10` and the condition "When W10 starts" no longer named one owner or trigger. OPEN-08, R147-16 and W03-H23 now name W10-INFRA with a concrete resume condition. DOC-S99 no longer cites the closed OPEN-09. No entry changed state, and no source, check or user file was removed. | no | none |
+| EVD-180 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-VERSION numeric version recheck | `scripts/semver_grammar.py`, the version patterns of `frontmatter.schema.json`, `document-profile.schema.json` and `template-definition.schema.json`, `scripts/release.py`, and the 24 cases of the package `version-fixtures.json` at `bb0d1887`, 2026-11-17 | PASS | All 24 package cases match `is_numeric_version`, and `numeric_version_order` orders 1.9.0 before 1.10.0. The schema patterns end in `(?![\s\S])`, so a trailing newline fails. Release tags keep their own `v`-prefixed SemVer pattern, Kubernetes API `version: v1` labels stay unchanged, and `contract_id` and `contract_version` are separate fields. `tests.test_semver_grammar`, `tests.test_semver_versions` and `tests.test_frontmatter_key_contract`: 104 tests OK. No change was needed. | no | none |
 
 #### Edition Delta
 
@@ -2371,6 +2372,23 @@ condition, so the work was not repeated.
 No incomplete entry became terminal. W03-H23 is still a real gap:
 `README.md` lists a `VAULT_TOKEN` environment variable, while the script
 prompts for the token. Fixing it is W10-INFRA work and is not done here.
+
+#### W03-VERSION Recheck (4.2.0)
+
+The 2026-11-17 request applies the 4.2.0 W03-VERSION prompt with the same
+limits, starting from merged `bb0d1887`. The designs read were D02, D25 and
+D27. No attached k8s action targets W03-VERSION.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Three-part ASCII integer grammar with fullmatch and integer order | KEEP_VERIFIED | EVD-180 | none |
+| Schema patterns reject a trailing newline | KEEP_VERIFIED | EVD-180 | none |
+| Product tags, external labels and identifiers keep their own types | KEEP_VERIFIED | EVD-180; the repository has no database migration number | none |
+| `contract_id` and `contract_version` as separate fields | KEEP_VERIFIED | Registry, TemplateDefinition schema and the Stage 99 README | none |
+| Compatibility readers of older registry majors | UNVERIFIED | W05-H09 holds their removal | W05 |
+
+The repository has no Node reader, so the cross-language case of D02 does
+not apply. Renumbering does not reset any version; it stays with Q07-CUTOVER.
 
 ### Resolution Links
 
