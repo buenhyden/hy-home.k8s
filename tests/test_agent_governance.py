@@ -988,6 +988,34 @@ class NativeBoundaryTests(unittest.TestCase):
                     self.assert_rejected("AGENT-NATIVE-HOOK")
             path.write_text(json.dumps(original))
 
+    def test_native_hook_failure_policy_is_scoped_to_claude_pre_tool(self):
+        import json
+
+        path = self.root / ".claude/settings.json"
+        original = json.loads(path.read_text())
+        handler = original["hooks"]["PreToolUse"][0]["hooks"][0]
+        self.assertEqual(handler.get("onFailure"), "block")
+        for value in (None, "continue"):
+            with self.subTest(value=value):
+                handler.pop("onFailure")
+                if value is not None:
+                    handler["onFailure"] = value
+                path.write_text(json.dumps(original))
+                self.assert_rejected("AGENT-NATIVE-HOOK")
+                handler["onFailure"] = "block"
+        advisory = original["hooks"]["SessionStart"][0]["hooks"][0]
+        advisory["onFailure"] = "block"
+        path.write_text(json.dumps(original))
+        self.assert_rejected("AGENT-NATIVE-HOOK")
+        del advisory["onFailure"]
+        path.write_text(json.dumps(original))
+
+        path = self.root / ".codex/hooks.json"
+        codex = json.loads(json.dumps(self.CODEX_HOOKS))
+        codex["hooks"]["PreToolUse"][0]["hooks"][0]["onFailure"] = "block"
+        path.write_text(json.dumps(codex))
+        self.assert_rejected("AGENT-NATIVE-HOOK")
+
     def test_session_start_is_claude_only_and_compact_or_resume(self):
         """SPEC-0151: one session event re-injects reading guidance on Claude."""
         import copy
