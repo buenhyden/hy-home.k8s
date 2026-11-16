@@ -1,10 +1,10 @@
 ---
 title: "90.references/research"
-version: "0.2.5"
+version: "0.2.6"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 ---
 # 90.references/research
 
@@ -12,10 +12,10 @@ updated: "2026-11-13"
 
 ### Purpose and Readers
 
-> workspace harness research pack 참조, 출처 원장, 오래 유지할 연구 종합을 두는 곳이다.
+> 연구 팩과 보고서, 출처 기록과 연구 종합을 두는 곳이다.
 
-`research/`는 workspace harness와 workspace engineering research pack의 오래
-유지할 참조 자료를 둔다. 출처에 근거한 발견, 관찰 날짜가 붙은 출처 확인, 종합을
+`research/`는 워크스페이스 엔지니어링과 아카이브 보존·출처에 관한 연구 팩을
+둔다. 출처에 근거한 발견, 관찰 날짜가 붙은 출처 확인, 종합을
 이후의 plan, spec, guide, task가 인용할 수 있는 안정적인 조회 영역이지만
 이 폴더가 활성 정책의 소유자가 되지는 않는다.
 
@@ -36,7 +36,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 
 #### In Scope
 
-- workspace harness research pack 색인 자료
+- 연구 팩 색인 자료
 - 오래 유지할 출처 원장과 출처 우선순위 메모
 - 공식 출처와 저장소 근거 증거 요약
 - 분명히 표시한 경우의 비권위 market scan 요약
@@ -76,7 +76,7 @@ research/
 현재 research pack은 `research/####-<slug>/`에만 있다. 네 자리 번호는 Research
 안에서 유일하고 slug는 의미 있는 kebab-case이며 날짜가 아니다. pack 안의 보고서는
 registry가 요구하는 `m####-` identity prefix 뒤에 의미 있는 주제 이름을 붙인다.
-이 prefix는 identity이지 정렬 키가 아니다. 현재 보고서 파일 이름에 `part-*.md`,
+이 prefix는 identity이지 정렬 키가 아니다. 새 보고서 파일 이름에 `part-*.md`,
 날짜, 두 번째 정렬 prefix를 붙이지 않는다.
 
 ### Classification
@@ -92,19 +92,18 @@ registry가 요구하는 `m####-` identity prefix 뒤에 의미 있는 주제 �
    [research-pack.template.md](../../99.templates/templates/references/research-pack.template.md)로,
    작성하는 보고서는
    [research.template.md](../../99.templates/templates/references/research.template.md)로 만든다.
-3. 출처 주장은 사실대로, 날짜와 함께 적고 `Claim-Source Matrix`, `Sources`, `Review and Freshness`로 범위를 명시한다.
+3. 주장마다 출처와 관찰 날짜를 기록하고 `Sources`, `Review and Freshness`에서 근거와 갱신 조건을 명시한다. 주장별 출처를 표로 대조할 때는 `Claim-Source Matrix`를 사용한다.
 4. market scan 자료보다 공식 문서와 저장소 근거 증거를 우선한다.
 5. market 발견은 비권위 자료로 표시하고, 공식 출처나 저장소 근거를 뒤집는 데 쓰지 않는다.
 6. 활성 정책, 구현 계약, runbook, task 증거는 여기서 다시 정의하지 말고 각 정본 소유자에게 돌려보낸다.
-7. research pack 구조나 검증 증거가 바뀌면 이 README와 상위 [90.references README](../README.md)를 함께 갱신한다. 검증 증거는 활성 Task가 있으면 그 Task에 기록한다.
+7. research pack 목록이 바뀌면 이 README의 색인을 갱신한다. 상위 [90.references README](../README.md)의 링크가 영향을 받으면 해당 링크도 갱신한다. 검증 증거는 소유 Task에 기록한다.
 
 #### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/90.references/research/`다.
 
 - 같은 폴더의 research 참조는 대상 파일이 생긴 뒤에만 `./`를 쓴다.
-- 번호가 붙은 pack 참조는 대상 파일이 생긴 뒤 `./0001-workspace-engineering/<filename>.md`
-  형식을 쓴다.
+- 번호가 붙은 pack 참조는 대상 파일이 생긴 뒤 `./####-<slug>/<filename>.md` 형식을 쓴다.
 - 상위 reference로 가는 링크는 `../README.md`를 쓴다.
 - 정본 소유 stage는 `../../../.agents/`, `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`, `../../05.operations/`를 쓴다.
 - 이 collection README에서 저장소 최상위 소스를 가리킬 때는 `../../../<path>`를 쓴다.

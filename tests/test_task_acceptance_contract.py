@@ -759,6 +759,10 @@ class SpecPlanAuthorityTests(unittest.TestCase):
         domain = next(
             item for item in registry.lifecycle_domains if item.family == "spec-plan"
         )
+        self.assertEqual(
+            {state for state, _ in domain.states},
+            {"draft", "in-review", "approved", "cancelled"},
+        )
         self.assertTrue(domain.allows("approved", "in-review"))
         self.assertTrue(domain.allows("draft", "cancelled"))
         self.assertFalse(domain.allows("approved", "in-progress"))
@@ -766,7 +770,7 @@ class SpecPlanAuthorityTests(unittest.TestCase):
         path = PurePosixPath("docs/03.specs/0999-new-package/spec.md")
         created = LifecycleDocument(path, "sdlc/spec", "completed")
         self.assertIn(
-            "LIFECYCLE-CREATE",
+            "LIFECYCLE-STATE",
             {
                 item.rule_id
                 for item in compare_lifecycle(

@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "3.37.1"
+version: "4.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-16"
 ---
 
 # Document Authoring Policy
@@ -117,8 +117,9 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    historical and current relationship contracts. Write each traceability
    relation once, in the document that cites its parent; never hand-write a
    back-link. Derive the reverse view on demand with
-   `scripts/document-backlinks.py`. Supersession pairs (rule 13) stay
-   reciprocal. The Stage 99 registry `relationship_contract` owns the meaning
+   `scripts/document-backlinks.py`. Operating supersession is written by its
+   successor and the lifecycle checker derives the reverse relation. Other
+   supersession evidence follows the applicable domain in rule 13. The Stage 99 registry `relationship_contract` owns the meaning
    of each relation (kind, direction, cardinality, canonical owner, consumers,
    checks) and of the four link types (normative, evidence, historical,
    navigation). A link fragment names a heading slug or an explicit anchor of
@@ -214,7 +215,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
     tracked document may later occupy a retired path; never restore the
     retired bytes there.
 13. `AUTHOR-R013` Preserve accepted decisions and completed evidence. Use successors,
-    reciprocal lifecycle relationships and the Archived Lineage summary in the
+    the applicable lifecycle relationship and the Archived Lineage summary in the
     owning current document; recover removed bytes from Git history rather than
     rewriting history, leaving redirects, or keeping a second recovery ledger; a closed work residue ledger entry is recovered from Git history.
     Before a current document leaves its stage, follow the manual consumer,
@@ -246,27 +247,32 @@ current authority.
 Governed Markdown uses the ordered common prefix "title", "version",
 "type", "status", "owner", and "updated"; later keys appear only when the
 selected profile declares them. A new document starts at version "0.1.0" and
-the first stable approval raises it to "1.0.0". Patch means a correction
-without changed meaning, minor means compatible meaning or section growth, and
-major means an incompatible role or contract change. Status and version are
-independent. A version value is a SemVer 2.0.0 string without a "v" prefix,
-checked by the one grammar in `scripts/semver_grammar.py`. Document Revision,
-Contract Version and Registry Schema Version are separate objects; an artifact
-identity or a package edition label is not a version. The Registry Schema Version
-is a SemVer string without prerelease or build metadata, and an integer of an
-earlier registry means `N.0.0`. The loader and the write guard read its MAJOR
-number only and accept the one they implement; the history reader also reads
-each MAJOR number it lists. A registry change takes MAJOR when it breaks a
-registry or consumer that was valid before, MINOR for a compatible addition that
-every consumer tolerates, PATCH for a compatible fix of a declared contract, and
-NO_CHANGE when the serialization shape stays; its Task records the level and the
-reason. In "0.y.z" an
-incompatible change and a feature raise the minor and a compatible fix raises
-the patch. One edit raises the highest affected level once, and an unchanged
-object keeps its version. A commit type such as `docs:` does not by itself
-decide the level. A check refuses a lower version and a changed released
-edition, accepts an unchanged version without demanding a bump, and never
-chooses the level of an increase. Native Skill packages keep name and description at the top and
+its first stable approval raises it to "1.0.0" when the document is still at
+major zero. Document Revision, Contract Version and Registry Schema Version
+each use the ASCII numeric triplet `X.Y.Z` from `scripts/semver_grammar.py`.
+Each component is zero or begins with an ASCII digit from 1 through 9.
+Prefixes, whitespace, prerelease identifiers and build metadata are invalid.
+Compare components numerically in order. Product tags follow
+[Git release ownership](git.md#release-ownership). External deployment labels,
+database migration numbers and artifact identities retain their own types.
+Historical Registry integers are read as `N.0.0` only in the history reader.
+Current readers accept the Registry schema MAJOR they implement.
+
+Assess compatibility against previously valid producers and consumers across
+keys, sections, table columns, relationships, states, meaning, diagnostics and
+outputs. Use MAJOR for an incompatible change, MINOR for a compatible addition
+and PATCH for a correction that preserves the contract. Reset both lower
+components after a MAJOR increase and reset PATCH after a MINOR increase.
+Judge compatibility against the prior interface even when all consumers
+change at once. The owning Task records the highest applicable level and its
+reason. An unchanged contract retains its version. A stable shared edition
+retains its approved source identity under the same contract ID and version.
+Status changes, content changes and new observations carry separate evidence
+under the [document lifecycle policy](document-lifecycle.md). The lifecycle
+check detects downgrades and same-version changes to a released shared edition.
+The staged check also verifies the lower-component reset for a single change.
+
+Native Skill packages keep name and description at the top and
 place that six-key document envelope inside metadata. Preserve native
 invocation, tool and model controls; metadata does not grant execution authority.
 
@@ -279,8 +285,9 @@ native templates use double-underscore UPPER_SNAKE_CASE markers, and author
 guidance uses the registered HTML comment form. The shared value markers are
 TITLE, OWNER, UPDATED, ARTIFACT_ID and PARENT_ID; parent_ids names exactly one
 direct structural owner rather than a duplicate spec_id. Authored documents contain none
-of those markers. Template history belongs to Registry contract version and
-Git, not to the created document's "version".
+of those markers. The Registry's TemplateDefinition records `contract_id` and
+the numeric `contract_version` separately. Git and that contract identity and
+version record template history. The created document has its own "version".
 The Registry's `document_language` owns each document's language. Navigation,
 reference-pack, and operations profiles default to Korean. Policies under
 `.agents/governance/` use English. New prose in governed Markdown elsewhere
@@ -353,98 +360,20 @@ role, its forms and placement are owned by the
 
 `AUTHOR-R021`
 
-Guide, Runbook, Incident, Postmortem, Policy, AGENTS, Skill, Root README, Stage README,
-Service README, Workspace README, Reference Pack README, Knowledge Map, Vocabulary,
-Prompt, Evaluation Task, Evaluation Score, Evaluation Results, Governance Document,
-Governance Role, Reference Report, Requirement, Architecture, ADR, Spec and Plan use their registry forms. Spec keeps its
-Lifecycle Traceability table under References and its Criteria table (Criterion ID, Expected Result) under Acceptance
-Criteria, and its Architecture column links an architecture description or an ADR or states an explicit exclusion. Plan keeps its
-Work Breakdown table under Implementation Strategy, `Global Constraints` as an H4 that is the last block of Goal and
-Boundary, and its promotion table (Promotion ID, Target Owner, Acceptance, Evidence) under Promotion Map, Owner and
-Receipt. ADR keeps its
-Lifecycle Traceability table under Traceability and its Alternatives table under Trade-offs; an accepted ADR
-from ADR-0001 to ADR-0061 keeps the seven H2 it was accepted with as a registered retained form, and an ADR
-written after ADR-0061 takes the common ADR form in every status, accepted included (W03-D02, W03-D52,
-W03-D69; ADR-0062). Architecture keeps its
-Lifecycle Traceability table and its Archived Lineage under Traceability, its Constraints table under
-Constraints and its Quality Scenarios table under Quality and Risks; an architecture description cites each
-requirement member in the Upstream requirement column of Lifecycle Traceability, a Requirement writes no
-downstream link column, and the derived reverse view and the REQUIREMENT-COVERAGE check replace it. Requirement keeps its
-Lifecycle Traceability table and its Archived Lineage under Traceability, its
-requirement tables (Requirement ID, Statement, Rationale, Acceptance and an optional
-trailing Priority) under Functional Requirements and, where a quality requirement
-applies, Quality Requirements. Guide keeps its classification, readers and
-goal under Purpose and its Lifecycle Traceability table under Verification;
-Runbook keeps its Lifecycle Traceability table under Validation; Incident keeps
-its Lifecycle Traceability table under Evidence and Postmortem under Corrective
-Actions; Root README keeps an optional Directory Index table under Directories;
-Stage README, which the stage and collection READMEs use, keeps an optional
-Index table under Current Items; Service README, which the implementation,
-agent and provider, and runtime-governance READMEs use, keeps an optional
-Commands table under Checks; AGENTS, which every `AGENTS.md` uses, keeps an
-optional Tool Rules table under Local Obligations; Skill, which the common
-workflows and every native `SKILL.md` use, keeps an optional Steps table under
-Steps. Workspace README, which the seven `_workspace/` READMEs use, and
-Reference Pack README, which the research, audit and data pack READMEs use with
-the `Pack Contract` and `Pack Index` sections, are Stage 99 local roles under
-W03-D09 and W03-D10, not COMMON-DOC-FORM-1 roles; each uses its own registry
-form and keeps no table. Knowledge Map, Vocabulary, Prompt and the three
-evaluation roles (Task, Score and Results) are Stage 99 local roles under
-W03-D09, W03-D20 and W03-D26 with H2 sections only and no H3; Vocabulary keeps
-a Term ID table under Repository Vocabulary, Evaluation Task three tables
-under Overview, Declared Trials and Signals and Criteria, Evaluation Score three
-under Overview, Trial Evidence and Criterion Scores, and Evaluation Results two
-under Pair Coverage and Aggregate, each named by form section id. Governance
-Role, which the 17 `.agents/roles/*.md` role files use with eight H3 under
-Current Contract (Role, When to Use, Inputs, Outputs, Guardrails, Capability and
-Evidence, Handoff / Escalation and Postflight), and Governance Document, which
-the two provider notes use with H2 sections only, are also Stage 99 local roles
-under W03-D09, W03-D20, W03-D26 and W03-D34, not COMMON-DOC-FORM-1 roles, and
-keep no table. Reference Report, which the audit, research and data reports under
-`docs/90.references/` use as one form with eight H2 sections, conditional H3
-titles per report kind, a link-only Sources section and the nine template tables
-named by form section id, is also a Stage 99 local role under W03-D20, W03-D26,
-W03-D35 and W03-D36, not a COMMON-DOC-FORM-1 role. Policy uses the selected
-role's ordered sections and, when it states normative rules, a Rules table
-under Requirements: each rule has an ID `<CODE>-R<NNN>` built on the policy's
-registered code, a condition and a required, recommended or optional level, the
-table's optional Status column keeps a retired rule as `retired;` with a
-successor ID or `none`, the ID also stands as a code span at the start of the
-rule's list item, table cell or H4 paragraph (a bare `Required:`, `Allowed:` or
-`Disallowed:` label item carries none when every nested item under it carries
-one, each nested item then being one rule), and the registry
-`policy_rule_ids` owns the exact values and the code records. A
-TemplateDefinition stores eleven fields (`contract_version`, purpose,
-responsibility, non-goals, policy and vocabulary references, applicability,
-tables, consumer paths, validation and migration) and
-`template_definition_record` derives the other eight (template ID, role,
-metadata, headings, relationships, lifecycle, language and extensions) from the
-profile, the role's form and the registry owners of keys, relations, lifecycle
-and language. The registry validator checks every record against
-the template definition schema copy of the Stage 99 `contracts/` folder, a byte
-copy of the package schema pinned by its SHA-256. `contract_version` is
-`COMMON-DOC-FORM-1/` and the common form version for a COMMON-DOC-FORM-1 role,
-and `STAGE99-LOCAL-FORM-1/1.0.0` for a Stage 99 local role. Each table names a
-section ID or local H3 extension ID of its role's form, and the validator checks
-column order, count and minimum rows. `provider-native` has no form (W03-D33),
-carries no H2 list, records no table, and records its empty headings as a
-conditional extension (`headings_extension`) with its condition, owner,
-verification, review and removal criteria (W03-D65). A profile's headings come
-from its role's form and no profile carries an H2 list: the schema and the
-strict registry check refuse a `sections` key. A profile whose mode is
-authored, router or template has a form, except the `provider-native` role
-(`REGISTRY_FORM_REQUIRED`); a native or non-target profile may have none, and
-the profile validator then applies its fence, frontmatter and placeholder
-checks but no heading rule. The accepted ADRs from ADR-0001 to ADR-0061 keep
-the retained H2 lists of their registered form and its checks (ADR-0062).
-Classifications, prerequisites, controls, observations and recovery stay native
-submodules in their relevant roles. Fill sections with concrete content; a
-heading, comment, placeholder or empty fence is no operating instruction.
-An inapplicable item states why and who owns the remaining boundary. An empty
-required section states its reason and the condition for filling it, never a
-bare statement that nothing is stated, and a pointer line names a location that
-exists. A format
-check cannot authenticate a current operator, live service or approval.
+Use the Registry described in [Stage 99](../../docs/99.templates/README.md) to resolve the
+document role, canonical template, section IDs and titles, table contracts,
+applicability, relationships, and language. Apply a local extension only under
+its registered condition and follow its owner, validation, review, and removal
+criteria. Use the registered retained form where its scope applies. Follow the
+[Stage 99 authoring guidance](../../docs/99.templates/README.md#create-and-review)
+when creating a document.
+
+Fill applicable sections with concrete content for the role's reader. Omit an
+optional section when its condition is absent. Where a required section permits
+a justified omission, state the reason, the responsible owner, and the
+condition for supplying the content. Resolve evidence pointers to an existing
+location. A format check establishes structural conformance. Record operator
+authority, live observations, and acceptance with their own evidence.
 
 #### Joint edition decisions
 

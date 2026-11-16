@@ -18,7 +18,7 @@ _SCRIPT_REFERENCE = re.compile(
     rf"(?![A-Za-z0-9_./-])"
 )
 _TERMINAL_STATUSES = frozenset(
-    {"accepted", "archived", "cancelled", "completed", "done", "rejected", "superseded"}
+    {"accepted", "cancelled", "completed", "rejected", "superseded"}
 )
 _GIT = "/usr/bin/git"
 _GIT_TIMEOUT_SECONDS = 5.0

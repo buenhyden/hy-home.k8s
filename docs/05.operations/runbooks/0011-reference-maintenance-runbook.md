@@ -1,10 +1,10 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.5.0"
+version: "1.5.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-16"
 artifact_id: "RUN-0011"
 ---
 
@@ -42,7 +42,8 @@ Reference
 
 ### Safety Checks
 
-안전 점검: 해당 없음 — 이 런북은 Preconditions에 백업·가용성·동시성·비밀 보호 항목을 따로 정하지 않는다.
+처분 대상은 Steps에서 보존·hold·권한과 복구 조건을 먼저 확인한다. 검증에는
+검토한 작업 트리와 최종 Git index를 구분해 사용한다.
 
 ## Steps
 
@@ -142,22 +143,20 @@ Reference
 
 ### Service Checks
 
-현재 QA 실행 registry가 변경 경로에 맞춰 gate를 선택한다. 작업 트리의
-`quick`은 선택된 입력의 미리보기이며, commit 직전에는 최종 Git index를
-대상으로 `staged`를 한 번 수행한다.
-수동으로 모든 현행 문서의 strict 검사를 상시 반복하지 않는다.
+작업 트리에서 `quick`을 실행하고 선택된 gate와 변경 경로를 확인한다.
+문서 검사는 변경한 문서와 그 경로를 참조하는 문서를 대상으로 삼는다.
+pack member나 router의 추가·이동·삭제에는 pack, category, Stage router와
+구성원 집합도 대조한다. QA가 선택한 Registry validator는 이 topology를
+함께 검사한다.
 
 ```bash
 python3 scripts/qa.py quick
-python3 scripts/validate-document-contract-registry.py --root . --mode strict
 git diff --check
 ```
 
-최종 파일을 명시적으로 stage한 뒤 그 index에 대해 별도로 실행한다.
-
-```bash
-python3 scripts/qa.py staged
-```
+검토한 파일만 stage한다. commit을 수행할 때는 활성 `staged-qa` hook이
+최종 Git index를 대상으로 `staged` 검사를 한 번 실행한다. 변경 경로와
+함께 선택된 검사 결과를 기록한다.
 
 - [ ] Reference가 공통 거버넌스나 현재 Stage 01/02/03/05 owner를 대체하지 않는다.
 - [ ] 모든 pack 경로가 category별 `####-<slug>/` 규칙과 일치하는 template을 사용한다.

@@ -1,4 +1,4 @@
-"""One SemVer 2.0.0 grammar serves the release tag, schemas and skill envelope."""
+"""Numeric authoring versions and the separate product tag grammar."""
 
 from __future__ import annotations
 
@@ -13,7 +13,13 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from scripts import release  # noqa: E402
-from semver_grammar import SEMVER_PATTERN, is_semver  # noqa: E402
+from semver_grammar import (  # noqa: E402
+    NUMERIC_VERSION_PATTERN,
+    SEMVER_PATTERN,
+    is_numeric_version,
+    is_semver,
+    numeric_version_order,
+)
 
 SPEC = importlib.util.spec_from_file_location(
     "semver_agent_governance", ROOT / "scripts/validate-agent-governance.py"
@@ -34,36 +40,34 @@ INVALID = (
     "1.2.3+",
     "1.2.3.4",
 )
-FULL = "^" + SEMVER_PATTERN + "$"
-CORE = "^" + SEMVER_PATTERN.split("(?:-", 1)[0] + "$"
-SCHEMAS = ("frontmatter.schema.json", "document-profile.schema.json")
+CORE = "^" + NUMERIC_VERSION_PATTERN + r"(?![\s\S])"
+NUMERIC_VALID = ("0.0.0", "0.1.0", "1.2.3", "1.10.0")
+NUMERIC_INVALID = (
+    INVALID
+    + VALID[2:]
+    + (
+        " 1.2.3",
+        "1.2.3 ",
+        "1.2.3\n",
+        "1.2.3\r",
+        "١.2.3",
+        "1.２.3",
+    )
+)
 
 
-def _version_patterns(node: object) -> list[str]:
-    """Every `version` property pattern in a schema, at any depth."""
-
-    found: list[str] = []
-    if isinstance(node, dict):
-        version = node.get("version")
-        if isinstance(version, dict) and "pattern" in version:
-            found.append(version["pattern"])
-        for child in node.values():
-            found.extend(_version_patterns(child))
-    elif isinstance(node, list):
-        for child in node:
-            found.extend(_version_patterns(child))
-    return found
-
-
-def _schema_patterns() -> dict[str, list[str]]:
-    contracts = ROOT / "docs/99.templates/contracts"
-    return {
-        name: _version_patterns(json.loads((contracts / name).read_text()))
-        for name in SCHEMAS
-    }
+def _schema(name: str) -> dict:
+    path = ROOT / "docs/99.templates/contracts" / (name + ".schema.json")
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 class SemverGrammarTests(unittest.TestCase):
+    def test_document_schema_rejects_suffixes_and_trailing_newline(self) -> None:
+        pattern = _schema("frontmatter")["properties"]["version"]["pattern"]
+        for value in ("1.2.3-rc.1", "1.2.3+build.1", "1.2.3\n"):
+            with self.subTest(value=value):
+                self.assertIsNone(re.search(pattern, value))
+
     def test_module_accepts_and_refuses_the_cases(self) -> None:
         for value in VALID:
             with self.subTest(value=value):
@@ -86,27 +90,32 @@ class SemverGrammarTests(unittest.TestCase):
                 release.parse_version("v" + value)
 
     def test_every_schema_pattern_equals_the_anchored_grammar(self) -> None:
-        patterns = _schema_patterns()
-        self.assertEqual(patterns["frontmatter.schema.json"], [FULL])
-        # The adopted-binding branch keeps its final-edition guard: the numeric
-        # core of the grammar, with no prerelease or build metadata.
+        profile = _schema("document-profile")
+        core = profile["$defs"]["numeric_version"]
+        self.assertEqual(core["pattern"], CORE)
+        for key in ("shared_contract", "common_forms"):
+            rule = profile["properties"][key]["properties"]["version"]
+            self.assertEqual(rule["$ref"], "#/$defs/numeric_version")
+        definition = profile["$defs"]["template_definition"]["properties"]
         self.assertEqual(
-            sorted(patterns["document-profile.schema.json"]), sorted([FULL, FULL, CORE])
+            definition["contract_version"]["$ref"], "#/$defs/numeric_version"
+        )
+        self.assertEqual(_schema("frontmatter")["properties"]["version"], core)
+        self.assertEqual(
+            _schema("template-definition")["properties"]["contract_version"], core
         )
 
     def test_every_schema_pattern_accepts_and_refuses_the_cases(self) -> None:
-        for name, found in _schema_patterns().items():
-            for pattern in found:
-                final = pattern == CORE
-                for value in VALID:
-                    expected = not (final and re.search(r"[-+]", value))
-                    with self.subTest(schema=name, value=value):
-                        self.assertEqual(
-                            re.search(pattern, value) is not None, expected
-                        )
-                for value in INVALID:
-                    with self.subTest(schema=name, value=value):
-                        self.assertIsNone(re.search(pattern, value))
+        for values, expected in ((NUMERIC_VALID, True), (NUMERIC_INVALID, False)):
+            for value in values:
+                with self.subTest(value=value):
+                    self.assertEqual(re.search(CORE, value) is not None, expected)
+                    self.assertEqual(is_numeric_version(value), expected)
+                    self.assertEqual(numeric_version_order(value) is not None, expected)
+        self.assertFalse(is_numeric_version(123))
+        self.assertIsNone(numeric_version_order(None))
+        self.assertLess(numeric_version_order("1.9.0"), numeric_version_order("1.10.0"))
+        self.assertIsNotNone(numeric_version_order("1" * 5000 + ".0.0"))
 
     def test_skill_envelope_refuses_an_invalid_version(self) -> None:
         registry = GOVERNANCE.load_json(ROOT, GOVERNANCE.REGISTRY_PATH)
@@ -117,7 +126,8 @@ class SemverGrammarTests(unittest.TestCase):
         assert current is not None
 
         def check(value: str) -> None:
-            changed = text.replace(current.group(0), f'  version: "{value}"')
+            quoted = json.dumps(value, ensure_ascii=False)
+            changed = text.replace(current.group(0), f"  version: {quoted}")
 
             def read(root: Path, path: str, code: str) -> str:
                 return changed if path == skill else original(root, path, code)
@@ -125,10 +135,10 @@ class SemverGrammarTests(unittest.TestCase):
             with mock.patch.object(GOVERNANCE, "_read_text", read):
                 GOVERNANCE.validate_native_assets(ROOT, registry)
 
-        for value in VALID:
+        for value in NUMERIC_VALID:
             with self.subTest(value=value):
                 check(value)
-        for value in INVALID:
+        for value in NUMERIC_INVALID:
             with self.subTest(value=value):
                 with self.assertRaises(GOVERNANCE.HarnessError) as raised:
                     check(value)

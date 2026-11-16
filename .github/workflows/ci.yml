@@ -76,13 +76,20 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           path: trusted-base
+          sparse-checkout: /.cz.toml
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - name: Checkout pull request merge for commit messages
         if: github.event_name == 'pull_request'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.sha }}
           path: candidate-commits
-          fetch-depth: 0
+          # Git INFINITE_DEPTH keeps complete ancestry on checkout's single-ref path.
+          fetch-depth: 2147483647
+          fetch-tags: false
+          sparse-checkout: '!/*'
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - name: Set up Python for PR title
         if: github.event_name == 'pull_request'
@@ -238,27 +245,53 @@ jobs:
       - name: Checkout pull request merge
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.sha }}
           path: candidate
           fetch-depth: 2
           persist-credentials: false
-      - name: Set up Python
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-        with:
-          python-version: '3.12'
-      - name: Bind base and select changed files
+      - name: Bind candidate and plan affected checks
+        id: plan
         working-directory: candidate
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          MERGE_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
           umask 077
-          test "$(git rev-parse HEAD^1)" = "$BASE_SHA"
-          git diff --no-ext-diff --no-textconv --no-renames --name-only -z --diff-filter=ACMR HEAD^1 HEAD > "$RUNNER_TEMP/pr-style-paths.z"
+          test "$(git -C ../trusted-base rev-parse HEAD)" = "$BASE_SHA"
+          test "$(git rev-list --parents -n 1 HEAD)" = "$MERGE_SHA $BASE_SHA $HEAD_SHA"
+          git diff --no-ext-diff --no-textconv --no-renames --name-status -z HEAD^1 HEAD > "$RUNNER_TEMP/pr-changes.z"
+          lock=false
+          gitops=false
+          while IFS= read -r -d '' status; do
+            IFS= read -r -d '' path
+            case "$status" in
+              A|C|M|R) printf '%s\0' "$path" ;;
+              D|T) ;;
+              *) exit 1 ;;
+            esac
+            case "$path" in
+              .github/requirements|.github/requirements/*) lock=true ;;
+              gitops|gitops/*) gitops=true ;;
+            esac
+          done < "$RUNNER_TEMP/pr-changes.z" > "$RUNNER_TEMP/pr-style-paths.z"
+          style=false
+          if [ -s "$RUNNER_TEMP/pr-style-paths.z" ]; then style=true; fi
+          printf 'style=%s\nlock=%s\ngitops=%s\n' "$style" "$lock" "$gitops" >> "$GITHUB_OUTPUT"
+      - name: Set up Python
+        if: steps.plan.outputs.style == 'true' || steps.plan.outputs.lock == 'true' || steps.plan.outputs.gitops == 'true'
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
       - name: Install pinned style runner
+        if: steps.plan.outputs.style == 'true' || steps.plan.outputs.lock == 'true' || steps.plan.outputs.gitops == 'true'
         run: >-
           python -I -m pip install --disable-pip-version-check --only-binary=:all:
           --require-hashes -r trusted-base/.github/requirements/ci-validation.txt
       - name: Lint and format changed files
+        id: style
+        if: steps.plan.outputs.style == 'true'
         working-directory: candidate
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -269,15 +302,38 @@ jobs:
           --ruff-config ../trusted-base/.ruff.toml
           --paths-file "$RUNNER_TEMP/pr-style-paths.z" --delimiter nul
           --expected-base-sha "$BASE_SHA"
-      # A Dependabot lock pull request never passes local staged QA. Check the
-      # candidate lock with the reviewed base's validator (SPEC-0123, now in
-      # Git history). The unfiltered list also catches a deleted or retyped
-      # lock, and a failed git diff stops the job instead of skipping the check.
       - name: Validate a changed CI lock
+        id: lock
+        if: steps.plan.outputs.lock == 'true'
         working-directory: candidate
+        run: python -I ../trusted-base/scripts/validate-ci-python-contract.py --root .
+      - name: Validate affected GitOps identities
+        id: gitops
+        if: steps.plan.outputs.gitops == 'true'
+        working-directory: candidate
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: python -I ../trusted-base/scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_SHA"
+      - name: Verify affected check outcomes
+        if: always()
+        env:
+          PLAN_OUTCOME: ${{ steps.plan.outcome }}
+          STYLE_REQUIRED: ${{ steps.plan.outputs.style }}
+          STYLE_OUTCOME: ${{ steps.style.outcome }}
+          LOCK_REQUIRED: ${{ steps.plan.outputs.lock }}
+          LOCK_OUTCOME: ${{ steps.lock.outcome }}
+          GITOPS_REQUIRED: ${{ steps.plan.outputs.gitops }}
+          GITOPS_OUTCOME: ${{ steps.gitops.outcome }}
         run: |
           set -euo pipefail
-          git diff --no-ext-diff --no-textconv --no-renames --name-only -z HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"
-          if grep -qz '^\.github/requirements/' "$RUNNER_TEMP/pr-lock-paths.z"; then
-            python -I ../trusted-base/scripts/validate-ci-python-contract.py --root .
-          fi
+          test "$PLAN_OUTCOME" = success
+          check() {
+            case "$2:$3" in
+              true:success) printf '%s PASS\n' "$1" ;;
+              false:skipped) printf '%s NOT_APPLICABLE\n' "$1" ;;
+              *) printf '%s missing or invalid outcome\n' "$1" >&2; return 1 ;;
+            esac
+          }
+          check style "$STYLE_REQUIRED" "$STYLE_OUTCOME"
+          check lock "$LOCK_REQUIRED" "$LOCK_OUTCOME"
+          check gitops "$GITOPS_REQUIRED" "$GITOPS_OUTCOME"

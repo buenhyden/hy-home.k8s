@@ -1317,7 +1317,7 @@ def _workflow_action_refs(workflow: dict[str, Any]) -> tuple[str | None, str | N
 def _validate_style_pr_job(
     job: dict[str, Any], actions: tuple[str | None, str | None]
 ) -> None:
-    """Bind hosted style to read-only PR bytes and reviewed base tooling."""
+    """Bind the stable PR check to read-only candidate bytes and reviewed base tooling."""
 
     checkout_action, setup_python_action = actions
 
@@ -1330,14 +1330,9 @@ def _validate_style_pr_job(
     if set(job) != {*required, "steps"} or any(
         job.get(key) != value for key, value in required.items()
     ):
-        fail("CI-STYLE-TOPOLOGY", "PR style job has an unreviewed execution boundary")
-    steps = job.get("steps")
-    if (
-        not isinstance(steps, list)
-        or len(steps) != 7
-        or any(not isinstance(step, dict) for step in steps)
-    ):
-        fail("CI-STYLE-TOPOLOGY", "PR style job must have the reviewed steps")
+        fail(
+            "CI-STYLE-TOPOLOGY", "PR affected job has an unreviewed execution boundary"
+        )
     expected = (
         {
             "uses": checkout_action,
@@ -1350,55 +1345,115 @@ def _validate_style_pr_job(
         {
             "uses": checkout_action,
             "with": {
+                "ref": "${{ github.sha }}",
                 "path": "candidate",
                 "fetch-depth": 2,
                 "persist-credentials": False,
             },
         },
-        {"uses": setup_python_action, "with": {"python-version": "3.12"}},
         {
+            "id": "plan",
+            "working-directory": "candidate",
+            "env": {
+                "BASE_SHA": "${{ github.event.pull_request.base.sha }}",
+                "HEAD_SHA": "${{ github.event.pull_request.head.sha }}",
+                "MERGE_SHA": "${{ github.sha }}",
+            },
+            "run": "set -euo pipefail\n"
+            "umask 077\n"
+            'test "$(git -C ../trusted-base rev-parse HEAD)" = "$BASE_SHA"\n'
+            'test "$(git rev-list --parents -n 1 HEAD)" = "$MERGE_SHA $BASE_SHA '
+            '$HEAD_SHA"\n'
+            "git diff --no-ext-diff --no-textconv --no-renames --name-status -z HEAD^1 "
+            'HEAD > "$RUNNER_TEMP/pr-changes.z"\n'
+            "lock=false\n"
+            "gitops=false\n"
+            "while IFS= read -r -d '' status; do\n"
+            "  IFS= read -r -d '' path\n"
+            '  case "$status" in\n'
+            "    A|C|M|R) printf '%s\\0' \"$path\" ;;\n"
+            "    D|T) ;;\n"
+            "    *) exit 1 ;;\n"
+            "  esac\n"
+            '  case "$path" in\n'
+            "    .github/requirements|.github/requirements/*) lock=true ;;\n"
+            "    gitops|gitops/*) gitops=true ;;\n"
+            "  esac\n"
+            'done < "$RUNNER_TEMP/pr-changes.z" > "$RUNNER_TEMP/pr-style-paths.z"\n'
+            "style=false\n"
+            'if [ -s "$RUNNER_TEMP/pr-style-paths.z" ]; then style=true; fi\n'
+            'printf \'style=%s\\nlock=%s\\ngitops=%s\\n\' "$style" "$lock" "$gitops" >> '
+            '"$GITHUB_OUTPUT"',
+        },
+        {
+            "if": "steps.plan.outputs.style == 'true' || steps.plan.outputs.lock == 'true' || "
+            "steps.plan.outputs.gitops == 'true'",
+            "uses": setup_python_action,
+            "with": {"python-version": "3.12"},
+        },
+        {
+            "if": "steps.plan.outputs.style == 'true' || steps.plan.outputs.lock == 'true' || "
+            "steps.plan.outputs.gitops == 'true'",
+            "run": "python -I -m pip install --disable-pip-version-check --only-binary=:all: "
+            "--require-hashes -r trusted-base/.github/requirements/ci-validation.txt",
+        },
+        {
+            "id": "style",
+            "if": "steps.plan.outputs.style == 'true'",
             "working-directory": "candidate",
             "env": {"BASE_SHA": "${{ github.event.pull_request.base.sha }}"},
-            "run": (
-                "set -euo pipefail\n"
-                "umask 077\n"
-                'test "$(git rev-parse HEAD^1)" = "$BASE_SHA"\n'
-                "git diff --no-ext-diff --no-textconv --no-renames --name-only -z --diff-filter=ACMR "
-                'HEAD^1 HEAD > "$RUNNER_TEMP/pr-style-paths.z"'
-            ),
+            "run": "python -I ../trusted-base/scripts/validate-selected-style.py --root . "
+            "--config ../trusted-base/.pre-commit-config.yaml --markdown-config "
+            "../trusted-base/.markdownlint-cli2.yaml --ruff-config "
+            '../trusted-base/.ruff.toml --paths-file "$RUNNER_TEMP/pr-style-paths.z" '
+            '--delimiter nul --expected-base-sha "$BASE_SHA"',
         },
         {
-            "run": (
-                "python -I -m pip install --disable-pip-version-check --only-binary=:all: "
-                "--require-hashes -r trusted-base/.github/requirements/ci-validation.txt"
-            )
+            "id": "lock",
+            "if": "steps.plan.outputs.lock == 'true'",
+            "working-directory": "candidate",
+            "run": "python -I ../trusted-base/scripts/validate-ci-python-contract.py --root .",
         },
         {
+            "id": "gitops",
+            "if": "steps.plan.outputs.gitops == 'true'",
             "working-directory": "candidate",
             "env": {"BASE_SHA": "${{ github.event.pull_request.base.sha }}"},
-            "run": (
-                "python -I ../trusted-base/scripts/validate-selected-style.py --root . "
-                "--config ../trusted-base/.pre-commit-config.yaml "
-                "--markdown-config ../trusted-base/.markdownlint-cli2.yaml "
-                "--ruff-config ../trusted-base/.ruff.toml "
-                '--paths-file "$RUNNER_TEMP/pr-style-paths.z" --delimiter nul '
-                '--expected-base-sha "$BASE_SHA"'
-            ),
+            "run": "python -I ../trusted-base/scripts/validate-gitops-change-set.py --root . "
+            '--base-ref "$BASE_SHA"',
         },
         {
-            "working-directory": "candidate",
-            "run": (
-                "set -euo pipefail\n"
-                "git diff --no-ext-diff --no-textconv --no-renames --name-only -z "
-                'HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"\n'
-                "if grep -qz '^\\.github/requirements/' "
-                '"$RUNNER_TEMP/pr-lock-paths.z"; then\n'
-                "  python -I ../trusted-base/scripts/validate-ci-python-contract.py "
-                "--root .\n"
-                "fi"
-            ),
+            "if": "always()",
+            "env": {
+                "PLAN_OUTCOME": "${{ steps.plan.outcome }}",
+                "STYLE_REQUIRED": "${{ steps.plan.outputs.style }}",
+                "STYLE_OUTCOME": "${{ steps.style.outcome }}",
+                "LOCK_REQUIRED": "${{ steps.plan.outputs.lock }}",
+                "LOCK_OUTCOME": "${{ steps.lock.outcome }}",
+                "GITOPS_REQUIRED": "${{ steps.plan.outputs.gitops }}",
+                "GITOPS_OUTCOME": "${{ steps.gitops.outcome }}",
+            },
+            "run": "set -euo pipefail\n"
+            'test "$PLAN_OUTCOME" = success\n'
+            "check() {\n"
+            '  case "$2:$3" in\n'
+            "    true:success) printf '%s PASS\\n' \"$1\" ;;\n"
+            "    false:skipped) printf '%s NOT_APPLICABLE\\n' \"$1\" ;;\n"
+            "    *) printf '%s missing or invalid outcome\\n' \"$1\" >&2; return 1 ;;\n"
+            "  esac\n"
+            "}\n"
+            'check style "$STYLE_REQUIRED" "$STYLE_OUTCOME"\n'
+            'check lock "$LOCK_REQUIRED" "$LOCK_OUTCOME"\n'
+            'check gitops "$GITOPS_REQUIRED" "$GITOPS_OUTCOME"',
         },
     )
+    steps = job.get("steps")
+    if (
+        not isinstance(steps, list)
+        or len(steps) != len(expected)
+        or any(not isinstance(step, dict) for step in steps)
+    ):
+        fail("CI-STYLE-TOPOLOGY", "PR affected job must have the reviewed steps")
     for index, (step, reviewed) in enumerate(zip(steps, expected, strict=True)):
         actual = {
             key: (_run_text(step) if key == "run" else value)
@@ -1406,7 +1461,7 @@ def _validate_style_pr_job(
             if key != "name"
         }
         if actual != reviewed:
-            fail("CI-STYLE-TOPOLOGY", f"PR style step {index + 1} changed")
+            fail("CI-STYLE-TOPOLOGY", f"PR affected step {index + 1} changed")
 
 
 def _reviewed_metadata_run(root: Path) -> str:
@@ -1699,6 +1754,8 @@ def validate_workflow(workflow: dict[str, Any], root: Path | None = None) -> Non
             "with": {
                 "ref": "${{ github.event.pull_request.base.sha }}",
                 "path": "trusted-base",
+                "sparse-checkout": "/.cz.toml",
+                "sparse-checkout-cone-mode": False,
                 "persist-credentials": False,
             },
         },
@@ -1706,8 +1763,12 @@ def validate_workflow(workflow: dict[str, Any], root: Path | None = None) -> Non
             "if": pr_condition,
             "uses": checkout_action,
             "with": {
+                "ref": "${{ github.sha }}",
                 "path": "candidate-commits",
-                "fetch-depth": 0,
+                "fetch-depth": 2147483647,
+                "fetch-tags": False,
+                "sparse-checkout": "!/*",
+                "sparse-checkout-cone-mode": False,
                 "persist-credentials": False,
             },
         },

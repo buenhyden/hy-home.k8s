@@ -949,7 +949,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             self.assertNotIn(variable, runner_text)
             self.assertNotIn(variable, qa_text)
 
-    def test_remote_live_lane_defers_without_subprocess_and_succeeds(self):
+    def test_required_remote_live_gate_defers_without_subprocess_and_fails(self):
         contract = {
             "validators": [
                 {
@@ -974,7 +974,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
                 _RemoteLiveContractModule,
             )
 
-        self.assertEqual(result, 0)
+        self.assertEqual(result, 1)
         invoked.assert_not_called()
         self.assertEqual(
             re.findall(
@@ -2095,7 +2095,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         contract_module = RUNNER.load_contract_module()
         contract = contract_module.validate_contract(ROOT)
         output = StringIO()
-        completed_passes = {}
+        observed_results = {}
         with (
             tempfile.TemporaryDirectory(
                 prefix="selected-style-only-link-"
@@ -2120,11 +2120,11 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                 contract,
                 contract_module,
                 validator_ids=["selected-style"],
-                completed_passes=completed_passes,
+                observed_results=observed_results,
             )
         self.assertEqual(result, 0)
         self.assertIn("[NOT_APPLICABLE] selected-style", output.getvalue())
-        self.assertEqual(completed_passes, {})
+        self.assertEqual(observed_results, {"selected-style": "NOT_APPLICABLE"})
 
     def test_staged_style_forwards_regular_and_symlink_paths_but_not_deletions(self):
         contract_module = RUNNER.load_contract_module()

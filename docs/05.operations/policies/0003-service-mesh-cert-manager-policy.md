@@ -1,10 +1,10 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.4.0"
+version: "1.4.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-16"
 artifact_id: "POL-0003"
 ---
 
@@ -107,7 +107,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
   - `MESH-R014` Mesh 내 namespace에 `istio-injection=enabled` 레이블 추가
 - **Disallowed**:
   - `MESH-R015` `argocd`, `cert-manager`, `headlamp`, `external-secrets`, `platform` namespace에 `istio-injection=enabled` 레이블 부여
-  - `MESH-R016` (`apps`와 `traefik`은 mesh 대상이며 `istio-injection=enabled`를 유지한다.)
+  - `MESH-R016` mesh 대상인 [`apps`](../../../gitops/platform/namespaces/namespace-apps.yaml)와 [`traefik`](../../../gitops/platform/namespaces/namespace-traefik.yaml)의 `istio-injection=enabled` 레이블 제거
   - `MESH-R017` IngressGateway 활성화
   - `MESH-R018` Ambient mesh 전환(로컬 플랫폼 스코프 외)
 

@@ -141,15 +141,6 @@ run_hook() {
   }
 }
 
-# Only pre-push receives a payload on stdin. Capture it once so both sides read
-# the same bytes; a second reader of a consumed pipe would otherwise see none.
-STDIN_FILE=""
-if [ "$HOOK_NAME" = "pre-push" ]; then
-  STDIN_FILE="$(mktemp)"
-  trap 'rm -f "$STDIN_FILE"' EXIT
-  cat >"$STDIN_FILE"
-fi
-
 # A pre-push without a workspace hook is a no-op and needs no environment.
 WORKSPACE_HOOK="$GIT_COMMON_DIR/hooks/$HOOK_NAME"
 VALIDATION_BIN=""
@@ -179,7 +170,26 @@ if [ -n "$GLOBAL_HOOKS_PATH" ]; then
     printf '[git hook] HOOK-GLOBAL-DIR: configured global hook directory %s is absent; fix core.hooksPath\n' "$GLOBAL_HOOKS_PATH" >&2
     exit 2
   fi
-  run_hook global "$GLOBAL_HOOKS_PATH/$HOOK_NAME" "$STDIN_FILE" "$PATH" "$@"
+  GLOBAL_HOOK="$GLOBAL_HOOKS_PATH/$HOOK_NAME"
+else
+  GLOBAL_HOOK=""
+fi
+
+# Both installed push hooks need the same ref input. Without a consumer, drain
+# the stream so Git can finish writing it without creating a temporary file.
+STDIN_FILE=""
+if [ "$HOOK_NAME" = pre-push ]; then
+  if [ ! -e "$WORKSPACE_HOOK" ] && [ ! -L "$WORKSPACE_HOOK" ] &&
+    [ ! -e "$GLOBAL_HOOK" ] && [ ! -L "$GLOBAL_HOOK" ]; then
+    cat >/dev/null
+    exit 0
+  fi
+  STDIN_FILE="$(mktemp)"
+  trap 'rm -f "$STDIN_FILE"' EXIT
+  cat >"$STDIN_FILE"
+fi
+if [ -n "$GLOBAL_HOOK" ]; then
+  run_hook global "$GLOBAL_HOOK" "$STDIN_FILE" "$PATH" "$@"
 fi
 
 run_hook workspace "$WORKSPACE_HOOK" "$STDIN_FILE" "${VALIDATION_BIN:+$VALIDATION_BIN:}$PATH" "$@"

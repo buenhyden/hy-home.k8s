@@ -13,6 +13,7 @@ from unittest import mock
 from scripts.validation.repository.bounded_io import (
     BoundedInputError,
     BoundedOutputError,
+    open_parent,
     read_bytes,
     read_text,
     run,
@@ -20,6 +21,27 @@ from scripts.validation.repository.bounded_io import (
 
 
 class ValidationBoundedIoTests(unittest.TestCase):
+    def test_open_parent_distinguishes_ancestor_move_from_absence(self) -> None:
+        for child in ("input", "missing/input"):
+            with self.subTest(child=child), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                ancestor = root / "ancestor"
+                ancestor.mkdir()
+                real_open = os.open
+
+                def move_after_open(name, *args, **kwargs):
+                    descriptor = real_open(name, *args, **kwargs)
+                    if name == "ancestor":
+                        ancestor.rename(root / "moved")
+                    return descriptor
+
+                with (
+                    mock.patch.object(os, "open", side_effect=move_after_open),
+                    self.assertRaisesRegex(BoundedInputError, "parent changed"),
+                    open_parent(ancestor / child),
+                ):
+                    self.fail("The original parent chain is no longer bound")
+
     def test_file_reader_rejects_symlink_parents(self) -> None:
         with tempfile.TemporaryDirectory(prefix="bounded-parent-") as raw:
             root = Path(raw)

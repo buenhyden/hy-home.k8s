@@ -1,10 +1,10 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.4.1"
+version: "1.4.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 artifact_id: "RUN-0003"
 ---
 
@@ -37,13 +37,15 @@ Kiali와 외부 observability 연결 복구는
 
 ### Authority and Access
 
-권한 및 접근: 해당 없음 — 이 절에 옮길 소유자, 승인, 권한 문장이 본문에 따로 없다.
+플랫폼 운영자는 대상 클러스터와 승인 범위를 확인한다. CA Secret 재주입과
+컨트롤러 재시작은 아래 Recovery의 bootstrap 또는 승인된 복구 조건을 따른다.
 
 관련 문서: **Operations**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md); **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md); [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
 
 ### Safety Checks
 
-안전 점검: 해당 없음 — 이 절에 따로 옮길 백업, 가용성, 동시 실행, 비밀 보호 항목이 본문에 없으며, 점검 항목은 Steps의 Checklist에 있다.
+Steps의 Checklist에서 CA 입력과 외부 의존성을 확인한다. CA 개인 키는
+승인된 Secret 입력에만 사용하고 명령 출력이나 운영 증적에 남기지 않는다.
 
 ## Steps
 
@@ -75,9 +77,8 @@ Kiali와 외부 observability 연결 복구는
 
    ```bash
    kubectl -n cert-manager get deployment cert-manager
-   kubectl get clusterissuer mkcert-ca-issuer \
-     -o jsonpath='{.status.conditions[0].type}'
-   # 출력: Ready
+   test "$(kubectl get clusterissuer mkcert-ca-issuer \
+     -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}')" = True
    ```
 
 3. Istio 가용성 확인
@@ -152,7 +153,7 @@ kubectl -n cert-manager create secret tls mkcert-root-ca \
 # 3. cert-manager controller 재시작
 kubectl -n cert-manager rollout restart deploy/cert-manager
 
-# 4. ClusterIssuer 상태 재확인 (30초 대기)
+# 4. ClusterIssuer Ready=True 대기 (최대 60초)
 kubectl wait clusterissuer mkcert-ca-issuer \
   --for=condition=Ready --timeout=60s
 ```
@@ -195,6 +196,14 @@ kubectl get crd | grep istio.io | wc -l
 argocd app sync platform-istiod
 ```
 
+### Rollback
+
+확장 변경을 되돌릴 때는 operator-approved 범위와 적용 전 Git 리비전을 확인한다.
+기본 플랫폼 변경은 [RUN-0001의 롤백 절차](./0001-argocd-platform-bootstrap-runbook.md#rollback)를
+따른다. 확장 Application 설정을 되돌린 뒤 이 런북의 Service Checks로 영향받은
+컴포넌트와 Git·ArgoCD 상태를 다시 대조한다.
+
 ### Escalation
 
-에스컬레이션: 해당 없음 — 이 런북은 별도의 에스컬레이션 경로를 정하지 않는다.
+CA 입력을 복구할 수 없거나 승인된 조치 뒤에도 ClusterIssuer가 준비되지 않으면
+[서비스 메시·cert-manager 운영 정책](../policies/0003-service-mesh-cert-manager-policy.md)을 담당하는 플랫폼 운영자에게 넘긴다.

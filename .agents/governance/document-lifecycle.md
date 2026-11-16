@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.13.0"
+version: "3.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-16"
 ---
 
 # Document Lifecycle Policy
@@ -82,12 +82,14 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   revised target before dependent execution. `cancelled` requires a reason,
   actual authority and disposition of remaining criteria.
   Approval never asserts implementation completion, criterion acceptance,
-  or integration.
+  or integration. Current Spec and Plan use `draft`, `in-review`, `approved`
+  and `cancelled`. Task owns `in-progress`, `blocked` and `completed` work.
+  A historical comparison reads the states of its original Registry edition.
 - `DOCLIFE-R002` A newly authored Plan, or one revised for current scope, links the approved
   Spec's constraints in `Global Constraints`, the last block of Goal and
   Boundary written as an H4, adds only execution constraints specific to the
-  Plan, and keeps one promotion table under Promotion Map, Owner and Receipt. An
-  in-progress Plan does not treat an intended promotion target as approval or
+  Plan, and keeps one promotion table under Promotion Map, Owner and Receipt. A
+  Plan for in-progress Task work does not treat an intended promotion target as approval or
   completion evidence.
   When a Spec package is accepted as complete, the Plan's promotion table
   (Promotion ID, Target Owner, Acceptance, Evidence)
@@ -174,11 +176,38 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   rejection summarizes it in the owning document's `Archived Lineage` and
   deletes it; otherwise that disposition is deferred. Permission to record a
   successor Task does
-  not itself grant execution authority. Moving new active work to `ready` or
-  `in-progress`, or executing it, requires its current owning `approved` Spec
-  and Plan. No status alone grants
-  disposition, removal or new-execution authority.
-- `DOCLIFE-R009` Document approval, Task execution, criterion acceptance, QA result,
+  not itself grant execution authority. Draft creation, revision, review and
+  focused document checks may proceed within the writing scope. Drafts and QA
+  results grant no implementation, operating or completion authority.
+  Starting or resuming active work requires a current approved basis or a
+  separately verified user authorization for that execution request. Record
+  the original reference, actor, target, scope, request revision, reviewed inputs
+  and current validity using [Approval and Safety](approval-and-safety.md).
+  Keep draft states intact when separately authorized work uses them as inputs.
+  No status alone grants disposition, removal or new-execution authority.
+
+  For a changed executable Task, unchanged approved Spec and Plan bytes may
+  carry the existing basis. Changed reviewed inputs, draft parents or a draft
+  Requirement cited as a normative execution basis need the separately verified
+  authorization. A writing check recorded as PASS does not activate a Task.
+  In the existing Results table, `Scoped execution approval` records one JSON
+  input with `actor`, `approval_ref`, `scope` (Spec, Plan, Task IDs in that order),
+  `reviewed_spec_sha256`, `reviewed_plan_sha256`, `request_revision`, `validity`
+  and `revocation`. The revision is the SHA-256 of UTF-8 Python JSON with
+  `ensure_ascii=False` and default separators, containing the exact text under
+  the Task's Scope heading, ordered work rows projected to `ID`,
+  `Upstream criterion`, `Work item` and `Owner`, and sorted pairs of draft
+  normative Requirement paths for those criteria and their text SHA-256 values.
+  The latest receipt must match the current inputs and attest `user`, `confirmed`,
+  `none` and PASS for the receipt check. Append a new record on withdrawal or
+  reauthorization in chronological order. Recording a withdrawal without
+  changing work state or scope does not resume that work. The checker verifies
+  the receipt structure and input binding.
+  The operator verifies the original approval and current revocation before
+  executing or resuming. A receipt never supplies criterion acceptance.
+- `DOCLIFE-R009` An SDLC stage identifies the artifact's responsibility and placement.
+  Frontmatter status expresses the lifecycle of that artifact. Document approval,
+  Task execution, criterion acceptance, QA result,
   publication, integration and archival disposition are separate claims. A
   Requirement's `approved`, an ADR's `accepted`, an operating document's
   `active`, an Incident's `resolved`, and a Postmortem's `published` retain
@@ -204,14 +233,23 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   route. Preserve all observed results, including failures, when cancelling.
   A resolved Incident records its actual zoned resolved_at and body evidence;
   a placeholder or date alone cannot establish resolution.
-- `DOCLIFE-R011` Meaningful supersession of an operations, governance, reference or evaluation
-  document requires the old owner to link `superseded_by` to the successor and
-  the successor to link `supersedes` back in the same change.
+- `DOCLIFE-R011` A replacement Guide, Policy or Runbook names its predecessor
+  artifact ID in `supersedes`. While a superseded document stays in the tree,
+  the lifecycle checker derives its successors by ID and requires a path to
+  an active successor of the same profile. A path rename keeps the ID relation.
+  A disposition that removes a predecessor keeps its historical identifier.
+  Governance, reference and evaluation domains retain their reciprocal evidence
+  requirements in their applicable Registry edition.
 - `DOCLIFE-R012` A mutable or current owner cannot disappear without replacement coverage
   and consumer disposition.
 - `DOCLIFE-R013` These disposition rules govern repository development documents only.
   Service and operations data, backups, credentials, Vault records and the
   shared memory store keep their own owners and are never removed under them.
+  Rules 14–19 govern ordinary disposition. An explicitly approved final
+  transition has its own scope and checks. After candidate validation and
+  acceptance, the final transition keeps no recovery copy for its approved
+  removal targets. That requirement does not authorize a final transition or
+  change recovery protection for other work.
 - `DOCLIFE-R014` Before a current document is deleted or moved into `docs/98.archive/`,
   manually assess its current normative, historical, audit and recovery
   consumers; preservation value and access need; holds; and actual disposition
@@ -257,7 +295,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   registry is the commit claim.
 - `DOCLIFE-R019` A governed document that is no longer current leaves its stage. A stage
   other than 01, 02 or 03 may delete it or move it under a `docs/98.archive/`
-  disposition directory. In every case Git history is its record, recovered with
+  disposition directory. In ordinary disposition Git history is its record, recovered with
   `git show <commit>:<path>`.
   Stage 99 forms leave through Git history only, and a stage or collection
   index is retained in place.

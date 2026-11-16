@@ -1,10 +1,10 @@
 ---
 title: "90.references/data"
-version: "0.2.4"
+version: "0.2.5"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 ---
 # 90.references/data
 
@@ -79,7 +79,7 @@ data/
    `DATA-####-m####` artifact identity를 붙인다.
 4. 모든 스냅샷에 수집 날짜, 방법, 보존 경계를 기록하고 secret 값은 절대 저장하지 않는다.
 5. 활성 정책, 구현 계약, runbook, task 증거는 여기서 다시 정의하지 말고 각 정본 소유자에게 돌려보낸다.
-6. data pack 구조나 검증 증거가 바뀌면 이 README와 상위 [90.references README](../README.md)를 함께 갱신한다. 검증 증거는 활성 Task가 있으면 그 Task에 기록한다.
+6. data pack 목록이 바뀌면 이 README의 색인을 갱신한다. 상위 [90.references README](../README.md)의 링크가 영향을 받으면 해당 링크도 갱신한다. 검증 증거는 소유 Task에 기록한다.
 
 #### Relative Link Rules
 
@@ -88,7 +88,7 @@ data/
 - 번호가 붙은 pack 참조는 대상 파일이 생긴 뒤 `./####-<slug>/<filename>.md` 형식을 쓴다.
 - 상위 reference로 가는 링크는 `../README.md`를 쓴다.
 - 정본 소유 stage는 `../../../.agents/`, `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`, `../../05.operations/`를 쓴다.
-- 작성된 data reference 파일에서 저장소 최상위 소스를 가리킬 때는 `../../../<path>`를 쓴다.
+- pack README와 멤버에서 저장소 최상위 소스를 가리킬 때는 `../../../../<path>`를 쓴다.
 - 선택 사항이거나 계획 중인 대상 경로는 대상이 생길 때까지 code literal로 둔다.
 
 ### Transition and Exit

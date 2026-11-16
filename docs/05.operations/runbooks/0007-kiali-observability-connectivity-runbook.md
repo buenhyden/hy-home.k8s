@@ -1,10 +1,10 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "2.2.1"
+version: "2.2.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 artifact_id: "RUN-0007"
 ---
 
@@ -28,7 +28,8 @@ artifact_id: "RUN-0007"
 
 ### Scope
 
-범위: 해당 없음 — 이 절에 옮길 시스템, 환경, 영향 범위 문장이 본문에 따로 없으며, 대상은 Trigger and Outcome에 적혀 있다.
+로컬 `k3d-hyhome`의 `istio-system` Kiali에서 외부 Prometheus, Grafana 및
+Tempo로 이어지는 경로를 점검한다. 외부 서비스 설정 변경은 해당 운영자가 담당한다.
 
 관련 문서: **k8s Observability Runbook**: [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md); **External Services**: [`../../../gitops/platform/external-services`](../../../gitops/platform/external-services)
 
@@ -36,13 +37,15 @@ artifact_id: "RUN-0007"
 
 ### Authority and Access
 
-권한 및 접근: 해당 없음 — 이 절에 옮길 소유자, 승인, 권한 문장이 본문에 따로 없다.
+플랫폼 운영자는 대상 kube context와 Kiali 접근 권한을 확인한다. 재조정,
+일회성 DNS 진단 Pod 생성·삭제, Kiali 재시작은 해당 작업의 별도 승인 범위에서 수행한다.
 
 관련 문서: **Operations Policy**: [`../policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
 
 ### Safety Checks
 
-안전 점검: 해당 없음 — 이 절에 따로 옮길 백업, 가용성, 동시 실행, 비밀 보호 항목이 본문에 없다.
+DNS 진단 Pod는 승인된 `istio-system` namespace와 사용 가능한 Pod 이름을
+확인한 뒤 사용한다. 인증정보 대신 Secret 동기화 상태와 필요한 연결 결과를 남긴다.
 
 ## Steps
 
@@ -151,8 +154,13 @@ Kiali 기본 이미지의 `nc`(BusyBox)는 특정 옵션에서 오동작할 수 
 
 1. cluster DNS가 외부 이름을 host 주소로 해석하는지 확인한다.
 
+   클러스터 내부 DNS 검사가 필요하고 진단 Pod 생성과 삭제가 승인된 경우에만
+   아래를 실행한다. 명령이 중단되면 같은 context와 namespace에서 Pod 정리를 확인한다.
+
    ```bash
-   kubectl run -it --rm debug --image=busybox:1.36 --restart=Never -- \
+   # operator-approved temporary DNS probe Pod only
+   kubectl --context=k3d-hyhome -n istio-system run -it --rm kiali-dns-check \
+     --image=busybox:1.36 --restart=Never -- \
      nslookup grafana.hy.home.arpa
    ```
 

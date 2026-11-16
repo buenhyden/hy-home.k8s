@@ -20,7 +20,7 @@
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
     "schema_version": {
-      "const": "20.0.0"
+      "const": "21.0.0"
     },
     "shared_contract": {
       "description": "Identifies reviewed common input and the local adapter; structural validity does not authenticate approval or adoption.",
@@ -44,8 +44,7 @@
           "minLength": 1
         },
         "version": {
-          "type": "string",
-          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+          "$ref": "#/$defs/numeric_version"
         },
         "stage": {
           "enum": [
@@ -158,9 +157,6 @@
               },
               "approval_ref": {
                 "type": "string"
-              },
-              "version": {
-                "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
               }
             }
           }
@@ -803,8 +799,7 @@
           "const": "COMMON-DOC-FORM-1"
         },
         "version": {
-          "type": "string",
-          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+          "$ref": "#/$defs/numeric_version"
         },
         "forms": {
           "type": "array",
@@ -1170,6 +1165,10 @@
     }
   },
   "$defs": {
+    "numeric_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?![\\s\\S])"
+    },
     "heading_lists": {
       "type": "object",
       "additionalProperties": false,
@@ -1204,6 +1203,41 @@
           "type": "boolean"
         },
         "ordered": {
+          "type": "boolean"
+        }
+      }
+    },
+    "research_member_ids": {
+      "description": "Exact artifact IDs of research reports allowed to retain a historical H3.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^RES-[0-9]{4}-m[0-9]{4}(?![\\s\\S])"
+      }
+    },
+    "section_applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_profile_ids",
+        "required"
+      ],
+      "properties": {
+        "source_profile_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "artifact_ids": {
+          "$ref": "#/$defs/research_member_ids"
+        },
+        "required": {
           "type": "boolean"
         }
       }
@@ -1262,6 +1296,9 @@
         "condition": {
           "type": "string",
           "pattern": "\\S"
+        },
+        "applicability": {
+          "$ref": "#/$defs/section_applicability"
         },
         "content": {
           "type": "string",
@@ -1361,6 +1398,9 @@
           "type": "string",
           "pattern": "\\S"
         },
+        "artifact_ids": {
+          "$ref": "#/$defs/research_member_ids"
+        },
         "statuses": {
           "type": "array",
           "minItems": 1,
@@ -1459,6 +1499,11 @@
               "anyOf": [
                 {
                   "required": [
+                    "artifact_ids"
+                  ]
+                },
+                {
+                  "required": [
                     "parent_id"
                   ]
                 },
@@ -1499,6 +1544,11 @@
             ],
             "not": {
               "anyOf": [
+                {
+                  "required": [
+                    "artifact_ids"
+                  ]
+                },
                 {
                   "required": [
                     "parent_id"
@@ -1606,10 +1656,11 @@
       }
     },
     "template_definition": {
-      "description": "The eleven TemplateDefinition fields a registry stores; the other eight (template_id, role, metadata, headings, relationships, lifecycle, language and extensions) are derived by template_definition_record and validated against template-definition.schema.json. headings_extension, stored only on a role without a form, feeds the derived extensions field.",
+      "description": "Stored TemplateDefinition fields. template_definition_record derives the remaining fields and the registry checks the record against template-definition.schema.json. headings_extension, stored only on a role without a form, feeds the derived extensions field.",
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "contract_id",
         "contract_version",
         "purpose",
         "responsibility",
@@ -1623,10 +1674,14 @@
         "migration"
       ],
       "properties": {
-        "contract_version": {
-          "description": "A contract identifier, a slash and a SemVer value: COMMON-DOC-FORM-1 and the common_forms version for a COMMON-DOC-FORM-1 role, STAGE99-LOCAL-FORM-1/1.0.0 for a Stage 99 local role. REGISTRY_TEMPLATE_RECORD owns the grammar.",
+        "contract_id": {
+          "description": "The common or local form contract identifier.",
           "type": "string",
-          "pattern": "\\S"
+          "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+(?![\\s\\S])"
+        },
+        "contract_version": {
+          "description": "The numeric version of the named contract.",
+          "$ref": "#/$defs/numeric_version"
         },
         "headings_extension": {
           "description": "Only on a role without a form (provider-native): the conditional extension that records its empty headings, with an id, condition, owner, verification, review and removal. REGISTRY_TEMPLATE_EXTENSION owns its shape.",

@@ -52,7 +52,11 @@ class ChainedGitHooksTest(unittest.TestCase):
         (path / "bin").mkdir()
         (site / "marker.py").write_text("", encoding="utf-8")
         (path / "pyvenv.cfg").write_text("home = /usr/bin\n", encoding="utf-8")
-        (path / "bin/python3").symlink_to(sys.executable)
+        python = path / "bin/python3"
+        python.write_text(
+            f'#!/bin/sh\nexec {shlex.quote(sys.executable)} "$@"\n', encoding="utf-8"
+        )
+        python.chmod(0o755)
         stub = path / "bin/pre-commit"
         stub.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
         stub.chmod(0o755)
@@ -134,6 +138,7 @@ class ChainedGitHooksTest(unittest.TestCase):
                 self.assertIn("workspace", result.stderr)
 
     def test_pre_push_absence_is_optional(self) -> None:
+        self.shim("mktemp", "#!/bin/sh\nexit 97\n")
         result = self.run_chain(
             "pre-push", input_text="refs/heads/main aaa refs/heads/main bbb\n"
         )

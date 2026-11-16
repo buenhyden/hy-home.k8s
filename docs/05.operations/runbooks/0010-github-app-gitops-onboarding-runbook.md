@@ -1,10 +1,10 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.3.1"
+version: "1.3.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 artifact_id: "RUN-0010"
 ---
 
@@ -35,7 +35,9 @@ artifact_id: "RUN-0010"
 
 ### Authority and Access
 
-승인·권한 조건: 해당 없음 — 이 런북은 Preconditions에 소유자·승인·권한 항목을 따로 정하지 않는다.
+애플리케이션 소유자는 이미지와 변경 PR을 준비하고 플랫폼 운영자는 대상
+클러스터와 `apps` namespace를 확인한다. 원격 push, 배포에 영향을 주는
+merge, 수동 재조정·중단과 비밀 변경은 각각 본문의 승인 조건을 따른다.
 
 ### Safety Checks
 
@@ -174,12 +176,13 @@ kubectl argo rollouts get rollout ${APP} -n apps --watch
 # 대상 workload manifest의 컨테이너와 기대 Istio sidecar에 맞는 ready/desired 확인
 kubectl get pods -n apps -l app.kubernetes.io/name=${APP}
 
-# AnalysisRun 확인 (canary 단계에서 자동 생성)
-kubectl get analysisrun -n apps
-
 # Ingress 확인
 kubectl get ingress -n apps ${APP}
 ```
+
+Rollout 상세 출력에서 이번 canary 리비전에 속한 AnalysisRun 이름을 확인한다.
+이름이 아직 없거나 결과가 없으면 분석 성공으로 판정하지 않는다. 이름이 있으면
+아래 Recovery의 소유자 확인과 상세 조회로 상태를 확인한다.
 
 ```bash
 # 신뢰된 로컬 CA로 TLS와 HTTP 성공을 함께 확인한다.
@@ -297,9 +300,19 @@ argocd app sync platform-namespaces
 
 #### AnalysisRun 실패 (Prometheus 쿼리 오류)
 
+Procedure 2의 대상 Rollout에서 확인한 이번 리비전의 AnalysisRun 이름을
+`ANALYSIS_RUN`에 설정한다. `jq`로 해당 실행의 controller UID를 Rollout
+UID와 대조한 뒤 상세 정보를 읽는다.
+
 ```bash
-# AnalysisRun 상세 확인
-kubectl describe analysisrun -n apps $(kubectl get analysisrun -n apps -o name | head -1)
+# 승인 확인 때 사용한 APP과 선택한 ANALYSIS_RUN을 사용한다.
+rollout_uid=$(kubectl -n apps get "rollout/${APP:?대상 Rollout을 지정한다}" \
+  -o jsonpath='{.metadata.uid}') &&
+  test -n "$rollout_uid" &&
+  kubectl -n apps get "analysisrun/${ANALYSIS_RUN:?대상 AnalysisRun을 지정한다}" -o json |
+    jq -e --arg uid "$rollout_uid" \
+      'any(.metadata.ownerReferences[]?; .controller == true and .kind == "Rollout" and .uid == $uid)' >/dev/null &&
+  kubectl -n apps describe "analysisrun/$ANALYSIS_RUN"
 
 # AnalysisRun 오류가 401이면 apps/prometheus-api-auth, x509면 hy-home-root-ca 확인
 ```

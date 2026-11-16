@@ -1,10 +1,10 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.23"
+version: "0.2.24"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-16"
 artifact_id: "SPEC-0161-TSK-0001"
 parent_ids: ["SPEC-0161-PLAN-0001"]
 ---
@@ -31,7 +31,42 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
 - **Live Validation**: DEFER; no live surface in scope
 - **Secret / Vault Handling**: no secret read or printed
 - **Rollback Plan**: delete the branch `claude/w00-v14-7-intake`; `main` is unchanged
-- **Evidence Location**: this Task
+- **Evidence Location**: this Task. The [W03-FORMS follow-up](#w03-forms-301-check) records the request, scope, design and checks of the later form change.
+- **W07-BRIEF request:** The current user's W07-BRIEF prompt, revision 3.0.0,
+  authorizes the explicit preflight, its focused tests, routing and
+  documentation in this worktree. The scope includes
+  `scripts/validate-execution-brief.py`, its validation registry route, the
+  scripts README, Task execution tests and this Task. The
+  [design and intake](#w07-brief-design-and-intake) record the expected
+  behavior and separate authorization and native delivery boundaries.
+- **W07-BRIEF resume:** The user's 2026-11-16 follow-up requests local
+  revalidation and implementation of remaining work after the focused
+  baseline passes. The [target freshness follow-up](#w07-brief-mutation-target-freshness)
+  also covers the shared bounded path reader and its regression test.
+
+- **W07-ADAPTER request:** The user supplied W07-ADAPTER 3.0.0 for this
+  checkout. Scope includes the project pre-tool hook, its static validator
+  and focused tests, provider authoring guidance and the open W07-H04 form
+  defect. User and managed settings, live credentials, paid calls and Git
+  delivery require their existing authority.
+
+- **W07-ADAPTER resume:** The follow-up authorizes focused revalidation
+  and bounded local probes of the outstanding provider paths. The
+  [resume design](#w07-adapter-resume) keeps the current trust, account
+  and host permission boundaries in force.
+- **W07-ADAPTER host-path follow-up:** The latest user request authorizes
+  identification of the actual Codex socket directory, inspection of the
+  reviewer launch boundary, and repairs available within current grants.
+  The [host-path check](#w07-adapter-codex-host-path-check) records the result.
+- **W07-ADAPTER host and Desktop verification:** The latest request
+  authorizes an ordinary host-shell run with managed policy included
+  and a Desktop reviewer test under an effective read-only profile.
+  The [read-only check](#w07-adapter-read-only-execution) keeps the two
+  execution contexts separate.
+- **W07-ADAPTER Desktop profile setup:** The user requests the supported
+  configuration and selection path, with management policy retained.
+  The [Desktop profile check](#w07-adapter-desktop-profile-setup) limits
+  the local probe to documented configuration inventory.
 
 ## Execution Log
 
@@ -196,6 +231,30 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-139 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Transfer of duplicates: OPEN-09 into DOC-S99, PR-DURING into CI-SCOPE | The live rows DOC-S99 (hard-coded headings in tests, owner W05) and CI-SCOPE (PR-DURING hosted CI scope, owner W06); `python3 scripts/validate-work-residue-ledger.py --root .` | PASS | Transferred, not completed and not withdrawn: the obligation stays open in the receiving row, which carries the same function. DOC-S99 already names OPEN-09 in its resume condition, and PR-DURING resumed only when CI-SCOPE closed. | yes | none |
 | EVD-140 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W02 disposition of PKG 3.0.1 (SPEC-0219, approved spec `890fa960`, plan `bab60654`) | The ledger after EVD-135 to EVD-139; the SPEC-0219 code audit; `git ls-remote`, `gh release list` and `gh pr list` counts at `c6513839` | PASS | Seeds W05-H09 and Q07-H01; the `W02 Disposition` table states the 41 open entries by function, owner and completion condition; the `Q07 Target Preparation` table lists nine target groups and deletes nothing. It accepts no criterion. | no | none |
 | EVD-141 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | QA latency record (SPEC-0220, approved spec `00a21a36`, plan `2302db8d`) | Four `scripts/qa.py staged` runs in a clone of `e879e58e`, 2026-11-15; the full run of the `W01 Follow-up Record` | PASS | The `QA Latency Record` holds the commit QA, full run and limits parts, and corrects target 6 of the `Q07 Target Preparation` table. It accepts no criterion and closes no residue. | no | none |
+| EVD-142 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-BRIEF local mutation target preflight | Python 3.12.3, worktree at `537a7428`, disposable Git repositories and files, `python -m unittest tests.test_task_execution_contract.ExecutionBriefCliTests tests.test_validation_bounded_io` | PASS | 19 tests passed, including rejection when a target binding is missing, file bytes change at the same HEAD, an expected-absent target appears, or an ancestor moves during the no-follow check. The explicit preflight compares inputs and leaves authorization with the current authority owner. | no | none |
+| EVD-143 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-BRIEF native provider lifecycle and dispatch | Installed Claude Code 2.1.325 and Codex CLI 0.169.0, tracked hook entries and offline fixture inspection | NOT_RUN | The Claude resume/compact hook emits advisory context and the Codex project hooks cover Bash and apply_patch. The platform owner needs a trusted current-request feed at native entrypoints and a controlled live-session witness for direct and nested dispatch, resume, compact and clarification. | no | none |
+| EVD-144 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-H04 Claude agent authoring form | Claude role template, native metadata profile, provider bindings and strict registry, Markdown and link checks on the private worktree snapshot at `537a7428` | PASS | The form uses a binding-derived tools placeholder. All three document checks passed. No role projection or capability binding changed. The closure applies to the form handoff. | no | none |
+| EVD-145 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Claude pre-tool hook registration and adapter checks | Python 3.12.3, checked-out Claude settings, synthetic adapter payloads and the agent-governance, adapter, approval and registry test modules | PASS | The targeted check first failed on the missing failure policy. It now enforces the policy on Claude PreToolUse and refuses it on Claude SessionStart and Codex. The selected 182 tests and repository agent-governance validation passed. Independent review found no blocking defect. | no | none |
+| EVD-146 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER native Codex Desktop structured write | Current Desktop chat, scoped Task edit and an out-of-workspace inert marker under a disposable temporary directory | PASS | Editing the Task returned template and folder guidance and updated the file. The outside marker attempt returned a native PreToolUse denial with HOOK-PATH-ROOT. The marker was absent and the temporary directory was removed. | no | none |
+| EVD-147 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER native Claude startup output | Claude Code 2.1.325, `--init-only --print --setting-sources project --strict-mcp-config`, disposable project and profile, connection denied by the host test filter | PASS | A synthetic SessionStart startup command ran. A valid object was accepted. Complete but invalid JSON and a wrong-typed field generated parse and schema errors, and startup still exited 0. The startup command received no input bytes. The test covers startup delivery and output handling. | no | none |
+| EVD-148 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Codex Desktop read-only reviewer shell denial | Current Desktop code-reviewer subagent, default shell tool, atomic creation of a unique inert marker in the workspace root | FAIL | Shell creation returned exit 0 although the tracked reviewer projection declares read-only. The agent removed the marker and verified absence. No permission override or escalation was used. This witness applies to the Desktop subagent path. The effective standalone Codex role, actual credential access and the managed host's launch path remain unverified. | no | none |
+| EVD-149 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER resumed local contract verification | Python 3.12.3, worktree at `537a7428`, `tests.test_agent_governance`, `tests.test_k8s_pre_edit_hook`, `tests.test_task_acceptance_boundaries` and `tests.test_validate_agent_registry` | PASS | All 182 tests passed in 39.097 seconds. Agent governance, work residue ledger, Ruff and diff checks passed. This result leaves the native reviewer failure open. | no | none |
+| EVD-150 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Claude native PreToolUse resumed probe | Claude Code 2.1.325, local socket prerequisite for a credential-free synthetic model transport | NOT_RUN | Socket creation returned EPERM before loopback bind. Installed client inspection found no standalone agent tool replay entry. User shell mode follows a separate path. No session, model request or pre-tool scenario ran. | no | none |
+| EVD-151 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Codex native read-only profile launch | Codex CLI 0.169.0, `codex sandbox --permission-profile :read-only --include-managed-config`, synthetic read and write commands, external connections disabled | DEFER | Both launches exited 1 before the target process started. Codex reported that the app-server socket directory must be user-owned with mode 0700 when building the bubblewrap command. The diagnostic did not identify the path. The missing write marker establishes no sandbox denial. The host owner needs to inspect the runner prerequisite. Desktop EVD-148 stays open. | no | none |
+| EVD-152 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Codex socket path and namespace diagnosis | Codex CLI 0.169.0 release source, `lstat`, matching `/proc/self/mountinfo` entries and `bwrap --unshare-user --ro-bind / / -- /usr/bin/true` in the current execution context | PASS | The sandbox checks `/tmp/codex-daemon-1000`. It has the expected owner and is masked by a mode-0000 read-only tmpfs. The independent bwrap probe exited 1 because the host refused the namespace launch, before true could run. This result identifies prerequisites. EVD-148 and EVD-151 retain their recorded results. | no | none |
+| EVD-153 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER host-path follow-up local regression | Python 3.12.3, worktree at `537a7428`, same four governance, hook, approval and registry modules as EVD-149 | PASS | All 182 tests passed in 39.440 seconds. Agent registry and residue ledger passed. The source index stayed clean. | no | none |
+| EVD-154 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER host Codex read-only profile | Codex CLI 0.169.0 at `537a7428`, approved host shell, `codex sandbox --permission-profile :read-only --include-managed-config` and a disposable sample in the workspace | PASS | Host socket directory was user-owned mode 0700. The sandbox target started and read the sample. Exclusive marker creation failed with EROFS, errno 30, so no marker existed. The wrapper exited 0 and removed its disposable fixture. This verifies the CLI profile in that host context. | no | none |
+| EVD-155 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Desktop read-only profile availability | Operator checked the current Desktop permissions menu in response to the request for a read-only reviewer session | DEFER | The operator reported that no read-only profile was available. The current child dispatch has no per-child permission selector. A host configured for read-only Desktop review and an observed read and denied write are required. EVD-148 remains open. | no | none |
+| EVD-156 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER host profile inventory for Desktop setup | Codex 0.169.0 generated protocol schema, host stdio app-server with sockets and connections disabled, project cwd and read-only `permissionProfile/list` and `configRequirements/read` calls | PASS | The offline host app-server reported the built-in read-only profile with allowed true and returned no effective requirements for that offline process. It reported no custom profiles or additional page. This establishes local discovery only. The Desktop picker and its effective managed requirements remain unobserved by this probe. | no | none |
+| EVD-157 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Codex Desktop read-only reviewer shell denial | User reported that an administrator applied a read-only profile and that the operator selected it in Desktop. Fresh Desktop code-reviewer subagent and default shell in the same workspace at `537a7428` | FAIL | Reading RTK.md succeeded. The shell also created a unique inert marker in the workspace root, then removed it in the same command. A separate query found no marker. No exception or escalation was requested. The selected UI profile did not produce write denial on this execution path. | no | none |
+| EVD-158 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER repository configuration check after the profile selection | `python scripts/validate-agent-governance.py --root .`, current project `.codex/config.toml`, installed 0.169.0 config schema and official managed requirements reference | FAIL | The worktree's project config contains an added allowed_permission_profiles table, and the validator exits with AGENT-NATIVE-CONFIG. The key belongs to managed requirements.toml. The project edit and management state were left as supplied. The result does not identify why the Desktop tool received write authority. | no | none |
+| EVD-159 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER repository configuration check after the profile selection | User-authorized removal of the misplaced allowlist and `python scripts/validate-agent-governance.py --root .` at `537a7428` | PASS | Only the project-level table was removed. The resulting file matches HEAD byte for byte. The agent registry and 182 focused tests passed. The managed policy was outside the edit. | no | none |
+| EVD-160 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Codex Desktop read-only reviewer shell denial | Fresh Desktop code-reviewer after EVD-159. Default shell, runtime metadata reported workspace-write, tracked RTK.md and an exclusive disposable marker | FAIL | Reading succeeded and the default shell could also create the marker. The same command cleaned up the marker and a separate command confirmed absence. No approval or escalation was requested. The child still received write authority after the project config repair. | no | none |
+| EVD-161 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Codex reviewer permission inheritance diagnosis | Installed CLI 0.169.0, pinned role and child config sources, provider regression, current delegation interface and EVD-160 | PASS | Native spawn copies the invoking turn's effective permissions after applying the role. The supported role fields omit sandbox_mode. The current delegation interface exposes no child permission override. The Desktop parent's server-acknowledged profile at the time of dispatch is still unavailable. This establishes the inheritance contract and retains the runtime failure. | no | none |
+| EVD-162 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER live Desktop parent profile diagnosis and correction | Current Desktop chat on the managed SSH host, verified Codex 0.169.0 App Server connection, `thread/read` and `thread/resume` without history, live profile inventory, current-turn inert marker and scoped `thread/settings/update` | PASS | Before correction the server returned no active named profile, sandbox workspaceWrite and on-request approvals. The running turn read RTK.md and created its disposable marker, which was removed. The live allowlist permitted :read-only. The server acknowledged :read-only and readOnly for subsequent turns, with the same approval policy and reviewer. This verifies the parent settings change. | no | none |
+| EVD-163 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Codex Desktop read-only reviewer shell denial | First new turn after EVD-162, active thread App Server metadata and fresh code-reviewer default shell at `537a7428` | FAIL | This turn's server metadata again returned no active named profile and workspaceWrite. The reviewer read RTK.md and exclusive marker creation succeeded. The marker was immediately deleted and independently confirmed absent. No permission exception or escalation was used in the reviewer probe. The profile was already absent at the parent boundary. | no | none |
+| EVD-164 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Desktop turn-start permission-field observation | Codex 0.169.0 App Server ingress and tracing source, read-only aggregate queries against the SSH host diagnostic database | DEFER | The scoped query covered 62 App Server rows for the target chat. A bounded recent secondary query covered 857 App Server rows and found no matching turn-start request. Neither query returned log bodies. The pinned request trace records method and identifiers. The two incoming fields remain unobserved. No launch or policy setting changed and EVD-163 remains open. | no | none |
+| EVD-165 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Claude installed PreToolUse runtime and invalid-output behavior | Claude Code 2.1.325, host Bubblewrap loopback-only namespace, disposable project configuration, synthetic HTTP model replay, inert Bash marker, hook stream events and tool results | PASS | All four scenarios delivered the native Bash PreToolUse event. Valid output and malformed JSON with default behavior created a marker. Exit 2 and malformed JSON with onFailure block refused the tool and returned an error tool result. Each session made two local fixture requests and exited normally. The fixture was removed. This covers the installed native dispatcher in isolation. | no | none |
 
 #### Edition Delta
 
@@ -1511,6 +1570,623 @@ Rows 1 to 4 were measured on 2026-11-15 in a clone of `main` `e879e58e` with the
 
 Correction to the `Q07 Target Preparation` table, target 6 (session scratch clones): `negA`, `negB` and `negC`, and the later `latency` clone, were deleted by the user on 2026-11-15, and their absence was confirmed. None remains, and the target is no longer residue.
 
+#### W03 Forms 3.0.1 Check
+
+**Inputs and authority.** The user's 2026-11-15 request authorizes local changes and checks for PKG 3.0.1 form differences in this worktree. Prior W03 acceptances remain evidence for their original scope. User acceptance and remote delivery require their own evidence.
+
+The local intake used PKG 3.0.1 D01, D02, D03, S01–S07 and S27, the target role definitions, the four observation and decision inputs, and the current checkout at `537a7428`. The GitHub pull request search returned no open PR for this repository. Local merge history corroborates PRs #277, #280, #282 and #283 from the pinned observations. No other repository was inspected.
+
+**Design summary recorded before implementation.** Preserve the existing section IDs and consumers. Wholesale replacement with the target outlines would affect reader compatibility and revisit accepted scope. Apply the target meaning via policy and author guidance where the current interface suffices. Route release evidence to its existing owners and test catalog integrity through bindings. Use the existing validator, generator regressions and strict document and link checks. Roll back the changed prose and tests if an existing consumer fails.
+
+**KEEP_VERIFIED.** Retain the common SDLC role forms (EVD-070, EVD-093, EVD-094, EVD-100 and EVD-107), the Registry-backed common operational, navigation and local forms (W03 Closing Report), TemplateDefinition coverage (EVD-091 and EVD-107), the document generator (EVD-059), relationships and reverse navigation (EVD-062), the seven-column glossary, provider-native bindings, Requirement draft creation and the removal of per-profile heading lists. The current template sources and consumers are the Stage 99 Registry, the physical forms, the contract loader, the generator, and the Markdown, relationship and lifecycle validators. Existing completed or accepted records continue to describe their prior scope.
+
+**Implemented locally.** SDLC-R006 and the operations index route release work to the existing Runbook, Task, Git, CHANGELOG and observed evidence owners. Closing the former exception changes policy compatibility and raises the SDLC policy to 4.0.0. AUTHOR-R021 delegates exact form rules to Stage 99 and retains substantive authoring guidance. The Stage 99 index now describes the TemplateDefinitions that actually exist. The form tests use Registry-to-profile and schema consistency in place of fixed catalog totals and order. The release tool, Runbook, CHANGELOG, physical forms and Registry serialization retain their existing interfaces. A read-only review of the test diff found no blocking coverage loss.
+
+**Observed local checks.** On the working tree based on `537a7428`, the configured Python 3.12.3 environment with ruamel.yaml 0.19.1 ran `validate-document-contract-registry.py`, `validate-markdown-profiles.py`, `validate-links-and-owners.py` and `validate-document-lifecycle.py` under `scripts/` with `--root . --mode strict`. The checks passed after the cross-stage links were routed through their owning indexes. `scripts/validation/repository/quality.py --root .` passed, as did `scripts/validate-work-residue-ledger.py --root .` on the handoff entry. Source comparison checked the physical files against their profile routes and found a TemplateDefinition for each. The 38 physical sources and 85 registered profiles describe the observed input.
+
+The working-tree run of `scripts/validate-selected-style.py` checked eight paths from `git diff --name-only -z` with `.pre-commit-config.yaml`, `.markdownlint-cli2.yaml`, `.ruff.toml` and the installed pre-commit cache. It passed in 4.22 seconds. The first invocation with a private empty cache exited 2. The installed-cache input resolved that failure. `git diff --check` passed and the reviewed secret baseline locations stayed aligned.
+
+The configured Python ran `scripts/run-contract-tests.py --root . --suite document` on the W03-FORMS working tree on 2026-11-16 Asia/Seoul. The run exited 0 with 1,095 cases across 31 modules, including three skips. It exercised generator round trips, reading, conditional and empty sections, fenced and quoted headings, duplicates, relationships, native exceptions and authored content. Wall time was 747.44 seconds. The earlier local document run in the QA Latency Record took 774.9 seconds. The two observations used different inputs and execution conditions. The recorded 64.4–69.9 seconds for selected document commits came from a separate, narrower lane.
+
+**Publishing verification.** The local synthetic run of `python -m unittest tests.test_release` exited 1 with six failures and seven errors. The release runner found no trusted Git or GitHub CLI path because the execution environment reported the system tool ownership as UID 65534. A run of `ReleaseVersionTest` and `ReleaseBodyTest` from that module passed all three cases. Hosted checks, native delivery and live release execution remain unobserved.
+
+**Deferred to the named owner.** The D02 package fixtures agree with the current SemVer function in 22 of 24 cases. The function accepts `1.2.3-rc.1` and `1.2.3+build.1`, both rejected by D02. Stage 99 also stores a composite TemplateDefinition contract version. Once W03-VERSION migrates the interface, W03-FORMS can adopt the shared normalized record for generation and reading, exercise enforced applicability for conditional sections, bind reference subtype semantics and explicit target-versus-observed architecture meaning, and verify shared Markdown structure consumption against real inputs. The implementation, deployment and acceptance boundaries of D03 need their own behavioral evidence.
+
+**Delivery and acceptance.** The working-tree diff is available for the owner's review. The index remains clean. Exact-index QA and the hosted lane await an authorized delivery. The current W03-FORMS request awaits user acceptance.
+
+#### W03 Version 3.0.1 Implementation
+
+**Inputs and authority.** On 2026-11-16 Asia/Seoul, the user requested W03-VERSION and authorized continuing W03-FORMS after the prerequisite passes. The worktree is based on `537a7428` and includes the earlier local W03-FORMS diff. D02 3.0.1 and Q03 govern the version change. The task retains the earlier acceptance records and their original scope.
+
+**Design summary.** Use the numeric core of the existing grammar for document and contract versions across JSON Schema, native skill validation and lifecycle comparison. Compare exact numeric components and check the reset of lower fields on a major or minor increase. Product tags keep their existing suffix grammar and precedence. Separate TemplateDefinition contract identity and version in the schema, Registry and record reader. The split breaks the previous Registry wire format and advances its schema to 21.0.0. Classify historical documents with their recorded Registry form bindings. Keep current document identities, package labels and DB version integers. Reusing general SemVer for governed documents would continue to accept the two suffixed cases that failed D02 in the previous run. Verify the package cases, schema and consumer agreement, registry history, generator round trips and product tag behavior before applying the remaining forms changes. Roll back the coordinated schema, registry and reader diff if a required reader fails.
+
+**Prerequisite verification.** The configured Python 3.12.3 environment rejected the three new frontmatter cases after the change. All 24 package fixtures agreed with the Python numeric reader and the three JSON Schema constraints. The same fixture values agreed with the frontmatter pattern in the installed ECMAScript runtime. The Registry and native hook readers accepted generation 21 and the history reader still accepted generation 20. Focused checks exercised split TemplateDefinitions, numeric comparison and staged reset rules, native skill metadata, and the unchanged product parser. The GitHub pull request search returned no open pull requests for this checkout's repository.
+
+#### W03 Forms 3.0.1 Implementation
+
+**Design and scope.** The successful prerequisite admitted dependent work under D01 and D03 3.0.1. Apply one Registry-owned source-profile binding to the applicable reference pack and report headings, including their template twins. Use the current normalized TemplateDefinition and profile form to check the physical scaffold at generation time. Use the link validator's existing Markdown block view for root form headings so that HTML, quotes and fenced examples cannot introduce form headings. Keep the existing section IDs and owner links. Explain declared topology, target and actual observations using the existing Architecture sections. Runbook state-change applicability and Requirement quality applicability remain semantic review where the form has no independent machine fact.
+
+**Implementation.** Reference Pack requires its subtype's closure section. Reference Report admits its own optional subtype sections. Both existing Stage 99 local role contracts move to 2.0.0 because documents previously valid under the looser applicability check can now be refused. The historical research extensions retain their registered boundary. Current Registry profiles expose the same normalized record used by the Registry check. The generator verifies that record's role and source profile, the physical scaffold's visible heading tree and registered table columns, and the generated envelope. Architecture and two mutating Runbooks were updated using already registered sections. REQ-0001 carries functional and interface member IDs and does not need an empty Quality Requirements section.
+
+**Local checks.** Focused tests reproduced the earlier acceptance of missing pack closure, wrong report subtype headings, malformed generator headings, incorrect Guide table columns and false fence markers inside HTML examples. The corrected generator tests include literal HTML, CDATA, processing instructions, quoted headings and a real heading after them. Focused applicability and normalized-record validation, the captured history fixtures, the product tag cases and all 74 provider-hook regression cases passed. The actual reference router is checked with its matching isolated index, since a working-tree/real-index comparison correctly refuses the modified Stage 90 router. Architecture was reviewed against its existing declaration and evidence owners. Repository-static checks and the sandboxed hook tests supply no live deployment or release result.
+
+**Document suite and follow-up.** In the isolated working-tree snapshot, strict Registry validation covered 293 paths, repository quality passed, and staged lifecycle validation passed in its own isolated capture. The run of `scripts/run-contract-tests.py --root . --suite document` executed 1,105 tests in 826.96 seconds and exited 1 with eight failure reports, one error and three skips. The adverse reports were from four tests with former expectations for draft suffixes, reference applicability or template table columns. The corresponding fixtures and assertions now follow the new contracts. The subsequent isolated run of `test_shared_contract_binding`, `HeadingListRemovalTests`, `test_operations_section_contract` and `test_operations_lineage_contract` passed all 49 tests. `TableCheckTests` passed all 11 after the last fixture correction. These corrections changed test inputs only. The combined suite was not repeated after those focused retests. Its 826.96-second observation and the earlier 747.44-second run used different inputs and are not a controlled latency comparison. Final Markdown, link, residue and style checks cover authored evidence and Runbook changes.
+
+**Delivery boundary.** The independent review identified the opaque-Markdown and table-column gaps and the corresponding fixes were exercised in the focused regressions. The real index remains untouched. The Registry's reviewed secret-baseline entry follows the same line content from 8831 to 8875. The Stage 99 instructions require that location change in a separate earlier commit before delivery. User acceptance remains pending.
+
+#### W03 Forms Verification Resume
+
+The resumed request authorizes the remaining form changes after the existing candidate passes. Before any further edits, the local isolated working-tree snapshot ran `scripts/run-contract-tests.py --root . --suite document`. It passed all 31 modules with 1,105 cases, three skips and exit 0 in 771.42 seconds including snapshot preparation. Use the same Stage 99 owners and PKG D01 3.0.1. Three concrete gaps remain in the passing candidate. Both readers count HTML examples as tables, report-specific historical H3s can be used outside their registered reports, and an NFR entered in the traceability or functional table can omit its quality member.
+
+Use the shared rendered Markdown view for root tables while keeping each reader's row rules. Bind historical H3s to reviewed path-derived member identities without changing their authored content. Use only registered table cells carrying the current package's NFR ID to determine quality-section applicability. Reject synthetic invalid input before any document write and verify the existing positives. Current Runbooks already carry Rollback, and the state-change distinction remains author-reviewed. A failing reader is repaired at its owner before the candidate proceeds.
+
+**Implemented locally.** The Markdown and link readers share the root rendered view for table evidence. Opaque examples cannot supply headings or table rows, and a reordered registered header fails its column contract. Stage 99 constrains 15 conditional H3s and 39 local H3 extensions to the path-derived research IDs observed across 15 reports. The two schemas, contract reader and normalized generator record carry these selectors. The Requirement reader checks both directions of FR, IF and NFR placement and requires a quality row for each current-package NFR declared in Traceability or Functional Requirements. A package with no declared NFR can omit the section. The repository form regression now uses the real section model for its fixture.
+
+**Verification.** The configured Python ran all 31 modules registered in the `document` suite via `python -m unittest` in six parallel groups with isolated working-tree and index snapshots. Of 1,112 cases, 1,109 passed and three were skipped. Each group exited 0. Wall time including snapshot preparation was 228.81 seconds. The earlier serial gate took 771.42 seconds with different inputs and scheduling. This comparison records observed elapsed times for the two invocations.
+
+The local candidate also passed `validate-document-contract-registry.py` for 293 paths, `validate-markdown-profiles.py`, `validate-links-and-owners.py`, `validate-document-lifecycle.py --mode staged`, `validate-work-residue-ledger.py` for 42 entries, and `validation/repository/quality.py` in isolated snapshots. The selected style gate passed for the candidate and the repository form, product-tag and release-body focused run passed seven cases. Ruff and `git diff --check` passed. Independent review reproduced one reverse-placement gap and the regression now covers both FR and IF in the quality table.
+
+**Delivery and acceptance.** The source index remains clean. The unchanged reviewed Registry entry still maps from line 8831 in the baseline to line 8875 in this candidate. The Stage 99 instructions assign that location change to a separate earlier commit before delivery. Hosted checks, live operations and user acceptance remain pending.
+
+#### W03 Version Boundary Follow-Up
+
+The resumed W03-VERSION request applies D02 3.0.1 and Q03 to the current working tree. Reuse the recorded W01-CONTRACT rule fit, the numeric document schemas and parser, the split TemplateDefinition wire format, the existing numeric ordering and reset rules, and the separate product tag grammar. The GitHub pull request search found no open PR for this repository. Three consumer gaps remain. The glossary reader accepts an invalid Contract Version cell, the version comparator misses downgrades through an old combined TemplateDefinition binding, and the released edition check omits the common-form contract.
+
+Use the shared numeric parser for the glossary's final column. Interpret the base's combined binding only for historical Registry generations that used it. Compare its ID and exact version against the split values using the existing downgrade and reset checks. Apply the released source and content protection to approved and adopted common forms, while keeping candidate rows editable. The optional consumer edition field retains its existing independent binding. The current schemas continue to require split fields. These corrections enforce the existing contract for valid values and need no wire-format or policy version increase. The acceptance checks exercise both glossary tables, historical and current comparison, released and candidate forms, the D02 fixtures and product tags. A regression is repaired in the affected reader or its corresponding test fixture.
+
+**Implemented and verified.** `validate-knowledge-surface.py` applies the shared parser in both glossary tables. `document_lifecycle.py` protects approved and adopted common forms and compares the legacy base binding against the current split binding. Independent review identified the missing comparison and edition protection. The focused regressions reproduced both failures before the fixes. Actual historical Registry blobs at `6c29fcb7` and `537a7428` confirm the combined representation in generations 14 and 20. The regression fixture uses string versions for both generations.
+
+The Python reader and all three schema patterns agreed on all 24 D02 examples in Python 3.12.3 and Node 26.10.0. The check also proved `1.9.0 < 1.10.0` and rejected a terminal newline. Three isolated groups of `python -m unittest` passed all 226 cases in 130.34 seconds including snapshot preparation. They covered SemVer, Registry schema and bindings, lifecycle history and completion, both glossary tables, external reference routing, SQLite workspace memory, and the product tag and release body checks. Strict Registry validation covered 293 paths. The knowledge reader passed on three actual documents and staged lifecycle validation passed in the private index. Ruff and `git diff --check` passed.
+
+Three alternating runs against the same working-tree input measured a median of 0.105 seconds for the previous knowledge reader and 0.102 seconds for the corrected reader. The earlier W03-FORMS full document suite remains recorded on its own input. Hosted CI and actual publication were outside these runs. The source index remains clean, the earlier Registry baseline delivery condition still applies, and user acceptance remains pending.
+
+#### W03 Version Glossary Column Resume
+
+D02 3.0.1 and the D01 seven-column vocabulary form govern this resume. The private snapshot passed the 50-case focused version run, strict Registry validation and staged lifecycle in 27.93 seconds. Retain the prior numeric grammar, split contract fields, history comparison and independent product grammar. The vocabulary gate currently reads the rightmost text cell. A numeric overflow cell can hide an invalid value in the rendered Contract Version column. Reuse the existing GFM cell parser and compare the seventh cell in both vocabulary tables, including a row with an escaped internal pipe. A missing or invalid version still yields the existing diagnostic. Verify the malformed and valid rows in the focused gate before handing off. The correction affects the knowledge reader and its fixture and adds no schema fields.
+
+**Result.** The knowledge reader uses the shared rendered root view and GFM cells. Only ASCII space and tab are removed as table padding before the numeric check. The seventh cell supplies the edition, including on rows with an escaped pipe. Fenced examples supply no terms. Independent review confirmed the need to preserve Unicode whitespace through the shared splitter. The splitter retains its default behavior for existing callers.
+
+The regression reproduced failures for an invalid seventh cell masked by a numeric eighth cell in either vocabulary table and for an invalid value in a fenced example. After the change, `python -m unittest tests.test_validate_knowledge_surface` passed all 18 cases. In the private snapshot, the link boundary, renderer cache, table iterator and residue ledger modules passed 99 cases. `validate-knowledge-surface.py --root .` passed on three actual documents and `validate-links-and-owners.py --root .` passed. Ruff and `git diff --check` passed. On the same input, three alternating runs measured a median of 0.106 seconds before the change and 0.270 seconds with the shared rendered view.
+
+The earlier W03-FORMS evidence remains in its verification section. The source index remains clean. Hosted execution, Git delivery and user acceptance remain pending.
+
+#### W03 Forms Required Scaffold Table
+
+D01, D02 and D03 3.0.1 govern this resume. The W03-VERSION predecessor passed its numeric version, Registry and staged lifecycle checks. Retain the prior common forms, native exceptions, relationship routing and the seven-column glossary. The Registry reader assigns a positive authored row minimum to Criteria in the Spec form. Independent review found that removing every visible Criteria table from the physical scaffold still lets the generator produce a Spec. The generator already delegates to the profile check. Use that same check to require a visible registered table in a present applicable scaffold section when the Registry requires authored rows. The template may carry a header without authored evidence rows. Keep existing body-contract checks at their current owner and keep optional tables omittable. Verify missing and hidden tables, the header-only case, and actual generator entry points. This enforces the registered contract without changing the wire format or the physical templates.
+
+An authored Guide section also passed with a non-breaking-space entity as its entire body. Apply the same visible-content check to entity spellings in prose and table data. Literal code remains evidence of its displayed text. The Registry still owns applicability and section IDs. Lifecycle authority and release publication remain with their existing owners.
+
+**Verification.** Independent review exercised the actual Spec scaffold and an authored Guide. Focused regressions reproduced the missing and opaque Criteria table cases and empty prose entity cases before the fixes. In the initial snapshot, generator, reference, Requirement and native regressions passed all 99 cases. In the corrected snapshots, `python -m unittest` ran the common form tree, generator, native Skill envelope and operations section and lineage modules. Of 458 cases, 455 passed and three were skipped. The parallel run including snapshot preparation took 221.26 seconds. Strict Registry validation passed on 293 paths. Strict Markdown and cross-document validation passed on actual documents, and lifecycle validation passed using the private index. The Markdown profile check took 13.28 seconds before the correction and 11.83 seconds after it under different concurrent loads. The measurements capture observed time for each run.
+
+`validate-markdown-profiles.py` holds the behavioral changes. The generator tests cover missing and hidden tables, a header-only Criteria table and omission of the optional Guide Steps table. The common form tests cover entity-only text and table cells together with literal code. Stage 99 author guidance describes the scaffold requirement. The source index remains clean. Hosted checks, live publication and user acceptance remain pending.
+
+#### W04 Lifecycle Authority Intake
+
+The current user request authorizes W04-LIFECYCLE implementation and local verification in this workspace at `537a7428`. W03-FORMS supplies its recorded implementation verification. Its user acceptance and delivery stay pending. D03 and D15 3.0.1 and Q-DRAFT govern this change. Reuse the current role states, transition model, typed parent graph, separate criterion acceptance, and the original operator verification route. No open PR was found for this repository.
+
+The changed-Task detector mistakes an authored QA PASS for execution. It also reuses an approved status after the reviewed parent bytes change. Replace PASS inference with Task and work-row execution states. For a changed executable Task, reuse recorded approval only at unchanged reviewed input, and use the current Task evidence path for a separately verified scoped request. Verify its exact parents, current work scope and approval facts. The document check observes the record and never verifies the human actor itself. An unavailable or revoked original approval stops only the dependent action at intake, dispatch or resume. A draft referenced for explanation stays outside the normative relationship. Keep evidence, completion and integration distinct. Focus acceptance on draft authoring, revised scope and approvals, independent work and completion prerequisites. A failing check is repaired at its consuming owner before handoff.
+
+**Implementation.** The lifecycle and approval policies and the intake and dispatch workflows bind the current request and original approval. The lifecycle checker consumes the Registry's canonical Requirement basis and criterion columns, so a draft for another criterion does not stop independent work. Scoped approval uses the existing Task Results table and binds exact Spec and Plan text, the Task Scope, work rows and relevant draft Requirement revisions. Approval records are append-only in receipt order. Recording a withdrawal alone does not resume work. The next changed work state or scope needs current authority. An approved Spec or Plan body changed in the staged comparison goes back through review. The Task contract excludes scoped approval from criterion verification. The completion checker revalidates the Promotion owner even if the Plan has not changed.
+
+**Verification.** The installed Python 3.12.3 ran isolated Task, acceptance and completion tests (93), lifecycle history, package exit and rule-history tests (73), and relationship, link and document identity tests (78). All 244 cases passed. Two initial completion fixtures failed because their unborn repositories contained no prior approved parent editions; their temporary repositories now record that fixture baseline before completion. The later focused rerun passed all 16 authority tests after deriving the criterion column from the Registry and using a correctly shaped draft verification table. Strict Registry validation for 293 paths, Markdown profiles, cross-document links and staged lifecycle passed on local candidate snapshots. Staged lifecycle took 37.36 seconds, compared with 24.55 seconds in the earlier W03 run, on different inputs and under different concurrent load. Independent review identified the receipt order, full Scope, stale staged body and criterion isolation cases now covered.
+
+The Registry path update passed strict validation. Native hook-protocol fixtures and relationship tests passed 95 cases together, and the agent Registry validator passed. Those are simulated protocol and repository configuration results. The final document, cross-link, staged lifecycle, residue ledger and selected style checks passed. The source index stayed clean.
+
+**Limits and handoff.** The native provider paths were traced to the path guard. The operator still confirms the original trusted approval, the actual invocation and its revocation at runtime. The document checker can validate a receipt's form and binding but cannot authenticate that interaction, infer an executed command from a PASS cell, or see a resumed invocation with no Task change. The stale approval body check is staged. The D15 inventory contains 7 Requirement, 46 Architecture, 23 Operations and 26 Reference Markdown files. This change reviewed the affected owners and consumers; it does not establish semantic review of every document. Operations supersession direction and the legacy Spec/Plan state-model disposition in W04-H01 remain open. No document disposition, live operation, remote delivery or user acceptance was recorded.
+
+#### W04 Current and Historical Lifecycle Models
+
+The resumed request authorizes the remaining W04-H01 changes in this worktree. The earlier W04 authority rules remain applicable. The isolated prerequisite ran 18 focused cases plus strict Registry and staged lifecycle checks, all successful in 19.91 seconds. D03 and D15 3.0.1 govern this change. The sole current Spec/Plan pair is approved. Historical packages contain actual legacy execution states and must be read through their own Registry. Current Stage 05 documents carry no supersession field. The three operating profiles currently designate the predecessor's field, while their terminal check follows promotion links that cannot identify same-role replacement.
+
+Use the successor's `supersedes` identity for current Guide, Policy and Runbook profiles. Derive the inverse in the lifecycle check, including when a surviving predecessor's successor is renamed or removed. A current superseded document must reach an active successor of its own profile. Preserve prior Registry decoding and the existing relation rules outside those operation profiles. Current Spec and Plan authorize and plan work, while Task carries execution and completion. Remove only their unreachable current execution states and retain their reviewed draft, approval and cancellation rules. Use explicit history fixtures for old states rather than adding authoring edges. These are incompatible authoring changes in the still-local generation 21 candidate. Verify the new shape, retained legacy classification, identity-based rename, missing successor, and current completion. If a legacy read fails, repair historical classification before proceeding.
+
+**Implemented.** The Registry and operating lifecycle checker now read a successor's ID relation for the three operating roles and their template twins. A retained predecessor still needs an active same-profile successor after a path change or deletion. The current package completion check requires an approved Spec and Plan and the Task's separate completion evidence. Generation 10 Task contracts lacked the acceptance section field; the history decoder supplies an empty section only for that generation. A direct comparison of the actual SPEC-0107 Git versions `7523ece4` and `4c7eb4d8` read the old `in-progress` to `completed` transition in both parent documents. The same legacy states fail when used in current documents. A captured Registry from each generation 10 through 20 loaded with the history reader.
+
+**Verification.** The exact private candidate ran 117 operating relation, terminal, frontmatter and lineage tests, 76 Task and completion tests, 85 Registry version and lifecycle history tests, and 35 generator tests with `python -m unittest`. All 313 passed in 175.94 seconds including snapshot preparation. Strict Registry (293 paths), profiles, cross-document links, staged lifecycle, ledger (42 entries), and style (52 selected regular files) passed. The prerequisite staged lifecycle check took 18.30 seconds and the candidate check took 28.40 seconds under different concurrent loads. An initial multi-snapshot attempt detected a concurrent source edit during snapshot creation and was discarded. Independent review and targeted tests exercised successor-only authorship, stable IDs after renames, wrong-role and draft successors, deletion of a retained predecessor's only successor, and historical input decoding.
+
+**D15 review boundary.** Scoped Stage 01 and Stage 05 review covered the 7 and 23 tracked files by inventory, status and claim search with direct reads of the affected sections. The Stage 02 review screened 46 tracked files and read the affected descriptions and accepted-decision sections. The Stage 90 review inventoried 26 tracked documents, read nine in full and partially read the current and historical material in the SDLC report. The changes correct Stage 01 draft authority guidance, an AD-0007 status reference, the Architecture decision index's adoption version and Istio target, and Stage 90 QA selection and result vocabulary. Accepted ADRs and historical reference claims were retained. This is partial semantic coverage. The remaining corpus claim comparison and inherited broad QA gateway wording are still open. The verified W04-H01 implementation awaits user acceptance. Hosted and live checks were not run. The reviewed Registry baseline anchor moves from 8831 to 8850 and remains a separate earlier Git delivery change.
+
+#### W04 Content Claim Review
+
+This request authorizes W04-CONTENT in the current worktree at `537a7428`. Read D15, D01 and D03 3.0.1, S02–S07 and S27, the four package observation and decision inputs, and the prior W01 and W04 evidence. Reuse the implemented W01 contract, W03 removal of the Release document role, and W04 draft authorization rules. `git ls-files` lists 102 regular Markdown files across Stages 01, 02, 05 and 90 (7, 46, 23 and 26). The current checkout has no open PR. Use individual read ranges and the four claim kinds (requirement, design, checked local configuration and dated operation) to delimit the candidate. A mere listing or heading scan cannot establish semantic review.
+
+Align the existing gateway with the owning quality policy for changed-document and incoming-reference validation. Keep Git recovery for ordinary disposition with its actual approval and preservation conditions. Scope Q10 to an explicitly approved final transition and leave its execution to Q07. Edit only present claims that have evidence of a conflict. Preserve accepted decisions and dated observations, and leave owner links and current file IDs in place. Compare commands to tracked entry points and installed option help. Run only literal local validators, isolated fixture checks and safe local render or check modes. No live runbook step supplies evidence here. If a referenced implementation is missing, record the affected claim and owner and repair the bounded consumer or make its unimplemented status visible. Verify document scope, normative trace and reverse links on the exact candidate before handoff.
+
+**Current claims and owners.** The requirements, AD-0006 and lifecycle policy distinguish ordinary recoverable disposition from approved final removal. The Quality checklist and acceptance evidence follow that boundary and apply independent review to high-risk changes. W06 owns the pending affected hosted QA supplier, W08 the separately scoped session capture, W10 the review workflow and Q07 the final transition. Current metadata/style CI and routine Task and checkpoint retention remain distinct from those targets. The authoring gateways select current documents and incoming references through the existing QA owner. Stage 05 keeps RUN-0012, Task, Git and CHANGELOG as its product-release evidence owners. W03 and W04 draft writing, scoped execution approvals, state transitions and the single-direction operating replacement relation retain their previously verified behavior.
+
+Stage 01 and 02 now distinguish local rollout validation from hosted enforcement, split Application and Rollout notification owners, and separate desired configuration from dated observations. Stage 05 corrects shell syntax and target selection, Ready status checks, temporary diagnostic Pod authority, Git-owned rollback, prior CA prerequisites and reference QA scope. Stage 90 routers correct nested source paths, apply conditional report sections and keep evidence in the owning Task. The current draft report and dated addendum correct QA vocabulary and navigation while retaining published observation bytes.
+
+**Coverage.** The temporary derived review table is `_workspace/w04-content-review.tsv`. It records 102 unique tracked paths, purpose, claim class, read range, consulted owner, disposition and current SHA-256. The table passed checks for current digests and 22 literal evidence paths. The review read the full bodies of 52 files and selected sections of 50. Stage counts for full and partial are 01 (6 and 1), 02 (10 and 36), 05 (23 and 0), and 90 (13 and 13). Partial reasons are individual archived proofs, ADR context and consequences beyond the current decision excerpts, and historical research blocks or unsampled matrix cells. External freshness, hosted protection and provider or cluster behavior were not re-observed. Full-body reading does not claim verification of every factual statement. The table is outside tracked runtime and no consumer reads it as policy.
+
+**Verification.** Review compared local command owners and `kubectl --kubeconfig=/dev/null describe --help`. Bash syntax passed on 86 runbook fences and seven fake-kubectl/jq cases passed for ClusterIssuer status and AnalysisRun owner selection. The local Kustomize 5.8.1 render of `gitops/platform/external-services` produced eight expected Service and EndpointSlice declarations in 0.04 seconds. These are syntax, synthetic behavior and local configuration results, respectively. No cluster or GitHub operation ran. Three focused routing tests passed in 0.26 seconds. On the private candidate, 38 README navigation tests, 40 selected-file style checks, the Repository Quality command-boundary check, the agent and document Registries (293 document paths), affected profiles and reverse links, and staged lifecycle passed. Affected profiles and links took 7.09 and 22.32 seconds, respectively. The earlier W04 whole-tree observations were 11.90 and 30.58 seconds with different inputs, scope and load. Independent review caught remaining ordinary/final checklist contradictions and the provider-binding claim, which were corrected before this run. The source index stayed clean. Remaining individual claim verification, original provider evidence, hosted and live operation, and user acceptance are outstanding.
+
+#### W04 Content Residual Review
+
+The user's follow-up authorizes continuing W04-CONTENT in the same worktree. On resume, `main` was at `537a7428`, the source index was clean, no open PR was returned for the configured repository, and all 102 inventory paths and digests matched the previous review. The same four document stages, D15 3.0.1, D01 and D03 govern this pass. Review the remaining requirement lineage, accepted-decision sections and published or draft reference passages against current owners. Keep dated source and decision editions intact and route any current-facing correction through its existing owner or dated addendum. Select checks for the changed documents and their incoming references. External source refresh, live verification, hosted execution and final transition need their own evidence and scope.
+
+**Residual coverage.** The temporary comparison table records 100 full-body or full-lineage reviews and two mixed-method ledger reviews. This pass completed 36 ADR bodies, the 222 archived summaries and 61 recovery groups in REQ-0003, and eleven Stage 90 research bodies. The two remaining ledgers have direct reads of the historical dispositions with projected source and claim columns, plus ID, scope and evidence-state checks across the current tables. Those checks found 127 source-ledger claims and 114 application questions, all 241 marked workspace unobserved in their current research cycle. The ledgers retain partial-body status for individually unread cells. Four retained local Git objects were sampled. Historical digests, approvals, remote reachability and source freshness were not replayed.
+
+**Corrections and owners.** REQ-0003 now distinguishes the initial archive removal from subsequent exits and identifies the local retained-ref evidence boundary. The decision index links the tracked main protection after ADR-0052's historical check and scopes ADR-0056 and ADR-0057 to ordinary disposition. The Stage 90 pack router and its two draft members point to the active role and document registries and RUN-0012 while keeping the published editions and observation dates. RUN-0009 separates an empty Loki result from HTTP or response failure, tests the AppProject's server and namespace together, and requires checking the owning `platform-cluster-config` reconciliation before proceeding. Direct apply remains separately approved.
+
+**Verification.** At resume, the affected profile, link and staged lifecycle checks passed in 5.37, 21.59 and 18.29 seconds, respectively. The earlier Loki snippet returned successful zero output for a failing synthetic response. On the corrected runbook, `bash -n` passed 90 fences including nested examples, nine curl or kubectl stub cases passed with real jq, and three tracked configuration assertions passed. Independent review identified the missing owner reconciliation and destination server check; both are covered by the corrected instructions and targeted checks. On the six-file candidate, profile, link and staged lifecycle checks passed in 9.03, 27.48 and 25.29 seconds, respectively. The strict Registry covered 293 paths, selected style covered six files, the repository command-boundary check passed, and all 38 README navigation tests passed. The timings reflect different scopes and concurrent load. No live Loki, Kubernetes, ArgoCD or hosted CI action was run. User acceptance and Git delivery remain pending.
+
+#### W05 Gates Design and Intake
+
+The W05-GATES request authorizes local implementation and focused verification at `537a7428`, with existing W03 and W04 edits in the same worktree. Use the previously accepted W00 intake. D04, D12 and D15 3.0.1 govern gate identity, evidence and document scope. Package observations and PR observations are dated inputs. Current local routing, registry, candidate bytes and installed tools determine the runner behavior.
+
+Keep the current local registry and hosted metadata and style roles. Continue using the exact-index or isolated working-tree snapshot and the current Markdown renderer. Reuse immutable parse and read results only inside the applicable run. Compare the required local selection with observed leaf outcomes and refuse missing, invalid or stale results. Preserve legitimate empty and optional outcomes. Prefer scoped changes to the current runner and readers over a new dispatcher or persistent cache. If identity or completeness cannot be shown, return failure and retain the existing full readers as explicitly selected checks. Validate selector faults, missing results, stale input, link and Markdown regressions, and a plain document edit. Compare the same local candidate and tools before and after. Hosted protection, native hook observations, other sibling W05 tasks and final transition require their own evidence.
+
+**Invocation trace and retained behavior.** Installed `core.hooksPath` points to `scripts/githooks`. Commit `pre-commit` chains the installed hook to `.pre-commit-config.yaml`'s `staged-qa`, which calls `qa.py staged` on exact-index bytes. The affected-surface registry selects by candidate paths, including both names of renames and deletions, then the bounded runner invokes each selected leaf. The separate commit-message hook invokes Commitizen and its exceptions. No workspace pre-push hook is installed beneath the chain. Hosted `ci.yml` declares `ci-summary` for branch and commit metadata and PR-only `style-pr` for selected style, with the conditional Python lock check. The one-document quick run passed document registry, lifecycle, work-residue ledger, links and Markdown profiles in 63.015 seconds under concurrent local load. It selected no validator regression suite. W00-DELTA evidence and existing ordinary-document routing, staged-only style and platform security depth boundaries were retained. The published report's historical GitHub link alias has a live reader and was retained.
+
+**Changes and defect checks.** Each local profile must cover all repository-static gates admitted to its lane. The caller verifies required results after snapshot checking and before reuse evidence is stored. It refuses missing or nonexecuted required results and validates a reuse hit against the current identity. Source and private merge parents are checked before and after execution, and merge-parent input is part of reuse identity. The link reader shares one immutable link extraction per document between the link and inbound-selection walks. Markdown retained-form content checks reuse the canonical heading scan and derive link-only headings from the profile's form. The old public-mode denial loop was removed while retaining the public profile-set assertion. The QA snapshot fixture fixes its starting branch explicitly. Failure injection reproduced quick/staged profile omission, success without a required result, and false empty headings inside HTML prior to repair. Final focus tests also exercise untrusted-tool refusal, merge-parent mutation, optional deferral and required cancellation or nonexecution. The independent review found the retained-form raw-heading mismatch, which the new false-positive test reproduces and verifies.
+
+**Latency and limits.** Python 3.12.3, one private snapshot, and identical REQ-0001 bytes (`c3dd46152534e581601970dbaf7bc17358e16c6d0eb46a3d11b343868a5dcdce`) were used with `validate-links-and-owners.py --root . --change-scope --changed-path` for a before/after/after/before cross-check. The before runs were 18.016 and 19.051 seconds, after 15.756 and 16.150 seconds. Both versions produced byte-identical successful diagnostics and refused the same injected broken link with identical diagnostics. Snapshot preparation was 1.627 seconds, separately measured. Git Trace2 recorded two top-level Git calls in each link run (0.003–0.006 seconds combined). Independent pre-change profiling identified 912 link extraction calls and two document sweeps; its instrumented times were excluded from the wall comparison. Baseline Markdown profiles took 4.644 and 4.943 seconds and lifecycle took 18.444 and 18.250 seconds on the one-document inputs. No installation, hosted queue or data-plane execution was part of the local timing. No remote cost or tail latency is inferred.
+
+The related W05 residue stays open for user acceptance or its named scope. This pass does not retire cumulative lifecycle history or complete the separate W05 document, policy-authority and derived-copy work or the W06 hosted aggregate. The earlier one-document harness expected four gates and omitted the already registered work-residue check; the observed five passed. The corrected harness asserts all five and no other gate. No user acceptance, Git delivery, hosted run or native hook replay was recorded.
+
+#### W05 Gates Residual Verification
+
+The resume request authorizes continuing the local W05-GATES work in the same worktree at `537a7428`. Apply D04, D12 and D15 3.0.1. Compare the source and private Git reference sets as part of the existing candidate integrity check and distinguish an absent default remote ref from a Git failure. A moving reference must block caching and require a fresh run. For current registry validation, reuse the validated payload for both typed routing and current record diagnostics. Keep the separate historical reader for lifecycle comparisons. Use existing focused tests for requirement edges, document status and the selector, plus before and after measurements on the same local registry input. Do not infer hosted or operator acceptance from a local result.
+
+**Results.** The previous 151 focused cases passed before resuming the edits. Injected movement of `refs/remotes/origin/main` on the source and private snapshot previously returned success and now fails. Independent review found that an explicit pseudo-ref falls outside the enumerated ref set. The explicit base is now re-resolved before publishing the result, and a moving `ORIG_HEAD` is refused. An existing default remote branch with no common history fails instead of proceeding against HEAD. The ref projection used to compare the private candidate is also used for reuse identity.
+
+The strict registry validator reads and validates one payload. A before/after/after/before run of `validate-document-contract-registry.py --root .` on one private snapshot measured 3.937 and 3.803 seconds before, and 3.412 and 3.581 seconds after. Strict results matched byte for byte and classified 293 paths. This is two observations per variant with other local verification load, with no setup or hosted timing included.
+
+W05-H06 removes the unregistered `done` and `archived` status branches. Current form validation still refuses invalid statuses. The history fixtures retain Git recovery checks for a completed Task and a cancelled Plan, and the accepted ADR reference route stays in use. W05-H07 exercises the requirement family's registered edges and rejects draft to approved and approved to draft. The obsolete Stage 00 filesystem absence assertion was removed; the current route refusal remains covered. Persisted SQLite compatibility, cumulative historical registry readers and the published-report link alias have current consumers and remain in scope for their existing checks.
+
+Sixty-eight focused tests passed across the QA runner, executable references, governance routes, strict registry editions and requirement transitions. The targeted ref mutation and unrelated default branch tests also passed after the pseudo-ref fix. An isolated single-paragraph candidate invoked `qa.py staged` and passed all seven selected document, ledger and style checks in 43.918 seconds, with no regression suite selected. GitHub reported no open PRs at intake. Hosted execution, native hook replay, final cutover and user acceptance remain unobserved or pending as applicable. The source index was untouched.
+
+#### W06 Delivery Design and Intake
+
+The W06-DELIVERY request authorizes repository-local implementation and bounded Git fixtures in this worktree at `537a7428`. D04, D05 and D17 3.0.1 govern exact candidate identity, independent review and native observations. Consume the passed W05 local gate contract and preserve the original worktree and index. GitHub returned no open PR at intake. Hosted execution and changes to remote protection need their own observable evidence and authority.
+
+Extend the existing required `style-pr` job in place. Bind the event's base, head and merge identity including both parents before Python setup. Share the existing read-only checkout and hash-pinned dependency installation between selected style, changed CI lock and the reviewed base's static GitOps identity check. Use an unfiltered NUL path list for lock and GitOps selection, including removals. A final step compares the plan with actual step outcomes. An edited PR still checks metadata and its applicable candidate evidence because no authenticated same-input reuse exists. Retain the complete ancestry for the independent limit on authored commit-message checking. Candidate files are read as data with reviewed base tools and no persistent checkout credentials. The `pull_request` workflow definition remains candidate-editable.
+
+Commit retains exact-index QA and its separate message hook. The optional pre-push chain should preserve real consumers and failures, with no repeated QA where no consumer exists. Check a synthetic PR merge with multiple commits, wrong merge identity, deletion selection, missing or skipped required results and unsupported input. Compare the dispatch and static validation timings locally. Review the trust and selection boundary independently. A failed or unobservable hosted job has no acceptance evidence.
+
+**Installed hook observations.** Git 2.43.0 read the workspace's local `core.hooksPath`; no global or system hook path was configured. Executable workspace pre-commit and commit-msg hooks were present and workspace pre-push was absent. In a disposable snapshot, preparation took 1.513 seconds and staging 0.033 seconds. An actual commit attempt stopped with `HOOK-ENV` in 0.165 seconds. Trace2 recorded the pre-commit hook at 0.128 seconds with status 2. The configured environment's resolved Python executable was owned by UID 65534. Its installation trust check blocked staged QA and commit-msg. No installed hook or interpreter was changed.
+
+The pre-push dispatcher now drains input without a temporary file when both actual consumers are absent. Fixture tests preserve byte-identical input to multiple hooks and propagate their failures. Paired file-transport Trace2 observations on one disposable sender and receiver used six up-to-date pushes per variant. Median wall time changed from 35.7 to 32.0 milliseconds and median hook time changed from 25.1 to 21.9 milliseconds. Both had zero pack processes. A native Git dry-run with 4,096 pending refs finished before and after, and the changed dispatcher also worked with a non-directory temporary path. An actual local updating push reached the requested receiver ref in each variant. No network or hosted queue is represented by these samples.
+
+**Hosted candidate and verification.** The existing `style-pr` name, `contents: read`, pinned Actions and PR triggers remain. A single NUL-delimited merge diff selects style, lock and GitOps identity leaves. Setup and hash-locked installation run once for selected leaves and are skipped for an empty plan. Local Bash fixtures prove deletion and rename selection, paths containing newlines, wrong merge/base/head rejection, and missing, cancelled, skipped and failed required outcomes. The CI Python topology and lock module passed 83 tests; hook, branch metadata and GitOps tests passed 26. Actionlint and the GitHub Actions security validator passed. The exact workflow GitOps command, executed locally with the checked-out HEAD tool, accepted a candidate declaration in 3.999 seconds and refused an injected duplicate YAML key in 3.853 seconds. The retained leaf checks declared identity and resource closure; renderer, schema, runtime and implementation-code execution evidence remain separate. The independent review identified the first-adoption ordering constraint: the current trusted-base lock checker must see the old topology while this PR leaves the lock unchanged.
+
+REQ-0003, AD-0006, ADR-0063 and the hosted source and protection notes record the candidate's boundary. ADR-0063 is proposed. QUAL-R006 still requires an accepted successor and associated policy alignment before changing the current delivery authority. Metadata edits still check applicable candidate data without an authenticated same-input hosted ledger. Commit-range metadata still requests full ancestry to preserve its existing proof. Current branch protection, a successful installed commit, actual hosted results and their queue/run/setup timing remain unobserved. No PR, merge, rule change, external transfer or user acceptance was recorded.
+
+#### W06 Delivery Resume
+
+On resume the previous 109-test local candidate passed and the repository
+returned no open PRs. Continue under D04, D05 and D17 3.0.1. Scope metadata
+fetches to the exact event commits and limit worktree materialization to
+the reviewed grammar. Use the pinned checkout action's single-ref fetch
+path and Git's infinite depth value to preserve both parents' complete
+ancestry. Keep nonshallow, exact parent, bounded commit range and message
+checks as acceptance conditions. A shallow depth tied to the commit count
+cannot establish reachability across branched history. Verify the protocol
+and checkout selection on a synthetic local merge before relying on it.
+
+The `ci-summary` base checkout now materializes only regular `.cz.toml`.
+The exact merge checkout selects one SHA, disables tag fetching and uses
+`!/*` in non-cone sparse mode. Both preserve the existing pinned action,
+read-only permissions and nonpersistent credentials. The reviewed
+[checkout source](https://raw.githubusercontent.com/actions/checkout/3d3c42e5aac5ba805825da76410c181273ba90b1/src/git-source-provider.ts)
+binds the positive-depth path to the requested ref and applies blob
+filtering for sparse checkout. The local Git 2.43.0
+[server implementation](https://raw.githubusercontent.com/git/git/v2.43.0/upload-pack.c)
+recognizes the infinite depth value. The unchanged nonshallow guard fails
+if a server supplies incomplete ancestry.
+
+The native file-transport fixture fetched a three-commit PR range with the
+new recipe. It retained both parents and the full range, left the candidate
+worktree empty, excluded unrelated commits and tags, and rejected the
+earliest invalid message via the canonical workflow step. The CI contract
+regression refuses all-ref, shallow, wrong-ref, tag-fetching and materialized
+candidate configurations. Independent review tied these claims to the
+actual pinned source and identified no candidate blocker.
+
+On one synthetic origin with three topic commits and an unrelated tagged
+root, paired before/after checkout recipes were alternated six times each
+using fresh receivers. Median base fetch and checkout time rose from 39.5
+to 66.8 milliseconds; its stored pack bytes fell from 65,828 to 295.
+Median merge fetch and checkout time fell from 68.1 to 36.8 milliseconds,
+and pack bytes fell from 328,840 to 854. These samples measure local Git
+file transport and sparse checkout rather than a hosted workflow, queue
+or network. The original installed interpreter still reports UID 65534
+and mode 0755, the same stopped hook precondition as the earlier native
+observation.
+
+Edited events retain the actual applicable checks until independently
+trusted evidence binds a previous execution to the exact base, head,
+merge, workflow, lock and leaf outcomes. An event or check name alone
+cannot establish that identity, and skipping a required job can produce
+a successful status. ADR-0063 remains proposed and no remote protection
+setting, publication, hosted execution or user acceptance was recorded.
+
+#### W07 Brief Design and Intake
+
+The current W07-BRIEF request authorizes a local preflight and verification
+at `537a7428`, with the existing worktree and Task kept in place. D08 and
+D03 3.0.1 govern the input shape, request freshness, scoped clarification
+and separate authority. The previously accepted W01 contract and W04 Task
+lifecycle checks remain the basis for document roles and state changes.
+
+Use an explicit provider-neutral preflight immediately before a worker
+handoff, resume or state-changing request. Add one reader under `scripts/`
+and focused tests in the existing Task execution suite. Compare a bounded
+BriefRecord with the independently refreshed current request, check actual
+workspace and HEAD, and read current material input digests within that
+workspace. Match operation and paths to the current request. Ignore
+questions that concern independent actions, and refuse stale, withdrawn,
+ambiguous or expanded affected scope. The original interaction and native
+approval and permission boundaries still determine authorization. A brief
+or local file cannot grant authorization or adopt a draft. A new
+every-tool automatic gate would lack a trusted current-turn input in the
+tracked native configuration. Verify the explicit path and keep native
+event gaps separately classified.
+
+**Read-back and retained boundaries.** No open PR was returned for the
+configured repository. The code's staged Task approval still compares
+the reviewed Spec, Plan and Task work scope and draft inputs. It allows
+recording withdrawal without resuming work, so it stays a separate consumer.
+The existing role and delegation workflows retain authority and scope.
+Installed versions were Claude Code 2.1.325 and Codex CLI 0.169.0.
+The tracked Claude compact and resume paths are advisory, and the tracked
+Codex configuration has no equivalent project adapter.
+
+**Implementation and verification.** The explicit CLI accepts separate
+BriefRecord and current-request files. Request and brief revisions, pending
+questions, goal, acceptance criteria, risk, authority reference, workspace,
+HEAD and material digests must match. Each action binds an operation and
+the exact mutation paths. The verifier exposes correspondence only. The
+first local read-only review handoff ran the preflight successfully before
+dispatch. Independent review then found that a second brief within the
+same request could supersede the first without changing request revision.
+The verifier now compares the latest brief identity and question set as
+well. Nine focused CLI tests passed, including withdrawal and changed
+material, missing inputs, altered criteria, shorthand approval, action
+confusion and missing mutation paths, scope escape, unrelated pending
+questions, stale brief revision, and removed clarification. They use
+temporary bounded files and a disposable Git history.
+
+**Observed limits and timing.** Seven local samples of each path measured
+median 2.02 milliseconds for Git identity alone, 63.60 milliseconds for
+the full valid preflight and 59.84 milliseconds for rejecting a stale
+brief revision. The valid sample hashed this Task and the preflight source.
+These are startup and check timings, with no measurement of user
+clarification or provider time. In offline adapter execution, structured
+paths outside scope produced exit 2 on both providers. Direct shell
+redirection was advisory, and the nested shell, worker request and
+question-answer payloads did not enter a brief check. The Claude
+compact and resume fixture gave advisory context without checking the
+brief. The actual native dispatch, nested execution, resume, compact and
+question roundtrip remain unobserved. No native or shared workflow
+configuration was changed, and no acceptance or Git delivery was recorded.
+
+#### W07 Brief Mutation Target Freshness
+
+D08 and D03 3.0.1 require a fresh target and independent authority
+before affected dispatch, resume or state change. The 188 existing
+focused tests passed at `537a7428`. The baseline verifier checks the
+listed inputs, so an exact mutation target omitted from the list could
+change at the same HEAD without invalidating the handoff.
+
+Bind every selected mutation target in `material_inputs` to its current
+file digest or expected absence. Compare both records and verify the
+actual worktree with bounded, no-follow file access. Using HEAD alone
+would miss worktree edits, and treating an omitted path as absent would
+allow reuse after a deletion. Keep the existing explicit intake and
+authority check. On mismatch, stop the affected action and reread the
+current request and target before rebuilding the brief. Check missing
+bindings, unchanged and changed file bytes, removal, new-file appearance
+and unsafe paths with synthetic inputs. Source-backed provider
+automation still depends on a trusted current-request feed at the
+provider boundary.
+
+**Result.** Focused tests first reproduced the omitted snapshot and the
+unsupported absent-path declaration. Independent review also identified
+an ancestor move that could be mistaken for absence; the bounded path
+reader now rechecks parent bindings and reports that as changed. Twelve
+CLI tests and seven bounded-I/O tests passed together. Both versions
+used the same local Git fixture, request, exact path, digest and Python
+3.12.3. From ten interleaved runs per version and input, median elapsed
+time for the unchanged target was 65.68 ms before and 61.26 ms after.
+For the stale bound target it was 67.41 ms before and 66.01 ms after.
+These samples measure local preflight startup and validation only.
+
+#### W07 Adapter Design and Intake
+
+D17, D08 and D07 3.0.1 require separate evidence for declared settings,
+installed support, discovery, authorization, event delivery and actual
+tool effects. This review uses the existing W01 policy and bindings,
+the local W07 brief entry and the existing pre-tool guard at `537a7428`.
+Installed versions are Claude Code 2.1.325 and Codex CLI 0.169.0.
+
+The guard exits 2 on rejection, but Claude's tracked pre-tool command
+does not request blocking if the client encounters a startup failure,
+timeout or invalid JSON. Use Claude's native `onFailure: "block"` on
+PreToolUse only. A shell wrapper cannot handle failures before it starts
+or after it is killed. Validate this field for the matching provider and
+event. Leave SessionStart on compact and resume advisory and keep Codex
+on its documented exit-2 behavior. A change requires fresh provider
+discovery and operator-owned trust. Rollback restores the prior project
+registration and validator together.
+
+Replace the fixed tool-list example in the Claude role form with a
+placeholder for the selected role's full binding. No role receives a
+permission change. Check the provider-specific static contract, actual
+adapter exit and context behavior on synthetic inputs, the form route and
+ledger. Use only isolated, no-credential probes for native discovery or
+execution. Record separately any unobserved PreToolUse tool effect,
+reviewer isolation and connection of brief, capture, memory and dispatch.
+
+**Read scope.** D17, D08 and D07 3.0.1, and external notes S10, S20,
+S21, S22, S24, S06, S23, S11 and S15. Checked the pinned repository and
+PR observations, workspace binding and decisions for this checkout.
+Read both provider notes, project hook registration and adapters, the
+shared guard, native roles and bindings, authoring form and governance
+validator. The index was clean and the linked GitHub view returned no
+open PR. Claude user and project-local setting files were observed by
+presence only. Linux managed files were absent at the checked paths.
+Account permissions, remotely managed settings and live precedence are
+operator-owned observations.
+
+| Provider and event | Configured and supported | Discovery and authority | Observed and verified |
+| --- | --- | --- | --- |
+| Claude 2.1.325 PreToolUse | Tracked command with failure blocking; installed synchronous command schema includes `onFailure` | Static configuration. The effective workspace trust and user and managed restrictions remain unverified for a new session | Script fixtures return exit 0 or 2. Native tool continuation on invalid output and blocking under the updated workspace settings remain unobserved |
+| Claude 2.1.325 SessionStart | Tracked compact and resume advisory; installed client supports startup | The disposable fixture loaded its startup handler. Current project trust was outside that probe | Real startup handler ran. Rejected output did not stop startup. Project compact and resume remain unobserved |
+| Codex Desktop PreToolUse and reviewer | Tracked structured-write and Bash matcher. Standalone CLI 0.169.0 exposes hook inventory and lifecycle notifications. The reviewer projection declares read-only | Active Desktop session delivered the structured-write hook. The selected Desktop reviewer used the available shell. Standalone CLI trust and launch remain unverified | The Task edit succeeded and the outside marker was blocked. The reviewer could create a shell marker inside the workspace. Invalid PreToolUse output and sensitive reads remain unobserved |
+| Brief, capture, memory and dispatch | Local brief and workspace-memory commands exist. Tracked events lack authoritative inputs for automatic adoption | User and managed trust remain in force. Transcript reads and collection need separate scope | Explicit local brief preflight retained. Native capture, memory promotion and dispatch, including null or delayed transcripts and nested calls, remain unverified |
+
+**Timing.** The registered Claude launcher received the same synthetic
+Bash read and out-of-scope Write requests under the HEAD and candidate
+command definitions. Ten interleaved samples per version gave allow
+medians of 75.65 and 72.10 ms, and denial medians of 76.44 and 82.04 ms.
+Both definitions launch the same script. The comparison measures local
+adapter startup and handling, with no measurement of the runtime failure
+option. The strict registry check initially reported pre-existing Stage
+90 index/worktree drift. The same command passed on a private snapshot
+of the intended worktree without updating the source index.
+
+**Handoff.** W07-H04 closes on EVD-144. W07-H02 still needs a trusted
+Claude tool session and sensitive-path evidence. The host owner needs
+to apply an actual read-only boundary to the Desktop reviewer before
+repeating EVD-148. The operator owns the session and trust decisions. The platform owner
+needs source-backed authorization before connecting brief, capture,
+memory promotion or worker dispatch to lifecycle events. Local tests and
+the Desktop witness leave W07-ADAPTER user acceptance pending.
+
+#### W07 Adapter Resume
+
+D17, D08 and D07 3.0.1 still govern the outstanding checks. At
+`537a7428` the focused adapter and approval regression passed on the
+current worktree. Retain the Claude-specific failure option and the
+provider-bound authoring form. The open difference is runtime
+enforcement. EVD-148 remains the Desktop reviewer result until the host
+applies an actual read-only permission boundary.
+
+Use the documented Codex read-only command entry with managed
+requirements included to test native launch separately from Desktop
+dispatch. Probe Claude's native event only through a cost-free,
+credential-free route when the host can confine external traffic.
+Successful launch must be followed by an observed read, an actual
+write refusal, or the event-specific tool outcome under test. A setup
+failure leaves that outcome unobserved. Keep probe data disposable.
+Any configuration repair requires evidence of the failing interface
+and must preserve the existing provider and host authorities.
+
+The local tests passed in 39.097 seconds, compared with 43.089 seconds
+for the same selection in the earlier run. This is a regression timing
+comparison across runs. There was no implementation or settings change
+in this resume. The remote view returned no open PR.
+
+For Codex, both native read-only launches stopped during setup with a
+socket-directory ownership and mode diagnostic. The host owner needs to
+verify the directory used by the runner and enable a read-only Desktop
+permission profile before repeating the reviewer denial. For Claude,
+the runner did not permit the local-only socket required to replay a
+synthetic response. Enable a credential-free loopback test environment
+or provide an explicitly approved Claude tool session to exercise
+PreToolUse. Sensitive-path denial and native brief, capture, memory and
+dispatch remain unverified at this boundary. Evidence, settings and
+standalone launch state cannot substitute for an observed tool effect.
+
+#### W07 Adapter Codex Host Path Check
+
+D17 3.0.1 separates installed behavior, host authority and observed tool
+effects. The follow-up inspected the matching 0.169.0 source and only the
+directory and mount metadata visible in the current execution context.
+Codex derives the reserved directory from canonical `/tmp` and effective
+UID. The home-side app-server directory is mode 0700 and the
+separately checked `/tmp/codex-daemon-1000` is mode 0000 on a read-only
+tmpfs. The mount matches the release's outer socket mask. The nested
+precondition runs before bubblewrap launches the requested command.
+The version-pinned [directory check](https://github.com/openai/codex/blob/rust-v0.169.0/codex-rs/uds/src/daemon_directory.rs#L11-L36)
+and [bubblewrap mount logic](https://github.com/openai/codex/blob/rust-v0.169.0/codex-rs/linux-sandbox/src/bwrap.rs#L762-L796)
+identify the mechanism.
+
+The separate bubblewrap prerequisite probe also failed before executing
+its inert command because the outer environment refused namespace
+creation. Retain the socket isolation. Repair, if needed, belongs in a
+normal authorized host shell with the host-visible directory metadata.
+First test native launch with `codex sandbox --permission-profile :read-only --include-managed-config -- /usr/bin/true`.
+After launch succeeds, run a synthetic read and a synthetic denied
+write under that same profile. Record CLI and Desktop results separately.
+
+This Desktop collaboration interface can select a reviewer role but
+exposes no filesystem-profile parameter for a child. The earlier Desktop
+write result therefore remains open. The operator needs to select a
+read-only Desktop session before testing the reviewer there. No runtime,
+trust or permission configuration changed. The same local regression
+took 39.440 seconds versus 39.097 seconds in EVD-149. Native Claude
+PreToolUse and the other runtime integration checks were held at their
+previous unverified boundary.
+
+#### W07 Adapter Read-only Execution
+
+D17 3.0.1 requires an observed tool effect under the intended runtime.
+Execute the user-authorized host probe with managed requirements included
+and the Codex read-only profile. Use an inert, temporary repository-local
+sample and an exclusive new marker. Success requires the child to start,
+read the known bytes and receive a filesystem refusal, followed by
+verification of marker absence. Clean up the temporary sample. A host
+probe cannot settle the Desktop reviewer outcome.
+
+The ordinary host sees the socket directory with the expected user and
+mode 0700. EVD-154 verifies read and write behavior without changing the
+socket, host policy or repository configuration. To verify Desktop, use
+the operator-selected read-only profile and observe a reviewer tool
+reading a harmless file and refusing an inert write. Preserve the
+original failure at EVD-148 until the separate runtime check is observed.
+The operator reported that the Desktop permissions menu has no
+read-only profile. EVD-155 records the missing launch environment. A
+Desktop read-only permissions profile must be provisioned through the
+managed Desktop configuration before repeating the reviewer probe.
+The handoff to remaining implementation is conditional on both
+execution-context checks.
+
+#### W07 Adapter Desktop Profile Setup
+
+D17 3.0.1 distinguishes a profile supported by the installed client,
+its discovery and permission result, the Desktop selection, and the
+reviewer's actual reads and writes. The approved host CLI witness at
+EVD-154 remains valid for its host lane. The user reported the absent
+Desktop entry at EVD-155. The new local probe reads only the installed
+profile and requirements inventory, with external connections disabled.
+The nested workspace process exited before answering initialization.
+The normal host process returned the built-in profile as allowed.
+
+For a managed deployment, the official route is Workspace Policy at
+the applicable scope, then Edit as TOML for `requirements.toml`. The
+administrator can enable the existing `:read-only` entry under
+`[allowed_permission_profiles]` while preserving the permitted profiles,
+default, approvals and other requirements. A custom profile is only
+needed when the built-in profile's scope is insufficient. For a legacy
+deployment, the matching managed control is the read-only sandbox mode.
+The documented Desktop permission menu shows options allowed by its
+configuration. The trusted project currently declares legacy
+`sandbox_mode`, so a user-layer named default alone does not guarantee
+an effective named profile.
+
+See [managed profiles](https://learn.chatgpt.com/docs/enterprise/managed-configuration#control-available-permission-profiles),
+[profile selection](https://learn.chatgpt.com/docs/permissions#define-and-select-a-profile)
+and [Desktop permissions](https://learn.chatgpt.com/docs/sandboxing#how-permissions-work).
+The installed app-server protocol exposes inventory and an in-session
+settings request for authorized clients. This chat's tooling has no
+profile selection or managed policy control for the active Desktop
+session. There is no Desktop effective-profile or read/write witness
+from the host inventory probe. Keep EVD-148 and EVD-155 open until
+Desktop shows the profile active and the reviewer passes both probes.
+
+The subsequent operator reported administrator application and Desktop
+selection. A fresh reviewer read the tracked sample and created its
+test marker, which it immediately removed. EVD-157 records the failed
+runtime denial. EVD-158 separately records the project-layer config
+error. The administrator needs to confirm the effective profile
+applied to the Desktop tool execution. Residual implementation and Git
+delivery remain conditional on the user's requested acceptance test.
+
+On the user's follow-up, the misplaced project table was removed and
+the repository config gate passed. The fresh reviewer still reported
+`workspace-write` and could create its disposable marker. EVD-159
+records the repair for EVD-158. EVD-160 keeps Desktop runtime
+enforcement open. The Desktop host owner needs to correct the effective
+profile on the reviewer dispatch path before repeating the denial test.
+
+#### W07 Adapter Desktop Permission Inheritance
+
+D17 3.0.1 requires the effective tool boundary. In Codex 0.169.0
+the [role overlay](https://github.com/openai/codex/blob/rust-v0.169.0/codex-rs/core/src/agent/role.rs#L29-L115)
+omits `sandbox_mode` from its applied keys. The
+[native child path](https://github.com/openai/codex/blob/rust-v0.169.0/codex-rs/core/src/agent/child_config.rs#L49-L106)
+reapplies the live parent snapshot after the overlay, including the
+[permission profile and approval policy](https://github.com/openai/codex/blob/rust-v0.169.0/codex-rs/core/src/agent/child_config.rs#L182-L208).
+Vendor [regression tests](https://github.com/openai/codex/blob/rust-v0.169.0/codex-rs/core/src/agent/role_tests.rs#L365-L402)
+cover this rule. The checked-out reviewer projection declares the
+desired permission ceiling. A separate profile parameter is unavailable
+in this chat's reviewer dispatch and command tools.
+
+The observed child remained workspace-write. Without the live Desktop
+parent settings acknowledgement, the exact source of the Desktop UI
+and execution discrepancy is unresolved. The acknowledged
+`activePermissionProfile` and effective filesystem policy at the start
+of the next turn distinguish a failed selection from a downstream
+dispatch mismatch. Apply a permitted read-only profile at that parent
+boundary through the Desktop control, preserving approval policy. If
+the parent is confirmed read-only while the child can still write,
+the Desktop or execution host owner needs to fix the downstream
+permission transfer. Replay the reviewer probe only after the relevant
+boundary changes. Keep EVD-160 open and preserve the repository and
+managed permission controls.
+
+#### W07 Adapter Desktop Parent Profile Correction
+
+D17 3.0.1 requires a server setting and a separate observation of tool
+effects. The host proxy's Unix transport is WebSocket, so the initial
+JSONL initialization did not receive a response. The documented
+WebSocket transport identified the current active thread on the
+managed SSH host and returned settings without turns or history.
+The missing named profile and workspaceWrite sandbox locate the
+discrepancy at or before the backend parent setting. The underlying
+Desktop UI event is outside the observed boundary. Current-turn shell
+observations matched the writable setting.
+
+The live server listed the built-in profile as allowed. The approved
+update sent only the current thread ID and `permissions=":read-only"`.
+The resulting settings event confirmed `:read-only`, `readOnly` and
+unchanged approval controls. The [installed protocol](https://github.com/openai/codex/blob/rust-v0.169.0/codex-rs/app-server-protocol/src/protocol/v2/thread.rs#L245-L259)
+applies this change to subsequent turns. Start a fresh reviewer in
+the next turn and observe its read success and write refusal. Keep
+EVD-160 open until that witness. No repository provider settings or
+managed requirements were changed in this correction.
+
+The first new user turn after the acknowledgement returned to
+`workspaceWrite` with no active named profile. Its fresh reviewer
+could read and create a marker, so EVD-163 keeps the Desktop criterion
+open. The missing setting is already visible on the parent at the new
+turn. The exact client request was outside this observation. The
+[turn-start contract](https://github.com/openai/codex/blob/rust-v0.169.0/codex-rs/app-server-protocol/src/protocol/v2/turn.rs#L236-L249)
+allows the client to supply a named profile or a legacy sandbox policy
+for the new turn. The host owner can compare those fields with the
+previous settings event to find what changed the effective policy.
+Repeat the test after the permission transfer changes.
+
+#### W07 Adapter Desktop Turn-start Field Availability
+
+The user requested the exact incoming `permissions` and `sandboxPolicy`
+fields before fixing the mismatch. EVD-164 records the bounded host
+diagnostic check. The App Server [ingress trace](https://github.com/openai/codex/blob/rust-v0.169.0/codex-rs/app-server/src/message_processor.rs#L669-L701)
+and [request span](https://github.com/openai/codex/blob/rust-v0.169.0/codex-rs/app-server/src/app_server_tracing.rs#L85-L104)
+record request identifiers and metadata. They do not contain these
+parameters. The live server settings already observed in EVD-162 and
+EVD-163 report effective state after processing requests.
+
+Obtain only the outgoing Desktop client field presence and values for
+the affected turn, with an identifier or timestamp that correlates
+them to EVD-163. The Desktop host owner or product support owns that
+capture and any client repair. The evidence should distinguish an
+explicit named profile, a legacy sandbox override, and both fields
+omitted. The previous write refusal failure still blocks native
+acceptance. The prior settings-only update did not survive the first
+new user turn, so it was not repeated as a repair.
+
+#### W07 Adapter Claude Native Pre-tool Replay
+
+D17 3.0.1 requires observable tool effects. The earlier workspace
+socket denial prevented EVD-150. A direct host namespace attempt also
+failed at the UID map. The approved Bubblewrap alternative provided a
+network namespace with only loopback and no default route and exposed
+the host filesystem read-only except for its disposable fixture.
+
+Claude Code 2.1.325 ran with a synthetic project and profile, dummy
+credential, local response replay, no session persistence and an empty
+MCP list. The four cases differed only in the hook outcome and failure
+policy. Each case observed a matching native PreToolUse Bash event,
+the marker state and the next request's tool result. The allow and
+malformed-default cases produced the marker without a tool error.
+Exit 2 and malformed-block produced no marker and returned a tool
+error. This closes the isolated Claude dispatcher observation. The
+actual workspace Claude session, Desktop read-only reviewer enforcement,
+and receipt of the Desktop permission fields remain separate.
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -1573,6 +2249,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W01-H01 | Legacy row `governance policy set` of `Read Denominator`: 3 partial and 1 listed-only governance policy files | terminal | W01 | When W01 re-reads its files before editing | EVD-074 |
 | W01-H02 | No legacy row: DOC-S00, W01 part, the `rule_id` binding of the vocabulary in `.agents/knowledge/glossary.md` that W05 consumes; the DOC-S00 row holds the W05 part only. W01 stays the owner (the legacy `Stage QA Handoff` row DOC-S00 says "W01 (`.agents/knowledge/glossary.md`); W05 consumes"; PKG W06:331 names W01 the normative canon). Seeded under W03-D78 and W03-D82 by SPEC-0213 | terminal | W01 | When the user decides its per-item withdrawal (Q04); W05 consumes any result | EVD-138 |
 | W03-H02 | Legacy row `W03-H02` of `W03 Decisions`: phase 3 forms for the six SDLC roles and deletion of the heading-list model | terminal | W03 | After phase 2 is accepted | EVD-110 |
+| W03-FORMS-D01 | PKG 3.0.1 form interface and conditional section adoption from W03 Forms 3.0.1 Implementation | open | W03-FORMS | When candidate verification and user acceptance are recorded | none |
 | W03-H05 | Legacy row `W03-H05` of `W03 Decisions`: keep or remove the stored ADR rejected state | open | W04 | When W04 starts | none |
 | W03-H08 | Legacy row `W03-H08` of `W03 Decisions`: the per-relationship contract | terminal | W03 | With phase 3 (the SDLC roles own these relations) | EVD-062 |
 | W03-H09 | Legacy row `W03-H09` of `W03 Decisions`: cross-repository equivalence; the owner is W11 by W03-H22 | terminal | W11 | When another repository's adoption evidence exists | EVD-137 |
@@ -1603,7 +2280,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W03-H42 | Legacy row `Generator` of `Document Form Handoff`: a document generator or the recorded reason for none | terminal | W03 | After W03-H25, which SPEC-0184 closed | EVD-059 |
 | W03-H43 | No legacy row: the `requirement` lifecycle domain yields no creation state, so a new Requirement is refused by the lifecycle creation rule and by the document generator (W03-D48); the repair is a lifecycle contract change of its own | terminal | W03 | When the registry admits a creation state for the `requirement` lifecycle domain | EVD-116 |
 | W03-H44 | No legacy row: the Requirement `Downstream owner` column is a hand-written reciprocal field, 10 of the 68 members are not cited in their description's own `Upstream requirement` column and 17 of its 91 cells are not a single link (W03-D55); the Architecture form package completes the citing rows and then removes the column with a derived coverage check in place of its link check | terminal | W03 | When the Architecture form package (SPEC-0197) completes the citing rows | EVD-093 |
-| W04-H01 | No legacy row: lifecycle and relation semantics found by the W03-H34 read at `d0ae8cf6` (SPEC-0211 Task EVD-019): `operation/guide`, `operation/policy` and `operation/runbook` carry supersession by the frontmatter key `superseded_by`, so the predecessor owns the relation, against the relation kind "a successor names its predecessor" that every other owner follows; the `spec-plan` lifecycle family declares `in-progress`, `blocked` and `completed` with no inbound edge and no edge from `approved` to `in-progress`. Recorded under SPEC-0211 (user answer "Residue to owners, close H34 (Recommended)", 2026-11-15) | open | W04 | When W04 starts (policy and lifecycle semantics) | none |
+| W04-H01 | Verified current operating supersession and Spec/Plan state model in W04 Current and Historical Lifecycle Models. Origin: SPEC-0211 Task EVD-019 at `d0ae8cf6` | open | W04 | After the user accepts the verified current lifecycle model | none |
 | W05-H01 | Legacy row `Link-only section` of `Document Form Handoff`: the hard-coded link-only section list must follow the registry | open | W05 | When W05 starts | none |
 | W05-H02 | Legacy row `scripts set` of `Read Denominator`: 8 partial and 53 listed-only tracked scripts | terminal | W05 | When W05 re-reads its files before editing | EVD-136 |
 | W05-H03 | Legacy row `tests set` of `Read Denominator`: 5 partial and 68 listed-only tracked tests | terminal | W05 | When W05 re-reads its files before editing | EVD-136 |
@@ -1616,7 +2293,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W07-H01 | Legacy row `hooks set` of `Read Denominator`: 2 listed-only hook files | terminal | W07 | When W07 re-reads its files before editing | EVD-136 |
 | W07-H02 | No legacy row: GOV-08, allow tests for approved local reads, reversible edits and narrow tests, and deny tests for secret access and out-of-scope writes. Frozen SPEC-0166 Handoffs, W07 row, and Trace GOV-08; PKG W01:414-420. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | open | W07 | When W07 starts | none |
 | W07-H03 | No legacy row: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash). Frozen SPEC-0166 Requirement Trace, W01-B row; its Handoffs table does not list it. Recover the frozen Task as for W05-H04. Seeded under W03-D81 by SPEC-0213 | open | W07 | When W07 starts | none |
-| W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | open | W07 | When W07 starts (provider projections) | none |
+| W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W07 | When W07 starts (provider projections) | EVD-144 |
 | W05-H09 | No legacy row: remove the checks of finished one-time transitions and the compatibility branches for older registry generations found by the SPEC-0219 audit, with their tests, and give any guarantee they still hold to a current contract. The audit names `RETIRED_REFERENCE_ALIASES` in `scripts/validate-links-and-owners.py`, the `docs/00.agent-governance` absence test, the retired progress-ledger and full/ci QA mode checks, the legacy empty-body rule of `validate-markdown-profiles.py`, the old Task and Requirement form layouts in tests, the legacy idempotency-key test of the memory store, the provenance-string assertions on the registry `migration.meaning_map`, and the readers of registry majors 10 to 19. Overlaps: W05-H06 (`done` and `archived` branches) and W05-H08 (validator and schema points) stay separate; W03-H11 holds the qa-runner fixture branch name | open | W05 | When W05 starts | none |
 | Q07-H01 | No legacy row: before the final cutover rewrites history and renumbers documents, convert or remove the checks that depend on history or numbering, found by the SPEC-0219 audit. These are the registry `work_residue.historical_tables` path to this Task; the retained ADR range (`FIRST_ADR_OUTSIDE_RETAINED_RANGE`, the registry ADR identity bound); `policy_rule_ids.reserved_codes` and the never-shrink check; the Archived Lineage identity reservations read by `document_lifecycle.py` and `document-generator.py`; `reachable_git_path_exists` in `scripts/validation/current_executable_references.py` with every `git show <sha>:` reference in current documents; the cumulative-history replay range; and the tests that read requirement files 0001 to 0004 by path | open | Q07 | In the Q07-CUTOVER task, after W11 | none |
 

@@ -41,7 +41,10 @@ def open_parent(path: Path, *, create: bool = False):
 
     def verify_edges() -> None:
         for parent, name, child in edges:
-            entry = os.stat(name, dir_fd=parent, follow_symlinks=False)
+            try:
+                entry = os.stat(name, dir_fd=parent, follow_symlinks=False)
+            except FileNotFoundError as exc:
+                raise BoundedInputError("input parent changed during access") from exc
             opened = os.fstat(child)
             if not stat.S_ISDIR(entry.st_mode) or (
                 entry.st_dev,
@@ -59,7 +62,11 @@ def open_parent(path: Path, *, create: bool = False):
                     os.mkdir(name, dir_fd=parent)
                 except FileExistsError:
                     pass
-            child = os.open(name, flags, dir_fd=parent)
+            try:
+                child = os.open(name, flags, dir_fd=parent)
+            except FileNotFoundError:
+                verify_edges()
+                raise
             descriptors.append(child)
             edges.append((parent, name, child))
         verify_edges()

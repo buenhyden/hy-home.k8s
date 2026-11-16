@@ -7,6 +7,7 @@ import base64
 import contextlib
 import hashlib
 import io
+import json
 import os
 import re
 import subprocess
@@ -34,6 +35,50 @@ def load_checker():
 
 
 class SelectedNonstyleContractTests(unittest.TestCase):
+    def test_detect_secrets_only_accepts_private_baseline_line_relocation(self):
+        checker = load_checker()
+        failure = b"- hook id: detect-secrets\n- exit code: 3\nThe baseline file was updated.\n"
+        entry = {"hashed_secret": "fixture", "is_secret": False, "line_number": 1}
+
+        def baseline(entries, filename=".secrets.baseline", **settings):
+            return json.dumps(
+                {
+                    "results": {"example.md": entries},
+                    "filters_used": [
+                        {
+                            "path": "detect_secrets.filters.common.is_baseline_file",
+                            "filename": filename,
+                        }
+                    ],
+                    **settings,
+                }
+            ).encode()
+
+        before = baseline([entry], generated_at="before", version="1.5.0")
+        relocated = baseline(
+            [{**entry, "line_number": 2}],
+            filename=checker.TRUSTED_SECRETS_BASELINE,
+            generated_at="after",
+            version="1.5.0",
+        )
+        self.assertTrue(checker._detect_secrets_relocated(failure, before, relocated))
+        for changed in (
+            baseline([], version="1.5.0"),
+            baseline([{**entry, "hashed_secret": "different"}], version="1.5.0"),
+            baseline([{**entry, "is_secret": True}], version="1.5.0"),
+            baseline([entry], version="2.0.0"),
+            baseline([entry], filename="unexpected.md", version="1.5.0"),
+            b"not JSON",
+        ):
+            self.assertFalse(
+                checker._detect_secrets_relocated(failure, before, changed)
+            )
+        self.assertFalse(
+            checker._detect_secrets_relocated(
+                failure + b"- hook id: gitleaks\n- exit code: 1\n", before, relocated
+            )
+        )
+
     def test_missing_pre_commit_module_names_the_tool(self) -> None:
         checker = load_checker()
         with patch.object(checker.importlib.util, "find_spec", return_value=None):

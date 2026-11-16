@@ -8,6 +8,8 @@ import json
 import sys
 import unittest
 from pathlib import Path, PurePosixPath
+from types import SimpleNamespace
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -55,6 +57,7 @@ def _load_script(name: str, filename: str):
 
 
 MARKDOWN = _load_script("relationship_markdown", "validate-markdown-profiles.py")
+LIFECYCLE = _load_script("relationship_lifecycle", "validate-document-lifecycle.py")
 
 
 def raw_registry() -> dict:
@@ -78,6 +81,26 @@ def relation(raw: dict, relation_id: str) -> dict:
 
 
 class RelationshipRegistryTests(unittest.TestCase):
+    def test_operation_profiles_write_only_the_successor_relation(self) -> None:
+        raw = raw_registry()
+        relation_ = relation(raw, "supersession")
+        for role in ("guide", "policy", "runbook"):
+            profile_id = f"operation/{role}"
+            with self.subTest(role=role):
+                self.assertEqual(
+                    [
+                        entry["key"]
+                        for entry in relation_["canonical_owners"]
+                        if entry["profile_id"] == profile_id
+                    ],
+                    ["supersedes"],
+                )
+                profile = next(
+                    item for item in raw["profiles"] if item["id"] == profile_id
+                )
+                self.assertIn("supersedes", profile["frontmatter"]["optional"])
+                self.assertNotIn("superseded_by", profile["frontmatter"]["optional"])
+
     def test_the_repository_registry_holds_the_contract(self) -> None:
         raw = raw_registry()
         contract = raw["relationship_contract"]
@@ -339,6 +362,135 @@ def _cycles(tree: dict) -> set[str]:
         if item.rule_id == "LIFECYCLE-EVIDENCE"
         and item.observed_transition == "supersession cycle"
     }
+
+
+class OperationSupersessionTests(unittest.TestCase):
+    OPERATIONS = (
+        ("guide", "guides", "GDE"),
+        ("policy", "policies", "POL"),
+        ("runbook", "runbooks", "RUN"),
+    )
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = CONTRACTS.load_registry(ROOT)
+
+    @staticmethod
+    def operation(kind, number, state, *, supersedes=None, slug="example"):
+        role, folder, prefix = kind
+        path = PurePosixPath(f"docs/05.operations/{folder}/{number:04d}-{slug}.md")
+        relation_line = "" if supersedes is None else f'supersedes: "{supersedes}"\n'
+        text = (
+            '---\ntitle: "Example"\nversion: "1.0.0"\n'
+            f'type: "operation/{role}"\nstatus: "{state}"\nowner: "platform"\n'
+            f'updated: "2026-11-15"\nartifact_id: "{prefix}-{number:04d}"\n'
+            f"{relation_line}---\n\n# Example\n"
+        )
+        return path, text
+
+    def compare(self, base, proposed):
+        def parsed(texts):
+            return {
+                path: LIFECYCLE.document_from_text(self.registry, path, text)
+                for path, text in texts.items()
+            }
+
+        base_documents = parsed(base)
+        proposed_documents = parsed(proposed)
+        context = LIFECYCLE._evidence_context(
+            self.registry, base_documents, proposed_documents, base, proposed
+        )
+        return compare_lifecycle(
+            self.registry,
+            base_documents,
+            proposed_documents,
+            base_mode="staged",
+            evidence_context=context,
+        )
+
+    def snapshot(self, texts):
+        with (
+            mock.patch.object(LIFECYCLE, "_verify_repository_root"),
+            mock.patch.object(
+                LIFECYCLE,
+                "enumerate_target_markdown",
+                return_value=SimpleNamespace(current_paths=tuple(texts)),
+            ),
+            mock.patch.object(
+                LIFECYCLE,
+                "read_repository_text",
+                side_effect=lambda _, path: texts[path],
+            ),
+        ):
+            return LIFECYCLE._evaluate_snapshot(ROOT, self.registry, ())
+
+    @staticmethod
+    def evidence_paths(issues):
+        return {item.path for item in issues if item.rule_id == "LIFECYCLE-EVIDENCE"}
+
+    def test_only_the_successor_needs_the_relation_for_each_operation_role(
+        self,
+    ) -> None:
+        for kind in self.OPERATIONS:
+            with self.subTest(role=kind[0]):
+                old = self.operation(kind, 1, "active")
+                terminal = self.operation(kind, 1, "superseded")
+                successor = self.operation(
+                    kind, 2, "active", supersedes=f"{kind[2]}-0001"
+                )
+                base = dict((old, successor))
+                proposed = dict((terminal, successor))
+                self.assertEqual(
+                    self.evidence_paths(self.compare(base, proposed)), set()
+                )
+                self.assertEqual(self.evidence_paths(self.snapshot(proposed)), set())
+
+    def test_a_same_role_chain_survives_a_successor_path_rename(self) -> None:
+        kind = self.OPERATIONS[2]
+        predecessor = self.operation(kind, 1, "superseded")
+        middle = self.operation(kind, 2, "superseded", supersedes="RUN-0001")
+        successor = self.operation(kind, 3, "active", supersedes="RUN-0002")
+        renamed = self.operation(
+            kind, 3, "active", supersedes="RUN-0002", slug="renamed"
+        )
+        base = dict((predecessor, middle, successor))
+        proposed = dict((predecessor, middle, renamed))
+        self.assertEqual(self.evidence_paths(self.compare(base, proposed)), set())
+        self.assertEqual(self.evidence_paths(self.snapshot(proposed)), set())
+
+    def test_retained_predecessor_rejects_loss_of_its_active_same_role_successor(
+        self,
+    ) -> None:
+        kind = self.OPERATIONS[2]
+        predecessor = self.operation(kind, 1, "superseded")
+        successor = self.operation(kind, 2, "active", supersedes="RUN-0001")
+        base = dict((predecessor, successor))
+        for replacement in (
+            (),
+            (self.operation(kind, 2, "draft", supersedes="RUN-0001"),),
+            (self.operation(self.OPERATIONS[0], 2, "active", supersedes="RUN-0001"),),
+        ):
+            with self.subTest(replacement=replacement):
+                proposed = dict((predecessor, *replacement))
+                self.assertIn(
+                    predecessor[0], self.evidence_paths(self.compare(base, proposed))
+                )
+                self.assertIn(
+                    predecessor[0], self.evidence_paths(self.snapshot(proposed))
+                )
+
+    def test_predecessor_inverse_field_is_not_successor_evidence(self) -> None:
+        kind = self.OPERATIONS[2]
+        path, terminal = self.operation(kind, 1, "superseded")
+        inverse = terminal.replace(
+            'artifact_id: "RUN-0001"',
+            'artifact_id: "RUN-0001"\nsuperseded_by: "RUN-0002"',
+        )
+        successor = self.operation(kind, 2, "active")
+        base = dict((self.operation(kind, 1, "active"), successor))
+        proposed = dict(((path, inverse), successor))
+        self.assertIn(path, self.evidence_paths(self.compare(base, proposed)))
+        self.assertIn(path, self.evidence_paths(self.snapshot(proposed)))
 
 
 class SupersessionCycleTests(unittest.TestCase):

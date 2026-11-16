@@ -7,6 +7,7 @@ from types import SimpleNamespace
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
+from document_contracts import FormSection  # noqa: E402
 from validation.repository.form_contracts import (  # noqa: E402
     canonical_form_content_errors,
     canonical_form_contract_errors,
@@ -50,7 +51,20 @@ class CanonicalFormContractTests(unittest.TestCase):
         )
         profile = SimpleNamespace(
             form=SimpleNamespace(
-                sections=(SimpleNamespace(title="Overview", requiredness="required"),)
+                sections=(
+                    FormSection(
+                        section_id="overview",
+                        title="Overview",
+                        level=2,
+                        parent_id=None,
+                        order=1,
+                        requiredness="required",
+                        condition="",
+                        empty_policy="omit_when_condition_false",
+                        link_only=False,
+                        children=(),
+                    ),
+                )
             ),
             listed_headings=None,
             body_contract=SimpleNamespace(

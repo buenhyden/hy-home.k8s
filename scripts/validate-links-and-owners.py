@@ -15,9 +15,10 @@ import stat
 import sys
 import unicodedata
 from dataclasses import dataclass, field as dataclass_field
-from functools import lru_cache
+from functools import cached_property, lru_cache
 from pathlib import Path
 from pathlib import PurePosixPath
+from types import MappingProxyType
 from typing import Any, Callable, Iterable, Mapping, Sequence
 from urllib.parse import unquote, urlsplit
 
@@ -100,7 +101,7 @@ class Context:
     paths: tuple[PurePosixPath, ...]
     baseline_paths: frozenset[PurePosixPath]
     profiles: dict[PurePosixPath, ProfileView]
-    texts: dict[PurePosixPath, str]
+    texts: Mapping[PurePosixPath, str]
     metadata: dict[PurePosixPath, dict[str, Any]]
     adapter_targets: dict[PurePosixPath, PurePosixPath]
     governance_current_paths: tuple[PurePosixPath, ...]
@@ -110,6 +111,12 @@ class Context:
     readme_navigation: Any = None
     current_registry: Registry | None = None
     current_inventory: TargetInventory | None = None
+
+    @cached_property
+    def document_links(self) -> Mapping[PurePosixPath, tuple[str, ...]]:
+        return MappingProxyType(
+            {path: _extract_links(self.texts[path]) for path in self.paths}
+        )
 
 
 @dataclass(frozen=True)
@@ -156,7 +163,31 @@ def _commonmark_blank_line(value: str) -> bool:
     return not value.strip(" \t")
 
 
-def _visible_markdown(text: str) -> str:
+_LITERAL_HTML_OPEN = re.compile(
+    r"^ {0,3}<(?P<tag>script|pre|style|textarea)(?:\s|>|$)", re.IGNORECASE
+)
+_RAW_MARKUP_DELIMITERS = (
+    (re.compile(r"^ {0,3}<\?"), re.compile(r"\?>")),
+    (re.compile(r"^ {0,3}<!\[CDATA\["), re.compile(r"\]\]>")),
+    (re.compile(r"^ {0,3}<![A-Z]"), re.compile(r">")),
+)
+
+
+def _raw_markup_end(line: str) -> tuple[int, re.Pattern[str]] | None:
+    literal = _LITERAL_HTML_OPEN.match(line)
+    if literal is not None:
+        return literal.end(), re.compile(
+            rf"</{re.escape(literal['tag'])}\s*>", re.IGNORECASE
+        )
+    for opening, closing in _RAW_MARKUP_DELIMITERS:
+        if (marker := opening.match(line)) is not None:
+            return marker.end(), closing
+    return None
+
+
+def _mask_markdown(text: str) -> tuple[str, dict[int, bool], bool]:
+    """Mask comments and fences, retaining root fence markers and body positions."""
+
     inline_masked = list(text)
     cursor = 0
     while cursor < len(text):
@@ -193,9 +224,12 @@ def _visible_markdown(text: str) -> str:
         cursor = match.end()
 
     output: list[str] = []
+    fence_lines: dict[int, bool] = {}
     fence: tuple[str, int] | None = None
     comment_block = False
-    for raw_line in _commonmark_splitlines("".join(inline_masked)):
+    literal_end: re.Pattern[str] | None = None
+    raw_until_blank = False
+    for index, raw_line in enumerate(_commonmark_splitlines("".join(inline_masked))):
         if fence is not None:
             marker = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", raw_line)
             if marker:
@@ -206,12 +240,35 @@ def _visible_markdown(text: str) -> str:
                     and not marker.group(2).strip()
                 ):
                     fence = None
+            fence_lines[index] = fence is not None
             output.append("")
             continue
         if comment_block:
             output.append("")
             if "-->" in raw_line:
                 comment_block = False
+            continue
+        if literal_end is not None:
+            output.append(raw_line)
+            if literal_end.search(raw_line):
+                literal_end = None
+            continue
+        if raw_until_blank:
+            output.append(raw_line)
+            raw_until_blank = not _commonmark_blank_line(raw_line)
+            continue
+        if (raw := _raw_markup_end(raw_line)) is not None:
+            output.append(raw_line)
+            start, end = raw
+            if end.search(raw_line, start) is None:
+                literal_end = end
+            continue
+        if _HTML_BLOCK_TAG.match(raw_line) or (
+            (not output or _commonmark_blank_line(output[-1]))
+            and _HTML_COMPLETE_TAG.match(raw_line)
+        ):
+            output.append(raw_line)
+            raw_until_blank = True
             continue
         comment_start = re.match(r"^ {0,3}<!--", raw_line)
         if comment_start is not None:
@@ -227,10 +284,15 @@ def _visible_markdown(text: str) -> str:
                 output.append(line)
                 continue
             fence = (token[0], len(token))
+            fence_lines[index] = False
             output.append("")
             continue
         output.append(line)
-    return "\n".join(output)
+    return "\n".join(output), fence_lines, fence is not None
+
+
+def _visible_markdown(text: str) -> str:
+    return _mask_markdown(text)[0]
 
 
 _HTML_BLOCK_TAGS = (
@@ -347,38 +409,14 @@ def _render_container_markdown(
             previous_paragraph_line = False
             continue
 
-        start = re.match(
-            r"^ {0,3}<(?P<tag>script|pre|style|textarea)(?:\s|>|$)", line, re.IGNORECASE
-        )
-        if start is not None:
+        if (raw := _raw_markup_end(line)) is not None:
             output.append("")
-            closing = re.compile(
-                rf"</{re.escape(start.group('tag'))}\s*>", re.IGNORECASE
-            )
-            if closing.search(line, start.end()) is None:
+            start, closing = raw
+            if closing.search(line, start) is None:
                 raw_end = closing
             previous_blank = False
             previous_leaf_block = False
             previous_paragraph_line = False
-            continue
-        raw_delimiters = (
-            (re.match(r"^ {0,3}<\?", line), re.compile(r"\?>")),
-            (re.match(r"^ {0,3}<!\[CDATA\[", line), re.compile(r"\]\]>")),
-            (re.match(r"^ {0,3}<![A-Z]", line), re.compile(r">")),
-        )
-        matched_raw = False
-        for start_match, closing in raw_delimiters:
-            if start_match is None:
-                continue
-            output.append("")
-            if closing.search(line, start_match.end()) is None:
-                raw_end = closing
-            previous_blank = False
-            previous_leaf_block = False
-            previous_paragraph_line = False
-            matched_raw = True
-            break
-        if matched_raw:
             continue
         if _HTML_BLOCK_TAG.match(line) or (
             previous_blank and _HTML_COMPLETE_TAG.match(line)
@@ -523,7 +561,7 @@ def _build_context(
         inventory.current_paths,
         frozenset(inventory.baseline_paths),
         profiles,
-        texts,
+        MappingProxyType(texts),
         metadata,
         adapters,
         governance_current_paths,
@@ -2355,7 +2393,7 @@ def _retired_reference_link(context: Context, target: PurePosixPath) -> bool:
 
 
 _FRONTMATTER_BLOCK = re.compile(r"\A---[ \t]*\r?\n.*?\r?\n---[ \t]*(?:\r?\n|\Z)", re.S)
-_ATX_HEADING = re.compile(r" {0,3}#{1,6}(?:[ \t]+(.*?))?(?:[ \t]+#+)?[ \t]*")
+_ATX_HEADING = re.compile(r" {0,3}(#{1,6})(?:[ \t]+(.*?))?(?:[ \t]+#+)?[ \t]*")
 _EXPLICIT_ANCHOR = re.compile(
     r"""<[A-Za-z][^<>]*?\b(?:id|name)\s*=\s*(?:"([^"]+)"|'([^']+)')"""
 )
@@ -2368,6 +2406,54 @@ def _heading_slug(heading: str) -> str:
     text = re.sub(r"<[^>]*>", "", text)
     text = re.sub(r"(?<!\w)_+|_+(?!\w)", "", text)
     return re.sub(r"[^\w\- ]", "", text.casefold()).strip(" ").replace(" ", "-")
+
+
+@lru_cache(maxsize=1024)
+def root_form_structure(
+    text: str,
+) -> tuple[Mapping[int, tuple[int, str]], Mapping[int, bool], bool]:
+    """Return root headings, fence lines and fence completeness for a form."""
+
+    headings = {
+        index: (
+            len(match[1]),
+            (match[2] or "").replace(_INLINE_COMMENT_OPAQUE, "").strip(),
+        )
+        for index, line in enumerate(_rendered_container_lines(text))
+        if line.depth == 0 and (match := _ATX_HEADING.fullmatch(line.text)) is not None
+    }
+    _, fence_lines, unclosed_fence = _mask_markdown(text)
+    return MappingProxyType(headings), MappingProxyType(fence_lines), unclosed_fence
+
+
+def root_heading_section(text: str, level: int, title: str) -> str | None:
+    """Return raw source under a unique root heading in the rendered structure."""
+
+    headings, _, _ = root_form_structure(text)
+    positions = [
+        line for line, heading in headings.items() if heading == (level, title)
+    ]
+    if len(positions) != 1:
+        return None
+    start = positions[0]
+    end = next(
+        (
+            line
+            for line, (depth, _) in headings.items()
+            if line > start and depth <= level
+        ),
+        None,
+    )
+    return "\n".join(_commonmark_splitlines(text)[start + 1 : end])
+
+
+def root_visible_lines(text: str) -> tuple[str, ...]:
+    """Keep only rendered root lines without joining across hidden blocks."""
+
+    return tuple(
+        line.text.replace(_INLINE_COMMENT_OPAQUE, "") if line.depth == 0 else ""
+        for line in _rendered_container_lines(text)
+    )
 
 
 @lru_cache(maxsize=2048)
@@ -2385,7 +2471,7 @@ def _heading_anchors(text: str) -> frozenset[str]:
         match = _ATX_HEADING.fullmatch(line)
         if match is None:
             continue
-        slug = _heading_slug(match.group(1) or "")
+        slug = _heading_slug(match.group(2) or "")
         count = seen.get(slug, 0)
         seen[slug] = count + 1
         anchors.add(slug if count == 0 else f"{slug}-{count}")
@@ -2450,7 +2536,7 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                 stage_target_exists,
             )
         )
-        for raw in _extract_links(context.texts[source]):
+        for raw in context.document_links[source]:
             kind, target = _local_destination(
                 source, raw, template=context.profiles[source].mode == "template"
             )
@@ -2573,7 +2659,7 @@ def _markdown_without_html_comments(text: str) -> str:
     return "\n".join(output)
 
 
-def _gfm_table_cells(line: str) -> list[str]:
+def _gfm_table_cells(line: str, *, cell_padding: str | None = None) -> list[str]:
     """Split one GFM table row without treating escaped pipes as delimiters."""
     stripped = line.strip()
     if not stripped.startswith("|"):
@@ -2591,11 +2677,11 @@ def _gfm_table_cells(line: str) -> list[str]:
     current: list[str] = []
     for index, character in enumerate(stripped):
         if character == "|" and not escaped(index):
-            cells.append("".join(current).strip())
+            cells.append("".join(current).strip(cell_padding))
             current = []
         else:
             current.append(character)
-    cells.append("".join(current).strip())
+    cells.append("".join(current).strip(cell_padding))
     if cells and cells[0] == "":
         cells.pop(0)
     if stripped.endswith("|") and not escaped(len(stripped) - 1) and cells[-1] == "":
@@ -2604,20 +2690,8 @@ def _gfm_table_cells(line: str) -> list[str]:
 
 
 def _exact_heading_section(text: str, heading: str) -> str | None:
-    visible_lines = _visible_markdown(text).splitlines()
-    raw_lines = text.splitlines()
-    matches = [index for index, line in enumerate(visible_lines) if line == heading]
-    if len(matches) != 1:
-        return None
-    start = matches[0]
-    level = len(heading) - len(heading.lstrip("#"))
-    end = len(raw_lines)
-    for index in range(start + 1, len(visible_lines)):
-        candidate = re.match(r"^(#{1,6})\s", visible_lines[index])
-        if candidate and len(candidate.group(1)) <= level:
-            end = index
-            break
-    return "\n".join(raw_lines[start + 1 : end])
+    marker, _, title = heading.partition(" ")
+    return root_heading_section(text, len(marker), title)
 
 
 def _exact_rendered_heading_section(text: str, heading: str) -> str | None:
@@ -2655,7 +2729,7 @@ def _after_exact_heading(text: str, heading: str) -> str | None:
 def _first_visible_table(
     text: str,
 ) -> tuple[list[str], list[list[str]]] | None:
-    lines = _visible_markdown(text).splitlines()
+    lines = root_visible_lines(text)
     for index in range(len(lines) - 1):
         header_line = lines[index]
         delimiter_line = lines[index + 1]
@@ -4320,17 +4394,6 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
                     "current authority is undeclared",
                 )
             )
-        elif status in {"done", "archived"} and path not in declared:
-            diagnostics.append(
-                _diag(
-                    "GOVERNANCE-OWNER-ROUTE",
-                    path,
-                    profile.profile_id,
-                    "draft candidate or declared active/accepted current authority",
-                    f"undeclared {status} document in the current common authority route",
-                )
-            )
-
     return diagnostics
 
 
@@ -4357,7 +4420,7 @@ def _body_link_scope(
             affected.add(source)
         if source in changed and parent is not None:
             affected.add(parent[0])
-        for raw_link in _extract_links(context.texts[source]):
+        for raw_link in context.document_links[source]:
             kind, target = _local_destination(
                 source, raw_link, template=profile.mode == "template"
             )

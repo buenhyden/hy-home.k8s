@@ -1,10 +1,10 @@
 ---
 title: "Delegated Development"
-version: "1.1.3"
+version: "1.2.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-16"
 ---
 
 # Delegated Development
@@ -41,6 +41,11 @@ roster or tool inventory.
 2. Give the worker one concrete task, allowed paths, acceptance IDs,
    dependencies, validation expectations, and next owner. State that other
    workers' changes must be preserved.
+   Carry the current request reference and revision, applicable authority and
+   execution conditions from the Task. Authoring or review of draft inputs
+   follows writing scope. Dependent implementation or operation needs current
+   execution authority. Recheck the binding on resume and stop the dependent
+   action if approval is stale or revoked.
 3. Treat write scope as the intersection of authorization, registry permission,
    responsibility boundary, and task ownership. Read-only roles remain
    read-only; an orchestration role delegates mutation rather than acquiring it.

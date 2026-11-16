@@ -415,17 +415,24 @@ def validate_contract(
     for profile, identifiers in profiles.items():
         if any(identifier not in validators for identifier in identifiers):
             fail("SURFACE-PROFILE-REFERENCE", profile)
-    selected = set(profiles["quick"]) | set(profiles["staged"])
     static = {
-        identifier
+        identifier: row
         for identifier, row in validators.items()
         if row["evidenceLane"] == "repo-static"
     }
-    if selected != static:
-        fail(
-            "SURFACE-PROFILE-COVERAGE",
-            "selected local profiles must cover every registered static gate",
-        )
+    if set(profiles["quick"]) | set(profiles["staged"]) != static.keys():
+        fail("SURFACE-PROFILE-COVERAGE", "local profiles must cover every static gate")
+    for profile, lane in (("quick", "affected"), ("staged", "staged")):
+        expected = {
+            identifier for identifier, row in static.items() if lane in row["lanes"]
+        }
+        actual = set(profiles[profile])
+        if actual != expected:
+            fail(
+                "SURFACE-PROFILE-COVERAGE",
+                f"{profile}: missing={sorted(expected - actual)}, "
+                f"unexpected={sorted(actual - expected)}",
+            )
     return contract
 
 

@@ -1,10 +1,10 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.6.0"
+version: "1.6.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-16"
 artifact_id: "POL-0007"
 ---
 
@@ -175,11 +175,11 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 `ONBOARD-R014`
 
-`apps` namespace에 PeerAuthentication STRICT가 적용되어 있다.
+`apps` namespace의 GitOps 목표 상태는 PeerAuthentication STRICT다.
 
 - `ONBOARD-R015` **신규 앱**: 별도 PeerAuthentication 불필요 (namespace 정책 자동 적용)
 - `ONBOARD-R016` **현재 소유 위치**: namespace 전체 STRICT `PeerAuthentication default`는
-  `gitops/workloads/adminer/peer-authentication.yaml`이 adminer와 함께 배포한다.
+  [adminer의 PeerAuthentication 매니페스트](../../../gitops/workloads/adminer/peer-authentication.yaml)가 선언한다.
   adminer를 제거하거나 이동하는 변경은 이 리소스를 먼저 platform 소유로
   옮겨야 하며, 그렇지 않으면 `apps` 전체의 STRICT mTLS가 함께 사라진다.
 - `ONBOARD-R017` **전제**: Pod에 Istio sidecar가 주입되어야 함 (`apps` namespace에 `istio-injection: enabled` 라벨)
@@ -188,7 +188,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 `ONBOARD-R018`
 
-현재 `apps` namespace 전체에 egress 정책(`allow-egress-apps`)이 적용된다:
+GitOps의 [`allow-egress-apps` 정책](../../../gitops/platform/network-policies/apps-egress.yaml)은 `apps` namespace 전체에 다음 egress 경계를 선언한다.
 
 - `ONBOARD-R019` 현재 앱 egress에 폐기된 `postgres-ha` `15432/15433` 허용은 없다.
   management/development PostgreSQL은 host loopback 전용이므로 현재 K8s

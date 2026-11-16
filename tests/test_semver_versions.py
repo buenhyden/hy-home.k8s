@@ -31,7 +31,7 @@ import document_contracts as CONTRACTS  # noqa: E402
 import document_lifecycle as LIFECYCLE  # noqa: E402
 import semver_grammar as GRAMMAR  # noqa: E402
 from scripts import release  # noqa: E402
-from tests.git_fixture import GitFixture  # noqa: E402
+from tests.git_fixture import GitFixture, lifecycle_registry_fixture  # noqa: E402
 
 REGISTRY_FILE = ROOT / "docs/99.templates/registry.json"
 SCHEMA_FILE = ROOT / "docs/99.templates/contracts/document-profile.schema.json"
@@ -169,7 +169,11 @@ SPEC_PATH = PurePosixPath("docs/03.specs/0208-w03-semver-tests/spec.md")
 
 
 def compare(
-    base: str | None, proposed: str | None, path: PurePosixPath = RULE_PATH
+    base: str | None,
+    proposed: str | None,
+    path: PurePosixPath = RULE_PATH,
+    *,
+    base_mode: LIFECYCLE.LifecycleBaseMode = MODE,
 ) -> set[str]:
     """Version rule IDs of the base-to-proposed comparison of one scratch pair."""
     base_documents = {}
@@ -185,7 +189,7 @@ def compare(
     return {
         item.rule_id
         for item in LIFECYCLE.compare_lifecycle(
-            REGISTRY, base_documents, proposed_documents, base_mode=MODE
+            REGISTRY, base_documents, proposed_documents, base_mode=base_mode
         )
         if item.rule_id.startswith("LIFECYCLE-VERSION")
     }
@@ -212,8 +216,6 @@ class DocumentComparisonTests(unittest.TestCase):
             ("1.2.3", "1.2.2"),
             ("2.0.0", "1.9.9"),
             ("1.10.0", "1.9.0"),
-            ("1.0.0", "1.0.0-rc.2"),
-            ("1.0.0-rc.10", "1.0.0-rc.2"),
         ):
             with self.subTest(base=base, proposed=proposed):
                 self.refused(base, proposed)
@@ -225,16 +227,24 @@ class DocumentComparisonTests(unittest.TestCase):
             ("1.2.0", "1.3.0"),
             ("1.2.0", "2.0.0"),
             ("1.9.0", "1.10.0"),
-            ("1.0.0-rc.2", "1.0.0-rc.10"),
-            ("1.0.0-rc.2", "1.0.0"),
         ):
             with self.subTest(base=base, proposed=proposed):
                 self.accepted(base, proposed)
 
-    def test_a_build_metadata_difference_alone_is_accepted(self) -> None:
-        self.accepted("1.2.0+build.1", "1.2.0+build.2")
-        self.accepted("1.2.0", "1.2.0+build.2")
-        self.accepted("1.2.0+build.2", "1.2.0")
+    def test_one_major_or_minor_change_resets_lower_components(self) -> None:
+        base = document_text("1.2.3")
+        for value in ("2.1.0", "2.0.1", "1.3.4"):
+            with self.subTest(value=value):
+                proposed = document_text(value)
+                self.assertEqual(
+                    compare(base, proposed, base_mode="staged"),
+                    {"LIFECYCLE-VERSION-RESET"},
+                )
+                self.assertEqual(compare(base, proposed), set())
+        for value in ("2.0.0", "1.3.0", "1.2.4"):
+            self.assertEqual(
+                compare(base, document_text(value), base_mode="staged"), set()
+            )
 
     def test_a_new_or_deleted_document_has_no_pair(self) -> None:
         text = document_text("1.0.0")
@@ -243,7 +253,13 @@ class DocumentComparisonTests(unittest.TestCase):
         self.assertEqual(compare(text, None), set())
 
     def test_a_value_outside_the_grammar_is_not_compared(self) -> None:
-        for base, proposed in (("v14.7", "1.0.0"), ("1.0.0", "v14.7"), ("1.2", "1.1")):
+        for base, proposed in (
+            ("v14.7", "1.0.0"),
+            ("1.0.0", "v14.7"),
+            ("1.2", "1.1"),
+            ("1.2.3", "1.2.3-rc.1"),
+            ("1.2.3+build.1", "1.2.2"),
+        ):
             with self.subTest(base=base, proposed=proposed):
                 self.assertEqual(
                     compare(document_text(base), document_text(proposed)), set()
@@ -352,8 +368,8 @@ class RegistryComparisonTests(unittest.TestCase):
         base = with_changes(shared_contract={"version": "3.1.0"})
         self.assertEqual(rules(base, self.current), {DOWNGRADE})
 
-    def test_a_risen_equal_or_build_only_contract_version_is_accepted(self) -> None:
-        for value in ("2.0.0", "3.0.0", "3.0.0+build.1", "3.0.0-rc.1"):
+    def test_a_risen_or_unchanged_contract_version_is_accepted(self) -> None:
+        for value in ("2.0.0", "3.0.0"):
             with self.subTest(value=value):
                 base = with_changes(shared_contract={"version": value})
                 self.assertEqual(diagnostics(base, self.current), [])
@@ -399,7 +415,73 @@ class RegistryComparisonTests(unittest.TestCase):
         base = with_changes(common_forms={"version": "1.1.0"})
         self.assertEqual(rules(base, self.current), {DOWNGRADE})
 
-    def test_the_form_tree_has_no_released_edition_rule(self) -> None:
+    def test_template_definition_versions_compare_within_the_same_contract(
+        self,
+    ) -> None:
+        def snapshot(contract_id, version):
+            return {
+                "profiles": [
+                    {
+                        "id": "common/template-sdlc-task",
+                        "template_definition": {
+                            "contract_id": contract_id,
+                            "contract_version": version,
+                        },
+                    }
+                ],
+            }
+
+        before = snapshot("COMMON-DOC-FORM-1", "1.10.0")
+        lower = snapshot("COMMON-DOC-FORM-1", "1.9.0")
+        self.assertEqual(rules(before, lower), {DOWNGRADE})
+        self.assertEqual(rules(before, snapshot("OTHER-CONTRACT", "1.9.0")), set())
+
+    def test_split_template_definition_keeps_its_historical_version_order(self) -> None:
+        profile_id = "common/template-sdlc-task"
+        contract_id = "COMMON-DOC-FORM-1"
+
+        def snapshot(schema, definition):
+            return {
+                "schema_version": schema,
+                "profiles": [{"id": profile_id, "template_definition": definition}],
+            }
+
+        for base_schema in ("14.0.0", "20.0.0"):
+            before = snapshot(
+                base_schema, {"contract_version": f"{contract_id}/1.10.0"}
+            )
+            for version, expected in (
+                ("1.9.0", {DOWNGRADE}),
+                ("1.10.0", set()),
+                ("2.0.0", set()),
+            ):
+                with self.subTest(schema=base_schema, version=version):
+                    after = snapshot(
+                        "21.0.0",
+                        {"contract_id": contract_id, "contract_version": version},
+                    )
+                    self.assertEqual(rules(before, after), expected)
+        for invalid_schema in (20, "21.0.0"):
+            invalid = snapshot(
+                invalid_schema, {"contract_version": f"{contract_id}/2.0.0"}
+            )
+            split = snapshot(
+                "21.0.0", {"contract_id": contract_id, "contract_version": "1.9.0"}
+            )
+            self.assertEqual(rules(invalid, split), set())
+
+    def test_a_released_form_tree_keeps_its_source_identity_and_forms(self) -> None:
+        for stage in ("approved", "adopted"):
+            base = with_changes(common_forms={"stage": stage})
+            for field, value in (("source_revision", "0" * 40), ("forms", [])):
+                with self.subTest(stage=stage, field=field):
+                    after = copy.deepcopy(base)
+                    after["common_forms"][field] = value
+                    self.assertEqual(rules(base, after), {EDITION})
+                    after["common_forms"]["version"] = "2.0.0"
+                    self.assertEqual(diagnostics(base, after), [])
+
+    def test_a_candidate_form_tree_may_change_under_an_unchanged_version(self) -> None:
         base = copy.deepcopy(self.current)
         base["common_forms"]["forms"] = base["common_forms"]["forms"][:-1]
         self.assertEqual(diagnostics(base, self.current), [])
@@ -418,21 +500,7 @@ class ValidatorIntegrationTests(unittest.TestCase):
         cls.addClassCleanup(temporary.cleanup)
         cls.seed = Path(temporary.name) / "repository"
         cls.seed.mkdir()
-        raw = raw_registry()
-        selected = {
-            "governance/rule",
-            "sdlc/architecture-description",
-            "sdlc/spec",
-            "sdlc/plan",
-        }
-        for domain in raw["lifecycle_domains"]:
-            selected.add(domain["profile_ids"][0])
-            domain["profile_ids"] = [
-                item for item in domain["profile_ids"] if item in selected
-            ]
-        raw.pop("readme_navigation", None)
-        raw.pop("document_language", None)
-        raw["profiles"] = [item for item in raw["profiles"] if item["id"] in selected]
+        raw = lifecycle_registry_fixture(raw_registry())
         for profile in raw["profiles"]:
             if profile["id"] == "governance/rule":
                 profile["path_pattern"] = (

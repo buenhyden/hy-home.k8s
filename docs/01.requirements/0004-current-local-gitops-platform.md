@@ -1,10 +1,10 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "3.0.0"
+version: "3.0.1"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-16"
 artifact_id: "REQ-0004"
 ---
 
@@ -38,7 +38,7 @@ security level as supported. The existence of static configuration must be kept 
 - A reviewer judges failure, fallback, DEFER, and live-unobserved states separately.
 - An executor resumes an unfinished assurance package within its prerequisite validation and approval scope.
 
-In scope: the current local platform, the platform/workload separation, external service connections, onboarding examples, and local-only assurance.
+In scope: the current local platform, the platform/workload separation, external service connections, onboarding examples, and repository assurance for the local platform. [REQ-0003](./0003-workspace-agent-governance-platform.md) owns the common local and hosted delivery requirements.
 Out of scope: creating the external runtime, cloud provisioning, unapproved cluster changes, and an unvalidated blanket digest conversion.
 
 ### Constraints and Exclusions
@@ -66,7 +66,7 @@ The repository checks structure, Kubernetes YAML, required policy tools, secret 
 | REQ-0004-FR-0008 | Platform validation results must distinguish the depth (syntax, render, schema/policy, product semantic, and live observation) and the tool, fallback, lane, and result. | Serves composed per-target validation depths with explicit tool, fallback, execution lane and result; static and live evidence stay distinct (AD-0007 Lifecycle Traceability). | Validation output records depth, tool, fallback, lane and result. | Must |
 | REQ-0004-FR-0009 | An executable cloud example must carry guidance beside the example and provider-native static validation, and must be verifiable without credentials or apply/deploy. | Serves example-adjacent native validation without cloud deployment (AD-0007 Transferred requirement members). | Example static validation passes without credentials or apply. | Must |
 | REQ-0004-FR-0010 | Ingress references, resource kinds, GitOps structure, policy, secret sync, and explicit local-only transport exceptions must be checked fail-closed. | Serves fail-closed resource and ingress reference integrity with explicit chart/operator declaration boundaries and preserved policy/secret checks (AD-0007 Lifecycle Traceability). | The fail-closed platform validators PASS; quality scenario Workload onboarding. | Must |
-| REQ-0004-FR-0011 | Platform assurance work must proceed in ordered per-package review, validation, and rollback units and must prove the final local-only integration. | Serves ordered review/rollback boundaries and local-only integration (AD-0007 Transferred requirement members). | Each assurance package records review, validation and rollback before integration. | Must |
+| REQ-0004-FR-0011 | Platform assurance work must proceed in ordered per-package review, validation, and rollback units and must prove integration of the local platform changes. | Serves ordered review and rollback boundaries for the local platform (AD-0007 Transferred requirement members). | Each assurance package records review, validation and rollback before integration. Local and hosted checks each have their own evidence. | Must |
 | REQ-0004-FR-0012 | Exact infrastructure, workflow, dependency, and example versions must be confirmed from the executable source or a reviewed lock, and a Reference mirror must not be required as an execution precondition. | Serves direct executable-source versions and self-source/external-source distinction (AD-0007 Transferred requirement members). | Version checks read the executable source or reviewed lock. | Must |
 | REQ-0004-FR-0013 | The revision policy of the repository's own continuously reconciled source must be kept distinct from that of external release sources, and revisited when multiple operators or environments, or history rewriting, are introduced. | Serves direct executable-source versions and self-source/external-source distinction (AD-0007 Transferred requirement members). | The self-source revision rule differs from the external release pin rule and names its revisit triggers. | Must |
 | REQ-0004-FR-0014 | The Pod security enforcement level must be proportional to the workload evidence the repository owns and validates statically. Chart, injection, and runtime uncertainty is separated as audit/warn, and CNI desired state is not promoted to live evidence. | Serves namespace and artifact assurance (AD-0007 Transferred requirement members). | Namespace Pod Security labels match the statically owned workload evidence. | Must |
@@ -257,7 +257,7 @@ No downstream link is listed here: the architecture description or Spec that own
 | Requirement ID | Acceptance criterion |
 | --- | --- |
 | REQ-0004-FR-0001 | The selected root/platform/workload targets render at a reviewed revision (100% of selected targets). |
-| REQ-0004-FR-0002 | Static validation shows platform components and user workloads reconciled through separate projects with distinct destination and resource permissions. |
+| REQ-0004-FR-0002 | Static validation verifies that the declarations assign platform components and user workloads to separate projects with distinct destination and resource permissions. Runtime reconciliation requires its own observation. |
 | REQ-0004-FR-0003 | Every declared external interface tuple or gateway host/port/CA matches the reviewed desired state. |
 | REQ-0004-FR-0004 | Only the currently supported UIs have routes; no removed UI is described as current. |
 | REQ-0004-FR-0005 | Every in-scope surface carries changed, unchanged-with-reason, or DEFER-with-owner-and-trigger. |
@@ -266,7 +266,7 @@ No downstream link is listed here: the architecture description or Spec that own
 | REQ-0004-FR-0008 | Each platform validation result names its depth, tool, fallback, lane and result. |
 | REQ-0004-FR-0009 | Each cloud example passes provider-native static validation with no credentials and no apply. |
 | REQ-0004-FR-0010 | The ingress, resource-kind, GitOps, policy, secret-sync and transport checks fail closed and PASS. |
-| REQ-0004-FR-0011 | The final local-only integration is proven after per-package review, validation and rollback. |
+| REQ-0004-FR-0011 | Integration of the local platform changes is proven after per-package review, validation and rollback, using the applicable evidence for each lane. |
 | REQ-0004-FR-0012 | Every pinned version is read from the executable source or a reviewed lock. |
 | REQ-0004-FR-0013 | The self-source and external release revision rules are recorded separately with revisit triggers. |
 | REQ-0004-FR-0014 | Enforced namespaces hold only statically validated workloads; the rest stay audit/warn. |

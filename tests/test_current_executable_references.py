@@ -103,20 +103,6 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
         self.assertEqual([item.code for item in diagnostics], ["EXECUTABLE-CURRENT"])
         self.assertEqual(recovered, [])
 
-    def test_terminal_reference_uses_git_first_recovery(self) -> None:
-        target = PurePosixPath("scripts/retired/deep/check-contract.py")
-        recovered: list[PurePosixPath] = []
-        text = f"---\nstatus: done\n---\n\nHistorical command: `python3 {target}`.\n"
-
-        diagnostics = self.validate(
-            "docs/03.specs/0001-example/spec.md",
-            text,
-            historical_path_exists=lambda path: recovered.append(path) or True,
-        )
-
-        self.assertEqual(diagnostics, ())
-        self.assertEqual(recovered, [target])
-
     def test_changelog_reference_uses_git_first_recovery(self) -> None:
         target = PurePosixPath("scripts/validate-retired-gates.sh")
         recovered: list[PurePosixPath] = []
@@ -133,22 +119,22 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
         lost = self.validate("CHANGELOG.md", text)
         self.assertEqual([item.code for item in lost], ["EXECUTABLE-HISTORY"])
 
-    def test_completed_spec_reference_uses_git_first_recovery(self) -> None:
+    def test_completed_task_reference_uses_git_first_recovery(self) -> None:
         target = PurePosixPath("scripts/retired/deep/check-contract.py")
         recovered: list[PurePosixPath] = []
         diagnostics = self.validate(
-            "docs/03.specs/0001-example/spec.md",
+            "docs/03.specs/0001-example/tasks/tsk-0001-example.md",
             f"---\nstatus: completed\n---\n\nHistorical command: `python3 {target}`.\n",
             historical_path_exists=lambda path: recovered.append(path) or True,
         )
         self.assertEqual(diagnostics, ())
         self.assertEqual(recovered, [target])
 
-    def test_active_spec_proposal_does_not_claim_a_current_executable(self) -> None:
+    def test_draft_spec_proposal_does_not_claim_a_current_executable(self) -> None:
         invoked: list[PurePosixPath] = []
         diagnostics = self.validate(
             "docs/03.specs/0001-example/spec.md",
-            "---\nstatus: active\n---\n\n"
+            "---\nstatus: draft\n---\n\n"
             "Proposed: `scripts/future/deep/check-contract.py`.\n",
             historical_path_exists=lambda path: invoked.append(path) or True,
         )
@@ -160,7 +146,7 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
         target = "scripts/retired/deep/check-contract.sh"
         diagnostics = self.validate(
             "docs/03.specs/0001-example/plan.md",
-            f"---\nstatus: done\n---\n\nHistorical: `{target}`.\n",
+            f"---\nstatus: cancelled\n---\n\nHistorical: `{target}`.\n",
         )
 
         self.assertEqual([item.code for item in diagnostics], ["EXECUTABLE-HISTORY"])

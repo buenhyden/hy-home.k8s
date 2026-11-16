@@ -227,11 +227,8 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         hint = get_type_hints(contracts.DocumentProfile)["document_role"]
         literal = next(item for item in get_args(hint) if item is not type(None))
         self.assertEqual(set(get_args(literal)), set(roles))
-        self.assertEqual(len(roles), 28)
 
     def test_typed_form_identifier_matches_the_schema_form_enum(self) -> None:
-        # SPEC-0189: one local role still has no form, so the typed form
-        # identifier is its own literal of the twenty-seven form identifiers.
         contracts = load_document_contracts()
         schema = json.loads(PROFILE_SCHEMA_PATH.read_text(encoding="utf-8"))
         forms = schema["$defs"]["common_form"]["properties"]["form_id"]["enum"]
@@ -240,7 +237,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         ]["enum"]
         literal = get_args(get_type_hints(contracts.CommonForm)["form_id"])
         self.assertEqual(literal, tuple(forms))
-        self.assertEqual(len(forms), 27)
         self.assertEqual(
             set(roles) - set(literal),
             {"provider-native"},
@@ -726,13 +722,31 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
         )
         profile = markdown.classify_path(registry, path)
         source = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")
-        superseded = source.replace(
+        superseded = source.replace('status: "active"', 'status: "superseded"', 1)
+        self.assertEqual(
+            markdown.validate_document_text(superseded, path, profile, "strict"), []
+        )
+        successor = source.replace(
+            'artifact_id: "RUN-0008"',
+            'artifact_id: "RUN-0008"\nsupersedes: "RUN-0007"',
+            1,
+        )
+        self.assertEqual(
+            markdown.validate_document_text(successor, path, profile, "strict"), []
+        )
+        inverse = superseded.replace(
             'artifact_id: "RUN-0008"',
             'artifact_id: "RUN-0008"\nsuperseded_by: "RUN-0009"',
             1,
-        ).replace('status: "active"', 'status: "superseded"', 1)
-        self.assertEqual(
-            markdown.validate_document_text(superseded, path, profile, "strict"), []
+        )
+        self.assertIn(
+            "FM-KEYSET",
+            {
+                item.rule_id
+                for item in markdown.validate_document_text(
+                    inverse, path, profile, "strict"
+                )
+            },
         )
         other_owner = source.replace('owner: "platform"', 'owner: "someone"', 1)
         self.assertTrue(

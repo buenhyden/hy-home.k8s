@@ -263,6 +263,16 @@
       }
     },
     {
+      "id": "W03-FORMS-D01",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W03-FORMS",
+      "resume_condition": "When candidate verification and user acceptance are recorded",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
       "id": "W03-H05",
       "kind": "handoff",
       "state": "open",
@@ -307,7 +317,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W04",
-      "resume_condition": "When W04 starts (policy and lifecycle semantics)",
+      "resume_condition": "After the user accepts the verified current lifecycle model",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -405,11 +415,15 @@
     {
       "id": "W07-H04",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W07",
       "resume_condition": "When W07 starts (provider projections)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-144"
       }
     }
   ]

@@ -332,11 +332,17 @@ def require_unchanged_private_snapshot(
     head_before: bytes,
     raw_index_before: bytes,
     tree_before: dict[str, tuple[int, bytes] | None],
+    merge_head_before: bytes | None = None,
+    refs_before: bytes | None = None,
 ) -> None:
-    """Catch HEAD, index, and file changes without refreshing the private index."""
+    """Catch changes to the private candidate and its merge parents."""
     changed: list[str] = []
     if git(root, "rev-parse", "HEAD") != head_before:
         changed.append("HEAD")
+    if merge_head_bytes(root) != merge_head_before:
+        changed.append("MERGE_HEAD")
+    if refs_before is not None and reference_projection(root) != refs_before:
+        changed.append("refs")
     if (
         read_bounded_bytes(index_file(root), max_bytes=GIT_INDEX_LIMIT_BYTES)
         != raw_index_before
@@ -346,6 +352,10 @@ def require_unchanged_private_snapshot(
         changed.append("file-bytes")
     if changed:
         raise ValueError("QA private snapshot changed: " + ",".join(changed))
+
+
+def reference_projection(root: Path) -> bytes:
+    return git(root, "for-each-ref", "--format=%(refname) %(objectname) %(symref)")
 
 
 def base_revision(root: Path, profile: str, value: str | None) -> str:
@@ -359,12 +369,11 @@ def base_revision(root: Path, profile: str, value: str | None) -> str:
         ):
             raise ValueError("unsafe base reference")
         return git(root, "rev-parse", "--verify", value + "^{commit}").decode().strip()
-    baseline = git(root, "merge-base", "HEAD", "origin/main", optional=True)
-    return (
-        baseline.decode().strip()
-        if baseline
-        else git(root, "rev-parse", "HEAD").decode().strip()
-    )
+    default_ref = "refs/remotes/origin/main"
+    remote = git(root, "for-each-ref", "--format=%(refname)", default_ref)
+    if default_ref.encode("ascii") in remote.splitlines():
+        return git(root, "merge-base", "HEAD", default_ref).decode().strip()
+    return git(root, "rev-parse", "HEAD").decode().strip()
 
 
 def changed_paths(root: Path, *, staged: bool) -> list[str]:
@@ -422,6 +431,7 @@ def gate_input_identity(
     base_ref: str,
     environment: Mapping[str, str],
     captured_tree: Mapping[str, tuple[int, bytes] | None] | None = None,
+    captured_refs: bytes | None = None,
 ) -> str:
     """Hash a versioned, bounded canonical description of an audited gate input."""
     if lane not in ("affected", "staged"):
@@ -459,7 +469,7 @@ def gate_input_identity(
     executable = Path(sys.executable).resolve(strict=True)
     executable_stat = executable.stat()
     fields = {
-        "version": 1,
+        "version": 3,
         "gate": gate["id"],
         "lane": canonical_lane,
         "paths": sorted(set(paths)),
@@ -476,9 +486,10 @@ def gate_input_identity(
         ],
         "gitVersion": git(snapshot, "--version").decode("ascii").strip(),
         "head": git(snapshot, "rev-parse", "HEAD").decode("ascii").strip(),
-        "refs": git(
-            snapshot, "for-each-ref", "--format=%(refname) %(objectname)"
-        ).decode("ascii"),
+        "mergeHead": (merge_head_bytes(snapshot) or b"").decode("ascii").strip(),
+        "refs": (
+            reference_projection(snapshot) if captured_refs is None else captured_refs
+        ).decode("utf-8", errors="surrogateescape"),
         "files": files,
     }
     if any(
@@ -598,14 +609,16 @@ def main() -> int:
             return 0
         if args.profile == "staged":
             require_canonical_staged_index(root)
-        baseline = base_revision(root, args.profile, args.base_ref)
-        paths = changed_paths(root, staged=args.profile == "staged")
         source_head_before = git(root, "rev-parse", "HEAD")
+        source_merge_head_before = merge_head_bytes(root)
+        source_refs_before = reference_projection(root)
         source_index_path = index_file(root)
         source_index_before = read_bounded_bytes(
             source_index_path, max_bytes=GIT_INDEX_LIMIT_BYTES
         )
         source_tree_before = tree_identity(root)
+        baseline = base_revision(root, args.profile, args.base_ref)
+        paths = changed_paths(root, staged=args.profile == "staged")
         with repository_snapshot(root, staged=args.profile == "staged") as snapshot:
             contract = contract_module.validate_contract(snapshot)
             lane = "staged" if args.profile == "staged" else "affected"
@@ -618,6 +631,8 @@ def main() -> int:
                 f"[INFO] qa profile={args.profile} snapshot={'index' if args.profile == 'staged' else 'working-tree'} gates={len(ids)}"
             )
             private_head_before = git(snapshot, "rev-parse", "HEAD")
+            private_merge_head_before = merge_head_bytes(snapshot)
+            private_refs_before = reference_projection(snapshot)
             private_index_before = read_bounded_bytes(
                 index_file(snapshot), max_bytes=GIT_INDEX_LIMIT_BYTES
             )
@@ -646,11 +661,12 @@ def main() -> int:
                     base_ref=baseline,
                     environment=runner.validation_environment(snapshot),
                     captured_tree=private_tree_before,
+                    captured_refs=private_refs_before,
                 )
                 identities[identifier] = identity
                 if store.matching_pass(identifier, identity):
                     candidates[identifier] = {"identity": identity, "source": "local"}
-            completed_passes = {}
+            observed_results = {}
             result = runner.run_selected(
                 snapshot,
                 lane,
@@ -660,16 +676,19 @@ def main() -> int:
                 validator_ids=ids,
                 base_ref=baseline,
                 reuse_candidates=candidates,
-                completed_passes=completed_passes,
+                observed_results=observed_results,
             )
             require_unchanged_private_snapshot(
                 snapshot,
                 head_before=private_head_before,
                 raw_index_before=private_index_before,
                 tree_before=private_tree_before,
+                merge_head_before=private_merge_head_before,
+                refs_before=private_refs_before,
             )
             if (
                 git(root, "rev-parse", "HEAD") != source_head_before
+                or merge_head_bytes(root) != source_merge_head_before
                 or read_bounded_bytes(
                     source_index_path, max_bytes=GIT_INDEX_LIMIT_BYTES
                 )
@@ -679,8 +698,31 @@ def main() -> int:
                 raise ValueError(
                     "source HEAD, index, or selected files changed during QA"
                 )
-            for identifier in completed_passes:
-                if identifier in identities:
+            if reference_projection(root) != source_refs_before:
+                raise ValueError("source Git refs changed during QA")
+            if (
+                args.base_ref
+                and base_revision(root, args.profile, args.base_ref) != baseline
+            ):
+                raise ValueError("explicit QA base changed during QA")
+            if not result:
+                for identifier in ids:
+                    status = observed_results.get(identifier)
+                    if (
+                        status == "PASS"
+                        or (status == "REUSED" and identifier in candidates)
+                        or (
+                            status == "NOT_APPLICABLE"
+                            and identifier in {"selected-style", "selected-nonstyle"}
+                        )
+                        or validators[identifier]["optional"]
+                    ):
+                        continue
+                    raise ValueError(
+                        f"required gate {identifier} has no valid result: {status or 'missing'}"
+                    )
+            for identifier, status in observed_results.items():
+                if status == "PASS" and identifier in identities:
                     store.record_pass(identifier, identities[identifier])
             return result
     except (OSError, ValueError) as exc:

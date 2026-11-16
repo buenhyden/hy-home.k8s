@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts Progressive Delivery Requirement Package"
-version: "3.0.0"
+version: "3.0.1"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-16"
 artifact_id: "REQ-0001"
 ---
 
@@ -67,7 +67,7 @@ This document owns product intent and acceptance criteria; the linked downstream
 #### Agent execution and approval requirements
 
 - **Allowed Actions**: Update the Requirement Package and documentation, run non-destructive static validation, and collect read-only status evidence.
-- **Disallowed Actions**: Expand AppProject permissions without approval, mutate the live cluster directly, or change manifests outside an approved downstream stage.
+- **Disallowed Actions**: Expand AppProject permissions without approval, mutate the live cluster directly, or change manifests outside the implementation scope authorized under the [document lifecycle policy](../../.agents/governance/document-lifecycle.md#requirements).
 - **Human-in-the-loop Requirement**: Required before AppProject cluster resource allow-list changes or rollout promotion policy changes.
 - **Evaluation Expectation**: Verify controller status, Dashboard access, and ArgoCD sync traceability in a downstream validation stage.
 
@@ -94,7 +94,7 @@ This update does not claim to have observed runtime state or received live notif
 - **Acceptance criterion 01**: An operator can check the Rollouts controller state. Evidence: the Rollouts controller Deployment (`argo-rollouts`) is `Available=True`.
 - **Acceptance criterion 02**: An operator can see rollout progress in the Dashboard. Evidence: HTTPS access to the approved Dashboard local path succeeds.
 - **Acceptance criterion 03**: An application team can track Rollout resources in the ArgoCD state model. Evidence: ArgoCD shows the `Rollout` resource as `Healthy` or `Progressing`.
-- **Acceptance criterion 04**: CI blocks static contract regressions related to Rollouts. Evidence: the repo quality gate and static contract validation PASS.
+- **Acceptance criterion 04**: Hosted CI must block Rollouts static contract regressions when a pull request changes the affected contract. Local quality and static contract results establish the local check only. The current hosted metadata and style checks leave affected Rollouts validation pending. An observed hosted verdict needs its actual input revision and run.
 
 ### Verification Method
 
@@ -126,7 +126,7 @@ No separate verification method is stated: each requirement is verified by the e
 | N/A — Acceptance criterion 01 remains acceptance-only | An operator can confirm that the Rollouts controller Deployment (`argo-rollouts`) is `Available=True`. |
 | N/A — Acceptance criterion 02 remains acceptance-only | HTTPS access to the approved Dashboard local path succeeds and the Dashboard shows progress. |
 | N/A — Acceptance criterion 03 remains acceptance-only | ArgoCD shows the reference Rollout resource as `Healthy` or `Progressing`. |
-| N/A — Acceptance criterion 04 remains acceptance-only | The repository quality gate and the Rollouts static contract validation PASS. |
+| N/A — Acceptance criterion 04 remains acceptance-only | The local gate records its Rollouts static result. The hosted acceptance requires the affected Rollouts check and its observed verdict for the pull request revision. |
 
 ### Archived Lineage
 

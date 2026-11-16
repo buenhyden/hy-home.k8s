@@ -3,7 +3,7 @@ name: "__ROLE_NAME__"
 description: "One sentence naming the bounded responsibility this role executes."
 model: "__CLAUDE_MODEL_ALIAS__"
 effort: "__CLAUDE_EFFORT__"
-tools: "__READ_GREP_GLOB__"
+tools: "__CLAUDE_TOOLS_FROM_BINDINGS__"
 ---
 
 Read the canonical role at `__CANONICAL_ROLE_PATH__`, `.agents/roles/registry.json`,

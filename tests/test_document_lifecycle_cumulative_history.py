@@ -14,7 +14,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path, PurePosixPath
 from unittest import mock
 
-from tests.git_fixture import GitFixture
+from tests.git_fixture import GitFixture, lifecycle_registry_fixture
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -48,27 +48,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         cls.seed_root = Path(cls.seed_temporary.name) / "repository"
         cls.seed_root.mkdir()
         registry_path = Path("docs/99.templates/registry.json")
-        raw_registry = json.loads((ROOT / registry_path).read_text())
-        selected = {
-            "governance/rule",
-            "sdlc/architecture-description",
-            "sdlc/spec",
-            "sdlc/plan",
-        }
-        for domain in raw_registry["lifecycle_domains"]:
-            selected.add(domain["profile_ids"][0])
-            domain["profile_ids"] = [
-                profile_id
-                for profile_id in domain["profile_ids"]
-                if profile_id in selected
-            ]
-        # README navigation names profiles this selection drops.
-        raw_registry.pop("readme_navigation", None)
-        # The language contract names profiles this selection drops.
-        raw_registry.pop("document_language", None)
-        raw_registry["profiles"] = [
-            profile for profile in raw_registry["profiles"] if profile["id"] in selected
-        ]
+        raw_registry = lifecycle_registry_fixture(
+            json.loads((ROOT / registry_path).read_text())
+        )
         # These synthetic lifecycle documents exercise transitions, not the
         # production contract owner's closed path inventory.
         for profile in raw_registry["profiles"]:
@@ -1428,6 +1410,38 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
         self.assertNotEqual(result, 0, output)
         self.assertIn("LIFECYCLE-CREATE", output)
+
+    def test_requirement_transitions_follow_its_own_registry_domain(self) -> None:
+        path = PurePosixPath("docs/01.requirements/0999-sample.md")
+        for source, target, refused in (
+            ("draft", "in-review", False),
+            ("in-review", "draft", False),
+            ("in-review", "approved", False),
+            ("draft", "approved", True),
+            ("approved", "draft", True),
+        ):
+            with self.subTest(source=source, target=target):
+                base = VALIDATOR.LifecycleDocument(
+                    path,
+                    "sdlc/requirement",
+                    source,
+                    artifact_id="REQ-0999",
+                    version="1.0.0",
+                )
+                proposed = VALIDATOR.LifecycleDocument(
+                    path,
+                    "sdlc/requirement",
+                    target,
+                    artifact_id="REQ-0999",
+                    version="1.0.0",
+                )
+                findings = VALIDATOR.compare_lifecycle(
+                    self.registry, {path: base}, {path: proposed}, base_mode="staged"
+                )
+                self.assertEqual(
+                    [item.rule_id for item in findings],
+                    ["LIFECYCLE-EDGE"] if refused else [],
+                )
 
     def test_invalid_intermediate_edges_are_not_admitted(self) -> None:
         draft = self.commit("draft")

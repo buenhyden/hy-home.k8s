@@ -63,11 +63,11 @@ Canonical sources are the documents linked or named in the opening paragraph and
    [03](03.specs/AGENTS.md), [05](05.operations/AGENTS.md),
    [90](90.references/AGENTS.md) and [99](99.templates/AGENTS.md). Read the
    one for the stage you change; `docs/98.archive/` has none.
-8. After a change, run the strict document checks:
-   `python3 scripts/validate-document-contract-registry.py --root . --mode strict`,
-   `python3 scripts/validate-markdown-profiles.py --root . --mode strict`,
-   `python3 scripts/validate-links-and-owners.py --root . --mode strict` and
-   `python3 scripts/validate-document-lifecycle.py --root . --mode strict`.
+8. Select checks under the [quality policy](../.agents/governance/quality.md#ordinary-document-selection).
+   Check the affected documents and incoming references for profile,
+   relationship, link and lifecycle changes. Governance, Registry, form and
+   executable changes select the focused checks registered for those surfaces.
+   The staged delivery route checks the exact index.
 
 ## Workflow
 

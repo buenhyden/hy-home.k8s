@@ -47,10 +47,6 @@ PRE_COMMIT_REPOS = {
     "https://github.com/example/two": ("b" * 40, "0.2.3"),
 }
 
-CHECKOUT_ACTION = "actions/checkout@" + "c" * 40
-SETUP_PYTHON_ACTION = "actions/setup-python@" + "d" * 40
-ACTIONS = (CHECKOUT_ACTION, SETUP_PYTHON_ACTION)
-
 
 def make_lock() -> str:
     lines = [
@@ -117,13 +113,10 @@ GOVERNED_TEXT_OWNERS = (
 
 LOCK_STEP = """\
       - name: Validate a changed CI lock
+        id: lock
+        if: steps.plan.outputs.lock == 'true'
         working-directory: candidate
-        run: |
-          set -euo pipefail
-          git diff --no-ext-diff --no-textconv --no-renames --name-only -z HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"
-          if grep -qz '^\\.github/requirements/' "$RUNNER_TEMP/pr-lock-paths.z"; then
-            python -I ../trusted-base/scripts/validate-ci-python-contract.py --root .
-          fi
+        run: python -I ../trusted-base/scripts/validate-ci-python-contract.py --root .
 """
 
 CANDIDATE_BRANCH_REF = "${{ github.sha }}"
@@ -497,20 +490,20 @@ class CiPythonContractTests(unittest.TestCase):
         root = self.make_real_workflow_root((LOCK_STEP, ""))
         self.assert_rule_in_repository(root, "CI-STYLE-TOPOLOGY")
 
-    def test_changed_lock_step_condition_reads_the_path_list_directly(self) -> None:
+    def test_affected_plan_rejects_line_delimited_paths(self) -> None:
         root = self.make_real_workflow_root(
             (
-                "if grep -qz '^\\.github/requirements/' \"$RUNNER_TEMP/pr-lock-paths.z\"; then",
-                "if tr '\\0' '\\n' < \"$RUNNER_TEMP/pr-lock-paths.z\" | grep -q '^\\.github/requirements/'; then",
+                "IFS= read -r -d '' path",
+                "IFS= read -r path",
             )
         )
         self.assert_rule_in_repository(root, "CI-STYLE-TOPOLOGY")
 
-    def test_changed_lock_step_lists_every_change_kind(self) -> None:
+    def test_affected_plan_lists_every_change_kind(self) -> None:
         root = self.make_real_workflow_root(
             (
-                '--name-only -z HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"',
-                '--name-only -z --diff-filter=ACMR HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"',
+                '--name-status -z HEAD^1 HEAD > "$RUNNER_TEMP/pr-changes.z"',
+                '--name-status -z --diff-filter=ACMR HEAD^1 HEAD > "$RUNNER_TEMP/pr-changes.z"',
             )
         )
         self.assert_rule_in_repository(root, "CI-STYLE-TOPOLOGY")
@@ -1331,6 +1324,15 @@ class MetadataAndStyleCiContractTests(unittest.TestCase):
         workflow = copy.deepcopy(baseline)
         workflow["jobs"]["ci-summary"]["steps"][2]["with"]["fetch-depth"] = 1
         variants.append(workflow)
+        for key, value in (
+            ("fetch-depth", 0),
+            ("fetch-tags", True),
+            ("ref", "${{ github.event.pull_request.head.sha }}"),
+            ("sparse-checkout", "README.md"),
+        ):
+            workflow = copy.deepcopy(baseline)
+            workflow["jobs"]["ci-summary"]["steps"][2]["with"][key] = value
+            variants.append(workflow)
         workflow = copy.deepcopy(baseline)
         workflow["jobs"]["ci-summary"]["steps"][3]["uses"] = "actions/setup-python@v7"
         variants.append(workflow)
@@ -1442,128 +1444,219 @@ class MetadataAndStyleCiContractTests(unittest.TestCase):
 
 
 class HostedStyleJobBoundaryTests(unittest.TestCase):
-    def style_job(self):
-        return {
-            "if": "github.event_name == 'pull_request'",
-            "runs-on": "ubuntu-latest",
-            "timeout-minutes": 5,
-            "permissions": {"contents": "read"},
-            "steps": [
-                {
-                    "uses": CHECKOUT_ACTION,
-                    "with": {
-                        "ref": "${{ github.event.pull_request.base.sha }}",
-                        "path": "trusted-base",
-                        "persist-credentials": False,
-                    },
-                },
-                {
-                    "uses": CHECKOUT_ACTION,
-                    "with": {
-                        "path": "candidate",
-                        "fetch-depth": 2,
-                        "persist-credentials": False,
-                    },
-                },
-                {
-                    "uses": SETUP_PYTHON_ACTION,
-                    "with": {"python-version": "3.12"},
-                },
-                {
-                    "working-directory": "candidate",
-                    "env": {"BASE_SHA": "${{ github.event.pull_request.base.sha }}"},
-                    "run": (
-                        "set -euo pipefail\n"
-                        "umask 077\n"
-                        'test "$(git rev-parse HEAD^1)" = "$BASE_SHA"\n'
-                        "git diff --no-ext-diff --no-textconv --no-renames --name-only -z --diff-filter=ACMR "
-                        'HEAD^1 HEAD > "$RUNNER_TEMP/pr-style-paths.z"'
-                    ),
-                },
-                {
-                    "run": (
-                        "python -I -m pip install --disable-pip-version-check --only-binary=:all: "
-                        "--require-hashes -r trusted-base/.github/requirements/ci-validation.txt"
-                    )
-                },
-                {
-                    "working-directory": "candidate",
-                    "env": {"BASE_SHA": "${{ github.event.pull_request.base.sha }}"},
-                    "run": (
-                        "python -I ../trusted-base/scripts/validate-selected-style.py --root . "
-                        "--config ../trusted-base/.pre-commit-config.yaml "
-                        "--markdown-config ../trusted-base/.markdownlint-cli2.yaml "
-                        "--ruff-config ../trusted-base/.ruff.toml "
-                        '--paths-file "$RUNNER_TEMP/pr-style-paths.z" --delimiter nul '
-                        '--expected-base-sha "$BASE_SHA"'
-                    ),
-                },
-                {
-                    "working-directory": "candidate",
-                    "run": (
-                        "set -euo pipefail\n"
-                        "git diff --no-ext-diff --no-textconv --no-renames --name-only -z "
-                        'HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"\n'
-                        "if grep -qz '^\\.github/requirements/' "
-                        '"$RUNNER_TEMP/pr-lock-paths.z"; then\n'
-                        "  python -I ../trusted-base/scripts/validate-ci-python-contract.py "
-                        "--root .\n"
-                        "fi"
-                    ),
-                },
-            ],
-        }
+    def setUp(self):
+        self.workflow = VALIDATOR._load_yaml(
+            (REPO_ROOT / VALIDATOR.WORKFLOW_PATH).read_text(encoding="utf-8"),
+            "CI-PYTHON-WORKFLOW",
+            VALIDATOR.WORKFLOW_PATH,
+        )
+        self.job = self.workflow["jobs"]["style-pr"]
+        self.actions = VALIDATOR._workflow_action_refs(self.workflow)
 
     def test_style_job_rejects_untrusted_or_mutable_inputs(self):
         import copy
 
-        VALIDATOR._validate_style_pr_job(self.style_job(), ACTIONS)
+        VALIDATOR._validate_style_pr_job(self.job, self.actions)
+        steps = self.job["steps"]
+        indexes = {
+            step["id"]: index for index, step in enumerate(steps) if "id" in step
+        }
+        install = next(
+            index
+            for index, step in enumerate(steps)
+            if " -m pip install " in step.get("run", "")
+        )
         cases = (
-            (
-                6,
-                "run",
-                "set -euo pipefail\n"
-                "git diff --no-ext-diff --no-textconv --no-renames --name-only -z "
-                'HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"\n'
-                "if grep -qz '^\\.github/requirements/' "
-                '"$RUNNER_TEMP/pr-lock-paths.z"; then\n'
-                "  python -I scripts/validate-ci-python-contract.py --root .\n"
-                "fi",
-            ),
             (0, "uses", "actions/checkout@v7"),
             (
                 0,
                 "with",
-                {
-                    "ref": "${{ github.head_ref }}",
-                    "path": "trusted-base",
-                    "persist-credentials": False,
-                },
+                {**steps[0]["with"], "ref": "${{ github.head_ref }}"},
             ),
             (
                 1,
                 "with",
-                {"path": "candidate", "fetch-depth": 2, "persist-credentials": True},
-            ),
-            (4, "run", "python -m pip install pre-commit"),
-            (5, "run", "python scripts/validate-selected-style.py --root . || true"),
-            (
-                4,
-                "run",
-                self.style_job()["steps"][4]["run"].replace("python -I", "python", 1),
+                {**steps[1]["with"], "persist-credentials": True},
             ),
             (
-                5,
-                "run",
-                self.style_job()["steps"][5]["run"].replace("python -I", "python", 1),
+                1,
+                "with",
+                {
+                    **steps[1]["with"],
+                    "ref": "${{ github.event.pull_request.head.sha }}",
+                },
             ),
+            (install, "run", "python -m pip install pre-commit"),
+            (install, "run", steps[install]["run"].replace("python -I", "python", 1)),
+            (
+                indexes["style"],
+                "run",
+                "python scripts/validate-selected-style.py --root . || true",
+            ),
+            (
+                indexes["style"],
+                "run",
+                steps[indexes["style"]]["run"].replace("python -I", "python", 1),
+            ),
+            (
+                indexes["lock"],
+                "run",
+                steps[indexes["lock"]]["run"].replace("../trusted-base/", "", 1),
+            ),
+            (
+                indexes["gitops"],
+                "run",
+                steps[indexes["gitops"]]["run"].replace("../trusted-base/", "", 1),
+            ),
+            (indexes["gitops"], "if", "false"),
+            (len(steps) - 1, "if", "success()"),
+            (len(steps) - 1, "run", "echo PASS"),
         )
         for index, key, value in cases:
-            with self.subTest(index=index, key=key, value=value):
-                job = copy.deepcopy(self.style_job())
+            with self.subTest(index=index, key=key):
+                job = copy.deepcopy(self.job)
+                self.assertNotEqual(job["steps"][index].get(key), value)
                 job["steps"][index][key] = value
-                with self.assertRaises(VALIDATOR.ContractError):
-                    VALIDATOR._validate_style_pr_job(job, ACTIONS)
+                with self.assertRaisesRegex(
+                    VALIDATOR.ContractError, "CI-STYLE-TOPOLOGY"
+                ):
+                    VALIDATOR._validate_style_pr_job(job, self.actions)
+
+    def test_style_job_refuses_missing_aggregate(self):
+        job = {**self.job, "steps": self.job["steps"][:-1]}
+        with self.assertRaisesRegex(VALIDATOR.ContractError, "CI-STYLE-TOPOLOGY"):
+            VALIDATOR._validate_style_pr_job(job, self.actions)
+
+    def test_plan_binds_merge_parents_and_selects_deletions_and_renames(self):
+        with tempfile.TemporaryDirectory(prefix="ci-pr-plan-") as directory:
+            root = Path(directory)
+            candidate = root / "candidate"
+            candidate.mkdir()
+            git_env = {
+                "PATH": os.defpath,
+                "GIT_CONFIG_NOSYSTEM": "1",
+                "GIT_CONFIG_GLOBAL": os.devnull,
+                "GIT_AUTHOR_NAME": "PR Plan Fixture",
+                "GIT_AUTHOR_EMAIL": "fixture@example.invalid",
+                "GIT_COMMITTER_NAME": "PR Plan Fixture",
+                "GIT_COMMITTER_EMAIL": "fixture@example.invalid",
+            }
+
+            def git(*args):
+                return subprocess.run(
+                    ["git", *args],
+                    cwd=candidate,
+                    env=git_env,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                    timeout=10,
+                ).stdout.strip()
+
+            git("init", "--quiet")
+            manifest = candidate / "gitops/sample.yml"
+            lock = candidate / ".github/requirements/sample.txt"
+            for path in (manifest, lock):
+                path.parent.mkdir(parents=True)
+                path.write_text("fixture\n", encoding="utf-8")
+            git("add", "--all")
+            base = git("commit-tree", git("write-tree"), "-m", "base")
+            lock.unlink()
+            manifest.rename(candidate / "moved.yml")
+            (candidate / "line\nbreak.md").write_text("fixture\n", encoding="utf-8")
+            git("add", "--all")
+            tree = git("write-tree")
+            head = git("commit-tree", tree, "-p", base, "-m", "candidate")
+            merge = git("commit-tree", tree, "-p", base, "-p", head, "-m", "merge")
+            git("update-ref", "HEAD", merge)
+            git("clone", "--quiet", "--shared", "--no-checkout", ".", "../trusted-base")
+            git("-C", "../trusted-base", "update-ref", "HEAD", base)
+
+            plan = next(
+                step["run"] for step in self.job["steps"] if step.get("id") == "plan"
+            )
+            output = root / "outputs"
+            env = {
+                "PATH": os.defpath,
+                "BASE_SHA": base,
+                "HEAD_SHA": head,
+                "MERGE_SHA": merge,
+                "RUNNER_TEMP": str(root),
+                "GITHUB_OUTPUT": str(output),
+            }
+            for binding in ("BASE_SHA", "HEAD_SHA", "MERGE_SHA", None):
+                with self.subTest(changed_binding=binding):
+                    wrong_identity = {binding: "0" * 40} if binding else {}
+                    result = subprocess.run(
+                        ["bash", "-c", plan],
+                        cwd=candidate,
+                        env={**env, **wrong_identity},
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                        timeout=10,
+                    )
+                    self.assertEqual(result.returncode, int(binding is not None))
+                    if binding is not None:
+                        self.assertFalse(output.exists())
+            self.assertEqual(output.read_text(), "style=true\nlock=true\ngitops=true\n")
+            self.assertEqual(
+                (root / "pr-style-paths.z").read_bytes(), b"line\nbreak.md\0moved.yml\0"
+            )
+
+    def test_aggregate_only_accepts_success_and_proven_nonapplicability(self):
+        baseline = {
+            "PATH": os.defpath,
+            "PLAN_OUTCOME": "success",
+            "STYLE_REQUIRED": "true",
+            "STYLE_OUTCOME": "success",
+            "LOCK_REQUIRED": "false",
+            "LOCK_OUTCOME": "skipped",
+            "GITOPS_REQUIRED": "true",
+            "GITOPS_OUTCOME": "success",
+        }
+        script = self.job["steps"][-1]["run"]
+        scenarios = (
+            ({}, 0),
+            (
+                {
+                    "STYLE_REQUIRED": "false",
+                    "STYLE_OUTCOME": "skipped",
+                    "GITOPS_REQUIRED": "false",
+                    "GITOPS_OUTCOME": "skipped",
+                },
+                0,
+            ),
+            ({"PLAN_OUTCOME": "skipped"}, 1),
+            ({"GITOPS_OUTCOME": "skipped"}, 1),
+            ({"GITOPS_OUTCOME": "failure"}, 1),
+            ({"GITOPS_OUTCOME": "cancelled"}, 1),
+            ({"GITOPS_OUTCOME": ""}, 1),
+            ({"GITOPS_REQUIRED": ""}, 1),
+            ({"LOCK_OUTCOME": "success"}, 1),
+        )
+        for changed, expected in scenarios:
+            with self.subTest(changed=changed):
+                result = subprocess.run(
+                    ["bash", "-c", script],
+                    env={**baseline, **changed},
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                    timeout=10,
+                )
+                self.assertEqual(result.returncode, expected, result.stderr)
+                if expected == 0:
+                    self.assertEqual(
+                        result.stdout.splitlines(),
+                        ["style PASS", "lock NOT_APPLICABLE", "gitops PASS"]
+                        if not changed
+                        else [
+                            "style NOT_APPLICABLE",
+                            "lock NOT_APPLICABLE",
+                            "gitops NOT_APPLICABLE",
+                        ],
+                    )
 
     def test_style_job_rejects_permission_and_event_drift(self):
         for key, value in (
@@ -1572,10 +1665,11 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
             ("timeout-minutes", 11),
         ):
             with self.subTest(key=key):
-                job = self.style_job()
-                job[key] = value
-                with self.assertRaises(VALIDATOR.ContractError):
-                    VALIDATOR._validate_style_pr_job(job, ACTIONS)
+                job = {**self.job, key: value}
+                with self.assertRaisesRegex(
+                    VALIDATOR.ContractError, "CI-STYLE-TOPOLOGY"
+                ):
+                    VALIDATOR._validate_style_pr_job(job, self.actions)
 
 
 if __name__ == "__main__":

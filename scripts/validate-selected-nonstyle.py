@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import json
 from contextlib import contextmanager
 import os
 import re
@@ -84,6 +85,7 @@ MAX_CONFIG_BYTES = 1024 * 1024
 MAX_PATHS = 2048
 MAX_PATH_BYTES = 4096
 MAX_INDEX_BYTES = 16 * 1024 * 1024
+TRUSTED_SECRETS_BASELINE = ".git/qa-trusted-secrets.baseline"
 
 
 class NonstyleError(ValueError):
@@ -107,6 +109,42 @@ def _hook_failure_lines(output: bytes | str) -> str:
     return "".join(
         line + "\n" for line in text.splitlines() if _HOOK_LINE.fullmatch(line)
     )
+
+
+def _baseline_without_locations(raw: bytes, baseline_filename: str) -> dict:
+    baseline = json.loads(raw)
+    return {
+        **{name: value for name, value in baseline.items() if name != "generated_at"},
+        "filters_used": [
+            {**entry, "filename": ".secrets.baseline"}
+            if entry.get("path") == "detect_secrets.filters.common.is_baseline_file"
+            and entry.get("filename") == baseline_filename
+            else entry
+            for entry in baseline["filters_used"]
+        ],
+        "results": {
+            path: [
+                {name: value for name, value in entry.items() if name != "line_number"}
+                for entry in entries
+            ]
+            for path, entries in baseline["results"].items()
+        },
+    }
+
+
+def _detect_secrets_relocated(output: bytes, before: bytes, after: bytes) -> bool:
+    if (
+        before == after
+        or _hook_failure_lines(output) != "- hook id: detect-secrets\n- exit code: 3\n"
+        or b"The baseline file was updated." not in output.splitlines()
+    ):
+        return False
+    try:
+        return _baseline_without_locations(
+            before, ".secrets.baseline"
+        ) == _baseline_without_locations(after, TRUSTED_SECRETS_BASELINE)
+    except (AttributeError, KeyError, TypeError, ValueError):
+        return False
 
 
 def _closed_environment() -> dict[str, str]:
@@ -272,7 +310,7 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
                     **hook,
                     "args": [
                         "--baseline",
-                        ".git/qa-trusted-secrets.baseline",
+                        TRUSTED_SECRETS_BASELINE,
                         *args[2:],
                     ],
                     "exclude": (
@@ -403,9 +441,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         # The candidate index may change the config; a pre-commit check must
         # use the reviewed HEAD definition until that change is accepted.
         config = project_nonstyle(_git(root, "show", "HEAD:.pre-commit-config.yaml"))
+        baseline_name = PurePosixPath(TRUSTED_SECRETS_BASELINE).name
         trusted = {
             "qa-trusted-gitleaks.toml": _git(root, "show", "HEAD:.gitleaks.toml"),
-            "qa-trusted-secrets.baseline": _git(root, "show", "HEAD:.secrets.baseline"),
+            baseline_name: _git(root, "show", "HEAD:.secrets.baseline"),
             "qa-trusted-kube-linter.yaml": _git(root, "show", "HEAD:.kube-linter.yaml"),
             # No actionlint config is declared at this revision. An explicit
             # empty config prevents candidate .github/actionlint.yaml discovery.
@@ -465,6 +504,19 @@ def main(argv: Sequence[str] | None = None) -> int:
                         != canonical_raw_before
                     ):
                         raise NonstyleError("NONSTYLE-MUTATION: snapshot index changed")
+                    # The pinned scanner uses exit 3 for private baseline maintenance.
+                    relocated = (
+                        result.returncode == 1
+                        and not result.stderr
+                        and _detect_secrets_relocated(
+                            result.stdout,
+                            trusted[baseline_name],
+                            read_bytes(
+                                root / TRUSTED_SECRETS_BASELINE,
+                                max_bytes=MAX_CONFIG_BYTES,
+                            ),
+                        )
+                    )
             finally:
                 for control in controls:
                     control.unlink(missing_ok=True)
@@ -472,7 +524,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise NonstyleError("NONSTYLE-MUTATION: snapshot index changed")
         if _worktree_diff(root):
             raise NonstyleError("NONSTYLE-MUTATION: snapshot files changed")
-        if result.returncode:
+        if result.returncode and not relocated:
             sys.stderr.write(_hook_failure_lines(result.stdout))
             raise NonstyleError("NONSTYLE-HOOK-FAIL: selected non-style hook failed")
         print(f"NONSTYLE-PASS: checked {len(paths)} selected index paths")

@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.38.0"
+version: "0.38.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-16"
 ---
 # 99.templates
 
@@ -133,18 +133,15 @@ form 경로의 대응은 Registry만 소유한다.
   `provider-native`를 뺀 모든 Stage 99 지역 역할은 각자의 지역 form을 쓰며,
   W03-D35와 W03-D36에 따라 `reference-report`는 감사·연구·데이터 보고서가
   함께 쓰는 form 하나를 가진다. `provider-native`만 form 없는 Stage 99 지역
-  역할이며 table을 기록하지 않는다. SPEC-0195가 `requirement` 템플릿의
-  TemplateDefinition을, SPEC-0197이 `architecture` 템플릿의
-  TemplateDefinition을, SPEC-0198이 `adr` 템플릿의
-  TemplateDefinition을 더했고, 나머지 세 SDLC 템플릿의
-  TemplateDefinition은 3단계에서 더한다. TemplateDefinition은 열한 필드를
-  Registry에 저장하고(`contract_version` 포함) 나머지 여덟 필드는
-  `template_definition_record`가 profile, form, 키·관계·생명주기·언어 소유자에서
-  유도하며, Registry 검증이 모든 record를
-  `contracts/`의 `template-definition.schema.json`(패키지 schema의 바이트 사본,
-  SHA-256으로 고정)에 맞춰 검사한다.
-  `contract_version`은 COMMON-DOC-FORM-1 역할에서 `COMMON-DOC-FORM-1/`과 공통
-  form 버전, Stage 99 지역 역할에서 `STAGE99-LOCAL-FORM-1/1.0.0`이다.
+  역할이며 table을 기록하지 않는다. 모든 등록 템플릿에는 TemplateDefinition이
+  있다. `template_definition_record`는 Registry의 정의와 profile, form,
+  키·관계·생명주기·언어 계약에서 레코드를 유도하며, Registry 검증이 모든 레코드를
+  `contracts/template-definition.schema.json`에
+  맞춰 검사한다. `contract_id`는 공통 양식이면 `COMMON-DOC-FORM-1`, 지역
+  양식이면 `STAGE99-LOCAL-FORM-1`이다. `contract_version`은 그 계약의
+  ASCII 숫자 세 요소 판본을 별도 필드에 기록한다. 변경 수준은
+  [작성 정책](../../.agents/governance/document-authoring.md#frontmatter-order-and-versions)의
+  소비자 호환성 기준을 따른다.
   `provider-native`의 빈 heading은 조건·소유자·검증·검토·제거 기준을 갖는
   조건부 확장(`headings_extension`)으로 기록한다. profile의 heading은 role의
   form에서 오며 어떤 profile도 H2 목록(`sections`)을 두지 않는다. schema와 엄격
@@ -160,6 +157,8 @@ form 경로의 대응은 Registry만 소유한다.
   form을 담아 단계별 책임과 handoff를 기록한다. `sdlc/requirement`는 이 중
   처음으로 `requirement` form(다섯 H2와 열 개 H3, Traceability 아래 지역 H3
   `Lifecycle Traceability`와 `Archived Lineage`)을 쓰며 H2 목록을 두지 않는다.
+  추적 표에 이 패키지의 NFR ID를 기록하면 같은 ID의 요구 행을
+  `Quality Requirements`에 둔다. 기능 요구사항 표에는 FR과 IF 행을 둔다.
   `sdlc/architecture-description`은 `architecture` form(여섯 H2와 열두 개 H3,
   같은 두 지역 H3)을 쓰고 H2 목록을 두지 않으며, 각 요구 member를 자신의
   `Upstream requirement` 열에서 인용한다. Requirement는 downstream 링크 열을
@@ -210,7 +209,10 @@ form 경로의 대응은 Registry만 소유한다.
   `reference/audit`·`reference/data`·`reference/research` form을 사용한다.
   세 pack README는 W03-D10에 따른 Stage 99 지역 역할의 자체 Reference Pack
   README form을 함께 쓰며, 종류별 계약 절은 `Pack Contract`, 멤버 색인 절은
-  `Pack Index`로 부른다.
+  `Pack Index`로 부른다. Registry는 pack 유형별 필수 마감 절과 보고서 유형별
+  선택 소제목의 적용 대상을 원본 profile로 지정한다. 템플릿에도 같은 바인딩을
+  적용한다. 역사적 연구 소제목과 지역 확장은 Registry에 등록된 보고서에만
+  적용하며, 검사기는 문서 경로에서 해당 보고서 ID를 유도한다.
 - **Runtime forms** (`runtime/`): provider가 직접 읽는 binding만 담는다.
   Claude는 `claude-agent.template.md`와 `claude-command.template.md`, Codex는
   `codex-agent.template.toml`이며 이 form들은 provider 소유
@@ -238,9 +240,10 @@ form 경로의 대응은 Registry만 소유한다.
 현재 record가 없는 것은 곧 사용하지 않는 capacity를 뜻하지 않는다.
 `operation/incident`와 `operation/postmortem`은 사건 발생 전에도 운영 증거를
 기록할 수 있도록 유지한다. `reference/audit`, `reference/data`,
-`reference/audit-pack`, `reference/data-pack`은 현재 record가 0건이어도
-Stage 90 collection contract가 요구하는 audit/data collection·pack 경로를
-구조적으로 보장하므로 유지한다. 이는 이미 retired한 미사용 capacity와 구별한다.
+`reference/audit-pack`, `reference/data-pack`은 각각 Stage 90의 감사와
+데이터 자료를 지원한다. [Audit collection](../90.references/audits/README.md)은
+현재 감사 pack을 안내한다. Data는 자료가 생길 때 사용할 pack과 member
+profile을 유지한다.
 
 ## Workflow
 
@@ -249,8 +252,11 @@ Stage 90 collection contract가 요구하는 audit/data collection·pack 경로�
 1. **Classify**: repository-relative target path를 registry로 분류하고 정확히 하나의
    profile이 선택되는지 확인한다.
 2. **Copy**: 선택된 profile의 canonical form을 복사한다.
-   `python3 scripts/document-generator.py`가 form을 복사하고 공통 marker 다섯
-   개를 채운다(번호는 호출자가 target path에 쓴다). form을 손으로 복사해도
+   `python3 scripts/document-generator.py`가 정규 TemplateDefinition을 확인하고
+   양식의 절과 표 열을 검사한 뒤 공통 marker 다섯 개를 채운다(번호는 호출자가
+   target path에 쓴다). 적용되는 절에서 작성 문서에 데이터 행을 요구하는
+   표는 복제 원본에 등록된 열을 갖춰야 한다. 생성 시점에는 빈 데이터 행 없이
+   표 머리글만 둘 수 있다. form을 손으로 복사해도
    유효하며 validator가 gate다. 이웃 파일명이나 README 목록으로 form을
    추측하지 않는다.
    Stage 90 pack은 반드시 `audits|data|research/####-<slug>/` 아래에서
@@ -267,11 +273,11 @@ Registry가 소유한다. Governed README도 공통 envelope를 사용하지만
 "artifact_id"와 lifecycle binding은 없으며, "status: active"는 router
 constant다. Template은 실제 destination path를 hardcode하지 않는다.
 Spec은 변경 계약과 수용 기준을, Plan은 실행 순서와 위험·예정 검증을
-소유한다. 새 Spec·Plan의 `approved`는 현재 계약의 승인·유효성을 뜻하며
-구현 완료를 뜻하지 않는다. Task의 단일 Lifecycle Traceability 표(Execution Log 아래)는 실행 상태·결과와
+소유한다. 현행 Spec·Plan 상태는 `draft`, `in-review`, `approved`, `cancelled`다.
+`approved`는 현재 계약의 승인·유효성을 뜻한다. Task의 단일 Lifecycle Traceability 표(Execution Log 아래)는 실행 상태·결과와
 증거 포인터를 기록하고, Criterion Decisions 표가 기준별 수용 판정의
 유일한 작성 원본이다. Results 표는 검사 사실을 보존한다. 기존 완료
-Spec·Plan·Task는 당시의 `completed`와 승인·검사 근거를 소급 변경하지 않는다.
+Spec·Plan·Task는 당시 Registry 판본으로 읽으며 상태와 승인·검사 근거를 보존한다.
 새로 작성하거나 현행 내용을 바꾸는 Plan은 승인된 Spec의 제약을
 `Global Constraints`에서 연결하고 Plan에만 필요한 추가 실행 제약을 적으며,
 지속 계약의 실제 현행 소유자와 위치를 Promotion Map의 Owner and Receipt 표에
@@ -315,7 +321,7 @@ supersession, provenance key는 선택된 profile의 order에만 따라 나타�
 | Key | Presence | Grammar | Template value |
 | --- | --- | --- | --- |
 | "title" | 항상 | identity를 반복하지 않는 사람용 이름 | "&#123;&#123;TITLE&#125;&#125;" |
-| "version" | 항상 | SemVer; 새 문서는 "0.1.0" | "0.1.0" |
+| "version" | 항상 | ASCII 숫자 세 요소(`X.Y.Z`), 선행 0·접두사·접미사 없이 표기 | "0.1.0" |
 | "type" | 항상 | Registry profile ID인 "family/kind" | profile literal |
 | "status" | 항상 | profile lifecycle subset 또는 router constant | profile literal |
 | "owner" | 항상 | 책임 소유자 | "&#123;&#123;OWNER&#125;&#125;" |
