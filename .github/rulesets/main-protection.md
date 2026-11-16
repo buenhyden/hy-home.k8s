@@ -26,7 +26,8 @@ that a setting is in force; only a dated authenticated read-back is.
 - Require conversations to be resolved before merge.
 - Block force pushes.
 - Block branch deletion.
-- Require the latest branch head to pass required checks before merge.
+- Require the latest branch head to pass required checks before merge
+  (`strict: true`).
 - Require both `ci-summary` and PR-only `style-pr` from GitHub Actions App
   `15368` on a pull request; the former checks branch metadata and the latter
   checks selected style. Their separate required results carry the style
@@ -110,7 +111,8 @@ has its own input and evidence. The W06 workflow candidate extends `style-pr`
 to aggregate selected style, CI lock and static GitOps identity checks on the PR
 merge candidate using the reviewed base's tool and configuration copies. Its
 job result is separately required. A main push or manual dispatch skips the
-PR-only job. This candidate change has no new remote settings read-back.
+PR-only job. The SPEC-0161 Task records the 2026-11-16 read-back of both
+required contexts and `strict` in EVD-166.
 
 GitHub treats a whole workflow skipped by a path or branch filter as an
 expected check that may remain pending. No CI workflow here declares a `paths`

@@ -1,6 +1,6 @@
 ---
 title: "Affected Pull Request GitOps Validation"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/architecture-decision"
 status: "proposed"
 owner: "platform"
@@ -70,10 +70,11 @@ checks when same-input hosted evidence cannot be authenticated.
 
 ### Follow-up
 
-Record queue, checkout, setup and leaf timing on the first authorized PR run.
-Verify the actual required-check settings separately. During adoption, deliver
-the topology update before a change to the CI dependency lock so the reviewed
-base's exact topology checker can recognize the successor workflow.
+The topology update reached `main` through PR #290 before any change to the
+CI dependency lock. The owning Spec package's Task records the hosted
+aggregate, required-check read-back and observed timings in EVD-166.
+The GitOps leaf was inapplicable on that candidate. An affected hosted GitOps
+run and the operator's adoption decision remain outstanding.
 
 ## Traceability
 

@@ -20055,12 +20055,8 @@
             "path": "scripts/document_contracts.py"
           },
           {
-            "rule_id": "LINK-BROKEN",
-            "path": "scripts/validate-links-and-owners.py"
-          },
-          {
-            "rule_id": "LINK-STAGE-BOUNDARY",
-            "path": "scripts/validate-links-and-owners.py"
+            "rule_id": "REGISTRY_RELATION_POLICY_REF",
+            "path": "scripts/document_contracts.py"
           }
         ],
         "positive_test": {
@@ -20069,11 +20065,9 @@
         },
         "negative_test": {
           "module": "tests/test_relationship_contract.py",
-          "test": "test_policy_authority_is_read_from_template_definition_policy_refs"
+          "test": "test_policy_authority_rejects_invalid_template_policy_refs"
         },
-        "gaps": [
-          "No rule checks that a policy_refs path exists."
-        ]
+        "gaps": []
       },
       {
         "id": "consumer-impact",

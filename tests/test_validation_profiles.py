@@ -94,6 +94,12 @@ class ValidationProfileTests(unittest.TestCase):
                         {"external-service-contracts"}
                         if owner == "agent-shared"
                         else set()
+                    )
+                    # Document contract tests read governance policy files.
+                    | (
+                        {"document-contract-tests"}
+                        if owner == "governance-documents"
+                        else set()
                     ),
                 )
                 self.assertEqual(surface["protectedLevel"], "protected")

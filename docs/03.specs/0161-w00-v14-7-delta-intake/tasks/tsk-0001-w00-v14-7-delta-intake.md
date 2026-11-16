@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.24"
+version: "0.2.25"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -67,6 +67,25 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
   configuration and selection path, with management policy retained.
   The [Desktop profile check](#w07-adapter-desktop-profile-setup) limits
   the local probe to documented configuration inventory.
+- **W00–W07 residual audit:** The 2026-11-16 user request authorizes comparison
+  of all eleven 3.0.1 package prompts and local correction, checks and PR
+  delivery of confirmed gaps. Start at merged `main` (`16f05183`) with clean
+  worktrees. The package is read-only evidence. Use this Task and its existing
+  residue ledger for status. The first edits cover the Requirement transition
+  validator, current rejected ADR retention, matching regressions and owning
+  documentation and Codex provider guidance. The finished intake Spec keeps
+  its approved wording. D03, D04, D15 and D17 distinguish authority, selected proof,
+  content, and actual provider enforcement. Preserve historical approvals and
+  package inputs. Production operations and managed provider policy changes
+  require their existing authority.
+- **R00 resume disposition:** The 2026-11-16 user request scopes the 4.2.0
+  package prompt R00-RESUME to this workspace. Act only on differences from
+  the current implementation, without replaying the eleven reported W00–W07
+  items or treating attached proposals as approval. The user identified the
+  uncommitted W00–W07 residual audit candidate as leftover work to continue.
+  Drafts do not decide implementation, operation or completion. A later
+  request the same day adds the W00-DELTA prompt with the same limits and
+  asks for commit, push, PR and merge of both results.
 
 ## Execution Log
 
@@ -255,6 +274,17 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-163 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Codex Desktop read-only reviewer shell denial | First new turn after EVD-162, active thread App Server metadata and fresh code-reviewer default shell at `537a7428` | FAIL | This turn's server metadata again returned no active named profile and workspaceWrite. The reviewer read RTK.md and exclusive marker creation succeeded. The marker was immediately deleted and independently confirmed absent. No permission exception or escalation was used in the reviewer probe. The profile was already absent at the parent boundary. | no | none |
 | EVD-164 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Desktop turn-start permission-field observation | Codex 0.169.0 App Server ingress and tracing source, read-only aggregate queries against the SSH host diagnostic database | DEFER | The scoped query covered 62 App Server rows for the target chat. A bounded recent secondary query covered 857 App Server rows and found no matching turn-start request. Neither query returned log bodies. The pinned request trace records method and identifiers. The two incoming fields remain unobserved. No launch or policy setting changed and EVD-163 remains open. | no | none |
 | EVD-165 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Claude installed PreToolUse runtime and invalid-output behavior | Claude Code 2.1.325, host Bubblewrap loopback-only namespace, disposable project configuration, synthetic HTTP model replay, inert Bash marker, hook stream events and tool results | PASS | All four scenarios delivered the native Bash PreToolUse event. Valid output and malformed JSON with default behavior created a marker. Exit 2 and malformed JSON with onFailure block refused the tool and returned an error tool result. Each session made two local fixture requests and exited normally. The fixture was removed. This covers the installed native dispatcher in isolation. | no | none |
+| EVD-166 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W06 actual hosted affected aggregate and protection read-back | GitHub Actions runs [43777736819](https://github.com/buenhyden/hy-home.k8s/actions/runs/43777736819) and [43784273324](https://github.com/buenhyden/hy-home.k8s/actions/runs/43784273324) for heads `29735752` and `c2243ef9`, authenticated `gh api` main protection and job records, 2026-11-16 | PASS | `ci-summary` and `style-pr` passed on both heads. The new aggregate passed on `c2243ef9` with the lock and GitOps leaves skipped for absent affected paths. Main required both contexts from GitHub Actions App 15368 with strict updating enabled. A hosted GitOps leaf-positive result remains unobserved. | no | none |
+| EVD-167 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07 Windows Desktop SSH reviewer request settings | User-supplied Windows Desktop diagnostic log and earlier Codex App Server 0.169.0 runtime probes, 2026-11-16 | FAIL | The matched client preparation event at 08:46:44.872 KST recorded a null request profile, workspaceWrite and server-default selection false. All 47 preparation records for the same chat agreed. The raw JSON is unavailable and the runtime write-denial test remains failed. Windows client profile propagation is the next owner boundary. | no | none |
+| EVD-168 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W05-H07 Requirement lifecycle edge mutation regression | Installed validation environment, `python3 -m unittest tests.test_task_acceptance_contract.SpecPlanAuthorityTests` at merged base `16f05183` plus candidate source, 2026-11-16 | PASS | An added draft-to-approved edge first passed registry checking and failed the new regression. The corrected validator refused that edge and a removed return-to-draft edge, kept the current graph valid and passed all ten SpecPlanAuthority tests. | no | none |
+| EVD-169 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | R147-07 document stage and SDLC phase comparison | D03 3.0.1, `.agents/governance/sdlc.md` SDLC-R035, `.agents/governance/document-lifecycle.md` DOCLIFE-R001 and the Stage 99 registry at `16f05183`, 2026-11-16 | PASS | The document stage owns document location, the SDLC phase owns work progression, and the Git point owns delivery. The lifecycle policy and Registry own role-specific transitions without using document stage as execution state. | no | none |
+| EVD-170 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-H05 rejected ADR candidate retention | `tests.test_document_lifecycle_cumulative_history` ADR subset in the installed validation environment, disposable Git history and ADR-0063 snapshot, 2026-11-16 | PASS | The synthetic rejected ADR initially passed staged, strict and explicit-ref validation. The corrected final candidate checks refused retention in all three modes, and the staged deletion with a lineage entry passed. Three ADR regressions and the current proposed ADR-0063 snapshot passed. No actual disposition approval or history rewrite was performed. | no | none |
+| EVD-171 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | COMMIT-BEFORE governance policy selection of document contract tests | `tests.test_validation_profiles` in the installed validation environment at merged base `16f05183` plus candidate source, 2026-11-16 | PASS | The extended route case first failed because the `governance-documents` surface did not select `document-contract-tests`, although document suite tests read `.agents/governance/document-lifecycle.md`. Adding the gate to that surface passed all 17 profile tests and the affected-surface contract. | no | none |
+| EVD-172 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-H12 folder agent guides outside `docs/` | `tests.test_validate_affected_surfaces` and `scripts/validate-affected-surfaces.py` in the installed validation environment, same candidate, 2026-11-16 | PASS | The new case first failed for 16 folder `AGENTS.md` and `CLAUDE.md` paths under `.github`, `examples`, `gitops`, `infrastructure`, `policy`, `scripts` and `tests`. These paths lacked the registry or profile gate that the Stage 99 folder guide profile requires. After the folder surfaces excluded them and `folder-agents-guides` routed them, all 28 tests passed with no ambiguous path. Independent review found that a guide under `scripts/validation/platform/` would also match `cluster-gate-scripts`. The added case first failed with `SURFACE-PATH-AMBIGUOUS`, then passed after that surface received the same exclusion. A classification of both guide names in all tracked directories found no ambiguous path. The 16 unmatched names under the `.agents/` root and `_workspace/` were also unmatched at `16f05183`. | no | none |
+| EVD-173 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | MERGE-BEFORE strict note | `.github/rulesets/main-protection.md` candidate and the EVD-166 read-back, 2026-11-16 | PASS | The intended-state note now names `strict: true` for the latest-head rule and points to the EVD-166 read-back instead of claiming no read-back. No remote setting changed. | no | none |
+| EVD-174 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W05-H01 link-only sections follow the registry | Source read of `scripts/validate-markdown-profiles.py` and `scripts/document_contracts.py` at `16f05183`, 2026-11-16 | PASS | No hard-coded `_LINK_ONLY_SECTIONS` list remains. The profile validator builds link-only headings from each registry form section's `link_only` field. | no | none |
+| EVD-175 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-H11 QA runner fixture branch | Source read of `tests/test_qa_runner.py` at `16f05183`, 2026-11-16 | PASS | The fixture repository is created with `--initial-branch=qa-fixture`, so the remote-tracking test no longer depends on a local `master` default. | no | none |
+| EVD-176 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W00 hosted job description against the current workflow | `.github/workflows/ci.yml` `style-pr` plan and GitOps steps, `.agents/governance/sdlc.md` SDLC-R016 and `.agents/governance/quality.md` QUAL-R006 at `16f05183`, 2026-11-16 | PASS | Both policy statements described `style-pr` as style plus lock only, while the workflow also selects the reviewed base's GitOps identity check for GitOps data. Both now name that leaf and its pending ADR-0063 adoption. No workflow or remote setting changed. | no | none |
 
 #### Edition Delta
 
@@ -2187,6 +2217,112 @@ error. This closes the isolated Claude dispatcher observation. The
 actual workspace Claude session, Desktop read-only reviewer enforcement,
 and receipt of the Desktop permission fields remain separate.
 
+#### W00–W07 Residual Audit
+
+Read the eleven named prompts in the 3.0.1 package on the same repository's
+original checkout. Read the relevant design and decision sections, compare
+with local owners and registered consumers at `16f05183`, and reuse the
+recorded results for unchanged inputs. Keep the package outside runtime
+dependencies and preserve every recorded acceptance. This pass combines
+separate local validator corrections, hosted result read-back and a review
+of provider evidence already supplied by the user.
+
+| Work | Current evidence and action | Remaining condition |
+| --- | --- | --- |
+| W00-DELTA, W01-CONTRACT, W02-DISPOSITION | Reuse the accepted intake and the settled contract and disposition decisions. The intake Spec's statement that results live only in this Task predates the work residue ledger. The Task owns evidence and the ledger owns residue pointers. The finished package's approved Spec stays unchanged under LIFECYCLE-PACKAGE-EXIT, and the user chose to keep it so on 2026-11-16. | Preserve deferred obligations with their existing owners and final-transition scope. |
+| W03-VERSION, W03-FORMS | Reuse numeric comparison, product tag grammar, seven glossary columns, registry forms and the recorded Release role exclusion. | W03-FORMS-D01 still needs the user's acceptance of the verified candidate. |
+| W04-CONTENT, W04-LIFECYCLE | Reuse the recorded draft scope, authorized execution and successor checks. Confirm the independent work axes. Reject a retained rejected ADR in the final candidate and keep historical rejection readable. | The two Stage 90 ledgers retain partial claim review and 241 unobserved application entries. Proposed ADR-0063 was added after the earlier 102-document denominator. W04-H01 awaits acceptance. Production commands remain unobserved. |
+| W05-GATES | Reuse exact-index routing, required outcome checks and identity-bound local reuse. Refuse Requirement edges that bypass review or remove the rework transition. | Relation metadata and schema, promotion cross-checks, copied text and obsolete-check retirement require separate evidence. |
+| W06-DELIVERY | Observe the actual strict protected-main PR results and the revised aggregate in EVD-166. | Remote affected implementation or product coverage beyond style, lock and declared GitOps identity remains open. ADR-0063 is proposed. The next step is bounded trusted-base product checks on changed data and an actual applicable hosted result. |
+| W07-BRIEF, W07-ADAPTER | Reuse the explicit local brief preflight and isolated Claude hook results. The Windows client and effective reviewer scope fail the read-only check in EVD-167. | Native direct, nested, resume and compact enforcement, the workspace Claude path and sensitive-path refusal require fresh provider evidence. Windows Desktop SSH profile propagation requires a client fix before Desktop reviewer acceptance. |
+
+The hosted style job waited three seconds from run creation in each sample.
+Its total fell from 44 to 33 seconds, base plus candidate checkout from seven
+to two seconds, and pinned installation from seven to four seconds. Python
+setup rounded to zero seconds in each. The metadata job waited two and three
+seconds and ran for eight and nine seconds, respectively. The before and
+after pull requests have different inputs and runner allocations. These are
+observed timings, so controlled same-input latency and a positive GitOps
+execution still need their own evidence. The comparison used existing runs
+and made no workflow or branch-protection mutation.
+
+#### R00 Resume Disposition
+
+The 4.2.0 package `plan_resume.py --workspace-profile k8s --actual-head
+16f05183…` reported a snapshot match and kept all eleven items out of replay.
+`plan_evidence.py` listed ten open conditions and no closure declaration. Both
+outputs are read-only plans, not runtime or approval evidence. The residual
+audit candidate's three test modules passed 90 tests in the installed
+validation environment. No new implementation gap was found.
+
+Design summary under package D00: the goal is a difference-only resume. A
+full re-audit and new physical paths are out of scope. The designs read were
+D00, D18, D23, D25, D26 and D28 at package edition 4.2.0. The selected
+approach records dispositions in this Task and its existing ledger. The
+rejected alternative, a separate resume ledger, would duplicate status. The
+interface is the package's read-only `plan_resume.py`, `plan_evidence.py` and
+`plan_sdlc_transition.py` output. These tools do not change the repository
+or authorize execution. Failure handling keeps a known FAIL or an unobserved
+path open and never converts it from a merge. The main risk is a stale
+resume condition that names a finished work item. The checks are the residue
+ledger validation and the selected document QA. Acceptance stays with the
+operator.
+
+The ten k8s attachment actions keep their package dispositions. K-A01,
+K-A02 and K-W03 go to SDLC-STRUCTURE. K-A03 goes to RUNTIME-CLOSE and K-A04
+to T99-CONFORMANCE. K-W01 goes to W10-INFRA, and K-W04 and K-W05 go to
+SDD-CONFORMANCE. K-W02 and K-W06 go to DOC-PATH-PLAN until the final
+transition. No action is adopted as approval. The SDD-WOWNER and SDD-PATHS
+path choices block only the physical moves.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| W00–W07 source, eleven items | KEEP_VERIFIED | PR #290 at `16f05183` and the residual audit above | none |
+| R147-07, W03-H05, W05-H07 pending records | RECONCILE_RECORD | EVD-169, EVD-170, EVD-168 | this candidate's delivery |
+| Native brief checker dispatch, resume and revocation | RUNTIME_ONLY | Source only; no native observation | RUNTIME-CLOSE |
+| Windows Desktop SSH reviewer write denial | RUNTIME_ONLY | EVD-163 and EVD-167 FAIL; the merge does not change it | RUNTIME-CLOSE, client profile propagation |
+| Approval receipt authenticity | RUNTIME_ONLY | A matching form does not authenticate the owner's decision | W11-ACCEPT |
+| Hosted GitOps leaf-positive run | RUNTIME_ONLY | EVD-166 skipped the leaf; ADR-0063 is proposed | W06, first affected GitOps PR |
+| W03-FORMS-D01 and W04-H01 | RUNTIME_ONLY | Awaiting user acceptance | user |
+| Memory, capture, forecast, parallel, gate effect, current docs, cutover scope | OPTIONAL_EXTENSION | Open package evidence obligations | W08, W10, W05, W04, Q07 |
+| SDD-WOWNER and SDD-PATHS physical paths | not applicable | R00 moves no path | DOC-PATH-PLAN, Q07 |
+
+The open ledger entries were read against the current tree because 26 of
+them still waited for a finished W04–W07 start. COMMIT-BEFORE and W03-H12
+were live routing defects and were corrected in EVD-171 and EVD-172 as
+TARGETED_CHANGE. MERGE-BEFORE closed with the note fix in EVD-173. W05-H01
+and W03-H11 were already satisfied at the merged base, and EVD-174 and
+EVD-175 reconcile the records. The other 21 stale entries remain open with
+concrete resume conditions in the Residue Handoff table. Their conditions
+now name RUNTIME-CLOSE, an owner decision or the next change to the owning
+file. W05-H09 still holds compatibility majors and retired aliases that the
+`scripts/AGENTS.md` rule 3 forbids. Removing them needs a separate scoped
+change with its consumer trace. Entries owned by W10 and Q07 and the
+user-acceptance entries are unchanged.
+
+#### W00 Delta Recheck (4.2.0)
+
+The 2026-11-16 request applies the 4.2.0 W00-DELTA prompt to this workspace
+as a difference-only check. The repository had one Git worktree, with HEAD
+at merged `16f05183`. No reset,
+stash or clean was used. The designs read were D00, D15, D17, D18 and D25.
+The package observations read were the k8s repository, PR and CI entries.
+PR #290 read back as merged, with head `c2243ef9`, merge `16f05183` and five
+successful checks. The API listed 100 files, which is its page limit. That
+matches the package observation and the completion baseline.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| W00 intake tables and verdict vocabulary | KEEP_VERIFIED | Accepted intake; the R00 disposition above | none |
+| REQ-0003 renumbering, transcript and final no-recovery clauses | KEEP_VERIFIED | FR-0023, the session capture clause and FR-0020 already match Q02, Q06 and Q10 | none |
+| SDLC-R016 and QUAL-R006 hosted job description | CHANGE | F42-01: both omitted the GitOps identity leaf that `ci.yml` runs in `style-pr`; EVD-176 | none |
+| ADR-0063 adoption of that leaf | UNVERIFIED | ADR proposed; no leaf-positive hosted run (EVD-166) | operator decision, W06 |
+| Native, Desktop and receipt residue | UNVERIFIED | EVD-163, EVD-167 and the R00 table | RUNTIME-CLOSE, W11-ACCEPT |
+
+The policy text now states the current workflow behavior and leaves adoption
+pending. It does not accept ADR-0063. The source observations are static
+reads and do not establish host, native or user acceptance.
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -2197,22 +2333,22 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 
 | ID | Residue | State | Owner | Resume condition | Closure |
 | --- | --- | --- | --- | --- | --- |
-| AGENT-04 | Legacy row `AGENT-04` of `Requirement Changes`: direct, wrapper and nested hook delivery | open | W07 | When W07 starts | none |
-| CI-SCOPE | Legacy row `CI-SCOPE` of `Conflicts`: PR-DURING hosted CI scope; also an OPEN row of Requirement Changes | open | W06 | When W06 starts (W03-D28) | none |
-| COMMIT-AFTER | Legacy row `COMMIT-AFTER` of `Stage QA Handoff`: no post-commit record; decide no blocking hook | open | W06 | When W06 starts | none |
-| COMMIT-BEFORE | Legacy row `COMMIT-BEFORE` of `Stage QA Handoff`: surface selection gap for governance policy changes | open | W06 | When W06 starts | none |
+| AGENT-04 | Legacy row `AGENT-04` of `Requirement Changes`: direct, wrapper and nested hook delivery | open | W07 | When a trusted Claude and Codex session can observe nested, resume and compact hook delivery (RUNTIME-CLOSE) | none |
+| CI-SCOPE | Legacy row `CI-SCOPE` of `Conflicts`: PR-DURING hosted CI scope; also an OPEN row of Requirement Changes | open | W06 | When ADR-0063 or another ADR-0048 successor is accepted with the REQ-0003 FR-0017 amendment | none |
+| COMMIT-AFTER | Legacy row `COMMIT-AFTER` of `Stage QA Handoff`: no post-commit record; decide no blocking hook | open | W06 | With the Git-point binding change to `.agents/governance/git.md` | none |
+| COMMIT-BEFORE | Legacy row `COMMIT-BEFORE` of `Stage QA Handoff`: surface selection gap for governance policy changes | terminal | W06 | When W06 starts | EVD-171 |
 | DOC-04 | Legacy row `DOC-04` of `Requirement Changes`: profile field, state, relation and table definitions reformed | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | DOC-05 | Legacy row `DOC-05` of `Requirement Changes`: section and body contracts match target H2 and H3 and tables | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | DOC-11 | Legacy row `DOC-11` of `Requirement Changes`: a TemplateDefinition for every real template | terminal | W03 | When every template has its TemplateDefinition (W03-H13, W03-H15) | EVD-107 |
 | DOC-12 | Legacy row `DOC-12` of `Conflicts`: display renumbering of Stage 01, 02 and 03; also an OPEN row of Requirement Changes | open | Q07 | After W11 and every applicable docs task, in the separate Q07 task | none |
 | DOC-S00 | Legacy row `DOC-S00` of `Stage QA Handoff`: vocabulary rule_id binding | terminal | W05 | When W05 starts | EVD-138 |
-| DOC-S90 | Legacy row `DOC-S90` of `Stage QA Handoff`: Stage 90 source, edition and freshness checks | open | W05 | When W05 starts | none |
+| DOC-S90 | Legacy row `DOC-S90` of `Stage QA Handoff`: Stage 90 source, edition and freshness checks | open | W05 | At the next Stage 90 profile or validator change | none |
 | DOC-S99 | Legacy row `DOC-S99` of `Stage QA Handoff`: tests hard-code current headings | open | W05 | When W05 moves the hard-coded headings of tests (OPEN-09) | none |
 | GOV-04 | Legacy row `GOV-04` of `Requirement Changes`: the approved registry as a reform target | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | GOV-06 | Legacy row `GOV-06` of `Requirement Changes`: single-writer registry reformed | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | LEDGER | Legacy row `LEDGER` of `Conflicts`: the work residue ledger; built by this package | terminal | W03 | After the user accepts the SPEC-0191 criteria | EVD-055 |
-| MERGE-AFTER | Legacy row `MERGE-AFTER` of `Stage QA Handoff`: no post-merge regression run | open | W06 | When W06 starts | none |
-| MERGE-BEFORE | Legacy row `MERGE-BEFORE` of `Stage QA Handoff`: record strict in the main protection note | open | W06 | When W06 starts | none |
+| MERGE-AFTER | Legacy row `MERGE-AFTER` of `Stage QA Handoff`: no post-merge regression run | open | W06 | With the Git-point binding change to `.agents/governance/git.md` | none |
+| MERGE-BEFORE | Legacy row `MERGE-BEFORE` of `Stage QA Handoff`: record strict in the main protection note | terminal | W06 | When W06 starts | EVD-173 |
 | OLD-RULE-TESTS | Legacy row `Old-rule tests` of `Stage QA Handoff`: CI branch and Python contract tests move only with CI-SCOPE | open | W06 | With CI-SCOPE | none |
 | OPEN-01 | Legacy row `OPEN-01` of `OPEN Dispositions`: semantic atomization of the original report lines | terminal | W00 | Only on a difference shown to affect a current owner (historical, non-blocking; W00:20, 153) | EVD-135 |
 | OPEN-02 | Legacy row `OPEN-02` of `OPEN Dispositions`: review of the relation candidates | terminal | W00 | Same as OPEN-01 | EVD-135 |
@@ -2223,26 +2359,26 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | OPEN-08 | Legacy row `OPEN-08` of `OPEN Dispositions`: live, native and cluster authority | open | W10 | When W10 starts | none |
 | OPEN-09 | Legacy row `OPEN-09` of `OPEN Dispositions`: hard-coded current headings in tests | terminal | W05 | When W05 moves the hard-coded headings | EVD-139 |
 | PR-DURING | Legacy row `PR-DURING` of `Stage QA Handoff`: PR-DURING scope decision (CI-SCOPE) | terminal | W06 | When CI-SCOPE closes | EVD-139 |
-| PUSH-BEFORE | Legacy row `PUSH-BEFORE` of `Stage QA Handoff`: pre-push has no target | open | W06 | When W06 starts | none |
-| QA-03 | Legacy row `QA-03` of `Requirement Changes`: validator input is the reformed registry edition | open | W05 | When W05 starts | none |
-| QA-17 | Legacy row `QA-17` of `Requirement Changes`: validators changed for the reformed registry | open | W05 | When W05 starts | none |
+| PUSH-BEFORE | Legacy row `PUSH-BEFORE` of `Stage QA Handoff`: pre-push has no target | open | W06 | With the Git-point binding change to `.agents/governance/git.md` | none |
+| QA-03 | Legacy row `QA-03` of `Requirement Changes`: validator input is the reformed registry edition | open | W05 | When an evidence row maps each rule to a current check or a narrower residue row | none |
+| QA-17 | Legacy row `QA-17` of `Requirement Changes`: validators changed for the reformed registry | open | W05 | When an evidence row maps each rule to a current check or a narrower residue row | none |
 | R147-03 | Legacy row `R147-03` of `Requirement Changes`: approved norms are reform targets | terminal | W03 | Same as GOV-04 | EVD-110 |
 | R147-04 | Legacy row `R147-04` of `Requirement Changes`: common H2 and H3 forms in templates and consumers | terminal | W03 | When the common forms reach every role (phase 3) | EVD-110 |
-| R147-05 | Legacy row `R147-05` of `Requirement Changes`: tests, QA and scripts follow QA-ALIGNMENT | open | W05 | When W05 starts | none |
-| R147-06 | Legacy row `R147-06` of `Requirement Changes`: bind Git before, during and after cells | open | W06 | When W06 starts | none |
-| R147-07 | Legacy row `R147-07` of `Requirement Changes`: separate SDLC stage from document STAGE | open | W04 | When W04 starts | none |
+| R147-05 | Legacy row `R147-05` of `Requirement Changes`: tests, QA and scripts follow QA-ALIGNMENT | open | W05 | When an evidence row maps each rule to a current check or a narrower residue row | none |
+| R147-06 | Legacy row `R147-06` of `Requirement Changes`: bind Git before, during and after cells | open | W06 | With the Git-point binding change to `.agents/governance/git.md` | none |
+| R147-07 | Legacy row `R147-07` of `Requirement Changes`: separate SDLC stage from document STAGE | terminal | W04 | When W04 starts | EVD-169 |
 | R147-10 | Legacy row `R147-10` of `Requirement Changes`: migrate the registry to the CI chain | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | R147-16 | Legacy row `R147-16` of `Requirement Changes`: Kubernetes impact of governance changes | open | W10 | When W10 starts | none |
-| R147-17 | Legacy row `R147-17` of `Requirement Changes`: harness static versus live provider evidence | open | W07 | When W07 starts | none |
-| R147-20 | Legacy row `R147-20` of `Requirement Changes`: reuse only equivalent results | open | W05 | When W05 starts | none |
+| R147-17 | Legacy row `R147-17` of `Requirement Changes`: harness static versus live provider evidence | open | W07 | At the next provider note edit or at RUNTIME-CLOSE | none |
+| R147-20 | Legacy row `R147-20` of `Requirement Changes`: reuse only equivalent results | open | W05 | When an evidence row maps equivalent-result reuse to the `scripts/qa.py` identity contract | none |
 | R45-06 | Legacy row `R45-06` of `Requirement Changes`: reform the approved registry itself | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | R45-07 | Legacy row `R45-07` of `Requirement Changes`: reform forms and consumers in place | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | R45-10 | Legacy row `R45-10` of `Requirement Changes`: a TemplateDefinition per real template | terminal | W03 | When every template has its TemplateDefinition (W03-H13, W03-H15) | EVD-107 |
 | R45-12 | Legacy row `R45-12` of `Requirement Changes`: verify common adoption across four purposes | terminal | W11 | When another repository's adoption evidence exists (this workspace only) | EVD-137 |
 | SCOPE-10 | Legacy row `SCOPE-10` of `Requirement Changes`: current-copy migration against historical bytes | terminal | W03 | With the migration map of the form change (phase 3) | EVD-110 |
-| SDLC-07 | Legacy row `SDLC-07` of `Requirement Changes`: transition rules in the registry | open | W04 | When W04 starts (policy semantics only) | none |
-| SDLC-08 | Legacy row `SDLC-08` of `Requirement Changes`: old approved registry edition is not a pass basis | open | W05 | When W05 starts | none |
-| SDLC-ROWS | Legacy row `SDLC rows` of `Stage QA Handoff`: PLAN-PROMOTION anchor, member and receipt cross-check | open | W05 | When W05 starts | none |
+| SDLC-07 | Legacy row `SDLC-07` of `Requirement Changes`: transition rules in the registry | open | W04 | When the owner decides between per-family policy edges and the registry-only transition rule | none |
+| SDLC-08 | Legacy row `SDLC-08` of `Requirement Changes`: old approved registry edition is not a pass basis | open | W05 | When a negative test refuses an old approved edition as a pass basis, or with W05-H09 | none |
+| SDLC-ROWS | Legacy row `SDLC rows` of `Stage QA Handoff`: PLAN-PROMOTION anchor, member and receipt cross-check | open | W05 | At the next change to the PLAN-PROMOTION check or the Plan promotion form | none |
 | SPEC-0205-STALE-TEXT | No legacy row: three texts left stale by the H2-list removal of SPEC-0205 and outside its Spec scope: the Plan sentence "a draft until its review and approval receipts exist", the word `sections` in `docs/99.templates/AGENTS.md`, and the TemplateDefinition `validation` strings of `docs/99.templates/registry.json` that say "keep heading lists". Transferred from the closed SPEC-0205 Task (EVD-111) | open | W04+ platform | When the owner of the Plan text, of the Stage 99 `AGENTS.md` and of the registry TemplateDefinition text next edits them in its own package | none |
 | SPEC-0211-REGISTRY-TEXT | No legacy row: wording faults found by the W03-H34 read of `docs/99.templates/registry.json` at `d0ae8cf6` (SPEC-0211 Task EVD-019), beyond `SPEC-0205-STALE-TEXT`: four "keep empty heading lists" pack strings, one "listed their H2 headings" and the provider-native twin "H2 lists" strings; copied or wrong TemplateDefinition and profile text (the data-pack consumer path names the collection README, the collection and runtime-governance template texts copy the stage and implementation texts, the postmortem extension removal names incident lineage, two `review` strings do not name their form, the governance-document form calls itself a provider note); one failure named by both `BODY-HEADING-REQUIRED` and `BODY-H3-REQUIRED`; "A audit" and "a operations policy"; about 28 Korean object particles (을 for 를) in generated `required_content`. Recorded under SPEC-0211 (user answer "Residue to owners, close H34 (Recommended)", 2026-11-15) | open | W04+ platform | When the owner of those registry TemplateDefinition, form and profile texts next edits them in its own package | none |
 | W00-H01 | Legacy row `package contracts set` of `Read Denominator`: 3 partial and 2 listed-only package contract files | terminal | W00 | When a difference shown to affect a current owner is found | EVD-135 |
@@ -2250,12 +2386,12 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W01-H02 | No legacy row: DOC-S00, W01 part, the `rule_id` binding of the vocabulary in `.agents/knowledge/glossary.md` that W05 consumes; the DOC-S00 row holds the W05 part only. W01 stays the owner (the legacy `Stage QA Handoff` row DOC-S00 says "W01 (`.agents/knowledge/glossary.md`); W05 consumes"; PKG W06:331 names W01 the normative canon). Seeded under W03-D78 and W03-D82 by SPEC-0213 | terminal | W01 | When the user decides its per-item withdrawal (Q04); W05 consumes any result | EVD-138 |
 | W03-H02 | Legacy row `W03-H02` of `W03 Decisions`: phase 3 forms for the six SDLC roles and deletion of the heading-list model | terminal | W03 | After phase 2 is accepted | EVD-110 |
 | W03-FORMS-D01 | PKG 3.0.1 form interface and conditional section adoption from W03 Forms 3.0.1 Implementation | open | W03-FORMS | When candidate verification and user acceptance are recorded | none |
-| W03-H05 | Legacy row `W03-H05` of `W03 Decisions`: keep or remove the stored ADR rejected state | open | W04 | When W04 starts | none |
+| W03-H05 | Legacy row `W03-H05` of `W03 Decisions`: keep or remove the stored ADR rejected state | terminal | W04 | When W04 starts | EVD-170 |
 | W03-H08 | Legacy row `W03-H08` of `W03 Decisions`: the per-relationship contract | terminal | W03 | With phase 3 (the SDLC roles own these relations) | EVD-062 |
 | W03-H09 | Legacy row `W03-H09` of `W03 Decisions`: cross-repository equivalence; the owner is W11 by W03-H22 | terminal | W11 | When another repository's adoption evidence exists | EVD-137 |
 | W03-H10 | Legacy row `W03-H10` of `W03 Decisions`: heading-list consumers once a role has a form | terminal | W03 | In the Plan, README and Policy packages respectively | EVD-128 |
-| W03-H11 | Legacy row `W03-H11` of `W03 Decisions`: qa-runner fixture branch name | open | W05 | When W05 starts | none |
-| W03-H12 | Legacy row `W03-H12` of `W03 Decisions`: staged QA routing of folder AGENTS files | open | W05 | When W05 starts | none |
+| W03-H11 | Legacy row `W03-H11` of `W03 Decisions`: qa-runner fixture branch name | terminal | W05 | When W05 starts | EVD-175 |
+| W03-H12 | Legacy row `W03-H12` of `W03 Decisions`: staged QA routing of folder AGENTS files | terminal | W05 | When W05 starts | EVD-172 |
 | W03-H13 | Legacy row `W03-H13` of `W03 Decisions`: SDLC TemplateDefinitions and H2 lists of local roles | terminal | W03 | With phase 3 (W03-H02) | EVD-107 |
 | W03-H15 | Legacy row `W03-H15` of `W03 Decisions`: the full TemplateDefinition record | terminal | W03 | After phase 3; the H07 package named in the row is closed; W05 consumes the record | EVD-091 |
 | W03-H16 | Legacy row `W03-H16` of `W03 Decisions`: link types and relation kinds | terminal | W03 | With W03-H08 in phase 3 | EVD-062 |
@@ -2281,20 +2417,20 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W03-H43 | No legacy row: the `requirement` lifecycle domain yields no creation state, so a new Requirement is refused by the lifecycle creation rule and by the document generator (W03-D48); the repair is a lifecycle contract change of its own | terminal | W03 | When the registry admits a creation state for the `requirement` lifecycle domain | EVD-116 |
 | W03-H44 | No legacy row: the Requirement `Downstream owner` column is a hand-written reciprocal field, 10 of the 68 members are not cited in their description's own `Upstream requirement` column and 17 of its 91 cells are not a single link (W03-D55); the Architecture form package completes the citing rows and then removes the column with a derived coverage check in place of its link check | terminal | W03 | When the Architecture form package (SPEC-0197) completes the citing rows | EVD-093 |
 | W04-H01 | Verified current operating supersession and Spec/Plan state model in W04 Current and Historical Lifecycle Models. Origin: SPEC-0211 Task EVD-019 at `d0ae8cf6` | open | W04 | After the user accepts the verified current lifecycle model | none |
-| W05-H01 | Legacy row `Link-only section` of `Document Form Handoff`: the hard-coded link-only section list must follow the registry | open | W05 | When W05 starts | none |
+| W05-H01 | Legacy row `Link-only section` of `Document Form Handoff`: the hard-coded link-only section list must follow the registry | terminal | W05 | When W05 starts | EVD-174 |
 | W05-H02 | Legacy row `scripts set` of `Read Denominator`: 8 partial and 53 listed-only tracked scripts | terminal | W05 | When W05 re-reads its files before editing | EVD-136 |
 | W05-H03 | Legacy row `tests set` of `Read Denominator`: 5 partial and 68 listed-only tracked tests | terminal | W05 | When W05 re-reads its files before editing | EVD-136 |
-| W05-H04 | No legacy row: derived-copy drift check, a derived body changed alone is refused (source requirement GOV-06, not the legacy `GOV-06` row, which is the registry reform). Frozen SPEC-0166 Handoffs, W05 row, and Trace GOV-06; PKG W01:396-402. Recover the frozen Task with `git show 579280f2:docs/03.specs/0166-w01-governance-alignment/tasks/tsk-0001-w01-governance-alignment.md`. Seeded under W03-D78 by SPEC-0213 | open | W05 | When W05 starts | none |
-| W05-H05 | No legacy row: refusal of contradictory approval text, and refusal tests for rule, code and validator contradictions (source requirement GOV-07). Frozen SPEC-0166 Handoffs, W05 row, and Trace GOV-07; PKG W01:405-411. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | open | W05 | When W05 starts | none |
-| W05-H06 | No legacy row: ARC-08, trace and remove the `done` and `archived` branches of `scripts/validate-links-and-owners.py` and the terminal statuses of `scripts/validation/current_executable_references.py` with their tests when no registry domain reaches them. Frozen SPEC-0167 Handoffs, W05 row, and ARC-08 row; PKG W02:340-343. Recover with `git show 3270cb00:docs/03.specs/0167-w02-safe-disposition/tasks/tsk-0001-w02-safe-disposition.md`. Seeded under W03-D78 by SPEC-0213 | open | W05 | When W05 starts | none |
-| W05-H07 | No legacy row: the registry validator fixes no transition edge set for the `requirement` lifecycle family, so an added `draft` to `approved` edge gives no diagnostic; pre-existing, found by the SPEC-0210 security read (SPEC-0210 Task EVD-029). Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | open | W05 | When W05 starts (validators) | none |
-| W05-H08 | No legacy row: validator and schema points found by the W03-H34 read at `d0ae8cf6` (SPEC-0211 Task EVD-019): the policy-authority relation lists only `scripts/document_contracts.py` and the schema as consumer paths while its checks `LINK-BROKEN` and `LINK-STAGE-BOUNDARY` run in `scripts/validate-links-and-owners.py`, and its gap text says no rule checks a `policy_refs` path; the positive normative link test is named as a negative case, and seven relations use one test as both positive and negative; the schema `relation_owner.carrier` allows `section`, which no relation uses, and `relation.kind` is a free string not tied to the relation kind IDs. Recorded under SPEC-0211 (user answer "Residue to owners, close H34 (Recommended)", 2026-11-15) | open | W05 | When W05 starts (validators and schema) | none |
+| W05-H04 | No legacy row: derived-copy drift check, a derived body changed alone is refused (source requirement GOV-06, not the legacy `GOV-06` row, which is the registry reform). Frozen SPEC-0166 Handoffs, W05 row, and Trace GOV-06; PKG W01:396-402. Recover the frozen Task with `git show 579280f2:docs/03.specs/0166-w01-governance-alignment/tasks/tsk-0001-w01-governance-alignment.md`. Seeded under W03-D78 by SPEC-0213 | open | W05 | At the next change to a derived-copy surface | none |
+| W05-H05 | No legacy row: refusal of contradictory approval text, and refusal tests for rule, code and validator contradictions (source requirement GOV-07). Frozen SPEC-0166 Handoffs, W05 row, and Trace GOV-07; PKG W01:405-411. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | open | W05 | At the next change to approval receipt validation | none |
+| W05-H06 | No legacy row: ARC-08, trace and remove the `done` and `archived` branches of `scripts/validate-links-and-owners.py` and the terminal statuses of `scripts/validation/current_executable_references.py` with their tests when no registry domain reaches them. Frozen SPEC-0167 Handoffs, W05 row, and ARC-08 row; PKG W02:340-343. Recover with `git show 3270cb00:docs/03.specs/0167-w02-safe-disposition/tasks/tsk-0001-w02-safe-disposition.md`. Seeded under W03-D78 by SPEC-0213 | open | W05 | At the next change to `scripts/validation/current_executable_references.py` | none |
+| W05-H07 | No legacy row: the registry validator fixes no transition edge set for the `requirement` lifecycle family, so an added `draft` to `approved` edge gives no diagnostic; pre-existing, found by the SPEC-0210 security read (SPEC-0210 Task EVD-029). Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W05 | When W05 starts (validators) | EVD-168 |
+| W05-H08 | No legacy row: validator and schema points found by the W03-H34 read at `d0ae8cf6` (SPEC-0211 Task EVD-019): the policy-authority relation lists only `scripts/document_contracts.py` and the schema as consumer paths while its checks `LINK-BROKEN` and `LINK-STAGE-BOUNDARY` run in `scripts/validate-links-and-owners.py`, and its gap text says no rule checks a `policy_refs` path; the positive normative link test is named as a negative case, and seven relations use one test as both positive and negative; the schema `relation_owner.carrier` allows `section`, which no relation uses, and `relation.kind` is a free string not tied to the relation kind IDs. Recorded under SPEC-0211 (user answer "Residue to owners, close H34 (Recommended)", 2026-11-15) | open | W05 | At the next edit of the relationship contract schema | none |
 | W06-H01 | Legacy row `workflows set` of `Read Denominator`: 2 listed-only workflow files | terminal | W06 | When W06 re-reads its files before editing | EVD-136 |
 | W07-H01 | Legacy row `hooks set` of `Read Denominator`: 2 listed-only hook files | terminal | W07 | When W07 re-reads its files before editing | EVD-136 |
-| W07-H02 | No legacy row: GOV-08, allow tests for approved local reads, reversible edits and narrow tests, and deny tests for secret access and out-of-scope writes. Frozen SPEC-0166 Handoffs, W07 row, and Trace GOV-08; PKG W01:414-420. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | open | W07 | When W07 starts | none |
-| W07-H03 | No legacy row: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash). Frozen SPEC-0166 Requirement Trace, W01-B row; its Handoffs table does not list it. Recover the frozen Task as for W05-H04. Seeded under W03-D81 by SPEC-0213 | open | W07 | When W07 starts | none |
+| W07-H02 | No legacy row: GOV-08, allow tests for approved local reads, reversible edits and narrow tests, and deny tests for secret access and out-of-scope writes. Frozen SPEC-0166 Handoffs, W07 row, and Trace GOV-08; PKG W01:414-420. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | open | W07 | When a trusted Claude tool session can record sensitive-path allow and deny cases (RUNTIME-CLOSE) | none |
+| W07-H03 | No legacy row: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash). Frozen SPEC-0166 Requirement Trace, W01-B row; its Handoffs table does not list it. Recover the frozen Task as for W05-H04. Seeded under W03-D81 by SPEC-0213 | open | W07 | At the next approval or receipt validator change, or at W11-ACCEPT | none |
 | W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W07 | When W07 starts (provider projections) | EVD-144 |
-| W05-H09 | No legacy row: remove the checks of finished one-time transitions and the compatibility branches for older registry generations found by the SPEC-0219 audit, with their tests, and give any guarantee they still hold to a current contract. The audit names `RETIRED_REFERENCE_ALIASES` in `scripts/validate-links-and-owners.py`, the `docs/00.agent-governance` absence test, the retired progress-ledger and full/ci QA mode checks, the legacy empty-body rule of `validate-markdown-profiles.py`, the old Task and Requirement form layouts in tests, the legacy idempotency-key test of the memory store, the provenance-string assertions on the registry `migration.meaning_map`, and the readers of registry majors 10 to 19. Overlaps: W05-H06 (`done` and `archived` branches) and W05-H08 (validator and schema points) stay separate; W03-H11 holds the qa-runner fixture branch name | open | W05 | When W05 starts | none |
+| W05-H09 | No legacy row: remove the checks of finished one-time transitions and the compatibility branches for older registry generations found by the SPEC-0219 audit, with their tests, and give any guarantee they still hold to a current contract. The audit names `RETIRED_REFERENCE_ALIASES` in `scripts/validate-links-and-owners.py`, the `docs/00.agent-governance` absence test, the retired progress-ledger and full/ci QA mode checks, the legacy empty-body rule of `validate-markdown-profiles.py`, the old Task and Requirement form layouts in tests, the legacy idempotency-key test of the memory store, the provenance-string assertions on the registry `migration.meaning_map`, and the readers of registry majors 10 to 19. Overlaps: W05-H06 (`done` and `archived` branches) and W05-H08 (validator and schema points) stay separate; W03-H11 holds the qa-runner fixture branch name | open | W05 | At the next change to a file that holds the retired aliases or readable majors | none |
 | Q07-H01 | No legacy row: before the final cutover rewrites history and renumbers documents, convert or remove the checks that depend on history or numbering, found by the SPEC-0219 audit. These are the registry `work_residue.historical_tables` path to this Task; the retained ADR range (`FIRST_ADR_OUTSIDE_RETAINED_RANGE`, the registry ADR identity bound); `policy_rule_ids.reserved_codes` and the never-shrink check; the Archived Lineage identity reservations read by `document_lifecycle.py` and `document-generator.py`; `reachable_git_path_exists` in `scripts/validation/current_executable_references.py` with every `git show <sha>:` reference in current documents; the cumulative-history replay range; and the tests that read requirement files 0001 to 0004 by path | open | Q07 | In the Q07-CUTOVER task, after W11 | none |
 
 ## Acceptance Decision

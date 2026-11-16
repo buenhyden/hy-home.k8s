@@ -6,6 +6,7 @@ import copy
 import importlib.util
 import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path, PurePosixPath
 from types import SimpleNamespace
@@ -321,9 +322,43 @@ class RelationshipRegistryTests(unittest.TestCase):
             self.assertTrue(
                 profile["template_definition"]["policy_refs"], profile["id"]
             )
-        defined[0]["template_definition"]["policy_refs"] = []
+        self.assertNotIn("REGISTRY_RELATION_POLICY_REF", contract_rules(raw))
+
+    def test_policy_authority_rejects_invalid_template_policy_refs(self) -> None:
+        raw = raw_registry()
+        definition = next(
+            profile["template_definition"]
+            for profile in raw["profiles"]
+            if profile.get("template_definition")
+        )
+        definition["policy_refs"] = []
         with self.assertRaises(CONTRACTS.DocumentContractError):
             CONTRACTS.validate_registry(ROOT, raw)
+        for reference in (
+            "./.agents/governance/quality.md",
+            ".agents//governance/quality.md",
+            "docs/05.operations/policies/9999-missing-policy.md",
+            "README.md",
+        ):
+            with self.subTest(reference=reference):
+                definition["policy_refs"] = [reference]
+                self.assertIn("REGISTRY_RELATION_POLICY_REF", contract_rules(raw))
+
+        reference = ".agents/governance/quality.md"
+        definition["policy_refs"] = [reference]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            policy = root / reference
+            policy.parent.mkdir(parents=True)
+            policy.symlink_to(ROOT / reference)
+            self.assertTrue(
+                any(
+                    rule == "REGISTRY_RELATION_POLICY_REF"
+                    and reference in actual
+                    and "symlink" in actual
+                    for rule, _, actual, _ in CONTRACTS._relationship_faults(root, raw)
+                )
+            )
 
 
 def _view(

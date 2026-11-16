@@ -1,10 +1,10 @@
 ---
 title: "Codex Provider Notes"
-version: "1.8.0"
+version: "1.8.1"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-16"
 ---
 
 # Codex Provider Notes
@@ -47,6 +47,16 @@ team document, not a special automatic entry filename.
   native `tools` allowlist. Each role projection consumes its provider's
   binding. The validator checks this configuration, not whether a client
   applied it.
+- On the observed Windows Desktop over SSH path with App Server 0.169.0,
+  the reviewer inherited the parent turn's writable scope despite the role
+  projection. The client prepared the request without a named permission
+  profile and with `workspaceWrite`. Before using this path for a read-only
+  role, establish the active parent and reviewer runtime restriction on the
+  exact path. If the path cannot establish it, use a separately authorized
+  review surface with verified read-only enforcement. An independent host CLI
+  check does not establish Desktop enforcement. Apply the
+  [approval and safety policy](../.agents/governance/approval-and-safety.md#requirements)
+  when selecting the authorized review surface.
 - Observed on `codex-cli 0.153.4` (2026-09-06): the client reports `hooks` as a
   stable feature, and the documented surfaces are `.codex/hooks.json` and a
   `[hooks]` table in `.codex/config.toml`. `hooks.json` is adopted; the inline
