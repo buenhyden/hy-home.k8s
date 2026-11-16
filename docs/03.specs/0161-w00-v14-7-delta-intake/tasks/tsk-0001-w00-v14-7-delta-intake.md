@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.25"
+version: "0.2.26"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -86,6 +86,9 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
   Drafts do not decide implementation, operation or completion. A later
   request the same day adds the W00-DELTA prompt with the same limits and
   asks for commit, push, PR and merge of both results.
+  A further request applies the W01-CONTRACT prompt under the same limits
+  and asks the agent to continue until completion and fix errors at their
+  cause.
 
 ## Execution Log
 
@@ -285,6 +288,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-174 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W05-H01 link-only sections follow the registry | Source read of `scripts/validate-markdown-profiles.py` and `scripts/document_contracts.py` at `16f05183`, 2026-11-16 | PASS | No hard-coded `_LINK_ONLY_SECTIONS` list remains. The profile validator builds link-only headings from each registry form section's `link_only` field. | no | none |
 | EVD-175 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-H11 QA runner fixture branch | Source read of `tests/test_qa_runner.py` at `16f05183`, 2026-11-16 | PASS | The fixture repository is created with `--initial-branch=qa-fixture`, so the remote-tracking test no longer depends on a local `master` default. | no | none |
 | EVD-176 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W00 hosted job description against the current workflow | `.github/workflows/ci.yml` `style-pr` plan and GitOps steps, `.agents/governance/sdlc.md` SDLC-R016 and `.agents/governance/quality.md` QUAL-R006 at `16f05183`, 2026-11-16 | PASS | Both policy statements described `style-pr` as style plus lock only, while the workflow also selects the reviewed base's GitOps identity check for GitOps data. Both now name that leaf and its pending ADR-0063 adoption. No workflow or remote setting changed. | no | none |
+| EVD-177 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | SDLC-07 lifecycle edge ownership | `.agents/governance/document-lifecycle.md` Authority, DOCLIFE-R002 and DOCLIFE-R003, the Stage 99 registry `lifecycle` domains and `scripts/document_contracts.py` REGISTRY_LIFECYCLE_DOMAIN at `c6d997fb`, 2026-11-16 | PASS | The policy explains each family's state meanings and names the registry as the sole machine owner of directed transitions. The validators enforce the edges, and the Requirement edge set is fixed. The legacy criterion that the policy restate each family's edges conflicts with the single-owner requirement in the W01 contract and package D24, so the registry stays the only edge owner. | no | none |
+| EVD-178 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W01 vocabulary and contract recheck | `.agents/knowledge/glossary.md`, `.agents/governance/quality.md` QUAL-R015 and QUAL-R016, `.agents/governance/document-lifecycle.md` draft boundary and `.claude/provider.md` binding ownership at `c6d997fb`, 2026-11-16 | PASS | All 64 vocabulary rows use the seven common columns, with numeric contract versions. TERM-REMOVAL cited closed package decision IDs, and now cites REQ-0003-FR-0020. Risk-based review, the draft boundary and the provider binding ownership already matched the confirmed decisions. | no | none |
 
 #### Edition Delta
 
@@ -2323,6 +2328,26 @@ The policy text now states the current workflow behavior and leaves adoption
 pending. It does not accept ADR-0063. The source observations are static
 reads and do not establish host, native or user acceptance.
 
+#### W01 Contract Recheck (4.2.0)
+
+The 2026-11-16 request applies the 4.2.0 W01-CONTRACT prompt with the same
+limits as R00 and W00, starting from merged `c6d997fb`. The designs read were
+D00, D01, D03, D15 and D24, together with the package decisions. No attached
+k8s action targets W01.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Seven-column vocabulary, numeric contract versions | KEEP_VERIFIED | EVD-178 | none |
+| TERM-REMOVAL closed decision IDs | CHANGE | EVD-178 | none |
+| Risk-based review, Q08 | KEEP_VERIFIED | QUAL-R015 and QUAL-R016 | none |
+| Draft writing and execution boundary, Q-DRAFT | KEEP_VERIFIED | document-lifecycle draft clause; SAFE-R020 | none |
+| Native settings as bindings, not a second policy owner | KEEP_VERIFIED | `.claude/provider.md` and `.codex/provider.md` binding sections | none |
+| SDLC-07 lifecycle edge ownership | RECONCILE_RECORD | EVD-177 | none |
+| Approval inferred from a status, checkbox, QA result or verdict | UNVERIFIED | W07-H03 has no refusal test per source | next approval or receipt validator change |
+
+Source reads establish repository contracts only. Native enforcement and
+user acceptance remain with RUNTIME-CLOSE and W11-ACCEPT.
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -2376,7 +2401,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | R45-10 | Legacy row `R45-10` of `Requirement Changes`: a TemplateDefinition per real template | terminal | W03 | When every template has its TemplateDefinition (W03-H13, W03-H15) | EVD-107 |
 | R45-12 | Legacy row `R45-12` of `Requirement Changes`: verify common adoption across four purposes | terminal | W11 | When another repository's adoption evidence exists (this workspace only) | EVD-137 |
 | SCOPE-10 | Legacy row `SCOPE-10` of `Requirement Changes`: current-copy migration against historical bytes | terminal | W03 | With the migration map of the form change (phase 3) | EVD-110 |
-| SDLC-07 | Legacy row `SDLC-07` of `Requirement Changes`: transition rules in the registry | open | W04 | When the owner decides between per-family policy edges and the registry-only transition rule | none |
+| SDLC-07 | Legacy row `SDLC-07` of `Requirement Changes`: transition rules in the registry | terminal | W04 | When the owner decides between per-family policy edges and the registry-only transition rule | EVD-177 |
 | SDLC-08 | Legacy row `SDLC-08` of `Requirement Changes`: old approved registry edition is not a pass basis | open | W05 | When a negative test refuses an old approved edition as a pass basis, or with W05-H09 | none |
 | SDLC-ROWS | Legacy row `SDLC rows` of `Stage QA Handoff`: PLAN-PROMOTION anchor, member and receipt cross-check | open | W05 | At the next change to the PLAN-PROMOTION check or the Plan promotion form | none |
 | SPEC-0205-STALE-TEXT | No legacy row: three texts left stale by the H2-list removal of SPEC-0205 and outside its Spec scope: the Plan sentence "a draft until its review and approval receipts exist", the word `sections` in `docs/99.templates/AGENTS.md`, and the TemplateDefinition `validation` strings of `docs/99.templates/registry.json` that say "keep heading lists". Transferred from the closed SPEC-0205 Task (EVD-111) | open | W04+ platform | When the owner of the Plan text, of the Stage 99 `AGENTS.md` and of the registry TemplateDefinition text next edits them in its own package | none |

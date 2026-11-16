@@ -1,10 +1,10 @@
 ---
 title: "Repository Vocabulary"
-version: "2.0.0"
+version: "2.0.1"
 type: "governance/vocabulary"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-16"
 ---
 
 # Repository Vocabulary
@@ -54,7 +54,7 @@ states no obligation.
 | TERM-PROMOTION | Promotion | 지속 의미 승격 | Handing the lasting meaning of an open change, as the Plan maps it, to the current requirement, design, operations or governance owner. | Moving a file; copying Task state | [Plan and the receiving current document](../governance/document-lifecycle.md) | 3.0.1 |
 | TERM-RETIREMENT | Retirement | 문서 종료 | A decision that ends a document's current effect and fixes its successor owner, lineage and any needed historical basis. | Unconditional deletion | [Document lifecycle policy](../governance/document-lifecycle.md) | 3.0.1 |
 | TERM-ARCHIVE | Archive | 역사 보관 | The holding state of information whose preservation is actually approved. Development trial and error from before the final cutover is not kept by archiving around it; an operational retention duty follows its own target and decision. | Treating vault retention as the end of development | [Preservation and disposition policy](../governance/document-lifecycle.md) | 3.0.1 |
-| TERM-REMOVAL | Removal | 사본 제거 | Taking away the actual copies of, or accessible references to, an approved target, keeping the deletion scope, any remaining copy and the authority apart. The Q01 and Q10 final cutover requires no recovery copy of the past to be kept. | Rewriting Git history; destroying a source without basis | [Disposition Task](../governance/document-lifecycle.md) | 3.0.1 |
+| TERM-REMOVAL | Removal | 사본 제거 | Taking away the actual copies of, or accessible references to, an approved target, keeping the deletion scope, any remaining copy and the authority apart. An approved final transition keeps no recovery copy of its removal targets, as REQ-0003-FR-0020 requires. | Rewriting Git history; destroying a source without basis | [Disposition Task](../governance/document-lifecycle.md) | 3.0.1 |
 | TERM-SUPERSESSION | Supersession | 대체 | A relation in which a new meaning owner takes over the valid scope of an earlier document or decision and links the lineage. | A simple title change | [Lifecycle and relationship contract](../governance/document-lifecycle.md) | 3.0.1 |
 | TERM-HOLD | Preservation Hold | 보존 보류 | A preservation condition that blocks disposal of a given source or evidence until a resolving basis exists. | A blanket stop on all execution | [Preservation owner](../governance/document-lifecycle.md) | 3.0.1 |
 | TERM-REGISTRY | Registry | 등록 계약 | The machine-readable contract that states document profiles, forms, states, relationships and generator bindings. Approval does not exempt it from reform. | A frozen baseline | [Registry contract author](../../docs/99.templates/README.md) | 3.0.1 |
