@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.4.2"
+version: "1.4.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 artifact_id: "RUN-0004"
 ---
 
@@ -38,13 +38,15 @@ Argo Rollouts controller의 자체 notification engine이 같은 채널로 보�
 
 ### Authority and Access
 
-권한 및 접근: 해당 없음 — 이 절에 옮길 소유자, 승인, 권한 문장이 본문에 따로 없다.
+대상 클러스터를 확인한 운영자가 진단한다. ESO 재동기화, 컨트롤러 재시작,
+Rollout의 수동 진행과 복구는 Recovery의 승인 범위에서만 수행한다.
 
 관련 문서: **Operations**: [`../policies/0004-rollouts-notifications-headlamp-policy.md`](../policies/0004-rollouts-notifications-headlamp-policy.md); **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md); **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md); **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md); **ADR-0054**: [`../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md`](../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md)
 
 ### Safety Checks
 
-안전 점검: 해당 없음 — 이 절에 따로 옮길 백업, 가용성, 동시 실행, 비밀 보호 항목이 본문에 없다.
+Secret 값 대신 ExternalSecret 조건과 Secret 메타데이터를 읽는다. Rollout의
+namespace, 이름, 현재 단계와 복구할 stable 리비전은 변경 전에 확인한다.
 
 ## Steps
 
@@ -103,9 +105,15 @@ kubectl -n argo-rollouts logs deploy/argo-rollouts --tail=100 | grep -i 'notif\|
 
 # 전체 Rollout 목록
 kubectl argo rollouts list rollouts --all-namespaces
+```
 
-# Rollout 상세 상태
-kubectl argo rollouts get rollout <name> -n <namespace> --watch
+상세 상태를 읽기 전에 `ROLLOUT_NAME`과 `ROLLOUT_NAMESPACE`를 위 목록에서
+선택한 실제 이름과 namespace로 설정한다.
+
+```bash
+kubectl argo rollouts get rollout \
+  -n "${ROLLOUT_NAMESPACE:?대상 namespace를 지정한다}" --watch \
+  -- "${ROLLOUT_NAME:?대상 Rollout 이름을 지정한다}"
 ```
 
 #### Procedure 4: Headlamp 접근 검증
@@ -206,16 +214,21 @@ kubectl -n argo-rollouts annotate externalsecret argo-rollouts-notification-secr
 
 #### Rollout 수동 프로모션
 
+Procedure 3에서 확인한 대상과 현재 상태를 승인 범위와 대조한다. 다음 단계
+진행과 즉시 전체 프로모션 중 승인된 한 가지만 실행한다.
+
 ```bash
-# operator-approved only
-# canary 다음 단계로 진행
-kubectl argo rollouts promote <rollout-name> -n <namespace>
+# operator-approved canary step only
+kubectl argo rollouts promote \
+  -n "${ROLLOUT_NAMESPACE:?대상 namespace를 지정한다}" \
+  -- "${ROLLOUT_NAME:?대상 Rollout 이름을 지정한다}"
+```
 
-# 전체 즉시 프로모션
-kubectl argo rollouts promote <rollout-name> -n <namespace> --full
-
-# 롤백 (이전 버전으로)
-kubectl argo rollouts undo <rollout-name> -n <namespace>
+```bash
+# operator-approved full promotion only
+kubectl argo rollouts promote --full \
+  -n "${ROLLOUT_NAMESPACE:?대상 namespace를 지정한다}" \
+  -- "${ROLLOUT_NAME:?대상 Rollout 이름을 지정한다}"
 ```
 
 #### 복구: Headlamp TLS NotReady
@@ -256,7 +269,18 @@ kubectl -n headlamp rollout restart deployment headlamp
 
 ### Rollback
 
-- Rollout 문제가 발생하면 `kubectl argo rollouts undo`로 workload 단위 rollback을 수행한다.
+운영자가 대상과 현재 이력을 확인하고, `undo`의 이전 리비전이 승인된 stable
+리비전과 일치할 때 아래 명령을 실행한다.
+
+```bash
+# operator-approved workload rollback only
+kubectl argo rollouts undo \
+  -n "${ROLLOUT_NAMESPACE:?대상 namespace를 지정한다}" \
+  -- "${ROLLOUT_NAME:?대상 Rollout 이름을 지정한다}"
+```
+
+Procedure 3에서 대상 Rollout의 리비전과 상태를 다시 확인한다. Git의 배포
+설정도 되돌려야 하면 검토된 복구 PR과 GitOps reconciliation으로 반영한다.
 
 ### Escalation
 

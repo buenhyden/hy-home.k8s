@@ -31,6 +31,8 @@ import sys
 import tempfile
 from pathlib import Path, PurePosixPath
 
+from semver_grammar import NUMERIC_VERSION_PATTERN
+
 PROVIDERS = ("claude", "codex")
 PATCH_BEGIN = "*** Begin Patch"
 PATCH_END = "*** End Patch"
@@ -59,10 +61,9 @@ SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 
 # SPEC-0207: the one MAJOR number of the Registry Schema Version this guard
 # accepts. Keep it equal to REGISTRY_MAJOR in scripts/document_authority.py; the
-# guard runs from the checkout with the standard library only, so it holds its
-# own copy of the release grammar of scripts/semver_grammar.py.
-DOC_REGISTRY_MAJOR = 20
-_REGISTRY_RELEASE = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
+# guard runs from the trusted checkout with a standard-library dependency only.
+DOC_REGISTRY_MAJOR = 21
+_REGISTRY_RELEASE = re.compile(NUMERIC_VERSION_PATTERN)
 
 
 def registry_version_major(value: object) -> int | None:

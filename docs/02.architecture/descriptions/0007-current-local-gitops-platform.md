@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "2.0.0"
+version: "2.0.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-16"
 artifact_id: "AD-0007"
 ---
 
@@ -14,14 +14,14 @@ artifact_id: "AD-0007"
 
 ### Purpose and Readers
 
-This document defines the reference architecture of the currently implemented local GitOps platform.
-Current structure is described from GitOps desired state and static contract evidence.
+This document describes the local GitOps platform using its current desired-state declarations and static contract evidence.
+The structure and deployment views identify the intended topology, with separately scoped runtime observations kept by the operating owners.
 This AD owns the durable platform view. Operating controls and procedures remain
 with the Stage 05 owners below, and later changes use their own scoped work units.
 
 #### Current architecture summary
 
-The current platform consists of a k3d cluster on the Linux server's native Docker Engine, the ArgoCD App-of-Apps, platform Applications, the workload ApplicationSet, and external service interface contracts.
+The repository declares a k3d cluster on the Linux server's native Docker Engine, the ArgoCD App-of-Apps, platform Applications, the workload ApplicationSet, and external service interface contracts.
 The architecture's core goals are local reproducibility, GitOps-first ownership, secret-safe integration, and current-document traceability.
 
 ### System Boundary
@@ -29,10 +29,10 @@ The architecture's core goals are local reproducibility, GitOps-first ownership,
 - **Owns**:
   - Local k3d cluster configuration and bootstrap assets.
   - ArgoCD root Application, AppProjects, platform Applications, and workload ApplicationSet manifests.
-  - Kubernetes interface contracts for external OpenBao (Vault API compatible), PostgreSQL, Valkey, and observability services.
+  - Kubernetes interface contracts for external OpenBao (Vault API compatible), management Valkey, and observability services.
   - Headlamp, Kiali, Argo Rollouts, Argo Notifications, Traefik, cert-manager, Istio, monitoring, and ESO configuration.
 - **Does Not Own**:
-  - External service containers or cloud provider resources.
+  - External service containers, PostgreSQL runtime and interface admission, or cloud provider resources.
   - Secret values.
   - Live cluster repair without explicit approval.
 - **Non-goals**:
@@ -202,9 +202,11 @@ unreviewed loading directives before rendering. This choice reuses the upstream
 renderer and installed schema engine; a local renderer implementation or a
 second schema CLI would duplicate their responsibilities. Remote bases,
 generators and plugin flexibility are outside the reviewed loading contract.
-Retired full/CI sweeps are not completion gates. Hosted metadata and selected
-style checks have their own observed inputs and cannot certify local platform
-assurance or live cluster health.
+Retired full/CI sweeps are not completion gates. The current workflow declares
+hosted metadata and selected style validation. Affected hosted product
+validation remains a delivery target under [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md).
+Each hosted result requires its own observed input and run. Live cluster
+health requires a separate operating observation.
 
 [Platform reference checks](../../../scripts/validation/platform/ingress.py)
 resolve rendered Ingress class, host, TLS, namespace, backend Service and port
@@ -233,17 +235,22 @@ The Istio CNI manifest is desired state and proves no actual admission or networ
 
 ### Runtime and Deployment
 
-- **Runtime / Platform**:
+- **Declared Runtime / Platform**:
   - Linux server shell with the native Docker Engine.
   - k3d cluster named `hyhome`.
   - Traefik behind the dedicated k8s router (k3d serverlb on `192.168.0.14:443`) for browser access at `<name>.hy-k8s.home.arpa` ([ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md)).
-- **Deployment Model**:
+- **Declared Deployment Model**:
   - Bootstrap installs the initial ArgoCD boundary.
   - Steady-state changes flow through Git and ArgoCD reconciliation.
-- **Operational Evidence**:
+- **Repository-static Verification Commands**:
   - `bash scripts/validate-infrastructure-contracts.sh`
   - `bash scripts/validate-gitops-structure.sh`
   - `bash scripts/validate-k8s-manifests.sh .`
+
+These commands check declarations. This description records no run outcome or
+current live cluster state for this topology. The
+[platform bootstrap runbook](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
+and the operating owners listed above own live verification.
 
 #### Deployment mapping
 
@@ -292,7 +299,7 @@ No separate failure boundary is recorded in this description; the Reliability at
 
 #### Quality scenario architecture paths
 
-The in-review [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md)
+[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md)
 owns each scenario's measure, unit, environment, sample, and threshold or named
 gap. This view identifies the current implementation path and the evidence
 boundary; it does not promote a configured check or repository-static result
@@ -326,7 +333,7 @@ The repository checks structure, Kubernetes YAML, required policy tools, secret 
 | REQ-0004-FR-0008, REQ-0004-FR-0010 | Delivered repository-static layered validation evidence and fail-closed platform reference integrity | N/A — SPEC-0104 left the tree; Git history recovers it; current ingress sources and operating owners are named above, with custom-schema, generated-output and live-observation DEFER explicitly reported |
 | REQ-0004-FR-0014, REQ-0004-NFR-0003 | Namespace and artifact assurance | Existing validators retain their current coverage; conditional digest/SBOM/provenance follow-on remains as stated above and is outside the deleted delivery Spec |
 | REQ-0004-FR-0009 | Example-adjacent native validation without cloud deployment | None; N/A — Spec 0050 left the tree; Git history recovers it |
-| REQ-0004-FR-0011 | Ordered review/rollback boundaries and local-only integration | None; N/A — Spec 0051 left the tree; Git history recovers it |
+| REQ-0004-FR-0011 | Ordered review and rollback boundaries for local platform integration | None; N/A — Spec 0051 left the tree; Git history recovers it |
 | REQ-0004-FR-0012, REQ-0004-FR-0013 | Direct executable-source versions and self-source/external-source distinction | Executable manifests and ADR-0029 |
 
 ### Currentness and Lineage
@@ -352,7 +359,7 @@ lives; nothing is copied between this description, the ADRs and REQ-0004.
 | 9 Architecture decisions | The [decision log](../decisions/) | none |
 | 10 Quality requirements | [Quality and Risks](#quality-and-risks); REQ-0004 scenarios | Measured values remain operator observations |
 | 11 Risks and technical debt | [Implementation owners and remaining boundaries](#implementation-owners-and-remaining-boundaries) | No separate risk register; residuals stay with their owners |
-| 12 Glossary | none | Omitted; the description uses product names, and SDLC terms live in `.agents/governance/sdlc.md` |
+| 12 Glossary | [Repository Vocabulary](../../../.agents/knowledge/glossary.md) | Shared terms use the vocabulary owner. |
 
 ### Lifecycle Traceability
 
@@ -370,7 +377,7 @@ ADR links identify durable decisions; a Spec that left the tree does not own the
 | [REQ-0004-FR-0008](../../01.requirements/0004-current-local-gitops-platform.md) | Composed per-target validation depths with explicit tool, fallback, execution lane and result; static and live evidence stay distinct | N/A — SPEC-0104 left the tree; Git history recovers it |
 | [REQ-0004-FR-0009](../../01.requirements/0004-current-local-gitops-platform.md) | Example-adjacent native validation without cloud deployment | N/A — Spec 0050 left the tree; Git history recovers it |
 | [REQ-0004-FR-0010](../../01.requirements/0004-current-local-gitops-platform.md) | Fail-closed resource and ingress reference integrity with explicit chart/operator declaration boundaries and preserved policy/secret checks | [ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md) |
-| [REQ-0004-FR-0011](../../01.requirements/0004-current-local-gitops-platform.md) | Ordered review/rollback boundaries and local-only integration | N/A — Spec 0051 left the tree; Git history recovers it |
+| [REQ-0004-FR-0011](../../01.requirements/0004-current-local-gitops-platform.md) | Ordered review and rollback boundaries for local platform integration | N/A — Spec 0051 left the tree; Git history recovers it |
 | [REQ-0004-FR-0012](../../01.requirements/0004-current-local-gitops-platform.md) | Direct executable-source versions and self-source/external-source distinction | [ADR 0029](../decisions/0029-mutable-target-revision-retention.md) |
 | [REQ-0004-FR-0013](../../01.requirements/0004-current-local-gitops-platform.md) | Direct executable-source versions and self-source/external-source distinction | [ADR 0029](../decisions/0029-mutable-target-revision-retention.md) |
 | [REQ-0004-FR-0014](../../01.requirements/0004-current-local-gitops-platform.md) | Namespace and artifact assurance | N/A — existing validators retain their current coverage; the conditional digest/SBOM/provenance follow-on is outside the deleted delivery Spec |

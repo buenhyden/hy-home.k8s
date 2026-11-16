@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD ESO OpenBao Recovery Runbook"
-version: "1.6.1"
+version: "1.6.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 artifact_id: "RUN-0002"
 ---
 
@@ -52,7 +52,7 @@ ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
 
 ### Safety Checks
 
-안전 점검: 해당 없음 — 이 절에 따로 옮길 백업, 가용성, 동시 실행, 비밀 보호 항목이 본문에 없으며, 점검 항목은 Steps의 Checklist에 있다.
+Steps의 Checklist를 확인하고, 변경할 각 ConfigMap의 적용 전 상태를 승인된 로컬 위치에 보관한다. 인증정보는 스냅샷·명령 출력·증적에 남기지 않는다.
 
 ## Steps
 
@@ -112,7 +112,8 @@ ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
 
 4. 이름 해석이나 CA drift가 확인된 경우에만 bootstrap `[7.3/11]`과 같은
    입력으로 다시 적용한다. 이 단계는 human-approved break-glass 전용이다.
-   증상이 난 소비자의 ConfigMap만 적용해도 된다.
+   증상이 난 소비자의 ConfigMap만 적용한다. CA ConfigMap을 바꿀 때는 먼저
+   현재 CA bundle을 복구할 수 있는 승인된 입력과 대상·키를 확인한다.
 
    ```bash
    # human-approved break-glass only
@@ -245,8 +246,9 @@ SAN이 없으면 인증서를 재발급한 뒤
 
 CoreDNS custom zone 재적용이 상황을 악화시키면 Steps 1단계의 스냅샷으로
 되돌린다. zone을 삭제하면 cluster 안에서 `openbao`, `prometheus`,
-`grafana` 이름 해석이 모두 끊기므로 삭제로 롤백하지 않는다. CA
-ConfigMap은 같은 `rootCA.pem`으로 다시 적용하는 것이 롤백이다.
+`grafana` 이름 해석이 모두 끊기므로 기존 zone을 복구한다. CA ConfigMap의
+변경을 되돌릴 때는 변경 전과 일치하는 승인된 CA bundle을 같은 대상과 키에
+적용한다. 이전 입력이 없거나 신뢰를 확인할 수 없으면 CA 소유자에게 넘긴다.
 
 ```bash
 # human-approved break-glass only

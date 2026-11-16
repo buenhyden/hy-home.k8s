@@ -217,8 +217,8 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
 
     def write_glossary(self, common: str, local: str = "") -> None:
         header = (
-            "| Term ID | Term | Definition | Not to Confuse | Policy Owner "
-            "| Contract Version |\n| --- | --- | --- | --- | --- | --- |\n"
+            "| Term ID | Term | Korean | Definition | Not to Confuse | Policy Owner "
+            "| Contract Version |\n| --- | --- | --- | --- | --- | --- | --- |\n"
         )
         self.write_readme("glossary.md")
         (self.surface / "glossary.md").write_text(
@@ -234,10 +234,50 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
         )
 
     def term(self, term_id: str, owner: str = "owner/README.md") -> str:
-        return f"| {term_id} | Term | A short meaning. | Other | `{owner}` | 1.0.0 |"
+        return f"| {term_id} | Term | 용어 | A short meaning. | Other | `{owner}` | 1.0.0 |"
 
     def test_valid_vocabulary_passes(self) -> None:
         self.write_glossary(self.term("TERM-ONE"), self.term("TERM-LOCAL-TWO"))
+        self.assertEqual(self.codes(), [])
+
+    def test_contract_version_requires_the_numeric_triplet_in_both_tables(self) -> None:
+        common = self.term("TERM-ONE")
+        local = self.term("TERM-LOCAL-TWO")
+        for value in (
+            "",
+            "v14.7",
+            "1.02.0",
+            "1.2.0-rc.1",
+            "1.2.0+custom",
+            "\u00a01.0.0",
+        ):
+            for rows in (
+                (common.replace("1.0.0", value), local),
+                (common, local.replace("1.0.0", value)),
+            ):
+                with self.subTest(value=value, rows=rows):
+                    self.write_glossary(*rows)
+                    self.assertIn("KNOWLEDGE-CONTRACT-VERSION", self.codes())
+
+    def test_overflow_cannot_supply_the_contract_version(self) -> None:
+        common = self.term("TERM-ONE").replace("short meaning", r"short \| meaning")
+        local = self.term("TERM-LOCAL-TWO")
+        self.write_glossary(common, local)
+        self.assertEqual(self.codes(), [])
+        for common_row, local_row in (
+            (common + " 1.0.0 |", local),
+            (common, local + " 1.0.0 |"),
+        ):
+            with self.subTest(common=common_row, local=local_row):
+                self.write_glossary(
+                    common_row.replace("1.0.0 | 1.0.0", "v14.7 | 1.0.0"),
+                    local_row.replace("1.0.0 | 1.0.0", "v14.7 | 1.0.0"),
+                )
+                self.assertIn("KNOWLEDGE-CONTRACT-VERSION", self.codes())
+
+    def test_a_fenced_example_does_not_supply_a_contract_version(self) -> None:
+        example = self.term("TERM-EXAMPLE").replace("1.0.0", "v14.7")
+        self.write_glossary(f"{self.term('TERM-ONE')}\n\n```md\n{example}\n```")
         self.assertEqual(self.codes(), [])
 
     def test_vocabulary_without_terms_fails(self) -> None:
@@ -258,7 +298,7 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
 
     def test_definition_copying_its_owner_fails(self) -> None:
         borrowed = (
-            "| TERM-ONE | Term | The reconciliation boundary keeps declarative "
+            "| TERM-ONE | Term | 용어 | The reconciliation boundary keeps declarative "
             "desired state under version control so that every applied change "
             "arrives through a reviewed pull request. | Other | "
             "`owner/README.md` | 1.0.0 |"
@@ -273,7 +313,7 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
         )
         (self.root / "owner" / "KO.md").write_text(korean + "\n", encoding="utf-8")
         self.write_glossary(
-            f"| TERM-ONE | Term | {korean} | Other | `owner/KO.md` | 1.0.0 |"
+            f"| TERM-ONE | Term | 용어 | {korean} | Other | `owner/KO.md` | 1.0.0 |"
         )
         self.assertIn("KNOWLEDGE-DUPLICATED-SPAN", self.codes())
 

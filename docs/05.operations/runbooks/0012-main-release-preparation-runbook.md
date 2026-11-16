@@ -1,10 +1,10 @@
 ---
 title: "Main Release Preparation"
-version: "1.4.0"
+version: "1.4.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-16"
 artifact_id: "RUN-0012"
 ---
 
@@ -154,6 +154,13 @@ SemVer tag를 이동하거나 덮어쓰지 않는다. 게시 후 정정이 필�
 operator가 새 버전의 범위와 승인·회복 경로를 결정하고, 원래 Task와
 Release 이력을 보존한다. 원격 결과가 불명확하면 재시도 전에 동일 대상
 존재 여부부터 조회한다.
+
+### Rollback
+
+게시 전에는 준비 PR에서 승인 범위에 해당하는 `CHANGELOG.md` 변경을 원래 main
+내용과 대조해 되돌리고 preview를 다시 실행한다. 이미 main에 통합한 준비 변경은
+Recovery Procedures의 후속 정정 커밋을 사용한다. 게시 이후의 정정은 다음 승인된
+버전에 반영하고 기존 태그와 Release 이력을 보존한다.
 
 ### Escalation
 

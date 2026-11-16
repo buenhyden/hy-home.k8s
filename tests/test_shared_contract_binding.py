@@ -108,7 +108,7 @@ class SharedContractBindingTests(unittest.TestCase):
         raw = copy.deepcopy(self.raw)
         raw["shared_contract"].update(
             stage="candidate",
-            version="3.1.0-draft.1",
+            version="3.1.0",
             source_revision="a" * 40,
             approval_ref=None,
         )
@@ -231,13 +231,15 @@ class SharedContractApprovalFieldsTests(unittest.TestCase):
     def test_candidate_needs_no_approval_facts(self) -> None:
         raw = self.candidate(
             stage="candidate",
-            version="3.1.0-draft.1",
+            version="3.1.0",
             source_revision="a" * 40,
             approval_ref=None,
         )
         for key in APPROVAL_FIELDS:
             del raw["shared_contract"][key]
         self.assertEqual(self.rules(raw), set())
+        raw["shared_contract"]["version"] = "3.1.0-draft.1"
+        self.assertIn("REGISTRY_SCHEMA", self.rules(raw))
 
     def test_unverified_is_admitted_only_with_an_approval_ref(self) -> None:
         for stage in ("candidate", "approved", "adopted"):

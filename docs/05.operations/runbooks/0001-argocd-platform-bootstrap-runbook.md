@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.5.1"
+version: "1.5.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 artifact_id: "RUN-0001"
 ---
 
@@ -43,7 +43,7 @@ K8s DB endpoint가 아니다.
 
 ### Safety Checks
 
-안전 점검: 해당 없음 — 이 절에 따로 옮길 백업, 가용성, 동시 실행, 비밀 보호 항목이 본문에 없으며, 점검 항목은 Steps의 Checklist에 있다.
+Steps의 Checklist에서 호스트·CA 입력과 필수 Valkey 경로를 확인한다. 부트스트랩이나 복구 범위에 없는 변경은 중단한다.
 
 ## Steps
 
@@ -146,7 +146,8 @@ K8s DB endpoint가 아니다.
    DB 접속 검사를 시도하지 않는다.
 
    ```bash
-   kubectl -n platform run svc-probe --rm -it --restart=Never \
+   # operator-approved temporary probe Pod only
+   kubectl --context=k3d-hyhome -n platform run svc-probe --rm -it --restart=Never \
      --image=busybox:1.36 -- sh -c \
      "nc -zvw3 valkey-external 6379"
    ```
@@ -251,14 +252,12 @@ reconciliation이다.
 
 ### Rollback
 
-- [ ] ArgoCD app을 이전 리비전으로 rollback
-
-  ```bash
-  # operator-approved
-  argocd app history root-platform
-  argocd app rollback root-platform <history-id>
-  ```
+`root-platform`은 `main`을 자동 동기화하며 prune과 self-heal을 사용한다.
+운영자는 문제가 생긴 변경과 복구할 Git 리비전을 확인한다. 승인된 복구 PR로
+해당 변경을 되돌린 뒤 자동 reconciliation을 관측한다. root와 영향을 받은
+Application의 리비전·Sync·Health 및 해당 Service Checks를 다시 확인한다.
 
 ### Escalation
 
-에스컬레이션: 해당 없음 — 이 런북은 별도의 에스컬레이션 경로를 정하지 않는다.
+루트 Application을 재조정할 수 없거나 복구 범위에 승인되지 않은 변경이 필요하면
+[플랫폼 운영 정책의 예외 경로](../policies/0001-k8s-gitops-operations-policy.md#exceptions)로 넘긴다.

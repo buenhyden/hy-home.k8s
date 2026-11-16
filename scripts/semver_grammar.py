@@ -1,17 +1,34 @@
-"""The one SemVer 2.0.0 grammar for repository version values."""
+"""Numeric document versions and SemVer 2.0.0 product versions."""
 
 from __future__ import annotations
 
 import re
+from decimal import Decimal
+
+NUMERIC_VERSION_PATTERN = r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
+_NUMERIC = re.compile(NUMERIC_VERSION_PATTERN)
 
 # Unanchored, no `v` prefix; groups: major, minor, patch, prerelease, build.
 _IDENTIFIER = r"(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)"
 SEMVER_PATTERN = (
-    r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
-    rf"(?:-({_IDENTIFIER}(?:\.{_IDENTIFIER})*))?"
+    rf"{NUMERIC_VERSION_PATTERN}(?:-({_IDENTIFIER}(?:\.{_IDENTIFIER})*))?"
     r"(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?"
 )
 _COMPILED = re.compile(SEMVER_PATTERN)
+
+
+def is_numeric_version(value: object) -> bool:
+    return isinstance(value, str) and _NUMERIC.fullmatch(value) is not None
+
+
+def numeric_version_order(value: object) -> tuple[Decimal, Decimal, Decimal] | None:
+    """Return exact numeric components without the int string length limit."""
+
+    match = _NUMERIC.fullmatch(value) if isinstance(value, str) else None
+    if match is None:
+        return None
+    major, minor, patch = match.groups()
+    return Decimal(major), Decimal(minor), Decimal(patch)
 
 
 def is_semver(value: str) -> bool:

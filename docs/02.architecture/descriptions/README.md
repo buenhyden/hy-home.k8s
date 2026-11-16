@@ -1,10 +1,10 @@
 ---
 title: "02.architecture/descriptions (AD)"
-version: "0.8.2"
+version: "0.8.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 ---
 
 # 02.architecture/descriptions (AD)
@@ -66,7 +66,7 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 1. 관련 `01.requirements/` 문서를 먼저 읽어 요구사항 경계를 고정한다.
 2. 새 AD는 `../../99.templates/templates/architecture/description.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/descriptions/####-<system-or-domain>.md`다. 안정 ID `AD-####`는 frontmatter에 둔다.
 3. 주요 설계 결정은 `02.architecture/decisions/`에 별도 ADR로 연결한다.
-4. 구현 가능한 계약은 `03.specs/`로 내려보내고 양방향 링크를 유지한다.
+4. 구현 계약은 `03.specs/`에 두고, 그 계약을 작성하는 Spec에서 관련 AD를 인용한다. 역방향 탐색은 이 관계에서 파생한다.
 
 #### Relative Link Rules
 

@@ -46,8 +46,10 @@ class RetainedLinkAndTemplateTests(unittest.TestCase):
         deleted = PurePosixPath("docs/05.operations/runbooks/deleted.md")
         incoming = PurePosixPath("docs/05.operations/guides/0001-incoming.md")
         unrelated = PurePosixPath("docs/05.operations/guides/0002-unrelated.md")
-        context = SimpleNamespace(
+        context = validator.Context(
+            root=ROOT,
             paths=(incoming, unrelated),
+            baseline_paths=frozenset(),
             profiles={
                 incoming: SimpleNamespace(
                     profile_id="operation/guide", mode="authored"
@@ -60,6 +62,11 @@ class RetainedLinkAndTemplateTests(unittest.TestCase):
                 incoming: "[missing](../runbooks/deleted.md#step)",
                 unrelated: "[incoming](0001-incoming.md)",
             },
+            metadata={},
+            adapter_targets={},
+            governance_current_paths=(),
+            governance_current_states=(),
+            tracked_regular_paths=frozenset(),
         )
         with mock.patch.object(
             validator, "scoped_document_content_paths", return_value=frozenset()
@@ -148,10 +155,14 @@ class RetainedLinkAndTemplateTests(unittest.TestCase):
             "{{SPEC_RELATIVE_PATH}}/extra#success-criteria",
             "{{SPEC_RELATIVE_PATH}}?query=value#success-criteria",
         ):
-            context.texts[forms[0]] = (
-                (ROOT / forms[0]).read_text().replace(expected, malformed)
+            candidate = replace(
+                context,
+                texts={
+                    **context.texts,
+                    forms[0]: context.texts[forms[0]].replace(expected, malformed),
+                },
             )
-            diagnostics = validator._link_diagnostics(context)
+            diagnostics = validator._link_diagnostics(candidate)
             self.assertTrue(
                 any(
                     item.rule_id == "LINK-BROKEN" and item.path == forms[0]
@@ -183,11 +194,11 @@ class RetainedLinkAndTemplateTests(unittest.TestCase):
         original = context.texts[spec]
 
         def rules(text: str) -> list[str]:
-            context.texts[spec] = text
+            candidate = replace(context, texts={**context.texts, spec: text})
             return [
                 item.rule_id
                 for item in validator._body_contract_link_diagnostics(
-                    context, profiles, "registry", selected_paths=frozenset({spec})
+                    candidate, profiles, "registry", selected_paths=frozenset({spec})
                 )
             ]
 

@@ -258,6 +258,23 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
         )
         self.assertFalse(any("coveredBy" in row for row in self.contract["validators"]))
 
+    def test_gate_cannot_be_omitted_from_one_of_its_local_profiles(self) -> None:
+        for profile in ("quick", "staged"):
+            with self.subTest(profile=profile):
+                candidate = {
+                    **self.contract,
+                    "profiles": {
+                        **self.contract["profiles"],
+                        profile: [
+                            gate
+                            for gate in self.contract["profiles"][profile]
+                            if gate != "document-lifecycle"
+                        ],
+                    },
+                }
+                with self.assertRaisesRegex(ValueError, "SURFACE-PROFILE-COVERAGE"):
+                    self.validator.validate_contract(ROOT, candidate)
+
     def test_every_test_module_runs_in_one_gate_selected_by_its_file(self) -> None:
         spec = importlib.util.spec_from_file_location(
             "run_contract_tests", ROOT / "scripts/run-contract-tests.py"

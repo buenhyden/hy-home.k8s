@@ -1,10 +1,10 @@
 ---
 title: "Approval and Safety Policy"
-version: "1.5.0"
+version: "1.6.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-16"
 ---
 
 # Approval and Safety Policy
@@ -111,7 +111,8 @@ The request owner/operator verifies approval through the original trusted
 interaction or native approval interface. Before a protected operation:
 
 1. `SAFE-R009` Bind the approving actor and responsible executor, exact operation, subject
-   or target, reviewed revision/snapshot, and applicable validity conditions.
+   or target, current request revision, reviewed revision/snapshot, and applicable
+   validity conditions.
 2. `SAFE-R010` Verify the original approval and current revocation state through that
    trusted interaction. Record its non-secret reference and the operator's
    verification result in the owning Task or incident; do not copy credentials

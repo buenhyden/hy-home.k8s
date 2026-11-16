@@ -12,10 +12,12 @@ import re
 import sys
 import subprocess
 from collections.abc import Sequence
+from importlib import import_module
 from pathlib import Path, PurePosixPath
 from typing import NamedTuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from semver_grammar import is_numeric_version  # noqa: E402
 from validation.repository.bounded_io import (
     BoundedInputError,
     BoundedOutputError,
@@ -247,6 +249,8 @@ def _check_facts(root: Path, document: str, text: str) -> list[Finding]:
 def _check_vocabulary(document: str, body: str) -> tuple[list[Finding], list[str]]:
     """Check the glossary's term tables; return findings and every term row."""
 
+    markdown = import_module("validate-links-and-owners")
+    body = "\n".join(markdown.root_visible_lines(body))
     common = _pointer_rows(body, VOCABULARY_HEADING)
     if not common:
         return [
@@ -260,7 +264,8 @@ def _check_vocabulary(document: str, body: str) -> tuple[list[Finding], list[str
     findings: list[Finding] = []
     seen: set[str] = set()
     for row in rows:
-        term_id = row.split("|", 1)[0].strip().strip("`")
+        cells = markdown._gfm_table_cells(f"|{row}|", cell_padding=" \t")
+        term_id = cells[0].strip("`")
         if not TERM_ID.match(term_id):
             findings.append(
                 Finding(
@@ -278,6 +283,14 @@ def _check_vocabulary(document: str, body: str) -> tuple[list[Finding], list[str
                 )
             )
         seen.add(term_id)
+        if len(cells) < 7 or not is_numeric_version(cells[6]):
+            findings.append(
+                Finding(
+                    "KNOWLEDGE-CONTRACT-VERSION",
+                    document,
+                    f"`{term_id}` requires an ASCII numeric Contract Version (X.Y.Z)",
+                )
+            )
     return findings, rows
 
 

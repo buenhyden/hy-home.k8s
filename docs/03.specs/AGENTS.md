@@ -19,7 +19,7 @@ adoption and survey residue as pointers; the Task owns execution state.
 | Break work into a Spec, Plan and Task | [supervisor](../../.agents/roles/supervisor.md) | `task-breakdown`, `execution-plan`, `risk-report` | `.claude/agents/supervisor.md` | `.codex/agents/supervisor.toml` |
 | Author package documents | [doc-writer](../../.agents/roles/doc-writer.md) | `docs-stage-conformance`, `docs-stage-routing`, `requirements-to-design` | `.claude/agents/doc-writer.md` | `.codex/agents/doc-writer.toml` |
 | Run checks and record Task evidence | [quality-engineer](../../.agents/roles/quality-engineer.md) | `k8s-validate`, `workspace-harness-audit` | `.claude/agents/quality-engineer.md` | `.codex/agents/quality-engineer.toml` |
-| Optional change review (never a required reviewer) | [code-reviewer](../../.agents/roles/code-reviewer.md) | `risk-report` | `.claude/agents/code-reviewer.md` | `.codex/agents/code-reviewer.toml` |
+| Independent or requested change review | [code-reviewer](../../.agents/roles/code-reviewer.md) | `risk-report` | `.claude/agents/code-reviewer.md` | `.codex/agents/code-reviewer.toml` |
 
 ### Non-goals
 
@@ -57,7 +57,7 @@ Canonical sources are the documents linked or named in the opening paragraph and
    next owner.
 6. Criterion acceptance is the operator's decision; an agent records PASS
    evidence and leaves `Acceptance` pending until the operator accepts.
-7. A finished package promotes each durable contract through the Plan's
+7. For ordinary completed-package disposition, promote each durable contract through the Plan's
    promotion table under Promotion Map > Owner and Receipt (Promotion ID,
    Target Owner, Acceptance, Evidence). Before its final source commit, its Task freezes the
    consumer, hold, authority and method decision. After that commit, the
@@ -84,9 +84,9 @@ Handoff is stated in rules 3 and 5 under Local Obligations.
 
 ### Required Checks
 
-Run the strict document checks listed in the parent `AGENTS.md`, plus
-`python3 scripts/validate-document-lifecycle.py --root . --mode staged`
-before each commit, and `python3 scripts/qa.py staged` on the exact index.
+Select the document checks in the parent `AGENTS.md`. For delivery, the
+staged QA route runs the selected lifecycle and document checks against the
+exact index.
 
 ### Evidence and Limits
 

@@ -62,8 +62,8 @@ Handoff is stated in rule 5 under Local Obligations.
 
 ### Required Checks
 
-Run the strict document checks listed in the parent `AGENTS.md`;
-`validate-document-contract-registry.py` checks pack topology.
+Select the document checks in the parent `AGENTS.md`. When pack topology
+changes, use `validate-document-contract-registry.py` for that boundary.
 
 ### Evidence and Limits
 

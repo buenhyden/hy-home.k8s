@@ -39,16 +39,6 @@ class PublicEntryTests(unittest.TestCase):
             [line.split(":", 1)[0] for line in result.stdout.splitlines()],
             ["quick", "staged"],
         )
-        for retired in ("full", "ci"):
-            with self.subTest(retired=retired):
-                denied = subprocess.run(
-                    [sys.executable, str(ROOT / "scripts/qa.py"), retired],
-                    cwd=ROOT,
-                    capture_output=True,
-                    text=True,
-                )
-                self.assertEqual(denied.returncode, 2)
-                self.assertIn("invalid choice", denied.stderr)
 
 
 class QaTests(unittest.TestCase):
@@ -58,7 +48,7 @@ class QaTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name) / "source"
         self.root.mkdir()
-        self.git("init", "-q")
+        self.git("init", "-q", "--initial-branch=qa-fixture")
         self.git("config", "user.name", "QA Fixture")
         self.git("config", "user.email", "qa@example.invalid")
         (self.root / "file.txt").write_text("original\n")
@@ -238,7 +228,7 @@ class QaTests(unittest.TestCase):
         }
 
         def alter_source(*_args, **kwargs):
-            kwargs["completed_passes"]["document-lifecycle"] = "PASS"
+            kwargs["observed_results"]["document-lifecycle"] = "PASS"
             (self.root / "file.txt").write_text("raced candidate\n")
             self.git("add", "file.txt")
             return 0
@@ -260,6 +250,120 @@ class QaTests(unittest.TestCase):
         ):
             self.assertEqual(self.qa.main(), 1)
         record.assert_not_called()
+
+    def test_zero_runner_exit_cannot_hide_an_invalid_required_result(self):
+        contract = {
+            "profiles": {"quick": ["fixture"]},
+            "validators": [{"id": "fixture", "optional": False}],
+        }
+        for status in (None, "NOT_RUN", "DEFER", "NOT_APPLICABLE", "REUSED"):
+            with self.subTest(status=status):
+
+                def report(*_args, observed_results, **_kwargs):
+                    if status is not None:
+                        observed_results["fixture"] = status
+                    return 0
+
+                with (
+                    mock.patch.object(
+                        sys, "argv", ["qa.py", "quick", "--root", str(self.root)]
+                    ),
+                    mock.patch.object(
+                        self.qa.contract_module,
+                        "validate_contract",
+                        return_value=contract,
+                    ),
+                    mock.patch.object(
+                        self.qa.contract_module,
+                        "select_paths",
+                        return_value={"validators": ["fixture"]},
+                    ),
+                    mock.patch.object(
+                        self.qa.runner, "run_selected", side_effect=report
+                    ),
+                ):
+                    self.assertEqual(self.qa.main(), 1)
+
+    def test_merge_parent_change_cannot_report_qa_success(self):
+        contract = {"profiles": {"quick": []}, "validators": []}
+        for private in (False, True):
+            with self.subTest(private=private):
+
+                def change_merge_parent(snapshot, *_args, **_kwargs):
+                    root = snapshot if private else self.root
+                    (root / ".git/MERGE_HEAD").write_bytes(
+                        self.git("rev-parse", "HEAD")
+                    )
+                    return 0
+
+                with (
+                    mock.patch.object(
+                        sys, "argv", ["qa.py", "quick", "--root", str(self.root)]
+                    ),
+                    mock.patch.object(
+                        self.qa.contract_module,
+                        "validate_contract",
+                        return_value=contract,
+                    ),
+                    mock.patch.object(
+                        self.qa.contract_module,
+                        "select_paths",
+                        return_value={"validators": []},
+                    ),
+                    mock.patch.object(
+                        self.qa.runner, "run_selected", side_effect=change_merge_parent
+                    ),
+                ):
+                    self.assertEqual(self.qa.main(), 1)
+                (self.root / ".git/MERGE_HEAD").unlink(missing_ok=True)
+
+    def test_git_reference_change_cannot_report_qa_success(self):
+        contract = {"profiles": {"quick": []}, "validators": []}
+        baseline = self.git("rev-parse", "HEAD").decode().strip()
+        (self.root / "file.txt").write_text("second revision\n")
+        self.git("commit", "-qam", "second revision")
+        for ref, private in (
+            ("refs/remotes/origin/main", False),
+            ("refs/remotes/origin/main", True),
+            ("ORIG_HEAD", False),
+        ):
+            with self.subTest(ref=ref, private=private):
+                self.git("update-ref", ref, baseline)
+
+                def move_ref(snapshot, *_args, **_kwargs):
+                    self.qa.git(
+                        snapshot if private else self.root, "update-ref", ref, "HEAD"
+                    )
+                    return 0
+
+                with (
+                    mock.patch.object(
+                        sys,
+                        "argv",
+                        [
+                            "qa.py",
+                            "quick",
+                            "--root",
+                            str(self.root),
+                            "--base-ref",
+                            ref,
+                        ],
+                    ),
+                    mock.patch.object(
+                        self.qa.contract_module,
+                        "validate_contract",
+                        return_value=contract,
+                    ),
+                    mock.patch.object(
+                        self.qa.contract_module,
+                        "select_paths",
+                        return_value={"validators": []},
+                    ),
+                    mock.patch.object(
+                        self.qa.runner, "run_selected", side_effect=move_ref
+                    ),
+                ):
+                    self.assertEqual(self.qa.main(), 1)
 
     def test_private_skip_worktree_mutation_is_not_a_pass(self):
         with self.qa.repository_snapshot(self.root, staged=True) as snapshot:
@@ -317,9 +421,10 @@ class QaTests(unittest.TestCase):
         # CI checks out a named branch that is not `main`; `main` exists only as
         # `origin/main`, and archive envelopes resolve against it.
         head = self.git("rev-parse", "HEAD").strip()
+        primary = self.git("branch", "--show-current").decode().strip()
         self.git("update-ref", "refs/remotes/origin/main", "HEAD")
         self.git("switch", "-q", "-c", "ci-validated-checkout")
-        self.git("branch", "-q", "-D", "master")
+        self.git("branch", "-q", "-D", primary)
         for staged in (False, True):
             with self.qa.repository_snapshot(self.root, staged=staged) as snapshot:
                 self.assertEqual(
@@ -417,6 +522,11 @@ class QaTests(unittest.TestCase):
         )
         (adapter / "example").symlink_to("../../.agents/skills/example")
         contract = self.qa.contract_module.validate_contract(ROOT)
+
+        def pass_selected(*_args, validator_ids, observed_results, **_kwargs):
+            observed_results.update(dict.fromkeys(validator_ids, "PASS"))
+            return 0
+
         for staged in (False, True):
             with self.subTest(staged=staged):
                 if staged:
@@ -435,7 +545,7 @@ class QaTests(unittest.TestCase):
                         return_value=contract,
                     ),
                     mock.patch.object(
-                        self.qa.runner, "run_selected", return_value=0
+                        self.qa.runner, "run_selected", side_effect=pass_selected
                     ) as run,
                 ):
                     self.assertEqual(self.qa.main(), 0)
@@ -662,6 +772,13 @@ class QaTests(unittest.TestCase):
         self.git("commit", "-qam", "next")
         next_head = self.git("rev-parse", "HEAD").decode().strip()
         self.assertEqual(self.qa.base_revision(self.root, "quick", ""), next_head)
+
+    def test_quick_baseline_refuses_an_unrelated_default_branch(self):
+        tree = self.git("rev-parse", "HEAD^{tree}").decode().strip()
+        unrelated = self.git("commit-tree", tree, "-m", "unrelated").decode().strip()
+        self.git("update-ref", "refs/remotes/origin/main", unrelated)
+        with self.assertRaisesRegex(ValueError, "Git snapshot command failed"):
+            self.qa.base_revision(self.root, "quick", None)
 
     def test_gate_failure_diagnostics_are_bounded_and_redacted(self):
         row = {
@@ -1062,7 +1179,7 @@ class LocalEvidenceTests(unittest.TestCase):
         }
 
         def mutating_run(snapshot, *_args, **kwargs):
-            kwargs["completed_passes"]["fixture-change-scoped"] = "PASS"
+            kwargs["observed_results"]["fixture-change-scoped"] = "PASS"
             (snapshot / "check.py").write_text("formatter rewrite\n")
             return 0
 

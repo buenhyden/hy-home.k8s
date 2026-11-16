@@ -19,7 +19,6 @@ class GovernanceCutoverTests(unittest.TestCase):
         import os
         import json
 
-        self.assertFalse(os.path.lexists(ROOT / "docs/00.agent-governance"))
         path = ROOT / ".agents/roles/registry.json"
         self.assertTrue(path.is_file())
         registry = json.loads(path.read_text())

@@ -10,6 +10,68 @@ from __future__ import annotations
 
 import subprocess
 from pathlib import Path
+from typing import Any
+
+
+def lifecycle_registry_fixture(raw: dict[str, Any]) -> dict[str, Any]:
+    """Keep the document profiles and form predicates used by lifecycle fixtures."""
+
+    selected = {
+        "governance/rule",
+        "sdlc/architecture-description",
+        "sdlc/spec",
+        "sdlc/plan",
+        *(domain["profile_ids"][0] for domain in raw["lifecycle_domains"]),
+    }
+    profiles = [{**profile} for profile in raw["profiles"] if profile["id"] in selected]
+    roles = {profile.get("document_role") for profile in profiles}
+
+    def sections(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        result = []
+        for item in items:
+            scoped = {**item, "children": sections(item["children"])}
+            if applicability := item.get("applicability"):
+                sources = [
+                    source
+                    for source in applicability["source_profile_ids"]
+                    if source in selected
+                ]
+                if not sources:
+                    continue
+                scoped["applicability"] = {
+                    **applicability,
+                    "source_profile_ids": sources,
+                }
+            result.append(scoped)
+        return result
+
+    # Navigation and language include global profile references unrelated to replay.
+    registry = {
+        key: value
+        for key, value in raw.items()
+        if key not in {"readme_navigation", "document_language"}
+    }
+    return {
+        **registry,
+        "profiles": profiles,
+        "lifecycle_domains": [
+            {
+                **domain,
+                "profile_ids": [
+                    item for item in domain["profile_ids"] if item in selected
+                ],
+            }
+            for domain in raw["lifecycle_domains"]
+        ],
+        "common_forms": {
+            **raw["common_forms"],
+            "forms": [
+                {**form, "sections": sections(form["sections"])}
+                for form in raw["common_forms"]["forms"]
+                if form["form_id"] in roles
+            ],
+        },
+    }
 
 
 class GitFixture:

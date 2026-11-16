@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts Progressive Delivery Architecture Description"
-version: "2.0.0"
+version: "2.0.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-16"
 artifact_id: "AD-0004"
 ---
 
@@ -15,11 +15,11 @@ artifact_id: "AD-0004"
 ### Purpose and Readers
 
 This document defines the reference architecture and quality attributes of progressive delivery based on Argo Rollouts.
-The GitOps resources already exist in the repository, so this AD is not a future implementation plan but a backfill that turns the repo-backed execution contract into traceable architecture input.
+It describes the current GitOps declarations and traces them to the platform requirements. The operational verification scope is recorded under [Runtime and Deployment](#runtime-and-deployment).
 
 #### Current architecture summary
 
-Argo Rollouts provides the controller and dashboard in the `argo-rollouts` namespace and lets application teams run progressive delivery by combining `Rollout`, `AnalysisTemplate`, Istio routing, Traefik, and cert-manager TLS.
+GitOps declares the Argo Rollouts controller and dashboard in the `argo-rollouts` namespace. The designed workload path combines `Rollout`, `AnalysisTemplate`, Istio routing, Traefik, and cert-manager TLS.
 The platform owns the controller install, dashboard access, AppProject permissions, observability exposure, and a default that imposes no promotion mode, with failure safety through an approved `AnalysisTemplate`.
 
 ### System Boundary
@@ -65,8 +65,8 @@ The platform owns the controller install, dashboard access, AppProject permissio
 
 - Platform root app includes `gitops/apps/root/platform-rollouts-app.yaml`.
 - The chart source and exact revision are owned by the [Rollouts Application](../../../gitops/apps/root/platform-rollouts-app.yaml); this AD does not maintain a second version pin.
-- The controller and dashboard run in `argo-rollouts`.
-- Dashboard traffic uses Traefik TLS behind the dedicated k8s router for browser access ([ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md)).
+- The Application targets `argo-rollouts` for the controller and dashboard.
+- The declared dashboard route uses Traefik TLS behind the dedicated k8s router for browser access ([ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md)).
 - Application teams consume the CRDs through workload manifests, for example `gitops/workloads/adminer/rollout.yaml`.
 
 ### Runtime and Deployment
@@ -75,15 +75,14 @@ The platform owns the controller install, dashboard access, AppProject permissio
   - Linux server + k3d/k3s local platform managed by ArgoCD.
   - Namespace: `argo-rollouts`.
   - Dashboard host: `rollouts.hy-k8s.home.arpa`.
-- **Deployment Model**:
-  - `platform-rollouts` ArgoCD Application installs the Helm chart.
+- **Declared Deployment Model**:
+  - `platform-rollouts` ArgoCD Application declares the Helm chart installation.
   - `gitops/apps/root/kustomization.yaml` includes the Application.
   - AppProject `platform` allows the chart repo and destination namespace.
   - AppProject `apps` allows application workloads to use Rollout and Analysis resources.
-- **Operational Evidence**:
-  - Static GitOps checks validate application and kustomization structure.
-  - Manifest checks validate YAML syntax.
-  - Runtime checks are deferred to the runbook when a live cluster is intentionally available.
+- **Verification Scope**:
+  - Static checks cover Application and kustomization structure and manifest syntax.
+  - Controller availability and dashboard reachability remain unobserved in this description. The [operations runbook](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md) owns runtime verification.
 
 ## Interfaces
 

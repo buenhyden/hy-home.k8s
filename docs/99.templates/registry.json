@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": "20.0.0",
+  "schema_version": "21.0.0",
   "profiles": [
     {
       "id": "sdlc/requirement",
@@ -272,9 +272,6 @@
           "draft",
           "in-review",
           "approved",
-          "in-progress",
-          "blocked",
-          "completed",
           "cancelled"
         ]
       },
@@ -286,9 +283,7 @@
           "enforced_statuses": [
             "draft",
             "in-review",
-            "approved",
-            "in-progress",
-            "blocked"
+            "approved"
           ],
           "required_columns": [
             "Requirement ID",
@@ -364,9 +359,6 @@
           "draft",
           "in-review",
           "approved",
-          "in-progress",
-          "blocked",
-          "completed",
           "cancelled"
         ]
       },
@@ -378,9 +370,7 @@
           "enforced_statuses": [
             "draft",
             "in-review",
-            "approved",
-            "in-progress",
-            "blocked"
+            "approved"
           ],
           "required_columns": [
             "Work Unit",
@@ -588,7 +578,7 @@
           "artifact_id"
         ],
         "optional": [
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -599,7 +589,7 @@
           "owner",
           "updated",
           "artifact_id",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "operation/guide"
@@ -664,7 +654,7 @@
           "artifact_id"
         ],
         "optional": [
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -675,7 +665,7 @@
           "owner",
           "updated",
           "artifact_id",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "operation/policy"
@@ -740,7 +730,7 @@
           "artifact_id"
         ],
         "optional": [
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -751,7 +741,7 @@
           "owner",
           "updated",
           "artifact_id",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "operation/runbook"
@@ -2291,7 +2281,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for the repository README: a human entry point that states the project role and boundaries, maps the repository, gives the shortest verified start and points to current documentation and owners.",
         "responsibility": "The root README owns the human-facing orientation to the repository and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
         "non_goals": [
@@ -2418,7 +2409,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a stage README: a human index that states the stage responsibility, lists its current items, and routes readers to the create, review and transition rules and to its upstream, downstream, policy and template documents.",
         "responsibility": "A stage README owns the human-facing index of a documentation stage and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
         "non_goals": [
@@ -2551,7 +2543,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a collection README: a human index that states the stage responsibility, lists its current items, and routes readers to the create, review and transition rules and to its upstream, downstream, policy and template documents.",
         "responsibility": "A collection README owns the human-facing index of a document collection and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
         "non_goals": [
@@ -2693,7 +2686,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for an implementation README: a human document for a code, configuration, agent or provider folder that states the service role, its supported environment, its interfaces, how to develop and check it, and where to operate it.",
         "responsibility": "An implementation README owns the human-facing description of its folder and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
         "non_goals": [
@@ -2839,9 +2833,10 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
-        "purpose": "Give authors one form for a Reference Pack README, here for a audit pack: a router that states the pack contract, its structure, its Pack Index of members, how it is used, its Review and Closure rule and its evidence boundary.",
-        "responsibility": "A audit pack README owns the router of one Stage 90 pack and lists exactly its members in the Pack Index; the member reports and the adopting Stage 01, 02 or 05 owners keep their own authority.",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "2.0.0",
+        "purpose": "Give authors one form for a Reference Pack README, here for an audit pack: a router that states the pack contract, its structure, its Pack Index of members, how it is used, its Review and Closure rule and its evidence boundary.",
+        "responsibility": "An audit pack README owns the router of one Stage 90 pack and lists exactly its members in the Pack Index; the member reports and the adopting Stage 01, 02 or 05 owners keep their own authority.",
         "non_goals": [
           "Defining a COMMON-DOC-FORM-1 role: the Reference Pack README is a Stage 99 local role under W03-D10.",
           "Changing a Stage 90 member report or presenting a pack claim as a requirement, decision or policy.",
@@ -2874,15 +2869,16 @@
         "validation": {
           "positive": [
             "The pack READMEs and the template pass the form tree, navigation, link and residue checks.",
-            "A audit pack with the Review and Closure section, with the optional Method section, or without either, passes."
+            "An audit pack with the Review and Closure section, with or without the optional Method section, passes."
           ],
           "negative": [
+            "The missing closure section fails BODY-HEADING-REQUIRED. A closure section for another pack kind fails BODY-HEADING-INAPPLICABLE.",
             "A pack README with the old Contract or Index heading fails BODY-HEADING-REQUIRED.",
             "A pack Index that omits a member fails README-NAV-COMPLETE."
           ],
           "regression": [
-            "The pack profiles keep empty heading lists, derive the required headings from the form and read navigation from Pack Index.",
-            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+            "The form supplies the closure required by each pack kind and keeps navigation under Pack Index.",
+            "tests/test_common_form_tree.py checks missing and inapplicable closure sections on the pack forms."
           ]
         },
         "migration": {
@@ -2941,7 +2937,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a Reference Pack README, here for a data pack: a router that states the pack contract, its structure, its Pack Index of members, how it is used, its Refresh and Retention rule and its evidence boundary.",
         "responsibility": "A data pack README owns the router of one Stage 90 pack and lists exactly its members in the Pack Index; the member reports and the adopting Stage 01, 02 or 05 owners keep their own authority.",
         "non_goals": [
@@ -2976,15 +2973,16 @@
         "validation": {
           "positive": [
             "The pack READMEs and the template pass the form tree, navigation, link and residue checks.",
-            "A data pack with the Refresh and Retention section, with the optional Method section, or without either, passes."
+            "A data pack with the Refresh and Retention section, with or without the optional Method section, passes."
           ],
           "negative": [
+            "The missing closure section fails BODY-HEADING-REQUIRED. A closure section for another pack kind fails BODY-HEADING-INAPPLICABLE.",
             "A pack README with the old Contract or Index heading fails BODY-HEADING-REQUIRED.",
             "A pack Index that omits a member fails README-NAV-COMPLETE."
           ],
           "regression": [
-            "The pack profiles keep empty heading lists, derive the required headings from the form and read navigation from Pack Index.",
-            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+            "The form supplies the closure required by each pack kind and keeps navigation under Pack Index.",
+            "tests/test_common_form_tree.py checks missing and inapplicable closure sections on the pack forms."
           ]
         },
         "migration": {
@@ -3043,7 +3041,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a Reference Pack README, here for a research pack: a router that states the pack contract, its structure, its Pack Index of members, how it is used, its Refresh and Succession rule and its evidence boundary.",
         "responsibility": "A research pack README owns the router of one Stage 90 pack and lists exactly its members in the Pack Index; the member reports and the adopting Stage 01, 02 or 05 owners keep their own authority.",
         "non_goals": [
@@ -3079,15 +3078,16 @@
         "validation": {
           "positive": [
             "The pack READMEs and the template pass the form tree, navigation, link and residue checks.",
-            "A research pack with the Refresh and Succession section, with the optional Method section, or without either, passes."
+            "A research pack with the Refresh and Succession section, with or without the optional Method section, passes."
           ],
           "negative": [
+            "The missing closure section fails BODY-HEADING-REQUIRED. A closure section for another pack kind fails BODY-HEADING-INAPPLICABLE.",
             "A pack README with the old Contract or Index heading fails BODY-HEADING-REQUIRED.",
             "A pack Index that omits a member fails README-NAV-COMPLETE."
           ],
           "regression": [
-            "The pack profiles keep empty heading lists, derive the required headings from the form and read navigation from Pack Index.",
-            "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries."
+            "The form supplies the closure required by each pack kind and keeps navigation under Pack Index.",
+            "tests/test_common_form_tree.py checks missing and inapplicable closure sections on the pack forms."
           ]
         },
         "migration": {
@@ -3141,7 +3141,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a Workspace README: a router that states what a repository-local staging area holds, what it forbids, its structure, how its output is promoted or cleaned up, and how Git tracks it.",
         "responsibility": "A Workspace README owns the short human-facing boundary of one staging folder under _workspace/ and links the owners of anything durable; it holds no secret, no durable policy and no agent-only instruction.",
         "non_goals": [
@@ -3242,7 +3243,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for the runtime-governance README: a human document that states the role of the repository GitHub surface, its supported environment, its interfaces, how to develop and check it, and where to operate it.",
         "responsibility": "The runtime-governance README owns the human-facing description of the GitHub surface and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
         "non_goals": [
@@ -3369,9 +3371,10 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a Stage 90 audit member that records a dated assurance assessment with its observation boundary and sources.",
-        "responsibility": "A audit member owns its dated evidence and states what it cannot establish; it never becomes policy or current authority by itself.",
+        "responsibility": "An audit member owns its dated evidence and states what it cannot establish; it never becomes policy or current authority by itself.",
         "non_goals": [
           "Being a COMMON-DOC-FORM-1 role: reference-report has its own local form under W03-D20, W03-D26, W03-D35 and W03-D36 and is not a COMMON-DOC-FORM-1 role.",
           "Changing the template's headings, which stay as they are and are now owned by the form.",
@@ -3538,10 +3541,11 @@
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
             "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
             "A recorded section that is not a section ID or local_h3 extension ID of the reference-report form fails REGISTRY_TABLE_SECTION.",
-            "A document with an unregistered H3, an H3 under the wrong H2 or conditional H3 titles out of order fails BODY-H3-UNSUPPORTED, BODY-H3-PARENT or BODY-H3-ORDER in the form tree check."
+            "A document with an unregistered H3, an H3 under the wrong H2 or conditional H3 titles out of order fails BODY-H3-UNSUPPORTED, BODY-H3-PARENT or BODY-H3-ORDER in the form tree check.",
+            "A subtype H3 under the right parent but on another report kind fails BODY-HEADING-INAPPLICABLE."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to reference-report, their form tree with empty H2 lists and this definition's tables.",
+            "tests/test_common_form_tree.py checks subtype applicability, optional H3 sections and this definition’s tables.",
             "tests/test_document_terminal_contract.py compares the typed role list and the typed form identifiers with the schema enums."
           ]
         },
@@ -3600,7 +3604,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a Stage 90 research member that records a dated inquiry with its observation boundary and sources.",
         "responsibility": "A research member owns its dated evidence and states what it cannot establish; it never becomes policy or current authority by itself.",
         "non_goals": [
@@ -3699,10 +3704,11 @@
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
             "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
             "A recorded section that is not a section ID or local_h3 extension ID of the reference-report form fails REGISTRY_TABLE_SECTION.",
-            "A document with an unregistered H3, an H3 under the wrong H2 or conditional H3 titles out of order fails BODY-H3-UNSUPPORTED, BODY-H3-PARENT or BODY-H3-ORDER in the form tree check."
+            "A document with an unregistered H3, an H3 under the wrong H2 or conditional H3 titles out of order fails BODY-H3-UNSUPPORTED, BODY-H3-PARENT or BODY-H3-ORDER in the form tree check.",
+            "A subtype H3 under the right parent but on another report kind fails BODY-HEADING-INAPPLICABLE."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to reference-report, their form tree with empty H2 lists and this definition's tables.",
+            "tests/test_common_form_tree.py checks subtype applicability, optional H3 sections and this definition’s tables.",
             "tests/test_document_terminal_contract.py compares the typed role list and the typed form identifiers with the schema enums."
           ]
         },
@@ -3761,7 +3767,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a Stage 90 data member that records a reproducible repository-fact snapshot with its observation boundary and sources.",
         "responsibility": "A data member owns its dated evidence and states what it cannot establish; it never becomes policy or current authority by itself.",
         "non_goals": [
@@ -3880,10 +3887,11 @@
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
             "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
             "A recorded section that is not a section ID or local_h3 extension ID of the reference-report form fails REGISTRY_TABLE_SECTION.",
-            "A document with an unregistered H3, an H3 under the wrong H2 or conditional H3 titles out of order fails BODY-H3-UNSUPPORTED, BODY-H3-PARENT or BODY-H3-ORDER in the form tree check."
+            "A document with an unregistered H3, an H3 under the wrong H2 or conditional H3 titles out of order fails BODY-H3-UNSUPPORTED, BODY-H3-PARENT or BODY-H3-ORDER in the form tree check.",
+            "A subtype H3 under the right parent but on another report kind fails BODY-HEADING-INAPPLICABLE."
           ],
           "regression": [
-            "tests/test_common_form_tree.py asserts the profiles bound to reference-report, their form tree with empty H2 lists and this definition's tables.",
+            "tests/test_common_form_tree.py checks subtype applicability, optional H3 sections and this definition’s tables.",
             "tests/test_document_terminal_contract.py compares the typed role list and the typed form identifiers with the schema enums."
           ]
         },
@@ -3965,7 +3973,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for an architecture decision record that states the context, the chosen option and its authority, the alternatives, the consequences and the traceability of one durable decision.",
         "responsibility": "An ADR owns one durable decision, its decision maker, effect and lineage; the current structure it changes stays with the Architecture Description, requirements with the Requirement and implementer-level contracts with the Spec.",
         "non_goals": [
@@ -4143,9 +4152,10 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
-        "purpose": "Give authors one form for a current architecture description that states the purpose, system boundary, context and constraints, building blocks, runtime and deployment, interfaces, decisions, quality scenarios and requirement mapping of one system view.",
-        "responsibility": "An architecture description owns the current structure of one system and the requirement-to-architecture relation: it cites every requirement member it serves; requirements, ADR decisions and Spec contracts stay with the Stage 01, Stage 02 decision and Stage 03 owners.",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
+        "purpose": "Give authors one form for one system view that distinguishes the approved structure, the current configuration, and directly observed deployment and behavior.",
+        "responsibility": "An architecture description owns the target and current structure of one system, the evidence boundary of its operational observations, and the requirement-to-architecture relation. It cites every requirement it serves and links the decisions and Spec contracts at their current owners.",
         "non_goals": [
           "Requirement statements or acceptance criteria, which belong to a Requirement.",
           "Decisions, which belong to an ADR, and implementer-level contracts, which belong to a Spec.",
@@ -4343,9 +4353,7 @@
           "enforced_statuses": [
             "draft",
             "in-review",
-            "approved",
-            "in-progress",
-            "blocked"
+            "approved"
           ],
           "required_columns": [
             "Work Unit",
@@ -4374,7 +4382,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for the work order of one Spec that states the goal, shared constraints, dependencies, work units, verification, risks and promotion of durable meaning.",
         "responsibility": "A Plan owns the order of the work for one approved Spec: its units and their criteria, the verification and its placement, the risks with their rollback and the promotion of each durable contract to its current owner; the change contract stays with the Spec and execution and evidence stay with the Task.",
         "non_goals": [
@@ -4660,7 +4669,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for the execution of one Plan work unit set that records its scope and authority, its work and decisions, its observed evidence, its criterion decisions and its handoff.",
         "responsibility": "A Task owns the actual execution of the work its Plan orders: the inputs and authority it ran under, what was done and decided, each observed result with its evidence, the decision on each assigned Spec criterion and the residue and next owner it hands off; the change contract stays with the Spec and the work order with the Plan.",
         "non_goals": [
@@ -4894,7 +4904,7 @@
           "artifact_id"
         ],
         "optional": [
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -4905,7 +4915,7 @@
           "owner",
           "updated",
           "artifact_id",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "operation/guide"
@@ -4943,7 +4953,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a guide that explains or walks a reader through a stable operating procedure.",
         "responsibility": "A guide owns how a reader reaches and checks one operating outcome; execution and recovery steps stay with runbooks and rules stay with policies.",
         "non_goals": [
@@ -5114,7 +5125,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for an incident record that states the confirmed event, its impact, its timeline, its resolution and its evidence.",
         "responsibility": "An incident record owns the observed facts, timeline, mitigation, recovery verification and evidence of one event; causal analysis and corrective actions belong to the postmortem.",
         "non_goals": [
@@ -5245,7 +5257,7 @@
           "artifact_id"
         ],
         "optional": [
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -5256,7 +5268,7 @@
           "owner",
           "updated",
           "artifact_id",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "operation/policy"
@@ -5294,7 +5306,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a operations policy that states one normative rule set with its purpose, scope, requirements, exceptions and ownership.",
         "responsibility": "A operations policy owns the rules, their enforcement and the exceptions and ownership of one governed concern; procedures stay with runbooks and explanations with guides.",
         "non_goals": [
@@ -5490,7 +5503,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a postmortem that records the root cause, the confirmed impact, the corrective actions and their evidence for one incident.",
         "responsibility": "A postmortem owns the causal analysis, contributing factors, corrective actions and review decision for one incident; the observed facts and timeline stay in the incident record.",
         "non_goals": [
@@ -5626,7 +5640,7 @@
           "artifact_id"
         ],
         "optional": [
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -5637,7 +5651,7 @@
           "owner",
           "updated",
           "artifact_id",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "operation/runbook"
@@ -5676,7 +5690,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a runbook that carries an operator through one executable operating procedure, its checks and its recovery.",
         "responsibility": "A runbook owns the preconditions, steps, stop conditions, validation and recovery of one operating procedure; stable explanations stay with guides and rules with policies.",
         "non_goals": [
@@ -5861,7 +5876,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a Requirement package that states the problem, scope, functional and quality requirements, acceptance conditions and traceability of one product or system outcome.",
         "responsibility": "A Requirement owns the user value, its stable member requirements with their rationale and acceptance, and the acceptance boundary; architecture, decisions and change contracts stay with the Stage 02 and Stage 03 owners.",
         "non_goals": [
@@ -6065,9 +6081,7 @@
           "enforced_statuses": [
             "draft",
             "in-review",
-            "approved",
-            "in-progress",
-            "blocked"
+            "approved"
           ],
           "required_columns": [
             "Requirement ID",
@@ -6099,7 +6113,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a change contract that states the intent, scope, behavior, acceptance criteria and references of one bounded change, so that a Plan can order the work and a Task can evidence it.",
         "responsibility": "A Spec owns the change contract and its acceptance criteria for one change: what the change does, what it leaves out, how it behaves at its edges and how each criterion is observed; the work order, risks and rollback stay with the Plan and execution and evidence stay with the Task.",
         "non_goals": [
@@ -6246,7 +6261,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one native form for a Claude agent projection: a provider-native file whose body has no headings.",
         "responsibility": "The projection consumes the native values the provider bindings own and restates no shared policy.",
         "non_goals": [
@@ -6337,7 +6353,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one native form for a Claude command projection: a provider-native file whose body has no headings.",
         "responsibility": "The projection consumes the native values the provider bindings own and restates no shared policy.",
         "non_goals": [
@@ -6419,7 +6436,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one native form for a Codex agent binding: a TOML file with no frontmatter and no headings.",
         "responsibility": "The projection consumes the native values the provider bindings own and restates no shared policy.",
         "non_goals": [
@@ -6526,7 +6544,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a knowledge map: a pointer index that routes readers to canonical owners.",
         "responsibility": "A knowledge map routes and never decides; the owner it points to holds the rule.",
         "non_goals": [
@@ -6629,7 +6648,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for the repository vocabulary: shared term meanings, each with its policy owner and contract version.",
         "responsibility": "The vocabulary owns the meaning of shared terms; each policy keeps its operating rules and the vocabulary restates none.",
         "non_goals": [
@@ -6785,7 +6805,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a prompt contract: its inputs, output, validation and refusal conditions.",
         "responsibility": "A prompt contract owns one request's inputs, output and refusals and grants no authority beyond its governing policy.",
         "non_goals": [
@@ -6888,7 +6909,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a provider note: its overview, authority boundary, governance context, current contract and validation.",
         "responsibility": "The provider document owns a provider note and routes readers to its canonical owners; it restates no rule another owner holds.",
         "non_goals": [
@@ -6990,7 +7012,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a role responsibility: its overview, authority boundary, governance context, current contract and validation.",
         "responsibility": "The role document owns a role responsibility and routes readers to its canonical owners; it restates no rule another owner holds.",
         "non_goals": [
@@ -7093,7 +7116,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a governance rule that states one normative rule set with its purpose, scope, requirements, exceptions and ownership.",
         "responsibility": "A governance rule owns the rules, their enforcement and the exceptions and ownership of one governed concern; procedures stay with runbooks and explanations with guides.",
         "non_goals": [
@@ -7252,7 +7276,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a common workflow that states when it applies, its ordered procedure, its inputs and outputs, and how it is checked and handed off.",
         "responsibility": "A workflow under .agents/workflows/ owns one invoked procedure and its own authority boundary as a registered local heading; policy, role and skill authority stay with their owners and are linked, not copied.",
         "non_goals": [
@@ -7372,7 +7397,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a native skill package that states when the skill applies, its ordered procedure, its inputs and outputs, and how it is checked and handed off.",
         "responsibility": "A SKILL.md owns one invoked procedure; the provider frontmatter, skill name and loader path stay unchanged, and policy, role and approval authority stay with their owners and are linked, not copied.",
         "non_goals": [
@@ -7497,7 +7523,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for the agent instructions of a directory that state its work surface, required policies, workflow, checks and safety boundaries.",
         "responsibility": "An AGENTS.md owns the agent instructions of its directory and the root gateway for Codex; policy, role and skill authority stay with their owners and are linked, not copied.",
         "non_goals": [
@@ -7816,7 +7843,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for an evaluation task declaration.",
         "responsibility": "The task document owns the declared trials and the criteria it fixes before either condition is collected; it does not prove that a provider session ran or that a score is true.",
         "non_goals": [
@@ -8007,7 +8035,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for a score for one paired trial.",
         "responsibility": "The score document owns the observed hashes, signals and scores of one paired trial; it does not prove that a provider session ran or that a score is true.",
         "non_goals": [
@@ -8210,7 +8239,8 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_version": "STAGE99-LOCAL-FORM-1/1.0.0",
+        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors one form for the evaluation aggregate.",
         "responsibility": "The results document owns pair coverage and aggregates for the observed cycles; it does not prove that a provider session ran or that a score is true.",
         "non_goals": [
@@ -8446,9 +8476,6 @@
         "draft": "mutable",
         "in-review": "mutable",
         "approved": "current",
-        "in-progress": "current",
-        "blocked": "current",
-        "completed": "terminal",
         "cancelled": "terminal"
       },
       "transitions": [
@@ -8466,14 +8493,6 @@
         ],
         [
           "approved",
-          "cancelled"
-        ],
-        [
-          "in-progress",
-          "cancelled"
-        ],
-        [
-          "blocked",
           "cancelled"
         ],
         [
@@ -12806,6 +12825,12 @@
             "order": 8,
             "requiredness": "conditional",
             "condition": "a research pack",
+            "applicability": {
+              "source_profile_ids": [
+                "reference/research-pack"
+              ],
+              "required": true
+            },
             "content": "연구 팩의 갱신과 대체 규칙",
             "required_content": [
               "연구 팩의 갱신 시점, 후속 팩으로 대체하는 조건, 대체 뒤 이 팩의 상태를 적는다."
@@ -12830,6 +12855,12 @@
             "order": 9,
             "requiredness": "conditional",
             "condition": "an audit pack",
+            "applicability": {
+              "source_profile_ids": [
+                "reference/audit-pack"
+              ],
+              "required": true
+            },
             "content": "감사 팩의 검토와 종결 규칙",
             "required_content": [
               "감사 팩의 검토 순서, 발견 사항의 종결 조건, 종결 기록을 남길 정본 위치를 적는다."
@@ -12854,6 +12885,12 @@
             "order": 10,
             "requiredness": "conditional",
             "condition": "a data pack",
+            "applicability": {
+              "source_profile_ids": [
+                "reference/data-pack"
+              ],
+              "required": true
+            },
             "content": "자료 팩의 갱신과 보존 규칙",
             "required_content": [
               "자료 팩의 갱신 주기, 보존 기간, 폐기 조건과 보존 근거를 적는다."
@@ -14335,7 +14372,10 @@
           {
             "id": "reference-extension-definitions-facts-instruction-and-context-loading",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0001 that holds a section titled \"Instruction and context loading\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Instruction and context loading\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14346,7 +14386,10 @@
           {
             "id": "reference-extension-definitions-facts-cross-provider-governance",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0001 that holds a section titled \"Cross-provider governance\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Cross-provider governance\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14357,7 +14400,10 @@
           {
             "id": "reference-extension-definitions-facts-workspace-governance-questions",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0001 that holds a section titled \"Workspace governance questions\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Workspace governance questions\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14368,7 +14414,10 @@
           {
             "id": "reference-extension-definitions-facts-historical-observations-and-corrections-2026-08-08-to-2026-09-07",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0001 that holds a section titled \"Historical observations and corrections — 2026-08-08 to 2026-09-07\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Historical observations and corrections — 2026-08-08 to 2026-09-07\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14379,7 +14428,10 @@
           {
             "id": "reference-extension-definitions-facts-harness-components-and-lifecycle",
             "kind": "local_h3",
-            "condition": "the research report m0002 of research pack 0001 that holds a section titled \"Harness components and lifecycle\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Harness components and lifecycle\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0002"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14390,7 +14442,10 @@
           {
             "id": "reference-extension-definitions-facts-loop-design-and-failure-controls",
             "kind": "local_h3",
-            "condition": "the research report m0002 of research pack 0001 that holds a section titled \"Loop design and failure controls\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Loop design and failure controls\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0002"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14401,7 +14456,10 @@
           {
             "id": "reference-extension-definitions-facts-harness-and-loop-questions",
             "kind": "local_h3",
-            "condition": "the research report m0002 of research pack 0001 that holds a section titled \"Harness and loop questions\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Harness and loop questions\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0002"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14412,7 +14470,10 @@
           {
             "id": "reference-extension-definitions-facts-provider-surface-comparison",
             "kind": "local_h3",
-            "condition": "the research report m0003 of research pack 0001 that holds a section titled \"Provider surface comparison\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Provider surface comparison\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0003"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14423,7 +14484,10 @@
           {
             "id": "reference-extension-definitions-facts-hooks-ide-and-sdk-boundaries",
             "kind": "local_h3",
-            "condition": "the research report m0003 of research pack 0001 that holds a section titled \"Hooks IDE and SDK boundaries\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Hooks IDE and SDK boundaries\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0003"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14434,7 +14498,10 @@
           {
             "id": "reference-extension-definitions-facts-provider-verification-questions",
             "kind": "local_h3",
-            "condition": "the research report m0003 of research pack 0001 that holds a section titled \"Provider verification questions\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Provider verification questions\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0003"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14445,7 +14512,10 @@
           {
             "id": "reference-extension-definitions-facts-model-selection-and-escalation",
             "kind": "local_h3",
-            "condition": "the research report m0010 of research pack 0001 that holds a section titled \"Model selection and escalation\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Model selection and escalation\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0010"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14456,7 +14526,10 @@
           {
             "id": "reference-extension-definitions-facts-cost-context-and-rate-control",
             "kind": "local_h3",
-            "condition": "the research report m0010 of research pack 0001 that holds a section titled \"Cost context and rate control\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Cost context and rate control\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0010"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14467,7 +14540,10 @@
           {
             "id": "reference-extension-definitions-facts-model-and-budget-questions",
             "kind": "local_h3",
-            "condition": "the research report m0010 of research pack 0001 that holds a section titled \"Model and budget questions\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Model and budget questions\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0010"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14478,7 +14554,10 @@
           {
             "id": "reference-extension-definitions-facts-memory-authority-and-lifecycle",
             "kind": "local_h3",
-            "condition": "the research report m0011 of research pack 0001 that holds a section titled \"Memory authority and lifecycle\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Memory authority and lifecycle\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0011"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14489,7 +14568,10 @@
           {
             "id": "reference-extension-definitions-facts-retrieval-poisoning-and-handoff",
             "kind": "local_h3",
-            "condition": "the research report m0011 of research pack 0001 that holds a section titled \"Retrieval poisoning and handoff\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Retrieval poisoning and handoff\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0011"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14500,7 +14582,10 @@
           {
             "id": "reference-extension-definitions-facts-memory-verification-questions",
             "kind": "local_h3",
-            "condition": "the research report m0011 of research pack 0001 that holds a section titled \"Memory verification questions\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Memory verification questions\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0011"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14511,7 +14596,10 @@
           {
             "id": "reference-extension-definitions-facts-evidence-axes-and-ownership",
             "kind": "local_h3",
-            "condition": "the research report m0012 of research pack 0001 that holds a section titled \"Evidence axes and ownership\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Evidence axes and ownership\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0012"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14522,7 +14610,10 @@
           {
             "id": "reference-extension-definitions-facts-requirement-coverage-matrix",
             "kind": "local_h3",
-            "condition": "the research report m0012 of research pack 0001 that holds a section titled \"Requirement coverage matrix\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Requirement coverage matrix\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0012"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14533,7 +14624,10 @@
           {
             "id": "reference-extension-definitions-facts-current-claim-ownership-and-evidence-boundaries",
             "kind": "local_h3",
-            "condition": "the research report m0012 of research pack 0001 that holds a section titled \"Current claim ownership and evidence boundaries\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Current claim ownership and evidence boundaries\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0012"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14544,7 +14638,10 @@
           {
             "id": "reference-extension-definitions-facts-historical-consolidation-and-consumer-disposition",
             "kind": "local_h3",
-            "condition": "the research report m0012 of research pack 0001 that holds a section titled \"Historical consolidation and consumer disposition\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Historical consolidation and consumer disposition\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0012"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14555,7 +14652,10 @@
           {
             "id": "reference-extension-definitions-facts-current-source-observations",
             "kind": "local_h3",
-            "condition": "the research report m0012 of research pack 0001 that holds a section titled \"Current source observations\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Current source observations\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0012"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14566,7 +14666,10 @@
           {
             "id": "reference-extension-definitions-facts-2026-10-27-required-source-observations",
             "kind": "local_h3",
-            "condition": "the research report m0012 of research pack 0001 that holds a section titled \"2026-10-27 required-source observations\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"2026-10-27 required-source observations\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0012"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14577,7 +14680,10 @@
           {
             "id": "reference-extension-definitions-facts-historical-source-and-claim-provenance",
             "kind": "local_h3",
-            "condition": "the research report m0012 of research pack 0001 that holds a section titled \"Historical source and claim provenance\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Historical source and claim provenance\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0012"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14588,7 +14694,10 @@
           {
             "id": "reference-extension-definitions-facts-historical-readme-coverage-and-reconciliation",
             "kind": "local_h3",
-            "condition": "the research report m0012 of research pack 0001 that holds a section titled \"Historical README coverage and reconciliation\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Historical README coverage and reconciliation\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0012"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14599,7 +14708,10 @@
           {
             "id": "reference-extension-definitions-facts-analytical-axes-and-evidence-contract",
             "kind": "local_h3",
-            "condition": "the research report m0013 of research pack 0001 that holds a section titled \"Analytical axes and evidence contract\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Analytical axes and evidence contract\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0013"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14610,7 +14722,10 @@
           {
             "id": "reference-extension-definitions-facts-follow-up-question-ledger",
             "kind": "local_h3",
-            "condition": "the research report m0013 of research pack 0001 that holds a section titled \"Follow-up question ledger\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Follow-up question ledger\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0013"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14621,7 +14736,10 @@
           {
             "id": "reference-extension-definitions-facts-historical-scope-projections",
             "kind": "local_h3",
-            "condition": "the research report m0013 of research pack 0001 that holds a section titled \"Historical scope projections\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Historical scope projections\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0001-m0013"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14632,7 +14750,10 @@
           {
             "id": "reference-extension-definitions-facts-git-object-naming-and-availability",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0002 that holds a section titled \"Git object naming and availability\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Git object naming and availability\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0002-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14643,7 +14764,10 @@
           {
             "id": "reference-extension-definitions-facts-superseded-decisions-and-incident-records",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0002 that holds a section titled \"Superseded decisions and incident records\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Superseded decisions and incident records\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0002-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14654,7 +14778,10 @@
           {
             "id": "reference-extension-definitions-facts-public-urls-and-sensitive-data",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0002 that holds a section titled \"Public URLs and sensitive data\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Public URLs and sensitive data\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0002-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14665,7 +14792,10 @@
           {
             "id": "reference-extension-definitions-facts-schema-conditionals-and-annotations",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0002 that holds a section titled \"Schema conditionals and annotations\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Schema conditionals and annotations\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0002-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14676,7 +14806,10 @@
           {
             "id": "reference-extension-definitions-facts-markdown-links-and-code",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0002 that holds a section titled \"Markdown links and code\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Markdown links and code\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0002-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14687,7 +14820,10 @@
           {
             "id": "reference-extension-definitions-facts-documentation-purpose",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0002 that holds a section titled \"Documentation purpose\" under Definitions / Facts",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Documentation purpose\" under Definitions / Facts",
+            "artifact_ids": [
+              "RES-0002-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14698,7 +14834,10 @@
           {
             "id": "reference-extension-sources-findings",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0002 that holds a section titled \"Findings\" under Sources",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Findings\" under Sources",
+            "artifact_ids": [
+              "RES-0002-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14709,7 +14848,10 @@
           {
             "id": "reference-extension-sources-limitations",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0002 that holds a section titled \"Limitations\" under Sources",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Limitations\" under Sources",
+            "artifact_ids": [
+              "RES-0002-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14720,7 +14862,10 @@
           {
             "id": "reference-extension-sources-recommendations",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0002 that holds a section titled \"Recommendations\" under Sources",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Recommendations\" under Sources",
+            "artifact_ids": [
+              "RES-0002-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14731,7 +14876,10 @@
           {
             "id": "reference-extension-review-and-freshness-evidence-insufficiency-correction-dated-2026-09-27",
             "kind": "local_h3",
-            "condition": "the research report m0007 of research pack 0001 that holds a section titled \"Evidence insufficiency correction dated 2026-09-27\" under Review and Freshness",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"Evidence insufficiency correction dated 2026-09-27\" under Review and Freshness",
+            "artifact_ids": [
+              "RES-0001-m0007"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14742,7 +14890,10 @@
           {
             "id": "reference-extension-review-and-freshness-external-claim-qualification-dated-2026-09-27",
             "kind": "local_h3",
-            "condition": "the research report m0008 of research pack 0001 that holds a section titled \"External claim qualification dated 2026-09-27\" under Review and Freshness",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"External claim qualification dated 2026-09-27\" under Review and Freshness",
+            "artifact_ids": [
+              "RES-0001-m0008"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14753,7 +14904,10 @@
           {
             "id": "reference-extension-review-and-freshness-2026-09-28-retention-and-provenance-addendum",
             "kind": "local_h3",
-            "condition": "the research report m0001 of research pack 0002 that holds a section titled \"2026-09-28 Retention and Provenance Addendum\" under Review and Freshness",
+            "condition": "the research report with the listed artifact ID that holds a section titled \"2026-09-28 Retention and Provenance Addendum\" under Review and Freshness",
+            "artifact_ids": [
+              "RES-0002-m0001"
+            ],
             "owner": "platform",
             "verification": "the form tree check",
             "review": "when the Reference Report form changes",
@@ -14793,7 +14947,19 @@
                 "title": "Historical overview and observation boundary",
                 "order": 1,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0004/m0005/m0006/m0009 of research pack 0001) that keeps a section titled \"Historical overview and observation boundary\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical overview and observation boundary\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0004",
+                    "RES-0001-m0005",
+                    "RES-0001-m0006",
+                    "RES-0001-m0009"
+                  ],
+                  "required": false
+                },
                 "content": "Historical overview and observation boundary 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -14842,7 +15008,19 @@
                 "title": "Historical reference classification",
                 "order": 1,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0004/m0005/m0006/m0009 of research pack 0001) that keeps a section titled \"Historical reference classification\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical reference classification\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0004",
+                    "RES-0001-m0005",
+                    "RES-0001-m0006",
+                    "RES-0001-m0009"
+                  ],
+                  "required": false
+                },
                 "content": "Historical reference classification 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -14891,7 +15069,19 @@
                 "title": "Historical authority statement",
                 "order": 1,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0004/m0005/m0006/m0009 of research pack 0001) that keeps a section titled \"Historical authority statement\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical authority statement\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0004",
+                    "RES-0001-m0005",
+                    "RES-0001-m0006",
+                    "RES-0001-m0009"
+                  ],
+                  "required": false
+                },
                 "content": "Historical authority statement 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -14941,6 +15131,12 @@
                 "order": 1,
                 "requiredness": "conditional",
                 "condition": "an audit report that states its criteria and inspected surface",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/audit"
+                  ],
+                  "required": false
+                },
                 "content": "Criteria and Inspected Surface 절",
                 "required_content": [
                   "감사 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -14964,7 +15160,19 @@
                 "title": "Historical scope",
                 "order": 2,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0004/m0005/m0006/m0009 of research pack 0001) that keeps a section titled \"Historical scope\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical scope\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0004",
+                    "RES-0001-m0005",
+                    "RES-0001-m0006",
+                    "RES-0001-m0009"
+                  ],
+                  "required": false
+                },
                 "content": "Historical scope 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -14989,6 +15197,12 @@
                 "order": 3,
                 "requiredness": "conditional",
                 "condition": "a research report that states its research questions",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "required": false
+                },
                 "content": "Research Questions 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15013,6 +15227,12 @@
                 "order": 4,
                 "requiredness": "conditional",
                 "condition": "a research report that states its collection and analysis method",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "required": false
+                },
                 "content": "Method 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15062,6 +15282,12 @@
                 "order": 1,
                 "requiredness": "conditional",
                 "condition": "an audit report that records its observed evidence",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/audit"
+                  ],
+                  "required": false
+                },
                 "content": "Observed Evidence 절",
                 "required_content": [
                   "감사 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15086,6 +15312,12 @@
                 "order": 2,
                 "requiredness": "conditional",
                 "condition": "an audit report that records its findings and gaps",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/audit"
+                  ],
+                  "required": false
+                },
                 "content": "Findings and Gaps 절",
                 "required_content": [
                   "감사 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15109,7 +15341,19 @@
                 "title": "Historical observations and corrections — 2026-08-08 to 2026-09-05",
                 "order": 3,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0002/m0003/m0010/m0011 of research pack 0001) that keeps a section titled \"Historical observations and corrections — 2026-08-08 to 2026-09-05\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical observations and corrections — 2026-08-08 to 2026-09-05\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0002",
+                    "RES-0001-m0003",
+                    "RES-0001-m0010",
+                    "RES-0001-m0011"
+                  ],
+                  "required": false
+                },
                 "content": "Historical observations and corrections — 2026-08-08 to 2026-09-05 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15133,7 +15377,19 @@
                 "title": "Current external analysis",
                 "order": 4,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0004/m0005/m0006/m0009 of research pack 0001) that keeps a section titled \"Current external analysis\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Current external analysis\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0004",
+                    "RES-0001-m0005",
+                    "RES-0001-m0006",
+                    "RES-0001-m0009"
+                  ],
+                  "required": false
+                },
                 "content": "Current external analysis 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15157,7 +15413,19 @@
                 "title": "Historical analysis and dated observations",
                 "order": 5,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0004/m0005/m0006/m0009 of research pack 0001) that keeps a section titled \"Historical analysis and dated observations\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical analysis and dated observations\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0004",
+                    "RES-0001-m0005",
+                    "RES-0001-m0006",
+                    "RES-0001-m0009"
+                  ],
+                  "required": false
+                },
                 "content": "Historical analysis and dated observations 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15181,7 +15449,17 @@
                 "title": "Current external research",
                 "order": 6,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0007/m0008 of research pack 0001) that keeps a section titled \"Current external research\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Current external research\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0007",
+                    "RES-0001-m0008"
+                  ],
+                  "required": false
+                },
                 "content": "Current external research 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15205,7 +15483,17 @@
                 "title": "Follow-up workspace questions",
                 "order": 7,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0007/m0008 of research pack 0001) that keeps a section titled \"Follow-up workspace questions\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Follow-up workspace questions\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0007",
+                    "RES-0001-m0008"
+                  ],
+                  "required": false
+                },
                 "content": "Follow-up workspace questions 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15230,6 +15518,12 @@
                 "order": 8,
                 "requiredness": "conditional",
                 "condition": "a research report that records each claim against its sources",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "required": false
+                },
                 "content": "Claim-Source Matrix 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15254,6 +15548,12 @@
                 "order": 9,
                 "requiredness": "conditional",
                 "condition": "a research report that states its findings",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "required": false
+                },
                 "content": "Findings 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15278,6 +15578,12 @@
                 "order": 10,
                 "requiredness": "conditional",
                 "condition": "a data report that records its schema",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/data"
+                  ],
+                  "required": false
+                },
                 "content": "Schema 절",
                 "required_content": [
                   "데이터 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15302,6 +15608,12 @@
                 "order": 11,
                 "requiredness": "conditional",
                 "condition": "a data report that records its repository facts",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/data"
+                  ],
+                  "required": false
+                },
                 "content": "Repository Facts 절",
                 "required_content": [
                   "데이터 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15350,7 +15662,20 @@
                 "title": "Historical source provenance",
                 "order": 1,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0001/m0002/m0003/m0010/m0011 of research pack 0001) that keeps a section titled \"Historical source provenance\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical source provenance\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0001",
+                    "RES-0001-m0002",
+                    "RES-0001-m0003",
+                    "RES-0001-m0010",
+                    "RES-0001-m0011"
+                  ],
+                  "required": false
+                },
                 "content": "Historical source provenance 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15374,7 +15699,19 @@
                 "title": "Current primary sources",
                 "order": 2,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0004/m0005/m0006/m0009 of research pack 0001) that keeps a section titled \"Current primary sources\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Current primary sources\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0004",
+                    "RES-0001-m0005",
+                    "RES-0001-m0006",
+                    "RES-0001-m0009"
+                  ],
+                  "required": false
+                },
                 "content": "Current primary sources 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15398,7 +15735,19 @@
                 "title": "Historical sources",
                 "order": 3,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0004/m0005/m0006/m0009 of research pack 0001) that keeps a section titled \"Historical sources\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical sources\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0004",
+                    "RES-0001-m0005",
+                    "RES-0001-m0006",
+                    "RES-0001-m0009"
+                  ],
+                  "required": false
+                },
                 "content": "Historical sources 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15423,6 +15772,12 @@
                 "order": 4,
                 "requiredness": "conditional",
                 "condition": "a data report that records its provenance",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/data"
+                  ],
+                  "required": false
+                },
                 "content": "Provenance 절",
                 "required_content": [
                   "데이터 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15472,6 +15827,12 @@
                 "order": 1,
                 "requiredness": "conditional",
                 "condition": "an audit report that records its remediation",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/audit"
+                  ],
+                  "required": false
+                },
                 "content": "Remediation 절",
                 "required_content": [
                   "감사 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15496,6 +15857,12 @@
                 "order": 2,
                 "requiredness": "conditional",
                 "condition": "an audit report that states its verification state",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/audit"
+                  ],
+                  "required": false
+                },
                 "content": "Verification State 절",
                 "required_content": [
                   "감사 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15519,7 +15886,19 @@
                 "title": "Current review boundary",
                 "order": 3,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0004/m0005/m0006/m0009 of research pack 0001) that keeps a section titled \"Current review boundary\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Current review boundary\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0004",
+                    "RES-0001-m0005",
+                    "RES-0001-m0006",
+                    "RES-0001-m0009"
+                  ],
+                  "required": false
+                },
                 "content": "Current review boundary 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15543,7 +15922,19 @@
                 "title": "Historical refresh record",
                 "order": 4,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0004/m0005/m0006/m0009 of research pack 0001) that keeps a section titled \"Historical refresh record\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical refresh record\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0004",
+                    "RES-0001-m0005",
+                    "RES-0001-m0006",
+                    "RES-0001-m0009"
+                  ],
+                  "required": false
+                },
                 "content": "Historical refresh record 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15567,7 +15958,17 @@
                 "title": "Dated history retained from 2026-08-08 through 2026-09-14",
                 "order": 5,
                 "requiredness": "conditional",
-                "condition": "a historical research report (m0007/m0008 of research pack 0001) that keeps a section titled \"Dated history retained from 2026-08-08 through 2026-09-14\"",
+                "condition": "a historical research report in the listed member scope that keeps a section titled \"Dated history retained from 2026-08-08 through 2026-09-14\"",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "artifact_ids": [
+                    "RES-0001-m0007",
+                    "RES-0001-m0008"
+                  ],
+                  "required": false
+                },
                 "content": "Dated history retained from 2026-08-08 through 2026-09-14 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15592,6 +15993,12 @@
                 "order": 6,
                 "requiredness": "conditional",
                 "condition": "a research report that states its limitations",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "required": false
+                },
                 "content": "Limitations 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15616,6 +16023,12 @@
                 "order": 7,
                 "requiredness": "conditional",
                 "condition": "a research report that states its recommendations",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/research"
+                  ],
+                  "required": false
+                },
                 "content": "Recommendations 절",
                 "required_content": [
                   "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15640,6 +16053,12 @@
                 "order": 8,
                 "requiredness": "conditional",
                 "condition": "a data report that records how it is generated and refreshed",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/data"
+                  ],
+                  "required": false
+                },
                 "content": "Generation and Refresh 절",
                 "required_content": [
                   "데이터 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -15664,6 +16083,12 @@
                 "order": 9,
                 "requiredness": "conditional",
                 "condition": "a data report that states its staleness boundaries",
+                "applicability": {
+                  "source_profile_ids": [
+                    "reference/data"
+                  ],
+                  "required": false
+                },
                 "content": "Staleness Boundaries 절",
                 "required_content": [
                   "데이터 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
@@ -16269,9 +16694,11 @@
             "condition": "always",
             "content": "지금 적용되는 구조",
             "required_content": [
-              "지금 적용되는 구조에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+              "지금 적용되는 구조에 필요한 사실·근거·판정 조건을 해당 절에 적는다.",
+              "현재 소스가 선언한 구조와 승인된 목표에서 아직 선언되지 않은 부분을 나누어 각 소유자나 근거를 연결한다."
             ],
             "prohibited_content": [
+              "선언된 구조나 설계 목표를 직접 확인한 운영 상태로 기록하지 않는다.",
               "과거 실행 로그를 현행 구조로 취급하지 않는다.",
               "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
             ],
@@ -16315,9 +16742,11 @@
                 "condition": "always",
                 "content": "실행·배치·상호작용과 환경별 차이",
                 "required_content": [
-                  "실행·배치·상호작용과 환경별 차이을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "실행·배치·상호작용과 환경별 차이을 사실/가정과 구분해 명시하고 실제 참조로 연결한다.",
+                  "선언된 배치와 실제 관측을 구분한다. 관측은 입력·환경·결과에 연결하고 관측하지 않은 범위를 명시한다."
                 ],
                 "prohibited_content": [
+                  "구성 선언, 실행 예정 명령 또는 정적 검사 결과를 운영 관측으로 제시하지 않는다.",
                   "과거 실행 로그를 현행 구조로 취급하지 않는다.",
                   "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
                 ],
@@ -16534,7 +16963,8 @@
                 "condition": "always",
                 "content": "현행 판본·대체·역사 참조",
                 "required_content": [
-                  "현행 판본·대체·역사 참조을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "현행 판본·대체·역사 참조을 사실/가정과 구분해 명시하고 실제 참조로 연결한다.",
+                  "목표와 적용 사이 차이, 아직 확인되지 않은 운영 범위와 확인 소유자를 해당 근거에 연결한다."
                 ],
                 "prohibited_content": [
                   "과거 실행 로그를 현행 구조로 취급하지 않는다.",
@@ -18411,9 +18841,10 @@
       "condition": "Allowed where the profile lists it; used only when the document replaces another.",
       "authoring_owner": "author",
       "derived_from": "",
-      "duplicate_source": "The reciprocal relationship link that scripts/document_lifecycle.py checks.",
+      "duplicate_source": "Guide, Policy, and Runbook predecessors carry no duplicate forward pointer; the lifecycle validator derives successors from this field.",
       "consumer_paths": [
-        "scripts/validate-markdown-profiles.py"
+        "scripts/validate-markdown-profiles.py",
+        "scripts/document_lifecycle.py"
       ],
       "lifecycle": "Added when a document replaces an earlier one.",
       "migration": "None recorded; the key keeps its meaning and no package changes it.",
@@ -18430,7 +18861,7 @@
       "key": "superseded_by",
       "purpose": "Names the later document or documents that replace this document.",
       "data_type": "artifact identifier string or array",
-      "condition": "Required on a document whose status is superseded.",
+      "condition": "Used only where the selected profile permits predecessor-authored evidence; current Guide, Policy, and Runbook derive successors instead.",
       "authoring_owner": "author",
       "derived_from": "",
       "duplicate_source": "The reciprocal relationship link that scripts/document_lifecycle.py checks.",
@@ -18977,6 +19408,7 @@
         "consumer_paths": [
           "scripts/validate-markdown-profiles.py",
           "scripts/validate-links-and-owners.py",
+          "scripts/validate-document-lifecycle.py",
           "scripts/document-backlinks.py"
         ],
         "checks": [
@@ -19206,17 +19638,17 @@
           {
             "profile_id": "operation/guide",
             "carrier": "frontmatter",
-            "key": "superseded_by"
+            "key": "supersedes"
           },
           {
             "profile_id": "operation/policy",
             "carrier": "frontmatter",
-            "key": "superseded_by"
+            "key": "supersedes"
           },
           {
             "profile_id": "operation/runbook",
             "carrier": "frontmatter",
-            "key": "superseded_by"
+            "key": "supersedes"
           },
           {
             "profile_id": "reference/audit",
@@ -19284,7 +19716,7 @@
             "key": "supersedes"
           }
         ],
-        "reverse_view": "superseded_by, written with the successor in one commit where the lifecycle domain has a superseded state; an accepted ADR is never edited, so its successor alone carries the relation.",
+        "reverse_view": "Guide, Policy, and Runbook successors carry supersedes; the lifecycle validator derives the inverse by artifact ID and requires a retained superseded document to reach an active same-profile successor. Other lifecycle domains keep their registered evidence, including the accepted ADR successor-only rule.",
         "consumer_paths": [
           "scripts/document_lifecycle.py",
           "scripts/document_authority.py",

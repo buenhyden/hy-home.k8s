@@ -6,6 +6,7 @@ import importlib.util
 import contextlib
 import dataclasses
 from dataclasses import replace
+import hashlib
 import io
 import json
 import re
@@ -368,6 +369,14 @@ class TaskExecutionContractTests(unittest.TestCase):
             self.rules(task_text("completed", [row(result="NOT_RUN")])),
         )
 
+    def test_scoped_execution_receipt_cannot_supply_acceptance_evidence(self) -> None:
+        task = task_text("completed", [row(result="PASS", evidence="EVD-001")])
+        self.assertNotIn("TASK-ACCEPTANCE-EVIDENCE", self.rules(task))
+        self.assertIn(
+            "TASK-ACCEPTANCE-EVIDENCE",
+            self.rules(task.replace("Focused test", "Scoped execution approval", 1)),
+        )
+
     def test_all_state_execution_remains_strict(self) -> None:
         for status in ("completed", "cancelled"):
             with self.subTest(status=status):
@@ -658,6 +667,7 @@ class CompletionIndexTests(unittest.TestCase):
         ).strip()
 
     def test_completion_reads_index_not_worktree_and_reports_identity(self) -> None:
+        self.commit()  # The reviewed parent editions precede Task completion.
         passed = task_text(
             "completed", [row(result="PASS", evidence="focused unit test PASS")]
         )
@@ -690,6 +700,21 @@ class CompletionIndexTests(unittest.TestCase):
         result, output = self.completion()
         self.assertEqual(result, 2, output)
         self.assertIn("AUTHORITY_DRIFT", output)
+
+    def test_current_completion_rejects_legacy_spec_and_plan_states(self) -> None:
+        for path, text, rule, legacy in (
+            (self.spec, form_spec_text(), "COMPLETION-SPEC", "completed"),
+            (self.plan, form_plan_text(), "COMPLETION-PLAN", "in-progress"),
+        ):
+            with self.subTest(path=path):
+                self.write(
+                    path, text.replace('status: "approved"', f'status: "{legacy}"')
+                )
+                self.stage()
+                result, output = self.completion()
+                self.assertEqual(result, 1, output)
+                self.assertIn(rule, output)
+                self.write(path, text)
 
     def test_required_in_progress_pass_and_cancelled_rows_refuse_handoff(self) -> None:
         for state, result_value in (("in-progress", "PASS"), ("cancelled", "NOT_RUN")):
@@ -761,6 +786,8 @@ class CompletionIndexTests(unittest.TestCase):
             .read_text()
             .replace("[VAL-P02-001](spec.md#criteria)", criteria),
         )
+        self.stage()
+        self.commit()
         upstream = UPSTREAM + ", [VAL-P02-002](../spec.md#criteria)"
         self.write(
             self.task,
@@ -980,6 +1007,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         base: dict[PurePosixPath, str] | None = None,
         proposed: dict[PurePosixPath, str],
         classified: dict[PurePosixPath, LifecycleDocument] | None = None,
+        completion_plan: PurePosixPath | None = None,
     ) -> set[str]:
         before = base or {}
         fixed = classified or {}
@@ -992,7 +1020,12 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             for path, text in proposed.items()
         }
         context = LIFECYCLE_CLI._evidence_context(
-            self.registry, base_docs, proposed_docs, before, proposed
+            self.registry,
+            base_docs,
+            proposed_docs,
+            before,
+            proposed,
+            completion_plan=completion_plan,
         )
         return {
             finding.rule_id
@@ -1153,8 +1186,10 @@ class AdoptedExecutionParentTests(unittest.TestCase):
     def test_active_task_needs_approved_typed_parents(self) -> None:
         spec = self.spec_text()
         plan = self.plan_text()
-        valid = {self.spec: spec, self.plan: plan, self.task: self.task_text()}
-        self.assertNotIn("TASK-PARENT-APPROVAL", self.rules(proposed=valid))
+        base = {self.spec: spec, self.plan: plan}
+        valid = {**base, self.task: self.task_text()}
+        self.assertNotIn("TASK-PARENT-APPROVAL", self.rules(base=base, proposed=valid))
+        self.assertIn("TASK-PARENT-APPROVAL", self.rules(proposed=valid))
         for change in (
             {self.plan: self.plan_text("in-review")},
             {self.spec: self.spec_text("in-review")},
@@ -1183,7 +1218,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             + "## Verification Evidence\n### Results\n"
             + "| Evidence ID | Result |\n| --- | --- |\n| EVD-001 | PASS |\n",
         }
-        self.assertIn("TASK-PARENT-APPROVAL", self.rules(proposed=evidence_blocked))
+        self.assertNotIn("TASK-PARENT-APPROVAL", self.rules(proposed=evidence_blocked))
         self.assertNotIn(
             "TASK-PARENT-APPROVAL",
             self.rules(
@@ -1191,7 +1226,224 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             ),
         )
 
+    def test_draft_authoring_pass_does_not_activate_a_task(self) -> None:
+        parents = {
+            self.spec: self.spec_text("draft"),
+            self.plan: self.plan_text("draft"),
+        }
+        task = self.task_text("draft") + (
+            "## Verification Evidence\n### Results\n"
+            f"{CHECK_HEADER}\n{CHECK_SEPARATOR}\n"
+            "| EVD-001 | [VAL-P02-001](../spec.md) | WORK-001 | Check draft links | Exact draft fixture | PASS | Fixture | no | none |\n"
+        )
+        self.assertEqual(
+            len(
+                LINKS.task_evidence_rows(
+                    task, LIFECYCLE_CLI._task_execution_binding(self.registry)
+                )
+            ),
+            1,
+        )
+        self.assertNotIn(
+            "TASK-PARENT-APPROVAL",
+            self.rules(base=parents, proposed={**parents, self.task: task}),
+        )
+
+    def test_scoped_approval_is_bound_to_current_parents_and_execution_request(
+        self,
+    ) -> None:
+        spec = self.spec_text("draft")
+        plan = self.plan_text("draft")
+        task = self.task_text().replace(
+            "## Execution Log",
+            "## Scope\n### Inputs and Authority\nRead fixtures only.\n## Execution Log",
+            1,
+        )
+        base = {self.spec: spec, self.plan: plan}
+        work = (("WORK-001", "[VAL-P02-001](../spec.md)", "Verify", "platform"),)
+        receipt = {
+            "actor": "user",
+            "approval_ref": "fixture-user-request",
+            "scope": ["SPEC-0900", "SPEC-0900-PLAN-0001", "SPEC-0900-TSK-0001"],
+            "reviewed_spec_sha256": hashlib.sha256(spec.encode()).hexdigest(),
+            "reviewed_plan_sha256": hashlib.sha256(plan.encode()).hexdigest(),
+            "request_revision": hashlib.sha256(
+                json.dumps(
+                    (LINKS._exact_heading_section(task, "## Scope"), work, [])
+                ).encode()
+            ).hexdigest(),
+            "validity": "confirmed",
+            "revocation": "none",
+        }
+        header = (
+            "## Verification Evidence\n### Results\n"
+            "| Evidence ID | Consumer | Work Unit | Command | Input | Result | Location | Required | Resolves |\n"
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+        )
+
+        def evidence(number, facts):
+            return f"| EVD-{number:03d} | VAL-P02-001 | WORK-001 | Scoped execution approval | {json.dumps(facts)} | PASS | Fixture | yes | none |\n"
+
+        authorized = task + header + evidence(1, receipt)
+        approved = {**base, self.task: authorized}
+        self.assertNotIn(
+            "TASK-PARENT-APPROVAL", self.rules(base=base, proposed=approved)
+        )
+        for update in (
+            {self.spec: spec + "A different request scope.\n"},
+            {self.task: authorized.replace("| Verify |", "| Publish |", 1)},
+            {
+                self.task: authorized.replace(
+                    "Read fixtures only.", "Publish artifacts."
+                )
+            },
+            {self.task: authorized + evidence(2, {**receipt, "scope": ["SPEC-0901"]})},
+            {self.task: authorized + evidence(2, {**receipt, "validity": "expired"})},
+            {self.task: authorized + evidence(2, {**receipt, "revocation": "revoked"})},
+        ):
+            with self.subTest(update=update):
+                self.assertIn(
+                    "TASK-PARENT-APPROVAL",
+                    self.rules(base=base, proposed={**approved, **update}),
+                )
+        resumed = (
+            authorized
+            + evidence(2, {**receipt, "revocation": "revoked"})
+            + evidence(3, {**receipt, "approval_ref": "fixture-renewed-request"})
+        )
+        self.assertNotIn(
+            "TASK-PARENT-APPROVAL",
+            self.rules(base=base, proposed={**base, self.task: resumed}),
+        )
+        withdrawn = authorized + evidence(2, {**receipt, "revocation": "revoked"})
+        self.assertNotIn(
+            "TASK-PARENT-APPROVAL",
+            self.rules(base=approved, proposed={**approved, self.task: withdrawn}),
+        )
+        restarted = withdrawn.replace('status: "ready"', 'status: "in-progress"')
+        self.assertIn(
+            "TASK-PARENT-APPROVAL",
+            self.rules(
+                base={**base, self.task: withdrawn},
+                proposed={**base, self.task: restarted},
+            ),
+        )
+        reordered = (
+            task
+            + header
+            + evidence(2, {**receipt, "revocation": "revoked"})
+            + evidence(1, receipt)
+        )
+        self.assertIn(
+            "TASK-EVIDENCE-RETENTION",
+            self.rules(
+                base={**base, self.task: withdrawn},
+                proposed={**base, self.task: reordered},
+            ),
+        )
+
+    def test_stale_approved_parents_do_not_authorize_a_changed_executable_task(
+        self,
+    ) -> None:
+        base = {self.spec: self.spec_text(), self.plan: self.plan_text()}
+        for parent in (self.spec, self.plan):
+            with self.subTest(parent=parent):
+                proposed = {
+                    **base,
+                    parent: base[parent] + "Revised scope.\n",
+                    self.task: self.task_text(),
+                }
+                self.assertIn(
+                    "TASK-PARENT-APPROVAL", self.rules(base=base, proposed=proposed)
+                )
+                self.assertIn(
+                    "LIFECYCLE-APPROVAL-STALE",
+                    self.rules(base=base, proposed={**base, parent: proposed[parent]}),
+                )
+
+    def test_only_the_normative_column_carries_a_draft_requirement_basis(self) -> None:
+        requirement = PurePosixPath("docs/01.requirements/0900-fixture.md")
+        text = self.spec_text().replace('type: "sdlc/spec"', 'type: "sdlc/requirement"')
+        text = text.replace('status: "approved"', 'status: "draft"')
+        text = text.replace('artifact_id: "SPEC-0900"', 'artifact_id: "REQ-0900"')
+        link = "[REQ-0900-FR-0001](../../01.requirements/0900-fixture.md)"
+        spec = self.spec_text() + f"\nBackground: {link}\n"
+        base = {self.spec: spec, self.plan: self.plan_text(), requirement: text}
+        proposed = {**base, self.task: self.task_text()}
+        self.assertNotIn(
+            "TASK-PARENT-APPROVAL", self.rules(base=base, proposed=proposed)
+        )
+        spec += (
+            "\n## References\n### Lifecycle Traceability\n"
+            "| Requirement ID | Spec criterion | Architecture | Verification method |\n"
+            "| --- | --- | --- | --- |\n"
+            f"| {link} | VAL-P02-001 | Fixture | Check |\n"
+        )
+        revised = {**base, self.spec: spec}
+        self.assertIn(
+            "TASK-PARENT-APPROVAL",
+            self.rules(base=revised, proposed={**revised, self.task: self.task_text()}),
+        )
+        self.assertNotIn(
+            "TASK-PARENT-APPROVAL",
+            self.rules(
+                base=revised,
+                proposed={
+                    **revised,
+                    self.task: self.task_text().replace("VAL-P02-001", "VAL-P02-002"),
+                },
+            ),
+        )
+
+    def test_completion_checks_current_promotion_owner_even_when_plan_is_unchanged(
+        self,
+    ) -> None:
+        owner = PurePosixPath(
+            "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md"
+        )
+        owner_text = (ROOT / owner).read_text(encoding="utf-8")
+        plan = self.plan_text().replace(
+            self.NONE_ROW,
+            "| Lifecycle | [Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md) | Own current guidance | Existing receipt |",
+        )
+        base = {self.spec: self.spec_text(), self.plan: plan, owner: owner_text}
+        self.assertNotIn(
+            "PLAN-PROMOTION",
+            self.rules(base=base, proposed=base, completion_plan=self.plan),
+        )
+        proposed = {
+            **base,
+            owner: owner_text.replace('status: "active"', 'status: "deprecated"'),
+        }
+        self.assertIn(
+            "PLAN-PROMOTION",
+            self.rules(base=base, proposed=proposed, completion_plan=self.plan),
+        )
+
     def test_exact_completed_parent_extension_keeps_historical_authority(self) -> None:
+        domain = next(
+            domain
+            for domain in self.registry.lifecycle_domains
+            if domain.family == "spec-plan"
+        )
+        historical_domain = replace(
+            domain,
+            states=(*domain.states, ("completed", "terminal")),
+        )
+        self.registry = replace(
+            self.registry,
+            schema_version="20.0.0",
+            profiles=tuple(
+                replace(profile, lifecycle_domain=historical_domain)
+                if profile.lifecycle_domain == domain
+                else profile
+                for profile in self.registry.profiles
+            ),
+            lifecycle_domains=tuple(
+                historical_domain if item == domain else item
+                for item in self.registry.lifecycle_domains
+            ),
+        )
         base = {
             self.spec: self.spec_text("completed"),
             self.plan: self.plan_text("completed"),
@@ -2107,6 +2359,382 @@ class TaskFormStagedMoveTests(unittest.TestCase):
         result, output = self.staged(removed)
         self.assertEqual(result, 1, output)
         self.assertIn("TASK-ITEM-DELETE", output)
+
+
+class ExecutionBriefCliTests(unittest.TestCase):
+    def setUp(self) -> None:
+        temporary = tempfile.TemporaryDirectory(prefix="execution-brief-")
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name).resolve()
+        self.git("init", "--quiet", "--initial-branch=fixture")
+        self.material = self.root / "request.md"
+        self.material.write_text("Inspect the synthetic input.\n", encoding="utf-8")
+        self.git("add", "request.md")
+        self.baseline = self.git("commit-tree", self.git("write-tree"), "-m", "fixture")
+        self.git("update-ref", "HEAD", self.baseline)
+        self.current = {
+            "request_ref": "fixture:user:1",
+            "request_digest": hashlib.sha256(b"fixture request").hexdigest(),
+            "request_revision": "r1",
+            "workspace_id": str(self.root),
+            "baseline_id": self.baseline,
+            "brief_id": "fixture-brief",
+            "revision": 1,
+            "goal": "Review the fixture and record the approved note.",
+            "in_scope": ["Inspect the fixture and edit the note if approved."],
+            "out_of_scope": ["Publish the note."],
+            "constraints": ["Local fixture only."],
+            "acceptance_criteria": ["Preserve the synthetic input."],
+            "allowed_mutations": ["notes.md"],
+            "expected_checks": ["Review the note."],
+            "risk": "low",
+            "authority_ref": None,
+            "material_inputs": {
+                "request.md": hashlib.sha256(self.material.read_bytes()).hexdigest(),
+                "notes.md": "absent",
+            },
+            "allowed_actions": {
+                "inspect": {"operation": "dispatch", "paths": []},
+                "resume-inspection": {"operation": "resume", "paths": []},
+                "write": {"operation": "state-change", "paths": ["notes.md"]},
+                "write-worker": {"operation": "dispatch", "paths": ["notes.md"]},
+                "delete": {"operation": "state-change", "paths": ["notes.md"]},
+            },
+            "unresolved_questions": [],
+            "state": "current",
+        }
+        self.brief = {
+            **{
+                key: value
+                for key, value in self.current.items()
+                if key != "allowed_actions"
+            },
+            "contract_version": "3.0.0",
+            "known_facts": [],
+            "assumptions": [],
+            "state": "ready",
+        }
+        self.deletion_questions = [
+            {
+                "question": "May the note be removed?",
+                "affected_actions": ["delete"],
+                "recommendation": "Keep the note.",
+            }
+        ]
+
+    def git(self, *args: str) -> str:
+        return subprocess.run(
+            [
+                "/usr/bin/git",
+                "-c",
+                "user.name=Fixture",
+                "-c",
+                "user.email=fixture@example.invalid",
+                *args,
+            ],
+            cwd=self.root,
+            env={
+                "PATH": "/usr/bin:/bin",
+                "GIT_CONFIG_NOSYSTEM": "1",
+                "GIT_CONFIG_GLOBAL": "/dev/null",
+            },
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        ).stdout.strip()
+
+    def run_brief(
+        self,
+        *,
+        brief=None,
+        current=None,
+        operation="dispatch",
+        action="inspect",
+        path=None,
+    ) -> subprocess.CompletedProcess[str]:
+        brief_file = self.root / "brief.json"
+        current_file = self.root / "current.json"
+        brief_file.write_text(
+            json.dumps(self.brief if brief is None else brief), encoding="utf-8"
+        )
+        current_file.write_text(
+            json.dumps(self.current if current is None else current), encoding="utf-8"
+        )
+        command = [
+            sys.executable,
+            str(SCRIPTS / "validate-execution-brief.py"),
+            "--root",
+            str(self.root),
+            "--brief",
+            str(brief_file),
+            "--current-request",
+            str(current_file),
+            "--operation",
+            operation,
+            "--action",
+            action,
+        ]
+        if path is not None:
+            command.extend(("--path", path))
+        return subprocess.run(
+            command, capture_output=True, text=True, timeout=10, check=False
+        )
+
+    def assert_refused(self, diagnostic, **arguments) -> None:
+        result = self.run_brief(**arguments)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn(diagnostic, result.stderr)
+
+    def test_low_risk_dispatch_does_not_require_an_approval_reference(self) -> None:
+        result = self.run_brief()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("authorization is separate", result.stdout)
+
+    def test_changed_request_or_cancelled_request_blocks_resume(self) -> None:
+        for change, message in (
+            ({"request_revision": "r2"}, "does not match"),
+            (
+                {"request_digest": hashlib.sha256(b"different").hexdigest()},
+                "does not match",
+            ),
+            ({"acceptance_criteria": ["Replace the input."]}, "does not match"),
+            ({"goal": "Replace the input."}, "does not match"),
+            ({"state": "withdrawn"}, "withdrawn or is unavailable"),
+        ):
+            with self.subTest(change=change):
+                self.assert_refused(
+                    message,
+                    current={**self.current, **change},
+                    operation="resume",
+                    action="resume-inspection",
+                )
+
+    def test_missing_request_identity_and_malformed_request_digest_fail(self) -> None:
+        current = {
+            key: value for key, value in self.current.items() if key != "request_ref"
+        }
+        self.assert_refused("record fields", current=current)
+        digest = "a guessed request hash"
+        self.assert_refused(
+            "request",
+            brief={**self.brief, "request_digest": digest},
+            current={**self.current, "request_digest": digest},
+        )
+
+    def test_changed_material_file_or_head_blocks_resume(self) -> None:
+        original = self.material.read_bytes()
+        self.material.write_bytes(original + b"New text.\n")
+        self.assert_refused(
+            "material input changed", operation="resume", action="resume-inspection"
+        )
+        self.material.write_bytes(original)
+        head = self.git(
+            "commit-tree", self.git("write-tree"), "-p", self.baseline, "-m", "updated"
+        )
+        self.git("update-ref", "HEAD", head)
+        self.assert_refused(
+            "Git baseline changed", operation="resume", action="resume-inspection"
+        )
+
+    def test_state_change_requires_path_and_separate_current_reference(self) -> None:
+        self.assert_refused(
+            "lacks a target path", operation="state-change", action="write"
+        )
+        self.assert_refused(
+            "separately supplied authority reference",
+            operation="state-change",
+            action="write",
+            path="notes.md",
+        )
+        self.assert_refused("record fields", brief={**self.brief, "approval": True})
+        self.assert_refused(
+            "does not match",
+            brief={**self.brief, "authority_ref": "self-declared-approval"},
+            operation="state-change",
+            action="write",
+            path="notes.md",
+        )
+        approval = {"authority_ref": "fixture:independent-source"}
+        allowed = self.run_brief(
+            brief={**self.brief, **approval},
+            current={**self.current, **approval},
+            operation="state-change",
+            action="write",
+            path="notes.md",
+        )
+        self.assertEqual(allowed.returncode, 0, allowed.stderr)
+        self.assertIn("authorization is separate", allowed.stdout)
+
+    def test_mutation_rejects_scope_expansion_escape_and_symbolic_link(self) -> None:
+        approval = {"authority_ref": "fixture:independent-source"}
+        self.assert_refused(
+            "path",
+            brief={**self.brief, **approval},
+            current={**self.current, **approval},
+            operation="state-change",
+            action="write",
+            path="other.md",
+        )
+        escape = {**approval, "allowed_mutations": ["../escape.md"]}
+        self.assert_refused(
+            "workspace-relative path",
+            brief={**self.brief, **escape},
+            current={**self.current, **escape},
+            operation="state-change",
+            action="write",
+            path="../escape.md",
+        )
+        (self.root / "notes.md").symlink_to(self.material)
+        self.assert_refused(
+            "material input changed",
+            brief={**self.brief, **approval},
+            current={**self.current, **approval},
+            operation="state-change",
+            action="write",
+            path="notes.md",
+        )
+
+    def test_only_affected_action_waits_for_an_unresolved_question(self) -> None:
+        questions = {"unresolved_questions": self.deletion_questions}
+        current = {**self.current, **questions}
+        self.assert_refused(
+            "state contradicts", brief={**self.brief, **questions}, current=current
+        )
+        brief = {**self.brief, **questions, "state": "needs-clarification"}
+        self.assert_refused(
+            "needs clarification",
+            brief=brief,
+            current=current,
+            operation="state-change",
+            action="delete",
+            path="notes.md",
+        )
+        result = self.run_brief(brief=brief, current=current, action="inspect")
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_same_request_cannot_reuse_or_strip_a_superseded_brief(self) -> None:
+        approval = {"authority_ref": "fixture:independent-source"}
+        current = {
+            **self.current,
+            **approval,
+            "revision": 2,
+            "unresolved_questions": self.deletion_questions,
+        }
+        old_brief = {**self.brief, **approval}
+        for brief, field in (
+            (old_brief, "revision"),
+            ({**old_brief, "revision": 2}, "unresolved_questions"),
+            (
+                {
+                    **old_brief,
+                    "brief_id": "old-brief",
+                    "revision": 2,
+                    "state": "needs-clarification",
+                    "unresolved_questions": self.deletion_questions,
+                },
+                "brief_id",
+            ),
+        ):
+            with self.subTest(field=field):
+                self.assert_refused(
+                    f"does not match current {field}",
+                    brief=brief,
+                    current=current,
+                    operation="state-change",
+                    action="delete",
+                    path="notes.md",
+                )
+
+    def test_operation_and_paths_must_match_the_current_action_binding(self) -> None:
+        approval = {"authority_ref": "fixture:independent-source"}
+        current = {**self.current, **approval}
+        brief = {**self.brief, **approval}
+        self.assert_refused(
+            "operation",
+            brief=brief,
+            current=current,
+            operation="state-change",
+            action="inspect",
+            path="notes.md",
+        )
+        self.assert_refused("path", brief=brief, current=current, action="write-worker")
+        result = self.run_brief(
+            brief=brief, current=current, action="write-worker", path="notes.md"
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_mutation_rejects_omitted_target_snapshot(self) -> None:
+        (self.root / "notes.md").write_text("New worktree content\n", encoding="utf-8")
+        binding = {
+            "material_inputs": {},
+            "authority_ref": "fixture:independent-source",
+        }
+        self.assert_refused(
+            "lacks a material input binding",
+            brief={**self.brief, **binding},
+            current={**self.current, **binding},
+            operation="state-change",
+            action="write",
+            path="notes.md",
+        )
+
+    def test_mutating_dispatch_checks_bound_file_at_unchanged_head(self) -> None:
+        target = self.root / "notes.md"
+        target.write_bytes(b"Reviewed contents\n")
+        binding = {
+            "material_inputs": {
+                "notes.md": hashlib.sha256(target.read_bytes()).hexdigest()
+            },
+            "authority_ref": "fixture:independent-source",
+        }
+        arguments = {
+            "brief": {**self.brief, **binding},
+            "current": {**self.current, **binding},
+            "action": "write-worker",
+            "path": "notes.md",
+        }
+        result = self.run_brief(**arguments)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        target.write_bytes(b"Concurrent contents\n")
+        self.assert_refused("material input changed", **arguments)
+        target.unlink()
+        self.assert_refused("invalid or unavailable input", **arguments)
+
+    def test_new_target_must_remain_absent(self) -> None:
+        path = "new/notes.md"
+        binding = {
+            "material_inputs": {path: "absent"},
+            "allowed_mutations": [path],
+            "authority_ref": "fixture:independent-source",
+        }
+        arguments = {
+            "brief": {**self.brief, **binding},
+            "current": {
+                **self.current,
+                **binding,
+                "allowed_actions": {"write": {"operation": "resume", "paths": [path]}},
+            },
+            "operation": "resume",
+            "action": "write",
+            "path": path,
+        }
+        for parent_exists in (False, True):
+            with self.subTest(parent_exists=parent_exists):
+                if parent_exists:
+                    (self.root / "new").mkdir()
+                result = self.run_brief(**arguments)
+                self.assertEqual(result.returncode, 0, result.stderr)
+        target = self.root / path
+        target.mkdir()
+        self.assert_refused("material input changed", **arguments)
+        target.rmdir()
+        target.write_bytes(b"Created after briefing\n")
+        self.assert_refused("material input changed", **arguments)
+        target.unlink()
+        target.parent.rmdir()
+        target.parent.symlink_to(self.root / "missing")
+        self.assert_refused("invalid or unavailable input", **arguments)
 
 
 if __name__ == "__main__":

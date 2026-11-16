@@ -1,6 +1,6 @@
 ---
 title: "Software Development Lifecycle"
-version: "3.8.0"
+version: "4.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -126,8 +126,7 @@ Provider and agent-roster authority is excluded and stated under Authority; if a
 6. `SDLC-R006` Keep release procedure in a Runbook when one is needed, local execution
    evidence in Tasks and Git, the committed main `CHANGELOG.md` as release
    history, and tag, GitHub Release, hosted, provider or live evidence in its
-   actually observed lane. Do not create a Release Record without a successor
-   ADR, profile, lifecycle, template, and demonstrated audit consumer.
+   actually observed lane. Use these owners for all release documentation.
 
 #### Stage 04 slot
 
@@ -164,7 +163,7 @@ each artifact lives and the rules that govern it.
 | Transition | Entry and output | Approval and evidence | Failure or rollback |
 | --- | --- | --- | --- |
 | `SDLC-R020` Need to design | Requirement or direct scoped request; structural views or decision only when boundaries change | Request owner approves scope; design approval when required | Clarify an unresolved boundary before dependent implementation |
-| `SDLC-R021` Design to execution | Reviewed and approved change contract and ordered Plan; Task records work and checks | Reuse valid approval for the same scope; never infer approval from a checkbox or `ready` Task | Re-review affected authority when scope or evidence contradicts it; preserve unrelated work |
+| `SDLC-R021` Design to execution | Current approved change contract and ordered Plan, or separately verified scoped user authorization; Task records work and checks | Bind approval to the reviewed inputs and current request revision; draft authoring and focused document checks remain within writing scope | Re-review affected authority when scope or evidence contradicts it; preserve unrelated work |
 | `SDLC-R022` Execution to handoff | Reviewed final bytes, resolved required checks, accepted criteria and Task handoff; scoped Git commit only when authorized | Local, index, hosted, provider, and live evidence remain distinct | Unresolved required checks block completion; missing external permission is DEFER |
 | `SDLC-R023` Handoff to operations or retention | Stable operating knowledge or terminal work record | Promote only durable meaning; apply the Stage 99 lifecycle contract; recover removed documents from Git history | Keep failures factual; use Git recovery rather than a second active owner |
 

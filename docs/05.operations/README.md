@@ -1,10 +1,10 @@
 ---
 title: "05.operations"
-version: "0.6.2"
+version: "0.6.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 ---
 # 05.operations
 
@@ -38,16 +38,13 @@ updated: "2026-11-13"
 - 아키텍처 결정 기록
 - 기능 구현 상세 명세
 - 임시 scratch 로그
-- 저장소-local Release Record; 현재 release 사실은 Task/Git과 외부 tag·CI·provider
-  evidence가 소유한다.
 
 #### Release Evidence Boundary
 
-반복 가능한 배포 절차가 필요하면 Runbook이 소유한다. 특정 release의 로컬 변경과
-검증은 owning Task와 Git이 소유하고, tag, hosted CI, GitHub Release,
-provider/runtime, live verification은 외부 evidence로 링크한다. 별도
-"operation/release" 문서는 현재 채택하지 않으며, audit consumer가 입증될 때 새
-ADR, profile, lifecycle, template을 함께 검토한다.
+반복 가능한 발행 절차는 Runbook `RUN-0012`에 둔다.
+개별 발행의 로컬 변경과 검증은 해당 Task와 Git에 기록하고, 발행 이력은
+[CHANGELOG](../../CHANGELOG.md)에 남긴다. 태그, GitHub Release, hosted CI,
+provider/runtime, 실제 운영 검증은 각각 관측한 결과를 링크한다.
 
 ## Contents
 
@@ -141,7 +138,7 @@ marker는 실행 권한을 부여하지 않는다.
 
 - 하위 운영 폴더는 `./guides/`, `./policies/`, `./runbooks/`, `./incidents/`로 연결한다.
 - upstream docs stage는 `../01.requirements/`, `../02.architecture/`, `../03.specs/`로 연결한다.
-- root-level runtime evidence는 `../../gitops/`, `../../infrastructure/`, `../../scripts/`처럼 repository root 기준으로 올라간다.
+- 운영 목표 상태와 정적 검사의 원본은 [GitOps 선언](../../gitops/), [인프라 설정](../../infrastructure/), [검사 도구](../../scripts/)처럼 repository root 기준으로 연결한다. 실제 운영 검증 결과는 해당 Task나 운영 기록으로 연결한다.
 
 #### Language Boundary
 
@@ -152,7 +149,7 @@ cluster, OpenBao, secret, ArgoCD 같은 고위험 명령의 실행 경계는 언
 
 ### Transition and Exit
 
-1. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)에 따라 처분한다. 현재 문서는 대체된 본문 대신 후속 문서를 인용한다.
+1. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)에 따라 처분한다. 대체 Guide·Policy·Runbook이 `supersedes`에 선행 문서의 ID를 기록한다. 수명주기 검사기는 그 관계에서 후속 문서를 찾아 현재 소유자를 확인한다.
 
 ## Related Documents
 

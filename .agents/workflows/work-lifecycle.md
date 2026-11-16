@@ -1,10 +1,10 @@
 ---
 title: "Work Lifecycle"
-version: "2.3.1"
+version: "2.4.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-16"
 ---
 
 # Work Lifecycle
@@ -52,6 +52,11 @@ The procedure parts are Intake, Resume, Implementation and Completion.
 4. Resolve the Stage 99 profile and template before authored document changes.
    Record the current scoped request in the existing Task Inputs and Authority. Keep the Spec acceptance contract, Plan work mapping
    and actual Task execution/evidence separate; progress is kept as [context and memory](../governance/context-and-memory.md#objective) states.
+   Identify the request reference and revision, applicable authority, target,
+   scope and conditions. Draft authoring, review and focused document checks
+   use the writing scope. Before dependent implementation, operation or
+   completion, confirm a current authority separate from the draft and apply
+   [the lifecycle policy](../governance/document-lifecycle.md#rules).
 5. Resolve selected required-check tools, environment, actual resource/output
    needs, technical command limits and necessary native execution approval through
    [quality preflight](../governance/quality.md#validation-runner-envelope).
@@ -105,7 +110,8 @@ end the loop.
 1. Check acceptance, links, owner boundaries, language, and README navigation
    through the [semantic review contract](../governance/quality.md#semantic-review):
    a recorded risk class, applicable automated checks, a core-diff checklist
-   and the owner's explicit acceptance; an agent review is optional.
+   and the owner's explicit acceptance. Apply the independent-review requirement
+   to high-risk changes.
 2. Follow the delivery route and ordered sequence in
    [quality policy](../governance/quality.md#delivery-ownership). Record local
    selected QA and pre-commit lint/format over their actual snapshots. PR branch

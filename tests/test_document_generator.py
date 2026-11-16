@@ -592,6 +592,92 @@ class InputRefusalTests(TreeCase):
 class OutputCheckRefusalTests(TreeCase):
     GUIDE_TEMPLATE = "docs/99.templates/templates/operations/guide.template.md"
 
+    def test_spec_scaffold_needs_a_visible_criteria_table(self) -> None:
+        path = "docs/99.templates/templates/specs/spec.template.md"
+        source = (self.root / path).read_text(encoding="utf-8")
+        table = (
+            "| Criterion ID | Expected Result |\n| --- | --- |\n"
+            "| VAL-FEATURE-001 | Named test, contract, integration, or review evidence |"
+        )
+        self.assertIn(table, source)
+        target = SAMPLES["sdlc/spec"][0]
+        for replacement in ("", f"<pre>\n{table}\n</pre>"):
+            with self.subTest(replacement=replacement):
+                self.write(path, source.replace(table, replacement))
+                error = self.refuse("GENERATOR-OUTPUT", "sdlc/spec", target)
+                self.assertIn("BODY-TABLE-MISSING", error)
+
+        self.write(path, source.replace(table, "\n".join(table.splitlines()[:2])))
+        self.assertIn(
+            "| Criterion ID | Expected Result |", self.generate("sdlc/spec", target)
+        )
+
+    def test_guide_scaffold_may_omit_the_optional_steps_table(self) -> None:
+        self.edit(
+            self.GUIDE_TEMPLATE,
+            "| Step | Action | Check |\n| --- | --- | --- |\n"
+            "| 1 | Describe the action. | Describe the observable check. |\n",
+            "",
+        )
+        text = self.generate("operation/guide", SAMPLES["operation/guide"][0])
+        self.assertNotIn("| Step | Action | Check |", text)
+
+    def test_generator_refuses_a_body_that_does_not_match_the_registry_form(
+        self,
+    ) -> None:
+        template = (self.root / self.GUIDE_TEMPLATE).read_text(encoding="utf-8")
+        self.write(
+            self.GUIDE_TEMPLATE, template + "\n## Undeclared section\n\nExtra.\n"
+        )
+        error = self.refuse(
+            "GENERATOR-OUTPUT", "operation/guide", SAMPLES["operation/guide"][0]
+        )
+        self.assertIn("BODY-HEADING-UNSUPPORTED", error)
+
+    def test_generator_ignores_nonstructural_heading_text(self) -> None:
+        template = (self.root / self.GUIDE_TEMPLATE).read_text(encoding="utf-8")
+        for opener, closer in (
+            ("<pre>", "</pre>"),
+            ("<![CDATA[", "]]>"),
+            ("<?test", "?>"),
+        ):
+            with self.subTest(opener=opener):
+                example = (
+                    f"{opener}\n```\n## Example heading\n{closer}\n\n"
+                    "> ## Quoted heading\n\n"
+                )
+                source = template.replace(
+                    "## Verification", example + "## Verification", 1
+                )
+                self.write(self.GUIDE_TEMPLATE, source)
+                text = self.generate("operation/guide", SAMPLES["operation/guide"][0])
+                self.assertIn(example + "## Verification", text)
+
+    def test_generator_refuses_wrong_registered_table_columns(self) -> None:
+        template = (self.root / self.GUIDE_TEMPLATE).read_text(encoding="utf-8")
+        for malformed in (
+            "| Step | Check | Action |",
+            "<pre>\n```\n</pre>\n\n| Action | Step | Check |",
+        ):
+            with self.subTest(malformed=malformed):
+                self.write(
+                    self.GUIDE_TEMPLATE,
+                    template.replace("| Step | Action | Check |", malformed, 1),
+                )
+                error = self.refuse(
+                    "GENERATOR-OUTPUT",
+                    "operation/guide",
+                    SAMPLES["operation/guide"][0],
+                )
+                self.assertIn("BODY-TABLE-COLUMNS", error)
+
+    def test_generator_refuses_a_product_suffix_in_a_document_version(self) -> None:
+        self.edit(self.GUIDE_TEMPLATE, 'version: "0.1.0"', 'version: "0.1.0-rc.1"')
+        error = self.refuse(
+            "GENERATOR-OUTPUT", "operation/guide", SAMPLES["operation/guide"][0]
+        )
+        self.assertIn("FM-SCHEMA", error)
+
     def test_template_with_a_duplicate_key(self) -> None:
         self.edit(
             self.GUIDE_TEMPLATE,
@@ -624,8 +710,8 @@ class OutputCheckRefusalTests(TreeCase):
         profile = next(
             item for item in registry["profiles"] if item["id"] == "operation/guide"
         )
-        profile["frontmatter"]["optional"].remove("superseded_by")
-        profile["frontmatter"]["required"].append("superseded_by")
+        profile["frontmatter"]["optional"].remove("supersedes")
+        profile["frontmatter"]["required"].append("supersedes")
         path.write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8")
         self.refuse(
             "GENERATOR-OUTPUT", "operation/guide", SAMPLES["operation/guide"][0]

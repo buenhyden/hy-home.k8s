@@ -45,7 +45,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
   `base..head` 새 commit 메시지를 해당 schema와 생성 Merge/Revert 형태로
   검사한다. 생성 예외는 title에는 없다. main push와 manual dispatch의
   branch·title·commit 대상은 `NOT_APPLICABLE`이다. 별도 `style-pr` job은 main 대상 PR에서만
-  선택된 style을 검사한다. 과거 hosted full QA `NOT_RUN` 기록은 Task 역사에
+  선택된 style·CI lock·GitOps 정적 검사를 집계한다. 과거 hosted full QA `NOT_RUN` 기록은 Task 역사에
   남고 현재 `ci-summary`의 완료 gate가 아니다. 어느 job의 성공도 로컬
   목적·단위·문서 내용 검사의 통과를 뜻하지 않는다.
 - 로컬 QA 명령과 gate 구성은 `scripts/qa.py`와 validation registry가
@@ -61,7 +61,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 - `.github/requirements/ci-validation.txt`와
   `.pre-commit-config.yaml`은 로컬 Python 의존성·hook revision 계약을
   보존한다. `style-pr`은 신뢰된 base의 hash lock에서 Python 도구를
-  설치하며 로컬 목적·단위 검사는 실행하지 않는다.
+  한 번 설치한다. 어느 검사도 선택되지 않으면 Python 설정과 설치도 비적용이다.
   `scripts/validate-ci-python-contract.py`는 pin 형식, 직접 pin과 lock의
   일치, hash 존재와 workflow 경계를 검사하며 pin 값 사본은 두지 않는다.
 - Issue는 요청과 triage priority를 소유한다. 승인된 수용 계약은 Spec,
@@ -84,14 +84,17 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 
 - `ci.yml`의 `ci-summary`는 main 대상 push·pull request·`workflow_dispatch`
   에서 PR branch·title·새 commit metadata를 처리한다. PR title과 commit
-  메시지 문법은 검증된 base SHA의 regular `.cz.toml`에서 읽는다. commit
-  검사는 정확한 merge/base/head SHA와 비얕은 전체 `base..head` 범위를
+  메시지 문법은 검증된 base SHA에서 펼친 regular `.cz.toml`만 읽는다.
+  커밋 객체는 해당 merge SHA에서 도달하는 이력만 가져오고 후보 파일은
+  펼치지 않는다. 검사는 정확한 merge/base/head SHA와 비얕은 전체 `base..head` 범위를
   확인하고, 최대 256개 commit과 각 64 KiB commit object에서 실패 폐쇄한다.
   후보 branch의 코드·설정은 실행하지
   않는다. main push/manual에는 PR title 검사를 수행하지 않는다. 별도
-  `style-pr`은 main 대상 PR merge 입력의 NUL 구분 변경 경로를 검증된 base
-  SHA와 대조한 뒤, 신뢰된 base의 공유 style helper와 기존 여덟 pinned
-  pre-commit hook 규칙으로 선택된 lint·format만 검사한다. `style-pr`의
+  `style-pr`은 main 대상 PR의 merge SHA와 두 부모를 대조한 뒤 NUL 구분
+  누적 변경 경로에서 style, CI lock, GitOps 검사를 선택한다. 검증기의
+  코드와 설정은 신뢰된 base에서 읽고 후보는 데이터로 사용한다.
+  마지막 단계는 선택된 검사의 성공과 비적용 검사의 skip을 대조한다.
+  GitOps 검사는 선언된 리소스와 식별자 그래프를 확인한다. `style-pr`의
   정적 등록은 GitHub 실행이나 성공 증거가 아니다. 로컬 title·commit 경계 회귀는
   정적 구현 증거이며 현재 후보의 hosted 결과는 실제 SHA/run이 관측되기
   전까지 `NOT_RUN`이다. 배포 workflow는 없다.

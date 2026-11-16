@@ -1,10 +1,10 @@
 ---
 title: "Reference: Scope Application Index"
-version: "1.3.1"
+version: "1.3.3"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 artifact_id: "RES-0001-m0013"
 ---
 
@@ -42,7 +42,7 @@ The investigation spans organization/user, repository, directory/domain, task/se
 
 Each row binds a granular question to U/REQ/Claim/Source, analytic scope, canonical file type, candidate selector, evidence, validation/acceptance, approval/risk, current result, and next role/trigger. File-type and selector cells are code literals because no current existence observation was made. Roles are routing suggestions, never delegated permission. Pass criteria are proposals for a future authorized investigation, not results.
 
-The four evidence axes remain separate: external Verified/Partial/Unverified/DEFER/Contradicted; source new/changed/unchanged/unreachable; workspace **not observed in this cycle**; actual document QA PASS/FAIL/SKIP/DEFER. No external unfinished item is filled with DEFER to imply completed research. All source identities and current request coverage are in [m0012](m0012-source-coverage.md#requirement-coverage-matrix).
+Keep four evidence axes separate. External claims use Verified, Partial, Unverified, DEFER or Contradicted. Sources are new, changed, unchanged or unreachable. Workspace application is **not observed in this cycle**. Record actual document checks using the [canonical QA result vocabulary](../../../../.agents/governance/quality.md#result-vocabulary). No external unfinished item is filled with DEFER to imply completed research. All source identities and current request coverage are in [m0012](m0012-source-coverage.md#requirement-coverage-matrix).
 
 ### Follow-up question ledger
 
@@ -179,10 +179,8 @@ policy. A requirement appearing in a scope row means the research touched a path
 that the scope already owns; it does not mean the scope acquired new authority.
 
 Where this document notes that a canonical path appears in no scope's
-file-ownership table, that is a repository-static observation about the current
-scope registry. It is not an instruction to add the path, and adopting or
-deliberately declining any such path is a `meta` scope decision that requires
-human approval.
+file-ownership table, it records the registry seen on 2026-08-14. Any current
+ownership change follows the role registry and its approval policy.
 
 Request and claim coverage is owned by
 [m0012](m0012-source-coverage.md#requirement-coverage-matrix), not by the pack
@@ -191,9 +189,8 @@ from m0012; where they disagree, m0012 is correct and this index is stale.
 
 Its base map covers `REQ-WERPC-001`–`REQ-WERPC-033` and the ten governance
 scopes as they stood on 2026-08-14. The 2026-08-28 pack-level addendum also
-routes `REQ-WERPC-034`–`REQ-WERPC-036` without claiming a current scope-topology
-projection. Current scope ownership always comes from the scope registry, not
-from this dated map.
+routes `REQ-WERPC-034`–`REQ-WERPC-036` as dated research coverage. Use the
+role registry and roles README linked above for current scope ownership.
 
 It excludes any change to a requirement status, any new external source, and any
 evidence that requires cluster, hosted CI, provider runtime, or stakeholder

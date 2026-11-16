@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.15.3"
+version: "0.15.4"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-16"
 ---
 # scripts
 
@@ -59,6 +59,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `document_contracts.py`, `validate-document-contract-registry.py`, `validate-markdown-profiles.py` | route·profile 분류와 작성된 Markdown의 의미 검증. affected·staged의 변경 경로가 본문 검사 대상을 정하며, 현재 문서의 metadata·identity 검사와 English-only 파일 검사는 유지한다. 생산자·reader helper 변경은 Registry의 문서 검사 owner로 연결한다. |
 | `document_authority.py`, `validate-links-and-owners.py` | 현재 owner와 문서 간 관계의 의미 검증. 링크 검사 한 실행의 context가 Registry와 문서 inventory를 보유해 같은 입력의 재조회에 쓰인다. |
 | `document_lifecycle.py`, `validate-document-lifecycle.py` | registry가 분류한 lifecycle과 staged index 전이 |
+| `validate-execution-brief.py` | 작업자 인계·재개·상태 변경 직전 현재 요청과 브리핑의 대응 및 범위를 확인하는 명시적 읽기 전용 진입점 |
 | `document_language.py` | 문서의 언어를 판정하는 순수 규칙 |
 | `validate-knowledge-surface.py` | knowledge owner 포인터, Repository Vocabulary 용어 표와 제한된 관찰 출처 검증 |
 | `document-backlinks.py` | 정방향 링크에서 한 문서를 가리키는 추적 문서 목록을 파생하는 탐색 도구(gate 아님) |
@@ -92,7 +93,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `validate-workspace-boundary.py` | staged workspace 경계와 ignore 경로 계약 |
 | `render-platform-chart-kinds.sh` | 운영자가 직접 실행하는 chart kind 리뷰 보조 도구 |
 | `release.py` | main changelog PR을 준비하고 SemVer GitHub Release 하나를 명시적으로 게시한다. 기본은 로컬 읽기 전용 미리보기이며 `publish --execute`는 운영자, 또는 version과 asset을 명시한 운영자의 현재 요청에 따른 agent가 실행하는 operator-approved 작업이다. |
-| `semver_grammar.py` | 저장소 버전 값의 SemVer 2.0.0 문법(`SEMVER_PATTERN`, `is_semver`)과 우선순위 비교(`precedence`) 하나를 소유한다. `release.py`는 이것으로 tag 패턴과 tag 순서를 만들고, 스킬 envelope 검사와 문서 schema의 `version` 패턴이 같은 문법을 쓴다. |
+| `semver_grammar.py` | 문서·계약에는 ASCII 숫자 세 요소 판본 문법과 숫자 비교를 제공한다. `release.py`는 별도의 제품 SemVer 문법과 우선순위 비교로 태그 패턴과 순서를 정한다. |
 
 ### Supported Environment
 
@@ -168,6 +169,39 @@ branch protection의 활성 상태는 실제 원격에서 확인해야 하며, �
 required-check 성공이나 설정을 주장하지 않는다.
 
 ### Checks
+
+#### 요청 브리핑 사전 확인
+
+요청을 받은 호출자는 원본 상호작용에서 현재 요청을 다시 확인하고,
+Task의 Inputs and Authority에 요청 참조·판본·범위를 기록한다.
+독립적으로 구성한 현재 요청 JSON과 작업자가 소비할 BriefRecord JSON을
+검사에 함께 넘긴다. 메모리나 브리핑을 복사해 현재 요청 입력을 만들지 않는다.
+
+```bash
+python3 scripts/validate-execution-brief.py --root . \
+  --brief "$brief_file" --current-request "$current_request_file" \
+  --operation dispatch --action "$action_id" --path "$target_file"
+```
+
+위 변수는 호출자가 실제 입력에 맞게 준비한다. 읽기 전용 인계에는
+`--path`를 생략한다. 변경 대상은 워크스페이스 상대 파일 경로를
+`--path`로 각각 지정한다. 현재 요청에는 목표, 요청 참조·SHA-256·판본,
+실제 작업 루트와 HEAD, 범위·제약·인수 기준·검사 목록, 위험,
+권한 참조, 허용 변경, 파일별 상태를 담는다. `material_inputs`에는
+선택한 모든 변경 대상의 현재 SHA-256을 기록한다. 아직 없는 경로에는
+`"absent"`를 기록한다. 누락된 대상, 달라진 내용, 예상과 달리 생기거나
+사라진 파일, 안전하게 읽을 수 없는 경로는 검사에 실패한다. 현재 요청의
+`allowed_actions`는 호출자가 확인한 행동 ID별 `operation`과 정확한
+`paths`의 매핑이다. `state`는 호출자가 확인한 최신 유효 상태다.
+최신 브리핑 ID·판본과 미해결 질문은 양쪽 입력에서 일치해야 한다.
+브리핑에 확인된 사실과 출처, 가정을 따로 담는다. 파일은 임시 입력으로
+사용하고 원문 권한 확인은 기존 절차를 따른다.
+
+재개나 상태 변경에는 `--operation resume` 또는 `--operation state-change`를
+사용한다. 요청 수정·철회, 작업 대상 또는 입력 변경으로 실패하면 해당
+행동을 멈추고 최신 원본에 연결한다. 범위와 판본 일치 결과는 로컬 사전
+검사 증거다. 실행 직전에 호출하고, 검사 이후 파일 변경이 관찰되면 다시
+확인한다. 원본 승인, 네이티브 훅 전달과 실제 실행은 각각 확인한다.
 
 가장 작은 owner부터 실행하고 현재 작업에 필요한 affected·staged lane을
 선택한다. 로컬 커밋마다 정확한 index 기준의 staged QA가 필요하다. 이 public

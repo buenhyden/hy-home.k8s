@@ -18,6 +18,7 @@ from document_contracts import (
     DocumentContractError,
     DocumentProfile,
     LifecycleDomain,
+    SCOPED_EXECUTION_APPROVAL_COMMAND,
     SPEC_PLAN_FIRST_APPROVED_EXTENSION,
     task_status,
     Registry,
@@ -27,7 +28,7 @@ from document_contracts import (
     registry_schema_version,
     task_criterion_ids,
 )
-from semver_grammar import is_semver, precedence
+from semver_grammar import numeric_version_order
 
 
 LifecycleSeverity = Literal["FAIL", "DEFER"]
@@ -380,7 +381,11 @@ def _terminal_supersession_evidence(
     """
 
     domain = profile.lifecycle_domain
-    if domain is None or not domain.requires_reciprocal_supersession:
+    if (
+        domain is None
+        or not domain.requires_reciprocal_supersession
+        or _successor_owned_operation(profile)
+    ):
         return ()
     visited = {target.path}
     pending = list(_reciprocal_links(target.path, context))
@@ -405,6 +410,97 @@ def _terminal_supersession_evidence(
             evidence_gap="registry lifecycle domain requires reciprocal supersession",
         ),
     )
+
+
+def _successor_owned_operation(profile: DocumentProfile) -> bool:
+    return (
+        profile.profile_id.startswith("operation/")
+        and "supersedes" in profile.frontmatter.allowed
+        and "superseded_by" not in profile.frontmatter.allowed
+    )
+
+
+def operating_supersession_diagnostics(
+    registry: Registry,
+    documents: Mapping[PurePosixPath, LifecycleEvidenceDocument],
+    *,
+    base_mode: LifecycleBaseMode,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Resolve current operating successors by artifact ID, including after a move."""
+
+    profiles = {
+        p.profile_id for p in registry.profiles if _successor_owned_operation(p)
+    }
+    if not profiles:
+        return ()
+    indexed = {
+        view.document.artifact_id: view.document
+        for view in documents.values()
+        if view.document.artifact_id is not None
+    }
+    incoming: dict[str, list[LifecycleDocument]] = {}
+    issues: list[LifecycleDiagnostic] = []
+
+    def fail(document: LifecycleDocument, expected: str, observed: str) -> None:
+        issues.append(
+            _diagnostic(
+                "LIFECYCLE-EVIDENCE",
+                path=document.path,
+                profile=document.profile_id,
+                expected=expected,
+                observed=observed,
+                base_mode=base_mode,
+                evidence_gap="successor-authored operating supersession by artifact ID",
+            )
+        )
+
+    for view in documents.values():
+        document = view.document
+        if document.profile_id not in profiles:
+            continue
+        if view.superseded_by_ids:
+            fail(
+                document,
+                "supersedes written only by the successor",
+                "predecessor carries superseded_by",
+            )
+        for identity in view.supersedes_ids:
+            predecessor = indexed.get(identity)
+            if predecessor is None:
+                continue  # A retained identifier may name an archived predecessor.
+            if (
+                predecessor.profile_id != document.profile_id
+                or predecessor.path == document.path
+            ):
+                fail(
+                    document,
+                    "a distinct predecessor of the same operating profile",
+                    identity,
+                )
+            else:
+                incoming.setdefault(identity, []).append(document)
+
+    for document in indexed.values():
+        if document.profile_id not in profiles or document.status != "superseded":
+            continue
+        pending = list(incoming.get(document.artifact_id or "", ()))
+        visited = {document.path}
+        while pending:
+            successor = pending.pop()
+            if successor.path in visited or successor.state_issue is not None:
+                continue
+            if successor.status == "active":
+                break
+            visited.add(successor.path)
+            if successor.status == "superseded":
+                pending.extend(incoming.get(successor.artifact_id or "", ()))
+        else:
+            fail(
+                document,
+                "an active successor reachable through same-profile supersedes IDs",
+                "no active operating successor",
+            )
+    return tuple(issues)
 
 
 def supersession_cycle_diagnostics(
@@ -626,6 +722,28 @@ def _task_evidence_retention_diagnostics(
         for cells in view.task_evidence_rows
     }
     issues: list[LifecycleDiagnostic] = []
+    prior_approvals = tuple(
+        key
+        for key, row in before.items()
+        if row.get("Command") == SCOPED_EXECUTION_APPROVAL_COMMAND
+    )
+    approvals = tuple(
+        key
+        for key, row in after.items()
+        if row.get("Command") == SCOPED_EXECUTION_APPROVAL_COMMAND
+    )
+    if approvals[: len(prior_approvals)] != prior_approvals:
+        issues.append(
+            _diagnostic(
+                "TASK-EVIDENCE-RETENTION",
+                path=path,
+                profile="sdlc/task",
+                expected="existing scoped execution approval rows followed by any new records",
+                observed="scoped approval history removed, reordered or inserted before a retained record",
+                base_mode=base_mode,
+                evidence_gap="ordered authority and withdrawal records",
+            )
+        )
     for identifier, old in before.items():
         new = after.get(identifier)
         reason = ""
@@ -676,18 +794,7 @@ def _task_evidence_retention_diagnostics(
     return tuple(issues)
 
 
-def _release_order(value: object) -> tuple[object, ...] | None:
-    """The precedence key of a grammar-valid version string, else None."""
-
-    if type(value) is not str or not is_semver(value):
-        return None
-    try:
-        return precedence(value)
-    except ValueError:  # a numeric identifier past Python's int-conversion limit
-        return None
-
-
-def version_downgrade(
+def version_change_diagnostic(
     path: PurePosixPath,
     profile: str,
     field: str,
@@ -696,24 +803,32 @@ def version_downgrade(
     *,
     base_mode: LifecycleBaseMode,
 ) -> LifecycleDiagnostic | None:
-    """Refuse a proposed version of lower precedence than its base (SPEC-0208).
+    """Enforce numeric order and reset rules on structurally valid versions."""
 
-    A value outside the grammar is not compared: the strict profile check or the
-    registry schema reports it. Build metadata never changes precedence, and the
-    comparison never asks for a bump or chooses its level.
-    """
-
-    before, after = _release_order(base), _release_order(proposed)
-    if before is None or after is None or after >= before:
+    before, after = numeric_version_order(base), numeric_version_order(proposed)
+    if before is None or after is None or after == before:
+        return None
+    if after < before:
+        rule = "LIFECYCLE-VERSION-DOWNGRADE"
+        expected = f"{field} not lower than {base}"
+    # Only the staged comparison observes one proposed change. A ref-to-ref
+    # comparison can span valid major, minor and patch changes.
+    elif base_mode == "staged" and (
+        (after[0] > before[0] and any(after[1:]))
+        or (after[:2] > before[:2] and after[2] != 0)
+    ):
+        rule = "LIFECYCLE-VERSION-RESET"
+        expected = f"{field} resets components below the highest increase to zero"
+    else:
         return None
     return _diagnostic(
-        "LIFECYCLE-VERSION-DOWNGRADE",
+        rule,
         path=path,
         profile=profile,
-        expected=f"{field} not lower than {base}",
+        expected=expected,
         observed=f"{base} -> {proposed}",
         base_mode=base_mode,
-        evidence_gap="a version never falls; build metadata never changes precedence",
+        evidence_gap="compare three numeric components and reset lower components",
     )
 
 
@@ -736,16 +851,17 @@ def registry_version_diagnostics(
 ) -> tuple[LifecycleDiagnostic, ...]:
     """Compare the scalar version fields of two raw Stage 99 registry mappings.
 
-    Only scalar fields are read, so a historical registry is never parsed.
+    Read the relevant editions without validating historical Registry schemas.
     """
 
     path = REGISTRY_PATH
+    base_schema = _registry_schema_release(base)
     found: list[LifecycleDiagnostic | None] = [
-        version_downgrade(
+        version_change_diagnostic(
             path,
             "",
             "schema_version",
-            _registry_schema_release(base),
+            base_schema,
             _registry_schema_release(proposed),
             base_mode=base_mode,
         )
@@ -755,10 +871,14 @@ def registry_version_diagnostics(
         for name in ("shared_contract", "common_forms")
     }
     for name, (before, after) in sections.items():
-        if not isinstance(before, Mapping) or not isinstance(after, Mapping):
+        if (
+            not isinstance(before, Mapping)
+            or not isinstance(after, Mapping)
+            or before.get("contract_id") != after.get("contract_id")
+        ):
             continue
         found.append(
-            version_downgrade(
+            version_change_diagnostic(
                 path,
                 "",
                 f"{name}.version",
@@ -767,33 +887,71 @@ def registry_version_diagnostics(
                 base_mode=base_mode,
             )
         )
-    released, current = sections["shared_contract"]
-    if (
-        isinstance(released, Mapping)
-        and isinstance(current, Mapping)
-        and released.get("stage") in _RELEASED_STAGES
-        and released.get("contract_id") == current.get("contract_id")
-        and type(released.get("version")) is str
-        and released.get("version") == current.get("version")
-    ):
-        changed = [
-            name for name in _EDITION_FIELDS if released.get(name) != current.get(name)
-        ]
-        if changed:
+        if (
+            before.get("stage") in _RELEASED_STAGES
+            and type(before.get("version")) is str
+            and before.get("version") == after.get("version")
+        ):
+            fields = (
+                (*_EDITION_FIELDS, "forms")
+                if name == "common_forms"
+                else _EDITION_FIELDS
+            )
+            changed = [
+                field for field in fields if before.get(field) != after.get(field)
+            ]
+            if changed:
+                found.append(
+                    _diagnostic(
+                        "LIFECYCLE-VERSION-EDITION-CHANGED",
+                        path=path,
+                        profile="",
+                        expected=f"released {name} {before['version']} keeps {', '.join(fields)}",
+                        observed=f"{', '.join(changed)} changed under the same version",
+                        base_mode=base_mode,
+                        evidence_gap="a released edition never changes; raise the version",
+                    )
+                )
+
+    def definitions(snapshot: Mapping[str, object]) -> dict[str, Mapping]:
+        profiles = snapshot.get("profiles")
+        if not isinstance(profiles, list):
+            return {}
+        return {
+            profile["id"]: profile["template_definition"]
+            for profile in profiles
+            if isinstance(profile, Mapping)
+            and isinstance(profile.get("id"), str)
+            and isinstance(profile.get("template_definition"), Mapping)
+        }
+
+    old_definitions = definitions(base)
+    base_order = numeric_version_order(base_schema)
+    for profile_id, after in definitions(proposed).items():
+        before = old_definitions.get(profile_id)
+        if before is None:
+            continue
+        contract_id, version = before.get("contract_id"), before.get("contract_version")
+        # Generation 21 split the combined binding on the current wire format.
+        if (
+            "contract_id" not in before
+            and base_order is not None
+            and base_order[0] < 21
+            and isinstance(version, str)
+        ):
+            contract_id, _, version = version.partition("/")
+        if isinstance(contract_id, str) and contract_id == after.get("contract_id"):
             found.append(
-                _diagnostic(
-                    "LIFECYCLE-VERSION-EDITION-CHANGED",
-                    path=path,
-                    profile="",
-                    expected=(
-                        f"released shared_contract {released['version']} "
-                        f"keeps {', '.join(_EDITION_FIELDS)}"
-                    ),
-                    observed=f"{', '.join(changed)} changed under the same version",
+                version_change_diagnostic(
+                    path,
+                    profile_id,
+                    "TemplateDefinition.contract_version",
+                    version,
+                    after.get("contract_version"),
                     base_mode=base_mode,
-                    evidence_gap="a released edition never changes; raise the version",
                 )
             )
+
     return tuple(item for item in found if item is not None)
 
 
@@ -982,7 +1140,7 @@ def compare_lifecycle(
                 )
             )
             continue
-        version_failure = version_downgrade(
+        version_failure = version_change_diagnostic(
             path,
             proposed.profile_id,
             "document version",
@@ -1011,6 +1169,23 @@ def compare_lifecycle(
                     profile, path, evidence_context, base_mode=base_mode
                 )
             )
+            if (
+                base_mode == "staged"
+                and proposed.profile_id in {"sdlc/spec", "sdlc/plan"}
+                and base.status == proposed.status == "approved"
+                and path in evidence_context.body_changed_paths
+            ):
+                diagnostics.append(
+                    _diagnostic(
+                        "LIFECYCLE-APPROVAL-STALE",
+                        path=path,
+                        profile=proposed.profile_id,
+                        expected="revised approved contract returns to in-review",
+                        observed="approved contract body changed under its existing approval state",
+                        base_mode=base_mode,
+                        evidence_gap="review of revised contract bytes",
+                    )
+                )
         if base.status == proposed.status or not _stateful(profile):
             continue
         allowed_edges = (
@@ -1095,6 +1270,11 @@ def compare_lifecycle(
         )
 
     if evidence_context is not None:
+        diagnostics.extend(
+            operating_supersession_diagnostics(
+                registry, evidence_context.proposed_documents, base_mode=base_mode
+            )
+        )
         diagnostics.extend(
             supersession_cycle_diagnostics(
                 evidence_context.proposed_documents, base_mode=base_mode

@@ -1,10 +1,10 @@
 ---
 title: "05.operations/runbooks"
-version: "0.4.2"
+version: "0.4.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 ---
 # 05.operations/runbooks
 
@@ -78,7 +78,9 @@ updated: "2026-11-13"
 1. 관련 Spec/Operations를 먼저 확인해 계약값을 고정한다.
 2. [runbook.template.md](../../99.templates/templates/operations/runbook.template.md)를 기반으로 작성한다.
 3. 절차는 명령 실행 순서와 검증 기준을 함께 제시한다.
-4. 복구 절차에는 롤백, 재동기화, 증적 수집 단계를 반드시 포함한다.
+4. 실패 시 필요한 복구 확인과 증적을 적는다. 실행이 상태나 산출물을
+   바꾸면 원복 조건과 절차를 적고, GitOps 재동기화는 해당 변경을 반영하는
+   절차일 때 포함한다.
 5. 정책 통제 기준은 런북에 복제하지 말고 [policies](../policies/README.md)로 연결한다.
 6. 고위험 명령 예시는 [Operations Mutation Boundary](../README.md#operations-mutation-boundary)를 따른다.
 

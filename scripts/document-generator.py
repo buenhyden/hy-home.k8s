@@ -305,7 +305,24 @@ def generate(
             frontmatter_schema=check.load_frontmatter_schema(root),
             include_body=False,
         )
-    except (OSError, ValueError) as error:
+        if not findings:
+            assert profile.template is not None
+            template_profile = classify_path(registry, profile.template)
+            record = template_profile.template_definition
+            if (
+                record is None
+                or record.get("template_id") != template_profile.profile_id
+                or record.get("role") != profile.document_role
+                or template_profile.source_profile_ids != (profile_id,)
+            ):
+                raise Refusal(
+                    "GENERATOR-PROFILE",
+                    f"the form has no matching TemplateDefinition for {profile_id}",
+                )
+            findings = check.validate_document_text(
+                template, profile.template, template_profile, "strict", today=today
+            )
+    except (DocumentContractError, OSError, ValueError) as error:
         raise Refusal(
             "GENERATOR-OUTPUT", f"the profile check failed: {error}"
         ) from error

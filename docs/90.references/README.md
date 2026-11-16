@@ -1,10 +1,10 @@
 ---
 title: "90.references"
-version: "0.3.1"
+version: "0.3.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 ---
 # 90.references
 
@@ -33,8 +33,9 @@ updated: "2026-11-13"
 
 Stage 90 자료는 공통 거버넌스(`.agents/`)와 현재 Stage 01/02/03/05 owner를
 인용할 수 있지만,
-Stage 98의 문서나 파일을 인용하거나 cross-link하지 않는다. 삭제된 자료의
-전체 본문 복구는 Git history가 담당한다.
+Stage 98의 문서나 파일을 인용하거나 cross-link하지 않는다. 일반 처분의
+본문 복구는 Git history가 담당한다. 승인된 최종 전환 대상의 처분은
+[문서 수명주기 정책](../../.agents/governance/document-lifecycle.md#rules)을 따른다.
 
 ## Contents
 
@@ -63,8 +64,6 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 각 collection README가 자신의 pack을, 각 pack README가 자신의 member와 연구
 책임을 안내한다. 관찰일·lifecycle·주장·coverage는 해당 보고서가 소유하며
 라우터는 이를 중복 관리하지 않는다.
-현재 pack을 보유한 collection이 Research뿐인 것은 현재 처분 결과일 뿐이며, 고유
-목적과 출처 경계를 갖춘 Audit 또는 Data pack의 추가를 금지하지 않는다.
 
 ### Classification
 
@@ -96,16 +95,13 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
    [Data Reference](../99.templates/templates/references/data.template.md),
    [Research Reference](../99.templates/templates/references/research.template.md)
    template을 사용한다. 관찰일은 frontmatter 또는 source metadata에만 둔다.
-5. 이 router와 category router를 같은 변경에서 갱신한다. 삭제된 자료는 tree를 떠난 것이며 Git history가 복구한다.
+5. 목록이나 링크가 바뀌면 이 router와 category router를 같은 변경에서 갱신한다.
+   일반 처분과 승인된 최종 전환은 위 수명주기 정책을 따른다.
 6. 참조 자료를 실행 입력이나 중복 control plane으로 사용하지 않는다.
-7. 다음 최소 검증을 실행한다.
-
-   ```bash
-   python3 scripts/validate-document-contract-registry.py --root . --mode strict
-   python3 scripts/validate-markdown-profiles.py --root . --mode strict
-   python3 scripts/validate-links-and-owners.py --root . --mode strict
-   git diff --check
-   ```
+7. [일반 문서 변경의 검사 선택](../../.agents/governance/quality.md#ordinary-document-selection)에
+   따라 변경 문서의 형식, 관계, 링크와 수명주기 상태를 확인한다.
+   경로나 제목 앵커의 이동·삭제가 기존 참조에 영향을 주면 해당 대상을
+   인용하는 문서의 링크도 검사한다.
 
 ### Transition and Exit
 

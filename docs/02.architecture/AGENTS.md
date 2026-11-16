@@ -75,7 +75,7 @@ Handoff is stated in rule 6 under Local Obligations.
 
 ### Required Checks
 
-Run the strict document checks listed in the parent `AGENTS.md`.
+Select the document checks in the parent `AGENTS.md`.
 
 ### Evidence and Limits
 

@@ -1,10 +1,10 @@
 ---
 title: "01.requirements"
-version: "0.10.3"
+version: "0.10.4"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-16"
 ---
 # 01.requirements
 
@@ -73,9 +73,9 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 
 | 상태 | 의미 | 작업 기준 |
 | --- | --- | --- |
-| `draft` | 검토 중이며 아직 현재 권위가 아닌 요구 초안 | 구현 시작 전 승인과 downstream Spec/Plan 갭을 해소한다. |
-| `in-review` | 검토 중인 요구 | 승인 전까지 현재 권위로 사용하지 않는다. |
-| `approved` | 현재 solution-independent 요구 권위 | 관련 AD/ADR/Spec과 current 구현 증적을 함께 확인한다. |
+| `draft` | 승인 전 요구 초안 | 허용된 작성 범위에서 작성·보완·검토하고 집중 문서 검사를 수행한다. |
+| `in-review` | 검토 중인 요구 | 같은 작성 범위에서 검토 의견을 반영하고 필요한 근거를 보완한다. |
+| `approved` | 현재 solution-independent 요구 권위 | 관련 AD/ADR/Spec, 적용되는 실행 권한과 구현 증적을 확인한다. |
 
 ## Workflow
 
@@ -117,7 +117,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 
 1. 현재 로컬 GitOps 플랫폼 기준은 [`0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md)와 `gitops/**`, `infrastructure/**`, `scripts/**` 정적 검증 증적이 소유한다.
 2. `approved` 문서는 현재 요구 권위다. downstream AD/ADR/Spec과 구현 증적을 함께 확인한다.
-3. `draft`·`in-review` 문서는 아직 현재 요구 권위가 아닌 초안이다. 구현은 승인된 downstream Spec과 Plan이 있어야 시작한다.
+3. 구현·운영 적용·완료 판정 전에 적용되는 승인된 근거나 별도로 검증한 범위별 승인을 확인한다. 초안은 해당 범위의 참고 입력으로 두고 문서 상태를 유지한다. 권한과 증거의 확인 기준은 [Document Lifecycle](../../.agents/governance/document-lifecycle.md#requirements)을 따른다.
 4. 과거 문서가 필요한 경우 Git history에서 복구한다(`git show <commit>:<path>`). 대체·완료된 문서는 현재 소유 문서의 Archived Lineage 표에 요약된다([ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md)).
 
 ## Related Documents

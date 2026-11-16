@@ -283,6 +283,44 @@ class HistoryReaderTests(unittest.TestCase):
         )
         self.assertEqual(result.schema_version, f"{LAST_INTEGER_GENERATION}.0.0")
 
+    def test_generation_ten_task_evidence_has_no_separate_acceptance_section(
+        self,
+    ) -> None:
+        def legacy_evidence(raw):
+            raw["schema_version"] = 10
+            for profile in raw["profiles"]:
+                if profile["id"] not in {"sdlc/task", "common/template-sdlc-task"}:
+                    continue
+                execution = profile["relationships"]["body_contract"]["task_execution"]
+                execution["evidence_section"] = "Task Evidence"
+                execution["evidence_columns"] = [
+                    "Evidence",
+                    "Criteria",
+                    "Work Unit",
+                    "Check",
+                    "Input",
+                    "Result",
+                    "Location",
+                    "Acceptance",
+                ]
+                del execution["criterion_acceptance_section"]
+                del execution["criterion_acceptance_columns"]
+
+        raw = self.own_blob(legacy_evidence)
+        historical = self.registry_at(self.commit_registry(raw))
+        task = next(p for p in historical.profiles if p.profile_id == "sdlc/task")
+        binding = task.body_contract.task_execution
+        self.assertEqual(binding.evidence_section, "Task Evidence")
+        self.assertEqual(binding.evidence_columns[-1], "Acceptance")
+        self.assertEqual(binding.criterion_acceptance_section, "")
+        self.assertEqual(binding.criterion_acceptance_columns, ())
+
+        current = {**raw, "schema_version": self.current.schema_version}
+        with self.assertRaisesRegex(
+            VALIDATOR.InvocationError, "history registry is malformed"
+        ):
+            self.registry_at(self.commit_registry(current))
+
     def test_every_readable_major_is_read_as_itself(self) -> None:
         for major in AUTHORITY.READABLE_REGISTRY_MAJORS:
             with self.subTest(major=major):

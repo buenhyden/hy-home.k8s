@@ -22,6 +22,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 from document_contracts import (
     ROOT_FILES,
+    SCOPED_EXECUTION_APPROVAL_COMMAND,
     TARGET_ROOTS,
     DocumentContractError,
     DocumentProfile,
@@ -54,6 +55,7 @@ from document_lifecycle import (
     lifecycle_diagnostic_sort_key,
     lineage_retired_identities,
     local_contract_diagnostics,
+    operating_supersession_diagnostics,
     package_exit_diagnostics,
     registry_version_diagnostics,
     validate_current_task_evidence,
@@ -718,6 +720,81 @@ def _task_profile(registry: Registry | None) -> DocumentProfile | None:
     )
 
 
+def _work_scope(rows: Sequence[Mapping[str, str]]) -> tuple[tuple[str, ...], ...]:
+    return tuple(
+        tuple(
+            row.get(key, "")
+            for key in ("ID", "Upstream criterion", "Work item", "Owner")
+        )
+        for row in rows
+    )
+
+
+def _execution_request_revision(
+    scope_text: str,
+    rows: Sequence[Mapping[str, str]],
+    draft_basis: Sequence[tuple[str, str]],
+) -> str:
+    payload = json.dumps(
+        (scope_text, _work_scope(rows), sorted(draft_basis)), ensure_ascii=False
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _draft_requirement_basis(
+    registry: Registry,
+    spec: PurePosixPath,
+    documents: Mapping[PurePosixPath, LifecycleDocument],
+    texts: Mapping[PurePosixPath, str],
+    criteria: set[str],
+) -> tuple[tuple[str, str], ...]:
+    contract = registry.relationship_contract
+    columns = {
+        column
+        for relation in (contract.relations if contract else ())
+        if relation.id == "requirement-basis"
+        for profile_id, carrier, column in relation.canonical_owners
+        if profile_id == "sdlc/spec" and carrier == "body_contract"
+    }
+    if not columns:
+        return ()
+    adapter = _link_validator_module()
+    profile = next(
+        profile for profile in registry.profiles if profile.profile_id == "sdlc/spec"
+    )
+    criterion_column = next(
+        (
+            item.column
+            for item in (
+                profile.body_contract.identifier_columns
+                if profile.body_contract
+                else ()
+            )
+            if item.kind == "criterion"
+        ),
+        None,
+    )
+    if criterion_column is None:
+        return ()
+    text = texts[spec]
+    targets = {
+        adapter._local_destination(spec, link)[1]
+        for row in adapter._body_contract_rows(text, profile) or ()
+        if criteria.intersection(
+            re.findall(r"\bVAL-[A-Z0-9-]+-[0-9]{3}\b", row.get(criterion_column, ""))
+        )
+        for column in columns
+        for link in adapter._extract_links(row.get(column, ""), definitions_text=text)
+    }
+    return tuple(
+        (path.as_posix(), hashlib.sha256(texts[path].encode("utf-8")).hexdigest())
+        for path in targets
+        if path in documents
+        and documents[path].profile_id == "sdlc/requirement"
+        and documents[path].status != "approved"
+    )
+
+
 def _local_plan_task_contract_issues(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -725,6 +802,9 @@ def _local_plan_task_contract_issues(
     base_texts: Mapping[PurePosixPath, str],
     proposed_texts: Mapping[PurePosixPath, str],
     base_registry: Registry | None = None,
+    *,
+    approved_initial_paths: frozenset[PurePosixPath] = frozenset(),
+    completion_plan: PurePosixPath | None = None,
 ) -> tuple[tuple[PurePosixPath, str, str, str, str], ...]:
     """Check only this local adopter's changed Plan and execution inputs.
 
@@ -733,7 +813,6 @@ def _local_plan_task_contract_issues(
     """
 
     base_registry = base_registry or registry
-    base_binding = _task_execution_binding(base_registry)
     binding = _task_execution_binding(registry)
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     plan_profile = profiles.get("sdlc/plan")
@@ -764,7 +843,15 @@ def _local_plan_task_contract_issues(
         promotion_header = ["Durable contract", "Promoted to", "Where"]
         none_row = ["none", "none", "No durable contract was introduced"]
     adapter = _link_validator_module()
+    task_scope_heading = _form_heading(registry, "task", "task-scope")
     issues: list[tuple[PurePosixPath, str, str, str, str]] = []
+
+    def task_scope(text: str) -> str | None:
+        return (
+            adapter._exact_heading_section(text, task_scope_heading)
+            if task_scope_heading
+            else None
+        )
 
     def issue(
         path: PurePosixPath, profile: str, rule: str, expected: str, observed: str
@@ -832,7 +919,9 @@ def _local_plan_task_contract_issues(
             plan.profile_id != "sdlc/plan"
             or path.parts[:2] != ("docs", "03.specs")
             or plan.status == "cancelled"
-            or base_texts.get(path) == proposed_texts[path]
+            or (
+                path != completion_plan and base_texts.get(path) == proposed_texts[path]
+            )
         ):
             continue
         constraints = (
@@ -901,19 +990,6 @@ def _local_plan_task_contract_issues(
             row.get("Status", "").strip() in {"ready", "in-progress", "completed"}
             for row in rows
         )
-        base_evidence = {
-            row.get("Evidence ID", "").strip(): row
-            for row in adapter.task_base_evidence_rows(
-                base_texts.get(path, ""), base_binding
-            )
-            or ()
-        }
-        active = active or any(
-            row.get("Result", "").strip() == "PASS"
-            and base_evidence.get(row.get("Evidence ID", "").strip()) != row
-            for row in adapter.task_base_evidence_rows(proposed_texts[path], binding)
-            or ()
-        )
         if not active:
             continue
         plan_path, plan_id = direct_parent(path, "sdlc/task") or (None, None)
@@ -933,30 +1009,21 @@ def _local_plan_task_contract_issues(
             if prior_task is not None and base_task_profile is not None
             else ()
         )
+        scope_text = task_scope(proposed_texts[path])
+        if (
+            prior_task is not None
+            and prior_task.status == task.status
+            and prior_rows == rows
+            and task_scope(base_texts[path]) == scope_text
+        ):
+            continue  # Recording evidence and withdrawal does not resume work.
         same_existing_work = bool(
             prior_task is not None
             and prior_task.profile_id == "sdlc/task"
             and prior_task.artifact_id == task.artifact_id
             and prior_task.status == "completed"
             and prior_rows
-            and tuple(
-                (
-                    row.get("ID"),
-                    row.get("Upstream criterion"),
-                    row.get("Work item"),
-                    row.get("Owner"),
-                )
-                for row in prior_rows
-            )
-            == tuple(
-                (
-                    row.get("ID"),
-                    row.get("Upstream criterion"),
-                    row.get("Work item"),
-                    row.get("Owner"),
-                )
-                for row in rows
-            )
+            and _work_scope(prior_rows) == _work_scope(rows)
         )
 
         def approved_parent(
@@ -964,9 +1031,12 @@ def _local_plan_task_contract_issues(
         ) -> bool:
             if parent_path is None or parent is None:
                 return False
-            if parent.status == "approved":
-                return True
             old = base_documents.get(parent_path)
+            unchanged = base_texts.get(parent_path) == proposed_texts.get(parent_path)
+            if parent.status == "approved":
+                return parent_path in approved_initial_paths or bool(
+                    old is not None and old.status == "approved" and unchanged
+                )
             return bool(
                 same_existing_work
                 and parent.status == "completed"
@@ -974,11 +1044,11 @@ def _local_plan_task_contract_issues(
                 and old.profile_id == parent.profile_id
                 and old.artifact_id == parent.artifact_id
                 and old.status == "completed"
-                and base_texts.get(parent_path) == proposed_texts.get(parent_path)
+                and unchanged
             )
 
         expected_spec = direct_parent(plan_path, "sdlc/plan") if plan_path else None
-        valid = bool(
+        typed = bool(
             plan_path is not None
             and plan is not None
             and plan.profile_id == "sdlc/plan"
@@ -988,17 +1058,49 @@ def _local_plan_task_contract_issues(
             and plan_metadata.get("parent_ids") == [spec.artifact_id if spec else None]
             and spec is not None
             and spec.profile_id == "sdlc/spec"
-            and approved_parent(plan_path, plan)
-            and approved_parent(spec_path, spec)
         )
-        if not valid:
-            issue(
-                path,
-                "sdlc/task",
-                "TASK-PARENT-APPROVAL",
-                "typed same-package approved Spec and Plan before Task execution",
-                "changed executable Task lacks approved parent identity or status",
+        if typed:
+            assert plan_path is not None and plan is not None and spec is not None
+            draft_basis = _draft_requirement_basis(
+                registry,
+                spec_path,
+                proposed_documents,
+                proposed_texts,
+                {
+                    criterion
+                    for row in rows
+                    for criterion in (
+                        task_criterion_ids(row.get("Upstream criterion", "")) or ()
+                    )
+                },
             )
+            approval = _scoped_execution_approval(
+                adapter.task_evidence_rows(proposed_texts[path], binding) or (),
+                [spec.artifact_id, plan.artifact_id, task.artifact_id],
+                proposed_texts[spec_path],
+                proposed_texts[plan_path],
+                _execution_request_revision(scope_text, rows, draft_basis)
+                if scope_text and rows
+                else None,
+            )
+            if (
+                approval is True
+                and plan.status in {"draft", "in-review", "approved"}
+                and spec.status in {"draft", "in-review", "approved"}
+            ) or (
+                approval is None
+                and not draft_basis
+                and approved_parent(plan_path, plan)
+                and approved_parent(spec_path, spec)
+            ):
+                continue
+        issue(
+            path,
+            "sdlc/task",
+            "TASK-PARENT-APPROVAL",
+            "current typed parents and approval for the reviewed execution inputs",
+            "changed executable Task lacks unchanged approval or a current scoped approval receipt",
+        )
     return tuple(issues)
 
 
@@ -1021,6 +1123,52 @@ def _receipt_object(value: str, keys: frozenset[str]) -> dict[str, object] | Non
     except (ValueError, TypeError):
         return None
     return parsed if isinstance(parsed, dict) and parsed.keys() == keys else None
+
+
+def _scoped_execution_approval(
+    rows: Sequence[Mapping[str, str]],
+    scope: Sequence[str | None],
+    spec: str,
+    plan: str,
+    request_revision: str | None,
+) -> bool | None:
+    """Check the latest Task receipt against the exact current execution inputs."""
+
+    row = next(
+        (
+            row
+            for row in reversed(rows)
+            if row.get("Command") == SCOPED_EXECUTION_APPROVAL_COMMAND
+        ),
+        None,
+    )
+    if row is None:
+        return None
+    if row.get("Result") != "PASS" or request_revision is None or not all(scope):
+        return False
+    expected = {
+        "actor": "user",
+        "scope": list(scope),
+        "reviewed_spec_sha256": hashlib.sha256(spec.encode("utf-8")).hexdigest(),
+        "reviewed_plan_sha256": hashlib.sha256(plan.encode("utf-8")).hexdigest(),
+        "request_revision": request_revision,
+        "validity": "confirmed",
+        "revocation": "none",
+    }
+    receipt = _receipt_object(
+        row.get("Input", ""), frozenset({*expected, "approval_ref"})
+    )
+    if receipt is None:
+        return False
+    ref = receipt.get("approval_ref")
+    return bool(
+        all(receipt[key] == value for key, value in expected.items())
+        and isinstance(ref, str)
+        and ref == ref.strip()
+        and ref.casefold() not in {"", "none", "pending", "tbd", "todo"}
+        and "{{" not in ref
+        and "}}" not in ref
+    )
 
 
 def _new_approval_receipts(
@@ -1241,6 +1389,8 @@ def _evidence_context(
     base_texts: Mapping[PurePosixPath, str],
     proposed_texts: Mapping[PurePosixPath, str],
     base_registry: Registry | None = None,
+    *,
+    completion_plan: PurePosixPath | None = None,
 ) -> LifecycleEvidenceContext:
     """Read each side of every Task with the registry of that side (SPEC-0203).
 
@@ -1469,6 +1619,14 @@ def _evidence_context(
         if _body_text(base_texts[path]) != _body_text(proposed_texts[path])
     )
     created = frozenset(set(proposed_documents) - set(base_documents))
+    approved_initial_paths = _approved_initial_paths(
+        base_documents,
+        proposed_documents,
+        proposed_texts,
+        base_texts,
+        views,
+        base_binding,
+    )
     return LifecycleEvidenceContext(
         base_documents=base_documents,
         proposed_documents=MappingProxyType(views),
@@ -1480,14 +1638,7 @@ def _evidence_context(
         status_changed_paths=status_changed,
         body_changed_paths=body_changed | created,
         created_paths=created,
-        approved_initial_paths=_approved_initial_paths(
-            base_documents,
-            proposed_documents,
-            proposed_texts,
-            base_texts,
-            views,
-            base_binding,
-        ),
+        approved_initial_paths=approved_initial_paths,
         base_task_rows=MappingProxyType(base_task_rows),
         base_task_evidence_rows=MappingProxyType(base_task_evidence_rows),
         local_contract_issues=_local_plan_task_contract_issues(
@@ -1497,6 +1648,8 @@ def _evidence_context(
             base_texts,
             proposed_texts,
             base_registry,
+            approved_initial_paths=approved_initial_paths,
+            completion_plan=completion_plan,
         ),
         retired_identities=(
             lineage_retired_identities(proposed_texts)
@@ -2893,8 +3046,12 @@ def _evaluate_snapshot(
         path: document_from_text(registry, path, text) for path, text in texts.items()
     }
     context = _evidence_context(registry, {}, documents, {}, texts)
-    return validate_snapshot_documents(registry, tuple(documents.values())) + (
-        validate_current_task_evidence(context, base_mode="explicit-ref")
+    return (
+        validate_snapshot_documents(registry, tuple(documents.values()))
+        + validate_current_task_evidence(context, base_mode="explicit-ref")
+        + operating_supersession_diagnostics(
+            registry, context.proposed_documents, base_mode="snapshot"
+        )
     )
 
 
@@ -2984,11 +3141,11 @@ def _completion_document_diagnostics(
         ):
             fail(spec_path, "COMPLETION-SPEC", "anchor must be an indexed current Spec")
             continue
-        if documents[spec_path].status not in {"active", "approved", "completed"}:
+        if documents[spec_path].status != "approved":
             fail(
                 spec_path,
                 "COMPLETION-SPEC",
-                "Spec approval state is not active/completed",
+                "current Spec must be approved",
             )
         package = spec_path.parent
         plan_path = package / "plan.md"
@@ -3007,16 +3164,11 @@ def _completion_document_diagnostics(
         if plan_path not in documents or documents[plan_path].profile_id != "sdlc/plan":
             fail(plan_path, "COMPLETION-PLAN", "indexed same-package Plan missing")
             continue
-        if documents[plan_path].status not in {
-            "active",
-            "approved",
-            "in-progress",
-            "completed",
-        }:
+        if documents[plan_path].status != "approved":
             fail(
                 plan_path,
                 "COMPLETION-PLAN",
-                "Plan approval state is not active/completed",
+                "current Plan must be approved",
             )
 
         criteria_heading = _form_heading(
@@ -3138,7 +3290,12 @@ def _completion_document_diagnostics(
                         registry, current_path, prior_text
                     )
         context = _evidence_context(
-            registry, baseline_documents, documents, baseline_texts, texts
+            registry,
+            baseline_documents,
+            documents,
+            baseline_texts,
+            texts,
+            completion_plan=plan_path if base_mode == "completion" else None,
         )
         for diagnostic in validate_current_task_evidence(
             context, base_mode="explicit-ref"

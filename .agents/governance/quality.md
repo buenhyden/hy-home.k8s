@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "2.8.0"
+version: "3.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-16"
 ---
 
 # Quality and Evidence Policy
@@ -228,15 +228,16 @@ results, approval, integration and publication are distinct facts.
 
 `QUAL-R015`
 
-A single-maintainer review combines a recorded risk class, the applicable
-static and contract checks, a core-diff checklist over the exact snapshot, the
-owner's explicit acceptance and a recovery path, with the evidence and any
-release approval recorded. An extra agent or model API call is never a required
-reviewer: no rule, gate or completion condition may depend on one, and adding
-one under another name (proxy, summary or gate helper) is the same violation.
-When the operator asks for one, a separate read-only agent review is optional
-supporting evidence. No review step, agent or human, is recorded as a second
-human approval.
+Record the risk class, the applicable checks, a core-diff checklist over the
+exact snapshot, and the owner's acceptance and applicable recovery evidence.
+Low-risk changes use focused checks and the author's review. High-risk changes
+require review by an independent human or authorized reviewer who did not write
+the change. Record the review inputs, outcome and any unresolved finding.
+The independent review grants no execution permission or user acceptance.
+Choose a reviewer within the approved budget. This rule requires no paid model
+call or standing multiple-reviewer requirement. For an approved irreversible
+transition, record the applicable pre-transition and forward-correction checks
+in place of a recovery route for its authorized removal targets.
 
 - `QUAL-R016` Record the risk class in the existing handoff evidence: `low` for a
   document-only change outside policy, registry, validator, hook, workflow and
@@ -249,8 +250,10 @@ human approval.
   acceptance criteria and command results, not the author's summary:
   acceptance and implementation alignment, document completion or
   supersession, one writer per file, consistency with current contracts and
-  policies, removed or weakened checks, secret exposure and the recovery path
-  (rollback commit or bounded procedure). A `high`
+  policies, removed or weakened checks, secret exposure and the applicable
+  recovery path (rollback commit or bounded procedure). For approved final
+  removal targets, record candidate validation, exact scope and the stop or
+  forward-correction procedure from Rule 15. A `high`
   change also lists each changed permission, trigger and protected action.
 - `QUAL-R019` Grade every finding `BLOCK`, `FIX` or `NOTE`. `BLOCK` is a correctness,
   security or data-loss defect or a violation of a current contract or policy;
@@ -259,7 +262,8 @@ human approval.
   from an optional review blocks in the same way until fixed or dispositioned
   by the owner.
 - `QUAL-R020` Record the checked snapshot, check results, risk class, checklist outcome,
-  findings, any optional reviewer identity and the disposition in the existing
+  findings, the reviewing role and identity when independent review is required,
+  and the disposition in the existing
   handoff evidence. The writer repairs findings and refreshes the affected
   checks and checklist after changes. Reuse unchanged evidence under the
   validation lane contract.

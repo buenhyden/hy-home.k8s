@@ -82,6 +82,9 @@ class CiBranchMetadataTests(unittest.TestCase):
             candidate.mkdir()
             git_env = {
                 **os.environ,
+                "GIT_ALLOW_PROTOCOL": "file",
+                "GIT_CONFIG_GLOBAL": os.devnull,
+                "GIT_CONFIG_NOSYSTEM": "1",
                 "GIT_AUTHOR_NAME": "Test",
                 "GIT_AUTHOR_EMAIL": "test@example.invalid",
                 "GIT_COMMITTER_NAME": "Test",
@@ -137,6 +140,7 @@ class CiBranchMetadataTests(unittest.TestCase):
                 "HEAD_SHA": head_sha,
                 "MERGE_SHA": merge_sha,
                 "PATH": os.environ["PATH"],
+                "GIT_ALLOW_PROTOCOL": "file",
             }
 
             def run(title="docs: title", **overrides):
@@ -213,6 +217,7 @@ class CiBranchMetadataTests(unittest.TestCase):
 
             git("checkout", "-q", "--detach", head_sha)
             git("commit", "-q", "--allow-empty", "-m", "bad middle subject")
+            bad_commit = git("rev-parse", "HEAD")
             git("commit", "-q", "--allow-empty", "-m", "fix: valid tip")
             bad_head = git("rev-parse", "HEAD")
             bad_merge = merge_for(bad_head)
@@ -255,6 +260,53 @@ class CiBranchMetadataTests(unittest.TestCase):
             (trusted / ".cz.toml").unlink()
             (trusted / ".cz.toml").symlink_to(candidate / ".cz.toml")
             self.assertNotEqual(run().returncode, 0)
+            (trusted / ".cz.toml").unlink()
+            git("restore", "--", ".cz.toml", cwd=trusted)
+
+            checkout = self.workflow["jobs"]["ci-summary"]["steps"][2]["with"]
+            self.assertEqual(checkout["ref"], "${{ github.sha }}")
+            self.assertIs(checkout["fetch-tags"], False)
+            self.assertIs(checkout["sparse-checkout-cone-mode"], False)
+            origin = candidate.rename(root / "origin")
+            git("config", "uploadpack.allowFilter", "true", cwd=origin)
+            git("update-ref", "refs/pull/1/merge", bad_merge, cwd=origin)
+            unrelated = git(
+                "commit-tree", tree, input=b"docs: unrelated history\n", cwd=origin
+            )
+            git("update-ref", "refs/heads/unrelated", unrelated, cwd=origin)
+            git("tag", "unrelated", unrelated, cwd=origin)
+
+            candidate.mkdir()
+            git("init", "-q")
+            git("remote", "add", "origin", origin.as_uri())
+            git(
+                "fetch",
+                "-q",
+                "--no-tags",
+                "--filter=blob:none",
+                f"--depth={checkout['fetch-depth']}",
+                "origin",
+                bad_merge,
+            )
+            git("sparse-checkout", "set", "--no-cone", checkout["sparse-checkout"])
+            git("checkout", "-q", "--detach", bad_merge)
+            self.assertEqual(git("rev-parse", "--is-shallow-repository"), "false")
+            self.assertEqual(
+                git("rev-list", f"{base_sha}..{bad_head}").splitlines(),
+                [bad_head, bad_commit, head_sha],
+            )
+            self.assertEqual(git("for-each-ref", "--format=%(refname)"), "")
+            objects = git(
+                "cat-file",
+                "--batch-all-objects",
+                "--batch-check=%(objectname) %(objecttype)",
+            ).splitlines()
+            self.assertNotIn(f"{unrelated} commit", objects)
+            self.assertFalse(any(row.endswith(" blob") for row in objects))
+            self.assertEqual({path.name for path in candidate.iterdir()}, {".git"})
+            refused = run(HEAD_SHA=bad_head, MERGE_SHA=bad_merge)
+            self.assertNotEqual(refused.returncode, 0)
+            self.assertIn(bad_commit, refused.stderr)
 
 
 if __name__ == "__main__":

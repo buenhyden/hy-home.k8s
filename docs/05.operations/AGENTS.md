@@ -69,9 +69,9 @@ This folder hands off through the work lifecycle's Completion steps with no extr
 
 ### Required Checks
 
-Run the strict document checks listed in the parent `AGENTS.md` and
-`python3 scripts/validation/repository/quality.py --root .`, which checks
-command boundary markers.
+Select the document checks in the parent `AGENTS.md`. When an executable
+snippet or its safety boundary changes, also check command boundary markers
+with `python3 scripts/validation/repository/quality.py --root .`.
 
 ### Evidence and Limits
 

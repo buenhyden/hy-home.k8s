@@ -1679,7 +1679,7 @@ def run_selected(
     validator_ids: Sequence[str] | None = None,
     base_ref: str | None = None,
     reuse_candidates: Mapping[str, dict[str, str]] | None = None,
-    completed_passes: MutableMapping[str, str] | None = None,
+    observed_results: MutableMapping[str, str] | None = None,
 ) -> int:
     if lane not in LOCAL_LANES:
         raise ValueError("unsupported local validation lane")
@@ -1728,6 +1728,9 @@ def run_selected(
         tool_token = argv[0]
         evidence = validator["evidenceLane"]
         if evidence == "remote/live":
+            if observed_results is not None:
+                observed_results[identifier] = "DEFER"
+            failed = failed or not validator["optional"]
             print(
                 result_line(
                     "DEFER",
@@ -1745,6 +1748,8 @@ def run_selected(
         if resolved_tool is None:
             fallback = validator["fallback"]
             if validator["optional"]:
+                if observed_results is not None:
+                    observed_results[identifier] = "DEFER"
                 print(
                     result_line(
                         "DEFER",
@@ -1785,6 +1790,8 @@ def run_selected(
                 )
             )
             failed = True
+            if observed_results is not None:
+                observed_results[identifier] = "FAIL"
             continue
 
         candidate = (reuse_candidates or {}).get(identifier)
@@ -1800,6 +1807,8 @@ def run_selected(
             and candidate["source"] == "local"
             and lane in ("affected", "staged")
         ):
+            if observed_results is not None:
+                observed_results[identifier] = "REUSED"
             print(
                 result_line(
                     "REUSED",
@@ -1912,9 +1921,8 @@ def run_selected(
         )
         for row in platform_rows:
             print(platform_result_line(row, identifier, lane, scope, evidence))
-        if passed and not style_not_applicable and completed_passes is not None:
-            # The caller persists these only after checking snapshot integrity.
-            completed_passes[identifier] = "PASS"
+        if observed_results is not None:
+            observed_results[identifier] = status
         failed = failed or not passed
     return 1 if failed else 0
 

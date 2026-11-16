@@ -1,10 +1,10 @@
 ---
 title: "Reference: Current-State Addendum 2026-11-05"
-version: "0.1.1"
+version: "0.1.3"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 artifact_id: "RES-0001-m0014"
 ---
 
@@ -154,6 +154,19 @@ numbers are fixed to the published members at `726e1956`. Findings the
 reviews marked uncertain are omitted.
 
 ### Recommendations
+
+Navigation verified on 2026-11-16. The GitHub configuration link in m0008
+names the former path. Use the
+[GitHub repository surface](../../../../.github/repository-surface.md) for current configuration.
+For m0012's document QA terminology, use the
+[QA result vocabulary](../../../../.agents/governance/quality.md#result-vocabulary),
+which distinguishes `NOT_RUN` and `NOT_APPLICABLE`. The 2026-11-05 observations
+above keep their original evidence date.
+
+The release document proposed in m0004 belongs to its historical design
+comparison. The [document registry](../../../99.templates/registry.json)
+owns the current form set and schema version. Product tags and GitHub
+Releases follow [RUN-0012](../../../05.operations/runbooks/0012-main-release-preparation-runbook.md).
 
 A later research cycle can succeed the most out-of-date members (m0004,
 m0008, m0012) with fresh members instead of relying on this addendum; the

@@ -216,12 +216,40 @@ class OperationsSectionContractTests(unittest.TestCase):
         )
 
     def test_navigation_section_may_hold_links_only(self) -> None:
-        content = markdown._scan_required_h2_content(
-            "# Example\n\n## Related Documents\n- [RUN-0001](./0001-x.md)\n",
-            ("Related Documents",),
-            substantive_body=True,
+        profile = guide_profile(
+            substantive_body=True, required=["Operational References"]
         )
-        self.assertEqual(content.empty, ())
+        section = dataclasses.replace(
+            profile.form.sections[0], title="Operational References", link_only=True
+        )
+        for link_only in (True, False):
+            with self.subTest(link_only=link_only):
+                candidate = dataclasses.replace(
+                    profile,
+                    form=dataclasses.replace(
+                        profile.form,
+                        sections=(dataclasses.replace(section, link_only=link_only),),
+                    ),
+                )
+                diagnostics = markdown._body_diagnostics(
+                    GUIDE_PATH,
+                    candidate,
+                    "# Example\n\n## Operational References\n- [RUN-0001](./0001-x.md)\n",
+                    RETAINED_STATUS,
+                )
+                self.assertEqual(
+                    any(item.rule_id == "BODY-HEADING-EMPTY" for item in diagnostics),
+                    not link_only,
+                )
+
+    def test_html_block_heading_does_not_create_empty_retained_section(self) -> None:
+        diagnostics = markdown._body_diagnostics(
+            GUIDE_PATH,
+            guide_profile(substantive_body=True),
+            "# Example\n\n<div>\n## Purpose\n\n## Purpose\nA real purpose.\n",
+            RETAINED_STATUS,
+        )
+        self.assertEqual([item.rule_id for item in diagnostics], [])
 
     def test_nested_role_heading_is_rejected_even_when_prose_exists(self) -> None:
         self.assertIn(

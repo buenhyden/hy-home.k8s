@@ -1,10 +1,10 @@
 ---
 title: "Workspace Engineering Research Pack"
-version: "0.3.2"
+version: "0.3.3"
 type: "reference/research-pack"
 status: "in-review"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 artifact_id: "RES-0001"
 ---
 # Workspace Engineering Research Pack
@@ -53,7 +53,7 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 | 외부 주장 판정 | 위 다섯 값과 그 주장의 출처·범위·한계를 기록한다. |
 | 출처 갱신 결과 | `new`는 새로 수용한 근거, `changed`는 비교 범위의 변화, `unchanged`는 실제 관련 본문 비교에서 변화가 없었던 결과, `unreachable`은 필요한 본문에 접근하지 못한 결과다. |
 | 이번 workspace 관찰 | 항상 `not observed in this cycle`이다. 후보 경로는 후속 조사 selector이며 현재 실태 판정이 아니다. |
-| 문서 QA | 실제 실행한 검사와 snapshot의 `PASS / FAIL / SKIP / DEFER`를 실행 Task에 기록한다. 연구 사실 판정과 별개다. |
+| 문서 QA | 검사 대상 snapshot과 결과를 [QA 결과 분류](../../../../.agents/governance/quality.md#result-vocabulary)에 따라 실행 Task에 기록한다. |
 
 상충하는 외부 자료는 제품·버전·채널·관찰일로 나누며 해결되지 않은 차이를
 남긴다. 문서에 없다는 이유만으로 미지원이라고 단정하지 않는다. 조건부 적용
@@ -81,7 +81,7 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 | [Memory management](m0011-agent-memory-tiers-and-management.md) | 단기·장기·도메인 기억, 수명·승격·정정·삭제·복구 |
 | [Source coverage](m0012-source-coverage.md) | 원 요청·requirement·claim·source 대응, 갱신·이관 처분과 역사적 증거 |
 | [Scope application index](m0013-scope-application-index.md) | 외부 근거를 scope별 후속 조사 질문·selector·합격 기준·승인 경계에 연결 |
-| [Current-state addendum 2026-11-05](m0014-current-state-addendum-2026-11-05.md) | 게시된 m0001~m0012의 저장소 지역 주장 중 현재와 다른 항목, 멤버 내부 상충·중복의 최신 판정 |
+| [Current-state addendum 2026-11-05](m0014-current-state-addendum-2026-11-05.md) | 게시된 m0001~m0012의 당시 저장소 관측 차이와 내부 상충·중복, 현행 QA·양식·제품 발행 소유자 안내 |
 
 ## Usage
 
@@ -110,7 +110,9 @@ provider discovery·model resolution·hook 실행, hosted CI와 live cluster 효
 
 문서 검증은 변경 문서의 repository-static QA만 입증한다. 연구 발견과 조건부
 제안은 활성 정책, 구현 계약, 실행 승인이나 도구 도입 결정으로 승격되지 않는다.
-현재 로컬 권한은 공통 거버넌스와 각 stage의 정본 owner가 소유한다. 2026-11-05 기준 이 pack 안의 과거 로컬 경로·Spec·scope 문서 언급은 그 관찰일의 증거이며, tree를 떠난 문서는 Git history가 복구한다.
+현재 로컬 권한은 공통 거버넌스와 각 stage의 정본 owner가 소유한다.
+과거 로컬 경로·Spec·scope 문서는 각 관측일의 증거다. 종료된 Spec
+패키지의 보존 근거는 해당 요구 문서의 Archived Lineage에서 확인한다.
 
 ## Related Documents
 

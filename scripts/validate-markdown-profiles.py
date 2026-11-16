@@ -6,12 +6,16 @@ from __future__ import annotations
 import argparse
 import collections
 import datetime as dt
+import importlib.util
 import json
 import math
 import re
 import sys
 from dataclasses import dataclass, replace
+from functools import lru_cache
+from html import unescape
 from pathlib import Path, PurePosixPath
+from types import ModuleType
 from typing import Any, Iterator, Mapping, Sequence
 from zoneinfo import ZoneInfo
 
@@ -33,6 +37,7 @@ from document_contracts import (
     diagnostic_sort_key,
     enumerate_tracked_regular_paths,
     enumerate_target_markdown,
+    heading_contract,
     is_opaque_evaluation_output,
     verify_opaque_evaluation_output,
     is_ignored_repository_path,
@@ -40,6 +45,7 @@ from document_contracts import (
     load_registry,
     read_repository_text,
     scoped_document_content_paths,
+    section_usage,
     validated_changed_paths,
     task_status,
     task_contract_issues,
@@ -267,49 +273,48 @@ def _strip_html_comments(line: str, in_comment: bool) -> tuple[str, bool]:
     return "".join(visible), in_comment
 
 
-def scan_headings(markdown: str) -> HeadingScan:
-    """Scan ATX headings outside CommonMark-compatible fenced blocks."""
+@lru_cache(maxsize=1)
+def _markdown_renderer() -> ModuleType:
+    """Load the shared link and heading block renderer."""
 
+    path = Path(__file__).with_name("validate-links-and-owners.py")
+    name = "_document_profile_markdown_renderer"
+    spec = importlib.util.spec_from_file_location(name, path)
+    if spec is None or spec.loader is None:
+        raise ValueError("document block renderer unavailable")
+    renderer = importlib.util.module_from_spec(spec)
+    sys.modules[name] = renderer
+    spec.loader.exec_module(renderer)
+    return renderer
+
+
+def scan_headings(markdown: str) -> HeadingScan:
+    """Collect root headings from the rendered block view and preserve body source."""
+
+    renderer = _markdown_renderer()
+    structural_headings, fence_lines, unclosed_fence = renderer.root_form_structure(
+        markdown
+    )
     headings: list[tuple[int, str]] = []
     bodies: list[list[tuple[str, bool]]] = []
-    fence_character: str | None = None
-    fence_length = 0
     in_comment = False
-    opening = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
-    for raw_line in markdown.splitlines():
-        if fence_character is not None:
-            closing = re.compile(
-                rf"^ {{0,3}}{re.escape(fence_character)}"
-                rf"{{{fence_length},}}[ \t]*$"
-            )
-            if closing.fullmatch(raw_line):
-                fence_character = None
-                fence_length = 0
-            elif bodies:
+    for index, raw_line in enumerate(renderer._commonmark_splitlines(markdown)):
+        if index in fence_lines:
+            if fence_lines[index] and bodies:
                 bodies[-1].append((raw_line, True))
             continue
-        line, in_comment = _strip_html_comments(raw_line, in_comment)
-        match = opening.match(line)
-        if match:
-            marker = match.group(1)
-            if marker[0] == "`" and "`" in match.group(2):
-                if bodies:
-                    bodies[-1].append((line, False))
-                continue
-            fence_character = marker[0]
-            fence_length = len(marker)
-            continue
-        match = re.match(r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$", line)
-        if not match:
+        heading = structural_headings.get(index)
+        if heading is None:
+            line, in_comment = _strip_html_comments(raw_line, in_comment)
             if bodies:
                 bodies[-1].append((line, False))
             continue
-        title = re.sub(r"[ \t]+#+[ \t]*$", "", match.group(2).strip()).strip()
-        headings.append((len(match.group(1)), title))
+        in_comment = False
+        headings.append(heading)
         bodies.append([])
     return HeadingScan(
         tuple(headings),
-        fence_character is not None,
+        unclosed_fence,
         tuple(tuple(body) for body in bodies),
     )
 
@@ -317,35 +322,12 @@ def scan_headings(markdown: str) -> HeadingScan:
 def text_outside_fenced_code(markdown: str) -> str:
     """Return source outside fenced blocks while preserving HTML comments."""
 
-    visible: list[str] = []
-    fence_character: str | None = None
-    fence_length = 0
-    in_comment = False
-    opening = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
-    for raw_line in markdown.splitlines():
-        if fence_character is not None:
-            closing = re.compile(
-                rf"^ {{0,3}}{re.escape(fence_character)}"
-                rf"{{{fence_length},}}[ \t]*$"
-            )
-            if closing.fullmatch(raw_line):
-                fence_character = None
-                fence_length = 0
-            visible.append("")
-            continue
-        line, in_comment = _strip_html_comments(raw_line, in_comment)
-        match = opening.match(line)
-        if match:
-            marker = match.group(1)
-            if marker[0] == "`" and "`" in match.group(2):
-                visible.append(raw_line)
-                continue
-            fence_character = marker[0]
-            fence_length = len(marker)
-            visible.append("")
-            continue
-        visible.append(raw_line)
-    return "\n".join(visible)
+    renderer = _markdown_renderer()
+    _, fence_lines, _ = renderer.root_form_structure(markdown)
+    return "\n".join(
+        "" if index in fence_lines else line
+        for index, line in enumerate(renderer._commonmark_splitlines(markdown))
+    )
 
 
 def _visible_markdown(markdown: str) -> str:
@@ -414,28 +396,16 @@ def _gfm_table_cells(line: str) -> list[str]:
 
 
 def _exact_heading_section(text: str, heading: str) -> str | None:
-    """Return the sole exact heading section outside comments and fences."""
+    """Use the same rendered heading boundaries as the form tree."""
 
-    visible_lines = _visible_markdown(text).splitlines()
-    raw_lines = text.splitlines()
-    matches = [index for index, line in enumerate(visible_lines) if line == heading]
-    if len(matches) != 1:
-        return None
-    start = matches[0]
-    level = len(heading) - len(heading.lstrip("#"))
-    end = len(raw_lines)
-    for index in range(start + 1, len(visible_lines)):
-        candidate = re.match(r"^(#{1,6})\s", visible_lines[index])
-        if candidate and len(candidate.group(1)) <= level:
-            end = index
-            break
-    return "\n".join(raw_lines[start + 1 : end])
+    marker, _, title = heading.partition(" ")
+    return _markdown_renderer().root_heading_section(text, len(marker), title)
 
 
 def _visible_tables(text: str) -> Iterator[tuple[list[str], list[list[str]]]]:
-    """Yield every valid pipe-led GFM table outside comments and fences, in order."""
+    """Yield every valid pipe-led GFM table in the rendered root, in order."""
 
-    lines = _visible_markdown(text).splitlines()
+    lines = _markdown_renderer().root_visible_lines(text)
     index = 0
     while index < len(lines) - 1:
         start, index = index, index + 1
@@ -837,9 +807,9 @@ def _table_diagnostics(
 ) -> list[Diagnostic]:
     """SPEC-0169: check the profile's template tables inside their sections.
 
-    A table is identified by its first header cell. The table the body contract
-    owns keeps its own checks, and a non-unique section heading is left to the
-    heading-tree check.
+    A table is identified by its first header cell or a reordered column prefix.
+    Body-contract tables keep their own checks. The heading tree checks
+    non-unique section headings.
     """
 
     owned = profile.body_contract.table_heading if profile.body_contract else None
@@ -856,10 +826,12 @@ def _table_diagnostics(
         keys = [column.key for column in table.columns]
         # Optional columns trail the required ones, so a header may stop early.
         required = sum(column.required for column in table.columns)
+        present = False
         rows = 0
         for header, data in _visible_tables(section):
-            if header[0] != keys[0]:
+            if header[0] != keys[0] and sorted(header) != sorted(keys[: len(header)]):
                 continue
+            present = True
             rows += len(data)
             if header != keys[: len(header)] or len(header) < required:
                 found.append(
@@ -871,7 +843,17 @@ def _table_diagnostics(
                         json.dumps(header, ensure_ascii=False),
                     )
                 )
-        if rows < table.minimum_rows:
+        if profile.mode == "template" and table.minimum_rows and not present:
+            found.append(
+                _diagnostic(
+                    "BODY-TABLE-MISSING",
+                    path,
+                    profile,
+                    f"a visible {table.name} table in its template section",
+                    "no matching table header",
+                )
+            )
+        elif profile.mode != "template" and rows < table.minimum_rows:
             found.append(
                 _diagnostic(
                     "BODY-TABLE-ROWS",
@@ -882,6 +864,63 @@ def _table_diagnostics(
                 )
             )
     return found
+
+
+def _requirement_quality_diagnostics(
+    path: PurePosixPath, profile: DocumentProfile, body: str
+) -> list[Diagnostic]:
+    """Keep requirement kinds in their own tables and resolve declared NFRs."""
+
+    package = _requirement_package_number(path)
+    if package is None or profile.form is None:
+        return []
+    requirement = re.compile(rf"REQ-{package}-(FR|NFR|IF)-[0-9]{{4}}")
+    functional = "requirement-requirements-functional-requirements"
+    quality = "requirement-requirements-quality-requirements"
+    trace = "requirement-lifecycle-traceability"
+    members = {section: set() for section in (functional, quality, trace)}
+    for table in profile.tables:
+        if table.section not in members:
+            continue
+        heading = _form_heading(profile.form, table.section)
+        if heading is None:
+            continue
+        level, title = heading
+        section = _exact_heading_section(body, "#" * level + " " + title)
+        for header, rows in _visible_tables(section or ""):
+            if header[0] != table.row_identity:
+                continue
+            members[table.section].update(
+                value
+                for row in rows
+                if row and requirement.fullmatch(value := _identifier_text(row[0]))
+            )
+    functional_nfrs = {value for value in members[functional] if "-NFR-" in value}
+    declared_nfrs = functional_nfrs | {
+        value for value in members[trace] if "-NFR-" in value
+    }
+    misplaced_quality = {value for value in members[quality] if "-NFR-" not in value}
+    return [
+        _diagnostic(rule, path, profile, expected, ", ".join(sorted(values)))
+        for rule, expected, values in (
+            (
+                "BODY-QUALITY-PLACEMENT",
+                "NFR members belong in Quality Requirements",
+                functional_nfrs,
+            ),
+            (
+                "BODY-QUALITY-PLACEMENT",
+                "FR and IF members belong in Functional Requirements",
+                misplaced_quality,
+            ),
+            (
+                "BODY-QUALITY-MEMBER",
+                "a Quality Requirements row for each declared NFR",
+                declared_nfrs - members[quality],
+            ),
+        )
+        if values
+    ]
 
 
 _RULE_ID_TEXT = r"[A-Z][A-Z0-9]{1,7}-R[0-9]{3}"
@@ -1260,8 +1299,6 @@ _TABLE_SEPARATOR = re.compile(r"^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$")
 _EMPTY_HTML_ANCHOR = re.compile(r"(?i)<a\b[^>]*>\s*</a>|<a\b[^>]*/>")
 _CHECKBOX_MARKER = re.compile(r"^\[[ xX]\](?:\s+|$)")
 _MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\([^)]*\)|<[a-z][a-z0-9+.-]*:[^>]*>")
-# Sections whose job is navigation may consist of links alone.
-_LINK_ONLY_SECTIONS = frozenset({"Related Documents"})
 
 
 def _substantive_section_body(
@@ -1288,7 +1325,7 @@ def _substantive_section_body(
             continue
         if "|" in line:
             if table_data:
-                cells = [cell.strip() for cell in line.strip("|").split("|")]
+                cells = [unescape(cell).strip() for cell in line.strip("|").split("|")]
                 if any(
                     cell and not _BARE_PLACEHOLDER.fullmatch(cell) for cell in cells
                 ):
@@ -1304,17 +1341,22 @@ def _substantive_section_body(
         prose = re.sub(r"^(?:[-*+]|\d+[.)]|>)\s+", "", prose)
         prose = _CHECKBOX_MARKER.sub("", prose)
         prose = prose.strip("*_`~ ")
-        if not links_are_content and not re.search(
-            r"\w", _MARKDOWN_LINK.sub("", prose)
-        ):
+        visible = prose if links_are_content else _MARKDOWN_LINK.sub("", prose)
+        if "`" not in line:
+            visible = unescape(visible).strip()
+        if not links_are_content and not re.search(r"\w", visible):
             continue
-        if prose and not _BARE_PLACEHOLDER.fullmatch(prose) and prose != "---":
+        if visible and not _BARE_PLACEHOLDER.fullmatch(visible) and visible != "---":
             return True
     return False
 
 
 def _scan_required_h2_content(
-    markdown: str, required_headings: Sequence[str], *, substantive_body: bool
+    scan: HeadingScan,
+    required_headings: Sequence[str],
+    *,
+    substantive_body: bool,
+    link_only_headings: frozenset[str] = frozenset(),
 ) -> RequiredH2Content:
     """Scan required H2 bodies once, preserving the legacy empty-body rule."""
 
@@ -1324,17 +1366,13 @@ def _scan_required_h2_content(
     current_heading: str | None = None
     current_has_content = False
     current_lines: list[tuple[str, bool]] = []
-    fence_character: str | None = None
-    fence_length = 0
-    in_comment = False
-    opening = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 
     def close_current() -> None:
         nonlocal current_heading, current_has_content, current_lines
         if current_heading is not None and not (
             _substantive_section_body(
                 current_lines,
-                links_are_content=current_heading in _LINK_ONLY_SECTIONS,
+                links_are_content=current_heading in link_only_headings,
             )
             if substantive_body
             else current_has_content
@@ -1344,56 +1382,22 @@ def _scan_required_h2_content(
         current_has_content = False
         current_lines = []
 
-    for raw_line in markdown.splitlines():
-        if fence_character is not None:
-            closing = re.compile(
-                rf"^ {{0,3}}{re.escape(fence_character)}"
-                rf"{{{fence_length},}}[ \t]*$"
+    for (level, title), lines in zip(scan.headings, scan.bodies, strict=True):
+        if level <= 2:
+            close_current()
+            if level == 2 and title in required:
+                current_heading = title
+        elif substantive_body and title in required:
+            nested_roles.append(title)
+
+        if current_heading is not None:
+            current_has_content = (
+                current_has_content
+                or level > 2
+                or any(line.strip() for line, _ in lines)
             )
-            if closing.fullmatch(raw_line):
-                fence_character = None
-                fence_length = 0
-            elif current_heading is not None and raw_line.strip():
-                current_has_content = True
-                if substantive_body:
-                    current_lines.append((raw_line, True))
-            continue
-
-        line, in_comment = _strip_html_comments(raw_line, in_comment)
-        match = opening.match(line)
-        if match:
-            marker = match.group(1)
-            if marker[0] == "`" and "`" in match.group(2):
-                if current_heading is not None and line.strip():
-                    current_has_content = True
-                    if substantive_body:
-                        current_lines.append((line, False))
-                continue
-            fence_character = marker[0]
-            fence_length = len(marker)
-            continue
-
-        heading_match = re.match(r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$", line)
-        if heading_match:
-            level = len(heading_match.group(1))
-            title = re.sub(
-                r"[ \t]+#+[ \t]*$", "", heading_match.group(2).strip()
-            ).strip()
-            if level <= 2:
-                close_current()
-                if level == 2 and title in required:
-                    current_heading = title
-            else:
-                if current_heading is not None:
-                    current_has_content = True
-                if substantive_body and title in required:
-                    nested_roles.append(title)
-            continue
-
-        if current_heading is not None and line.strip():
-            current_has_content = True
             if substantive_body:
-                current_lines.append((line, False))
+                current_lines.extend(lines)
 
     close_current()
     return RequiredH2Content(tuple(empty), tuple(nested_roles))
@@ -1405,7 +1409,7 @@ def empty_required_h2_sections(
     """Return empty required H2 bodies under the historical content rule."""
 
     return _scan_required_h2_content(
-        markdown, required_headings, substantive_body=False
+        scan_headings(markdown), required_headings, substantive_body=False
     ).empty
 
 
@@ -2006,14 +2010,22 @@ def _form_tree_diagnostics(
         found.append(_diagnostic(rule_id, path, profile, expected, actual))
 
     registered = {section.title: section for section in form.sections}
-    local: dict[str | None, set[str]] = {}
+    h2_contract = heading_contract(profile)
+    identity = (
+        expected_artifact_id(path, profile)
+        if profile.profile_id == "reference/research"
+        else None
+    )
+    local: dict[str | None, dict[str, tuple[str, ...]]] = {}
     homes: dict[str, set[str | None]] = {}
     for section in form.sections:
         for child in section.children:
             homes.setdefault(child.title, set()).add(section.section_id)
     for extension in form.extensions:
         if extension.kind == "local_h3" and extension.title is not None:
-            local.setdefault(extension.parent_id, set()).add(extension.title)
+            local.setdefault(extension.parent_id, {})[extension.title] = (
+                extension.artifact_ids
+            )
             homes.setdefault(extension.title, set()).add(extension.parent_id)
 
     headings = scan.headings
@@ -2024,11 +2036,15 @@ def _form_tree_diagnostics(
     for title in h2_titles:
         if title not in registered:
             add("BODY-HEADING-UNSUPPORTED", "a registered H2", title)
-    for section in form.sections:
-        if section.requiredness == "required" and section.title not in h2_titles:
-            add("BODY-HEADING-REQUIRED", "required H2", section.title)
-    present = [title for title in dict.fromkeys(h2_titles) if title in registered]
-    in_order = [s.title for s in form.sections if s.title in present]
+        elif title not in h2_contract.allowed:
+            add("BODY-HEADING-INAPPLICABLE", "an H2 applicable to this profile", title)
+    for title in h2_contract.required:
+        if title not in h2_titles:
+            add("BODY-HEADING-REQUIRED", "required H2", title)
+    present = [
+        title for title in dict.fromkeys(h2_titles) if title in h2_contract.allowed
+    ]
+    in_order = [title for title in h2_contract.allowed if title in present]
     if present != in_order:
         add("BODY-H2-ORDER", json.dumps(in_order), json.dumps(present))
 
@@ -2076,10 +2092,27 @@ def _form_tree_diagnostics(
             continue
         parent = registered.get(title or "")
         kids = {child.title: child for child in parent.children} if parent else {}
-        extras = local.get(parent.section_id if parent else None, set())
+        uses = {
+            name: section_usage(child, profile, artifact_id=identity)
+            for name, child in kids.items()
+        }
+        extras = local.get(parent.section_id if parent else None, {})
+        applicable_extras = {
+            name
+            for name, artifact_ids in extras.items()
+            if not artifact_ids or identity in artifact_ids
+        }
         for name in dict.fromkeys(names):
             if names.count(name) > 1:
                 add("BODY-H3-DUPLICATE", "unique H3 under one H2", f"{title}: {name}")
+            if uses.get(name) == "forbidden" or (
+                name in extras and name not in applicable_extras
+            ):
+                add(
+                    "BODY-HEADING-INAPPLICABLE",
+                    "an H3 applicable to this document",
+                    f"{title}: {name}",
+                )
             if name in kids or name in extras:
                 continue
             if name in homes:
@@ -2094,12 +2127,16 @@ def _form_tree_diagnostics(
                     "a registered H3 or local extension",
                     f"{title}: {name}",
                 )
-        if parent is None:
+        if parent is None or title not in h2_contract.allowed:
             continue
-        for child in parent.children:
-            if child.requiredness == "required" and child.title not in names:
-                add("BODY-H3-REQUIRED", "required H3", f"{title}: {child.title}")
-        seen = [name for name in dict.fromkeys(names) if name in kids]
+        for name, use in uses.items():
+            if use == "required" and name not in names:
+                add("BODY-H3-REQUIRED", "required H3", f"{title}: {name}")
+        seen = [
+            name
+            for name in dict.fromkeys(names)
+            if uses.get(name) in ("required", "optional")
+        ]
         ordered = [child.title for child in parent.children if child.title in seen]
         if seen != ordered:
             add("BODY-H3-ORDER", json.dumps(ordered), json.dumps(seen))
@@ -2113,7 +2150,7 @@ def _form_tree_diagnostics(
         elif not children and bare(index):
             add("BODY-SECTION-BARE", BARE_EXPECTED, title or "")
         for position, name in children:
-            if name in kids or name in extras:
+            if uses.get(name) in ("required", "optional") or name in applicable_extras:
                 link_only = name in kids and kids[name].link_only
                 if authored and empty(position, link_only):
                     add(
@@ -2229,10 +2266,14 @@ def _body_diagnostics(
             )
     if profile.mode == "authored":
         h2_counts = collections.Counter(h2)
+        link_only_headings = frozenset(
+            section.title for section in profile.form.sections if section.link_only
+        )
         section_content = _scan_required_h2_content(
-            body,
+            scan,
             headings.required,
             substantive_body=headings.substantive_body,
+            link_only_headings=link_only_headings,
         )
         diagnostics.extend(
             _diagnostic(
@@ -2466,8 +2507,11 @@ def validate_document_text(
         status = task_status(metadata, text, profile)
     if include_body:
         diagnostics.extend(_body_diagnostics(path, profile, body, status))
-        if profile.mode == "authored":
+        if profile.mode in {"authored", "template"}:
             diagnostics.extend(_table_diagnostics(path, profile, body))
+        if profile.mode == "authored" and profile.profile_id == "sdlc/requirement":
+            diagnostics.extend(_requirement_quality_diagnostics(path, profile, body))
+        if profile.mode == "authored":
             diagnostics.extend(_policy_rule_diagnostics(path, profile, body))
     diagnostics.extend(artifact_identity_diagnostics(path, profile, metadata))
     if not include_body:

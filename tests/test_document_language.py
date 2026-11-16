@@ -326,7 +326,7 @@ class ValidatorTests(unittest.TestCase):
         doc = (
             "docs/03.specs/0001-x/spec.md",
             "sdlc/spec",
-            f'---\ntitle: "X"\nstatus: "completed"\n---\n\n{KO}\n',
+            f'---\ntitle: "X"\nstatus: "cancelled"\n---\n\n{KO}\n',
         )
         self.assertEqual(self.codes([doc]), [])
 

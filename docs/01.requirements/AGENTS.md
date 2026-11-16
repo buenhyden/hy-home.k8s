@@ -36,10 +36,16 @@ Canonical sources are the documents linked or named in the opening paragraph and
    and name the file `####-<slug>.md`. Reuse an existing package for the same
    problem instead of creating a duplicate.
 2. Issue stable IDs `REQ-####-FR-####`, `REQ-####-NFR-####` and
-   `REQ-####-IF-####`. Never renumber or reuse an ID; downstream AD, ADR and
-   Spec rows trace the full ID.
+   `REQ-####-IF-####`. Keep IDs stable on the current baseline; downstream AD,
+   ADR and Spec rows trace the full ID. A final-baseline allocation follows
+   only its explicitly approved conversion scope.
 3. Valid states are `draft`, `in-review` and `approved`. Only `approved` is
-   current requirement authority; do not start implementation from a draft.
+   current requirement authority. Draft creation, revision, review and focused
+   document checks may proceed within the writing scope. Before implementation,
+   operation or completion, verify the applicable approved basis or separate
+   scoped authority and keep the draft status intact. Follow the
+   [document lifecycle policy](../../.agents/governance/document-lifecycle.md#requirements)
+   for the authority and evidence boundary.
 4. This stage has no `superseded`, `retired` or `deprecated` state. A replaced
    or completed document is summarized in the `Archived Lineage` table under
    `## Traceability` of the owning current document and deleted in the same
@@ -65,7 +71,7 @@ This folder hands off through the work lifecycle's Completion steps with no extr
 
 ### Required Checks
 
-Run the strict document checks listed in the parent `AGENTS.md`; the
+Select the document checks in the parent `AGENTS.md`; the
 lifecycle check enforces the state edges above.
 
 ### Evidence and Limits

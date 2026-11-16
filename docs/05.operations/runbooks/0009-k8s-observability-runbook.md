@@ -1,10 +1,10 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.5.1"
+version: "2.5.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-16"
 artifact_id: "RUN-0009"
 ---
 
@@ -66,13 +66,16 @@ Prometheus의 NodePort static scrape는 폐지되었다.
 
 ### Authority and Access
 
-승인·권한 조건: 해당 없음 — 이 런북은 Preconditions에 소유자·승인·권한 항목을 따로 정하지 않는다.
+대상 클러스터와 namespace를 확인하고 읽기 권한으로 먼저 진단한다.
+수동 ArgoCD sync는 운영자가 수행한다. 직접 적용은 대상·범위를 명시해
+승인된 bootstrap 또는 break-glass에서만 수행한다.
 
 관련 문서: [Observability Platform Policy](../policies/0005-observability-platform-operations-policy.md)
 
 ### Safety Checks
 
-안전 점검: 해당 없음 — 이 런북은 Preconditions에 백업·가용성·동시성·비밀 보호 항목을 따로 정하지 않는다.
+Loki 조회는 해당 endpoint에 접근할 수 있는 승인된 진단 환경에서 수행한다.
+조회 예시에는 Bash, `curl`, `jq`가 필요하다.
 
 ## Steps
 
@@ -118,11 +121,19 @@ kubectl logs -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --since=10m 
   | rg -i 'remote_write|prometheus.remote_write|level=error' | tail -5
 
 echo "=== Loki k8s 로그 ==="
-curl -s -G "$LOKI/loki/api/v1/query_range" \
-  --data-urlencode 'query={cluster="k3d-hyhome"}' \
-  --data-urlencode "since=15m" --data-urlencode "limit=1" \
-  | python3 -c "import sys,json; d=json.load(sys.stdin); print('  스트림 수:', len(d['data']['result']))"
+(
+  set -o pipefail
+  curl --fail --silent --show-error -G "$LOKI/loki/api/v1/query_range" \
+    --data-urlencode 'query={cluster="k3d-hyhome"}' \
+    --data-urlencode "since=15m" --data-urlencode "limit=1" \
+    | jq -er 'if .status == "success" and (.data.result | type == "array")
+              then .data.result | length
+              else error("Loki query did not return a successful result") end'
+)
 ```
+
+출력은 제한된 조회에서 반환된 스트림 수다. 0은 이 조회에 스트림이 없음을 뜻한다.
+명령이 실패하면 빈 결과와 구분해 조회 오류를 기록한다.
 
 승인된 조회 경로가 401, `x509` 오류를 내거나 응답하지 않으면 Procedure 4로
 이동하고, 실제 인증·TLS 복구는 외부 observability owner에게 넘긴다.
@@ -132,13 +143,35 @@ curl -s -G "$LOKI/loki/api/v1/query_range" \
 > **Agent execution boundary**: AppProject 직접 적용은 human-approved bootstrap 또는 break-glass 전용이다. Agent는 기본적으로 Git 파일 수정, 리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.
 
 ```bash
-# AppProject에 monitoring namespace 포함 확인
-kubectl get appproject platform -n argocd \
-  -o jsonpath='{.spec.destinations[*].namespace}' | tr ' ' '\n' | grep monitoring
+# AppProject가 현재 클러스터의 monitoring namespace를 허용하는지 확인
+(
+  set -o pipefail
+  kubectl get appproject platform -n argocd -o json \
+    | jq -e 'any(.spec.destinations[];
+                 .server == "https://kubernetes.default.svc" and .namespace == "monitoring")'
+)
+```
 
-# 없으면 human-approved bootstrap/break-glass로 직접 적용
+대상 destination이 없으면 Git의 AppProject를 검토하고 그 매니페스트의
+소유자인 `platform-cluster-config`가 검토된 변경을 반영할 때까지 기다린다.
+수동 동기화가 필요하면 운영자가 수행한다.
+
+```bash
+# operator-triggered reconciliation only
+argocd app sync platform-cluster-config
+```
+
+직접 적용 승인을 받은 경우에만 아래 명령을 사용한다.
+
+```bash
+# human-approved bootstrap or break-glass only
 kubectl apply -f gitops/clusters/local/appproject-platform.yaml
+```
 
+위 destination 조회를 다시 실행해 `true`를 확인한 뒤 아래 단계로 진행한다.
+조회가 실패하거나 `false`면 먼저 AppProject 반영 상태를 해결한다.
+
+```bash
 # namespace 먼저 배포 (operator-triggered reconciliation only)
 argocd app sync platform-namespaces
 
@@ -181,6 +214,11 @@ python3 -c "import hashlib,yaml; d=[x for x in yaml.safe_load_all(open('gitops/p
 ```bash
 # 기본 경로: ArgoCD sync (operator-triggered reconciliation only)
 argocd app sync platform-monitoring
+```
+
+별도로 승인된 break-glass에서만 아래 직접 적용을 사용한다.
+
+```bash
 # human-approved break-glass only
 kubectl apply -f gitops/platform/monitoring/alloy-k8s-logs.yaml
 ```
@@ -249,14 +287,10 @@ kubectl get pods -n istio-system -l app=istiod \
 ```bash
 echo "[1] alloy-k8s-logs"
 kubectl get pods -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --no-headers \
-  | awk '{print "  "$1": "$3}'
-
-echo "[2] Loki k8s log streams"
-curl -s -G "http://192.168.0.13:3100/loki/api/v1/query_range" \
-  --data-urlencode 'query={cluster="k3d-hyhome"}' \
-  --data-urlencode "since=15m" --data-urlencode "limit=1" \
-  | python3 -c "import sys,json; d=json.load(sys.stdin); print('  스트림:', len(d['data']['result']))"
+  | awk '{print "  "$1": "$2" "$3}'
 ```
+
+Loki 스트림은 전체 상태 진단의 조회를 사용하고 실행 결과를 함께 기록한다.
 
 외부 운영자는 승인된 인증 경로에서 다음 PromQL을 조회하고 정상 상태
 기준값과 대조한다.

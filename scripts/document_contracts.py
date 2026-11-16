@@ -27,7 +27,7 @@ from document_authority import (
 )
 from json_schema_validation import SchemaEvaluationError, schema_errors
 from document_language import classify as _document_language_classify
-from semver_grammar import SEMVER_PATTERN, is_semver
+from semver_grammar import is_numeric_version
 from validation.repository.bounded_io import (
     BoundedInputError,
     read_bytes as read_bounded_bytes,
@@ -251,6 +251,9 @@ def _task_evidence_ids(cell: str) -> tuple[str, ...] | None:
     return identifiers if len(identifiers) == len(set(identifiers)) else None
 
 
+SCOPED_EXECUTION_APPROVAL_COMMAND = "Scoped execution approval"
+
+
 def task_contract_issues(
     work_rows: Sequence[Mapping[str, str]],
     evidence_rows: Sequence[Mapping[str, str]],
@@ -378,6 +381,8 @@ def task_contract_issues(
             if not cited or not any(
                 checks[item][1]["Result"].strip() == "PASS"
                 and checks[item][1]["Required"].strip() == "yes"
+                and checks[item][1]["Command"].strip()
+                != SCOPED_EXECUTION_APPROVAL_COMMAND
                 and criterion in (task_criterion_ids(checks[item][1]["Consumer"]) or ())
                 for item in cited
             ):
@@ -821,6 +826,9 @@ class FormSection:
     empty_policy: Literal["explain_none_or_not_applicable", "omit_when_condition_false"]
     link_only: bool
     children: tuple["FormSection", ...]
+    applicable_source_profiles: tuple[str, ...] = ()
+    required_if_applicable: bool = False
+    artifact_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -845,6 +853,7 @@ class FormExtension:
     # SPEC-0203: a local_columns extension names its table and its extra columns.
     table: str | None = None
     columns: tuple[str, ...] = ()
+    artifact_ids: tuple[str, ...] = ()
 
     def keeps_identity(self, identity: str) -> bool:
         """Whether a retained form's bound admits this artifact identity."""
@@ -1248,7 +1257,6 @@ def _fail(rule_id: str, *, expected: str, actual: str) -> NoReturn:
     )
 
 
-_REGISTRY_VERSION = re.compile(SEMVER_PATTERN)
 # SPEC-0207: generations 1 to 10 were integers; generation N means `N.0.0`.
 _LAST_INTEGER_GENERATION = 10
 
@@ -1264,10 +1272,8 @@ def registry_schema_version(raw: Mapping[str, Any]) -> str:
     value = raw.get("schema_version") if isinstance(raw, Mapping) else None
     if type(value) is int and 1 <= value <= _LAST_INTEGER_GENERATION:
         return f"{value}.0.0"
-    if type(value) is str:
-        match = _REGISTRY_VERSION.fullmatch(value)
-        if match is not None and match.group(4) is None and match.group(5) is None:
-            return value
+    if type(value) is str and is_numeric_version(value):
+        return value
     _fail(
         "REGISTRY_SCHEMA",
         expected=(
@@ -1757,7 +1763,9 @@ def _schema_rule_id(error: Any) -> str:
     return "REGISTRY_SCHEMA"
 
 
-def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
+def _body_contract(
+    raw: Mapping[str, Any] | None, *, historical_major: int | None = None
+) -> BodyContract | None:
     if raw is None:
         return None
     execution = raw.get("task_execution")
@@ -1793,7 +1801,12 @@ def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
                 evidence_result_states=tuple(
                     execution.get("evidence_result_states", ())
                 ),
-                criterion_acceptance_section=execution["criterion_acceptance_section"],
+                # Early generation 10 recorded acceptance in Task Evidence.
+                criterion_acceptance_section=(
+                    execution.get("criterion_acceptance_section", "")
+                    if historical_major == 10
+                    else execution["criterion_acceptance_section"]
+                ),
                 criterion_acceptance_columns=tuple(
                     execution.get("criterion_acceptance_columns", ())
                 ),
@@ -1802,25 +1815,38 @@ def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
     )
 
 
+def section_usage(
+    section: FormSection, profile: DocumentProfile, *, artifact_id: str | None = None
+) -> Literal["required", "optional", "forbidden"]:
+    if section.artifact_ids and artifact_id not in section.artifact_ids:
+        return "forbidden"
+    if section.applicable_source_profiles:
+        sources = profile.source_profile_ids or (profile.profile_id,)
+        if not any(source in section.applicable_source_profiles for source in sources):
+            return "forbidden"
+        if section.required_if_applicable:
+            return "required"
+    return "required" if section.requiredness == "required" else "optional"
+
+
 def heading_contract(profile: DocumentProfile) -> HeadingContract:
     """The H2 titles a profile requires and allows: the one accessor of the heading
     contract (SPEC-0205, W03-D63).
 
-    A profile with a form takes them from its form: required titles in order, every
-    title allowed. A profile without one has none, except a profile of a registry of
+    A profile with a form takes its required and applicable titles in form order.
+    A profile without one has none, except a profile of a registry of
     an earlier MAJOR, which returns the lists that registry carried (history replay
     only; the current registry carries no list). A retained form of an accepted ADR
     keeps its own lists in the form extension, read through the form.
     """
 
     if profile.form is not None:
+        uses = {
+            item.title: section_usage(item, profile) for item in profile.form.sections
+        }
         return HeadingContract(
-            required=tuple(
-                item.title
-                for item in profile.form.sections
-                if item.requiredness == "required"
-            ),
-            allowed=tuple(item.title for item in profile.form.sections),
+            required=tuple(title for title, use in uses.items() if use == "required"),
+            allowed=tuple(title for title, use in uses.items() if use != "forbidden"),
         )
     return profile.listed_headings or HeadingContract(required=(), allowed=())
 
@@ -1853,9 +1879,9 @@ def _profile_from_mapping(
     *,
     lifecycle_domain: LifecycleDomain | None,
     form: CommonForm | None = None,
-    history: bool = False,
+    historical_major: int | None = None,
 ) -> DocumentProfile:
-    """Type one profile; `history` reads the H2 lists of a registry of an earlier MAJOR."""
+    """Type one profile and retain the recorded fields on historical reads."""
 
     frontmatter = raw["frontmatter"]
     lifecycle = raw["lifecycle"]
@@ -1900,14 +1926,16 @@ def _profile_from_mapping(
                 substantive_body=raw["sections"].get("substantive_body", False),
                 ordered=raw["sections"].get("ordered", False),
             )
-            if history and "sections" in raw
+            if historical_major is not None and "sections" in raw
             else None
         ),
         template=_normalize_relative_path(template) if template is not None else None,
         mode=raw["mode"],
         source_profile_ids=tuple(raw["relationships"]["source_profile_ids"]),
         placeholder_policy=raw["placeholder_policy"],
-        body_contract=_body_contract(raw["relationships"]["body_contract"]),
+        body_contract=_body_contract(
+            raw["relationships"]["body_contract"], historical_major=historical_major
+        ),
         lifecycle_domain=lifecycle_domain,
         document_role=raw.get("document_role"),
         form=form,
@@ -2687,7 +2715,7 @@ def current_registry_diagnostics(
     policy rule ID section and the SPEC-0196 checks the TemplateDefinition
     record of every template. These refuse what a
     comparison-base registry legitimately lacks, so they run from the strict
-    registry validator and never on the load path.
+    registry validator when it explicitly requests the current records.
     """
 
     faults = _relationship_faults(root, raw_registry)
@@ -2797,9 +2825,10 @@ def current_registry_diagnostics(
     )
 
 
-# SPEC-0196: the package's 19 TemplateDefinition fields, in its required order.
+# TemplateDefinition fields in the order declared by its record schema.
 TEMPLATE_RECORD_FIELDS = (
     "template_id",
+    "contract_id",
     "contract_version",
     "role",
     "purpose",
@@ -2824,7 +2853,6 @@ TEMPLATE_SCHEMA_PATH = PurePosixPath(
 )
 HEADINGS_EXTENSION_ID = "provider-native-empty-headings"
 HEADINGS_EXTENSION_TEXTS = ("condition", "owner", "verification", "review", "removal")
-_CONTRACT_VERSION_ID = re.compile(r"[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+")
 _KEY_CONDITION = {
     "required": "The key is always present.",
     "optional": "The key may be omitted.",
@@ -2856,6 +2884,8 @@ def _record_section(item: Mapping[str, Any]) -> dict[str, Any]:
     """One form section as a package heading: every field but the local flag."""
 
     section = {name: copy.deepcopy(item[name]) for name in _RECORD_SECTION_FIELDS}
+    if "applicability" in item:
+        section["applicability"] = copy.deepcopy(item["applicability"])
     section["children"] = [_record_section(child) for child in item["children"]]
     return section
 
@@ -2901,9 +2931,9 @@ def _record_language(
 def template_definition_record(
     raw_registry: Mapping[str, Any], profile_id: str
 ) -> dict[str, Any]:
-    """SPEC-0196: the 19-field TemplateDefinition record of one template profile.
+    """The normalized TemplateDefinition record of one template profile.
 
-    Eleven fields are stored in the definition; the other eight are derived from
+    The fields not stored in the definition are derived from
     the source profile, the role's form, ``frontmatter_keys``,
     ``relationship_contract``, ``lifecycle_domains`` and ``document_language``,
     so a change at that owner changes the record. The function reads the registry
@@ -3007,7 +3037,7 @@ def template_definition_record(
             f"{', '.join(domain['states'])} and initial states {', '.join(initial)}."
         )
 
-    extensions: list[dict[str, str]] = []
+    extensions: list[dict[str, Any]] = []
     if form is not None:
         for item in form["extensions"]:
             delta = f"{item['kind']} {item['id']}"
@@ -3020,6 +3050,11 @@ def template_definition_record(
                     "delta": delta,
                     "validation": item["verification"],
                     "expiry_or_review": _join_review(item["review"], item["removal"]),
+                    **(
+                        {"artifact_ids": item["artifact_ids"]}
+                        if "artifact_ids" in item
+                        else {}
+                    ),
                 }
             )
     elif isinstance(definition.get("headings_extension"), Mapping):
@@ -3038,6 +3073,7 @@ def template_definition_record(
 
     record = {
         "template_id": profile_id,
+        "contract_id": definition["contract_id"],
         "contract_version": definition["contract_version"],
         "role": role,
         "purpose": definition["purpose"],
@@ -3099,7 +3135,7 @@ def _headings_extension_faults(
 def _template_record_faults(
     root: Path, raw_registry: Mapping[str, Any]
 ) -> list[tuple[str, str, str, str]]:
-    """SPEC-0196 checks: each definition's contract version and derived record."""
+    """Check each template's contract binding and derived record."""
 
     faults: list[tuple[str, str, str, str]] = []
     schema = load_json_file(
@@ -3111,34 +3147,24 @@ def _template_record_faults(
         item["owner"] for form in forms.values() for item in form["extensions"]
     } | {(raw_registry.get("shared_contract") or {}).get("owner")}
     owners.discard(None)
-    versions: dict[Any, set[str]] = {}
+    bindings: dict[Any, set[tuple[str, str]]] = {}
     for profile in raw_registry["profiles"]:
         definition = profile.get("template_definition")
         if definition is None or profile["mode"] != "template":
             continue
         profile_id, role = profile["id"], profile.get("document_role")
         has_form = role in forms
+        contract_id = definition.get("contract_id")
         version = definition.get("contract_version")
-        if not isinstance(version, str):
-            continue
-        versions.setdefault(role, set()).add(version)
-        name, slash, number = version.partition("/")
-        if not (slash and _CONTRACT_VERSION_ID.fullmatch(name) and is_semver(number)):
-            faults.append(
-                (
-                    "REGISTRY_TEMPLATE_RECORD",
-                    "a contract identifier, a slash and a SemVer value",
-                    f"contract_version {version!r}",
-                    profile_id,
-                )
-            )
-        elif name == common.get("contract_id") and (
-            not has_form or number != common.get("version")
+        if isinstance(contract_id, str) and isinstance(version, str):
+            bindings.setdefault(role, set()).add((contract_id, version))
+        if contract_id == common.get("contract_id") and (
+            not has_form or version != common.get("version")
         ):
             faults.append(
                 (
                     "REGISTRY_TEMPLATE_RECORD",
-                    f"{name}/{common.get('version')} only on a role with a form",
+                    f"contract {contract_id!r} at version {common.get('version')!r} only on a role with a form",
                     f"contract_version {version!r} on role {role}",
                     profile_id,
                 )
@@ -3180,12 +3206,12 @@ def _template_record_faults(
                     profile_id,
                 )
             )
-    for role, values in versions.items():
+    for role, values in bindings.items():
         if len(values) > 1:
             faults.append(
                 (
                     "REGISTRY_TEMPLATE_RECORD",
-                    "one contract_version per role",
+                    "one contract ID and version pair per role",
                     f"role {role}: {sorted(values)!r}",
                     "",
                 )
@@ -3370,6 +3396,7 @@ def _identity_bound_faults(
 
 def _form_section_diagnostics(
     form: Mapping[str, Any],
+    role_sources: set[str],
 ) -> list[tuple[str, str, str]]:
     """Check one form's tree: nesting, levels, order, uniqueness and conditions."""
 
@@ -3431,6 +3458,34 @@ def _form_section_diagnostics(
                         where,
                     )
                 )
+            applicability = item.get("applicability")
+            if applicability is not None and (
+                item["requiredness"] != "conditional"
+                or not set(applicability["source_profile_ids"]) <= role_sources
+            ):
+                faults.append(
+                    (
+                        "REGISTRY_FORM_CONDITION",
+                        "a conditional section on non-template profiles of its role",
+                        where,
+                    )
+                )
+            if (
+                applicability is not None
+                and "artifact_ids" in applicability
+                and (
+                    form["form_id"] != "reference-report"
+                    or level != 3
+                    or applicability["source_profile_ids"] != ["reference/research"]
+                )
+            ):
+                faults.append(
+                    (
+                        "REGISTRY_FORM_CONDITION",
+                        "artifact_ids on a research report's conditional H3",
+                        where,
+                    )
+                )
             if level == 3 and item["children"]:
                 faults.append(("REGISTRY_FORM_LEVEL", "no sections below an H3", where))
             elif level == 2:
@@ -3449,6 +3504,14 @@ def _form_section_diagnostics(
             faults.extend(_identity_bound_faults(form["form_id"], extension, where))
         if extension["kind"] != "local_h3":
             continue
+        if "artifact_ids" in extension and form["form_id"] != "reference-report":
+            faults.append(
+                (
+                    "REGISTRY_FORM_EXTENSION",
+                    "artifact_ids on a research report's local H3 extension",
+                    where,
+                )
+            )
         parent = top.get(extension["parent_id"])
         if parent is None:
             faults.append(
@@ -3622,7 +3685,15 @@ def _form_registry_diagnostics(
     for form_id in sorted({name for name in form_ids if form_ids.count(name) > 1}):
         faults.append(("REGISTRY_FORM_DUPLICATE", "one form per role", form_id, ""))
     for form in forms:
-        faults.extend((*fault, "") for fault in _form_section_diagnostics(form))
+        role_sources = {
+            profile_id
+            for profile_id, profile in profiles_by_id.items()
+            if profile.get("document_role") == form["form_id"]
+            and profile["mode"] != "template"
+        }
+        faults.extend(
+            (*fault, "") for fault in _form_section_diagnostics(form, role_sources)
+        )
     roles_with_form = set(form_ids)
     forms_by_role = {form["form_id"]: form for form in forms}
     for profile_id, profile in profiles_by_id.items():
@@ -3746,6 +3817,7 @@ def _form_registry_diagnostics(
 
 def _common_form_from_mapping(raw: Mapping[str, Any]) -> CommonForm:
     def section(item: Mapping[str, Any]) -> FormSection:
+        applicability = item.get("applicability", {})
         return FormSection(
             section_id=item["section_id"],
             title=item["title"],
@@ -3757,6 +3829,11 @@ def _common_form_from_mapping(raw: Mapping[str, Any]) -> CommonForm:
             empty_policy=item["empty_policy"],
             link_only=item.get("link_only", False),
             children=tuple(section(child) for child in item["children"]),
+            applicable_source_profiles=tuple(
+                applicability.get("source_profile_ids", ())
+            ),
+            required_if_applicable=applicability.get("required", False),
+            artifact_ids=tuple(applicability.get("artifact_ids", ())),
         )
 
     def extension(item: Mapping[str, Any]) -> FormExtension:
@@ -3775,6 +3852,7 @@ def _common_form_from_mapping(raw: Mapping[str, Any]) -> CommonForm:
             identity_bound=item.get("identity_bound"),
             table=item.get("table"),
             columns=tuple(item.get("columns", ())),
+            artifact_ids=tuple(item.get("artifact_ids", ())),
             retained=(
                 None
                 if lists is None
@@ -3827,7 +3905,9 @@ def _common_forms_record_from_mapping(
 def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
     # SPEC-0205: a registry below REGISTRY_MAJOR is read by the history reading, which
     # builds the H2 lists it carried; the current MAJOR is read with none.
-    history = int(registry_schema_version(raw).split(".")[0]) < REGISTRY_MAJOR
+    schema_version = registry_schema_version(raw)
+    major = int(schema_version.split(".")[0])
+    historical_major = major if major < REGISTRY_MAJOR else None
     domains = tuple(
         LifecycleDomain(
             family=item["family"],
@@ -3855,7 +3935,7 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
             profile,
             lifecycle_domain=domains_by_profile.get(profile["id"]),
             form=forms_by_role.get(profile.get("document_role")),
-            history=history,
+            historical_major=historical_major,
         )
 
     profiles = tuple(typed_profile(profile) for profile in raw["profiles"])
@@ -3896,7 +3976,7 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
             for profile in profiles
         )
     return Registry(
-        schema_version=registry_schema_version(raw),
+        schema_version=schema_version,
         shared_contract=(
             _shared_contract_from_mapping(raw["shared_contract"])
             if "shared_contract" in raw
@@ -4512,17 +4592,40 @@ def load_registry(
     raw_registry: object = _UNSET,
     raw_schema: object = _UNSET,
     template_regular_paths: frozenset[PurePosixPath] | None = None,
+    require_current_records: bool = False,
 ) -> Registry:
-    """Build the typed view directly from the root registry authority."""
+    """Build the typed current view and expose its normalized template records."""
 
-    return _typed_registry_from_mapping(
-        load_internal_payload(
-            root,
-            raw_registry=raw_registry,
-            raw_schema=raw_schema,
-            template_regular_paths=template_regular_paths,
-        )
+    raw = load_internal_payload(
+        root,
+        raw_registry=raw_registry,
+        raw_schema=raw_schema,
+        template_regular_paths=template_regular_paths,
     )
+    if require_current_records:
+        diagnostics = current_registry_diagnostics(root, raw)
+        if diagnostics:
+            raise DocumentContractError(diagnostics)
+    registry = _typed_registry_from_mapping(raw)
+    try:
+        profiles = tuple(
+            replace(
+                profile,
+                template_definition=MappingProxyType(
+                    template_definition_record(raw, profile.profile_id)
+                ),
+            )
+            if profile.template_definition is not None
+            else profile
+            for profile in registry.profiles
+        )
+    except (KeyError, TypeError, ValueError) as error:
+        _fail(
+            "REGISTRY_TEMPLATE_RECORD",
+            expected="a record derivable from the current registry",
+            actual=f"{type(error).__name__}: {error}"[:200],
+        )
+    return replace(registry, profiles=profiles)
 
 
 def _route_matches(route: Route, path: PurePosixPath) -> bool:

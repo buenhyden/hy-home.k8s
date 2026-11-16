@@ -106,10 +106,11 @@ it, left the tree and Git history recovers it.
 `ci-summary` checks pull-request base and source-prefix
 metadata directly, and reports branch policy as `NOT_APPLICABLE` on main
 push/manual dispatch. Success establishes only this metadata policy; local QA
-has its own input and evidence. `style-pr` checks selected style on the PR
+has its own input and evidence. The W06 workflow candidate extends `style-pr`
+to aggregate selected style, CI lock and static GitOps identity checks on the PR
 merge candidate using the reviewed base's tool and configuration copies. Its
 job result is separately required. A main push or manual dispatch skips the
-PR-only job; that skip is not PR style PASS.
+PR-only job. This candidate change has no new remote settings read-back.
 
 GitHub treats a whole workflow skipped by a path or branch filter as an
 expected check that may remain pending. No CI workflow here declares a `paths`

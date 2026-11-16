@@ -38,13 +38,13 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ### Building Blocks
 
-<!-- Author prompt: Describe components, actors, trust boundaries, and major interactions. -->
+<!-- Author prompt: Describe components, actors, trust boundaries, and major interactions declared by the current sources. Identify approved target structure that those sources do not yet declare. -->
 <!-- Author prompt: Use proportionate context and container views to show responsibilities, labels, and relationships, or explain an omitted view. -->
 <!-- Author prompt: Give every diagram a title, scope, intended reader, legend, and editable source. Label each element with its name, type and responsibility, and give each relationship a direction and a label that states its purpose and protocol. -->
 
 ### Runtime and Deployment
 
-<!-- Author prompt: define deployment topology, configuration owners, runtime platform and operational evidence. -->
+<!-- Author prompt: Identify the declared deployment topology and its configuration owners. Cite actual runtime observations with their input, environment, and result. Identify any unobserved scope and its verification owner. -->
 
 ## Interfaces
 
@@ -81,7 +81,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ### Currentness and Lineage
 
-<!-- Author prompt: state what is current, which Specs or evidence left the tree, and optionally map the twelve arc42 sections to where this description, an ADR or a requirement covers them, with a reason for each omitted section; link instead of copying. -->
+<!-- Author prompt: Explain differences between approved targets, current declarations, and observed operation. Link the evidence and responsible owners, including lineage for Specs or evidence that left the tree. Optionally map arc42 sections to their current owners and explain omissions. -->
 
 ### Lifecycle Traceability
 

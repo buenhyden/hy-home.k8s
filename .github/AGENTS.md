@@ -8,7 +8,7 @@ rules are for AI agents. The repository root gateway (`AGENTS.md` or
 
 ### Allowed Surface
 
-GitHub automation: the `ci.yml` branch metadata, PR title, commit and changed-file style checks, greetings and labeler workflows, pinned CI requirements, rulesets and repository templates. Repository QA runs locally; hosted checks never certify it.
+GitHub automation: the `ci.yml` branch metadata, PR title, commit and selected PR checks, greetings and labeler workflows, pinned CI requirements, rulesets and repository templates. Report local QA and hosted evidence against their respective inputs.
 
 | Work in `.github/` | Role (`.agents/roles/`) | Skills (`.agents/skills/<id>/SKILL.md`) | Claude | Codex |
 | --- | --- | --- | --- | --- |
@@ -65,7 +65,7 @@ directly:
 
 ### Evidence and Limits
 
-Evidence limits are stated at the end of the Allowed Surface text: hosted checks never certify repository QA.
+Record the selected hosted guarantees and their exact run identity.
 
 ## Safety
 

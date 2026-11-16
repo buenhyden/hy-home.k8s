@@ -1,10 +1,10 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.12.8"
+version: "0.12.9"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-16"
 ---
 
 # 02.architecture/decisions (ADR)
@@ -70,11 +70,11 @@ updated: "2026-11-14"
 | [`./0045-in-cluster-telemetry-collection.md`](./0045-in-cluster-telemetry-collection.md) | In-cluster telemetry collection 결정 |
 | [`./0046-external-services-over-host-addresses.md`](./0046-external-services-over-host-addresses.md) | External service transport 결정 |
 | [`./0047-agent-contract-and-resource-ownership.md`](./0047-agent-contract-and-resource-ownership.md) | Agent 계약과 resource 소유 경계의 한정 개정 |
-| [`./0048-local-qa-and-semver-release-ownership.md`](./0048-local-qa-and-semver-release-ownership.md) | 로컬 QA 단계별 책임과 단일 SemVer 릴리스 생산자 결정 |
+| [`./0048-local-qa-and-semver-release-ownership.md`](./0048-local-qa-and-semver-release-ownership.md) | 로컬 QA 단계별 책임과 단일 SemVer 릴리스 생산자 결정. 호스팅 검사 조항 개정안은 ADR-0063에서 검토한다. |
 | [`./0049-external-data-service-contract-alignment.md`](./0049-external-data-service-contract-alignment.md) | 외부 데이터 서비스의 management/development 및 현행 K8s 소비 경계 한정 개정 |
 | [`./0050-ingress-nginx-replacement-with-traefik.md`](./0050-ingress-nginx-replacement-with-traefik.md) | 은퇴한 ingress-nginx를 Traefik ingress-nginx provider로 교체 |
-| [`./0051-istio-supported-release-upgrade.md`](./0051-istio-supported-release-upgrade.md) | Istio 1.25.2를 지원 release 1.31로 재구축 upgrade |
-| [`./0052-single-main-trunk-branch-strategy.md`](./0052-single-main-trunk-branch-strategy.md) | `main` 하나만 장기 branch로 두고 짧은 feature branch로 통합 |
+| [`./0051-istio-supported-release-upgrade.md`](./0051-istio-supported-release-upgrade.md) | Istio 1.31.2 이상으로 재구축하는 결정. 재구축은 미실행 상태이며 현재 GitOps 선언은 1.25.2다. |
+| [`./0052-single-main-trunk-branch-strategy.md`](./0052-single-main-trunk-branch-strategy.md) | `main` 하나만 장기 branch로 두고 짧은 feature branch로 통합. 이 결정에 기록된 `independent-review` 필수 체크는 당시 설정이며, 현재 선언은 [main 보호 설정](../../../.github/rulesets/main-protection.md)이 소유한다. |
 | [`./0053-unvalidated-archive.md`](./0053-unvalidated-archive.md) | `docs/98.archive`를 검증하지 않고 Git history로만 복구 |
 | [`./0054-platform-decision-current-state-amendment.md`](./0054-platform-decision-current-state-amendment.md) | 플랫폼 ADR(0011, 0012, 0014, 0026, 0041, 0050)의 현행 불일치 조항을 운영자 승인으로 한정 개정 |
 | [`./0055-governance-decision-current-state-amendment.md`](./0055-governance-decision-current-state-amendment.md) | 거버넌스 ADR(0030, 0031, 0033, 0036, 0047, 0048, 0053)의 현행 불일치 조항을 운영자 승인으로 한정 개정 |
@@ -83,8 +83,9 @@ updated: "2026-11-14"
 | [`./0058-repository-vocabulary-in-knowledge-surface.md`](./0058-repository-vocabulary-in-knowledge-surface.md) | `.agents/knowledge/glossary.md` 하나만 용어 의미를 소유하는 Repository Vocabulary로 허용하도록 ADR-0036 Decision 3의 포인터 전용 조항을 좁히는 개정 |
 | [`./0059-registry-common-form-model.md`](./0059-registry-common-form-model.md) | Stage 99 registry(generation 10 유지)에 선택 키를 더해 역할별 공통 문서 양식, 문서 역할, TemplateDefinition, 공유 계약 승인 필드를 담도록 ADR-0033의 현재 상태 키 목록을 개정 |
 | [`./0060-work-residue-ledger-amendment.md`](./0060-work-residue-ledger-amendment.md) | 작업 잔여물(미완료 handoff, conflict, adoption, survey)만 담는 단일 JSON work residue ledger를 허용하도록 ADR-0031, ADR-0036, ADR-0047, ADR-0048의 무원장 조항을 "경쟁하는 progress ledger 금지"로 좁히는 개정 |
-| [`./0061-registry-schema-version-semver.md`](./0061-registry-schema-version-semver.md) | Amendment that makes the Stage 99 registry `schema_version` a SemVer string (generation 10 is `10.0.0`, current `11.0.0`) and states the four-level bump rule, amending the integer sentences of ADR-0033 and ADR-0059 Decision 1 |
+| [`./0061-registry-schema-version-semver.md`](./0061-registry-schema-version-semver.md) | Amendment that makes the Stage 99 registry `schema_version` a SemVer string (generation 10 is `10.0.0`, adoption edition is `11.0.0`) and states the four-level bump rule, amending the integer sentences of ADR-0033 and ADR-0059 Decision 1. The current edition is recorded in `docs/99.templates/registry.json`. |
 | [`./0062-accepted-decision-retained-form.md`](./0062-accepted-decision-retained-form.md) | Amendment that keeps the seven-H2 form for accepted ADRs in the closed range ADR-0001 to ADR-0061 as a registered retained form, gives every later ADR the common ADR form in every status, and narrows ADR-0059 Decision 5 for the ADR role |
+| [`./0063-affected-pr-gitops-validation.md`](./0063-affected-pr-gitops-validation.md) | PR의 누적 변경이 GitOps에 영향을 줄 때 기존 필수 job에서 정적 검사를 선택하는 제안 |
 
 ### Classification
 
@@ -96,9 +97,9 @@ updated: "2026-11-14"
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `../descriptions/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/templates/architecture/decision.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
-3. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
+3. `Accepted` ADR의 승인 목표, GitOps manifest의 현재 선언, 관측한 런타임 결과를 구분한다. 목표와 선언이 다르면 현재 구현과 미적용 범위를 표시하고, 런타임 판단은 관측 근거에 연결한다.
 4. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
-5. ADR 번호는 재사용하지 않는다. 삭제된 ADR의 번호도 다시 쓰지 않으며, 기존 번호의 의미나 원래 승인·이력을 새 번호로 고쳐 쓰지 않는다.
+5. 현재 기준선에서는 삭제된 결정을 포함한 ADR 번호를 보존하고 재사용을 금지한다. 번호 체계의 초기화는 별도로 승인된 최종 기준선 전환에서 해당 범위의 조건이 충족된 때에만 적용한다.
 
 #### Relative Link Rules
 
@@ -112,6 +113,7 @@ updated: "2026-11-14"
 ### Transition and Exit
 
 1. 이 log에는 superseded·retired·deprecated 상태의 ADR을 두지 않는다. 결정 전체를 대체할 때는 새 ADR의 `supersedes`와 Traceability에 이전 ID를 적고, 해당 AD의 `Archived Lineage`에 요약한다. [문서 수명주기 정책](../../../.agents/governance/document-lifecycle.md)의 처분 조건을 확인한 뒤 같은 변경에서 삭제한다. 일부 조항만 개정할 때는 기존 ADR을 보존하고 새 ADR에 개정 범위를 적는다.
+2. ADR-0056과 ADR-0057의 보존·복구 조건은 일상 문서 처분과 완료 패키지 종료에 적용한다. 별도로 승인된 Q07 최종 전환의 제거 범위와 조건은 문서 수명주기 정책에서 확인한다.
 
 ## Related Documents
 

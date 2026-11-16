@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture Description (AD)"
-version: "3.0.1"
+version: "3.0.2"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-16"
 artifact_id: "AD-0006"
 ---
 
@@ -88,9 +88,10 @@ No constraint is recorded separately in this description; the boundaries and non
 | Change evidence | Stage 03 Task and Git | Actual commands, scope, failures, limitations and handoff |
 | Skill comparison evidence | `.agents/evaluations/` | Actual task, paired raw outputs, scoped score and one aggregate results owner; no recurring grader or runtime authority |
 
-Claude exposes common `SKILL.md` packages through one relative link per skill.
-Codex discovers the packages under `.agents/skills/`; both providers require
-explicit invocation. Root instructions also require reading the selected role
+The tracked Claude configuration routes common `SKILL.md` packages through one
+relative link per skill. The tracked Codex configuration uses `.agents/skills/`.
+Both require explicit invocation. Runtime discovery and enforcement need an
+authenticated provider observation. Root instructions also require reading the selected role
 and its common procedures. No provider generator or compatibility skill copy
 is needed. A native hook is registered only for an actual supported event;
 routine tool completion does not invoke whole-repository QA. ADR-0036 owns the
@@ -147,7 +148,7 @@ Exact commands and tool versions are read from their execution owners and not co
 | Release | Validate release inputs and publish through one producer; tag or Release publication does not repeat QA |
 
 GitHub Actions retains `ci-summary`, which validates branch and PR commit
-metadata, and a separate PR-only selected style job. `ci-summary` reports the
+metadata, and a separate PR-only `style-pr` job. `ci-summary` reports the
 branch-policy verdict itself. Its canonical Python producer is projected as
 matching inline workflow logic: it reads candidate commit objects as data,
 uses trusted-base message grammar, checks the actual merge identity and parents,
@@ -157,10 +158,15 @@ invalid PR base or source branch, a failed commit identity/range check, or an
 unexpected event/ref fails that job; PR branch policy is not applicable on
 main. The workflow and its inline projection remain PR-editable, so independent
 protected workflow control requires separate remote evidence. Historical hosted
-full QA `NOT_RUN` records remain evidence, not a current check. A successful
-metadata or style job does not certify local purpose QA. This design gives up an
-independent hosted full/unit QA execution and its per-push attestation.
-Actual remote protections, settings and execution remain separately observed.
+full QA `NOT_RUN` records remain historical evidence. The W06 candidate
+extends `style-pr` with read-only affected GitOps identity validation using
+the candidate merge tree and reviewed base tooling. It aggregates style, CI
+lock and GitOps outcomes against the cumulative PR change plan. Each leaf
+reports its own guarantee. Local render, schema and unit evidence have their
+own inputs. [ADR-0063](../decisions/0063-affected-pr-gitops-validation.md) records
+the proposed hosted-clause amendment. Actual remote protections, settings
+and execution require separate observation. W10 owns the review
+routing target for high-risk independent review and low-risk author review.
 
 #### Release and work-tracking boundaries
 
@@ -276,6 +282,12 @@ findings and any disposition deferral. Until an unmet condition is resolved,
 the source remains in place without regaining current authority. Candidate
 implementation, acceptance and a later actual disposition remain distinct.
 
+These are ordinary disposition controls. An explicitly approved final
+transition keeps no recovery copy for its accepted removal targets, after
+candidate validation and acceptance. Q07 owns the final execution and
+evidence. The current implementation still checks ordinary reachable
+history and does not implement the irreversible transition.
+
 Once its applicable conditions are met, a non-current document follows its
 existing type-specific route. Stage 01-03 documents have no superseded,
 retired or withdrawn state: their current semantic owner summarizes a
@@ -334,9 +346,11 @@ the timeout, output, and child cleanup limits, and the Task owns the no-progress
 A checkpoint is ignored transient recovery state and replaces neither policy, the Task, nor a credential store.
 Compaction and resume keep only finished and unfinished work, validation results, and the next action, and exclude sensitive data and full transcripts.
 Reusable decision context may live in the shared workspace memory store
-(`scripts/workspace_memory.py`, Git-ignored `.workspace-memory/`). Both
-providers read and write it, and their native memory is disabled in project
-configuration. It is never Task status, evidence, approval or acceptance, and
+(`scripts/workspace_memory.py`, Git-ignored `.workspace-memory/`). The context
+policy and provider notes direct use of this store. Project configuration
+disables native memory.
+Actual read/write use requires an observed session. W08 owns the separately
+scoped session-capture target. The store is never Task status, evidence, approval or acceptance, and
 it is not the retired shared progress ledger. The work residue ledger of [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) is the separate repository file `docs/03.specs/work-residue-ledger.json`, holding residue only. The shared store belongs to the
 representative worktree; source references are checked against the caller
 worktree without following symlinks. Request-bound retries, a capacity bound
@@ -420,10 +434,10 @@ historical evidence rather than parallel operating instructions.
 | [REQ-0003-FR-0014](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stage-specific purpose boundaries and no parallel Release family | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0033](../decisions/0033-common-document-contract-v9.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md) |
 | [REQ-0003-FR-0015](../../01.requirements/0003-workspace-agent-governance-platform.md) | Consumer succession and accepted manual pre-disposition review; completed package evidence is in REQ-0003 Archived Lineage | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0031](../decisions/0031-current-corpus-retention-and-validation-ownership.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md), [ADR-0056](../decisions/0056-manual-document-disposition-review.md), SPEC-0152 (left the tree; Git history recovers it) |
 | [REQ-0003-FR-0016](../../01.requirements/0003-workspace-agent-governance-platform.md) | Local Registry dispatch, proportional selection and independent failure meanings | [ADR-0031](../decisions/0031-current-corpus-retention-and-validation-ownership.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md), [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
-| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | Local QA and hosted delivery metadata with separate evidence | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
-| [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-index logical delivery and no repeated identical leaf at later stages | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [ADR-0052](../decisions/0052-single-main-trunk-branch-strategy.md) |
+| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | Current local QA and hosted metadata/style use separate evidence. W06 owns the affected hosted target. | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
+| [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-index delivery, no repeated identical leaf, and W10 risk-based review routing | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [ADR-0052](../decisions/0052-single-main-trunk-branch-strategy.md) |
 | [REQ-0003-FR-0019](../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local sequencing with unchanged historical program lineage | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md), [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) |
-| [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | Unvalidated archive with accepted manual hold, authority and exact-source recovery checks before disposition | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0031](../decisions/0031-current-corpus-retention-and-validation-ownership.md), [ADR-0053](../decisions/0053-unvalidated-archive.md), [ADR-0056](../decisions/0056-manual-document-disposition-review.md), SPEC-0152 (left the tree; Git history recovers it) |
+| [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | Ordinary manual hold, authority and exact-source recovery checks. Q07 owns the separately authorized final removal scope. | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0031](../decisions/0031-current-corpus-retention-and-validation-ownership.md), [ADR-0053](../decisions/0053-unvalidated-archive.md), [ADR-0056](../decisions/0056-manual-document-disposition-review.md), SPEC-0152 (left the tree; Git history recovers it) |
 | [REQ-0003-FR-0021](../../01.requirements/0003-workspace-agent-governance-platform.md) | Reference provenance separated from current execution authority | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md) |
 | [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | Ignored checkpoint state and the shared memory store versus Task-owned durable execution evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0047](../decisions/0047-agent-contract-and-resource-ownership.md), [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) |
 | [REQ-0003-FR-0023](../../01.requirements/0003-workspace-agent-governance-platform.md) | Profile-owned stable identity and source-preserving migration mapping | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0033](../decisions/0033-common-document-contract-v9.md) |

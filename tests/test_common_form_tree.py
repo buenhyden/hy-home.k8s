@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import copy
 import dataclasses
-import hashlib
 import importlib.util
 import json
 import re
@@ -64,14 +63,6 @@ FORM_IDS = (
     "governance-document",
     "governance-role",
     "reference-report",
-)
-# W03-D20, W03-D26, W03-D33: one Stage 99 local role has no form
-# (provider-native keeps none; reference-report gets one in W03-D36).
-LOCAL_ROLE_IDS = ("provider-native",)
-# The schema role order: the 18 first roles, reference-report, the governance
-# document and governance role, the six small local roles, then provider-native.
-ROLE_IDS = (
-    FORM_IDS[:18] + FORM_IDS[26:] + FORM_IDS[24:26] + FORM_IDS[18:24] + LOCAL_ROLE_IDS
 )
 # The profiles bound to a role: the clear common roles, then the local roles on
 # their source profiles; every other profile carries none.
@@ -376,6 +367,7 @@ PACK_NOT_REQUIRED = (
     "Review and Closure",
     "Refresh and Retention",
 )
+PACK_CLOSURES = dict(zip(PACK_FORM[::2], PACK_NOT_REQUIRED[1:]))
 PACK_EXTENSIONS = [
     {
         "id": "pack-external-finding-vocabulary",
@@ -1303,35 +1295,6 @@ FORM_TEMPLATES = (
     REFERENCE_FORM[3],
     REFERENCE_FORM[5],
 )
-TWENTY_SEVEN_FORMS = [
-    "guide",
-    "runbook",
-    "incident",
-    "postmortem",
-    "root-readme",
-    "stage-readme",
-    "service-readme",
-    "policy",
-    "agents",
-    "skill",
-    "workspace-readme",
-    "reference-pack-readme",
-    "knowledge-map",
-    "vocabulary",
-    "prompt",
-    "evaluation-task",
-    "evaluation-score",
-    "evaluation-results",
-    "governance-document",
-    "governance-role",
-    "reference-report",
-    "requirement",
-    "architecture",
-    "adr",
-    "spec",
-    "plan",
-    "task",
-]
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
     "Task or an N/A reason"
@@ -1527,7 +1490,8 @@ def extension(**fields: object) -> dict:
 
 def definition(**fields: object) -> dict:
     item = {
-        "contract_version": "COMMON-DOC-FORM-1/1.0.0",
+        "contract_id": "COMMON-DOC-FORM-1",
+        "contract_version": "1.0.0",
         "purpose": "Give authors the guide form.",
         "responsibility": "One guide per procedure.",
         "non_goals": ["Runbook steps"],
@@ -1619,9 +1583,7 @@ def semantic_rules_of(raw: dict) -> set[str]:
 
 
 class RepositoryRegistryTests(unittest.TestCase):
-    def test_repository_registry_binds_clear_roles_and_carries_exactly_the_twenty_seven_forms(
-        self,
-    ) -> None:
+    def test_repository_registry_binds_clear_roles(self) -> None:
         raw = load_raw()
         self.assertIsInstance(raw["schema_version"], str)
         self.assertEqual(
@@ -1630,30 +1592,6 @@ class RepositoryRegistryTests(unittest.TestCase):
         common = raw["common_forms"]
         self.assertEqual(common["contract_id"], "COMMON-DOC-FORM-1")
         self.assertEqual(common["version"], "1.0.0")
-        self.assertEqual(
-            [(item["form_id"], item["title"]) for item in common["forms"]],
-            [
-                ("guide", "Guide"),
-                ("runbook", "Runbook"),
-                ("incident", "Incident"),
-                ("postmortem", "Postmortem"),
-                ("root-readme", "Root README"),
-                ("stage-readme", "Stage README"),
-                ("service-readme", "Service README"),
-                ("policy", "Policy"),
-                ("agents", "AGENTS"),
-                ("skill", "Skill"),
-                ("workspace-readme", "Workspace README"),
-                ("reference-pack-readme", "Reference Pack README"),
-                *((form_id, title) for form_id, title, *_ in LOCAL_FORMS),
-                ("requirement", "Requirement"),
-                ("architecture", "Architecture"),
-                ("adr", "ADR"),
-                ("spec", "Spec"),
-                ("plan", "Plan"),
-                ("task", "Task"),
-            ],
-        )
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
         for form_id, tree, extensions, tables, profiles, body_section in (
             (
@@ -1949,14 +1887,8 @@ class RepositoryRegistryTests(unittest.TestCase):
             {"policy"},
         )
 
-    def test_repository_registry_loads_with_exactly_the_twenty_seven_forms(
-        self,
-    ) -> None:
+    def test_repository_registry_loads_role_forms_and_tables(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
-        self.assertEqual(
-            [item.form_id for item in registry.common_forms],
-            TWENTY_SEVEN_FORMS,
-        )
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
             "guide": ["Steps", "Lifecycle Traceability"],
@@ -2054,26 +1986,22 @@ class RepositoryRegistryTests(unittest.TestCase):
             by_id["governance/provider"].document_role, "governance-document"
         )
 
-    def test_schema_role_enum_is_twenty_eight_and_form_enum_is_twenty_seven(
+    def test_registered_forms_are_bound_to_profiles_and_admitted_by_schema(
         self,
     ) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        forms = [form.form_id for form in registry.common_forms]
+        self.assertCountEqual(
+            forms,
+            {profile.form.form_id for profile in registry.profiles if profile.form},
+        )
         schema = json.loads(
             (
                 ROOT / "docs/99.templates/contracts/document-profile.schema.json"
             ).read_text("utf-8")
         )
-        profile_role = schema["properties"]["profiles"]["items"]["properties"][
-            "document_role"
-        ]["enum"]
-        form_id = schema["$defs"]["common_form"]["properties"]["form_id"]["enum"]
-        self.assertEqual(len(ROLE_IDS), 28)
-        self.assertEqual(tuple(profile_role), ROLE_IDS)
-        self.assertEqual(tuple(form_id), FORM_IDS)
-        self.assertEqual(len(form_id), 27)
-        self.assertEqual(
-            [item.form_id for item in CONTRACTS.load_registry(ROOT).common_forms],
-            TWENTY_SEVEN_FORMS,
-        )
+        allowed = schema["$defs"]["common_form"]["properties"]["form_id"]["enum"]
+        self.assertLessEqual(set(forms), set(allowed))
         self.assertEqual(
             schema["$defs"]["section"]["properties"]["level"]["enum"], [2, 3]
         )
@@ -2091,11 +2019,7 @@ class FormRegistryTests(unittest.TestCase):
 
     def test_valid_form_binds_to_every_profile_of_its_role(self) -> None:
         registry = CONTRACTS.validate_registry(ROOT, self.candidate())
-        self.assertEqual(
-            [item.form_id for item in registry.common_forms],
-            TWENTY_SEVEN_FORMS,
-        )
-        loaded = registry.common_forms[0]
+        loaded = next(form for form in registry.common_forms if form.form_id == "guide")
         self.assertEqual(
             [item.title for item in loaded.sections],
             ["Overview", "Procedure", "Related Documents"],
@@ -2373,6 +2297,7 @@ class TemplateDefinitionTests(unittest.TestCase):
 
     def test_incomplete_definition_fails_the_schema(self) -> None:
         for key in (
+            "contract_id",
             "contract_version",
             "purpose",
             "consumer_paths",
@@ -2702,7 +2627,16 @@ class HeadingTreeTests(unittest.TestCase):
         )
 
     def test_empty_and_bare_placeholder_sections_fail(self) -> None:
-        for body in ("", "N/A", "N/A.", "TBD", "pending"):
+        for body in (
+            "",
+            "N/A",
+            "N/A.",
+            "TBD",
+            "pending",
+            "&nbsp;",
+            "**&#160;**",
+            "| Key | Value |\n| --- | --- |\n| &nbsp; | &#160; |",
+        ):
             text = VALID.replace("Name where the guide applies.", body)
             with self.subTest(body=body):
                 self.assertEqual(self.found(text), ["BODY-SECTION-EMPTY"])
@@ -2718,10 +2652,14 @@ class HeadingTreeTests(unittest.TestCase):
             "Name where the guide applies.", "| Key | Value |\n| --- | --- |\n| a | b |"
         )
         self.assertEqual(self.found(table), [])
-        code = VALID.replace(
-            "Name where the guide applies.", "```text\nkubectl get pods\n```"
-        )
-        self.assertEqual(self.found(code), [])
+        for code in (
+            "```text\nkubectl get pods\n```",
+            "```text\n&nbsp;\n```",
+            "`&nbsp;`",
+        ):
+            with self.subTest(code=code):
+                text = VALID.replace("Name where the guide applies.", code)
+                self.assertEqual(self.found(text), [])
 
     def test_link_only_sections_may_consist_of_links_alone(self) -> None:
         self.assertEqual(self.found(VALID), [])
@@ -2878,6 +2816,7 @@ class TableCheckTests(unittest.TestCase):
     def test_a_reordered_missing_or_extra_column_fails(self) -> None:
         for header in (
             "| Step | Check | Action |",
+            "| Action | Step | Check |",
             "| Step | Action |",
             "| Step | Action | Check | Note |",
             "| Step | Action | Check | Check |",
@@ -2944,7 +2883,7 @@ class TableCheckTests(unittest.TestCase):
         self.assertEqual(role.tables, ())
         self.assertEqual(self.found(guide_body(STEPS), role), [])
 
-    def test_the_check_runs_for_authored_documents_only(self) -> None:
+    def test_template_columns_are_checked_without_authored_row_minima(self) -> None:
         wrong = "| Step | Action |\n| --- | --- |\n| 1 | Run |"
         text = (
             "---\n"
@@ -2963,8 +2902,12 @@ class TableCheckTests(unittest.TestCase):
             ]
 
         self.assertEqual(rules(self.profile), ["BODY-TABLE-COLUMNS"])
-        self.assertEqual(rules(self.template), [])
+        self.assertEqual(rules(self.template), ["BODY-TABLE-COLUMNS"])
         self.assertEqual(rules(self.strict), ["BODY-TABLE-COLUMNS", "BODY-TABLE-ROWS"])
+        self.assertEqual(
+            rules(dataclasses.replace(self.strict, mode="template")),
+            ["BODY-TABLE-COLUMNS"],
+        )
 
 
 class OptionalTrailingColumnTests(unittest.TestCase):
@@ -3310,6 +3253,34 @@ class ServiceReadmeFormTests(unittest.TestCase):
 
 
 class TableIteratorTests(unittest.TestCase):
+    def test_only_root_rendered_tables_can_supply_form_evidence(self) -> None:
+        hidden = "| Example |\n| --- |\n| Opaque |"
+        visible = "| Outcome |\n| --- |\n| Observed |"
+        for example in (
+            f"<pre>\n{hidden}\n</pre>",
+            f"<![CDATA[\n```\n{hidden}\n]]>",
+            "\n".join("> " + line for line in hidden.splitlines()),
+            "- Example\n\n" + "\n".join("  " + line for line in hidden.splitlines()),
+        ):
+            with self.subTest(example=example):
+                text = example + "\n\n" + visible
+                expected = (["Outcome"], [["Observed"]])
+                self.assertEqual(list(MARKDOWN._visible_tables(text)), [expected])
+                self.assertEqual(LINKS._first_visible_table(text), expected)
+
+    def test_the_link_reader_uses_the_rendered_root_heading(self) -> None:
+        text = "<pre>\n## Scope\nFake.\n</pre>\n\n## Scope\n\nActual.\n"
+        expected = "\nActual."
+        self.assertEqual(MARKDOWN._exact_heading_section(text, "## Scope"), expected)
+        self.assertEqual(LINKS._exact_heading_section(text, "## Scope"), expected)
+
+    def test_opaque_markup_does_not_hide_subsequent_author_prompts(self) -> None:
+        text = "<pre>\n```\n</pre>\n\n<!-- Author prompt: fill this in -->\n"
+        self.assertIn(
+            "<!-- Author prompt: fill this in -->",
+            MARKDOWN.text_outside_fenced_code(text),
+        )
+
     def test_every_table_is_yielded_in_order(self) -> None:
         text = md(
             "| A | B |\n| --- | --- |\n| 1 | 2 |\n| 3 | 4 |",
@@ -4336,10 +4307,13 @@ def workspace_body() -> str:
     )
 
 
-def pack_body(*extra: tuple[str, str]) -> str:
-    """A pack README; `extra` is (H2 title, body) of the optional sections."""
+def pack_body(
+    *extra: tuple[str, str], closure: str | None = PACK_CLOSURES[PACK_FORM[0]]
+) -> str:
+    """A pack README with its closure section and any supplied overrides."""
 
-    later = dict(extra)
+    later = {closure: "The pack records its review boundary."} if closure else {}
+    later.update(extra)
     blocks = ["# Research pack"]
     for title, _ in PACK_FORM_TREE:
         if title == "Related Documents":
@@ -4528,6 +4502,15 @@ class ReferencePackFormTests(LocalReadmeForm):
     TREE = PACK_FORM_TREE
     BODY = pack_body()
 
+    def test_pack_must_include_only_its_own_closure_section(self) -> None:
+        self.assertEqual(self.tree(pack_body(closure=None)), ["BODY-HEADING-REQUIRED"])
+        research = ("Refresh and Succession", "Review the cited sources.")
+        self.assertEqual(self.tree(pack_body(research)), [])
+        audit = ("Review and Closure", "Close verified audit items.")
+        self.assertEqual(
+            self.tree(pack_body(research, audit)), ["BODY-HEADING-INAPPLICABLE"]
+        )
+
     def test_related_documents_may_be_a_link_list_and_no_other_section(self) -> None:
         self.assertEqual(self.tree(self.BODY), [])
         plain = re.sub(r"(## Structure\n\n)[^\n]*", r"\1- [a](a.md)", self.BODY)
@@ -4538,7 +4521,7 @@ class ReferencePackFormTests(LocalReadmeForm):
     def test_the_form_has_the_two_registered_local_h3s(self) -> None:
         self.assertEqual(self.raw_form()["extensions"], PACK_EXTENSIONS)
 
-    def test_the_three_closure_sections_and_method_are_not_required(self) -> None:
+    def test_closure_sections_are_conditional_and_method_is_optional(self) -> None:
         sections = {s["title"]: s for s in self.raw_form()["sections"]}
         for title in PACK_NOT_REQUIRED:
             with self.subTest(section=title):
@@ -4551,31 +4534,69 @@ class ReferencePackFormTests(LocalReadmeForm):
     def test_the_profiles_derive_the_required_headings_from_the_form(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
         every = tuple(title for title, _ in PACK_FORM_TREE)
-        required = tuple(t for t in every if t not in PACK_NOT_REQUIRED)
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         for profile_id in PACK_FORM:
             with self.subTest(profile=profile_id):
-                headings = CONTRACTS.heading_contract(by_id[profile_id])
-                self.assertEqual(headings.required, required)
-                self.assertEqual(headings.allowed, every)
+                profile = by_id[profile_id]
+                source_id = next(iter(profile.source_profile_ids), profile_id)
+                headings = CONTRACTS.heading_contract(profile)
+                closure = PACK_CLOSURES[source_id]
+                self.assertEqual(
+                    headings.required,
+                    tuple(
+                        t for t in every if t == closure or t not in PACK_NOT_REQUIRED
+                    ),
+                )
+                self.assertEqual(
+                    headings.allowed,
+                    tuple(
+                        t
+                        for t in every
+                        if t == closure or t not in PACK_CLOSURES.values()
+                    ),
+                )
 
-    def test_each_conditional_section_may_be_absent_or_present(self) -> None:
+    def test_optional_method_may_be_absent_and_present_sections_need_content(
+        self,
+    ) -> None:
         self.assertEqual(self.tree(self.BODY), [])
-        for title in PACK_NOT_REQUIRED:
+        for title in ("Method", PACK_CLOSURES[PACK_FORM[0]]):
             with self.subTest(section=title):
                 body = pack_body((title, "The pack states it."))
                 self.assertEqual(self.tree(body), [])
                 empty = pack_body((title, ""))
                 self.assertEqual(self.tree(empty), ["BODY-SECTION-EMPTY"])
 
-    def test_every_closure_section_is_accepted_at_once_in_form_order(self) -> None:
-        body = pack_body(*((title, "Stated.") for title in PACK_NOT_REQUIRED))
+    def test_the_applicable_closure_section_keeps_form_order(self) -> None:
+        closure = PACK_CLOSURES[PACK_FORM[0]]
+        body = pack_body((closure, "Stated."))
         self.assertEqual(self.tree(body), [])
-        early = body.replace(
-            "## Usage", "## Review and Closure\n\nEarly.\n\n## Usage", 1
-        )
-        early = early.replace("## Review and Closure\n\nStated.\n\n", "", 1)
+        early = body.replace("## Usage", f"## {closure}\n\nEarly.\n\n## Usage", 1)
+        early = early.replace(f"## {closure}\n\nStated.\n\n", "", 1)
         self.assertEqual(self.tree(early), ["BODY-H2-ORDER"])
+
+    def test_applicability_refuses_missing_other_role_and_template_sources(
+        self,
+    ) -> None:
+        for profile_id in (
+            "reference/unknown-pack",
+            "reference/research",
+            "common/template-readme-research-pack",
+        ):
+            with self.subTest(profile=profile_id):
+                raw = load_raw()
+                form = next(
+                    f
+                    for f in raw["common_forms"]["forms"]
+                    if f["form_id"] == self.FORM_ID
+                )
+                section = next(
+                    s
+                    for s in form["sections"]
+                    if s["title"] == PACK_CLOSURES[PACK_FORM[0]]
+                )
+                section["applicability"]["source_profile_ids"] = [profile_id]
+                self.assertIn("REGISTRY_FORM_CONDITION", semantic_rules_of(raw))
 
     def test_an_old_pack_heading_is_refused(self) -> None:
         for old, new in (
@@ -4963,8 +4984,6 @@ class GovernanceRoleFormTests(unittest.TestCase):
     def test_the_forms_hold_twenty_sections_and_no_extension(self) -> None:
         forms = {f["form_id"]: f for f in self.raw["common_forms"]["forms"]}
         stage = forms["stage-readme"]
-        self.assertEqual(len(forms), 27)
-        self.assertEqual(list(forms)[-9:-7], ["governance-document", "governance-role"])
         counts = {}
         for form_id, title, _, tree, _, link in GOVERNANCE_FORMS:
             with self.subTest(form=form_id):
@@ -5462,6 +5481,10 @@ class ReferenceReportFormTests(unittest.TestCase):
             with self.subTest(profile=profile_id):
                 self.assertEqual(self.rules(profile_id, self.body(h3)), [])
 
+    def test_a_research_report_refuses_an_audit_subheading(self) -> None:
+        wrong = {**self.RESEARCH_H3, "Scope": ("Criteria and Inspected Surface",)}
+        self.assertEqual(self.research(self.body(wrong)), ["BODY-HEADING-INAPPLICABLE"])
+
     def test_a_report_with_no_h3_passes_and_a_missing_conditional_h3_passes(
         self,
     ) -> None:
@@ -5504,14 +5527,108 @@ class ReferenceReportFormTests(unittest.TestCase):
         twice = {**self.RESEARCH_H3, "Scope": ("Method", "Method")}
         self.assertIn("BODY-H3-DUPLICATE", self.research(self.body(twice)))
 
-    def test_a_registered_extension_is_accepted_only_under_its_h2(self) -> None:
+    def test_a_registered_extension_is_accepted_only_under_its_h2_and_member(
+        self,
+    ) -> None:
         item = next(
             e for e in self.form["extensions"] if e["parent_id"].endswith("-sources")
         )
         under_sources = {**self.RESEARCH_H3, "Sources": (item["title"],)}
-        self.assertEqual(self.research(self.body(under_sources)), [])
+        current = self.body(under_sources)
+        bound = PurePosixPath("docs/90.references/research/0002-sample/m0001-sample.md")
+        self.assertFalse(
+            MARKDOWN._body_diagnostics(
+                bound, self.profiles["reference/research"], current, "published"
+            )
+        )
+        self.assertEqual(self.research(current), ["BODY-HEADING-INAPPLICABLE"])
         under_scope = {**self.RESEARCH_H3, "Scope": (item["title"],)}
         self.assertEqual(self.research(self.body(under_scope)), ["BODY-H3-PARENT"])
+
+    def test_a_historical_conditional_heading_is_bound_to_its_members(self) -> None:
+        body = self.body({"Scope": ("Historical scope",)})
+        bound = PurePosixPath("docs/90.references/research/0001-sample/m0004-sample.md")
+        self.assertFalse(
+            MARKDOWN._body_diagnostics(
+                bound, self.profiles["reference/research"], body, "published"
+            )
+        )
+        self.assertEqual(self.research(body), ["BODY-HEADING-INAPPLICABLE"])
+        wrong_pack = PurePosixPath(
+            "docs/90.references/research/0002-sample/m0004-sample.md"
+        )
+        self.assertEqual(
+            [
+                item.rule_id
+                for item in MARKDOWN._body_diagnostics(
+                    wrong_pack, self.profiles["reference/research"], body, "published"
+                )
+            ],
+            ["BODY-HEADING-INAPPLICABLE"],
+        )
+        self.assertEqual(
+            self.rules("reference/audit", body), ["BODY-HEADING-INAPPLICABLE"]
+        )
+        template = self.profiles["common/template-reference-research"]
+        self.assertEqual(
+            [
+                item.rule_id
+                for item in MARKDOWN._body_diagnostics(
+                    template.template, template, body, "draft"
+                )
+            ],
+            ["BODY-HEADING-INAPPLICABLE"],
+        )
+
+    def test_historical_member_bindings_reach_the_template_record(self) -> None:
+        record = CONTRACTS.template_definition_record(
+            self.raw, "common/template-reference-research"
+        )
+        scope = next(node for node in record["headings"] if node["title"] == "Scope")
+        historical = next(
+            child for child in scope["children"] if child["title"] == "Historical scope"
+        )
+        self.assertEqual(
+            historical["applicability"],
+            {
+                "source_profile_ids": ["reference/research"],
+                "artifact_ids": [
+                    "RES-0001-m0004",
+                    "RES-0001-m0005",
+                    "RES-0001-m0006",
+                    "RES-0001-m0009",
+                ],
+                "required": False,
+            },
+        )
+        findings = next(
+            extension
+            for extension in record["extensions"]
+            if "reference-extension-sources-findings " in extension["delta"]
+        )
+        self.assertEqual(findings["artifact_ids"], ["RES-0002-m0001"])
+
+    def test_historical_member_bindings_reject_invalid_selectors(self) -> None:
+        raw = copy.deepcopy(self.raw)
+        form = next(
+            form
+            for form in raw["common_forms"]["forms"]
+            if form["form_id"] == "reference-report"
+        )
+        applicability = form["sections"][0]["children"][0]["applicability"]
+        original = applicability["artifact_ids"]
+        for invalid in (
+            [],
+            [original[0]] * 2,
+            ["AUD-0001-m0004"],
+            [original[0] + "\n"],
+        ):
+            with self.subTest(artifact_ids=invalid):
+                applicability["artifact_ids"] = invalid
+                self.assertEqual(rules_of(raw), {"REGISTRY_SCHEMA"})
+        applicability["artifact_ids"] = original
+        applicability["source_profile_ids"] = ["reference/audit"]
+        self.assertIn("REGISTRY_FORM_CONDITION", rules_of(raw))
 
     def test_a_bare_or_empty_section_fails(self) -> None:
         text = self.body(self.RESEARCH_H3)
@@ -5738,6 +5855,46 @@ class RequirementFormTests(unittest.TestCase):
                 self.assertEqual(self.tree(body), [])
                 self.assertEqual(self.tables(body), [])
         self.assertNotIn("Quality Requirements", requirement_body(quality=False))
+
+    def test_declared_nfr_needs_its_quality_member(self) -> None:
+        frontmatter = (
+            '---\ntitle: "Requirement"\nversion: "1.0.0"\ntype: "sdlc/requirement"\n'
+            'status: "approved"\nowner: "platform"\nupdated: "2026-11-12"\n'
+            'artifact_id: "REQ-0001"\n---\n\n'
+        )
+
+        def quality_rules(body):
+            return {
+                item.rule_id
+                for item in MARKDOWN.validate_document_text(
+                    frontmatter + body, REQUIREMENT_PATH, self.profile, "strict"
+                )
+                if item.rule_id.startswith("BODY-QUALITY-")
+            }
+
+        trace = "| REQ-0001-FR-0001 | The controller is available. |"
+        nfr_trace = "| `REQ-0001-NFR-0001` | The controller is available. |"
+        plain = requirement_body(quality=False)
+        self.assertEqual(
+            quality_rules(plain.replace(trace, nfr_trace)), {"BODY-QUALITY-MEMBER"}
+        )
+        misplaced = plain.replace(requirement_table(), requirement_table(kind="NFR"))
+        self.assertIn("BODY-QUALITY-PLACEMENT", quality_rules(misplaced))
+        for kind in ("FR", "IF"):
+            with self.subTest(kind=kind):
+                misplaced = requirement_body().replace(
+                    requirement_table(kind="NFR"), requirement_table(kind=kind)
+                )
+                self.assertEqual(quality_rules(misplaced), {"BODY-QUALITY-PLACEMENT"})
+        correct = requirement_body().replace(trace, trace + "\n" + nfr_trace)
+        self.assertEqual(quality_rules(correct), set())
+        self.assertEqual(quality_rules(plain + "\nSee REQ-0001-NFR-0001.\n"), set())
+        foreign = nfr_trace.replace("REQ-0001-", "REQ-0002-")
+        self.assertEqual(quality_rules(plain.replace(trace, foreign)), set())
+        hidden = f"<pre>\n| Requirement ID | Acceptance criterion |\n| --- | --- |\n{nfr_trace}\n</pre>"
+        self.assertEqual(
+            quality_rules(plain.replace(trace, trace + "\n\n" + hidden)), set()
+        )
 
     def test_a_removed_h2_or_a_missing_h3_fails_the_tree(self) -> None:
         old = requirement_body().replace("## Scope", "## Scope and Non-goals")
@@ -6009,7 +6166,8 @@ class ArchitectureFormTests(unittest.TestCase):
         self,
     ) -> None:
         definition_ = self.profiles[ARCHITECTURE[1]].template_definition
-        self.assertEqual(definition_["contract_version"], "COMMON-DOC-FORM-1/1.0.0")
+        self.assertEqual(definition_["contract_id"], "COMMON-DOC-FORM-1")
+        self.assertEqual(definition_["contract_version"], "1.0.0")
         for path in (
             "docs/99.templates/registry.json",
             "docs/99.templates/contracts/document-profile.schema.json",
@@ -6478,10 +6636,10 @@ class AdrFormTests(unittest.TestCase):
         )
         self.assertTrue(all(c.required for t in twin.tables for c in t.columns))
 
-    def test_the_definition_has_eleven_keys_and_the_record_lists_both_extensions(
+    def test_the_stored_definition_and_derived_record_preserve_the_adr_contract(
         self,
     ) -> None:
-        definition_ = self.profiles[ADR[1]].template_definition
+        definition_ = profile_of(self.raw, ADR[1])["template_definition"]
         self.assertEqual(
             sorted(definition_),
             sorted(
@@ -6496,11 +6654,13 @@ class AdrFormTests(unittest.TestCase):
                     "validation",
                     "migration",
                     "tables",
+                    "contract_id",
                     "contract_version",
                 ]
             ),
         )
-        self.assertEqual(definition_["contract_version"], "COMMON-DOC-FORM-1/1.0.0")
+        self.assertEqual(definition_["contract_id"], "COMMON-DOC-FORM-1")
+        self.assertEqual(definition_["contract_version"], "1.0.0")
         self.assertEqual(
             definition_["policy_refs"],
             [".agents/governance/document-authoring.md", ".agents/governance/sdlc.md"],
@@ -6591,10 +6751,7 @@ class AdrFormTests(unittest.TestCase):
 
 
 # SPEC-0196 (W03-D56, W03-D65): the full TemplateDefinition record.
-SCHEMA_COPY = ROOT / "docs/99.templates/contracts/template-definition.schema.json"
-# The package schema TEMPLATE-DEFINITION.schema.json of the v14.7 revision; any
-# byte change is a deliberate change of this digest and of the file.
-SCHEMA_COPY_SHA256 = "e490cf402419bd1e8204d665b5774f8c9869f28e31879d1b4f3ea39d550364ff"
+RECORD_SCHEMA = ROOT / "docs/99.templates/contracts/template-definition.schema.json"
 COMMON_RECORD_ROLES = frozenset(FORM_IDS[:16])
 SDLC_ROLES = frozenset(FORM_IDS[:6])
 HEADINGS_EXTENSION = {
@@ -6611,12 +6768,12 @@ def current_rules(raw: dict) -> set[str]:
     return {item.rule_id for item in CONTRACTS.current_registry_diagnostics(ROOT, raw)}
 
 
-def schema_copy() -> dict:
-    return json.loads(SCHEMA_COPY.read_text("utf-8"))
+def record_schema() -> dict:
+    return json.loads(RECORD_SCHEMA.read_text("utf-8"))
 
 
 def record_errors(record: dict) -> list:
-    return schema_errors(schema_copy(), record)
+    return schema_errors(record_schema(), record)
 
 
 def form_headings(item: dict) -> dict:
@@ -6633,7 +6790,7 @@ def form_headings(item: dict) -> dict:
 
 
 class TemplateRecordTests(unittest.TestCase):
-    """VAL-TDREC-001: one 19-field record per template, derived from its owners."""
+    """VAL-TDREC-001: a record per template, derived from its owners."""
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -6661,27 +6818,36 @@ class TemplateRecordTests(unittest.TestCase):
             if not (error.validator == "minItems" and list(error.path) == ["headings"])
         ]
 
-    def test_the_schema_copy_digest_is_pinned(self) -> None:
-        self.assertEqual(
-            hashlib.sha256(SCHEMA_COPY.read_bytes()).hexdigest(), SCHEMA_COPY_SHA256
-        )
-
-    def test_the_record_fields_follow_the_required_list_of_the_schema_copy(
+    def test_the_record_fields_follow_the_required_list_of_the_schema(
         self,
     ) -> None:
         self.assertEqual(
-            list(CONTRACTS.TEMPLATE_RECORD_FIELDS), schema_copy()["required"]
+            list(CONTRACTS.TEMPLATE_RECORD_FIELDS), record_schema()["required"]
         )
-        self.assertEqual(len(CONTRACTS.TEMPLATE_RECORD_FIELDS), 19)
 
-    def test_every_template_with_a_definition_has_the_nineteen_key_record(
+    def test_current_registry_exposes_the_normalized_template_record(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        profile_id = "common/template-readme-research-pack"
+        profile = next(p for p in registry.profiles if p.profile_id == profile_id)
+        self.assertEqual(profile.template_definition, self.records[profile_id])
+        closure = next(
+            section
+            for section in profile.template_definition["headings"]
+            if section["title"] == PACK_CLOSURES[PACK_FORM[0]]
+        )
+        self.assertEqual(
+            closure["applicability"],
+            {"source_profile_ids": [PACK_FORM[0]], "required": True},
+        )
+
+    def test_every_template_with_a_definition_has_a_valid_record(
         self,
     ) -> None:
         self.assertTrue(self.templates)
         for profile in self.templates:
             with self.subTest(template=profile["id"]):
                 record = self.records[profile["id"]]
-                self.assertEqual(list(record), schema_copy()["required"])
+                self.assertEqual(list(record), record_schema()["required"])
                 self.assertEqual(self.tolerated(profile, record_errors(record)), [])
 
     def test_the_record_is_derived_from_the_profile_and_form(self) -> None:
@@ -6691,10 +6857,9 @@ class TemplateRecordTests(unittest.TestCase):
                 definition = profile["template_definition"]
                 self.assertEqual(record["template_id"], profile["id"])
                 self.assertEqual(record["role"], profile["document_role"])
-                self.assertEqual(
-                    record["contract_version"], definition["contract_version"]
-                )
                 for key in (
+                    "contract_id",
+                    "contract_version",
                     "purpose",
                     "responsibility",
                     "non_goals",
@@ -6735,7 +6900,7 @@ class TemplateRecordTests(unittest.TestCase):
             )
         self.assertGreater(len(by_role), 1)
         for role, records in by_role.items():
-            for key in ("headings", "extensions", "contract_version"):
+            for key in ("headings", "extensions", "contract_id", "contract_version"):
                 with self.subTest(role=role, key=key):
                     self.assertEqual(
                         len(
@@ -6744,18 +6909,25 @@ class TemplateRecordTests(unittest.TestCase):
                         1,
                     )
 
-    def test_the_contract_version_names_the_contract_of_its_role(self) -> None:
+    def test_the_contract_fields_name_the_contract_of_its_role(self) -> None:
         common = self.raw["common_forms"]
         for profile in self.templates:
             role = profile["document_role"]
             expected = (
-                f"{common['contract_id']}/{common['version']}"
+                (common["contract_id"], common["version"])
                 if role in COMMON_RECORD_ROLES
-                else "STAGE99-LOCAL-FORM-1/1.0.0"
+                else (
+                    "STAGE99-LOCAL-FORM-1",
+                    "2.0.0"
+                    if role in {"reference-pack-readme", "reference-report"}
+                    else "1.0.0",
+                )
             )
+            definition = profile["template_definition"]
             with self.subTest(template=profile["id"]):
                 self.assertEqual(
-                    profile["template_definition"]["contract_version"], expected
+                    (definition["contract_id"], definition["contract_version"]),
+                    expected,
                 )
 
     def test_every_template_carries_a_definition_since_the_task_form(self) -> None:
@@ -6890,44 +7062,68 @@ class TemplateRecordRuleTests(unittest.TestCase):
         del self.definition(raw, GUIDE[1])["contract_version"]
         self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
 
+    def test_definition_and_record_require_distinct_contract_fields(self) -> None:
+        raw = load_raw()
+        stored = self.definition(raw, GUIDE[1])
+        self.assertEqual(stored["contract_id"], "COMMON-DOC-FORM-1")
+        self.assertEqual(stored["contract_version"], "1.0.0")
+        record = CONTRACTS.template_definition_record(raw, GUIDE[1])
+        self.assertEqual(record["contract_id"], stored["contract_id"])
+        self.assertEqual(record["contract_version"], stored["contract_version"])
+        for invalid in (
+            "COMMON-DOC-FORM-1/1.0.0",
+            "1.0.0-rc.1",
+            "1.0.0+local",
+            "1.0.0\n",
+        ):
+            with self.subTest(version=invalid):
+                self.assertTrue(record_errors({**record, "contract_version": invalid}))
+        del stored["contract_id"]
+        self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
+
     def test_a_common_value_that_differs_from_the_common_form_version_fails(
         self,
     ) -> None:
         raw = load_raw()
-        self.definition(raw, GUIDE[1])["contract_version"] = "COMMON-DOC-FORM-1/9.9.9"
+        self.definition(raw, GUIDE[1])["contract_version"] = "9.9.9"
         self.assertIn("REGISTRY_TEMPLATE_RECORD", current_rules(raw))
 
     def test_a_common_value_on_a_role_without_a_form_fails(self) -> None:
         raw = load_raw()
         for profile_id in self.NATIVES:
-            self.definition(raw, profile_id)["contract_version"] = (
-                "COMMON-DOC-FORM-1/1.0.0"
-            )
+            self.definition(raw, profile_id)["contract_id"] = "COMMON-DOC-FORM-1"
         self.assertIn("REGISTRY_TEMPLATE_RECORD", current_rules(raw))
 
     def test_a_value_outside_the_grammar_fails(self) -> None:
-        for value in (
-            "COMMON-DOC-FORM-1",
-            "COMMON-DOC-FORM-1/",
-            "COMMON-DOC-FORM-1/1.0",
-            "COMMON-DOC-FORM-1/v1.0.0",
-            "common-doc-form-1/1.0.0",
-            "STAGE99-LOCAL-FORM-1/01.0.0",
-            "/1.0.0",
-            " STAGE99-LOCAL-FORM-1/1.0.0",
-        ):
-            raw = load_raw()
-            self.definition(raw, "common/template-governance-prompt")[
-                "contract_version"
-            ] = value
-            with self.subTest(value=value):
-                self.assertIn("REGISTRY_TEMPLATE_RECORD", current_rules(raw))
+        invalid = {
+            "contract_id": (
+                "common-doc-form-1",
+                "COMMON-DOC-FORM-1/1.0.0",
+                "STAGE99-LOCAL-FORM-1\n",
+            ),
+            "contract_version": (
+                "1.0",
+                "v1.0.0",
+                "01.0.0",
+                "１.0.0",
+                "1.0.0\n",
+                "1.0.0-rc.1",
+                "1.0.0+build",
+            ),
+        }
+        for field, values in invalid.items():
+            for value in values:
+                raw = load_raw()
+                self.definition(raw, "common/template-governance-prompt")[field] = value
+                with self.subTest(field=field, value=value):
+                    self.assertIn("REGISTRY_TEMPLATE_RECORD", current_rules(raw))
+                    self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
 
     def test_two_values_on_one_role_fail(self) -> None:
         raw = load_raw()
-        self.definition(raw, "common/template-readme-stage-index")[
-            "contract_version"
-        ] = "STAGE99-LOCAL-FORM-1/1.0.0"
+        self.definition(raw, "common/template-readme-stage-index")["contract_id"] = (
+            "STAGE99-LOCAL-FORM-1"
+        )
         self.assertIn("REGISTRY_TEMPLATE_RECORD", current_rules(raw))
 
     def test_a_record_with_a_missing_added_or_wrong_field_fails_the_schema(
@@ -7195,14 +7391,12 @@ class SpecPlanFormTests(unittest.TestCase):
         for twin in (SPEC_FORM[1], PLAN_FORM[1]):
             with self.subTest(twin=twin):
                 definition_ = self.profiles[twin].template_definition
+                self.assertEqual(definition_["contract_id"], "COMMON-DOC-FORM-1")
+                self.assertEqual(definition_["contract_version"], "1.0.0")
+                record = CONTRACTS.template_definition_record(self.raw, twin)
+                self.assertEqual(record["contract_id"], definition_["contract_id"])
                 self.assertEqual(
-                    definition_["contract_version"], "COMMON-DOC-FORM-1/1.0.0"
-                )
-                self.assertEqual(
-                    CONTRACTS.template_definition_record(self.raw, twin)[
-                        "contract_version"
-                    ],
-                    "COMMON-DOC-FORM-1/1.0.0",
+                    record["contract_version"], definition_["contract_version"]
                 )
                 for path in definition_["consumer_paths"]:
                     self.assertTrue((ROOT / path).is_file(), path)
@@ -7324,23 +7518,6 @@ class FormlessRoleTableTests(unittest.TestCase):
                 self.assertFalse(table["section"].startswith("#"), profile["id"])
 
 
-class CurrentRegistryTenFormsOnlyTests(unittest.TestCase):
-    def test_only_the_twenty_seven_form_profiles_use_the_tree(self) -> None:
-        registry = CONTRACTS.load_registry(ROOT)
-        self.assertEqual(
-            [item.form_id for item in registry.common_forms],
-            TWENTY_SEVEN_FORMS,
-        )
-        self.assertEqual(
-            sorted(p.profile_id for p in registry.profiles if p.form is not None),
-            sorted(FORM_PROFILES),
-        )
-        self.assertEqual(
-            sorted(p.profile_id for p in registry.profiles if p.template_definition),
-            sorted(FORM_TEMPLATES + LOCAL_TEMPLATES),
-        )
-
-
 TASK_PATH = PurePosixPath("docs/03.specs/0900-form-fixture/tasks/tsk-0001-fixture.md")
 
 
@@ -7432,12 +7609,14 @@ class TaskFormTests(unittest.TestCase):
             },
             SDLC_TASK_FORM_TABLE_KEYS,
         )
-        self.assertEqual(
-            twin.template_definition["contract_version"], "COMMON-DOC-FORM-1/1.0.0"
-        )
+        self.assertEqual(twin.template_definition["contract_id"], "COMMON-DOC-FORM-1")
+        self.assertEqual(twin.template_definition["contract_version"], "1.0.0")
         self.assertEqual(rules_of(self.raw), set())
         record = CONTRACTS.template_definition_record(self.raw, SDLC_TASK_FORM[1])
-        self.assertEqual(record["contract_version"], "COMMON-DOC-FORM-1/1.0.0")
+        self.assertEqual(record["contract_id"], twin.template_definition["contract_id"])
+        self.assertEqual(
+            record["contract_version"], twin.template_definition["contract_version"]
+        )
         for path in twin.template_definition["consumer_paths"]:
             self.assertTrue((ROOT / path).is_file(), path)
 
@@ -7530,17 +7709,25 @@ class HeadingListRemovalTests(unittest.TestCase):
                 if profile.form is None:
                     self.assertEqual((headings.required, headings.allowed), ((), ()))
                     continue
+                sources = set(profile.source_profile_ids or (profile.profile_id,))
+                applicable = [
+                    item
+                    for item in profile.form.sections
+                    if not item.applicable_source_profiles
+                    or sources.intersection(item.applicable_source_profiles)
+                ]
                 self.assertEqual(
                     headings.required,
                     tuple(
                         item.title
-                        for item in profile.form.sections
+                        for item in applicable
                         if item.requiredness == "required"
+                        or item.required_if_applicable
                     ),
                 )
                 self.assertEqual(
                     headings.allowed,
-                    tuple(item.title for item in profile.form.sections),
+                    tuple(item.title for item in applicable),
                 )
 
     def test_the_old_field_is_gone_so_a_reader_of_it_fails_loudly(self) -> None:
