@@ -45,7 +45,7 @@ On 2026-11-17 the agent compared the targets with the registry `common_forms` an
 
 ### Blockers and Decisions
 
-Spec and Plan approval is open. The work starts after the user approves the exact bytes.
+The user approved the Spec and Plan (EVD-002), with acceptance on green checks. No question is open.
 
 ### Lifecycle Traceability
 
@@ -65,6 +65,7 @@ Spec and Plan approval is open. The work starts after the user approves the exac
 | Evidence ID | Consumer | Work Unit | Command | Input | Result | Location | Required | Resolves |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-FORM-001](../spec.md#criteria) | WORK-001 | Strict document validators and staged QA | Implementation snapshot of each work unit | NOT_RUN | Pending | yes | none |
+| EVD-002 | [VAL-FORM-001](../spec.md#criteria) | WORK-001 | Spec/Plan approval | Direct current-session user answer `승인, 녹색이면 수용 (권장)` (approve, accept when green) to the SPEC-0221 approval question naming spec.md `c19ed378` and plan.md `722984da` of in-review commit `1c81056a`, 2026-11-17; risk class `high` | PASS | Approves the reviewed Spec and Plan content of `1c81056a`; the approved files differ from it only in `status` and `version`. The same answer accepts VAL-FORM-001 to VAL-FORM-003 on the condition that the strict validators, the `document` suite, staged QA and the independent review pass; later rows check that condition. | yes | none |
 
 ### Resolution Links
 
@@ -82,7 +83,7 @@ No earlier failure is open.
 
 ### Remaining Conditions
 
-Spec and Plan approval, all six work units, the independent review and the user's acceptance remain.
+All six work units, the independent review and the user's acceptance remain.
 
 ## Handoff
 
@@ -92,4 +93,4 @@ The Plan's FORM-TREES row is not yet reflected.
 
 ### Next Owner
 
-The user reviews and approves the Spec and Plan. The agent then runs WORK-001.
+The agent runs WORK-001.
