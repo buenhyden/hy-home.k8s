@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "3.0.0"
+version: "3.0.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 
 # Document Lifecycle Policy
@@ -86,9 +86,9 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   and `cancelled`. Task owns `in-progress`, `blocked` and `completed` work.
   A historical comparison reads the states of its original Registry edition.
 - `DOCLIFE-R002` A newly authored Plan, or one revised for current scope, links the approved
-  Spec's constraints in `Global Constraints`, the last block of Goal and
-  Boundary written as an H4, adds only execution constraints specific to the
-  Plan, and keeps one promotion table under Promotion Map, Owner and Receipt. A
+  Spec's constraints in `Global Constraints`, an H4 of Overview > Constraints
+  placed after that section's text, adds only execution constraints specific to the
+  Plan, and keeps one promotion table under Promotion Map > Durable Owners. A
   Plan for in-progress Task work does not treat an intended promotion target as approval or
   completion evidence.
   When a Spec package is accepted as complete, the Plan's promotion table

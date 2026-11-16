@@ -850,6 +850,9 @@ class FormExtension:
     # SPEC-0198 (W03-D52): an anchored expression over the artifact identity that
     # bounds a retained form; None keeps the kind's selection by status alone.
     identity_bound: str | None = None
+    # SPEC-0221: where a retained document keeps its body-contract table, as
+    # (section, table heading); None keeps the profile's body contract.
+    body_contract: tuple[str, str] | None = None
     # SPEC-0203: a local_columns extension names its table and its extra columns.
     table: str | None = None
     columns: tuple[str, ...] = ()
@@ -892,6 +895,20 @@ class CommonForm:
                 and extension.keeps_identity(identity)
             ):
                 return extension.retained
+        return None
+
+    def retained_body_contract(
+        self, status: str, identity: str = ""
+    ) -> tuple[str, str] | None:
+        """The (section, table heading) a retained document keeps, if any."""
+
+        for extension in self.extensions:
+            if (
+                extension.kind == "retained_form"
+                and status in extension.statuses
+                and extension.keeps_identity(identity)
+            ):
+                return extension.body_contract
         return None
 
     def retains_identity(self, identity: str) -> bool:
@@ -970,6 +987,24 @@ class DocumentProfile:
     # base side of the staged check). Remove it, with its tests, when
     # READABLE_REGISTRY_MAJORS holds no MAJOR below the one that removed `sections`.
     listed_headings: HeadingContract | None = None
+
+    def body_contract_location(
+        self, status: str, identity: str = ""
+    ) -> tuple[str, str] | None:
+        """The H2 and H3 that hold this document's body-contract table.
+
+        A retained form that names its own location (SPEC-0221) applies to its
+        statuses and bounded identities; every other document uses the profile's
+        body contract.
+        """
+
+        if self.body_contract is None:
+            return None
+        if self.form is not None:
+            kept = self.form.retained_body_contract(status, identity)
+            if kept is not None:
+                return kept
+        return self.body_contract.section, self.body_contract.table_heading
 
 
 @dataclass(frozen=True)
@@ -3893,6 +3928,14 @@ def _common_form_from_mapping(raw: Mapping[str, Any]) -> CommonForm:
             title=item.get("title"),
             statuses=tuple(item.get("statuses", ())),
             identity_bound=item.get("identity_bound"),
+            body_contract=(
+                None
+                if item.get("body_contract") is None
+                else (
+                    item["body_contract"]["section"],
+                    item["body_contract"]["table_heading"],
+                )
+            ),
             table=item.get("table"),
             columns=tuple(item.get("columns", ())),
             artifact_ids=tuple(item.get("artifact_ids", ())),

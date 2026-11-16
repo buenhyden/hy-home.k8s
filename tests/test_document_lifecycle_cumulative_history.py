@@ -283,8 +283,8 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             )
             if name == "plan.md":
                 text = text.replace(
-                    "### Goal and Boundary\n\n",
-                    "### Goal and Boundary\n\nThe synthetic goal and its boundary.\n\n",
+                    "### Constraints\n\n",
+                    "### Constraints\n\nThe synthetic goal and its boundary.\n\n",
                     1,
                 )
                 text = text.replace(

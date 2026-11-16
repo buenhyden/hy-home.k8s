@@ -584,7 +584,7 @@ def _ad(*members: str) -> str:
 def _spec(*members: str) -> str:
     rows = "".join(f"| {m} | VAL-X-001 | N/A — fixture | Test. |\n" for m in members)
     return (
-        "## References\n\n### Lifecycle Traceability\n\n"
+        "## Acceptance Criteria\n\n### Lifecycle Traceability\n\n"
         "| Requirement ID | Spec criterion | Architecture | Verification method |\n"
         f"| --- | --- | --- | --- |\n{rows}"
     )
@@ -613,7 +613,7 @@ class SpecArchitectureLinkTests(unittest.TestCase):
 
     def rules(self, cell: str, *, target: str = "sdlc/architecture-description"):
         spec = (
-            "## References\n\n### Lifecycle Traceability\n\n"
+            "## Acceptance Criteria\n\n### Lifecycle Traceability\n\n"
             "| Requirement ID | Spec criterion | Architecture | Verification method |\n"
             f"| --- | --- | --- | --- |\n| N/A — fixture | VAL-X-001 | {cell} | Test. |\n"
         )

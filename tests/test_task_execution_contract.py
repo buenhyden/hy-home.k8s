@@ -218,17 +218,16 @@ def form_spec_text() -> str:
         [
             *_frontmatter("spec", "SPEC-0106"),
             "# Spec",
-            *block("Overview", "Intent", "Owning Requirements"),
-            *block("Scope", "In Scope", "Non-goals"),
-            *block("Behavior Contract", "Normal Behavior", "Failure and Edge Cases"),
+            *block("Overview", "Goal", "Consumers"),
+            *block("Scope", "In Scope", "Out of Scope"),
+            *block("Behavior Contract", "Inputs and Outputs", "Failure Behavior"),
             "## Acceptance Criteria",
             "### Criteria",
             "| Criterion ID | Expected Result |",
             "| --- | --- |",
             "| VAL-P02-001 | Focused test PASS |",
-            "### Evidence Requirements",
+            "### Verification Strategy",
             "Concrete fixture text.",
-            *block("References", "Normative and Evidence", "Historical and Navigation"),
             "### Lifecycle Traceability",
             "| Requirement ID | Spec criterion | Architecture | Verification method |",
             "| --- | --- | --- | --- |",
@@ -253,30 +252,29 @@ def form_plan_text() -> str:
             *_frontmatter("plan", "SPEC-0106-PLAN-0001", 'parent_ids: ["SPEC-0106"]'),
             "# Plan",
             "## Overview",
-            "### Goal and Boundary",
+            "### Outcome",
             "Concrete fixture goal.",
+            "### Constraints",
+            "Concrete fixture text.",
             "#### Global Constraints",
             "Keep the approved [Spec](spec.md#scope) parent contract.",
-            "### Assumptions",
-            "Concrete fixture text.",
-            *block("Dependencies", "Prerequisites", "Dependency Order"),
-            "## Implementation Strategy",
-            "### Work Breakdown",
+            *block("Dependencies", "Prerequisites", "Shared Resources"),
+            "## Work Breakdown",
+            "### Work Units",
             "| Work Unit | Criteria | Work | Dependencies | Task | Verification |",
             "| --- | --- | --- | --- | --- | --- |",
             "| WORK-001 | [VAL-P02-001](spec.md#criteria) | Verify | none | "
             "[SPEC-0106-TSK-0001](tasks/tsk-0001-example.md) | Focused test |",
-            "### Change and Rollback",
+            "### Dependency Edges",
             "Concrete fixture text.",
-            *block("Verification Plan", "Verification Matrix", "Stage Placement"),
-            *block("Risks", "Risks and Mitigations", "Escalation"),
+            *block("Verification Plan", "Selected Checks", "Evidence Plan"),
             "## Promotion Map",
-            "### Durable Meaning",
-            "Concrete fixture text.",
-            "### Owner and Receipt",
+            "### Durable Owners",
             "| Promotion ID | Target Owner | Acceptance | Evidence |",
             "| --- | --- | --- | --- |",
             "| none | none | none | No durable contract was introduced |",
+            "### Consumer Updates",
+            "Concrete fixture text.",
             "",
         ]
     )
@@ -966,16 +964,15 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             'parent_ids: ["SPEC-0900"]\n'
             "---\n# Plan\n"
             "## Overview\n"
-            "### Goal and Boundary\n"
+            "### Outcome\n"
             "The fixture goal and its boundary.\n"
+            "### Constraints\n"
+            "The fixture assumptions.\n"
             "#### Global Constraints\n"
             f"{self.CONSTRAINTS}"
-            "### Assumptions\n"
-            "The fixture assumptions.\n"
             "## Promotion Map\n"
-            "### Durable Meaning\n"
+            "### Durable Owners\n"
             "Each row of the table below names one durable contract.\n"
-            "### Owner and Receipt\n"
             "| Promotion ID | Target Owner | Acceptance | Evidence |\n"
             "| --- | --- | --- | --- |\n"
             "| none | none | none | No durable contract was introduced |\n"
@@ -1051,7 +1048,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
                 "PLAN-GLOBAL-CONSTRAINTS",
             ),
             (
-                plan.replace("### Owner and Receipt\n", "### Other\n"),
+                plan.replace("### Durable Owners\n", "### Other\n"),
                 "PLAN-PROMOTION",
             ),
             (
@@ -1096,7 +1093,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
                 proposed = {**base, self.plan: changed}
                 self.assertIn(rule, self.rules(base=base, proposed=proposed))
         completed_without_receipt = self.plan_text("completed").replace(
-            "### Owner and Receipt\n", "### Other\n"
+            "### Durable Owners\n", "### Other\n"
         )
         self.assertIn(
             "PLAN-PROMOTION",
@@ -1374,7 +1371,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             "TASK-PARENT-APPROVAL", self.rules(base=base, proposed=proposed)
         )
         spec += (
-            "\n## References\n### Lifecycle Traceability\n"
+            "\n## Acceptance Criteria\n### Lifecycle Traceability\n"
             "| Requirement ID | Spec criterion | Architecture | Verification method |\n"
             "| --- | --- | --- | --- |\n"
             f"| {link} | VAL-P02-001 | Fixture | Check |\n"
@@ -1580,7 +1577,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
                 base=base,
                 proposed={
                     **base,
-                    self.plan: plan.replace("### Owner and Receipt\n", "### Other\n"),
+                    self.plan: plan.replace("### Durable Owners\n", "### Other\n"),
                 },
             ),
         )
@@ -1603,16 +1600,15 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         }
         self.assertIn("TASK-PARENT-APPROVAL", self.rules(proposed=draft_parent))
 
-    def test_constraints_heading_first_does_not_read_goal_text_as_constraints(
+    def test_constraints_heading_first_does_not_read_other_text_as_constraints(
         self,
     ) -> None:
         plan = self.plan_text()
         base = {self.spec: self.spec_text(), self.plan: plan}
         first = plan.replace(
-            "The fixture goal and its boundary.\n"
-            "#### Global Constraints\n" + self.CONSTRAINTS,
+            "The fixture assumptions.\n#### Global Constraints\n" + self.CONSTRAINTS,
             "#### Global Constraints\n"
-            "The fixture goal links the [Spec](spec.md#scope).\n",
+            "The fixture constraints link the [Spec](spec.md#scope).\n",
         )
         self.assertNotEqual(first, plan)
         self.assertIn(
@@ -1640,8 +1636,8 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         base = {self.spec: self.spec_text(), self.plan: plan}
         changed = {**base, self.plan: plan + "\nA changed line.\n"}
         for dropped, rule in (
-            ("plan-promotion-map-owner-and-receipt", "PLAN-PROMOTION"),
-            ("plan-overview-goal-and-boundary", "PLAN-GLOBAL-CONSTRAINTS"),
+            ("plan.promotion.1", "PLAN-PROMOTION"),
+            ("plan.intent.2", "PLAN-GLOBAL-CONSTRAINTS"),
         ):
             with self.subTest(dropped=dropped):
                 registry = self.registry_with(drop_sections=(dropped,))
@@ -1651,9 +1647,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         form_base = {self.spec: self.spec_text(), self.plan: self.plan_text()}
         form_bad = {
             **form_base,
-            self.plan: self.plan_text().replace(
-                "### Owner and Receipt\n", "### Other\n"
-            ),
+            self.plan: self.plan_text().replace("### Durable Owners\n", "### Other\n"),
         }
         self.assertIn(
             "PLAN-PROMOTION", self.rules_under(self.registry, form_base, form_bad)

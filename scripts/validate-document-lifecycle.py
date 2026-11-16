@@ -825,12 +825,9 @@ def _local_plan_task_contract_issues(
     # A Plan form names the headings by section id; an old-list registry names them
     # by title. A form that lacks a section makes the rule fail instead of skip.
     if plan_form:
-        promotion_heading = _form_heading(
-            registry, "plan", "plan-promotion-map-owner-and-receipt"
-        )
-        goal_heading = _form_heading(
-            registry, "plan", "plan-overview-goal-and-boundary"
-        )
+        promotion_heading = _form_heading(registry, "plan", "plan.promotion.1")
+        # SPEC-0221: Global Constraints is an H4 of Overview > Constraints.
+        goal_heading = _form_heading(registry, "plan", "plan.intent.2")
         constraints_heading = (
             "#" * (goal_heading.count("#") + 1) + " Global Constraints"
             if goal_heading
@@ -931,9 +928,9 @@ def _local_plan_task_contract_issues(
             else None
         )
         visible_constraints = adapter._visible_markdown(constraints or "").strip()
-        # With a form the H4 is the last block of Goal and Boundary, and the section
-        # reader ends an H4 only at the next heading of its level or higher, so an
-        # H4 placed first would read the goal text after it as constraints.
+        # With a form the H4 follows the text of Constraints, and the section reader
+        # ends an H4 only at the next heading of its level or higher, so an H4
+        # placed first would read the constraint text after it as its own.
         placed_after_text = goal_heading is None
         if goal_heading is not None and constraints_heading is not None:
             goal = adapter._exact_heading_section(proposed_texts[path], goal_heading)
@@ -3201,9 +3198,7 @@ def _completion_document_diagnostics(
                 "current Plan must be approved",
             )
 
-        criteria_heading = _form_heading(
-            registry, "spec", "spec-acceptance-criteria-criteria"
-        )
+        criteria_heading = _form_heading(registry, "spec", "spec.acceptance.1")
         success_section = adapter._exact_heading_section(
             texts[spec_path],
             criteria_heading or "## Success Criteria & Verification Plan",

@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.38.1"
+version: "0.38.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 # 99.templates
 
@@ -165,14 +165,16 @@ form 경로의 대응은 Registry만 소유한다.
   두지 않고, 파생 역조회와 `REQUIREMENT-COVERAGE` 검사가 그 자리를 대신한다.
   `sdlc/architecture-decision`은 `adr` form(다섯 H2와 열 개 H3, Traceability
   아래 지역 H3 `Lifecycle Traceability`)을 쓰고 H2 목록을 두지 않는다.
-  `sdlc/spec`은 `spec` form(다섯 H2와 열 개 H3, References 아래 지역 H3
-  `Lifecycle Traceability`)을, `sdlc/plan`은 `plan` form(여섯 H2와 열두 개 H3)을
-  쓰며 둘 다 H2 목록을 두지 않는다. Spec의 기준 표는 `Criterion ID`와
+  `sdlc/spec`은 `spec` form(네 H2와 여덟 H3, Acceptance Criteria 아래 지역 H3
+  `Lifecycle Traceability`)을, `sdlc/plan`은 `plan` form(다섯 H2와 열 개 H3)을
+  쓰며 둘 다 H2 목록을 두지 않는다. 두 form은 4.0.0 설계 목표의 제목과 section
+  ID(`spec.intent.1` 등)를 쓴다(SPEC-0221). SPEC-0161과 SPEC-0221의 approved
+  Spec·Plan은 승인 당시 H2와 표 위치를 등록된 retained form으로 유지한다. Spec의 기준 표는 `Criterion ID`와
   `Expected Result` 열로 Acceptance Criteria 아래에 두고, `Architecture` 열은
   architecture description이나 ADR 링크 또는 설명된 제외를 검사받는다. Plan의
-  `Work Breakdown` 표는 Implementation Strategy 아래에, 승격 표
+  `Work Breakdown` 표는 Work Breakdown > Work Units 아래에, 승격 표
   (`Promotion ID`, `Target Owner`, `Acceptance`, `Evidence`)는 Promotion Map의
-  Owner and Receipt 아래에 둔다.
+  Durable Owners 아래에 둔다.
   ADR-0001부터 ADR-0061까지의 accepted ADR은 승인된 일곱 H2를 등록된
   retained form으로 유지하며(W03-D02, W03-D52, W03-D69), 그 범위 뒤의 ADR은
   accepted를 포함한 모든 상태에서 공통 form을 쓴다.
@@ -280,8 +282,8 @@ Spec은 변경 계약과 수용 기준을, Plan은 실행 순서와 위험·예�
 Spec·Plan·Task는 당시 Registry 판본으로 읽으며 상태와 승인·검사 근거를 보존한다.
 새로 작성하거나 현행 내용을 바꾸는 Plan은 승인된 Spec의 제약을
 `Global Constraints`에서 연결하고 Plan에만 필요한 추가 실행 제약을 적으며,
-지속 계약의 실제 현행 소유자와 위치를 Promotion Map의 Owner and Receipt 표에
-기록한다. `Global Constraints`는 Goal and Boundary 아래 마지막 H4다. 완료
+지속 계약의 실제 현행 소유자와 위치를 Promotion Map의 Durable Owners 표에
+기록한다. `Global Constraints`는 Overview > Constraints의 본문 뒤에 오는 H4다. 완료
 판정에서는 이 표가 유일한 승격 기록이며, 승격 대상이 없으면
 `none | none | none | No durable contract was introduced` 한 행만 명시한다.
 lifecycle reader는 두 위치를 form의 section id로 읽고, 현행 Plan의

@@ -412,7 +412,8 @@ class RegistryComparisonTests(unittest.TestCase):
         self.assertEqual(diagnostics({"shared_contract": []}, self.current), [])
 
     def test_a_lowered_form_tree_version_is_refused(self) -> None:
-        base = with_changes(common_forms={"version": "1.1.0"})
+        major = int(self.current["common_forms"]["version"].split(".")[0])
+        base = with_changes(common_forms={"version": f"{major}.1.0"})
         self.assertEqual(rules(base, self.current), {DOWNGRADE})
 
     def test_template_definition_versions_compare_within_the_same_contract(
@@ -478,7 +479,8 @@ class RegistryComparisonTests(unittest.TestCase):
                     after = copy.deepcopy(base)
                     after["common_forms"][field] = value
                     self.assertEqual(rules(base, after), {EDITION})
-                    after["common_forms"]["version"] = "2.0.0"
+                    major = int(base["common_forms"]["version"].split(".")[0])
+                    after["common_forms"]["version"] = f"{major + 1}.0.0"
                     self.assertEqual(diagnostics(base, after), [])
 
     def test_a_candidate_form_tree_may_change_under_an_unchanged_version(self) -> None:

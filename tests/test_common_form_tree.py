@@ -1065,12 +1065,30 @@ LOCAL_LINK_ONLY["reference-report"].add("reference-report-sources")
 # Spec's local H3 extension and the four tables; the profiles carry no H2 list.
 SPEC_FORM = ("sdlc/spec", "common/template-sdlc-spec")
 SPEC_FORM_TREE = (
+    ("Overview", ("Goal", "Consumers")),
+    ("Scope", ("In Scope", "Out of Scope")),
+    ("Behavior Contract", ("Inputs and Outputs", "Failure Behavior")),
+    ("Acceptance Criteria", ("Criteria", "Verification Strategy")),
+)
+# SPEC-0221: the approved and frozen Specs and Plans keep the tree they were
+# approved with, bound to their four identities.
+SPEC_RETAINED_TREE = (
     ("Overview", ("Intent", "Owning Requirements")),
     ("Scope", ("In Scope", "Non-goals")),
     ("Behavior Contract", ("Normal Behavior", "Failure and Edge Cases")),
     ("Acceptance Criteria", ("Criteria", "Evidence Requirements")),
     ("References", ("Normative and Evidence", "Historical and Navigation")),
 )
+PLAN_RETAINED_TREE = (
+    ("Overview", ("Goal and Boundary", "Assumptions")),
+    ("Dependencies", ("Prerequisites", "Dependency Order")),
+    ("Implementation Strategy", ("Work Breakdown", "Change and Rollback")),
+    ("Verification Plan", ("Verification Matrix", "Stage Placement")),
+    ("Risks", ("Risks and Mitigations", "Escalation")),
+    ("Promotion Map", ("Durable Meaning", "Owner and Receipt")),
+)
+SPEC_RETAINED_BOUND = "^SPEC-0(?:161|221)$"
+PLAN_RETAINED_BOUND = "^SPEC-0(?:161|221)-PLAN-0001$"
 SPEC_FORM_EXTENSIONS = [
     {
         "id": "spec-lifecycle-traceability",
@@ -1085,13 +1103,63 @@ SPEC_FORM_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Spec form version changes",
         "removal": "when Spec traceability has another registered owner",
-        "parent_id": "spec-references",
+        "parent_id": "spec.acceptance",
         "title": "Lifecycle Traceability",
-    }
+    },
+    {
+        "id": "spec-approved-retained-form",
+        "kind": "retained_form",
+        "condition": (
+            "an approved Spec of SPEC-0161 or SPEC-0221 keeps the five H2 it was "
+            "approved with and its Lifecycle Traceability table under References; "
+            "every other Spec takes the form tree"
+        ),
+        "owner": "platform",
+        "verification": "tests/test_common_form_tree.py",
+        "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
+        "removal": "when neither package remains in the tree; the bound is never widened",
+        "statuses": ["approved"],
+        "identity_bound": SPEC_RETAINED_BOUND,
+        "retained_sections": {
+            "required": [h2 for h2, _ in SPEC_RETAINED_TREE],
+            "optional": [],
+            "forbidden": [],
+        },
+        "body_contract": {
+            "section": "References",
+            "table_heading": "Lifecycle Traceability",
+        },
+    },
+]
+PLAN_FORM_EXTENSIONS = [
+    {
+        "id": "plan-approved-retained-form",
+        "kind": "retained_form",
+        "condition": (
+            "an approved Plan of SPEC-0161 or SPEC-0221 keeps the six H2 it was "
+            "approved with and its Work Breakdown table under Implementation "
+            "Strategy; every other Plan takes the form tree"
+        ),
+        "owner": "platform",
+        "verification": "tests/test_common_form_tree.py",
+        "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
+        "removal": "when neither package remains in the tree; the bound is never widened",
+        "statuses": ["approved"],
+        "identity_bound": PLAN_RETAINED_BOUND,
+        "retained_sections": {
+            "required": [h2 for h2, _ in PLAN_RETAINED_TREE],
+            "optional": [],
+            "forbidden": [],
+        },
+        "body_contract": {
+            "section": "Implementation Strategy",
+            "table_heading": "Work Breakdown",
+        },
+    },
 ]
 SPEC_FORM_TABLE_KEYS = {
     "Criteria": (
-        "spec-acceptance-criteria-criteria",
+        "spec.acceptance.1",
         ("Criterion ID", "Expected Result"),
         1,
         "Criterion ID",
@@ -1105,27 +1173,49 @@ SPEC_FORM_TABLE_KEYS = {
 }
 PLAN_FORM = ("sdlc/plan", "common/template-sdlc-plan")
 PLAN_FORM_TREE = (
-    ("Overview", ("Goal and Boundary", "Assumptions")),
-    ("Dependencies", ("Prerequisites", "Dependency Order")),
-    ("Implementation Strategy", ("Work Breakdown", "Change and Rollback")),
-    ("Verification Plan", ("Verification Matrix", "Stage Placement")),
-    ("Risks", ("Risks and Mitigations", "Escalation")),
-    ("Promotion Map", ("Durable Meaning", "Owner and Receipt")),
+    ("Overview", ("Outcome", "Constraints")),
+    ("Dependencies", ("Prerequisites", "Shared Resources")),
+    ("Work Breakdown", ("Work Units", "Dependency Edges")),
+    ("Verification Plan", ("Selected Checks", "Evidence Plan")),
+    ("Promotion Map", ("Durable Owners", "Consumer Updates")),
 )
 PLAN_FORM_TABLE_KEYS = {
     "Work Breakdown": (
-        "plan-implementation-strategy-work-breakdown",
+        "plan.work.1",
         ("Work Unit", "Criteria", "Work", "Dependencies", "Task", "Verification"),
         1,
         "Work Unit",
     ),
     "Promotion": (
-        "plan-promotion-map-owner-and-receipt",
+        "plan.promotion.1",
         ("Promotion ID", "Target Owner", "Acceptance", "Evidence"),
         1,
         "Promotion ID",
     ),
 }
+# SPEC-0221: an adopted form takes the target section IDs, <role>.<group> for
+# an H2 and <role>.<group>.<n> for an H3; every other form keeps the slug IDs.
+TARGET_GROUPS = {
+    "spec": ("intent", "scope", "behavior", "acceptance"),
+    "plan": ("intent", "dependencies", "work", "verification", "promotion"),
+}
+
+
+def section_id_of(
+    form_id: str,
+    position: int,
+    title: str,
+    n: int | None = None,
+    child: str | None = None,
+) -> str:
+    groups = TARGET_GROUPS.get(form_id)
+    if groups is not None:
+        h2 = f"{form_id}.{groups[position - 1]}"
+        return h2 if n is None else f"{h2}.{n}"
+    h2 = f"{form_id}-{slug(title)}"
+    return h2 if child is None else f"{h2}-{slug(child)}"
+
+
 SDLC_TASK_FORM = ("sdlc/task", "common/template-sdlc-task")
 SDLC_TASK_FORM_TREE = (
     ("Scope", ("Objective and Parent", "Inputs and Authority")),
@@ -1491,7 +1581,7 @@ def extension(**fields: object) -> dict:
 def definition(**fields: object) -> dict:
     item = {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors the guide form.",
         "responsibility": "One guide per procedure.",
         "non_goals": ["Runbook steps"],
@@ -1591,7 +1681,7 @@ class RepositoryRegistryTests(unittest.TestCase):
         )
         common = raw["common_forms"]
         self.assertEqual(common["contract_id"], "COMMON-DOC-FORM-1")
-        self.assertEqual(common["version"], "1.0.0")
+        self.assertEqual(common["version"], "2.0.0")
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
         for form_id, tree, extensions, tables, profiles, body_section in (
             (
@@ -1733,15 +1823,15 @@ class RepositoryRegistryTests(unittest.TestCase):
                 SPEC_FORM_EXTENSIONS,
                 SPEC_FORM_TABLE_KEYS,
                 SPEC_FORM,
-                "References",
+                "Acceptance Criteria",
             ),
             (
                 "plan",
                 PLAN_FORM_TREE,
-                [],
+                PLAN_FORM_EXTENSIONS,
                 PLAN_FORM_TABLE_KEYS,
                 PLAN_FORM,
-                "Implementation Strategy",
+                "Work Breakdown",
             ),
             (
                 "task",
@@ -1769,12 +1859,12 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ],
                 [
                     (
-                        f"{form_id}-{slug(title)}",
+                        section_id_of(form_id, position, title),
                         title,
                         position,
                         [
                             (
-                                f"{form_id}-{slug(title)}-{slug(child)}",
+                                section_id_of(form_id, position, title, n, child),
                                 child,
                                 n,
                             )
@@ -6167,7 +6257,7 @@ class ArchitectureFormTests(unittest.TestCase):
     ) -> None:
         definition_ = self.profiles[ARCHITECTURE[1]].template_definition
         self.assertEqual(definition_["contract_id"], "COMMON-DOC-FORM-1")
-        self.assertEqual(definition_["contract_version"], "1.0.0")
+        self.assertEqual(definition_["contract_version"], "2.0.0")
         for path in (
             "docs/99.templates/registry.json",
             "docs/99.templates/contracts/document-profile.schema.json",
@@ -6660,7 +6750,7 @@ class AdrFormTests(unittest.TestCase):
             ),
         )
         self.assertEqual(definition_["contract_id"], "COMMON-DOC-FORM-1")
-        self.assertEqual(definition_["contract_version"], "1.0.0")
+        self.assertEqual(definition_["contract_version"], "2.0.0")
         self.assertEqual(
             definition_["policy_refs"],
             [".agents/governance/document-authoring.md", ".agents/governance/sdlc.md"],
@@ -7066,7 +7156,7 @@ class TemplateRecordRuleTests(unittest.TestCase):
         raw = load_raw()
         stored = self.definition(raw, GUIDE[1])
         self.assertEqual(stored["contract_id"], "COMMON-DOC-FORM-1")
-        self.assertEqual(stored["contract_version"], "1.0.0")
+        self.assertEqual(stored["contract_version"], "2.0.0")
         record = CONTRACTS.template_definition_record(raw, GUIDE[1])
         self.assertEqual(record["contract_id"], stored["contract_id"])
         self.assertEqual(record["contract_version"], stored["contract_version"])
@@ -7259,11 +7349,11 @@ def plan_form_body(*, constraints_first: bool = False) -> str:
         blocks.append(f"## {h2}")
         for h3 in children:
             text = f"The {h3} of the work."
-            if h3 == "Goal and Boundary":
+            if h3 == "Constraints":
                 text += "\n\n#### Global Constraints\n\nKeep the Spec constraints."
-            if h3 == "Work Breakdown":
+            if h3 == "Work Units":
                 text += "\n\n" + form_table(keys["Work Breakdown"][1])
-            if h3 == "Owner and Receipt":
+            if h3 == "Durable Owners":
                 text += "\n\n" + form_table(keys["Promotion"][1])
             blocks.append(f"### {h3}\n\n{text}")
     return md(*blocks)
@@ -7291,7 +7381,7 @@ class SpecPlanFormTests(unittest.TestCase):
     ) -> None:
         for form_id, tree, extensions in (
             ("spec", SPEC_FORM_TREE, SPEC_FORM_EXTENSIONS),
-            ("plan", PLAN_FORM_TREE, []),
+            ("plan", PLAN_FORM_TREE, PLAN_FORM_EXTENSIONS),
         ):
             with self.subTest(form=form_id):
                 form = next(
@@ -7311,7 +7401,7 @@ class SpecPlanFormTests(unittest.TestCase):
                 self.assertFalse(any(n.link_only for n in every))
                 self.assertEqual(
                     [(e.extension_id, e.parent_id, e.title) for e in form.extensions],
-                    [(e["id"], e["parent_id"], e["title"]) for e in extensions],
+                    [(e["id"], e.get("parent_id"), e.get("title")) for e in extensions],
                 )
         self.assertEqual(
             self.registry.schema_version.split(".")[0], str(AUTHORITY.REGISTRY_MAJOR)
@@ -7323,26 +7413,26 @@ class SpecPlanFormTests(unittest.TestCase):
         for profile_id, section, heading, columns in (
             (
                 "sdlc/spec",
-                "References",
+                "Acceptance Criteria",
                 "Lifecycle Traceability",
                 SPEC_FORM_TABLE_KEYS["Lifecycle Traceability"][1],
             ),
             (
                 "common/template-sdlc-spec",
-                "References",
+                "Acceptance Criteria",
                 "Lifecycle Traceability",
                 SPEC_FORM_TABLE_KEYS["Lifecycle Traceability"][1],
             ),
             (
                 "sdlc/plan",
-                "Implementation Strategy",
                 "Work Breakdown",
+                "Work Units",
                 PLAN_FORM_TABLE_KEYS["Work Breakdown"][1],
             ),
             (
                 "common/template-sdlc-plan",
-                "Implementation Strategy",
                 "Work Breakdown",
+                "Work Units",
                 PLAN_FORM_TABLE_KEYS["Work Breakdown"][1],
             ),
         ):
@@ -7392,7 +7482,7 @@ class SpecPlanFormTests(unittest.TestCase):
             with self.subTest(twin=twin):
                 definition_ = self.profiles[twin].template_definition
                 self.assertEqual(definition_["contract_id"], "COMMON-DOC-FORM-1")
-                self.assertEqual(definition_["contract_version"], "1.0.0")
+                self.assertEqual(definition_["contract_version"], "2.0.0")
                 record = CONTRACTS.template_definition_record(self.raw, twin)
                 self.assertEqual(record["contract_id"], definition_["contract_id"])
                 self.assertEqual(
@@ -7407,7 +7497,7 @@ class SpecPlanFormTests(unittest.TestCase):
     def test_a_complete_document_passes_the_tree_and_a_previous_h2_fails(self) -> None:
         self.assertEqual(self.tree(SPEC_PATH, "sdlc/spec", spec_form_body()), [])
         self.assertEqual(self.tree(PLAN_PATH, "sdlc/plan", plan_form_body()), [])
-        old_spec = spec_form_body().replace("## References", "## Traceability")
+        old_spec = spec_form_body().replace("## Acceptance Criteria", "## Traceability")
         self.assertLessEqual(
             {"BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"},
             set(self.tree(SPEC_PATH, "sdlc/spec", old_spec)),
@@ -7418,7 +7508,7 @@ class SpecPlanFormTests(unittest.TestCase):
             set(self.tree(PLAN_PATH, "sdlc/plan", old_plan)),
         )
 
-    def test_lifecycle_traceability_belongs_under_references(self) -> None:
+    def test_lifecycle_traceability_belongs_under_acceptance_criteria(self) -> None:
         body = spec_form_body()
         block = "### Lifecycle Traceability\n\n" + form_table(
             SPEC_FORM_TABLE_KEYS["Lifecycle Traceability"][1]
@@ -7451,7 +7541,7 @@ class SpecPlanFormTests(unittest.TestCase):
             found and set(found) <= {"BODY-TABLE-COLUMNS", "BODY-TABLE-ROWS"}
         )
 
-    def test_the_templates_pass_the_form_tree_and_keep_global_constraints_last(
+    def test_the_templates_pass_the_form_tree_and_put_global_constraints_after_text(
         self,
     ) -> None:
         for twin_id, forbidden in (
@@ -7473,10 +7563,157 @@ class SpecPlanFormTests(unittest.TestCase):
                 )
                 self.assertNotRegex(text, forbidden)
         plan = (ROOT / self.profiles[PLAN_FORM[1]].template).read_text(encoding="utf-8")
-        goal = plan.split("### Goal and Boundary", 1)[1].split("### Assumptions", 1)[0]
-        self.assertIn("#### Global Constraints", goal)
-        self.assertEqual(goal.count("####"), 1)
+        constraints = plan.split("### Constraints", 1)[1].split("## Dependencies", 1)[0]
+        before, found, _ = constraints.partition("#### Global Constraints")
+        self.assertTrue(found)
+        self.assertNotIn("####", before)
+        self.assertTrue(before.strip())
         self.assertIn("| Promotion ID | Target Owner | Acceptance | Evidence |", plan)
+
+
+def retained_spec_text(artifact_id: str, status: str) -> str:
+    keys = SPEC_FORM_TABLE_KEYS
+    blocks = [
+        "---",
+        'title: "Retained Spec"',
+        'version: "1.0.0"',
+        'type: "sdlc/spec"',
+        f'status: "{status}"',
+        'owner: "platform"',
+        'updated: "2026-11-17"',
+        f'artifact_id: "{artifact_id}"',
+        "---",
+        "",
+        "# Spec title",
+    ]
+    for h2, children in SPEC_RETAINED_TREE:
+        blocks.append(f"## {h2}")
+        for h3 in children:
+            text = f"The {h3} of the change."
+            if h3 == "Criteria":
+                text += "\n\n" + form_table(keys["Criteria"][1])
+            blocks.append(f"### {h3}\n\n{text}")
+    blocks.append(
+        "### Lifecycle Traceability\n\n" + form_table(keys["Lifecycle Traceability"][1])
+    )
+    return md(*blocks)
+
+
+def retained_plan_text(artifact_id: str, status: str) -> str:
+    keys = PLAN_FORM_TABLE_KEYS
+    blocks = [
+        "---",
+        'title: "Retained Plan"',
+        'version: "1.0.0"',
+        'type: "sdlc/plan"',
+        f'status: "{status}"',
+        'owner: "platform"',
+        'updated: "2026-11-17"',
+        f'artifact_id: "{artifact_id}"',
+        f'parent_ids: ["{artifact_id.split("-PLAN")[0]}"]',
+        "---",
+        "",
+        "# Plan title",
+    ]
+    for h2, children in PLAN_RETAINED_TREE:
+        blocks.append(f"## {h2}")
+        for h3 in children:
+            text = f"The {h3} of the work."
+            if h3 == "Goal and Boundary":
+                text += "\n\n#### Global Constraints\n\nKeep the Spec constraints."
+            if h3 == "Work Breakdown":
+                text += "\n\n" + form_table(keys["Work Breakdown"][1])
+            if h3 == "Owner and Receipt":
+                text += "\n\n" + form_table(keys["Promotion"][1])
+            blocks.append(f"### {h3}\n\n{text}")
+    return md(*blocks)
+
+
+class RetainedSpecPlanTests(unittest.TestCase):
+    """SPEC-0221 VAL-FORM-003: four approved identities keep their old tree."""
+
+    CASES = (
+        ("sdlc/spec", "0161-w00-v14-7-delta-intake", "SPEC-0161", "spec.md"),
+        ("sdlc/spec", "0221-w03-form-target-adoption", "SPEC-0221", "spec.md"),
+        ("sdlc/plan", "0161-w00-v14-7-delta-intake", "SPEC-0161-PLAN-0001", "plan.md"),
+        (
+            "sdlc/plan",
+            "0221-w03-form-target-adoption",
+            "SPEC-0221-PLAN-0001",
+            "plan.md",
+        ),
+    )
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = CONTRACTS.load_registry(ROOT)
+        cls.profiles = {p.profile_id: p for p in cls.registry.profiles}
+
+    @staticmethod
+    def text(profile_id: str, artifact_id: str, status: str) -> str:
+        build = retained_spec_text if profile_id == "sdlc/spec" else retained_plan_text
+        return build(artifact_id, status)
+
+    def found(self, profile_id: str, path: PurePosixPath, text: str, status: str):
+        profile = self.profiles[profile_id]
+        return sorted(
+            item.rule_id
+            for item in (
+                *MARKDOWN._body_diagnostics(path, profile, text, status),
+                *MARKDOWN._body_contract_diagnostics(
+                    path, profile, text, status, "registry"
+                ),
+            )
+        )
+
+    def test_each_retained_identity_passes_its_approved_tree_and_table(self) -> None:
+        for profile_id, package, artifact_id, name in self.CASES:
+            with self.subTest(artifact=artifact_id):
+                path = PurePosixPath("docs/03.specs", package, name)
+                text = self.text(profile_id, artifact_id, "approved")
+                profile = self.profiles[profile_id]
+                self.assertEqual(
+                    [
+                        item.rule_id
+                        for item in MARKDOWN._body_diagnostics(
+                            path, profile, text, "approved"
+                        )
+                    ],
+                    [],
+                )
+                # The synthetic rows carry no real identifier; only the table's
+                # location is under test here.
+                self.assertNotIn(
+                    "BODY-CONTRACT-HEADING",
+                    self.found(profile_id, path, text, "approved"),
+                )
+                rows = LINKS._body_contract_rows(text, profile)
+                self.assertTrue(rows)
+
+    def test_another_identity_in_the_old_tree_is_refused(self) -> None:
+        for profile_id, artifact_id, name in (
+            ("sdlc/spec", "SPEC-0162", "spec.md"),
+            ("sdlc/plan", "SPEC-0162-PLAN-0001", "plan.md"),
+        ):
+            with self.subTest(artifact=artifact_id):
+                path = PurePosixPath("docs/03.specs/0162-other", name)
+                text = self.text(profile_id, artifact_id, "approved")
+                found = self.found(profile_id, path, text, "approved")
+                self.assertIn("BODY-HEADING-UNSUPPORTED", found)
+                self.assertIn("BODY-CONTRACT-HEADING", found)
+                self.assertIsNone(
+                    LINKS._body_contract_rows(text, self.profiles[profile_id])
+                )
+
+    def test_a_retained_identity_in_another_status_takes_the_tree(self) -> None:
+        for profile_id, package, artifact_id, name in self.CASES:
+            with self.subTest(artifact=artifact_id):
+                path = PurePosixPath("docs/03.specs", package, name)
+                text = self.text(profile_id, artifact_id, "draft")
+                self.assertIn(
+                    "BODY-HEADING-UNSUPPORTED",
+                    self.found(profile_id, path, text, "draft"),
+                )
 
 
 class FormlessRoleTableTests(unittest.TestCase):
@@ -7610,7 +7847,7 @@ class TaskFormTests(unittest.TestCase):
             SDLC_TASK_FORM_TABLE_KEYS,
         )
         self.assertEqual(twin.template_definition["contract_id"], "COMMON-DOC-FORM-1")
-        self.assertEqual(twin.template_definition["contract_version"], "1.0.0")
+        self.assertEqual(twin.template_definition["contract_version"], "2.0.0")
         self.assertEqual(rules_of(self.raw), set())
         record = CONTRACTS.template_definition_record(self.raw, SDLC_TASK_FORM[1])
         self.assertEqual(record["contract_id"], twin.template_definition["contract_id"])

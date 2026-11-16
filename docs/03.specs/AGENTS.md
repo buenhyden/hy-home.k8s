@@ -58,7 +58,7 @@ Canonical sources are the documents linked or named in the opening paragraph and
 6. Criterion acceptance is the operator's decision; an agent records PASS
    evidence and leaves `Acceptance` pending until the operator accepts.
 7. For ordinary completed-package disposition, promote each durable contract through the Plan's
-   promotion table under Promotion Map > Owner and Receipt (Promotion ID,
+   promotion table under Promotion Map > Durable Owners (Promotion ID,
    Target Owner, Acceptance, Evidence). Before its final source commit, its Task freezes the
    consumer, hold, authority and method decision. After that commit, the
    Requirement's `Archived Lineage` records each file's recovery proof and

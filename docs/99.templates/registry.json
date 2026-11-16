@@ -278,7 +278,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "References",
+          "section": "Acceptance Criteria",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -365,8 +365,8 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Implementation Strategy",
-          "table_heading": "Work Breakdown",
+          "section": "Work Breakdown",
+          "table_heading": "Work Units",
           "enforced_statuses": [
             "draft",
             "in-review",
@@ -2282,7 +2282,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for the repository README: a human entry point that states the project role and boundaries, maps the repository, gives the shortest verified start and points to current documentation and owners.",
         "responsibility": "The root README owns the human-facing orientation to the repository and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
         "non_goals": [
@@ -2410,7 +2410,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a stage README: a human index that states the stage responsibility, lists its current items, and routes readers to the create, review and transition rules and to its upstream, downstream, policy and template documents.",
         "responsibility": "A stage README owns the human-facing index of a documentation stage and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
         "non_goals": [
@@ -2544,7 +2544,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a collection README: a human index that states the stage responsibility, lists its current items, and routes readers to the create, review and transition rules and to its upstream, downstream, policy and template documents.",
         "responsibility": "A collection README owns the human-facing index of a document collection and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
         "non_goals": [
@@ -2687,7 +2687,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for an implementation README: a human document for a code, configuration, agent or provider folder that states the service role, its supported environment, its interfaces, how to develop and check it, and where to operate it.",
         "responsibility": "An implementation README owns the human-facing description of its folder and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
         "non_goals": [
@@ -3244,7 +3244,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for the runtime-governance README: a human document that states the role of the repository GitHub surface, its supported environment, its interfaces, how to develop and check it, and where to operate it.",
         "responsibility": "The runtime-governance README owns the human-facing description of the GitHub surface and routes readers to canonical owners; it restates no detailed policy and holds no agent-only instruction.",
         "non_goals": [
@@ -3974,7 +3974,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for an architecture decision record that states the context, the chosen option and its authority, the alternatives, the consequences and the traceability of one durable decision.",
         "responsibility": "An ADR owns one durable decision, its decision maker, effect and lineage; the current structure it changes stays with the Architecture Description, requirements with the Requirement and implementer-level contracts with the Spec.",
         "non_goals": [
@@ -4153,7 +4153,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for one system view that distinguishes the approved structure, the current configuration, and directly observed deployment and behavior.",
         "responsibility": "An architecture description owns the target and current structure of one system, the evidence boundary of its operational observations, and the requirement-to-architecture relation. It cites every requirement it serves and links the decisions and Spec contracts at their current owners.",
         "non_goals": [
@@ -4348,8 +4348,8 @@
           "sdlc/plan"
         ],
         "body_contract": {
-          "section": "Implementation Strategy",
-          "table_heading": "Work Breakdown",
+          "section": "Work Breakdown",
+          "table_heading": "Work Units",
           "enforced_statuses": [
             "draft",
             "in-review",
@@ -4383,7 +4383,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for the work order of one Spec that states the goal, shared constraints, dependencies, work units, verification, risks and promotion of durable meaning.",
         "responsibility": "A Plan owns the order of the work for one approved Spec: its units and their criteria, the verification and its placement, the risks with their rollback and the promotion of each durable contract to its current owner; the change contract stays with the Spec and execution and evidence stay with the Task.",
         "non_goals": [
@@ -4418,13 +4418,13 @@
         ],
         "validation": {
           "positive": [
-            "A Plan in the form, with Global Constraints as the last block of Goal and Boundary, its Work Breakdown table and its promotion table under Owner and Receipt, passes the form tree, table, body-contract and lifecycle checks.",
+            "A Plan in the form, with Global Constraints as the first H4 of Constraints after its text, its Work Breakdown table under Work Units and its promotion table under Durable Owners, passes the form tree, table, body-contract and lifecycle checks.",
             "A promotion table with one explicit none row passes PLAN-PROMOTION."
           ],
           "negative": [
-            "A Plan that keeps a previous H2 title such as Completion Criteria fails the form tree.",
+            "A Plan that keeps a previous H2 title such as Implementation Strategy, outside the retained identities, fails the form tree.",
             "A changed Plan without a valid promotion table fails PLAN-PROMOTION and one without shared constraints that link the parent Spec fails PLAN-GLOBAL-CONSTRAINTS.",
-            "A Plan whose Global Constraints heading has no goal or scope text before it fails PLAN-GLOBAL-CONSTRAINTS."
+            "A Plan whose Global Constraints heading has no constraint text before it under Constraints fails PLAN-GLOBAL-CONSTRAINTS."
           ],
           "regression": [
             "The loaded Plan profiles keep heading lists equal to the form H2 titles.",
@@ -4433,14 +4433,14 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0200 heading map moves each body of the Plan template and of every current Plan into the six H2 and twelve H3 of the form without splitting a paragraph; Global Constraints becomes an H4, the last block of Goal and Boundary, and the promotion table takes the common names Promotion ID, Target Owner, Acceptance and Evidence.",
-          "retained_history": "Git history retains the ten-heading Plan layout and its previous template.",
-          "rollback": "Revert the SPEC-0200 implementation commit."
+          "meaning_map": "The SPEC-0221 heading map moves each body of the Plan template into the five H2 and ten H3 of the 4.0.0 design target without changing a sentence: Goal and Boundary becomes Outcome, Assumptions becomes Constraints with Global Constraints, Risks and Mitigations and Escalation as its H4 in that order, Implementation Strategy becomes Work Breakdown with Work Units and Change and Rollback as its H4, Dependency Order becomes Dependency Edges, Verification Matrix and Stage Placement become Selected Checks and Evidence Plan, Owner and Receipt becomes Durable Owners, Durable Meaning becomes Consumer Updates, and Shared Resources is new. The approved Plans of SPEC-0161 and SPEC-0221 keep their form through the retained form.",
+          "retained_history": "Git history retains the six-H2 Plan layout of SPEC-0200 and its template.",
+          "rollback": "Revert the SPEC-0221 WORK-001 commit."
         },
         "tables": [
           {
             "name": "Work Breakdown",
-            "section": "plan-implementation-strategy-work-breakdown",
+            "section": "plan.work.1",
             "columns": [
               {
                 "key": "Work Unit",
@@ -4484,7 +4484,7 @@
           },
           {
             "name": "Promotion",
-            "section": "plan-promotion-map-owner-and-receipt",
+            "section": "plan.promotion.1",
             "columns": [
               {
                 "key": "Promotion ID",
@@ -4670,7 +4670,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for the execution of one Plan work unit set that records its scope and authority, its work and decisions, its observed evidence, its criterion decisions and its handoff.",
         "responsibility": "A Task owns the actual execution of the work its Plan orders: the inputs and authority it ran under, what was done and decided, each observed result with its evidence, the decision on each assigned Spec criterion and the residue and next owner it hands off; the change contract stays with the Spec and the work order with the Plan.",
         "non_goals": [
@@ -4954,7 +4954,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a guide that explains or walks a reader through a stable operating procedure.",
         "responsibility": "A guide owns how a reader reaches and checks one operating outcome; execution and recovery steps stay with runbooks and rules stay with policies.",
         "non_goals": [
@@ -5126,7 +5126,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for an incident record that states the confirmed event, its impact, its timeline, its resolution and its evidence.",
         "responsibility": "An incident record owns the observed facts, timeline, mitigation, recovery verification and evidence of one event; causal analysis and corrective actions belong to the postmortem.",
         "non_goals": [
@@ -5307,7 +5307,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a operations policy that states one normative rule set with its purpose, scope, requirements, exceptions and ownership.",
         "responsibility": "A operations policy owns the rules, their enforcement and the exceptions and ownership of one governed concern; procedures stay with runbooks and explanations with guides.",
         "non_goals": [
@@ -5504,7 +5504,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a postmortem that records the root cause, the confirmed impact, the corrective actions and their evidence for one incident.",
         "responsibility": "A postmortem owns the causal analysis, contributing factors, corrective actions and review decision for one incident; the observed facts and timeline stay in the incident record.",
         "non_goals": [
@@ -5691,7 +5691,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a runbook that carries an operator through one executable operating procedure, its checks and its recovery.",
         "responsibility": "A runbook owns the preconditions, steps, stop conditions, validation and recovery of one operating procedure; stable explanations stay with guides and rules with policies.",
         "non_goals": [
@@ -5877,7 +5877,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a Requirement package that states the problem, scope, functional and quality requirements, acceptance conditions and traceability of one product or system outcome.",
         "responsibility": "A Requirement owns the user value, its stable member requirements with their rationale and acceptance, and the acceptance boundary; architecture, decisions and change contracts stay with the Stage 02 and Stage 03 owners.",
         "non_goals": [
@@ -6076,7 +6076,7 @@
           "sdlc/spec"
         ],
         "body_contract": {
-          "section": "References",
+          "section": "Acceptance Criteria",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -6114,7 +6114,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a change contract that states the intent, scope, behavior, acceptance criteria and references of one bounded change, so that a Plan can order the work and a Task can evidence it.",
         "responsibility": "A Spec owns the change contract and its acceptance criteria for one change: what the change does, what it leaves out, how it behaves at its edges and how each criterion is observed; the work order, risks and rollback stay with the Plan and execution and evidence stay with the Task.",
         "non_goals": [
@@ -6149,11 +6149,11 @@
         ],
         "validation": {
           "positive": [
-            "A Spec in the form, with its criteria table under Criteria and its Lifecycle Traceability table under References, passes the form tree, table, body-contract and link checks.",
+            "A Spec in the form, with its criteria table under Criteria and its Lifecycle Traceability table under Acceptance Criteria, passes the form tree, table, body-contract and link checks.",
             "A Spec whose Architecture cell links an architecture description or an ADR, or states an explicit exclusion with its reason, passes."
           ],
           "negative": [
-            "A Spec that keeps a previous H2 title such as Success Criteria & Verification Plan fails the form tree.",
+            "A Spec that keeps a previous H2 title such as References, outside the retained identities, fails the form tree.",
             "A Spec whose Architecture cell has no link, a broken link or a link to a document of another profile fails the body-contract link check.",
             "A Spec without the criteria table under Criteria fails COMPLETION-CRITERIA."
           ],
@@ -6163,14 +6163,14 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0200 heading map moves each body of the Spec template and of every current Spec into the five H2 and ten H3 of the form without splitting a paragraph; the criteria table takes the common names Criterion ID and Expected Result, and Lifecycle Traceability stays a local H3 under References.",
-          "retained_history": "Git history retains the eleven-heading Spec layout and its previous template.",
-          "rollback": "Revert the SPEC-0200 implementation commit."
+          "meaning_map": "The SPEC-0221 heading map moves each body of the Spec template into the four H2 and eight H3 of the 4.0.0 design target without changing a sentence: Intent becomes Goal with Owning Requirements as its H4, Non-goals becomes Out of Scope, Normal Behavior becomes Inputs and Outputs, Failure and Edge Cases becomes Failure Behavior, Evidence Requirements becomes Verification Strategy with the former References H3 as its H4, Consumers is new, and Lifecycle Traceability stays a local H3 under Acceptance Criteria. The approved Specs of SPEC-0161 and SPEC-0221 keep their form through the retained form.",
+          "retained_history": "Git history retains the five-H2 Spec layout of SPEC-0200 and its template.",
+          "rollback": "Revert the SPEC-0221 WORK-001 commit."
         },
         "tables": [
           {
             "name": "Criteria",
-            "section": "spec-acceptance-criteria-criteria",
+            "section": "spec.acceptance.1",
             "columns": [
               {
                 "key": "Criterion ID",
@@ -7117,7 +7117,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a governance rule that states one normative rule set with its purpose, scope, requirements, exceptions and ownership.",
         "responsibility": "A governance rule owns the rules, their enforcement and the exceptions and ownership of one governed concern; procedures stay with runbooks and explanations with guides.",
         "non_goals": [
@@ -7277,7 +7277,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a common workflow that states when it applies, its ordered procedure, its inputs and outputs, and how it is checked and handed off.",
         "responsibility": "A workflow under .agents/workflows/ owns one invoked procedure and its own authority boundary as a registered local heading; policy, role and skill authority stay with their owners and are linked, not copied.",
         "non_goals": [
@@ -7398,7 +7398,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for a native skill package that states when the skill applies, its ordered procedure, its inputs and outputs, and how it is checked and handed off.",
         "responsibility": "A SKILL.md owns one invoked procedure; the provider frontmatter, skill name and loader path stay unchanged, and policy, role and approval authority stay with their owners and are linked, not copied.",
         "non_goals": [
@@ -7524,7 +7524,7 @@
       "placeholder_policy": "template-only",
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors one form for the agent instructions of a directory that state its work surface, required policies, workflow, checks and safety boundaries.",
         "responsibility": "An AGENTS.md owns the agent instructions of its directory and the root gateway for Codex; policy, role and skill authority stay with their owners and are linked, not copied.",
         "non_goals": [
@@ -8927,7 +8927,7 @@
   },
   "common_forms": {
     "contract_id": "COMMON-DOC-FORM-1",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "stage": "candidate",
     "owner": "buenhyden",
     "source": "workspace_execution_tasks_v14_7_revision_20261113_r1/dependencies/contracts/COMMON-SECTION-CONTRACT.json",
@@ -17428,7 +17428,7 @@
         "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
         "sections": [
           {
-            "section_id": "spec-overview",
+            "section_id": "spec.intent",
             "level": 2,
             "parent_id": null,
             "title": "Overview",
@@ -17450,10 +17450,10 @@
             ],
             "children": [
               {
-                "section_id": "spec-overview-intent",
+                "section_id": "spec.intent.1",
                 "level": 3,
-                "parent_id": "spec-overview",
-                "title": "Intent",
+                "parent_id": "spec.intent",
+                "title": "Goal",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
@@ -17474,20 +17474,20 @@
                 "link_only": false
               },
               {
-                "section_id": "spec-overview-owning-requirements",
+                "section_id": "spec.intent.2",
                 "level": 3,
-                "parent_id": "spec-overview",
-                "title": "Owning Requirements",
+                "parent_id": "spec.intent",
+                "title": "Consumers",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "구체화할 요구·아키텍처 제약",
+                "content": "변경 결과를 읽거나 의존하는 문서·도구·검사·사람",
                 "required_content": [
-                  "구체화할 요구·아키텍처 제약을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "변경 결과를 읽거나 의존하는 문서·도구·검사·사람을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "Plan의 실행 순서·Task 진행 상태를 중복 저술하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
                 ],
                 "empty_policy": "explain_none_or_not_applicable",
                 "validation_ids": [
@@ -17501,7 +17501,7 @@
             "link_only": false
           },
           {
-            "section_id": "spec-scope",
+            "section_id": "spec.scope",
             "level": 2,
             "parent_id": null,
             "title": "Scope",
@@ -17523,9 +17523,9 @@
             ],
             "children": [
               {
-                "section_id": "spec-scope-in-scope",
+                "section_id": "spec.scope.1",
                 "level": 3,
-                "parent_id": "spec-scope",
+                "parent_id": "spec.scope",
                 "title": "In Scope",
                 "order": 1,
                 "requiredness": "required",
@@ -17547,10 +17547,10 @@
                 "link_only": false
               },
               {
-                "section_id": "spec-scope-non-goals",
+                "section_id": "spec.scope.2",
                 "level": 3,
-                "parent_id": "spec-scope",
-                "title": "Non-goals",
+                "parent_id": "spec.scope",
+                "title": "Out of Scope",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
@@ -17574,7 +17574,7 @@
             "link_only": false
           },
           {
-            "section_id": "spec-behavior-contract",
+            "section_id": "spec.behavior",
             "level": 2,
             "parent_id": null,
             "title": "Behavior Contract",
@@ -17596,10 +17596,10 @@
             ],
             "children": [
               {
-                "section_id": "spec-behavior-contract-normal-behavior",
+                "section_id": "spec.behavior.1",
                 "level": 3,
-                "parent_id": "spec-behavior-contract",
-                "title": "Normal Behavior",
+                "parent_id": "spec.behavior",
+                "title": "Inputs and Outputs",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
@@ -17620,10 +17620,10 @@
                 "link_only": false
               },
               {
-                "section_id": "spec-behavior-contract-failure-and-edge-cases",
+                "section_id": "spec.behavior.2",
                 "level": 3,
-                "parent_id": "spec-behavior-contract",
-                "title": "Failure and Edge Cases",
+                "parent_id": "spec.behavior",
+                "title": "Failure Behavior",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
@@ -17647,7 +17647,7 @@
             "link_only": false
           },
           {
-            "section_id": "spec-acceptance-criteria",
+            "section_id": "spec.acceptance",
             "level": 2,
             "parent_id": null,
             "title": "Acceptance Criteria",
@@ -17669,9 +17669,9 @@
             ],
             "children": [
               {
-                "section_id": "spec-acceptance-criteria-criteria",
+                "section_id": "spec.acceptance.1",
                 "level": 3,
-                "parent_id": "spec-acceptance-criteria",
+                "parent_id": "spec.acceptance",
                 "title": "Criteria",
                 "order": 1,
                 "requiredness": "required",
@@ -17693,89 +17693,16 @@
                 "link_only": false
               },
               {
-                "section_id": "spec-acceptance-criteria-evidence-requirements",
+                "section_id": "spec.acceptance.2",
                 "level": 3,
-                "parent_id": "spec-acceptance-criteria",
-                "title": "Evidence Requirements",
+                "parent_id": "spec.acceptance",
+                "title": "Verification Strategy",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "필수 관측·검증 방법·판정 주체",
+                "content": "필수 관측·검증 방법·판정 주체와 규범·탐색 근거",
                 "required_content": [
-                  "필수 관측·검증 방법·판정 주체을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "Plan의 실행 순서·Task 진행 상태를 중복 저술하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "children": [],
-                "link_only": false
-              }
-            ],
-            "link_only": false
-          },
-          {
-            "section_id": "spec-references",
-            "level": 2,
-            "parent_id": null,
-            "title": "References",
-            "order": 5,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "설계 제약과 근거",
-            "required_content": [
-              "설계 제약과 근거에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "Plan의 실행 순서·Task 진행 상태를 중복 저술하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "children": [
-              {
-                "section_id": "spec-references-normative-and-evidence",
-                "level": 3,
-                "parent_id": "spec-references",
-                "title": "Normative and Evidence",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "현행 요구·설계·규범과 근거",
-                "required_content": [
-                  "현행 요구·설계·규범과 근거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "Plan의 실행 순서·Task 진행 상태를 중복 저술하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "children": [],
-                "link_only": false
-              },
-              {
-                "section_id": "spec-references-historical-and-navigation",
-                "level": 3,
-                "parent_id": "spec-references",
-                "title": "Historical and Navigation",
-                "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "과거 원문·탐색 링크의 비권위 구분",
-                "required_content": [
-                  "과거 원문·탐색 링크의 비권위 구분을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "필수 관측·검증 방법·판정 주체와 규범·탐색 근거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "Plan의 실행 순서·Task 진행 상태를 중복 저술하지 않는다.",
@@ -17802,8 +17729,36 @@
             "verification": "the body-contract check",
             "review": "when the Spec form version changes",
             "removal": "when Spec traceability has another registered owner",
-            "parent_id": "spec-references",
+            "parent_id": "spec.acceptance",
             "title": "Lifecycle Traceability"
+          },
+          {
+            "id": "spec-approved-retained-form",
+            "kind": "retained_form",
+            "condition": "an approved Spec of SPEC-0161 or SPEC-0221 keeps the five H2 it was approved with and its Lifecycle Traceability table under References; every other Spec takes the form tree",
+            "owner": "platform",
+            "verification": "tests/test_common_form_tree.py",
+            "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
+            "removal": "when neither package remains in the tree; the bound is never widened",
+            "statuses": [
+              "approved"
+            ],
+            "identity_bound": "^SPEC-0(?:161|221)$",
+            "retained_sections": {
+              "required": [
+                "Overview",
+                "Scope",
+                "Behavior Contract",
+                "Acceptance Criteria",
+                "References"
+              ],
+              "optional": [],
+              "forbidden": []
+            },
+            "body_contract": {
+              "section": "References",
+              "table_heading": "Lifecycle Traceability"
+            }
           }
         ]
       },
@@ -17815,7 +17770,7 @@
         "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
         "sections": [
           {
-            "section_id": "plan-overview",
+            "section_id": "plan.intent",
             "level": 2,
             "parent_id": null,
             "title": "Overview",
@@ -17837,16 +17792,16 @@
             ],
             "children": [
               {
-                "section_id": "plan-overview-goal-and-boundary",
+                "section_id": "plan.intent.1",
                 "level": 3,
-                "parent_id": "plan-overview",
-                "title": "Goal and Boundary",
+                "parent_id": "plan.intent",
+                "title": "Outcome",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "Spec 참조와 계획 범위",
+                "content": "Spec 참조·계획 범위·완료 상태",
                 "required_content": [
-                  "Spec 참조와 계획 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "Spec 참조·계획 범위·완료 상태을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
@@ -17861,16 +17816,16 @@
                 "link_only": false
               },
               {
-                "section_id": "plan-overview-assumptions",
+                "section_id": "plan.intent.2",
                 "level": 3,
-                "parent_id": "plan-overview",
-                "title": "Assumptions",
+                "parent_id": "plan.intent",
+                "title": "Constraints",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "현재 가정·제약·허용 권한",
+                "content": "현재 가정·제약·허용 권한·위험·상향 조건",
                 "required_content": [
-                  "현재 가정·제약·허용 권한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "현재 가정·제약·허용 권한·위험·상향 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
@@ -17888,7 +17843,7 @@
             "link_only": false
           },
           {
-            "section_id": "plan-dependencies",
+            "section_id": "plan.dependencies",
             "level": 2,
             "parent_id": null,
             "title": "Dependencies",
@@ -17910,9 +17865,9 @@
             ],
             "children": [
               {
-                "section_id": "plan-dependencies-prerequisites",
+                "section_id": "plan.dependencies.1",
                 "level": 3,
-                "parent_id": "plan-dependencies",
+                "parent_id": "plan.dependencies",
                 "title": "Prerequisites",
                 "order": 1,
                 "requiredness": "required",
@@ -17934,10 +17889,83 @@
                 "link_only": false
               },
               {
-                "section_id": "plan-dependencies-dependency-order",
+                "section_id": "plan.dependencies.2",
                 "level": 3,
-                "parent_id": "plan-dependencies",
-                "title": "Dependency Order",
+                "parent_id": "plan.dependencies",
+                "title": "Shared Resources",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "여러 작업 단위가 함께 쓰는 파일·환경·잠금과 사용 순서",
+                "required_content": [
+                  "여러 작업 단위가 함께 쓰는 파일·환경·잠금과 사용 순서을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
+                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "plan.work",
+            "level": 2,
+            "parent_id": null,
+            "title": "Work Breakdown",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "구현 방법과 작업 분해",
+            "required_content": [
+              "구현 방법과 작업 분해에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "plan.work.1",
+                "level": 3,
+                "parent_id": "plan.work",
+                "title": "Work Units",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "작업 단위·담당·파일 경계·수용 기준 연결·복구 순서",
+                "required_content": [
+                  "작업 단위·담당·파일 경계·수용 기준 연결·복구 순서을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "plan.work.2",
+                "level": 3,
+                "parent_id": "plan.work",
+                "title": "Dependency Edges",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
@@ -17961,80 +17989,7 @@
             "link_only": false
           },
           {
-            "section_id": "plan-implementation-strategy",
-            "level": 2,
-            "parent_id": null,
-            "title": "Implementation Strategy",
-            "order": 3,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "구현 방법과 작업 분해",
-            "required_content": [
-              "구현 방법과 작업 분해에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "children": [
-              {
-                "section_id": "plan-implementation-strategy-work-breakdown",
-                "level": 3,
-                "parent_id": "plan-implementation-strategy",
-                "title": "Work Breakdown",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "작업 단위·담당·파일 경계·수용 기준 연결",
-                "required_content": [
-                  "작업 단위·담당·파일 경계·수용 기준 연결을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "children": [],
-                "link_only": false
-              },
-              {
-                "section_id": "plan-implementation-strategy-change-and-rollback",
-                "level": 3,
-                "parent_id": "plan-implementation-strategy",
-                "title": "Change and Rollback",
-                "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "무엇을 어떻게 바꿀지·복구 순서",
-                "required_content": [
-                  "무엇을 어떻게 바꿀지·복구 순서을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "children": [],
-                "link_only": false
-              }
-            ],
-            "link_only": false
-          },
-          {
-            "section_id": "plan-verification-plan",
+            "section_id": "plan.verification",
             "level": 2,
             "parent_id": null,
             "title": "Verification Plan",
@@ -18056,10 +18011,10 @@
             ],
             "children": [
               {
-                "section_id": "plan-verification-plan-verification-matrix",
+                "section_id": "plan.verification.1",
                 "level": 3,
-                "parent_id": "plan-verification-plan",
-                "title": "Verification Matrix",
+                "parent_id": "plan.verification",
+                "title": "Selected Checks",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
@@ -18080,10 +18035,10 @@
                 "link_only": false
               },
               {
-                "section_id": "plan-verification-plan-stage-placement",
+                "section_id": "plan.verification.2",
                 "level": 3,
-                "parent_id": "plan-verification-plan",
-                "title": "Stage Placement",
+                "parent_id": "plan.verification",
+                "title": "Evidence Plan",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
@@ -18107,84 +18062,11 @@
             "link_only": false
           },
           {
-            "section_id": "plan-risks",
-            "level": 2,
-            "parent_id": null,
-            "title": "Risks",
-            "order": 5,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "실행 위험과 대응",
-            "required_content": [
-              "실행 위험과 대응에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "children": [
-              {
-                "section_id": "plan-risks-risks-and-mitigations",
-                "level": 3,
-                "parent_id": "plan-risks",
-                "title": "Risks and Mitigations",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "위험·탐지·완화·담당",
-                "required_content": [
-                  "위험·탐지·완화·담당을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "children": [],
-                "link_only": false
-              },
-              {
-                "section_id": "plan-risks-escalation",
-                "level": 3,
-                "parent_id": "plan-risks",
-                "title": "Escalation",
-                "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "차단 조건·사용자 질문·재개 조건",
-                "required_content": [
-                  "차단 조건·사용자 질문·재개 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "children": [],
-                "link_only": false
-              }
-            ],
-            "link_only": false
-          },
-          {
-            "section_id": "plan-promotion-map",
+            "section_id": "plan.promotion",
             "level": 2,
             "parent_id": null,
             "title": "Promotion Map",
-            "order": 6,
+            "order": 5,
             "requiredness": "required",
             "condition": "always",
             "content": "지속 의미의 승격 계획",
@@ -18202,35 +18084,11 @@
             ],
             "children": [
               {
-                "section_id": "plan-promotion-map-durable-meaning",
+                "section_id": "plan.promotion.1",
                 "level": 3,
-                "parent_id": "plan-promotion-map",
-                "title": "Durable Meaning",
+                "parent_id": "plan.promotion",
+                "title": "Durable Owners",
                 "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "완료 후 남을 계약·운영 의미",
-                "required_content": [
-                  "완료 후 남을 계약·운영 의미을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "children": [],
-                "link_only": false
-              },
-              {
-                "section_id": "plan-promotion-map-owner-and-receipt",
-                "level": 3,
-                "parent_id": "plan-promotion-map",
-                "title": "Owner and Receipt",
-                "order": 2,
                 "requiredness": "required",
                 "condition": "always",
                 "content": "현행 인계 위치·담당·검증 조건·Task 영수증 참조",
@@ -18248,12 +18106,66 @@
                 ],
                 "children": [],
                 "link_only": false
+              },
+              {
+                "section_id": "plan.promotion.2",
+                "level": 3,
+                "parent_id": "plan.promotion",
+                "title": "Consumer Updates",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "완료 후 남을 계약·운영 의미와 그 소비자 갱신",
+                "required_content": [
+                  "완료 후 남을 계약·운영 의미와 그 소비자 갱신을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실제 작업 상태·검사 결과는 Task를 참조하고 수동 복제하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
               }
             ],
             "link_only": false
           }
         ],
-        "extensions": []
+        "extensions": [
+          {
+            "id": "plan-approved-retained-form",
+            "kind": "retained_form",
+            "condition": "an approved Plan of SPEC-0161 or SPEC-0221 keeps the six H2 it was approved with and its Work Breakdown table under Implementation Strategy; every other Plan takes the form tree",
+            "owner": "platform",
+            "verification": "tests/test_common_form_tree.py",
+            "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
+            "removal": "when neither package remains in the tree; the bound is never widened",
+            "statuses": [
+              "approved"
+            ],
+            "identity_bound": "^SPEC-0(?:161|221)-PLAN-0001$",
+            "retained_sections": {
+              "required": [
+                "Overview",
+                "Dependencies",
+                "Implementation Strategy",
+                "Verification Plan",
+                "Risks",
+                "Promotion Map"
+              ],
+              "optional": [],
+              "forbidden": []
+            },
+            "body_contract": {
+              "section": "Implementation Strategy",
+              "table_heading": "Work Breakdown"
+            }
+          }
+        ]
       },
       {
         "form_id": "task",

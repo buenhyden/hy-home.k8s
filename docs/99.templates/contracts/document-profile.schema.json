@@ -1417,6 +1417,25 @@
           "type": "string",
           "pattern": "\\S"
         },
+        "body_contract": {
+          "description": "SPEC-0221: on a retained form only, where the retained document keeps its body-contract table.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "section",
+            "table_heading"
+          ],
+          "properties": {
+            "section": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "table_heading": {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          }
+        },
         "table": {
           "type": "string",
           "pattern": "\\S"
@@ -1463,6 +1482,11 @@
                 {
                   "required": [
                     "identity_bound"
+                  ]
+                },
+                {
+                  "required": [
+                    "body_contract"
                   ]
                 },
                 {
@@ -1572,6 +1596,11 @@
                 {
                   "required": [
                     "identity_bound"
+                  ]
+                },
+                {
+                  "required": [
+                    "body_contract"
                   ]
                 }
               ]

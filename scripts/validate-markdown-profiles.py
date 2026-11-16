@@ -643,11 +643,17 @@ def _body_contract_diagnostics(
     ):
         return []
     diagnostics: list[Diagnostic] = []
-    section = _exact_heading_section(body, f"## {contract.section}")
+    location = profile.body_contract_location(
+        status, expected_artifact_id(path, profile) or ""
+    )
+    if location is None:
+        return []
+    section_title, table_heading = location
+    section = _exact_heading_section(body, f"## {section_title}")
     table_section = (
         None
         if section is None
-        else _exact_heading_section(section, f"### {contract.table_heading}")
+        else _exact_heading_section(section, f"### {table_heading}")
     )
     if table_section is None:
         return [
@@ -655,7 +661,7 @@ def _body_contract_diagnostics(
                 "BODY-CONTRACT-HEADING",
                 path,
                 profile,
-                f"one exact H3 '{contract.table_heading}' inside H2 '{contract.section}'",
+                f"one exact H3 '{table_heading}' inside H2 '{section_title}'",
                 "missing, duplicated, or at the wrong level",
             )
         ]
