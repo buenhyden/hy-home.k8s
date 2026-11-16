@@ -7,7 +7,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W07",
-      "resume_condition": "When W07 starts",
+      "resume_condition": "When a trusted Claude and Codex session can observe nested, resume and compact hook delivery (RUNTIME-CLOSE)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -17,7 +17,7 @@
       "kind": "conflict",
       "state": "open",
       "owner": "W06",
-      "resume_condition": "When W06 starts (W03-D28)",
+      "resume_condition": "When ADR-0063 or another ADR-0048 successor is accepted with the REQ-0003 FR-0017 amendment",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -27,7 +27,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W06",
-      "resume_condition": "When W06 starts",
+      "resume_condition": "With the Git-point binding change to `.agents/governance/git.md`",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -35,11 +35,15 @@
     {
       "id": "COMMIT-BEFORE",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W06",
       "resume_condition": "When W06 starts",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-171"
       }
     },
     {
@@ -57,7 +61,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 starts",
+      "resume_condition": "At the next Stage 90 profile or validator change",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -77,7 +81,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W06",
-      "resume_condition": "When W06 starts",
+      "resume_condition": "With the Git-point binding change to `.agents/governance/git.md`",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -85,11 +89,15 @@
     {
       "id": "MERGE-BEFORE",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W06",
       "resume_condition": "When W06 starts",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-173"
       }
     },
     {
@@ -117,7 +125,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W06",
-      "resume_condition": "When W06 starts",
+      "resume_condition": "With the Git-point binding change to `.agents/governance/git.md`",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -137,7 +145,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 starts",
+      "resume_condition": "When an evidence row maps each rule to a current check or a narrower residue row",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -147,7 +155,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 starts",
+      "resume_condition": "When an evidence row maps each rule to a current check or a narrower residue row",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -157,7 +165,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 starts",
+      "resume_condition": "When an evidence row maps each rule to a current check or a narrower residue row",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -167,7 +175,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W06",
-      "resume_condition": "When W06 starts",
+      "resume_condition": "With the Git-point binding change to `.agents/governance/git.md`",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -175,11 +183,15 @@
     {
       "id": "R147-07",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W04",
       "resume_condition": "When W04 starts",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-169"
       }
     },
     {
@@ -197,7 +209,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W07",
-      "resume_condition": "When W07 starts",
+      "resume_condition": "At the next provider note edit or at RUNTIME-CLOSE",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -207,7 +219,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 starts",
+      "resume_condition": "When an evidence row maps equivalent-result reuse to the `scripts/qa.py` identity contract",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -217,7 +229,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W04",
-      "resume_condition": "When W04 starts (policy semantics only)",
+      "resume_condition": "When the owner decides between per-family policy edges and the registry-only transition rule",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -227,7 +239,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 starts",
+      "resume_condition": "When a negative test refuses an old approved edition as a pass basis, or with W05-H09",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -237,7 +249,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 starts",
+      "resume_condition": "At the next change to the PLAN-PROMOTION check or the Plan promotion form",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -275,31 +287,43 @@
     {
       "id": "W03-H05",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W04",
       "resume_condition": "When W04 starts",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-170"
       }
     },
     {
       "id": "W03-H11",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "When W05 starts",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-175"
       }
     },
     {
       "id": "W03-H12",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "When W05 starts",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-172"
       }
     },
     {
@@ -325,11 +349,15 @@
     {
       "id": "W05-H01",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "When W05 starts",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-174"
       }
     },
     {
@@ -337,7 +365,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 starts",
+      "resume_condition": "At the next change to a derived-copy surface",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -347,7 +375,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 starts",
+      "resume_condition": "At the next change to approval receipt validation",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -357,7 +385,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 starts",
+      "resume_condition": "At the next change to `scripts/validation/current_executable_references.py`",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -365,11 +393,15 @@
     {
       "id": "W05-H07",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "When W05 starts (validators)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-168"
       }
     },
     {
@@ -377,7 +409,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 starts (validators and schema)",
+      "resume_condition": "At the next edit of the relationship contract schema",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -387,7 +419,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 starts",
+      "resume_condition": "At the next change to a file that holds the retired aliases or readable majors",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -397,7 +429,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W07",
-      "resume_condition": "When W07 starts",
+      "resume_condition": "When a trusted Claude tool session can record sensitive-path allow and deny cases (RUNTIME-CLOSE)",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -407,7 +439,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W07",
-      "resume_condition": "When W07 starts",
+      "resume_condition": "At the next approval or receipt validator change, or at W11-ACCEPT",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
