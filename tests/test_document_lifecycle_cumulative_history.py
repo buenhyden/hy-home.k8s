@@ -592,6 +592,40 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         )
         return text.replace('status: "proposed"', f'status: "{status}"', 1).encode()
 
+    def test_rejected_adr_cannot_remain_in_the_candidate(self) -> None:
+        target = PurePosixPath("docs/02.architecture/decisions/0999-target.md")
+        self.git.commit(target.as_posix(), self.adr_document("ADR-0999"))
+        proposed_commit = self.oid("HEAD")
+        (self.root / target).write_bytes(
+            self.adr_document("ADR-0999", status="rejected")
+        )
+        self.git.run("add", "--", target.as_posix())
+
+        for mode in ("staged", "strict"):
+            with self.subTest(mode=mode):
+                result, output = self.invoke(mode, include_path=target.as_posix())
+                self.assertEqual(result, 1, output)
+                self.assertIn(f"LIFECYCLE-ADR-RETAINED {target}", output)
+
+        self.git.run("commit", "--quiet", "-m", "historical ADR rejection")
+        rejected_commit = self.oid("HEAD")
+        result, output = self.explicit(proposed_commit, rejected_commit)
+        self.assertEqual(result, 1, output)
+        self.assertIn(f"LIFECYCLE-ADR-RETAINED {target}", output)
+
+        owner = "docs/02.architecture/decisions/0998-owner.md"
+        self.git.commit(owner, self.adr_document("ADR-0998"))
+        self.git.commit(owner, self.adr_document("ADR-0998", status="accepted"))
+        (self.root / owner).write_bytes(
+            self.lineage_owner("ADR-0999")
+            .replace(b'status: "proposed"', b'status: "accepted"', 1)
+            .replace(b"superseded", b"rejected")
+        )
+        self.git.run("add", "--", owner)
+        self.git.run("rm", "--", target.as_posix())
+        result, output = self.invoke("staged")
+        self.assertEqual(result, 0, output)
+
     def test_distinct_adr_authoring_copies_admit_proposed_then_accepted(self) -> None:
         source = PurePosixPath("docs/02.architecture/decisions/0998-source.md")
         target = PurePosixPath("docs/02.architecture/decisions/0999-target.md")

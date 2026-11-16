@@ -326,6 +326,28 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                 path,
             )
 
+    def test_folder_agents_guides_outside_docs_use_the_guide_surface(self) -> None:
+        for folder in (
+            ".github",
+            "examples",
+            "examples/azure",
+            "gitops",
+            "infrastructure",
+            "policy",
+            "scripts",
+            "scripts/validation/platform",
+            "tests",
+        ):
+            for name in ("AGENTS.md", "CLAUDE.md"):
+                path = f"{folder}/{name}"
+                with self.subTest(path=path):
+                    surface = self.validator.classify_path(self.contract, path)
+                    self.assertEqual(surface["id"], "folder-agents-guides")
+                    self.assertTrue(
+                        {"document-contract-registry", "markdown-profiles"}
+                        <= set(surface["validators"])
+                    )
+
     def test_release_tooling_keeps_its_direct_contract_checks(self) -> None:
         for path in (
             "scripts/release.py",

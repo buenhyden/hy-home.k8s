@@ -43,6 +43,7 @@ from document_contracts import (
     _typed_registry_from_mapping,
 )
 from document_lifecycle import (
+    LifecycleBaseMode,
     LifecycleDiagnostic,
     LifecycleDocument,
     LifecycleEvidenceContext,
@@ -2872,6 +2873,30 @@ def _policy_rules(
     return rows
 
 
+def _retained_rejected_adr_diagnostics(
+    documents: Mapping[PurePosixPath, LifecycleDocument],
+    *,
+    base_mode: LifecycleBaseMode,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Apply DOCLIFE-R008 to the final candidate without rewriting history."""
+
+    return tuple(
+        LifecycleDiagnostic(
+            severity="FAIL",
+            rule_id="LIFECYCLE-ADR-RETAINED",
+            path=path,
+            profile=document.profile_id,
+            expected_transition="authorized rejection is recorded in Archived Lineage and the ADR is removed",
+            observed_transition="rejected ADR retained in the candidate",
+            base_mode=base_mode,
+            evidence_gap="same-change disposition",
+        )
+        for path, document in documents.items()
+        if document.profile_id == "sdlc/architecture-decision"
+        and document.status == "rejected"
+    )
+
+
 def _evaluate_comparison(
     root: Path,
     registry: Registry,
@@ -2988,6 +3013,10 @@ def _evaluate_comparison(
         evidence_context,
         base_mode=mode,  # type: ignore[arg-type]
     )
+    diagnostics += _retained_rejected_adr_diagnostics(
+        proposed_snapshot,
+        base_mode=mode,  # type: ignore[arg-type]
+    )
     # SPEC-0208: scalar version fields only, from the raw registry blobs.
     if (
         base_registry_oid is not None
@@ -3048,6 +3077,7 @@ def _evaluate_snapshot(
     context = _evidence_context(registry, {}, documents, {}, texts)
     return (
         validate_snapshot_documents(registry, tuple(documents.values()))
+        + _retained_rejected_adr_diagnostics(documents, base_mode="snapshot")
         + validate_current_task_evidence(context, base_mode="explicit-ref")
         + operating_supersession_diagnostics(
             registry, context.proposed_documents, base_mode="snapshot"

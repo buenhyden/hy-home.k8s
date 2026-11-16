@@ -597,6 +597,23 @@ class SpecPlanAuthorityTests(unittest.TestCase):
 
         # The repository registry raises none once the entry exists.
         self.assertEqual(refusals("requirement", ["draft"]), [])
+        self.assertTrue(refusals("requirement", ["draft"], ["draft", "approved"]))
+        domains = [dict(item) for item in registry["lifecycle_domains"]]
+        requirement = next(item for item in domains if item["family"] == "requirement")
+        requirement["transitions"] = [
+            edge
+            for edge in requirement["transitions"]
+            if edge != ["in-review", "draft"]
+        ]
+        self.assertTrue(
+            any(
+                item.rule_id == "REGISTRY_LIFECYCLE_DOMAIN"
+                and "requirement" in item.actual
+                for item in _terminal_semantic_diagnostics(
+                    ROOT, registry | {"lifecycle_domains": domains}
+                )
+            )
+        )
         for invalid in (None, ["in-review"], ["approved"], ["draft", "in-review"]):
             with self.subTest(requirement=invalid):
                 self.assertTrue(refusals("requirement", invalid))

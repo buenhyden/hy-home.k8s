@@ -2163,6 +2163,20 @@ def _terminal_semantic_diagnostics(
         # SPEC-0210: the Requirement draft state is created in and may be
         # returned to, so its rework edge is the one other inbound exception.
         requirement_initial = family == "requirement" and initial_states == ["draft"]
+        if family == "requirement" and {
+            tuple(edge) for edge in domain["transitions"]
+        } != {
+            ("draft", "in-review"),
+            ("in-review", "draft"),
+            ("in-review", "approved"),
+        }:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_LIFECYCLE_DOMAIN",
+                    expected="requirement review before approval, with return to draft for rework",
+                    actual="requirement transition edges differ from the reviewed domain",
+                )
+            )
         if initial_states is not None and (
             not initial_states
             or any(
@@ -2552,6 +2566,35 @@ def _relationship_faults(
                 "at least one consumer path",
                 f"{name}: none",
             )
+        if name == "policy-authority":
+            routes = [
+                _compile_route(profile["path_pattern"])
+                for profile_id in item["target_profile_ids"]
+                if (profile := profiles.get(profile_id)) is not None
+                and profile["mode"] == "authored"
+                and profile.get("document_role") == "policy"
+            ]
+            references = {
+                reference
+                for profile in profiles.values()
+                if (definition := profile.get("template_definition"))
+                for reference in definition["policy_refs"]
+            }
+            for reference in sorted(references):
+                try:
+                    path = _normalize_relative_path(reference)
+                    if path.as_posix() != reference:
+                        raise ValueError("path is not canonical")
+                    if not any(route.fullmatch(reference) for route in routes):
+                        raise ValueError("no declared authored policy profile matches")
+                    if not stat.S_ISREG(_lstat_named_path(root.absolute(), path)):
+                        raise ValueError("not a regular file")
+                except ValueError as exc:
+                    fault(
+                        "REGISTRY_RELATION_POLICY_REF",
+                        "policy_refs naming an existing regular authored policy file",
+                        f"{reference!r}: {exc}",
+                    )
         if item["kind"] != "structural-ownership":
             continue
         # The i-th source profile is owned by the i-th target profile.
