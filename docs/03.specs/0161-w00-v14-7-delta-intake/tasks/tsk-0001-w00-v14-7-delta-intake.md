@@ -1,10 +1,10 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.26"
+version: "0.2.27"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "SPEC-0161-TSK-0001"
 parent_ids: ["SPEC-0161-PLAN-0001"]
 ---
@@ -88,7 +88,8 @@ This Task records the W00 v14.7 delta tables for [SPEC-0161](../spec.md) under i
   asks for commit, push, PR and merge of both results.
   A further request applies the W01-CONTRACT prompt under the same limits
   and asks the agent to continue until completion and fix errors at their
-  cause.
+  cause. The 2026-11-17 request applies the W02-DISPOSITION prompt under the
+  same limits.
 
 ## Execution Log
 
@@ -290,6 +291,7 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-176 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W00 hosted job description against the current workflow | `.github/workflows/ci.yml` `style-pr` plan and GitOps steps, `.agents/governance/sdlc.md` SDLC-R016 and `.agents/governance/quality.md` QUAL-R006 at `16f05183`, 2026-11-16 | PASS | Both policy statements described `style-pr` as style plus lock only, while the workflow also selects the reviewed base's GitOps identity check for GitOps data. Both now name that leaf and its pending ADR-0063 adoption. No workflow or remote setting changed. | no | none |
 | EVD-177 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | SDLC-07 lifecycle edge ownership | `.agents/governance/document-lifecycle.md` Authority, DOCLIFE-R002 and DOCLIFE-R003, the Stage 99 registry `lifecycle` domains and `scripts/document_contracts.py` REGISTRY_LIFECYCLE_DOMAIN at `c6d997fb`, 2026-11-16 | PASS | The policy explains each family's state meanings and names the registry as the sole machine owner of directed transitions. The validators enforce the edges, and the Requirement edge set is fixed. The legacy criterion that the policy restate each family's edges conflicts with the single-owner requirement in the W01 contract and package D24, so the registry stays the only edge owner. | no | none |
 | EVD-178 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W01 vocabulary and contract recheck | `.agents/knowledge/glossary.md`, `.agents/governance/quality.md` QUAL-R015 and QUAL-R016, `.agents/governance/document-lifecycle.md` draft boundary and `.claude/provider.md` binding ownership at `c6d997fb`, 2026-11-16 | PASS | All 64 vocabulary rows use the seven common columns, with numeric contract versions. TERM-REMOVAL cited closed package decision IDs, and now cites REQ-0003-FR-0020. Risk-based review, the draft boundary and the provider binding ownership already matched the confirmed decisions. | no | none |
+| EVD-179 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W02 owner and resume condition recheck | The work residue ledger, the W02 Disposition table and the Residue Handoff rows at `84d2e981`, read against the 4.2.0 package prompt list, 2026-11-17 | PASS | The 4.2.0 package splits W10 into seven tasks, so the owner `W10` and the condition "When W10 starts" no longer named one owner or trigger. OPEN-08, R147-16 and W03-H23 now name W10-INFRA with a concrete resume condition. DOC-S99 no longer cites the closed OPEN-09. No entry changed state, and no source, check or user file was removed. | no | none |
 
 #### Edition Delta
 
@@ -2348,6 +2350,28 @@ k8s action targets W01.
 Source reads establish repository contracts only. Native enforcement and
 user acceptance remain with RUNTIME-CLOSE and W11-ACCEPT.
 
+#### W02 Disposition Recheck (4.2.0)
+
+The 2026-11-17 request applies the 4.2.0 W02-DISPOSITION prompt with the same
+limits, starting from merged `84d2e981`. The designs read were D00, D14, D15,
+D25, D27 and D28. No attached k8s action targets W02; K-W02 goes to
+DOC-PATH-PLAN for the final cutover. The [W02 Disposition](#w02-disposition)
+table already states every open entry by function, owner and completion
+condition, so the work was not repeated.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Function, owner and completion condition per open entry | KEEP_VERIFIED | W02 Disposition table (EVD-140) | none |
+| Owner `W10` and "When W10 starts" for OPEN-08, R147-16 and W03-H23 | CHANGE | EVD-179: the package now has seven W10 tasks | W10-INFRA |
+| DOC-S99 resume condition citing the closed OPEN-09 | CHANGE | EVD-179 | W05 |
+| Package path or closed audit question in a standing check | KEEP_VERIFIED | No script, test, workflow or policy reads the package or asks a closed OPEN identifier | none |
+| Old SPEC-0161 non-goal "no push, PR or merge" | KEEP_VERIFIED | The approved Spec stays frozen; later requests in Inputs and Authority authorize each delivery | none |
+| History removal and renumbering | UNVERIFIED | Prepared only; Q07-CUTOVER after W11 (DOC-12, Q07-H01) | Q07 |
+
+No incomplete entry became terminal. W03-H23 is still a real gap:
+`README.md` lists a `VAULT_TOKEN` environment variable, while the script
+prompts for the token. Fixing it is W10-INFRA work and is not done here.
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -2368,7 +2392,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | DOC-12 | Legacy row `DOC-12` of `Conflicts`: display renumbering of Stage 01, 02 and 03; also an OPEN row of Requirement Changes | open | Q07 | After W11 and every applicable docs task, in the separate Q07 task | none |
 | DOC-S00 | Legacy row `DOC-S00` of `Stage QA Handoff`: vocabulary rule_id binding | terminal | W05 | When W05 starts | EVD-138 |
 | DOC-S90 | Legacy row `DOC-S90` of `Stage QA Handoff`: Stage 90 source, edition and freshness checks | open | W05 | At the next Stage 90 profile or validator change | none |
-| DOC-S99 | Legacy row `DOC-S99` of `Stage QA Handoff`: tests hard-code current headings | open | W05 | When W05 moves the hard-coded headings of tests (OPEN-09) | none |
+| DOC-S99 | Legacy row `DOC-S99` of `Stage QA Handoff`: tests hard-code current headings | open | W05 | When W05 makes the tests that hard-code current section headings read them from the registry | none |
 | GOV-04 | Legacy row `GOV-04` of `Requirement Changes`: the approved registry as a reform target | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | GOV-06 | Legacy row `GOV-06` of `Requirement Changes`: single-writer registry reformed | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | LEDGER | Legacy row `LEDGER` of `Conflicts`: the work residue ledger; built by this package | terminal | W03 | After the user accepts the SPEC-0191 criteria | EVD-055 |
@@ -2381,7 +2405,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | OPEN-04 | Legacy row `OPEN-04` of `OPEN Dispositions`: byte comparison with two original reports | terminal | W00 | Only when the original reports are supplied or a difference shown to affect a current owner (historical, non-blocking) | EVD-135 |
 | OPEN-06 | Legacy row `OPEN-06` of `OPEN Dispositions`: perspective rows of an external source | terminal | W00 | Only when a stage proposes adopting a named source, or on a shown owner difference; that stage consumes the result | EVD-135 |
 | OPEN-07 | Legacy row `OPEN-07` of `OPEN Dispositions`: full survey of the local workspace | terminal | W05, W06, W07, W10 by file set | Each writer stage reads its whole file set before editing | EVD-136 |
-| OPEN-08 | Legacy row `OPEN-08` of `OPEN Dispositions`: live, native and cluster authority | open | W10 | When W10 starts | none |
+| OPEN-08 | Legacy row `OPEN-08` of `OPEN Dispositions`: live, native and cluster authority | open | W10-INFRA | When an operator authorizes a named live or cluster observation for W10-INFRA; native paths stay with AGENT-04 and W07-H02 | none |
 | OPEN-09 | Legacy row `OPEN-09` of `OPEN Dispositions`: hard-coded current headings in tests | terminal | W05 | When W05 moves the hard-coded headings | EVD-139 |
 | PR-DURING | Legacy row `PR-DURING` of `Stage QA Handoff`: PR-DURING scope decision (CI-SCOPE) | terminal | W06 | When CI-SCOPE closes | EVD-139 |
 | PUSH-BEFORE | Legacy row `PUSH-BEFORE` of `Stage QA Handoff`: pre-push has no target | open | W06 | With the Git-point binding change to `.agents/governance/git.md` | none |
@@ -2393,7 +2417,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | R147-06 | Legacy row `R147-06` of `Requirement Changes`: bind Git before, during and after cells | open | W06 | With the Git-point binding change to `.agents/governance/git.md` | none |
 | R147-07 | Legacy row `R147-07` of `Requirement Changes`: separate SDLC stage from document STAGE | terminal | W04 | When W04 starts | EVD-169 |
 | R147-10 | Legacy row `R147-10` of `Requirement Changes`: migrate the registry to the CI chain | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
-| R147-16 | Legacy row `R147-16` of `Requirement Changes`: Kubernetes impact of governance changes | open | W10 | When W10 starts | none |
+| R147-16 | Legacy row `R147-16` of `Requirement Changes`: Kubernetes impact of governance changes | open | W10-INFRA | When W10-INFRA maps the manifest and GitOps consumers that a governance change can affect | none |
 | R147-17 | Legacy row `R147-17` of `Requirement Changes`: harness static versus live provider evidence | open | W07 | At the next provider note edit or at RUNTIME-CLOSE | none |
 | R147-20 | Legacy row `R147-20` of `Requirement Changes`: reuse only equivalent results | open | W05 | When an evidence row maps equivalent-result reuse to the `scripts/qa.py` identity contract | none |
 | R45-06 | Legacy row `R45-06` of `Requirement Changes`: reform the approved registry itself | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
@@ -2423,7 +2447,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W03-H19 | Legacy row `W03-H19` of `W03 Decisions`: the missing adoption record of COMMON-DOC-FORM-1 in common_forms | terminal | W03 | With the W03 closing | EVD-119 |
 | W03-H20 | Legacy row `W03-H20` of `W03 Decisions`: the W03 closing report | terminal | W03 | Last before DOC-12 | EVD-131 |
 | W03-H21 | Legacy row `W03-H21` of `W03 Decisions`: writer delegation record | terminal | W03 | With the W03 closing | EVD-120 |
-| W03-H23 | Legacy row `W03-H23` of `W03 Decisions`: root README bootstrap text | open | W10 | When W10 starts | none |
+| W03-H23 | Legacy row `W03-H23` of `W03 Decisions`: root README bootstrap text | open | W10-INFRA | When W10-INFRA aligns the root README prerequisites with the token prompt of `infrastructure/bootstrap-local.sh` | none |
 | W03-H27 | Legacy row `W03-H27` of `W03 Decisions`: the document generator | terminal | W03 | After W03-H25, which SPEC-0184 closed | EVD-059 |
 | W03-H29 | Legacy row `W03-H29` of `W03 Decisions`: Policy rule IDs | terminal | W03 | SPEC-0199 adopts nine policies (W03-D58) and SPEC-0201 adopts `quality.md` (W03-D60), so all ten governance policies are adopted; SPEC-0202 adopts four operations policies and SPEC-0204 adopts POL-0007 with 45 IDs (W03-D62), so all fifteen are adopted; the final source commit of the SPEC-0204 package removes the adoption gate, `state` and `POLICY-RULE-ADOPTION` with their tests (W03-D53, W03-D62); package 5 adds the history check and code permanence; W05 consumes the rule IDs | EVD-114 |
 | W03-H30 | Legacy row `W03-H30` of `W03 Decisions`: the work residue ledger, its gate and tests | terminal | W03 with W05 | Closes through the ledger cycle of SPEC-0191 | EVD-055 |

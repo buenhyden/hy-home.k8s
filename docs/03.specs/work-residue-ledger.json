@@ -71,7 +71,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 moves the hard-coded headings of tests (OPEN-09)",
+      "resume_condition": "When W05 makes the tests that hard-code current section headings read them from the registry",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -114,8 +114,8 @@
       "id": "OPEN-08",
       "kind": "survey",
       "state": "open",
-      "owner": "W10",
-      "resume_condition": "When W10 starts",
+      "owner": "W10-INFRA",
+      "resume_condition": "When an operator authorizes a named live or cluster observation for W10-INFRA; native paths stay with AGENT-04 and W07-H02",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -198,8 +198,8 @@
       "id": "R147-16",
       "kind": "handoff",
       "state": "open",
-      "owner": "W10",
-      "resume_condition": "When W10 starts",
+      "owner": "W10-INFRA",
+      "resume_condition": "When W10-INFRA maps the manifest and GitOps consumers that a governance change can affect",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -334,8 +334,8 @@
       "id": "W03-H23",
       "kind": "handoff",
       "state": "open",
-      "owner": "W10",
-      "resume_condition": "When W10 starts",
+      "owner": "W10-INFRA",
+      "resume_condition": "When W10-INFRA aligns the root README prerequisites with the token prompt of `infrastructure/bootstrap-local.sh`",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
