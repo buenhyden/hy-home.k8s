@@ -1,6 +1,6 @@
 ---
 title: "Formatting and Linting Policy"
-version: "1.8.1"
+version: "1.8.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -37,73 +37,35 @@ Exclusions of files from formatters and linters are stated under Requirements.
 
 ### Requirements
 
-| Rule ID | Condition | Level | Evidence | Status |
+| Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
-| FMT-R001 | Always | required | Semantic review | active |
-| FMT-R002 | For an ordinary authored document or README router edit | required | `document-contract-tests` | active |
-| FMT-R003 | Always | required | `selected-style` | active |
-| FMT-R004 | When the last target of a tool disappears | required | Semantic review | active |
-| FMT-R005 | Always | required | Semantic review | active |
-| FMT-R006 | When the projection preserves an ownership boundary; before raising a tool revision | required | Semantic review | active |
-| FMT-R007 | Always | required | Semantic review | active |
-| FMT-R008 | Always | required | Semantic review | active |
-| FMT-R009 | Always | required | `selected-style` | active |
-| FMT-R010 | Always | required | `.pre-commit-config.yaml` | active |
-| FMT-R011 | Always | required | Semantic review | active |
-| FMT-R012 | Always | required | `.markdownlint-cli2.yaml` | active |
+| FMT-R001 | Always | Keep one semantic owner for each rule. Project it only where a complementary layer needs it: `.gitattributes` for Git normalization, `.editorconfig` for editor hints, and hook or tool configuration for validation and rewriting. Mirrored values across those layers are not separate rules; document their purpose and validate that the committed result agrees. | Semantic review | none |
+| FMT-R002 | For an ordinary authored document or README router edit | For an ordinary authored document or README router edit, select only the applicable document-facing style rules on changed files. Keep the common diff and commit-message checks and the active hook chain; do not add shell, Python, infrastructure or whole-tree formatting merely because the file is Markdown. A change to a formatting rule or hook configuration needs its own focused contract regression under [quality](quality.md#ordinary-document-selection). | `document-contract-tests` | none |
+| FMT-R003 | Always | The selected lint and format rules run on the final logical index as the `selected-style` gate inside the `staged-qa` hook (`qa.py staged`), one run before a local commit. Reuse a successful identical style leaf under [quality](quality.md#validation-lane-contract) instead of running it again in another local caller. A hosted PR style check uses the same declared rules on its distinct PR merge input and records its own SHA/run; a successful local result cannot stand in for it. A deployment style check requires an actual deployment workflow and observed run; no such result follows from a tracked rule alone. | `selected-style` | none |
+| FMT-R004 | When the last target of a tool disappears | Keep no configuration for a file type the repository does not contain. When the last target of a tool disappears, remove the tool and its configuration in the same change rather than leaving an unread file. | Semantic review | none |
+| FMT-R005 | Always | Do not add a second tool that enforces a rule an existing tool already enforces. Extend the owner instead. | Semantic review | none |
+| FMT-R006 | When the projection preserves an ownership boundary; before raising a tool revision | Explicitly declare file types or rules when that projection preserves an ownership boundary. A pinned tool may intentionally retain reviewed defaults. Before raising its revision, measure default changes, check whether they widen the rule set or claim another tool's file type, and validate the resulting corpus behavior before accepting the upgrade. | Semantic review | none |
+| FMT-R007 | Always | Scope a rule by capability, not by exclusion. Prefer configuring a checker to understand a file shape over excluding the tree that has that shape. | Semantic review | none |
+| FMT-R008 | Always | State a cause for every suppression and classify it as a deliberate authoring convention, a rule blocked by documents the lifecycle policy forbids editing, or living debt to be retired by fixing the documents. A bare disabled rule hides which of the three it is. | Semantic review | none |
+| FMT-R009 | Always | Linters report. Shfmt, Ruff format and whitespace hooks rewrite their input files. QA runs them inside an isolated snapshot, detects changed bytes and fails without modifying the source tree/index. An explicitly approved fix uses the same pinned hooks with `--files` naming only reviewed source paths; inspect the diff, restage and refresh the affected evidence afterward. | `selected-style` | none |
+| FMT-R010 | Always | ShellCheck and shfmt cover shell scripts under `scripts/`, `infrastructure/` and both provider hook directories, plus the extensionless `scripts/githooks/` entries (`pre-commit`, `commit-msg`, `pre-push`). Ruff's explicit Python type restriction keeps Markdown with its own reporting linter. | `.pre-commit-config.yaml` | none |
+| FMT-R011 | Always | Never suppress a rule for a whole file when the conflict is one rule. A whole-file exemption silently drops every other rule on that file. | Semantic review | none |
+| FMT-R012 | Always | Exclude `docs/98.archive/` from every auto-fixing formatter and from Markdown lint: it is unvalidated history. The three whitespace hooks share one hook-local exclusion for it, which also covers the raw paired-trial outputs `.agents/evaluations/harnesses/*/baseline.md` and `with-skill.md` (Markdown lint ignores the same files). Secret scanners are not excluded. | `.markdownlint-cli2.yaml` | none |
 
-- `FMT-R001` Keep one semantic owner for each rule. Project it only where a complementary
-  layer needs it: `.gitattributes` for Git normalization, `.editorconfig` for
-  editor hints, and hook or tool configuration for validation and rewriting.
-  Mirrored values across those layers are not separate rules; document their
-  purpose and validate that the committed result agrees.
-- `FMT-R002` For an ordinary authored document or README router edit, select only the
-  applicable document-facing style rules on changed files. Keep the common
-  diff and commit-message checks and the active hook chain; do not add shell,
-  Python, infrastructure or whole-tree formatting merely because the file is
-  Markdown. A change to a formatting rule or hook configuration needs its own
-  focused contract regression under [quality](quality.md#ordinary-document-selection).
-- `FMT-R003` The selected lint and format rules run on the final logical index as the
-  `selected-style` gate inside the `staged-qa` hook (`qa.py staged`), one run
-  before a local commit. Reuse a successful identical style leaf under
-  [quality](quality.md#validation-lane-contract) instead of running it again in
-  another local caller. A hosted PR
-  style check uses the same declared rules on its distinct PR merge input and
-  records its own SHA/run; a successful local result cannot stand in for it.
-  A deployment style check requires an actual deployment workflow and observed
-  run; no such result follows from a tracked rule alone.
-- `FMT-R004` Keep no configuration for a file type the repository does not contain.
-  When the last target of a tool disappears, remove the tool and its
-  configuration in the same change rather than leaving an unread file.
-- `FMT-R005` Do not add a second tool that enforces a rule an existing tool already
-  enforces. Extend the owner instead.
-- `FMT-R006` Explicitly declare file types or rules when that projection preserves an
-  ownership boundary. A pinned tool may intentionally retain reviewed defaults.
-  Before raising its revision, measure default changes, check whether they widen
-  the rule set or claim another tool's file type, and validate the resulting
-  corpus behavior before accepting the upgrade.
-- `FMT-R007` Scope a rule by capability, not by exclusion. Prefer configuring a checker
-  to understand a file shape over excluding the tree that has that shape.
-- `FMT-R008` State a cause for every suppression and classify it as a deliberate
-  authoring convention, a rule blocked by documents the lifecycle policy
-  forbids editing, or living debt to be retired by fixing the documents.
-  A bare disabled rule hides which of the three it is.
-- `FMT-R009` Linters report. Shfmt, Ruff format and whitespace hooks rewrite their input
-  files. QA runs them inside an isolated snapshot, detects changed bytes and
-  fails without modifying the source tree/index. An explicitly approved fix
-  uses the same pinned hooks with `--files` naming only reviewed source paths;
-  inspect the diff, restage and refresh the affected evidence afterward.
-- `FMT-R010` ShellCheck and shfmt cover shell scripts under `scripts/`, `infrastructure/`
-  and both provider hook directories, plus the extensionless
-  `scripts/githooks/` entries (`pre-commit`, `commit-msg`, `pre-push`). Ruff's explicit Python type restriction
-  keeps Markdown with its own reporting linter.
-- `FMT-R011` Never suppress a rule for a whole file when the conflict is one rule.
-  A whole-file exemption silently drops every other rule on that file.
-- `FMT-R012` Exclude `docs/98.archive/` from every auto-fixing formatter and from
-  Markdown lint: it is unvalidated history. The three whitespace hooks share
-  one hook-local exclusion for it, which also covers the raw paired-trial
-  outputs `.agents/evaluations/harnesses/*/baseline.md` and `with-skill.md`
-  (Markdown lint ignores the same files). Secret scanners are not excluded.
+| Rule ID | Level | Status |
+| --- | --- | --- |
+| FMT-R001 | required | active |
+| FMT-R002 | required | active |
+| FMT-R003 | required | active |
+| FMT-R004 | required | active |
+| FMT-R005 | required | active |
+| FMT-R006 | required | active |
+| FMT-R007 | required | active |
+| FMT-R008 | required | active |
+| FMT-R009 | required | active |
+| FMT-R010 | required | active |
+| FMT-R011 | required | active |
+| FMT-R012 | required | active |
 
 ### Exceptions
 

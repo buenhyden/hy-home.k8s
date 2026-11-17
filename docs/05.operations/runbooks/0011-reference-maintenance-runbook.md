@@ -1,6 +1,6 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.5.2"
+version: "1.5.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -134,6 +134,9 @@ Reference
    않는다. Git 객체와 현재 원형의 해시, 검사 대상 ref, 명령 결과를 기존
    Task의 Results 표에 남기되, 종료 단위에 Task 자체가 포함된 경우 위의 살아남는
    Archived Lineage에 남긴다. 문서 본문은 로그에 복사하지 않는다.
+
+| Step | Action | Expected Result | On Failure |
+| --- | --- | --- | --- |
 
 ### Stop Conditions
 

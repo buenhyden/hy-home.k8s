@@ -1,6 +1,6 @@
 ---
 title: "Quality and Evidence Policy"
-version: "3.1.1"
+version: "3.1.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -34,118 +34,117 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 
 ### Requirements
 
-| Rule ID | Condition | Level | Evidence | Status |
+| Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
-| QUAL-R001 | Always | required | `qa-runner-tests` | active |
-| QUAL-R002 | In the quick or affected lane | required | `validation-routing-tests` | active |
-| QUAL-R003 | In the staged lane | required | `qa-runner-tests` | active |
-| QUAL-R004 | Always | required | `validation-routing-tests` | active |
-| QUAL-R005 | When a commit-message or manual-stage check applies | required | Semantic review | active |
-| QUAL-R006 | Always | required | `ci-python-contract` | active |
-| QUAL-R007 | For provider discovery, authenticated operation, remote execution or runtime checks | required | Semantic review | active |
-| QUAL-R008 | Always | required | `scripts/run-validation-lane.py` | active |
-| QUAL-R009 | When a Task records a FAIL, DEFER or NOT_RUN result | required | `document-lifecycle` | active |
-| QUAL-R010 | Always | required | `qa-runner-tests` | active |
-| QUAL-R011 | Always | required | `qa-runner-tests` | active |
-| QUAL-R012 | Always | required | `qa-runner-tests` | active |
-| QUAL-R013 | Always | required | `validation-routing-tests` | active |
-| QUAL-R014 | When required authority, environment, provider or external evidence is unavailable | required | Semantic review | active |
-| QUAL-R015 | Always | required | Semantic review | active |
-| QUAL-R016 | Always | required | Semantic review | active |
-| QUAL-R017 | Always | required | `scripts/qa.py` | active |
-| QUAL-R018 | Always | required | Semantic review | active |
-| QUAL-R019 | Always | required | Semantic review | active |
-| QUAL-R020 | Always | required | Semantic review | active |
-| QUAL-R021 | For a pull request | required | Semantic review | active |
-| QUAL-R022 | Always | required | Semantic review | active |
-| QUAL-R023 | Always | required | Semantic review | active |
-| QUAL-R024 | Always | required | `document-contract-tests` | active |
-| QUAL-R025 | Always | required | `validation-routing-tests` | active |
-| QUAL-R026 | For an ordinary authored document or README router change | required | `document-contract-tests` | active |
-| QUAL-R027 | Always | required | Semantic review | active |
-| QUAL-R028 | During routine editing | required | `scripts/qa.py` | active |
-| QUAL-R029 | At a local commit | required | `staged-qa` hook of `.pre-commit-config.yaml` | active |
-| QUAL-R030 | At a feature push | required | Semantic review | active |
-| QUAL-R031 | At a pull request | required | `ci-python-contract` | active |
-| QUAL-R032 | At a deployment | required | Semantic review | active |
-| QUAL-R033 | At main integration | required | Semantic review | active |
-| QUAL-R034 | At a local handoff | required | Semantic review | active |
-| QUAL-R035 | Always | required | `qa-runner-tests` | active |
-| QUAL-R036 | While implementing | required | Semantic review | active |
-| QUAL-R037 | During iterations, when the working-tree input differs | required | `scripts/qa.py` | active |
-| QUAL-R038 | At each logical commit | required | `staged-qa` hook of `.pre-commit-config.yaml` | active |
-| QUAL-R039 | At delivery | required | Semantic review | active |
-| QUAL-R040 | When formatter findings or a failed delivery check occur | required | `selected-style` | active |
-| QUAL-R041 | At evidence handoff | required | Semantic review | active |
-| QUAL-R042 | Always | required | `document-lifecycle` | active |
-| QUAL-R043 | Always | required | Semantic review | active |
-| QUAL-R044 | Always | required | Semantic review | active |
-| QUAL-R045 | Always | required | Semantic review | active |
-| QUAL-R046 | Always | required | Semantic review | active |
-| QUAL-R047 | Always | required | Semantic review | active |
-| QUAL-R048 | Always | required | Semantic review | active |
-| QUAL-R049 | Always | required | Semantic review | active |
-| QUAL-R050 | Always | required | Semantic review | active |
-| QUAL-R051 | Where byte identity is the security contract | required | `github-actions-security` | active |
+| QUAL-R001 | Always | A QA profile selects gate IDs; a lane describes routing or an evidence boundary. The execution registry owns commands and profile membership. Execute one logical leaf once for identical input bytes and history, configuration, tool identity, environment, scope, mode, trust, guarantee and consumer; a matching filename set alone never justifies reuse, and reuse never drops a required security, regression or artifact check. A check that runs after an action observes it; it never claims to have blocked it. Distinct index, working-tree, integrated-main and remote observations require their own evidence where those inputs differ. A phase name or a second caller does not justify replaying an already proven leaf. Treat local candidate-code QA as validation in the authorized workspace, not as an isolation boundary for adversarial PR code. The hosted PR style route has a separate trusted-base source, merge input and run identity; neither route certifies the other's trust conditions. | `qa-runner-tests` | none |
+| QUAL-R002 | In the quick or affected lane | **quick / affected**: selected checks cover normalized working-tree changes, including applicable new files and deletion/rename paths. Record selection and the snapshot actually checked. | `validation-routing-tests` | none |
+| QUAL-R003 | In the staged lane | **staged**: validate the exact logical Git index in an isolated snapshot. Unstaged repairs cannot hide invalid staged content; commit-message hooks remain separate. | `qa-runner-tests` | none |
+| QUAL-R004 | Always | **retired full / ci sweep**: historical local `full` and `ci` all-files profiles and blanket unit discovery are retained as past evidence, not selected for current completion. Even a shared QA-contract change selects its actual affected gates and named behavior and security unit regressions; it does not revive a repository-wide sweep. An explicit audit identifies its purpose, inputs and bounded named checks under the active registry before execution. | `validation-routing-tests` | none |
+| QUAL-R005 | When a commit-message or manual-stage check applies | **message/manual**: record applicable commit-message or explicit manual-stage checks individually. | Semantic review | none |
+| QUAL-R006 | Always | **hosted**: a former local `ci` alias never established GitHub Actions execution. Hosted automation runs branch or repository metadata checks and the separately selected shared style check on PR inputs. When a PR changes `.github/requirements/`, the style job also runs the reviewed base's CI Python contract check against the PR files, because a bot-authored lock update never passes local staged QA (SPEC-0123; Git history: package `0123-hosted-lock-check` under `docs/03.specs/` at commit `69445fca`). When a PR changes GitOps data, the same job runs the reviewed base's static GitOps identity check against the PR files. That leaf is a candidate under the proposed ADR-0063 and is not yet adopted. A deployment style route applies only if a real deployment workflow exists. Hosted automation does not run local unit or document-content QA. A hosted result reports only what its jobs actually observed and is never a proxy for a successful local run or style job. The user adopted on 2026-11-12 a target in which PR-time hosted CI runs the affected implementation and product checks with a read-only token and no secrets. It is a target, not current behavior: until one change set accepts a successor to ADR-0048 and amends REQ-0003 FR-0017 with the workflow, FR-0017 and ADR-0048 govern, and the hosted jobs are `ci-summary` and `style-pr`. | `ci-python-contract` | none |
+| QUAL-R007 | For provider discovery, authenticated operation, remote execution or runtime checks | **remote/live**: provider discovery or authenticated operation, remote execution, and operator-approved runtime checks need direct authorized evidence. Static presence and hosted CI do not imply this lane. | Semantic review | none |
+| QUAL-R008 | Always | Before implementation, identify the required gates and resolve their tools, environment, actual cost/output needs, technical command limits and necessary native execution approval. This is resource preflight, not secret/live authorization; [approval and safety](approval-and-safety.md) owns the latter. If an actual required resource or native permission is unavailable, preserve safe work and report the required check as unexecuted with its next owner. Never change a command or wrapper to evade a resource guard, disable a required check or report a false result. | `scripts/run-validation-lane.py` | none |
+| QUAL-R009 | When a Task records a FAIL, DEFER or NOT_RUN result | A modern Task evidence `FAIL` records concrete Command, Input and Location as a `PASS` does. `NOT_RUN` and `DEFER` may use `Pending` where no result artifact exists, while naming the reason and next owner. QA `NOT_APPLICABLE` judges a check's target; it is never the Task criterion verdict `not-required`, which requires a cancelled Task and same-package cancelled Spec with the actual criterion-specific scope and authorization evidence. | `document-lifecycle` | none |
+| QUAL-R010 | Always | `PASS`: the named check ran over the stated scope and met its acceptance condition. | `qa-runner-tests` | none |
+| QUAL-R011 | Always | `NOT_RUN`: the named check did not execute. A selected required gate with this result blocks completion and cannot enter the PASS cache, which is the local evidence index kept by `scripts/qa.py`. A check outside the selected scope stays factual `NOT_RUN` without becoming a new requirement merely because a previous workflow once ran it. | `qa-runner-tests` | none |
+| QUAL-R012 | Always | `NOT_APPLICABLE`: the named check has no applicable target for the stated scope. It is not evidence that a selected required check ran. | `qa-runner-tests` | none |
+| QUAL-R013 | Always | `FAIL`: execution or input validation did not meet the acceptance condition. Missing required tools/modules, invalid registry, cancellation, timeout, output overflow, and cleanup failure cannot become NOT_APPLICABLE or PASS. | `validation-routing-tests` | none |
+| QUAL-R014 | When required authority, environment, provider or external evidence is unavailable | `DEFER`: required authority, environment, provider, or external evidence is unavailable. An applicable optional tool's absence needs a reason and next owner, with its fallback classified separately. This is a visible limitation, never a pass. | Semantic review | none |
+| QUAL-R015 | Always | Record the risk class, the applicable checks, a core-diff checklist over the exact snapshot, and the owner's acceptance and applicable recovery evidence. Low-risk changes use focused checks and the author's review. High-risk changes require review by an independent human or authorized reviewer who did not write the change. Record the review inputs, outcome and any unresolved finding. The independent review grants no execution permission or user acceptance. Choose a reviewer within the approved budget. This rule requires no paid model call or standing multiple-reviewer requirement. For an approved irreversible transition, record the applicable pre-transition and forward-correction checks in place of a recovery route for its authorized removal targets. | Semantic review | none |
+| QUAL-R016 | Always | Record the risk class in the existing handoff evidence: `low` for a document-only change outside policy, registry, validator, hook, workflow and permission files; `medium` for a policy, registry, template, validator or test change; `high` for a permission, secret-handling, hook, workflow, protected-action or data-loss path. A disputed class takes the higher one. | Semantic review | none |
+| QUAL-R017 | Always | Run the applicable checks selected by the validation registry. Automation establishes only what those checks cover. | `scripts/qa.py` | none |
+| QUAL-R018 | Always | Complete the core-diff checklist against the actual diff, current owners, acceptance criteria and command results, not the author's summary: acceptance and implementation alignment, document completion or supersession, one writer per file, consistency with current contracts and policies, removed or weakened checks, secret exposure and the applicable recovery path (rollback commit or bounded procedure). For approved final removal targets, record candidate validation, exact scope and the stop or forward-correction procedure from Rule 15. A `high` change also lists each changed permission, trigger and protected action. | Semantic review | none |
+| QUAL-R019 | Always | Grade every finding `BLOCK`, `FIX` or `NOTE`. `BLOCK` is a correctness, security or data-loss defect or a violation of a current contract or policy; it must be fixed before merge. `FIX` should be fixed, in the same change or in a tracked follow-up with a named owner. `NOTE` is informational. A `BLOCK` from an optional review blocks in the same way until fixed or dispositioned by the owner. | Semantic review | none |
+| QUAL-R020 | Always | Record the checked snapshot, check results, risk class, checklist outcome, findings, the reviewing role and identity when independent review is required, and the disposition in the existing handoff evidence. The writer repairs findings and refreshes the affected checks and checklist after changes. Reuse unchanged evidence under the validation lane contract. | Semantic review | none |
+| QUAL-R021 | For a pull request | For a pull request, complete the checklist over the final diff of the exact head. | Semantic review | none |
+| QUAL-R022 | Always | A failed required check or unresolved `BLOCK` finding blocks completion. Missing applicable automation is an explicit evidence gap, not PASS; route it to the responsible owner. The owner's explicit acceptance is the decision; it is never inferred from a check PASS, a merge or an optional review. Human judgment beyond that acceptance is needed for unresolved intent, conflicting authority or a decision reserved to the request owner. | Semantic review | none |
+| QUAL-R023 | Always | This review rule supplies quality evidence, not authorization. Explicit human/operator approvals, protected external actions and required hosted reviews remain governed by their existing owners. Native and live claims still require the corresponding observed evidence. | Semantic review | none |
+| QUAL-R024 | Always | The [agent evaluator](../roles/agent-evaluator.md) may compare actual `noSkill` and `withSkill` trials of the same task as bounded measurement evidence. The evaluation router holds raw observations, task context, criteria, scores and one aggregate results owner; Stage 99 owns their form. Declare trial count, signals, criterion IDs and human calibration before scoring. Preserve partial trials as incomplete and enter an aggregate only after every declared pair has actual evidence. A synthetic example or an unobserved condition is not an actual cycle. | `document-contract-tests` | none |
+| QUAL-R025 | Always | Admit a recurring check only for a current document contract or actual repository-purpose surface: document profiles, forms, frontmatter, relations, links and status; GitOps, Kubernetes, Docker, reference project templates, web content, Vault configuration and external-service interfaces where present. Shared selection, commit, release, secret and runner controls that enforce those contracts also need bounded regression coverage. Keep separate rules when their input, threat model or failure meaning differs. An old name, a slow run or a failure alone does not prove a test is obsolete. | `validation-routing-tests` | none |
+| QUAL-R026 | For an ordinary authored document or README router change | An ordinary authored document or README router change that alters only prose or navigation selects the common diff, style and commit-message checks plus document content checks for profile, relationships, links and lifecycle state. Do not select repository-wide quality, agent or infrastructure gates, or unit sweeps, solely because the changed path is Markdown. A change to a governance, provider or native contract, a Stage 99 form, schema or registry, or executable implementation is a contract or behavior change: select its necessary focused regressions and affected gates under the owning validation registry. No validator or hook rewrites a governed document. Document link checks remain local as specified above. | `document-contract-tests` | none |
+| QUAL-R027 | Always | The registry selects gates within a profile; changed inputs require a fresh result. A static workflow file cannot establish hosted execution or remote branch protection. | Semantic review | none |
+| QUAL-R028 | During routine editing | Routine editing | `scripts/qa.py` | none |
+| QUAL-R029 | At a local commit | Local commit | `staged-qa` hook of `.pre-commit-config.yaml` | none |
+| QUAL-R030 | At a feature push | Feature push | Semantic review | none |
+| QUAL-R031 | At a pull request | Pull request | `ci-python-contract` | none |
+| QUAL-R032 | At a deployment | Deployment | Semantic review | none |
+| QUAL-R033 | At main integration | Main integration | Semantic review | none |
+| QUAL-R034 | At a local handoff | Local handoff | Semantic review | none |
+| QUAL-R035 | Always | For a no-commit request preserve the index and record staged/message evidence as N/A. | `qa-runner-tests` | none |
+| QUAL-R036 | While implementing | **targeted**: reproduce changed behavior and run focused checks while implementing. | Semantic review | none |
+| QUAL-R037 | During iterations, when the working-tree input differs | **quick**: during iterations, run selected affected checks when the working-tree input differs or independent working-tree evidence is needed. Record the selection. If the required staged run demonstrably covers the same leaf with equivalent bytes, configuration, tool, scope, mode and trust, record `quick` as `NOT_RUN` and unrequired for completion; matching paths alone do not establish that equivalence. | `scripts/qa.py` | none |
+| QUAL-R038 | At each logical commit | **each logical commit**: inspect status and the unstaged diff, stage only the reviewed logical set, inspect the cached diff, run `git diff --check` and `git diff --cached --check`, then commit through the active hooks, whose `staged-qa` hook runs `qa.py staged` (exact-index QA including the selected lint/format gate) as one run. Validate the actual message under Git policy and record the leaf actually run. | `staged-qa` hook of `.pre-commit-config.yaml` | none |
+| QUAL-R039 | At delivery | **delivery validation**: review the selected focused units and purpose gates against the final branch input. Record hosted branch metadata and selected style at their own PR or deployment SHA/run when observed. Recheck an integrated-main input only to the extent changed bytes or history invalidate prior evidence. | Semantic review | none |
+| QUAL-R040 | When formatter findings or a failed delivery check occur | **repair and refresh**: inspect formatter findings, explicitly fix selected files, review/restage changed bytes and refresh affected evidence. QA itself never fixes source files. A failed required delivery check keeps the work incomplete. | `selected-style` | none |
+| QUAL-R041 | At evidence handoff | **evidence handoff**: record the checked snapshot and any subsequent Task-only changes separately, validating those document changes without a self-SHA or elapsed-time rewrite loop. Review final diff scope and remaining acceptance using the semantic review contract above. | Semantic review | none |
+| QUAL-R042 | Always | Record in the owning Task or approved evidence record: | `document-lifecycle` | none |
+| QUAL-R043 | Always | scope, changed paths, and acceptance IDs; | Semantic review | none |
+| QUAL-R044 | Always | the snapshot the work sits on: branch, HEAD, and the base it diverged from; when they differ, name the candidate the checks ran on, the verified commit and the delivered commit. A result recorded over a commit that later changed is stale for the new commit until it is run again; | Semantic review | none |
+| QUAL-R045 | Always | commands and tool/version, with each ordered completion-step result; | Semantic review | none |
+| QUAL-R046 | Always | separate lane results and limitations; | Semantic review | none |
+| QUAL-R047 | Always | the approval boundary in force: what was authorized and what was not; | Semantic review | none |
+| QUAL-R048 | Always | risk class, checklist outcome, any optional reviewer identity and disposition; | Semantic review | none |
+| QUAL-R049 | Always | rollback commit or bounded rollback procedure; | Semantic review | none |
+| QUAL-R050 | Always | residual risk and next owner. | Semantic review | none |
+| QUAL-R051 | Where byte identity is the security contract | Retain immutable identities where byte identity is the security contract: pinned external Actions/hooks, resolved dependency artifacts, or Git-backed recovery objects. Their owning contract records purpose and refresh/recovery procedure. Branch HEADs, current docs, local validators, and inventory counts are not policy pins. | `github-actions-security` | none |
+
+| Rule ID | Level | Status |
+| --- | --- | --- |
+| QUAL-R001 | required | active |
+| QUAL-R002 | required | active |
+| QUAL-R003 | required | active |
+| QUAL-R004 | required | active |
+| QUAL-R005 | required | active |
+| QUAL-R006 | required | active |
+| QUAL-R007 | required | active |
+| QUAL-R008 | required | active |
+| QUAL-R009 | required | active |
+| QUAL-R010 | required | active |
+| QUAL-R011 | required | active |
+| QUAL-R012 | required | active |
+| QUAL-R013 | required | active |
+| QUAL-R014 | required | active |
+| QUAL-R015 | required | active |
+| QUAL-R016 | required | active |
+| QUAL-R017 | required | active |
+| QUAL-R018 | required | active |
+| QUAL-R019 | required | active |
+| QUAL-R020 | required | active |
+| QUAL-R021 | required | active |
+| QUAL-R022 | required | active |
+| QUAL-R023 | required | active |
+| QUAL-R024 | required | active |
+| QUAL-R025 | required | active |
+| QUAL-R026 | required | active |
+| QUAL-R027 | required | active |
+| QUAL-R028 | required | active |
+| QUAL-R029 | required | active |
+| QUAL-R030 | required | active |
+| QUAL-R031 | required | active |
+| QUAL-R032 | required | active |
+| QUAL-R033 | required | active |
+| QUAL-R034 | required | active |
+| QUAL-R035 | required | active |
+| QUAL-R036 | required | active |
+| QUAL-R037 | required | active |
+| QUAL-R038 | required | active |
+| QUAL-R039 | required | active |
+| QUAL-R040 | required | active |
+| QUAL-R041 | required | active |
+| QUAL-R042 | required | active |
+| QUAL-R043 | required | active |
+| QUAL-R044 | required | active |
+| QUAL-R045 | required | active |
+| QUAL-R046 | required | active |
+| QUAL-R047 | required | active |
+| QUAL-R048 | required | active |
+| QUAL-R049 | required | active |
+| QUAL-R050 | required | active |
+| QUAL-R051 | required | active |
 
 #### Validation lane contract
 
 `QUAL-R001`
-
-- `QUAL-R002` **quick / affected**: selected checks cover normalized working-tree changes,
-  including applicable new files and deletion/rename paths. Record selection
-  and the snapshot actually checked.
-- `QUAL-R003` **staged**: validate the exact logical Git index in an isolated snapshot.
-  Unstaged repairs cannot hide invalid staged content; commit-message hooks
-  remain separate.
-- `QUAL-R004` **retired full / ci sweep**: historical local `full` and `ci` all-files
-  profiles and blanket unit discovery are retained as past evidence, not
-  selected for current completion. Even a shared QA-contract change selects
-  its actual affected gates and named behavior and security unit
-  regressions; it does not revive a repository-wide sweep. An explicit audit
-  identifies its purpose, inputs and bounded named checks under the active
-  registry before execution.
-- `QUAL-R005` **message/manual**: record applicable commit-message or explicit manual-stage
-  checks individually.
-- `QUAL-R006` **hosted**: a former local `ci` alias never established GitHub Actions
-  execution. Hosted automation
-  runs branch or repository metadata checks and the separately selected shared
-  style check on PR inputs. When a PR changes `.github/requirements/`, the
-  style job also runs the reviewed base's CI Python contract check against the
-  PR files, because a bot-authored lock update never passes local staged QA
-  (SPEC-0123; Git history: package `0123-hosted-lock-check` under
-  `docs/03.specs/` at commit `69445fca`). When a PR changes GitOps data, the
-  same job runs the reviewed base's static GitOps identity check against the
-  PR files. That leaf is a candidate under the proposed ADR-0063 and is not
-  yet adopted. A
-  deployment style route applies only if a real
-  deployment workflow exists. Hosted automation does not run local unit or
-  document-content QA. A hosted result reports only what its jobs actually
-  observed and is never a proxy for a successful local run or style job.
-  The user adopted on 2026-11-12 a target in which PR-time hosted CI runs the
-  affected implementation and product checks with a read-only token and no
-  secrets. It is a target, not current behavior: until one change set accepts
-  a successor to ADR-0048 and amends REQ-0003 FR-0017 with the workflow,
-  FR-0017 and ADR-0048 govern, and the hosted jobs are `ci-summary` and
-  `style-pr`.
-- `QUAL-R007` **remote/live**: provider discovery or authenticated operation, remote
-  execution, and operator-approved runtime checks need direct authorized
-  evidence. Static presence and hosted CI do not imply this lane.
-
-A QA profile selects gate IDs; a lane describes routing or an evidence boundary.
-The execution registry owns commands and profile membership. Execute one logical
-leaf once for identical input bytes and history, configuration, tool identity,
-environment, scope, mode, trust, guarantee and consumer; a matching filename
-set alone never justifies reuse, and reuse never drops a required security,
-regression or artifact check. A check that runs after an action observes it;
-it never claims to have blocked it.
-Distinct index, working-tree, integrated-main and remote
-observations require their own evidence where those inputs differ. A phase name
-or a second caller does not justify replaying an already proven leaf.
-Treat local candidate-code QA as validation in the authorized workspace, not
-as an isolation boundary for adversarial PR code. The hosted PR style route
-has a separate trusted-base source, merge input and run identity; neither
-route certifies the other's trust conditions.
 
 Document link and owner checks execute only through selected local QA. Hosted
 metadata jobs neither run nor certify them. A local repository link-target
@@ -155,14 +154,6 @@ unobserved external condition unless directly authorized and checked.
 #### Validation runner envelope
 
 `QUAL-R008`
-
-Before implementation, identify the required gates and resolve their tools,
-environment, actual cost/output needs, technical command limits and necessary
-native execution approval. This is resource preflight, not secret/live authorization;
-[approval and safety](approval-and-safety.md) owns the latter. If an actual
-required resource or native permission is unavailable, preserve safe work and report the required
-check as unexecuted with its next owner. Never change a command or wrapper to
-evade a resource guard, disable a required check or report a false result.
 
 Business deadlines, session timeboxes and final-validation reserve approvals
 are not prerequisites to scoped work or local validation. Do not invent them,
@@ -181,30 +172,6 @@ or pipes held by descendants after the leader exits as `FAIL`.
 
 `QUAL-R009`
 
-- `QUAL-R010` `PASS`: the named check ran over the stated scope and met its acceptance
-  condition.
-- `QUAL-R011` `NOT_RUN`: the named check did not execute. A selected required gate with this
-  result blocks completion and cannot enter the PASS cache, which is the local evidence index kept by
-  `scripts/qa.py`. A check
-  outside the selected scope stays factual `NOT_RUN` without becoming a new
-  requirement merely because a previous workflow once ran it.
-- `QUAL-R012` `NOT_APPLICABLE`: the named check has no applicable target for the stated
-  scope. It is not evidence that a selected required check ran.
-- `QUAL-R013` `FAIL`: execution or input validation did not meet the acceptance condition.
-  Missing required tools/modules, invalid registry, cancellation, timeout,
-  output overflow, and cleanup failure cannot become NOT_APPLICABLE or PASS.
-- `QUAL-R014` `DEFER`: required authority, environment, provider, or external evidence is
-  unavailable. An applicable optional tool's absence needs a reason and next
-  owner, with its fallback classified separately. This is a visible limitation,
-  never a pass.
-
-A modern Task evidence `FAIL` records concrete Command, Input and Location as a
-`PASS` does. `NOT_RUN` and `DEFER` may use `Pending` where no result artifact
-exists, while naming the reason and next owner. QA `NOT_APPLICABLE` judges a
-check's target; it is never the Task criterion verdict `not-required`, which
-requires a cancelled Task and same-package cancelled Spec with the actual
-criterion-specific scope and authorization evidence.
-
 When a Task records a required `FAIL`, `DEFER`, or `NOT_RUN`, keep the original
 observation. A later `PASS` closes it only when the new evidence explicitly
 names the earlier evidence ID and concerns the same check, work unit and
@@ -216,70 +183,9 @@ results, approval, integration and publication are distinct facts.
 
 `QUAL-R015`
 
-Record the risk class, the applicable checks, a core-diff checklist over the
-exact snapshot, and the owner's acceptance and applicable recovery evidence.
-Low-risk changes use focused checks and the author's review. High-risk changes
-require review by an independent human or authorized reviewer who did not write
-the change. Record the review inputs, outcome and any unresolved finding.
-The independent review grants no execution permission or user acceptance.
-Choose a reviewer within the approved budget. This rule requires no paid model
-call or standing multiple-reviewer requirement. For an approved irreversible
-transition, record the applicable pre-transition and forward-correction checks
-in place of a recovery route for its authorized removal targets.
-
-- `QUAL-R016` Record the risk class in the existing handoff evidence: `low` for a
-  document-only change outside policy, registry, validator, hook, workflow and
-  permission files; `medium` for a policy, registry, template, validator or test
-  change; `high` for a permission, secret-handling, hook, workflow,
-  protected-action or data-loss path. A disputed class takes the higher one.
-- `QUAL-R017` Run the applicable checks selected by the validation registry. Automation
-  establishes only what those checks cover.
-- `QUAL-R018` Complete the core-diff checklist against the actual diff, current owners,
-  acceptance criteria and command results, not the author's summary:
-  acceptance and implementation alignment, document completion or
-  supersession, one writer per file, consistency with current contracts and
-  policies, removed or weakened checks, secret exposure and the applicable
-  recovery path (rollback commit or bounded procedure). For approved final
-  removal targets, record candidate validation, exact scope and the stop or
-  forward-correction procedure from Rule 15. A `high`
-  change also lists each changed permission, trigger and protected action.
-- `QUAL-R019` Grade every finding `BLOCK`, `FIX` or `NOTE`. `BLOCK` is a correctness,
-  security or data-loss defect or a violation of a current contract or policy;
-  it must be fixed before merge. `FIX` should be fixed, in the same change or
-  in a tracked follow-up with a named owner. `NOTE` is informational. A `BLOCK`
-  from an optional review blocks in the same way until fixed or dispositioned
-  by the owner.
-- `QUAL-R020` Record the checked snapshot, check results, risk class, checklist outcome,
-  findings, the reviewing role and identity when independent review is required,
-  and the disposition in the existing
-  handoff evidence. The writer repairs findings and refreshes the affected
-  checks and checklist after changes. Reuse unchanged evidence under the
-  validation lane contract.
-- `QUAL-R021` For a pull request, complete the checklist over the final diff of the exact
-  head.
-- `QUAL-R022` A failed required check or unresolved `BLOCK` finding blocks completion.
-  Missing applicable automation is an explicit evidence gap, not PASS; route it
-  to the responsible owner. The owner's explicit acceptance is the decision; it
-  is never inferred from a check PASS, a merge or an optional review. Human
-  judgment beyond that acceptance is needed for unresolved intent, conflicting
-  authority or a decision reserved to the request owner.
-- `QUAL-R023` This review rule supplies quality evidence, not authorization. Explicit
-  human/operator approvals, protected external actions and required hosted
-  reviews remain governed by their existing owners. Native and live claims
-  still require the corresponding observed evidence.
-
 #### Agent evaluation evidence
 
 `QUAL-R024`
-
-The [agent evaluator](../roles/agent-evaluator.md) may compare actual
-`noSkill` and `withSkill` trials of the same task as bounded measurement
-evidence. The evaluation router holds raw observations, task context,
-criteria, scores and one aggregate results owner; Stage 99 owns their form.
-Declare trial count, signals, criterion IDs and human calibration before
-scoring. Preserve partial trials as incomplete and enter an aggregate only
-after every declared pair has actual evidence. A synthetic example or an
-unobserved condition is not an actual cycle.
 
 Evaluation scores and calibration are distinct from repository QA
 `PASS`/`FAIL`/`NOT_RUN`/`DEFER`, approval, and provider-runtime evidence. A
@@ -292,15 +198,6 @@ owned failure rule and the validation registry's separate review.
 #### QA admission and retirement
 
 `QUAL-R025`
-
-Admit a recurring check only for a current document contract or actual
-repository-purpose surface: document profiles, forms, frontmatter, relations,
-links and status; GitOps, Kubernetes, Docker, reference project templates, web
-content, Vault configuration and external-service interfaces where present.
-Shared selection, commit, release, secret and runner controls that enforce
-those contracts also need bounded regression coverage. Keep separate rules
-when their input, threat model or failure meaning differs.
-An old name, a slow run or a failure alone does not prove a test is obsolete.
 
 For a one-use, legacy or deprecated check, first transfer any ongoing
 protection to its durable owner, including lifecycle, link and content
@@ -323,66 +220,23 @@ not a policy sentence, owns the exact gate list and per-check limits.
 
 `QUAL-R026`
 
-An ordinary authored document or README router change that alters only prose
-or navigation selects the common diff, style and commit-message checks plus
-document content checks for profile, relationships, links and lifecycle state.
-Do not select repository-wide quality, agent or infrastructure gates, or
-unit sweeps, solely because the changed path is Markdown. A change to a governance,
-provider or native contract, a Stage 99 form, schema or registry, or executable
-implementation is a contract or behavior change: select its necessary focused
-regressions and affected gates under the owning validation registry. No
-validator or hook rewrites a governed document. Document link checks remain local as specified
-above.
-
 #### Delivery ownership
 
 `QUAL-R027`
 
-| Route | Required owner and evidence |
+| Rule ID | Required owner and evidence |
 | --- | --- |
-| `QUAL-R028` Routine editing | Run focused behavior checks and selected affected `quick` checks over changed working-tree bytes. |
-| `QUAL-R029` Local commit | Review the logical index, then commit with active hooks as one run: the `staged-qa` hook runs exact-index `staged` QA, which includes the selected lint and format gate (`selected-style`), and the commit-msg hooks validate the actual message. Record that run once. |
-| `QUAL-R030` Feature push | Preserve checked commit evidence and observed push result; pushing adds no QA leaf for unchanged inputs. |
-| `QUAL-R031` Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. A pull request completes only when the required checks pass, the review requirement is met (no approving review is required, count 0) and the core-diff checklist of the final diff records no unresolved `BLOCK` finding. The repository owner merges it, or explicitly directs its merge, with a merge commit; automated checks, Apps and signatures never stand in for the owner's approval. |
-| `QUAL-R032` Deployment | Observe the selected style check at the actual deployment SHA/run before deployment, as the hosted lane requires; otherwise retain `NOT_RUN` or `DEFER`. Repository files alone cannot certify deployment. |
-| `QUAL-R033` Main integration | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an unchanged merge candidate needs no repeat. Record the actual merge and any remote required-check result separately. |
-| `QUAL-R034` Local handoff | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing security guarantees. No session timebox or reserve approval is required. |
-
-The registry selects gates within a profile; changed inputs require a fresh
-result. A static workflow file
-cannot establish hosted execution or remote branch protection.
+| QUAL-R028 | Run focused behavior checks and selected affected `quick` checks over changed working-tree bytes. |
+| QUAL-R029 | Review the logical index, then commit with active hooks as one run: the `staged-qa` hook runs exact-index `staged` QA, which includes the selected lint and format gate (`selected-style`), and the commit-msg hooks validate the actual message. Record that run once. |
+| QUAL-R030 | Preserve checked commit evidence and observed push result; pushing adds no QA leaf for unchanged inputs. |
+| QUAL-R031 | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. A pull request completes only when the required checks pass, the review requirement is met (no approving review is required, count 0) and the core-diff checklist of the final diff records no unresolved `BLOCK` finding. The repository owner merges it, or explicitly directs its merge, with a merge commit; automated checks, Apps and signatures never stand in for the owner's approval. |
+| QUAL-R032 | Observe the selected style check at the actual deployment SHA/run before deployment, as the hosted lane requires; otherwise retain `NOT_RUN` or `DEFER`. Repository files alone cannot certify deployment. |
+| QUAL-R033 | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an unchanged merge candidate needs no repeat. Record the actual merge and any remote required-check result separately. |
+| QUAL-R034 | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing security guarantees. No session timebox or reserve approval is required. |
 
 #### Canonical completion sequence
 
 `QUAL-R035`
-
-1. `QUAL-R036` **targeted**: reproduce changed behavior and run focused checks while implementing.
-2. `QUAL-R037` **quick**: during iterations, run selected affected checks when the
-   working-tree input differs or independent working-tree evidence is needed.
-   Record the selection. If the required staged run demonstrably covers the
-   same leaf with equivalent bytes, configuration, tool, scope, mode and trust,
-   record `quick` as `NOT_RUN` and unrequired for completion; matching paths
-   alone do not establish that equivalence.
-3. `QUAL-R038` **each logical commit**: inspect status and the unstaged diff, stage only the
-   reviewed logical set, inspect the cached diff, run `git diff --check` and
-   `git diff --cached --check`, then commit through the active hooks, whose
-   `staged-qa` hook runs `qa.py staged` (exact-index QA including the selected
-   lint/format gate) as one run. Validate the actual message under Git policy
-   and record the leaf actually run.
-4. `QUAL-R039` **delivery validation**: review the selected focused units and purpose gates
-   against the final branch input. Record hosted branch metadata and selected
-   style at their own PR or deployment SHA/run when observed. Recheck an integrated-main
-   input only to the extent changed bytes or history invalidate prior evidence.
-5. `QUAL-R040` **repair and refresh**: inspect formatter findings, explicitly fix selected
-   files, review/restage changed bytes and refresh affected evidence. QA itself
-   never fixes source files. A failed required delivery check keeps the work incomplete.
-6. `QUAL-R041` **evidence handoff**: record the checked snapshot and any subsequent Task-only
-   changes separately, validating those document changes without a self-SHA or
-   elapsed-time rewrite loop. Review final diff scope and remaining acceptance using the semantic review
-   contract above.
-
-For a no-commit request preserve the index and record staged/message evidence
-as N/A.
 
 Use raw NUL-delimited machine paths for changed/staged path transport. Do not
 reconstruct them with newline iteration or filtered display output. Preserve
@@ -392,20 +246,6 @@ as successful selected coverage.
 #### Handoff evidence contract
 
 `QUAL-R042`
-
-Record in the owning Task or approved evidence record:
-
-- `QUAL-R043` scope, changed paths, and acceptance IDs;
-- `QUAL-R044` the snapshot the work sits on: branch, HEAD, and the base it diverged from;
-  when they differ, name the candidate the checks ran on, the verified commit
-  and the delivered commit. A result recorded over a commit that later changed
-  is stale for the new commit until it is run again;
-- `QUAL-R045` commands and tool/version, with each ordered completion-step result;
-- `QUAL-R046` separate lane results and limitations;
-- `QUAL-R047` the approval boundary in force: what was authorized and what was not;
-- `QUAL-R048` risk class, checklist outcome, any optional reviewer identity and disposition;
-- `QUAL-R049` rollback commit or bounded rollback procedure;
-- `QUAL-R050` residual risk and next owner.
 
 A field may state `none` or `DEFER` with a reason, but must not silently
 disappear. Do not copy raw child payload or sensitive diagnostics into evidence.
@@ -419,12 +259,6 @@ one. Neither field grants authority, and a stale record never widens it.
 #### Supply-chain identity
 
 `QUAL-R051`
-
-Retain immutable identities where byte identity is the security contract:
-pinned external Actions/hooks, resolved dependency artifacts, or Git-backed
-recovery objects. Their owning contract records purpose and
-refresh/recovery procedure. Branch HEADs, current docs, local validators, and
-inventory counts are not policy pins.
 
 ### Exceptions
 

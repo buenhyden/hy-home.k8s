@@ -1,6 +1,6 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.3.4"
+version: "1.3.5"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -239,6 +239,9 @@ kubectl get externalsecret -n apps ${APP}-secret
 
 성공 기준은 `READY=True`, `STATUS=SecretSynced`이며 secret value는 출력하지
 않는다.
+
+| Step | Action | Expected Result | On Failure |
+| --- | --- | --- | --- |
 
 ### Stop Conditions
 

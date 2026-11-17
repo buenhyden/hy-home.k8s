@@ -1273,6 +1273,10 @@ class PolicyRuleIds:
     rules_table_condition: str
     rules_table_minimum_rows: int
     codes: tuple[PolicyRuleCode, ...]
+    # SPEC-0222: the template tables the rule check reads: the core Rules table
+    # and the local rule level table keyed by Rule ID.
+    rules_table_name: str = ""
+    level_table_name: str = ""
 
 
 @dataclass(frozen=True)
@@ -3092,6 +3096,20 @@ def _policy_rule_faults(
         return faults
     if sorted(section["levels"]) != sorted(POLICY_RULE_LEVELS):
         fault(f"levels {list(POLICY_RULE_LEVELS)}", repr(section["levels"]))
+    # SPEC-0222: both named tables are tables of every policy template.
+    for profile in raw_registry["profiles"]:
+        if profile["mode"] != "template" or profile.get("document_role") != "policy":
+            continue
+        names = {
+            table["name"]
+            for table in (profile.get("template_definition") or {}).get("tables", ())
+        }
+        for key in ("core_table", "level_table"):
+            if section["rules_table"][key] not in names:
+                fault(
+                    f"the {key} named in a table of every policy template",
+                    f"{profile['id']}: {section['rules_table'][key]!r}",
+                )
     try:
         code_pattern = re.compile(section["code_pattern"])
     except re.error as exc:
@@ -4675,6 +4693,10 @@ def _policy_rule_ids_from_mapping(
         codes=tuple(
             PolicyRuleCode(item["path"], item["code"]) for item in raw["codes"]
         ),
+        # The schema requires both names; a same-MAJOR base registry read by the
+        # lifecycle comparison may predate them (as WORK-001 reads authority_ref).
+        rules_table_name=raw["rules_table"].get("core_table", ""),
+        level_table_name=raw["rules_table"].get("level_table", ""),
     )
 
 

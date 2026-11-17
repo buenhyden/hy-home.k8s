@@ -28,13 +28,17 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ### Requirements
 
-<!-- Author prompt: 통제의 의도와 책임을 실제 절차와 구분해 적는다. 정책이 규범적 규칙을 진술하면 규칙마다 <CODE>-R<NNN> 형식의 안정적인 ID와 조건, required·recommended·optional 중 하나의 수준을 두고, ID는 규칙의 목록 항목·표 첫 셀·H4 단락 맨 앞에 코드 스팬으로 적는다. -->
+<!-- Author prompt: 통제의 의도와 책임을 실제 절차와 구분해 적는다. 정책이 규범적 규칙을 진술하면 규칙마다 <CODE>-R<NNN> 형식의 안정적인 ID와 조건, required·recommended·optional 중 하나의 수준을 두고, 규칙의 내용은 Rules 표의 행에 적는다. 보충 단락·목록·표는 규칙 ID를 코드 스팬 한 줄로 둔 H4 아래에 둔다. -->
 
-<!-- Author prompt: 정책이 규범적 규칙을 진술하면 아래 Rules 표를 유지해 규칙마다 한 행을 두고, 번호는 001부터 빈틈없이 올리며, Status는 active 또는 retired; 뒤에 후속 규칙 ID나 none을 적고, 같은 변경에서 정책의 code를 docs/99.templates/registry.json의 policy_rule_ids에 등록한다. 그렇지 않으면 표를 지운다. -->
+<!-- Author prompt: 정책이 규범적 규칙을 진술하면 아래 Rules 표에 현재 규칙마다 한 행을, Rule Levels 표에 발급한 규칙 ID마다 한 행을 두고, 번호는 001부터 빈틈없이 올리며, 수준과 Status(active 또는 retired; 뒤에 후속 규칙 ID나 none)를 적는다. 같은 변경에서 정책의 code를 docs/99.templates/registry.json의 policy_rule_ids에 등록한다. 그렇지 않으면 두 표를 지운다. -->
 
-| Rule ID | Condition | Level | Evidence | Status |
+| Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
-| CODE-R001 | State when the rule applies. | required | Name where compliance is observed. | active |
+| CODE-R001 | State when the rule applies. | State what is allowed, required or forbidden. | Name where the rule is enforced, or manual review. | Name how compliance is checked, or none. |
+
+| Rule ID | Level | Status |
+| --- | --- | --- |
+| CODE-R001 | required | active |
 
 #### Control Register
 

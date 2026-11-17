@@ -205,10 +205,13 @@ form 경로의 대응은 Registry만 소유한다.
   목적·범위·규칙·예외·집행·소유는 form의 `Purpose and Scope`, `Rules`,
   `Enforcement`, `Ownership`에 배치하고, Policy의
   `Lifecycle Traceability` 관계 표는 `Ownership` 아래에서 같은 source·열·상호 참조
-  의미를 유지한다. Policy가 규범적 규칙을 진술하면 `Requirements` 아래에
-  `Rules` 표(Rule ID·Condition·Level·Evidence, 선택 열 Status)를 두고, 규칙 ID는
-  정책의 등록 code로 만든 `<CODE>-R<NNN>`이며 같은 ID를 규칙의 목록 항목·표
-  첫 셀·H4 단락 맨 앞에 코드 스팬으로 적는다. `Status`는 `retired;` 뒤에 후속
+  의미를 유지한다. Policy가 규범적 규칙을 진술하면 `Requirements` 아래에 core
+  `Rules` 표(Rule ID·Condition·Requirement·Enforcement·Evidence)에 현재 규칙마다
+  한 행을, 그 뒤 Rule ID로 묶인 지역 `Rule Levels` 표(Rule ID·Level, 선택 열
+  Status)에 발급한 규칙 ID마다 한 행을 둔다(SPEC-0222). 규칙 ID는 정책의 등록
+  code로 만든 `<CODE>-R<NNN>`이고, 규칙의 내용은 Rules 행에만 있으며 본문의 보충
+  단락·목록은 ID를 코드 스팬 한 줄로 둔 H4 아래에 남는다. 열이 더 많은 규칙 표는
+  Rule ID로 묶인 지역 표로 남는다. `Status`는 `retired;` 뒤에 후속
   ID나 `none`을 적어 폐기한 규칙의 행을 남기는 이 저장소의 조건부 확장이며,
   정확한 값과 code 기록은 Registry의 `policy_rule_ids`가 소유한다. 규칙 ID와 code는
   사용자가 승인한 Q-07 새 baseline까지 영구하다. ID는 삭제하거나 폐기 뒤 다시 `active`로

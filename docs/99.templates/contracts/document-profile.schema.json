@@ -1162,7 +1162,9 @@
           "additionalProperties": false,
           "required": [
             "condition",
-            "minimum_rows"
+            "minimum_rows",
+            "core_table",
+            "level_table"
           ],
           "properties": {
             "condition": {
@@ -1172,6 +1174,16 @@
             "minimum_rows": {
               "type": "integer",
               "minimum": 1
+            },
+            "core_table": {
+              "description": "SPEC-0222: the template table that carries the core policy.rules table.",
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "level_table": {
+              "description": "SPEC-0222: the local template table keyed by Rule ID that carries each rule's Level and Status.",
+              "type": "string",
+              "pattern": "\\S"
             }
           }
         },

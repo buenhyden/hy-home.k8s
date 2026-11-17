@@ -173,13 +173,11 @@ RUNBOOK_EXTENSIONS = [
         "title": "Lifecycle Traceability",
     },
 ]
+# SPEC-0222: the core step table of the runbook, guide and their operations peers.
+CORE_STEP_COLUMNS = ("Step", "Action", "Expected Result", "On Failure")
+CORE_ACTION_COLUMNS = ("Action", "Owner", "Condition", "Evidence")
 RUNBOOK_TABLE_KEYS = {
-    "Triggers": (
-        "runbook.procedure.1",
-        ("Trigger", "Action", "Rollback"),
-        0,
-        "Trigger",
-    ),
+    "Steps": ("runbook.procedure", CORE_STEP_COLUMNS, 0, "Step"),
     "Lifecycle Traceability": (
         "runbook-lifecycle-traceability",
         ("Promoted owner", "Trigger or control", "Evidence or recovery owner"),
@@ -275,12 +273,20 @@ POLICY_EXTENSION = {
     "parent_id": "policy.ownership",
     "title": "Lifecycle Traceability",
 }
-# SPEC-0194 (W03-D65): four common columns and the one optional Status extension.
-POLICY_RULES_COLUMNS = ("Rule ID", "Condition", "Level", "Evidence")
+# SPEC-0222: the core Rules table and the local Rule Levels table keyed by Rule ID,
+# whose Status stays the one optional extension (SPEC-0194, W03-D65).
+POLICY_RULES_COLUMNS = (
+    "Rule ID",
+    "Condition",
+    "Requirement",
+    "Enforcement",
+    "Evidence",
+)
 POLICY_RULES_OPTIONAL = ("Status",)
-POLICY_RULES_TABLE = (
+POLICY_RULES_TABLE = ("policy.rules", POLICY_RULES_COLUMNS, 0, "Rule ID")
+POLICY_LEVELS_TABLE = (
     "policy.rules.1",
-    (*POLICY_RULES_COLUMNS, *POLICY_RULES_OPTIONAL),
+    ("Rule ID", "Level", *POLICY_RULES_OPTIONAL),
     0,
     "Rule ID",
 )
@@ -395,9 +401,13 @@ PACK_EXTENSIONS = [
         "title": "Separate Evidence Axes",
     },
 ]
-POLICY_GOVERNANCE_TABLE_KEYS = {"Rules": POLICY_RULES_TABLE}
+POLICY_GOVERNANCE_TABLE_KEYS = {
+    "Rules": POLICY_RULES_TABLE,
+    "Rule Levels": POLICY_LEVELS_TABLE,
+}
 POLICY_OPERATIONS_TABLE_KEYS = {
     "Rules": POLICY_RULES_TABLE,
+    "Rule Levels": POLICY_LEVELS_TABLE,
     "Lifecycle Traceability": (
         "policy-lifecycle-traceability",
         ("Promoted owner", "Control owner", "Enforcement surface"),
@@ -1454,6 +1464,7 @@ INCIDENT_TABLE_KEYS = {
         0,
         "Timestamp",
     ),
+    "Actions": ("incident.response", CORE_ACTION_COLUMNS, 0, "Action"),
     "Lifecycle Traceability": (
         "incident-lifecycle-traceability",
         ("Timeline or action", "Evidence", "Follow-up Task"),
@@ -1462,12 +1473,7 @@ INCIDENT_TABLE_KEYS = {
     ),
 }
 POSTMORTEM_TABLE_KEYS = {
-    "Actions": (
-        "postmortem.actions.1",
-        ("Action", "Owner", "Verification"),
-        0,
-        "Action",
-    ),
+    "Actions": ("postmortem.actions", CORE_ACTION_COLUMNS, 0, "Action"),
     "Lifecycle Traceability": (
         "postmortem-lifecycle-traceability",
         (
@@ -1496,7 +1502,7 @@ GUIDE_EXTENSION = {
     "title": "Lifecycle Traceability",
 }
 GUIDE_TABLE_KEYS = {
-    "Steps": ("guide.steps.1", ("Step", "Action", "Check"), 0, "Step"),
+    "Steps": ("guide.steps", CORE_STEP_COLUMNS, 0, "Step"),
     "Lifecycle Traceability": (
         "guide-lifecycle-traceability",
         ("Promoted owner", "Audience outcome", "Operating surface"),
@@ -1908,7 +1914,6 @@ class RepositoryRegistryTests(unittest.TestCase):
             self.assertEqual(
                 conditional,
                 {
-                    "runbook": {"runbook.escalation.2"},
                     "reference-pack-readme": {
                         f"reference-pack-readme-{title.lower().replace(' ', '-')}"
                         for title in PACK_NOT_REQUIRED
@@ -1955,19 +1960,23 @@ class RepositoryRegistryTests(unittest.TestCase):
                         else tables
                     ),
                 )
+                core_types = {
+                    (t["table_id"], c["label"]): c["value_type"]
+                    for t in loaded.get("core", {}).get("tables", ())
+                    for c in t["columns"]
+                }
                 for table in by_id[twin]["template_definition"]["tables"]:
                     for column in table["columns"]:
                         self.assertTrue(column["meaning"])
                         # The research Sources table dates its retrieval (W03-D21);
-                        # a core table column takes its core value type, which the
-                        # core check compares (SPEC-0222).
-                        if "table_id" in table:
-                            self.assertTrue(column["data_type"])
-                        else:
-                            self.assertEqual(
-                                column["data_type"],
+                        # a core table takes the core value type (SPEC-0222).
+                        self.assertEqual(
+                            column["data_type"],
+                            core_types.get(
+                                (table.get("table_id"), column["key"]),
                                 "date" if column["key"] == "Retrieved" else "string",
-                            )
+                            ),
+                        )
                         self.assertIs(
                             column["required"],
                             not (
@@ -2008,13 +2017,13 @@ class RepositoryRegistryTests(unittest.TestCase):
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
             "guide": ["Steps", "Lifecycle Traceability"],
-            "runbook": ["Triggers", "Lifecycle Traceability"],
-            "incident": ["Events", "Lifecycle Traceability"],
+            "runbook": ["Steps", "Lifecycle Traceability"],
+            "incident": ["Events", "Actions", "Lifecycle Traceability"],
             "postmortem": ["Actions", "Lifecycle Traceability"],
             "root-readme": ["Directory Index"],
             "stage-readme": ["Index"],
             "service-readme": ["Commands"],
-            "policy": ["Rules", "Lifecycle Traceability"],
+            "policy": ["Rules", "Rule Levels", "Lifecycle Traceability"],
             "agents": ["Tool Rules"],
             "skill": ["Steps"],
             "workspace-readme": [],
@@ -2043,7 +2052,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 for form_id, _, _, _, tables, _ in LOCAL_FORMS
             },
         }
-        governance_tables = ["Rules"]
+        governance_tables = ["Rules", "Rule Levels"]
         for profile in registry.profiles:
             with self.subTest(profile=profile.profile_id):
                 role = next(
@@ -2354,7 +2363,9 @@ class FormRegistryTests(unittest.TestCase):
         REGISTRY_CHECK._assert_template_source_parity(registry)
         raw = self.candidate()
         profile_of(raw, GUIDE[1])["document_role"] = "runbook"
-        loaded = CONTRACTS.validate_registry(ROOT, raw)
+        # SPEC-0222: the moved template also lacks the runbook core table.
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_TABLE"})
+        loaded = CONTRACTS._typed_registry_from_mapping(raw)
         with self.assertRaisesRegex(AssertionError, "template/source contract differs"):
             REGISTRY_CHECK._assert_template_source_parity(loaded)
         raw = self.candidate()
@@ -2490,7 +2501,7 @@ class GuideFormRegistryTests(unittest.TestCase):
         steps, lifecycle = twin.tables
         self.assertEqual(
             (steps.name, steps.section, steps.minimum_rows, steps.row_identity),
-            ("Steps", "guide.steps.1", 0, "Step"),
+            ("Steps", "guide.steps", 0, "Step"),
         )
         self.assertEqual(
             [column.key for column in lifecycle.columns],
@@ -2528,7 +2539,7 @@ class GuideFormRegistryTests(unittest.TestCase):
         guide_tables(raw)[0]["section"] = "Actions"
         self.assertIn("REGISTRY_TABLE_SECTION", rules_of(raw))
         for accepted in ("guide.purpose", "guide.troubleshoot.1"):
-            raw = load_raw()
+            raw = unbind_guide(load_raw())
             guide_tables(raw)[0]["section"] = accepted
             with self.subTest(section=accepted):
                 self.assertEqual(rules_of(raw), set())
@@ -2878,7 +2889,10 @@ class HeadingTreeTests(unittest.TestCase):
         self.assertIn("BODY-H3-UNSUPPORTED", [i.rule_id for i in broken])
 
 
-STEPS = "| Step | Action | Check |\n| --- | --- | --- |\n| 1 | Run | Read |"
+STEPS = (
+    "| Step | Action | Expected Result | On Failure |\n"
+    "| --- | --- | --- | --- |\n| 1 | Run | Read | Stop |"
+)
 OTHER = "| Name | Value |\n| --- | --- |\n| a | b |"
 LIFECYCLE = (
     "| Promoted owner | Audience outcome | Operating surface |\n"
@@ -2939,11 +2953,11 @@ class TableCheckTests(unittest.TestCase):
 
     def test_a_reordered_missing_or_extra_column_fails(self) -> None:
         for header in (
-            "| Step | Check | Action |",
-            "| Action | Step | Check |",
-            "| Step | Action |",
-            "| Step | Action | Check | Note |",
-            "| Step | Action | Check | Check |",
+            "| Step | Expected Result | Action | On Failure |",
+            "| Action | Step | Expected Result | On Failure |",
+            "| Step | Action | Expected Result |",
+            "| Step | Action | Expected Result | On Failure | Note |",
+            "| Step | Action | Check | On Failure |",
         ):
             cells = header.count("|") - 1
             body = f"{header}\n" + "| --- " * cells + "|\n" + "| 1 " * cells + "|"
@@ -2958,7 +2972,7 @@ class TableCheckTests(unittest.TestCase):
     def test_the_minimum_rows_count_every_identified_table_in_the_section(
         self,
     ) -> None:
-        header_only = "| Step | Action | Check |\n| --- | --- | --- |"
+        header_only = "| Step | Action | Expected Result | On Failure |\n| --- | --- | --- | --- |"
         self.assertEqual(
             self.found(guide_body(header_only), self.strict), ["BODY-TABLE-ROWS"]
         )
@@ -2966,7 +2980,7 @@ class TableCheckTests(unittest.TestCase):
             self.found(guide_body(STEPS), self.strict), ["BODY-TABLE-ROWS"]
         )
         self.assertEqual(
-            self.found(guide_body(STEPS + "\n| 2 | Run | Read |"), self.strict),
+            self.found(guide_body(STEPS + "\n| 2 | Run | Read | Stop |"), self.strict),
             [],
         )
         split = guide_body(STEPS + "\n\n#### Detail\n\n" + STEPS)
@@ -2986,7 +3000,8 @@ class TableCheckTests(unittest.TestCase):
         self.assertEqual(self.found(body, self.strict), ["BODY-TABLE-ROWS"])
 
     def test_a_non_unique_section_heading_is_left_to_the_tree_check(self) -> None:
-        body = guide_body(STEPS) + "\n### Steps\n\n" + OTHER + "\n"
+        # SPEC-0222: the core table belongs to the Procedure H2.
+        body = guide_body(STEPS) + "\n## Procedure\n\n" + OTHER + "\n"
         self.assertEqual(self.found(body, self.strict), [])
 
     def test_the_body_contract_table_is_not_checked_twice(self) -> None:
@@ -3040,7 +3055,9 @@ class OptionalTrailingColumnTests(unittest.TestCase):
 
     @classmethod
     def raw_with_note(cls, required: bool = False) -> dict:
-        raw = load_raw()
+        # A core table refuses an appended column; the trailing-column rule is
+        # a local table rule, read here on the unbound guide table.
+        raw = unbind_guide(load_raw())
         columns = guide_tables(raw)[0]["columns"]
         columns.append(
             {"key": "Note", "meaning": "m", "data_type": "string", "required": required}
@@ -3070,21 +3087,21 @@ class OptionalTrailingColumnTests(unittest.TestCase):
         )
 
     def test_an_omitted_optional_trailing_column_passes(self) -> None:
-        self.assertEqual(self.found(("Step", "Action", "Check")), [])
+        self.assertEqual(self.found(CORE_STEP_COLUMNS), [])
 
     def test_a_present_optional_trailing_column_passes(self) -> None:
-        self.assertEqual(self.found(("Step", "Action", "Check", "Note")), [])
+        self.assertEqual(self.found((*CORE_STEP_COLUMNS, "Note")), [])
 
     def test_a_missing_required_column_fails(self) -> None:
-        for header in (("Step", "Action"), ("Step",)):
+        for header in (("Step", "Action", "Expected Result"), ("Step",)):
             with self.subTest(header=header):
                 self.assertEqual(self.found(header), ["BODY-TABLE-COLUMNS"])
 
     def test_a_reordered_or_extra_column_still_fails(self) -> None:
         for header in (
-            ("Step", "Action", "Note"),
-            ("Step", "Action", "Note", "Check"),
-            ("Step", "Action", "Check", "Note", "Extra"),
+            ("Step", "Action", "Expected Result", "Note"),
+            ("Step", "Action", "Expected Result", "Note", "On Failure"),
+            (*CORE_STEP_COLUMNS, "Note", "Extra"),
         ):
             with self.subTest(header=header):
                 self.assertEqual(self.found(header), ["BODY-TABLE-COLUMNS"])
@@ -3421,8 +3438,9 @@ class TableIteratorTests(unittest.TestCase):
 
 
 RUNBOOK_PATH = PurePosixPath("docs/05.operations/runbooks/0001-temporary-runbook.md")
-TRIGGERS = (
-    "| Trigger | Action | Rollback |\n| --- | --- | --- |\n| Alert | Restart | Undo |"
+RUNBOOK_STEPS = (
+    "| Step | Action | Expected Result | On Failure |\n"
+    "| --- | --- | --- | --- |\n| 1 | Restart | Ready | Stop and call the owner |"
 )
 RUNBOOK_BODY = md(
     "# Runbook title",
@@ -3440,6 +3458,7 @@ RUNBOOK_BODY = md(
     "### Unverified Conditions\n\nNone recorded.",
     "## Escalation",
     "### Next Owner\n\nCall the owner.",
+    "### Recovery or Forward Repair\n\nUndo step 1.",
 )
 
 
@@ -3490,21 +3509,19 @@ class RunbookFormTests(unittest.TestCase):
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         twin, source = by_id[RUNBOOK[1]], by_id[RUNBOOK[0]]
         self.assertEqual(source.tables, twin.tables)
-        triggers, lifecycle = twin.tables
+        steps, lifecycle = twin.tables
         self.assertEqual(
-            (
-                triggers.name,
-                triggers.section,
-                triggers.minimum_rows,
-                triggers.row_identity,
-            ),
-            ("Triggers", "runbook.procedure.1", 0, "Trigger"),
+            (steps.name, steps.section, steps.minimum_rows, steps.row_identity),
+            ("Steps", "runbook.procedure", 0, "Step"),
+        )
+        self.assertEqual(
+            [column.key for column in steps.columns], list(CORE_STEP_COLUMNS)
         )
         self.assertEqual(
             [column.key for column in lifecycle.columns],
             list(RUNBOOK_TABLE_KEYS["Lifecycle Traceability"][1]),
         )
-        self.assertTrue(all(column.required for column in triggers.columns))
+        self.assertTrue(all(column.required for column in steps.columns))
 
     def test_the_repository_runbook_registry_is_valid_and_its_twin_matches(
         self,
@@ -3515,24 +3532,32 @@ class RunbookFormTests(unittest.TestCase):
     def test_a_complete_runbook_passes_the_tree(self) -> None:
         self.assertEqual(self.tree(RUNBOOK_BODY), [])
 
-    def test_a_triggers_table_passes_when_it_keeps_the_registered_columns(
+    def test_recovery_or_forward_repair_is_required_as_the_core_states(self) -> None:
+        without = RUNBOOK_BODY.replace(
+            "\n\n### Recovery or Forward Repair\n\nUndo step 1.", ""
+        )
+        self.assertNotIn("Recovery or Forward Repair", without)
+        self.assertNotEqual(self.tree(without), [])
+
+    def test_a_steps_table_passes_when_it_keeps_the_core_columns(
         self,
     ) -> None:
-        body = RUNBOOK_BODY.replace("Run it.", "Run it.\n\n" + TRIGGERS)
+        body = RUNBOOK_BODY.replace("Run it.", "Run it.\n\n" + RUNBOOK_STEPS)
         self.assertEqual(self.tables(body), [])
 
-    def test_a_header_only_triggers_table_passes_because_the_minimum_is_zero(
+    def test_a_header_only_steps_table_passes_because_the_minimum_is_zero(
         self,
     ) -> None:
-        header_only = "| Trigger | Action | Rollback |\n| --- | --- | --- |"
+        header_only = "| Step | Action | Expected Result | On Failure |\n| --- | --- | --- | --- |"
         self.assertEqual(self.tables(RUNBOOK_BODY.replace("Run it.", header_only)), [])
         self.assertEqual(self.tables(RUNBOOK_BODY), [])
 
-    def test_a_reordered_or_missing_triggers_column_fails(self) -> None:
+    def test_a_reordered_relabeled_or_missing_steps_column_fails(self) -> None:
         for header in (
-            "| Trigger | Rollback | Action |",
-            "| Trigger | Action |",
-            "| Trigger | Action | Rollback | Note |",
+            "| Step | Expected Result | Action | On Failure |",
+            "| Step | Action | Expected Result |",
+            "| Step | Action | Expected Result | On Failure | Note |",
+            "| Step | Action | Expected result | Stop / escalate when |",
         ):
             cells = header.count("|") - 1
             table = f"{header}\n" + "| --- " * cells + "|\n" + "| a " * cells + "|"
@@ -3542,26 +3567,24 @@ class RunbookFormTests(unittest.TestCase):
                     ["BODY-TABLE-COLUMNS"],
                 )
 
-    def test_the_four_column_step_table_is_not_identified(self) -> None:
-        step = (
-            "| Step | Action | Expected result | Stop / escalate when |\n"
-            "| --- | --- | --- | --- |\n| 1 | Run | Pass | Error |"
+    def test_a_steps_table_outside_procedure_is_not_looked_at(self) -> None:
+        wrong = "| Step | Action |\n| --- | --- |\n| a | b |"
+        self.assertEqual(
+            self.tables(RUNBOOK_BODY.replace("Read the status.", wrong)), []
         )
-        self.assertEqual(self.tables(RUNBOOK_BODY.replace("Run it.", step)), [])
-
-    def test_a_triggers_table_outside_actions_is_not_looked_at(self) -> None:
-        wrong = "| Trigger | Action |\n| --- | --- |\n| a | b |"
-        body = RUNBOOK_BODY.replace("Stop on error.", wrong)
-        self.assertEqual(self.tables(body), [])
+        inside = RUNBOOK_BODY.replace("Stop on error.", wrong)
+        self.assertEqual(self.tables(inside), ["BODY-TABLE-COLUMNS"])
 
     def test_recovery_procedures_is_accepted_under_recovery(self) -> None:
         block = "### Recovery Procedures\n\nRestore the replica from the snapshot."
         self.assertEqual(self.tree(self.under("", block)), [])
         before_rollback = RUNBOOK_BODY.replace(
             "### Next Owner\n\nCall the owner.",
-            "### Next Owner\n\nCall the owner.\n\n"
-            + block
-            + "\n\n### Recovery or Forward Repair\n\nUndo step 1.",
+            "### Next Owner\n\nCall the owner.\n\n" + block,
+        )
+        self.assertLess(
+            before_rollback.index("### Recovery Procedures"),
+            before_rollback.index("### Recovery or Forward Repair"),
         )
         self.assertEqual(self.tree(before_rollback), [])
 
@@ -3643,6 +3666,7 @@ class RoleFormBody(unittest.TestCase):
     BODY: str
     HEADER: tuple[str, ...]  # its required columns, in order
     OPTIONAL: tuple[str, ...] = ()  # its optional trailing columns, in order
+    ALL_OPTIONAL: tuple[str, ...] | None = None  # every table's, when it differs
     HOME: str  # the H3 line its table belongs under
 
     @classmethod
@@ -3717,7 +3741,7 @@ class RoleFormBody(unittest.TestCase):
         )
         self.assertEqual(
             tuple(c.key for t in twin.tables for c in t.columns if not c.required),
-            self.OPTIONAL,
+            self.OPTIONAL if self.ALL_OPTIONAL is None else self.ALL_OPTIONAL,
         )
 
     def test_the_repository_registry_is_valid_and_its_twin_matches(self) -> None:
@@ -3786,6 +3810,19 @@ class IncidentFormTests(RoleFormBody):
         body = INCIDENT_BODY.replace("Checks pass.", wrong)
         self.assertEqual(self.tables(body), [])
 
+    def test_the_core_actions_table_belongs_to_the_response_section(self) -> None:
+        # SPEC-0222: incident.actions sits under Response > Actions.
+        core = self.table(CORE_ACTION_COLUMNS, ("Roll back", "Ops", "Alert", "none"))
+        body = self.with_table(core, home="Rolled back.")
+        self.assertEqual(self.tables(body), [])
+        self.assertEqual(self.tree(body), [])
+        old = self.table(("Action", "Owner", "Verification"), ("a", "b", "c"))
+        self.assertEqual(
+            self.tables(self.with_table(old, home="Rolled back.")),
+            ["BODY-TABLE-COLUMNS"],
+        )
+        self.assertEqual(self.tables(self.with_table(old, home="Checks pass.")), [])
+
     def test_the_metadata_table_is_not_a_contract_table(self) -> None:
         self.assertIn("| Field | Value |", INCIDENT_BODY)
         self.assertEqual(self.tables(INCIDENT_BODY), [])
@@ -3813,8 +3850,15 @@ class PostmortemFormTests(RoleFormBody):
     TREE = POSTMORTEM_TREE
     TABLE_KEYS = POSTMORTEM_TABLE_KEYS
     BODY = POSTMORTEM_BODY
-    HEADER = ("Action", "Owner", "Verification")
+    HEADER = CORE_ACTION_COLUMNS
     HOME = "Add a canary."
+
+    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
+        # SPEC-0222: the core table belongs to the whole Actions H2.
+        wrong = self.table(self.HEADER[:2], ("a", "b"))
+        self.assertEqual(self.tables(self.with_table(wrong, home="No canary.")), [])
+        inside = self.with_table(wrong, home="#### Source Records")
+        self.assertEqual(self.tables(inside), ["BODY-TABLE-COLUMNS"])
 
     WELL = "### What Went Well\n\nThe alert fired within a minute."
 
@@ -3896,8 +3940,16 @@ class GovernancePolicyFormTests(RoleFormBody):
     TABLE_KEYS = POLICY_GOVERNANCE_TABLE_KEYS
     BODY = policy_body()
     HEADER = POLICY_RULES_COLUMNS
-    OPTIONAL = POLICY_RULES_OPTIONAL
+    ALL_OPTIONAL = POLICY_RULES_OPTIONAL
     HOME = "Review every change."
+
+    def tables(self, text: str) -> list[str]:
+        # SPEC-0222: the rule check owns both rule tables of an authored policy, so
+        # the generic table check is read on the template twin.
+        twin = typed_profiles(load_raw())[self.PROFILES[1]]
+        return sorted(
+            item.rule_id for item in MARKDOWN._table_diagnostics(self.PATH, twin, text)
+        )
 
     def test_the_loader_copies_the_tables_to_the_source_profile(self) -> None:
         super().test_the_loader_copies_the_tables_to_the_source_profile()
@@ -3919,8 +3971,16 @@ class OperationsPolicyFormTests(RoleFormBody):
     TABLE_KEYS = POLICY_OPERATIONS_TABLE_KEYS
     BODY = policy_body()
     HEADER = POLICY_RULES_COLUMNS
-    OPTIONAL = POLICY_RULES_OPTIONAL
+    ALL_OPTIONAL = POLICY_RULES_OPTIONAL
     HOME = "Review every change."
+
+    def tables(self, text: str) -> list[str]:
+        # SPEC-0222: the rule check owns both rule tables of an authored policy, so
+        # the generic table check is read on the template twin.
+        twin = typed_profiles(load_raw())[self.PROFILES[1]]
+        return sorted(
+            item.rule_id for item in MARKDOWN._table_diagnostics(self.PATH, twin, text)
+        )
 
     BLOCK = (
         "### Lifecycle Traceability\n\n"
@@ -6410,7 +6470,9 @@ class TemplateTwinTableTests(unittest.TestCase):
 
     def test_a_second_twin_without_tables_is_not_refused(self) -> None:
         raw = self.second_twin(load_raw(), tables=False)
-        self.assertEqual(rules_of(raw), set())
+        # SPEC-0222: the twin rule stays silent; the core rule still asks every
+        # guide template for the core guide.steps table.
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_TABLE"})
 
 
 class RetainedFormTests(unittest.TestCase):
@@ -8387,6 +8449,25 @@ def core_bound_guide(raw: dict) -> dict:
     return raw
 
 
+def unbind_guide(raw: dict) -> dict:
+    """SPEC-0222: the guide form without its core binding, so that a test of a
+    local table rule can use the guide tables as a plain local fixture."""
+
+    form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
+    del form["core_role"], form["core"]
+    stack = list(form["sections"])
+    while stack:
+        item = stack.pop()
+        stack.extend(item["children"])
+        del item["core"]
+    for table in guide_tables(raw):
+        for key in ("table_id", "required_when", "empty_policy"):
+            table.pop(key, None)
+        for column in table["columns"]:
+            column.pop("id", None)
+    return raw
+
+
 class CoreRoleBindingTests(unittest.TestCase):
     """SPEC-0222 VAL-CORE-001: the registry carries the common core binding."""
 
@@ -8426,7 +8507,8 @@ class CoreRoleBindingTests(unittest.TestCase):
         cases["domain with core"] = raw
         raw = load_raw()
         form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
-        form["core_role"] = "guide"
+        self.assertEqual(form["core_role"], "guide")
+        del form["core"]
         cases["core role without core"] = raw
         raw = load_raw()
         del raw["common_forms"]["forms"][0]["extensions"][0]["authority_ref"]
@@ -8492,7 +8574,7 @@ class CoreRoleBindingTests(unittest.TestCase):
         self.assertEqual(rules_of(raw), {"REGISTRY_CORE_SECTION"})
 
     def test_a_core_table_id_outside_a_core_role_form_is_refused(self) -> None:
-        raw = load_raw()
+        raw = unbind_guide(load_raw())
         table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
         table.update(table_id="guide.steps", required_when="w", empty_policy="e")
         self.assertEqual(rules_of(raw), {"REGISTRY_CORE_TABLE"})
@@ -8558,6 +8640,218 @@ class CoreRoleBindingTests(unittest.TestCase):
                 )
                 change(form)
                 self.assertEqual(rules_of(raw), {"REGISTRY_CORE_SECTION"})
+
+
+OPERATIONS_CORE = {
+    "guide": {
+        "guide.steps": ("guide.steps", "ordered_procedure", CORE_STEP_COLUMNS),
+    },
+    "runbook": {
+        "runbook.steps": ("runbook.procedure", "always", CORE_STEP_COLUMNS),
+    },
+    "incident": {
+        "incident.actions": ("incident.response", "always", CORE_ACTION_COLUMNS),
+    },
+    "postmortem": {
+        "postmortem.actions": ("postmortem.actions", "always", CORE_ACTION_COLUMNS),
+    },
+    "policy": {
+        "policy.rules": ("policy.rules", "always", POLICY_RULES_COLUMNS),
+    },
+}
+OPERATIONS_TEMPLATES = {
+    "guide": GUIDE[1],
+    "runbook": RUNBOOK[1],
+    "incident": INCIDENT[1],
+    "postmortem": POSTMORTEM[1],
+    "policy": POLICY_GOVERNANCE[1],
+}
+
+
+class OperationsCoreBindingTests(unittest.TestCase):
+    """SPEC-0222 WORK-004: guide, runbook, incident and postmortem bind the core."""
+
+    @staticmethod
+    def form(raw: dict, role: str) -> dict:
+        return next(f for f in raw["common_forms"]["forms"] if f["form_id"] == role)
+
+    def test_each_form_binds_its_core_role_and_core_tables(self) -> None:
+        raw = load_raw()
+        for role, expected in OPERATIONS_CORE.items():
+            with self.subTest(role=role):
+                form = self.form(raw, role)
+                self.assertEqual(form["core_role"], role)
+                self.assertEqual(
+                    {
+                        t["table_id"]: (
+                            t["section_id"],
+                            t["required_when"],
+                            tuple(c["label"] for c in t["columns"]),
+                        )
+                        for t in form["core"]["tables"]
+                    },
+                    expected,
+                )
+                stack = list(form["sections"])
+                while stack:
+                    item = stack.pop()
+                    stack.extend(item["children"])
+                    self.assertEqual(item["condition"], "always")
+                    self.assertEqual(item["core"]["required_when"], "always")
+                tables = {
+                    t["table_id"]: t
+                    for t in profile_of(raw, OPERATIONS_TEMPLATES[role])[
+                        "template_definition"
+                    ]["tables"]
+                    if "table_id" in t
+                }
+                self.assertEqual(set(tables), set(expected))
+                for table_id, (section_id, condition, labels) in expected.items():
+                    table = tables[table_id]
+                    self.assertEqual(
+                        (table["section"], table["required_when"]),
+                        (section_id, condition),
+                    )
+                    self.assertEqual(tuple(c["key"] for c in table["columns"]), labels)
+                    self.assertEqual(table["row_identity"], labels[0])
+        self.assertEqual(rules_of(raw), set())
+
+    def test_the_core_value_types_reach_the_template_columns(self) -> None:
+        raw = load_raw()
+        types = {
+            role: [
+                (c["id"], c["data_type"])
+                for t in profile_of(raw, OPERATIONS_TEMPLATES[role])[
+                    "template_definition"
+                ]["tables"]
+                if "table_id" in t
+                for c in t["columns"]
+            ]
+            for role in OPERATIONS_CORE
+        }
+        steps = [
+            ("step", "integer"),
+            ("action", "string"),
+            ("expected", "string"),
+            ("on_failure", "string"),
+        ]
+        actions = [
+            ("action", "string"),
+            ("owner", "string"),
+            ("condition", "string"),
+            ("evidence", "reference-or-none"),
+        ]
+        policy = [
+            ("rule_id", "identifier"),
+            ("condition", "condition"),
+            ("requirement", "string"),
+            ("enforcement", "reference-or-none"),
+            ("evidence", "reference-or-none"),
+        ]
+        self.assertEqual(
+            types,
+            {
+                "guide": steps,
+                "runbook": steps,
+                "incident": actions,
+                "postmortem": actions,
+                "policy": policy,
+            },
+        )
+        # Both policy templates carry the same core table.
+        twins = [
+            next(
+                t
+                for t in profile_of(raw, template)["template_definition"]["tables"]
+                if "table_id" in t
+            )
+            for template in (POLICY_GOVERNANCE[1], POLICY_OPERATIONS[1])
+        ]
+        self.assertEqual(twins[0], twins[1])
+
+    def test_a_drifted_operations_core_table_is_refused(self) -> None:
+        cases = {
+            "relabeled": lambda t: t["columns"][0].update(key="Order"),
+            "other type": lambda t: t["columns"][0].update(data_type="text"),
+            "appended": lambda t: t["columns"].append(
+                {
+                    "key": "Note",
+                    "id": "note",
+                    "data_type": "string",
+                    "meaning": "m",
+                    "required": False,
+                }
+            ),
+            "other section": lambda t: t.update(section=t["section"] + ".1"),
+        }
+        for role in OPERATIONS_CORE:
+            for name, change in cases.items():
+                with self.subTest(role=role, case=name):
+                    raw = load_raw()
+                    table = next(
+                        t
+                        for t in profile_of(raw, OPERATIONS_TEMPLATES[role])[
+                            "template_definition"
+                        ]["tables"]
+                        if "table_id" in t
+                    )
+                    change(table)
+                    self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
+
+    def test_the_registry_carries_the_core_tables_and_the_record_stays_projected(
+        self,
+    ) -> None:
+        # SPEC-0222 WORK-001: the core binding of a table stays in the registry,
+        # which the core check reads; the record keeps its own table fields.
+        raw = load_raw()
+        for role, template in OPERATIONS_TEMPLATES.items():
+            with self.subTest(role=role):
+                tables = profile_of(raw, template)["template_definition"]["tables"]
+                self.assertEqual(
+                    {t["table_id"] for t in tables if "table_id" in t},
+                    set(OPERATIONS_CORE[role]),
+                )
+                record = CONTRACTS.template_definition_record(raw, template)
+                self.assertEqual(record_errors(record), [])
+                self.assertFalse(any("table_id" in t for t in record["tables"]))
+
+    def test_every_runbook_renders_the_always_core_steps_table(self) -> None:
+        # SPEC-0222: runbook.steps is always required; a runbook whose steps lack
+        # a stated Expected Result keeps its header-only table (W04-CONTENT).
+        profile = typed_profiles(load_raw())[RUNBOOK[0]]
+        paths = sorted((ROOT / "docs/05.operations/runbooks").glob("0*.md"))
+        self.assertTrue(paths)
+        for path in paths:
+            text = path.read_text(encoding="utf-8")
+            relative = PurePosixPath(path.relative_to(ROOT).as_posix())
+            with self.subTest(path=path.name):
+                section = MARKDOWN._exact_heading_section(text, "## Procedure")
+                headers = [
+                    tuple(header)
+                    for header, _ in MARKDOWN._visible_tables(section)
+                    if header[0] == "Step"
+                ]
+                self.assertEqual(headers, [CORE_STEP_COLUMNS])
+                self.assertEqual(
+                    MARKDOWN._table_diagnostics(relative, profile, text), []
+                )
+
+    def test_the_converted_runbook_passes_and_its_former_header_fails(self) -> None:
+        path = PurePosixPath(
+            "docs/05.operations/runbooks/0012-main-release-preparation-runbook.md"
+        )
+        text = (ROOT / path).read_text(encoding="utf-8")
+        profile = typed_profiles(load_raw())[RUNBOOK[0]]
+        self.assertIn("| Step | Action | Expected Result | On Failure |", text)
+        self.assertEqual(MARKDOWN._table_diagnostics(path, profile, text), [])
+        former = text.replace(
+            "| Step | Action | Expected Result | On Failure |",
+            "| Step | Action | Expected result | Stop / escalate when |",
+        )
+        self.assertEqual(
+            [d.rule_id for d in MARKDOWN._table_diagnostics(path, profile, former)],
+            ["BODY-TABLE-COLUMNS"],
+        )
 
 
 if __name__ == "__main__":

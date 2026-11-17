@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.12.0"
+version: "0.13.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -147,6 +147,21 @@ The prepared units reported stop cases, and the user answered four questions on 
   - the runbook `Triggers` table replaced by the core Steps table;
   - the ADR-0063 Trade-off split.
 
+WORK-004 bound the guide, runbook, policy, incident and postmortem forms to the core.
+
+- **Core tables.** Each template carries its exact core table. `runbook.escalation.2` is now `always`, as the core says. The unused runbook `Triggers` table is replaced, and the incident `Events` table stays a local table.
+- **Runbooks.** RUN-0012's step table renames `Expected result` and `Stop / escalate when` to `Expected Result` and `On Failure`. The other nine runbooks render the core Steps table header-only, and their numbered procedures are unchanged.
+- **Policies.**
+  - All 15 policies carry the core `Rules` table. The Requirement cell holds each rule's lead text: the bullet text, the first paragraph of an H4 group, or the first cell of a table-row rule. Enforcement takes the former Evidence cell, and Evidence is `none`.
+  - A registered `Rule Levels` table holds each rule's Level and Status.
+  - Group headings whose bullets moved into the table keep a token-only list of their rule IDs, so each rule keeps its group (for example, Kiali rules under the Kiali heading).
+  - The policy rule check reads the two tables with no fallback.
+  - EXEC-R012 is retired and has no rule text, so it has no core row. Its former Condition (`When adopting a shared edition`) and Evidence (`Semantic review`) are recoverable from `b6e99e9d`; its Level and Status stay in Rule Levels.
+- **Merge resolution.** WORK-004 was prepared before WORK-002 and merged by a three-way apply:
+  - the two policies that WORK-002 had reworded were converted again from HEAD with the same converter, so AUTHOR-R007 and DOCLIFE-R009 keep the WORK-002 wording;
+  - DOCLIFE-R009 now names the full set of open results (`FAIL`, `ERROR`, `DEFER`, `NOT_RUN`, `CANCELLED`);
+  - the template record stays the projection WORK-001 decided, so the record schema widening from the prepared unit is dropped.
+
 ### Blockers and Decisions
 
 The user approved the Spec and Plan (EVD-006); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
@@ -188,6 +203,8 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | EVD-015 | [VAL-CORE-003](../spec.md#criteria) | WORK-002 | Focused tests and strict validators after the change | 15 modules that read Task tables, the registry or the lifecycle: form tree, task execution, acceptance contract and boundaries, cumulative history, summary derivation, residue ledger, registry schema version, frontmatter keys, generator, package exit, artifact identity, relationship contract, link boundary and shared contract binding; the four strict validators; pinned venv, 2026-11-17 | PASS | 878 tests OK with 3 skips, including 11 `TaskCoreHeaderTests`; the registry, markdown profile, link and lifecycle validators passed; the three recorded Tasks are byte-unchanged. | yes | none |
 | EVD-016 | [VAL-CORE-004](../spec.md#criteria) | WORK-002 | Suite runtime | `scripts/run-contract-tests.py --root . --suite document` timed alone with `time`, on this tree before the fix, on an export of `d5603cc9`, and after the schema check cache, with `tests.test_json_schema_validation` and `tests.test_common_form_tree`; pinned venv, 12 CPUs, load average 7 to 20, 2026-11-17 | PASS | Before: 941 s CPU (1,174 tests) and 966 s CPU on `d5603cc9` (1,163 tests), both above the 900-second gate limit. After: 455 s CPU, 1,176 tests OK. `test_common_form_tree` 256 s to 96 s. Two cache tests prove one check per distinct schema and no caching of an invalid schema. | yes | none |
 | EVD-017 | [VAL-CORE-003](../spec.md#criteria) | WORK-002 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `3909ae40` and its commit hooks; pinned venv, 2026-11-17 | PASS | 17 selected gates passed, the `document` suite among them, after three earlier runs timed out in that suite and committed nothing (EVD-016 records the cause and fix). The independent review of WORK-002 moves to the final WORK-009 review by the user's decision. | yes | none |
+| EVD-018 | [VAL-CORE-001](../spec.md#criteria) | WORK-004 | Failing first | The WORK-004 tests over an export of `b6e99e9d` in the prepared worktree: round one `tests.test_common_form_tree` and `tests.test_document_generator`; round two the policy rule ID, rule history and policy form classes; pinned venv, 2026-11-17 | PASS | Observed the defect: round one 463 tests with 31 failures and 24 errors; round two 95 tests with 122 failures and 31 errors (subtests). | yes | none |
+| EVD-019 | [VAL-CORE-003](../spec.md#criteria) | WORK-004 | Focused tests and strict validators after the change | After the merge onto `67a8081b`: form tree, generator, policy rule IDs and history, shared contract binding, task execution, operations section and lineage, terminal contract and native skill envelope; the four strict validators; one-time scratch move checks of every policy and runbook; pinned venv, 2026-11-17 | PASS | 699 tests run. One test assumed record fields that WORK-001 keeps out of the record; it now checks the registry, and its class with the policy modules passed (74 tests OK). Every validator passed. The move check found every line and cell again, except the listed renames and EXEC-R012's two retired cells. | yes | none |
 
 ### Resolution Links
 

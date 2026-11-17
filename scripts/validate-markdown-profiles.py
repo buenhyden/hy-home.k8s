@@ -819,18 +819,47 @@ def _table_diagnostics(
     non-unique section headings.
     """
 
-    owned = profile.body_contract.table_heading if profile.body_contract else None
     if profile.body_contract and profile.body_contract.task_execution:
         return []  # The Task table reader owns every Task table (SPEC-0222).
+    owned = {profile.body_contract.table_heading} if profile.body_contract else set()
+    if profile.policy_rule_ids is not None:
+        # SPEC-0222: the policy rule check owns the two rule tables.
+        owned |= {
+            profile.policy_rule_ids.rules_table_name,
+            profile.policy_rule_ids.level_table_name,
+        }
     identity = expected_artifact_id(path, profile) or ""
     found: list[Diagnostic] = []
+
+    def exact(header: list[str], table) -> bool:
+        keys = [column.key for column in table.columns]
+        required = sum(column.required for column in table.columns)
+        return header == keys[: len(header)] and len(header) >= required
+
+    def identifies(header: list[str], table) -> bool:
+        keys = [column.key for column in table.columns]
+        return header[0] == keys[0] or sorted(header) == sorted(keys[: len(header)])
+
+    def owner(header: list[str], table) -> bool:
+        """SPEC-0222: tables that share a first key share a header by fit: an
+        exact fit wins, else the table with the most matching labels."""
+
+        rivals = [other for other in profile.tables if identifies(header, other)]
+        if any(exact(header, other) for other in rivals):
+            return exact(header, table)
+        best = max(
+            rivals,
+            key=lambda other: len(set(header) & {c.key for c in other.columns}),
+        )
+        return best is table
+
     for table in profile.tables:
         heading = (
             None
             if profile.form is None
             else _form_heading(profile.form, table.section, status, identity)
         )
-        if table.name == owned or heading is None:
+        if table.name in owned or heading is None:
             continue
         section = _exact_heading_section(body, "#" * heading[0] + " " + heading[1])
         if section is None:
@@ -841,7 +870,7 @@ def _table_diagnostics(
         present = False
         rows = 0
         for header, data in _visible_tables(section):
-            if header[0] != keys[0] and sorted(header) != sorted(keys[: len(header)]):
+            if not identifies(header, table) or not owner(header, table):
                 continue
             present = True
             rows += len(data)
@@ -967,8 +996,11 @@ class RuleScan:
     rows: tuple[RuleUnit, ...]  # table rows outside control registers and Rules tables
     groups: tuple[RuleUnit, ...]  # H4 groups with content beyond those tables
     control_rows: int
-    tokens: tuple[str, ...]  # every definition token, in reading order
+    tokens: tuple[str, ...]  # every rule reference token, in reading order
     rules_tables: tuple[tuple[tuple[str, ...], tuple[tuple[str, ...], ...]], ...]
+    # SPEC-0222: tokens followed by rule text in a list item or a first table cell;
+    # that text belongs in the core Rules table, so each one is refused.
+    worded: tuple[str, ...] = ()
 
     @property
     def units(self) -> tuple[RuleUnit, ...]:
@@ -989,6 +1021,7 @@ def _scan_requirements(section: str) -> RuleScan:
     rows: list[RuleUnit] = []
     groups: list[RuleUnit] = []
     tokens: list[str] = []
+    worded: list[str] = []
     rules_tables: list[tuple[tuple[str, ...], tuple[tuple[str, ...], ...]]] = []
     control_rows = 0
     # The open H4 group: its title, token, content flag and the units seen in it.
@@ -1066,6 +1099,8 @@ def _scan_requirements(section: str) -> RuleScan:
                         token = match.group(1) if match else None
                         if token is not None:
                             tokens.append(token)
+                            if _RULE_TOKEN_LINE.fullmatch(first) is None:
+                                worded.append(token)
                         rows.append(RuleUnit("row", token, covered(token), first[:60]))
                     if group is not None:
                         group["content"] = True
@@ -1076,6 +1111,8 @@ def _scan_requirements(section: str) -> RuleScan:
             token = match.group(1) if match else None
             if token is not None:
                 tokens.append(token)
+                if _RULE_TOKEN_LINE.fullmatch(item.group(2).strip()) is None:
+                    worded.append(token)
             indent = len(item.group(1))
             if not indent:
                 close_label()
@@ -1108,6 +1145,7 @@ def _scan_requirements(section: str) -> RuleScan:
         control_rows,
         tuple(tokens),
         tuple(rules_tables),
+        tuple(worded),
     )
 
 
@@ -1118,19 +1156,24 @@ def policy_rule_units(text: str, heading: str = "### Requirements") -> RuleScan:
     return _scan_requirements("" if section is None else section)
 
 
-def policy_rule_rows(text: str) -> tuple[tuple[str, str], ...]:
-    """SPEC-0206: the (Rule ID, Status) of each Rules table row of one policy.
+RULE_LEVEL_COLUMNS = ("Rule ID", "Level", "Status")
 
-    The lifecycle check reads policy history through this one reader. A table
-    with no Status column reads every row as `active`; no table reads no row.
+
+def policy_rule_rows(text: str) -> tuple[tuple[str, str], ...]:
+    """SPEC-0206, SPEC-0222: the (Rule ID, Status) of each row of one policy's
+    rule level table, the local table keyed by Rule ID under Requirements.
+
+    The lifecycle check reads policy history through this one reader. Only a
+    table with exactly the level columns is read; no table reads no row.
     """
 
     rows: list[tuple[str, str]] = []
     for header, data in policy_rule_units(text).rules_tables:
-        at = header.index("Status") if "Status" in header else None
+        if header != RULE_LEVEL_COLUMNS:
+            continue
         for row in data:
             if row:
-                status = row[at] if at is not None and at < len(row) else "active"
+                status = row[2] if len(row) > 2 else ""
                 rows.append((_identifier_text(row[0]), status))
     return tuple(rows)
 
@@ -1156,19 +1199,26 @@ def _rules_status_fault(
 def _policy_rule_diagnostics(
     path: PurePosixPath, profile: DocumentProfile, body: str
 ) -> list[Diagnostic]:
-    """SPEC-0194: the policy rule ID rules over one authored policy body.
+    """SPEC-0194, SPEC-0222: the policy rule ID rules over one authored policy.
 
-    A policy with a record applies the table, ID, inline-token and coverage
-    rules; a document with no record fails POLICY-RULE-CODE when it states
-    normative rules or carries a Rules table.
+    Under Requirements the core Rules table holds each current rule (its
+    condition, requirement text, enforcement and evidence) and the local rule
+    level table keyed by Rule ID holds every issued rule ID with its level and
+    status. Another table keyed by Rule ID may keep columns of a rule that the
+    core table has no column for. A rule ID token left in the body only refers
+    to a current rule; a token followed by rule text is refused, because that
+    text belongs in the Rules table. A document with no record fails
+    POLICY-RULE-CODE when it carries a rule table or a rule token.
     """
 
     ids = profile.policy_rule_ids
-    table = next((item for item in profile.tables if item.name == "Rules"), None)
+    tables = {item.name: item for item in profile.tables}
+    core = None if ids is None else tables.get(ids.rules_table_name)
+    level = None if ids is None else tables.get(ids.level_table_name)
     heading = (
         None
-        if ids is None or table is None or profile.form is None
-        else _form_heading(profile.form, table.section)
+        if core is None or level is None or profile.form is None
+        else _form_heading(profile.form, level.section)
     )
     if heading is None or profile.mode != "authored":
         return []
@@ -1185,13 +1235,13 @@ def _policy_rule_diagnostics(
         return _diagnostic(rule, path, profile, expected, actual)
 
     if record is None:
-        if scan.units or carried:
+        if scan.units or scan.tokens or carried:
             return [
                 found(
                     "POLICY-RULE-CODE",
                     "a rule ID code registered in policy_rule_ids for this policy",
                     "no record for a policy that states normative rules "
-                    "or carries a Rules table",
+                    "or carries a rule table",
                 )
             ]
         return []
@@ -1200,84 +1250,114 @@ def _policy_rule_diagnostics(
     def add(rule: str, expected: str, actual: str) -> None:
         found_all.append(found(rule, expected, actual))
 
-    keys = tuple(column.key for column in table.columns)
-    stated = bool(scan.units)
+    core_keys = tuple(column.key for column in core.columns)
+    level_keys = tuple(column.key for column in level.columns)
     if carried != len(scan.rules_tables):
         add(
             "POLICY-RULE-TABLE",
-            "the Rules table under Requirements only",
+            "rule tables under Requirements only",
             f"{carried - len(scan.rules_tables)} outside it",
         )
-    if len(scan.rules_tables) > 1:
-        add("POLICY-RULE-TABLE", "exactly one Rules table", f"{len(scan.rules_tables)}")
-    if stated and not scan.rules_tables:
-        add(
-            "POLICY-RULE-TABLE",
-            f"a Rules table when {ids.rules_table_condition}",
-            "no Rules table",
-        )
-    row_ids: list[str] = []
-    statuses: list[str] = []
-    readable = not scan.rules_tables
-    if scan.rules_tables:
-        header, data = scan.rules_tables[0]
-        readable = header == keys and all(len(row) == len(keys) for row in data)
-        if header != keys:
-            add("POLICY-RULE-TABLE", json.dumps(keys), json.dumps(header))
-        elif not readable:
-            add("POLICY-RULE-TABLE", f"{len(keys)} cells in every row", "ragged row")
-        if readable:
-            if stated and len(data) < ids.rules_table_minimum_rows:
+    cores = [(h, d) for h, d in scan.rules_tables if h == core_keys]
+    levels = [(h, d) for h, d in scan.rules_tables if h == level_keys]
+    keyed = [(h, d) for h, d in scan.rules_tables if h not in (core_keys, level_keys)]
+    stated = bool(scan.units or scan.tokens or keyed)
+    for name, keys, found_tables in (
+        (core.name, core_keys, cores),
+        (level.name, level_keys, levels),
+    ):
+        if len(found_tables) > 1:
+            add(
+                "POLICY-RULE-TABLE", f"exactly one {name} table", f"{len(found_tables)}"
+            )
+        if not found_tables and (stated or cores or levels):
+            add(
+                "POLICY-RULE-TABLE",
+                f"a {name} table {json.dumps(keys)} when {ids.rules_table_condition}",
+                "no table with exactly these columns",
+            )
+    for header, data in scan.rules_tables:
+        if any(len(row) != len(header) for row in data):
+            add("POLICY-RULE-TABLE", f"{len(header)} cells in every row", "ragged row")
+    level_rows = levels[0][1] if len(levels) == 1 else ()
+    core_rows = cores[0][1] if len(cores) == 1 else ()
+    row_ids = [_identifier_text(row[0]) for row in level_rows]
+    statuses = [row[2] if len(row) > 2 else "" for row in level_rows]
+    codes = frozenset(item.code for item in ids.codes)
+    for number, (row, own, status) in enumerate(
+        zip(level_rows, row_ids, statuses), start=1
+    ):
+        if own != f"{record.code}-R{number:03d}":
+            add(
+                "POLICY-RULE-ID",
+                f"{record.code}-R{number:03d}: this policy's code, "
+                "ascending from R001 without a gap or duplicate",
+                own,
+            )
+        if len(row) > 1 and row[1] not in ids.levels:
+            add("POLICY-RULE-TABLE", f"{own}: a level of {list(ids.levels)}", row[1])
+        fault = _rules_status_fault(status, own, row_ids, codes)
+        if fault is not None:
+            add("POLICY-RULE-TABLE", f"{own}: Status {fault}", status)
+    active = [own for own, status in zip(row_ids, statuses) if status == "active"]
+    core_ids = [_identifier_text(row[0]) for row in core_rows]
+    if len(cores) == 1 and len(levels) == 1:
+        if core_ids != active:
+            add(
+                "POLICY-RULE-TABLE",
+                f"{core.name} rows for exactly the active rules, in order: {active}",
+                json.dumps(core_ids),
+            )
+        if stated and len(core_rows) < ids.rules_table_minimum_rows:
+            add(
+                "POLICY-RULE-TABLE",
+                f"at least {ids.rules_table_minimum_rows} row when "
+                f"{ids.rules_table_condition}",
+                f"{len(core_rows)} rows",
+            )
+        for row in core_rows:
+            empty = [key for key, cell in zip(core_keys, row) if not cell.strip()]
+            if empty:
                 add(
                     "POLICY-RULE-TABLE",
-                    f"at least {ids.rules_table_minimum_rows} row when "
-                    f"{ids.rules_table_condition}",
-                    f"{len(data)} rows",
+                    f"{_identifier_text(row[0])}: a value in every core cell",
+                    ", ".join(empty),
                 )
-            level_at, status_at = keys.index("Level"), keys.index("Status")
-            row_ids = [_identifier_text(row[0]) for row in data]
-            statuses = [row[status_at] for row in data]
-            codes = frozenset(item.code for item in ids.codes)
-            for number, (row, own, status) in enumerate(
-                zip(data, row_ids, statuses), start=1
-            ):
-                if own != f"{record.code}-R{number:03d}":
-                    add(
-                        "POLICY-RULE-ID",
-                        f"{record.code}-R{number:03d}: this policy's code, "
-                        "ascending from R001 without a gap or duplicate",
-                        own,
-                    )
-                if row[level_at] not in ids.levels:
-                    add(
-                        "POLICY-RULE-TABLE",
-                        f"{own}: a level of {list(ids.levels)}",
-                        row[level_at],
-                    )
-                fault = _rules_status_fault(status, own, row_ids, codes)
-                if fault is not None:
-                    add("POLICY-RULE-TABLE", f"{own}: Status {fault}", status)
-    if readable:
-        counts = collections.Counter(scan.tokens)
-        active = {own for own, status in zip(row_ids, statuses) if status == "active"}
-        for own in sorted(active):
-            if counts[own] != 1:
+    current = set(active)
+    for header, data in keyed:
+        for row in data:
+            own = _identifier_text(row[0]) if row else ""
+            if own not in current:
                 add(
-                    "POLICY-RULE-INLINE",
-                    f"{own}: one definition token for an active row",
-                    f"{counts[own]} tokens",
+                    "POLICY-RULE-TABLE",
+                    f"a row of a table keyed by Rule ID names an active rule ({header[1:]})",
+                    own,
                 )
-        for token in sorted(set(counts) - active):
+    counts = collections.Counter(scan.tokens)
+    for token in sorted(counts):
+        if token not in current:
             add(
                 "POLICY-RULE-INLINE",
-                f"{token}: an active Rules table row for each definition token",
+                f"{token}: a rule reference names an active {core.name} row",
                 "no active row",
             )
+        elif counts[token] != 1:
+            add(
+                "POLICY-RULE-INLINE",
+                f"{token}: one reference token for a rule",
+                f"{counts[token]} tokens",
+            )
+    for token in scan.worded:
+        add(
+            "POLICY-RULE-INLINE",
+            f"{token}: the rule text in its {core.name} row, not after its token",
+            "a token followed by rule text",
+        )
     for unit in (*scan.items, *scan.rows):
         if not unit.covered:
             add(
                 "POLICY-RULE-COVERAGE",
-                f"a definition token on this {unit.kind} or in its H4 group",
+                f"a reference token on this {unit.kind} or in its H4 group",
                 unit.text,
             )
     return found_all

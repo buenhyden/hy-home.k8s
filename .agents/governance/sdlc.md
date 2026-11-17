@@ -1,6 +1,6 @@
 ---
 title: "Software Development Lifecycle"
-version: "4.1.1"
+version: "4.1.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -45,79 +45,85 @@ Provider and agent-roster authority is excluded and stated under Owner; if anoth
 
 ### Requirements
 
-| Rule ID | Condition | Level | Evidence | Status |
+| Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
-| SDLC-R001 | Always | required | Semantic review | active |
-| SDLC-R002 | When the change affects system boundaries or important trade-offs | required | Semantic review | active |
-| SDLC-R003 | Before dependent execution | required | `document-lifecycle` | active |
-| SDLC-R004 | Always | required | Semantic review | active |
-| SDLC-R005 | Before a current document is deleted or moved | required | Semantic review | active |
-| SDLC-R006 | Always | required | Semantic review | active |
-| SDLC-R007 | Always | required | Semantic review | active |
-| SDLC-R008 | Always | required | `markdown-profiles` | active |
-| SDLC-R009 | Always | required | `markdown-profiles` | active |
-| SDLC-R010 | Always | required | `document-lifecycle` | active |
-| SDLC-R011 | Always | required | Semantic review | active |
-| SDLC-R012 | Always | required | `document-contract-registry` | active |
-| SDLC-R013 | Always | required | `agent-governance` | active |
-| SDLC-R014 | Always | required | `agent-governance` | active |
-| SDLC-R015 | Always | required | Semantic review | active |
-| SDLC-R016 | Always | required | `ci-python-contract` | active |
-| SDLC-R017 | Always | required | Semantic review | active |
-| SDLC-R018 | Always | required | `markdown-profiles` | active |
-| SDLC-R019 | Always | required | Semantic review | active |
-| SDLC-R020 | At the Need to design transition | required | Semantic review | active |
-| SDLC-R021 | At the Design to execution transition | required | `document-lifecycle` | active |
-| SDLC-R022 | At the Execution to handoff transition | required | `document-lifecycle` | active |
-| SDLC-R023 | At the Handoff to operations or retention transition | required | `document-lifecycle` | active |
-| SDLC-R024 | Always | required | Semantic review | active |
-| SDLC-R025 | For a small correction | required | `document-contract-tests` | active |
-| SDLC-R026 | For a document content change | required | `document-contract-tests` | active |
-| SDLC-R027 | For an executable behavior change | required | Semantic review | active |
-| SDLC-R028 | For a governance, provider, Stage 99 form, schema or registry change | required | `document-lifecycle` | active |
-| SDLC-R029 | For an architecture boundary or durable choice | required | Semantic review | active |
-| SDLC-R030 | For a live cluster change or incident fix | required | Semantic review | active |
-| SDLC-R031 | Before a Spec leaves draft | required | `markdown-profiles` | active |
-| SDLC-R032 | When an open question changes an acceptance criterion | required | Semantic review | active |
-| SDLC-R033 | When a Spec or Plan needs to depart from a current Architecture Description or ADR | required | `document-lifecycle` | active |
-| SDLC-R034 | When implementation and an approved Requirement, Architecture or Spec disagree | required | Semantic review | active |
-| SDLC-R035 | Always | required | Semantic review | active |
+| SDLC-R001 | Always | Establish the problem, acceptance boundary, and complete requirement IDs. | Semantic review | none |
+| SDLC-R002 | When the change affects system boundaries or important trade-offs | Record structural views and durable decisions before implementation when the change affects system boundaries or important trade-offs. | Semantic review | none |
+| SDLC-R003 | Before dependent execution | Review the Stage 03 Spec's change and acceptance contract and the Plan's intended order, risks and verification before dependent execution. Their approval establishes current authority, not an implementation result. Implement through Task records in that package. Changed executable behavior uses a focused failing case followed by a passing case; narrative changes use selected document checks. The Task's Lifecycle Traceability table owns execution state and result, its Results table owns factual checks, and one Criterion Decisions table owns each criterion verdict. | `document-lifecycle` | none |
+| SDLC-R004 | Always | Promote stable operator controls to Guide, Policy, or Runbook owners and preserve incident learning in Incident and Postmortem records. | Semantic review | none |
+| SDLC-R005 | Before a current document is deleted or moved | Before a current document is deleted or moved, complete the manual consumer, preservation, hold and authority review in [document lifecycle](document-lifecycle.md#requirements). A Git-history-only disposition also needs the exact recovery proof. Defer the affected disposition if any condition is unresolved. Replace or withdraw a Stage 01, 02 or 03 document by summarizing it in the owning current document's Archived Lineage table and deleting it; supersede or retire other documents only through registry-owned lifecycle edges and their reciprocal links. | Semantic review | none |
+| SDLC-R006 | Always | Keep release procedure in a Runbook when one is needed, local execution evidence in Tasks and Git, the committed main `CHANGELOG.md` as release history, and tag, GitHub Release, hosted, provider or live evidence in its actually observed lane. Use these owners for all release documentation. | Semantic review | none |
+| SDLC-R007 | Always | The terminal Stage 04 slot remains unused. This workspace carries no user interface, so it has no design-system authority and no root design document; if one is ever introduced it takes that authority and does not become a Stage 03 technical-design artifact. | Semantic review | none |
+| SDLC-R008 | Always | Requirement | `markdown-profiles` | none |
+| SDLC-R009 | Always | Architecture Description / Architecture Decision Record | `markdown-profiles` | none |
+| SDLC-R010 | Always | Spec / Plan / Task | `document-lifecycle` | none |
+| SDLC-R011 | Always | GitHub Issue / Project | Semantic review | none |
+| SDLC-R012 | Always | Policy / rule / contract / control | `document-contract-registry` | none |
+| SDLC-R013 | Always | Provider / Role / Agent | `agent-governance` | none |
+| SDLC-R014 | Always | Skill | `agent-governance` | none |
+| SDLC-R015 | Always | Hook / Gate / validator / Fixture | Semantic review | none |
+| SDLC-R016 | Always | QA / CI / CD | `ci-python-contract` | none |
+| SDLC-R017 | Always | Deployment / release | Semantic review | none |
+| SDLC-R018 | Always | Guide / Runbook | `markdown-profiles` | none |
+| SDLC-R019 | Always | Evidence / archive | Semantic review | none |
+| SDLC-R020 | At the Need to design transition | Need to design | Semantic review | none |
+| SDLC-R021 | At the Design to execution transition | Design to execution | `document-lifecycle` | none |
+| SDLC-R022 | At the Execution to handoff transition | Execution to handoff | `document-lifecycle` | none |
+| SDLC-R023 | At the Handoff to operations or retention transition | Handoff to operations or retention | `document-lifecycle` | none |
+| SDLC-R024 | Always | The kind of change sets the minimum records, checks and authoring approval. A change that fits several rows takes the union. Push, pull request and merge follow the [Git policy](git.md) for every row. | Semantic review | none |
+| SDLC-R025 | For a small correction | Small correction: wording, link or typo | `document-contract-tests` | none |
+| SDLC-R026 | For a document content change | Document content: README, guide, reference | `document-contract-tests` | none |
+| SDLC-R027 | For an executable behavior change | Executable behavior | Semantic review | none |
+| SDLC-R028 | For a governance, provider, Stage 99 form, schema or registry change | Governance, provider, Stage 99 form, schema or registry | `document-lifecycle` | none |
+| SDLC-R029 | For an architecture boundary or durable choice | Architecture boundary or durable choice | Semantic review | none |
+| SDLC-R030 | For a live cluster change or incident fix | Live cluster change or incident fix | Semantic review | none |
+| SDLC-R031 | Before a Spec leaves draft | Before a Spec leaves `draft`, its author reads the Requirement and the Architecture Descriptions and ADRs that own the affected boundary, and the Spec's Lifecycle Traceability `Architecture` column links the ones that constrain each criterion or states why none applies. The validator checks that the cell is present and non-empty; reviewers judge its content. | `markdown-profiles` | none |
+| SDLC-R032 | When an open question changes an acceptance criterion | An open question that changes an acceptance criterion keeps the Spec out of `approved`; a Plan is not approved against an unapproved Spec. | Semantic review | none |
+| SDLC-R033 | When a Spec or Plan needs to depart from a current Architecture Description or ADR | A Spec or Plan that needs to depart from a current Architecture Description or ADR returns to `in-review` under the [lifecycle policy](document-lifecycle.md), and dependent work stops until a new or amended ADR is accepted or the departure is removed. | `document-lifecycle` | none |
+| SDLC-R034 | When implementation and an approved Requirement, Architecture or Spec disagree | When implementation and an approved Requirement, Architecture or Spec disagree, resolve in the order current user requirement, approved contract, implementation and tests. Record the divergence in the active Task, then either amend the owning document through its own review or correct the implementation, changing producer, reader, schema, current guidance and tests in one change set. An unapproved test expectation never becomes policy, a test is never edited alone to make a violation pass, and a requirement is never relaxed by editing a downstream document alone. This order never authorizes a protected action: [approval and safety](approval-and-safety.md) still binds, and no package or agent message counts as user approval. | Semantic review | none |
+| SDLC-R035 | Always | Three separate axes describe where work stands, and one never implies another. The document STAGE (Stage 01 to 99) names the owner and place of a document. The SDLC phase (Clarify to Complete above) names the work step. The Git point names before, during or after commit, push, pull request or merge. Status, acceptance, promotion and exit per document role follow the [lifecycle policy](document-lifecycle.md). | Semantic review | none |
 
-1. `SDLC-R001` Establish the problem, acceptance boundary, and complete requirement IDs.
-2. `SDLC-R002` Record structural views and durable decisions before implementation when
-   the change affects system boundaries or important trade-offs.
-3. `SDLC-R003` Review the Stage 03 Spec's change and acceptance contract and the Plan's
-   intended order, risks and verification before dependent execution. Their
-   approval establishes current authority, not an implementation result.
-   Implement through Task records in that package. Changed executable behavior
-   uses a focused failing case followed by a passing case; narrative changes
-   use selected document checks. The Task's Lifecycle Traceability table owns execution state and
-   result, its Results table owns factual checks, and one Criterion Decisions
-   table owns each criterion verdict.
-4. `SDLC-R004` Promote stable operator controls to Guide, Policy, or Runbook owners and
-   preserve incident learning in Incident and Postmortem records.
-5. `SDLC-R005` Before a current document is deleted or moved, complete the manual
-   consumer, preservation, hold and authority review in
-   [document lifecycle](document-lifecycle.md#requirements). A
-   Git-history-only disposition also needs the exact recovery proof. Defer the
-   affected disposition if any condition is unresolved. Replace or withdraw a
-   Stage 01, 02 or 03 document by summarizing it in the owning current
-   document's Archived Lineage table and deleting it; supersede
-   or retire other documents only through registry-owned lifecycle edges and
-   their reciprocal links.
-6. `SDLC-R006` Keep release procedure in a Runbook when one is needed, local execution
-   evidence in Tasks and Git, the committed main `CHANGELOG.md` as release
-   history, and tag, GitHub Release, hosted, provider or live evidence in its
-   actually observed lane. Use these owners for all release documentation.
+| Rule ID | Level | Status |
+| --- | --- | --- |
+| SDLC-R001 | required | active |
+| SDLC-R002 | required | active |
+| SDLC-R003 | required | active |
+| SDLC-R004 | required | active |
+| SDLC-R005 | required | active |
+| SDLC-R006 | required | active |
+| SDLC-R007 | required | active |
+| SDLC-R008 | required | active |
+| SDLC-R009 | required | active |
+| SDLC-R010 | required | active |
+| SDLC-R011 | required | active |
+| SDLC-R012 | required | active |
+| SDLC-R013 | required | active |
+| SDLC-R014 | required | active |
+| SDLC-R015 | required | active |
+| SDLC-R016 | required | active |
+| SDLC-R017 | required | active |
+| SDLC-R018 | required | active |
+| SDLC-R019 | required | active |
+| SDLC-R020 | required | active |
+| SDLC-R021 | required | active |
+| SDLC-R022 | required | active |
+| SDLC-R023 | required | active |
+| SDLC-R024 | required | active |
+| SDLC-R025 | required | active |
+| SDLC-R026 | required | active |
+| SDLC-R027 | required | active |
+| SDLC-R028 | required | active |
+| SDLC-R029 | required | active |
+| SDLC-R030 | required | active |
+| SDLC-R031 | required | active |
+| SDLC-R032 | required | active |
+| SDLC-R033 | required | active |
+| SDLC-R034 | required | active |
+| SDLC-R035 | required | active |
 
 #### Stage 04 slot
 
 `SDLC-R007`
-
-The terminal Stage 04 slot remains unused. This workspace carries no user
-interface, so it has no design-system authority and no root design document; if
-one is ever introduced it takes that authority and does not become a Stage 03
-technical-design artifact.
 
 #### Ownership and placement
 
@@ -125,46 +131,42 @@ The meaning of each term below is owned by the
 [Repository Vocabulary](../knowledge/glossary.md); this table owns only where
 each artifact lives and the rules that govern it.
 
-| Term | Owner and placement rule |
+| Rule ID | Owner and placement rule |
 | --- | --- |
-| `SDLC-R008` Requirement | Stage 01. |
-| `SDLC-R009` Architecture Description / Architecture Decision Record | Stage 02. |
-| `SDLC-R010` Spec / Plan / Task | One Stage 03 package. Approval is not execution completion. |
-| `SDLC-R011` GitHub Issue / Project | Link to a Spec and Task by ID or URL; do not copy their full contract or evidence or synchronize status in both directions. Remote state requires observation. |
-| `SDLC-R012` Policy / rule / contract / control | Common behavior belongs to `.agents/governance/`, executable enforcement to scripts, document shape to Stage 99. These terms do not create parallel policy directories. The Stage 99 profile `governance/rule` names the shape those policy documents share, from the retired directory they once sat in; it is a stable identity rather than a claim that such a document carries one obligation. Policy is one document role with one common form, placed as `governance/rule` under `.agents/governance/` or `operation/policy` in Stage 05; a Rule is a normative unit with a stable ID inside a Policy, not a document role. |
-| `SDLC-R013` Provider / Role / Agent | Native configuration is not evidence of runtime enforcement. |
-| `SDLC-R014` Skill | Lives under `.agents/skills/`; native discovery depends on the provider contract. A plain procedure reference is not a native registration. |
-| `SDLC-R015` Hook / Gate / validator / Fixture | A hook need not run QA, and a test fixture is never production policy input. |
-| `SDLC-R016` QA / CI / CD | This public repository runs repository-static QA locally. The hosted `ci-summary` job checks branch and commit metadata. `style-pr` runs the selected style gate, the CI Python contract check when a lock changes, and the static GitOps identity check when GitOps data changes; its adoption awaits ADR-0063 acceptance. Neither job replays the rest of that QA. Argo CD reconciles declared GitOps state only under the operating boundary. |
-| `SDLC-R017` Deployment / release | Neither follows automatically from local validation or a commit. |
-| `SDLC-R018` Guide / Runbook | Stage 05. |
-| `SDLC-R019` Evidence / archive | Task and Git own change evidence; Git owns source recovery. Stage 98 is unvalidated history. |
+| SDLC-R008 | Stage 01. |
+| SDLC-R009 | Stage 02. |
+| SDLC-R010 | One Stage 03 package. Approval is not execution completion. |
+| SDLC-R011 | Link to a Spec and Task by ID or URL; do not copy their full contract or evidence or synchronize status in both directions. Remote state requires observation. |
+| SDLC-R012 | Common behavior belongs to `.agents/governance/`, executable enforcement to scripts, document shape to Stage 99. These terms do not create parallel policy directories. The Stage 99 profile `governance/rule` names the shape those policy documents share, from the retired directory they once sat in; it is a stable identity rather than a claim that such a document carries one obligation. Policy is one document role with one common form, placed as `governance/rule` under `.agents/governance/` or `operation/policy` in Stage 05; a Rule is a normative unit with a stable ID inside a Policy, not a document role. |
+| SDLC-R013 | Native configuration is not evidence of runtime enforcement. |
+| SDLC-R014 | Lives under `.agents/skills/`; native discovery depends on the provider contract. A plain procedure reference is not a native registration. |
+| SDLC-R015 | A hook need not run QA, and a test fixture is never production policy input. |
+| SDLC-R016 | This public repository runs repository-static QA locally. The hosted `ci-summary` job checks branch and commit metadata. `style-pr` runs the selected style gate, the CI Python contract check when a lock changes, and the static GitOps identity check when GitOps data changes; its adoption awaits ADR-0063 acceptance. Neither job replays the rest of that QA. Argo CD reconciles declared GitOps state only under the operating boundary. |
+| SDLC-R017 | Neither follows automatically from local validation or a commit. |
+| SDLC-R018 | Stage 05. |
+| SDLC-R019 | Task and Git own change evidence; Git owns source recovery. Stage 98 is unvalidated history. |
 
 #### Proportional transitions
 
-| Transition | Entry and output | Approval and evidence | Failure or rollback |
+| Rule ID | Entry and output | Approval and evidence | Failure or rollback |
 | --- | --- | --- | --- |
-| `SDLC-R020` Need to design | Requirement or direct scoped request; structural views or decision only when boundaries change | Request owner approves scope; design approval when required | Clarify an unresolved boundary before dependent implementation |
-| `SDLC-R021` Design to execution | Current approved change contract and ordered Plan, or separately verified scoped user authorization; Task records work and checks | Bind approval to the reviewed inputs and current request revision; draft authoring and focused document checks remain within writing scope | Re-review affected authority when scope or evidence contradicts it; preserve unrelated work |
-| `SDLC-R022` Execution to handoff | Reviewed final bytes, resolved required checks, accepted criteria and Task handoff; scoped Git commit only when authorized | Local, index, hosted, provider, and live evidence remain distinct | Unresolved required checks block completion; missing external permission is DEFER |
-| `SDLC-R023` Handoff to operations or retention | Stable operating knowledge or terminal work record | Promote only durable meaning; apply the Stage 99 lifecycle contract; recover removed documents from Git history | Keep failures factual; use Git recovery rather than a second active owner |
+| SDLC-R020 | Requirement or direct scoped request; structural views or decision only when boundaries change | Request owner approves scope; design approval when required | Clarify an unresolved boundary before dependent implementation |
+| SDLC-R021 | Current approved change contract and ordered Plan, or separately verified scoped user authorization; Task records work and checks | Bind approval to the reviewed inputs and current request revision; draft authoring and focused document checks remain within writing scope | Re-review affected authority when scope or evidence contradicts it; preserve unrelated work |
+| SDLC-R022 | Reviewed final bytes, resolved required checks, accepted criteria and Task handoff; scoped Git commit only when authorized | Local, index, hosted, provider, and live evidence remain distinct | Unresolved required checks block completion; missing external permission is DEFER |
+| SDLC-R023 | Stable operating knowledge or terminal work record | Promote only durable meaning; apply the Stage 99 lifecycle contract; recover removed documents from Git history | Keep failures factual; use Git recovery rather than a second active owner |
 
 #### Change kinds
 
 `SDLC-R024`
 
-The kind of change sets the minimum records, checks and authoring approval.
-A change that fits several rows takes the union. Push, pull request and merge
-follow the [Git policy](git.md) for every row.
-
-| Change kind | Minimum records | Checks | Authoring approval |
+| Rule ID | Minimum records | Checks | Authoring approval |
 | --- | --- | --- | --- |
-| `SDLC-R025` Small correction: wording, link or typo | The current owner; no new package | Ordinary document selection in [quality](quality.md) | The operator's request |
-| `SDLC-R026` Document content: README, guide, reference | The current owner, or the Task of the package that changes it | Ordinary document selection | The operator's request |
-| `SDLC-R027` Executable behavior | A Stage 03 package; a failing case then a passing case in its Task | Focused regressions and affected purpose gates | Spec and Plan approval |
-| `SDLC-R028` Governance, provider, Stage 99 form, schema or registry | A Stage 03 package; durable meaning promoted to its owner | The contract-change selection in [quality](quality.md) | Spec and Plan approval |
-| `SDLC-R029` Architecture boundary or durable choice | An Architecture Description or ADR; a package when it is implemented | Document checks and forward links | The operator approves the ADR, whose status becomes `accepted` |
-| `SDLC-R030` Live cluster change or incident fix | A Task, and an Incident record for an incident; Runbook steps | Observation in the approved live lane | The operator approves the live action; approved bootstrap and break-glass actions stay operator-bound under [approval and safety](approval-and-safety.md) |
+| SDLC-R025 | The current owner; no new package | Ordinary document selection in [quality](quality.md) | The operator's request |
+| SDLC-R026 | The current owner, or the Task of the package that changes it | Ordinary document selection | The operator's request |
+| SDLC-R027 | A Stage 03 package; a failing case then a passing case in its Task | Focused regressions and affected purpose gates | Spec and Plan approval |
+| SDLC-R028 | A Stage 03 package; durable meaning promoted to its owner | The contract-change selection in [quality](quality.md) | Spec and Plan approval |
+| SDLC-R029 | An Architecture Description or ADR; a package when it is implemented | Document checks and forward links | The operator approves the ADR, whose status becomes `accepted` |
+| SDLC-R030 | A Task, and an Incident record for an incident; Runbook steps | Observation in the approved live lane | The operator approves the live action; approved bootstrap and break-glass actions stay operator-bound under [approval and safety](approval-and-safety.md) |
 
 Security checks follow their existing owners: [quality](quality.md) selects
 the security unit regressions for continuing guarantees, and a reviewer who
@@ -184,39 +186,9 @@ These rules apply to the Executable behavior and Governance, provider, Stage 99
 rows, and to an Architecture row once it is implemented; a small correction or
 document content change does not trigger them.
 
-- `SDLC-R031` Before a Spec leaves `draft`, its author reads the Requirement and the
-  Architecture Descriptions and ADRs that own the affected boundary, and the
-  Spec's Lifecycle Traceability `Architecture` column links the ones that
-  constrain each criterion or states why none applies. The validator checks
-  that the cell is present and non-empty; reviewers judge its content.
-- `SDLC-R032` An open question that changes an acceptance criterion keeps the Spec out of
-  `approved`; a Plan is not approved against an unapproved Spec.
-- `SDLC-R033` A Spec or Plan that needs to depart from a current Architecture Description
-  or ADR returns to `in-review` under the
-  [lifecycle policy](document-lifecycle.md), and dependent work stops until a
-  new or amended ADR is accepted or the departure is removed.
-- `SDLC-R034` When implementation and an approved Requirement, Architecture or Spec
-  disagree, resolve in the order current user requirement, approved contract,
-  implementation and tests. Record the divergence in the active Task, then
-  either amend the owning document through its own review or correct the
-  implementation, changing producer, reader, schema, current guidance and
-  tests in one change set. An unapproved test expectation never becomes
-  policy, a test is never edited alone to make a violation pass, and a
-  requirement is never relaxed by editing a downstream document alone. This
-  order never authorizes a protected action: [approval and
-  safety](approval-and-safety.md) still binds, and no package or agent
-  message counts as user approval.
-
 #### Three axes
 
 `SDLC-R035`
-
-Three separate axes describe where work stands, and one never implies
-another. The document STAGE (Stage 01 to 99) names the owner and place of a
-document. The SDLC phase (Clarify to Complete above) names the work step.
-The Git point names before, during or after commit, push, pull request or
-merge. Status, acceptance, promotion and exit per document role follow the
-[lifecycle policy](document-lifecycle.md).
 
 ### Exceptions
 

@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD 메트릭 Prometheus 수집 복구 Runbook"
-version: "2.4.3"
+version: "2.4.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -99,6 +99,9 @@ rg -n 'argocd-\(' gitops/platform/monitoring/alloy-k8s-logs.yaml
 # operator-triggered reconciliation only
 argocd app sync platform-monitoring
 ```
+
+| Step | Action | Expected Result | On Failure |
+| --- | --- | --- | --- |
 
 ### Stop Conditions
 

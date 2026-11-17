@@ -1,6 +1,6 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "2.2.4"
+version: "2.2.5"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -203,6 +203,9 @@ kubectl -n istio-system get externalsecret kiali-grafana-auth
 # Kiali 로그에서 401 오류 사라짐 확인
 kubectl -n istio-system logs deploy/kiali --since=2m | rg -i 'grafana|401'
 ```
+
+| Step | Action | Expected Result | On Failure |
+| --- | --- | --- | --- |
 
 ### Stop Conditions
 

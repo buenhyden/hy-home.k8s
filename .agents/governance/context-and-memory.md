@@ -1,6 +1,6 @@
 ---
 title: "Context and Memory Policy"
-version: "1.8.1"
+version: "1.8.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -31,125 +31,59 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 
 ### Requirements
 
-| Rule ID | Condition | Level | Evidence | Status |
+| Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
-| CTX-R001 | Always | required | Semantic review | active |
-| CTX-R002 | When promoting recurring knowledge | required | Semantic review | active |
-| CTX-R003 | Always | required | `knowledge-surface` | active |
-| CTX-R004 | Always | required | Semantic review | active |
-| CTX-R005 | Always | required | Semantic review | active |
-| CTX-R006 | Always | required | `workspace-memory-regressions` | active |
-| CTX-R007 | Always | required | `repository-quality` | active |
-| CTX-R008 | Always | required | Semantic review | active |
-| CTX-R009 | When using the shared workspace memory store | required | `workspace-memory-regressions` | active |
-| CTX-R010 | When writing a memory body | required | `workspace-memory-regressions` | active |
-| CTX-R011 | When writing a memory in a tier | required | `workspace-memory-regressions` | active |
-| CTX-R012 | Always | required | `workspace-memory-regressions` | active |
-| CTX-R013 | When writing a memory | required | `workspace-memory-regressions` | active |
-| CTX-R014 | When an idempotency key is reused | required | `workspace-memory-regressions` | active |
-| CTX-R015 | When a memory carries source refs | required | `workspace-memory-regressions` | active |
-| CTX-R016 | Always | required | `workspace-memory-regressions` | active |
-| CTX-R017 | Always | required | `workspace-memory-regressions` | active |
-| CTX-R018 | Always | required | `agent-governance` | active |
-| CTX-R019 | When a reviewed observation carries a knowledge-fact block | required | `knowledge-surface` | active |
-| CTX-R020 | Before dependent mutation, on resume | required | Semantic review | active |
+| CTX-R001 | Always | Keep working context bounded, factual, redacted, and scoped to one task. Record remaining acceptance criteria and next owner rather than raw sessions. | Semantic review | none |
+| CTX-R002 | When promoting recurring knowledge | Promote recurring knowledge only after review into the appropriate policy, skill, operating document, or reference record. | Semantic review | none |
+| CTX-R003 | Always | Durable knowledge about one domain — Kubernetes and GitOps desired state, networking, secret handling, observability — stays with that domain's operating or reference owner. Reach it through the stage index rather than copying it into a governance summary; use [`knowledge-map`](../skills/knowledge-map/SKILL.md) to find stale navigation without creating a second authority for the same subject. | `knowledge-surface` | none |
+| CTX-R004 | Always | Provider-local recall never writes canonical truth directly; verify it against the repository first. A provider's memory feature does not change repository ownership or permission. | Semantic review | none |
+| CTX-R005 | Always | Hand task-local evidence to its Task owner. Reusable decision context may instead be kept in the shared workspace memory store below; durable policy and domain knowledge still refresh, supersede, or retire through their profile contract. | Semantic review | none |
+| CTX-R006 | Always | Do not read or store credentials, secret values, personal data, auth configuration, shell history, environment dumps, raw prompts, or complete provider transcripts, in the store or its metadata. | `workspace-memory-regressions` | none |
+| CTX-R007 | Always | The `memory/progress.md` ledger and the `memory/` directory are retired and neither is restored; Git history recovers their bytes. The work residue ledger is not the retired ledger. Progress and task status belong to the owning Spec Task, and durable knowledge stays with the responsible policy, skill, operating document, or reference owner. `.agents/knowledge/` maps those owners without restating them; it is a pointer surface, never a second store of current state. Its one exception, `glossary.md`, owns term meanings and states no rule (ADR-0058). | `repository-quality` | none |
+| CTX-R008 | Always | A checkpoint is an optional, untracked human aid; no repository tool creates one. Static validation of a synthetic checkpoint proves neither actual checkpoint execution nor provider memory, hook, or compaction behavior. | Semantic review | none |
+| CTX-R009 | When using the shared workspace memory store | SPEC-0109 (Git history: package `0109-shared-workspace-memory` under `docs/03.specs/` at commit `69445fca`) defined one store that Claude and Codex sessions both read and write: `.workspace-memory/memory.sqlite3` at the main worktree root, resolved from the Git common directory so every linked worktree reaches the same file. It is Git-ignored runtime data. Use `scripts/workspace_memory.py`; run `init` once, and never create a second store when the root cannot be resolved. If the representative worktree or Git common directory moves, stop and have the operator reconnect the existing store and verify its workspace identity before resuming. A separate Git directory layout is currently unsupported; it reports `MEMORY_UNAVAILABLE` and does not authorize a replacement store. | `workspace-memory-regressions` | none |
+| CTX-R010 | When writing a memory body | A memory body is decision context: why a choice was made, why a check failed, how it was resolved and when that applies again. It is never Task status, evidence, approval or acceptance, and the store rejects bodies that carry those fields. Cite the original record in the Task instead. | `workspace-memory-regressions` | none |
+| CTX-R011 | When writing a memory in a tier | Tiers share one envelope (`workspace_id`, `memory_id`, `tier`, `revision`, `owner`, source refs, `eligibility`, `sensitivity`, body). `short-term` needs context and narrative, `long-term` a reviewed claim, reason and applicability, and `domain` a `domain_id`, symptom, cause and resolution. | `workspace-memory-regressions` | none |
+| CTX-R012 | Always | Task completion, session end, compaction, promotion and age never delete or summarize a memory. Eligibility (`candidate`, `current`, `needs-review`, `superseded`, `withdrawn`) only controls the default view, which returns `current` memories whose source refs are unchanged; history keeps every revision and conflict and is labelled as history. | `workspace-memory-regressions` | none |
+| CTX-R013 | When writing a memory | A write names the expected revision. A stale write is kept as a conflict when capacity allows, otherwise both revisions are reported and nothing changes. A full tier, domain or revision limit refuses only the new write with `MEMORY_CAPACITY_EXCEEDED`; ordinary repository work and QA continue. | `workspace-memory-regressions` | none |
+| CTX-R014 | When an idempotency key is reused | An idempotency key is bound to the complete request, including target, expected revision, body, sources and scope. Reusing it with different input fails with `MEMORY_CONFLICT`; an old result without a request digest cannot be replayed as a successful write. Existing revisions remain intact. | `workspace-memory-regressions` | none |
+| CTX-R015 | When a memory carries source refs | Repository-relative source refs currently retain `path` and `sha256`. A source is read from the caller's worktree; a symlink in any path component, a non-regular file, an inaccessible file or changed bytes makes it unavailable or stale. Default retrieval excludes stale entries. Direct ID and history reads can show them for review, never as current authority. | `workspace-memory-regressions` | none |
+| CTX-R016 | Always | The SQLite page limit is set and checked on each connection and bounds the main database only. The 4 GiB store-area limit remains an observation, not a filesystem quota. Backups use a private temporary file, serialize with other backups, verify schema, workspace identity, revisions and conflicts, then atomically replace the single backup. A failed backup preserves the previous valid copy. To restore, stop every writer, remove a leftover `memory.sqlite3-journal` beside the store, copy the backup over the store file and confirm `pragma integrity_check` returns `ok`; the restored store reads the same records. | `workspace-memory-regressions` | none |
+| CTX-R017 | Always | The store accepts only `public` or `internal` sensitivity. | `workspace-memory-regressions` | none |
+| CTX-R018 | Always | Native Claude and Codex memory stay disabled in project configuration, and their existing files are neither deleted nor imported. | `agent-governance` | none |
+| CTX-R019 | When a reviewed observation carries a knowledge-fact block | A reviewed observation may carry a `knowledge-fact` JSON block in an existing knowledge document. It records provenance, not a copy of the source policy. All eight fields are required: `owner`, `scope`, `source` (tracked repository path and SHA-256), `observed_at` (ISO date), `valid_for` (inclusive ISO expiry date), `invalidated_by` (`source`, `scope`, `approval`, `validity`), `review_status` (`advisory` or `current` while reusable), and `sensitivity` (`public`). `current` means reviewed at the named owner; it grants no permission. | `knowledge-surface` | none |
+| CTX-R020 | Before dependent mutation, on resume | Re-observe the worktree, branch, HEAD and divergence base, relevant file hashes, staged/unstaged paths and changed consumers before dependent mutation. Compare current user authorization and revocation state with the Task's scope; a saved approval is evidence of a past decision, not fresh authority. Resolve any other writer's ownership before writing shared files. | Semantic review | none |
 
-- `CTX-R001` Keep working context bounded, factual, redacted, and scoped to one task.
-  Record remaining acceptance criteria and next owner rather than raw sessions.
-- `CTX-R002` Promote recurring knowledge only after review into the appropriate policy,
-  skill, operating document, or reference record.
-- `CTX-R003` Durable knowledge about one domain — Kubernetes and GitOps desired state,
-  networking, secret handling, observability — stays with that domain's
-  operating or reference owner. Reach it through the stage index rather than
-  copying it into a governance summary; use
-  [`knowledge-map`](../skills/knowledge-map/SKILL.md) to find stale navigation
-  without creating a second authority for the same subject.
-- `CTX-R004` Provider-local recall never writes canonical truth directly; verify it
-  against the repository first. A provider's memory feature does not change
-  repository ownership or permission.
-- `CTX-R005` Hand task-local evidence to its Task owner. Reusable decision context may
-  instead be kept in the shared workspace memory store below; durable policy
-  and domain knowledge still refresh, supersede, or retire through their
-  profile contract.
-- `CTX-R006` Do not read or store credentials, secret values, personal data, auth
-  configuration, shell history, environment dumps, raw prompts, or complete
-  provider transcripts, in the store or its metadata.
-- `CTX-R007` The `memory/progress.md` ledger and the `memory/` directory are retired and
-  neither is restored; Git history recovers their bytes. The work residue ledger is not the retired ledger. Progress and task
-  status belong to the owning Spec Task, and durable knowledge stays with the
-  responsible policy, skill, operating document, or reference owner. `.agents/knowledge/` maps those owners
-  without restating them; it is a pointer surface, never a second store of
-  current state. Its one exception, `glossary.md`, owns term meanings and
-  states no rule (ADR-0058).
-- `CTX-R008` A checkpoint is an optional, untracked human aid; no repository tool creates
-  one. Static validation of a synthetic checkpoint proves neither actual
-  checkpoint execution nor provider memory, hook, or compaction behavior.
+| Rule ID | Level | Status |
+| --- | --- | --- |
+| CTX-R001 | required | active |
+| CTX-R002 | required | active |
+| CTX-R003 | required | active |
+| CTX-R004 | required | active |
+| CTX-R005 | required | active |
+| CTX-R006 | required | active |
+| CTX-R007 | required | active |
+| CTX-R008 | required | active |
+| CTX-R009 | required | active |
+| CTX-R010 | required | active |
+| CTX-R011 | required | active |
+| CTX-R012 | required | active |
+| CTX-R013 | required | active |
+| CTX-R014 | required | active |
+| CTX-R015 | required | active |
+| CTX-R016 | required | active |
+| CTX-R017 | required | active |
+| CTX-R018 | required | active |
+| CTX-R019 | required | active |
+| CTX-R020 | required | active |
 
 #### Shared workspace memory store
 
 `CTX-R009`
 
-SPEC-0109 (Git history: package `0109-shared-workspace-memory` under
-`docs/03.specs/` at commit `69445fca`) defined one store that Claude and Codex sessions both read and write:
-`.workspace-memory/memory.sqlite3` at the main worktree root, resolved from the
-Git common directory so every linked worktree reaches the same file. It is
-Git-ignored runtime data. Use `scripts/workspace_memory.py`; run `init` once,
-and never create a second store when the root cannot be resolved.
-If the representative worktree or Git common directory moves, stop and have the
-operator reconnect the existing store and verify its workspace identity before
-resuming. A separate Git directory layout is currently unsupported; it reports
-`MEMORY_UNAVAILABLE` and does not authorize a replacement store.
-
-- `CTX-R010` A memory body is decision context: why a choice was made, why a check
-  failed, how it was resolved and when that applies again. It is never Task
-  status, evidence, approval or acceptance, and the store rejects bodies that
-  carry those fields. Cite the original record in the Task instead.
-- `CTX-R011` Tiers share one envelope (`workspace_id`, `memory_id`, `tier`, `revision`,
-  `owner`, source refs, `eligibility`, `sensitivity`, body). `short-term`
-  needs context and narrative, `long-term` a reviewed claim, reason and
-  applicability, and `domain` a `domain_id`, symptom, cause and resolution.
-- `CTX-R012` Task completion, session end, compaction, promotion and age never delete
-  or summarize a memory. Eligibility (`candidate`, `current`, `needs-review`,
-  `superseded`, `withdrawn`) only controls the default view, which returns
-  `current` memories whose source refs are unchanged; history keeps every
-  revision and conflict and is labelled as history.
-- `CTX-R013` A write names the expected revision. A stale write is kept as a conflict
-  when capacity allows, otherwise both revisions are reported and nothing
-  changes. A full tier, domain or revision limit refuses only the new write
-  with `MEMORY_CAPACITY_EXCEEDED`; ordinary repository work and QA continue.
-- `CTX-R014` An idempotency key is bound to the complete request, including target,
-  expected revision, body, sources and scope. Reusing it with different input
-  fails with `MEMORY_CONFLICT`; an old result without a request digest cannot
-  be replayed as a successful write. Existing revisions remain intact.
-- `CTX-R015` Repository-relative source refs currently retain `path` and `sha256`. A
-  source is read from the caller's worktree; a symlink in any path component,
-  a non-regular file, an inaccessible file or changed bytes makes it
-  unavailable or stale. Default retrieval excludes stale entries. Direct ID
-  and history reads can show them for review, never as current authority.
-- `CTX-R016` The SQLite page limit is set and checked on each connection and bounds the
-  main database only. The 4 GiB store-area limit remains an observation, not
-  a filesystem quota. Backups use a private temporary file, serialize with
-  other backups, verify schema, workspace identity, revisions and conflicts,
-  then atomically replace the single backup. A failed backup preserves the
-  previous valid copy. To restore, stop every writer, remove a leftover
-  `memory.sqlite3-journal` beside the store, copy the backup over the store
-  file and confirm `pragma integrity_check` returns `ok`; the restored store
-  reads the same records.
-- `CTX-R017` The store accepts only `public` or `internal` sensitivity.
-- `CTX-R018` Native Claude and Codex memory stay disabled in project configuration, and
-  their existing files are neither deleted nor imported.
-
 #### Bounded observation metadata
 
 `CTX-R019`
-
-A reviewed observation may carry a `knowledge-fact` JSON block in an existing
-knowledge document. It records provenance, not a copy of the source policy.
-All eight fields are required: `owner`, `scope`, `source` (tracked repository path and
-SHA-256), `observed_at` (ISO date), `valid_for` (inclusive ISO expiry date),
-`invalidated_by` (`source`, `scope`, `approval`, `validity`), `review_status`
-(`advisory` or `current` while reusable), and `sensitivity` (`public`).
-`current` means reviewed at the named owner; it grants no permission.
 
 Before promoting, correcting or deleting an observation, re-read its owner and
 source, verify sensitivity and the current authorization, and record the change
@@ -163,12 +97,6 @@ an approval or infer whether a writer concealed sensitive content.
 #### Resume decision
 
 `CTX-R020`
-
-Re-observe the worktree, branch, HEAD and divergence base, relevant file hashes,
-staged/unstaged paths and changed consumers before dependent mutation. Compare
-current user authorization and revocation state with the Task's scope; a saved
-approval is evidence of a past decision, not fresh authority. Resolve any other
-writer's ownership before writing shared files.
 
 Stop dependent mutation on a mismatch, expired/deleted/redacted source, revoked
 or missing approval, concurrent writer conflict, or partial subprocess result.

@@ -55,6 +55,12 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 <!-- Author prompt: 현재 맡은 역할, 완화 조치, escalation, 다음 점검 시점을 추적한다. -->
 
+<!-- Author prompt: 아래 Actions 표에 조치마다 소유자, 실행·완료 조건, 실제 근거를 적는다. 근거가 아직 없으면 none을 쓰고, 실제 조치가 생기기 전에는 열만 둔다. -->
+
+| Action | Owner | Condition | Evidence |
+| --- | --- | --- | --- |
+| Name one response action. | Name the owner. | State the execution or completion condition. | Link the actual evidence, or none. |
+
 ## Resolution
 
 ### Verified State

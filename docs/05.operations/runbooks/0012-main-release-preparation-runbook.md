@@ -1,6 +1,6 @@
 ---
 title: "Main Release Preparation"
-version: "1.4.3"
+version: "1.4.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -59,7 +59,7 @@ Python과 구현의 trusted resolver가 받아들이는 `git`, `git-cliff`, `gh`
 
 ### Steps
 
-| Step | Action | Expected result | Stop / escalate when |
+| Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
 | 1 | main에 통합된 범위와 공개 호환성 영향을 검토한다. 지원 CLI/options, JSON Schema, 문서 profile/frontmatter, GitOps desired state, 외부 서비스 인터페이스의 변경을 분류한다. | 릴리스 범위와 실제 변경 근거가 Task/PR에 연결된다. | 기존 릴리스의 공개 계약이나 배포 결과를 추측해야 한다. |
 | 2 | main에서 `release/vX.Y.Z` 브랜치를 만들고 release tool의 `prepare` preview로 제안 내용을 확인한 뒤, 명시적 `--write`로 정규 `CHANGELOG.md`를 작성해 release-preparation PR을 연다. 1.0 이후 breaking/additive compatible/compatible fix는 major/minor/patch다. 첫 0.y는 운영자가 version과 호환성 약속을 명시한다. | 릴리스 노트가 실제 통합 내용에 대응한다. | dev push 또는 7일 artifact만으로 정규 이력을 대신하려 한다. |

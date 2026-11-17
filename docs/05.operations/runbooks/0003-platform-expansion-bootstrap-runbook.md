@@ -1,6 +1,6 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.4.4"
+version: "1.4.5"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -96,6 +96,9 @@ Steps의 Checklist에서 CA 입력과 외부 의존성을 확인한다. CA 개�
    ```
 
 5. 아래 Verification의 정적 계약과 런타임 검사를 실행한다.
+
+| Step | Action | Expected Result | On Failure |
+| --- | --- | --- | --- |
 
 ### Stop Conditions
 

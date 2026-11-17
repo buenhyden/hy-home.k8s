@@ -42,9 +42,9 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 <!-- Author prompt: 순서가 있는 절차일 때만 아래 Steps 표를 사용하고, 그렇지 않으면 표를 지운다. -->
 
-| Step | Action | Check |
-| --- | --- | --- |
-| 1 | Describe the action. | Describe the observable check. |
+| Step | Action | Expected Result | On Failure |
+| --- | --- | --- | --- |
+| 1 | Describe the action. | Describe the observable result. | State where to stop and who owns the next step. |
 
 ### Expected Results
 
