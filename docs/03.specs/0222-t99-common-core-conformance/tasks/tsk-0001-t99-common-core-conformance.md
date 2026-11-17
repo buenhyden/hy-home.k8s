@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.21.0"
+version: "0.22.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-18"
@@ -271,7 +271,7 @@ The user approved the Spec and Plan (EVD-006) and renewed that approval for revi
 | WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | completed | PASS | EVD-024, EVD-025, EVD-026 |
 | WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | completed | PASS | EVD-027, EVD-028, EVD-029 |
 | WORK-008 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Research, audit and data-reference forms | platform | completed | PASS | EVD-030, EVD-031, EVD-033 |
-| WORK-009 | [VAL-CORE-002](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Final export, residue closure, review and suite | platform | in-progress | NOT_RUN | EVD-001, EVD-036, EVD-037, EVD-038, EVD-039, EVD-040, EVD-041, EVD-042, EVD-043, EVD-044 |
+| WORK-009 | [VAL-CORE-002](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Final export, residue closure, review and suite | platform | completed | PASS | EVD-036, EVD-037, EVD-038, EVD-039, EVD-040, EVD-041, EVD-042, EVD-043, EVD-044, EVD-045 |
 
 ## Verification Evidence
 
@@ -323,10 +323,11 @@ The user approved the Spec and Plan (EVD-006) and renewed that approval for revi
 | EVD-042 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Independent review | Three read-only code-reviewer agents over `main...66fe7808`: executable changes, Stage 99, governed documents; 2026-11-18 | PASS | No blocking or high finding; one medium and eight low findings, each disposed in the WORK-009 decisions above. The Task's EVD rows were unchanged across all 18 commits that touch it, and ADR-0001 to ADR-0061 and published members m0001 to m0012 are untouched. | yes | none |
 | EVD-043 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | `document` suite | `scripts/run-contract-tests.py --suite document` on the staged tree `f16bdef1`; pinned venv, 2026-11-18 | PASS | 1197 tests in 31 modules OK (4 skipped) in 510 s; the run on `66fe7808` before the review fix also passed (1196 tests). | yes | none |
 | EVD-044 | [VAL-CORE-002](../spec.md#criteria) | WORK-009 | Final template export and comparison | The exporter over the staged tree `f16bdef1` and the package comparator (sha256 `f6ee2636`) with `--workspace-root`; pinned venv, 2026-11-18 | PASS | `DECLARED_CORE_MATCH`: 19 roles, 0 unmapped templates, 15 classified templates, 43 declared extensions, 0 not-applicable roles. | yes | none |
+| EVD-045 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `321cb2cf` and its commit hooks; pinned venv, 2026-11-18 | PASS | 11 selected gates passed. The first hook run refused the ledger because its entries were not sorted by ID, so they were sorted. The second hook run passed all 11 gates but returned 1 with no gate failure, while worktree backups ran beside it. A direct `qa.py staged` on the same index returned 0, and the commit hook then passed. | yes | none |
 
 ### Resolution Links
 
-EVD-005 resolves EVD-003 and EVD-004 for the reviewed draft.
+EVD-005 resolves EVD-003 and EVD-004 for the reviewed draft. EVD-001 was the planned WORK-001 check, and EVD-013 records that observation.
 
 ### Residue Handoff
 
@@ -345,14 +346,14 @@ WORK-009 records the residue this Task leaves here and in `docs/03.specs/work-re
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-CORE-001](../spec.md#criteria) | pending | none | Run WORK-001 to WORK-008 and their checks | platform |
-| [VAL-CORE-002](../spec.md#criteria) | pending | none | Run WORK-009 | platform |
-| [VAL-CORE-003](../spec.md#criteria) | pending | none | Run WORK-002 to WORK-008 and their checks | platform |
-| [VAL-CORE-004](../spec.md#criteria) | pending | none | Run WORK-002 and WORK-009 | platform |
+| [VAL-CORE-001](../spec.md#criteria) | accepted | EVD-002, EVD-005, EVD-006, EVD-007, EVD-008, EVD-010, EVD-011, EVD-012, EVD-013, EVD-014, EVD-018, EVD-021, EVD-024, EVD-027, EVD-030, EVD-032, EVD-034 | Accepted under the user's 2026-11-18 answer `criterion acceptance, COMMIT, PUSH, PR, MERGE까지`, whose conditions the listed PASS rows meet | platform |
+| [VAL-CORE-002](../spec.md#criteria) | accepted | EVD-038, EVD-039, EVD-044 | Accepted under the user's 2026-11-18 answer `criterion acceptance, COMMIT, PUSH, PR, MERGE까지`, whose conditions the listed PASS rows meet | platform |
+| [VAL-CORE-003](../spec.md#criteria) | accepted | EVD-015, EVD-017, EVD-019, EVD-020, EVD-022, EVD-023, EVD-025, EVD-026, EVD-028, EVD-029, EVD-031, EVD-033, EVD-035 | Accepted under the user's 2026-11-18 answer `criterion acceptance, COMMIT, PUSH, PR, MERGE까지`, whose conditions the listed PASS rows meet | platform |
+| [VAL-CORE-004](../spec.md#criteria) | accepted | EVD-016, EVD-036, EVD-037, EVD-040, EVD-041, EVD-042, EVD-043, EVD-045 | Accepted under the user's 2026-11-18 answer `criterion acceptance, COMMIT, PUSH, PR, MERGE까지`, whose conditions the listed PASS rows meet | platform |
 
 ### Remaining Conditions
 
-The staged QA record of the final WORK-009 commit and the user's criterion acceptance remain.
+No work unit or criterion remains. The residue rows T99-H01 to T99-H04 stay open for their owners. Push, pull request and merge follow the user's request.
 
 ## Handoff
 
@@ -362,4 +363,4 @@ CORE-BINDING is reflected: the [document authoring policy](../../../../.agents/g
 
 ### Next Owner
 
-The user decides on criterion acceptance of VAL-CORE-001 to VAL-CORE-004. The residue rows T99-H01 to T99-H04 name their owners. The next package prompt, W04-CONTENT, starts only when the user enters its scope.
+The user accepted VAL-CORE-001 to VAL-CORE-004 on 2026-11-18 (`criterion acceptance, COMMIT, PUSH, PR, MERGE까지`). The residue rows T99-H01 to T99-H04 name their owners. The next package prompt, W04-CONTENT, starts only when the user enters its scope.
