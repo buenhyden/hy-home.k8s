@@ -2,7 +2,7 @@
 title: "T99 Common Core Conformance"
 version: "0.4.0"
 type: "sdlc/plan"
-status: "draft"
+status: "in-review"
 owner: "platform"
 updated: "2026-11-17"
 artifact_id: "SPEC-0222-PLAN-0001"
