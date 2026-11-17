@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.6.0"
+version: "0.7.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -72,6 +72,25 @@ The result was `MISMATCH` (export `9305a9cc69e61fa5ba5efe28aa7af92ed6fa8fcce5ea5
 - **Decision, agent-instructions, research, audit and data-reference:** their H2 and H3 trees.
 - **Unmapped templates:** 15 of them.
 
+#### WORK-001 Field Map
+
+Recorded before any code changes, as the Spec requires. A registry member that has the core's meaning carries the core's value: the drift check requires equality, and the one-time export reads it under the core name. Local bindings keep their registry names and are never exported as core.
+
+| Core member | Registry member | Rule |
+| --- | --- | --- |
+| identity `contract_id`, `contract_version` | `common_forms.core.contract_id`, `.contract_version`, `.source_sha256` | New; `stage`, `approval_ref`, `source` and `content_digest` stay as recorded |
+| role | form `core_role` (or native `template_definition.core_role`) | New; one of 19 core roles, `domain` or `native`; `domain` and `native` carry `classification` (`owner`, `reason`, `review_trigger`, `authority_ref`) |
+| `purpose`, `non_goals`, `metadata_policy`, `language`, `status`, `relationships`, `lifecycle`, `rules` | form `core.<member>` | New; verbatim core values |
+| section `section_id`, `level`, `parent_id`, `order` | section `section_id`, `level`, `parent_id`, `order` | Existing; equal values |
+| section `title_en` | section `title` | Existing; equal value |
+| section `required_when` | section `condition` | Existing; takes the core value |
+| section `title_ko`, `content_rule`, `prohibited_content` (string), `empty_policy` (H2 sentence) | section `core.title_ko`, `.content_rule`, `.prohibited_content`, `.empty_policy` | New; verbatim. The registry `content`, `required_content`, `prohibited_content` list, `empty_policy` code, `validation_ids` and `link_only` stay local authoring bindings |
+| `subsections` | section `children` | Existing; equal structure |
+| `tables` | form `core.tables` | New; verbatim core tables |
+| table `table_id`, `section_id`, `required_when`, `empty_policy` | template table `table_id`, `section`, `required_when`, `empty_policy` | `table_id`, `required_when` and `empty_policy` are new; `section` takes the core H2 ID |
+| column `label`, `key`, `value_type`, `meaning`, `required` | template column `key`, `id`, `data_type`, `meaning`, `required` | `key` carries the label as the header text; `id` is new and holds the core key; `data_type` takes the core value type; `meaning` and `required` take core values |
+| extension `reason`, `validation`, `review_trigger`, `authority_ref` | extension `condition`, `verification`, `review`, `authority_ref` | `authority_ref` is new: `ADR-0059` for entries before this Spec, `SPEC-0222` for new ones |
+
 ### Blockers and Decisions
 
 The user approved the Spec and Plan (EVD-006); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
@@ -80,7 +99,7 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CORE-001](../spec.md#criteria) | Registry core members, `core_role` and classifications | platform | ready | NOT_RUN | EVD-001 |
+| WORK-001 | [VAL-CORE-001](../spec.md#criteria) | Registry core members, `core_role` and classifications | platform | in-progress | NOT_RUN | EVD-001 |
 | WORK-002 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Task core members, tables and transition adapter | platform | ready | NOT_RUN | EVD-001 |
 | WORK-003 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Requirement, architecture, spec and plan tables | platform | ready | NOT_RUN | EVD-001 |
 | WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | ready | NOT_RUN | EVD-001 |
