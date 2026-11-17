@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts Progressive Delivery Requirement Package"
-version: "3.0.1"
+version: "3.0.2"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "REQ-0001"
 ---
 
@@ -87,31 +87,29 @@ This update does not claim to have observed runtime state or received live notif
 | REQ-0001-IF-0002 | The default promotion policy must not force automatic promotion, and a per-application deployment must be able to abort/rollback automatically on failure through an approved safety check. | Serves a default that imposes no promotion mode, and failure safety through an approved AnalysisTemplate (AD-0004 Lifecycle Traceability). | The platform imposes no promotion mode, and a failing safety check aborts the reference Rollout and returns traffic to the stable version. | Must |
 | REQ-0001-IF-0003 | Access to the approved Dashboard local path must be provided through the standard local route. | Serves the route boundary between the k8s router and the cluster ingress (AD-0004 Lifecycle Traceability). | The shared local entry point forwards its Rollouts path to the Dashboard host, distinct from the direct TLS access of FR-0002. | Must |
 
-## Acceptance Criteria
+## Traceability
 
-### Acceptance Conditions
+### Sources
+
+- **Requirement**: [`./0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md) — cert-manager dependency
+
+### Verification Links
+
+- **AD**: [`../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md`](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md)
+- **Spec**: N/A — SPEC-0004 left the tree; Git history recovers it ([REQ-0001 Archived Lineage](./0001-argo-rollouts-progressive-delivery.md#archived-lineage))
+- **ADR**: [`../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
+- **ADR**: [`../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
+
+#### Acceptance Conditions
 
 - **Acceptance criterion 01**: An operator can check the Rollouts controller state. Evidence: the Rollouts controller Deployment (`argo-rollouts`) is `Available=True`.
 - **Acceptance criterion 02**: An operator can see rollout progress in the Dashboard. Evidence: HTTPS access to the approved Dashboard local path succeeds.
 - **Acceptance criterion 03**: An application team can track Rollout resources in the ArgoCD state model. Evidence: ArgoCD shows the `Rollout` resource as `Healthy` or `Progressing`.
 - **Acceptance criterion 04**: Hosted CI must block Rollouts static contract regressions when a pull request changes the affected contract. Local quality and static contract results establish the local check only. The current hosted metadata and style checks leave affected Rollouts validation pending. An observed hosted verdict needs its actual input revision and run.
 
-### Verification Method
+#### Verification Method
 
 No separate verification method is stated: each requirement is verified by the evidence named in its `Acceptance` cell, and the acceptance-criterion column of `Lifecycle Traceability` states the acceptance condition of every member.
-
-## Traceability
-
-### Source and Constraints
-
-- **Requirement**: [`./0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md) — cert-manager dependency
-
-### Downstream Links
-
-- **AD**: [`../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md`](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md)
-- **Spec**: N/A — SPEC-0004 left the tree; Git history recovers it ([REQ-0001 Archived Lineage](./0001-argo-rollouts-progressive-delivery.md#archived-lineage))
-- **ADR**: [`../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
-- **ADR**: [`../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
 
 ### Lifecycle Traceability
 

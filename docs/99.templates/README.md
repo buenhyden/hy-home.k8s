@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.38.2"
+version: "0.38.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -155,12 +155,12 @@ form 경로의 대응은 Registry만 소유한다.
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
   `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의
   form을 담아 단계별 책임과 handoff를 기록한다. `sdlc/requirement`는 이 중
-  처음으로 `requirement` form(다섯 H2와 열 개 H3, Traceability 아래 지역 H3
+  처음으로 `requirement` form(네 H2와 여덟 H3, Traceability 아래 지역 H3
   `Lifecycle Traceability`와 `Archived Lineage`)을 쓰며 H2 목록을 두지 않는다.
   추적 표에 이 패키지의 NFR ID를 기록하면 같은 ID의 요구 행을
   `Quality Requirements`에 둔다. 기능 요구사항 표에는 FR과 IF 행을 둔다.
-  `sdlc/architecture-description`은 `architecture` form(여섯 H2와 열두 개 H3,
-  같은 두 지역 H3)을 쓰고 H2 목록을 두지 않으며, 각 요구 member를 자신의
+  `sdlc/architecture-description`은 `architecture` form(다섯 H2와 열 개 H3,
+  Decisions and Adoption 아래 같은 두 지역 H3)을 쓰고 H2 목록을 두지 않으며, 각 요구 member를 자신의
   `Upstream requirement` 열에서 인용한다. Requirement는 downstream 링크 열을
   두지 않고, 파생 역조회와 `REQUIREMENT-COVERAGE` 검사가 그 자리를 대신한다.
   `sdlc/architecture-decision`은 `adr` form(다섯 H2와 열 개 H3, Traceability

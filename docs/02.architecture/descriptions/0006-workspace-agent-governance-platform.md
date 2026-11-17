@@ -1,18 +1,33 @@
 ---
 title: "Agent and Document Governance Architecture Description (AD)"
-version: "3.0.2"
+version: "3.1.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "AD-0006"
 ---
 
 # Agent and Document Governance Architecture Description (AD)
 
-## Overview
+## Context and Boundaries
 
-### Purpose and Readers
+### System Boundary
+
+- Common governance owns the meaning of common policy, roles, and skills, and role metadata.
+- Stage 99 owns document profiles and forms and defines neither role permissions nor execution success.
+- The execution registry and scripts own check selection, execution limits, and failure handling.
+- The repository does not own provider accounts, authentication, model access, or global installs. External accounts,
+  credentials, provider capabilities, and the live runtime are not implementation evidence for this document.
+- GitOps desired state, Kubernetes policy, and external service interfaces stay in their existing domains.
+- No separate governance registry, per-provider policy fork, Release family, or shared progress ledger is created; the work residue ledger of [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) holds residue only and is not one.
+- SPEC-0152 (left the tree; Git history recovers it) completed the manual
+  disposition policy and bounded first-record Spec/Plan approval change. The
+  [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage)
+  retains its Task acceptance and exact recovery route; current authority is
+  the lifecycle policy and accepted ADR-0056, not a deleted package.
+
+#### Purpose and Readers
 
 This Architecture describes the current owner boundaries of agent, document, validation, and execution evidence.
 [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) owns the common governance design. The earlier
@@ -31,26 +46,9 @@ the role roster, validator argv, and task state are referenced at their canonica
 The existence of a file does not prove the installed runtime's discovery or permission enforcement, nor hosted CI success;
 actual validation state is confirmed in the relevant Task.
 
-### System Boundary
+#### Context
 
-- Common governance owns the meaning of common policy, roles, and skills, and role metadata.
-- Stage 99 owns document profiles and forms and defines neither role permissions nor execution success.
-- The execution registry and scripts own check selection, execution limits, and failure handling.
-- The repository does not own provider accounts, authentication, model access, or global installs. External accounts,
-  credentials, provider capabilities, and the live runtime are not implementation evidence for this document.
-- GitOps desired state, Kubernetes policy, and external service interfaces stay in their existing domains.
-- No separate governance registry, per-provider policy fork, Release family, or shared progress ledger is created; the work residue ledger of [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) holds residue only and is not one.
-- SPEC-0152 (left the tree; Git history recovers it) completed the manual
-  disposition policy and bounded first-record Spec/Plan approval change. The
-  [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage)
-  retains its Task acceptance and exact recovery route; current authority is
-  the lifecycle policy and accepted ADR-0056, not a deleted package.
-
-## Context and Constraints
-
-### Context
-
-#### Consumer and validation flow
+##### Consumer and validation flow
 
 1. A task sets its scope, role, skill, and approval boundaries in common governance and links to a package-local Plan/Task.
 2. The current domain owner and registries select the change's profile, affected paths, and required local lanes; actual tools, resources and execution authority are resolved before implementation without a business/session deadline gate.
@@ -71,7 +69,7 @@ security rules retain their failure meanings when their orchestration is shared.
 
 No constraint is recorded separately in this description; the boundaries and non-goals it states are under [System Boundary](#system-boundary).
 
-## Current Structure
+## Structure
 
 ### Building Blocks
 
@@ -117,94 +115,7 @@ supported roster. `.agents/roles/` owns the current machine truth of common role
 and `.agents/governance/` owns the execution policy. The current provider projection files are repository-static configuration,
 not evidence of an observed authenticated discovery or run.
 
-### Runtime and Deployment
-
-Tracked provider configuration and projections are secret-free repository configuration. The user's credential store is
-neither read nor migrated. Native parsers and canaries are handled in the provider owner's independent evidence lane,
-and no provider credential is added to hosted CI.
-
-Provider permission and hook hardening is recorded in the provider notes;
-native configuration parsing and operator-relayed hook delivery are separate
-observations. The recorded host `bwrap` startup failure does not establish operating-system
-sandbox isolation; a command subsequently approved outside that sandbox
-supplies no workspace-isolation evidence. Native syntax and loading remain
-with the [provider notes](../../../.codex/provider.md), while current r10
-findings and follow-up verification belong to the provider owner's evidence.
-
-The implementation validation owners are [document contracts](../../../scripts/document_contracts.py),
-[lifecycle](../../../scripts/document_lifecycle.py), and the lanes the Validation Registry points to.
-Exact commands and tool versions are read from their execution owners and not copied into this Architecture.
-
-#### Local delivery stages
-
-| Stage | Execution owner and boundary |
-| --- | --- |
-| Editing | Focused behavior regressions and affected content checks selected from the current local registry |
-| Logical commit | Exact-index staged validation and the actual Commitizen message check; an active hook's identical leaf is not repeated manually |
-| Feature push | Git transport preserves commit evidence and adds no repeated QA requirement |
-| PR and main integration | Review local evidence and check inputs changed by integration; refresh only invalidated results |
-| After merge | Verify delivered identity and state; a merge resolution that changes validated inputs selects the affected checks |
-| Global QA-contract change or bounded audit | Resolve tools, time, output and native execution approval for affected purpose gates and named behavior and security units; do not run a blanket sweep |
-| Release | Validate release inputs and publish through one producer; tag or Release publication does not repeat QA |
-
-GitHub Actions retains `ci-summary`, which validates branch and PR commit
-metadata, and a separate PR-only `style-pr` job. `ci-summary` reports the
-branch-policy verdict itself. Its canonical Python producer is projected as
-matching inline workflow logic: it reads candidate commit objects as data,
-uses trusted-base message grammar, checks the actual merge identity and parents,
-and validates the complete base-to-head commit range. The workflow separately
-checks its PR branch-prefix policy. Missing metadata, an
-invalid PR base or source branch, a failed commit identity/range check, or an
-unexpected event/ref fails that job; PR branch policy is not applicable on
-main. The workflow and its inline projection remain PR-editable, so independent
-protected workflow control requires separate remote evidence. Historical hosted
-full QA `NOT_RUN` records remain historical evidence. The W06 candidate
-extends `style-pr` with read-only affected GitOps identity validation using
-the candidate merge tree and reviewed base tooling. It aggregates style, CI
-lock and GitOps outcomes against the cumulative PR change plan. Each leaf
-reports its own guarantee. Local render, schema and unit evidence have their
-own inputs. [ADR-0063](../decisions/0063-affected-pr-gitops-validation.md) records
-the proposed hosted-clause amendment. Actual remote protections, settings
-and execution require separate observation. W10 owns the review
-routing target for high-risk independent review and low-risk author review.
-
-#### Release and work-tracking boundaries
-
-One local release producer prepares the committed main release history in
-`CHANGELOG.md` through a release-preparation PR, then binds a SemVer tag and
-GitHub Release to an exact reviewed main commit. Development pushes do not
-generate release notes or publish versions. Required assets are attached to a
-draft before publication; repository configuration cannot prove GitHub's
-immutable-release setting. Existing `main-<full SHA>` tags remain historical
-refs and are neither moved nor republished.
-
-Version compatibility covers supported CLI commands and options, machine JSON
-schemas, governed document profiles and frontmatter, GitOps desired state and
-external-service interfaces. For released 1.0-or-later contracts, incompatible
-changes raise major, compatible additions raise minor and compatible fixes
-raise patch. The operator selects the initial 0.y version and compatibility
-promise from the reviewed release scope. A release version certifies neither
-deployment nor provider or live runtime acceptance.
-
-Issues own requests and priorities, Specs own contracts, Tasks own execution
-and evidence, and Projects display work. Links and one-way metadata connect
-them without copying complete Spec/Task bodies or overwriting their state in
-both directions. Project activation is remote state, not a consequence of this
-architecture description.
-
-Argo CD reconciles `gitops/` desired state within the existing operating boundary.
-`infrastructure/` supplies bootstrap support and `examples/` contains
-examples. `policy/` is Kubernetes
-Conftest/Rego policy, separate from common agent policy. External OpenBao
-([ADR-0041](../decisions/0041-openbao-secret-backend.md)), PostgreSQL, and Valkey remain interface contracts, not services operated by QA.
-
-A local commit does not authorize push, PR creation, workflow dispatch, release,
-cluster mutation, or external service changes. Hosted, native provider, and live
-verification require their own actual evidence and applicable authorization.
-
-## Interfaces
-
-### Contracts
+### Interfaces
 
 Role metadata references canonical role bodies, skill IDs and provider binding
 paths; it does not copy native values or policy prose. Each provider binding
@@ -337,7 +248,94 @@ outputs stay unobserved; retired historical grading criteria are not silently
 reapplied to a changed contract. Retiring a fixed recurring grader leaves this
 evidence capacity available without adding a new QA gate.
 
-### Failure Boundaries
+## Runtime Behavior
+
+### Normal Flow
+
+Tracked provider configuration and projections are secret-free repository configuration. The user's credential store is
+neither read nor migrated. Native parsers and canaries are handled in the provider owner's independent evidence lane,
+and no provider credential is added to hosted CI.
+
+Provider permission and hook hardening is recorded in the provider notes;
+native configuration parsing and operator-relayed hook delivery are separate
+observations. The recorded host `bwrap` startup failure does not establish operating-system
+sandbox isolation; a command subsequently approved outside that sandbox
+supplies no workspace-isolation evidence. Native syntax and loading remain
+with the [provider notes](../../../.codex/provider.md), while current r10
+findings and follow-up verification belong to the provider owner's evidence.
+
+The implementation validation owners are [document contracts](../../../scripts/document_contracts.py),
+[lifecycle](../../../scripts/document_lifecycle.py), and the lanes the Validation Registry points to.
+Exact commands and tool versions are read from their execution owners and not copied into this Architecture.
+
+#### Local delivery stages
+
+| Stage | Execution owner and boundary |
+| --- | --- |
+| Editing | Focused behavior regressions and affected content checks selected from the current local registry |
+| Logical commit | Exact-index staged validation and the actual Commitizen message check; an active hook's identical leaf is not repeated manually |
+| Feature push | Git transport preserves commit evidence and adds no repeated QA requirement |
+| PR and main integration | Review local evidence and check inputs changed by integration; refresh only invalidated results |
+| After merge | Verify delivered identity and state; a merge resolution that changes validated inputs selects the affected checks |
+| Global QA-contract change or bounded audit | Resolve tools, time, output and native execution approval for affected purpose gates and named behavior and security units; do not run a blanket sweep |
+| Release | Validate release inputs and publish through one producer; tag or Release publication does not repeat QA |
+
+GitHub Actions retains `ci-summary`, which validates branch and PR commit
+metadata, and a separate PR-only `style-pr` job. `ci-summary` reports the
+branch-policy verdict itself. Its canonical Python producer is projected as
+matching inline workflow logic: it reads candidate commit objects as data,
+uses trusted-base message grammar, checks the actual merge identity and parents,
+and validates the complete base-to-head commit range. The workflow separately
+checks its PR branch-prefix policy. Missing metadata, an
+invalid PR base or source branch, a failed commit identity/range check, or an
+unexpected event/ref fails that job; PR branch policy is not applicable on
+main. The workflow and its inline projection remain PR-editable, so independent
+protected workflow control requires separate remote evidence. Historical hosted
+full QA `NOT_RUN` records remain historical evidence. The W06 candidate
+extends `style-pr` with read-only affected GitOps identity validation using
+the candidate merge tree and reviewed base tooling. It aggregates style, CI
+lock and GitOps outcomes against the cumulative PR change plan. Each leaf
+reports its own guarantee. Local render, schema and unit evidence have their
+own inputs. [ADR-0063](../decisions/0063-affected-pr-gitops-validation.md) records
+the proposed hosted-clause amendment. Actual remote protections, settings
+and execution require separate observation. W10 owns the review
+routing target for high-risk independent review and low-risk author review.
+
+#### Release and work-tracking boundaries
+
+One local release producer prepares the committed main release history in
+`CHANGELOG.md` through a release-preparation PR, then binds a SemVer tag and
+GitHub Release to an exact reviewed main commit. Development pushes do not
+generate release notes or publish versions. Required assets are attached to a
+draft before publication; repository configuration cannot prove GitHub's
+immutable-release setting. Existing `main-<full SHA>` tags remain historical
+refs and are neither moved nor republished.
+
+Version compatibility covers supported CLI commands and options, machine JSON
+schemas, governed document profiles and frontmatter, GitOps desired state and
+external-service interfaces. For released 1.0-or-later contracts, incompatible
+changes raise major, compatible additions raise minor and compatible fixes
+raise patch. The operator selects the initial 0.y version and compatibility
+promise from the reviewed release scope. A release version certifies neither
+deployment nor provider or live runtime acceptance.
+
+Issues own requests and priorities, Specs own contracts, Tasks own execution
+and evidence, and Projects display work. Links and one-way metadata connect
+them without copying complete Spec/Task bodies or overwriting their state in
+both directions. Project activation is remote state, not a consequence of this
+architecture description.
+
+Argo CD reconciles `gitops/` desired state within the existing operating boundary.
+`infrastructure/` supplies bootstrap support and `examples/` contains
+examples. `policy/` is Kubernetes
+Conftest/Rego policy, separate from common agent policy. External OpenBao
+([ADR-0041](../decisions/0041-openbao-secret-backend.md)), PostgreSQL, and Valkey remain interface contracts, not services operated by QA.
+
+A local commit does not authorize push, PR creation, workflow dispatch, release,
+cluster mutation, or external service changes. Hosted, native provider, and live
+verification require their own actual evidence and applicable authorization.
+
+### Failure and Recovery
 
 #### Loop and checkpoint
 
@@ -357,19 +355,9 @@ worktree without following symlinks. Request-bound retries, a capacity bound
 on every store connection, and verified atomic backup replacement protect
 context integrity. The store grants no authority to the stored context.
 
-## Decisions
+## Quality Scenarios
 
-### Decision Links
-
-- **Current decision**: [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md)
-- **Local QA and release decision**: [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md)
-- **Current-state amendment**: [ADR-0055](../decisions/0055-governance-decision-current-state-amendment.md) replaces the governance ADR clauses that no longer match the repository
-- **Accepted manual disposition amendment**: [ADR-0056](../decisions/0056-manual-document-disposition-review.md) qualifies the no-proof disposition and unconditional Git-recovery clauses and records the bounded local first-record approval exception; the user's acceptance and completed implementation are separately recorded in REQ-0003 Archived Lineage
-- **Accepted package exit shape amendment**: [ADR-0057](../decisions/0057-package-exit-shape-check.md) narrows only ADR-0056 Decision 6: in `staged` mode the lifecycle validator refuses a Stage 03 package exit in the wrong shape (`LIFECYCLE-PACKAGE-EXIT`), while recovery proof, holds, consumers and authority stay manual
-- **Work residue ledger amendment**: [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) narrows the no-ledger clauses of ADR-0031, ADR-0036, ADR-0047 and ADR-0048 to no competing progress ledger of execution state; the work residue ledger holds residue only
-- **Historical decisions**: [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md); earlier ADRs are in Archived Lineage
-
-### Quality and Risks
+### Scenarios
 
 | Quality attribute | Stimulus | Environment | Response | Measure |
 | --- | --- | --- | --- | --- |
@@ -383,13 +371,27 @@ context integrity. The store grants no authority to the stored context.
 | Maintainability (REQ-0003-FR-0024, REQ-0003-NFR-0001) | A wrapper, script or census outlives its consumer | The actual consumer graph | Targeted/affected/staged selection and purpose-specific gates replace fixed censuses and duplicate wrappers | Direct negative fixtures; aggregate all-files retirement stays with the owning Task |
 | Legibility (REQ-0003-FR-0002) | A gateway or provider note is added | Root and provider gateways | Gateways point to common owners without copied policy bodies | Native syntax parse and canonical-reference tests PASS |
 
-## Traceability
+### Trade-offs
 
-### Requirement Mapping
+Each selected leaf runs once per identical input, and ordinary document edits do not invoke implementation regression discovery, so registry selection replaces a full sweep on every Git event. Static, provider-runtime, hosted-CI and remote or live evidence stay separate classes, so an unobserved class keeps an owner and a retry trigger instead of passing on another class's result.
+
+## Decisions and Adoption
+
+### Decisions
+
+- **Current decision**: [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md)
+- **Local QA and release decision**: [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md)
+- **Current-state amendment**: [ADR-0055](../decisions/0055-governance-decision-current-state-amendment.md) replaces the governance ADR clauses that no longer match the repository
+- **Accepted manual disposition amendment**: [ADR-0056](../decisions/0056-manual-document-disposition-review.md) qualifies the no-proof disposition and unconditional Git-recovery clauses and records the bounded local first-record approval exception; the user's acceptance and completed implementation are separately recorded in REQ-0003 Archived Lineage
+- **Accepted package exit shape amendment**: [ADR-0057](../decisions/0057-package-exit-shape-check.md) narrows only ADR-0056 Decision 6: in `staged` mode the lifecycle validator refuses a Stage 03 package exit in the wrong shape (`LIFECYCLE-PACKAGE-EXIT`), while recovery proof, holds, consumers and authority stay manual
+- **Work residue ledger amendment**: [ADR-0060](../decisions/0060-work-residue-ledger-amendment.md) narrows the no-ledger clauses of ADR-0031, ADR-0036, ADR-0047 and ADR-0048 to no competing progress ledger of execution state; the work residue ledger holds residue only
+- **Historical decisions**: [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md); earlier ADRs are in Archived Lineage
+
+#### Requirement Mapping
 
 - **Requirement Package**: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
 
-### Currentness and Lineage
+### Adoption Boundaries
 
 - **Local QA and release implementation**: `scripts/qa.py` and `scripts/release.py`
 - **Completed change**: SPEC-0152 (left the tree; Git history recovers it) produced the manual policy and bounded approval reader. Its accepted Task and exact three-file recovery route are summarized in [REQ-0003 Archived Lineage](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage). Earlier Spec packages also remain recoverable through their lineage owners.

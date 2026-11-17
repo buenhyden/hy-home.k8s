@@ -10,19 +10,17 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 # [System or Domain Name] Architecture Description (AD)
 
-## Overview
-
-### Purpose and Readers
-
-<!-- Author prompt: identify the architecture subject, its stakeholders and the readers this description serves, and state who owns the structure description. -->
+## Context and Boundaries
 
 ### System Boundary
 
 <!-- Author prompt: define system boundaries, what the system owns and does not own, and explicit non-goals. -->
 
-## Context and Constraints
+#### Purpose and Readers
 
-### Context
+<!-- Author prompt: identify the architecture subject, its stakeholders and the readers this description serves, and state who owns the structure description. -->
+
+#### Context
 
 <!-- Author prompt: name the external dependencies, actors and trust boundaries the system consumes or serves. -->
 
@@ -34,7 +32,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 | --- | --- | --- |
 | <!-- Author prompt: Name a free-text constraint identifier. --> | <!-- Author prompt: State the constraint as a checkable fact. --> | <!-- Author prompt: Name the components or views it limits. --> |
 
-## Current Structure
+## Structure
 
 ### Building Blocks
 
@@ -42,27 +40,23 @@ artifact_id: "{{ARTIFACT_ID}}"
 <!-- Author prompt: Use proportionate context and container views to show responsibilities, labels, and relationships, or explain an omitted view. -->
 <!-- Author prompt: Give every diagram a title, scope, intended reader, legend, and editable source. Label each element with its name, type and responsibility, and give each relationship a direction and a label that states its purpose and protocol. -->
 
-### Runtime and Deployment
-
-<!-- Author prompt: Identify the declared deployment topology and its configuration owners. Cite actual runtime observations with their input, environment, and result. Identify any unobserved scope and its verification owner. -->
-
-## Interfaces
-
-### Contracts
+### Interfaces
 
 <!-- Author prompt: state data ownership, flow, retention, integrity constraints and the contracts between components. -->
 
-### Failure Boundaries
+## Runtime Behavior
+
+### Normal Flow
+
+<!-- Author prompt: Identify the declared deployment topology and its configuration owners. Cite actual runtime observations with their input, environment, and result. Identify any unobserved scope and its verification owner. -->
+
+### Failure and Recovery
 
 <!-- Author prompt: define failure boundaries and what each failure leaves intact. -->
 
-## Decisions
+## Quality Scenarios
 
-### Decision Links
-
-<!-- Author prompt: State core structural choices and link each significant decision to its owning ADR. -->
-
-### Quality and Risks
+### Scenarios
 
 <!-- Author prompt: make quality attributes measurable and link each to a requirement. -->
 
@@ -73,13 +67,21 @@ artifact_id: "{{ARTIFACT_ID}}"
 | --- | --- | --- | --- | --- |
 | <!-- Author prompt: Name the requirement-backed attribute. --> | <!-- Author prompt: State the triggering event. --> | <!-- Author prompt: State the operating condition. --> | <!-- Author prompt: State the system response. --> | <!-- Author prompt: State a measurable threshold. --> |
 
-## Traceability
+### Trade-offs
 
-### Requirement Mapping
+<!-- Author prompt: state what the structure gives up for each quality it favors, using only facts from this description and its ADRs. -->
+
+## Decisions and Adoption
+
+### Decisions
+
+<!-- Author prompt: State core structural choices and link each significant decision to its owning ADR. -->
+
+#### Requirement Mapping
 
 <!-- Author prompt: name the requirement this description serves and cite each of its members in the Lifecycle Traceability table. -->
 
-### Currentness and Lineage
+### Adoption Boundaries
 
 <!-- Author prompt: Explain differences between approved targets, current declarations, and observed operation. Link the evidence and responsible owners, including lineage for Specs or evidence that left the tree. Optionally map arc42 sections to their current owners and explain omissions. -->
 

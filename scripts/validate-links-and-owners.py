@@ -3781,7 +3781,7 @@ def _body_contract_link_diagnostics(
 
 _MEMBER_ID = re.compile(r"REQ-[0-9]{4}-(?:FR|NFR|IF)-[0-9]{4}")
 _COVERAGE_BASIS = "requirement-basis"
-_COVERAGE_SECTION_ID = "requirement-traceability-downstream-links"
+_COVERAGE_SECTION_ID = "requirement.relations.2"
 _COVERAGE_STATUS = "approved"
 
 
@@ -3805,7 +3805,7 @@ def _requirement_coverage_diagnostics(
     The registry relation `requirement-basis` names the citing profiles and the
     body-contract column of each. A member that no citing document cites in an
     enforced status passes only with an explained exclusion line under the
-    Requirement's Downstream Links section, which the form names by section id.
+    Requirement's Verification Links section, which the form names by section id.
     """
 
     registry = context.current_registry or load_registry(context.root)
@@ -3884,7 +3884,7 @@ def _requirement_coverage_diagnostics(
                     path,
                     profile.profile_id,
                     f"{member} cited in a requirement column of a description or "
-                    f"Spec, or an N/A — exclusion line under {title or 'a Downstream Links section'}",
+                    f"Spec, or an N/A — exclusion line under {title or 'a Verification Links section'}",
                     f"{member} uncited"
                     + ("" if section is not None else f"; no {title} section"),
                 )

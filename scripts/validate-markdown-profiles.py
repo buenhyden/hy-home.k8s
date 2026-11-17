@@ -881,8 +881,8 @@ def _requirement_quality_diagnostics(
     if package is None or profile.form is None:
         return []
     requirement = re.compile(rf"REQ-{package}-(FR|NFR|IF)-[0-9]{{4}}")
-    functional = "requirement-requirements-functional-requirements"
-    quality = "requirement-requirements-quality-requirements"
+    functional = "requirement.requirements.1"
+    quality = "requirement.requirements.2"
     trace = "requirement-lifecycle-traceability"
     members = {section: set() for section in (functional, quality, trace)}
     for table in profile.tables:

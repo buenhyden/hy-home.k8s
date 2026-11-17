@@ -1,6 +1,6 @@
 ---
 title: "W03 Form Target Adoption"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -49,7 +49,9 @@ WORK-001 changed the spec and plan forms, their two templates, the synthetic SPE
 - **Retained body-contract location.** The retained form gains an optional `body_contract` (section and table heading), which the schema allows only on a retained form. `DocumentProfile.body_contract_location` reads it, so the four retained identities keep their Lifecycle Traceability or Work Breakdown table where they were approved. The markdown profile, link and lifecycle readers use that one method.
 - **Spec references.** The two References H3 of the Spec template move as two H4 (Normative and Evidence, Historical and Navigation) under Verification Strategy. The Plan's `Global Constraints` H4 moves to Constraints, after that section's text, and the lifecycle reader takes it from `plan.intent.2`.
 
-The first `document` suite run on the WORK-001 tree failed 8 cases in four tests. Three fixtures still placed the Spec table under References or matched a Criteria section by a following H2, and the version comparison tests assumed a 1.x common contract. Each fixture now uses the new position or a version relative to the current one; no assertion was removed.
+The first `document` suite run on the WORK-001 tree failed 8 cases in four tests. Three fixtures still placed the Spec table under References or matched a Criteria section by a following H2, and the version comparison tests assumed a 1.x common contract. Each fixture now uses the new position or a version relative to the current one; no assertion was removed. WORK-001 is commit `6ec18e41`.
+
+WORK-002 moved the requirement and architecture forms, their two templates, the four Requirements and the four Architecture Descriptions by the Spec map, with every non-heading line kept (80, 85, 801 and 216 lines in the Requirements; 89, 91, 416 and 308 in the descriptions). REQ-0003 keeps its Archived Lineage byte for byte as the last local H3 under Traceability. Each description's new Trade-offs section restates facts from its own Quality and Risks, Decision Links and Overview text, quoted in the Results row. Eight links inside AD-0004, AD-0005 and AD-0007 pointed at a removed anchor; each now names and links its receiving section (Normal Flow, Scenarios, or Context and Boundaries). The Requirements take a PATCH version and the descriptions a MINOR version, because the descriptions gain a section.
 
 ### Blockers and Decisions
 
@@ -59,7 +61,7 @@ The user approved the Spec and Plan (EVD-002), with acceptance on green checks. 
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-003](../spec.md#criteria) | Spec and plan forms and the retained form | platform | in-progress | NOT_RUN | EVD-001 |
+| WORK-001 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-003](../spec.md#criteria) | Spec and plan forms and the retained form | platform | completed | PASS | EVD-003, EVD-004, EVD-005 |
 | WORK-002 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-002](../spec.md#criteria) | Requirement and architecture forms and documents | platform | in-progress | NOT_RUN | EVD-001 |
 | WORK-003 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-002](../spec.md#criteria) | Operations and policy forms and documents | platform | ready | NOT_RUN | EVD-001 |
 | WORK-004 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-002](../spec.md#criteria) | Skill form and documents | platform | ready | NOT_RUN | EVD-001 |
@@ -77,6 +79,8 @@ The user approved the Spec and Plan (EVD-002), with acceptance on green checks. 
 | EVD-003 | [VAL-FORM-001](../spec.md#criteria) | WORK-001 | Failing first | `python3 -m unittest tests.test_common_form_tree.SpecPlanFormTests tests.test_common_form_tree.RetainedSpecPlanTests tests.test_task_execution_contract` with the changed tests over an export of `2cc30e27` (registry and code before the change); pinned `hyhome-validation` venv, 2026-11-17 | PASS | Observed the defect: 82 tests, 28 failures and 1 error. The old registry has neither the new trees nor the retained forms. | yes | none |
 | EVD-004 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-003](../spec.md#criteria) | WORK-001 | Focused tests and registry check after the change | `python3 -m unittest tests.test_common_form_tree tests.test_task_execution_contract tests.test_document_lifecycle_cumulative_history`; `python3 scripts/validate-document-contract-registry.py --root . --mode strict`; pinned venv, 2026-11-17 | PASS | 535 tests, OK with 3 skips; registry strict PASS over 297 paths. The four retained identities pass their approved tree and keep their table location. A fifth identity in the old tree, or a retained identity in another status, is refused. | yes | none |
 | EVD-005 | [VAL-FORM-001](../spec.md#criteria) | WORK-001 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the WORK-001 index; pinned venv, 2026-11-17 | PASS | Every selected gate passed on the exact index before the commit; the commit hooks repeat it. | yes | EVD-001 |
+| EVD-006 | [VAL-FORM-001](../spec.md#criteria) | WORK-002 | Failing first | `python3 -m unittest tests.test_common_form_tree.RequirementFormTests tests.test_common_form_tree.ArchitectureFormTests tests.test_common_form_tree.RepositoryRegistryTests` with the changed tests over an export of `f2e3aeb0`; pinned venv, 2026-11-17 | PASS | Observed the defect: 28 tests, 36 failures against the old requirement and architecture forms. | yes | none |
+| EVD-007 | [VAL-FORM-002](../spec.md#criteria) | WORK-002 | Focused tests and strict validators after the change | `python3 -m unittest tests.test_common_form_tree tests.test_documentation_link_boundary`; the strict registry, markdown profile, link and lifecycle validators over the whole tree; pinned venv, 2026-11-17 | PASS | Every listed check passed after the fixture repairs. The Trade-offs texts: AD-0004 shared controller and pinned requests and limits; AD-0005 shared-channel subscriptions and the OpenBao, ESO and Secret token path; AD-0006 once-per-input selection and separate evidence classes; AD-0007 the ADR-0042 single-host budget and the static-versus-live boundary. | yes | none |
 
 ### Resolution Links
 

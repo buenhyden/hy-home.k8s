@@ -562,7 +562,7 @@ EXCLUSION = f"- {OTHER}: N/A — no description covers it yet; ADR-0001 decides 
 
 
 def _requirement(*, links: str = "", extra: str = "") -> str:
-    section = f"\n### Downstream Links\n\n{links}\n" if links is not None else ""
+    section = f"\n### Verification Links\n\n{links}\n" if links is not None else ""
     return (
         "## Traceability\n"
         f"{section}\n### Lifecycle Traceability\n\n"
@@ -575,7 +575,7 @@ def _requirement(*, links: str = "", extra: str = "") -> str:
 def _ad(*members: str) -> str:
     rows = "".join(f"| {m} | A boundary. | N/A — none |\n" for m in members)
     return (
-        "## Traceability\n\n### Lifecycle Traceability\n\n"
+        "## Decisions and Adoption\n\n### Lifecycle Traceability\n\n"
         "| Upstream requirement | Quality attribute or boundary | ADR / Spec |\n"
         f"| --- | --- | --- |\n{rows}"
     )
@@ -773,7 +773,7 @@ class RequirementCoverageTests(unittest.TestCase):
             [
                 (
                     "REQUIREMENT-COVERAGE",
-                    f"{MEMBER} uncited; no Downstream Links section",
+                    f"{MEMBER} uncited; no Verification Links section",
                 )
             ],
         )

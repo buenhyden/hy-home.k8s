@@ -49,25 +49,23 @@ artifact_id: "{{ARTIFACT_ID}}"
 | --- | --- | --- | --- | --- |
 | REQ-0001-NFR-0001 | State one measurable non-functional constraint. | State the reason and name its source, or explain why none is recorded. | Name the observable quality evidence. | Must |
 
-## Acceptance Criteria
-
-### Acceptance Conditions
-
-<!-- Author prompt: define measurable conditions that establish product success. -->
-
-### Verification Method
-
-<!-- Author prompt: state how each acceptance condition is verified, or point to the Acceptance column and the acceptance-criterion column of Lifecycle Traceability when they state it. -->
-
 ## Traceability
 
-### Source and Constraints
+### Sources
 
 <!-- Author prompt: name the upstream requirements, decisions and constraints this requirement derives from or depends on. -->
 
-### Downstream Links
+### Verification Links
 
 <!-- Author prompt: link the architecture descriptions, decisions and Specs that own the downstream contracts. -->
+
+#### Acceptance Conditions
+
+<!-- Author prompt: define measurable conditions that establish product success. -->
+
+#### Verification Method
+
+<!-- Author prompt: state how each acceptance condition is verified, or point to the Acceptance column and the acceptance-criterion column of Lifecycle Traceability when they state it. -->
 
 ### Lifecycle Traceability
 

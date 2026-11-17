@@ -414,8 +414,7 @@ REQUIREMENT_TREE = (
     ("Overview", ("Problem and Outcome", "Stakeholders")),
     ("Scope", ("In Scope", "Constraints and Exclusions")),
     ("Requirements", ("Functional Requirements", "Quality Requirements")),
-    ("Acceptance Criteria", ("Acceptance Conditions", "Verification Method")),
-    ("Traceability", ("Source and Constraints", "Downstream Links")),
+    ("Traceability", ("Sources", "Verification Links")),
 )
 REQUIREMENT_EXTENSIONS = [
     {
@@ -429,7 +428,7 @@ REQUIREMENT_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Requirement form version changes",
         "removal": "when requirement lineage has another registered owner",
-        "parent_id": "requirement-traceability",
+        "parent_id": "requirement.relations",
         "title": "Lifecycle Traceability",
     },
     {
@@ -443,7 +442,7 @@ REQUIREMENT_EXTENSIONS = [
         "verification": ("the package-exit check and the retired-identity reservation"),
         "review": "when the Requirement form version changes",
         "removal": "when requirement lineage has another registered owner",
-        "parent_id": "requirement-traceability",
+        "parent_id": "requirement.relations",
         "title": "Archived Lineage",
     },
 ]
@@ -451,13 +450,13 @@ REQUIREMENT_COLUMNS = ("Requirement ID", "Statement", "Rationale", "Acceptance")
 REQUIREMENT_OPTIONAL = ("Priority",)
 REQUIREMENT_TABLE_KEYS = {
     "Functional Requirements": (
-        "requirement-requirements-functional-requirements",
+        "requirement.requirements.1",
         (*REQUIREMENT_COLUMNS, *REQUIREMENT_OPTIONAL),
         1,
         "Requirement ID",
     ),
     "Quality Requirements": (
-        "requirement-requirements-quality-requirements",
+        "requirement.requirements.2",
         (*REQUIREMENT_COLUMNS, *REQUIREMENT_OPTIONAL),
         0,
         "Requirement ID",
@@ -477,12 +476,11 @@ ARCHITECTURE = (
     "common/template-sdlc-architecture-description",
 )
 ARCHITECTURE_TREE = (
-    ("Overview", ("Purpose and Readers", "System Boundary")),
-    ("Context and Constraints", ("Context", "Constraints")),
-    ("Current Structure", ("Building Blocks", "Runtime and Deployment")),
-    ("Interfaces", ("Contracts", "Failure Boundaries")),
-    ("Decisions", ("Decision Links", "Quality and Risks")),
-    ("Traceability", ("Requirement Mapping", "Currentness and Lineage")),
+    ("Context and Boundaries", ("System Boundary", "Constraints")),
+    ("Structure", ("Building Blocks", "Interfaces")),
+    ("Runtime Behavior", ("Normal Flow", "Failure and Recovery")),
+    ("Quality Scenarios", ("Scenarios", "Trade-offs")),
+    ("Decisions and Adoption", ("Decisions", "Adoption Boundaries")),
 )
 ARCHITECTURE_EXTENSIONS = [
     {
@@ -497,7 +495,7 @@ ARCHITECTURE_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Architecture form version changes",
         "removal": "when architecture lineage has another registered owner",
-        "parent_id": "architecture-traceability",
+        "parent_id": "architecture.decisions",
         "title": "Lifecycle Traceability",
     },
     {
@@ -512,19 +510,19 @@ ARCHITECTURE_EXTENSIONS = [
         "verification": "the retired-identity reservation",
         "review": "when the Architecture form version changes",
         "removal": "when architecture lineage has another registered owner",
-        "parent_id": "architecture-traceability",
+        "parent_id": "architecture.decisions",
         "title": "Archived Lineage",
     },
 ]
 ARCHITECTURE_TABLE_KEYS = {
     "Constraints": (
-        "architecture-context-and-constraints-constraints",
+        "architecture.context.2",
         ("Architecture ID", "Constraint", "Affected Components"),
         0,
         "Architecture ID",
     ),
     "Quality Scenarios": (
-        "architecture-decisions-quality-and-risks",
+        "architecture.quality.1",
         ("Quality attribute", "Stimulus", "Environment", "Response", "Measure"),
         0,
         "Quality attribute",
@@ -1196,6 +1194,8 @@ PLAN_FORM_TABLE_KEYS = {
 # SPEC-0221: an adopted form takes the target section IDs, <role>.<group> for
 # an H2 and <role>.<group>.<n> for an H3; every other form keeps the slug IDs.
 TARGET_GROUPS = {
+    "requirement": ("intent", "scope", "requirements", "relations"),
+    "architecture": ("context", "structure", "behavior", "quality", "decisions"),
     "spec": ("intent", "scope", "behavior", "acceptance"),
     "plan": ("intent", "dependencies", "work", "verification", "promotion"),
 }
@@ -1807,7 +1807,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ARCHITECTURE_EXTENSIONS,
                 ARCHITECTURE_TABLE_KEYS,
                 ARCHITECTURE,
-                "Traceability",
+                "Decisions and Adoption",
             ),
             (
                 "adr",
@@ -1892,7 +1892,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                         f"reference-pack-readme-{title.lower().replace(' ', '-')}"
                         for title in PACK_NOT_REQUIRED
                     },
-                    "requirement": {"requirement-requirements-quality-requirements"},
+                    "requirement": {"requirement.requirements.2"},
                     "adr": {"adr-traceability-supersession"},
                     "reference-report": {
                         f"reference-report-{slug(h2)}-{slug(h3)}"
@@ -5788,12 +5788,11 @@ def requirement_body(*, quality: bool = True, lineage: bool = True) -> str:
     if quality:
         blocks.append("### Quality Requirements\n\n" + requirement_table(kind="NFR"))
     blocks += [
-        "## Acceptance Criteria",
-        "### Acceptance Conditions\n\nThe controller is available.",
-        "### Verification Method\n\nEach Acceptance cell names its evidence.",
         "## Traceability",
-        "### Source and Constraints\n\nNo upstream requirement exists.",
-        "### Downstream Links\n\n- **AD**: [AD 0004](../02.architecture/x.md)",
+        "### Sources\n\nNo upstream requirement exists.",
+        "### Verification Links\n\n- **AD**: [AD 0004](../02.architecture/x.md)"
+        "\n\n#### Acceptance Conditions\n\nThe controller is available."
+        "\n\n#### Verification Method\n\nEach Acceptance cell names its evidence.",
         "### Lifecycle Traceability\n\n"
         "| Requirement ID | Acceptance criterion |\n"
         "| --- | --- |\n"
@@ -5993,7 +5992,7 @@ class RequirementFormTests(unittest.TestCase):
             {"BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"}, found
         )
         lost = requirement_body().replace(
-            "### Verification Method\n\nEach Acceptance cell names its evidence.\n\n",
+            "### Sources\n\nNo upstream requirement exists.\n\n",
             "",
         )
         self.assertEqual(self.tree(lost), ["BODY-H3-REQUIRED"])
@@ -6002,7 +6001,7 @@ class RequirementFormTests(unittest.TestCase):
         body = requirement_body()
         quality = "### Quality Requirements\n\n" + requirement_table(kind="NFR")
         moved = body.replace(quality + "\n\n", "").replace(
-            "## Traceability", quality + "\n\n## Traceability"
+            "## Scope", quality + "\n\n## Scope"
         )
         self.assertEqual(self.tree(moved), ["BODY-H3-PARENT"])
 
@@ -6011,7 +6010,7 @@ class RequirementFormTests(unittest.TestCase):
     ) -> None:
         body = requirement_body()
         lineage = "### Archived Lineage\n\nSPEC-0004 left the tree.\n"
-        for heading in ("## Overview", "## Scope", "## Acceptance Criteria"):
+        for heading in ("## Overview", "## Scope", "## Requirements"):
             with self.subTest(before=heading):
                 moved = body.replace(lineage, "").replace(
                     heading, lineage + "\n" + heading, 1
@@ -6143,7 +6142,7 @@ def architecture_body(
                 text += "\n\n" + architecture_table(
                     ARCHITECTURE_TABLE_KEYS["Constraints"][1], rows=constraints
                 )
-            if h3 == "Quality and Risks":
+            if h3 == "Scenarios":
                 text += "\n\n" + architecture_table(quality_header, rows=scenarios)
             blocks.append(f"### {h3}\n\n{text}")
     blocks.append(
@@ -6213,7 +6212,7 @@ class ArchitectureFormTests(unittest.TestCase):
                 self.assertEqual(headings.required, titles)
                 self.assertEqual(headings.allowed, titles)
                 contract = raw["relationships"]["body_contract"]
-                self.assertEqual(contract["section"], "Traceability")
+                self.assertEqual(contract["section"], "Decisions and Adoption")
                 self.assertEqual(contract["table_heading"], "Lifecycle Traceability")
                 self.assertEqual(
                     contract["required_columns"],
@@ -6295,21 +6294,26 @@ class ArchitectureFormTests(unittest.TestCase):
                 self.assertEqual(self.tables(body), [])
 
     def test_a_previous_h2_or_a_missing_h3_fails_the_tree(self) -> None:
-        old = architecture_body().replace("## Interfaces", "## Data Architecture")
+        old = architecture_body().replace("## Structure", "## Data Architecture")
         self.assertLessEqual(
             {"BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"}, set(self.tree(old))
         )
         lost = architecture_body().replace(
-            "### Failure Boundaries\n\nThe Failure Boundaries of the system.\n\n", ""
+            "### Failure and Recovery\n\nThe Failure and Recovery of the system.\n\n",
+            "",
         )
         self.assertEqual(self.tree(lost), ["BODY-H3-REQUIRED"])
 
-    def test_archived_lineage_and_lifecycle_traceability_belong_under_traceability(
+    def test_archived_lineage_and_lifecycle_traceability_belong_under_decisions_and_adoption(
         self,
     ) -> None:
         body = architecture_body()
         lineage = "### Archived Lineage\n\nSPEC-0004 left the tree.\n"
-        for heading in ("## Overview", "## Interfaces", "## Decisions"):
+        for heading in (
+            "## Context and Boundaries",
+            "## Structure",
+            "## Quality Scenarios",
+        ):
             with self.subTest(before=heading):
                 moved = body.replace(lineage, "").replace(
                     heading, lineage + "\n" + heading, 1

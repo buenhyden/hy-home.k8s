@@ -1,10 +1,10 @@
 ---
 title: "Argo Notifications Slack Requirement Package"
-version: "3.0.1"
+version: "3.0.2"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "REQ-0002"
 ---
 
@@ -91,9 +91,21 @@ This update adds no runtime observation.
 | --- | --- | --- | --- | --- |
 | REQ-0002-NFR-0001 | The common default notification policy must apply health degradation and sync failure to every app. Deployment completion may be part of the same default. The presence of the current settings does not prove an all-app subscription or actual receipt. | Serves the shared-channel default subscription boundary for common health/sync failures and deployments (AD-0005 Lifecycle Traceability). | The default subscription names both triggers; receipt is proven by acceptance criteria 03 and 04. | Must |
 
-## Acceptance Criteria
+## Traceability
 
-### Acceptance Conditions
+### Sources
+
+- **Requirement**: [`./0001-argo-rollouts-progressive-delivery.md`](./0001-argo-rollouts-progressive-delivery.md) — Rollouts event source
+- **Requirement**: [`./0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md) — ESO/OpenBao dependency
+
+### Verification Links
+
+- **AD**: [`../02.architecture/descriptions/0005-argo-notifications-slack.md`](../02.architecture/descriptions/0005-argo-notifications-slack.md)
+- **Spec**: N/A — SPEC-0141 and SPEC-0005 left the tree; Git history recovers them ([REQ-0002 Archived Lineage](./0002-argo-notifications-slack.md#archived-lineage))
+- **ADR**: [`../02.architecture/decisions/0012-argo-notifications-slack.md`](../02.architecture/decisions/0012-argo-notifications-slack.md)
+- **ADR**: [`../02.architecture/decisions/0041-openbao-secret-backend.md`](../02.architecture/decisions/0041-openbao-secret-backend.md)
+
+#### Acceptance Conditions
 
 - **Acceptance criterion 01**: An operator can check the Notifications controller state. Evidence: `argocd-notifications-controller` Pod `Running`.
 - **Acceptance criterion 02**: An operator can check the sync state of the notification credential held in the runtime secret backend. Evidence: `argocd-notifications-secret` ExternalSecret `Ready=True`, synced from the OpenBao backend.
@@ -101,23 +113,9 @@ This update adds no runtime observation.
 - **Acceptance criterion 04**: An operator can notice health degradation in Slack. Evidence: receipt of a health degraded event in Slack is confirmed.
 - **Acceptance criterion 05**: An operator can notice a Rollouts abort in Slack. Evidence: receipt of an abort notification is confirmed. The Rollouts chart declares the route to the shared channel. Live receipt of an abort notification remains unobserved.
 
-### Verification Method
+#### Verification Method
 
 No separate verification method is stated: each requirement is verified by the evidence named in its `Acceptance` cell, and the acceptance-criterion column of `Lifecycle Traceability` states the acceptance condition of every member.
-
-## Traceability
-
-### Source and Constraints
-
-- **Requirement**: [`./0001-argo-rollouts-progressive-delivery.md`](./0001-argo-rollouts-progressive-delivery.md) — Rollouts event source
-- **Requirement**: [`./0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md) — ESO/OpenBao dependency
-
-### Downstream Links
-
-- **AD**: [`../02.architecture/descriptions/0005-argo-notifications-slack.md`](../02.architecture/descriptions/0005-argo-notifications-slack.md)
-- **Spec**: N/A — SPEC-0141 and SPEC-0005 left the tree; Git history recovers them ([REQ-0002 Archived Lineage](./0002-argo-notifications-slack.md#archived-lineage))
-- **ADR**: [`../02.architecture/decisions/0012-argo-notifications-slack.md`](../02.architecture/decisions/0012-argo-notifications-slack.md)
-- **ADR**: [`../02.architecture/decisions/0041-openbao-secret-backend.md`](../02.architecture/decisions/0041-openbao-secret-backend.md)
 
 ### Lifecycle Traceability
 

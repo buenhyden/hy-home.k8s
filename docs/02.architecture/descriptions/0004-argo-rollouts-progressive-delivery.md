@@ -1,26 +1,16 @@
 ---
 title: "Argo Rollouts Progressive Delivery Architecture Description"
-version: "2.0.1"
+version: "2.1.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "AD-0004"
 ---
 
 # Argo Rollouts Progressive Delivery Architecture Description
 
-## Overview
-
-### Purpose and Readers
-
-This document defines the reference architecture and quality attributes of progressive delivery based on Argo Rollouts.
-It describes the current GitOps declarations and traces them to the platform requirements. The operational verification scope is recorded under [Runtime and Deployment](#runtime-and-deployment).
-
-#### Current architecture summary
-
-GitOps declares the Argo Rollouts controller and dashboard in the `argo-rollouts` namespace. The designed workload path combines `Rollout`, `AnalysisTemplate`, Istio routing, Traefik, and cert-manager TLS.
-The platform owns the controller install, dashboard access, AppProject permissions, observability exposure, and a default that imposes no promotion mode, with failure safety through an approved `AnalysisTemplate`.
+## Context and Boundaries
 
 ### System Boundary
 
@@ -39,9 +29,17 @@ The platform owns the controller install, dashboard access, AppProject permissio
   - Multi-cluster Rollouts
   - Standardizing per-app Analysis metrics
 
-## Context and Constraints
+#### Purpose and Readers
 
-### Context
+This document defines the reference architecture and quality attributes of progressive delivery based on Argo Rollouts.
+It describes the current GitOps declarations and traces them to the platform requirements. The operational verification scope is recorded under [Normal Flow](#normal-flow).
+
+##### Current architecture summary
+
+GitOps declares the Argo Rollouts controller and dashboard in the `argo-rollouts` namespace. The designed workload path combines `Rollout`, `AnalysisTemplate`, Istio routing, Traefik, and cert-manager TLS.
+The platform owns the controller install, dashboard access, AppProject permissions, observability exposure, and a default that imposes no promotion mode, with failure safety through an approved `AnalysisTemplate`.
+
+#### Context
 
 - **Consumes**:
   - ArgoCD App-of-Apps reconciliation
@@ -59,7 +57,7 @@ The platform owns the controller install, dashboard access, AppProject permissio
 - **Guardrail Boundary**: the Rollouts controller sends only its completion and abort events to the shared Slack channel; the notification architecture is owned by [AD-0005](./0005-argo-notifications-slack.md).
 - **Latency / Cost Budget**: Not applicable.
 
-## Current Structure
+## Structure
 
 ### Building Blocks
 
@@ -69,7 +67,22 @@ The platform owns the controller install, dashboard access, AppProject permissio
 - The declared dashboard route uses Traefik TLS behind the dedicated k8s router for browser access ([ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md)).
 - Application teams consume the CRDs through workload manifests, for example `gitops/workloads/adminer/rollout.yaml`.
 
-### Runtime and Deployment
+### Interfaces
+
+- **Key Entities / Flows**:
+  - `Rollout`: application deployment state machine.
+  - `AnalysisTemplate` / `AnalysisRun`: application-level metrics-driven safety checks; the current app onboarding pattern requires an `AnalysisTemplate` during canary rollout steps.
+  - `Service` stable/canary pair: traffic targets for rollout steps.
+  - `VirtualService` / `DestinationRule`: Istio routing for mesh-aware workloads.
+- **Storage Strategy**:
+  - Rollouts state is Kubernetes API state. No separate database is introduced.
+  - Controller metrics are scraped in-cluster by Alloy ([ADR-0045](../decisions/0045-in-cluster-telemetry-collection.md)) and remote-written to the external Prometheus; no metrics NodePort remains.
+- **Data Boundaries**:
+  - No credentials are introduced by Rollouts itself; the reference analysis consumes the ESO-synced `prometheus-api-auth` Secret and the `hy-home-root-ca` ConfigMap from the app namespace.
+
+## Runtime Behavior
+
+### Normal Flow
 
 - **Runtime / Platform**:
   - Linux server + k3d/k3s local platform managed by ArgoCD.
@@ -84,33 +97,13 @@ The platform owns the controller install, dashboard access, AppProject permissio
   - Static checks cover Application and kustomization structure and manifest syntax.
   - Controller availability and dashboard reachability remain unobserved in this description. The [operations runbook](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md) owns runtime verification.
 
-## Interfaces
+### Failure and Recovery
 
-### Contracts
+No separate failure boundary is recorded in this description; the failure and recovery behavior it states is in [Scenarios](#scenarios).
 
-- **Key Entities / Flows**:
-  - `Rollout`: application deployment state machine.
-  - `AnalysisTemplate` / `AnalysisRun`: application-level metrics-driven safety checks; the current app onboarding pattern requires an `AnalysisTemplate` during canary rollout steps.
-  - `Service` stable/canary pair: traffic targets for rollout steps.
-  - `VirtualService` / `DestinationRule`: Istio routing for mesh-aware workloads.
-- **Storage Strategy**:
-  - Rollouts state is Kubernetes API state. No separate database is introduced.
-  - Controller metrics are scraped in-cluster by Alloy ([ADR-0045](../decisions/0045-in-cluster-telemetry-collection.md)) and remote-written to the external Prometheus; no metrics NodePort remains.
-- **Data Boundaries**:
-  - No credentials are introduced by Rollouts itself; the reference analysis consumes the ESO-synced `prometheus-api-auth` Secret and the `hy-home-root-ca` ConfigMap from the app namespace.
+## Quality Scenarios
 
-### Failure Boundaries
-
-No separate failure boundary is recorded in this description; the failure and recovery behavior it states is in [Quality and Risks](#quality-and-risks).
-
-## Decisions
-
-### Decision Links
-
-- **ADR**: [`../decisions/0011-argo-rollouts-progressive-delivery.md`](../decisions/0011-argo-rollouts-progressive-delivery.md)
-- **ADR**: [`../decisions/0054-platform-decision-current-state-amendment.md`](../decisions/0054-platform-decision-current-state-amendment.md) — current promotion-mode clause
-
-### Quality and Risks
+### Scenarios
 
 | Quality attribute | Stimulus | Environment | Response | Measure |
 | --- | --- | --- | --- | --- |
@@ -121,13 +114,22 @@ No separate failure boundary is recorded in this description; the failure and re
 | Observability | An operator inspects controller metrics | In-cluster Alloy scraping `argo-rollouts:8090` with remote-write to the external Prometheus | Controller metrics reach the external Prometheus | The controller target is up in Prometheus |
 | Operability | An operator checks progress, promotion, abort or rollback | Dashboard, CLI and runbook | The path is available without platform changes | Each path is listed in the runbook checks |
 
-## Traceability
+### Trade-offs
 
-### Requirement Mapping
+One shared controller serves every app that adopts Rollouts, so an adopting app needs no controller change, while every app depends on that controller. Pinned requests and limits keep the controller and dashboard inside the single-host k3d cluster, and progress, promotion, abort and rollback stay on the dashboard, CLI and runbook paths without a platform change.
+
+## Decisions and Adoption
+
+### Decisions
+
+- **ADR**: [`../decisions/0011-argo-rollouts-progressive-delivery.md`](../decisions/0011-argo-rollouts-progressive-delivery.md)
+- **ADR**: [`../decisions/0054-platform-decision-current-state-amendment.md`](../decisions/0054-platform-decision-current-state-amendment.md) — current promotion-mode clause
+
+#### Requirement Mapping
 
 - **Requirement**: [`../../01.requirements/0001-argo-rollouts-progressive-delivery.md`](../../01.requirements/0001-argo-rollouts-progressive-delivery.md)
 
-### Currentness and Lineage
+### Adoption Boundaries
 
 - **Spec**: N/A — SPEC-0004 left the tree; Git history recovers it ([REQ-0001 Archived Lineage](../../01.requirements/0001-argo-rollouts-progressive-delivery.md#archived-lineage))
 
