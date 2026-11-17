@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.19.0"
+version: "0.20.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-18"
@@ -232,6 +232,8 @@ The merge with WORK-003 needed three corrections:
 - **One report per drifted header.** Among several core tables of one section, only the best-fitting one now claims an inexact header. One drifted requirement table had been reported twice; a header inside a core section still stays a core table's.
 - **Fixture core tables.** The synthetic completion fixtures gain header-only core check and work unit tables, because the presence check now requires them.
 
+The first comparison on the merged tree returned `MISMATCH` for the requirement and task roles. The comparator required every core table in `observed_tables`, including the conditional `requirement.quality` (`quality_requirement`) and `task.work_items` (`multiple_items`). The core contract renders a conditional part only when its condition applies (section `empty_policy`), and keeps the Task's frontmatter `status` for a single-item Task (`status` is `required_when: single_task`). On 2026-11-18 the user decided that a conflict between the prompt requirements and the comparison tool or an existing contract is resolved by changing the tool or contract (`프롬프트에 작성된 요구사항에 맞추고, 비교 도구, 기존 계약이 상충될 경우, 비교 도구와 기존 계약을 수정`). The templates therefore keep their form, with no rendered conditional table and the Task's `status: "draft"`. The package comparator `tools/compare_template_contracts.py`, which is untracked under `_workspace/`, changed from sha256 `42f2c0df` to `f6ee2636`. It now requires every `always` table, accepts an absent conditional table, and refuses an observed table whose header or order differs from the core. The exporter emits only rendered tables.
+
 ### Blockers and Decisions
 
 The user approved the Spec and Plan (EVD-006) and renewed that approval for revision 1.1.0 (EVD-032); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
@@ -293,6 +295,7 @@ The user approved the Spec and Plan (EVD-006) and renewed that approval for revi
 | EVD-035 | [VAL-CORE-003](../spec.md#criteria) | WORK-003 | Focused tests, strict validators and staged QA | In the prepared worktree, `tests.test_common_form_tree` and 21 focused modules; then `python3 scripts/qa.py staged` on the index of `c82b0aea` and its commit hooks; pinned venv, 2026-11-18 | PASS | 1,076 tests OK with 4 skips; 12 selected gates passed, the `document` suite among them. | yes | none |
 | EVD-036 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Failing first | The new `CoreTableDocumentTests` over an export of `3d82e960`; pinned venv, 2026-11-18 | PASS | Observed the defect: 12 tests with 1 failure and 56 errors (subtests); no document-side core check existed and no local table carried `authority_ref`. | yes | none |
 | EVD-037 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Focused tests and strict validators after the change | After the merge onto `a5ff0010`: form tree, generator, policy rule IDs, task execution, README navigation and repository quality rules, then the changed requirement, core table, core binding and task classes; the four strict validators; pinned venv, 2026-11-18 | PASS | The first merged run had 3 failures, from the double report and the fixtures named above; after the fixes the affected modules passed (92 and 83 tests OK) and every validator passed. | yes | none |
+| EVD-038 | [VAL-CORE-002](../spec.md#criteria) | WORK-009 | Template export and comparison with conditional core tables | The exporter over the tree of `5ad27fa1` and the changed comparator (sha256 `f6ee2636`) with `--workspace-root`; three mutated exports; pinned venv, 2026-11-18 | PASS | The export returned `DECLARED_CORE_MATCH` with 19 roles, 0 unmapped templates and 15 classified domain or native templates. A missing `always` table and a drifted conditional header returned `MISMATCH`, and a rendered conditional table with the core header matched. | yes | none |
 
 ### Resolution Links
 
