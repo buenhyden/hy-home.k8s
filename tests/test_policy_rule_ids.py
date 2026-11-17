@@ -846,9 +846,11 @@ class RulesTableDefinitionTests(unittest.TestCase):
         wrong = body.replace(
             "| Rule ID | Level | Status |", "| Rule ID | Status | Level |"
         )
+        # SPEC-0222: inside the core H2 a header that is no registered table's
+        # exact header drifts the core Rules table too, so both refuse it.
         self.assertEqual(
             [d.rule_id for d in MARKDOWN._table_diagnostics(f.path, template, wrong)],
-            ["BODY-TABLE-COLUMNS"],
+            ["BODY-TABLE-COLUMNS", "BODY-TABLE-COLUMNS"],
         )
 
 

@@ -237,6 +237,10 @@ def form_spec_text() -> str:
             "| VAL-P02-001 | Focused test PASS |",
             "### Verification Strategy",
             "Concrete fixture text.",
+            "",
+            # SPEC-0222: the always core checks table, header-only.
+            "| Check ID | Guarantee | Input | Trust Boundary | Required When | Evidence |",
+            "| --- | --- | --- | --- | --- | --- |",
             "### Lifecycle Traceability",
             "| Requirement ID | Spec criterion | Architecture | Verification method |",
             "| --- | --- | --- | --- |",
@@ -274,9 +278,22 @@ def form_plan_text() -> str:
             "| --- | --- | --- | --- | --- | --- |",
             "| WORK-001 | [VAL-P02-001](spec.md#criteria) | Verify | none | "
             "[SPEC-0106-TSK-0001](tasks/tsk-0001-example.md) | Focused test |",
+            "",
+            # SPEC-0222: the always core work units table, header-only.
+            "| Work Unit | Outcome | Depends On | Owner | Write Scope | Acceptance "
+            "| Checks |",
+            "| --- | --- | --- | --- | --- | --- | --- |",
             "### Dependency Edges",
             "Concrete fixture text.",
-            *block("Verification Plan", "Selected Checks", "Evidence Plan"),
+            "## Verification Plan",
+            "### Selected Checks",
+            "Concrete fixture text.",
+            "",
+            # SPEC-0222: the always core checks table, header-only.
+            "| Check ID | Guarantee | Input | Trust Boundary | Required When | Evidence |",
+            "| --- | --- | --- | --- | --- | --- |",
+            "### Evidence Plan",
+            "Concrete fixture text.",
             "## Promotion Map",
             "### Durable Owners",
             "| Promotion ID | Target Owner | Acceptance | Evidence |",

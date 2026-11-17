@@ -6112,7 +6112,13 @@ class RequirementFormTests(unittest.TestCase):
             with self.subTest(value=value):
                 changed = body.replace("| must |", f"| {value} |", 1)
                 self.assertNotEqual(changed, body)
-                self.assertEqual(self.tables(changed), ["BODY-TABLE-VALUE"])
+                found = [
+                    item.rule_id
+                    for item in MARKDOWN._core_table_diagnostics(
+                        REQUIREMENT_PATH, self.profile, changed, "approved"
+                    )
+                ]
+                self.assertEqual(found, ["BODY-CORE-TABLE-CELL"])
         # A row of author prompts is the author-prompt check's, not a value.
         prompt_row = (
             "| "
@@ -8049,6 +8055,7 @@ class FormlessRoleTableTests(unittest.TestCase):
         ],
         "minimum_rows": 0,
         "row_identity": "Key",
+        "authority_ref": "ADR-0059",
     }
 
     def test_a_table_on_a_role_without_a_form_fails(self) -> None:
@@ -8603,6 +8610,7 @@ def unbind_guide(raw: dict) -> dict:
     for table in guide_tables(raw):
         for key in ("table_id", "required_when", "empty_policy"):
             table.pop(key, None)
+        table.setdefault("authority_ref", "ADR-0059")
         for column in table["columns"]:
             column.pop("id", None)
     return raw
@@ -8800,6 +8808,8 @@ class CoreRoleBindingTests(unittest.TestCase):
         table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
         for key in ("table_id", "required_when", "empty_policy"):
             del table[key]
+        # A valid local table now, so only the missing core table is refused.
+        table["authority_ref"] = "ADR-0059"
         self.assertEqual(rules_of(raw), {"REGISTRY_CORE_TABLE"})
         raw = core_bound_guide(load_raw())
         form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
@@ -8809,6 +8819,7 @@ class CoreRoleBindingTests(unittest.TestCase):
     def test_a_core_table_id_outside_a_core_role_form_is_refused(self) -> None:
         raw = unbind_guide(load_raw())
         table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
+        del table["authority_ref"]
         table.update(table_id="guide.steps", required_when="w", empty_policy="e")
         self.assertEqual(rules_of(raw), {"REGISTRY_CORE_TABLE"})
 
@@ -8829,6 +8840,7 @@ class CoreRoleBindingTests(unittest.TestCase):
     def test_an_extra_core_table_id_is_refused(self) -> None:
         raw = core_bound_guide(load_raw())
         table = next(t for t in guide_tables(raw) if t["name"] != "Steps")
+        del table["authority_ref"]
         table.update(table_id="guide.other", required_when="w", empty_policy="e")
         self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
 
@@ -9613,6 +9625,265 @@ class SdlcCoreBindingTests(unittest.TestCase):
             ],
             ["BODY-TABLE-COLUMNS"],
         )
+
+
+class CoreTableDocumentTests(unittest.TestCase):
+    """SPEC-0222 WORK-009: the document validators refuse a missing always core
+    table, a drifted core header and a core cell of the wrong type."""
+
+    AUDIT_PATH = PurePosixPath("docs/90.references/audits/0001-sample/m0003-sample.md")
+    DATA_PATH = PurePosixPath("docs/90.references/data/0001-sample/m0001-sample.md")
+    RES_PATH = "docs/90.references/research/0001-sample/m{:04d}-sample.md"
+    RUNBOOK_TEMPLATE = PurePosixPath(
+        "docs/99.templates/templates/operations/runbook.template.md"
+    )
+    FINDINGS = "| " + " | ".join(label for label, _, _ in AUDIT_FINDINGS) + " |"
+    SCHEMA = "| " + " | ".join(label for label, _, _ in DATA_REFERENCE_SCHEMA) + " |"
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.raw = load_raw()
+        cls.profiles = typed_profiles(cls.raw)
+
+    def rules(
+        self, profile_id: str, path: PurePosixPath, body: str, status: str = "active"
+    ) -> list[str]:
+        profile = self.profiles[profile_id]
+        return sorted(
+            item.rule_id
+            for item in (
+                *MARKDOWN._table_diagnostics(path, profile, body, status),
+                *MARKDOWN._core_table_diagnostics(path, profile, body, status),
+            )
+        )
+
+    @staticmethod
+    def table(header: str, *rows: str) -> str:
+        cells = header.count("|") - 1
+        return "\n".join((header, "| --- " * cells + "|", *rows))
+
+    def runbook(self, steps: str) -> str:
+        return RUNBOOK_BODY.replace("### Steps\n\nRun it.", "### Steps\n\n" + steps)
+
+    def audit(self, *rows: str, header: str = "") -> str:
+        return md(
+            "# Reference: Sample",
+            "## Findings",
+            self.table(header or self.FINDINGS, *rows),
+        )
+
+    def test_a_missing_always_core_table_is_refused(self) -> None:
+        self.assertEqual(
+            self.rules(RUNBOOK[0], RUNBOOK_PATH, RUNBOOK_BODY),
+            ["BODY-CORE-TABLE-MISSING"],
+        )
+        self.assertEqual(
+            self.rules(RUNBOOK[0], RUNBOOK_PATH, self.runbook(RUNBOOK_STEPS)), []
+        )
+        # The table counts only inside its core H2.
+        moved = RUNBOOK_BODY + "\n" + RUNBOOK_STEPS + "\n"
+        self.assertEqual(
+            self.rules(RUNBOOK[0], RUNBOOK_PATH, moved), ["BODY-CORE-TABLE-MISSING"]
+        )
+        # A header-only core table is present: rows come when facts occur.
+        header_only = RUNBOOK_STEPS.rsplit("\n", 1)[0]
+        self.assertEqual(
+            self.rules(RUNBOOK[0], RUNBOOK_PATH, self.runbook(header_only)), []
+        )
+
+    def test_a_relabeled_reordered_appended_or_dropped_column_is_refused(
+        self,
+    ) -> None:
+        row = "| 1 | Restart | Ready | Stop |"
+        for header in (
+            "| Step | Action | Result | On Failure |",
+            "| Step | Expected Result | Action | On Failure |",
+            "| Step | Action | Expected Result | On Failure | Note |",
+            "| Step | Action | Expected Result |",
+        ):
+            with self.subTest(header=header):
+                body = self.runbook(self.table(header, row))
+                self.assertEqual(
+                    self.rules(RUNBOOK[0], RUNBOOK_PATH, body),
+                    ["BODY-CORE-TABLE-MISSING", "BODY-TABLE-COLUMNS"],
+                )
+                # Beside an exact core table the drifted copy is still refused.
+                both = self.runbook(RUNBOOK_STEPS + "\n\n" + self.table(header, row))
+                self.assertEqual(
+                    self.rules(RUNBOOK[0], RUNBOOK_PATH, both), ["BODY-TABLE-COLUMNS"]
+                )
+        relabeled_first = self.table("| No. | Action | Expected Result | On Failure |")
+        self.assertEqual(
+            self.rules(RUNBOOK[0], RUNBOOK_PATH, self.runbook(relabeled_first)),
+            ["BODY-CORE-TABLE-MISSING"],
+        )
+
+    def test_a_core_cell_of_the_wrong_type_is_refused(self) -> None:
+        good = "| F-001 | REQ-0001 | EVD-001 | gap | Fix it | platform | Reviewed |"
+        self.assertEqual(
+            self.rules(AUDIT[0], self.AUDIT_PATH, self.audit(good), "draft"), []
+        )
+        for row in (
+            good.replace("| gap |", "| maybe |"),
+            good.replace("| gap |", "| `gap` |"),
+            good.replace("| Fix it |", "|  |"),
+            "| F-001 | REQ-0001 | EVD-001 | gap |",
+        ):
+            with self.subTest(row=row):
+                # A short row leaves each missing required cell empty.
+                self.assertEqual(
+                    set(
+                        self.rules(AUDIT[0], self.AUDIT_PATH, self.audit(row), "draft")
+                    ),
+                    {"BODY-CORE-TABLE-CELL"},
+                )
+        integer = RUNBOOK_STEPS.replace("| 1 |", "| one |")
+        self.assertEqual(
+            self.rules(RUNBOOK[0], RUNBOOK_PATH, self.runbook(integer)),
+            ["BODY-CORE-TABLE-CELL"],
+        )
+
+    def test_the_shared_cell_check_reads_booleans_and_integer_or_none(self) -> None:
+        column = CONTRACTS.TableColumn
+        table = CONTRACTS.TableContract(
+            name="T",
+            section="s",
+            columns=(
+                column("Count", "m", "integer-or-none", True),
+                column("Flag", "m", "boolean", True, (True, False)),
+            ),
+            minimum_rows=0,
+            row_identity="Count",
+            table_id="t",
+            required_when="always",
+        )
+        self.assertEqual(
+            CONTRACTS.core_cell_faults(table, [["none", "true"], ["3", "false"]]), []
+        )
+        self.assertEqual(
+            CONTRACTS.core_cell_faults(table, [["x", "yes"]]),
+            ["row 1: Count 'x'", "row 1: Flag 'yes'"],
+        )
+
+    def test_a_retained_identity_keeps_its_recorded_tables(self) -> None:
+        former = ResearchAuditFormTests.former()
+        retained = PurePosixPath(self.RES_PATH.format(1))
+        self.assertEqual(self.rules(RESEARCH[0], retained, former, "published"), [])
+        current = PurePosixPath(self.RES_PATH.format(13))
+        self.assertEqual(
+            self.rules(RESEARCH[0], current, former, "published"),
+            ["BODY-CORE-TABLE-MISSING"],
+        )
+
+    def test_a_registered_local_table_with_the_same_first_cell_is_accepted(
+        self,
+    ) -> None:
+        schema = self.table(self.SCHEMA, "| f | text | none | A field | None |")
+        local = self.table("| Field | Producer |", "| f | the collector |")
+        body = md("# Reference: Sample", "## Interpretation", schema, local)
+        self.assertEqual(self.rules(DATA_REFERENCE[0], self.DATA_PATH, body), [])
+        # A header that matches no registered table exactly stays the core's.
+        for header in ("| Field | Producer | Note |", "| Field | Type | Meaning |"):
+            with self.subTest(header=header):
+                drifted = md(
+                    "# Reference: Sample",
+                    "## Interpretation",
+                    schema,
+                    self.table(header),
+                )
+                self.assertEqual(
+                    self.rules(DATA_REFERENCE[0], self.DATA_PATH, drifted),
+                    ["BODY-TABLE-COLUMNS"],
+                )
+
+    def test_a_conditional_core_table_is_required_only_where_present(self) -> None:
+        self.assertEqual(self.rules(GUIDE[0], GUIDE_PATH, guide_body("Run it.")), [])
+        wrong = self.table(
+            "| Step | Action | Expected Result | On Failure |", "| one | a | b | c |"
+        )
+        self.assertEqual(
+            self.rules(GUIDE[0], GUIDE_PATH, guide_body(wrong)),
+            ["BODY-CORE-TABLE-CELL"],
+        )
+
+    def test_a_template_is_checked_for_the_core_header_only(self) -> None:
+        prompt = self.table(
+            "| Step | Action | Expected Result | On Failure |",
+            "| {{STEP}} | {{ACTION}} | {{RESULT}} | {{ON_FAILURE}} |",
+        )
+        self.assertEqual(
+            self.rules(RUNBOOK[1], self.RUNBOOK_TEMPLATE, self.runbook(prompt)), []
+        )
+        self.assertEqual(
+            self.rules(RUNBOOK[1], self.RUNBOOK_TEMPLATE, RUNBOOK_BODY),
+            ["BODY-CORE-TABLE-MISSING"],
+        )
+
+    def test_task_and_forms_without_a_core_table_are_not_checked(self) -> None:
+        for profile in self.profiles.values():
+            if profile.mode == "native":
+                continue
+            core = any(table.table_id for table in profile.tables)
+            task = bool(profile.body_contract and profile.body_contract.task_execution)
+            if core and not task:
+                continue
+            with self.subTest(profile=profile.profile_id):
+                self.assertEqual(
+                    MARKDOWN._core_table_diagnostics(
+                        GUIDE_PATH, profile, "# Title\n", "active"
+                    ),
+                    [],
+                )
+
+    def test_every_local_template_table_carries_its_authority(self) -> None:
+        refs = {
+            (profile["id"], table["name"]): table.get("authority_ref")
+            for profile in self.raw["profiles"]
+            for table in (profile.get("template_definition") or {}).get("tables", ())
+            if "table_id" not in table
+        }
+        self.assertTrue(refs)
+        self.assertEqual(set(refs.values()), {"ADR-0059", "SPEC-0222"})
+        self.assertEqual(
+            {key for key, value in refs.items() if value == "SPEC-0222"},
+            {
+                ("common/template-operation-policy", "Rule Levels"),
+                ("common/template-governance-rule", "Rule Levels"),
+                ("common/template-reference-data", "Producer"),
+                (ADR[1], "Alternatives"),
+            },
+        )
+
+    def test_a_local_template_table_without_authority_is_refused(self) -> None:
+        raw = load_raw()
+        table = next(
+            t
+            for t in profile_of(raw, RUNBOOK[1])["template_definition"]["tables"]
+            if "table_id" not in t
+        )
+        del table["authority_ref"]
+        self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
+
+    def test_every_current_document_of_a_core_role_passes(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        checked = []
+        found = []
+        for path in CONTRACTS.enumerate_target_markdown(ROOT).current_paths:
+            profile = CONTRACTS.classify_path(registry, path)
+            if profile.mode == "native" or not any(t.table_id for t in profile.tables):
+                continue
+            checked.append(path)
+            text = CONTRACTS.read_repository_text(ROOT, path)
+            found += [
+                f"{path}: {item.rule_id}"
+                for item in MARKDOWN.validate_document_text(
+                    text, path, profile, "strict"
+                )
+                if item.rule_id.startswith("BODY-CORE-")
+                or item.rule_id == "BODY-TABLE-COLUMNS"
+            ]
+        self.assertTrue(checked)
+        self.assertEqual(found, [])
 
 
 if __name__ == "__main__":

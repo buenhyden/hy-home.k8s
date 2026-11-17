@@ -2021,7 +2021,7 @@
           "pattern": "\\S"
         },
         "authority_ref": {
-          "description": "SPEC-0222: the authority of a local table of its own that SPEC-0222 registers; a core table carries none.",
+          "description": "SPEC-0222: the decision that registered a local table of its own (ADR-0059 before SPEC-0222, SPEC-0222 for the tables it added); a template table carries exactly one of table_id and authority_ref.",
           "type": "string",
           "pattern": "\\S"
         }
@@ -2038,12 +2038,18 @@
           "table_id"
         ]
       },
-      "not": {
-        "required": [
-          "table_id",
-          "authority_ref"
-        ]
-      }
+      "oneOf": [
+        {
+          "required": [
+            "table_id"
+          ]
+        },
+        {
+          "required": [
+            "authority_ref"
+          ]
+        }
+      ]
     },
     "shared_extension": {
       "type": "object",

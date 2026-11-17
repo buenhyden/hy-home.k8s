@@ -149,6 +149,8 @@ SAMPLES: dict[str, tuple[str, str | None, str | None]] = {
 AUTHORING_RULES = frozenset(
     {
         "BODY-AUTHOR-PROMPT",
+        # SPEC-0222: a core cell that holds only its author prompt is empty.
+        "BODY-CORE-TABLE-CELL",
         "BODY-H1-PLACEHOLDER",
         "BODY-HEADING-EMPTY",
         "BODY-SECTION-EMPTY",

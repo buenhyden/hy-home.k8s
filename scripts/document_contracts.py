@@ -306,6 +306,42 @@ class TaskTables:
     issues: tuple[tuple[str, str], ...] = ()
 
 
+def core_cell_faults(
+    table: "TableContract", rows: Sequence[Sequence[str]]
+) -> list[str]:
+    """SPEC-0222: the cells of a core table's rows that break their core column.
+
+    Only what the core states without further meaning is checked: a required
+    cell left empty, a value outside the column's allowed values (a boolean reads
+    as `true` or `false`), and a non-integer in an `integer` or `integer-or-none`
+    column (the latter also admits `none`). Identifier, reference, path,
+    condition, timestamp, list and free-text values are not interpreted here.
+    """
+
+    faults: list[str] = []
+    for number, row in enumerate(rows, 1):
+        for index, column in enumerate(table.columns):
+            cell = row[index].strip() if index < len(row) else ""
+            allowed = (
+                None
+                if column.allowed_values is None
+                else {
+                    str(value).lower() if isinstance(value, bool) else value
+                    for value in column.allowed_values
+                }
+            )
+            integer = column.data_type == "integer" or (
+                column.data_type == "integer-or-none" and cell != "none"
+            )
+            if (
+                (column.required and not cell)
+                or (allowed is not None and cell not in allowed)
+                or (integer and re.fullmatch(r"-?[0-9]+", cell) is None)
+            ):
+                faults.append(f"row {number}: {column.key} {cell!r}")
+    return faults
+
+
 def _task_core_cell_issues(
     name: str, rows: Sequence[Mapping[str, str]], tables: Sequence["TableContract"]
 ) -> list[tuple[str, str]]:
@@ -321,31 +357,13 @@ def _task_core_cell_issues(
         ),
         None,
     )
-    issues: list[tuple[str, str]] = []
-    for number, row in enumerate(rows, 1) if table else ():
-        for column in table.columns:  # type: ignore[union-attr]
-            cell = row[column.key].strip()
-            allowed = (
-                None
-                if column.allowed_values is None
-                else {
-                    str(value).lower() if isinstance(value, bool) else value
-                    for value in column.allowed_values
-                }
-            )
-            if (
-                (column.required and not cell)
-                or (allowed is not None and cell not in allowed)
-                or (
-                    column.data_type == "integer-or-none"
-                    and cell != "none"
-                    and re.fullmatch(r"-?[0-9]+", cell) is None
-                )
-            ):
-                issues.append(
-                    ("TASK-CORE-CELL", f"{name} row {number}: {column.key} {cell!r}")
-                )
-    return issues
+    if table is None:
+        return []
+    cells = [[row[column.key] for column in table.columns] for row in rows]
+    return [
+        ("TASK-CORE-CELL", f"{name} {fault}")
+        for fault in core_cell_faults(table, cells)
+    ]
 
 
 def read_task_tables(
@@ -1109,8 +1127,10 @@ class TableContract:
     columns: tuple[TableColumn, ...]
     minimum_rows: int
     row_identity: str
-    # SPEC-0222: the core table this template table carries, if any.
+    # SPEC-0222: the core table this template table carries, if any, and the
+    # core condition under which a document must render it.
     table_id: str | None = None
+    required_when: str | None = None
 
 
 @dataclass(frozen=True)
@@ -2259,6 +2279,7 @@ def _tables_from_definition(
             minimum_rows=table["minimum_rows"],
             row_identity=table["row_identity"],
             table_id=table.get("table_id"),
+            required_when=table.get("required_when"),
         )
         for table in (definition or {}).get("tables", ())
     )

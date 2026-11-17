@@ -2836,7 +2836,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Command"
+            "row_identity": "Command",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -3420,7 +3421,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Command"
+            "row_identity": "Command",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -3576,7 +3578,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Criterion"
+            "row_identity": "Criterion",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Observation",
@@ -3602,7 +3605,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Observation"
+            "row_identity": "Observation",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "ID",
@@ -3658,7 +3662,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "ID"
+            "row_identity": "ID",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Remediation",
@@ -3684,7 +3689,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Remediation"
+            "row_identity": "Remediation",
+            "authority_ref": "ADR-0059"
           }
         ],
         "consumer_paths": [
@@ -3875,7 +3881,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Claim"
+            "row_identity": "Claim",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Source",
@@ -3907,7 +3914,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Source"
+            "row_identity": "Source",
+            "authority_ref": "ADR-0059"
           }
         ],
         "consumer_paths": [
@@ -4078,7 +4086,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Field"
+            "row_identity": "Field",
+            "authority_ref": "SPEC-0222"
           },
           {
             "name": "Source",
@@ -4104,7 +4113,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Source"
+            "row_identity": "Source",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Generation command",
@@ -4130,7 +4140,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Generation command"
+            "row_identity": "Generation command",
+            "authority_ref": "ADR-0059"
           }
         ],
         "consumer_paths": [
@@ -4381,7 +4392,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Decision lineage"
+            "row_identity": "Decision lineage",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -5305,7 +5317,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Item"
+            "row_identity": "Item",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Results",
@@ -5683,7 +5696,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Promoted owner"
+            "row_identity": "Promoted owner",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -5839,7 +5853,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Timestamp"
+            "row_identity": "Timestamp",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Actions",
@@ -5904,7 +5919,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Timeline or action"
+            "row_identity": "Timeline or action",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -6113,7 +6129,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Rule ID"
+            "row_identity": "Rule ID",
+            "authority_ref": "SPEC-0222"
           },
           {
             "name": "Lifecycle Traceability",
@@ -6139,7 +6156,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Promoted owner"
+            "row_identity": "Promoted owner",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -6334,7 +6352,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Root cause or action"
+            "row_identity": "Root cause or action",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -6534,7 +6553,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Promoted owner"
+            "row_identity": "Promoted owner",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -6647,7 +6667,7 @@
           "positive": [
             "The four Requirements and the template pass the form tree, table, body-contract, author-prompt and residue checks.",
             "A Requirement whose Quality Requirements section states that it declares no quality member passes the form tree.",
-            "A requirement table with the five core requirement.requirements columns and a lower-case Priority passes BODY-TABLE-COLUMNS, BODY-TABLE-VALUE and BODY-TABLE-ROWS."
+            "A requirement table with the five core requirement.requirements columns and a lower-case Priority passes BODY-TABLE-COLUMNS, BODY-CORE-TABLE-CELL and BODY-TABLE-ROWS."
           ],
           "negative": [
             "The previous four-column requirement header, whose second and fourth columns are not Statement and Acceptance, fails BODY-TABLE-COLUMNS.",
@@ -6655,7 +6675,7 @@
             "A table section outside the form fails REGISTRY_TABLE_SECTION.",
             "An H3 under the wrong H2, including Archived Lineage outside Traceability, fails BODY-H3-PARENT.",
             "A Requirement without a Quality Requirements section fails BODY-H3-REQUIRED.",
-            "A requirement table without Priority fails BODY-TABLE-COLUMNS, and a Priority outside must, should and could fails BODY-TABLE-VALUE.",
+            "A requirement table without Priority fails BODY-TABLE-COLUMNS, and a Priority outside must, should and could fails BODY-CORE-TABLE-CELL.",
             "A Requirement without a Functional Requirements member fails BODY-TABLE-ROWS."
           ],
           "regression": [
@@ -7556,7 +7576,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Term ID"
+            "row_identity": "Term ID",
+            "authority_ref": "ADR-0059"
           }
         ],
         "consumer_paths": [
@@ -8097,7 +8118,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Rule ID"
+            "row_identity": "Rule ID",
+            "authority_ref": "SPEC-0222"
           }
         ]
       }
@@ -8231,7 +8253,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Step"
+            "row_identity": "Step",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -8369,7 +8392,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Step"
+            "row_identity": "Step",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -8727,7 +8751,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Field"
+            "row_identity": "Field",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Trial ID",
@@ -8765,7 +8790,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Trial ID"
+            "row_identity": "Trial ID",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Criterion ID",
@@ -8797,7 +8823,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Criterion ID"
+            "row_identity": "Criterion ID",
+            "authority_ref": "ADR-0059"
           }
         ],
         "consumer_paths": [
@@ -8919,7 +8946,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Field"
+            "row_identity": "Field",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Trial ID",
@@ -8957,7 +8985,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Trial ID"
+            "row_identity": "Trial ID",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Trial ID",
@@ -9001,7 +9030,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Criterion ID"
+            "row_identity": "Criterion ID",
+            "authority_ref": "ADR-0059"
           }
         ],
         "consumer_paths": [
@@ -9153,7 +9183,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Cycle ID"
+            "row_identity": "Cycle ID",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Scope",
@@ -9197,7 +9228,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Criterion ID"
+            "row_identity": "Criterion ID",
+            "authority_ref": "ADR-0059"
           }
         ],
         "consumer_paths": [

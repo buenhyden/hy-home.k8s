@@ -34,6 +34,7 @@ from document_contracts import (
     DocumentProfile,
     EnumConstraint,  # noqa: F401 - re-exported
     classify_path,
+    core_cell_faults,
     diagnostic_sort_key,
     enumerate_tracked_regular_paths,
     enumerate_target_markdown,
@@ -842,16 +843,26 @@ def _table_diagnostics(
 
     def owner(header: list[str], table) -> bool:
         """SPEC-0222: tables that share a first key share a header by fit: an
-        exact fit wins, else the table with the most matching labels."""
+        exact fit wins. Otherwise a header inside a core section stays a core
+        table's, and among core tables of one section only the best fit claims
+        it, so one drifted table is reported once; a local table takes the
+        header it fits best."""
 
         rivals = [other for other in profile.tables if identifies(header, other)]
         if any(exact(header, other) for other in rivals):
             return exact(header, table)
-        best = max(
-            rivals,
-            key=lambda other: len(set(header) & {c.key for c in other.columns}),
-        )
-        return best is table
+
+        def fit(other) -> int:
+            return len(set(header) & {c.key for c in other.columns})
+
+        if table.table_id:
+            cores = [
+                other
+                for other in rivals
+                if other.table_id and other.section == table.section
+            ]
+            return max(cores, key=fit) is table
+        return max(rivals, key=fit) is table
 
     for table in profile.tables:
         heading = (
@@ -884,30 +895,6 @@ def _table_diagnostics(
                         json.dumps(header, ensure_ascii=False),
                     )
                 )
-            elif table.table_id and profile.mode != "template":
-                # SPEC-0222: a core enum cell takes one of the core's values. A row
-                # with no visible cell is a template's author-prompt row, which the
-                # author-prompt check owns.
-                for row in data:
-                    if not any(cell.strip() for cell in row):
-                        continue
-                    for column, cell in zip(table.columns, row, strict=False):
-                        if column.allowed_values is not None and cell.strip() not in {
-                            str(value).lower() if isinstance(value, bool) else value
-                            for value in column.allowed_values
-                        }:
-                            found.append(
-                                _diagnostic(
-                                    "BODY-TABLE-VALUE",
-                                    path,
-                                    profile,
-                                    f"{table.name} {column.key}: one of "
-                                    + json.dumps(
-                                        list(column.allowed_values), ensure_ascii=False
-                                    ),
-                                    cell.strip(),
-                                )
-                            )
         if profile.mode == "template" and table.minimum_rows and not present:
             found.append(
                 _diagnostic(
@@ -928,6 +915,69 @@ def _table_diagnostics(
                     f"{rows} rows",
                 )
             )
+    return found
+
+
+def _core_table_diagnostics(
+    path: PurePosixPath, profile: DocumentProfile, body: str, status: str = ""
+) -> list[Diagnostic]:
+    """SPEC-0222: the core tables of a core-role form in one document or template.
+
+    A core table whose `required_when` is `always` must appear with exactly its
+    core header inside its core H2 (BODY-CORE-TABLE-MISSING); a conditional one
+    is checked only where present. In a document, each row of a core table is
+    checked by `core_cell_faults` (BODY-CORE-TABLE-CELL); a template keeps prompt
+    cells, so only its header is checked. A drifted header is BODY-TABLE-COLUMNS.
+    The Task reader owns the Task tables, and a retained identity keeps its
+    recorded tables.
+    """
+
+    core = [table for table in profile.tables if table.table_id]
+    if (
+        not core
+        or profile.form is None
+        or (profile.body_contract and profile.body_contract.task_execution)
+    ):
+        return []
+    identity = expected_artifact_id(path, profile) or ""
+    if profile.form.retained_headings(status, identity) is not None:
+        return []
+    found: list[Diagnostic] = []
+    for table in core:
+        keys = [column.key for column in table.columns]
+        heading = _form_heading(profile.form, table.section, status, identity)
+        section = (
+            None
+            if heading is None
+            else _exact_heading_section(body, "#" * heading[0] + " " + heading[1])
+        )
+        tables = [
+            rows for header, rows in _visible_tables(section or "") if header == keys
+        ]
+        if not tables and table.required_when == "always":
+            found.append(
+                _diagnostic(
+                    "BODY-CORE-TABLE-MISSING",
+                    path,
+                    profile,
+                    f"{table.table_id}: {json.dumps(keys, ensure_ascii=False)} "
+                    "in its core section",
+                    "no table with exactly the core header",
+                )
+            )
+        if profile.mode == "template":
+            continue
+        for rows in tables:
+            for fault in core_cell_faults(table, rows):
+                found.append(
+                    _diagnostic(
+                        "BODY-CORE-TABLE-CELL",
+                        path,
+                        profile,
+                        f"{table.table_id}: each cell of its core column type",
+                        fault,
+                    )
+                )
     return found
 
 
@@ -2660,6 +2710,8 @@ def validate_document_text(
         diagnostics.extend(_body_diagnostics(path, profile, body, status))
         if profile.mode in {"authored", "template"}:
             diagnostics.extend(_table_diagnostics(path, profile, body, status))
+        if profile.mode in {"authored", "template", "router"}:
+            diagnostics.extend(_core_table_diagnostics(path, profile, body, status))
         if profile.mode == "authored" and profile.profile_id == "sdlc/requirement":
             diagnostics.extend(_requirement_quality_diagnostics(path, profile, body))
         if profile.mode == "authored":

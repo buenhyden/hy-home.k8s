@@ -167,7 +167,13 @@ form 경로의 대응은 Registry만 소유한다.
   소유자·이유·검토 조건·권한 근거를 담은 `classification`이 있다. core 역할 form은
   core 구성원을 그대로 담고, 각 템플릿이 core 표의 ID·조건·열·타입을 정확히
   가지는지 엄격 Registry 검사가 확인한다(`REGISTRY_CORE_TABLE`,
-  `REGISTRY_CORE_SECTION`). 모든 지역 확장은 `authority_ref`를 가진다.
+  `REGISTRY_CORE_SECTION`). 모든 지역 확장과 `table_id`가 없는 템플릿 지역 표는
+  `authority_ref`를 가진다(SPEC-0222 이전 등록은 `ADR-0059`, SPEC-0222가 추가한
+  것은 `SPEC-0222`). 문서 검사는 `required_when`이 `always`인 core 표가 core H2
+  안에 정확한 core 머리글로 있는지(`BODY-CORE-TABLE-MISSING`)와 각 core 셀이 열
+  타입을 지키는지(`BODY-CORE-TABLE-CELL`: 필수 셀 공란, 허용값 밖의 값, 정수 열의
+  비정수)를 확인한다. 템플릿은 머리글만 검사하고, retained identity와 Task 표는
+  제외한다.
 - **Core SDLC forms**: physical `requirements/`, `architecture/`, `specs/`
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
   `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의

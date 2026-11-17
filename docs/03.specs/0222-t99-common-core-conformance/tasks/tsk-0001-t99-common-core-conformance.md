@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.18.0"
+version: "0.19.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-18"
@@ -218,6 +218,20 @@ WORK-003 bound the requirement, architecture, spec and plan forms to the core (`
 - **Spec and Plan.** They carry `spec.checks`, `plan.work_units` and `plan.checks`, beside the local Criteria, Work Breakdown and Promotion tables their readers use. The four retained identities stay unchanged.
 - **This package's Spec and Plan.** They took those core tables and the user's review and parallel-preparation decisions as revision 1.1.0, returned to `in-review` in `c82b0aea`, and were approved again (EVD-032, `73338831`). The Task changed only after that approval, because the lifecycle check refuses Task execution changes while their parents are in review.
 
+WORK-009 started with the document-side checks that the Spec's Failure Behavior requires. They were prepared in a worktree in parallel with WORK-003.
+
+- **`BODY-CORE-TABLE-MISSING`.** A core table whose `required_when` is `always` must appear with exactly its core header inside its core H2.
+- **`BODY-CORE-TABLE-CELL`.** A core cell must be present when required, inside `allowed_values`, and an integer where the core says so. It is shared with the Task reader.
+- **Header drift.** It keeps `BODY-TABLE-COLUMNS`.
+- **Exemptions.** The retained identities, Task tables and unbound profiles are exempt.
+- **`authority_ref` on local tables.** Every local template table now carries `authority_ref`: `ADR-0059` for 47 tables registered before this Spec, and `SPEC-0222` for those it added. The schema admits exactly one of `table_id` and `authority_ref` on a template table.
+
+The merge with WORK-003 needed three corrections:
+
+- **One allowed-value rule.** WORK-003's `BODY-TABLE-VALUE` checked the same allowed values as `BODY-CORE-TABLE-CELL`, so it leaves, and its test and registry text name the remaining rule.
+- **One report per drifted header.** Among several core tables of one section, only the best-fitting one now claims an inexact header. One drifted requirement table had been reported twice; a header inside a core section still stays a core table's.
+- **Fixture core tables.** The synthetic completion fixtures gain header-only core check and work unit tables, because the presence check now requires them.
+
 ### Blockers and Decisions
 
 The user approved the Spec and Plan (EVD-006) and renewed that approval for revision 1.1.0 (EVD-032); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
@@ -228,13 +242,13 @@ The user approved the Spec and Plan (EVD-006) and renewed that approval for revi
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-CORE-001](../spec.md#criteria) | Registry core members, `core_role` and classifications | platform | completed | PASS | EVD-007, EVD-008, EVD-010, EVD-011, EVD-012, EVD-013 |
 | WORK-002 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Task core members, tables and transition adapter | platform | completed | PASS | EVD-014, EVD-015, EVD-016, EVD-017 |
-| WORK-003 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Requirement, architecture, spec and plan tables | platform | in-progress | NOT_RUN | EVD-001 |
+| WORK-003 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Requirement, architecture, spec and plan tables | platform | completed | PASS | EVD-032, EVD-034, EVD-035 |
 | WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | completed | PASS | EVD-018, EVD-019, EVD-020 |
 | WORK-005 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | README tables | platform | completed | PASS | EVD-021, EVD-022, EVD-023 |
 | WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | completed | PASS | EVD-024, EVD-025, EVD-026 |
 | WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | completed | PASS | EVD-027, EVD-028, EVD-029 |
 | WORK-008 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Research, audit and data-reference forms | platform | completed | PASS | EVD-030, EVD-031, EVD-033 |
-| WORK-009 | [VAL-CORE-002](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Final export, residue closure, review and suite | platform | ready | NOT_RUN | EVD-001 |
+| WORK-009 | [VAL-CORE-002](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Final export, residue closure, review and suite | platform | in-progress | NOT_RUN | EVD-001 |
 
 ## Verification Evidence
 
@@ -277,6 +291,8 @@ The user approved the Spec and Plan (EVD-006) and renewed that approval for revi
 | EVD-033 | [VAL-CORE-003](../spec.md#criteria) | WORK-008 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `3d82e960` and its commit hooks; pinned venv, 2026-11-17 | PASS | 12 selected gates passed after the one stale-heading test fix recorded in EVD-031. | yes | none |
 | EVD-034 | [VAL-CORE-001](../spec.md#criteria) | WORK-003 | Failing first | The WORK-003 tests over an export of `3d82e960`: the SDLC core binding, requirement, architecture, spec and plan form, retained Spec and Plan, and repository registry classes; pinned venv, 2026-11-18 | PASS | Observed the defect: 50 tests with 27 failures and 35 errors. | yes | none |
 | EVD-035 | [VAL-CORE-003](../spec.md#criteria) | WORK-003 | Focused tests, strict validators and staged QA | In the prepared worktree, `tests.test_common_form_tree` and 21 focused modules; then `python3 scripts/qa.py staged` on the index of `c82b0aea` and its commit hooks; pinned venv, 2026-11-18 | PASS | 1,076 tests OK with 4 skips; 12 selected gates passed, the `document` suite among them. | yes | none |
+| EVD-036 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Failing first | The new `CoreTableDocumentTests` over an export of `3d82e960`; pinned venv, 2026-11-18 | PASS | Observed the defect: 12 tests with 1 failure and 56 errors (subtests); no document-side core check existed and no local table carried `authority_ref`. | yes | none |
+| EVD-037 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Focused tests and strict validators after the change | After the merge onto `a5ff0010`: form tree, generator, policy rule IDs, task execution, README navigation and repository quality rules, then the changed requirement, core table, core binding and task classes; the four strict validators; pinned venv, 2026-11-18 | PASS | The first merged run had 3 failures, from the double report and the fixtures named above; after the fixes the affected modules passed (92 and 83 tests OK) and every validator passed. | yes | none |
 
 ### Resolution Links
 
