@@ -40,29 +40,31 @@ parent_ids: ["{{PARENT_ID}}"]
 
 <!-- Author prompt: record the actual change, command, time and owner of each work item; the rows below hold the state of each item, so point to them rather than copy them. -->
 
+<!-- Author prompt: only when the Task tracks more than one item (core condition multiple_items), add the core Work Items table `| Item | Work Unit | Owner | Status | Blocker |` as the first table under Work Performed, one row per Item with its Plan Work Unit, its owner, its status (draft, ready, in-progress, blocked, completed or cancelled) and its Blocker (the block or cancellation reason and next owner, or none), and delete the frontmatter status line; readers derive the summary from these rows. For one item, add no Work Items table: the frontmatter status key holds the state. -->
+
 ### Blockers and Decisions
 
 <!-- Author prompt: record each failure, question, answer and resume condition, or say that none is open. -->
 
 ### Lifecycle Traceability
 
-<!-- Author prompt: keep one row per executable item and link each upstream VAL criterion to the owning Spec, using comma-space between links. For exactly one row, write literal frontmatter in its Status cell and put the actual state only in the frontmatter status key. For multiple rows, use actual row states and delete the frontmatter status line; readers derive the summary from the rows. See the document lifecycle policy for the status rules. Result is observed execution outcome; the sole criterion decision belongs under Criterion Decisions. -->
+<!-- Author prompt: keep one row per executable item, keyed by the Item of its Work Items row, and link each upstream VAL criterion to the owning Spec, using comma-space between links. The status of an item lives in the Work Items table, or in the frontmatter status key for one item. See the document lifecycle policy for the status rules. Result is observed execution outcome; the sole criterion decision belongs under Criterion Decisions. -->
 
-| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
-| --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#criteria) | One bounded change | {{OWNER}} | frontmatter | NOT_RUN | Pending named repository evidence |
+| Item | Upstream criterion | Result | Evidence |
+| --- | --- | --- | --- |
+| WORK-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#criteria) | NOT_RUN | Pending named repository evidence |
 
 ## Verification Evidence
 
 ### Results
 
-<!-- Author prompt: record each factual check with an exact input and location; for a command, name it, its tool version, exit code and UTC time when they matter. Required is yes or no. Resolves is none or comma-space separated earlier Evidence IDs. A required FAIL, DEFER, or NOT_RUN is closed only by a later PASS for the same Command, Work Unit, and Consumer that explicitly names its Evidence ID. Keep failed rows as history. -->
+<!-- Author prompt: record each factual check with an exact input and location. Method is automated, review or observation; Tool and Config names the tool, its version and configuration, or none; Exit is the exit code, or none when nothing ran (never 0 for an unrun check). Required is true or false. Resolves is none or comma-space separated earlier Evidence IDs. A required FAIL, DEFER, or NOT_RUN is closed only by a later PASS for the same Command, Work Unit, and Criteria that explicitly names its Evidence ID. Keep failed rows as history. -->
 
 <!-- Author prompt: write residue (an open handoff, conflict, adoption or survey item) only in one `### Residue Handoff` table under this section, after the evidence table, with the columns ID, Residue, State, Owner, Resume condition and Closure, and add the matching entry to `docs/03.specs/work-residue-ledger.json` in the same change. State is open or terminal; Closure is none or a PASS Evidence ID of this Task. -->
 
-| Evidence ID | Consumer | Work Unit | Command | Input | Result | Location | Required | Resolves |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| EVD-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#criteria) | WORK-001 | Named deterministic check | Exact revision or fixture | NOT_RUN | Pending | yes | none |
+| Evidence ID | Criteria | Work Unit | Method | Input | Tool and Config | Command | Exit | Result | Location | Required | Resolves |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| EVD-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#criteria) | WORK-001 | automated | Exact revision or fixture | none | Named deterministic check | none | NOT_RUN | none | true | none |
 
 ### Resolution Links
 
@@ -72,11 +74,11 @@ parent_ids: ["{{PARENT_ID}}"]
 
 ### Criterion Decisions
 
-<!-- Author prompt: keep exactly one decision row for each assigned Spec criterion. Accepted requires relevant concrete PASS evidence and no unresolved required failure. Pending or rejected retains the current owner and next disposition. Not-required requires an actual Spec scope basis; a Task cannot waive an assigned required criterion by itself. -->
+<!-- Author prompt: keep this table when the Task owns the acceptance of its assigned criteria (core condition owns_acceptance), with exactly one decision row for each assigned Spec criterion. An agent never writes an acceptance or an acceptor: until the operator's recorded Decision, Intent is undecided, Acceptance is pending, and Accepted By and Reassigned To are none. Accepted requires relevant concrete PASS evidence and no unresolved required failure. Not-required requires an actual Spec scope basis; a Task cannot waive an assigned required criterion by itself. -->
 
-| Criterion | Acceptance | Evidence | Disposition | Current owner |
-| --- | --- | --- | --- | --- |
-| [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#criteria) | pending | none | Run named deterministic check | {{OWNER}} |
+| Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#criteria) | undecided | pending | none | none | none | {{OWNER}} | none |
 
 ### Remaining Conditions
 

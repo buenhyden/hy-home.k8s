@@ -49,6 +49,9 @@ from document_contracts import (
     validated_changed_paths,
     task_status,
     task_contract_issues,
+    read_task_tables,
+    task_core_name,
+    task_header_form,
     direct_parent,
     MARKDOWN_TEMPLATE_PLACEHOLDER,
     validate_registry,  # noqa: F401 - re-exported
@@ -690,7 +693,16 @@ def _body_contract_diagnostics(
                 json.dumps(duplicate_columns),
             )
         ]
-    if tuple(header) != contract.required_columns:
+    # SPEC-0222: an authored Task may keep its recorded header, read under the
+    # core names by the transition adapter; a template carries the core header.
+    task_form = (
+        task_header_form("traceability", header, contract.required_columns)
+        if contract.task_execution is not None
+        else None
+    )
+    if task_form == "recorded" and profile.mode == "authored":
+        header = [task_core_name(column) for column in header]
+    elif tuple(header) != contract.required_columns:
         return [
             _diagnostic(
                 "BODY-CONTRACT-COLUMNS",
@@ -808,6 +820,8 @@ def _table_diagnostics(
     """
 
     owned = profile.body_contract.table_heading if profile.body_contract else None
+    if profile.body_contract and profile.body_contract.task_execution:
+        return []  # The Task table reader owns every Task table (SPEC-0222).
     identity = expected_artifact_id(path, profile) or ""
     found: list[Diagnostic] = []
     for table in profile.tables:
@@ -2525,83 +2539,7 @@ def validate_document_text(
         return sorted(diagnostics, key=diagnostic_sort_key)
     binding = profile.body_contract.task_execution if profile.body_contract else None
     if binding and binding.evidence_section:
-        section = _exact_heading_section(body, f"## {binding.evidence_section}")
-        table = _first_visible_table(section or "")
-        if table is None or tuple(table[0]) != binding.evidence_columns or not table[1]:
-            diagnostics.append(
-                _diagnostic(
-                    "TASK-EVIDENCE-COLUMNS",
-                    path,
-                    profile,
-                    repr(binding.evidence_columns),
-                    "missing or malformed evidence table",
-                )
-            )
-        elif profile.mode != "template":
-            if any(len(row) != len(table[0]) for row in table[1]):
-                diagnostics.append(
-                    _diagnostic(
-                        "TASK-EVIDENCE-COLUMNS",
-                        path,
-                        profile,
-                        f"{len(binding.evidence_columns)} cells in every evidence row",
-                        "ragged evidence row",
-                    )
-                )
-                return sorted(diagnostics, key=diagnostic_sort_key)
-            evidence_rows = [dict(zip(table[0], row, strict=True)) for row in table[1]]
-            decision_section = _exact_heading_section(
-                body, f"## {binding.criterion_acceptance_section}"
-            )
-            decision_table = _first_visible_table(decision_section or "")
-            execution_section = _exact_heading_section(
-                body, f"## {profile.body_contract.section}"
-            )
-            execution_table = _first_visible_table(
-                _exact_heading_section(
-                    execution_section or "",
-                    f"### {profile.body_contract.table_heading}",
-                )
-                or ""
-            )
-            if (
-                decision_table is None
-                or tuple(decision_table[0]) != binding.criterion_acceptance_columns
-                or not decision_table[1]
-                or any(len(row) != len(decision_table[0]) for row in decision_table[1])
-            ):
-                diagnostics.append(
-                    _diagnostic(
-                        "TASK-ACCEPTANCE-COLUMNS",
-                        path,
-                        profile,
-                        repr(binding.criterion_acceptance_columns),
-                        "missing or malformed criterion acceptance table",
-                    )
-                )
-            elif (
-                execution_table is not None
-                and tuple(execution_table[0]) == profile.body_contract.required_columns
-                and all(
-                    len(row) == len(execution_table[0]) for row in execution_table[1]
-                )
-            ):
-                work_rows = [
-                    dict(zip(execution_table[0], row, strict=True))
-                    for row in execution_table[1]
-                ]
-                decision_rows = [
-                    dict(zip(decision_table[0], row, strict=True))
-                    for row in decision_table[1]
-                ]
-                diagnostics.extend(
-                    _diagnostic(
-                        rule, path, profile, "valid Task acceptance graph", detail
-                    )
-                    for rule, detail in task_contract_issues(
-                        work_rows, evidence_rows, decision_rows, status, binding
-                    )
-                )
+        diagnostics.extend(_task_table_diagnostics(path, profile, body, status))
     diagnostics.extend(
         _body_contract_diagnostics(
             path,
@@ -2613,6 +2551,94 @@ def validate_document_text(
         )
     )
     return sorted(diagnostics, key=diagnostic_sort_key)
+
+
+def _task_table_diagnostics(
+    path: PurePosixPath, profile: DocumentProfile, body: str, status: str
+) -> list[Diagnostic]:
+    """Read every Task table through the transition adapter (SPEC-0222)."""
+
+    contract = profile.body_contract
+    assert contract is not None and contract.task_execution is not None
+    binding = contract.task_execution
+
+    def table(
+        h2: str | None, h3: str | None = None
+    ) -> tuple[list[str], list[list[str]]] | None:
+        section = _exact_heading_section(body, f"## {h2}") if h2 else None
+        if section is not None and h3 is not None:
+            section = _exact_heading_section(section, f"### {h3}") if h3 else None
+        return _first_visible_table(section) if section is not None else None
+
+    def found(rule: str, expected: str, actual: str) -> Diagnostic:
+        return _diagnostic(rule, path, profile, expected, actual)
+
+    evidence = table(binding.evidence_section)
+    evidence_form = (
+        None
+        if evidence is None or not evidence[1]
+        else task_header_form("evidence", evidence[0], binding.evidence_columns)
+    )
+    if evidence_form is None or (
+        profile.mode == "template" and evidence_form != "core"
+    ):
+        return [
+            found(
+                "TASK-EVIDENCE-COLUMNS",
+                repr(binding.evidence_columns),
+                "missing or malformed evidence table",
+            )
+        ]
+    if profile.mode == "template":
+        return []
+    assert evidence is not None
+    if any(len(row) != len(evidence[0]) for row in evidence[1]):
+        return [
+            found(
+                "TASK-EVIDENCE-COLUMNS",
+                f"{len(evidence[0])} cells in every evidence row",
+                "ragged evidence row",
+            )
+        ]
+    location = profile.body_contract_location(
+        status, expected_artifact_id(path, profile) or ""
+    )
+    section = location[0] if location else contract.section
+    work_items = table(section, binding.work_item_heading or None)
+    if work_items is not None and work_items[0][:1] != list(
+        binding.work_item_columns[:1]
+    ):
+        work_items = None  # The first table there is not the work item table.
+    traceability = table(section, location[1] if location else None)
+    tables = read_task_tables(
+        profile,
+        traceability=traceability if traceability and traceability[1] else None,
+        work_items=work_items,
+        evidence=evidence,
+        acceptance=table(binding.criterion_acceptance_section),
+    )
+    diagnostics = [
+        found(rule, "one Task header form and core cell types", detail)
+        for rule, detail in tables.issues
+    ]
+    if tables.form is None and tables.issues:
+        return diagnostics
+    if tables.acceptance is None or not tables.acceptance:
+        diagnostics.append(
+            found(
+                "TASK-ACCEPTANCE-COLUMNS",
+                repr(binding.criterion_acceptance_columns),
+                "missing or malformed criterion acceptance table",
+            )
+        )
+    elif tables.work is not None and tables.evidence is not None:
+        diagnostics.extend(
+            found(rule, "valid Task acceptance graph", detail)
+            for rule, detail in task_contract_issues(
+                tables.work, tables.evidence, tables.acceptance, status, binding
+            )
+        )
+    return diagnostics
 
 
 def _fixture_path(value: object) -> PurePosixPath:

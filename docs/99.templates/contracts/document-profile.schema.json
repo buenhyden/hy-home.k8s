@@ -470,6 +470,19 @@
                           "type": "string",
                           "minLength": 1
                         }
+                      },
+                      "work_item_heading": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "work_item_columns": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
                       }
                     }
                   },
@@ -1393,8 +1406,7 @@
         "kind": {
           "enum": [
             "local_h3",
-            "retained_form",
-            "local_columns"
+            "retained_form"
           ]
         },
         "condition": {
@@ -1475,19 +1487,6 @@
             "pattern": "\\S"
           }
         },
-        "table": {
-          "type": "string",
-          "pattern": "\\S"
-        },
-        "columns": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "pattern": "\\S"
-          }
-        },
         "authority_ref": {
           "type": "string",
           "pattern": "\\S"
@@ -1536,16 +1535,6 @@
                   "required": [
                     "section_titles"
                   ]
-                },
-                {
-                  "required": [
-                    "table"
-                  ]
-                },
-                {
-                  "required": [
-                    "columns"
-                  ]
                 }
               ]
             }
@@ -1582,78 +1571,6 @@
                 {
                   "required": [
                     "title"
-                  ]
-                },
-                {
-                  "required": [
-                    "table"
-                  ]
-                },
-                {
-                  "required": [
-                    "columns"
-                  ]
-                }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "kind": {
-                "const": "local_columns"
-              }
-            },
-            "required": [
-              "kind"
-            ]
-          },
-          "then": {
-            "required": [
-              "table",
-              "columns"
-            ],
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "artifact_ids"
-                  ]
-                },
-                {
-                  "required": [
-                    "parent_id"
-                  ]
-                },
-                {
-                  "required": [
-                    "title"
-                  ]
-                },
-                {
-                  "required": [
-                    "statuses"
-                  ]
-                },
-                {
-                  "required": [
-                    "retained_sections"
-                  ]
-                },
-                {
-                  "required": [
-                    "identity_bound"
-                  ]
-                },
-                {
-                  "required": [
-                    "body_contract"
-                  ]
-                },
-                {
-                  "required": [
-                    "section_titles"
                   ]
                 }
               ]
@@ -2061,8 +1978,15 @@
                 "minItems": 1,
                 "uniqueItems": true,
                 "items": {
-                  "type": "string",
-                  "pattern": "\\S"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "\\S"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ]
                 }
               }
             }
@@ -2603,8 +2527,15 @@
                 "minItems": 1,
                 "uniqueItems": true,
                 "items": {
-                  "type": "string",
-                  "pattern": "\\S"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "\\S"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ]
                 }
               }
             }

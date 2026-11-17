@@ -194,19 +194,21 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         if status == "completed":
             text = (
                 text.replace(
-                    "| frontmatter | NOT_RUN | Pending named repository evidence |",
-                    "| frontmatter | PASS | [Synthetic fixture result](#next-owner) |",
+                    "| NOT_RUN | Pending named repository evidence |",
+                    "| PASS | [Synthetic fixture result](#next-owner) |",
                 )
                 .replace(
-                    "| NOT_RUN | Pending | yes | none |",
-                    "| NOT_RUN | Pending | yes | none |\n"
+                    "| NOT_RUN | none | true | none |",
+                    "| NOT_RUN | none | true | none |\n"
                     "| EVD-002 | [VAL-P02-004](../spec.md#criteria) "
-                    "| WORK-004 | Named deterministic check | Exact revision or fixture "
-                    "| PASS | [Synthetic fixture result](#next-owner) | yes | EVD-001 |",
+                    "| WORK-004 | automated | Exact revision or fixture | none "
+                    "| Named deterministic check | 0 "
+                    "| PASS | [Synthetic fixture result](#next-owner) | true | EVD-001 |",
                 )
                 .replace(
-                    "| pending | none | Run named deterministic check |",
-                    "| accepted | EVD-002 | Synthetic fixture accepted |",
+                    "| undecided | pending | none | none | none |",
+                    "| accept | accepted | EVD-002 | Synthetic fixture accepted "
+                    "| operator |",
                 )
             )
         return text.replace('status: "draft"', f'status: "{status}"', 1).encode()
@@ -320,14 +322,16 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         )
         task = self.registered_task_document().decode()
         task = task.replace(
-            "| NOT_RUN | Pending | yes | none |",
-            "| NOT_RUN | Pending | yes | none |\n"
+            "| NOT_RUN | none | true | none |",
+            "| NOT_RUN | none | true | none |\n"
             "| EVD-002 | [VAL-P02-004](../spec.md#criteria) "
-            f"| WORK-004 | Independent semantic review | {review_input} | PASS | "
-            "Synthetic reviewer receipt | yes | none |\n"
+            f"| WORK-004 | review | {review_input} | none "
+            "| Independent semantic review | none | PASS | "
+            "Synthetic reviewer receipt | true | none |\n"
             "| EVD-003 | [VAL-P02-004](../spec.md#criteria) "
-            f"| WORK-004 | Spec/Plan first-record approval | {approval_input} | PASS | "
-            "Synthetic user approval receipt | yes | none |",
+            f"| WORK-004 | observation | {approval_input} | none "
+            "| Spec/Plan first-record approval | none | PASS | "
+            "Synthetic user approval receipt | true | none |",
             1,
         )
         files = parents | {f"{package}/tasks/tsk-0001-work.md": task.encode()}
@@ -1100,7 +1104,8 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                         self.registered_task_document("in-progress"),
                     )
                     invalid_result = completed.replace(
-                        b"| frontmatter | PASS |", b"| frontmatter | NOT_RUN |"
+                        b"(../spec.md#criteria) | PASS |",
+                        b"(../spec.md#criteria) | NOT_RUN |",
                     )
                     self.assertNotEqual(invalid_result, completed)
                     completed = invalid_result

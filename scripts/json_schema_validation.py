@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import functools
+import json
 from typing import Any
 
 from jsonschema import Draft202012Validator
@@ -47,13 +49,28 @@ except ImportError:
         )
 
 
+@functools.lru_cache(maxsize=32)
+def _checked_validator(schema_text: str) -> Draft202012Validator:
+    """Check one schema against its meta-schema once per distinct content.
+
+    The key is the canonical JSON text, so a changed schema is checked again; a
+    schema that fails the check raises and is never cached.
+    """
+
+    schema = json.loads(schema_text)
+    Draft202012Validator.check_schema(schema)
+    return _validator(schema)
+
+
 def schema_errors(schema: dict[str, Any], instance: Any) -> list[ValidationError]:
     """Return sorted instance findings, or a typed value-free evaluation error."""
 
     try:
-        Draft202012Validator.check_schema(schema)
+        validator = _checked_validator(
+            json.dumps(schema, sort_keys=True, ensure_ascii=False, allow_nan=False)
+        )
         return sorted(
-            _validator(schema).iter_errors(instance),
+            validator.iter_errors(instance),
             key=lambda error: tuple(str(part) for part in error.absolute_path),
         )
     except Exception:

@@ -20,6 +20,7 @@ from document_contracts import (
     LifecycleDomain,
     SCOPED_EXECUTION_APPROVAL_COMMAND,
     SPEC_PLAN_FIRST_APPROVED_EXTENSION,
+    UNRESOLVED_EVIDENCE_RESULTS,
     task_status,
     Registry,
     classify_path,
@@ -638,9 +639,9 @@ def _task_item_edge_diagnostics(
                 evidence_gap="base and proposed bound Task rows",
             ),
         )
-    before = {dict(row)["ID"].strip().strip("`"): dict(row) for row in before_rows}
+    before = {dict(row)["Item"].strip().strip("`"): dict(row) for row in before_rows}
     after = {
-        dict(row)["ID"].strip().strip("`"): dict(row) for row in after_view.body_rows
+        dict(row)["Item"].strip().strip("`"): dict(row) for row in after_view.body_rows
     }
 
     def criterion_ids(cell: str) -> tuple[str, ...] | None:
@@ -752,7 +753,7 @@ def _task_evidence_retention_diagnostics(
             if new is None
             else tuple(
                 key
-                for key in ("Consumer", "Work Unit", "Command", "Input", "Result")
+                for key in ("Criteria", "Work Unit", "Command", "Input", "Result")
                 if key not in old or key not in new
             )
         )
@@ -763,7 +764,16 @@ def _task_evidence_retention_diagnostics(
             reason = f"{identifier} lacks the column {missing[0]}"
         elif any(
             old.get(key, "").strip() != new.get(key, "").strip()
-            for key in ("Work Unit", "Command", "Input", "Result", "Location")
+            for key in (
+                "Work Unit",
+                "Method",
+                "Tool and Config",
+                "Command",
+                "Exit",
+                "Input",
+                "Result",
+                "Location",
+            )
         ):
             reason = f"{identifier} factual check changed"
         elif "Required" in old and any(
@@ -773,11 +783,11 @@ def _task_evidence_retention_diagnostics(
             reason = f"{identifier} requirement or resolution edge changed"
         elif (
             "Required" not in old
-            and old["Result"].strip() in {"FAIL", "DEFER", "NOT_RUN"}
-            and new.get("Required", "").strip() != "yes"
+            and old["Result"].strip() in UNRESOLVED_EVIDENCE_RESULTS
+            and new.get("Required", "").strip() != "true"
         ):
             reason = f"{identifier} prior adverse check made optional"
-        elif old.get("Consumer", "").strip() != new.get("Consumer", "").strip():
+        elif old.get("Criteria", "").strip() != new.get("Criteria", "").strip():
             reason = f"{identifier} criterion membership changed"
         if reason:
             issues.append(

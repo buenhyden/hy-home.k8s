@@ -462,17 +462,14 @@
             "blocked"
           ],
           "required_columns": [
-            "ID",
+            "Item",
             "Upstream criterion",
-            "Work item",
-            "Owner",
-            "Status",
             "Result",
             "Evidence"
           ],
           "identifier_columns": [
             {
-              "column": "ID",
+              "column": "Item",
               "kind": "work-item"
             },
             {
@@ -529,10 +526,13 @@
             "evidence_section": "Verification Evidence",
             "evidence_columns": [
               "Evidence ID",
-              "Consumer",
+              "Criteria",
               "Work Unit",
-              "Command",
+              "Method",
               "Input",
+              "Tool and Config",
+              "Command",
+              "Exit",
               "Result",
               "Location",
               "Required",
@@ -542,16 +542,29 @@
               "NOT_RUN",
               "PASS",
               "FAIL",
+              "ERROR",
+              "CANCELLED",
               "DEFER",
               "NOT_APPLICABLE"
             ],
             "criterion_acceptance_section": "Acceptance Decision",
             "criterion_acceptance_columns": [
               "Criterion",
+              "Intent",
               "Acceptance",
               "Evidence",
-              "Disposition",
-              "Current owner"
+              "Decision",
+              "Accepted By",
+              "Current Owner",
+              "Reassigned To"
+            ],
+            "work_item_heading": "Work Performed",
+            "work_item_columns": [
+              "Item",
+              "Work Unit",
+              "Owner",
+              "Status",
+              "Blocker"
             ]
           }
         }
@@ -4573,17 +4586,14 @@
             "blocked"
           ],
           "required_columns": [
-            "ID",
+            "Item",
             "Upstream criterion",
-            "Work item",
-            "Owner",
-            "Status",
             "Result",
             "Evidence"
           ],
           "identifier_columns": [
             {
-              "column": "ID",
+              "column": "Item",
               "kind": "work-item"
             },
             {
@@ -4640,10 +4650,13 @@
             "evidence_section": "Verification Evidence",
             "evidence_columns": [
               "Evidence ID",
-              "Consumer",
+              "Criteria",
               "Work Unit",
-              "Command",
+              "Method",
               "Input",
+              "Tool and Config",
+              "Command",
+              "Exit",
               "Result",
               "Location",
               "Required",
@@ -4653,16 +4666,29 @@
               "NOT_RUN",
               "PASS",
               "FAIL",
+              "ERROR",
+              "CANCELLED",
               "DEFER",
               "NOT_APPLICABLE"
             ],
             "criterion_acceptance_section": "Acceptance Decision",
             "criterion_acceptance_columns": [
               "Criterion",
+              "Intent",
               "Acceptance",
               "Evidence",
-              "Disposition",
-              "Current owner"
+              "Decision",
+              "Accepted By",
+              "Current Owner",
+              "Reassigned To"
+            ],
+            "work_item_heading": "Work Performed",
+            "work_item_columns": [
+              "Item",
+              "Work Unit",
+              "Owner",
+              "Status",
+              "Blocker"
             ]
           }
         }
@@ -4711,57 +4737,93 @@
         ],
         "validation": {
           "positive": [
-            "A Task in the form, with its Lifecycle Traceability table under Execution Log, its evidence table under Results, its criterion decisions under Criterion Decisions and its Approval and Safety Boundaries block under Inputs and Authority, passes the form tree, table, body-contract and lifecycle checks.",
-            "A Task whose evidence table carries the common names Evidence ID, Consumer, Command, Input and Result and the registered columns Work Unit, Location, Required and Resolves passes the evidence rules."
+            "A Task in the form, with its core Work Items table first under Work Performed when it tracks more than one item, its local Lifecycle Traceability table under Execution Log, its core evidence table under Results, its core criterion table under Criterion Decisions and its Approval and Safety Boundaries block under Inputs and Authority, passes the form tree, table, body-contract and lifecycle checks.",
+            "A Task recorded under the SPEC-0203 header of every Task table is read by the transition adapter under the core names and passes the same rules."
           ],
           "negative": [
             "A Task that keeps a previous H2 title such as Task Evidence fails the form tree.",
-            "A Task whose evidence table keeps the old header names, or adds a column that is neither common nor registered, fails the table check.",
+            "A Task that mixes a recorded header and a core header fails TASK-HEADER-MIXED, and a core cell outside its type or allowed values fails TASK-CORE-CELL.",
             "An edited, removed or reordered recorded evidence cell fails TASK-EVIDENCE-RETENTION and a removed work row fails TASK-ITEM-DELETE."
           ],
           "regression": [
             "The loaded Task profiles keep heading lists equal to the form H2 titles.",
-            "tests/test_task_execution_contract.py keeps every TASK- rule active on the repository registry with the form bound and reads each side of a comparison with its own registry.",
-            "tests/test_common_form_tree.py asserts exactly the Task form, its extensions, its three tables and this definition in the repository registry."
+            "tests/test_task_execution_contract.py keeps every TASK- rule active on the repository registry with the form bound, reads each side of a comparison with its own registry and reads the recorded and the core header.",
+            "tests/test_common_form_tree.py asserts exactly the Task form, its extensions, its four tables and this definition in the repository registry."
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0203 heading map moves each body of the Task template and of every current Task into the five H2 and ten H3 of the form without splitting a paragraph and without changing a recorded row; the evidence table takes the common names Evidence ID, Command and Consumer by a recorded header map, and the Approval and Safety Boundaries block moves whole under Inputs and Authority.",
-          "retained_history": "Git history retains the seven-heading Task layout, the previous evidence header and the previous template.",
-          "rollback": "Revert the SPEC-0203 implementation commit."
+          "meaning_map": "SPEC-0222 moves the Task section IDs to the core IDs and the Task tables to the core task.work_items, task.evidence and task.acceptance tables; the local Lifecycle Traceability table keeps the Upstream criterion, Result and Evidence of each Item. A recorded Task keeps its SPEC-0203 header, which the transition adapter reads under the core names.",
+          "retained_history": "Git history retains the slug section IDs, the SPEC-0203 Task headers and the previous template.",
+          "rollback": "Revert the SPEC-0222 WORK-002 commit."
         },
         "tables": [
+          {
+            "name": "Work Items",
+            "section": "task.work",
+            "table_id": "task.work_items",
+            "required_when": "multiple_items",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성",
+            "columns": [
+              {
+                "key": "Item",
+                "id": "item",
+                "meaning": "독립 추적 항목",
+                "data_type": "identifier",
+                "required": true
+              },
+              {
+                "key": "Work Unit",
+                "id": "work_unit",
+                "meaning": "Plan 작업 단위",
+                "data_type": "reference",
+                "required": true
+              },
+              {
+                "key": "Owner",
+                "id": "owner",
+                "meaning": "항목 소유자",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Status",
+                "id": "status",
+                "meaning": "draft/ready/in-progress/blocked/completed/cancelled",
+                "data_type": "enum",
+                "required": true,
+                "allowed_values": [
+                  "draft",
+                  "ready",
+                  "in-progress",
+                  "blocked",
+                  "completed",
+                  "cancelled"
+                ]
+              },
+              {
+                "key": "Blocker",
+                "id": "blocker",
+                "meaning": "차단 원인과 재개 조건",
+                "data_type": "reference-or-none",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Item"
+          },
           {
             "name": "Lifecycle Traceability",
             "section": "task-lifecycle-traceability",
             "columns": [
               {
-                "key": "ID",
-                "meaning": "The stable work item identifier, WORK- followed by three digits, unique within the Task.",
+                "key": "Item",
+                "meaning": "The Item of the core task.work_items row this row extends, WORK- followed by three digits, unique within the Task.",
                 "data_type": "string",
                 "required": true
               },
               {
                 "key": "Upstream criterion",
                 "meaning": "Link to each Spec criterion the work item serves.",
-                "data_type": "string",
-                "required": true
-              },
-              {
-                "key": "Work item",
-                "meaning": "The bounded change the item makes.",
-                "data_type": "string",
-                "required": true
-              },
-              {
-                "key": "Owner",
-                "meaning": "The responsible role of the item.",
-                "data_type": "string",
-                "required": true
-              },
-              {
-                "key": "Status",
-                "meaning": "The frontmatter marker for a one-row Task, else the item state.",
                 "data_type": "string",
                 "required": true
               },
@@ -4779,64 +4841,115 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "ID"
+            "row_identity": "Item"
           },
           {
             "name": "Results",
-            "section": "task-verification-evidence-results",
+            "section": "task.evidence",
+            "table_id": "task.evidence",
+            "required_when": "always",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성",
             "columns": [
               {
                 "key": "Evidence ID",
-                "meaning": "The stable identifier of one evidence row, EVD- followed by a three-digit number, unique within the Task.",
-                "data_type": "string",
+                "id": "evidence_id",
+                "meaning": "관측의 고유 ID",
+                "data_type": "identifier",
                 "required": true
               },
               {
-                "key": "Consumer",
-                "meaning": "Link to each Spec criterion whose acceptance uses the row.",
-                "data_type": "string",
+                "key": "Criteria",
+                "id": "criteria",
+                "meaning": "소유 Spec 기준",
+                "data_type": "reference-list",
                 "required": true
               },
               {
                 "key": "Work Unit",
-                "meaning": "The work item of the Task that the check serves.",
-                "data_type": "string",
+                "id": "work_unit",
+                "meaning": "Plan 작업 단위",
+                "data_type": "reference",
+                "required": true
+              },
+              {
+                "key": "Method",
+                "id": "method",
+                "meaning": "automated/review/observation",
+                "data_type": "enum",
+                "required": true,
+                "allowed_values": [
+                  "automated",
+                  "review",
+                  "observation"
+                ]
+              },
+              {
+                "key": "Input",
+                "id": "input",
+                "meaning": "검사한 바이트·환경의 식별",
+                "data_type": "reference",
+                "required": true
+              },
+              {
+                "key": "Tool and Config",
+                "id": "tool_config",
+                "meaning": "실제 도구·설정 식별",
+                "data_type": "reference-or-none",
                 "required": true
               },
               {
                 "key": "Command",
-                "meaning": "The named check or command that was run.",
-                "data_type": "string",
+                "id": "command",
+                "meaning": "실제 실행 또는 관측 방법",
+                "data_type": "string-or-none",
                 "required": true
               },
               {
-                "key": "Input",
-                "meaning": "The exact revision, fixture or approval receipt the check ran over.",
-                "data_type": "string",
+                "key": "Exit",
+                "id": "exit",
+                "meaning": "실행 종료코드; 미실행을 0으로 쓰지 않음",
+                "data_type": "integer-or-none",
                 "required": true
               },
               {
                 "key": "Result",
-                "meaning": "The observed result: NOT_RUN, PASS, FAIL, DEFER or NOT_APPLICABLE.",
-                "data_type": "string",
-                "required": true
+                "id": "result",
+                "meaning": "PASS/FAIL/ERROR/NOT_RUN/CANCELLED/DEFER/NOT_APPLICABLE",
+                "data_type": "enum",
+                "required": true,
+                "allowed_values": [
+                  "PASS",
+                  "FAIL",
+                  "ERROR",
+                  "NOT_RUN",
+                  "CANCELLED",
+                  "DEFER",
+                  "NOT_APPLICABLE"
+                ]
               },
               {
                 "key": "Location",
-                "meaning": "Where the evidence can be read again.",
-                "data_type": "string",
+                "id": "location",
+                "meaning": "비밀 없는 실제 근거 위치",
+                "data_type": "reference-or-none",
                 "required": true
               },
               {
                 "key": "Required",
-                "meaning": "yes when a required PASS is needed for the criterion, else no.",
-                "data_type": "string",
-                "required": true
+                "id": "required",
+                "meaning": "true/false; 승인 여부가 아님",
+                "data_type": "boolean",
+                "required": true,
+                "allowed_values": [
+                  true,
+                  false
+                ]
               },
               {
                 "key": "Resolves",
-                "meaning": "none, or the earlier evidence IDs, comma-space separated, that this PASS row closes.",
-                "data_type": "string",
+                "id": "resolves",
+                "meaning": "같은 의무의 이전 관측을 명시적으로 해소",
+                "data_type": "reference-list",
                 "required": true
               }
             ],
@@ -4845,36 +4958,77 @@
           },
           {
             "name": "Criterion Decisions",
-            "section": "task-acceptance-decision-criterion-decisions",
+            "section": "task.acceptance",
+            "table_id": "task.acceptance",
+            "required_when": "owns_acceptance",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성",
             "columns": [
               {
                 "key": "Criterion",
-                "meaning": "Link to the one assigned Spec criterion the row decides.",
-                "data_type": "string",
+                "id": "criterion",
+                "meaning": "기준의 단일 결정 소유",
+                "data_type": "reference",
                 "required": true
+              },
+              {
+                "key": "Intent",
+                "id": "intent",
+                "meaning": "accept/reject/not-required/undecided",
+                "data_type": "enum",
+                "required": true,
+                "allowed_values": [
+                  "accept",
+                  "reject",
+                  "not-required",
+                  "undecided"
+                ]
               },
               {
                 "key": "Acceptance",
-                "meaning": "pending, accepted, rejected or not-required.",
-                "data_type": "string",
-                "required": true
+                "id": "acceptance",
+                "meaning": "pending/accepted/rejected/not-required",
+                "data_type": "enum",
+                "required": true,
+                "allowed_values": [
+                  "pending",
+                  "accepted",
+                  "rejected",
+                  "not-required"
+                ]
               },
               {
                 "key": "Evidence",
-                "meaning": "none, or the evidence IDs the decision rests on.",
+                "id": "evidence",
+                "meaning": "해당 기준의 실제 관측",
+                "data_type": "reference-list",
+                "required": true
+              },
+              {
+                "key": "Decision",
+                "id": "decision",
+                "meaning": "범위와 효력 있는 판정 근거",
+                "data_type": "reference-or-none",
+                "required": true
+              },
+              {
+                "key": "Accepted By",
+                "id": "accepted_by",
+                "meaning": "실제 판단자; 문자열 자체는 인증 아님",
+                "data_type": "string-or-none",
+                "required": true
+              },
+              {
+                "key": "Current Owner",
+                "id": "current_owner",
+                "meaning": "남은 책임자",
                 "data_type": "string",
                 "required": true
               },
               {
-                "key": "Disposition",
-                "meaning": "The concrete next step or basis of the decision.",
-                "data_type": "string",
-                "required": true
-              },
-              {
-                "key": "Current owner",
-                "meaning": "The owner of the criterion until it is accepted.",
-                "data_type": "string",
+                "key": "Reassigned To",
+                "id": "reassigned_to",
+                "meaning": "허용된 의무 이전 대상",
+                "data_type": "reference-or-none",
                 "required": true
               }
             ],
@@ -17667,9 +17821,319 @@
         "h1": "{{document_title}}",
         "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
         "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "core_role": "task",
+        "core": {
+          "purpose": "실제 실행·차단·검증·인수의 단일 작성 원본",
+          "non_goals": "다른 역할의 상태·정책 정본 대체",
+          "metadata_policy": {
+            "envelope": "frontmatter",
+            "fields": [
+              {
+                "key": "title",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "문서 목적을 나타내는 제목"
+              },
+              {
+                "key": "version",
+                "value_type": "document-semver",
+                "required_when": "always",
+                "meaning": "ASCII 숫자 세 요소 판본"
+              },
+              {
+                "key": "type",
+                "value_type": "role-binding",
+                "required_when": "always",
+                "meaning": "역할과 정확하게 대응하는 문서 타입"
+              },
+              {
+                "key": "owner",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "현재 의미 소유자"
+              },
+              {
+                "key": "updated",
+                "value_type": "date",
+                "required_when": "always",
+                "meaning": "실제 문서 변경일"
+              },
+              {
+                "key": "status",
+                "value_type": "role-state",
+                "required_when": "single_task",
+                "meaning": "역할에 따른 상태; 실행 승인이나 인수를 대체하지 않음"
+              }
+            ],
+            "extension_rule": "선택 native 문법은 공급자 검증, domain field는 이름공간과 소유자·실제 소비자를 갖는 별도 모듈",
+            "document_version_pattern": "(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
+          },
+          "tables": [
+            {
+              "table_id": "task.work_items",
+              "section_id": "task.work",
+              "required_when": "multiple_items",
+              "columns": [
+                {
+                  "key": "item",
+                  "label": "Item",
+                  "value_type": "identifier",
+                  "meaning": "독립 추적 항목",
+                  "required": true
+                },
+                {
+                  "key": "work_unit",
+                  "label": "Work Unit",
+                  "value_type": "reference",
+                  "meaning": "Plan 작업 단위",
+                  "required": true
+                },
+                {
+                  "key": "owner",
+                  "label": "Owner",
+                  "value_type": "string",
+                  "meaning": "항목 소유자",
+                  "required": true
+                },
+                {
+                  "key": "status",
+                  "label": "Status",
+                  "value_type": "enum",
+                  "meaning": "draft/ready/in-progress/blocked/completed/cancelled",
+                  "required": true,
+                  "allowed_values": [
+                    "draft",
+                    "ready",
+                    "in-progress",
+                    "blocked",
+                    "completed",
+                    "cancelled"
+                  ]
+                },
+                {
+                  "key": "blocker",
+                  "label": "Blocker",
+                  "value_type": "reference-or-none",
+                  "meaning": "차단 원인과 재개 조건",
+                  "required": true
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            },
+            {
+              "table_id": "task.evidence",
+              "section_id": "task.evidence",
+              "required_when": "always",
+              "columns": [
+                {
+                  "key": "evidence_id",
+                  "label": "Evidence ID",
+                  "value_type": "identifier",
+                  "meaning": "관측의 고유 ID",
+                  "required": true
+                },
+                {
+                  "key": "criteria",
+                  "label": "Criteria",
+                  "value_type": "reference-list",
+                  "meaning": "소유 Spec 기준",
+                  "required": true
+                },
+                {
+                  "key": "work_unit",
+                  "label": "Work Unit",
+                  "value_type": "reference",
+                  "meaning": "Plan 작업 단위",
+                  "required": true
+                },
+                {
+                  "key": "method",
+                  "label": "Method",
+                  "value_type": "enum",
+                  "meaning": "automated/review/observation",
+                  "required": true,
+                  "allowed_values": [
+                    "automated",
+                    "review",
+                    "observation"
+                  ]
+                },
+                {
+                  "key": "input",
+                  "label": "Input",
+                  "value_type": "reference",
+                  "meaning": "검사한 바이트·환경의 식별",
+                  "required": true
+                },
+                {
+                  "key": "tool_config",
+                  "label": "Tool and Config",
+                  "value_type": "reference-or-none",
+                  "meaning": "실제 도구·설정 식별",
+                  "required": true
+                },
+                {
+                  "key": "command",
+                  "label": "Command",
+                  "value_type": "string-or-none",
+                  "meaning": "실제 실행 또는 관측 방법",
+                  "required": true
+                },
+                {
+                  "key": "exit",
+                  "label": "Exit",
+                  "value_type": "integer-or-none",
+                  "meaning": "실행 종료코드; 미실행을 0으로 쓰지 않음",
+                  "required": true
+                },
+                {
+                  "key": "result",
+                  "label": "Result",
+                  "value_type": "enum",
+                  "meaning": "PASS/FAIL/ERROR/NOT_RUN/CANCELLED/DEFER/NOT_APPLICABLE",
+                  "required": true,
+                  "allowed_values": [
+                    "PASS",
+                    "FAIL",
+                    "ERROR",
+                    "NOT_RUN",
+                    "CANCELLED",
+                    "DEFER",
+                    "NOT_APPLICABLE"
+                  ]
+                },
+                {
+                  "key": "location",
+                  "label": "Location",
+                  "value_type": "reference-or-none",
+                  "meaning": "비밀 없는 실제 근거 위치",
+                  "required": true
+                },
+                {
+                  "key": "required",
+                  "label": "Required",
+                  "value_type": "boolean",
+                  "meaning": "true/false; 승인 여부가 아님",
+                  "required": true,
+                  "allowed_values": [
+                    true,
+                    false
+                  ]
+                },
+                {
+                  "key": "resolves",
+                  "label": "Resolves",
+                  "value_type": "reference-list",
+                  "meaning": "같은 의무의 이전 관측을 명시적으로 해소",
+                  "required": true
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            },
+            {
+              "table_id": "task.acceptance",
+              "section_id": "task.acceptance",
+              "required_when": "owns_acceptance",
+              "columns": [
+                {
+                  "key": "criterion",
+                  "label": "Criterion",
+                  "value_type": "reference",
+                  "meaning": "기준의 단일 결정 소유",
+                  "required": true
+                },
+                {
+                  "key": "intent",
+                  "label": "Intent",
+                  "value_type": "enum",
+                  "meaning": "accept/reject/not-required/undecided",
+                  "required": true,
+                  "allowed_values": [
+                    "accept",
+                    "reject",
+                    "not-required",
+                    "undecided"
+                  ]
+                },
+                {
+                  "key": "acceptance",
+                  "label": "Acceptance",
+                  "value_type": "enum",
+                  "meaning": "pending/accepted/rejected/not-required",
+                  "required": true,
+                  "allowed_values": [
+                    "pending",
+                    "accepted",
+                    "rejected",
+                    "not-required"
+                  ]
+                },
+                {
+                  "key": "evidence",
+                  "label": "Evidence",
+                  "value_type": "reference-list",
+                  "meaning": "해당 기준의 실제 관측",
+                  "required": true
+                },
+                {
+                  "key": "decision",
+                  "label": "Decision",
+                  "value_type": "reference-or-none",
+                  "meaning": "범위와 효력 있는 판정 근거",
+                  "required": true
+                },
+                {
+                  "key": "accepted_by",
+                  "label": "Accepted By",
+                  "value_type": "string-or-none",
+                  "meaning": "실제 판단자; 문자열 자체는 인증 아님",
+                  "required": true
+                },
+                {
+                  "key": "current_owner",
+                  "label": "Current Owner",
+                  "value_type": "string",
+                  "meaning": "남은 책임자",
+                  "required": true
+                },
+                {
+                  "key": "reassigned_to",
+                  "label": "Reassigned To",
+                  "value_type": "reference-or-none",
+                  "meaning": "허용된 의무 이전 대상",
+                  "required": true
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            }
+          ],
+          "language": {
+            "headings": "en",
+            "body": "로컬 승인 언어 계약; 본문 언어가 core heading·column을 바꾸지 않음"
+          },
+          "status": "DESIGN_PROPOSAL_NOT_ADOPTED",
+          "relationships": {
+            "authored_direction": "consumer-to-direct-owner",
+            "reverse_links": "derived",
+            "missing_target": "unresolved-not-pass",
+            "deletion": "transfer-current-meaning-before-removal"
+          },
+          "lifecycle": {
+            "axis": "execution",
+            "draft_rule": "authoring-allowed-not-execution-authority",
+            "transition_authority": "explicit-scoped-authority",
+            "acceptance_rule": "required-evidence-and-authorized-acceptance-separate"
+          },
+          "rules": [
+            "single-meaning-owner",
+            "no-synthetic-evidence",
+            "no-release-document-role",
+            "no-package-path-runtime-dependency"
+          ]
+        },
         "sections": [
           {
-            "section_id": "task-scope",
+            "section_id": "task.scope",
             "level": 2,
             "parent_id": null,
             "title": "Scope",
@@ -17691,9 +18155,9 @@
             ],
             "children": [
               {
-                "section_id": "task-scope-objective-and-parent",
+                "section_id": "task.scope.1",
                 "level": 3,
-                "parent_id": "task-scope",
+                "parent_id": "task.scope",
                 "title": "Objective and Parent",
                 "order": 1,
                 "requiredness": "required",
@@ -17712,12 +18176,17 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Objective and Parent",
+                  "required_when": "always",
+                  "content_rule": "작업 목표·제외·참조 설계·선택 이유 중 Objective and Parent에 해당하는 사실·규칙만 기록"
+                }
               },
               {
-                "section_id": "task-scope-inputs-and-authority",
+                "section_id": "task.scope.2",
                 "level": 3,
-                "parent_id": "task-scope",
+                "parent_id": "task.scope",
                 "title": "Inputs and Authority",
                 "order": 2,
                 "requiredness": "required",
@@ -17736,13 +18205,25 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Inputs and Authority",
+                  "required_when": "always",
+                  "content_rule": "작업 목표·제외·참조 설계·선택 이유 중 Inputs and Authority에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "범위와 설계",
+              "required_when": "always",
+              "content_rule": "작업 목표·제외·참조 설계·선택 이유",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
-            "section_id": "task-execution-log",
+            "section_id": "task.work",
             "level": 2,
             "parent_id": null,
             "title": "Execution Log",
@@ -17764,9 +18245,9 @@
             ],
             "children": [
               {
-                "section_id": "task-execution-log-work-performed",
+                "section_id": "task.work.1",
                 "level": 3,
-                "parent_id": "task-execution-log",
+                "parent_id": "task.work",
                 "title": "Work Performed",
                 "order": 1,
                 "requiredness": "required",
@@ -17785,12 +18266,17 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Work Performed",
+                  "required_when": "always",
+                  "content_rule": "실제 명령·입력·변경·차단 중 Work Performed에 해당하는 사실·규칙만 기록"
+                }
               },
               {
-                "section_id": "task-execution-log-blockers-and-decisions",
+                "section_id": "task.work.2",
                 "level": 3,
-                "parent_id": "task-execution-log",
+                "parent_id": "task.work",
                 "title": "Blockers and Decisions",
                 "order": 2,
                 "requiredness": "required",
@@ -17809,13 +18295,25 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Blockers and Decisions",
+                  "required_when": "always",
+                  "content_rule": "실제 명령·입력·변경·차단 중 Blockers and Decisions에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "실행",
+              "required_when": "always",
+              "content_rule": "실제 명령·입력·변경·차단",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
-            "section_id": "task-verification-evidence",
+            "section_id": "task.evidence",
             "level": 2,
             "parent_id": null,
             "title": "Verification Evidence",
@@ -17837,9 +18335,9 @@
             ],
             "children": [
               {
-                "section_id": "task-verification-evidence-results",
+                "section_id": "task.evidence.1",
                 "level": 3,
-                "parent_id": "task-verification-evidence",
+                "parent_id": "task.evidence",
                 "title": "Results",
                 "order": 1,
                 "requiredness": "required",
@@ -17858,12 +18356,17 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Results",
+                  "required_when": "always",
+                  "content_rule": "검사·입력·결과·미실행·해소 중 Results에 해당하는 사실·규칙만 기록"
+                }
               },
               {
-                "section_id": "task-verification-evidence-resolution-links",
+                "section_id": "task.evidence.2",
                 "level": 3,
-                "parent_id": "task-verification-evidence",
+                "parent_id": "task.evidence",
                 "title": "Resolution Links",
                 "order": 2,
                 "requiredness": "required",
@@ -17882,13 +18385,25 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Resolution Links",
+                  "required_when": "always",
+                  "content_rule": "검사·입력·결과·미실행·해소 중 Resolution Links에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "검증 근거",
+              "required_when": "always",
+              "content_rule": "검사·입력·결과·미실행·해소",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
-            "section_id": "task-acceptance-decision",
+            "section_id": "task.acceptance",
             "level": 2,
             "parent_id": null,
             "title": "Acceptance Decision",
@@ -17910,9 +18425,9 @@
             ],
             "children": [
               {
-                "section_id": "task-acceptance-decision-criterion-decisions",
+                "section_id": "task.acceptance.1",
                 "level": 3,
-                "parent_id": "task-acceptance-decision",
+                "parent_id": "task.acceptance",
                 "title": "Criterion Decisions",
                 "order": 1,
                 "requiredness": "required",
@@ -17931,12 +18446,17 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Criterion Decisions",
+                  "required_when": "always",
+                  "content_rule": "기준별 판단자·결정·미완료 중 Criterion Decisions에 해당하는 사실·규칙만 기록"
+                }
               },
               {
-                "section_id": "task-acceptance-decision-remaining-conditions",
+                "section_id": "task.acceptance.2",
                 "level": 3,
-                "parent_id": "task-acceptance-decision",
+                "parent_id": "task.acceptance",
                 "title": "Remaining Conditions",
                 "order": 2,
                 "requiredness": "required",
@@ -17955,13 +18475,25 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Remaining Conditions",
+                  "required_when": "always",
+                  "content_rule": "기준별 판단자·결정·미완료 중 Remaining Conditions에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "인수",
+              "required_when": "always",
+              "content_rule": "기준별 판단자·결정·미완료",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
-            "section_id": "task-handoff",
+            "section_id": "task.handoff",
             "level": 2,
             "parent_id": null,
             "title": "Handoff",
@@ -17983,9 +18515,9 @@
             ],
             "children": [
               {
-                "section_id": "task-handoff-promotion-receipt",
+                "section_id": "task.handoff.1",
                 "level": 3,
-                "parent_id": "task-handoff",
+                "parent_id": "task.handoff",
                 "title": "Promotion Receipt",
                 "order": 1,
                 "requiredness": "required",
@@ -18004,12 +18536,17 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Promotion Receipt",
+                  "required_when": "always",
+                  "content_rule": "현재 소비자 반영·잔여·일회성 제거 중 Promotion Receipt에 해당하는 사실·규칙만 기록"
+                }
               },
               {
-                "section_id": "task-handoff-next-owner",
+                "section_id": "task.handoff.2",
                 "level": 3,
-                "parent_id": "task-handoff",
+                "parent_id": "task.handoff",
                 "title": "Next Owner",
                 "order": 2,
                 "requiredness": "required",
@@ -18028,22 +18565,34 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Next Owner",
+                  "required_when": "always",
+                  "content_rule": "현재 소비자 반영·잔여·일회성 제거 중 Next Owner에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "인계와 정리",
+              "required_when": "always",
+              "content_rule": "현재 소비자 반영·잔여·일회성 제거",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           }
         ],
         "extensions": [
           {
             "id": "task-lifecycle-traceability",
             "kind": "local_h3",
-            "condition": "a Task in a status the body contract enforces (draft, ready, in-progress, blocked) maps each work item to its upstream Spec criterion, its owner, its status, its result and its evidence",
+            "condition": "a Task in a status the body contract enforces (draft, ready, in-progress, blocked) keeps, for each work item, its upstream Spec criterion, its result and its evidence, keyed by the Item of the core task.work_items row",
             "owner": "platform",
             "verification": "the body-contract check",
             "review": "when the Task form version changes",
             "removal": "when Task work items have another registered owner",
-            "parent_id": "task-execution-log",
+            "parent_id": "task.work",
             "title": "Lifecycle Traceability",
             "authority_ref": "ADR-0059"
           },
@@ -18055,25 +18604,8 @@
             "verification": "the work residue ledger check of scripts/validate-work-residue-ledger.py",
             "review": "when the work residue ledger design changes or the Task form version changes",
             "removal": "when the work residue ledger has another registered host for residue",
-            "parent_id": "task-verification-evidence",
+            "parent_id": "task.evidence",
             "title": "Residue Handoff",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "task-evidence-local-columns",
-            "kind": "local_columns",
-            "condition": "a Task whose evidence the acceptance and resolution rules of this repository read: each row names its work unit, where the evidence can be read again, whether it is required and which earlier row it resolves",
-            "owner": "platform",
-            "verification": "TASK-EVIDENCE-WORK, TASK-EVIDENCE-LOCATION, TASK-EVIDENCE-REQUIRED, TASK-EVIDENCE-RESOLUTION and TASK-EVIDENCE-UNRESOLVED of scripts/document_contracts.py",
-            "review": "when the Task form or the common Task table changes",
-            "removal": "when the common contract names these columns or the rules that read them are retired",
-            "table": "Results",
-            "columns": [
-              "Work Unit",
-              "Location",
-              "Required",
-              "Resolves"
-            ],
             "authority_ref": "ADR-0059"
           }
         ]
@@ -19173,7 +19705,7 @@
           {
             "profile_id": "sdlc/task",
             "carrier": "body_contract",
-            "key": "Consumer"
+            "key": "Criteria"
           },
           {
             "profile_id": "sdlc/task",

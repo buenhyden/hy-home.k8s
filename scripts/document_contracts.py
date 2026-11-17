@@ -130,6 +130,9 @@ class TaskExecution:
     evidence_columns: tuple[str, ...] = ()
     evidence_result_states: tuple[str, ...] = ()
     criterion_acceptance_columns: tuple[str, ...] = ()
+    # SPEC-0222: the core task.work_items table, the first table of this H3.
+    work_item_heading: str = ""
+    work_item_columns: tuple[str, ...] = ()
 
 
 def direct_parent(
@@ -158,6 +161,12 @@ def direct_parent(
 # scripts/validate-document-lifecycle.py and the retention, evidence and TASK-ITEM-
 # rules of scripts/document_lifecycle.py. Remove it, with its tests, when
 # READABLE_REGISTRY_MAJORS holds no MAJOR below the one that introduced the form.
+# SPEC-0222: the core evidence results that leave a required check open until a
+# later PASS of the same check resolves it.
+UNRESOLVED_EVIDENCE_RESULTS = frozenset(
+    {"FAIL", "ERROR", "DEFER", "NOT_RUN", "CANCELLED"}
+)
+
 TASK_EVIDENCE_HEADER_MAP = {
     "Evidence": "Evidence ID",
     "Check": "Command",
@@ -185,6 +194,239 @@ def carry_evidence_rows(
     ]
 
 
+# SPEC-0222 transition adapter: the one reader of a Task table header. A Task is
+# read under either the header it recorded (the SPEC-0203 header of each Task table)
+# or the core header of the registry, never a mixture, and every rule then reads the
+# rows under the core names. It writes nothing: a recorded row keeps its bytes.
+# Remove it, these constants and their tests when the SPEC-0161, SPEC-0221 and
+# SPEC-0222 packages have exited.
+TASK_RECORDED_HEADERS: Mapping[str, tuple[str, ...]] = MappingProxyType(
+    {
+        "traceability": (
+            "ID",
+            "Upstream criterion",
+            "Work item",
+            "Owner",
+            "Status",
+            "Result",
+            "Evidence",
+        ),
+        "evidence": (
+            "Evidence ID",
+            "Consumer",
+            "Work Unit",
+            "Command",
+            "Input",
+            "Result",
+            "Location",
+            "Required",
+            "Resolves",
+        ),
+        "acceptance": (
+            "Criterion",
+            "Acceptance",
+            "Evidence",
+            "Disposition",
+            "Current owner",
+        ),
+    }
+)
+_TASK_RECORDED_NAMES = {
+    "ID": "Item",
+    "Consumer": "Criteria",
+    "Current owner": "Current Owner",
+}
+_TASK_RECORDED_REQUIRED = {"yes": "true", "no": "false"}
+TaskForm = Literal["recorded", "core"]
+TaskTable = tuple[Sequence[str], Sequence[Sequence[str]]]
+
+
+def task_header_form(
+    kind: str, header: Sequence[str], core: Sequence[str]
+) -> TaskForm | None:
+    """Which header a Task table carries. The recorded header is tried first: a
+    comparison-base registry binds the recorded names as its own."""
+
+    if tuple(header) == TASK_RECORDED_HEADERS.get(kind):
+        return "recorded"
+    if core and tuple(header) == tuple(core):
+        return "core"
+    return None
+
+
+def task_core_name(column: str) -> str:
+    """The core name of one recorded Task column."""
+
+    return _TASK_RECORDED_NAMES.get(column, column)
+
+
+def task_recorded_row(kind: str, row: Mapping[str, str]) -> dict[str, str]:
+    """One row read under its recorded header, under the core names.
+
+    A column the recorded header lacks stays absent (not recorded). The recorded
+    work item ID is also its Work Unit, because a recorded evidence row cites that
+    ID in its Work Unit cell; `yes` and `no` read as `true` and `false`.
+    """
+
+    read = {task_core_name(key): value for key, value in row.items()}
+    if kind == "traceability" and "Item" in read:
+        read["Work Unit"] = read["Item"]
+    if kind == "evidence" and "Required" in read:
+        value = read["Required"].strip()
+        read["Required"] = _TASK_RECORDED_REQUIRED.get(value, read["Required"])
+    return read
+
+
+def task_table_rows(
+    kind: str, table: TaskTable | None, core: Sequence[str]
+) -> tuple[TaskForm, list[dict[str, str]]] | None:
+    """Rows of one Task table under the core names, or None for an unknown header
+    or a ragged row."""
+
+    if table is None:
+        return None
+    header, rows = table
+    form = task_header_form(kind, header, core)
+    if form is None or any(len(row) != len(header) for row in rows):
+        return None
+    read = [dict(zip(header, row, strict=True)) for row in rows]
+    return form, [
+        task_recorded_row(kind, row) if form == "recorded" else row for row in read
+    ]
+
+
+@dataclass(frozen=True)
+class TaskTables:
+    """The Task tables of one document under the core names (SPEC-0222)."""
+
+    form: TaskForm | None
+    work: list[dict[str, str]] | None
+    evidence: list[dict[str, str]] | None
+    acceptance: list[dict[str, str]] | None
+    issues: tuple[tuple[str, str], ...] = ()
+
+
+def _task_core_cell_issues(
+    name: str, rows: Sequence[Mapping[str, str]], tables: Sequence["TableContract"]
+) -> list[tuple[str, str]]:
+    """A core cell outside its allowed values or integer type, or a required core
+    cell left empty."""
+
+    header = tuple(rows[0]) if rows else ()
+    table = next(
+        (
+            item
+            for item in tables
+            if item.table_id and tuple(c.key for c in item.columns) == header
+        ),
+        None,
+    )
+    issues: list[tuple[str, str]] = []
+    for number, row in enumerate(rows, 1) if table else ():
+        for column in table.columns:  # type: ignore[union-attr]
+            cell = row[column.key].strip()
+            allowed = (
+                None
+                if column.allowed_values is None
+                else {
+                    str(value).lower() if isinstance(value, bool) else value
+                    for value in column.allowed_values
+                }
+            )
+            if (
+                (column.required and not cell)
+                or (allowed is not None and cell not in allowed)
+                or (
+                    column.data_type == "integer-or-none"
+                    and cell != "none"
+                    and re.fullmatch(r"-?[0-9]+", cell) is None
+                )
+            ):
+                issues.append(
+                    ("TASK-CORE-CELL", f"{name} row {number}: {column.key} {cell!r}")
+                )
+    return issues
+
+
+def read_task_tables(
+    profile: "DocumentProfile",
+    *,
+    traceability: TaskTable | None,
+    work_items: TaskTable | None,
+    evidence: TaskTable | None,
+    acceptance: TaskTable | None,
+) -> TaskTables:
+    """Read every Task table under one header form.
+
+    In a core Task, each Lifecycle Traceability row joins the core work item of
+    the same Item, which owns its status. A one-item core Task has no work item
+    table: its status is the frontmatter's, read as the single status marker.
+    """
+
+    contract = profile.body_contract
+    binding = contract.task_execution if contract else None
+    if contract is None or binding is None:
+        return TaskTables(None, None, None, None)
+    lifecycle = task_table_rows("traceability", traceability, contract.required_columns)
+    items = task_table_rows("work_items", work_items, binding.work_item_columns)
+    checks = task_table_rows("evidence", evidence, binding.evidence_columns)
+    decisions = task_table_rows(
+        "acceptance", acceptance, binding.criterion_acceptance_columns
+    )
+    # A comparison-base registry from before the core binds only recorded headers.
+    pre_core = not binding.work_item_columns
+    forms = {
+        "recorded" if pre_core else read[0]
+        for read in (lifecycle, items, checks, decisions)
+        if read
+    }
+    if work_items is not None:
+        forms.add("core")
+    if len(forms) > 1:
+        return TaskTables(
+            None,
+            None,
+            None,
+            None,
+            (("TASK-HEADER-MIXED", "recorded and core Task headers in one Task"),),
+        )
+    form = next(iter(forms), None)
+    issues: list[tuple[str, str]] = []
+    work = None if lifecycle is None else lifecycle[1]
+    if form == "core" and work is not None:
+        if items is None and work_items is not None:
+            issues.append(("TASK-WORK-ITEMS", "work item table columns differ"))
+            work = None
+        elif items is None and len(work) != 1:
+            issues.append(("TASK-WORK-ITEMS", "more than one item needs the table"))
+            work = None
+        elif items is None:
+            work = [{**work[0], "Status": binding.single_status_marker}]
+        else:
+            by_item = {row["Item"].strip(): row for row in items[1]}
+            traced = [row["Item"].strip() for row in work]
+            if len(by_item) != len(items[1]) or sorted(by_item) != sorted(traced):
+                issues.append(("TASK-WORK-ITEMS", "each Item once in both work tables"))
+                work = None
+            else:
+                work = [{**by_item[row["Item"].strip()], **row} for row in work]
+    if form == "core":
+        for name, read in (
+            ("work items", items),
+            ("evidence", checks),
+            ("acceptance", decisions),
+        ):
+            if read is not None:
+                issues.extend(_task_core_cell_issues(name, read[1], profile.tables))
+    return TaskTables(
+        form,
+        work,
+        None if checks is None else checks[1],
+        None if decisions is None else decisions[1],
+        tuple(issues),
+    )
+
+
 def task_evidence_issues(
     rows: Sequence[Mapping[str, str]], binding: TaskExecution
 ) -> tuple[tuple[str, str], ...]:
@@ -203,14 +445,16 @@ def task_evidence_issues(
                 )
             )
         seen.add(identifier)
-        if task_criterion_ids(row["Consumer"]) is None:
+        if task_criterion_ids(row["Criteria"]) is None:
             issues.append(
                 ("TASK-EVIDENCE-CRITERION", f"row {number}: invalid criterion")
             )
         if re.fullmatch(r"WORK-[0-9]{3}", row["Work Unit"].strip()) is None:
             issues.append(("TASK-EVIDENCE-WORK", f"row {number}: invalid work unit"))
-        if row.get("Required", "").strip() not in {"yes", "no"}:
-            issues.append(("TASK-EVIDENCE-REQUIRED", f"row {number}: expected yes/no"))
+        if row.get("Required", "").strip() not in {"true", "false"}:
+            issues.append(
+                ("TASK-EVIDENCE-REQUIRED", f"row {number}: expected true/false")
+            )
         if _task_evidence_ids(row.get("Resolves", "")) is None:
             issues.append(
                 ("TASK-EVIDENCE-RESOLUTION", f"row {number}: invalid Resolves IDs")
@@ -266,7 +510,25 @@ def task_contract_issues(
     issues = list(task_execution_issues(work_rows, status, binding))
     issues.extend(task_evidence_issues(evidence_rows, binding))
 
-    work_by_id = {row["ID"].strip().strip("`"): row for row in work_rows}
+    # A check names the Work Unit of its work items; a one-item core Task records
+    # no Work Unit, so its one item serves every check.
+    def work_criteria(unit: str) -> tuple[str, ...] | None:
+        if len(work_rows) == 1 and "Work Unit" not in work_rows[0]:
+            served = list(work_rows)
+        else:
+            served = [
+                row
+                for row in work_rows
+                if row.get("Work Unit", "").strip().strip("`") == unit
+            ]
+        found: list[str] = []
+        for row in served:
+            linked = task_criterion_ids(row["Upstream criterion"])
+            if linked is None:
+                return None
+            found.extend(linked)
+        return tuple(found) if served else None
+
     required_criteria = {
         criterion
         for row in work_rows
@@ -276,17 +538,9 @@ def task_contract_issues(
     closed: set[str] = set()
     for index, check in enumerate(evidence_rows):
         identifier = check["Evidence ID"].strip()
-        work = work_by_id.get(check["Work Unit"].strip())
-        criteria = task_criterion_ids(check["Consumer"])
-        work_criteria = (
-            task_criterion_ids(work["Upstream criterion"]) if work is not None else None
-        )
-        if (
-            work is None
-            or criteria is None
-            or work_criteria is None
-            or not set(criteria) <= set(work_criteria)
-        ):
+        criteria = task_criterion_ids(check["Criteria"])
+        served = work_criteria(check["Work Unit"].strip())
+        if criteria is None or served is None or not set(criteria) <= set(served):
             issues.append(
                 (
                     "TASK-EVIDENCE-WORK",
@@ -305,12 +559,12 @@ def task_contract_issues(
             if (
                 previous is None
                 or check["Result"].strip() != "PASS"
-                or check["Required"].strip() != "yes"
-                or previous[1]["Required"].strip() != "yes"
-                or previous[1]["Result"].strip() not in {"FAIL", "DEFER", "NOT_RUN"}
+                or check["Required"].strip() != "true"
+                or previous[1]["Required"].strip() != "true"
+                or previous[1]["Result"].strip() not in UNRESOLVED_EVIDENCE_RESULTS
                 or any(
                     check[key].strip() != previous[1][key].strip()
-                    for key in ("Consumer", "Work Unit", "Command")
+                    for key in ("Criteria", "Work Unit", "Command")
                 )
             ):
                 issues.append(
@@ -352,10 +606,12 @@ def task_contract_issues(
         verdict = row["Acceptance"].strip()
         if verdict not in binding.acceptance_states:
             issues.append(("TASK-ACCEPTANCE-STATE", f"row {number}: invalid {verdict}"))
+        # Disposition is a recorded-only column; a core row names its decision.
         if any(
             not row[key].strip()
             or _TASK_EVIDENCE_PLACEHOLDER.fullmatch(row[key].strip())
-            for key in ("Disposition", "Current owner")
+            for key in ("Disposition", "Current Owner", "Decision")
+            if key in row
         ):
             issues.append(
                 (
@@ -363,6 +619,23 @@ def task_contract_issues(
                     f"row {number}: concrete disposition and owner required",
                 )
             )
+        # SPEC-0222: an agent never writes an acceptance or an acceptor; until the
+        # operator's recorded Decision, a core row keeps Intent undecided, Accepted
+        # By and Reassigned To none, and Acceptance pending.
+        if "Intent" in row and row["Decision"].strip() == "none":
+            undecided = (
+                ("Intent", "undecided"),
+                ("Accepted By", "none"),
+                ("Reassigned To", "none"),
+                ("Acceptance", "pending"),
+            )
+            if any(row[key].strip() != value for key, value in undecided):
+                issues.append(
+                    (
+                        "TASK-ACCEPTANCE-DECISION",
+                        f"row {number}: no recorded decision",
+                    )
+                )
         cited = _task_evidence_ids(row["Evidence"])
         if cited is None or any(item not in checks for item in cited):
             issues.append(
@@ -370,7 +643,7 @@ def task_contract_issues(
             )
             continue
         if any(
-            criterion not in (task_criterion_ids(checks[item][1]["Consumer"]) or ())
+            criterion not in (task_criterion_ids(checks[item][1]["Criteria"]) or ())
             for item in cited
         ):
             issues.append(
@@ -380,10 +653,10 @@ def task_contract_issues(
             accepted.add(criterion)
             if not cited or not any(
                 checks[item][1]["Result"].strip() == "PASS"
-                and checks[item][1]["Required"].strip() == "yes"
+                and checks[item][1]["Required"].strip() == "true"
                 and checks[item][1]["Command"].strip()
                 != SCOPED_EXECUTION_APPROVAL_COMMAND
-                and criterion in (task_criterion_ids(checks[item][1]["Consumer"]) or ())
+                and criterion in (task_criterion_ids(checks[item][1]["Criteria"]) or ())
                 for item in cited
             ):
                 issues.append(
@@ -410,14 +683,14 @@ def task_contract_issues(
         unresolved = [
             identifier
             for identifier, (_, check) in checks.items()
-            if check["Required"].strip() == "yes"
-            and check["Result"].strip() in {"FAIL", "DEFER", "NOT_RUN"}
+            if check["Required"].strip() == "true"
+            and check["Result"].strip() in UNRESOLVED_EVIDENCE_RESULTS
             and identifier not in closed
             and (
                 status == "completed"
                 or any(
                     criterion in accepted
-                    for criterion in (task_criterion_ids(check["Consumer"]) or ())
+                    for criterion in (task_criterion_ids(check["Criteria"]) or ())
                 )
             )
         ]
@@ -478,15 +751,7 @@ def derive_task_summary(states: Sequence[str], binding: TaskExecution) -> str:
     return expected
 
 
-def _task_row_states(text: str, contract: "BodyContract") -> list[str] | None:
-    """Status cells of the bound Task table in its current column form only."""
-
-    lines = text.split("\n")
-    try:
-        start = lines.index(f"## {contract.section}")
-        start = lines.index(f"### {contract.table_heading}", start)
-    except ValueError:
-        return None
+def _plain_table(lines: Sequence[str], start: int) -> list[list[str]]:
     table: list[list[str]] = []
     for line in lines[start + 1 :]:
         if line.startswith("#"):
@@ -496,8 +761,34 @@ def _task_row_states(text: str, contract: "BodyContract") -> list[str] | None:
             table.append([cell.strip() for cell in cells])
         elif table:
             break
+    return table
+
+
+def _task_row_states(text: str, contract: "BodyContract") -> list[str] | None:
+    """Status cells of the Task work items: the core work item table of a core
+    Task, else the recorded Lifecycle Traceability table (SPEC-0222)."""
+
+    binding = contract.task_execution
+    lines = text.split("\n")
+    try:
+        section = lines.index(f"## {contract.section}")
+        start = lines.index(f"### {contract.table_heading}", section)
+    except ValueError:
+        return None
+    table = _plain_table(lines, start)
     # ponytail: plain pipe split; the full validators still check the table shape.
-    if len(table) < 3 or tuple(table[0]) != contract.required_columns:
+    if len(table) < 3:
+        return None
+    form = task_header_form("traceability", table[0], contract.required_columns)
+    if form == "core" and binding is not None and binding.work_item_heading:
+        try:
+            start = lines.index(f"### {binding.work_item_heading}", section)
+        except ValueError:
+            return None
+        table = _plain_table(lines, start)
+        if len(table) < 3 or tuple(table[0]) != binding.work_item_columns:
+            return None
+    elif form != "recorded":
         return None
     column = table[0].index("Status")
     return [row[column] for row in table[2:] if len(row) == len(table[0])]
@@ -535,7 +826,7 @@ def task_execution_issues(
     seen_ids: set[str] = set()
     states: list[str] = []
     for number, row in enumerate(rows, start=1):
-        work_id = row["ID"].strip().strip("`")
+        work_id = row["Item"].strip().strip("`")
         if work_id in seen_ids:
             issues.append(("TASK-EXECUTION-ID", f"row {number}: duplicate {work_id}"))
         seen_ids.add(work_id)
@@ -547,6 +838,8 @@ def task_execution_issues(
         row_status = row["Status"].strip()
         result = row["Result"].strip()
         evidence = row["Evidence"].strip()
+        # A core row may state its block or cancellation reason in its Blocker.
+        reason = f"{row.get('Blocker', '')}\n{evidence}"
         if len(rows) == 1 and row_status != binding.single_status_marker:
             issues.append(
                 ("TASK-EXECUTION-STATUS", f"row {number}: expected frontmatter marker")
@@ -580,8 +873,8 @@ def task_execution_issues(
                 )
             )
         if effective_status == "blocked" and not (
-            re.search(r"(?i)\breason:\s*\S", evidence)
-            and re.search(r"(?i)\bnext owner:\s*\S", evidence)
+            re.search(r"(?i)\breason:\s*\S", reason)
+            and re.search(r"(?i)\bnext owner:\s*\S", reason)
         ):
             issues.append(
                 (
@@ -590,7 +883,7 @@ def task_execution_issues(
                 )
             )
         if effective_status == "cancelled" and not re.search(
-            r"(?i)\breason:\s*\S", evidence
+            r"(?i)\breason:\s*\S", reason
         ):
             issues.append(
                 (
@@ -798,6 +1091,8 @@ class TableColumn:
     meaning: str
     data_type: str
     required: bool
+    # SPEC-0222: the values a core column admits, booleans included.
+    allowed_values: tuple[str | bool, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -809,6 +1104,8 @@ class TableContract:
     columns: tuple[TableColumn, ...]
     minimum_rows: int
     row_identity: str
+    # SPEC-0222: the core table this template table carries, if any.
+    table_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -833,11 +1130,10 @@ class FormSection:
 
 @dataclass(frozen=True)
 class FormExtension:
-    """A registered departure from a form: a local H3, a retained H2 list or the
-    columns a role's table carries beside the common ones (SPEC-0203, W03-D65)."""
+    """A registered departure from a form: a local H3 or a retained H2 list."""
 
     extension_id: str
-    kind: Literal["local_h3", "retained_form", "local_columns"]
+    kind: Literal["local_h3", "retained_form"]
     condition: str
     owner: str
     verification: str
@@ -855,9 +1151,6 @@ class FormExtension:
     body_contract: tuple[str, str] | None = None
     # SPEC-0221: the H3 title a retained document keeps for a form section id.
     section_titles: tuple[tuple[str, str], ...] = ()
-    # SPEC-0203: a local_columns extension names its table and its extra columns.
-    table: str | None = None
-    columns: tuple[str, ...] = ()
     artifact_ids: tuple[str, ...] = ()
     # SPEC-0222: the decision that registered this extension.
     authority_ref: str = ""
@@ -1890,6 +2183,8 @@ def _body_contract(
                 criterion_acceptance_columns=tuple(
                     execution.get("criterion_acceptance_columns", ())
                 ),
+                work_item_heading=execution.get("work_item_heading", ""),
+                work_item_columns=tuple(execution.get("work_item_columns", ())),
             )
         ),
     )
@@ -1944,11 +2239,17 @@ def _tables_from_definition(
                     meaning=column["meaning"],
                     data_type=column["data_type"],
                     required=column["required"],
+                    allowed_values=(
+                        tuple(column["allowed_values"])
+                        if "allowed_values" in column
+                        else None
+                    ),
                 )
                 for column in table["columns"]
             ),
             minimum_rows=table["minimum_rows"],
             row_identity=table["row_identity"],
+            table_id=table.get("table_id"),
         )
         for table in (definition or {}).get("tables", ())
     )
@@ -2509,6 +2810,7 @@ def _declared_columns(profile: Mapping[str, Any]) -> set[str]:
         *contract.get("required_columns", ()),
         *execution.get("evidence_columns", ()),
         *execution.get("criterion_acceptance_columns", ()),
+        *execution.get("work_item_columns", ()),
     }
 
 
@@ -2997,6 +3299,9 @@ _RECORD_SECTION_FIELDS = (
 )
 
 
+_RECORD_COLUMN_FIELDS = ("key", "meaning", "data_type", "required")
+
+
 def _join_review(review: Any, removal: Any) -> str:
     """The review and the removal criterion of an extension as one sentence."""
 
@@ -3209,7 +3514,21 @@ def template_definition_record(
         "headings": []
         if form is None
         else [_record_section(item) for item in form["sections"]],
-        "tables": definition["tables"],
+        # The record keeps its own table fields; the core binding of a table
+        # (SPEC-0222) stays in the registry, which the core check reads.
+        "tables": [
+            {
+                "name": table["name"],
+                "section": table["section"],
+                "columns": [
+                    {key: column[key] for key in _RECORD_COLUMN_FIELDS}
+                    for column in table["columns"]
+                ],
+                "minimum_rows": table["minimum_rows"],
+                "row_identity": table["row_identity"],
+            }
+            for table in definition["tables"]
+        ],
         "relationships": relationships,
         "lifecycle": lifecycle,
         "language": _record_language(raw_registry, source, form),
@@ -3659,25 +3978,21 @@ def _form_section_diagnostics(
     return faults
 
 
-# The common names of the Task evidence table (COMMON-ROLE-FORMS: evidence id, input,
-# command, result and consumer); the other columns of the table are registered by a
-# local_columns extension (SPEC-0203, W03-D65).
-TASK_COMMON_RESULT_COLUMNS = ("Evidence ID", "Input", "Command", "Result", "Consumer")
-
-
 def _task_binding_diagnostics(
     profile: Mapping[str, Any], form: Mapping[str, Any] | None, has_form: bool
 ) -> list[tuple[str, str, str]]:
-    """A Task binding names required H2 sections of its form and no other column."""
+    """A Task binding names required H2 sections of its form, and each of its
+    column lists equals the labels of the core table of its section (SPEC-0222)."""
 
-    binding = ((profile.get("relationships") or {}).get("body_contract") or {}).get(
-        "task_execution"
-    ) or {}
+    body = (profile.get("relationships") or {}).get("body_contract") or {}
+    binding = body.get("task_execution") or {}
     if not binding or not has_form or form is None:
         return []
     faults: list[tuple[str, str, str]] = []
     required_h2 = {
-        item["title"] for item in form["sections"] if item["requiredness"] == "required"
+        item["title"]: item
+        for item in form["sections"]
+        if item["requiredness"] == "required"
     }
     for key in ("evidence_section", "criterion_acceptance_section"):
         name = binding.get(key)
@@ -3689,21 +4004,36 @@ def _task_binding_diagnostics(
                     f"{key}: {name!r}",
                 )
             )
-    extra = {
-        column
-        for extension in form["extensions"]
-        if extension["kind"] == "local_columns"
-        for column in extension["columns"]
+    core_labels = {
+        table["section_id"]: [column["label"] for column in table["columns"]]
+        for table in (form.get("core") or {}).get("tables", ())
     }
-    for column in binding.get("evidence_columns", ()):
-        if column not in {*TASK_COMMON_RESULT_COLUMNS, *extra}:
+    for key, section in (
+        ("evidence_columns", binding.get("evidence_section")),
+        ("criterion_acceptance_columns", binding.get("criterion_acceptance_section")),
+        ("work_item_columns", body.get("section")),
+    ):
+        h2 = required_h2.get(section)
+        expected = None if h2 is None else core_labels.get(h2["section_id"])
+        if binding.get(key) != expected:
             faults.append(
                 (
                     "REGISTRY_TASK_BINDING",
-                    "evidence columns that are common names or registered in the column extension",
-                    f"evidence column {column!r}",
+                    f"{key} equal to the labels of the core table of {section!r}",
+                    f"{key}: {binding.get(key)!r}",
                 )
             )
+    execution_h2 = required_h2.get(body.get("section"))
+    if binding.get("work_item_heading") not in {
+        child["title"] for child in (execution_h2 or {}).get("children", ())
+    }:
+        faults.append(
+            (
+                "REGISTRY_TASK_BINDING",
+                "work_item_heading naming an H3 of the body-contract section",
+                f"work_item_heading: {binding.get('work_item_heading')!r}",
+            )
+        )
     return faults
 
 
@@ -3756,20 +4086,6 @@ def _table_diagnostics(
                     f"{name}: keys {keys!r}, row_identity {table['row_identity']!r}",
                 )
             )
-        if form is not None:
-            for extension in form["extensions"]:
-                if extension["kind"] == "local_columns" and extension["table"] == name:
-                    allowed = {*TASK_COMMON_RESULT_COLUMNS, *extension["columns"]}
-                    for key in keys:
-                        if key not in allowed:
-                            faults.append(
-                                (
-                                    "REGISTRY_TABLE_COLUMNS",
-                                    "a column that is a common name or registered in the "
-                                    f"column extension {extension['id']!r}",
-                                    f"{name}: {key!r}",
-                                )
-                            )
         flags = [column["required"] for column in table["columns"]]
         if False in flags and True in flags[flags.index(False) :]:
             faults.append(
@@ -4192,8 +4508,6 @@ def _common_form_from_mapping(raw: Mapping[str, Any]) -> CommonForm:
                 )
             ),
             section_titles=tuple(item.get("section_titles", {}).items()),
-            table=item.get("table"),
-            columns=tuple(item.get("columns", ())),
             artifact_ids=tuple(item.get("artifact_ids", ())),
             retained=(
                 None

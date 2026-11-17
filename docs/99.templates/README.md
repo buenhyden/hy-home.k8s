@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.40.0"
+version: "0.40.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -289,8 +289,9 @@ Registry가 소유한다. Governed README도 공통 envelope를 사용하지만
 constant다. Template은 실제 destination path를 hardcode하지 않는다.
 Spec은 변경 계약과 수용 기준을, Plan은 실행 순서와 위험·예정 검증을
 소유한다. 현행 Spec·Plan 상태는 `draft`, `in-review`, `approved`, `cancelled`다.
-`approved`는 현재 계약의 승인·유효성을 뜻한다. Task의 단일 Lifecycle Traceability 표(Execution Log 아래)는 실행 상태·결과와
-증거 포인터를 기록하고, Criterion Decisions 표가 기준별 수용 판정의
+`approved`는 현재 계약의 승인·유효성을 뜻한다. Task의 core Work Items 표(Work Performed의
+첫 표)는 작업 항목별 상태를, Lifecycle Traceability 표(Execution Log 아래)는
+Item별 결과와 증거 포인터를 기록하고, Criterion Decisions 표가 기준별 수용 판정의
 유일한 작성 원본이다. Results 표는 검사 사실을 보존한다. 기존 완료
 Spec·Plan·Task는 당시 Registry 판본으로 읽으며 상태와 승인·검사 근거를 보존한다.
 새로 작성하거나 현행 내용을 바꾸는 Plan은 승인된 Spec의 제약을
@@ -303,16 +304,18 @@ lifecycle reader는 두 위치를 form의 section id로 읽고, 현행 Plan의
 작성·완료 의무는 선택한 입력에 대해 검사한다. Stage 99
 형식 구현은 해당 형식을 위임하는 현행 정책 소유자를 가리킨다.
 
-Plan, Task Lifecycle Traceability, Criterion Decisions, Results 표의 열 이름과 순서, 수용
-값 집합은 Registry의 `body_contract`가 소유하며 이 README는 복제하지 않는다.
+Plan, Task Work Items, Lifecycle Traceability, Criterion Decisions, Results 표의 열 이름과
+순서, 수용 값 집합은 Registry의 `body_contract`와 core 표가 소유하며 이 README는
+복제하지 않는다. 기록된 Task는 기록 당시 머리행 그대로 전환 어댑터가 core 이름으로
+읽고, 한 Task 안에서 두 머리행을 섞지 않는다.
 `not-required`는 취소된 Task와 같은 package의 취소된 Spec에서 해당 기준의
 실제 범위 변경과 승인 근거를 확인한 때만 쓴다. 두 취소 처분 모두 정확한
 기준 ID를 명시하고 Task의 승인 참조는 해당 Spec 결정을 가리킨다. 후속
 Task만 정하거나 활성·
 완료·대체 Task로 끝내는 경우 기준 면제로 바꾸지 않는다. QA의
 `NOT_APPLICABLE`는 검사 대상 판정으로 이 수용 값과 다르다.
-`Required`는 `yes` 또는 `no`, `Resolves`는 `none` 또는 앞선 증거 ID를
-쉼표와 공백으로 연결한다. `no`는 원래 검증 계획에서 비필수인 검사와
+`Required`는 `true` 또는 `false`(기록된 Task의 `yes`·`no`는 같은 뜻으로 읽는다), `Resolves`는 `none` 또는 앞선 증거 ID를
+쉼표와 공백으로 연결한다. `false`는 원래 검증 계획에서 비필수인 검사와
 그 사유에만 쓰며 필수 실패를 사후 재분류하지 않는다. 필수
 `FAIL`·`DEFER`·`NOT_RUN`은 같은 검사·작업
 항목·기준의 뒤따르는 `PASS`가 이전 증거 ID를 명시해야 해소된다. 다른
@@ -322,8 +325,8 @@ PASS로 미해소 필수 결과를 숨기지 않는다. 완료 인계는 필수 
 통합과 보관은 서로의 대체값이 아니다. 취소·대체는 남은 필수 기준의
 후속 Task의 Plan 배정을 명시하고, 관측 결과를 보존한다.
 관측된 `FAIL`은 `PASS`처럼 구체적인 Command·Input·Location을 적는다.
-`NOT_RUN`·`DEFER`에는 아직 실제 결과 위치가 없으면 `Pending`을 쓸 수
-있지만 사유와 다음 owner를 남긴다.
+`NOT_RUN`·`DEFER`에는 아직 실제 결과 위치가 없으면 `none`(기록된 Task는 `Pending`)을
+쓸 수 있지만 사유와 다음 owner를 남긴다.
 resolved Incident에는 시간대를 포함한 실제 resolved_at과 해결 증거가 필요하다.
 
 #### Shared Frontmatter Grammar

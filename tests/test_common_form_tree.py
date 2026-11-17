@@ -1220,6 +1220,8 @@ TARGET_GROUPS = {
     "stage-readme": ("scope", "contents", "use"),
     "service-readme": ("service", "use", "checks"),
     "skill": ("trigger", "procedure", "output", "verification"),
+    # SPEC-0222: the Task form takes the core section IDs.
+    "task": ("scope", "work", "evidence", "acceptance", "handoff"),
 }
 
 
@@ -1252,15 +1254,16 @@ SDLC_TASK_FORM_EXTENSIONS = [
         "kind": "local_h3",
         "condition": (
             "a Task in a status the body contract enforces (draft, ready, "
-            "in-progress, blocked) maps each work item to its upstream Spec "
-            "criterion, its owner, its status, its result and its evidence"
+            "in-progress, blocked) keeps, for each work item, its upstream Spec "
+            "criterion, its result and its evidence, keyed by the Item of the core "
+            "task.work_items row"
         ),
         "owner": "platform",
         "verification": "the body-contract check",
         "review": "when the Task form version changes",
         "removal": "when Task work items have another registered owner",
         "authority_ref": "ADR-0059",
-        "parent_id": "task-execution-log",
+        "parent_id": "task.work",
         "title": "Lifecycle Traceability",
     },
     {
@@ -1276,56 +1279,35 @@ SDLC_TASK_FORM_EXTENSIONS = [
         "review": "when the work residue ledger design changes or the Task form version changes",
         "removal": "when the work residue ledger has another registered host for residue",
         "authority_ref": "ADR-0059",
-        "parent_id": "task-verification-evidence",
+        "parent_id": "task.evidence",
         "title": "Residue Handoff",
     },
-    {
-        "id": "task-evidence-local-columns",
-        "kind": "local_columns",
-        "condition": (
-            "a Task whose evidence the acceptance and resolution rules of this "
-            "repository read: each row names its work unit, where the evidence can "
-            "be read again, whether it is required and which earlier row it resolves"
-        ),
-        "owner": "platform",
-        "verification": (
-            "TASK-EVIDENCE-WORK, TASK-EVIDENCE-LOCATION, TASK-EVIDENCE-REQUIRED, "
-            "TASK-EVIDENCE-RESOLUTION and TASK-EVIDENCE-UNRESOLVED of "
-            "scripts/document_contracts.py"
-        ),
-        "review": "when the Task form or the common Task table changes",
-        "removal": (
-            "when the common contract names these columns or the rules that read "
-            "them are retired"
-        ),
-        "authority_ref": "ADR-0059",
-        "table": "Results",
-        "columns": ["Work Unit", "Location", "Required", "Resolves"],
-    },
 ]
+# SPEC-0222: the three core tables and the local Lifecycle Traceability table.
 SDLC_TASK_FORM_TABLE_KEYS = {
+    "Work Items": (
+        "task.work",
+        ("Item", "Work Unit", "Owner", "Status", "Blocker"),
+        0,
+        "Item",
+    ),
     "Lifecycle Traceability": (
         "task-lifecycle-traceability",
-        (
-            "ID",
-            "Upstream criterion",
-            "Work item",
-            "Owner",
-            "Status",
-            "Result",
-            "Evidence",
-        ),
+        ("Item", "Upstream criterion", "Result", "Evidence"),
         1,
-        "ID",
+        "Item",
     ),
     "Results": (
-        "task-verification-evidence-results",
+        "task.evidence",
         (
             "Evidence ID",
-            "Consumer",
+            "Criteria",
             "Work Unit",
-            "Command",
+            "Method",
             "Input",
+            "Tool and Config",
+            "Command",
+            "Exit",
             "Result",
             "Location",
             "Required",
@@ -1335,8 +1317,17 @@ SDLC_TASK_FORM_TABLE_KEYS = {
         "Evidence ID",
     ),
     "Criterion Decisions": (
-        "task-acceptance-decision-criterion-decisions",
-        ("Criterion", "Acceptance", "Evidence", "Disposition", "Current owner"),
+        "task.acceptance",
+        (
+            "Criterion",
+            "Intent",
+            "Acceptance",
+            "Evidence",
+            "Decision",
+            "Accepted By",
+            "Current Owner",
+            "Reassigned To",
+        ),
         1,
         "Criterion",
     ),
@@ -1967,11 +1958,16 @@ class RepositoryRegistryTests(unittest.TestCase):
                 for table in by_id[twin]["template_definition"]["tables"]:
                     for column in table["columns"]:
                         self.assertTrue(column["meaning"])
-                        # The research Sources table dates its retrieval (W03-D21).
-                        self.assertEqual(
-                            column["data_type"],
-                            "date" if column["key"] == "Retrieved" else "string",
-                        )
+                        # The research Sources table dates its retrieval (W03-D21);
+                        # a core table column takes its core value type, which the
+                        # core check compares (SPEC-0222).
+                        if "table_id" in table:
+                            self.assertTrue(column["data_type"])
+                        else:
+                            self.assertEqual(
+                                column["data_type"],
+                                "date" if column["key"] == "Retrieved" else "string",
+                            )
                         self.assertIs(
                             column["required"],
                             not (
@@ -2036,7 +2032,12 @@ class RepositoryRegistryTests(unittest.TestCase):
             "adr": ["Alternatives", "Lifecycle Traceability"],
             "spec": ["Criteria", "Lifecycle Traceability"],
             "plan": ["Work Breakdown", "Promotion"],
-            "task": ["Lifecycle Traceability", "Results", "Criterion Decisions"],
+            "task": [
+                "Work Items",
+                "Lifecycle Traceability",
+                "Results",
+                "Criterion Decisions",
+            ],
             **{
                 form_id: [name for name, *_ in tables]
                 for form_id, _, _, _, tables, _ in LOCAL_FORMS
@@ -6903,13 +6904,14 @@ def record_errors(record: dict) -> list:
 
 
 def form_headings(item: dict) -> dict:
-    """The form section as a package heading: every field but the local flag."""
+    """The form section as a package heading: every field but the local flag and
+    the section core members, which stay in the registry (SPEC-0222)."""
 
     return {
         **{
             key: value
             for key, value in item.items()
-            if key not in {"link_only", "children"}
+            if key not in {"link_only", "children", "core"}
         },
         "children": [form_headings(child) for child in item["children"]],
     }
@@ -6992,12 +6994,37 @@ class TemplateRecordTests(unittest.TestCase):
                     "policy_refs",
                     "vocabulary_refs",
                     "applicability",
-                    "tables",
                     "consumer_paths",
                     "validation",
                     "migration",
                 ):
                     self.assertEqual(record[key], definition[key])
+                # SPEC-0222: the record keeps its own table fields; a core table's
+                # binding stays in the registry.
+                self.assertEqual(
+                    record["tables"],
+                    [
+                        {
+                            "name": table["name"],
+                            "section": table["section"],
+                            "columns": [
+                                {
+                                    key: column[key]
+                                    for key in (
+                                        "key",
+                                        "meaning",
+                                        "data_type",
+                                        "required",
+                                    )
+                                }
+                                for column in table["columns"]
+                            ],
+                            "minimum_rows": table["minimum_rows"],
+                            "row_identity": table["row_identity"],
+                        }
+                        for table in definition["tables"]
+                    ],
+                )
                 form = self.forms.get(profile["document_role"])
                 self.assertEqual(
                     record["headings"],
@@ -7875,7 +7902,7 @@ class TaskFormTests(unittest.TestCase):
         cls.registry = CONTRACTS.load_registry(ROOT)
         cls.profiles = {p.profile_id: p for p in cls.registry.profiles}
 
-    def test_the_form_has_the_common_sections_and_three_registered_extensions(
+    def test_the_form_has_the_common_sections_and_two_registered_extensions(
         self,
     ) -> None:
         form = next(f for f in self.registry.common_forms if f.form_id == "task")
@@ -7890,11 +7917,9 @@ class TaskFormTests(unittest.TestCase):
             f for f in self.raw["common_forms"]["forms"] if f["form_id"] == "task"
         )
         self.assertEqual(raw_form["extensions"], SDLC_TASK_FORM_EXTENSIONS)
-        columns = next(e for e in form.extensions if e.kind == "local_columns")
-        self.assertEqual(
-            (columns.table, columns.columns),
-            ("Results", ("Work Unit", "Location", "Required", "Resolves")),
-        )
+        # SPEC-0222: the core evidence table names Work Unit, Location, Required
+        # and Resolves, so no column extension remains.
+        self.assertEqual({e.kind for e in form.extensions}, {"local_h3"})
 
     def test_the_two_profiles_carry_no_h2_list_and_the_moved_contract_and_binding(
         self,
@@ -7962,18 +7987,25 @@ class TaskFormTests(unittest.TestCase):
             {"BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"}, tree(old)
         )
 
-    def test_a_column_extension_without_its_table_or_columns_is_refused(self) -> None:
-        for drop in ("table", "columns"):
-            with self.subTest(drop=drop):
-                raw = copy.deepcopy(self.raw)
-                form = next(
-                    f for f in raw["common_forms"]["forms"] if f["form_id"] == "task"
-                )
-                extension = next(
-                    e for e in form["extensions"] if e["kind"] == "local_columns"
-                )
-                del extension[drop]
-                self.assertTrue(rules_of(raw))
+    def test_a_column_extension_is_refused(self) -> None:
+        # SPEC-0222: no local table column extends a core table.
+        raw = copy.deepcopy(self.raw)
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "task")
+        form["extensions"].append(
+            {
+                "id": "task-extra-columns",
+                "kind": "local_columns",
+                "condition": "c",
+                "owner": "platform",
+                "verification": "v",
+                "review": "r",
+                "removal": "x",
+                "authority_ref": "SPEC-0222",
+                "table": "Results",
+                "columns": ["Extra"],
+            }
+        )
+        self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
         raw = copy.deepcopy(self.raw)
         form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "task")
         next(e for e in form["extensions"] if e["id"] == "task-lifecycle-traceability")[
@@ -7981,14 +8013,14 @@ class TaskFormTests(unittest.TestCase):
         ] = ["Extra"]
         self.assertTrue(rules_of(raw))
 
-    def test_the_version_before_the_column_extension_kind_refuses_it(self) -> None:
+    def test_the_extension_kinds_are_the_local_h3_and_the_retained_form(self) -> None:
         schema = json.loads(
             (
                 ROOT / "docs/99.templates/contracts/document-profile.schema.json"
             ).read_text(encoding="utf-8")
         )
         kinds = schema["$defs"]["form_extension"]["properties"]["kind"]["enum"]
-        self.assertEqual(kinds, ["local_h3", "retained_form", "local_columns"])
+        self.assertEqual(kinds, ["local_h3", "retained_form"])
 
 
 class HeadingListRemovalTests(unittest.TestCase):

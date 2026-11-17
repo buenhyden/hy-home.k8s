@@ -18,6 +18,7 @@ from document_contracts import (  # noqa: E402
     extension_name,
     load_registry,
     local_extension_names,
+    task_recorded_row,
     validate_registry,
 )
 from document_lifecycle import (  # noqa: E402
@@ -83,9 +84,12 @@ class TaskHistoryRetentionTests(unittest.TestCase):
             "Required": "yes",
             "Resolves": "none",
         }
-        proposed = (
-            () if drop else (tuple((base_check | (evidence_changes or {})).items()),)
-        )
+        # Rows of a Task recorded under the SPEC-0203 header, as the transition
+        # adapter reads them (SPEC-0222).
+        changed = task_recorded_row("evidence", base_check | (evidence_changes or {}))
+        base_work = task_recorded_row("traceability", base_work)
+        base_check = task_recorded_row("evidence", base_check)
+        proposed = () if drop else (tuple(changed.items()),)
         document = LifecycleDocument(path, "sdlc/task", "blocked")
         view = LifecycleEvidenceDocument(
             document=document,

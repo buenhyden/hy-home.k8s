@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.10.0"
+version: "0.11.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -118,6 +118,35 @@ The independent WORK-001 review (EVD-009) returned two HIGH findings, which bloc
   - new negative tests cover a dropped column, an enum difference, a repeated ID, an extra core table ID, the identity and the section members.
 - **Record.** The TemplateDefinition record and its schema stay unchanged on purpose. The one-time export reads the registry directly, and no record consumer needs the classification.
 
+WORK-002 bound the `task` form to the core:
+
+- **Form.** `core_role: task`, the core members, the section IDs `task.scope` to `task.handoff.2`, and the section core members. The Task template carries the three core tables exactly. A local Lifecycle Traceability table keeps `Item | Upstream criterion | Result | Evidence`.
+- **Transition adapter.** One adapter block in `scripts/document_contracts.py` (`read_task_tables`, `task_header_form`, `task_recorded_row`) reads a Task under the recorded header or the core header, never a mixture (`TASK-HEADER-MIXED`), and writes nothing.
+  - Under the recorded header, it renames `ID` to `Item` and `Work Unit`, `Consumer` to `Criteria` and `Current owner` to `Current Owner`, and reads `Required` `yes`/`no` as `true`/`false`. The recorded ID is also read as the Work Unit, because recorded evidence cites the work-item ID there.
+  - Core cells are checked against the registry's allowed values (`TASK-CORE-CELL`).
+  - Work-item status in a core Task comes from `task.work_items`.
+  - New core rows without a recorded decision keep `Intent` `undecided` and the acceptor cells `none` (`TASK-ACCEPTANCE-DECISION`).
+- **Registry.** `task-evidence-local-columns` and the `local_columns` extension kind are removed, because their removal condition is met. The evidence result states take the core enum, and a required `ERROR` or `CANCELLED` check stays open until a later PASS resolves it, as `FAIL` does.
+- **Prose.** Stage 03 `AGENTS.md` rule 4, AUTHOR-R007, DOCLIFE-R009 and the Stage 99 README state the adapter rule.
+- **Recorded Tasks.** The three recorded Tasks are byte-unchanged and pass under the adapter.
+- **Baseline.** The `.secrets.baseline` registry line moved in its own commit first (`d5603cc9`).
+- **Suite speed.** The staged `document` suite timed out three times at its 900-second gate limit. A timed run of the suite alone showed the cause: it needed 941 seconds of CPU on this tree and 966 seconds on `d5603cc9`, before WORK-002. So the suite had outgrown its limit on this machine, and WORK-002 was not a regression. The user chose to fix the root cause rather than raise the limit. A profile of the slowest module showed `schema_errors` re-checking the same schema against its meta-schema on each of 1,444 calls. `scripts/json_schema_validation.py` now caches the checked validator by the schema's canonical JSON. A changed schema is checked again, and a schema that fails the check is never cached. The suite now takes 455 seconds of CPU.
+
+On 2026-11-17 the user also approved (`승인`) moving the independent review of WORK-002 and later units into one final review after all units are integrated. That review runs in WORK-009, split across parallel reviewers by area, and every unit still passes the strict validators and staged QA before its commit. The Plan's Evidence Plan text is brought up to date in the WORK-003 renewed approval.
+
+On 2026-11-17 the user asked to run the remaining work units in parallel where possible (`남아 있는 WORK중에서 동시에 진행이 가능한 work은 동시에 진행한다.`). WORK-004 to WORK-008 depend only on WORK-001, so they were prepared at the same time as WORK-002, each in its own worktree. Each is integrated in the Plan's order, one commit per unit, after the WORK-002 review disposition. WORK-003 and WORK-009 stay sequential.
+
+The prepared units reported stop cases, and the user answered four questions on 2026-11-17:
+
+- **Required core cells with no source fact.** The answer was to render a header-only core table plus residue if that matches the prompt. It does: the core empty policy defines the columns and writes rows when facts occur, D24 forbids invented values, and D25 links each gap to an owner. So the core table is rendered header-only, existing prose and tables stay as registered local tables, and the missing facts become residue owned by W04-CONTENT.
+- **The 13 published Stage 90 reports.** The answer was to replace them with new members.
+- **Policy rules that are not bullets.** The answer was that the Requirement cell takes the rule's lead sentence, if that matches the prompt. It does, because the rule ID stays the single meaning owner. The supporting text stays under the rule's H4.
+- **Agent judgments.** All four are accepted:
+  - the root `AGENTS.md` heading cap of 20, re-derived for the new form;
+  - the RUN-0012 header rename;
+  - the runbook `Triggers` table replaced by the core Steps table;
+  - the ADR-0063 Trade-off split.
+
 ### Blockers and Decisions
 
 The user approved the Spec and Plan (EVD-006); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
@@ -155,6 +184,9 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | EVD-011 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Focused tests and strict validators after the change | `python3 -m unittest tests.test_common_form_tree`; the strict registry, markdown profile, link and lifecycle validators; pinned venv, 2026-11-17 | PASS | 428 tests OK with 3 skips, including 11 `CoreRoleBindingTests`; every listed validator passed. | yes | none |
 | EVD-012 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Independent review | The same read-only code-reviewer agent over `git show db0eb818`, rerunning its earlier in-memory probes, 2026-11-17; risk class `high` | PASS | APPROVE: H1, H2, M1, M2 and M4 closed (each probe now refused or accepted as expected); M3 accepted as decided. Remaining notes are low: a core-role form without a template is unchecked, and a same-named local table without `table_id` is accepted, which is not a bypass because the core table is still required by ID. | yes | EVD-009 |
 | EVD-013 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the indexes of `fa35445c` and `db0eb818`, and their commit hooks; pinned venv, 2026-11-17 | PASS | 12 selected gates, the `document` suite among them, passed on each exact index. The first hook run of `db0eb818` timed out in the `document` suite (`rc=-9`, load average about 7) and committed nothing; the unchanged retry passed. | yes | EVD-001 |
+| EVD-014 | [VAL-CORE-001](../spec.md#criteria) | WORK-002 | Failing first | The changed tests of `tests.test_task_execution_contract`, `test_task_acceptance_contract`, `test_task_acceptance_boundaries`, `test_common_form_tree` and `test_document_lifecycle_cumulative_history` over an export of `b6e99e9d`; pinned venv, 2026-11-17 | PASS | Observed the defect: three modules failed to import the adapter (1 error each), `test_common_form_tree` 428 tests with 9 failures, `test_document_lifecycle_cumulative_history` 50 tests with 8 failures and 1 error. | yes | none |
+| EVD-015 | [VAL-CORE-003](../spec.md#criteria) | WORK-002 | Focused tests and strict validators after the change | 15 modules that read Task tables, the registry or the lifecycle: form tree, task execution, acceptance contract and boundaries, cumulative history, summary derivation, residue ledger, registry schema version, frontmatter keys, generator, package exit, artifact identity, relationship contract, link boundary and shared contract binding; the four strict validators; pinned venv, 2026-11-17 | PASS | 878 tests OK with 3 skips, including 11 `TaskCoreHeaderTests`; the registry, markdown profile, link and lifecycle validators passed; the three recorded Tasks are byte-unchanged. | yes | none |
+| EVD-016 | [VAL-CORE-004](../spec.md#criteria) | WORK-002 | Suite runtime | `scripts/run-contract-tests.py --root . --suite document` timed alone with `time`, on this tree before the fix, on an export of `d5603cc9`, and after the schema check cache, with `tests.test_json_schema_validation` and `tests.test_common_form_tree`; pinned venv, 12 CPUs, load average 7 to 20, 2026-11-17 | PASS | Before: 941 s CPU (1,174 tests) and 966 s CPU on `d5603cc9` (1,163 tests), both above the 900-second gate limit. After: 455 s CPU, 1,176 tests OK. `test_common_form_tree` 256 s to 96 s. Two cache tests prove one check per distinct schema and no caching of an invalid schema. | yes | none |
 
 ### Resolution Links
 
