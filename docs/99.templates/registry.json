@@ -6316,6 +6316,13 @@
           "verification": "REGISTRY_TEMPLATE_EXTENSION, which fails when the record is missing, incomplete, malformed or sits on a role that has a form, and the native projection checks of the agent-governance suite.",
           "review": "when a provider's native file format changes and whenever the STAGE99-LOCAL-FORM-1 contract version changes.",
           "removal": "when provider-native receives a form in common_forms (a reversal of W03-D33) or the three templates leave the registry; the extension and its rule are then deleted."
+        },
+        "core_role": "native",
+        "classification": {
+          "owner": "platform",
+          "reason": "the provider reads its own Claude agent frontmatter envelope, which the Markdown core does not describe",
+          "review_trigger": "when the provider envelope changes",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
         }
       }
     },
@@ -6408,6 +6415,13 @@
           "verification": "REGISTRY_TEMPLATE_EXTENSION, which fails when the record is missing, incomplete, malformed or sits on a role that has a form, and the native projection checks of the agent-governance suite.",
           "review": "when a provider's native file format changes and whenever the STAGE99-LOCAL-FORM-1 contract version changes.",
           "removal": "when provider-native receives a form in common_forms (a reversal of W03-D33) or the three templates leave the registry; the extension and its rule are then deleted."
+        },
+        "core_role": "native",
+        "classification": {
+          "owner": "platform",
+          "reason": "the provider reads its own Claude command frontmatter envelope, which the Markdown core does not describe",
+          "review_trigger": "when the provider envelope changes",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
         }
       }
     },
@@ -6491,6 +6505,13 @@
           "verification": "REGISTRY_TEMPLATE_EXTENSION, which fails when the record is missing, incomplete, malformed or sits on a role that has a form, and the native projection checks of the agent-governance suite.",
           "review": "when a provider's native file format changes and whenever the STAGE99-LOCAL-FORM-1 contract version changes.",
           "removal": "when provider-native receives a form in common_forms (a reversal of W03-D33) or the three templates leave the registry; the extension and its rule are then deleted."
+        },
+        "core_role": "native",
+        "classification": {
+          "owner": "platform",
+          "reason": "the provider reads its own Codex agent TOML envelope, which the Markdown core does not describe",
+          "review_trigger": "when the provider envelope changes",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
         }
       }
     },
@@ -9245,7 +9266,8 @@
             "review": "when the Guide form version changes",
             "removal": "when guide lineage has another registered owner",
             "parent_id": "guide.troubleshoot",
-            "title": "Lifecycle Traceability"
+            "title": "Lifecycle Traceability",
+            "authority_ref": "ADR-0059"
           }
         ]
       },
@@ -9632,7 +9654,8 @@
             "review": "when the Runbook form version changes",
             "removal": "when the common Runbook form gains an H3 for non-rollback recovery",
             "parent_id": "runbook.escalation",
-            "title": "Recovery Procedures"
+            "title": "Recovery Procedures",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "runbook-lifecycle-traceability",
@@ -9643,7 +9666,8 @@
             "review": "when the Runbook form version changes",
             "removal": "when runbook lineage has another registered owner",
             "parent_id": "runbook.verification",
-            "title": "Lifecycle Traceability"
+            "title": "Lifecycle Traceability",
+            "authority_ref": "ADR-0059"
           }
         ]
       },
@@ -9884,7 +9908,8 @@
             "review": "when the form version changes",
             "removal": "when incident lineage has another registered owner",
             "parent_id": "incident.resolution",
-            "title": "Lifecycle Traceability"
+            "title": "Lifecycle Traceability",
+            "authority_ref": "ADR-0059"
           }
         ]
       },
@@ -10125,7 +10150,8 @@
             "review": "when the form version changes",
             "removal": "when incident lineage has another registered owner",
             "parent_id": "postmortem.actions",
-            "title": "Lifecycle Traceability"
+            "title": "Lifecycle Traceability",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "postmortem-what-went-well",
@@ -10136,7 +10162,8 @@
             "review": "when the Postmortem form version changes",
             "removal": "when the common Postmortem form gains a What Went Well H3",
             "parent_id": "postmortem.facts",
-            "title": "What Went Well"
+            "title": "What Went Well",
+            "authority_ref": "ADR-0059"
           }
         ]
       },
@@ -11210,7 +11237,8 @@
             "review": "when the Policy form version changes",
             "removal": "when policy lineage has another registered owner",
             "parent_id": "policy.ownership",
-            "title": "Lifecycle Traceability"
+            "title": "Lifecycle Traceability",
+            "authority_ref": "ADR-0059"
           }
         ]
       },
@@ -11899,7 +11927,8 @@
             "review": "when the Skill form version changes",
             "removal": "when the common Skill form gains an authority H3",
             "parent_id": "skill.trigger",
-            "title": "Authority Boundary"
+            "title": "Authority Boundary",
+            "authority_ref": "ADR-0059"
           }
         ]
       },
@@ -12129,7 +12158,14 @@
             "children": []
           }
         ],
-        "extensions": []
+        "extensions": [],
+        "core_role": "domain",
+        "classification": {
+          "owner": "platform",
+          "reason": "the staging README of an imported workspace package, which no core README role describes",
+          "review_trigger": "when a common core role gains this purpose",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
+        }
       },
       {
         "form_id": "reference-pack-readme",
@@ -12455,7 +12491,8 @@
             "review": "when the Reference Pack README form changes",
             "removal": "when the Reference Pack README form gains a matching section",
             "parent_id": "reference-pack-readme-pack-contract",
-            "title": "External Finding Vocabulary"
+            "title": "External Finding Vocabulary",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "pack-separate-evidence-axes",
@@ -12466,9 +12503,17 @@
             "review": "when the Reference Pack README form changes",
             "removal": "when the Reference Pack README form gains a matching section",
             "parent_id": "reference-pack-readme-pack-contract",
-            "title": "Separate Evidence Axes"
+            "title": "Separate Evidence Axes",
+            "authority_ref": "ADR-0059"
           }
-        ]
+        ],
+        "core_role": "domain",
+        "classification": {
+          "owner": "platform",
+          "reason": "the README of a reference pack that lists its members, which no core README role describes",
+          "review_trigger": "when a common core role gains this purpose",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
+        }
       },
       {
         "form_id": "knowledge-map",
@@ -12598,7 +12643,14 @@
             "children": []
           }
         ],
-        "extensions": []
+        "extensions": [],
+        "core_role": "domain",
+        "classification": {
+          "owner": "platform",
+          "reason": "the knowledge routing map, which routes to owners and decides nothing",
+          "review_trigger": "when a common core role gains this purpose",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
+        }
       },
       {
         "form_id": "vocabulary",
@@ -12777,7 +12829,14 @@
             "children": []
           }
         ],
-        "extensions": []
+        "extensions": [],
+        "core_role": "domain",
+        "classification": {
+          "owner": "platform",
+          "reason": "the seven-column repository vocabulary, which no core role describes",
+          "review_trigger": "when a common core role gains this purpose",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
+        }
       },
       {
         "form_id": "prompt",
@@ -12955,7 +13014,14 @@
             "children": []
           }
         ],
-        "extensions": []
+        "extensions": [],
+        "core_role": "domain",
+        "classification": {
+          "owner": "platform",
+          "reason": "a reusable request contract with input and refusal conditions, which no core role describes",
+          "review_trigger": "when a common core role gains this purpose",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
+        }
       },
       {
         "form_id": "evaluation-task",
@@ -13086,7 +13152,14 @@
             "children": []
           }
         ],
-        "extensions": []
+        "extensions": [],
+        "core_role": "domain",
+        "classification": {
+          "owner": "platform",
+          "reason": "skill evaluation trial declarations, which no core role describes",
+          "review_trigger": "when a common core role gains this purpose",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
+        }
       },
       {
         "form_id": "evaluation-score",
@@ -13217,7 +13290,14 @@
             "children": []
           }
         ],
-        "extensions": []
+        "extensions": [],
+        "core_role": "domain",
+        "classification": {
+          "owner": "platform",
+          "reason": "skill evaluation scores with raw locators, which no core role describes",
+          "review_trigger": "when a common core role gains this purpose",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
+        }
       },
       {
         "form_id": "evaluation-results",
@@ -13347,7 +13427,14 @@
             "children": []
           }
         ],
-        "extensions": []
+        "extensions": [],
+        "core_role": "domain",
+        "classification": {
+          "owner": "platform",
+          "reason": "the single aggregate of skill evaluation results, which no core role describes",
+          "review_trigger": "when a common core role gains this purpose",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
+        }
       },
       {
         "form_id": "governance-document",
@@ -13501,7 +13588,14 @@
             "link_only": true,
             "children": []
           }
-        ]
+        ],
+        "core_role": "domain",
+        "classification": {
+          "owner": "platform",
+          "reason": "a provider note that describes native loading without restating policy",
+          "review_trigger": "when a common core role gains this purpose",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
+        }
       },
       {
         "form_id": "governance-role",
@@ -13849,7 +13943,14 @@
             "link_only": true,
             "children": []
           }
-        ]
+        ],
+        "core_role": "domain",
+        "classification": {
+          "owner": "platform",
+          "reason": "a canonical agent role body bound to the agent registry",
+          "review_trigger": "when a common core role gains this purpose",
+          "authority_ref": "SPEC-0222 approval (receipt in the SPEC-0222 Task)"
+        }
       },
       {
         "form_id": "reference-report",
@@ -13870,7 +13971,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Instruction and context loading"
+            "title": "Instruction and context loading",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-cross-provider-governance",
@@ -13884,7 +13986,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Cross-provider governance"
+            "title": "Cross-provider governance",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-workspace-governance-questions",
@@ -13898,7 +14001,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Workspace governance questions"
+            "title": "Workspace governance questions",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-historical-observations-and-corrections-2026-08-08-to-2026-09-07",
@@ -13912,7 +14016,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Historical observations and corrections — 2026-08-08 to 2026-09-07"
+            "title": "Historical observations and corrections — 2026-08-08 to 2026-09-07",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-harness-components-and-lifecycle",
@@ -13926,7 +14031,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Harness components and lifecycle"
+            "title": "Harness components and lifecycle",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-loop-design-and-failure-controls",
@@ -13940,7 +14046,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Loop design and failure controls"
+            "title": "Loop design and failure controls",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-harness-and-loop-questions",
@@ -13954,7 +14061,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Harness and loop questions"
+            "title": "Harness and loop questions",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-provider-surface-comparison",
@@ -13968,7 +14076,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Provider surface comparison"
+            "title": "Provider surface comparison",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-hooks-ide-and-sdk-boundaries",
@@ -13982,7 +14091,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Hooks IDE and SDK boundaries"
+            "title": "Hooks IDE and SDK boundaries",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-provider-verification-questions",
@@ -13996,7 +14106,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Provider verification questions"
+            "title": "Provider verification questions",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-model-selection-and-escalation",
@@ -14010,7 +14121,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Model selection and escalation"
+            "title": "Model selection and escalation",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-cost-context-and-rate-control",
@@ -14024,7 +14136,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Cost context and rate control"
+            "title": "Cost context and rate control",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-model-and-budget-questions",
@@ -14038,7 +14151,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Model and budget questions"
+            "title": "Model and budget questions",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-memory-authority-and-lifecycle",
@@ -14052,7 +14166,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Memory authority and lifecycle"
+            "title": "Memory authority and lifecycle",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-retrieval-poisoning-and-handoff",
@@ -14066,7 +14181,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Retrieval poisoning and handoff"
+            "title": "Retrieval poisoning and handoff",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-memory-verification-questions",
@@ -14080,7 +14196,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Memory verification questions"
+            "title": "Memory verification questions",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-evidence-axes-and-ownership",
@@ -14094,7 +14211,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Evidence axes and ownership"
+            "title": "Evidence axes and ownership",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-requirement-coverage-matrix",
@@ -14108,7 +14226,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Requirement coverage matrix"
+            "title": "Requirement coverage matrix",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-current-claim-ownership-and-evidence-boundaries",
@@ -14122,7 +14241,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Current claim ownership and evidence boundaries"
+            "title": "Current claim ownership and evidence boundaries",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-historical-consolidation-and-consumer-disposition",
@@ -14136,7 +14256,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Historical consolidation and consumer disposition"
+            "title": "Historical consolidation and consumer disposition",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-current-source-observations",
@@ -14150,7 +14271,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Current source observations"
+            "title": "Current source observations",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-2026-10-27-required-source-observations",
@@ -14164,7 +14286,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "2026-10-27 required-source observations"
+            "title": "2026-10-27 required-source observations",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-historical-source-and-claim-provenance",
@@ -14178,7 +14301,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Historical source and claim provenance"
+            "title": "Historical source and claim provenance",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-historical-readme-coverage-and-reconciliation",
@@ -14192,7 +14316,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Historical README coverage and reconciliation"
+            "title": "Historical README coverage and reconciliation",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-analytical-axes-and-evidence-contract",
@@ -14206,7 +14331,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Analytical axes and evidence contract"
+            "title": "Analytical axes and evidence contract",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-follow-up-question-ledger",
@@ -14220,7 +14346,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Follow-up question ledger"
+            "title": "Follow-up question ledger",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-historical-scope-projections",
@@ -14234,7 +14361,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Historical scope projections"
+            "title": "Historical scope projections",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-git-object-naming-and-availability",
@@ -14248,7 +14376,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Git object naming and availability"
+            "title": "Git object naming and availability",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-superseded-decisions-and-incident-records",
@@ -14262,7 +14391,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Superseded decisions and incident records"
+            "title": "Superseded decisions and incident records",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-public-urls-and-sensitive-data",
@@ -14276,7 +14406,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Public URLs and sensitive data"
+            "title": "Public URLs and sensitive data",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-schema-conditionals-and-annotations",
@@ -14290,7 +14421,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Schema conditionals and annotations"
+            "title": "Schema conditionals and annotations",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-markdown-links-and-code",
@@ -14304,7 +14436,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Markdown links and code"
+            "title": "Markdown links and code",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-definitions-facts-documentation-purpose",
@@ -14318,7 +14451,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-definitions-facts",
-            "title": "Documentation purpose"
+            "title": "Documentation purpose",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-sources-findings",
@@ -14332,7 +14466,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-sources",
-            "title": "Findings"
+            "title": "Findings",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-sources-limitations",
@@ -14346,7 +14481,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-sources",
-            "title": "Limitations"
+            "title": "Limitations",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-sources-recommendations",
@@ -14360,7 +14496,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-sources",
-            "title": "Recommendations"
+            "title": "Recommendations",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-review-and-freshness-evidence-insufficiency-correction-dated-2026-09-27",
@@ -14374,7 +14511,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-review-and-freshness",
-            "title": "Evidence insufficiency correction dated 2026-09-27"
+            "title": "Evidence insufficiency correction dated 2026-09-27",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-review-and-freshness-external-claim-qualification-dated-2026-09-27",
@@ -14388,7 +14526,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-review-and-freshness",
-            "title": "External claim qualification dated 2026-09-27"
+            "title": "External claim qualification dated 2026-09-27",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "reference-extension-review-and-freshness-2026-09-28-retention-and-provenance-addendum",
@@ -14402,7 +14541,8 @@
             "review": "when the Reference Report form changes",
             "removal": "when that report is superseded or retired and no later report keeps the section",
             "parent_id": "reference-report-review-and-freshness",
-            "title": "2026-09-28 Retention and Provenance Addendum"
+            "title": "2026-09-28 Retention and Provenance Addendum",
+            "authority_ref": "ADR-0059"
           }
         ],
         "sections": [
@@ -15932,7 +16072,8 @@
             "review": "when the Requirement form version changes",
             "removal": "when requirement lineage has another registered owner",
             "parent_id": "requirement.relations",
-            "title": "Lifecycle Traceability"
+            "title": "Lifecycle Traceability",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "requirement-archived-lineage",
@@ -15943,7 +16084,8 @@
             "review": "when the Requirement form version changes",
             "removal": "when requirement lineage has another registered owner",
             "parent_id": "requirement.relations",
-            "title": "Archived Lineage"
+            "title": "Archived Lineage",
+            "authority_ref": "ADR-0059"
           }
         ]
       },
@@ -16332,7 +16474,8 @@
             "review": "when the Architecture form version changes",
             "removal": "when architecture lineage has another registered owner",
             "parent_id": "architecture.decisions",
-            "title": "Lifecycle Traceability"
+            "title": "Lifecycle Traceability",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "architecture-archived-lineage",
@@ -16343,7 +16486,8 @@
             "review": "when the Architecture form version changes",
             "removal": "when architecture lineage has another registered owner",
             "parent_id": "architecture.decisions",
-            "title": "Archived Lineage"
+            "title": "Archived Lineage",
+            "authority_ref": "ADR-0059"
           }
         ]
       },
@@ -16730,7 +16874,8 @@
             "review": "when the ADR form version changes",
             "removal": "when decision lineage has another registered owner",
             "parent_id": "adr-traceability",
-            "title": "Lifecycle Traceability"
+            "title": "Lifecycle Traceability",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "adr-accepted-retained-form",
@@ -16756,7 +16901,8 @@
               ],
               "optional": [],
               "forbidden": []
-            }
+            },
+            "authority_ref": "ADR-0059"
           }
         ]
       },
@@ -17070,7 +17216,8 @@
             "review": "when the Spec form version changes",
             "removal": "when Spec traceability has another registered owner",
             "parent_id": "spec.acceptance",
-            "title": "Lifecycle Traceability"
+            "title": "Lifecycle Traceability",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "spec-approved-retained-form",
@@ -17098,7 +17245,8 @@
             "body_contract": {
               "section": "References",
               "table_heading": "Lifecycle Traceability"
-            }
+            },
+            "authority_ref": "ADR-0059"
           }
         ]
       },
@@ -17508,7 +17656,8 @@
               "plan.intent.2": "Goal and Boundary",
               "plan.work.1": "Work Breakdown",
               "plan.promotion.1": "Owner and Receipt"
-            }
+            },
+            "authority_ref": "ADR-0059"
           }
         ]
       },
@@ -17895,7 +18044,8 @@
             "review": "when the Task form version changes",
             "removal": "when Task work items have another registered owner",
             "parent_id": "task-execution-log",
-            "title": "Lifecycle Traceability"
+            "title": "Lifecycle Traceability",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "task-residue-handoff",
@@ -17906,7 +18056,8 @@
             "review": "when the work residue ledger design changes or the Task form version changes",
             "removal": "when the work residue ledger has another registered host for residue",
             "parent_id": "task-verification-evidence",
-            "title": "Residue Handoff"
+            "title": "Residue Handoff",
+            "authority_ref": "ADR-0059"
           },
           {
             "id": "task-evidence-local-columns",
@@ -17922,11 +18073,17 @@
               "Location",
               "Required",
               "Resolves"
-            ]
+            ],
+            "authority_ref": "ADR-0059"
           }
         ]
       }
-    ]
+    ],
+    "core": {
+      "contract_id": "workspace-document-role-design",
+      "contract_version": "4.0.0",
+      "sha256": "3ac2806ec2db8b9f7cd320faa1b5bfe36675624555e63269783be8cdc2039a0e"
+    }
   },
   "frontmatter_keys": [
     {

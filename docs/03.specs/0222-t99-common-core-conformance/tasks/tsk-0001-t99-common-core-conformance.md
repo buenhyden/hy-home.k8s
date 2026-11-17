@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.7.0"
+version: "0.8.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -78,7 +78,7 @@ Recorded before any code changes, as the Spec requires. A registry member that h
 
 | Core member | Registry member | Rule |
 | --- | --- | --- |
-| identity `contract_id`, `contract_version` | `common_forms.core.contract_id`, `.contract_version`, `.source_sha256` | New; `stage`, `approval_ref`, `source` and `content_digest` stay as recorded |
+| identity `contract_id`, `contract_version` | `common_forms.core.contract_id`, `.contract_version`, `.sha256` | New; `stage`, `approval_ref`, `source` and `content_digest` stay as recorded |
 | role | form `core_role` (or native `template_definition.core_role`) | New; one of 19 core roles, `domain` or `native`; `domain` and `native` carry `classification` (`owner`, `reason`, `review_trigger`, `authority_ref`) |
 | `purpose`, `non_goals`, `metadata_policy`, `language`, `status`, `relationships`, `lifecycle`, `rules` | form `core.<member>` | New; verbatim core values |
 | section `section_id`, `level`, `parent_id`, `order` | section `section_id`, `level`, `parent_id`, `order` | Existing; equal values |
@@ -90,6 +90,20 @@ Recorded before any code changes, as the Spec requires. A registry member that h
 | table `table_id`, `section_id`, `required_when`, `empty_policy` | template table `table_id`, `section`, `required_when`, `empty_policy` | `table_id`, `required_when` and `empty_policy` are new; `section` takes the core H2 ID |
 | column `label`, `key`, `value_type`, `meaning`, `required` | template column `key`, `id`, `data_type`, `meaning`, `required` | `key` carries the label as the header text; `id` is new and holds the core key; `data_type` takes the core value type; `meaning` and `required` take core values |
 | extension `reason`, `validation`, `review_trigger`, `authority_ref` | extension `condition`, `verification`, `review`, `authority_ref` | `authority_ref` is new: `ADR-0059` for entries before this Spec, `SPEC-0222` for new ones |
+
+WORK-001 implemented the field map's registry side:
+
+- **Schema.** `document-profile.schema.json` gains the `common_forms.core` identity, `core_role`, `classification`, the role and section core members, the core table fields and the required extension `authority_ref`.
+- **Registry data.**
+  - The `common_forms.core` identity (SHA-256 of the package core).
+  - `authority_ref: ADR-0059` on all 61 existing extensions.
+  - `core_role: domain` with a classification on the ten domain forms, and `core_role: native` in the `template_definition` of the three provider-native templates.
+- **Loader.** `CommonForm` and `CommonFormsRecord` read the new members, and `FormExtension` reads `authority_ref`.
+- **Check.** `_core_role_diagnostics` refuses two things:
+  - a core-role form section without its core members (`REGISTRY_CORE_SECTION`);
+  - a template table that is missing, or differs from the core in section, condition, empty policy, labels, keys, types, meanings, requiredness, order or column count (`REGISTRY_CORE_TABLE`), and a core table ID outside a core-role form.
+
+The identity hash key is `sha256`, not `source_sha256` as first written in the field map. The first staged run failed `detect-secrets` on that line, and the repository's identity-key exclusion admits only the `sha256` key. No form carries a core role yet; each later unit adds its own. The Stage 99 README describes the binding.
 
 ### Blockers and Decisions
 
@@ -121,6 +135,8 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | EVD-004 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Independent review of the draft package | The same read-only code-reviewer agent over the staged 0.2.0 Spec, Plan and Task, 2026-11-17; risk class `high` | FAIL | APPROVE WITH CHANGES: 14 findings, among them the Stage 02 rule on accepted ADRs, the staged `core_role` rollout, the core identity and field map, predictable stop cases (policy and requirement tables), native binding, review gates, and tables with no core counterpart. 0.3.0 applies them. | yes | none |
 | EVD-005 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Independent review of the draft package | The same agent over the staged 0.3.0 package, 2026-11-17; risk class `high` | PASS | All 14 earlier findings applied; seven small edits remained (native binding inside `template_definition`, the `classification` member, two counts, these review rows, the work order wording, recorded status reading, Task acceptance values), and 0.4.0 applies them. The reviewer stated the package is ready to approve after these edits. | yes | EVD-003, EVD-004 |
 | EVD-006 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Spec/Plan approval | Direct current-session user answer `요구사항에 작성된 대로 진행하고 구현한다.` (proceed and implement as the requirements state) to the SPEC-0222 approval question naming spec.md `8bff1cd0` and plan.md `4db258c2` of draft commit `f5022431`, 2026-11-17; risk class `high` | PASS | Approves the reviewed Spec and Plan content of `f5022431` for implementation; the approved files differ from it only in `status` and `version`. The answer does not accept a criterion: VAL-CORE-001 to VAL-CORE-004 stay pending until the user's acceptance. | yes | none |
+| EVD-007 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Failing first | `python3 -m unittest tests.test_common_form_tree.CoreRoleBindingTests` with the new tests over an export of `294156dc`; pinned venv, 2026-11-17 | PASS | Observed the defect: 6 tests, 9 failures and 2 errors; the registry carried no core identity, classification or `authority_ref`, and no drift check existed. | yes | none |
+| EVD-008 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Focused tests and strict validators after the change | The 32 test modules that read the registry, its schema or TemplateDefinitions; the strict registry, markdown profile, link and lifecycle validators; agent governance and ledger gates; pinned venv, 2026-11-17 | PASS | `tests.test_common_form_tree` 423 tests OK with 3 skips after 25 extension fixtures gained `authority_ref`; the other 31 modules passed in the first run; every validator passed. | yes | none |
 
 ### Resolution Links
 

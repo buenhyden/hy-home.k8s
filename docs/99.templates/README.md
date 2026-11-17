@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.39.0"
+version: "0.40.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -155,6 +155,14 @@ form 경로의 대응은 Registry만 소유한다.
   되며, 그때 Markdown profile 검증은 fence·frontmatter·placeholder 검사만 적용하고
   heading 규칙은 적용하지 않는다. ADR-0001부터 ADR-0061까지의 accepted ADR은
   등록된 retained form의 H2 목록과 그 검사를 ADR-0062에 따라 유지한다.
+  SPEC-0222에 따라 `common_forms.core`는 채택한 공통 core의 `contract_id`,
+  `contract_version`, 원본 SHA-256을 기록한다. form의 `core_role`은 19개 core
+  역할 중 하나이거나 `domain`이며, form이 없는 `provider-native` 템플릿은
+  `template_definition`에 `core_role: native`를 둔다. `domain`과 `native`에는
+  소유자·이유·검토 조건·권한 근거를 담은 `classification`이 있다. core 역할 form은
+  core 구성원을 그대로 담고, 각 템플릿이 core 표의 ID·조건·열·타입을 정확히
+  가지는지 엄격 Registry 검사가 확인한다(`REGISTRY_CORE_TABLE`,
+  `REGISTRY_CORE_SECTION`). 모든 지역 확장은 `authority_ref`를 가진다.
 - **Core SDLC forms**: physical `requirements/`, `architecture/`, `specs/`
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
   `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의

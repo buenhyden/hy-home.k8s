@@ -859,6 +859,8 @@ class FormExtension:
     table: str | None = None
     columns: tuple[str, ...] = ()
     artifact_ids: tuple[str, ...] = ()
+    # SPEC-0222: the decision that registered this extension.
+    authority_ref: str = ""
 
     def keeps_identity(self, identity: str) -> bool:
         """Whether a retained form's bound admits this artifact identity."""
@@ -879,6 +881,11 @@ class CommonForm:
     extension_policy: str
     sections: tuple[FormSection, ...]
     extensions: tuple[FormExtension, ...]
+    # SPEC-0222: the common core role this form binds, its domain or native
+    # classification, and the verbatim role-level core members.
+    core_role: str | None = None
+    classification: Mapping[str, str] | None = None
+    core: Mapping[str, Any] | None = None
 
     def retained_headings(
         self, status: str, identity: str = ""
@@ -1093,6 +1100,9 @@ class CommonFormsRecord:
     source_revision: str | None = None
     content_digest: str | None = None
     approval_ref: str | None = None
+    # SPEC-0222: the identity of the adopted common core, as a mapping of
+    # contract_id, contract_version and sha256.
+    core: Mapping[str, str] | None = None
 
 
 def extension_name(extension: Mapping[str, Any] | SharedExtension) -> str:
@@ -3784,6 +3794,151 @@ def _table_diagnostics(
     return faults
 
 
+# SPEC-0222: the roles of the adopted common core; `domain` and `native` classify
+# a form or native template that no core role describes.
+CORE_ROLES = frozenset(
+    {
+        "requirement",
+        "architecture",
+        "decision",
+        "spec",
+        "plan",
+        "task",
+        "guide",
+        "runbook",
+        "policy",
+        "incident",
+        "postmortem",
+        "research",
+        "audit",
+        "data-reference",
+        "root-readme",
+        "stage-readme",
+        "service-readme",
+        "agent-instructions",
+        "skill",
+    }
+)
+
+
+def _core_role_diagnostics(
+    forms: Sequence[Mapping[str, Any]],
+    profiles_by_id: Mapping[str, Mapping[str, Any]],
+) -> list[tuple[str, str, str, str]]:
+    """SPEC-0222: a core-role form carries every core member, and each of its
+    templates carries each core table exactly; no other table claims a core ID."""
+
+    faults: list[tuple[str, str, str, str]] = []
+    for form in forms:
+        form_id = form["form_id"]
+        templates = [
+            (profile_id, profile)
+            for profile_id, profile in profiles_by_id.items()
+            if profile["mode"] == "template" and profile.get("document_role") == form_id
+        ]
+        if form.get("core_role") not in CORE_ROLES:
+            for profile_id, profile in templates:
+                for table in (profile.get("template_definition") or {}).get(
+                    "tables", ()
+                ):
+                    if "table_id" in table:
+                        faults.append(
+                            (
+                                "REGISTRY_CORE_TABLE",
+                                "a core table ID only on a template of a core-role form",
+                                f"{table['name']}: {table['table_id']}",
+                                profile_id,
+                            )
+                        )
+            continue
+        stack = list(form["sections"])
+        while stack:
+            section = stack.pop()
+            stack.extend(section["children"])
+            core = section.get("core")
+            missing = (
+                ["core"]
+                if core is None
+                else [
+                    key
+                    for key in ("prohibited_content", "empty_policy")
+                    if section["level"] == 2 and key not in core
+                ]
+            )
+            if missing:
+                faults.append(
+                    (
+                        "REGISTRY_CORE_SECTION",
+                        "every section of a core-role form carries its core members",
+                        f"{section['section_id']}: missing {', '.join(missing)}",
+                        "",
+                    )
+                )
+        core_tables = {table["table_id"]: table for table in form["core"]["tables"]}
+        for profile_id, profile in templates:
+            tables = (profile.get("template_definition") or {}).get("tables", ())
+            by_id = {
+                table["table_id"]: table for table in tables if "table_id" in table
+            }
+            for table_id in sorted(set(by_id) - set(core_tables)):
+                faults.append(
+                    (
+                        "REGISTRY_CORE_TABLE",
+                        "a template table ID that names a core table of its role",
+                        table_id,
+                        profile_id,
+                    )
+                )
+            for table_id, core_table in core_tables.items():
+                table = by_id.get(table_id)
+                expected = (
+                    core_table["section_id"],
+                    core_table["required_when"],
+                    core_table["empty_policy"],
+                    [
+                        (
+                            c["label"],
+                            c["key"],
+                            c["value_type"],
+                            c["meaning"],
+                            c["required"],
+                        )
+                        for c in core_table["columns"]
+                    ],
+                )
+                actual = (
+                    None
+                    if table is None
+                    else (
+                        table["section"],
+                        table.get("required_when"),
+                        table.get("empty_policy"),
+                        [
+                            (
+                                c["key"],
+                                c.get("id"),
+                                c["data_type"],
+                                c["meaning"],
+                                c["required"],
+                            )
+                            for c in table["columns"]
+                        ],
+                    )
+                )
+                if actual != expected:
+                    faults.append(
+                        (
+                            "REGISTRY_CORE_TABLE",
+                            "each template of a core-role form carries each core table "
+                            "with its section, condition, empty policy and exact columns",
+                            f"{table_id}: "
+                            + ("missing" if table is None else "differs from the core"),
+                            profile_id,
+                        )
+                    )
+    return faults
+
+
 def _form_registry_diagnostics(
     root: Path,
     raw_registry: Mapping[str, Any],
@@ -3809,6 +3964,7 @@ def _form_registry_diagnostics(
         )
     roles_with_form = set(form_ids)
     forms_by_role = {form["form_id"]: form for form in forms}
+    faults.extend(_core_role_diagnostics(forms, profiles_by_id))
     for profile_id, profile in profiles_by_id.items():
         role = profile.get("document_role")
         if "sections" in profile:
@@ -3963,6 +4119,7 @@ def _common_form_from_mapping(raw: Mapping[str, Any]) -> CommonForm:
             title=item.get("title"),
             statuses=tuple(item.get("statuses", ())),
             identity_bound=item.get("identity_bound"),
+            authority_ref=item.get("authority_ref", ""),
             body_contract=(
                 None
                 if item.get("body_contract") is None
@@ -3995,6 +4152,9 @@ def _common_form_from_mapping(raw: Mapping[str, Any]) -> CommonForm:
         extension_policy=raw["extension_policy"],
         sections=tuple(section(item) for item in raw["sections"]),
         extensions=tuple(extension(item) for item in raw["extensions"]),
+        core_role=raw.get("core_role"),
+        classification=raw.get("classification"),
+        core=raw.get("core"),
     )
 
 

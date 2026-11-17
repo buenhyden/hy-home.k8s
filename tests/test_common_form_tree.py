@@ -153,6 +153,7 @@ RUNBOOK_EXTENSIONS = [
         "removal": (
             "when the common Runbook form gains an H3 for non-rollback recovery"
         ),
+        "authority_ref": "ADR-0059",
         "parent_id": "runbook.escalation",
         "title": "Recovery Procedures",
     },
@@ -167,6 +168,7 @@ RUNBOOK_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Runbook form version changes",
         "removal": "when runbook lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "runbook.verification",
         "title": "Lifecycle Traceability",
     },
@@ -269,6 +271,7 @@ POLICY_EXTENSION = {
     "verification": "the body-contract check",
     "review": "when the Policy form version changes",
     "removal": "when policy lineage has another registered owner",
+    "authority_ref": "ADR-0059",
     "parent_id": "policy.ownership",
     "title": "Lifecycle Traceability",
 }
@@ -315,6 +318,7 @@ SKILL_EXTENSION = {
     "verification": "the form tree check",
     "review": "when the Skill form version changes",
     "removal": "when the common Skill form gains an authority H3",
+    "authority_ref": "ADR-0059",
     "parent_id": "skill.trigger",
     "title": "Authority Boundary",
 }
@@ -372,6 +376,7 @@ PACK_EXTENSIONS = [
         "verification": "the form tree check",
         "review": "when the Reference Pack README form changes",
         "removal": ("when the Reference Pack README form gains a matching section"),
+        "authority_ref": "ADR-0059",
         "parent_id": "reference-pack-readme-pack-contract",
         "title": "External Finding Vocabulary",
     },
@@ -385,6 +390,7 @@ PACK_EXTENSIONS = [
         "verification": "the form tree check",
         "review": "when the Reference Pack README form changes",
         "removal": ("when the Reference Pack README form gains a matching section"),
+        "authority_ref": "ADR-0059",
         "parent_id": "reference-pack-readme-pack-contract",
         "title": "Separate Evidence Axes",
     },
@@ -421,6 +427,7 @@ REQUIREMENT_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Requirement form version changes",
         "removal": "when requirement lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "requirement.relations",
         "title": "Lifecycle Traceability",
     },
@@ -435,6 +442,7 @@ REQUIREMENT_EXTENSIONS = [
         "verification": ("the package-exit check and the retired-identity reservation"),
         "review": "when the Requirement form version changes",
         "removal": "when requirement lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "requirement.relations",
         "title": "Archived Lineage",
     },
@@ -488,6 +496,7 @@ ARCHITECTURE_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Architecture form version changes",
         "removal": "when architecture lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "architecture.decisions",
         "title": "Lifecycle Traceability",
     },
@@ -503,6 +512,7 @@ ARCHITECTURE_EXTENSIONS = [
         "verification": "the retired-identity reservation",
         "review": "when the Architecture form version changes",
         "removal": "when architecture lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "architecture.decisions",
         "title": "Archived Lineage",
     },
@@ -565,6 +575,7 @@ ADR_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the ADR form version changes",
         "removal": "when decision lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "adr-traceability",
         "title": "Lifecycle Traceability",
     },
@@ -583,6 +594,7 @@ ADR_EXTENSIONS = [
             "when no ADR in the range remains in the tree, each having been "
             "replaced by a successor; the bound is never widened"
         ),
+        "authority_ref": "ADR-0059",
         "statuses": ["accepted"],
         "identity_bound": ADR_BOUND,
         "retained_sections": ADR_RETAINED_LISTS,
@@ -1094,6 +1106,7 @@ SPEC_FORM_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Spec form version changes",
         "removal": "when Spec traceability has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "spec.acceptance",
         "title": "Lifecycle Traceability",
     },
@@ -1109,6 +1122,7 @@ SPEC_FORM_EXTENSIONS = [
         "verification": "tests/test_common_form_tree.py",
         "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
         "removal": "when neither package remains in the tree; the bound is never widened",
+        "authority_ref": "ADR-0059",
         "statuses": ["approved"],
         "identity_bound": SPEC_RETAINED_BOUND,
         "retained_sections": {
@@ -1135,6 +1149,7 @@ PLAN_FORM_EXTENSIONS = [
         "verification": "tests/test_common_form_tree.py",
         "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
         "removal": "when neither package remains in the tree; the bound is never widened",
+        "authority_ref": "ADR-0059",
         "statuses": ["approved"],
         "identity_bound": PLAN_RETAINED_BOUND,
         "retained_sections": {
@@ -1244,6 +1259,7 @@ SDLC_TASK_FORM_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Task form version changes",
         "removal": "when Task work items have another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "task-execution-log",
         "title": "Lifecycle Traceability",
     },
@@ -1259,6 +1275,7 @@ SDLC_TASK_FORM_EXTENSIONS = [
         "verification": "the work residue ledger check of scripts/validate-work-residue-ledger.py",
         "review": "when the work residue ledger design changes or the Task form version changes",
         "removal": "when the work residue ledger has another registered host for residue",
+        "authority_ref": "ADR-0059",
         "parent_id": "task-verification-evidence",
         "title": "Residue Handoff",
     },
@@ -1281,6 +1298,7 @@ SDLC_TASK_FORM_EXTENSIONS = [
             "when the common contract names these columns or the rules that read "
             "them are retired"
         ),
+        "authority_ref": "ADR-0059",
         "table": "Results",
         "columns": ["Work Unit", "Location", "Required", "Resolves"],
     },
@@ -1405,6 +1423,7 @@ INCIDENT_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the form version changes",
         "removal": "when incident lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "incident.resolution",
         "title": "Lifecycle Traceability",
     }
@@ -1418,6 +1437,7 @@ POSTMORTEM_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the form version changes",
         "removal": "when incident lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "postmortem.actions",
         "title": "Lifecycle Traceability",
     },
@@ -1431,6 +1451,7 @@ POSTMORTEM_EXTENSIONS = [
         "verification": "the form tree check",
         "review": "when the Postmortem form version changes",
         "removal": "when the common Postmortem form gains a What Went Well H3",
+        "authority_ref": "ADR-0059",
         "parent_id": "postmortem.facts",
         "title": "What Went Well",
     },
@@ -1479,6 +1500,7 @@ GUIDE_EXTENSION = {
     "verification": "the body-contract check",
     "review": "when the Guide form version changes",
     "removal": "when guide lineage has another registered owner",
+    "authority_ref": "ADR-0059",
     "parent_id": "guide.troubleshoot",
     "title": "Lifecycle Traceability",
 }
@@ -1578,6 +1600,7 @@ def extension(**fields: object) -> dict:
         "verification": "tests/test_common_form_tree.py",
         "review": "each release",
         "removal": "when no guide needs it",
+        "authority_ref": "ADR-0059",
         "parent_id": "g-procedure",
         "title": "Cluster Notes",
     }
@@ -2141,6 +2164,7 @@ class FormRegistryTests(unittest.TestCase):
             "verification": "tests/test_common_form_tree.py",
             "review": "each release",
             "removal": "when no terminal guide remains",
+            "authority_ref": "ADR-0059",
             "statuses": ["retired"],
             "retained_sections": {
                 "required": ["Overview"],
@@ -6412,6 +6436,7 @@ class RetainedFormTests(unittest.TestCase):
             "verification": "tests/test_common_form_tree.py",
             "review": "each release",
             "removal": "when no accepted ADR keeps the old headings",
+            "authority_ref": "ADR-0059",
             "statuses": ["accepted"],
             "retained_sections": {
                 "required": ["Context", "Decision", "Consequences"],
@@ -8254,3 +8279,177 @@ class MeaningMapRecoveryPointerTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def core_bound_guide(raw: dict) -> dict:
+    """SPEC-0222: bind the guide form to a small synthetic core whose one table
+    the guide template carries exactly; the real core members arrive per unit."""
+
+    form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
+    columns = [
+        {
+            "key": "step",
+            "label": "Step",
+            "value_type": "integer",
+            "meaning": "order",
+            "required": True,
+        },
+        {
+            "key": "action",
+            "label": "Action",
+            "value_type": "string",
+            "meaning": "allowed action",
+            "required": True,
+        },
+    ]
+    form["core_role"] = "guide"
+    form["core"] = {
+        "purpose": "p",
+        "non_goals": "n",
+        "metadata_policy": {},
+        "tables": [
+            {
+                "table_id": "guide.steps",
+                "section_id": "guide.steps",
+                "required_when": "ordered_procedure",
+                "columns": columns,
+                "empty_policy": "no invented rows",
+            }
+        ],
+        "language": {},
+        "status": "s",
+        "relationships": {},
+        "lifecycle": {},
+        "rules": ["r"],
+    }
+    stack = list(form["sections"])
+    while stack:
+        item = stack.pop()
+        stack.extend(item["children"])
+        item["core"] = {"title_ko": "t", "content_rule": "c"}
+        if item["level"] == 2:
+            item["core"].update(prohibited_content="x", empty_policy="e")
+    table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
+    table.update(
+        table_id="guide.steps",
+        section="guide.steps",
+        required_when="ordered_procedure",
+        empty_policy="no invented rows",
+        columns=[
+            {
+                "key": c["label"],
+                "id": c["key"],
+                "data_type": c["value_type"],
+                "meaning": c["meaning"],
+                "required": c["required"],
+            }
+            for c in columns
+        ],
+    )
+    return raw
+
+
+class CoreRoleBindingTests(unittest.TestCase):
+    """SPEC-0222 VAL-CORE-001: the registry carries the common core binding."""
+
+    def test_the_repository_records_the_core_identity_and_classifications(
+        self,
+    ) -> None:
+        raw = load_raw()
+        self.assertEqual(
+            raw["common_forms"]["core"]["contract_id"],
+            "workspace-document-role-design",
+        )
+        self.assertEqual(raw["common_forms"]["core"]["contract_version"], "4.0.0")
+        forms = raw["common_forms"]["forms"]
+        for form in forms:
+            for extension in form["extensions"]:
+                with self.subTest(extension=extension["id"]):
+                    self.assertTrue(extension["authority_ref"].strip())
+            if form.get("core_role") == "domain":
+                self.assertTrue(form["classification"]["authority_ref"].strip())
+        natives = [
+            p
+            for p in raw["profiles"]
+            if (p.get("template_definition") or {}).get("core_role") == "native"
+        ]
+        self.assertTrue(natives)
+        for profile in natives:
+            self.assertEqual(profile["document_role"], "provider-native")
+        self.assertEqual(rules_of(raw), set())
+
+    def test_the_schema_refuses_a_misplaced_or_missing_core_member(self) -> None:
+        cases = {}
+        raw = load_raw()
+        domain = next(
+            f for f in raw["common_forms"]["forms"] if f.get("core_role") == "domain"
+        )
+        domain["core"] = {}
+        cases["domain with core"] = raw
+        raw = load_raw()
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
+        form["core_role"] = "guide"
+        cases["core role without core"] = raw
+        raw = load_raw()
+        del raw["common_forms"]["forms"][0]["extensions"][0]["authority_ref"]
+        cases["extension without authority_ref"] = raw
+        raw = load_raw()
+        native = next(
+            p
+            for p in raw["profiles"]
+            if (p.get("template_definition") or {}).get("core_role") == "native"
+        )
+        del native["template_definition"]["classification"]
+        cases["native without classification"] = raw
+        for name, payload in cases.items():
+            with self.subTest(case=name):
+                self.assertIn("REGISTRY_SCHEMA", rules_of(payload))
+
+    def test_a_core_bound_form_with_its_exact_table_passes(self) -> None:
+        self.assertEqual(rules_of(core_bound_guide(load_raw())), set())
+
+    def test_each_table_drift_is_refused(self) -> None:
+        def drift(change) -> set[str]:
+            raw = core_bound_guide(load_raw())
+            table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
+            change(table)
+            return rules_of(raw)
+
+        cases = {
+            "relabeled column": lambda t: t["columns"][0].update(key="Order"),
+            "same label, other type": lambda t: t["columns"][0].update(
+                data_type="string"
+            ),
+            "appended column": lambda t: t["columns"].append(
+                {
+                    "key": "Note",
+                    "id": "note",
+                    "data_type": "string",
+                    "meaning": "m",
+                    "required": False,
+                }
+            ),
+            "reordered columns": lambda t: t["columns"].reverse(),
+            "other condition": lambda t: t.update(required_when="always"),
+            "other section": lambda t: t.update(section="guide.purpose"),
+        }
+        for name, change in cases.items():
+            with self.subTest(case=name):
+                self.assertIn("REGISTRY_CORE_TABLE", drift(change))
+
+    def test_a_missing_core_table_or_section_member_is_refused(self) -> None:
+        raw = core_bound_guide(load_raw())
+        table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
+        for key in ("table_id", "required_when", "empty_policy"):
+            del table[key]
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_TABLE"})
+        raw = core_bound_guide(load_raw())
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
+        del form["sections"][0]["core"]["empty_policy"]
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_SECTION"})
+
+    def test_a_core_table_id_outside_a_core_role_form_is_refused(self) -> None:
+        raw = load_raw()
+        table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
+        table.update(table_id="guide.steps", required_when="w", empty_policy="e")
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_TABLE"})
