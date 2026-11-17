@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.28"
+version: "0.2.29"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -293,6 +293,7 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-178 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W01 vocabulary and contract recheck | `.agents/knowledge/glossary.md`, `.agents/governance/quality.md` QUAL-R015 and QUAL-R016, `.agents/governance/document-lifecycle.md` draft boundary and `.claude/provider.md` binding ownership at `c6d997fb`, 2026-11-16 | PASS | All 64 vocabulary rows use the seven common columns, with numeric contract versions. TERM-REMOVAL cited closed package decision IDs, and now cites REQ-0003-FR-0020. Risk-based review, the draft boundary and the provider binding ownership already matched the confirmed decisions. | no | none |
 | EVD-179 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W02 owner and resume condition recheck | The work residue ledger, the W02 Disposition table and the Residue Handoff rows at `84d2e981`, read against the 4.2.0 package prompt list, 2026-11-17 | PASS | The 4.2.0 package splits W10 into seven tasks, so the owner `W10` and the condition "When W10 starts" no longer named one owner or trigger. OPEN-08, R147-16 and W03-H23 now name W10-INFRA with a concrete resume condition. DOC-S99 no longer cites the closed OPEN-09. No entry changed state, and no source, check or user file was removed. | no | none |
 | EVD-180 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-VERSION numeric version recheck | `scripts/semver_grammar.py`, the version patterns of `frontmatter.schema.json`, `document-profile.schema.json` and `template-definition.schema.json`, `scripts/release.py`, and the 24 cases of the package `version-fixtures.json` at `bb0d1887`, 2026-11-17 | PASS | All 24 package cases match `is_numeric_version`, and `numeric_version_order` orders 1.9.0 before 1.10.0. The schema patterns end in `(?![\s\S])`, so a trailing newline fails. Release tags keep their own `v`-prefixed SemVer pattern, Kubernetes API `version: v1` labels stay unchanged, and `contract_id` and `contract_version` are separate fields. `tests.test_semver_grammar`, `tests.test_semver_versions` and `tests.test_frontmatter_key_contract`: 104 tests OK. No change was needed. | no | none |
+| EVD-181 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W04-LIFECYCLE draft, approval and relation recheck | `.agents/governance/document-lifecycle.md` DOCLIFE-R001 to R003, the Spec, Plan, Task and Requirement status domains of `docs/99.templates/registry.json`, the Plan template tables, `readme_navigation.forbidden_index_columns`, the ledger entries W05-H05 and W07-H03, and `tests.test_task_execution_contract`, `tests.test_task_acceptance_contract`, `tests.test_task_acceptance_boundaries`, `tests.test_document_lifecycle_cumulative_history`, `tests.test_current_executable_references`, `tests.test_relationship_contract`, `tests.test_document_lifecycle_package_exit` and `tests.test_shared_contract_binding` at `235fcb73`, 2026-11-17 | PASS | 227 tests OK. Draft creation, revision, review and focused checks stay allowed; a draft parent, a status edit or a writing PASS does not activate a Task; scoped approval binds the current parents and request revision; a changed or cancelled request and a superseded brief block resume; rename, deletion and recreation are refused; the registry status domains equal the policy prose. No change was needed. | no | none |
 
 #### Edition Delta
 
@@ -2389,6 +2390,26 @@ D27. No attached k8s action targets W03-VERSION.
 
 The repository has no Node reader, so the cross-language case of D02 does
 not apply. Renumbering does not reset any version; it stays with Q07-CUTOVER.
+
+#### W04-LIFECYCLE Recheck (4.2.0)
+
+The 2026-11-17 request applies the 4.2.0 W04-LIFECYCLE prompt with the same
+limits, starting from merged `235fcb73`. The package marks this task
+reported complete (`DELTA_ONLY_REPORTED_COMPLETE`), so only differences new
+in 4.2.0 are in scope. The designs read were D03, D15, D25 and the added D26,
+D27 and D28. No attached k8s action targets W04-LIFECYCLE.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Q-DRAFT: draft authoring and review allowed; draft-only implementation, operation and completion refused | KEEP_VERIFIED | DOCLIFE-R002; EVD-181 | none |
+| A status edit or a test PASS grants no execution authority; approval binds scope and request revision | KEEP_VERIFIED | EVD-181 | none |
+| Approval change, cancellation, resume, stale brief and relation rename or delete, positive and negative | KEEP_VERIFIED | EVD-181 | none |
+| Status meaning equal in registry, templates, validators and policy | KEEP_VERIFIED | Registry status domains and DOCLIFE-R001 | none |
+| D26: a Plan carries no progress state and a README writes back no status | KEEP_VERIFIED | Plan template columns; `forbidden_index_columns` | none |
+| Original approval and revocation facts behind a receipt | UNVERIFIED | W05-H05 and W07-H03 hold them | W05, W07 |
+
+D27 path and numbering changes stay with DOC-PATH-PLAN and Q07-CUTOVER, and
+D28 proposal dispositions with SDLC-STRUCTURE.
 
 ### Resolution Links
 
