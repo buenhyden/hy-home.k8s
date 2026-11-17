@@ -3948,9 +3948,11 @@ def _traceability_lineage(context: Context, path: PurePosixPath) -> str:
     profile = next(
         (item for item in registry.profiles if item.profile_id == profile_id), None
     )
-    relationship_section = (
-        profile.body_contract.section if profile and profile.body_contract else None
+    # A retained document reads the H2 its retained form keeps (SPEC-0222).
+    location = (
+        _body_contract_location(context.texts[path], profile) if profile else None
     )
+    relationship_section = location[0] if location else None
     section = (
         _exact_heading_section(context.texts[path], f"## {relationship_section}")
         if relationship_section

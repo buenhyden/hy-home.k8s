@@ -9,6 +9,7 @@ import json
 import re
 import sys
 import tempfile
+import types
 import unittest
 from pathlib import Path, PurePosixPath
 
@@ -557,13 +558,12 @@ ARCHITECTURE_TABLE_KEYS = {
 # SPEC-0198 (W03-D02, W03-D03, W03-D08, W03-D52, W03-D57, W03-D69): the ADR
 # form, its local H3 extension, its retained form for ADR-0001 to ADR-0061 and
 # its two tables; the decision profiles keep their body contract and carry no
-# H2 list.
+# H2 list. SPEC-0222 WORK-006 binds the form to the core `decision` role.
 ADR_TREE = (
     ("Context", ("Problem and Drivers", "Decision Scope")),
+    ("Options", ("Considered Options", "Trade-offs")),
     ("Decision", ("Chosen Option", "Authority and Effect")),
-    ("Alternatives", ("Considered Options", "Trade-offs")),
     ("Consequences", ("Impacts", "Follow-up")),
-    ("Traceability", ("Sources", "Supersession")),
 )
 # The closed range ADR-0001 to ADR-0061 and nothing else.
 ADR_BOUND = "^ADR-(?:000[1-9]|00[1-5][0-9]|006[01])$"
@@ -593,7 +593,7 @@ ADR_EXTENSIONS = [
         "review": "when the ADR form version changes",
         "removal": "when decision lineage has another registered owner",
         "authority_ref": "ADR-0059",
-        "parent_id": "adr-traceability",
+        "parent_id": "decision.decision",
         "title": "Lifecycle Traceability",
     },
     {
@@ -615,11 +615,24 @@ ADR_EXTENSIONS = [
         "statuses": ["accepted"],
         "identity_bound": ADR_BOUND,
         "retained_sections": ADR_RETAINED_LISTS,
+        "body_contract": {
+            "section": "Traceability",
+            "table_heading": "Lifecycle Traceability",
+        },
     },
 ]
 ADR_TABLE_KEYS = {
+    "Options": (
+        "decision.options",
+        ("Option", "Benefit", "Cost and Risk", "Reason"),
+        0,
+        "Option",
+    ),
+    # SPEC-0222: the former Alternatives table stays as a local table of its
+    # own after the core table, so a recorded row whose Benefit has no source
+    # fact keeps every fact (ADR-0062).
     "Alternatives": (
-        "adr-alternatives-trade-offs",
+        "decision.options.2",
         ("Alternative", "Trade-off"),
         0,
         "Alternative",
@@ -1239,7 +1252,10 @@ TARGET_GROUPS = {
     "skill": ("trigger", "procedure", "output", "verification"),
     # SPEC-0222: the Task form takes the core section IDs.
     "task": ("scope", "work", "evidence", "acceptance", "handoff"),
+    "adr": ("context", "options", "decision", "consequences"),
 }
+# SPEC-0222: a form whose ID differs from its core role takes the role's prefix.
+CORE_PREFIX = {"adr": "decision"}
 
 
 def section_id_of(
@@ -1251,7 +1267,7 @@ def section_id_of(
 ) -> str:
     groups = TARGET_GROUPS.get(form_id)
     if groups is not None:
-        h2 = f"{form_id}.{groups[position - 1]}"
+        h2 = f"{CORE_PREFIX.get(form_id, form_id)}.{groups[position - 1]}"
         return h2 if n is None else f"{h2}.{n}"
     h2 = f"{form_id}-{slug(title)}"
     return h2 if child is None else f"{h2}-{slug(child)}"
@@ -1849,7 +1865,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ADR_EXTENSIONS,
                 ADR_TABLE_KEYS,
                 ADR,
-                "Traceability",
+                "Decision",
             ),
             (
                 "spec",
@@ -1926,7 +1942,6 @@ class RepositoryRegistryTests(unittest.TestCase):
                         for title in PACK_NOT_REQUIRED
                     },
                     "requirement": {"requirement.requirements.2"},
-                    "adr": {"adr-traceability-supersession"},
                     "reference-report": {
                         f"reference-report-{slug(h2)}-{slug(h3)}"
                         for h2, titles in REFERENCE_H3.items()
@@ -2043,7 +2058,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 "Quality Scenarios",
                 "Lifecycle Traceability",
             ],
-            "adr": ["Alternatives", "Lifecycle Traceability"],
+            "adr": ["Options", "Alternatives", "Lifecycle Traceability"],
             "spec": ["Criteria", "Lifecycle Traceability"],
             "plan": ["Work Breakdown", "Promotion"],
             "task": [
@@ -6788,18 +6803,31 @@ ADR_PATH = PurePosixPath("docs/02.architecture/decisions/0062-example.md")
 
 
 def adr_body(*, supersession: bool = True) -> str:
+    """A form-tree ADR: Sources and the optional Supersession stay as H4 under
+    Authority and Effect, and Lifecycle Traceability is the local H3 of Decision."""
+
     blocks = ["# ADR-0062: Decision title"]
     for h2, children in ADR_TREE:
         blocks.append(f"## {h2}")
         for h3 in children:
-            if h3 != "Supersession" or supersession:
-                blocks.append(f"### {h3}\n\nThe {h3} of the decision.")
-    blocks.append(
-        "### Lifecycle Traceability\n\n"
-        "| Decision lineage | Replacement relation | Affected Spec |\n"
-        "| --- | --- | --- |\n"
-        "| Architecture owner | N/A | N/A |"
-    )
+            blocks.append(f"### {h3}\n\nThe {h3} of the decision.")
+            if h3 == "Trade-offs":
+                blocks.append(
+                    "| Option | Benefit | Cost and Risk | Reason |\n"
+                    "| --- | --- | --- | --- |\n"
+                    "| One way | It is simple. | It is slow. | Chosen. |"
+                )
+            if h3 == "Authority and Effect":
+                blocks.append("#### Sources\n\nThe sources of the decision.")
+                if supersession:
+                    blocks.append("#### Supersession\n\nNo predecessor.")
+        if h2 == "Decision":
+            blocks.append(
+                "### Lifecycle Traceability\n\n"
+                "| Decision lineage | Replacement relation | Affected Spec |\n"
+                "| --- | --- | --- |\n"
+                "| Architecture owner | N/A | N/A |"
+            )
     return md(*blocks)
 
 
@@ -6814,16 +6842,14 @@ class AdrFormTests(unittest.TestCase):
         cls.profile = cls.profiles[ADR[0]]
         cls.form = next(f for f in cls.registry.common_forms if f.form_id == "adr")
 
-    def test_the_form_has_five_h2_ten_h3_and_one_conditional_h3(self) -> None:
+    def test_the_form_has_the_four_core_h2_and_eight_required_h3(self) -> None:
         self.assertEqual(self.form.title, "ADR")
         self.assertEqual(
             [(s.title, tuple(c.title for c in s.children)) for s in self.form.sections],
             list(ADR_TREE),
         )
         every = [n for s in self.form.sections for n in (s, *s.children)]
-        self.assertEqual(
-            [n.title for n in every if n.requiredness != "required"], ["Supersession"]
-        )
+        self.assertEqual([n.title for n in every if n.requiredness != "required"], [])
         self.assertFalse(any(n.link_only for n in every))
 
     def test_the_form_registers_one_local_h3_and_one_bounded_retained_form(
@@ -6832,11 +6858,15 @@ class AdrFormTests(unittest.TestCase):
         local, retained = self.form.extensions
         self.assertEqual(
             (local.kind, local.parent_id, local.title),
-            ("local_h3", "adr-traceability", "Lifecycle Traceability"),
+            ("local_h3", "decision.decision", "Lifecycle Traceability"),
         )
         self.assertEqual(
             (retained.kind, retained.statuses, retained.identity_bound),
             ("retained_form", ("accepted",), ADR_BOUND),
+        )
+        # The retained ADRs keep reading their lifecycle table under Traceability.
+        self.assertEqual(
+            retained.body_contract, ("Traceability", "Lifecycle Traceability")
         )
         self.assertEqual(
             retained.retained.required, tuple(ADR_RETAINED_LISTS["required"])
@@ -6850,7 +6880,7 @@ class AdrFormTests(unittest.TestCase):
                 self.assertNotIn("sections", raw)
                 self.assertEqual(raw["document_role"], "adr")
                 contract = raw["relationships"]["body_contract"]
-                self.assertEqual(contract["section"], "Traceability")
+                self.assertEqual(contract["section"], "Decision")
                 self.assertEqual(contract["table_heading"], "Lifecycle Traceability")
                 self.assertEqual(
                     contract["required_columns"],
@@ -6858,7 +6888,7 @@ class AdrFormTests(unittest.TestCase):
                 )
                 self.assertEqual(contract["enforced_statuses"], ["proposed"])
 
-    def test_the_two_tables_are_recorded_on_the_twin_and_copied_to_the_source(
+    def test_the_tables_are_recorded_on_the_twin_and_copied_to_the_source(
         self,
     ) -> None:
         twin, source = (self.profiles[i] for i in reversed(ADR))
@@ -6987,7 +7017,20 @@ class AdrFormTests(unittest.TestCase):
                     self.assertRegex(
                         text, rf"(?m)^### {re.escape(h3)}\n\n<!-- Author prompt:"
                     )
-        for gone in ("## Overview", "## Explicit Non-goals"):
+        # SPEC-0222: the former Traceability H3 stay as H4 under Authority and
+        # Effect, and the local Lifecycle Traceability H3 closes Decision.
+        self.assertRegex(
+            text,
+            r"(?s)### Authority and Effect\n.*\n#### Sources\n\n<!-- Author prompt:"
+            r".*\n#### Supersession\n\n<!-- Author prompt:"
+            r".*\n### Lifecycle Traceability\n.*\n## Consequences\n",
+        )
+        for gone in (
+            "## Overview",
+            "## Explicit Non-goals",
+            "## Alternatives",
+            "## Traceability",
+        ):
             self.assertNotIn(gone, text)
 
 
@@ -8997,6 +9040,131 @@ class OperationsCoreBindingTests(unittest.TestCase):
             [d.rule_id for d in MARKDOWN._table_diagnostics(path, profile, former)],
             ["BODY-TABLE-COLUMNS"],
         )
+
+
+DECISION_CORE_TREE = [
+    ("decision.context", "문제와 조건", ["decision.context.1", "decision.context.2"]),
+    ("decision.options", "대안", ["decision.options.1", "decision.options.2"]),
+    ("decision.decision", "결정", ["decision.decision.1", "decision.decision.2"]),
+    (
+        "decision.consequences",
+        "영향",
+        ["decision.consequences.1", "decision.consequences.2"],
+    ),
+]
+DECISION_OPTIONS_COLUMNS = [
+    ("Option", "option"),
+    ("Benefit", "benefit"),
+    ("Cost and Risk", "cost"),
+    ("Reason", "reason"),
+]
+
+
+class DecisionCoreBindingTests(unittest.TestCase):
+    """SPEC-0222 WORK-006: the ADR form binds the core decision role."""
+
+    def test_the_adr_form_carries_the_decision_core_and_its_table(self) -> None:
+        raw = load_raw()
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "adr")
+        self.assertEqual(form["core_role"], "decision")
+        self.assertEqual(form["core"]["purpose"], "중요 설계 선택의 이유")
+        self.assertEqual(
+            [
+                (
+                    s["section_id"],
+                    s["core"]["title_ko"],
+                    [c["section_id"] for c in s["children"]],
+                )
+                for s in form["sections"]
+            ],
+            DECISION_CORE_TREE,
+        )
+        (core_table,) = form["core"]["tables"]
+        self.assertEqual(
+            (
+                core_table["table_id"],
+                core_table["section_id"],
+                core_table["required_when"],
+                [(c["label"], c["key"]) for c in core_table["columns"]],
+            ),
+            (
+                "decision.options",
+                "decision.options",
+                "always",
+                DECISION_OPTIONS_COLUMNS,
+            ),
+        )
+        table = next(
+            t
+            for t in profile_of(raw, ADR[1])["template_definition"]["tables"]
+            if t.get("table_id") == "decision.options"
+        )
+        self.assertEqual(
+            [(c["key"], c["id"]) for c in table["columns"]], DECISION_OPTIONS_COLUMNS
+        )
+        # The kept Alternatives table is a local table of its own: no core ID.
+        local = next(
+            t
+            for t in profile_of(raw, ADR[1])["template_definition"]["tables"]
+            if t["name"] == "Alternatives"
+        )
+        self.assertEqual(local["authority_ref"], "SPEC-0222")
+        self.assertNotIn("table_id", local)
+        self.assertEqual(rules_of(raw), set())
+        # The record keeps its own table fields (WORK-001); the core binding stays
+        # in the registry, which the core check reads.
+        record = CONTRACTS.template_definition_record(raw, ADR[1])
+        self.assertEqual(record["tables"][0]["name"], "Options")
+        self.assertNotIn("table_id", record["tables"][0])
+        self.assertEqual(current_rules(raw), set())
+
+    def test_the_former_alternatives_header_on_the_adr_template_is_refused(
+        self,
+    ) -> None:
+        raw = load_raw()
+        table = next(
+            t
+            for t in profile_of(raw, ADR[1])["template_definition"]["tables"]
+            if t.get("table_id") == "decision.options"
+        )
+        table["columns"][0]["key"] = "Alternative"
+        self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
+
+    def test_a_core_table_cannot_carry_a_local_authority_ref(self) -> None:
+        raw = load_raw()
+        table = next(
+            t
+            for t in profile_of(raw, ADR[1])["template_definition"]["tables"]
+            if t.get("table_id") == "decision.options"
+        )
+        table["authority_ref"] = "SPEC-0222"
+        self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
+
+    def test_the_owner_lineage_reads_each_adr_where_its_form_keeps_the_table(
+        self,
+    ) -> None:
+        link = "[REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)"
+        expected = "docs-01-requirements-0003-workspace-agent-governance-platform-md"
+        registry = CONTRACTS.load_registry(ROOT)
+        for number, section in (("0064", "Decision"), ("0050", "Traceability")):
+            path = PurePosixPath(
+                f"docs/02.architecture/decisions/{number}-temporary.md"
+            )
+            text = (
+                '---\ntitle: "Decision title"\nversion: "1.0.0"\n'
+                'type: "sdlc/architecture-decision"\nstatus: "accepted"\n'
+                'owner: "platform"\nupdated: "2026-11-17"\n'
+                f'artifact_id: "ADR-{number}"\n---\n\n# ADR-{number}: Decision title\n\n'
+                f"## Context\n\nNo link here.\n\n## {section}\n\nServes {link}.\n"
+            )
+            context = types.SimpleNamespace(
+                root=ROOT,
+                texts={path: text},
+                current_registry=registry,
+                profiles={path: types.SimpleNamespace(profile_id=ADR[0])},
+            )
+            with self.subTest(section=section):
+                self.assertEqual(LINKS._traceability_lineage(context, path), expected)
 
 
 if __name__ == "__main__":

@@ -1,10 +1,10 @@
 ---
 title: "Affected Pull Request GitOps Validation"
-version: "0.1.1"
+version: "0.1.2"
 type: "sdlc/architecture-decision"
 status: "proposed"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "ADR-0063"
 ---
 
@@ -26,6 +26,21 @@ selection, execution and reporting of static GitOps identity validation on
 main-targeting PRs. The existing local render, schema and operational checks
 keep their respective input and authority boundaries.
 
+## Options
+
+### Considered Options
+
+Keep local GitOps validation alone, add one hosted job per leaf, or share the
+existing PR candidate job and environment.
+
+### Trade-offs
+
+| Option | Benefit | Cost and Risk | Reason |
+| --- | --- | --- | --- |
+| Local only | Avoids hosted work. | Leaves hosted GitOps assurance absent. | Not selected: it leaves hosted GitOps assurance absent. |
+| Separate leaf jobs | Isolates failure displays. | Duplicates checkout or setup for selected leaves. | Not selected: it duplicates checkout or setup for selected leaves. |
+| Shared PR job | Shares setup and preserves the required job name. The aggregate distinguishes what each leaf observed. | The workflow definition itself remains editable by a PR. | Chosen: it shares setup and preserves the required job name. |
+
 ## Decision
 
 ### Chosen Option
@@ -45,20 +60,17 @@ hosted run establish adoption evidence. The workflow runs with read-only
 repository permission and without persistent checkout credentials. The
 workflow definition itself remains editable by a PR.
 
-## Alternatives
+#### Sources
 
-### Considered Options
+[ADR-0048](./0048-local-qa-and-semver-release-ownership.md),
+[REQ-0003 FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements)
+and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md).
 
-Keep local GitOps validation alone, add one hosted job per leaf, or share the
-existing PR candidate job and environment.
+### Lifecycle Traceability
 
-### Trade-offs
-
-| Alternative | Trade-off |
-| --- | --- |
-| Local only | Avoids hosted work and leaves hosted GitOps assurance absent. |
-| Separate leaf jobs | Isolates failure displays and duplicates checkout or setup for selected leaves. |
-| Shared PR job | Shares setup and preserves the required job name. The aggregate distinguishes what each leaf observed. |
+| Decision lineage | Replacement relation | Affected Spec |
+| --- | --- | --- |
+| [ADR-0048 hosted validation clause](./0048-local-qa-and-semver-release-ownership.md#one-local-validation-graph) | Proposed clause amendment | [SPEC-0161](../../03.specs/0161-w00-v14-7-delta-intake/spec.md) |
 
 ## Consequences
 
@@ -75,17 +87,3 @@ CI dependency lock. The owning Spec package's Task records the hosted
 aggregate, required-check read-back and observed timings in EVD-166.
 The GitOps leaf was inapplicable on that candidate. An affected hosted GitOps
 run and the operator's adoption decision remain outstanding.
-
-## Traceability
-
-### Sources
-
-[ADR-0048](./0048-local-qa-and-semver-release-ownership.md),
-[REQ-0003 FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements)
-and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md).
-
-### Lifecycle Traceability
-
-| Decision lineage | Replacement relation | Affected Spec |
-| --- | --- | --- |
-| [ADR-0048 hosted validation clause](./0048-local-qa-and-semver-release-ownership.md#one-local-validation-graph) | Proposed clause amendment | [SPEC-0161](../../03.specs/0161-w00-v14-7-delta-intake/spec.md) |

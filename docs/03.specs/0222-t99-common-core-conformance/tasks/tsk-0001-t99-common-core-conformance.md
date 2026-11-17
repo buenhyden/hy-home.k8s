@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.14.0"
+version: "0.15.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -179,6 +179,15 @@ WORK-005 bound the root, stage and service README forms and the skill form to th
 | service README | the two service templates, `gitops/README.md` and `infrastructure/README.md` |
 | skill | registry only |
 
+WORK-006 bound the `adr` form to the core `decision` role.
+
+- **Form.** The H2s are now Context, Options, Decision and Consequences, with the core section IDs. The former Traceability H3s (Sources, Supersession) became H4s under Decision > Authority and Effect, and Lifecycle Traceability is a local H3 at the end of Decision.
+- **Retained ADRs.** The retained form now names `Traceability` as the body-contract location for ADR-0001 to ADR-0061, so the 36 retained ADRs read their lifecycle table unchanged. The link validator reads that location per document.
+- **Stage 02 rule 3.** It now admits a heading or table move that keeps every sentence of an accepted ADR outside the retained range.
+- **ADR-0062** (PATCH 1.0.3) takes the heading move. Its core Options table is header-only, with the former `Alternative | Trade-off` table kept unchanged after it as a local table (`authority_ref: SPEC-0222`). The four Benefit cells have no stated fact.
+- **ADR-0063** takes the user-accepted split of its Trade-off cells.
+- **Merge.** The record schema widening of the prepared unit is dropped, as in WORK-004.
+
 ### Blockers and Decisions
 
 The user approved the Spec and Plan (EVD-006); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
@@ -191,8 +200,8 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | WORK-002 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Task core members, tables and transition adapter | platform | completed | PASS | EVD-014, EVD-015, EVD-016, EVD-017 |
 | WORK-003 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Requirement, architecture, spec and plan tables | platform | ready | NOT_RUN | EVD-001 |
 | WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | completed | PASS | EVD-018, EVD-019, EVD-020 |
-| WORK-005 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | README tables | platform | in-progress | NOT_RUN | EVD-001 |
-| WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | ready | NOT_RUN | EVD-001 |
+| WORK-005 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | README tables | platform | completed | PASS | EVD-021, EVD-022, EVD-023 |
+| WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | in-progress | NOT_RUN | EVD-001 |
 | WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | ready | NOT_RUN | EVD-001 |
 | WORK-008 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Research, audit and data-reference forms | platform | ready | NOT_RUN | EVD-001 |
 | WORK-009 | [VAL-CORE-002](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Final export, residue closure, review and suite | platform | ready | NOT_RUN | EVD-001 |
@@ -225,6 +234,9 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | EVD-020 | [VAL-CORE-003](../spec.md#criteria) | WORK-004 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `c91bcc1b` and its commit hooks; pinned venv, 2026-11-17 | PASS | 13 selected gates passed after one Markdown list prefix fix (MD029 on the kept `AUTHOR-R009` token item); the `.secrets.baseline` line shift did not fail the secret scan. | yes | none |
 | EVD-021 | [VAL-CORE-001](../spec.md#criteria) | WORK-005 | Failing first | The WORK-005 tests over an export of `b6e99e9d` in the prepared worktree; pinned venv, 2026-11-17 | PASS | Observed the defect: 460 tests with 26 failures and 1 error. | yes | none |
 | EVD-022 | [VAL-CORE-003](../spec.md#criteria) | WORK-005 | Focused tests and strict validators after the change | After the merge onto `c91bcc1b`: form tree, repository quality rules, scope selection, README navigation, generator, AGENTS routes, native skill envelope and reference pack routes; the four strict validators; one-time scratch move checks; pinned venv, 2026-11-17 | PASS | 571 tests OK with 3 skips; every validator passed; the move check found every line again, except the listed table conversions and four rewritten template prompts. | yes | none |
+| EVD-023 | [VAL-CORE-003](../spec.md#criteria) | WORK-005 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `a26515a9` and its commit hooks; pinned venv, 2026-11-17 | PASS | 13 selected gates passed. | yes | none |
+| EVD-024 | [VAL-CORE-001](../spec.md#criteria) | WORK-006 | Failing first | The WORK-006 tests over an export of `b6e99e9d` in the prepared worktree, in two rounds; pinned venv, 2026-11-17 | PASS | Observed the defect: round one 431 tests with 16 failures and 2 errors; round two 30 tests with 5 failures and 1 error. | yes | none |
+| EVD-025 | [VAL-CORE-003](../spec.md#criteria) | WORK-006 | Focused tests and strict validators after the change | After the merge onto `a26515a9`: form tree, generator, link boundary, artifact identity, frontmatter keys and relationship contract; the four strict validators; owner keys of all 38 ADRs compared with `b6e99e9d`; pinned venv, 2026-11-17 | PASS | 612 tests run, with one test changed to read the record projection; the ADR and decision classes then passed. Every validator passed; owner keys are byte-identical; the 36 retained ADRs are unchanged. | yes | none |
 
 ### Resolution Links
 

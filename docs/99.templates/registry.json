@@ -205,7 +205,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Decision",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "proposed"
@@ -4050,7 +4050,7 @@
           "sdlc/architecture-decision"
         ],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Decision",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "proposed"
@@ -4111,7 +4111,7 @@
           "positive": [
             "The 36 accepted ADRs of ADR-0001 to ADR-0061 pass the retained form and ADR-0062 and the template pass the form tree, body-contract, table, author-prompt and residue checks.",
             "An accepted ADR inside the identity bound passes the retained H2 lists and an accepted ADR outside it passes the form tree.",
-            "The Alternatives table accepts zero rows."
+            "The Options table accepts zero rows, and ADR-0062 keeps its Alternatives table unchanged as a local table of its own after a header-only Options table."
           ],
           "negative": [
             "An accepted ADR after ADR-0061 that keeps the retained H2 lists fails the form tree.",
@@ -4125,14 +4125,53 @@
           ]
         },
         "migration": {
-          "meaning_map": "No accepted ADR changes form (W03-D02): the retained form keeps the seven H2 of ADR-0001 to ADR-0061 and the decision template moves its former prompts into the five H2 and ten H3 of the form, with the Overview prompt under Chosen Option and the Traceability prompt above the Lifecycle Traceability table; the SPEC-0198 Task records each placement.",
-          "retained_history": "Git history retains the seven-heading decision layout and its previous template.",
-          "rollback": "Revert the SPEC-0198 implementation commit."
+          "meaning_map": "No accepted ADR changes form (W03-D02): the retained form keeps the seven H2 of ADR-0001 to ADR-0061 and the decision template moves its former prompts into the five H2 and ten H3 of the form, with the Overview prompt under Chosen Option and the Traceability prompt above the Lifecycle Traceability table; the SPEC-0198 Task records each placement. SPEC-0222 WORK-006 binds the form to the core decision role: Alternatives becomes Options before Decision, the Traceability H2 leaves the form with its Sources and Supersession prompts kept as H4 under Authority and Effect and Lifecycle Traceability kept as the local H3 of Decision, and the Alternatives table becomes the core decision.options table; where a required core cell has no source fact (ADR-0062), the core table is rendered header-only and the Alternatives table stays unchanged after it as a local table of its own; the SPEC-0222 Task records each placement.",
+          "retained_history": "Git history retains the seven-heading decision layout, the five-H2 form and their previous templates.",
+          "rollback": "Revert the SPEC-0222 WORK-006 commit, then the SPEC-0198 implementation commit."
         },
         "tables": [
           {
+            "name": "Options",
+            "section": "decision.options",
+            "columns": [
+              {
+                "key": "Option",
+                "id": "option",
+                "meaning": "대안",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Benefit",
+                "id": "benefit",
+                "meaning": "장점",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Cost and Risk",
+                "id": "cost",
+                "meaning": "비용과 위험",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Reason",
+                "id": "reason",
+                "meaning": "선택·배제 근거",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Option",
+            "table_id": "decision.options",
+            "required_when": "always",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+          },
+          {
             "name": "Alternatives",
-            "section": "adr-alternatives-trade-offs",
+            "section": "decision.options.2",
             "columns": [
               {
                 "key": "Alternative",
@@ -4148,7 +4187,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Alternative"
+            "row_identity": "Alternative",
+            "authority_ref": "SPEC-0222"
           },
           {
             "name": "Lifecycle Traceability",
@@ -18354,7 +18394,7 @@
         "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
         "sections": [
           {
-            "section_id": "adr-context",
+            "section_id": "decision.context",
             "level": 2,
             "parent_id": null,
             "title": "Context",
@@ -18376,9 +18416,9 @@
             ],
             "children": [
               {
-                "section_id": "adr-context-problem-and-drivers",
+                "section_id": "decision.context.1",
                 "level": 3,
-                "parent_id": "adr-context",
+                "parent_id": "decision.context",
                 "title": "Problem and Drivers",
                 "order": 1,
                 "requiredness": "required",
@@ -18397,12 +18437,17 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Problem and Drivers",
+                  "required_when": "always",
+                  "content_rule": "결정할 문제와 실제 제약 중 Problem and Drivers에 해당하는 사실·규칙만 기록"
+                }
               },
               {
-                "section_id": "adr-context-decision-scope",
+                "section_id": "decision.context.2",
                 "level": 3,
-                "parent_id": "adr-context",
+                "parent_id": "decision.context",
                 "title": "Decision Scope",
                 "order": 2,
                 "requiredness": "required",
@@ -18421,90 +18466,29 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Decision Scope",
+                  "required_when": "always",
+                  "content_rule": "결정할 문제와 실제 제약 중 Decision Scope에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "문제와 조건",
+              "required_when": "always",
+              "content_rule": "결정할 문제와 실제 제약",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
-            "section_id": "adr-decision",
+            "section_id": "decision.options",
             "level": 2,
             "parent_id": null,
-            "title": "Decision",
+            "title": "Options",
             "order": 2,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "선택한 결정과 효력",
-            "required_content": [
-              "선택한 결정과 효력에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "accepted를 구현·인수 완료로 치환하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "children": [
-              {
-                "section_id": "adr-decision-chosen-option",
-                "level": 3,
-                "parent_id": "adr-decision",
-                "title": "Chosen Option",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "선택·적용 조건·규범 소유자",
-                "required_content": [
-                  "선택·적용 조건·규범 소유자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "accepted를 구현·인수 완료로 치환하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "children": [],
-                "link_only": false
-              },
-              {
-                "section_id": "adr-decision-authority-and-effect",
-                "level": 3,
-                "parent_id": "adr-decision",
-                "title": "Authority and Effect",
-                "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "결정자·승인 증거·효력 시점",
-                "required_content": [
-                  "결정자·승인 증거·효력 시점을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "accepted를 구현·인수 완료로 치환하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "children": [],
-                "link_only": false
-              }
-            ],
-            "link_only": false
-          },
-          {
-            "section_id": "adr-alternatives",
-            "level": 2,
-            "parent_id": null,
-            "title": "Alternatives",
-            "order": 3,
             "requiredness": "required",
             "condition": "always",
             "content": "대안 비교",
@@ -18522,9 +18506,9 @@
             ],
             "children": [
               {
-                "section_id": "adr-alternatives-considered-options",
+                "section_id": "decision.options.1",
                 "level": 3,
-                "parent_id": "adr-alternatives",
+                "parent_id": "decision.options",
                 "title": "Considered Options",
                 "order": 1,
                 "requiredness": "required",
@@ -18543,12 +18527,17 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Considered Options",
+                  "required_when": "always",
+                  "content_rule": "실현 가능한 선택·비용·위험 중 Considered Options에 해당하는 사실·규칙만 기록"
+                }
               },
               {
-                "section_id": "adr-alternatives-trade-offs",
+                "section_id": "decision.options.2",
                 "level": 3,
-                "parent_id": "adr-alternatives",
+                "parent_id": "decision.options",
                 "title": "Trade-offs",
                 "order": 2,
                 "requiredness": "required",
@@ -18567,13 +18556,115 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Trade-offs",
+                  "required_when": "always",
+                  "content_rule": "실현 가능한 선택·비용·위험 중 Trade-offs에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "대안",
+              "required_when": "always",
+              "content_rule": "실현 가능한 선택·비용·위험",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
-            "section_id": "adr-consequences",
+            "section_id": "decision.decision",
+            "level": 2,
+            "parent_id": null,
+            "title": "Decision",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "선택한 결정과 효력",
+            "required_content": [
+              "선택한 결정과 효력에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "accepted를 구현·인수 완료로 치환하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "decision.decision.1",
+                "level": 3,
+                "parent_id": "decision.decision",
+                "title": "Chosen Option",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "선택·적용 조건·규범 소유자",
+                "required_content": [
+                  "선택·적용 조건·규범 소유자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "accepted를 구현·인수 완료로 치환하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Chosen Option",
+                  "required_when": "always",
+                  "content_rule": "선택과 근거·효력 범위 중 Chosen Option에 해당하는 사실·규칙만 기록"
+                }
+              },
+              {
+                "section_id": "decision.decision.2",
+                "level": 3,
+                "parent_id": "decision.decision",
+                "title": "Authority and Effect",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "결정자·승인 증거·효력 시점",
+                "required_content": [
+                  "결정자·승인 증거·효력 시점을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "accepted를 구현·인수 완료로 치환하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Authority and Effect",
+                  "required_when": "always",
+                  "content_rule": "선택과 근거·효력 범위 중 Authority and Effect에 해당하는 사실·규칙만 기록"
+                }
+              }
+            ],
+            "link_only": false,
+            "core": {
+              "title_ko": "결정",
+              "required_when": "always",
+              "content_rule": "선택과 근거·효력 범위",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
+          },
+          {
+            "section_id": "decision.consequences",
             "level": 2,
             "parent_id": null,
             "title": "Consequences",
@@ -18595,9 +18686,9 @@
             ],
             "children": [
               {
-                "section_id": "adr-consequences-impacts",
+                "section_id": "decision.consequences.1",
                 "level": 3,
-                "parent_id": "adr-consequences",
+                "parent_id": "decision.consequences",
                 "title": "Impacts",
                 "order": 1,
                 "requiredness": "required",
@@ -18616,12 +18707,17 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Impacts",
+                  "required_when": "always",
+                  "content_rule": "소비자·실패·재검토 조건 중 Impacts에 해당하는 사실·규칙만 기록"
+                }
               },
               {
-                "section_id": "adr-consequences-follow-up",
+                "section_id": "decision.consequences.2",
                 "level": 3,
-                "parent_id": "adr-consequences",
+                "parent_id": "decision.consequences",
                 "title": "Follow-up",
                 "order": 2,
                 "requiredness": "required",
@@ -18640,83 +18736,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Follow-up",
+                  "required_when": "always",
+                  "content_rule": "소비자·실패·재검토 조건 중 Follow-up에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
-          },
-          {
-            "section_id": "adr-traceability",
-            "level": 2,
-            "parent_id": null,
-            "title": "Traceability",
-            "order": 5,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "요구와 후속 결정 연결",
-            "required_content": [
-              "요구와 후속 결정 연결에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "accepted를 구현·인수 완료로 치환하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "children": [
-              {
-                "section_id": "adr-traceability-sources",
-                "level": 3,
-                "parent_id": "adr-traceability",
-                "title": "Sources",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "요구·외부 근거·관련 구조",
-                "required_content": [
-                  "요구·외부 근거·관련 구조을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "accepted를 구현·인수 완료로 치환하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "children": [],
-                "link_only": false
-              },
-              {
-                "section_id": "adr-traceability-supersession",
-                "level": 3,
-                "parent_id": "adr-traceability",
-                "title": "Supersession",
-                "order": 2,
-                "requiredness": "conditional",
-                "condition": "실제 선행·후속 결정이 존재하거나 대체하는 변경",
-                "content": "선행·후속 결정의 현재/역사 참조 및 계보",
-                "required_content": [
-                  "선행·후속 결정의 현재/역사 참조 및 계보을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "accepted를 구현·인수 완료로 치환하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "children": [],
-                "link_only": false
-              }
-            ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "영향",
+              "required_when": "always",
+              "content_rule": "소비자·실패·재검토 조건",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           }
         ],
         "extensions": [
@@ -18728,7 +18763,7 @@
             "verification": "the body-contract check",
             "review": "when the ADR form version changes",
             "removal": "when decision lineage has another registered owner",
-            "parent_id": "adr-traceability",
+            "parent_id": "decision.decision",
             "title": "Lifecycle Traceability",
             "authority_ref": "ADR-0059"
           },
@@ -18757,9 +18792,122 @@
               "optional": [],
               "forbidden": []
             },
+            "body_contract": {
+              "section": "Traceability",
+              "table_heading": "Lifecycle Traceability"
+            },
             "authority_ref": "ADR-0059"
           }
-        ]
+        ],
+        "core_role": "decision",
+        "core": {
+          "purpose": "중요 설계 선택의 이유",
+          "non_goals": "다른 역할의 상태·정책 정본 대체",
+          "metadata_policy": {
+            "envelope": "frontmatter",
+            "fields": [
+              {
+                "key": "title",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "문서 목적을 나타내는 제목"
+              },
+              {
+                "key": "version",
+                "value_type": "document-semver",
+                "required_when": "always",
+                "meaning": "ASCII 숫자 세 요소 판본"
+              },
+              {
+                "key": "type",
+                "value_type": "role-binding",
+                "required_when": "always",
+                "meaning": "역할과 정확하게 대응하는 문서 타입"
+              },
+              {
+                "key": "owner",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "현재 의미 소유자"
+              },
+              {
+                "key": "updated",
+                "value_type": "date",
+                "required_when": "always",
+                "meaning": "실제 문서 변경일"
+              },
+              {
+                "key": "status",
+                "value_type": "role-state",
+                "required_when": "always",
+                "meaning": "역할에 따른 상태; 실행 승인이나 인수를 대체하지 않음"
+              }
+            ],
+            "extension_rule": "선택 native 문법은 공급자 검증, domain field는 이름공간과 소유자·실제 소비자를 갖는 별도 모듈",
+            "document_version_pattern": "(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
+          },
+          "tables": [
+            {
+              "table_id": "decision.options",
+              "section_id": "decision.options",
+              "required_when": "always",
+              "columns": [
+                {
+                  "key": "option",
+                  "label": "Option",
+                  "value_type": "string",
+                  "meaning": "대안",
+                  "required": true
+                },
+                {
+                  "key": "benefit",
+                  "label": "Benefit",
+                  "value_type": "string",
+                  "meaning": "장점",
+                  "required": true
+                },
+                {
+                  "key": "cost",
+                  "label": "Cost and Risk",
+                  "value_type": "string",
+                  "meaning": "비용과 위험",
+                  "required": true
+                },
+                {
+                  "key": "reason",
+                  "label": "Reason",
+                  "value_type": "string",
+                  "meaning": "선택·배제 근거",
+                  "required": true
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            }
+          ],
+          "language": {
+            "headings": "en",
+            "body": "로컬 승인 언어 계약; 본문 언어가 core heading·column을 바꾸지 않음"
+          },
+          "status": "DESIGN_PROPOSAL_NOT_ADOPTED",
+          "relationships": {
+            "authored_direction": "consumer-to-direct-owner",
+            "reverse_links": "derived",
+            "missing_target": "unresolved-not-pass",
+            "deletion": "transfer-current-meaning-before-removal"
+          },
+          "lifecycle": {
+            "axis": "document-purpose",
+            "draft_rule": "authoring-allowed-not-execution-authority",
+            "transition_authority": "explicit-scoped-authority",
+            "acceptance_rule": "required-evidence-and-authorized-acceptance-separate"
+          },
+          "rules": [
+            "single-meaning-owner",
+            "no-synthetic-evidence",
+            "no-release-document-role",
+            "no-package-path-runtime-dependency"
+          ]
+        }
       },
       {
         "form_id": "spec",

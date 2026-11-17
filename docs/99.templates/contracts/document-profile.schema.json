@@ -2015,6 +2015,11 @@
         "empty_policy": {
           "type": "string",
           "pattern": "\\S"
+        },
+        "authority_ref": {
+          "description": "SPEC-0222: the authority of a local table of its own that SPEC-0222 registers; a core table carries none.",
+          "type": "string",
+          "pattern": "\\S"
         }
       },
       "dependentRequired": {
@@ -2027,6 +2032,12 @@
         ],
         "empty_policy": [
           "table_id"
+        ]
+      },
+      "not": {
+        "required": [
+          "table_id",
+          "authority_ref"
         ]
       }
     },

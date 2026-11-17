@@ -175,8 +175,13 @@ form 경로의 대응은 Registry만 소유한다.
   Decisions and Adoption 아래 같은 두 지역 H3)을 쓰고 H2 목록을 두지 않으며, 각 요구 member를 자신의
   `Upstream requirement` 열에서 인용한다. Requirement는 downstream 링크 열을
   두지 않고, 파생 역조회와 `REQUIREMENT-COVERAGE` 검사가 그 자리를 대신한다.
-  `sdlc/architecture-decision`은 `adr` form(다섯 H2와 열 개 H3, Traceability
-  아래 지역 H3 `Lifecycle Traceability`)을 쓰고 H2 목록을 두지 않는다.
+  `sdlc/architecture-decision`은 core `decision` 역할에 묶인 `adr` form(Context,
+  Options, Decision, Consequences의 네 H2와 여덟 H3, Decision 아래 지역 H3
+  `Lifecycle Traceability`)을 쓰고 H2 목록을 두지 않는다(SPEC-0222). 근거와 선행
+  결정은 Authority and Effect 아래 H4 `Sources`와 `Supersession`에 두고, 대안
+  표는 core `decision.options` 표(`Option`, `Benefit`, `Cost and Risk`,
+  `Reason`)다. 출처 사실이 없는 core 셀이 있는 ADR-0062는 열만 둔 core 표 뒤에
+  기존 `Alternatives` 표를 `authority_ref: SPEC-0222`인 독자 지역 표로 유지한다.
   `sdlc/spec`은 `spec` form(네 H2와 여덟 H3, Acceptance Criteria 아래 지역 H3
   `Lifecycle Traceability`)을, `sdlc/plan`은 `plan` form(다섯 H2와 열 개 H3)을
   쓰며 둘 다 H2 목록을 두지 않는다. 두 form은 4.0.0 설계 목표의 제목과 section
