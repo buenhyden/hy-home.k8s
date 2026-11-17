@@ -1,18 +1,18 @@
 ---
 title: "gitops"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 # gitops
 
 > ArgoCD App-of-Apps 기반으로 로컬 클러스터 desired state를 선언형 관리한다.
 
-## Purpose
+## Service
 
-### Service Role
+### Purpose
 
 이 디렉터리는 ArgoCD가 동기화할 GitOps 리소스를 포함한다. 프로젝트 경계(AppProject), ApplicationSet, 루트 애플리케이션, 플랫폼 리소스, 워크로드 리소스를 분리해 로컬 k3d 클러스터의 declarative desired state를 Git에 versioned 상태로 추적한다.
 
@@ -57,50 +57,7 @@ gitops/
 | `clusters/local`             | Local ArgoCD bootstrap entrypoint owned by platform maintainers.                                | Contains root Application, AppProjects, and workload ApplicationSet.                                                   | Depends on ArgoCD and the repository URL/target revision contract; no application secrets live here.                           | Validate root Application/ApplicationSet hierarchy with `bash scripts/validate-gitops-structure.sh` and static contracts with `bash scripts/validate-infrastructure-contracts.sh`. |
 | `apps/root`                  | App-of-Apps root for platform components owned by platform maintainers.                         | Declares platform Application resources and Kustomize entrypoint.                                                      | Depends on `gitops/platform/*` paths, the self-managed `gitops/clusters/local` config app, and ArgoCD project permissions.     | Validate platform-project and local-source boundaries with GitOps structure and manifest checks before PR merge.                                                                      |
 
-### Supported Environment
-
-이 트리의 desired state는 Git이 소유한다. secret 값은 승인된 외부 저장소에
-두고 manifest에는 위 매트릭스에 나온 ExternalSecret, store, route 참조만 둔다.
-클러스터를 직접 바꾸는 일은 명시적으로 승인된 bootstrap이나 break-glass 경로로
-제한하며 그 결과는 다시 Git과 운영 증거에 반영해야 한다.
-
-#### Scope
-
-##### In Scope
-
-- ArgoCD AppProject, ApplicationSet, Application 리소스
-- 플랫폼 공통 리소스와 워크로드 매니페스트
-- 로컬 k3d 클러스터의 GitOps desired state
-- 앱 온보딩을 위한 `gitops/workloads/` 구조
-
-##### Out of Scope
-
-- k3d 클러스터 생성과 ArgoCD 설치 스크립트
-- 외부 Vault/PostgreSQL/Valkey 런타임 자체 운영
-- AWS/Azure 실제 cloud 리소스 프로비저닝
-- live cluster mutation을 기본 운영 경로로 안내하는 문서
-
-#### Namespace Ownership Matrix
-
-이 표는 `CreateNamespace=true` 제거 후 namespace desired-state 소유권을
-고정한다. steady-state GitOps Application/ApplicationSet은 namespace를
-자동 생성하지 않고, bootstrap 또는 `gitops/platform/namespaces`가 owner로
-남는다.
-
-| Surface                      | Namespace surface                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Declared namespace owner                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Current behavior                                                                                                     | Remaining boundary                                                                                                    | Validation                                                                                                                                                                      |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `root Application`           | `root-platform -> argocd`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | ArgoCD namespace is created by the bootstrap/ArgoCD installation boundary, not by `gitops/platform/namespaces`.                                                                                                                                                                                                                                                                                                                                                                                                     | Root app no longer uses `CreateNamespace=true`; bootstrap must create `argocd` before applying the root Application. | Changing ArgoCD install ownership still requires an explicit bootstrap/ArgoCD install ownership pass.                 | `bash scripts/validate-gitops-structure.sh` and `bash scripts/validate-infrastructure-contracts.sh`.                       |
-| `apps ApplicationSet`        | `apps-generator -> apps`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `gitops/platform/namespaces/namespace-apps.yaml` owns the desired namespace manifest.                                                                                                                                                                                                                                                                                                                                                                                                                               | ApplicationSet no longer uses `CreateNamespace=true`; `platform/namespaces` is the Git SSoT for `apps`.              | New app namespaces require namespace owner manifests before onboarding.                                               | `bash scripts/validate-gitops-structure.sh` and `bash scripts/validate-k8s-manifests.sh .`.                                   |
-| `platform root Applications` | `platform-cert-manager -> cert-manager`; `platform-cert-manager-config -> cert-manager`; `platform-eso-config -> external-secrets`; `platform-external-secrets-operator -> external-secrets`; `platform-external-services -> platform`; `platform-headlamp -> headlamp`; `platform-headlamp-config -> headlamp`; `platform-ingress-routes -> traefik`; `platform-istio-base -> istio-system`; `platform-istio-cni -> istio-system`; `platform-istiod -> istio-system`; `platform-kiali -> istio-system`; `platform-kiali-config -> istio-system`; `platform-monitoring -> monitoring`; `platform-network-policies -> platform`; `platform-rollouts -> argo-rollouts`; `platform-traefik -> traefik`. | `gitops/platform/namespaces/namespace-argocd.yaml` (adopted with `Prune=false` so it can never be deleted by reconciliation), `gitops/platform/namespaces/namespace-cert-manager.yaml`, `gitops/platform/namespaces/namespace-external-secrets.yaml`, `gitops/platform/namespaces/namespace-headlamp.yaml`, `gitops/platform/namespaces/namespace-istio-system.yaml`, `gitops/platform/namespaces/namespace-platform.yaml`, `gitops/platform/namespaces/namespace-monitoring.yaml`, `gitops/platform/namespaces/namespace-argo-rollouts.yaml`, and `gitops/platform/namespaces/namespace-traefik.yaml` own the desired namespace manifests. | Platform root Applications no longer use `CreateNamespace=true`; namespace manifests remain the Git SSoT.            | New platform namespaces must be added to `gitops/platform/namespaces` and the platform AppProject destinations first. | `bash scripts/validate-gitops-structure.sh` and `bash scripts/validate-k8s-manifests.sh .`. <!-- pragma: allowlist secret --> |
-
-각 표의 `Validation`은 해당 책임을 따로 진단할 때의 leaf 예시다.
-변경 경로에 맞는 로컬 검사 선택은 `python3 scripts/qa.py quick`,
-커밋 직전 최종 index 검사는 `python3 scripts/qa.py staged`가 맡는다.
-같은 입력과 설정의 leaf를 수동 명령으로 반복하지 않는다.
-
-## Interfaces
-
-### Inputs and Outputs
+### Interfaces
 
 `platform/external-services`의 `Service`와 `EndpointSlice` 파일은 외부
 management Valkey·Loki·Tempo·Alloy 연결의 Git desired state SSoT다.
@@ -179,9 +136,9 @@ kind와 raw platform manifest kind를 기준으로 유지한다.
 | `platform-rollouts`                  | `argo-rollouts`    | `2.40.9`        | `argo-rollouts`    | `ConfigMap`, `Service`, `ServiceAccount`, `apiextensions.k8s.io/CustomResourceDefinition`, `apps/Deployment`, `networking.k8s.io/Ingress`, `rbac.authorization.k8s.io/ClusterRole`, `rbac.authorization.k8s.io/ClusterRoleBinding`.                                                                                                                                                                                               |
 | `platform-traefik`                   | `traefik`          | `42.1.3`        | `traefik`          | `ConfigMap`, `Service`, `ServiceAccount`, `apps/Deployment`, `rbac.authorization.k8s.io/ClusterRole`, `rbac.authorization.k8s.io/ClusterRoleBinding`.                                                                                                                                                                                                                                                                             |
 
-### Security Boundary
+#### Security Boundary
 
-secret과 credential을 저장소에 커밋하지 않는 경계는 위 Supported Environment의 Scope 문단에 함께 적혀 있다.
+secret과 credential을 저장소에 커밋하지 않는 경계는 아래 Usage > Prerequisites의 Scope 문단에 함께 적혀 있다.
 
 #### Secret Management Responsibility Matrix
 
@@ -196,9 +153,50 @@ secret과 credential을 저장소에 커밋하지 않는 경계는 위 Supported
 | `ArgoCD argocd-notifications-secret` | ExternalSecret reads Vault path `platform/notifications` property `slack_token` through `vault-backend`.                                                                       | Kubernetes target Secret name stays `argocd-notifications-secret` in namespace `argocd`; target key stays `slack-token`.                                            | Platform maintainers own notification wiring; notification token owner rotates `slack_token` in Vault.                                                             | Secret values remain outside Git; notification tokens must not appear in manifests, docs, or logs.                                                | `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live readiness uses `infrastructure/verify/verify-secrets.sh`.                                                             |
 | `Sample app ExternalSecret`          | Optional onboarding example uses ESO remoteRef key `apps/<appname>/config` through `vault-backend`; the Vault CLI path remains `secret/apps/<appname>/config`.                 | Kubernetes target Secret name follows `<appname>-secret` in namespace `apps`; sample keys are `db_password` and `api_key`.                                          | App operator owns app-specific Vault path requests; platform/security approves Vault policy changes before enabling the sample.                                    | Sample stays value-free and remains commented out in `examples/sample-app/kustomization.yaml` until an app needs it.                              | `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .`; repo-quality validates the sample boundary.                                                                                           |
 
-## Development
+## Usage
 
-### Local Workflow
+### Prerequisites
+
+이 트리의 desired state는 Git이 소유한다. secret 값은 승인된 외부 저장소에
+두고 manifest에는 위 매트릭스에 나온 ExternalSecret, store, route 참조만 둔다.
+클러스터를 직접 바꾸는 일은 명시적으로 승인된 bootstrap이나 break-glass 경로로
+제한하며 그 결과는 다시 Git과 운영 증거에 반영해야 한다.
+
+#### Scope
+
+##### In Scope
+
+- ArgoCD AppProject, ApplicationSet, Application 리소스
+- 플랫폼 공통 리소스와 워크로드 매니페스트
+- 로컬 k3d 클러스터의 GitOps desired state
+- 앱 온보딩을 위한 `gitops/workloads/` 구조
+
+##### Out of Scope
+
+- k3d 클러스터 생성과 ArgoCD 설치 스크립트
+- 외부 Vault/PostgreSQL/Valkey 런타임 자체 운영
+- AWS/Azure 실제 cloud 리소스 프로비저닝
+- live cluster mutation을 기본 운영 경로로 안내하는 문서
+
+#### Namespace Ownership Matrix
+
+이 표는 `CreateNamespace=true` 제거 후 namespace desired-state 소유권을
+고정한다. steady-state GitOps Application/ApplicationSet은 namespace를
+자동 생성하지 않고, bootstrap 또는 `gitops/platform/namespaces`가 owner로
+남는다.
+
+| Surface                      | Namespace surface                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Declared namespace owner                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Current behavior                                                                                                     | Remaining boundary                                                                                                    | Validation                                                                                                                                                                      |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `root Application`           | `root-platform -> argocd`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | ArgoCD namespace is created by the bootstrap/ArgoCD installation boundary, not by `gitops/platform/namespaces`.                                                                                                                                                                                                                                                                                                                                                                                                     | Root app no longer uses `CreateNamespace=true`; bootstrap must create `argocd` before applying the root Application. | Changing ArgoCD install ownership still requires an explicit bootstrap/ArgoCD install ownership pass.                 | `bash scripts/validate-gitops-structure.sh` and `bash scripts/validate-infrastructure-contracts.sh`.                       |
+| `apps ApplicationSet`        | `apps-generator -> apps`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `gitops/platform/namespaces/namespace-apps.yaml` owns the desired namespace manifest.                                                                                                                                                                                                                                                                                                                                                                                                                               | ApplicationSet no longer uses `CreateNamespace=true`; `platform/namespaces` is the Git SSoT for `apps`.              | New app namespaces require namespace owner manifests before onboarding.                                               | `bash scripts/validate-gitops-structure.sh` and `bash scripts/validate-k8s-manifests.sh .`.                                   |
+| `platform root Applications` | `platform-cert-manager -> cert-manager`; `platform-cert-manager-config -> cert-manager`; `platform-eso-config -> external-secrets`; `platform-external-secrets-operator -> external-secrets`; `platform-external-services -> platform`; `platform-headlamp -> headlamp`; `platform-headlamp-config -> headlamp`; `platform-ingress-routes -> traefik`; `platform-istio-base -> istio-system`; `platform-istio-cni -> istio-system`; `platform-istiod -> istio-system`; `platform-kiali -> istio-system`; `platform-kiali-config -> istio-system`; `platform-monitoring -> monitoring`; `platform-network-policies -> platform`; `platform-rollouts -> argo-rollouts`; `platform-traefik -> traefik`. | `gitops/platform/namespaces/namespace-argocd.yaml` (adopted with `Prune=false` so it can never be deleted by reconciliation), `gitops/platform/namespaces/namespace-cert-manager.yaml`, `gitops/platform/namespaces/namespace-external-secrets.yaml`, `gitops/platform/namespaces/namespace-headlamp.yaml`, `gitops/platform/namespaces/namespace-istio-system.yaml`, `gitops/platform/namespaces/namespace-platform.yaml`, `gitops/platform/namespaces/namespace-monitoring.yaml`, `gitops/platform/namespaces/namespace-argo-rollouts.yaml`, and `gitops/platform/namespaces/namespace-traefik.yaml` own the desired namespace manifests. | Platform root Applications no longer use `CreateNamespace=true`; namespace manifests remain the Git SSoT.            | New platform namespaces must be added to `gitops/platform/namespaces` and the platform AppProject destinations first. | `bash scripts/validate-gitops-structure.sh` and `bash scripts/validate-k8s-manifests.sh .`. <!-- pragma: allowlist secret --> |
+
+각 표의 `Validation`은 해당 책임을 따로 진단할 때의 leaf 예시다.
+변경 경로에 맞는 로컬 검사 선택은 `python3 scripts/qa.py quick`,
+커밋 직전 최종 index 검사는 `python3 scripts/qa.py staged`가 맡는다.
+같은 입력과 설정의 leaf를 수동 명령으로 반복하지 않는다.
+
+### Selected Start
 
 #### Working Procedure
 
@@ -219,7 +217,9 @@ secret과 credential을 저장소에 커밋하지 않는 경계는 위 Supported
 - 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
 - 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
 
-### Checks
+## Checks
+
+### Readiness
 
 변경 작업 중에는 `python3 scripts/qa.py quick`로 영향받은 경로를
 검사하고, 커밋 직전에는 최종 index에서 `python3 scripts/qa.py staged`를
@@ -238,13 +238,7 @@ Kustomization 문법과 안전한 단일 토큰 identity·경로 필드만 받�
 고른다. base가 0 마흔 개로만 이루어져 있으면 사용 가능한 HEAD 부모를 쓰고 진짜 root일 때만
 빈 기준으로 다룬다. 얕은 clone처럼 부모를 쓸 수 없으면 닫힌 쪽으로 실패한다.
 
-## Operations
-
-### Runbook Links
-
-이 디렉터리 README는 별도의 runbook 링크를 두지 않으며, 운영 정책과 아키텍처를 확인하는 경로는 Local Workflow의 Working Procedure에 적혀 있다.
-
-### Observability and Recovery
+### Failure Handling
 
 #### Current Hardening Deferrals
 
@@ -262,3 +256,7 @@ Kustomization 문법과 안전한 단일 토큰 identity·경로 필드만 받�
 - k8s router runtime proof: Traefik LoadBalancer fallback과
   `CHECK_K8S_ROUTER=true` router 검증은 이 저장소 live test가 담당하지만,
   host 주소 `192.168.0.14` 할당과 이름 해석은 operator 경계에서 다룬다.
+
+#### Runbook Links
+
+이 디렉터리 README는 별도의 runbook 링크를 두지 않으며, 운영 정책과 아키텍처를 확인하는 경로는 Selected Start의 Working Procedure에 적혀 있다.

@@ -1,16 +1,16 @@
 ---
 title: "05.operations/runbooks"
-version: "0.4.3"
+version: "0.5.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 # 05.operations/runbooks
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > 반복 가능한 운영 작업을 즉시 실행할 수 있는 체크리스트/절차 문서를 관리한다.
 
@@ -28,24 +28,28 @@ updated: "2026-11-16"
 - Developers
 - Documentation Writers
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
-#### In Scope
+##### In Scope
 
 - 실행 순서 중심 체크리스트
 - 검증 커맨드와 성공 기준
 - 오류 시그니처 기반 트러블슈팅
 - 안전한 롤백/복구 절차
 
-#### Out of Scope
+##### Out of Scope
 
 - 정책 통제의 정의 자체
 - 튜토리얼 중심 배경 설명
 - 사고 원인 분석 보고서
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 collection은 정책 통제의 정의 자체, 튜토리얼 중심 배경 설명, 사고 원인 분석 보고서를 소유하지 않는다. 정책 정의와 허용/금지/예외 기준은 policies에서, 가이드 설명과 배경·온보딩은 guides에서, 사고 분석과 실제 사고 기록은 incidents에서 관리한다.
+
+## Current Contents
+
+### Paths
 
 #### 문서 인덱스
 
@@ -62,7 +66,7 @@ updated: "2026-11-16"
 | [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md) | Stage 90 Audit/Data/Research pack 유지보수 런북 |
 | [`./0012-main-release-preparation-runbook.md`](./0012-main-release-preparation-runbook.md) | main CHANGELOG 준비와 SemVer GitHub Release의 운영자 게시 절차 |
 
-### Classification
+### Owners
 
 | 필요 상황                                | 문서 유형     |
 | ---------------------------------------- | ------------- |
@@ -71,9 +75,9 @@ updated: "2026-11-16"
 | 정책의 허용/금지 기준을 확인해야 함      | Policy로 이동 |
 | 작업 배경과 선행 지식을 익혀야 함        | Guide로 이동  |
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. 관련 Spec/Operations를 먼저 확인해 계약값을 고정한다.
 2. [runbook.template.md](../../99.templates/templates/operations/runbook.template.md)를 기반으로 작성한다.
@@ -111,13 +115,7 @@ updated: "2026-11-16"
 - sibling operations folder는 `../guides/`, `../policies/`, `../incidents/`로 연결한다.
 - upstream docs stage는 `../../02.architecture/`, `../../03.specs/`로 연결한다.
 
-### Transition and Exit
-
-이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [05.operations/guides](../guides/README.md)
 - [05.operations/policies](../policies/README.md)
@@ -125,8 +123,12 @@ updated: "2026-11-16"
 - [AD](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [ADR](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [Operations Policy](../policies/0001-k8s-gitops-operations-policy.md)
 - [Runbook Template](../../99.templates/templates/operations/runbook.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)
+
+### Checks
+
+이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.

@@ -199,14 +199,14 @@ POSTMORTEM_TREE = (
 )
 ROOT_FORM = ("common/readme-repository", "common/template-readme-repository")
 ROOT_FORM_TREE = (
-    ("Purpose", ("Project Role", "Boundaries")),
-    ("Repository Map", ("Directories", "Canonical Entry Points")),
-    ("Getting Started", ("Prerequisites", "First Verified Path")),
-    ("References", ("Current Documentation", "Support and Ownership")),
+    ("Purpose", ("Audience", "Outcome")),
+    ("Getting Started", ("Prerequisites", "First Use")),
+    ("Repository Map", ("Current Paths", "Owners")),
+    ("Support", ("Help", "Related Documentation")),
 )
 ROOT_TABLE_KEYS = {
     "Directory Index": (
-        "root-readme-repository-map-directories",
+        "root-readme.map.1",
         ("Path", "Purpose", "Owner"),
         0,
         "Path",
@@ -219,14 +219,13 @@ STAGE_FORM = (
     "common/template-readme-collection-index",
 )
 STAGE_FORM_TREE = (
-    ("Stage Responsibility", ("Purpose and Readers", "Inputs and Outputs")),
-    ("Contents", ("Current Items", "Classification")),
-    ("Workflow", ("Create and Review", "Transition and Exit")),
-    ("Related Documents", ("Upstream and Downstream", "Policy and Templates")),
+    ("Responsibility", ("Purpose", "Excluded Responsibilities")),
+    ("Current Contents", ("Paths", "Owners")),
+    ("Usage", ("Entry Points", "Checks")),
 )
 STAGE_TABLE_KEYS = {
     "Index": (
-        "stage-readme-contents-current-items",
+        "stage-readme.contents.1",
         ("Path", "Purpose", "Owner"),
         0,
         "Path",
@@ -239,14 +238,13 @@ SERVICE_FORM = (
     "common/template-readme-runtime-governance",
 )
 SERVICE_FORM_TREE = (
-    ("Purpose", ("Service Role", "Supported Environment")),
-    ("Interfaces", ("Inputs and Outputs", "Security Boundary")),
-    ("Development", ("Local Workflow", "Checks")),
-    ("Operations", ("Runbook Links", "Observability and Recovery")),
+    ("Service", ("Purpose", "Interfaces")),
+    ("Usage", ("Prerequisites", "Selected Start")),
+    ("Checks", ("Readiness", "Failure Handling")),
 )
 SERVICE_TABLE_KEYS = {
     "Commands": (
-        "service-readme-development-checks",
+        "service-readme.checks.1",
         ("Command", "Output"),
         0,
         "Command",
@@ -1198,6 +1196,9 @@ TARGET_GROUPS = {
     "architecture": ("context", "structure", "behavior", "quality", "decisions"),
     "spec": ("intent", "scope", "behavior", "acceptance"),
     "plan": ("intent", "dependencies", "work", "verification", "promotion"),
+    "root-readme": ("purpose", "start", "map", "support"),
+    "stage-readme": ("scope", "contents", "use"),
+    "service-readme": ("service", "use", "checks"),
     "skill": ("trigger", "procedure", "output", "verification"),
 }
 
@@ -3102,29 +3103,29 @@ class RootReadmeFormTests(unittest.TestCase):
     def test_a_complete_body_passes_the_tree_and_an_h4_is_allowed(self) -> None:
         self.assertEqual(self.tree(self.BODY), [])
         deeper = self.BODY.replace(
-            "### Boundaries\n\nText.",
-            "### Boundaries\n\nText.\n\n#### In Scope\n\nText.",
+            "### Outcome\n\nText.",
+            "### Outcome\n\nText.\n\n#### In Scope\n\nText.",
         )
         self.assertEqual(self.tree(deeper), [])
 
     def test_a_missing_h3_or_an_old_h2_fails_the_tree(self) -> None:
         self.assertIn(
             "BODY-H3-REQUIRED",
-            self.tree(self.BODY.replace("### Directories", "#### Directories")),
+            self.tree(self.BODY.replace("### Current Paths", "#### Current Paths")),
         )
         self.assertNotEqual(self.tree(self.BODY + "\n## Structure\n\nText.\n"), [])
 
-    def test_the_navigation_section_is_the_directories_h3(self) -> None:
+    def test_the_navigation_section_is_the_current_paths_h3(self) -> None:
         navigation = self.registry.readme_navigation.profiles[ROOT_FORM[0]]
         self.assertEqual(
-            (navigation.section, navigation.complete), ("Directories", False)
+            (navigation.section, navigation.complete), ("Current Paths", False)
         )
 
 
 class StageReadmeFormTests(unittest.TestCase):
     """SPEC-0173: the Stage README form, its Index table and its navigation."""
 
-    HOME = "### Current Items\n\nText."
+    HOME = "### Paths\n\nText."
     HEADER = ("Path", "Purpose", "Owner")
     BODY = md(
         "# Stage",
@@ -3172,8 +3173,8 @@ class StageReadmeFormTests(unittest.TestCase):
             with self.subTest(profile=profile_id):
                 self.assertEqual(self.tree(profile_id, self.BODY), [])
                 deeper = self.BODY.replace(
-                    "### Classification\n\nText.",
-                    "### Classification\n\nText.\n\n#### Matrix\n\nText.",
+                    "### Owners\n\nText.",
+                    "### Owners\n\nText.\n\n#### Matrix\n\nText.",
                 )
                 self.assertEqual(self.tree(profile_id, deeper), [])
                 self.assertNotEqual(
@@ -3183,7 +3184,7 @@ class StageReadmeFormTests(unittest.TestCase):
                     "BODY-H3-REQUIRED",
                     self.tree(
                         profile_id,
-                        self.BODY.replace("### Current Items", "#### Current Items"),
+                        self.BODY.replace("### Paths", "#### Paths"),
                     ),
                 )
 
@@ -3220,26 +3221,24 @@ class StageReadmeFormTests(unittest.TestCase):
                     )
 
     def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
-        wrong = self.with_table(
-            "| Path |", "| --- |", "| a |", home="### Classification"
-        )
+        wrong = self.with_table("| Path |", "| --- |", "| a |", home="### Owners")
         for profile_id in STAGE_FORM[::2]:
             with self.subTest(profile=profile_id):
                 self.assertEqual(self.tables(profile_id, wrong), [])
 
-    def test_the_navigation_section_is_the_current_items_h3(self) -> None:
+    def test_the_navigation_section_is_the_paths_h3(self) -> None:
         for profile_id in STAGE_FORM[::2]:
             navigation = self.registry.readme_navigation.profiles[profile_id]
             with self.subTest(profile=profile_id):
                 self.assertEqual(
-                    (navigation.section, navigation.complete), ("Current Items", True)
+                    (navigation.section, navigation.complete), ("Paths", True)
                 )
 
 
 class ServiceReadmeFormTests(unittest.TestCase):
     """SPEC-0174: the Service README form, its Commands table and navigation."""
 
-    HOME = "### Checks\n\nText."
+    HOME = "### Readiness\n\nText."
     HEADER = ("Command", "Output")
     BODY = md(
         "# Service",
@@ -3287,8 +3286,8 @@ class ServiceReadmeFormTests(unittest.TestCase):
             with self.subTest(profile=profile_id):
                 self.assertEqual(self.tree(profile_id, self.BODY), [])
                 deeper = self.BODY.replace(
-                    "### Service Role\n\nText.",
-                    "### Service Role\n\nText.\n\n#### Matrix\n\nText.",
+                    "### Purpose\n\nText.",
+                    "### Purpose\n\nText.\n\n#### Matrix\n\nText.",
                 )
                 self.assertEqual(self.tree(profile_id, deeper), [])
                 self.assertNotEqual(
@@ -3298,7 +3297,7 @@ class ServiceReadmeFormTests(unittest.TestCase):
                     "BODY-H3-REQUIRED",
                     self.tree(
                         profile_id,
-                        self.BODY.replace("### Checks", "#### Checks"),
+                        self.BODY.replace("### Readiness", "#### Readiness"),
                     ),
                 )
 
@@ -3332,17 +3331,15 @@ class ServiceReadmeFormTests(unittest.TestCase):
 
     def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
         wrong = self.with_table(
-            "| Command |", "| --- |", "| a |", home="### Local Workflow"
+            "| Command |", "| --- |", "| a |", home="### Selected Start"
         )
         for profile_id in SERVICE_FORM[::2]:
             with self.subTest(profile=profile_id):
                 self.assertEqual(self.tables(profile_id, wrong), [])
 
-    def test_the_navigation_section_is_the_service_role_h3(self) -> None:
+    def test_the_navigation_section_is_the_purpose_h3(self) -> None:
         navigation = self.registry.readme_navigation.profiles[SERVICE_FORM[0]]
-        self.assertEqual(
-            (navigation.section, navigation.complete), ("Service Role", False)
-        )
+        self.assertEqual((navigation.section, navigation.complete), ("Purpose", False))
         self.assertNotIn(SERVICE_FORM[2], self.registry.readme_navigation.profiles)
 
 

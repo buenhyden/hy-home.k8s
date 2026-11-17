@@ -1,6 +1,6 @@
 ---
 title: "05.operations/incidents"
-version: "0.3.3"
+version: "0.4.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -8,9 +8,9 @@ updated: "2026-11-17"
 ---
 # 05.operations/incidents
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > 사고 사실 기록과 postmortem을 보관하는 incident stage다.
 
@@ -34,23 +34,27 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 - Incident Commanders
 - Platform Engineers
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
-#### In Scope
+##### In Scope
 
 - Incident Record: 영향, 타임라인, 관찰된 사실, 대응, 증거, 후속 액션
 - Postmortem: 근본 원인, 기여 요인, 감지 공백, 재발 방지 액션
 - 관련 Runbook, Operation, ADR, Spec 링크
 
-#### Out of Scope
+##### Out of Scope
 
 - 일반 운영 정책
 - 실행 절차 중심 런북
 - 기능 요구사항 또는 상세 설계
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 collection은 일반 운영 정책, 실행 절차 중심 런북, 기능 요구사항 또는 상세 설계를 소유하지 않는다. 일반 정책은 policies에, 실행 복구 절차는 runbooks에 둔다. 현재 tracked incident record와 postmortem 문서는 없으며, 첫 사고 기록이 필요할 때만 `<year>/inc-####-<slug>/` 하위 경로를 만든다.
+
+## Current Contents
+
+### Paths
 
 ```text
 05.operations/incidents/
@@ -61,7 +65,7 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 사고 기록은 `<year>/inc-####-<slug>/` 폴더에 두며, 그 안의 `incident.md`가
 사실 기록을, 분석이 필요할 때만 만드는 `postmortem.md`가 사후 분석을 소유한다.
 
-### Classification
+### Owners
 
 #### Incident Boundary Matrix
 
@@ -70,9 +74,9 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 | `Incident Record` | `./<year>/inc-####-<slug>/incident.md` | [incident.template.md](../../99.templates/templates/operations/incident.template.md) | Create only for a real incident fact record. | No tracked incident records. |
 | `Postmortem` | `./<year>/inc-####-<slug>/postmortem.md` | [postmortem.template.md](../../99.templates/templates/operations/postmortem.template.md) | Create only after incident stabilization when root cause/prevention analysis is needed. | No tracked postmortems. |
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. 대응 중에는 [incident.template.md](../../99.templates/templates/operations/incident.template.md)로 사실 기록을 시작한다.
 2. Incident Record는 `<year>/inc-####-<slug>/incident.md`로 작성하고 frontmatter `artifact_id`를 `inc-<NNNN>-<NNNN>` 형식으로 기록한다.
@@ -116,21 +120,19 @@ Postmortem은 다음 항목을 포함한다.
 - Postmortem은 같은 incident 폴더의 `./<year>/inc-####-<slug>/postmortem.md` 경로를 사용한다.
 - sibling operations folder는 `../policies/`, `../runbooks/`, `../guides/`로 연결한다.
 
-### Transition and Exit
-
-1. Incident status는 `detected → investigating → mitigated → resolved` 순서를 따르고, 역할·다음 checkpoint·종료 근거를 함께 갱신한다.
-2. Postmortem status는 `draft → in-review → published`를 따르며 action closure evidence 없이 완료를 선언하지 않는다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [Operations README](../README.md)
 - [05.operations/policies](../policies/README.md)
 - [05.operations/runbooks](../runbooks/README.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [99.templates](../../99.templates/README.md)
 - [Incident Template](../../99.templates/templates/operations/incident.template.md)
 - [Postmortem Template](../../99.templates/templates/operations/postmortem.template.md)
+
+### Checks
+
+1. Incident status는 `detected → investigating → mitigated → resolved` 순서를 따르고, 역할·다음 checkpoint·종료 근거를 함께 갱신한다.
+2. Postmortem status는 `draft → in-review → published`를 따르며 action closure evidence 없이 완료를 선언하지 않는다.

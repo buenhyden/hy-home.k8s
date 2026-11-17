@@ -1,24 +1,24 @@
 ---
 title: "Common Prompt Contracts"
-version: "0.4.1"
+version: "0.5.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 
 # Common Prompt Contracts
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 반복되는 작성 요청은 세션마다 다시 입력하는 산문으로 agent에 전달되므로 그
 입력과 거절 조건을 검증할 수 없다. 이 영역은 그런 요청마다 계약을 둔다. 무엇이
 필요한지, 그 입력을 어떻게 만드는지, 답이 어떤 형태인지, 언제 답을 만들지
 않는지를 정한다.
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
 계약 식별자는 파일 이름(stem)이다. 각 계약은 필수 입력과 그것을 만드는 정확한
 명령(`scripts/prompt-input.py`의 닫힌 `ALLOWED_COMMANDS` 목록에 있는 것), 출력 형태, 만들어진 초안에 적용하는 검증, 거절 조건을 적는다.
@@ -30,9 +30,13 @@ script는 선언된 입력을 모아 요청을 표준 출력으로 쓴다. model
 접근을 하지 않고, 저장소나 Git 상태에 아무것도 쓰지 않는다. 만들어진 초안은
 사용자가 받아들이거나 고치거나 버리는 일시적 출력이다.
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 영역의 계약은 권한이나 승인 경계를 적지 않으며, 그것은 agent registry와 승인 정책이 계속 소유한다. 소비자인 `scripts/prompt-input.py`는 model 호출이나 네트워크 접근을 하지 않고 저장소나 Git 상태에 아무것도 쓰지 않으며, 만들어진 초안은 사용자가 받아들이거나 고치거나 버리는 일시적 출력이다.
+
+## Current Contents
+
+### Paths
 
 #### Item Index
 
@@ -43,13 +47,13 @@ script는 선언된 입력을 모아 요청을 표준 출력으로 쓴다. model
 | [commit-message](commit-message.md) | staged 차이만으로 커밋 메시지 초안 요청을 조립한다. |
 | [doc-update](doc-update.md) | 변경의 정규 소유자를 찾아 그 문서에 대한 수정안 요청을 만든다. |
 
-### Classification
+### Owners
 
 이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 #### Add and Find
 
@@ -66,18 +70,16 @@ script는 선언된 입력을 모아 요청을 표준 출력으로 쓴다. model
    `.claude/commands/<id>.md` 진입점을 하나 둔다([Claude adapter](../../.claude/README.md)).
    진입점은 자체 계약을 갖지 않는다.
 
-### Transition and Exit
-
-이 README는 상태, 승격, 종료 규칙을 따로 두지 않는다. 그런 규칙을 두게 되면 여기에 적는다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [Common Agent Governance](../README.md)
 - [Scripts](../../scripts/README.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [Quality and Evidence Policy](../governance/quality.md)
 - [Approval and Safety](../governance/approval-and-safety.md)
+
+### Checks
+
+이 README는 상태, 승격, 종료 규칙을 따로 두지 않는다. 그런 규칙을 두게 되면 여기에 적는다.

@@ -1,18 +1,18 @@
 ---
 title: "verify"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 # verify
 
 > 부트스트랩된 로컬 클러스터를 대상으로 하는 라이브 검증 스크립트를 관리한다.
 
-## Purpose
+## Service
 
-### Service Role
+### Purpose
 
 이 폴더의 스크립트는 모두 라이브 검증이며 저장소 정적 검사를 대신하지 않는다.
 실행 전제와 결과 의미는 아래 표가 소유한다.
@@ -21,29 +21,29 @@ updated: "2026-11-13"
 
 - [infrastructure](../README.md)
 
-### Supported Environment
+### Interfaces
+
+이 README는 별도의 외부 입출력 계약을 정의하지 않으며, 각 스크립트의 실행 전제와 결과 의미는 Infrastructure Test Inventory가 소유한다.
+
+#### Security Boundary
+
+secret 값을 출력하지 않는 경계는 아래 Usage > Prerequisites에 적혀 있다.
+
+## Usage
+
+### Prerequisites
 
 스크립트는 kubeconfig와 클러스터 상태를 읽기만 하며 secret 값을 출력하지 않는다.
 클러스터 변경은 [infrastructure](../README.md)의 bootstrap 절차가 소유한다.
 
-## Interfaces
-
-### Inputs and Outputs
-
-이 README는 별도의 외부 입출력 계약을 정의하지 않으며, 각 스크립트의 실행 전제와 결과 의미는 Infrastructure Test Inventory가 소유한다.
-
-### Security Boundary
-
-secret 값을 출력하지 않는 경계는 위 Supported Environment에 적혀 있다.
-
-## Development
-
-### Local Workflow
+### Selected Start
 
 전체 라이브 검증은 `run-all.sh`로 실행한다. 복구 절차는
 `docs/05.operations/runbooks/`가 소유한다.
 
-### Checks
+## Checks
+
+### Readiness
 
 `bash -n`과 shellcheck 정적 검사는 `python3 scripts/qa.py staged`가 선택한다.
 라이브 실행은 승인된 운영 절차에서만 한다.
@@ -65,12 +65,10 @@ secret 값을 출력하지 않는 경계는 위 Supported Environment에 적혀 
 | `verify-ingress-tls.sh` | Live | Traefik LoadBalancer (Service `traefik/traefik`), ArgoCD ingress/TLS, the mkcert root CA file used by the verifier, curl, rg, and optional k8s router inputs are available. | PASS means ArgoCD ingress/TLS and fallback endpoint pass CA-verified HTTPS; router checks run only when enabled, and Headlamp/Kiali TLS type mismatches report warnings. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `run-all.sh` | Live aggregate | All live-test preconditions above are satisfied. | PASS means every live verification script in this inventory completed successfully. | Tier B: canonical live validation entrypoint in this README and SDD verification records. |
 
-## Operations
+### Failure Handling
 
-### Runbook Links
+이 README는 별도의 관측·복구 절차를 두지 않으며, 복구 절차는 Selected Start에 적힌 `docs/05.operations/runbooks/`가 소유한다.
 
-이 README는 별도의 runbook 링크를 두지 않으며, 복구 절차의 소유처는 Local Workflow에 `docs/05.operations/runbooks/`로 적혀 있다.
+#### Runbook Links
 
-### Observability and Recovery
-
-이 README는 별도의 관측·복구 절차를 두지 않으며, 복구 절차는 Local Workflow에 적힌 `docs/05.operations/runbooks/`가 소유한다.
+이 README는 별도의 runbook 링크를 두지 않으며, 복구 절차의 소유처는 Selected Start에 `docs/05.operations/runbooks/`로 적혀 있다.

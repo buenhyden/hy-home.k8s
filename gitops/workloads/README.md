@@ -1,18 +1,18 @@
 ---
 title: "workloads"
-version: "0.3.1"
+version: "0.3.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-17"
 ---
 # workloads
 
 > ArgoCD ApplicationSet이 스캔하는 애플리케이션 워크로드 매니페스트를 관리한다.
 
-## Purpose
+## Service
 
-### Service Role
+### Purpose
 
 이 경로의 각 하위 디렉터리는 독립적인 앱 단위다. 일반적으로 Kustomize 기반 Kubernetes manifest, Argo Rollout, Service, Ingress, AnalysisTemplate을 함께 두며, secret-backed config가 필요한 앱만 ExternalSecret을 포함한다.
 
@@ -45,7 +45,17 @@ handling 검증 명령을 명시하는지 확인한다.
 | --- | --- | --- | --- | --- |
 | `adminer` | Reference admin workload owned by platform maintainers and app operators. | Managed by the local apps ApplicationSet from `gitops/workloads/adminer/kustomization.yaml`; includes Rollout, services, ingress, Istio routing, PeerAuthentication, and AnalysisTemplate. | Depends on `apps` namespace, Argo Rollouts, ingress, Istio, and the PostgreSQL external service route. | Validate with `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, and `bash scripts/check-secret-handling.sh .`; live rollout and ingress checks require intentional cluster validation. |
 
-### Supported Environment
+### Interfaces
+
+- App Onboarding Policy (`docs/05.operations/policies/README.md`)
+
+#### Security Boundary
+
+secret과 credential을 저장소에 커밋하지 않는 경계는 아래 Usage > Prerequisites의 Scope 문단에 함께 적혀 있다.
+
+## Usage
+
+### Prerequisites
 
 각 하위 디렉터리는 저장소의 branch, 리뷰, ArgoCD reconciliation 흐름을 거쳐야만
 활성 desired state가 된다. 평문 secret과 credential은 manifest에 넣지 않고 상위
@@ -67,19 +77,7 @@ GitOps 계약에 문서화된 승인된 ExternalSecret과 외부 저장소 경�
 - cloud target 전용 Terraform/Bicep 코드
 - live cluster에 직접 적용하는 운영 절차
 
-## Interfaces
-
-### Inputs and Outputs
-
-- App Onboarding Policy (`docs/05.operations/policies/README.md`)
-
-### Security Boundary
-
-secret과 credential을 저장소에 커밋하지 않는 경계는 위 Supported Environment의 Scope 문단에 함께 적혀 있다.
-
-## Development
-
-### Local Workflow
+### Selected Start
 
 #### Working Procedure
 
@@ -96,19 +94,19 @@ secret과 credential을 저장소에 커밋하지 않는 경계는 위 Supported
 - 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
 - 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
 
-### Checks
+## Checks
+
+### Readiness
 
 workload coverage 매트릭스와 상위
 [GitOps validation section](../README.md#checks)에 적힌 정적 명령을 그대로
 실행한다. 저장소 정적 검사가 성공해도 live rollout, route, 데이터베이스, Vault,
 ESO의 준비 상태는 증명되지 않는다.
 
-## Operations
-
-### Runbook Links
-
-- App Onboarding Runbook (`docs/05.operations/runbooks/README.md`)
-
-### Observability and Recovery
+### Failure Handling
 
 이 README는 별도의 관측·복구 절차를 두지 않으며, live rollout, route, 데이터베이스, Vault, ESO의 준비 상태는 Checks에 적힌 대로 저장소 정적 검사로 증명되지 않는다.
+
+#### Runbook Links
+
+- App Onboarding Runbook (`docs/05.operations/runbooks/README.md`)

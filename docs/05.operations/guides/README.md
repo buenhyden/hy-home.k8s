@@ -1,16 +1,16 @@
 ---
 title: "05.operations/guides"
-version: "0.3.2"
+version: "0.4.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 # 05.operations/guides
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > 운영자와 개발자가 k3d/GitOps 작업을 이해하고 재현할 수 있도록 how-to 중심 가이드를 관리한다.
 
@@ -25,24 +25,28 @@ updated: "2026-11-13"
 - Operators
 - Documentation Writers
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
-#### In Scope
+##### In Scope
 
 - 온보딩/이해 중심 가이드
 - 선행 조건과 점검 명령
 - 공통 실패 패턴 및 회피 방법
 - Spec/Operations/Runbook 교차 링크
 
-#### Out of Scope
+##### Out of Scope
 
 - 정책 통제 기준 정의
 - 실시간 장애 대응 절차
 - 사후 사고 분석 보고서
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 collection은 정책 통제 기준 정의, 실시간 장애 대응 절차, 사후 사고 분석 보고서를 소유하지 않는다. 정책 통제 기준은 policies, 즉시 실행할 복구 절차는 runbooks, 실제 사고 기록은 incidents에서 관리한다.
+
+## Current Contents
+
+### Paths
 
 #### 문서 인덱스
 
@@ -50,7 +54,7 @@ updated: "2026-11-13"
 | --- | --- |
 | [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md) | CI/CD QA 검증의 로컬·호스팅 경계와 증적 해석 안내 |
 
-### Classification
+### Owners
 
 | 필요 상황                                        | 문서 유형        |
 | ------------------------------------------------ | ---------------- |
@@ -59,9 +63,9 @@ updated: "2026-11-13"
 | 실패 상황에서 바로 따라 할 체크리스트가 필요함   | Runbook으로 이동 |
 | 허용/금지/예외 기준을 확인해야 함                | Policy로 이동    |
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. 현재 플랫폼 구조는 [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md), 운영 통제와 절차는 관련 Policy/Runbook에서 확인한다.
 2. 새 가이드 추가/수정 시 [guide.template.md](../../99.templates/templates/operations/guide.template.md)를 기반으로 작성한다.
@@ -94,13 +98,7 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - sibling operations folder는 `../policies/`, `../runbooks/`, `../incidents/`로 연결한다.
 - upstream docs stage는 `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`로 연결한다.
 
-### Transition and Exit
-
-이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [Agent Governance Hub](../../../.agents/README.md)
 - [03.specs](../../03.specs/README.md)
@@ -110,7 +108,11 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - [Requirement](../../01.requirements/0004-current-local-gitops-platform.md)
 - [AD](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [Guide Template](../../99.templates/templates/operations/guide.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)
+
+### Checks
+
+이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.

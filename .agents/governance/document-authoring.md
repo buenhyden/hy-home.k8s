@@ -353,7 +353,7 @@ document role, canonical template, section IDs and titles, table contracts,
 applicability, relationships, and language. Apply a local extension only under
 its registered condition and follow its owner, validation, review, and removal
 criteria. Use the registered retained form where its scope applies. Follow the
-[Stage 99 authoring guidance](../../docs/99.templates/README.md#create-and-review)
+[Stage 99 authoring guidance](../../docs/99.templates/README.md#entry-points)
 when creating a document.
 
 Fill applicable sections with concrete content for the role's reader. Omit an

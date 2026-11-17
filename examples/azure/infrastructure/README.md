@@ -1,16 +1,16 @@
 ---
 title: "Azure Infrastructure (Bicep)"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 # Azure Infrastructure (Bicep)
 
-## Purpose
+## Service
 
-### Service Role
+### Purpose
 
 > 이 경로는 Bicep을 이용한 Azure 리소스 프로비저닝 코드를 관리한다.
 
@@ -36,7 +36,17 @@ infrastructure/
 - DevOps Engineers
 - Cloud Platform Team
 
-### Supported Environment
+### Interfaces
+
+이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
+
+#### Security Boundary
+
+보안 경계는 Usage > Prerequisites에 적혀 있다.
+
+## Usage
+
+### Prerequisites
 
 provider 상태, credential, secret 값을 하드코딩하지 말고 배포 매개변수로
 주입한다. 이 Bicep 예시는 작성 시점이 고정된 저장소 정적 참조 자료다. 배포나
@@ -57,19 +67,7 @@ what-if 증거를 얻으려면 승인된 Azure 구독과 운영자가 소유한 
 - GitOps 설정 (gitops/ 참조)
 - 애플리케이션 소스 코드
 
-## Interfaces
-
-### Inputs and Outputs
-
-이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
-
-### Security Boundary
-
-보안 경계는 Supported Environment에 적혀 있다.
-
-## Development
-
-### Local Workflow
+### Selected Start
 
 #### Working Procedure
 
@@ -96,19 +94,19 @@ what-if 증거를 얻으려면 승인된 Azure 구독과 운영자가 소유한 
 - **Repository architecture**: Current local GitOps platform (`docs/02.architecture/descriptions/README.md`)
 - **GitOps**: [../gitops/README.md](../gitops/README.md)
 
-### Checks
+## Checks
+
+### Readiness
 
 `az bicep lint`와 문서에 적힌
 `az deployment group what-if --resource-group <rg-name> --template-file main.bicep`는
 승인된 provider 환경에서만 실행한다. 정적 문서 검증은 Azure 배포 준비 상태를
 증명하지 않는다.
 
-## Operations
-
-### Runbook Links
-
-이 문서는 참조 전용 예시를 다루므로 runbook 링크가 없다.
-
-### Observability and Recovery
+### Failure Handling
 
 이 문서는 참조 전용 예시를 다루며 live 환경을 변경하지 않으므로 관측과 복구 절차가 없다.
+
+#### Runbook Links
+
+이 문서는 참조 전용 예시를 다루므로 runbook 링크가 없다.

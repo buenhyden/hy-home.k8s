@@ -1,16 +1,16 @@
 ---
 title: "90.references"
-version: "0.3.3"
+version: "0.4.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 # 90.references
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > 감사, 외부 조사, 데이터 등 비권위 참고 자료를 관리한다.
 
@@ -19,9 +19,9 @@ updated: "2026-11-16"
 대체하지 않는다. 현재 실행 동작과 버전 값은 Stage 01/02 문서 및 실제
 매니페스트·설정·잠금 파일이 소유한다.
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
-#### Out of Scope
+##### Out of Scope
 
 - AI Agent governance, role, skill, provider, permission, runtime policy
 - 제품 요구사항, 현재 아키텍처, 구현 계약, 실행 Task 증거
@@ -37,9 +37,13 @@ Stage 98의 문서나 파일을 인용하거나 cross-link하지 않는다. 일�
 본문 복구는 Git history가 담당한다. 승인된 최종 전환 대상의 처분은
 [문서 수명주기 정책](../../.agents/governance/document-lifecycle.md#rules)을 따른다.
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 stage는 요구사항, 아키텍처, 구현 명세, 운영 절차, Agent 정책을 정의하거나 대체하지 않으며, 현재 실행 동작과 버전 값은 Stage 01/02 문서 및 실제 매니페스트·설정·잠금 파일이 소유한다. AI Agent governance, 운영 Guide·Policy·Runbook·Incident, 배포 승인, live mutation, secret-bearing procedure도 이 stage 밖에 있다. Stage 98의 문서나 파일은 인용하거나 cross-link하지 않는다.
+
+## Current Contents
+
+### Paths
 
 ```text
 docs/90.references/
@@ -65,7 +69,7 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 책임을 안내한다. 관찰일·lifecycle·주장·coverage는 해당 보고서가 소유하며
 라우터는 이를 중복 관리하지 않는다.
 
-### Classification
+### Owners
 
 #### In Scope
 
@@ -75,9 +79,9 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 | Research | 외부 공식 자료와 저장소 증거를 종합한 조사 | 출처, 확인일, freshness trigger, 추론 한계를 명시한다. |
 | Data | 독립적인 참고 가치가 있는 bounded dataset 또는 lookup material | 생성·수집 출처와 갱신 책임을 명시하고 실행 입력으로 승격하지 않는다. |
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. 새 자료가 정책·요구·설계·절차·실행 증거를 정의하는지 확인하고, 그렇다면
    공통 거버넌스와 Stage 01/02/03/05의 canonical owner에 작성한다.
@@ -103,13 +107,7 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
    경로나 제목 앵커의 이동·삭제가 기존 참조에 영향을 주면 해당 대상을
    인용하는 문서의 링크도 검사한다.
 
-### Transition and Exit
-
-전이와 종료: 해당 없음 — 이 stage README는 상태 전이나 종료 규칙을 따로 두지 않는다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [Docs Hub](../README.md)
 - [Requirements](../01.requirements/README.md)
@@ -118,7 +116,11 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 - [Operations](../05.operations/README.md)
 - [Reference Maintenance Runbook](../05.operations/runbooks/0011-reference-maintenance-runbook.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [Agent Governance Hub](../../.agents/README.md)
 - [Research Reference Template](../99.templates/templates/references/research.template.md)
+
+### Checks
+
+전이와 종료: 해당 없음 — 이 stage README는 상태 전이나 종료 규칙을 따로 두지 않는다.

@@ -1,16 +1,16 @@
 ---
 title: "Azure Kubernetes (App Manifests)"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 # Azure Kubernetes (App Manifests)
 
-## Purpose
+## Service
 
-### Service Role
+### Purpose
 
 > 이 경로는 AKS 클러스터에서 구동되는 개별 애플리케이션의 Kubernetes 매니페스트를 관리한다.
 
@@ -32,7 +32,17 @@ kubernetes/
 - Application Developers
 - DevOps Engineers
 
-### Supported Environment
+### Interfaces
+
+이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
+
+#### Security Boundary
+
+보안 경계는 Usage > Prerequisites에 적혀 있다.
+
+## Usage
+
+### Prerequisites
 
 Workload Identity와 `secrets-store.csi.k8s.io` 참조를 사용하고 Azure
 credential이나 secret 값은 커밋하지 않는다. 승격하기 전에 resource request,
@@ -54,19 +64,7 @@ limit, label, provider 식별자를 workload profile과 작성 시점이 고정�
 - Azure 인프라 리소스 관리 (infrastructure/ 참조)
 - 애플리케이션 빌드 파이프라인 (CI)
 
-## Interfaces
-
-### Inputs and Outputs
-
-이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
-
-### Security Boundary
-
-보안 경계는 Supported Environment에 적혀 있다.
-
-## Development
-
-### Local Workflow
+### Selected Start
 
 #### Working Procedure
 
@@ -88,17 +86,17 @@ limit, label, provider 식별자를 workload profile과 작성 시점이 고정�
 - **GitOps**: [../gitops/README.md](../gitops/README.md)
 - **Infrastructure**: [../infrastructure/main.bicep](../infrastructure/main.bicep)
 
-### Checks
+## Checks
+
+### Readiness
 
 리뷰 전에 Kubernetes 문법과 저장소 계약을 검증한다. 이 정적 예시는 live AKS,
 Azure Key Vault, Workload Identity, CSI driver의 준비 상태를 증명하지 않는다.
 
-## Operations
-
-### Runbook Links
-
-이 문서는 참조 전용 예시를 다루므로 runbook 링크가 없다.
-
-### Observability and Recovery
+### Failure Handling
 
 이 문서는 참조 전용 예시를 다루며 live 환경을 변경하지 않으므로 관측과 복구 절차가 없다.
+
+#### Runbook Links
+
+이 문서는 참조 전용 예시를 다루므로 runbook 링크가 없다.

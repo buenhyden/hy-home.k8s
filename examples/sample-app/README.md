@@ -1,16 +1,16 @@
 ---
 title: "sample-app"
-version: "0.3.1"
+version: "0.3.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-17"
 ---
 # sample-app
 
-## Purpose
+## Service
 
-### Service Role
+### Purpose
 
 > 새 애플리케이션을 `hy-home.k8s` GitOps 경로에 온보딩할 때 사용하는 최소 템플릿 예시다.
 
@@ -40,7 +40,17 @@ examples/sample-app/
 - Operators
 - Documentation Writers
 
-### Supported Environment
+### Interfaces
+
+- Policy: `../../docs/05.operations/policies/README.md` (`docs/05.operations/policies/README.md`)
+
+#### Security Boundary
+
+보안 경계는 Usage > Prerequisites에 적혀 있다.
+
+## Usage
+
+### Prerequisites
 
 `gitops/workloads/<appname>/`로 올리기 전에 `<appname>`, `<owner>`, `<tag>`,
 `<port>` placeholder를 모두 바꾼다. secret 값, 토큰, 개인 키는 예시 밖에 두고
@@ -74,19 +84,7 @@ examples/sample-app/
 - `traefik`에 Istio sidecar 주입 → mTLS 체인 완성
 - AnalysisTemplate이 Prometheus API(`https://prometheus.hy.home.arpa`)에 접근 필요. Basic Auth header는 platform이 관리하는 `apps/prometheus-api-auth` Secret에서 읽는다 (ADR-0046)
 
-## Interfaces
-
-### Inputs and Outputs
-
-- Policy: `../../docs/05.operations/policies/README.md` (`docs/05.operations/policies/README.md`)
-
-### Security Boundary
-
-보안 경계는 Supported Environment에 적혀 있다.
-
-## Development
-
-### Local Workflow
+### Selected Start
 
 #### Working Procedure
 
@@ -135,18 +133,18 @@ PR review 후 `main`에 병합되면 ArgoCD `apps-generator` ApplicationSet이 �
 - 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
 - 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
 
-### Checks
+## Checks
+
+### Readiness
 
 복사본을 desired state로 다루기 전에 placeholder가 남지 않았는지 확인하고
 상위 [examples contract](../README.md#checks)에 나열된 저장소 품질,
 Kubernetes manifest, secret 처리 검사를 실행한다.
 
-## Operations
-
-### Runbook Links
-
-- Runbook: `../../docs/05.operations/runbooks/README.md` (`docs/05.operations/runbooks/README.md`)
-
-### Observability and Recovery
+### Failure Handling
 
 이 문서는 참조 전용 예시를 다루며 live 환경을 변경하지 않으므로 관측과 복구 절차가 없다.
+
+#### Runbook Links
+
+- Runbook: `../../docs/05.operations/runbooks/README.md` (`docs/05.operations/runbooks/README.md`)

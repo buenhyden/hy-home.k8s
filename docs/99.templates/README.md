@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.38.4"
+version: "0.39.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -8,9 +8,9 @@ updated: "2026-11-17"
 ---
 # 99.templates
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > repo-authored 문서와 README가 시작해야 하는 canonical template stage다.
 
@@ -44,13 +44,17 @@ JSON·YAML 등 비 Markdown 파일과 `.codex/`·`.claude/`의 native 문서는
 확장과 아래의 Task 최초 기록·Spec/Plan 직접 전이·조건부 최초 승인 확장은 각각 하나만으로 승인된
 WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
 입력과 출력: 해당 없음 — 이 stage README는 입력과 출력의 범위를 따로 나열하지 않는다.
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 stage는 실제 PRD, AD, ADR, Spec, Plan, Task, 운영 기록이나 기능별 구현 계약을 소유하지 않으며, Form에는 재사용 가능한 구조만 둔다. 공통 규칙은 이 README 또는 `.agents/governance`의 공통 정책으로 돌려보내고, 정확한 경로, profile, frontmatter, 상태, heading, lifecycle, relationship, template 연결은 Document Profile Registry가 단독으로 소유하므로 README는 이 machine contract를 복제하지 않는다.
+
+## Current Contents
+
+### Paths
 
 | Path | Purpose |
 | --- | --- |
@@ -63,7 +67,7 @@ WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
 [form catalog](./templates/README.md)가 소유한다.
 
-### Classification
+### Owners
 
 #### Responsibility Boundary
 
@@ -248,9 +252,9 @@ form 경로의 대응은 Registry만 소유한다.
 현재 감사 pack을 안내한다. Data는 자료가 생길 때 사용할 pack과 member
 profile을 유지한다.
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. **Classify**: repository-relative target path를 registry로 분류하고 정확히 하나의
    profile이 선택되는지 확인한다.
@@ -351,7 +355,16 @@ optional identity만 보존한다.
 Stage 98(`docs/98.archive/`)에는 profile과 form이 없다. 그 경로는 문서
 inventory 밖이며 검증하지 않는다.
 
-### Transition and Exit
+#### Upstream and Downstream
+
+- [Docs README](../README.md)
+
+#### Policy and Templates
+
+- [Agent Governance Hub](../../.agents/README.md)
+- [Document Authoring Policy](../../.agents/governance/document-authoring.md)
+
+### Checks
 
 #### Task Status Authoring
 
@@ -362,14 +375,3 @@ Task 최초 기록이 허용하는 상태와 Spec·Plan의 direct approval·firs
 approval 예외는 Document Lifecycle Policy가 정본이다. 이 README는 그 규칙을
 다시 적지 않는다. 지역 확장의 정확한 이름은 Registry
 `shared_contract.extensions`에 있다.
-
-## Related Documents
-
-### Upstream and Downstream
-
-- [Docs README](../README.md)
-
-### Policy and Templates
-
-- [Agent Governance Hub](../../.agents/README.md)
-- [Document Authoring Policy](../../.agents/governance/document-authoring.md)

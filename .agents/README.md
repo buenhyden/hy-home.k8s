@@ -1,17 +1,17 @@
 ---
 title: "Common Agent Governance"
-version: "2.6.1"
+version: "2.6.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 
 # Common Agent Governance
 
-## Purpose
+## Service
 
-### Service Role
+### Purpose
 
 이 디렉터리는 이 GitOps 작업 공간의 공통 정책, 역할, skill에 대한 유일한
 권한 원본이다. 파일은 명시적인 gateway나 native skill loader를 통해 읽히며,
@@ -52,7 +52,17 @@ skill의 `scripts/` 아래 검사기를 선택할 수 있지만, 검사기를 �
 `*.template.md` 출력 양식이 포함될 수 있다. 공용 문서 profile과 template의
 권한은 여전히 Stage 99에 있으며 package asset이 이를 대신할 수 없다.
 
-### Supported Environment
+### Interfaces
+
+- Document profiles and templates (`docs/99.templates/README.md`)
+
+#### Security Boundary
+
+이 문서에는 secret, credential, 권한 경계만을 다루는 별도 내용이 없으며, skill이 권한을 주지 않는다는 설명은 Selected Start의 문단에 적혀 있다.
+
+## Usage
+
+### Prerequisites
 
 provider별 차이와 native adapter는 [.claude/](../.claude/)와
 [.codex/](../.codex/)에 있다. 공통 역할, 권한 등급, skill, 인계의 의미는
@@ -73,19 +83,7 @@ gate 선택은 여전히 `scripts/validation/registry.json`이, 공용 검증 he
 판단 맥락은 `governance/context-and-memory.md`가 정한 공유
 workspace memory store에 둔다.
 
-## Interfaces
-
-### Inputs and Outputs
-
-- Document profiles and templates (`docs/99.templates/README.md`)
-
-### Security Boundary
-
-이 문서에는 secret, credential, 권한 경계만을 다루는 별도 내용이 없으며, skill이 권한을 주지 않는다는 설명은 Local Workflow의 문단에 적혀 있다.
-
-## Development
-
-### Local Workflow
+### Selected Start
 
 이 디렉터리를 사용하는 작업은 [work lifecycle](workflows/work-lifecycle.md),
 [agent execution](governance/agent-execution.md), `governance/`의 승인·안전
@@ -96,7 +94,9 @@ package를 명시 호출용으로 노출한다. skill은 쓰기, 전송, 배포,
 권한을 주지 않는다. 근거의 의미는 `governance/`의 quality 정책이, 바뀌는 gate
 명령과 한도는 실행 registry가 소유한다.
 
-### Checks
+## Checks
+
+### Readiness
 
 역할, skill, 권한, native binding, routing 계약의 검증 명령은
 `python3 scripts/validate-agent-governance.py --root .`이다. 이것은
@@ -107,12 +107,10 @@ machinery를 바꾸거나 범위가 명시된 감사를 할 때는 자원 사전
 sweep은 완료 명령이 아니다. 역할 projection 생성기는 쓰이지 않는다. native
 발견, 호출, 권한, hook 전달은 새 세션에서 따로 얻는 근거다.
 
-## Operations
-
-### Runbook Links
-
-이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
-
-### Observability and Recovery
+### Failure Handling
 
 이 문서는 운영 관측과 복구만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
+
+#### Runbook Links
+
+이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
