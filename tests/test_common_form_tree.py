@@ -9806,6 +9806,23 @@ class CoreTableDocumentTests(unittest.TestCase):
             ["BODY-CORE-TABLE-CELL"],
         )
 
+    def test_a_conditional_core_table_with_a_drifted_first_column_is_refused(
+        self,
+    ) -> None:
+        # Reviewer probe: a relabeled or dropped first column must not read as
+        # "not rendered".
+        for header in (
+            "| Stage | Action | Expected Result | On Failure |",
+            "| Action | Expected Result | On Failure |",
+        ):
+            with self.subTest(header=header):
+                body = guide_body(self.table(header))
+                self.assertEqual(
+                    self.rules(GUIDE[0], GUIDE_PATH, body), ["BODY-TABLE-COLUMNS"]
+                )
+        unrelated = guide_body(self.table("| Stage | Owner |", "| one | platform |"))
+        self.assertEqual(self.rules(GUIDE[0], GUIDE_PATH, unrelated), [])
+
     def test_a_template_is_checked_for_the_core_header_only(self) -> None:
         prompt = self.table(
             "| Step | Action | Expected Result | On Failure |",

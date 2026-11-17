@@ -207,8 +207,10 @@ form 경로의 대응은 Registry만 소유한다.
   `plan` 역할에 묶인다. 기능·품질 요구사항 표는 core `requirement.requirements`
   표(`Requirement ID`, `Statement`, `Rationale`, `Acceptance`, `Priority`)의
   인스턴스이고 `Priority`는 `must`, `should`, `could` 중 하나다
-  (`BODY-TABLE-VALUE`). `Quality Requirements` H3는 항상 두며, core
-  `requirement.quality` 표는 정의만 두고 렌더링하지 않는다. 외부 인터페이스를 밝힌
+  (`BODY-CORE-TABLE-CELL`). `Quality Requirements` H3는 항상 두며, core
+  `requirement.quality` 표는 정의만 두고 렌더링하지 않는다. core
+  `task.work_items` 표도 frontmatter `status`와 함께 둘 수 없으므로 Task
+  템플릿은 한 항목 Task의 `status`를 두고 이 표를 작성자 안내로만 둔다. 외부 인터페이스를 밝힌
   architecture description은 Structure > Interfaces에 core
   `architecture.interface` 표를 둔다. Spec은 Verification Strategy 아래에 core
   `spec.checks` 표를, Plan은 Work Units의 `Work Breakdown` 표 뒤에 core

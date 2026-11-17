@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.20.0"
+version: "0.21.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-18"
@@ -234,9 +234,30 @@ The merge with WORK-003 needed three corrections:
 
 The first comparison on the merged tree returned `MISMATCH` for the requirement and task roles. The comparator required every core table in `observed_tables`, including the conditional `requirement.quality` (`quality_requirement`) and `task.work_items` (`multiple_items`). The core contract renders a conditional part only when its condition applies (section `empty_policy`), and keeps the Task's frontmatter `status` for a single-item Task (`status` is `required_when: single_task`). On 2026-11-18 the user decided that a conflict between the prompt requirements and the comparison tool or an existing contract is resolved by changing the tool or contract (`프롬프트에 작성된 요구사항에 맞추고, 비교 도구, 기존 계약이 상충될 경우, 비교 도구와 기존 계약을 수정`). The templates therefore keep their form, with no rendered conditional table and the Task's `status: "draft"`. The package comparator `tools/compare_template_contracts.py`, which is untracked under `_workspace/`, changed from sha256 `42f2c0df` to `f6ee2636`. It now requires every `always` table, accepts an absent conditional table, and refuses an observed table whose header or order differs from the core. The exporter emits only rendered tables.
 
+WORK-009 then ran the rest of its Plan row:
+
+- **Refusal without `core_role`.** The existing registry checks refuse a core table ID outside a core-role form, a core role without the core identity, and a native role outside a form-less provider-native template (`tests.test_common_form_tree`). Every one of the 29 forms carries `core_role`.
+- **Negative exports.** Mutations of the real export of `66fe7808` cover the prompt's acceptance tests. The same table ID with another column type gives `MISMATCH`. A missing source path, a wrong or missing source hash and an incomplete native exception are refused as invalid input. An unmapped template, a partial read (`inventory_complete: false`) and a declared native exception give `INCOMPLETE`. A synthetic input keeps its status but is marked `synthetic: true`, so it is not evidence (EVD-039).
+- **Declared deviations.** The export declares 43 registered local headings and tables as extensions across 16 roles, and 15 domain or native templates as classified. No role is declared not applicable.
+- **Residue closure.** W03-H45 to W03-H47 are closed in the SPEC-0221 Task (its EVD-023). This Task's own residue is listed under Residue Handoff.
+
+The final independent review ran as three read-only reviewers: executable changes, Stage 99, and governed documents. None found a blocking or high finding. Each finding was handled as follows:
+
+- **Conditional core table with a drifted first column (medium).** A conditional core table whose first column is relabeled or dropped read as "not rendered" and passed. The core table check now refuses a header in the core section that holds more than half of a conditional core table's labels and fits no registered table (`BODY-TABLE-COLUMNS`). The fix also turns the section's tables into a list, because the generator was consumed before the new loop ran (EVD-040, EVD-041).
+- **`pre_core` branch in the Task reader (low to medium).** It stays. The lifecycle checks read each Task's base revision with that revision's registry, and every registry before this change has no `work_item_columns`. This is the history reading that the `historical_major == 10` branch already does, not an alias of a current ID.
+- **Template missing a conditional core table (low).** This is by design. A conditional part is rendered only when its condition applies, and the registry check (`REGISTRY_CORE_TABLE`) and the export comparison hold the definition.
+- **Stale rule ID and wording.** The Stage 99 README named the removed `BODY-TABLE-VALUE` for `Priority` and now names `BODY-CORE-TABLE-CELL`. It now also says why the Task template keeps `task.work_items` as an author prompt. The Task template's Lifecycle Traceability prompt now keys a one-item Task by its work unit ID. The draft successor m0022 linked a missing `.github/README.md` (copied from m0008), and now links `.github/AGENTS.md`.
+- **Conditional tables rendered with a delete prompt (low).** `architecture.interface`, `service-readme.interface` and `task.acceptance` keep their header in the template with a prompt to delete it when the condition does not hold. `task.work_items` and `requirement.quality` are prompt-only. Both readings satisfy the core, and the README states the two exceptions.
+- **ADR-0062 (low).** Its `#### Supersession` paragraph restates its own Lifecycle Traceability row, and its header-only core Options table sits above the kept `Alternative | Trade-off` table. Both are declared here, and the Benefit cells stay residue T99-H01.
+- **Unregistered H4 tables (low, existing on `main`).** The policy template's Control Register and Responsibilities tables and the incident template's status table are not in `template_definition`; they come from `a8bc8c0b`, before this Spec. They become residue T99-H04.
+- **EXEC-R012 (low).** Its former Condition text is recoverable from `b6e99e9d`, as the WORK-003 decision above records.
+- **Untracked comparator.** The package comparator lives under the ignored `_workspace/`, so its two hashes are recorded and the PASS of EVD-038 and EVD-044 is reproducible only with that package.
+
+On 2026-11-18 the user asked why the SPEC-0161 Task has a frontmatter `status` and the SPEC-0221 and SPEC-0222 Tasks do not. Since `9cadabdd` (2026-10-13), `status` is optional for `sdlc/task`. A Task with one Lifecycle Traceability row keeps its state in frontmatter `status`, and the row holds the marker `frontmatter`. SPEC-0161 has one row, so its `status: "completed"` is required. A Task with several rows omits `status`, and `task_status` derives the summary from the rows. A present status must equal that summary (`TASK-EXECUTION-SUMMARY`). SPEC-0221 (six rows) and SPEC-0222 (nine rows) have omitted it since their first commit. The core agrees: `status` is `required_when: single_task`. No document changes. The rule was stated only in code and the Stage 99 template prompt, so `docs/03.specs/AGENTS.md` rule 3 now states it.
+
 ### Blockers and Decisions
 
-The user approved the Spec and Plan (EVD-006) and renewed that approval for revision 1.1.0 (EVD-032); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
+The user approved the Spec and Plan (EVD-006) and renewed that approval for revision 1.1.0 (EVD-032); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approved the exact 0.4.0 bytes.
 
 ### Lifecycle Traceability
 
@@ -250,7 +271,7 @@ The user approved the Spec and Plan (EVD-006) and renewed that approval for revi
 | WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | completed | PASS | EVD-024, EVD-025, EVD-026 |
 | WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | completed | PASS | EVD-027, EVD-028, EVD-029 |
 | WORK-008 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Research, audit and data-reference forms | platform | completed | PASS | EVD-030, EVD-031, EVD-033 |
-| WORK-009 | [VAL-CORE-002](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Final export, residue closure, review and suite | platform | in-progress | NOT_RUN | EVD-001 |
+| WORK-009 | [VAL-CORE-002](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Final export, residue closure, review and suite | platform | in-progress | NOT_RUN | EVD-001, EVD-036, EVD-037, EVD-038, EVD-039, EVD-040, EVD-041, EVD-042, EVD-043, EVD-044 |
 
 ## Verification Evidence
 
@@ -296,10 +317,27 @@ The user approved the Spec and Plan (EVD-006) and renewed that approval for revi
 | EVD-036 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Failing first | The new `CoreTableDocumentTests` over an export of `3d82e960`; pinned venv, 2026-11-18 | PASS | Observed the defect: 12 tests with 1 failure and 56 errors (subtests); no document-side core check existed and no local table carried `authority_ref`. | yes | none |
 | EVD-037 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Focused tests and strict validators after the change | After the merge onto `a5ff0010`: form tree, generator, policy rule IDs, task execution, README navigation and repository quality rules, then the changed requirement, core table, core binding and task classes; the four strict validators; pinned venv, 2026-11-18 | PASS | The first merged run had 3 failures, from the double report and the fixtures named above; after the fixes the affected modules passed (92 and 83 tests OK) and every validator passed. | yes | none |
 | EVD-038 | [VAL-CORE-002](../spec.md#criteria) | WORK-009 | Template export and comparison with conditional core tables | The exporter over the tree of `5ad27fa1` and the changed comparator (sha256 `f6ee2636`) with `--workspace-root`; three mutated exports; pinned venv, 2026-11-18 | PASS | The export returned `DECLARED_CORE_MATCH` with 19 roles, 0 unmapped templates and 15 classified domain or native templates. A missing `always` table and a drifted conditional header returned `MISMATCH`, and a rendered conditional table with the core header matched. | yes | none |
+| EVD-039 | [VAL-CORE-002](../spec.md#criteria) | WORK-009 | Negative exports and residue closure | Ten mutations of the export of `66fe7808` with the package comparator (sha256 `f6ee2636`) and `--workspace-root`; the registry `core_role` tests in `tests.test_common_form_tree`; pinned venv, 2026-11-18 | PASS | Baseline `DECLARED_CORE_MATCH`. Same table ID with another column type: `MISMATCH`. Missing source path, wrong hash, missing hash, incomplete native exception: refused as invalid input. Unmapped template, partial read, declared native exception: `INCOMPLETE`. Synthetic: marked `synthetic: true`. W03-H45 to W03-H47 closed by SPEC-0221 EVD-023. | yes | none |
+| EVD-040 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Failing first | The new test of a conditional core table with a drifted first column, `tests.test_common_form_tree`, on the tree of `66fe7808`; pinned venv, 2026-11-18 | PASS | Observed the defect: 2 subtest failures; a relabeled or dropped first column of `guide.steps` returned no diagnostic. | yes | none |
+| EVD-041 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Focused tests and strict validators after the change | `tests.test_common_form_tree` and the four strict validators on the staged tree; pinned venv, 2026-11-18 | PASS | 448 tests OK (4 skipped), and every validator passed after m0022 was staged. | yes | none |
+| EVD-042 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Independent review | Three read-only code-reviewer agents over `main...66fe7808`: executable changes, Stage 99, governed documents; 2026-11-18 | PASS | No blocking or high finding; one medium and eight low findings, each disposed in the WORK-009 decisions above. The Task's EVD rows were unchanged across all 18 commits that touch it, and ADR-0001 to ADR-0061 and published members m0001 to m0012 are untouched. | yes | none |
+| EVD-043 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | `document` suite | `scripts/run-contract-tests.py --suite document` on the staged tree `f16bdef1`; pinned venv, 2026-11-18 | PASS | 1197 tests in 31 modules OK (4 skipped) in 510 s; the run on `66fe7808` before the review fix also passed (1196 tests). | yes | none |
+| EVD-044 | [VAL-CORE-002](../spec.md#criteria) | WORK-009 | Final template export and comparison | The exporter over the staged tree `f16bdef1` and the package comparator (sha256 `f6ee2636`) with `--workspace-root`; pinned venv, 2026-11-18 | PASS | `DECLARED_CORE_MATCH`: 19 roles, 0 unmapped templates, 15 classified templates, 43 declared extensions, 0 not-applicable roles. | yes | none |
 
 ### Resolution Links
 
 EVD-005 resolves EVD-003 and EVD-004 for the reviewed draft.
+
+### Residue Handoff
+
+WORK-009 records the residue this Task leaves here and in `docs/03.specs/work-residue-ledger.json`.
+
+| ID | Residue | State | Owner | Resume condition | Closure |
+| --- | --- | --- | --- | --- | --- |
+| T99-H01 | Header-only core tables with no source fact: the Steps table of nine runbooks, ADR-0062's Options Benefit cells, the `service-readme.interface` table of the gitops and infrastructure READMEs, the `architecture.interface` Failure cells of AD-0004, AD-0005 and AD-0007, and the core tables of the research and audit successor members | open | W04-CONTENT | When W04-CONTENT writes each missing fact from its source, or records that none exists | none |
+| T99-H02 | Publishing the successor members RES-0001-m0015 to m0026 and AUD-0001-m0003, which are draft | open | operator | When the operator approves publishing each successor | none |
+| T99-H03 | Disposal of the 13 published predecessors and their two identity-bound retained forms; accepted ADR-0026 and ADR-0028 still link to RES-0001-m0007 | open | Q07 | At Q07-CUTOVER, after every work package's acceptance | none |
+| T99-H04 | The policy template's Control Register and Responsibilities tables and the incident template's status table are not in `template_definition` (existing since `a8bc8c0b`) | open | W04-CONTENT | When W04-CONTENT registers them as local tables with `authority_ref` or folds them into a core table | none |
 
 ## Acceptance Decision
 
@@ -314,14 +352,14 @@ EVD-005 resolves EVD-003 and EVD-004 for the reviewed draft.
 
 ### Remaining Conditions
 
-Spec and Plan approval, WORK-001 to WORK-009, the independent review and the user's acceptance remain.
+The staged QA record of the final WORK-009 commit and the user's criterion acceptance remain.
 
 ## Handoff
 
 ### Promotion Receipt
 
-The Plan's CORE-BINDING row is not yet reflected.
+CORE-BINDING is reflected: the [document authoring policy](../../../../.agents/governance/document-authoring.md) delegates section IDs, titles and table contracts to the Stage 99 registry (AUTHOR-R021), and the registry carries `core_role` on all 29 common forms and the core members on every core-role form (`common_forms.core`, commits `c82b0aea` to the final WORK-009 commit).
 
 ### Next Owner
 
-The user decides on the Spec and Plan. After approval, the agent runs the work units in the Plan's dependency order.
+The user decides on criterion acceptance of VAL-CORE-001 to VAL-CORE-004. The residue rows T99-H01 to T99-H04 name their owners. The next package prompt, W04-CONTENT, starts only when the user enters its scope.

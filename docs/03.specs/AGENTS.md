@@ -50,7 +50,11 @@ Canonical sources are the documents linked or named in the opening paragraph and
    acceptance, or protected-action authority.
 3. Task rows move `draft` → `ready` → `in-progress` → `completed`. A row is
    `completed` only with PASS evidence; record a blocker with its cause,
-   resume condition and next owner.
+   resume condition and next owner. A Task with one item keeps its state in
+   frontmatter `status`, and that row's `Status` holds the marker
+   `frontmatter`. A Task with several items omits frontmatter `status`:
+   readers derive the summary from its rows, and a status that is present must
+   equal that summary (`TASK-EXECUTION-SUMMARY`).
 4. Task evidence is append-only. Keep every recorded `EVD-###` row and its
    factual fields unchanged; add a new row whose `Resolves` cell names the
    row it closes. Never rewrite completed evidence to fit a later form. A

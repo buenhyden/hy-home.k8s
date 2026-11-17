@@ -925,7 +925,8 @@ def _core_table_diagnostics(
 
     A core table whose `required_when` is `always` must appear with exactly its
     core header inside its core H2 (BODY-CORE-TABLE-MISSING); a conditional one
-    is checked only where present. In a document, each row of a core table is
+    is checked only where present, and a present one whose first column drifted
+    is still refused. In a document, each row of a core table is
     checked by `core_cell_faults` (BODY-CORE-TABLE-CELL); a template keeps prompt
     cells, so only its header is checked. A drifted header is BODY-TABLE-COLUMNS.
     The Task reader owns the Task tables, and a retained identity keeps its
@@ -951,9 +952,32 @@ def _core_table_diagnostics(
             if heading is None
             else _exact_heading_section(body, "#" * heading[0] + " " + heading[1])
         )
-        tables = [
-            rows for header, rows in _visible_tables(section or "") if header == keys
-        ]
+        visible = list(_visible_tables(section or ""))
+        tables = [rows for header, rows in visible if header == keys]
+        if table.required_when != "always":
+            # A conditional table is checked only where present, so a header that
+            # holds most core labels but escapes `_table_diagnostics` (its first
+            # column dropped or relabeled) is a drifted core table, not an absent
+            # one. A header another registered table fits stays that table's.
+            for header, _ in visible:
+                if (
+                    header[0] != keys[0]
+                    and sorted(header) != sorted(keys[: len(header)])
+                    and 2 * len(set(header) & set(keys)) > len(keys)
+                    and not any(
+                        header == [c.key for c in other.columns][: len(header)]
+                        for other in profile.tables
+                    )
+                ):
+                    found.append(
+                        _diagnostic(
+                            "BODY-TABLE-COLUMNS",
+                            path,
+                            profile,
+                            f"{table.name}: {json.dumps(keys, ensure_ascii=False)}",
+                            json.dumps(header, ensure_ascii=False),
+                        )
+                    )
         if not tables and table.required_when == "always":
             found.append(
                 _diagnostic(

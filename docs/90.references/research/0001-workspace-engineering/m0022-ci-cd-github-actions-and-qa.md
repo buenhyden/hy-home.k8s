@@ -42,7 +42,7 @@ GitHub.com's mutable pages have no adopted immutable revision and do not prove G
 
 - [Platform security](m0021-kubernetes-infrastructure-and-security.md)
 - [Source coverage and migration ledger](m0026-source-coverage.md)
-- [GitHub configuration hub](../../../../.github/README.md)
+- [GitHub configuration rules](../../../../.github/AGENTS.md)
 - [Quality and Evidence Policy](../../../../.agents/governance/quality.md)
 - [Validation routing registry](../../../../scripts/validation/registry.json)
 - [Scripts inventory](../../../../scripts/README.md)

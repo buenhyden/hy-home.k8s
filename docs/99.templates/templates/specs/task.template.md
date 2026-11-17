@@ -48,7 +48,7 @@ parent_ids: ["{{PARENT_ID}}"]
 
 ### Lifecycle Traceability
 
-<!-- Author prompt: keep one row per executable item, keyed by the Item of its Work Items row, and link each upstream VAL criterion to the owning Spec, using comma-space between links. The status of an item lives in the Work Items table, or in the frontmatter status key for one item. See the document lifecycle policy for the status rules. Result is observed execution outcome; the sole criterion decision belongs under Criterion Decisions. -->
+<!-- Author prompt: keep one row per executable item, keyed by the Item of its Work Items row or, for one item, by its work unit ID, and link each upstream VAL criterion to the owning Spec, using comma-space between links. The status of an item lives in the Work Items table, or in the frontmatter status key for one item. See the document lifecycle policy for the status rules. Result is observed execution outcome; the sole criterion decision belongs under Criterion Decisions. -->
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
