@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.16.0"
+version: "0.17.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -199,6 +199,18 @@ WORK-007 bound the `agents` form to the core `agent-instructions` role.
 - **Removed.** The unused `Tool Rules` table leaves with its tests, because no document or check used it.
 - **Gateway heading cap.** It rises from 16 to 20. That cap was derived from the AGENTS form shape, and the root `AGENTS.md` keeps every sentence under the new form; the user accepted this.
 
+WORK-008 split the single `reference-report` form into the core `research`, `audit` and `data-reference` forms.
+
+- **Templates.** Each form's template carries its core table.
+- **Published members.** The 13 published members, RES-0001-m0001 to m0012 and AUD-0001-m0001, stay byte-unchanged on two identity-bound retained forms (`authority_ref: SPEC-0222`, removed at Q07-CUTOVER). So no published member is rewritten and the `REFERENCE_PUBLISHED_REWRITE` gate is not weakened.
+- **Successors.** Their successors, RES-0001-m0015 to m0026 and AUD-0001-m0003, are new draft members in the core forms, and each names its predecessor in `supersedes`.
+- **Draft members.** The four draft members (RES-0001-m0013 and m0014, RES-0002-m0001, AUD-0001-m0002) move in place.
+- **Tables.** Each member renders its core table header-only. Its existing source, claim and finding tables stay as local tables.
+- **Pack READMEs.** They list both predecessors and successors.
+- **Removed.** The `reference-report` form is retired.
+
+Two steps are left to the operator. Publishing each successor needs operator approval. Disposing of the predecessors belongs to Q07-CUTOVER after acceptance, because accepted ADR-0026 and ADR-0028 still link to RES-0001-m0007.
+
 ### Blockers and Decisions
 
 The user approved the Spec and Plan (EVD-006); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
@@ -213,8 +225,8 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | completed | PASS | EVD-018, EVD-019, EVD-020 |
 | WORK-005 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | README tables | platform | completed | PASS | EVD-021, EVD-022, EVD-023 |
 | WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | completed | PASS | EVD-024, EVD-025, EVD-026 |
-| WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | in-progress | NOT_RUN | EVD-001 |
-| WORK-008 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Research, audit and data-reference forms | platform | ready | NOT_RUN | EVD-001 |
+| WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | completed | PASS | EVD-027, EVD-028, EVD-029 |
+| WORK-008 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Research, audit and data-reference forms | platform | in-progress | NOT_RUN | EVD-001 |
 | WORK-009 | [VAL-CORE-002](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Final export, residue closure, review and suite | platform | ready | NOT_RUN | EVD-001 |
 
 ## Verification Evidence
@@ -251,6 +263,9 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | EVD-026 | [VAL-CORE-003](../spec.md#criteria) | WORK-006 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `30eb8ba2` and its commit hooks; pinned venv, 2026-11-17 | PASS | 12 selected gates passed. | yes | none |
 | EVD-027 | [VAL-CORE-001](../spec.md#criteria) | WORK-007 | Failing first | The WORK-007 tests over an export of `b6e99e9d` in the prepared worktree; pinned venv, 2026-11-17 | PASS | Observed the defect: 490 tests with 25 failures and 3 errors. | yes | none |
 | EVD-028 | [VAL-CORE-003](../spec.md#criteria) | WORK-007 | Focused tests and strict validators after the change | After the merge onto `30eb8ba2`: form tree, agent governance, AGENTS routes, repository quality rules, document language, agent core and harness contract; the four strict validators and agent governance; one-time scratch move checks of the 16 files; pinned venv, 2026-11-17 | PASS | 577 tests OK with 4 skips; every validator passed; every line of each AGENTS.md was found again, and only the four template lines of the removed table left. | yes | none |
+| EVD-029 | [VAL-CORE-003](../spec.md#criteria) | WORK-007 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `714de75e` and its commit hooks; pinned venv, 2026-11-17 | PASS | 13 selected gates passed, the agent governance suite among them. | yes | none |
+| EVD-030 | [VAL-CORE-001](../spec.md#criteria) | WORK-008 | Failing first | The WORK-008 tests over the data-only worktree state built on `b6e99e9d`; pinned venv, 2026-11-17 | PASS | Observed the defect: 413 tests with 8 failures and 9 errors (the research and audit forms absent). | yes | none |
+| EVD-031 | [VAL-CORE-003](../spec.md#criteria) | WORK-008 | Focused tests and strict validators after the change | After the merge onto `714de75e`: form tree, terminal contract, generator, reference pack routes, artifact identity and README navigation; the four strict validators; one-time scratch move checks of 17 members; pinned venv, 2026-11-17 | PASS | 572 tests run, with one test changed to read the record projection; its classes then passed. Every validator passed with no published rewrite. The move check found every unit again; the only extra units are core headers and pointer sentences. The first staged run failed one `document` suite test outside the focused set (`test_document_frontmatter_negatives`), which still read the former `Findings and Gaps` heading; it now reads `Conflicts and Gaps` and also checks that the core table comes first. | yes | none |
 
 ### Resolution Links
 

@@ -1,34 +1,57 @@
 ---
 title: "Reference: Scope Application Index"
-version: "1.3.3"
+version: "1.4.0"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "RES-0001-m0013"
 ---
 
 # Reference: Scope Application Index
 
-## Overview
+## Question and Scope
+
+### Question
 
 This index turns the pack's current external findings into bounded follow-up questions. It is the canonical detailed investigation ledger; topical reports own findings and concise question wording, and m0012 owns source/claim/request coverage. Every current application result is **not observed in this cycle**.
 
-## Reference Type
+#### Reference Type
 
 Analytical scope and investigation routing over external research, with dated historical scope projections retained.
 
-## Authority Boundary
-
-The seven axes below organize questions; they do not define governance roles, scope membership, write ownership or permissions. Canonical role, governance and approved lifecycle owners retain those decisions. Candidate file types/selectors are hypotheses, not paths observed to exist. No runtime, hosted CI, model entitlement, billing, memory recall or cluster behavior was investigated in this cycle.
-
-## Scope
+### Scope
 
 The investigation spans organization/user, repository, directory/domain, task/session, provider/product, CI/delivery and cluster/environment. These are analytical axes, distinct from the older ten-governance-scope projection preserved below. An approved later work package must choose a bounded subset, evidence lane, permissions and responsible role before acting.
 
-## Definitions / Facts
+## Sources
 
-### Analytical axes and evidence contract
+### Primary Sources
+
+| Source ID | Source | Version | Checked At | Finding | Application | Limits |
+| --- | --- | --- | --- | --- | --- | --- |
+
+- [Current URL-specific source observations](m0012-source-coverage.md#current-source-observations)
+- [Current claim and request ownership](m0012-source-coverage.md#requirement-coverage-matrix)
+- [Dated source and claim provenance](m0012-source-coverage.md#source-register)
+
+#### Related Documents
+
+- [Pack router](README.md)
+- [Source and coverage owner](m0012-source-coverage.md)
+- [Research collection](../README.md)
+
+### Versions and Dates
+
+#### Review and Freshness
+
+Updated 2026-09-27 from directly read external evidence; 2026-11-05 edits only correct local-path and lifecycle statements and add no external observation. Recheck a question before approved work when its source/version, account/product surface, document contract, environment, acceptance criteria or risk changes. No row establishes current implementation. Historical scope maps are preserved for their recorded dates and are not the current governance registry. Detailed question ownership stays here; topical reports link it, and README remains navigation.
+
+## Analysis
+
+### Findings
+
+#### Analytical axes and evidence contract
 
 | Axis | What the investigation asks | Evidence boundary |
 | --- | --- | --- |
@@ -44,7 +67,7 @@ Each row binds a granular question to U/REQ/Claim/Source, analytic scope, canoni
 
 Keep four evidence axes separate. External claims use Verified, Partial, Unverified, DEFER or Contradicted. Sources are new, changed, unchanged or unreachable. Workspace application is **not observed in this cycle**. Record actual document checks using the [canonical QA result vocabulary](../../../../.agents/governance/quality.md#result-vocabulary). No external unfinished item is filled with DEFER to imply completed research. All source identities and current request coverage are in [m0012](m0012-source-coverage.md#requirement-coverage-matrix).
 
-### Follow-up question ledger
+#### Follow-up question ledger
 
 | Question ID | U / requirements | Claim / sources | Analytic scope | Follow-up question | Canonical file type | Candidate selector | Evidence needed | Validation / acceptance | Approval boundary / risk | Current result | Next role / trigger |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -163,11 +186,11 @@ Keep four evidence axes separate. External claims use Verified, Partial, Unverif
 | `Q-WERPC-180` | U30 U38; `REQ-WERPC-029`, `REQ-WERPC-030`, `REQ-WERPC-031`, `REQ-WERPC-032`, `REQ-WERPC-006` | `CLM-WERPC-017-145`; `SRC-WERPC-087`, `SRC-WERPC-013`, `SRC-WERPC-008`, `SRC-WERPC-068` | task/session; repository; provider/product | Which source/tool context can poison memory and what quarantine, least access and injection boundary limits it? ([topic question owner](m0011-agent-memory-tiers-and-management.md#memory-verification-questions)) | `memory threat model` | `external context; MCP URI; promotion; access control` | bounded untrusted-content and policy-boundary checks | retrieval never grants permissions; no claim complete prevention | Read/static review only; account access, runtime probes, installs, settings changes or paid execution need separately bounded authorization; redact credentials | not observed in this cycle | governance-steward; agent-evaluator; trigger: source/version/contract change, approved adoption, acceptance gap or expiry |
 | `Q-WERPC-181` | U30 U38; `REQ-WERPC-029`, `REQ-WERPC-030`, `REQ-WERPC-031`, `REQ-WERPC-032`, `REQ-WERPC-006` | `CLM-WERPC-017-147`, `CLM-WERPC-017-148`, `CLM-WERPC-017-150`; `SRC-WERPC-096`, `SRC-WERPC-125`, `SRC-WERPC-137`, `SRC-WERPC-123`, `SRC-WERPC-004`, `SRC-WERPC-068`, `SRC-WERPC-050`, `SRC-WERPC-087`, `SRC-WERPC-013`, `SRC-WERPC-008` | task/session; repository; provider/product | What compaction loses and which acceptance/Git/evidence/approval facts must be reread after handoff? ([topic question owner](m0011-agent-memory-tiers-and-management.md#memory-verification-questions)) | `handoff/checkpoint` | `base SHA; current files; unknowns; next owner` | fresh context reconstruction against authoritative documents | summary loss disclosed and current authority reread | Read/static review only; account access, runtime probes, installs, settings changes or paid execution need separately bounded authorization; redact credentials | not observed in this cycle | governance-steward; agent-evaluator; trigger: source/version/contract change, approved adoption, acceptance gap or expiry |
 
-### Historical scope projections
+#### Historical scope projections
 
 All following dated scope/queue/path/status observations are historical only. They were not reread as implementation facts in this cycle. Their original IDs and claims remain for traceability; the analytical axes and current question contract above do not inherit their permission or scope assertions.
 
-#### Historical framing and authority
+##### Historical framing and authority
 
 As of the 2026-08-14 observation, `docs/00.agent-governance/scopes/` owned
 scope membership, file ownership, and write permission. On 2026-11-05 that
@@ -203,7 +226,7 @@ access.
 > `.gemini/` are not part of the current two-provider surface, and common
 > authority now lives under `.agents/` with progress owned by the Stage 03 Task.
 
-#### Scope-to-requirement map
+##### Scope-to-requirement map
 
 Scope membership below is derived by matching each requirement's canonical owner
 against the file-ownership globs declared in that scope's own document. A
@@ -227,7 +250,7 @@ the new links do not make current role routing evidence for those historical glo
 | [qa](../../../../.agents/roles/README.md#quality)                     | `REQ-WERPC-023`, `REQ-WERPC-024`, `REQ-WERPC-029`, `REQ-WERPC-033`                                                  | `scripts/validate-*.py`, `docs/00.agent-governance/contracts/`, `tests/`                                                 | [GitHub Actions baseline](m0008-ci-cd-github-actions-and-qa.md#github-actions-baseline), [QA baseline](m0008-ci-cd-github-actions-and-qa.md#qa-baseline), [Verification and Validation matrix](m0008-ci-cd-github-actions-and-qa.md#verification-and-validation-question-matrix)                                                                                                                                                                                                                                                                                                                  | `REQ-WERPC-023`, `REQ-WERPC-033` `Partial`                                                    | Hosted runs, rulesets, secrets, environments, OIDC, artifacts, and intended-use evidence remain `DEFER`                                                                                     | Keep static `PASS` labelled as bounded conformance evidence. A green lane is verification, never validation of intended use                                                                                                                                                                                                                                 |
 | [security](../../../../.agents/roles/README.md#security)         | `REQ-WERPC-008`, `REQ-WERPC-015`, `REQ-WERPC-016`, `REQ-WERPC-025`                                                  | `gitops/platform/network-policies/`, `infrastructure/vault/`, `docs/05.operations/incidents/`                            | [Kubernetes baseline](m0007-kubernetes-infrastructure-and-security.md#kubernetes-baseline), [Security baseline](m0007-kubernetes-infrastructure-and-security.md#security-baseline), [Document-family matrix](m0004-spec-driven-sdlc-and-document-contracts.md#document-family-contract-matrix)                                                                                                                                                                                                                                                                                                    | `REQ-WERPC-008`, `REQ-WERPC-025` `Partial`                                                    | Effective RBAC, real traffic flows, attestation, and live posture remain `DEFER`                                                                                                            | The absent default-deny ingress posture recorded in `memory/progress.md` is the highest-risk item in the pack. It requires a complete allowed-flow inventory and a security-reviewed Spec, never an incremental edit                                                                                                                                        |
 
-#### Unowned canonical paths
+##### Unowned canonical paths
 
 Five canonical owner paths named by the coverage matrix appear in no scope's
 file-ownership table. Searching all ten scope documents for `github`, `.agents`,
@@ -252,7 +275,7 @@ examine. Whether each path should be adopted by an existing scope, split across
 scopes, or deliberately left unowned is a `meta` decision requiring human
 approval.
 
-#### Blocked-by-DEFER summary
+##### Blocked-by-DEFER summary
 
 All twelve `Partial` requirements share one property: the missing evidence is
 unobtainable from the repository alone. Grouping them by blocking evidence class
@@ -283,7 +306,7 @@ limitations are recorded in
 the other affected scopes route to the dated sections listed in the
 [pack README](m0012-source-coverage.md#2026-08-11-partialdefer-refresh-reconciliation).
 
-#### 2026-08-14 re-projection re-observation
+##### 2026-08-14 re-projection re-observation
 
 This bounded re-projection re-read every file under
 `docs/00.agent-governance/scopes/` and re-matched each requirement's canonical
@@ -308,7 +331,7 @@ This index's mapping stays bounded to `REQ-WERPC-001`–`REQ-WERPC-033`; no
 scope row was added for the three new IDs, and doing so was out of scope for
 this re-projection.
 
-#### 2026-08-17 full-corpus re-projection and blocking-class closure
+##### 2026-08-17 full-corpus re-projection and blocking-class closure
 
 This re-projection belongs to the 2026-08-17 full-corpus refresh cycle
 (WRFC-008) executed under Spec 058. It contributes no new finding, source, or
@@ -316,7 +339,7 @@ status. It re-derives scope membership from the registry and, for the first time
 in this pack, records a terminal blocking class for every retained `Partial` and
 `DEFER` row rather than only the twelve `Partial` rows.
 
-#### Scope re-derivation result
+##### Scope re-derivation result
 
 Scope membership was re-derived from `docs/00.agent-governance/scopes/` rather
 than carried forward from the previous projection. The registry still contains
@@ -334,7 +357,7 @@ blocked. Those two rows can only be advanced by hosted evidence, and the surface
 that would produce it has no declared scope owner. Assigning that ownership
 remains a `meta` decision requiring human approval and is not made here.
 
-#### Terminal blocking-class closure
+##### Terminal blocking-class closure
 
 Every retained `Partial` and `DEFER` row now carries exactly one blocking class
 and a reopen condition. Of the thirty-six owner rows, twelve are unblocked, ten
@@ -367,7 +390,7 @@ and promoted nothing, because the sample was drawn without regard to whether the
 blocking evidence was reachable at all. Recording reachability once converts a
 repeating no-op into a decision.
 
-#### What closure does not authorize
+##### What closure does not authorize
 
 Closure is a statement about evidence reachability, not about correctness or
 safety. It does not promote any status, does not lower any evidence bar, and does
@@ -375,7 +398,7 @@ not permit a reopen condition to be waived once met. It grants no scope
 authority: a requirement appearing in a scope row still means only that the
 research touched a path the scope already owns.
 
-#### 2026-08-20 full-corpus reverification
+##### 2026-08-20 full-corpus reverification
 
 | Scope | Requests | Evidence depths | Outcome | Blocking classes | Canonical owners |
 | --- | --- | --- | --- | --- | --- |
@@ -390,7 +413,7 @@ research touched a path the scope already owns.
 | CI/CD and QA | REQ-WERPC-022, REQ-WERPC-023, REQ-WERPC-024 | repository-static | unchanged | hosted-ci, repo-static | `docs/90.references/research/0001-workspace-engineering/m0008-ci-cd-github-actions-and-qa.md` |
 | verification and validation | REQ-WERPC-033 | repository-static | unchanged | human-judgement | `docs/90.references/research/0001-workspace-engineering/m0008-ci-cd-github-actions-and-qa.md` |
 
-#### 2026-08-23 Spec 0054-compatible gap projection
+##### 2026-08-23 Spec 0054-compatible gap projection
 
 The closed incremental ledger now extends through `SRC-WERPC-115` and
 `CLM-WERPC-014-11`. It changes no requirement status or evidence-class
@@ -421,7 +444,7 @@ performed the atomic Stage 90 owner and consumer cutover. On 2026-11-05 Spec
 left the tree; Git history recovers them. That checker result was an expected
 legacy-allocation boundary, never a passing validation.
 
-#### 2026-08-28 closed full-scope revalidation
+##### 2026-08-28 closed full-scope revalidation
 
 The requested corpus was re-observed across all 36 requirement owners using
 official or primary external sources and named repository-static selectors.
@@ -453,7 +476,7 @@ expansion was created. The pack README and frozen SDLC/documentation owner
 bodies were left byte-unmodified on 2026-08-28 for the then-queued Spec 0054
 Stage 90 cutover (Spec 0054 has since left the tree; Git history recovers it).
 
-#### 2026-09-05 external-only scope revalidation
+##### 2026-09-05 external-only scope revalidation
 
 All thirty-six requirement owners were re-observed against their external
 evidence layer only. The approved 2026-09-05 follow-on cycle deliberately
@@ -485,18 +508,18 @@ previous observation date. Any later claim that the corpus is currently
 reconciled against the repository must come from a separate
 workspace-observation cycle, not from this record.
 
-## Sources
+### Alternatives
 
-- [Current URL-specific source observations](m0012-source-coverage.md#current-source-observations)
-- [Current claim and request ownership](m0012-source-coverage.md#requirement-coverage-matrix)
-- [Dated source and claim provenance](m0012-source-coverage.md#source-register)
+This report weighs no design alternatives, because it turns the pack's findings into bounded follow-up questions; a later member that compares options records them here.
 
-## Review and Freshness
+## Application and Limits
 
-Updated 2026-09-27 from directly read external evidence; 2026-11-05 edits only correct local-path and lifecycle statements and add no external observation. Recheck a question before approved work when its source/version, account/product surface, document contract, environment, acceptance criteria or risk changes. No row establishes current implementation. Historical scope maps are preserved for their recorded dates and are not the current governance registry. Detailed question ownership stays here; topical reports link it, and README remains navigation.
+### Design Implications
 
-## Related Documents
+The follow-up questions with their candidate selectors, evidence and acceptance are stated under [Follow-up question ledger](#follow-up-question-ledger).
 
-- [Pack router](README.md)
-- [Source and coverage owner](m0012-source-coverage.md)
-- [Research collection](../README.md)
+### Unverified Conditions
+
+#### Authority Boundary
+
+The seven axes below organize questions; they do not define governance roles, scope membership, write ownership or permissions. Canonical role, governance and approved lifecycle owners retain those decisions. Candidate file types/selectors are hypotheses, not paths observed to exist. No runtime, hosted CI, model entitlement, billing, memory recall or cluster behavior was investigated in this cycle.

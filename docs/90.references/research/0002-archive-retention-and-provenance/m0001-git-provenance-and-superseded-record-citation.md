@@ -1,16 +1,18 @@
 ---
 title: "Reference: Git Provenance and Superseded Record Citation"
-version: "0.2.2"
+version: "0.3.0"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 artifact_id: "RES-0002-m0001"
 ---
 
 # Reference: Git Provenance and Superseded Record Citation
 
-## Overview
+## Question and Scope
+
+### Question
 
 This dated reference records what primary sources say about naming and keeping
 Git objects, keeping superseded decisions and incident records, signalling moved
@@ -20,19 +22,19 @@ ADR-0039. ADR-0039 and its successor ADR-0040 left the tree (Git history
 recovers them); on 2026-11-05 the current Stage 98 decision is
 [ADR-0053](../../../02.architecture/decisions/0053-unvalidated-archive.md).
 
-## Reference Type
+#### Research Questions
+
+- How does Git name, keep and lose objects, so that a deleted document can be
+  recovered from history? (informs ADR-0053's Git-history recovery clause)
+- What do primary sources say about keeping superseded records, signalling
+  moved URLs, removing sensitive data, schema annotations and Markdown link
+  parsing?
+
+#### Reference Type
 
 Research reference with source-backed claims and stated limits.
 
-## Authority Boundary
-
-A claim here states what an external source documents. Whether this repository
-retains, cites, or validates something is decided by
-[common governance](../../../../.agents/README.md), the Stage 99 registry, and
-[ADR-0053](../../../02.architecture/decisions/0053-unvalidated-archive.md).
-This reference is not policy.
-
-## Scope
+### Scope
 
 Included: Git revision syntax, object inspection, garbage collection, clone
 depth and filters; the original ADR article; SRE postmortem practice; HTTP
@@ -41,105 +43,19 @@ conditionals, annotations, and `format`; CommonMark links and code; Diátaxis.
 Excluded: hosting-provider garbage collection policy, digital preservation
 certification, and any runtime behavior.
 
-### Research Questions
-
-- How does Git name, keep and lose objects, so that a deleted document can be
-  recovered from history? (informs ADR-0053's Git-history recovery clause)
-- What do primary sources say about keeping superseded records, signalling
-  moved URLs, removing sensitive data, schema annotations and Markdown link
-  parsing?
-
-### Method
+#### Method
 
 Each primary source was fetched on its observation date and a claim is recorded
 only with a captured quotation. A source that could not be fetched is recorded
 as `unreachable` without a claim. External statements are kept apart from this
 repository's local choices.
 
-## Definitions / Facts
-
-### Claim-Source Matrix
-
-| Claim | Source | Verification state |
-| --- | --- | --- |
-| `<rev>:<path>` names a blob or tree in a revision; existence is local | gitrevisions, git-cat-file (2026-09-15) | verified |
-| Unreachable objects are pruned after a grace period; reachability from a kept ref is what persists | git-gc (2026-09-15) | verified |
-| Shallow and partial clones may lack objects | git-clone (2026-09-15) | verified |
-| A superseded decision is kept and marked, not deleted | Nygard 2011 (2026-09-15) | verified |
-| 301/308/410 are live-site response semantics | RFC 9110 (2026-09-15) | verified |
-| Revoke or rotate a leaked secret; a history rewrite changes hashes | GitHub Docs (2026-09-15) | verified |
-| `format` is by default an annotation, not validation | Understanding JSON Schema (2026-09-15) | verified; explanatory pages, not normative |
-| Link-like text in code is not a link | CommonMark 0.31.2 (2026-09-15) | verified |
-| PREMIS object, event, agent and rights distinctions | PREMIS Ontology | unverified (`unreachable`) |
-
-### Git object naming and availability
-
-- `<rev>:<path>` "names the blob or tree at the given path in the tree-ish
-  object named by the part before the colon" (gitrevisions, Specifying
-  Revisions). One envelope form can therefore name a document's blob or a
-  package's tree. The syntax does not assert the type; the object at the path
-  decides it.
-- `git cat-file -t` shows "the object type identified by `<object>`", and `-e`
-  exits zero "if `<object>` exists and is a valid object" (git-cat-file). Existence
-  is local and says nothing about reachability or persistence.
-- `git gc` "tries very hard not to delete objects that are referenced anywhere in
-  your repository", while unreachable objects are pruned after a grace period
-  that defaults to two weeks (git-gc, Notes and `gc.pruneExpire`). An object
-  name alone is not a durable reference; reachability from a kept ref is.
-- `--depth` creates "a shallow clone with a history truncated", and `--filter`
-  requests "a subset of reachable objects" (git-clone). A shallow or partial
-  clone may lack the object an envelope names.
-
-### Superseded decisions and incident records
-
-- The original ADR article states: "If a decision is reversed, we will keep the
-  old one around, but mark it as superseded", with a reference to its
-  replacement (Nygard, 2011). The source keeps superseded decisions and does not
-  restrict citing them. Any local citation rule is a local policy choice; as of
-  2026-11-05 ADR-0053 carries no citation table forward for Stage 98.
-- A postmortem is "a written record of an incident, its impact, the actions
-  taken to mitigate or resolve it, the root cause(s), and the follow-up actions"
-  (SRE Book, Postmortem Culture). Well-written postmortems have action items
-  with "both an owner and a tracking number" (SRE Workbook, Postmortem Culture).
-  Neither chapter sets a retention period or a citation policy.
-
-### Public URLs and sensitive data
-
-- HTTP 301 and 308 mean the resource "has been assigned a new permanent URI",
-  and 410 means it is "no longer available at any location" and likely
-  permanently (RFC 9110, 15.4.2, 15.4.9, 15.5.11). These are server response
-  semantics for a live site, not version-control provenance.
-- For a leaked secret, GitHub's first step is to "revoke and/or rotate that
-  secret"; rewriting history "will change the hashes" of affected commits
-  (GitHub Docs, Removing sensitive data). This is hosting-product guidance, and
-  it is why a history rewrite cannot be a routine retention step.
-
-### Schema conditionals and annotations
-
-- `if`/`then`/`else` applies `then` only when `if` is valid, and
-  `dependentRequired` requires properties when a given property is present
-  (Understanding JSON Schema, Conditionals).
-- Annotation keywords such as `default`, `deprecated`, and `readOnly` "aren't
-  strictly used for validation", and "by default, `format` is just an annotation"
-  (Understanding JSON Schema, Annotations and Type). A declared format is not
-  proof that a validator enforces it. These guide pages are explanatory, not the
-  normative specification.
-
-### Markdown links and code
-
-- A link reference definition "does not correspond to a structural element of a
-  document", and code fence content "is treated as literal text, not parsed as
-  inlines" (CommonMark 0.31.2, 4.7 and 4.5). Link-like text in code is not a
-  link, so a comparison that rewrites it changes bytes a renderer never treats
-  as links.
-
-### Documentation purpose
-
-- Diátaxis "identifies four distinct needs, and four corresponding forms of
-  documentation" (diataxis.fr). A retained body keeps the purpose it had; an index
-  is navigation, not a fifth form.
-
 ## Sources
+
+### Primary Sources
+
+| Source ID | Source | Version | Checked At | Finding | Application | Limits |
+| --- | --- | --- | --- | --- | --- | --- |
 
 | Source                                                                                                                                                      | Grade      | Retrieved  | Relevance                                                                                                               |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------- |
@@ -159,36 +75,22 @@ repository's local choices.
 | [Diátaxis](https://diataxis.fr/)                                                                                                                            | Not graded | 2026-09-15 | Fetched                                                                                                                 |
 | [PREMIS Ontology](https://www.loc.gov/standards/premis/ontology/index.html)                                                                                 | Not graded | 2026-09-15 | `unreachable`: HTTP 403 twice, and `https://www.loc.gov/standards/premis/v3/` also returned HTTP 403; no claim recorded |
 
-### Findings
+#### Related Documents
 
-Git recovers a deleted document by name from any reachable commit, but a
-shallow or partial clone, or an object pruned after loss of every ref, can lack
-it; reachability, not the object name, is what persists. Primary sources keep
-superseded records and set no retention period or citation policy, so those
-choices are local. Format keywords and Markdown code are not enforcement or
-links, which bears on any comparison that rewrites them.
+- [Research pack](README.md)
+- [ADR-0053](../../../02.architecture/decisions/0053-unvalidated-archive.md)
+- Spec 0082, ADR-0039 and ADR-0040 left the tree; Git history recovers them (see the pack README)
 
-### Limitations
+### Versions and Dates
 
-PREMIS was `unreachable` (HTTP 403) and supports no claim. The JSON Schema pages
-are explanatory. Hosting-provider garbage collection policy and preservation
-certification are outside the scope. Observations date from 2026-09-15 and
-2026-09-28 and were not re-fetched on 2026-11-05.
-
-### Recommendations
-
-Local retention, citation and validation decisions belong to
-[ADR-0053](../../../02.architecture/decisions/0053-unvalidated-archive.md) and
-its successors; this reference only informs them.
-
-## Review and Freshness
+#### Review and Freshness
 
 Refresh when a cited Git, HTTP, JSON Schema, or CommonMark section changes, when
 PREMIS becomes reachable and an object, event, agent, or rights distinction is
 needed, or when ADR-0053 or its successor revises retention or citation. Current
 truth stays with the governance and registry owners named above.
 
-### 2026-09-28 Retention and Provenance Addendum
+##### 2026-09-28 Retention and Provenance Addendum
 
 The earlier 2026-09-15 findings and source results above remain their dated evidence. The sources below were read directly on 2026-09-28 to assess the proposed Archive standard; they do not grant repository approval. The current local decision was ADR-0040 when this addendum was written; ADR-0040 has since left the tree and ADR-0053 (2026-11-05) supersedes it. The "frozen exact-byte bodies", "Archive index" and "successor decision" mentioned below describe that earlier local model, which ADR-0053 removed.
 
@@ -208,8 +110,121 @@ The earlier 2026-09-15 findings and source results above remain their dated evid
 | Git, git-ls-files | https://git-scm.com/docs/git-ls-files | 2026-09-28 | Read directly; stage and eol expose index/worktree facts |
 | Git, gitattributes | https://git-scm.com/docs/gitattributes | 2026-09-28 | Read directly; path attributes and checkout transformations |
 
-## Related Documents
+## Analysis
 
-- [Research pack](README.md)
-- [ADR-0053](../../../02.architecture/decisions/0053-unvalidated-archive.md)
-- Spec 0082, ADR-0039 and ADR-0040 left the tree; Git history recovers them (see the pack README)
+### Claim-Source Matrix
+
+| Claim | Source | Verification state |
+| --- | --- | --- |
+| `<rev>:<path>` names a blob or tree in a revision; existence is local | gitrevisions, git-cat-file (2026-09-15) | verified |
+| Unreachable objects are pruned after a grace period; reachability from a kept ref is what persists | git-gc (2026-09-15) | verified |
+| Shallow and partial clones may lack objects | git-clone (2026-09-15) | verified |
+| A superseded decision is kept and marked, not deleted | Nygard 2011 (2026-09-15) | verified |
+| 301/308/410 are live-site response semantics | RFC 9110 (2026-09-15) | verified |
+| Revoke or rotate a leaked secret; a history rewrite changes hashes | GitHub Docs (2026-09-15) | verified |
+| `format` is by default an annotation, not validation | Understanding JSON Schema (2026-09-15) | verified; explanatory pages, not normative |
+| Link-like text in code is not a link | CommonMark 0.31.2 (2026-09-15) | verified |
+| PREMIS object, event, agent and rights distinctions | PREMIS Ontology | unverified (`unreachable`) |
+
+### Findings
+
+Git recovers a deleted document by name from any reachable commit, but a
+shallow or partial clone, or an object pruned after loss of every ref, can lack
+it; reachability, not the object name, is what persists. Primary sources keep
+superseded records and set no retention period or citation policy, so those
+choices are local. Format keywords and Markdown code are not enforcement or
+links, which bears on any comparison that rewrites them.
+
+#### Git object naming and availability
+
+- `<rev>:<path>` "names the blob or tree at the given path in the tree-ish
+  object named by the part before the colon" (gitrevisions, Specifying
+  Revisions). One envelope form can therefore name a document's blob or a
+  package's tree. The syntax does not assert the type; the object at the path
+  decides it.
+- `git cat-file -t` shows "the object type identified by `<object>`", and `-e`
+  exits zero "if `<object>` exists and is a valid object" (git-cat-file). Existence
+  is local and says nothing about reachability or persistence.
+- `git gc` "tries very hard not to delete objects that are referenced anywhere in
+  your repository", while unreachable objects are pruned after a grace period
+  that defaults to two weeks (git-gc, Notes and `gc.pruneExpire`). An object
+  name alone is not a durable reference; reachability from a kept ref is.
+- `--depth` creates "a shallow clone with a history truncated", and `--filter`
+  requests "a subset of reachable objects" (git-clone). A shallow or partial
+  clone may lack the object an envelope names.
+
+#### Superseded decisions and incident records
+
+- The original ADR article states: "If a decision is reversed, we will keep the
+  old one around, but mark it as superseded", with a reference to its
+  replacement (Nygard, 2011). The source keeps superseded decisions and does not
+  restrict citing them. Any local citation rule is a local policy choice; as of
+  2026-11-05 ADR-0053 carries no citation table forward for Stage 98.
+- A postmortem is "a written record of an incident, its impact, the actions
+  taken to mitigate or resolve it, the root cause(s), and the follow-up actions"
+  (SRE Book, Postmortem Culture). Well-written postmortems have action items
+  with "both an owner and a tracking number" (SRE Workbook, Postmortem Culture).
+  Neither chapter sets a retention period or a citation policy.
+
+#### Public URLs and sensitive data
+
+- HTTP 301 and 308 mean the resource "has been assigned a new permanent URI",
+  and 410 means it is "no longer available at any location" and likely
+  permanently (RFC 9110, 15.4.2, 15.4.9, 15.5.11). These are server response
+  semantics for a live site, not version-control provenance.
+- For a leaked secret, GitHub's first step is to "revoke and/or rotate that
+  secret"; rewriting history "will change the hashes" of affected commits
+  (GitHub Docs, Removing sensitive data). This is hosting-product guidance, and
+  it is why a history rewrite cannot be a routine retention step.
+
+#### Schema conditionals and annotations
+
+- `if`/`then`/`else` applies `then` only when `if` is valid, and
+  `dependentRequired` requires properties when a given property is present
+  (Understanding JSON Schema, Conditionals).
+- Annotation keywords such as `default`, `deprecated`, and `readOnly` "aren't
+  strictly used for validation", and "by default, `format` is just an annotation"
+  (Understanding JSON Schema, Annotations and Type). A declared format is not
+  proof that a validator enforces it. These guide pages are explanatory, not the
+  normative specification.
+
+#### Markdown links and code
+
+- A link reference definition "does not correspond to a structural element of a
+  document", and code fence content "is treated as literal text, not parsed as
+  inlines" (CommonMark 0.31.2, 4.7 and 4.5). Link-like text in code is not a
+  link, so a comparison that rewrites it changes bytes a renderer never treats
+  as links.
+
+#### Documentation purpose
+
+- Diátaxis "identifies four distinct needs, and four corresponding forms of
+  documentation" (diataxis.fr). A retained body keeps the purpose it had; an index
+  is navigation, not a fifth form.
+
+### Alternatives
+
+This reference weighs no design alternatives, because it records what primary sources say; the local choices belong to ADR-0053, and a later member that compares options records them here.
+
+## Application and Limits
+
+### Design Implications
+
+Local retention, citation and validation decisions belong to
+[ADR-0053](../../../02.architecture/decisions/0053-unvalidated-archive.md) and
+its successors; this reference only informs them.
+
+### Unverified Conditions
+
+PREMIS was `unreachable` (HTTP 403) and supports no claim. The JSON Schema pages
+are explanatory. Hosting-provider garbage collection policy and preservation
+certification are outside the scope. Observations date from 2026-09-15 and
+2026-09-28 and were not re-fetched on 2026-11-05.
+
+#### Authority Boundary
+
+A claim here states what an external source documents. Whether this repository
+retains, cites, or validates something is decided by
+[common governance](../../../../.agents/README.md), the Stage 99 registry, and
+[ADR-0053](../../../02.architecture/decisions/0053-unvalidated-archive.md).
+This reference is not policy.

@@ -102,10 +102,19 @@ class FrontmatterNegativeTest(unittest.TestCase):
 class AuditFormColumnsTest(unittest.TestCase):
     def test_findings_table_has_the_finding_columns(self) -> None:
         text = AUDIT_FORM.read_text(encoding="utf-8")
-        section = text.split("### Findings and Gaps", 1)[1]
+        # SPEC-0222: the local findings table sits under Conflicts and Gaps after
+        # the core audit.findings table.
+        section = text.split("### Conflicts and Gaps", 1)[1].split("\n## ", 1)[0]
         lines = section.splitlines()
-        index = next(i for i, line in enumerate(lines) if line.startswith("|"))
-        columns = [cell.strip() for cell in lines[index].strip("|").split("|")]
+        headers = [
+            (i, [cell.strip() for cell in line.strip("|").split("|")])
+            for i, line in enumerate(lines)
+            if line.startswith("|")
+            and not line.startswith("| ---")
+            and (i == 0 or not lines[i - 1].startswith("|"))
+        ]
+        self.assertEqual(headers[0][1][0], "Finding ID")
+        index, columns = next(h for h in headers if h[1][0] == "ID")
         self.assertEqual(columns, AUDIT_COLUMNS)
         self.assertEqual(lines[index + 2].count("Author prompt"), len(AUDIT_COLUMNS))
 

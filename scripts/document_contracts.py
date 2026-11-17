@@ -1016,8 +1016,9 @@ class DocumentLanguage:
         )
 
 
-# The twenty-seven form identifiers a form may carry: sixteen COMMON-DOC-FORM-1
-# roles and eleven Stage 99 local roles (W03-D09, W03-D26, W03-D34, W03-D36).
+# The twenty-nine form identifiers a form may carry: sixteen COMMON-DOC-FORM-1
+# roles, ten Stage 99 local roles (W03-D09, W03-D26, W03-D34) and the research,
+# audit and data-reference core roles (SPEC-0222).
 FormId = Literal[
     "requirement",
     "architecture",
@@ -1045,11 +1046,14 @@ FormId = Literal[
     "evaluation-results",
     "governance-document",
     "governance-role",
-    "reference-report",
+    "research",
+    "audit",
+    "data-reference",
 ]
 
-# Ten Stage 99 local roles follow (W03-D09, W03-D20, W03-D34, W03-D36); nine
-# have a form, and provider-native alone has none.
+# The Stage 99 local roles (W03-D09, W03-D20, W03-D34) and the research, audit
+# and data-reference core roles (SPEC-0222) follow; provider-native alone has no
+# form.
 DocumentRole = Literal[
     "requirement",
     "architecture",
@@ -1069,7 +1073,9 @@ DocumentRole = Literal[
     "skill",
     "workspace-readme",
     "reference-pack-readme",
-    "reference-report",
+    "research",
+    "audit",
+    "data-reference",
     "governance-document",
     "governance-role",
     "knowledge-map",
@@ -3933,7 +3939,7 @@ def _form_section_diagnostics(
                 applicability is not None
                 and "artifact_ids" in applicability
                 and (
-                    form["form_id"] != "reference-report"
+                    form["form_id"] != "research"
                     or level != 3
                     or applicability["source_profile_ids"] != ["reference/research"]
                 )
@@ -3963,7 +3969,7 @@ def _form_section_diagnostics(
             faults.extend(_identity_bound_faults(form["form_id"], extension, where))
         if extension["kind"] != "local_h3":
             continue
-        if "artifact_ids" in extension and form["form_id"] != "reference-report":
+        if "artifact_ids" in extension and form["form_id"] != "research":
             faults.append(
                 (
                     "REGISTRY_FORM_EXTENSION",

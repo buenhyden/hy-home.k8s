@@ -946,7 +946,7 @@
       "id": "reference/audit",
       "family": "reference",
       "mode": "authored",
-      "document_role": "reference-report",
+      "document_role": "audit",
       "path_pattern": "^docs/90\\.references/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^AUD-[0-9]{4}-m[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/audit.template.md",
@@ -1000,7 +1000,7 @@
       "id": "reference/research",
       "family": "reference",
       "mode": "authored",
-      "document_role": "reference-report",
+      "document_role": "research",
       "path_pattern": "^docs/90\\.references/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^RES-[0-9]{4}-m[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/research.template.md",
@@ -1054,7 +1054,7 @@
       "id": "reference/data",
       "family": "reference",
       "mode": "authored",
-      "document_role": "reference-report",
+      "document_role": "data-reference",
       "path_pattern": "^docs/90\\.references/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^DATA-[0-9]{4}-m[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/data.template.md",
@@ -3429,7 +3429,7 @@
       "id": "common/template-reference-audit",
       "family": "common",
       "mode": "template",
-      "document_role": "reference-report",
+      "document_role": "audit",
       "path_pattern": "^docs/99\\.templates/templates/references/audit\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/references/audit.template.md",
@@ -3473,13 +3473,13 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_id": "COMMON-DOC-FORM-1",
         "contract_version": "2.0.0",
         "purpose": "Give authors one form for a Stage 90 audit member that records a dated assurance assessment with its observation boundary and sources.",
         "responsibility": "An audit member owns its dated evidence and states what it cannot establish; it never becomes policy or current authority by itself.",
         "non_goals": [
-          "Being a COMMON-DOC-FORM-1 role: reference-report has its own local form under W03-D20, W03-D26, W03-D35 and W03-D36 and is not a COMMON-DOC-FORM-1 role.",
-          "Changing the template's headings, which stay as they are and are now owned by the form.",
+          "Changing a core section or table of the audit role, which the adopted common core workspace-document-role-design 4.0.0 owns (SPEC-0222).",
+          "Changing the template's headings outside the audit form, which owns them.",
           "Promoting a Stage 90 claim to a requirement, decision or policy, which its Stage 01, 02 or 05 owner adopts."
         ],
         "policy_refs": [
@@ -3492,8 +3492,75 @@
         "applicability": "Audit members under docs/90.references/audits/ and their template.",
         "tables": [
           {
+            "name": "Finding ID",
+            "section": "audit.findings",
+            "columns": [
+              {
+                "key": "Finding ID",
+                "meaning": "발견",
+                "data_type": "identifier",
+                "required": true,
+                "id": "finding_id"
+              },
+              {
+                "key": "Requirement",
+                "meaning": "현재 의무",
+                "data_type": "reference",
+                "required": true,
+                "id": "requirement"
+              },
+              {
+                "key": "Evidence",
+                "meaning": "직접 확인 범위",
+                "data_type": "reference-list",
+                "required": true,
+                "id": "evidence"
+              },
+              {
+                "key": "Classification",
+                "meaning": "confirmed/gap/conflict/unverified/not-applicable",
+                "data_type": "enum",
+                "required": true,
+                "id": "classification",
+                "allowed_values": [
+                  "confirmed",
+                  "gap",
+                  "conflict",
+                  "unverified",
+                  "not-applicable"
+                ]
+              },
+              {
+                "key": "Action",
+                "meaning": "구체 수정",
+                "data_type": "string",
+                "required": true,
+                "id": "action"
+              },
+              {
+                "key": "Owner",
+                "meaning": "담당",
+                "data_type": "string",
+                "required": true,
+                "id": "owner"
+              },
+              {
+                "key": "Acceptance",
+                "meaning": "닫히는 조건",
+                "data_type": "string",
+                "required": true,
+                "id": "acceptance"
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Finding ID",
+            "table_id": "audit.findings",
+            "required_when": "always",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+          },
+          {
             "name": "Criterion",
-            "section": "reference-report-scope-criteria-and-inspected-surface",
+            "section": "audit.scope.2",
             "columns": [
               {
                 "key": "Criterion",
@@ -3513,7 +3580,7 @@
           },
           {
             "name": "Observation",
-            "section": "reference-report-definitions-facts-observed-evidence",
+            "section": "audit.findings.1",
             "columns": [
               {
                 "key": "Observation",
@@ -3539,7 +3606,7 @@
           },
           {
             "name": "ID",
-            "section": "reference-report-definitions-facts-findings-and-gaps",
+            "section": "audit.findings.2",
             "columns": [
               {
                 "key": "ID",
@@ -3595,7 +3662,7 @@
           },
           {
             "name": "Remediation",
-            "section": "reference-report-review-and-freshness-remediation",
+            "section": "audit.actions.1",
             "columns": [
               {
                 "key": "Remediation",
@@ -3635,26 +3702,26 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the reference-report role pass the form tree check with the form's eight H2 sections and the H3 titles of their report kind.",
+            "The template and a document of the audit role pass the form tree check with the form's core H2 sections and their required H3 sections.",
             "A table with the recorded columns in the recorded order under its form section ID passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
             "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
-            "A recorded section that is not a section ID or local_h3 extension ID of the reference-report form fails REGISTRY_TABLE_SECTION.",
-            "A document with an unregistered H3, an H3 under the wrong H2 or conditional H3 titles out of order fails BODY-H3-UNSUPPORTED, BODY-H3-PARENT or BODY-H3-ORDER in the form tree check.",
-            "A subtype H3 under the right parent but on another report kind fails BODY-HEADING-INAPPLICABLE."
+            "A recorded section that is not a section ID or local_h3 extension ID of the audit form fails REGISTRY_TABLE_SECTION.",
+            "A document with an unregistered or missing H3, or an H3 under the wrong H2, fails BODY-H3-UNSUPPORTED, BODY-H3-REQUIRED or BODY-H3-PARENT in the form tree check.",
+            "A template core table whose section, condition, empty policy or columns differ from the form core fails REGISTRY_CORE_TABLE."
           ],
           "regression": [
-            "tests/test_common_form_tree.py checks subtype applicability, optional H3 sections and this definition’s tables.",
+            "tests/test_common_form_tree.py checks the audit core members, tree and tables.",
             "tests/test_document_terminal_contract.py compares the typed role list and the typed form identifiers with the schema enums."
           ]
         },
         "migration": {
-          "meaning_map": "No heading, column or sentence of the template changes; the form records the eight H2 headings and the conditional H3 titles of the three report kinds, binds the profiles to it and moves this template's tables to form section IDs (SPEC-0189).",
+          "meaning_map": "No heading, column or sentence of the template changes; the form records the eight H2 headings and the conditional H3 titles of the three report kinds, binds the profiles to it and moves this template's tables to form section IDs (SPEC-0189). SPEC-0222 moved the audit reports to the audit core role: Overview to Scope > Subject, with Reference Type, Authority Boundary and Related Documents as H4; Scope to Read Coverage, with Criteria and Inspected Surface and Sources as H4; Definitions / Facts to Findings; Observed Evidence to Evidence; Findings and Gaps to Conflicts and Gaps; Review and Freshness to Actions, with Remediation as Owners, Verification State as Acceptance Conditions and the Review and Freshness text as H4 under it. The core audit.findings table is added; the Criterion, Observation, ID and Remediation tables stay as local tables of their own.",
           "retained_history": "Git history retains the profiles that listed their H2 headings and the tables named by heading lines.",
-          "rollback": "Revert the SPEC-0189 implementation commit."
+          "rollback": "Revert the SPEC-0222 WORK-008 change, then the SPEC-0189 implementation change."
         }
       }
     },
@@ -3662,7 +3729,7 @@
       "id": "common/template-reference-research",
       "family": "common",
       "mode": "template",
-      "document_role": "reference-report",
+      "document_role": "research",
       "path_pattern": "^docs/99\\.templates/templates/references/research\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/references/research.template.md",
@@ -3706,13 +3773,13 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_id": "COMMON-DOC-FORM-1",
         "contract_version": "2.0.0",
         "purpose": "Give authors one form for a Stage 90 research member that records a dated inquiry with its observation boundary and sources.",
         "responsibility": "A research member owns its dated evidence and states what it cannot establish; it never becomes policy or current authority by itself.",
         "non_goals": [
-          "Being a COMMON-DOC-FORM-1 role: reference-report has its own local form under W03-D20, W03-D26, W03-D35 and W03-D36 and is not a COMMON-DOC-FORM-1 role.",
-          "Changing the template's headings, which stay as they are and are now owned by the form.",
+          "Changing a core section or table of the research role, which the adopted common core workspace-document-role-design 4.0.0 owns (SPEC-0222).",
+          "Changing the template's headings outside the research form, which owns them.",
           "Promoting a Stage 90 claim to a requirement, decision or policy, which its Stage 01, 02 or 05 owner adopts."
         ],
         "policy_refs": [
@@ -3725,8 +3792,68 @@
         "applicability": "Research members under docs/90.references/research/ and their template.",
         "tables": [
           {
+            "name": "Source ID",
+            "section": "research.sources",
+            "columns": [
+              {
+                "key": "Source ID",
+                "meaning": "출처",
+                "data_type": "identifier",
+                "required": true,
+                "id": "source_id"
+              },
+              {
+                "key": "Source",
+                "meaning": "원문 위치",
+                "data_type": "reference",
+                "required": true,
+                "id": "url"
+              },
+              {
+                "key": "Version",
+                "meaning": "실제 판본; 문서 판본과 타입 분리",
+                "data_type": "string-or-none",
+                "required": true,
+                "id": "version"
+              },
+              {
+                "key": "Checked At",
+                "meaning": "직접 확인한 때",
+                "data_type": "timestamp",
+                "required": true,
+                "id": "checked"
+              },
+              {
+                "key": "Finding",
+                "meaning": "출처가 실제로 지지하는 내용",
+                "data_type": "string",
+                "required": true,
+                "id": "finding"
+              },
+              {
+                "key": "Application",
+                "meaning": "선택한 적용",
+                "data_type": "string",
+                "required": true,
+                "id": "application"
+              },
+              {
+                "key": "Limits",
+                "meaning": "적용 한계·미확인",
+                "data_type": "string",
+                "required": true,
+                "id": "limits"
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Source ID",
+            "table_id": "research.sources",
+            "required_when": "always",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+          },
+          {
             "name": "Claim",
-            "section": "reference-report-definitions-facts-claim-source-matrix",
+            "section": "research-claim-source-matrix",
             "columns": [
               {
                 "key": "Claim",
@@ -3752,7 +3879,7 @@
           },
           {
             "name": "Source",
-            "section": "reference-report-sources",
+            "section": "research.sources.1",
             "columns": [
               {
                 "key": "Source",
@@ -3798,26 +3925,26 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the reference-report role pass the form tree check with the form's eight H2 sections and the H3 titles of their report kind.",
+            "The template and a document of the research role pass the form tree check with the form's core H2 sections and their required H3 sections.",
             "A table with the recorded columns in the recorded order under its form section ID passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
             "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
-            "A recorded section that is not a section ID or local_h3 extension ID of the reference-report form fails REGISTRY_TABLE_SECTION.",
-            "A document with an unregistered H3, an H3 under the wrong H2 or conditional H3 titles out of order fails BODY-H3-UNSUPPORTED, BODY-H3-PARENT or BODY-H3-ORDER in the form tree check.",
-            "A subtype H3 under the right parent but on another report kind fails BODY-HEADING-INAPPLICABLE."
+            "A recorded section that is not a section ID or local_h3 extension ID of the research form fails REGISTRY_TABLE_SECTION.",
+            "A document with an unregistered or missing H3, or an H3 under the wrong H2, fails BODY-H3-UNSUPPORTED, BODY-H3-REQUIRED or BODY-H3-PARENT in the form tree check.",
+            "A template core table whose section, condition, empty policy or columns differ from the form core fails REGISTRY_CORE_TABLE."
           ],
           "regression": [
-            "tests/test_common_form_tree.py checks subtype applicability, optional H3 sections and this definition’s tables.",
+            "tests/test_common_form_tree.py checks the research core members, tree and tables.",
             "tests/test_document_terminal_contract.py compares the typed role list and the typed form identifiers with the schema enums."
           ]
         },
         "migration": {
-          "meaning_map": "No heading, column or sentence of the template changes; the form records the eight H2 headings and the conditional H3 titles of the three report kinds, binds the profiles to it and moves this template's tables to form section IDs (SPEC-0189). The m0001 research report's Sources table moves from Source, URL, Checked and Result to Source, Grade, Retrieved and Relevance (W03-D21): its Relevance column holds the recorded retrieval result, not a statement of direct support, and its Grade is Not graded because no grade is on record.",
+          "meaning_map": "No heading, column or sentence of the template changes; the form records the eight H2 headings and the conditional H3 titles of the three report kinds, binds the profiles to it and moves this template's tables to form section IDs (SPEC-0189). The m0001 research report's Sources table moves from Source, URL, Checked and Result to Source, Grade, Retrieved and Relevance (W03-D21): its Relevance column holds the recorded retrieval result, not a statement of direct support, and its Grade is Not graded because no grade is on record. SPEC-0222 moved the research reports to the research core role: Overview to Question, with Research Questions and Reference Type as H4 under it; Scope to Scope, with Method as H4; Sources to Sources > Primary Sources, with Related Documents as H4; Review and Freshness as H4 under Versions and Dates; Definitions / Facts and Findings to Analysis > Findings, with Claim-Source Matrix a registered local H3; Recommendations to Design Implications; Limitations to Unverified Conditions, with Authority Boundary as H4. The core research.sources table is added; the Claim and Source tables stay as local tables of their own.",
           "retained_history": "Git history retains the profiles that listed their H2 headings and the tables named by heading lines.",
-          "rollback": "Revert the SPEC-0189 implementation commit."
+          "rollback": "Revert the SPEC-0222 WORK-008 change, then the SPEC-0189 implementation change."
         }
       }
     },
@@ -3825,7 +3952,7 @@
       "id": "common/template-reference-data",
       "family": "common",
       "mode": "template",
-      "document_role": "reference-report",
+      "document_role": "data-reference",
       "path_pattern": "^docs/99\\.templates/templates/references/data\\.template\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/references/data.template.md",
@@ -3869,13 +3996,13 @@
       },
       "placeholder_policy": "template-only",
       "template_definition": {
-        "contract_id": "STAGE99-LOCAL-FORM-1",
+        "contract_id": "COMMON-DOC-FORM-1",
         "contract_version": "2.0.0",
         "purpose": "Give authors one form for a Stage 90 data member that records a reproducible repository-fact snapshot with its observation boundary and sources.",
         "responsibility": "A data member owns its dated evidence and states what it cannot establish; it never becomes policy or current authority by itself.",
         "non_goals": [
-          "Being a COMMON-DOC-FORM-1 role: reference-report has its own local form under W03-D20, W03-D26, W03-D35 and W03-D36 and is not a COMMON-DOC-FORM-1 role.",
-          "Changing the template's headings, which stay as they are and are now owned by the form.",
+          "Changing a core section or table of the data-reference role, which the adopted common core workspace-document-role-design 4.0.0 owns (SPEC-0222).",
+          "Changing the template's headings outside the data-reference form, which owns them.",
           "Promoting a Stage 90 claim to a requirement, decision or policy, which its Stage 01, 02 or 05 owner adopts."
         ],
         "policy_refs": [
@@ -3889,17 +4016,57 @@
         "tables": [
           {
             "name": "Field",
-            "section": "reference-report-definitions-facts-schema",
+            "section": "data-reference.interpretation",
             "columns": [
               {
                 "key": "Field",
-                "meaning": "A stable field name.",
-                "data_type": "string",
-                "required": true
+                "meaning": "데이터 필드",
+                "data_type": "identifier",
+                "required": true,
+                "id": "field"
               },
               {
-                "key": "Meaning and unit",
-                "meaning": "The meaning and unit of the field.",
+                "key": "Type",
+                "meaning": "값의 타입",
+                "data_type": "string",
+                "required": true,
+                "id": "type"
+              },
+              {
+                "key": "Unit",
+                "meaning": "단위",
+                "data_type": "string-or-none",
+                "required": true,
+                "id": "unit"
+              },
+              {
+                "key": "Meaning",
+                "meaning": "의미",
+                "data_type": "string",
+                "required": true,
+                "id": "meaning"
+              },
+              {
+                "key": "Limits",
+                "meaning": "정밀도·결측·비용",
+                "data_type": "string",
+                "required": true,
+                "id": "limitations"
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Field",
+            "table_id": "data-reference.schema",
+            "required_when": "always",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+          },
+          {
+            "name": "Producer",
+            "section": "data-reference.provenance.1",
+            "columns": [
+              {
+                "key": "Field",
+                "meaning": "The data-reference.schema field the row names.",
                 "data_type": "string",
                 "required": true
               },
@@ -3915,7 +4082,7 @@
           },
           {
             "name": "Source",
-            "section": "reference-report-sources-provenance",
+            "section": "data-reference.provenance.1",
             "columns": [
               {
                 "key": "Source",
@@ -3941,7 +4108,7 @@
           },
           {
             "name": "Generation command",
-            "section": "reference-report-review-and-freshness-generation-and-refresh",
+            "section": "data-reference.provenance.1",
             "columns": [
               {
                 "key": "Generation command",
@@ -3981,26 +4148,26 @@
         ],
         "validation": {
           "positive": [
-            "The template and a document of the reference-report role pass the form tree check with the form's eight H2 sections and the H3 titles of their report kind.",
+            "The template and a document of the data-reference role pass the form tree check with the form's three core H2 sections and their six required H3 sections.",
             "A table with the recorded columns in the recorded order under its form section ID passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
           ],
           "negative": [
             "Removing document_role from the template while its definition remains fails REGISTRY_TEMPLATE_DEFINITION.",
             "A template and its source profile with different roles fail the template/source parity check of validate-document-contract-registry.py.",
             "A recorded table whose header reorders or omits a column fails BODY-TABLE-COLUMNS.",
-            "A recorded section that is not a section ID or local_h3 extension ID of the reference-report form fails REGISTRY_TABLE_SECTION.",
-            "A document with an unregistered H3, an H3 under the wrong H2 or conditional H3 titles out of order fails BODY-H3-UNSUPPORTED, BODY-H3-PARENT or BODY-H3-ORDER in the form tree check.",
-            "A subtype H3 under the right parent but on another report kind fails BODY-HEADING-INAPPLICABLE."
+            "A recorded section that is not a section ID of the data-reference form fails REGISTRY_TABLE_SECTION.",
+            "A document with an unregistered or missing H3, or an H3 under the wrong H2, fails BODY-H3-UNSUPPORTED, BODY-H3-REQUIRED or BODY-H3-PARENT in the form tree check.",
+            "A template core table whose section, condition, empty policy or columns differ from the form core fails REGISTRY_CORE_TABLE."
           ],
           "regression": [
-            "tests/test_common_form_tree.py checks subtype applicability, optional H3 sections and this definition’s tables.",
+            "tests/test_common_form_tree.py checks the data-reference core members, tree and tables.",
             "tests/test_document_terminal_contract.py compares the typed role list and the typed form identifiers with the schema enums."
           ]
         },
         "migration": {
-          "meaning_map": "No heading, column or sentence of the template changes; the form records the eight H2 headings and the conditional H3 titles of the three report kinds, binds the profiles to it and moves this template's tables to form section IDs (SPEC-0189).",
+          "meaning_map": "No heading, column or sentence of the template changes; the form records the eight H2 headings and the conditional H3 titles of the three report kinds, binds the profiles to it and moves this template's tables to form section IDs (SPEC-0189). SPEC-0222 moved the data reports to the data-reference core role: Overview, Reference Type and Related Documents to Purpose > Consumers, Authority Boundary to Purpose > Boundaries, Scope, Sources and their tables to Provenance > Collection, Definitions / Facts and Schema to Interpretation > Schema and Units, Review and Freshness and Staleness Boundaries to Interpretation > Limits; the Field table became the core data-reference.schema table (Meaning and unit split into Unit and Meaning) and its Producer column a local table keyed by Field.",
           "retained_history": "Git history retains the profiles that listed their H2 headings and the tables named by heading lines.",
-          "rollback": "Revert the SPEC-0189 implementation commit."
+          "rollback": "Revert the SPEC-0222 WORK-008 data-reference change, then the SPEC-0189 implementation change."
         }
       }
     },
@@ -15850,613 +16017,68 @@
         }
       },
       {
-        "form_id": "reference-report",
-        "title": "Reference Report",
+        "form_id": "research",
+        "title": "Research",
         "h1": "{{document_title}}",
         "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
-        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 이 양식은 W03-D20·W03-D26·W03-D35·W03-D36에 따른 Stage 99 지역 역할의 양식이며 COMMON-DOC-FORM-1 역할이 아니다. 감사·연구·데이터 보고서가 이 양식 하나를 쓰며 종류마다 다른 H3 제목은 조건부 절로 등록하고 한 문서만 쓰는 제목은 공통 확장 정의에 조건·위치·이름·소유자·시험을 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
         "extensions": [
           {
-            "id": "reference-extension-definitions-facts-instruction-and-context-loading",
+            "id": "research-claim-source-matrix",
             "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Instruction and context loading\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0001"
-            ],
+            "condition": "a research report that records each claim against its sources in a Claim-Source Matrix table",
             "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Instruction and context loading",
-            "authority_ref": "ADR-0059"
+            "verification": "the form tree check and the Claim table check",
+            "review": "when the Research form changes",
+            "removal": "when research.sources carries every claim's source facts and no report keeps the matrix",
+            "parent_id": "research.analysis",
+            "title": "Claim-Source Matrix",
+            "authority_ref": "SPEC-0222"
           },
           {
-            "id": "reference-extension-definitions-facts-cross-provider-governance",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Cross-provider governance\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0001"
-            ],
+            "id": "research-published-retained-form",
+            "kind": "retained_form",
+            "condition": "a published research member RES-0001-m0001 to RES-0001-m0012 keeps the eight H2 it was published with; every other research member takes the form tree",
             "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Cross-provider governance",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-workspace-governance-questions",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Workspace governance questions\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0001"
+            "verification": "tests/test_common_form_tree.py",
+            "review": "when a bound member's successor is published",
+            "removal": "when Q07-CUTOVER disposes of the bound members after their successors are accepted; the bound is never widened",
+            "statuses": [
+              "published"
             ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Workspace governance questions",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-historical-observations-and-corrections-2026-08-08-to-2026-09-07",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Historical observations and corrections — 2026-08-08 to 2026-09-07\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0001"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Historical observations and corrections — 2026-08-08 to 2026-09-07",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-harness-components-and-lifecycle",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Harness components and lifecycle\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0002"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Harness components and lifecycle",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-loop-design-and-failure-controls",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Loop design and failure controls\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0002"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Loop design and failure controls",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-harness-and-loop-questions",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Harness and loop questions\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0002"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Harness and loop questions",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-provider-surface-comparison",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Provider surface comparison\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0003"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Provider surface comparison",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-hooks-ide-and-sdk-boundaries",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Hooks IDE and SDK boundaries\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0003"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Hooks IDE and SDK boundaries",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-provider-verification-questions",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Provider verification questions\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0003"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Provider verification questions",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-model-selection-and-escalation",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Model selection and escalation\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0010"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Model selection and escalation",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-cost-context-and-rate-control",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Cost context and rate control\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0010"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Cost context and rate control",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-model-and-budget-questions",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Model and budget questions\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0010"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Model and budget questions",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-memory-authority-and-lifecycle",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Memory authority and lifecycle\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0011"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Memory authority and lifecycle",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-retrieval-poisoning-and-handoff",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Retrieval poisoning and handoff\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0011"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Retrieval poisoning and handoff",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-memory-verification-questions",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Memory verification questions\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0011"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Memory verification questions",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-evidence-axes-and-ownership",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Evidence axes and ownership\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0012"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Evidence axes and ownership",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-requirement-coverage-matrix",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Requirement coverage matrix\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0012"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Requirement coverage matrix",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-current-claim-ownership-and-evidence-boundaries",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Current claim ownership and evidence boundaries\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0012"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Current claim ownership and evidence boundaries",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-historical-consolidation-and-consumer-disposition",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Historical consolidation and consumer disposition\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0012"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Historical consolidation and consumer disposition",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-current-source-observations",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Current source observations\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0012"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Current source observations",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-2026-10-27-required-source-observations",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"2026-10-27 required-source observations\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0012"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "2026-10-27 required-source observations",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-historical-source-and-claim-provenance",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Historical source and claim provenance\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0012"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Historical source and claim provenance",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-historical-readme-coverage-and-reconciliation",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Historical README coverage and reconciliation\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0012"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Historical README coverage and reconciliation",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-analytical-axes-and-evidence-contract",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Analytical axes and evidence contract\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0013"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Analytical axes and evidence contract",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-follow-up-question-ledger",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Follow-up question ledger\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0013"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Follow-up question ledger",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-historical-scope-projections",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Historical scope projections\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0001-m0013"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Historical scope projections",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-git-object-naming-and-availability",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Git object naming and availability\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0002-m0001"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Git object naming and availability",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-superseded-decisions-and-incident-records",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Superseded decisions and incident records\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0002-m0001"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Superseded decisions and incident records",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-public-urls-and-sensitive-data",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Public URLs and sensitive data\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0002-m0001"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Public URLs and sensitive data",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-schema-conditionals-and-annotations",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Schema conditionals and annotations\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0002-m0001"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Schema conditionals and annotations",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-markdown-links-and-code",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Markdown links and code\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0002-m0001"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Markdown links and code",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-definitions-facts-documentation-purpose",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Documentation purpose\" under Definitions / Facts",
-            "artifact_ids": [
-              "RES-0002-m0001"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-definitions-facts",
-            "title": "Documentation purpose",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-sources-findings",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Findings\" under Sources",
-            "artifact_ids": [
-              "RES-0002-m0001"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-sources",
-            "title": "Findings",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-sources-limitations",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Limitations\" under Sources",
-            "artifact_ids": [
-              "RES-0002-m0001"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-sources",
-            "title": "Limitations",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-sources-recommendations",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Recommendations\" under Sources",
-            "artifact_ids": [
-              "RES-0002-m0001"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-sources",
-            "title": "Recommendations",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-review-and-freshness-evidence-insufficiency-correction-dated-2026-09-27",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"Evidence insufficiency correction dated 2026-09-27\" under Review and Freshness",
-            "artifact_ids": [
-              "RES-0001-m0007"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-review-and-freshness",
-            "title": "Evidence insufficiency correction dated 2026-09-27",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-review-and-freshness-external-claim-qualification-dated-2026-09-27",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"External claim qualification dated 2026-09-27\" under Review and Freshness",
-            "artifact_ids": [
-              "RES-0001-m0008"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-review-and-freshness",
-            "title": "External claim qualification dated 2026-09-27",
-            "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "reference-extension-review-and-freshness-2026-09-28-retention-and-provenance-addendum",
-            "kind": "local_h3",
-            "condition": "the research report with the listed artifact ID that holds a section titled \"2026-09-28 Retention and Provenance Addendum\" under Review and Freshness",
-            "artifact_ids": [
-              "RES-0002-m0001"
-            ],
-            "owner": "platform",
-            "verification": "the form tree check",
-            "review": "when the Reference Report form changes",
-            "removal": "when that report is superseded or retired and no later report keeps the section",
-            "parent_id": "reference-report-review-and-freshness",
-            "title": "2026-09-28 Retention and Provenance Addendum",
-            "authority_ref": "ADR-0059"
+            "identity_bound": "^RES-0001-m00(?:0[1-9]|1[0-2])$",
+            "retained_sections": {
+              "required": [
+                "Overview",
+                "Reference Type",
+                "Authority Boundary",
+                "Scope",
+                "Definitions / Facts",
+                "Sources",
+                "Review and Freshness",
+                "Related Documents"
+              ],
+              "optional": [],
+              "forbidden": []
+            },
+            "authority_ref": "SPEC-0222"
           }
         ],
         "sections": [
           {
-            "section_id": "reference-report-overview",
+            "section_id": "research.question",
             "level": 2,
             "parent_id": null,
-            "title": "Overview",
+            "title": "Question and Scope",
             "order": 1,
             "requiredness": "required",
             "condition": "always",
-            "content": "보고서의 결과와 독자",
+            "content": "해결할 실제 설계 문제",
             "required_content": [
-              "이 보고서가 다루는 결과와 이 문서를 고르는 독자를 적는다."
+              "해결할 실제 설계 문제에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
             "prohibited_content": [
-              "다른 문서가 소유한 규칙을 이 보고서에 복사해 적지 않는다.",
+              "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
               "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
             ],
             "empty_policy": "explain_none_or_not_applicable",
@@ -16464,714 +16086,89 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "reference-report-overview-historical-overview-and-observation-boundary",
+                "section_id": "research.question.1",
                 "level": 3,
-                "parent_id": "reference-report-overview",
-                "title": "Historical overview and observation boundary",
+                "parent_id": "research.question",
+                "title": "Question",
                 "order": 1,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical overview and observation boundary\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0004",
-                    "RES-0001-m0005",
-                    "RES-0001-m0006",
-                    "RES-0001-m0009"
-                  ],
-                  "required": false
-                },
-                "content": "Historical overview and observation boundary 절",
+                "requiredness": "required",
+                "condition": "always",
+                "content": "해결할 실제 설계 문제 중 Question에 해당하는 사실·규칙만 기록",
                 "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
+                  "Question에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
                 ],
-                "empty_policy": "omit_when_condition_false",
+                "empty_policy": "explain_none_or_not_applicable",
                 "validation_ids": [
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
+                "children": [],
                 "link_only": false,
-                "children": []
-              }
-            ]
-          },
-          {
-            "section_id": "reference-report-reference-type",
-            "level": 2,
-            "parent_id": null,
-            "title": "Reference Type",
-            "order": 2,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "보고서 종류와 분류",
-            "required_content": [
-              "이 보고서가 감사·연구·데이터 중 어느 종류인지와 그 분류를 사실과 가정으로 나누어 적는다."
-            ],
-            "prohibited_content": [
-              "종류를 확인하지 않은 채 다른 종류의 보고서로 적지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "reference-report-reference-type-historical-reference-classification",
-                "level": 3,
-                "parent_id": "reference-report-reference-type",
-                "title": "Historical reference classification",
-                "order": 1,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical reference classification\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0004",
-                    "RES-0001-m0005",
-                    "RES-0001-m0006",
-                    "RES-0001-m0009"
-                  ],
-                  "required": false
-                },
-                "content": "Historical reference classification 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              }
-            ]
-          },
-          {
-            "section_id": "reference-report-authority-boundary",
-            "level": 2,
-            "parent_id": null,
-            "title": "Authority Boundary",
-            "order": 3,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "권한 경계",
-            "required_content": [
-              "이 보고서가 정본이나 현재 권한이 되지 않으며 관찰 범위 밖을 확립하지 않는다는 경계를 적는다."
-            ],
-            "prohibited_content": [
-              "보고서의 주장을 요구사항·결정·정책으로 승격했다고 적지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "reference-report-authority-boundary-historical-authority-statement",
-                "level": 3,
-                "parent_id": "reference-report-authority-boundary",
-                "title": "Historical authority statement",
-                "order": 1,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical authority statement\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0004",
-                    "RES-0001-m0005",
-                    "RES-0001-m0006",
-                    "RES-0001-m0009"
-                  ],
-                  "required": false
-                },
-                "content": "Historical authority statement 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              }
-            ]
-          },
-          {
-            "section_id": "reference-report-scope",
-            "level": 2,
-            "parent_id": null,
-            "title": "Scope",
-            "order": 4,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "범위",
-            "required_content": [
-              "이 보고서가 다루는 대상과 다루지 않는 대상을 사실과 가정으로 나누어 적는다."
-            ],
-            "prohibited_content": [
-              "범위 밖의 대상을 조사한 것처럼 적지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "reference-report-scope-criteria-and-inspected-surface",
-                "level": 3,
-                "parent_id": "reference-report-scope",
-                "title": "Criteria and Inspected Surface",
-                "order": 1,
-                "requiredness": "conditional",
-                "condition": "an audit report that states its criteria and inspected surface",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/audit"
-                  ],
-                  "required": false
-                },
-                "content": "Criteria and Inspected Surface 절",
-                "required_content": [
-                  "감사 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
+                "core": {
+                  "title_ko": "Question",
+                  "required_when": "always",
+                  "content_rule": "해결할 실제 설계 문제 중 Question에 해당하는 사실·규칙만 기록"
+                }
               },
               {
-                "section_id": "reference-report-scope-historical-scope",
+                "section_id": "research.question.2",
                 "level": 3,
-                "parent_id": "reference-report-scope",
-                "title": "Historical scope",
+                "parent_id": "research.question",
+                "title": "Scope",
                 "order": 2,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical scope\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0004",
-                    "RES-0001-m0005",
-                    "RES-0001-m0006",
-                    "RES-0001-m0009"
-                  ],
-                  "required": false
-                },
-                "content": "Historical scope 절",
+                "requiredness": "required",
+                "condition": "always",
+                "content": "해결할 실제 설계 문제 중 Scope에 해당하는 사실·규칙만 기록",
                 "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
+                  "Scope에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
                 ],
-                "empty_policy": "omit_when_condition_false",
+                "empty_policy": "explain_none_or_not_applicable",
                 "validation_ids": [
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
+                "children": [],
                 "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-scope-research-questions",
-                "level": 3,
-                "parent_id": "reference-report-scope",
-                "title": "Research Questions",
-                "order": 3,
-                "requiredness": "conditional",
-                "condition": "a research report that states its research questions",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "required": false
-                },
-                "content": "Research Questions 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-scope-method",
-                "level": 3,
-                "parent_id": "reference-report-scope",
-                "title": "Method",
-                "order": 4,
-                "requiredness": "conditional",
-                "condition": "a research report that states its collection and analysis method",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "required": false
-                },
-                "content": "Method 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
+                "core": {
+                  "title_ko": "Scope",
+                  "required_when": "always",
+                  "content_rule": "해결할 실제 설계 문제 중 Scope에 해당하는 사실·규칙만 기록"
+                }
               }
-            ]
-          },
-          {
-            "section_id": "reference-report-definitions-facts",
-            "level": 2,
-            "parent_id": null,
-            "title": "Definitions / Facts",
-            "order": 5,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "정의와 사실",
-            "required_content": [
-              "보고서가 근거로 삼는 정의와 관찰된 사실을 가정·가설과 구분해 적는다."
-            ],
-            "prohibited_content": [
-              "관찰하지 않은 결과를 사실로 적지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
             ],
             "link_only": false,
-            "children": [
-              {
-                "section_id": "reference-report-definitions-facts-observed-evidence",
-                "level": 3,
-                "parent_id": "reference-report-definitions-facts",
-                "title": "Observed Evidence",
-                "order": 1,
-                "requiredness": "conditional",
-                "condition": "an audit report that records its observed evidence",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/audit"
-                  ],
-                  "required": false
-                },
-                "content": "Observed Evidence 절",
-                "required_content": [
-                  "감사 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-definitions-facts-findings-and-gaps",
-                "level": 3,
-                "parent_id": "reference-report-definitions-facts",
-                "title": "Findings and Gaps",
-                "order": 2,
-                "requiredness": "conditional",
-                "condition": "an audit report that records its findings and gaps",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/audit"
-                  ],
-                  "required": false
-                },
-                "content": "Findings and Gaps 절",
-                "required_content": [
-                  "감사 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-definitions-facts-historical-observations-and-corrections-2026-08-08-to-2026-09-05",
-                "level": 3,
-                "parent_id": "reference-report-definitions-facts",
-                "title": "Historical observations and corrections — 2026-08-08 to 2026-09-05",
-                "order": 3,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical observations and corrections — 2026-08-08 to 2026-09-05\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0002",
-                    "RES-0001-m0003",
-                    "RES-0001-m0010",
-                    "RES-0001-m0011"
-                  ],
-                  "required": false
-                },
-                "content": "Historical observations and corrections — 2026-08-08 to 2026-09-05 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-definitions-facts-current-external-analysis",
-                "level": 3,
-                "parent_id": "reference-report-definitions-facts",
-                "title": "Current external analysis",
-                "order": 4,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Current external analysis\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0004",
-                    "RES-0001-m0005",
-                    "RES-0001-m0006",
-                    "RES-0001-m0009"
-                  ],
-                  "required": false
-                },
-                "content": "Current external analysis 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-definitions-facts-historical-analysis-and-dated-observations",
-                "level": 3,
-                "parent_id": "reference-report-definitions-facts",
-                "title": "Historical analysis and dated observations",
-                "order": 5,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical analysis and dated observations\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0004",
-                    "RES-0001-m0005",
-                    "RES-0001-m0006",
-                    "RES-0001-m0009"
-                  ],
-                  "required": false
-                },
-                "content": "Historical analysis and dated observations 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-definitions-facts-current-external-research",
-                "level": 3,
-                "parent_id": "reference-report-definitions-facts",
-                "title": "Current external research",
-                "order": 6,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Current external research\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0007",
-                    "RES-0001-m0008"
-                  ],
-                  "required": false
-                },
-                "content": "Current external research 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-definitions-facts-follow-up-workspace-questions",
-                "level": 3,
-                "parent_id": "reference-report-definitions-facts",
-                "title": "Follow-up workspace questions",
-                "order": 7,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Follow-up workspace questions\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0007",
-                    "RES-0001-m0008"
-                  ],
-                  "required": false
-                },
-                "content": "Follow-up workspace questions 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-definitions-facts-claim-source-matrix",
-                "level": 3,
-                "parent_id": "reference-report-definitions-facts",
-                "title": "Claim-Source Matrix",
-                "order": 8,
-                "requiredness": "conditional",
-                "condition": "a research report that records each claim against its sources",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "required": false
-                },
-                "content": "Claim-Source Matrix 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-definitions-facts-findings",
-                "level": 3,
-                "parent_id": "reference-report-definitions-facts",
-                "title": "Findings",
-                "order": 9,
-                "requiredness": "conditional",
-                "condition": "a research report that states its findings",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "required": false
-                },
-                "content": "Findings 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-definitions-facts-schema",
-                "level": 3,
-                "parent_id": "reference-report-definitions-facts",
-                "title": "Schema",
-                "order": 10,
-                "requiredness": "conditional",
-                "condition": "a data report that records its schema",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/data"
-                  ],
-                  "required": false
-                },
-                "content": "Schema 절",
-                "required_content": [
-                  "데이터 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-definitions-facts-repository-facts",
-                "level": 3,
-                "parent_id": "reference-report-definitions-facts",
-                "title": "Repository Facts",
-                "order": 11,
-                "requiredness": "conditional",
-                "condition": "a data report that records its repository facts",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/data"
-                  ],
-                  "required": false
-                },
-                "content": "Repository Facts 절",
-                "required_content": [
-                  "데이터 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              }
-            ]
+            "core": {
+              "title_ko": "질문과 범위",
+              "required_when": "always",
+              "content_rule": "해결할 실제 설계 문제",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
-            "section_id": "reference-report-sources",
+            "section_id": "research.sources",
             "level": 2,
             "parent_id": null,
             "title": "Sources",
-            "order": 6,
+            "order": 2,
             "requiredness": "required",
             "condition": "always",
-            "content": "출처 목록",
+            "content": "판본·날짜·관련 설명",
             "required_content": [
-              "각 출처의 링크, 근거 등급, ISO 형식 조회일을 목록 또는 표로 적는다."
+              "판본·날짜·관련 설명에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
             "prohibited_content": [
-              "링크가 가리키는 문서의 내용을 이 보고서에 복사해 정본처럼 쓰지 않는다.",
+              "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
               "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
             ],
             "empty_policy": "explain_none_or_not_applicable",
@@ -17179,474 +16176,89 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": true,
             "children": [
               {
-                "section_id": "reference-report-sources-historical-source-provenance",
+                "section_id": "research.sources.1",
                 "level": 3,
-                "parent_id": "reference-report-sources",
-                "title": "Historical source provenance",
+                "parent_id": "research.sources",
+                "title": "Primary Sources",
                 "order": 1,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical source provenance\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0001",
-                    "RES-0001-m0002",
-                    "RES-0001-m0003",
-                    "RES-0001-m0010",
-                    "RES-0001-m0011"
-                  ],
-                  "required": false
-                },
-                "content": "Historical source provenance 절",
+                "requiredness": "required",
+                "condition": "always",
+                "content": "판본·날짜·관련 설명 중 Primary Sources에 해당하는 사실·규칙만 기록",
                 "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
+                  "Primary Sources에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
                 ],
-                "empty_policy": "omit_when_condition_false",
+                "empty_policy": "explain_none_or_not_applicable",
                 "validation_ids": [
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": true,
+                "core": {
+                  "title_ko": "Primary Sources",
+                  "required_when": "always",
+                  "content_rule": "판본·날짜·관련 설명 중 Primary Sources에 해당하는 사실·규칙만 기록"
+                }
               },
               {
-                "section_id": "reference-report-sources-current-primary-sources",
+                "section_id": "research.sources.2",
                 "level": 3,
-                "parent_id": "reference-report-sources",
-                "title": "Current primary sources",
+                "parent_id": "research.sources",
+                "title": "Versions and Dates",
                 "order": 2,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Current primary sources\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0004",
-                    "RES-0001-m0005",
-                    "RES-0001-m0006",
-                    "RES-0001-m0009"
-                  ],
-                  "required": false
-                },
-                "content": "Current primary sources 절",
+                "requiredness": "required",
+                "condition": "always",
+                "content": "판본·날짜·관련 설명 중 Versions and Dates에 해당하는 사실·규칙만 기록",
                 "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
+                  "Versions and Dates에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
                 ],
-                "empty_policy": "omit_when_condition_false",
+                "empty_policy": "explain_none_or_not_applicable",
                 "validation_ids": [
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
+                "children": [],
                 "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-sources-historical-sources",
-                "level": 3,
-                "parent_id": "reference-report-sources",
-                "title": "Historical sources",
-                "order": 3,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical sources\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0004",
-                    "RES-0001-m0005",
-                    "RES-0001-m0006",
-                    "RES-0001-m0009"
-                  ],
-                  "required": false
-                },
-                "content": "Historical sources 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-sources-provenance",
-                "level": 3,
-                "parent_id": "reference-report-sources",
-                "title": "Provenance",
-                "order": 4,
-                "requiredness": "conditional",
-                "condition": "a data report that records its provenance",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/data"
-                  ],
-                  "required": false
-                },
-                "content": "Provenance 절",
-                "required_content": [
-                  "데이터 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
+                "core": {
+                  "title_ko": "Versions and Dates",
+                  "required_when": "always",
+                  "content_rule": "판본·날짜·관련 설명 중 Versions and Dates에 해당하는 사실·규칙만 기록"
+                }
               }
-            ]
-          },
-          {
-            "section_id": "reference-report-review-and-freshness",
-            "level": 2,
-            "parent_id": null,
-            "title": "Review and Freshness",
-            "order": 7,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "검토와 최신성",
-            "required_content": [
-              "보고서의 검토 시점, 최신성 경계와 다시 확인할 조건을 사실과 가정으로 나누어 적는다."
-            ],
-            "prohibited_content": [
-              "확인하지 않은 최신성을 현재 상태로 적지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
             ],
             "link_only": false,
-            "children": [
-              {
-                "section_id": "reference-report-review-and-freshness-remediation",
-                "level": 3,
-                "parent_id": "reference-report-review-and-freshness",
-                "title": "Remediation",
-                "order": 1,
-                "requiredness": "conditional",
-                "condition": "an audit report that records its remediation",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/audit"
-                  ],
-                  "required": false
-                },
-                "content": "Remediation 절",
-                "required_content": [
-                  "감사 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-review-and-freshness-verification-state",
-                "level": 3,
-                "parent_id": "reference-report-review-and-freshness",
-                "title": "Verification State",
-                "order": 2,
-                "requiredness": "conditional",
-                "condition": "an audit report that states its verification state",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/audit"
-                  ],
-                  "required": false
-                },
-                "content": "Verification State 절",
-                "required_content": [
-                  "감사 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-review-and-freshness-current-review-boundary",
-                "level": 3,
-                "parent_id": "reference-report-review-and-freshness",
-                "title": "Current review boundary",
-                "order": 3,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Current review boundary\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0004",
-                    "RES-0001-m0005",
-                    "RES-0001-m0006",
-                    "RES-0001-m0009"
-                  ],
-                  "required": false
-                },
-                "content": "Current review boundary 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-review-and-freshness-historical-refresh-record",
-                "level": 3,
-                "parent_id": "reference-report-review-and-freshness",
-                "title": "Historical refresh record",
-                "order": 4,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Historical refresh record\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0004",
-                    "RES-0001-m0005",
-                    "RES-0001-m0006",
-                    "RES-0001-m0009"
-                  ],
-                  "required": false
-                },
-                "content": "Historical refresh record 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-review-and-freshness-dated-history-retained-from-2026-08-08-through-2026-09-14",
-                "level": 3,
-                "parent_id": "reference-report-review-and-freshness",
-                "title": "Dated history retained from 2026-08-08 through 2026-09-14",
-                "order": 5,
-                "requiredness": "conditional",
-                "condition": "a historical research report in the listed member scope that keeps a section titled \"Dated history retained from 2026-08-08 through 2026-09-14\"",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "artifact_ids": [
-                    "RES-0001-m0007",
-                    "RES-0001-m0008"
-                  ],
-                  "required": false
-                },
-                "content": "Dated history retained from 2026-08-08 through 2026-09-14 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-review-and-freshness-limitations",
-                "level": 3,
-                "parent_id": "reference-report-review-and-freshness",
-                "title": "Limitations",
-                "order": 6,
-                "requiredness": "conditional",
-                "condition": "a research report that states its limitations",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "required": false
-                },
-                "content": "Limitations 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-review-and-freshness-recommendations",
-                "level": 3,
-                "parent_id": "reference-report-review-and-freshness",
-                "title": "Recommendations",
-                "order": 7,
-                "requiredness": "conditional",
-                "condition": "a research report that states its recommendations",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/research"
-                  ],
-                  "required": false
-                },
-                "content": "Recommendations 절",
-                "required_content": [
-                  "연구 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-review-and-freshness-generation-and-refresh",
-                "level": 3,
-                "parent_id": "reference-report-review-and-freshness",
-                "title": "Generation and Refresh",
-                "order": 8,
-                "requiredness": "conditional",
-                "condition": "a data report that records how it is generated and refreshed",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/data"
-                  ],
-                  "required": false
-                },
-                "content": "Generation and Refresh 절",
-                "required_content": [
-                  "데이터 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "reference-report-review-and-freshness-staleness-boundaries",
-                "level": 3,
-                "parent_id": "reference-report-review-and-freshness",
-                "title": "Staleness Boundaries",
-                "order": 9,
-                "requiredness": "conditional",
-                "condition": "a data report that states its staleness boundaries",
-                "applicability": {
-                  "source_profile_ids": [
-                    "reference/data"
-                  ],
-                  "required": false
-                },
-                "content": "Staleness Boundaries 절",
-                "required_content": [
-                  "데이터 보고서가 이 절을 쓰는 경우 그 내용을 사실과 가정으로 나누어 적는다."
-                ],
-                "prohibited_content": [
-                  "이 절을 쓰지 않는 보고서에 빈 제목만 두지 않는다.",
-                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              }
-            ]
+            "core": {
+              "title_ko": "출처",
+              "required_when": "always",
+              "content_rule": "판본·날짜·관련 설명",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
-            "section_id": "reference-report-related-documents",
+            "section_id": "research.analysis",
             "level": 2,
             "parent_id": null,
-            "title": "Related Documents",
-            "order": 8,
+            "title": "Analysis",
+            "order": 3,
             "requiredness": "required",
             "condition": "always",
-            "content": "연결 문서 목록",
+            "content": "대안·조건·현황과 차이",
             "required_content": [
-              "이 보고서가 가리키는 정본 소유자와 관련 문서로 가는 링크를 목록으로 적는다."
+              "대안·조건·현황과 차이에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
             "prohibited_content": [
-              "링크가 가리키는 문서의 내용을 이 보고서에 복사해 정본처럼 쓰지 않는다.",
+              "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
               "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
             ],
             "empty_policy": "explain_none_or_not_applicable",
@@ -17654,10 +16266,1138 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": true,
-            "children": []
+            "children": [
+              {
+                "section_id": "research.analysis.1",
+                "level": 3,
+                "parent_id": "research.analysis",
+                "title": "Findings",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "대안·조건·현황과 차이 중 Findings에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Findings에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Findings",
+                  "required_when": "always",
+                  "content_rule": "대안·조건·현황과 차이 중 Findings에 해당하는 사실·규칙만 기록"
+                }
+              },
+              {
+                "section_id": "research.analysis.2",
+                "level": 3,
+                "parent_id": "research.analysis",
+                "title": "Alternatives",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "대안·조건·현황과 차이 중 Alternatives에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Alternatives에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Alternatives",
+                  "required_when": "always",
+                  "content_rule": "대안·조건·현황과 차이 중 Alternatives에 해당하는 사실·규칙만 기록"
+                }
+              }
+            ],
+            "link_only": false,
+            "core": {
+              "title_ko": "분석",
+              "required_when": "always",
+              "content_rule": "대안·조건·현황과 차이",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
+          },
+          {
+            "section_id": "research.application",
+            "level": 2,
+            "parent_id": null,
+            "title": "Application and Limits",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "변경 대상·비채택·수용 시험",
+            "required_content": [
+              "변경 대상·비채택·수용 시험에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "research.application.1",
+                "level": 3,
+                "parent_id": "research.application",
+                "title": "Design Implications",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "변경 대상·비채택·수용 시험 중 Design Implications에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Design Implications에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Design Implications",
+                  "required_when": "always",
+                  "content_rule": "변경 대상·비채택·수용 시험 중 Design Implications에 해당하는 사실·규칙만 기록"
+                }
+              },
+              {
+                "section_id": "research.application.2",
+                "level": 3,
+                "parent_id": "research.application",
+                "title": "Unverified Conditions",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "변경 대상·비채택·수용 시험 중 Unverified Conditions에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Unverified Conditions에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Unverified Conditions",
+                  "required_when": "always",
+                  "content_rule": "변경 대상·비채택·수용 시험 중 Unverified Conditions에 해당하는 사실·규칙만 기록"
+                }
+              }
+            ],
+            "link_only": false,
+            "core": {
+              "title_ko": "적용과 한계",
+              "required_when": "always",
+              "content_rule": "변경 대상·비채택·수용 시험",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           }
-        ]
+        ],
+        "core_role": "research",
+        "core": {
+          "purpose": "외부 근거의 적용 가능한 의미",
+          "non_goals": "다른 역할의 상태·정책 정본 대체",
+          "metadata_policy": {
+            "envelope": "frontmatter",
+            "fields": [
+              {
+                "key": "title",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "문서 목적을 나타내는 제목"
+              },
+              {
+                "key": "version",
+                "value_type": "document-semver",
+                "required_when": "always",
+                "meaning": "ASCII 숫자 세 요소 판본"
+              },
+              {
+                "key": "type",
+                "value_type": "role-binding",
+                "required_when": "always",
+                "meaning": "역할과 정확하게 대응하는 문서 타입"
+              },
+              {
+                "key": "owner",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "현재 의미 소유자"
+              },
+              {
+                "key": "updated",
+                "value_type": "date",
+                "required_when": "always",
+                "meaning": "실제 문서 변경일"
+              },
+              {
+                "key": "status",
+                "value_type": "role-state",
+                "required_when": "always",
+                "meaning": "역할에 따른 상태; 실행 승인이나 인수를 대체하지 않음"
+              }
+            ],
+            "extension_rule": "선택 native 문법은 공급자 검증, domain field는 이름공간과 소유자·실제 소비자를 갖는 별도 모듈",
+            "document_version_pattern": "(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
+          },
+          "tables": [
+            {
+              "table_id": "research.sources",
+              "section_id": "research.sources",
+              "required_when": "always",
+              "columns": [
+                {
+                  "key": "source_id",
+                  "label": "Source ID",
+                  "value_type": "identifier",
+                  "meaning": "출처",
+                  "required": true
+                },
+                {
+                  "key": "url",
+                  "label": "Source",
+                  "value_type": "reference",
+                  "meaning": "원문 위치",
+                  "required": true
+                },
+                {
+                  "key": "version",
+                  "label": "Version",
+                  "value_type": "string-or-none",
+                  "meaning": "실제 판본; 문서 판본과 타입 분리",
+                  "required": true
+                },
+                {
+                  "key": "checked",
+                  "label": "Checked At",
+                  "value_type": "timestamp",
+                  "meaning": "직접 확인한 때",
+                  "required": true
+                },
+                {
+                  "key": "finding",
+                  "label": "Finding",
+                  "value_type": "string",
+                  "meaning": "출처가 실제로 지지하는 내용",
+                  "required": true
+                },
+                {
+                  "key": "application",
+                  "label": "Application",
+                  "value_type": "string",
+                  "meaning": "선택한 적용",
+                  "required": true
+                },
+                {
+                  "key": "limits",
+                  "label": "Limits",
+                  "value_type": "string",
+                  "meaning": "적용 한계·미확인",
+                  "required": true
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            }
+          ],
+          "language": {
+            "headings": "en",
+            "body": "로컬 승인 언어 계약; 본문 언어가 core heading·column을 바꾸지 않음"
+          },
+          "status": "DESIGN_PROPOSAL_NOT_ADOPTED",
+          "relationships": {
+            "authored_direction": "consumer-to-direct-owner",
+            "reverse_links": "derived",
+            "missing_target": "unresolved-not-pass",
+            "deletion": "transfer-current-meaning-before-removal"
+          },
+          "lifecycle": {
+            "axis": "document-purpose",
+            "draft_rule": "authoring-allowed-not-execution-authority",
+            "transition_authority": "explicit-scoped-authority",
+            "acceptance_rule": "required-evidence-and-authorized-acceptance-separate"
+          },
+          "rules": [
+            "single-meaning-owner",
+            "no-synthetic-evidence",
+            "no-release-document-role",
+            "no-package-path-runtime-dependency"
+          ]
+        }
+      },
+      {
+        "form_id": "audit",
+        "title": "Audit",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "extensions": [
+          {
+            "id": "audit-published-retained-form",
+            "kind": "retained_form",
+            "condition": "the published audit member AUD-0001-m0001 keeps the eight H2 it was published with; every other audit member takes the form tree",
+            "owner": "platform",
+            "verification": "tests/test_common_form_tree.py",
+            "review": "when the bound member's successor is published",
+            "removal": "when Q07-CUTOVER disposes of the bound members after their successors are accepted; the bound is never widened",
+            "statuses": [
+              "published"
+            ],
+            "identity_bound": "^AUD-0001-m0001$",
+            "retained_sections": {
+              "required": [
+                "Overview",
+                "Reference Type",
+                "Authority Boundary",
+                "Scope",
+                "Definitions / Facts",
+                "Sources",
+                "Review and Freshness",
+                "Related Documents"
+              ],
+              "optional": [],
+              "forbidden": []
+            },
+            "authority_ref": "SPEC-0222"
+          }
+        ],
+        "sections": [
+          {
+            "section_id": "audit.scope",
+            "level": 2,
+            "parent_id": null,
+            "title": "Scope",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "실제 읽은·실행한 경계",
+            "required_content": [
+              "실제 읽은·실행한 경계에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "audit.scope.1",
+                "level": 3,
+                "parent_id": "audit.scope",
+                "title": "Subject",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 읽은·실행한 경계 중 Subject에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Subject에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Subject",
+                  "required_when": "always",
+                  "content_rule": "실제 읽은·실행한 경계 중 Subject에 해당하는 사실·규칙만 기록"
+                }
+              },
+              {
+                "section_id": "audit.scope.2",
+                "level": 3,
+                "parent_id": "audit.scope",
+                "title": "Read Coverage",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 읽은·실행한 경계 중 Read Coverage에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Read Coverage에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Read Coverage",
+                  "required_when": "always",
+                  "content_rule": "실제 읽은·실행한 경계 중 Read Coverage에 해당하는 사실·규칙만 기록"
+                }
+              }
+            ],
+            "link_only": false,
+            "core": {
+              "title_ko": "범위",
+              "required_when": "always",
+              "content_rule": "실제 읽은·실행한 경계",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
+          },
+          {
+            "section_id": "audit.findings",
+            "level": 2,
+            "parent_id": null,
+            "title": "Findings",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "주장·증거·차이·영향",
+            "required_content": [
+              "주장·증거·차이·영향에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "audit.findings.1",
+                "level": 3,
+                "parent_id": "audit.findings",
+                "title": "Evidence",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "주장·증거·차이·영향 중 Evidence에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Evidence에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Evidence",
+                  "required_when": "always",
+                  "content_rule": "주장·증거·차이·영향 중 Evidence에 해당하는 사실·규칙만 기록"
+                }
+              },
+              {
+                "section_id": "audit.findings.2",
+                "level": 3,
+                "parent_id": "audit.findings",
+                "title": "Conflicts and Gaps",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "주장·증거·차이·영향 중 Conflicts and Gaps에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Conflicts and Gaps에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Conflicts and Gaps",
+                  "required_when": "always",
+                  "content_rule": "주장·증거·차이·영향 중 Conflicts and Gaps에 해당하는 사실·규칙만 기록"
+                }
+              }
+            ],
+            "link_only": false,
+            "core": {
+              "title_ko": "발견",
+              "required_when": "always",
+              "content_rule": "주장·증거·차이·영향",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
+          },
+          {
+            "section_id": "audit.actions",
+            "level": 2,
+            "parent_id": null,
+            "title": "Actions",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "현재 업무와 소유자·수용",
+            "required_content": [
+              "현재 업무와 소유자·수용에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "audit.actions.1",
+                "level": 3,
+                "parent_id": "audit.actions",
+                "title": "Owners",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "현재 업무와 소유자·수용 중 Owners에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Owners에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Owners",
+                  "required_when": "always",
+                  "content_rule": "현재 업무와 소유자·수용 중 Owners에 해당하는 사실·규칙만 기록"
+                }
+              },
+              {
+                "section_id": "audit.actions.2",
+                "level": 3,
+                "parent_id": "audit.actions",
+                "title": "Acceptance Conditions",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "현재 업무와 소유자·수용 중 Acceptance Conditions에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Acceptance Conditions에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Acceptance Conditions",
+                  "required_when": "always",
+                  "content_rule": "현재 업무와 소유자·수용 중 Acceptance Conditions에 해당하는 사실·규칙만 기록"
+                }
+              }
+            ],
+            "link_only": false,
+            "core": {
+              "title_ko": "조치",
+              "required_when": "always",
+              "content_rule": "현재 업무와 소유자·수용",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
+          }
+        ],
+        "core_role": "audit",
+        "core": {
+          "purpose": "주장과 증거 사이 차이",
+          "non_goals": "다른 역할의 상태·정책 정본 대체",
+          "metadata_policy": {
+            "envelope": "frontmatter",
+            "fields": [
+              {
+                "key": "title",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "문서 목적을 나타내는 제목"
+              },
+              {
+                "key": "version",
+                "value_type": "document-semver",
+                "required_when": "always",
+                "meaning": "ASCII 숫자 세 요소 판본"
+              },
+              {
+                "key": "type",
+                "value_type": "role-binding",
+                "required_when": "always",
+                "meaning": "역할과 정확하게 대응하는 문서 타입"
+              },
+              {
+                "key": "owner",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "현재 의미 소유자"
+              },
+              {
+                "key": "updated",
+                "value_type": "date",
+                "required_when": "always",
+                "meaning": "실제 문서 변경일"
+              },
+              {
+                "key": "status",
+                "value_type": "role-state",
+                "required_when": "always",
+                "meaning": "역할에 따른 상태; 실행 승인이나 인수를 대체하지 않음"
+              }
+            ],
+            "extension_rule": "선택 native 문법은 공급자 검증, domain field는 이름공간과 소유자·실제 소비자를 갖는 별도 모듈",
+            "document_version_pattern": "(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
+          },
+          "tables": [
+            {
+              "table_id": "audit.findings",
+              "section_id": "audit.findings",
+              "required_when": "always",
+              "columns": [
+                {
+                  "key": "finding_id",
+                  "label": "Finding ID",
+                  "value_type": "identifier",
+                  "meaning": "발견",
+                  "required": true
+                },
+                {
+                  "key": "requirement",
+                  "label": "Requirement",
+                  "value_type": "reference",
+                  "meaning": "현재 의무",
+                  "required": true
+                },
+                {
+                  "key": "evidence",
+                  "label": "Evidence",
+                  "value_type": "reference-list",
+                  "meaning": "직접 확인 범위",
+                  "required": true
+                },
+                {
+                  "key": "classification",
+                  "label": "Classification",
+                  "value_type": "enum",
+                  "meaning": "confirmed/gap/conflict/unverified/not-applicable",
+                  "required": true,
+                  "allowed_values": [
+                    "confirmed",
+                    "gap",
+                    "conflict",
+                    "unverified",
+                    "not-applicable"
+                  ]
+                },
+                {
+                  "key": "action",
+                  "label": "Action",
+                  "value_type": "string",
+                  "meaning": "구체 수정",
+                  "required": true
+                },
+                {
+                  "key": "owner",
+                  "label": "Owner",
+                  "value_type": "string",
+                  "meaning": "담당",
+                  "required": true
+                },
+                {
+                  "key": "acceptance",
+                  "label": "Acceptance",
+                  "value_type": "string",
+                  "meaning": "닫히는 조건",
+                  "required": true
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            }
+          ],
+          "language": {
+            "headings": "en",
+            "body": "로컬 승인 언어 계약; 본문 언어가 core heading·column을 바꾸지 않음"
+          },
+          "status": "DESIGN_PROPOSAL_NOT_ADOPTED",
+          "relationships": {
+            "authored_direction": "consumer-to-direct-owner",
+            "reverse_links": "derived",
+            "missing_target": "unresolved-not-pass",
+            "deletion": "transfer-current-meaning-before-removal"
+          },
+          "lifecycle": {
+            "axis": "document-purpose",
+            "draft_rule": "authoring-allowed-not-execution-authority",
+            "transition_authority": "explicit-scoped-authority",
+            "acceptance_rule": "required-evidence-and-authorized-acceptance-separate"
+          },
+          "rules": [
+            "single-meaning-owner",
+            "no-synthetic-evidence",
+            "no-release-document-role",
+            "no-package-path-runtime-dependency"
+          ]
+        }
+      },
+      {
+        "form_id": "data-reference",
+        "title": "Data Reference",
+        "h1": "{{document_title}}",
+        "language_rule": "Stage 01~03 비README 본문 영어; README·운영 설명 한국어; 나머지 실제 역할 정책과 정확히 바인딩",
+        "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
+        "extensions": [],
+        "sections": [
+          {
+            "section_id": "data-reference.purpose",
+            "level": 2,
+            "parent_id": null,
+            "title": "Purpose",
+            "order": 1,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "자료의 사용처·비권위 경계",
+            "required_content": [
+              "자료의 사용처·비권위 경계에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "data-reference.purpose.1",
+                "level": 3,
+                "parent_id": "data-reference.purpose",
+                "title": "Consumers",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "자료의 사용처·비권위 경계 중 Consumers에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Consumers에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Consumers",
+                  "required_when": "always",
+                  "content_rule": "자료의 사용처·비권위 경계 중 Consumers에 해당하는 사실·규칙만 기록"
+                }
+              },
+              {
+                "section_id": "data-reference.purpose.2",
+                "level": 3,
+                "parent_id": "data-reference.purpose",
+                "title": "Boundaries",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "자료의 사용처·비권위 경계 중 Boundaries에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Boundaries에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Boundaries",
+                  "required_when": "always",
+                  "content_rule": "자료의 사용처·비권위 경계 중 Boundaries에 해당하는 사실·규칙만 기록"
+                }
+              }
+            ],
+            "link_only": false,
+            "core": {
+              "title_ko": "목적",
+              "required_when": "always",
+              "content_rule": "자료의 사용처·비권위 경계",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
+          },
+          {
+            "section_id": "data-reference.provenance",
+            "level": 2,
+            "parent_id": null,
+            "title": "Provenance",
+            "order": 2,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "입력·판본·시점·생성기",
+            "required_content": [
+              "입력·판본·시점·생성기에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "data-reference.provenance.1",
+                "level": 3,
+                "parent_id": "data-reference.provenance",
+                "title": "Collection",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "입력·판본·시점·생성기 중 Collection에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Collection에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Collection",
+                  "required_when": "always",
+                  "content_rule": "입력·판본·시점·생성기 중 Collection에 해당하는 사실·규칙만 기록"
+                }
+              },
+              {
+                "section_id": "data-reference.provenance.2",
+                "level": 3,
+                "parent_id": "data-reference.provenance",
+                "title": "Versions and Dates",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "입력·판본·시점·생성기 중 Versions and Dates에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Versions and Dates에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Versions and Dates",
+                  "required_when": "always",
+                  "content_rule": "입력·판본·시점·생성기 중 Versions and Dates에 해당하는 사실·규칙만 기록"
+                }
+              }
+            ],
+            "link_only": false,
+            "core": {
+              "title_ko": "생성 근거",
+              "required_when": "always",
+              "content_rule": "입력·판본·시점·생성기",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
+          },
+          {
+            "section_id": "data-reference.interpretation",
+            "level": 2,
+            "parent_id": null,
+            "title": "Interpretation",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "범위·제약·갱신·오류",
+            "required_content": [
+              "범위·제약·갱신·오류에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "data-reference.interpretation.1",
+                "level": 3,
+                "parent_id": "data-reference.interpretation",
+                "title": "Schema and Units",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "범위·제약·갱신·오류 중 Schema and Units에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Schema and Units에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Schema and Units",
+                  "required_when": "always",
+                  "content_rule": "범위·제약·갱신·오류 중 Schema and Units에 해당하는 사실·규칙만 기록"
+                }
+              },
+              {
+                "section_id": "data-reference.interpretation.2",
+                "level": 3,
+                "parent_id": "data-reference.interpretation",
+                "title": "Limits",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "범위·제약·갱신·오류 중 Limits에 해당하는 사실·규칙만 기록",
+                "required_content": [
+                  "Limits에 해당하는 사실을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false,
+                "core": {
+                  "title_ko": "Limits",
+                  "required_when": "always",
+                  "content_rule": "범위·제약·갱신·오류 중 Limits에 해당하는 사실·규칙만 기록"
+                }
+              }
+            ],
+            "link_only": false,
+            "core": {
+              "title_ko": "해석",
+              "required_when": "always",
+              "content_rule": "범위·제약·갱신·오류",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
+          }
+        ],
+        "core_role": "data-reference",
+        "core": {
+          "purpose": "생성 자료의 입력·출처·해석",
+          "non_goals": "다른 역할의 상태·정책 정본 대체",
+          "metadata_policy": {
+            "envelope": "frontmatter",
+            "fields": [
+              {
+                "key": "title",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "문서 목적을 나타내는 제목"
+              },
+              {
+                "key": "version",
+                "value_type": "document-semver",
+                "required_when": "always",
+                "meaning": "ASCII 숫자 세 요소 판본"
+              },
+              {
+                "key": "type",
+                "value_type": "role-binding",
+                "required_when": "always",
+                "meaning": "역할과 정확하게 대응하는 문서 타입"
+              },
+              {
+                "key": "owner",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "현재 의미 소유자"
+              },
+              {
+                "key": "updated",
+                "value_type": "date",
+                "required_when": "always",
+                "meaning": "실제 문서 변경일"
+              },
+              {
+                "key": "status",
+                "value_type": "role-state",
+                "required_when": "always",
+                "meaning": "역할에 따른 상태; 실행 승인이나 인수를 대체하지 않음"
+              }
+            ],
+            "extension_rule": "선택 native 문법은 공급자 검증, domain field는 이름공간과 소유자·실제 소비자를 갖는 별도 모듈",
+            "document_version_pattern": "(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
+          },
+          "tables": [
+            {
+              "table_id": "data-reference.schema",
+              "section_id": "data-reference.interpretation",
+              "required_when": "always",
+              "columns": [
+                {
+                  "key": "field",
+                  "label": "Field",
+                  "value_type": "identifier",
+                  "meaning": "데이터 필드",
+                  "required": true
+                },
+                {
+                  "key": "type",
+                  "label": "Type",
+                  "value_type": "string",
+                  "meaning": "값의 타입",
+                  "required": true
+                },
+                {
+                  "key": "unit",
+                  "label": "Unit",
+                  "value_type": "string-or-none",
+                  "meaning": "단위",
+                  "required": true
+                },
+                {
+                  "key": "meaning",
+                  "label": "Meaning",
+                  "value_type": "string",
+                  "meaning": "의미",
+                  "required": true
+                },
+                {
+                  "key": "limitations",
+                  "label": "Limits",
+                  "value_type": "string",
+                  "meaning": "정밀도·결측·비용",
+                  "required": true
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            }
+          ],
+          "language": {
+            "headings": "en",
+            "body": "로컬 승인 언어 계약; 본문 언어가 core heading·column을 바꾸지 않음"
+          },
+          "status": "DESIGN_PROPOSAL_NOT_ADOPTED",
+          "relationships": {
+            "authored_direction": "consumer-to-direct-owner",
+            "reverse_links": "derived",
+            "missing_target": "unresolved-not-pass",
+            "deletion": "transfer-current-meaning-before-removal"
+          },
+          "lifecycle": {
+            "axis": "document-purpose",
+            "draft_rule": "authoring-allowed-not-execution-authority",
+            "transition_authority": "explicit-scoped-authority",
+            "acceptance_rule": "required-evidence-and-authorized-acceptance-separate"
+          },
+          "rules": [
+            "single-meaning-owner",
+            "no-synthetic-evidence",
+            "no-release-document-role",
+            "no-package-path-runtime-dependency"
+          ]
+        }
       },
       {
         "form_id": "requirement",

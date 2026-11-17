@@ -268,7 +268,9 @@
               "skill",
               "workspace-readme",
               "reference-pack-readme",
-              "reference-report",
+              "research",
+              "audit",
+              "data-reference",
               "governance-document",
               "governance-role",
               "knowledge-map",
@@ -1624,7 +1626,9 @@
             "evaluation-results",
             "governance-document",
             "governance-role",
-            "reference-report"
+            "research",
+            "audit",
+            "data-reference"
           ]
         },
         "title": {

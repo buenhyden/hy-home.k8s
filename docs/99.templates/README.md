@@ -135,8 +135,13 @@ form 경로의 대응은 Registry만 소유한다.
   `governance-role`(`.agents/roles/*.md`, Current Contract 아래 여덟 H3)과
   `governance-document`(provider 노트 두 개, H2만)도 각자의 지역 form을 쓴다.
   `provider-native`를 뺀 모든 Stage 99 지역 역할은 각자의 지역 form을 쓰며,
-  W03-D35와 W03-D36에 따라 `reference-report`는 감사·연구·데이터 보고서가
-  함께 쓰는 form 하나를 가진다. `provider-native`만 form 없는 Stage 99 지역
+  SPEC-0222에 따라 Stage 90 보고서는 core 역할의 form을 쓴다. 연구 보고서는
+  `research`(`Question and Scope`·`Sources`·`Analysis`·`Application and Limits`,
+  core 표 `research.sources`), 감사 보고서는 `audit`(`Scope`·`Findings`·`Actions`,
+  core 표 `audit.findings`), 자료 보고서는 `data-reference`(`Purpose`·`Provenance`·
+  `Interpretation`, core 표 `data-reference.schema`) form이다. 게시된 RES-0001-m0001~
+  m0012와 AUD-0001-m0001은 identity가 묶인 retained form으로 이전의 여덟 H2를
+  유지하며, 그 처분은 Q07-CUTOVER가 맡는다. `provider-native`만 form 없는 Stage 99 지역
   역할이며 table을 기록하지 않는다. 모든 등록 템플릿에는 TemplateDefinition이
   있다. `template_definition_record`는 Registry의 정의와 profile, form,
   키·관계·생명주기·언어 계약에서 레코드를 유도하며, Registry 검증이 모든 레코드를
@@ -232,10 +237,10 @@ form 경로의 대응은 Registry만 소유한다.
   `reference/audit`·`reference/data`·`reference/research` form을 사용한다.
   세 pack README는 W03-D10에 따른 Stage 99 지역 역할의 자체 Reference Pack
   README form을 함께 쓰며, 종류별 계약 절은 `Pack Contract`, 멤버 색인 절은
-  `Pack Index`로 부른다. Registry는 pack 유형별 필수 마감 절과 보고서 유형별
-  선택 소제목의 적용 대상을 원본 profile로 지정한다. 템플릿에도 같은 바인딩을
-  적용한다. 역사적 연구 소제목과 지역 확장은 Registry에 등록된 보고서에만
-  적용하며, 검사기는 문서 경로에서 해당 보고서 ID를 유도한다.
+  `Pack Index`로 부른다. Registry는 pack 유형별 필수 마감 절의 적용 대상을 원본
+  profile로 지정하고 템플릿에도 같은 바인딩을 적용한다. 게시된 멤버의 retained
+  form은 Registry에 등록된 보고서 ID에만 적용하며, 검사기는 문서 경로에서 그
+  ID를 유도한다.
 - **Runtime forms** (`runtime/`): provider가 직접 읽는 binding만 담는다.
   Claude는 `claude-agent.template.md`와 `claude-command.template.md`, Codex는
   `codex-agent.template.toml`이며 이 form들은 provider 소유
