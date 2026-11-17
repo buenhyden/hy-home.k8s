@@ -1,10 +1,10 @@
 ---
 title: "Reference: Kubernetes, Infrastructure, and Security"
-version: "0.1.0"
+version: "0.1.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RES-0001-m0021"
 supersedes: "RES-0001-m0007"
 ---
@@ -31,6 +31,13 @@ Includes API/controller and declarative delivery, support/skew/API/CRD lifecycle
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
+| CLM-WERPC-017-81 through CLM-WERPC-017-100 | [m0026 current source observations](m0026-source-coverage.md#current-source-observations) | not stated in this document | 2026-09-27 | Claim mappings link directly read primary sources, dates, section selectors, version or revision limits and refresh results | Factual Verified applies only within those external scopes; conditional choices and future criteria are research analysis | Mutable stable or latest pages and publisher footer abbreviations are not reproducible immutable page pins |
+| Kubernetes controller concepts, version skew policy and NetworkPolicy | [Kubernetes controller concepts](https://kubernetes.io/docs/concepts/architecture/controller/) | not stated in this document | 2026-09-27 | not stated in this document | not stated in this document | Release-page 1.34 wording and table ambiguity retained |
+| K3s datastore backup and restore | [K3s datastore backup/restore](https://docs.k3s.io/datastore/backup-restore) | not stated in this document | 2026-09-27 | not stated in this document | not stated in this document | not stated in this document |
+| Terraform state locking | [Terraform state locking](https://developer.hashicorp.com/terraform/language/state/locking) | not stated in this document | 2026-09-27 | not stated in this document | not stated in this document | Terraform 1.16.x documentation is a qualified surface, not an installed-version observation |
+| Argo automated sync | [Argo automated sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/) | not stated in this document | 2026-09-27 | not stated in this document | not stated in this document | Mutable stable page |
+| SLSA v1.2 verification | [SLSA v1.2 verification](https://slsa.dev/spec/v1.2/verifying-artifacts) | not stated in this document | 2026-09-27 | not stated in this document | not stated in this document | not stated in this document |
+| CISA SBOM and OWASP vulnerability-management pages | [m0026 current source observations](m0026-source-coverage.md#current-source-observations) | not stated in this document | 2026-09-27 | not stated in this document | not stated in this document | Inaccessible to the research tool; unreachable, not a proven HTTP 404 or an implementation gap; unverified contents support no claim |
 
 Current claim mappings are `CLM-WERPC-017-81` through `CLM-WERPC-017-100` in [current source observations](m0026-source-coverage.md#current-source-observations). These link directly read primary sources, dates, section selectors, version/revision limits and source refresh results. The current definition of factual `Verified` applies only within those external scopes; conditional choices and future criteria are research analysis.
 

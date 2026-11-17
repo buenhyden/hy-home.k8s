@@ -1,10 +1,10 @@
 ---
 title: "Reference: Scope Application Index"
-version: "1.4.0"
+version: "1.4.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RES-0001-m0013"
 ---
 
@@ -30,6 +30,9 @@ The investigation spans organization/user, repository, directory/domain, task/se
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
+| Current URL-specific source observations | [m0012 current source observations](m0012-source-coverage.md#current-source-observations) | not stated in this document | not stated in this document | Owned by m0012; this index names it as the source of current URL-specific observations | not stated in this document | not stated in this document |
+| Current claim and request ownership | [m0012 requirement coverage matrix](m0012-source-coverage.md#requirement-coverage-matrix) | not stated in this document | not stated in this document | Owned by m0012; this index names it as the owner of current claim and request coverage | not stated in this document | not stated in this document |
+| Dated source and claim provenance | [m0012 source register](m0012-source-coverage.md#source-register) | not stated in this document | not stated in this document | Owned by m0012; this index names it as the dated source and claim provenance | not stated in this document | Every current application result is not observed in this cycle; no row establishes current implementation |
 
 - [Current URL-specific source observations](m0012-source-coverage.md#current-source-observations)
 - [Current claim and request ownership](m0012-source-coverage.md#requirement-coverage-matrix)
@@ -45,7 +48,7 @@ The investigation spans organization/user, repository, directory/domain, task/se
 
 #### Review and Freshness
 
-Updated 2026-09-27 from directly read external evidence; 2026-11-05 edits only correct local-path and lifecycle statements and add no external observation. Recheck a question before approved work when its source/version, account/product surface, document contract, environment, acceptance criteria or risk changes. No row establishes current implementation. Historical scope maps are preserved for their recorded dates and are not the current governance registry. Detailed question ownership stays here; topical reports link it, and README remains navigation.
+Updated 2026-09-27 from directly read external evidence; 2026-11-05 edits only correct local-path and lifecycle statements and add no external observation; the 2026-11-17 and 2026-11-18 edits restructure headings and fill the source table without new external observation. Recheck a question before approved work when its source/version, account/product surface, document contract, environment, acceptance criteria or risk changes. No row establishes current implementation. Historical scope maps are preserved for their recorded dates and are not the current governance registry. Detailed question ownership stays here; topical reports link it, and README remains navigation.
 
 ## Analysis
 

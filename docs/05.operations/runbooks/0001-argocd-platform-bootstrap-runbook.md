@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.5.5"
+version: "1.5.6"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RUN-0001"
 ---
 
@@ -163,6 +163,16 @@ Steps의 Checklist에서 호스트·CA 입력과 필수 Valkey 경로를 확인�
 
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
+| 1 | 외부 런타임 연결성 및 OpenBao 상태를 점검한다 | not stated in this document | OpenBao가 sealed(status=503)이면 unseal 후 health를 다시 확인한다; 그 밖에는 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
+| 2 | 저장소의 OpenBao/ESO 계약을 값 조회 없이 정적으로 검증한다 | not stated in this document | 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
+| 3 | ArgoCD TLS 인증서 입력을 확인한다 | cert.pem과 key.pem이 존재하고 ArgoCD host SAN을 포함한다 | 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
+| 4 | 부트스트랩 스크립트를 실행한다 | 4개 노드 Ready, argocd pod 정상, Traefik pod·svc 정상(NodePort 30080/30443, MetalLB 172.18.0.240) | bootstrap [2/11] 단계가 jq 오류로 중단되면 OpenBao 운영자가 경로·키·정책을 확인한 뒤 bootstrap을 재실행한다; 그 밖에는 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
+| 5 | Bootstrap 결과로 생성되는 ingress TLS secret을 확인한다 | not stated in this document | 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
+| 6 | ArgoCD 루트 앱 및 GitOps 경로 계약을 확인한다 | root-platform의 source.path가 gitops/apps/root이고 targetRevision이 main이다 | app path does not exist이면 gitops/apps/root 경로를 확인하고 앱을 재동기화한다; 그 밖에는 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
+| 7 | ESO 및 OpenBao 기반 비밀 동기화를 확인한다 | ExternalSecret·SecretStore·ClusterSecretStore 상태가 확인된다(정상 기준은 이 문서에 명시 없음) | WRONGPASS이면 ExternalSecret 재조정을 기다리고 지속되면 RUN-0002를 따른다; 그 밖에는 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
+| 8 | 외부 서비스 Kubernetes 인터페이스를 확인한다 | management Valkey(valkey-external)만 현행 데이터 서비스 interface이며 PostgreSQL 항목은 없다 | 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다; 외부 endpoint 복구는 External Endpoint Recovery를 따른다 |
+| 9 | 필수 management Valkey 경로를 클러스터 내부에서 확인한다 | svc-probe에서 필수 management valkey-external:6379 연결 성공 | 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
+| 10 | ArgoCD 접속 후 프로젝트 경계와 앱 상태를 확인한다 | argocd app list 및 sync 상태 확인 | 중단하고 Escalation의 Next Owner(플랫폼 운영 정책 예외 경로)와 Recovery or Forward Repair를 따른다 |
 
 ### Stop Conditions
 
@@ -225,7 +235,7 @@ Application의 리비전·Sync·Health 및 해당 Expected Results를 다시 확
       경로/정책과 ESO readiness를 복구한 뒤 ExternalSecret 재조정을 기다리고,
       필요하면 위의 대화형 CA 검증 부트스트랩을 다시 실행한다.
 
-- [ ] ArgoCD hard refresh로 캐시/상태 재평가
+- [ ] ArgoCD hard refresh로 캐시/상태 재평가 (`app get --hard-refresh`는 읽기 전용 점검이 아니라 Application 상태를 바꾸는 operator-triggered refresh다)
 
   ```bash
   argocd app get root-platform --hard-refresh

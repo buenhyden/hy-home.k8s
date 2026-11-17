@@ -1,10 +1,10 @@
 ---
 title: "SDLC Governance Audit"
-version: "0.2.2"
+version: "0.2.3"
 type: "reference/audit-pack"
 status: "published"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "AUD-0001"
 ---
 
@@ -40,7 +40,7 @@ Verification State에 UNKNOWN으로 남긴다.
 - [m0001 SDLC governance audit](./m0001-sdlc-governance-audit.md): 인벤토리,
   발견 사항, 개선 기록, 검증 상태를 맡는다.
 - [m0003 SDLC governance audit](./m0003-sdlc-governance-audit.md): 인벤토리,
-  발견 사항, 개선 기록, 검증 상태를 맡는다. m0001의 후속 멤버다.
+  발견 사항, 개선 기록, 검증 상태를 맡는다. m0001의 후속 멤버이며 현재 draft다. m0003이 published가 되기 전까지 m0001이 published 기록으로 남는다.
 - [m0002 AGENTS.md loading addendum](./m0002-agents-md-loading-addendum.md): 2026-11-06
   provider의 `AGENTS.md` 로드 방식, guard 출력(F-08~F-10)을 맡는다.
 

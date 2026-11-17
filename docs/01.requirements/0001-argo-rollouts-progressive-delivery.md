@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts Progressive Delivery Requirement Package"
-version: "3.0.3"
+version: "3.0.4"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
@@ -109,7 +109,7 @@ This package declares no quality requirement member; every member above is a fun
 - **Acceptance criterion 01**: An operator can check the Rollouts controller state. Evidence: the Rollouts controller Deployment (`argo-rollouts`) is `Available=True`.
 - **Acceptance criterion 02**: An operator can see rollout progress in the Dashboard. Evidence: HTTPS access to the approved Dashboard local path succeeds.
 - **Acceptance criterion 03**: An application team can track Rollout resources in the ArgoCD state model. Evidence: ArgoCD shows the `Rollout` resource as `Healthy` or `Progressing`.
-- **Acceptance criterion 04**: Hosted CI must block Rollouts static contract regressions when a pull request changes the affected contract. Local quality and static contract results establish the local check only. The current hosted metadata and style checks leave affected Rollouts validation pending. An observed hosted verdict needs its actual input revision and run.
+- **Acceptance criterion 04**: Hosted CI must block Rollouts static contract regressions when a pull request changes the affected contract. Local quality and static contract results establish the local check only. Affected Rollouts validation is not yet observed in a hosted check. An observed hosted verdict needs its actual input revision and run.
 
 #### Verification Method
 

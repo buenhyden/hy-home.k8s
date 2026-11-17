@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD 메트릭 Prometheus 수집 복구 Runbook"
-version: "2.4.4"
+version: "2.4.5"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RUN-0008"
 ---
 
@@ -102,6 +102,9 @@ argocd app sync platform-monitoring
 
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
+| 1 | 범위 판단: 쿼리 결과에서 `kubernetes-pods` 등 job이 조회되는지 본다. | not stated in this document | job 자체가 없으면 ArgoCD가 아니라 수집 경로 문제이므로 RUN-0009로 이동한다. |
+| 2 | ArgoCD component target 확인: 다섯 component의 target과 pod 상태를 확인한다. | 위 표의 component 다섯 개가 `up == 1`로 조회된다(Verification > Expected Results). | 빠진 component의 pod가 Running이 아니면 pod 상태부터 복구하고, Running인데 target이 없으면 Procedure 3으로 이동한다. |
+| 3 | label과 port 대조: pod label과 port를 위 표와 대조한다. | not stated in this document | 위 표와 다르면 `platform_pods` 규칙을 고치고 커밋한 뒤 reconciliation으로 반영한다. |
 
 ### Stop Conditions
 
@@ -134,7 +137,7 @@ argocd app sync platform-monitoring
 
 ### Next Owner
 
-에스컬레이션: 해당 없음 — 이 런북은 Escalation에 에스컬레이션 담당을 따로 정하지 않는다.
+에스컬레이션: ArgoCD pod 또는 Alloy relabel 규칙 복구는 GitOps owner, 근거 기록은 Platform operator가 맡는다(Lifecycle Traceability의 Evidence or recovery owner). Alloy 자체, remote write, egress 장애는 RUN-0009가 소유한다(Targets).
 
 ### Recovery or Forward Repair
 

@@ -1,10 +1,10 @@
 ---
 title: "Reference: Spec-Driven SDLC and Document Contracts"
-version: "0.1.0"
+version: "0.1.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RES-0001-m0018"
 supersedes: "RES-0001-m0004"
 ---
@@ -53,6 +53,9 @@ provenance and canonical owner anchors in the source ledger.
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
+| SRC-WERPC-014, 184, 185 | [Spec Kit agentic SDD, concepts and existing projects](https://github.com/github/spec-kit/blob/c00dc0551583428a10a94443c58c6a41e5e0138c/docs/reference/agentic-sdd.md) | commit c00dc0551583428a10a94443c58c6a41e5e0138c, dated 2026-09-25T20:31:03Z | 2026-09-27 | not stated in this document | not stated in this document | not stated in this document |
+| SRC-WERPC-015, 017–019, 053–057, 100, 110, 111 | Public ISO abstracts, NIST SSDF and control guidance, NASA requirements and architecture guidance, AWS ADR, Google SRE incident, postmortem, release and toil pages, and SemVer | not stated in this document | 2026-09-27 | Narrow retained practice claims unchanged; ISO access recovered | not stated in this document | Paid ISO clauses unread |
+| SRC-WERPC-191–197, 198–204, 205–210 | GitHub, Linear and Jira Cloud official workflow, permissions, API, export and pricing or licensing pages | not stated in this document | 2026-09-27 | New comparison coverage | not stated in this document | Exact page revisions and publication dates unknown; no account or synchronization observed |
 
 #### Current primary sources
 

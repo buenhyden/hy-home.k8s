@@ -1,10 +1,10 @@
 ---
 title: "Affected Pull Request GitOps Validation"
-version: "0.1.2"
+version: "0.1.3"
 type: "sdlc/architecture-decision"
 status: "proposed"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "ADR-0063"
 ---
 
@@ -37,9 +37,9 @@ existing PR candidate job and environment.
 
 | Option | Benefit | Cost and Risk | Reason |
 | --- | --- | --- | --- |
-| Local only | Avoids hosted work. | Leaves hosted GitOps assurance absent. | Not selected: it leaves hosted GitOps assurance absent. |
-| Separate leaf jobs | Isolates failure displays. | Duplicates checkout or setup for selected leaves. | Not selected: it duplicates checkout or setup for selected leaves. |
-| Shared PR job | Shares setup and preserves the required job name. The aggregate distinguishes what each leaf observed. | The workflow definition itself remains editable by a PR. | Chosen: it shares setup and preserves the required job name. |
+| Local only | Avoids hosted work. | Leaves hosted GitOps assurance absent. | Not selected: the Problem states a PR can change desired Kubernetes state while passing the hosted metadata and style checks. |
+| Separate leaf jobs | Isolates failure displays. | Duplicates checkout or setup for selected leaves. | not stated in this document |
+| Shared PR job | Shares setup and preserves the required job name. The aggregate distinguishes what each leaf observed. | The workflow definition itself remains editable by a PR. | Chosen: the Decision reports style, CI lock and GitOps identity checks under the existing `style-pr` status. |
 
 ## Decision
 
@@ -56,9 +56,10 @@ outcome for each unselected leaf.
 
 The W06 implementation request authorizes developing and testing the candidate.
 The operator's ADR acceptance, the associated policy update and an observed
-hosted run establish adoption evidence. The workflow runs with read-only
-repository permission and without persistent checkout credentials. The
-workflow definition itself remains editable by a PR.
+hosted run establish adoption evidence. The workflow is implemented in
+`.github/workflows/ci.yml` on `main` (EVD-166) with read-only repository
+permission and without persistent checkout credentials; adoption of this
+decision is pending. The workflow definition itself remains editable by a PR.
 
 #### Sources
 
@@ -76,14 +77,15 @@ and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md).
 
 ### Impacts
 
-The changed GitOps scope gets an additional static identity result on the
-exact PR merge input. A metadata edit still verifies applicable candidate
+Implemented in `.github/workflows/ci.yml` (EVD-166); adoption as a decision is
+pending. The changed GitOps scope gets an additional static identity result on
+the exact PR merge input. A metadata edit still verifies applicable candidate
 checks when same-input hosted evidence cannot be authenticated.
 
 ### Follow-up
 
 The topology update reached `main` through PR #290 before any change to the
 CI dependency lock. The owning Spec package's Task records the hosted
-aggregate, required-check read-back and observed timings in EVD-166.
+aggregate, and required-check read-back in EVD-166.
 The GitOps leaf was inapplicable on that candidate. An affected hosted GitOps
 run and the operator's adoption decision remain outstanding.

@@ -1,10 +1,10 @@
 ---
 title: "Reference: Agent Model Routing and Configuration"
-version: "0.1.0"
+version: "0.1.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RES-0001-m0024"
 supersedes: "RES-0001-m0010"
 ---
@@ -31,8 +31,12 @@ Primary owner of U29 and U35 and existing REQ-WERPC-028. Covers model family/ID,
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
+| SRC-WERPC-011, 049, 128, 136, 169, 229–237 | [m0026 current source observations](m0026-source-coverage.md#current-source-observations) | not stated in this document | 2026-09-27 | API model, pricing and rate pages, Claude costs, configuration and CLI pages, and Codex product catalog and pricing pages read directly | Model routing and configuration synthesis | No publisher modification date exposed; mutable aliases, feature gates, rollout dates and retirement dates are different metadata; list prices never prove effective account cost or access |
+| SRC-WERPC-049 | [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) | not stated in this document | 2026-08-08, re-checked 2026-08-10 | not stated in this document | not stated in this document | not stated in this document |
+| SRC-WERPC-045, 050 | [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/) | not stated in this document | 2026-08-08, re-checked 2026-08-10 | not stated in this document | not stated in this document | not stated in this document |
+| SRC-WERPC-046 | [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents) | not stated in this document | 2026-08-08, re-checked 2026-08-10 | not stated in this document | not stated in this document | not stated in this document |
 
-See [m0012 current source observations](m0026-source-coverage.md#current-source-observations) for SRC-WERPC-011, 049, 128, 136, 169 and 229–237. API model/pricing/rate, Claude costs/configuration/CLI and Codex product catalog/pricing pages were directly read on 2026-09-27. No publisher modification date was exposed in the read snapshots. Mutable aliases, feature gates, rollout dates and retirement dates are different metadata; list prices never prove effective account cost or access.
+See [m0026 current source observations](m0026-source-coverage.md#current-source-observations) for SRC-WERPC-011, 049, 128, 136, 169 and 229–237. API model/pricing/rate, Claude costs/configuration/CLI and Codex product catalog/pricing pages were directly read on 2026-09-27. No publisher modification date was exposed in the read snapshots. Mutable aliases, feature gates, rollout dates and retirement dates are different metadata; list prices never prove effective account cost or access.
 
 #### Historical source provenance
 

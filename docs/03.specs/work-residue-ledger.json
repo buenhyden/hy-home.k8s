@@ -281,11 +281,15 @@
     {
       "id": "T99-H01",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W04-CONTENT",
       "resume_condition": "When W04-CONTENT writes each missing fact from its source, or records that none exists",
       "source": {
         "path": "docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md",
+        "evidence": "EVD-046"
       }
     },
     {
@@ -311,11 +315,15 @@
     {
       "id": "T99-H04",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W04-CONTENT",
       "resume_condition": "When W04-CONTENT registers them as local tables with `authority_ref` or folds them into a core table",
       "source": {
         "path": "docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md",
+        "evidence": "EVD-046"
       }
     },
     {
@@ -428,6 +436,66 @@
       "state": "open",
       "owner": "W04",
       "resume_condition": "After the user accepts the verified current lifecycle model",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W04-H02",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "platform",
+      "resume_condition": "When the runbook owner observes or states each result and failure action",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W04-H03",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "platform",
+      "resume_condition": "When the architecture owner states each interface's failure boundary",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W04-H04",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "platform",
+      "resume_condition": "When the reference maintainer re-observes the sources under RUN-0011 or states the requirement",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W04-H05",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "platform",
+      "resume_condition": "When each rule gains a check or is reclassified as semantic review",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W04-H06",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "platform",
+      "resume_condition": "When the Stage 05 owner names the escalation contact and approver",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W04-H07",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "platform",
+      "resume_condition": "When the Requirement owner revises REQ-0002 and REQ-0003 with approval",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }

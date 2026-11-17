@@ -1,10 +1,10 @@
 ---
 title: "infrastructure"
-version: "0.4.2"
+version: "0.4.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 # infrastructure
 
@@ -67,6 +67,8 @@ infrastructure/
 
 | Interface | Producer | Consumer | Contract | Failure |
 | --- | --- | --- | --- | --- |
+| Vault connection contract | 외부 Vault operator (Vault runtime) | ESO (TLS through the external Traefik) | [Bootstrap Boundary Matrix](#bootstrap-boundary-matrix) | Repo-static checks do not read secret values, write Vault policy, refresh Vault auth, or repair live Vault state. |
+| PostgreSQL and Valkey connection contract | 외부 service workspace (PostgreSQL/Valkey runtime) | ArgoCD (management Valkey Service/EndpointSlice and ExternalSecret target) | [Bootstrap Boundary Matrix](#bootstrap-boundary-matrix) | Repo-static checks do not start external services, change Docker bind addresses, rotate credentials, or prove authenticated DB/K8s reachability. |
 
 #### Bootstrap Boundary Matrix
 

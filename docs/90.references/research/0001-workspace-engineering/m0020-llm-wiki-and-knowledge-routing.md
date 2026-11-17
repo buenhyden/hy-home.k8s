@@ -1,10 +1,10 @@
 ---
 title: "Reference: LLM-WIKI and Knowledge Routing"
-version: "0.1.0"
+version: "0.1.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RES-0001-m0020"
 supersedes: "RES-0001-m0006"
 ---
@@ -56,6 +56,11 @@ freshness rules, and the boundary from llms.txt, MCP Resources, search, and RAG.
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
+| SRC-WERPC-190 | [Karpathy LLM Wiki gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) | creation 2026-04-04 16:25 | 2026-09-27 | Body lines 62–117 excluding comments | not stated in this document | Fresh immutable revision unavailable after API 502; license unconfirmed |
+| SRC-WERPC-021 | [llms.txt](https://llmstxt.org/) | v2 proposal; published 2024-09-03, modified 2026-08-10 | 2026-09-27 | Proposal and Format sections | not stated in this document | Not a formal standards-body specification |
+| SRC-WERPC-087 | [MCP Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources) | revision 2026-07-28 | 2026-09-27 | User Interaction Model, Capabilities and Protocol Messages | not stated in this document | Not runtime evidence |
+| SRC-WERPC-213 | [Lewis et al. RAG paper](https://arxiv.org/abs/2005.11401) | 2020 | 2026-09-27 | Abstract and submission history | not stated in this document | Full paper and benchmark results not verified |
+| SRC-WERPC-214 | [OWASP LLM01:2025](https://genai.owasp.org/llmrisk/llm01-prompt-injection/) | not stated in this document | 2026-09-27 | Indirect and Prevention guidance | not stated in this document | Persistent-wiki poisoning is a labeled inference |
 
 #### Current primary sources
 

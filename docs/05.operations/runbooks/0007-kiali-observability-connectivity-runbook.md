@@ -1,10 +1,10 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "2.2.5"
+version: "2.2.6"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RUN-0007"
 ---
 
@@ -206,6 +206,9 @@ kubectl -n istio-system logs deploy/kiali --since=2m | rg -i 'grafana|401'
 
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
+| 1 | 연결 상태 진단(1-1 외부 route와 host port, 1-2 Kiali 파드 연결, 1-3 Tempo EndpointSlice 확인) | Kiali pod에서 192.168.0.13:443과 192.168.0.13:3200 TCP 연결 성공, tempo-external-1 주소 192.168.0.13과 port 3200 | 1-2에서 coredns-custom이나 kiali-cabundle이 없거나 no such host, x509가 보이면 RUN-0002 Steps 4단계로 재적용한다; 1-3에서 주소나 port가 다르면 RUN-0001 External Endpoint Recovery로 복구한다; 닫혀 있거나 route가 응답하지 않으면 외부 workspace의 route와 port 공개를 먼저 확인한다 |
+| 2 | NetworkPolicy egress 규칙 점검 | allow-kiali-egress-to-observability가 192.168.0.13/32의 443, 3200을 허용한다 | gitops/platform/network-policies 하위 YAML을 고쳐 PR로 반영한 뒤 reconciliation한다; 새 주소나 port 매핑이 틀리면 GitOps로 되돌린다 |
+| 3 | Kiali 외부 서비스 설정 확인 | Kiali 로그에 Grafana 401이나 Prometheus 연결 오류가 없다 | 값이 다르면 Application 파일을 고쳐 PR로 반영한 뒤 reconciliation한다; Grafana auth 변경은 외부 observability workspace 소관이며 이 저장소는 결과만 확인한다 |
 
 ### Stop Conditions
 

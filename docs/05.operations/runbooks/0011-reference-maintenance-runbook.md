@@ -1,10 +1,10 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.5.3"
+version: "1.5.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RUN-0011"
 ---
 
@@ -137,6 +137,12 @@ Reference
 
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
+| 1 | 자료의 semantic owner를 분류한다. | Reference가 공통 거버넌스나 현재 Stage 01/02/03/05 owner를 대체하지 않는다. | 잘못된 분류는 redirect를 만들지 않고 동일 변경을 revert하거나 canonical owner에 새 수정으로 바로잡는다. |
+| 2 | pack 경로와 template을 함께 선택한다. | 모든 pack 경로가 category별 `####-<slug>/` 규칙과 일치하는 template을 사용한다. | not stated in this document |
+| 3 | 현재 동작 또는 버전 사실은 매니페스트, 설정, workflow, lock, 코드와 Stage 01/02 설명을 먼저 갱신한다. | 현재 동작과 버전은 Stage 01/02 및 직접 구현 소스와 일치한다. | not stated in this document |
+| 4 | pack 내부의 새 authored report는 category와 일치하는 template을 사용하고 provenance, observation date, authority boundary, freshness trigger를 작성한다. | 보존 자료의 출처, 확인일, freshness trigger가 명시되어 있다. | not stated in this document |
+| 5 | pack router가 member를 정확히 나열하게 하고 category router와 `docs/90.references/README.md`를 같은 변경에서 갱신한다. | pack, category, Stage router와 구성원 집합이 대조된다(Verification > Expected Results). | validator 실패 시 실패한 owner, router, link만 수정하고 무관한 문서를 일괄 재생성하지 않는다. |
+| 6 | 종료 대상의 current consumer를 canonical owner 또는 직접 저장소 소스로 전환하고 소비자, 보존 가치, hold, 처분 권한을 확인한다. | Git-history-only 처분이면 현재 원형과 일치하는 정확한 `commit:path`의 도달성과 임시 복구 bytes 일치를 기록했다. | 하나라도 미해결이면 그 처분만 보류하고 원형은 그대로 둔다. 객체·ref 부재, 접근 오류, 차이, 미확인 hold 또는 권한은 해당 처분 `DEFER`이며, 도달성이나 bytes 일치가 확인되지 않으면 처분하지 않고 문서 소유자에게 넘긴다. |
 
 ### Stop Conditions
 

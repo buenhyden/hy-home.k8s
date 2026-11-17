@@ -6133,6 +6133,66 @@
             "authority_ref": "SPEC-0222"
           },
           {
+            "name": "Control Register",
+            "section": "policy.rules.1",
+            "columns": [
+              {
+                "key": "Control",
+                "meaning": "The stable control ID that one or more rules of this policy rely on.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Accountable role",
+                "meaning": "The role accountable for keeping the control in force.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Enforcement surface",
+                "meaning": "The validator, review or platform boundary that enforces the control.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Evidence",
+                "meaning": "The named evidence that shows the control holds, or none.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Control",
+            "authority_ref": "ADR-0059"
+          },
+          {
+            "name": "Responsibilities",
+            "section": "policy.ownership.1",
+            "columns": [
+              {
+                "key": "Role",
+                "meaning": "The role that authors, reviews, approves or executes this policy.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Responsibility",
+                "meaning": "One responsibility of that role under this policy.",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Escalation owner",
+                "meaning": "The named owner a blocked or disputed case goes to.",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Role",
+            "authority_ref": "ADR-0059"
+          },
+          {
             "name": "Lifecycle Traceability",
             "section": "policy-lifecycle-traceability",
             "columns": [

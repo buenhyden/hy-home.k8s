@@ -1,10 +1,10 @@
 ---
 title: "Reference: Documentation Architecture and Diataxis"
-version: "0.1.0"
+version: "0.1.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RES-0001-m0019"
 supersedes: "RES-0001-m0005"
 ---
@@ -50,6 +50,12 @@ application, the tutorial/explanation gaps, and safe target-state guidance.
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
+| SRC-WERPC-020, 071 | [Diátaxis start here and incremental use](https://diataxis.fr/start-here/) | not stated in this document | 2026-09-27 | Retained four-mode and no-empty-structure claims unchanged | not stated in this document | not stated in this document |
+| SRC-WERPC-116, 186–189, 211 | [C4 diagrams, notation, tooling, dynamic, deployment and container](https://c4model.com/diagrams) | not stated in this document | 2026-09-27 | not stated in this document | not stated in this document | Exact page publication or revision unknown |
+| SRC-WERPC-017, 118 | AWS ADR process and [Nygard original article](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) | original article published 2011-11-15 | 2026-09-27 | not stated in this document | not stated in this document | not stated in this document |
+| SRC-WERPC-117, 212 | [arc42 overview](https://arc42.org/overview/) and [decisions](https://docs.arc42.org/section-9/) | not stated in this document | 2026-09-27 | not stated in this document | not stated in this document | Exact page revision unknown; license reuse is bounded by the checked source CC-BY-SA 4.0 terms |
+| SRC-WERPC-154 | [GitHub about READMEs](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes) | not stated in this document | 2026-09-27 | not stated in this document | not stated in this document | Exact page revision unknown |
+| SRC-WERPC-067 | [Diátaxis upstream source](https://github.com/evildmp/diataxis-documentation-framework) | main | 2026-08-11 | The source that builds the site, not the published page | not stated in this document | not stated in this document |
 
 #### Current primary sources
 

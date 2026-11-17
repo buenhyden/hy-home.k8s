@@ -1,6 +1,6 @@
 ---
 title: "Argo Notifications Slack Architecture Description"
-version: "2.1.1"
+version: "2.1.2"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -85,6 +85,11 @@ ArgoCD Notifications evaluates Applications only, so Rollouts events are configu
 
 | Interface | Producer | Consumer | Contract | Failure |
 | --- | --- | --- | --- | --- |
+| OpenBao `secret/platform/notifications` property `slack_token` | OpenBao KV v2 | External Secrets Operator through `vault-backend` | [ADR-0041](../decisions/0041-openbao-secret-backend.md) | not stated in this document |
+| ExternalSecret `argocd-notifications-secret` | External Secrets Operator | ArgoCD Notifications controller through Secret key `slack-token` | [ExternalSecret reference](../../../gitops/platform/argocd/argocd-notifications-secret.yaml) | not stated in this document |
+| ConfigMap `argocd-notifications-cm` entries | GitOps declaration | ArgoCD Notifications controller | [Notifications ConfigMap](../../../gitops/platform/argocd/argocd-notifications-cm.yaml) | not stated in this document |
+| Application annotation `notifications.argoproj.io/subscribe.<trigger>.slack` | Application owner | ArgoCD Notifications controller | [Notifications ConfigMap](../../../gitops/platform/argocd/argocd-notifications-cm.yaml) | not stated in this document |
+| Rollouts events `on-rollout-completed` and `on-rollout-aborted` | Argo Rollouts controller notification engine | Shared Slack channel | [ADR-0054](../decisions/0054-platform-decision-current-state-amendment.md) | not stated in this document |
 
 ## Runtime Behavior
 

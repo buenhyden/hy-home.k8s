@@ -1,10 +1,10 @@
 ---
 title: "Reference: Provider Implementation Status"
-version: "0.1.0"
+version: "0.1.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RES-0001-m0017"
 supersedes: "RES-0001-m0003"
 ---
@@ -31,8 +31,11 @@ Primary owner of U04 and U34, preserving REQ-WERPC-004 and REQ-WERPC-005. Includ
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
+| SRC-WERPC-004–009, 011–013, 049, 066, 068, 087, 096, 136, 137, 156–169, 237–243 | [m0026 current source observations](m0026-source-coverage.md#current-source-observations) | not stated in this document | 2026-09-27 | Exact URLs, revisions and claim support are owned by the m0026 observations | Provider implementation status above | Version numbers are documented feature gates, not detected local installations; MCP revision is 2026-07-28; unversioned pages and editor documentation expose no immutable installed revision or publication or modification date |
+| SRC-WERPC-004–008 | Anthropic Claude Code memory, settings, hooks, subagents and MCP pages | not stated in this document | 2026-08-08 | Ledger rows for the Anthropic primary sources | not stated in this document | Historical check, not a current read |
+| SRC-WERPC-009–013 | Official OpenAI AGENTS, configuration, subagents, hooks and MCP pages | not stated in this document | not stated in this document | The official manual cache was consulted first; the pages are recorded as SRC-WERPC-009–013 | not stated in this document | Checked date not stated for this group |
 
-The [current source observations](m0026-source-coverage.md#current-source-observations) own exact URLs/revisions and claim support for SRC-WERPC-004–009, 011–013, 049, 066, 068, 087, 096, 136, 137, 156–169 and 237–243 used above. Every current read is 2026-09-27. Version numbers above are documented feature gates, not detected local installations. MCP revision is 2026-07-28; unversioned pages and editor documentation expose no immutable installed revision or publication/modification date in this evidence.
+The [current source observations](m0026-source-coverage.md#current-source-observations) own exact URLs/revisions and claim support for SRC-WERPC-004–009, 011–013, 049, 066, 068, 087, 096, 136, 137, 156–169 and 237–243 used below. Every current read is 2026-09-27. Version numbers below are documented feature gates, not detected local installations. MCP revision is 2026-07-28; unversioned pages and editor documentation expose no immutable installed revision or publication/modification date in this evidence.
 
 #### Historical source provenance
 

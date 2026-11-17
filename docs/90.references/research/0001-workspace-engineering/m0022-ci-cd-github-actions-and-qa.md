@@ -1,10 +1,10 @@
 ---
 title: "Reference: CI/CD, GitHub Actions, and QA"
-version: "0.1.0"
+version: "0.1.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RES-0001-m0022"
 supersedes: "RES-0001-m0008"
 ---
@@ -31,6 +31,12 @@ Includes build/test/package/release/deploy/promotion/rollback, Actions events/re
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
+| CLM-WERPC-017-101 through CLM-WERPC-017-120 | [m0026 current source observations](m0026-source-coverage.md#current-source-observations) | not stated in this document | 2026-09-27 | Directly read publisher sections, access dates, version or product limits and source outcomes | Product semantics are factual only within their stated scope; the QA taxonomy, stage model and application choices are conditional research synthesis | GitHub.com mutable pages have no adopted immutable revision and do not prove GHES support or a plan or settings state |
+| Actions workflow syntax, secure use and artifact storage | [Actions workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax) | not stated in this document | 2026-09-27 | not stated in this document | not stated in this document | Artifact v4 is an example, not a latest release claim |
+| Git hook semantics | [Git hook semantics](https://git-scm.com/docs/githooks) | manual change documented in 2.54.0 update of 2026-04-20 | 2026-09-27 | not stated in this document | not stated in this document | not stated in this document |
+| pre-commit | [pre-commit](https://pre-commit.com/) | not stated in this document | 2026-09-27 | not stated in this document | not stated in this document | pytest guidance has no established version or date pin |
+| Copilot review | [Copilot review](https://docs.github.com/en/copilot/concepts/agents/code-review) | not stated in this document | 2026-09-27 | not stated in this document | not stated in this document | The AI-testing URL resolves to VS Code agent testing guidance and establishes an invoked workflow, not universal automatic test generation |
+| NASA product verification and product validation | [NASA product verification](https://www.nasa.gov/reference/5-3-product-verification/) | pages updated 2023-09-29 and 2023-07-26 respectively | 2026-09-27 | not stated in this document | not stated in this document | Page update dates are separate from this cycle access date |
 
 Current mappings are `CLM-WERPC-017-101` through `CLM-WERPC-017-120` in [current source observations](m0026-source-coverage.md#current-source-observations), with directly read publisher sections, access dates, version/product limits, source outcomes and later questions. Product semantics are factual only within their stated scope; the QA taxonomy, stage model and application choices are conditional research synthesis.
 

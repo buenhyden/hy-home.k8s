@@ -1,10 +1,10 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.7.2"
+version: "1.7.3"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "POL-0007"
 ---
 
@@ -46,7 +46,7 @@ artifact_id: "POL-0007"
 | ONBOARD-R002 | Always | 모든 Rollout은 canary 단계에서 AnalysisTemplate을 참조해야 한다. | RUN-0010 | none |
 | ONBOARD-R003 | Always | **Prometheus 주소**: `https://prometheus.hy.home.arpa`. `Authorization` header는 `args`의 `secretKeyRef`로 platform 소유 `apps/prometheus-api-auth` Secret에서 읽는다(ADR-0046). | RUN-0010 | none |
 | ONBOARD-R004 | Always | **기본 측정 지표**: `kube_pod_container_status_restarts_total` (컨테이너 재시작 횟수) | 의미 검토 | none |
-| ONBOARD-R005 | Always | **측정 주기**: 30s, `count: 4`(유한한 canary step 측정), failureLimit: 1 | policy-gates | none |
+| ONBOARD-R005 | Always | **측정 주기**: 30s, `count: 4`(유한한 canary step 측정), failureLimit: 1 | policy-gates (that `count` is set); interval, the count value and failureLimit by semantic review | none |
 | ONBOARD-R006 | Always | 태그 | policy-gates | none |
 | ONBOARD-R007 | Always | 레지스트리 | RUN-0010 | none |
 | ONBOARD-R008 | Always | 가시성 | 의미 검토 | none |
