@@ -41,7 +41,12 @@ from document_contracts import (
     read_repository_text,
     scoped_document_content_paths,
     validated_changed_paths,
+    TaskTables,
     carry_evidence_rows,
+    read_task_tables,
+    task_header_form,
+    task_recorded_row,
+    task_table_rows,
     task_execution_issues,
     task_status,
     task_contract_issues,
@@ -2812,12 +2817,17 @@ def _body_contract_location(
 def _body_contract_rows(
     text: str, profile: DocumentProfile
 ) -> list[dict[str, str]] | None:
-    """Return a shape-valid lifecycle table; local validation owns shape errors."""
+    """Return a shape-valid lifecycle table; local validation owns shape errors.
+
+    A Task's rows are its work items under the core names (SPEC-0222).
+    """
 
     contract = profile.body_contract
     location = _body_contract_location(text, profile)
     if contract is None or location is None:
         return None
+    if contract.task_execution is not None:
+        return task_tables(text, profile).work or None
     section_title, table_heading = location
     section = _exact_heading_section(text, f"## {section_title}")
     table_section = (
@@ -2836,6 +2846,41 @@ def _body_contract_rows(
     return [dict(zip(header, row, strict=True)) for row in rows]
 
 
+def task_tables(text: str, profile: DocumentProfile) -> TaskTables:
+    """Every Task table of one document, read by the transition adapter."""
+
+    contract = profile.body_contract
+    binding = contract.task_execution if contract else None
+    location = _body_contract_location(text, profile)
+    if contract is None or binding is None or location is None:
+        return TaskTables(None, None, None, None)
+    execution = _exact_heading_section(text, f"## {location[0]}") or ""
+
+    def h3_table(heading: str) -> tuple[list[str], list[list[str]]] | None:
+        section = (
+            _exact_heading_section(execution, f"### {heading}") if heading else None
+        )
+        return _first_visible_table(section) if section is not None else None
+
+    def h2_table(name: str | None) -> tuple[list[str], list[list[str]]] | None:
+        section = _exact_heading_section(text, f"## {name}") if name else None
+        return _first_visible_table(section or "")
+
+    work_items = h3_table(binding.work_item_heading)
+    if work_items is not None and work_items[0][:1] != list(
+        binding.work_item_columns[:1]
+    ):
+        work_items = None  # The first table there is not the work item table.
+    traceability = h3_table(location[1])
+    return read_task_tables(
+        profile,
+        traceability=traceability if traceability and traceability[1] else None,
+        work_items=work_items,
+        evidence=h2_table(binding.evidence_section),
+        acceptance=h2_table(binding.criterion_acceptance_section),
+    )
+
+
 def task_base_rows(
     text: str, profile: DocumentProfile
 ) -> tuple[tuple[tuple[str, str], ...], ...]:
@@ -2850,57 +2895,52 @@ def task_base_rows(
     return tuple(tuple(row.items()) for row in rows)
 
 
-def task_acceptance_rows(text: str, binding: object) -> list[dict[str, str]] | None:
-    """Read the sole modern Task criterion verdict table."""
-
-    section_name = getattr(binding, "criterion_acceptance_section", None)
-    columns = getattr(binding, "criterion_acceptance_columns", ())
+def _task_rows(
+    text: str, kind: str, section_name: str | None, columns: Sequence[str]
+) -> list[dict[str, str]] | None:
     if not section_name:
         return None
     section = _exact_heading_section(text, f"## {section_name}")
-    table = _first_visible_table(section or "")
-    if (
-        table is None
-        or tuple(table[0]) != columns
-        or not table[1]
-        or any(len(row) != len(table[0]) for row in table[1])
-    ):
-        return None
-    return [dict(zip(table[0], row, strict=True)) for row in table[1]]
+    read = task_table_rows(kind, _first_visible_table(section or ""), columns)
+    return read[1] if read and read[1] else None
+
+
+def task_acceptance_rows(text: str, binding: object) -> list[dict[str, str]] | None:
+    """Read the sole Task criterion verdict table under the core names."""
+
+    return _task_rows(
+        text,
+        "acceptance",
+        getattr(binding, "criterion_acceptance_section", None),
+        getattr(binding, "criterion_acceptance_columns", ()),
+    )
 
 
 def task_evidence_rows(text: str, binding: object) -> list[dict[str, str]] | None:
-    """Read a complete Task check table using its exact registry columns."""
+    """Read a complete Task check table under the core names."""
 
-    section_name = getattr(binding, "evidence_section", None)
-    columns = getattr(binding, "evidence_columns", ())
-    if not section_name:
-        return None
-    section = _exact_heading_section(text, f"## {section_name}")
-    table = _first_visible_table(section or "")
-    if (
-        table is None
-        or tuple(table[0]) != columns
-        or not table[1]
-        or any(len(row) != len(table[0]) for row in table[1])
-    ):
-        return None
-    return [dict(zip(table[0], row, strict=True)) for row in table[1]]
+    return _task_rows(
+        text,
+        "evidence",
+        getattr(binding, "evidence_section", None),
+        getattr(binding, "evidence_columns", ()),
+    )
 
 
 def task_base_evidence_rows(
     text: str, binding: object | None = None
 ) -> list[dict[str, str]] | None:
-    """Read Task evidence without changing its cells, under the current names.
+    """Read Task evidence without changing its cells, under the core names.
 
     `binding` is the evidence binding of the registry of the side that is read
     (SPEC-0203). Its section selects the table, and a side whose registry binds the
-    old names is carried under the current names by the header map, so a rule sees
+    old names is carried under the recorded names by the header map, so a rule sees
     the same cells before and after the rename. Only a registry from before the
     binding existed, which passes none, reads the literal `## Task Evidence`. The
     table must hold the identity column that the binding names; the exact columns
     are the profile validator's rule, and the retention rule refuses a recorded
-    cell whose column is missing instead of reading it as empty.
+    cell whose column is missing instead of reading it as empty. Every table that
+    is not under the core header is read by the transition adapter (SPEC-0222).
     """
 
     section_name = getattr(binding, "evidence_section", None) or "Task Evidence"
@@ -2915,10 +2955,18 @@ def task_base_evidence_rows(
         or any(len(row) != len(table[0]) for row in table[1])
     ):
         return None
-    return carry_evidence_rows(
+    rows = carry_evidence_rows(
         [dict(zip(table[0], row, strict=True)) for row in table[1]],
         binding if columns else None,
     )
+    core = (
+        bool(columns)
+        and "Evidence" not in columns
+        and task_header_form("evidence", table[0], columns) == "core"
+    )
+    if rows is None or core:
+        return rows
+    return [task_recorded_row("evidence", row) for row in rows]
 
 
 def lifecycle_markdown_evidence(
@@ -3032,30 +3080,21 @@ def lifecycle_markdown_evidence(
                     ):
                         body_contract_valid = False
             binding = contract.task_execution
-            if binding is not None and binding.evidence_section:
-                evidence_section = _exact_heading_section(
-                    text, f"## {binding.evidence_section}"
-                )
-                evidence_table = _first_visible_table(evidence_section or "")
+            if binding is not None:
+                tables = task_tables(text, profile)
                 if (
-                    evidence_table is None
-                    or tuple(evidence_table[0]) != binding.evidence_columns
-                    or not evidence_table[1]
-                    or any(
-                        len(row) != len(evidence_table[0]) for row in evidence_table[1]
+                    tables.issues
+                    or tables.evidence is None
+                    or tables.acceptance is None
+                    or task_contract_issues(
+                        rows,
+                        tables.evidence,
+                        tables.acceptance,
+                        document_status,
+                        binding,
                     )
                 ):
                     body_contract_valid = False
-                else:
-                    evidence_rows = [
-                        dict(zip(evidence_table[0], row, strict=True))
-                        for row in evidence_table[1]
-                    ]
-                    decision_rows = task_acceptance_rows(text, binding)
-                    if decision_rows is None or task_contract_issues(
-                        rows, evidence_rows, decision_rows, document_status, binding
-                    ):
-                        body_contract_valid = False
             link_columns = (
                 (contract.source_link_column, contract.allowed_source_profile_ids),
                 (contract.target_link_column, contract.allowed_target_profile_ids),
@@ -3909,9 +3948,11 @@ def _traceability_lineage(context: Context, path: PurePosixPath) -> str:
     profile = next(
         (item for item in registry.profiles if item.profile_id == profile_id), None
     )
-    relationship_section = (
-        profile.body_contract.section if profile and profile.body_contract else None
+    # A retained document reads the H2 its retained form keeps (SPEC-0222).
+    location = (
+        _body_contract_location(context.texts[path], profile) if profile else None
     )
+    relationship_section = location[0] if location else None
     section = (
         _exact_heading_section(context.texts[path], f"## {relationship_section}")
         if relationship_section

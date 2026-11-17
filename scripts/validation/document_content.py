@@ -268,6 +268,7 @@ INDEX_FOLDERS = frozenset(
         "docs/05.operations/runbooks/README.md",
     }
 )
+INDEX_SECTION = "Current Contents"
 LINK = re.compile(r"\]\(([^)]+)\)")
 BACKTICKS = re.compile(r"`([^`]+)`")
 MAX_DIRECTORY_ENTRIES = 1024
@@ -560,18 +561,13 @@ def _index_findings(
     text: str,
     table_reader: TableReader,
     index_columns: tuple[str, ...],
-    optional_columns: tuple[str, ...],
 ) -> list[Finding]:
-    table = table_reader(text, "문서 인덱스")
+    # SPEC-0222: the index is the core paths table of the Current Contents H2.
+    table = table_reader(text, INDEX_SECTION)
     if table is None:
-        return [("DOC-INDEX-TABLE", "문서 인덱스", "missing-or-ambiguous-table")]
+        return [("DOC-INDEX-TABLE", INDEX_SECTION, "missing-or-ambiguous-table")]
     header, rows = table
-    extra = header[len(index_columns) :]
-    if (
-        tuple(header[: len(index_columns)]) != index_columns
-        or len(extra) != len(set(extra))
-        or any(column not in optional_columns for column in extra)
-    ):
+    if tuple(header) != index_columns:
         return [("DOC-INDEX-HEADER", "registry README index columns", "header-differs")]
     found: list[Finding] = []
     names: list[str] = []
@@ -619,7 +615,6 @@ def validate_document_content(
     table_reader: TableReader,
     *,
     index_columns: tuple[str, ...],
-    optional_index_columns: tuple[str, ...],
 ) -> list[Finding]:
     """Return bounded path/rule facts for one current authored router."""
 
@@ -635,7 +630,6 @@ def validate_document_content(
                 text,
                 table_reader,
                 index_columns,
-                optional_index_columns,
             )
         )
     if (

@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.5.4"
+version: "1.5.5"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -160,6 +160,9 @@ Steps의 Checklist에서 호스트·CA 입력과 필수 Valkey 경로를 확인�
     argocd proj list
     argocd app list
     ```
+
+| Step | Action | Expected Result | On Failure |
+| --- | --- | --- | --- |
 
 ### Stop Conditions
 

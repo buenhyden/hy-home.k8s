@@ -64,6 +64,11 @@ artifact_id: "{{ARTIFACT_ID}}"
 ### Verification Strategy
 
 <!-- Author prompt: list deterministic commands, expected results, and explicit evidence limits. -->
+<!-- Author prompt: give each check one row in the Checks table below: its unique guarantee, required input, trust boundary, the condition that selects it and the evidence type it must produce, as this Spec states them. -->
+
+| Check ID | Guarantee | Input | Trust Boundary | Required When | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| <!-- Author prompt: Name one stable check ID. --> | <!-- Author prompt: State what only this check guarantees. --> | <!-- Author prompt: State the input it needs. --> | <!-- Author prompt: State what the check trusts and what it cannot prove. --> | <!-- Author prompt: State the condition that selects it. --> | <!-- Author prompt: Name the evidence type it must produce. --> |
 
 #### Normative and Evidence
 

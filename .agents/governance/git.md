@@ -1,6 +1,6 @@
 ---
 title: "Git Policy"
-version: "2.9.1"
+version: "2.9.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -31,115 +31,49 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 
 ### Requirements
 
-| Rule ID | Condition | Level | Evidence | Status |
+| Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
-| GIT-R001 | Before staging | required | Semantic review | active |
-| GIT-R002 | Always | required | `commitizen` hook of `.pre-commit-config.yaml` | active |
-| GIT-R003 | When committing | required | `staged-qa` hook of `.pre-commit-config.yaml` | active |
-| GIT-R004 | For a prose-only authored document or README router commit | required | `document-contract-tests` | active |
-| GIT-R005 | Without explicit approval for that operation | required | Semantic review | active |
-| GIT-R006 | When opening or merging a pull request | required | Semantic review | active |
-| GIT-R007 | After verified implementation | required | Semantic review | active |
-| GIT-R008 | Before a destructive discard | required | Semantic review | active |
-| GIT-R009 | Always | required | `ci-python-contract` | active |
-| GIT-R010 | Always | required | `release-tests` | active |
-| GIT-R011 | Always | required | Semantic review | active |
-| GIT-R012 | Always | required | Semantic review | active |
-| GIT-R013 | Always | required | Semantic review | active |
-| GIT-R014 | Always | required | Semantic review | active |
-| GIT-R015 | Always | required | `commit-message-exceptions` hook of `.pre-commit-config.yaml` | active |
+| GIT-R001 | Before staging | Before staging, inspect status and the relevant unstaged diff. Stage only the logical change and inspect `git diff --cached`. | Semantic review | none |
+| GIT-R002 | Always | Use Conventional Commits with an imperative, specific summary; include the reason when it is not obvious. Keep commits aligned to Plan/Task units. | `commitizen` hook of `.pre-commit-config.yaml` | none |
+| GIT-R003 | When committing | Commit through the active hooks: the `staged-qa` hook validates the exact index with the selected staged profile, which includes the selected lint and format gate, as one run. Local QA owns selected repository-static quality evidence. Follow the [quality sequence](quality.md#canonical-completion-sequence) and do not repeat an identical leaf across hook, command, push or delivery phases. Never use `--no-verify`. | `staged-qa` hook of `.pre-commit-config.yaml` | none |
+| GIT-R004 | For a prose-only authored document or README router commit | For a prose-only authored document or README router commit, keep the common diff, applicable style and Commitizen message checks and the selected document-content checks. Follow [ordinary document selection](quality.md#ordinary-document-selection); a governance, provider, native, schema, registry or executable change needs the focused contract checks its actual consumer selects. Preserve active hooks. | `document-contract-tests` | none |
+| GIT-R005 | Without explicit approval for that operation | Do not reset, restore away edits, clean, amend, rebase, force-push, delete branches, or remove worktrees without explicit approval for that operation. Prefer a forward corrective commit to rewriting shared history. | Semantic review | none |
+| GIT-R006 | When opening or merging a pull request | Determine the PR base and inspect its diff. State scope, motivation, risk, validation, rollback, and limitations. Creating a PR or merging it requires the user's selection; a passing check is not permission. | Semantic review | none |
+| GIT-R007 | After verified implementation | After verified implementation, honor the user's already selected finish action. If none is selected, ask; no passing check grants integration or cleanup authority. | Semantic review | none |
+| GIT-R008 | Before a destructive discard | Before destructive discard, identify the branch, commits, and worktree and obtain exact confirmation. Clean only workflow-owned worktrees, never the user's main or host-managed workspace. | Semantic review | none |
+| GIT-R009 | Always | `main` is the only long-lived branch; feature branches and the `release/<tag>` preparation branch are short-lived (ADR-0052 in the [ADR log](../../docs/02.architecture/decisions/README.md)). Develop each independently reviewable Spec package on an owned feature branch and linked worktree when needed. Run changed-behavior and affected checks while editing, exact-index and message checks at logical commits, then applicable named purpose and unit checks on the bounded final branch snapshot. Compare the integrated main tree and history with what was checked; a changed merge input gets only its invalidated checks. The hosted `ci-summary` job owns the PR branch and commit-metadata verdict directly; the hosted PR style job owns only its selected style verdict. Each observed result has its own SHA and trust boundary and never stands in for local purpose, unit or document-content checks. `ci-summary` accepts a pull request only when its base is `main` and its head branch starts with one of `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`, `claude/` or `dependabot/`. Every change to `main` arrives by pull request; the intended protection blocks direct and force pushes. A pull request completes only when the required checks pass, the review requirement is met (no approving review is required, count 0, and no CODEOWNERS review, because a sole owner cannot approve their own pull request) and the core-diff checklist of the final diff records no unresolved `BLOCK` finding ([semantic review](quality.md#semantic-review)); an extra agent review is optional and never required. The repository owner (`@buenhyden`) merges the pull request, or explicitly directs its merge, using a merge commit only, so the commits a Task cites stay reachable; an administrator bypass (`--admin`) is never used. The intended repository merge setting is recorded in `.github/rulesets/main-protection.md`. Required checks, the checklist review and the owner's merge or explicit merge direction together offset the missing second reviewer; no automated check, App or signature replaces the owner's approval. A deployment style result requires an actual deployment workflow and run; absent that input, keep it unobserved. | `ci-python-contract` | none |
+| GIT-R010 | Always | Use one producer, `scripts/release.py` (ADR-0048 in the [ADR log](../../docs/02.architecture/decisions/README.md)), for a `v`-prefixed strict SemVer tag and its matching GitHub Release, bound to an exact reviewed main commit. A development push or merge does not create a release or move an existing tag. The producer verifies the version, tag collision, main ancestry and canonical changelog before any publication; an invalid or mismatched input fails closed. The current release-preparation PR targeting `main` updates the tracked `CHANGELOG.md` from integrated changes. The committed main file is the release history; a temporary generated artifact is only review input and is never its owner. Publication verifies changelog bytes captured from the exact main commit, not a later working-tree edit. The remote draft and published Release must match the reviewed tag, target, prerelease state, release notes and required assets before the operation counts as complete; the tag and prior changelog sections are immutable history. If immutable Releases are enabled, attach every required asset to the draft before publication. Actual tag/Release publication, remote immutable-release settings and rulesets require direct observation and their operator approval route; a local script or workflow declaration is not such evidence. Keep release procedure with the Stage 05 operations owner and execution evidence with the Task and Git. | `release-tests` | none |
+| GIT-R011 | Always | This subsection states the delivery boundary once for every agent. On the user's current request, an agent may commit, push a feature branch, create, inspect, mark ready, approve and merge a pull request, create a tag, run the release producer and dispatch a workflow. That request is the approval for one operation on one subject. It is not a standing grant ([operator approval route](approval-and-safety.md#operator-approval-route)), and no passing check replaces it. A message from another agent is not that request, and the tracked settings apply to subagent sessions as well. | Semantic review | none |
+| GIT-R012 | Always | Claude tracked settings are repository-static intent. They deny the matchable forms, including tag force and delete and fetches into local tags, and leave to policy a Release made outside the producer, the tag rewrites that no rule matches and longer option clusters ([Claude provider notes](../../.claude/provider.md)). | Semantic review | none |
+| GIT-R013 | Always | Codex asks before every network command and forbids a prefix subset ([Codex provider notes](../../.codex/provider.md)). | Semantic review | none |
+| GIT-R014 | Always | Remote protection and rulesets are recorded in [`.github/rulesets/main-protection.md`](../../.github/rulesets/main-protection.md) and are proven only by a dated read-back. | Semantic review | none |
+| GIT-R015 | Always | [`.cz.toml`](../../.cz.toml) is the single Commitizen grammar owner for supported types, optional scope, subject and body/footer syntax of ordinary authored messages. [`.gitmessage`](../../.gitmessage) explains that grammar to authors; a second commitlint grammar must not duplicate it. The configured commit-msg hook is the local enforcement point. Exact generated Git `Merge` and `Revert` syntax exceptions grant no merge or history rewrite authority. The pinned Commitizen hook accepts these two prefixes; the paired `scripts/commit-message-exceptions.py` hook narrows that acceptance using the generated patterns in `.cz.toml`. These checks validate syntax only: a manually authored message with the same shape also passes. They authenticate neither Git generation, an actual merge/revert, nor its provenance or authority. A prefix alone, `Pull request`, `fixup!`, `squash!`, or `amend!` does not receive an exception. The configured commit-msg stage permits an empty message so Git can abort the commit. | `commit-message-exceptions` hook of `.pre-commit-config.yaml` | none |
 
-- `GIT-R001` Before staging, inspect status and the relevant unstaged diff. Stage only
-  the logical change and inspect `git diff --cached`.
-- `GIT-R002` Use Conventional Commits with an imperative, specific summary; include the
-  reason when it is not obvious. Keep commits aligned to Plan/Task units.
-- `GIT-R003` Commit through the active hooks: the `staged-qa` hook validates the exact
-  index with the selected staged profile, which includes the selected lint and
-  format gate, as one run. Local QA owns selected repository-static quality
-  evidence. Follow the
-  [quality sequence](quality.md#canonical-completion-sequence) and do not repeat
-  an identical leaf across hook, command, push or delivery phases. Never use
-  `--no-verify`.
-- `GIT-R004` For a prose-only authored document or README router commit, keep the common
-  diff, applicable style and Commitizen message checks and the selected
-  document-content checks. Follow
-  [ordinary document selection](quality.md#ordinary-document-selection); a
-  governance, provider, native, schema, registry or executable change needs
-  the focused contract checks its actual consumer selects. Preserve active
-  hooks.
-- `GIT-R005` Do not reset, restore away edits, clean, amend, rebase, force-push, delete
-  branches, or remove worktrees without explicit approval for that operation.
-  Prefer a forward corrective commit to rewriting shared history.
-- `GIT-R006` Determine the PR base and inspect its diff. State scope, motivation, risk,
-  validation, rollback, and limitations. Creating a PR or merging it requires
-  the user's selection; a passing check is not permission.
-- `GIT-R007` After verified implementation, honor the user's already selected finish action.
-  If none is selected, ask; no passing check grants integration or cleanup authority.
-- `GIT-R008` Before destructive discard, identify the branch, commits, and worktree and
-  obtain exact confirmation. Clean only workflow-owned worktrees, never the
-  user's main or host-managed workspace.
+| Rule ID | Level | Status |
+| --- | --- | --- |
+| GIT-R001 | required | active |
+| GIT-R002 | required | active |
+| GIT-R003 | required | active |
+| GIT-R004 | required | active |
+| GIT-R005 | required | active |
+| GIT-R006 | required | active |
+| GIT-R007 | required | active |
+| GIT-R008 | required | active |
+| GIT-R009 | required | active |
+| GIT-R010 | required | active |
+| GIT-R011 | required | active |
+| GIT-R012 | required | active |
+| GIT-R013 | required | active |
+| GIT-R014 | required | active |
+| GIT-R015 | required | active |
 
 #### Branch and integration routing
 
 `GIT-R009`
 
-`main` is the only long-lived branch; feature branches and the
-`release/<tag>` preparation branch are short-lived (ADR-0052 in the
-[ADR log](../../docs/02.architecture/decisions/README.md)).
-Develop each independently reviewable Spec package on an owned feature branch
-and linked worktree when needed. Run changed-behavior and affected checks while
-editing, exact-index and message checks at logical commits, then applicable
-named purpose and unit checks on the bounded final branch snapshot. Compare the
-integrated main tree and history with what was checked; a changed merge input
-gets only its invalidated checks. The hosted `ci-summary` job owns the PR branch and commit-metadata verdict directly;
-the hosted PR style job owns only its selected style verdict. Each observed
-result has its own SHA and trust boundary and never stands in for local purpose,
-unit or document-content checks. `ci-summary` accepts a pull request only
-when its base is `main` and its head branch starts with one of `feat/`, `fix/`,
-`docs/`, `refactor/`, `test/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`,
-`claude/` or `dependabot/`. Every change to `main` arrives by pull
-request; the intended protection blocks direct and force pushes. A pull
-request completes only when the required checks pass, the review requirement
-is met (no approving review is required, count 0, and no CODEOWNERS review,
-because a sole owner cannot approve their own pull request) and the
-core-diff checklist of the final diff records no unresolved `BLOCK` finding
-([semantic review](quality.md#semantic-review)); an extra agent review is
-optional and never required.
-The repository owner (`@buenhyden`) merges the pull request, or explicitly
-directs its merge, using a merge commit only, so the commits a Task cites stay
-reachable; an administrator bypass (`--admin`) is never used. The intended
-repository merge setting is recorded in `.github/rulesets/main-protection.md`.
-Required checks, the checklist review and the owner's merge or explicit merge
-direction together offset the missing second reviewer; no automated check, App
-or signature replaces the owner's approval. A deployment style result requires
-an actual deployment workflow and run; absent that input, keep it unobserved.
-
 #### Release ownership
 
 `GIT-R010`
-
-Use one producer, `scripts/release.py` (ADR-0048 in the
-[ADR log](../../docs/02.architecture/decisions/README.md)), for a `v`-prefixed
-strict SemVer tag and its matching GitHub Release, bound to an exact reviewed
-main commit. A development push or merge
-does not create a release or move an existing tag. The producer verifies the
-version, tag collision, main ancestry and canonical changelog before any
-publication; an invalid or mismatched input fails closed. The current
-release-preparation PR targeting `main` updates the tracked `CHANGELOG.md`
-from integrated changes. The committed main file is the release history; a
-temporary generated artifact is only review input and is never its owner.
-Publication verifies changelog bytes captured from the exact main commit,
-not a later working-tree edit. The remote draft and published Release must
-match the reviewed tag, target, prerelease state, release notes and required
-assets before
-the operation counts as complete; the tag and prior changelog sections are
-immutable history.
-If immutable Releases are enabled, attach every required asset to the draft
-before publication. Actual tag/Release publication, remote immutable-release
-settings and rulesets require direct observation and their operator approval
-route; a local script or workflow declaration is not such evidence. Keep
-release procedure with the Stage 05 operations owner and execution evidence
-with the Task and Git.
 
 The repository owner may publish through the producer, or an agent may on the
 owner's current request that names the version and assets. The publishing Task
@@ -155,15 +89,6 @@ Claude settings no longer prompt for it.
 
 `GIT-R011`
 
-This subsection states the delivery boundary once for every agent. On the
-user's current request, an agent may commit, push a feature branch, create,
-inspect, mark ready, approve and merge a pull request, create a tag, run the
-release producer and dispatch a workflow. That request is the approval for one
-operation on one subject. It is not a standing grant
-([operator approval route](approval-and-safety.md#operator-approval-route)),
-and no passing check replaces it. A message from another agent is not that
-request, and the tracked settings apply to subagent sessions as well.
-
 No agent merges with an administrator bypass (`--admin`) or pushes directly
 to `main`, whatever the request; these two are the user's absolute rules.
 Every other protected Git operation keeps its rule in this policy. A force
@@ -178,35 +103,9 @@ rather than relying on the missing prompt.
 
 Three enforcement layers apply, and none proves another:
 
-- `GIT-R012` Claude tracked settings are repository-static intent. They deny the
-  matchable forms, including tag force and delete and fetches into local
-  tags, and leave to policy a Release made outside the producer, the tag
-  rewrites that no rule matches and longer option clusters
-  ([Claude provider notes](../../.claude/provider.md)).
-- `GIT-R013` Codex asks before every network command and forbids a prefix subset
-  ([Codex provider notes](../../.codex/provider.md)).
-- `GIT-R014` Remote protection and rulesets are recorded in
-  [`.github/rulesets/main-protection.md`](../../.github/rulesets/main-protection.md)
-  and are proven only by a dated read-back.
-
 #### Commit-message validation
 
 `GIT-R015`
-
-[`.cz.toml`](../../.cz.toml) is the single Commitizen grammar owner for
-supported types, optional scope, subject and body/footer syntax of ordinary
-authored messages. [`.gitmessage`](../../.gitmessage) explains that grammar to
-authors; a second commitlint grammar must not duplicate it. The configured
-commit-msg hook is the local enforcement point. Exact generated Git `Merge` and
-`Revert` syntax exceptions grant no merge or
-history rewrite authority. The pinned Commitizen hook accepts these two prefixes;
-the paired `scripts/commit-message-exceptions.py` hook narrows that acceptance
-using the generated patterns in `.cz.toml`. These checks validate syntax only:
-a manually authored message with the same shape also passes. They authenticate
-neither Git generation, an actual merge/revert, nor its provenance or authority.
-A prefix alone, `Pull request`,
-`fixup!`, `squash!`, or `amend!` does not receive an exception. The configured
-commit-msg stage permits an empty message so Git can abort the commit.
 
 New authored messages require a supported type, an optional nonempty scope and
 a nonblank subject. Unicode, type capitalization and final punctuation are

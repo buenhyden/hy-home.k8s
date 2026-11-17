@@ -9,6 +9,7 @@ import json
 import re
 import sys
 import tempfile
+import types
 import unittest
 from pathlib import Path, PurePosixPath
 
@@ -62,7 +63,9 @@ FORM_IDS = (
     "evaluation-results",
     "governance-document",
     "governance-role",
-    "reference-report",
+    "research",
+    "audit",
+    "data-reference",
 )
 # The profiles bound to a role: the clear common roles, then the local roles on
 # their source profiles; every other profile carries none.
@@ -91,9 +94,9 @@ ROLE_BINDINGS = {
     "common/readme-collection-index": "stage-readme",
     "common/readme-implementation": "service-readme",
     "common/readme-runtime-governance": "service-readme",
-    "reference/audit": "reference-report",
-    "reference/research": "reference-report",
-    "reference/data": "reference-report",
+    "reference/audit": "audit",
+    "reference/research": "research",
+    "reference/data": "data-reference",
     "governance/provider": "governance-document",
     "governance/role": "governance-role",
     "governance/knowledge": "knowledge-map",
@@ -153,6 +156,7 @@ RUNBOOK_EXTENSIONS = [
         "removal": (
             "when the common Runbook form gains an H3 for non-rollback recovery"
         ),
+        "authority_ref": "ADR-0059",
         "parent_id": "runbook.escalation",
         "title": "Recovery Procedures",
     },
@@ -167,17 +171,16 @@ RUNBOOK_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Runbook form version changes",
         "removal": "when runbook lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "runbook.verification",
         "title": "Lifecycle Traceability",
     },
 ]
+# SPEC-0222: the core step table of the runbook, guide and their operations peers.
+CORE_STEP_COLUMNS = ("Step", "Action", "Expected Result", "On Failure")
+CORE_ACTION_COLUMNS = ("Action", "Owner", "Condition", "Evidence")
 RUNBOOK_TABLE_KEYS = {
-    "Triggers": (
-        "runbook.procedure.1",
-        ("Trigger", "Action", "Rollback"),
-        0,
-        "Trigger",
-    ),
+    "Steps": ("runbook.procedure", CORE_STEP_COLUMNS, 0, "Step"),
     "Lifecycle Traceability": (
         "runbook-lifecycle-traceability",
         ("Promoted owner", "Trigger or control", "Evidence or recovery owner"),
@@ -204,10 +207,11 @@ ROOT_FORM_TREE = (
     ("Repository Map", ("Current Paths", "Owners")),
     ("Support", ("Help", "Related Documentation")),
 )
+# SPEC-0222: the index tables are the core paths tables of their H2.
 ROOT_TABLE_KEYS = {
     "Directory Index": (
-        "root-readme.map.1",
-        ("Path", "Purpose", "Owner"),
+        "root-readme.map",
+        ("Path", "Purpose"),
         0,
         "Path",
     ),
@@ -225,8 +229,8 @@ STAGE_FORM_TREE = (
 )
 STAGE_TABLE_KEYS = {
     "Index": (
-        "stage-readme.contents.1",
-        ("Path", "Purpose", "Owner"),
+        "stage-readme.contents",
+        ("Path", "Purpose"),
         0,
         "Path",
     ),
@@ -243,6 +247,12 @@ SERVICE_FORM_TREE = (
     ("Checks", ("Readiness", "Failure Handling")),
 )
 SERVICE_TABLE_KEYS = {
+    "External Interfaces": (
+        "service-readme.service",
+        ("Interface", "Producer", "Consumer", "Contract", "Failure"),
+        0,
+        "Interface",
+    ),
     "Commands": (
         "service-readme.checks.1",
         ("Command", "Output"),
@@ -269,34 +279,36 @@ POLICY_EXTENSION = {
     "verification": "the body-contract check",
     "review": "when the Policy form version changes",
     "removal": "when policy lineage has another registered owner",
+    "authority_ref": "ADR-0059",
     "parent_id": "policy.ownership",
     "title": "Lifecycle Traceability",
 }
-# SPEC-0194 (W03-D65): four common columns and the one optional Status extension.
-POLICY_RULES_COLUMNS = ("Rule ID", "Condition", "Level", "Evidence")
+# SPEC-0222: the core Rules table and the local Rule Levels table keyed by Rule ID,
+# whose Status stays the one optional extension (SPEC-0194, W03-D65).
+POLICY_RULES_COLUMNS = (
+    "Rule ID",
+    "Condition",
+    "Requirement",
+    "Enforcement",
+    "Evidence",
+)
 POLICY_RULES_OPTIONAL = ("Status",)
-POLICY_RULES_TABLE = (
+POLICY_RULES_TABLE = ("policy.rules", POLICY_RULES_COLUMNS, 0, "Rule ID")
+POLICY_LEVELS_TABLE = (
     "policy.rules.1",
-    (*POLICY_RULES_COLUMNS, *POLICY_RULES_OPTIONAL),
+    ("Rule ID", "Level", *POLICY_RULES_OPTIONAL),
     0,
     "Rule ID",
 )
 AGENTS = ("common/folder-agents-guide", "common/template-agents-guide")
+# SPEC-0222 WORK-007: the agent-instructions core tree; the core has no table.
 AGENTS_TREE = (
-    ("Scope", ("Allowed Surface", "Non-goals")),
-    ("Required Policies", ("Canonical Sources", "Local Obligations")),
-    ("Workflow", ("Inspect and Change", "Handoff")),
-    ("Verification", ("Required Checks", "Evidence and Limits")),
-    ("Safety", ("Protected Actions", "Stop and Escalate")),
+    ("Scope", ("Allowed Scope", "Instruction Precedence")),
+    ("Workflow", ("Intake", "Execution")),
+    ("Boundaries", ("Authority", "Secrets and External Effects")),
+    ("Verification", ("Checks", "Reporting")),
 )
-AGENTS_TABLE_KEYS = {
-    "Tool Rules": (
-        "agents-required-policies-local-obligations",
-        ("Rule", "Trigger", "Effect"),
-        0,
-        "Rule",
-    )
-}
+AGENTS_TABLE_KEYS: dict = {}
 SKILL_GOVERNANCE = ("governance/skill", "common/template-governance-skill")
 SKILL_NATIVE = ("common/native-skill-package", "common/template-native-skill")
 SKILL_TREE = (
@@ -315,6 +327,7 @@ SKILL_EXTENSION = {
     "verification": "the form tree check",
     "review": "when the Skill form version changes",
     "removal": "when the common Skill form gains an authority H3",
+    "authority_ref": "ADR-0059",
     "parent_id": "skill.trigger",
     "title": "Authority Boundary",
 }
@@ -372,6 +385,7 @@ PACK_EXTENSIONS = [
         "verification": "the form tree check",
         "review": "when the Reference Pack README form changes",
         "removal": ("when the Reference Pack README form gains a matching section"),
+        "authority_ref": "ADR-0059",
         "parent_id": "reference-pack-readme-pack-contract",
         "title": "External Finding Vocabulary",
     },
@@ -385,13 +399,18 @@ PACK_EXTENSIONS = [
         "verification": "the form tree check",
         "review": "when the Reference Pack README form changes",
         "removal": ("when the Reference Pack README form gains a matching section"),
+        "authority_ref": "ADR-0059",
         "parent_id": "reference-pack-readme-pack-contract",
         "title": "Separate Evidence Axes",
     },
 ]
-POLICY_GOVERNANCE_TABLE_KEYS = {"Rules": POLICY_RULES_TABLE}
+POLICY_GOVERNANCE_TABLE_KEYS = {
+    "Rules": POLICY_RULES_TABLE,
+    "Rule Levels": POLICY_LEVELS_TABLE,
+}
 POLICY_OPERATIONS_TABLE_KEYS = {
     "Rules": POLICY_RULES_TABLE,
+    "Rule Levels": POLICY_LEVELS_TABLE,
     "Lifecycle Traceability": (
         "policy-lifecycle-traceability",
         ("Promoted owner", "Control owner", "Enforcement surface"),
@@ -400,8 +419,11 @@ POLICY_OPERATIONS_TABLE_KEYS = {
     ),
 }
 # SPEC-0195 (W03-D03, W03-D08, W03-D55): the Requirement form, its two local H3
-# extensions and its three tables (the requirement id, statement, rationale and
-# acceptance of the common contract, then the optional trailing Priority).
+# extensions and its tables. SPEC-0222 WORK-003: the Functional and Quality
+# Requirements tables are instances of the core requirement.requirements table
+# (Priority required, in the core's lower case), the core requirement.quality
+# table is defined and not rendered, and Lifecycle Traceability stays a local
+# table of its own.
 REQUIREMENT = ("sdlc/requirement", "common/template-sdlc-requirement")
 REQUIREMENT_TREE = (
     ("Overview", ("Problem and Outcome", "Stakeholders")),
@@ -421,6 +443,7 @@ REQUIREMENT_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Requirement form version changes",
         "removal": "when requirement lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "requirement.relations",
         "title": "Lifecycle Traceability",
     },
@@ -435,22 +458,36 @@ REQUIREMENT_EXTENSIONS = [
         "verification": ("the package-exit check and the retired-identity reservation"),
         "review": "when the Requirement form version changes",
         "removal": "when requirement lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "requirement.relations",
         "title": "Archived Lineage",
     },
 ]
-REQUIREMENT_COLUMNS = ("Requirement ID", "Statement", "Rationale", "Acceptance")
-REQUIREMENT_OPTIONAL = ("Priority",)
+REQUIREMENT_COLUMNS = (
+    "Requirement ID",
+    "Statement",
+    "Rationale",
+    "Acceptance",
+    "Priority",
+)
+REQUIREMENT_QUALITY_COLUMNS = (
+    "Requirement ID",
+    "Attribute",
+    "Measure",
+    "Unit",
+    "Environment",
+    "Criterion",
+)
 REQUIREMENT_TABLE_KEYS = {
-    "Functional Requirements": (
-        "requirement.requirements.1",
-        (*REQUIREMENT_COLUMNS, *REQUIREMENT_OPTIONAL),
+    "Requirements": (
+        "requirement.requirements",
+        REQUIREMENT_COLUMNS,
         1,
         "Requirement ID",
     ),
-    "Quality Requirements": (
-        "requirement.requirements.2",
-        (*REQUIREMENT_COLUMNS, *REQUIREMENT_OPTIONAL),
+    "Quality Measures": (
+        "requirement.requirements",
+        REQUIREMENT_QUALITY_COLUMNS,
         0,
         "Requirement ID",
     ),
@@ -488,6 +525,7 @@ ARCHITECTURE_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Architecture form version changes",
         "removal": "when architecture lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "architecture.decisions",
         "title": "Lifecycle Traceability",
     },
@@ -503,11 +541,25 @@ ARCHITECTURE_EXTENSIONS = [
         "verification": "the retired-identity reservation",
         "review": "when the Architecture form version changes",
         "removal": "when architecture lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "architecture.decisions",
         "title": "Archived Lineage",
     },
 ]
+ARCHITECTURE_INTERFACE_COLUMNS = (
+    "Interface",
+    "Producer",
+    "Consumer",
+    "Contract",
+    "Failure",
+)
 ARCHITECTURE_TABLE_KEYS = {
+    "External Interfaces": (
+        "architecture.structure",
+        ARCHITECTURE_INTERFACE_COLUMNS,
+        0,
+        "Interface",
+    ),
     "Constraints": (
         "architecture.context.2",
         ("Architecture ID", "Constraint", "Affected Components"),
@@ -530,13 +582,12 @@ ARCHITECTURE_TABLE_KEYS = {
 # SPEC-0198 (W03-D02, W03-D03, W03-D08, W03-D52, W03-D57, W03-D69): the ADR
 # form, its local H3 extension, its retained form for ADR-0001 to ADR-0061 and
 # its two tables; the decision profiles keep their body contract and carry no
-# H2 list.
+# H2 list. SPEC-0222 WORK-006 binds the form to the core `decision` role.
 ADR_TREE = (
     ("Context", ("Problem and Drivers", "Decision Scope")),
+    ("Options", ("Considered Options", "Trade-offs")),
     ("Decision", ("Chosen Option", "Authority and Effect")),
-    ("Alternatives", ("Considered Options", "Trade-offs")),
     ("Consequences", ("Impacts", "Follow-up")),
-    ("Traceability", ("Sources", "Supersession")),
 )
 # The closed range ADR-0001 to ADR-0061 and nothing else.
 ADR_BOUND = "^ADR-(?:000[1-9]|00[1-5][0-9]|006[01])$"
@@ -565,7 +616,8 @@ ADR_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the ADR form version changes",
         "removal": "when decision lineage has another registered owner",
-        "parent_id": "adr-traceability",
+        "authority_ref": "ADR-0059",
+        "parent_id": "decision.decision",
         "title": "Lifecycle Traceability",
     },
     {
@@ -583,14 +635,28 @@ ADR_EXTENSIONS = [
             "when no ADR in the range remains in the tree, each having been "
             "replaced by a successor; the bound is never widened"
         ),
+        "authority_ref": "ADR-0059",
         "statuses": ["accepted"],
         "identity_bound": ADR_BOUND,
         "retained_sections": ADR_RETAINED_LISTS,
+        "body_contract": {
+            "section": "Traceability",
+            "table_heading": "Lifecycle Traceability",
+        },
     },
 ]
 ADR_TABLE_KEYS = {
+    "Options": (
+        "decision.options",
+        ("Option", "Benefit", "Cost and Risk", "Reason"),
+        0,
+        "Option",
+    ),
+    # SPEC-0222: the former Alternatives table stays as a local table of its
+    # own after the core table, so a recorded row whose Benefit has no source
+    # fact keeps every fact (ADR-0062).
     "Alternatives": (
-        "adr-alternatives-trade-offs",
+        "decision.options.2",
         ("Alternative", "Trade-off"),
         0,
         "Alternative",
@@ -870,16 +936,10 @@ GOVERNANCE_FORMS = (
         "Related Documents",
     ),
 )
-# SPEC-0189: the one reference-report form of the audit, research and data reports.
-REFERENCE_FORM = (
-    "reference/audit",
-    "common/template-reference-audit",
-    "reference/research",
-    "common/template-reference-research",
-    "reference/data",
-    "common/template-reference-data",
-)
-REFERENCE_H2 = (
+# SPEC-0222: the research and audit reports bind their core roles. The thirteen
+# published members keep the eight H2 of the former reference-report form through
+# an identity-bound retained form until Q07-CUTOVER disposes of them.
+FORMER_REFERENCE_H2 = (
     "Overview",
     "Reference Type",
     "Authority Boundary",
@@ -889,153 +949,199 @@ REFERENCE_H2 = (
     "Review and Freshness",
     "Related Documents",
 )
-# The 31 conditional H3 titles per H2 in form order: each report kind's template
-# titles and the 15 historical titles that two or more research reports share.
-REFERENCE_H3 = {
-    "Overview": ("Historical overview and observation boundary",),
-    "Reference Type": ("Historical reference classification",),
-    "Authority Boundary": ("Historical authority statement",),
-    "Scope": (
-        "Criteria and Inspected Surface",
-        "Historical scope",
-        "Research Questions",
-        "Method",
-    ),
-    "Definitions / Facts": (
-        "Observed Evidence",
-        "Findings and Gaps",
-        "Historical observations and corrections \u2014 2026-08-08 to 2026-09-05",
-        "Current external analysis",
-        "Historical analysis and dated observations",
-        "Current external research",
-        "Follow-up workspace questions",
-        "Claim-Source Matrix",
-        "Findings",
-        "Schema",
-        "Repository Facts",
-    ),
-    "Sources": (
-        "Historical source provenance",
-        "Current primary sources",
-        "Historical sources",
-        "Provenance",
-    ),
-    "Review and Freshness": (
-        "Remediation",
-        "Verification State",
-        "Current review boundary",
-        "Historical refresh record",
-        "Dated history retained from 2026-08-08 through 2026-09-14",
-        "Limitations",
-        "Recommendations",
-        "Generation and Refresh",
-        "Staleness Boundaries",
-    ),
-    "Related Documents": (),
-}
-REFERENCE_TREE = tuple((title, REFERENCE_H3[title]) for title in REFERENCE_H2)
-REFERENCE_FORMS = (
-    (
-        "reference-report",
-        "Reference Report",
-        REFERENCE_FORM,
-        REFERENCE_TREE,
-        [],
-        "Related Documents",
-    ),
+RESEARCH = ("reference/research", "common/template-reference-research")
+RESEARCH_TREE = (
+    ("Question and Scope", ("Question", "Scope")),
+    ("Sources", ("Primary Sources", "Versions and Dates")),
+    ("Analysis", ("Findings", "Alternatives")),
+    ("Application and Limits", ("Design Implications", "Unverified Conditions")),
 )
-# The nine tables of the three twins, each named by its form section id (SPEC-0179
-# moved them to heading lines; SPEC-0189 gives the role a form).
-REFERENCE_TABLES = {
-    "common/template-reference-audit": [
-        (
-            "Criterion",
-            "reference-report-scope-criteria-and-inspected-surface",
-            ("Criterion", "In-scope surface"),
-            0,
-            "Criterion",
+RESEARCH_SOURCES = (
+    ("Source ID", "source_id", "identifier"),
+    ("Source", "url", "reference"),
+    ("Version", "version", "string-or-none"),
+    ("Checked At", "checked", "timestamp"),
+    ("Finding", "finding", "string"),
+    ("Application", "application", "string"),
+    ("Limits", "limits", "string"),
+)
+RESEARCH_TABLE_KEYS = {
+    "Source ID": (
+        "research.sources",
+        tuple(label for label, _, _ in RESEARCH_SOURCES),
+        0,
+        "Source ID",
+    ),
+    "Claim": (
+        "research-claim-source-matrix",
+        ("Claim", "Source", "Verification state"),
+        0,
+        "Claim",
+    ),
+    "Source": (
+        "research.sources.1",
+        ("Source", "Grade", "Retrieved", "Relevance"),
+        0,
+        "Source",
+    ),
+}
+RETAINED_REMOVAL = (
+    "when Q07-CUTOVER disposes of the bound members after their successors are "
+    "accepted; the bound is never widened"
+)
+RESEARCH_EXTENSIONS = [
+    {
+        "id": "research-claim-source-matrix",
+        "kind": "local_h3",
+        "condition": (
+            "a research report that records each claim against its sources in a "
+            "Claim-Source Matrix table"
         ),
-        (
-            "Observation",
-            "reference-report-definitions-facts-observed-evidence",
-            ("Observation", "Source and input", "Result"),
-            0,
-            "Observation",
+        "owner": "platform",
+        "verification": "the form tree check and the Claim table check",
+        "review": "when the Research form changes",
+        "removal": (
+            "when research.sources carries every claim's source facts and no report "
+            "keeps the matrix"
         ),
+        "parent_id": "research.analysis",
+        "title": "Claim-Source Matrix",
+        "authority_ref": "SPEC-0222",
+    },
+    {
+        "id": "research-published-retained-form",
+        "kind": "retained_form",
+        "condition": (
+            "a published research member RES-0001-m0001 to RES-0001-m0012 keeps the "
+            "eight H2 it was published with; every other research member takes the "
+            "form tree"
+        ),
+        "owner": "platform",
+        "verification": "tests/test_common_form_tree.py",
+        "review": "when a bound member's successor is published",
+        "removal": RETAINED_REMOVAL,
+        "statuses": ["published"],
+        "identity_bound": "^RES-0001-m00(?:0[1-9]|1[0-2])$",
+        "retained_sections": {
+            "required": list(FORMER_REFERENCE_H2),
+            "optional": [],
+            "forbidden": [],
+        },
+        "authority_ref": "SPEC-0222",
+    },
+]
+AUDIT = ("reference/audit", "common/template-reference-audit")
+AUDIT_TREE = (
+    ("Scope", ("Subject", "Read Coverage")),
+    ("Findings", ("Evidence", "Conflicts and Gaps")),
+    ("Actions", ("Owners", "Acceptance Conditions")),
+)
+AUDIT_FINDINGS = (
+    ("Finding ID", "finding_id", "identifier"),
+    ("Requirement", "requirement", "reference"),
+    ("Evidence", "evidence", "reference-list"),
+    ("Classification", "classification", "enum"),
+    ("Action", "action", "string"),
+    ("Owner", "owner", "string"),
+    ("Acceptance", "acceptance", "string"),
+)
+AUDIT_TABLE_KEYS = {
+    "Finding ID": (
+        "audit.findings",
+        tuple(label for label, _, _ in AUDIT_FINDINGS),
+        0,
+        "Finding ID",
+    ),
+    "Criterion": ("audit.scope.2", ("Criterion", "In-scope surface"), 0, "Criterion"),
+    "Observation": (
+        "audit.findings.1",
+        ("Observation", "Source and input", "Result"),
+        0,
+        "Observation",
+    ),
+    "ID": (
+        "audit.findings.2",
         (
             "ID",
-            "reference-report-definitions-facts-findings-and-gaps",
-            (
-                "ID",
-                "Finding or gap",
-                "Requirement",
-                "Fact or hypothesis",
-                "Severity",
-                "Evidence",
-                "Action",
-                "Acceptance",
-            ),
-            0,
-            "ID",
+            "Finding or gap",
+            "Requirement",
+            "Fact or hypothesis",
+            "Severity",
+            "Evidence",
+            "Action",
+            "Acceptance",
         ),
-        (
-            "Remediation",
-            "reference-report-review-and-freshness-remediation",
-            ("Remediation", "Owner", "Due or decision date"),
-            0,
-            "Remediation",
-        ),
-    ],
-    "common/template-reference-research": [
-        (
-            "Claim",
-            "reference-report-definitions-facts-claim-source-matrix",
-            ("Claim", "Source", "Verification state"),
-            0,
-            "Claim",
-        ),
-        (
-            "Source",
-            "reference-report-sources",
-            ("Source", "Grade", "Retrieved", "Relevance"),
-            0,
-            "Source",
-        ),
-    ],
-    "common/template-reference-data": [
-        (
-            "Field",
-            "reference-report-definitions-facts-schema",
-            ("Field", "Meaning and unit", "Producer"),
-            0,
-            "Field",
-        ),
-        (
-            "Source",
-            "reference-report-sources-provenance",
-            ("Source", "Revision or observation", "Derivation"),
-            0,
-            "Source",
-        ),
-        (
-            "Generation command",
-            "reference-report-review-and-freshness-generation-and-refresh",
-            ("Generation command", "Refresh trigger", "Owner"),
-            0,
-            "Generation command",
-        ),
-    ],
+        0,
+        "ID",
+    ),
+    "Remediation": (
+        "audit.actions.1",
+        ("Remediation", "Owner", "Due or decision date"),
+        0,
+        "Remediation",
+    ),
 }
-# The source profile of each twin inherits the twin's tables.
-REFERENCE_PROFILE_TABLES = {
-    **REFERENCE_TABLES,
-    "reference/audit": REFERENCE_TABLES["common/template-reference-audit"],
-    "reference/research": REFERENCE_TABLES["common/template-reference-research"],
-    "reference/data": REFERENCE_TABLES["common/template-reference-data"],
+AUDIT_EXTENSIONS = [
+    {
+        "id": "audit-published-retained-form",
+        "kind": "retained_form",
+        "condition": (
+            "the published audit member AUD-0001-m0001 keeps the eight H2 it was "
+            "published with; every other audit member takes the form tree"
+        ),
+        "owner": "platform",
+        "verification": "tests/test_common_form_tree.py",
+        "review": "when the bound member's successor is published",
+        "removal": RETAINED_REMOVAL,
+        "statuses": ["published"],
+        "identity_bound": "^AUD-0001-m0001$",
+        "retained_sections": {
+            "required": list(FORMER_REFERENCE_H2),
+            "optional": [],
+            "forbidden": [],
+        },
+        "authority_ref": "SPEC-0222",
+    },
+]
+# SPEC-0222: the data reports bind the data-reference core role. Its template
+# carries the core schema table and keeps the former data tables as local tables:
+# the producer of a field keyed by Field, the provenance and the generation.
+DATA_REFERENCE = ("reference/data", "common/template-reference-data")
+DATA_REFERENCE_TREE = (
+    ("Purpose", ("Consumers", "Boundaries")),
+    ("Provenance", ("Collection", "Versions and Dates")),
+    ("Interpretation", ("Schema and Units", "Limits")),
+)
+DATA_REFERENCE_SCHEMA = (
+    ("Field", "field", "identifier"),
+    ("Type", "type", "string"),
+    ("Unit", "unit", "string-or-none"),
+    ("Meaning", "meaning", "string"),
+    ("Limits", "limitations", "string"),
+)
+DATA_REFERENCE_TABLE_KEYS = {
+    "Field": (
+        "data-reference.interpretation",
+        tuple(label for label, _, _ in DATA_REFERENCE_SCHEMA),
+        0,
+        "Field",
+    ),
+    "Producer": ("data-reference.provenance.1", ("Field", "Producer"), 0, "Field"),
+    "Source": (
+        "data-reference.provenance.1",
+        ("Source", "Revision or observation", "Derivation"),
+        0,
+        "Source",
+    ),
+    "Generation command": (
+        "data-reference.provenance.1",
+        ("Generation command", "Refresh trigger", "Owner"),
+        0,
+        "Generation command",
+    ),
 }
-# Every local form in registry order: the six small forms, SPEC-0188's two, then
-# SPEC-0189's reference-report.
-LOCAL_FORMS = SMALL_FORMS + GOVERNANCE_FORMS + REFERENCE_FORMS
+# Every local form in registry order: the six small forms, then SPEC-0188's two.
+LOCAL_FORMS = SMALL_FORMS + GOVERNANCE_FORMS
 
 
 def slug(title: str) -> str:
@@ -1050,8 +1156,9 @@ LOCAL_LINK_ONLY = {
         for form_id, _, _, _, _, link in LOCAL_FORMS
     },
 }
-# The reference-report form also keeps its Sources section link-only (W03-D36).
-LOCAL_LINK_ONLY["reference-report"].add("reference-report-sources")
+# The research form keeps Primary Sources link-only, as the former reference
+# report kept its Sources section (W03-D36).
+LOCAL_LINK_ONLY["research"] = {"research.sources.1"}
 # SPEC-0200 (W03-D03, W03-D04, W03-D08, W03-D65): the Spec and Plan forms, the
 # Spec's local H3 extension and the four tables; the profiles carry no H2 list.
 SPEC_FORM = ("sdlc/spec", "common/template-sdlc-spec")
@@ -1094,6 +1201,7 @@ SPEC_FORM_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Spec form version changes",
         "removal": "when Spec traceability has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "spec.acceptance",
         "title": "Lifecycle Traceability",
     },
@@ -1109,6 +1217,7 @@ SPEC_FORM_EXTENSIONS = [
         "verification": "tests/test_common_form_tree.py",
         "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
         "removal": "when neither package remains in the tree; the bound is never widened",
+        "authority_ref": "ADR-0059",
         "statuses": ["approved"],
         "identity_bound": SPEC_RETAINED_BOUND,
         "retained_sections": {
@@ -1135,6 +1244,7 @@ PLAN_FORM_EXTENSIONS = [
         "verification": "tests/test_common_form_tree.py",
         "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
         "removal": "when neither package remains in the tree; the bound is never widened",
+        "authority_ref": "ADR-0059",
         "statuses": ["approved"],
         "identity_bound": PLAN_RETAINED_BOUND,
         "retained_sections": {
@@ -1153,7 +1263,25 @@ PLAN_FORM_EXTENSIONS = [
         },
     },
 ]
+CORE_CHECK_COLUMNS = (
+    "Check ID",
+    "Guarantee",
+    "Input",
+    "Trust Boundary",
+    "Required When",
+    "Evidence",
+)
+CORE_WORK_UNIT_COLUMNS = (
+    "Work Unit",
+    "Outcome",
+    "Depends On",
+    "Owner",
+    "Write Scope",
+    "Acceptance",
+    "Checks",
+)
 SPEC_FORM_TABLE_KEYS = {
+    "Checks": ("spec.acceptance", CORE_CHECK_COLUMNS, 0, "Check ID"),
     "Criteria": (
         "spec.acceptance.1",
         ("Criterion ID", "Expected Result"),
@@ -1176,6 +1304,8 @@ PLAN_FORM_TREE = (
     ("Promotion Map", ("Durable Owners", "Consumer Updates")),
 )
 PLAN_FORM_TABLE_KEYS = {
+    "Units": ("plan.work", CORE_WORK_UNIT_COLUMNS, 0, "Work Unit"),
+    "Checks": ("plan.verification", CORE_CHECK_COLUMNS, 0, "Check ID"),
     "Work Breakdown": (
         "plan.work.1",
         ("Work Unit", "Criteria", "Work", "Dependencies", "Task", "Verification"),
@@ -1205,7 +1335,16 @@ TARGET_GROUPS = {
     "stage-readme": ("scope", "contents", "use"),
     "service-readme": ("service", "use", "checks"),
     "skill": ("trigger", "procedure", "output", "verification"),
+    # SPEC-0222: the Task form takes the core section IDs.
+    "task": ("scope", "work", "evidence", "acceptance", "handoff"),
+    "adr": ("context", "options", "decision", "consequences"),
+    "agents": ("scope", "workflow", "limits", "verification"),
+    "research": ("question", "sources", "analysis", "application"),
+    "audit": ("scope", "findings", "actions"),
+    "data-reference": ("purpose", "provenance", "interpretation"),
 }
+# SPEC-0222: a form whose ID differs from its core role takes the role's prefix.
+CORE_PREFIX = {"adr": "decision", "agents": "agent-instructions"}
 
 
 def section_id_of(
@@ -1217,7 +1356,7 @@ def section_id_of(
 ) -> str:
     groups = TARGET_GROUPS.get(form_id)
     if groups is not None:
-        h2 = f"{form_id}.{groups[position - 1]}"
+        h2 = f"{CORE_PREFIX.get(form_id, form_id)}.{groups[position - 1]}"
         return h2 if n is None else f"{h2}.{n}"
     h2 = f"{form_id}-{slug(title)}"
     return h2 if child is None else f"{h2}-{slug(child)}"
@@ -1237,14 +1376,16 @@ SDLC_TASK_FORM_EXTENSIONS = [
         "kind": "local_h3",
         "condition": (
             "a Task in a status the body contract enforces (draft, ready, "
-            "in-progress, blocked) maps each work item to its upstream Spec "
-            "criterion, its owner, its status, its result and its evidence"
+            "in-progress, blocked) keeps, for each work item, its upstream Spec "
+            "criterion, its result and its evidence, keyed by the Item of the core "
+            "task.work_items row"
         ),
         "owner": "platform",
         "verification": "the body-contract check",
         "review": "when the Task form version changes",
         "removal": "when Task work items have another registered owner",
-        "parent_id": "task-execution-log",
+        "authority_ref": "ADR-0059",
+        "parent_id": "task.work",
         "title": "Lifecycle Traceability",
     },
     {
@@ -1259,55 +1400,36 @@ SDLC_TASK_FORM_EXTENSIONS = [
         "verification": "the work residue ledger check of scripts/validate-work-residue-ledger.py",
         "review": "when the work residue ledger design changes or the Task form version changes",
         "removal": "when the work residue ledger has another registered host for residue",
-        "parent_id": "task-verification-evidence",
+        "authority_ref": "ADR-0059",
+        "parent_id": "task.evidence",
         "title": "Residue Handoff",
     },
-    {
-        "id": "task-evidence-local-columns",
-        "kind": "local_columns",
-        "condition": (
-            "a Task whose evidence the acceptance and resolution rules of this "
-            "repository read: each row names its work unit, where the evidence can "
-            "be read again, whether it is required and which earlier row it resolves"
-        ),
-        "owner": "platform",
-        "verification": (
-            "TASK-EVIDENCE-WORK, TASK-EVIDENCE-LOCATION, TASK-EVIDENCE-REQUIRED, "
-            "TASK-EVIDENCE-RESOLUTION and TASK-EVIDENCE-UNRESOLVED of "
-            "scripts/document_contracts.py"
-        ),
-        "review": "when the Task form or the common Task table changes",
-        "removal": (
-            "when the common contract names these columns or the rules that read "
-            "them are retired"
-        ),
-        "table": "Results",
-        "columns": ["Work Unit", "Location", "Required", "Resolves"],
-    },
 ]
+# SPEC-0222: the three core tables and the local Lifecycle Traceability table.
 SDLC_TASK_FORM_TABLE_KEYS = {
+    "Work Items": (
+        "task.work",
+        ("Item", "Work Unit", "Owner", "Status", "Blocker"),
+        0,
+        "Item",
+    ),
     "Lifecycle Traceability": (
         "task-lifecycle-traceability",
-        (
-            "ID",
-            "Upstream criterion",
-            "Work item",
-            "Owner",
-            "Status",
-            "Result",
-            "Evidence",
-        ),
+        ("Item", "Upstream criterion", "Result", "Evidence"),
         1,
-        "ID",
+        "Item",
     ),
     "Results": (
-        "task-verification-evidence-results",
+        "task.evidence",
         (
             "Evidence ID",
-            "Consumer",
+            "Criteria",
             "Work Unit",
-            "Command",
+            "Method",
             "Input",
+            "Tool and Config",
+            "Command",
+            "Exit",
             "Result",
             "Location",
             "Required",
@@ -1317,8 +1439,17 @@ SDLC_TASK_FORM_TABLE_KEYS = {
         "Evidence ID",
     ),
     "Criterion Decisions": (
-        "task-acceptance-decision-criterion-decisions",
-        ("Criterion", "Acceptance", "Evidence", "Disposition", "Current owner"),
+        "task.acceptance",
+        (
+            "Criterion",
+            "Intent",
+            "Acceptance",
+            "Evidence",
+            "Decision",
+            "Accepted By",
+            "Current Owner",
+            "Reassigned To",
+        ),
         1,
         "Criterion",
     ),
@@ -1353,7 +1484,9 @@ FORM_PROFILES = (
     + RESULTS_FORM
     + GOVERNANCE_DOCUMENT_FORM
     + GOVERNANCE_ROLE_FORM
-    + REFERENCE_FORM
+    + RESEARCH
+    + AUDIT
+    + DATA_REFERENCE
 )
 FORM_TEMPLATES = (
     REQUIREMENT[1],
@@ -1388,9 +1521,9 @@ FORM_TEMPLATES = (
     RESULTS_FORM[1],
     GOVERNANCE_DOCUMENT_FORM[1],
     GOVERNANCE_ROLE_FORM[1],
-    REFERENCE_FORM[1],
-    REFERENCE_FORM[3],
-    REFERENCE_FORM[5],
+    RESEARCH[1],
+    AUDIT[1],
+    DATA_REFERENCE[1],
 )
 LIFECYCLE_CONDITION = (
     "a document in a status the body contract enforces states its follow-up "
@@ -1405,6 +1538,7 @@ INCIDENT_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the form version changes",
         "removal": "when incident lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "incident.resolution",
         "title": "Lifecycle Traceability",
     }
@@ -1418,6 +1552,7 @@ POSTMORTEM_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the form version changes",
         "removal": "when incident lineage has another registered owner",
+        "authority_ref": "ADR-0059",
         "parent_id": "postmortem.actions",
         "title": "Lifecycle Traceability",
     },
@@ -1431,6 +1566,7 @@ POSTMORTEM_EXTENSIONS = [
         "verification": "the form tree check",
         "review": "when the Postmortem form version changes",
         "removal": "when the common Postmortem form gains a What Went Well H3",
+        "authority_ref": "ADR-0059",
         "parent_id": "postmortem.facts",
         "title": "What Went Well",
     },
@@ -1442,6 +1578,7 @@ INCIDENT_TABLE_KEYS = {
         0,
         "Timestamp",
     ),
+    "Actions": ("incident.response", CORE_ACTION_COLUMNS, 0, "Action"),
     "Lifecycle Traceability": (
         "incident-lifecycle-traceability",
         ("Timeline or action", "Evidence", "Follow-up Task"),
@@ -1450,12 +1587,7 @@ INCIDENT_TABLE_KEYS = {
     ),
 }
 POSTMORTEM_TABLE_KEYS = {
-    "Actions": (
-        "postmortem.actions.1",
-        ("Action", "Owner", "Verification"),
-        0,
-        "Action",
-    ),
+    "Actions": ("postmortem.actions", CORE_ACTION_COLUMNS, 0, "Action"),
     "Lifecycle Traceability": (
         "postmortem-lifecycle-traceability",
         (
@@ -1479,11 +1611,12 @@ GUIDE_EXTENSION = {
     "verification": "the body-contract check",
     "review": "when the Guide form version changes",
     "removal": "when guide lineage has another registered owner",
+    "authority_ref": "ADR-0059",
     "parent_id": "guide.troubleshoot",
     "title": "Lifecycle Traceability",
 }
 GUIDE_TABLE_KEYS = {
-    "Steps": ("guide.steps.1", ("Step", "Action", "Check"), 0, "Step"),
+    "Steps": ("guide.steps", CORE_STEP_COLUMNS, 0, "Step"),
     "Lifecycle Traceability": (
         "guide-lifecycle-traceability",
         ("Promoted owner", "Audience outcome", "Operating surface"),
@@ -1578,6 +1711,7 @@ def extension(**fields: object) -> dict:
         "verification": "tests/test_common_form_tree.py",
         "review": "each release",
         "removal": "when no guide needs it",
+        "authority_ref": "ADR-0059",
         "parent_id": "g-procedure",
         "title": "Cluster Notes",
     }
@@ -1822,7 +1956,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ADR_EXTENSIONS,
                 ADR_TABLE_KEYS,
                 ADR,
-                "Traceability",
+                "Decision",
             ),
             (
                 "spec",
@@ -1847,6 +1981,30 @@ class RepositoryRegistryTests(unittest.TestCase):
                 SDLC_TASK_FORM_TABLE_KEYS,
                 SDLC_TASK_FORM,
                 "Execution Log",
+            ),
+            (
+                "research",
+                RESEARCH_TREE,
+                RESEARCH_EXTENSIONS,
+                RESEARCH_TABLE_KEYS,
+                RESEARCH,
+                None,
+            ),
+            (
+                "audit",
+                AUDIT_TREE,
+                AUDIT_EXTENSIONS,
+                AUDIT_TABLE_KEYS,
+                AUDIT,
+                None,
+            ),
+            (
+                "data-reference",
+                DATA_REFERENCE_TREE,
+                [],
+                DATA_REFERENCE_TABLE_KEYS,
+                DATA_REFERENCE,
+                None,
             ),
         ):
             loaded = next(f for f in common["forms"] if f["form_id"] == form_id)
@@ -1894,17 +2052,9 @@ class RepositoryRegistryTests(unittest.TestCase):
             self.assertEqual(
                 conditional,
                 {
-                    "runbook": {"runbook.escalation.2"},
                     "reference-pack-readme": {
                         f"reference-pack-readme-{title.lower().replace(' ', '-')}"
                         for title in PACK_NOT_REQUIRED
-                    },
-                    "requirement": {"requirement.requirements.2"},
-                    "adr": {"adr-traceability-supersession"},
-                    "reference-report": {
-                        f"reference-report-{slug(h2)}-{slug(h3)}"
-                        for h2, titles in REFERENCE_H3.items()
-                        for h3 in titles
                     },
                 }.get(form_id, set()),
             )
@@ -1913,8 +2063,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 {node["section_id"] for node in every if node.get("link_only")},
                 LOCAL_LINK_ONLY.get(form_id, set()),
             )
-            if form_id != "reference-report":
-                self.assertEqual(loaded["extensions"], extensions)
+            self.assertEqual(loaded["extensions"], extensions)
             for profile_id in profiles:
                 profile = by_id[profile_id]
                 # SPEC-0205: no profile carries an H2 list.
@@ -1934,30 +2083,37 @@ class RepositoryRegistryTests(unittest.TestCase):
                         for table in by_id[twin]["template_definition"]["tables"]
                     ),
                     sorted(
-                        REFERENCE_TABLES[twin]
-                        if form_id == "reference-report"
-                        else [(name, *spec) for name, spec in tables.items()]
+                        [(name, *spec) for name, spec in tables.items()]
                         if isinstance(tables, dict)
                         else tables
                     ),
                 )
+                core_types = {
+                    (t["table_id"], c["label"]): c["value_type"]
+                    for t in loaded.get("core", {}).get("tables", ())
+                    for c in t["columns"]
+                }
                 for table in by_id[twin]["template_definition"]["tables"]:
+                    if "table_id" in table:
+                        # A core table keeps the core value types; the strict
+                        # registry check compares it (REGISTRY_CORE_TABLE).
+                        continue
                     for column in table["columns"]:
                         self.assertTrue(column["meaning"])
-                        # The research Sources table dates its retrieval (W03-D21).
+                        # The research Sources table dates its retrieval (W03-D21);
+                        # a core table takes the core value type (SPEC-0222).
                         self.assertEqual(
                             column["data_type"],
-                            "date" if column["key"] == "Retrieved" else "string",
+                            core_types.get(
+                                (table.get("table_id"), column["key"]),
+                                "date" if column["key"] == "Retrieved" else "string",
+                            ),
                         )
                         self.assertIs(
                             column["required"],
                             not (
-                                form_id in ("root-readme", "stage-readme")
-                                and column["key"] == "Owner"
-                                or form_id == "policy"
+                                form_id == "policy"
                                 and column["key"] in POLICY_RULES_OPTIONAL
-                                or form_id == "requirement"
-                                and column["key"] in REQUIREMENT_OPTIONAL
                             ),
                         )
         for profile_id, profile in by_id.items():
@@ -1989,37 +2145,46 @@ class RepositoryRegistryTests(unittest.TestCase):
         forms = {item.form_id: item for item in registry.common_forms}
         tables = {
             "guide": ["Steps", "Lifecycle Traceability"],
-            "runbook": ["Triggers", "Lifecycle Traceability"],
-            "incident": ["Events", "Lifecycle Traceability"],
+            "runbook": ["Steps", "Lifecycle Traceability"],
+            "incident": ["Events", "Actions", "Lifecycle Traceability"],
             "postmortem": ["Actions", "Lifecycle Traceability"],
             "root-readme": ["Directory Index"],
             "stage-readme": ["Index"],
-            "service-readme": ["Commands"],
-            "policy": ["Rules", "Lifecycle Traceability"],
-            "agents": ["Tool Rules"],
+            "service-readme": ["External Interfaces", "Commands"],
+            "policy": ["Rules", "Rule Levels", "Lifecycle Traceability"],
+            "agents": [],
             "skill": ["Steps"],
             "workspace-readme": [],
             "reference-pack-readme": [],
             "requirement": [
-                "Functional Requirements",
-                "Quality Requirements",
+                "Requirements",
+                "Quality Measures",
                 "Lifecycle Traceability",
             ],
             "architecture": [
+                "External Interfaces",
                 "Constraints",
                 "Quality Scenarios",
                 "Lifecycle Traceability",
             ],
-            "adr": ["Alternatives", "Lifecycle Traceability"],
-            "spec": ["Criteria", "Lifecycle Traceability"],
-            "plan": ["Work Breakdown", "Promotion"],
-            "task": ["Lifecycle Traceability", "Results", "Criterion Decisions"],
+            "adr": ["Options", "Alternatives", "Lifecycle Traceability"],
+            "spec": ["Checks", "Criteria", "Lifecycle Traceability"],
+            "plan": ["Units", "Checks", "Work Breakdown", "Promotion"],
+            "task": [
+                "Work Items",
+                "Lifecycle Traceability",
+                "Results",
+                "Criterion Decisions",
+            ],
+            "research": list(RESEARCH_TABLE_KEYS),
+            "audit": list(AUDIT_TABLE_KEYS),
+            "data-reference": list(DATA_REFERENCE_TABLE_KEYS),
             **{
                 form_id: [name for name, *_ in tables]
                 for form_id, _, _, _, tables, _ in LOCAL_FORMS
             },
         }
-        governance_tables = ["Rules"]
+        governance_tables = ["Rules", "Rule Levels"]
         for profile in registry.profiles:
             with self.subTest(profile=profile.profile_id):
                 role = next(
@@ -2044,6 +2209,9 @@ class RepositoryRegistryTests(unittest.TestCase):
                             ("spec", SPEC_FORM),
                             ("plan", PLAN_FORM),
                             ("task", SDLC_TASK_FORM),
+                            ("research", RESEARCH),
+                            ("audit", AUDIT),
+                            ("data-reference", DATA_REFERENCE),
                             *(
                                 (form_id, profiles)
                                 for form_id, _, profiles, _, _, _ in LOCAL_FORMS
@@ -2059,10 +2227,6 @@ class RepositoryRegistryTests(unittest.TestCase):
                         [t.name for t in profile.tables],
                         governance_tables
                         if profile.profile_id in POLICY_GOVERNANCE
-                        else [
-                            n for n, *_ in REFERENCE_PROFILE_TABLES[profile.profile_id]
-                        ]
-                        if role == "reference-report"
                         else tables[role],
                     )
                 else:
@@ -2141,6 +2305,7 @@ class FormRegistryTests(unittest.TestCase):
             "verification": "tests/test_common_form_tree.py",
             "review": "each release",
             "removal": "when no terminal guide remains",
+            "authority_ref": "ADR-0059",
             "statuses": ["retired"],
             "retained_sections": {
                 "required": ["Overview"],
@@ -2329,7 +2494,9 @@ class FormRegistryTests(unittest.TestCase):
         REGISTRY_CHECK._assert_template_source_parity(registry)
         raw = self.candidate()
         profile_of(raw, GUIDE[1])["document_role"] = "runbook"
-        loaded = CONTRACTS.validate_registry(ROOT, raw)
+        # SPEC-0222: the moved template also lacks the runbook core table.
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_TABLE"})
+        loaded = CONTRACTS._typed_registry_from_mapping(raw)
         with self.assertRaisesRegex(AssertionError, "template/source contract differs"):
             REGISTRY_CHECK._assert_template_source_parity(loaded)
         raw = self.candidate()
@@ -2465,7 +2632,7 @@ class GuideFormRegistryTests(unittest.TestCase):
         steps, lifecycle = twin.tables
         self.assertEqual(
             (steps.name, steps.section, steps.minimum_rows, steps.row_identity),
-            ("Steps", "guide.steps.1", 0, "Step"),
+            ("Steps", "guide.steps", 0, "Step"),
         )
         self.assertEqual(
             [column.key for column in lifecycle.columns],
@@ -2503,7 +2670,7 @@ class GuideFormRegistryTests(unittest.TestCase):
         guide_tables(raw)[0]["section"] = "Actions"
         self.assertIn("REGISTRY_TABLE_SECTION", rules_of(raw))
         for accepted in ("guide.purpose", "guide.troubleshoot.1"):
-            raw = load_raw()
+            raw = unbind_guide(load_raw())
             guide_tables(raw)[0]["section"] = accepted
             with self.subTest(section=accepted):
                 self.assertEqual(rules_of(raw), set())
@@ -2853,7 +3020,10 @@ class HeadingTreeTests(unittest.TestCase):
         self.assertIn("BODY-H3-UNSUPPORTED", [i.rule_id for i in broken])
 
 
-STEPS = "| Step | Action | Check |\n| --- | --- | --- |\n| 1 | Run | Read |"
+STEPS = (
+    "| Step | Action | Expected Result | On Failure |\n"
+    "| --- | --- | --- | --- |\n| 1 | Run | Read | Stop |"
+)
 OTHER = "| Name | Value |\n| --- | --- |\n| a | b |"
 LIFECYCLE = (
     "| Promoted owner | Audience outcome | Operating surface |\n"
@@ -2914,11 +3084,11 @@ class TableCheckTests(unittest.TestCase):
 
     def test_a_reordered_missing_or_extra_column_fails(self) -> None:
         for header in (
-            "| Step | Check | Action |",
-            "| Action | Step | Check |",
-            "| Step | Action |",
-            "| Step | Action | Check | Note |",
-            "| Step | Action | Check | Check |",
+            "| Step | Expected Result | Action | On Failure |",
+            "| Action | Step | Expected Result | On Failure |",
+            "| Step | Action | Expected Result |",
+            "| Step | Action | Expected Result | On Failure | Note |",
+            "| Step | Action | Check | On Failure |",
         ):
             cells = header.count("|") - 1
             body = f"{header}\n" + "| --- " * cells + "|\n" + "| 1 " * cells + "|"
@@ -2933,7 +3103,7 @@ class TableCheckTests(unittest.TestCase):
     def test_the_minimum_rows_count_every_identified_table_in_the_section(
         self,
     ) -> None:
-        header_only = "| Step | Action | Check |\n| --- | --- | --- |"
+        header_only = "| Step | Action | Expected Result | On Failure |\n| --- | --- | --- | --- |"
         self.assertEqual(
             self.found(guide_body(header_only), self.strict), ["BODY-TABLE-ROWS"]
         )
@@ -2941,7 +3111,7 @@ class TableCheckTests(unittest.TestCase):
             self.found(guide_body(STEPS), self.strict), ["BODY-TABLE-ROWS"]
         )
         self.assertEqual(
-            self.found(guide_body(STEPS + "\n| 2 | Run | Read |"), self.strict),
+            self.found(guide_body(STEPS + "\n| 2 | Run | Read | Stop |"), self.strict),
             [],
         )
         split = guide_body(STEPS + "\n\n#### Detail\n\n" + STEPS)
@@ -2961,7 +3131,8 @@ class TableCheckTests(unittest.TestCase):
         self.assertEqual(self.found(body, self.strict), ["BODY-TABLE-ROWS"])
 
     def test_a_non_unique_section_heading_is_left_to_the_tree_check(self) -> None:
-        body = guide_body(STEPS) + "\n### Steps\n\n" + OTHER + "\n"
+        # SPEC-0222: the core table belongs to the Procedure H2.
+        body = guide_body(STEPS) + "\n## Procedure\n\n" + OTHER + "\n"
         self.assertEqual(self.found(body, self.strict), [])
 
     def test_the_body_contract_table_is_not_checked_twice(self) -> None:
@@ -3015,7 +3186,9 @@ class OptionalTrailingColumnTests(unittest.TestCase):
 
     @classmethod
     def raw_with_note(cls, required: bool = False) -> dict:
-        raw = load_raw()
+        # A core table refuses an appended column; the trailing-column rule is
+        # a local table rule, read here on the unbound guide table.
+        raw = unbind_guide(load_raw())
         columns = guide_tables(raw)[0]["columns"]
         columns.append(
             {"key": "Note", "meaning": "m", "data_type": "string", "required": required}
@@ -3045,21 +3218,21 @@ class OptionalTrailingColumnTests(unittest.TestCase):
         )
 
     def test_an_omitted_optional_trailing_column_passes(self) -> None:
-        self.assertEqual(self.found(("Step", "Action", "Check")), [])
+        self.assertEqual(self.found(CORE_STEP_COLUMNS), [])
 
     def test_a_present_optional_trailing_column_passes(self) -> None:
-        self.assertEqual(self.found(("Step", "Action", "Check", "Note")), [])
+        self.assertEqual(self.found((*CORE_STEP_COLUMNS, "Note")), [])
 
     def test_a_missing_required_column_fails(self) -> None:
-        for header in (("Step", "Action"), ("Step",)):
+        for header in (("Step", "Action", "Expected Result"), ("Step",)):
             with self.subTest(header=header):
                 self.assertEqual(self.found(header), ["BODY-TABLE-COLUMNS"])
 
     def test_a_reordered_or_extra_column_still_fails(self) -> None:
         for header in (
-            ("Step", "Action", "Note"),
-            ("Step", "Action", "Note", "Check"),
-            ("Step", "Action", "Check", "Note", "Extra"),
+            ("Step", "Action", "Expected Result", "Note"),
+            ("Step", "Action", "Expected Result", "Note", "On Failure"),
+            (*CORE_STEP_COLUMNS, "Note", "Extra"),
         ):
             with self.subTest(header=header):
                 self.assertEqual(self.found(header), ["BODY-TABLE-COLUMNS"])
@@ -3120,6 +3293,26 @@ class RootReadmeFormTests(unittest.TestCase):
         )
         self.assertNotEqual(self.tree(self.BODY + "\n## Structure\n\nText.\n"), [])
 
+    def test_the_paths_table_is_read_anywhere_in_repository_map(self) -> None:
+        def tables(home: str, header: str) -> list[str]:
+            row = "| " + " | ".join("x" for _ in header.split("|")[1:-1]) + " |"
+            delimiter = "|" + " --- |" * len(header.split("|")[1:-1])
+            text = self.BODY.replace(home, f"{home}\n\n{header}\n{delimiter}\n{row}", 1)
+            return sorted(
+                item.rule_id
+                for item in MARKDOWN._table_diagnostics(
+                    PurePosixPath("README.md"), self.profile, text
+                )
+            )
+
+        for home in ("### Current Paths\n\nText.", "### Owners\n\nText."):
+            with self.subTest(home=home):
+                self.assertEqual(tables(home, "| Path | Purpose |"), [])
+                self.assertEqual(
+                    tables(home, "| Path | Purpose | Owner |"), ["BODY-TABLE-COLUMNS"]
+                )
+        self.assertEqual(tables("### Help\n\nText.", "| Path | Purpose | Owner |"), [])
+
     def test_the_navigation_section_is_the_current_paths_h3(self) -> None:
         navigation = self.registry.readme_navigation.profiles[ROOT_FORM[0]]
         self.assertEqual(
@@ -3131,7 +3324,7 @@ class StageReadmeFormTests(unittest.TestCase):
     """SPEC-0173: the Stage README form, its Index table and its navigation."""
 
     HOME = "### Paths\n\nText."
-    HEADER = ("Path", "Purpose", "Owner")
+    HEADER = ("Path", "Purpose")
     BODY = md(
         "# Stage",
         *(
@@ -3195,7 +3388,7 @@ class StageReadmeFormTests(unittest.TestCase):
 
     def test_the_index_table_accepts_its_registered_columns(self) -> None:
         for profile_id in STAGE_FORM[::2]:
-            for header in (self.HEADER[:2], self.HEADER):
+            for header in (self.HEADER,):
                 row = tuple("x" for _ in header)
                 text = self.with_table(
                     "| " + " | ".join(header) + " |",
@@ -3212,8 +3405,8 @@ class StageReadmeFormTests(unittest.TestCase):
         for profile_id in STAGE_FORM[::2]:
             for header in (
                 ("Path",),
-                ("Path", "Owner", "Purpose"),
-                (*self.HEADER, "Note"),
+                ("Purpose", "Path"),
+                (*self.HEADER, "Owner"),
             ):
                 text = self.with_table(
                     "| " + " | ".join(header) + " |",
@@ -3225,10 +3418,16 @@ class StageReadmeFormTests(unittest.TestCase):
                         self.tables(profile_id, text), ["BODY-TABLE-COLUMNS"]
                     )
 
-    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
-        wrong = self.with_table("| Path |", "| --- |", "| a |", home="### Owners")
+    def test_the_table_is_read_in_its_core_h2_and_not_outside(self) -> None:
+        # SPEC-0222: the core table belongs to Current Contents, so an Owners
+        # table is read and a Usage table is not.
+        inside = self.with_table("| Path |", "| --- |", "| a |", home="### Owners")
+        wrong = self.with_table("| Path |", "| --- |", "| a |", home="### Entry Points")
         for profile_id in STAGE_FORM[::2]:
             with self.subTest(profile=profile_id):
+                self.assertEqual(
+                    self.tables(profile_id, inside), ["BODY-TABLE-COLUMNS"]
+                )
                 self.assertEqual(self.tables(profile_id, wrong), [])
 
     def test_the_navigation_section_is_the_paths_h3(self) -> None:
@@ -3342,6 +3541,27 @@ class ServiceReadmeFormTests(unittest.TestCase):
             with self.subTest(profile=profile_id):
                 self.assertEqual(self.tables(profile_id, wrong), [])
 
+    def test_the_interface_table_is_read_in_the_service_h2(self) -> None:
+        header = "| Interface | Producer | Consumer | Contract | Failure |"
+        delimiter = "| --- | --- | --- | --- | --- |"
+        row = "| `api` | p | c | [contract](c.md) | f |"
+        for profile_id in SERVICE_FORM[::2]:
+            for home in ("### Interfaces\n\nText.", "### Purpose\n\nText."):
+                with self.subTest(profile=profile_id, home=home):
+                    ok = self.with_table(header, delimiter, row, home=home)
+                    self.assertEqual(self.tables(profile_id, ok), [])
+                    relabeled = self.with_table(
+                        header.replace("Failure", "Failure mode"),
+                        delimiter,
+                        row,
+                        home=home,
+                    )
+                    self.assertEqual(
+                        self.tables(profile_id, relabeled), ["BODY-TABLE-COLUMNS"]
+                    )
+            # A document without an external interface renders no table.
+            self.assertEqual(self.tables(profile_id, self.BODY), [])
+
     def test_the_navigation_section_is_the_purpose_h3(self) -> None:
         navigation = self.registry.readme_navigation.profiles[SERVICE_FORM[0]]
         self.assertEqual((navigation.section, navigation.complete), ("Purpose", False))
@@ -3396,8 +3616,9 @@ class TableIteratorTests(unittest.TestCase):
 
 
 RUNBOOK_PATH = PurePosixPath("docs/05.operations/runbooks/0001-temporary-runbook.md")
-TRIGGERS = (
-    "| Trigger | Action | Rollback |\n| --- | --- | --- |\n| Alert | Restart | Undo |"
+RUNBOOK_STEPS = (
+    "| Step | Action | Expected Result | On Failure |\n"
+    "| --- | --- | --- | --- |\n| 1 | Restart | Ready | Stop and call the owner |"
 )
 RUNBOOK_BODY = md(
     "# Runbook title",
@@ -3415,6 +3636,7 @@ RUNBOOK_BODY = md(
     "### Unverified Conditions\n\nNone recorded.",
     "## Escalation",
     "### Next Owner\n\nCall the owner.",
+    "### Recovery or Forward Repair\n\nUndo step 1.",
 )
 
 
@@ -3465,21 +3687,19 @@ class RunbookFormTests(unittest.TestCase):
         by_id = {profile.profile_id: profile for profile in registry.profiles}
         twin, source = by_id[RUNBOOK[1]], by_id[RUNBOOK[0]]
         self.assertEqual(source.tables, twin.tables)
-        triggers, lifecycle = twin.tables
+        steps, lifecycle = twin.tables
         self.assertEqual(
-            (
-                triggers.name,
-                triggers.section,
-                triggers.minimum_rows,
-                triggers.row_identity,
-            ),
-            ("Triggers", "runbook.procedure.1", 0, "Trigger"),
+            (steps.name, steps.section, steps.minimum_rows, steps.row_identity),
+            ("Steps", "runbook.procedure", 0, "Step"),
+        )
+        self.assertEqual(
+            [column.key for column in steps.columns], list(CORE_STEP_COLUMNS)
         )
         self.assertEqual(
             [column.key for column in lifecycle.columns],
             list(RUNBOOK_TABLE_KEYS["Lifecycle Traceability"][1]),
         )
-        self.assertTrue(all(column.required for column in triggers.columns))
+        self.assertTrue(all(column.required for column in steps.columns))
 
     def test_the_repository_runbook_registry_is_valid_and_its_twin_matches(
         self,
@@ -3490,24 +3710,32 @@ class RunbookFormTests(unittest.TestCase):
     def test_a_complete_runbook_passes_the_tree(self) -> None:
         self.assertEqual(self.tree(RUNBOOK_BODY), [])
 
-    def test_a_triggers_table_passes_when_it_keeps_the_registered_columns(
+    def test_recovery_or_forward_repair_is_required_as_the_core_states(self) -> None:
+        without = RUNBOOK_BODY.replace(
+            "\n\n### Recovery or Forward Repair\n\nUndo step 1.", ""
+        )
+        self.assertNotIn("Recovery or Forward Repair", without)
+        self.assertNotEqual(self.tree(without), [])
+
+    def test_a_steps_table_passes_when_it_keeps_the_core_columns(
         self,
     ) -> None:
-        body = RUNBOOK_BODY.replace("Run it.", "Run it.\n\n" + TRIGGERS)
+        body = RUNBOOK_BODY.replace("Run it.", "Run it.\n\n" + RUNBOOK_STEPS)
         self.assertEqual(self.tables(body), [])
 
-    def test_a_header_only_triggers_table_passes_because_the_minimum_is_zero(
+    def test_a_header_only_steps_table_passes_because_the_minimum_is_zero(
         self,
     ) -> None:
-        header_only = "| Trigger | Action | Rollback |\n| --- | --- | --- |"
+        header_only = "| Step | Action | Expected Result | On Failure |\n| --- | --- | --- | --- |"
         self.assertEqual(self.tables(RUNBOOK_BODY.replace("Run it.", header_only)), [])
         self.assertEqual(self.tables(RUNBOOK_BODY), [])
 
-    def test_a_reordered_or_missing_triggers_column_fails(self) -> None:
+    def test_a_reordered_relabeled_or_missing_steps_column_fails(self) -> None:
         for header in (
-            "| Trigger | Rollback | Action |",
-            "| Trigger | Action |",
-            "| Trigger | Action | Rollback | Note |",
+            "| Step | Expected Result | Action | On Failure |",
+            "| Step | Action | Expected Result |",
+            "| Step | Action | Expected Result | On Failure | Note |",
+            "| Step | Action | Expected result | Stop / escalate when |",
         ):
             cells = header.count("|") - 1
             table = f"{header}\n" + "| --- " * cells + "|\n" + "| a " * cells + "|"
@@ -3517,26 +3745,24 @@ class RunbookFormTests(unittest.TestCase):
                     ["BODY-TABLE-COLUMNS"],
                 )
 
-    def test_the_four_column_step_table_is_not_identified(self) -> None:
-        step = (
-            "| Step | Action | Expected result | Stop / escalate when |\n"
-            "| --- | --- | --- | --- |\n| 1 | Run | Pass | Error |"
+    def test_a_steps_table_outside_procedure_is_not_looked_at(self) -> None:
+        wrong = "| Step | Action |\n| --- | --- |\n| a | b |"
+        self.assertEqual(
+            self.tables(RUNBOOK_BODY.replace("Read the status.", wrong)), []
         )
-        self.assertEqual(self.tables(RUNBOOK_BODY.replace("Run it.", step)), [])
-
-    def test_a_triggers_table_outside_actions_is_not_looked_at(self) -> None:
-        wrong = "| Trigger | Action |\n| --- | --- |\n| a | b |"
-        body = RUNBOOK_BODY.replace("Stop on error.", wrong)
-        self.assertEqual(self.tables(body), [])
+        inside = RUNBOOK_BODY.replace("Stop on error.", wrong)
+        self.assertEqual(self.tables(inside), ["BODY-TABLE-COLUMNS"])
 
     def test_recovery_procedures_is_accepted_under_recovery(self) -> None:
         block = "### Recovery Procedures\n\nRestore the replica from the snapshot."
         self.assertEqual(self.tree(self.under("", block)), [])
         before_rollback = RUNBOOK_BODY.replace(
             "### Next Owner\n\nCall the owner.",
-            "### Next Owner\n\nCall the owner.\n\n"
-            + block
-            + "\n\n### Recovery or Forward Repair\n\nUndo step 1.",
+            "### Next Owner\n\nCall the owner.\n\n" + block,
+        )
+        self.assertLess(
+            before_rollback.index("### Recovery Procedures"),
+            before_rollback.index("### Recovery or Forward Repair"),
         )
         self.assertEqual(self.tree(before_rollback), [])
 
@@ -3618,6 +3844,7 @@ class RoleFormBody(unittest.TestCase):
     BODY: str
     HEADER: tuple[str, ...]  # its required columns, in order
     OPTIONAL: tuple[str, ...] = ()  # its optional trailing columns, in order
+    ALL_OPTIONAL: tuple[str, ...] | None = None  # every table's, when it differs
     HOME: str  # the H3 line its table belongs under
 
     @classmethod
@@ -3692,7 +3919,7 @@ class RoleFormBody(unittest.TestCase):
         )
         self.assertEqual(
             tuple(c.key for t in twin.tables for c in t.columns if not c.required),
-            self.OPTIONAL,
+            self.OPTIONAL if self.ALL_OPTIONAL is None else self.ALL_OPTIONAL,
         )
 
     def test_the_repository_registry_is_valid_and_its_twin_matches(self) -> None:
@@ -3702,6 +3929,16 @@ class RoleFormBody(unittest.TestCase):
     def test_a_complete_document_passes_the_tree(self) -> None:
         self.assertEqual(self.tree(self.BODY), [])
         self.assertEqual(self.tables(self.BODY), [])
+
+
+class RoleFormTableBody(RoleFormBody):
+    """Shared checks for a role form that carries a table."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        if cls is RoleFormTableBody:
+            raise unittest.SkipTest("shared base; its subclasses run the checks")
+        super().setUpClass()
 
     def test_the_optional_table_passes_with_the_registered_columns(self) -> None:
         row = tuple("x" for _ in self.HEADER)
@@ -3744,7 +3981,7 @@ class RoleFormBody(unittest.TestCase):
         self.assertEqual(self.tables(body), [])
 
 
-class IncidentFormTests(RoleFormBody):
+class IncidentFormTests(RoleFormTableBody):
     """SPEC-0171 VAL-INCIDENTFORM-001: the Incident form, its tables and extension."""
 
     PATH = INCIDENT_PATH
@@ -3760,6 +3997,19 @@ class IncidentFormTests(RoleFormBody):
         wrong = self.table(("Timestamp", "Event"), ("a", "b"))
         body = INCIDENT_BODY.replace("Checks pass.", wrong)
         self.assertEqual(self.tables(body), [])
+
+    def test_the_core_actions_table_belongs_to_the_response_section(self) -> None:
+        # SPEC-0222: incident.actions sits under Response > Actions.
+        core = self.table(CORE_ACTION_COLUMNS, ("Roll back", "Ops", "Alert", "none"))
+        body = self.with_table(core, home="Rolled back.")
+        self.assertEqual(self.tables(body), [])
+        self.assertEqual(self.tree(body), [])
+        old = self.table(("Action", "Owner", "Verification"), ("a", "b", "c"))
+        self.assertEqual(
+            self.tables(self.with_table(old, home="Rolled back.")),
+            ["BODY-TABLE-COLUMNS"],
+        )
+        self.assertEqual(self.tables(self.with_table(old, home="Checks pass.")), [])
 
     def test_the_metadata_table_is_not_a_contract_table(self) -> None:
         self.assertIn("| Field | Value |", INCIDENT_BODY)
@@ -3779,7 +4029,7 @@ class IncidentFormTests(RoleFormBody):
         )
 
 
-class PostmortemFormTests(RoleFormBody):
+class PostmortemFormTests(RoleFormTableBody):
     """SPEC-0171 VAL-INCIDENTFORM-001: the Postmortem form, tables and extensions."""
 
     PATH = POSTMORTEM_PATH
@@ -3788,8 +4038,15 @@ class PostmortemFormTests(RoleFormBody):
     TREE = POSTMORTEM_TREE
     TABLE_KEYS = POSTMORTEM_TABLE_KEYS
     BODY = POSTMORTEM_BODY
-    HEADER = ("Action", "Owner", "Verification")
+    HEADER = CORE_ACTION_COLUMNS
     HOME = "Add a canary."
+
+    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
+        # SPEC-0222: the core table belongs to the whole Actions H2.
+        wrong = self.table(self.HEADER[:2], ("a", "b"))
+        self.assertEqual(self.tables(self.with_table(wrong, home="No canary.")), [])
+        inside = self.with_table(wrong, home="#### Source Records")
+        self.assertEqual(self.tables(inside), ["BODY-TABLE-COLUMNS"])
 
     WELL = "### What Went Well\n\nThe alert fired within a minute."
 
@@ -3861,7 +4118,7 @@ def policy_body() -> str:
     )
 
 
-class GovernancePolicyFormTests(RoleFormBody):
+class GovernancePolicyFormTests(RoleFormTableBody):
     """SPEC-0175 VAL-POLICY-001: the Policy form on governance rules."""
 
     PATH = GOVERNANCE_POLICY_PATH
@@ -3871,8 +4128,16 @@ class GovernancePolicyFormTests(RoleFormBody):
     TABLE_KEYS = POLICY_GOVERNANCE_TABLE_KEYS
     BODY = policy_body()
     HEADER = POLICY_RULES_COLUMNS
-    OPTIONAL = POLICY_RULES_OPTIONAL
+    ALL_OPTIONAL = POLICY_RULES_OPTIONAL
     HOME = "Review every change."
+
+    def tables(self, text: str) -> list[str]:
+        # SPEC-0222: the rule check owns both rule tables of an authored policy, so
+        # the generic table check is read on the template twin.
+        twin = typed_profiles(load_raw())[self.PROFILES[1]]
+        return sorted(
+            item.rule_id for item in MARKDOWN._table_diagnostics(self.PATH, twin, text)
+        )
 
     def test_the_loader_copies_the_tables_to_the_source_profile(self) -> None:
         super().test_the_loader_copies_the_tables_to_the_source_profile()
@@ -3884,7 +4149,7 @@ class GovernancePolicyFormTests(RoleFormBody):
         self.assertEqual(self.tables(body), [])
 
 
-class OperationsPolicyFormTests(RoleFormBody):
+class OperationsPolicyFormTests(RoleFormTableBody):
     """SPEC-0175 VAL-POLICY-001: the Policy form on operations policies."""
 
     PATH = OPERATIONS_POLICY_PATH
@@ -3894,8 +4159,16 @@ class OperationsPolicyFormTests(RoleFormBody):
     TABLE_KEYS = POLICY_OPERATIONS_TABLE_KEYS
     BODY = policy_body()
     HEADER = POLICY_RULES_COLUMNS
-    OPTIONAL = POLICY_RULES_OPTIONAL
+    ALL_OPTIONAL = POLICY_RULES_OPTIONAL
     HOME = "Review every change."
+
+    def tables(self, text: str) -> list[str]:
+        # SPEC-0222: the rule check owns both rule tables of an authored policy, so
+        # the generic table check is read on the template twin.
+        twin = typed_profiles(load_raw())[self.PROFILES[1]]
+        return sorted(
+            item.rule_id for item in MARKDOWN._table_diagnostics(self.PATH, twin, text)
+        )
 
     BLOCK = (
         "### Lifecycle Traceability\n\n"
@@ -3948,27 +4221,55 @@ def agents_body() -> str:
         "# AGENTS.md",
         "Agent instructions for `scripts/`.",
         "## Scope",
-        "### Allowed Surface\n\nValidators only.",
-        "### Non-goals\n\nThis folder adds no non-goal beyond the parent `AGENTS.md`; "
-        "if work here must be excluded, state it here.",
-        "## Required Policies",
-        "### Canonical Sources\n\nThe quality policy.",
-        "### Local Obligations\n\n1. Keep the change small.",
+        "### Allowed Scope\n\nValidators only.",
+        "#### Non-goals\n\nThis folder adds no non-goal beyond the parent "
+        "`AGENTS.md`; if work here must be excluded, state it here.",
+        "### Instruction Precedence",
+        "#### Canonical Sources\n\nThe quality policy.",
         "## Workflow",
-        "### Inspect and Change\n\nFollow the rules above.",
-        "### Handoff\n\nThis folder hands off through the work lifecycle's Completion "
-        "steps with no extra field; if it needs one, state it here.",
+        "### Intake",
+        "#### Local Obligations\n\n1. Keep the change small.",
+        "### Execution\n\nFollow the rules above.",
+        "## Boundaries",
+        "### Authority",
+        "#### Stop and Escalate\n\nStop on a failed check.",
+        "### Secrets and External Effects",
+        "#### Protected Actions\n\nNone beyond the policy.",
         "## Verification",
-        "### Required Checks\n\nRun the suite.",
-        "### Evidence and Limits\n\nRepository-static only.",
-        "## Safety",
-        "### Protected Actions\n\nNone beyond the policy.",
-        "### Stop and Escalate\n\nStop on a failed check.",
+        "### Checks\n\nRun the suite.",
+        "### Reporting",
+        "#### Evidence and Limits\n\nRepository-static only.",
+        "#### Handoff\n\nThis folder hands off through the work lifecycle's "
+        "Completion steps with no extra field; if it needs one, state it here.",
     )
 
 
+# SPEC-0222 WORK-007: the agent-instructions core members the form carries.
+AGENTS_CORE_IDS = (
+    "agent-instructions.scope",
+    "agent-instructions.scope.1",
+    "agent-instructions.scope.2",
+    "agent-instructions.workflow",
+    "agent-instructions.workflow.1",
+    "agent-instructions.workflow.2",
+    "agent-instructions.limits",
+    "agent-instructions.limits.1",
+    "agent-instructions.limits.2",
+    "agent-instructions.verification",
+    "agent-instructions.verification.1",
+    "agent-instructions.verification.2",
+)
+AGENTS_CORE_H2 = {
+    "agent-instructions.scope": ("실행 범위", "작업 경로·우선권·허용 행동"),
+    "agent-instructions.workflow": ("절차", "필요 정책·계획·브리핑"),
+    "agent-instructions.limits": ("제한", "권한·실패·중단"),
+    "agent-instructions.verification": ("완료", "관련 검사와 보고"),
+}
+
+
 class AgentsFormTests(RoleFormBody):
-    """SPEC-0176 VAL-AGENTS-001: the AGENTS form on every AGENTS.md."""
+    """SPEC-0176 VAL-AGENTS-001: the AGENTS form on every AGENTS.md; SPEC-0222
+    WORK-007 binds it to the agent-instructions core tree."""
 
     PATH = AGENTS_PATH
     PROFILES = AGENTS
@@ -3976,8 +4277,47 @@ class AgentsFormTests(RoleFormBody):
     TREE = AGENTS_TREE
     TABLE_KEYS = AGENTS_TABLE_KEYS
     BODY = agents_body()
-    HEADER = ("Rule", "Trigger", "Effect")
-    HOME = "1. Keep the change small."
+
+    def test_the_form_binds_the_agent_instructions_core(self) -> None:
+        form = next(
+            f for f in load_raw()["common_forms"]["forms"] if f["form_id"] == "agents"
+        )
+        self.assertEqual(form["core_role"], "agent-instructions")
+        core = form["core"]
+        self.assertEqual(core["purpose"], "허용 범위의 도구 독립 실행 규칙")
+        self.assertEqual(core["non_goals"], "다른 역할의 상태·정책 정본 대체")
+        self.assertEqual(core["tables"], [])
+        self.assertEqual(core["status"], "DESIGN_PROPOSAL_NOT_ADOPTED")
+        self.assertEqual(core["metadata_policy"]["envelope"], "native")
+        self.assertEqual(
+            core["rules"],
+            [
+                "single-meaning-owner",
+                "no-synthetic-evidence",
+                "no-release-document-role",
+                "no-package-path-runtime-dependency",
+            ],
+        )
+        nodes = [n for s in form["sections"] for n in (s, *s["children"])]
+        self.assertEqual(tuple(n["section_id"] for n in nodes), AGENTS_CORE_IDS)
+        for node in nodes:
+            with self.subTest(section=node["section_id"]):
+                self.assertEqual(node["condition"], "always")
+                self.assertEqual(node["core"]["required_when"], "always")
+                if node["level"] == 2:
+                    self.assertEqual(
+                        (node["core"]["title_ko"], node["core"]["content_rule"]),
+                        AGENTS_CORE_H2[node["section_id"]],
+                    )
+                else:
+                    self.assertEqual(node["core"]["title_ko"], node["title"])
+                    self.assertIn(node["title"], node["core"]["content_rule"])
+
+    def test_the_template_carries_no_table(self) -> None:
+        twin = profile_of(load_raw(), self.PROFILES[1])
+        self.assertEqual(twin["template_definition"]["tables"], [])
+        template = (ROOT / twin["template_source"]).read_text(encoding="utf-8")
+        self.assertNotIn("|", template)
 
     def test_the_loaded_heading_lists_equal_the_form_h2_titles(self) -> None:
         # The AGENTS profiles stay native: they carry no H2 lists, so an empty
@@ -4065,22 +4405,26 @@ class AgentsFormTests(RoleFormBody):
 
     def test_a_missing_or_renamed_form_heading_fails_the_tree(self) -> None:
         self.assertEqual(
-            self.tree(self.BODY.replace("### Handoff", "### Handover")),
+            self.tree(self.BODY.replace("### Reporting", "### Report")),
             ["BODY-H3-REQUIRED", "BODY-H3-UNSUPPORTED"],
         )
         self.assertEqual(
-            self.tree(self.BODY.replace("### Handoff\n", "### Handoff\n\n#### Deep\n")),
+            self.tree(self.BODY.replace("### Checks\n", "### Checks\n\n#### Deep\n")),
             [],
         )
         self.assertEqual(
-            self.tree(self.under("## Safety", "### Stray\n\nText.")),
+            self.tree(self.under("## Verification", "### Stray\n\nText.")),
             ["BODY-H3-UNSUPPORTED"],
         )
 
-    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
-        wrong = self.table(self.HEADER[:2], ("a", "b"))
-        body = self.with_table(wrong, home="The quality policy.")
-        self.assertEqual(self.tables(body), [])
+    def test_a_former_form_heading_is_refused_as_an_h3(self) -> None:
+        for old, new in (
+            ("### Allowed Scope", "### Allowed Surface"),
+            ("#### Local Obligations", "### Local Obligations"),
+            ("## Boundaries", "## Safety"),
+        ):
+            with self.subTest(heading=new):
+                self.assertNotEqual(self.tree(self.BODY.replace(old, new)), [])
 
 
 GOVERNANCE_SKILL_PATH = PurePosixPath(".agents/workflows/work-lifecycle.md")
@@ -4108,7 +4452,7 @@ class BareSectionTests(unittest.TestCase):
             for item in MARKDOWN._body_diagnostics(AGENTS_PATH, profile, text, "active")
         )
 
-    def with_line(self, line: str, heading: str = "### Handoff") -> str:
+    def with_line(self, line: str, heading: str = "### Execution") -> str:
         body = agents_body()
         start = body.index(heading) + len(heading)
         end = body.index("\n\n##", start)
@@ -4182,7 +4526,7 @@ def skill_body(*, preface: str = "") -> str:
 
 
 # TestCase is named again so the static collector sees a runnable base.
-class SkillFormBody(RoleFormBody, unittest.TestCase):
+class SkillFormBody(RoleFormTableBody, unittest.TestCase):
     """Shared Skill checks; the two Skill profile pairs share one form."""
 
     FORM_ID = "skill"
@@ -5261,46 +5605,10 @@ class GovernanceRoleFormTests(unittest.TestCase):
         )
 
 
-class ReferenceReportFormTests(unittest.TestCase):
-    """SPEC-0189 VAL-REFFORM-001: the reference-report form of the three report kinds."""
+class DataReferenceFormTests(unittest.TestCase):
+    """SPEC-0222 WORK-008: the data reports bind the data-reference core role."""
 
-    AUDIT_H3 = {
-        "Scope": ("Criteria and Inspected Surface",),
-        "Definitions / Facts": ("Observed Evidence", "Findings and Gaps"),
-        "Review and Freshness": ("Remediation", "Verification State"),
-    }
-    RESEARCH_H3 = {
-        "Scope": ("Research Questions", "Method"),
-        "Definitions / Facts": ("Claim-Source Matrix", "Findings"),
-        "Review and Freshness": ("Limitations", "Recommendations"),
-    }
-    DATA_H3 = {
-        "Definitions / Facts": ("Schema", "Repository Facts"),
-        "Sources": ("Provenance",),
-        "Review and Freshness": ("Generation and Refresh", "Staleness Boundaries"),
-    }
-    KINDS = {
-        "reference/audit": ("audits", AUDIT_H3),
-        "reference/research": ("research", RESEARCH_H3),
-        "reference/data": ("data", DATA_H3),
-    }
-    # (H2, count of conditional H3) and (parent H2, count of local_h3 extensions).
-    CONDITIONAL_BY_H2 = {
-        "Overview": 1,
-        "Reference Type": 1,
-        "Authority Boundary": 1,
-        "Scope": 4,
-        "Definitions / Facts": 11,
-        "Sources": 4,
-        "Review and Freshness": 9,
-        "Related Documents": 0,
-    }
-    EXTENSIONS_BY_H2 = {
-        "Definitions / Facts": 33,
-        "Sources": 3,
-        "Review and Freshness": 3,
-    }
-    LINK = "- [Source](https://example.com/a), grade A, retrieved 2026-11-13."
+    PATH = PurePosixPath("docs/90.references/data/0001-sample/m0001-sample.md")
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -5309,451 +5617,300 @@ class ReferenceReportFormTests(unittest.TestCase):
         cls.form = next(
             f
             for f in cls.raw["common_forms"]["forms"]
-            if f["form_id"] == "reference-report"
+            if f["form_id"] == "data-reference"
         )
 
     @staticmethod
-    def body(h3: dict, *, sources: str | None = None) -> str:
+    def body(tree=DATA_REFERENCE_TREE) -> str:
         blocks = ["# Reference: Sample"]
-        for h2 in REFERENCE_H2:
-            children = h3.get(h2, ())
-            if h2 == "Related Documents":
-                blocks.append(f"## {h2}\n\n- [Owner](owner.md)")
-            elif children:
-                blocks.append(f"## {h2}")
-                blocks += [f"### {c}\n\nThe {c} text." for c in children]
-            elif h2 == "Sources":
-                blocks.append(f"## {h2}\n\n{sources or ReferenceReportFormTests.LINK}")
-            else:
-                blocks.append(f"## {h2}\n\nThe {h2} text.")
+        for h2, children in tree:
+            blocks.append(f"## {h2}")
+            blocks += [f"### {child}\n\nThe {child} text." for child in children]
         return md(*blocks)
 
-    def rules(self, profile_id: str, text: str) -> list[str]:
-        folder, _ = self.KINDS[profile_id]
-        path = PurePosixPath(f"docs/90.references/{folder}/0001-sample/m0001-sample.md")
+    def rules(self, text: str) -> list[str]:
         return sorted(
             item.rule_id
             for item in MARKDOWN._body_diagnostics(
-                path, self.profiles[profile_id], text, "published"
+                self.PATH, self.profiles["reference/data"], text, "published"
             )
         )
 
-    def research(self, text: str) -> list[str]:
-        return self.rules("reference/research", text)
-
-    def test_the_form_is_a_stage_99_local_form_with_eight_required_h2(self) -> None:
-        stage = next(
-            f
-            for f in self.raw["common_forms"]["forms"]
-            if f["form_id"] == "stage-readme"
-        )
+    def test_the_form_carries_the_data_reference_core(self) -> None:
         form = self.form
-        self.assertEqual(form["title"], "Reference Report")
-        self.assertEqual(form["h1"], "{{document_title}}")
-        self.assertEqual(form["language_rule"], stage["language_rule"])
-        for needle in (
-            "Stage 99",
-            "W03-D20",
-            "W03-D26",
-            "W03-D35",
-            "W03-D36",
-            "COMMON-DOC-FORM-1",
-        ):
-            self.assertIn(needle, form["extension_policy"])
-        self.assertNotEqual(form["extension_policy"], stage["extension_policy"])
-        self.assertEqual([s["title"] for s in form["sections"]], list(REFERENCE_H2))
-        self.assertEqual(self.raw["common_forms"]["contract_id"], "COMMON-DOC-FORM-1")
-        for node in form["sections"]:
-            with self.subTest(section=node["title"]):
-                self.assertEqual(node["requiredness"], "required")
-                self.assertEqual(node["condition"], "always")
-                self.assertEqual(node["empty_policy"], "explain_none_or_not_applicable")
-                self.assertIs(
-                    node["link_only"], node["title"] in ("Sources", "Related Documents")
-                )
-
-    def test_every_section_carries_the_form_fields_and_a_slug_id(self) -> None:
-        nodes = [n for s in self.form["sections"] for n in (s, *s["children"])]
-        self.assertEqual(len(nodes), 39)
-        for node in nodes:
-            with self.subTest(section=node["section_id"]):
-                self.assertTrue(node["content"])
-                self.assertTrue(node["required_content"])
-                self.assertTrue(node["prohibited_content"])
-                self.assertEqual(
-                    node["validation_ids"], ["FORM-STRUCTURE", "FORM-CONTENT-REVIEW"]
-                )
-                self.assertIsInstance(node["link_only"], bool)
-                prefix = "reference-report-"
-                if node["level"] == 2:
-                    self.assertEqual(node["section_id"], prefix + slug(node["title"]))
-                else:
+        self.assertEqual(form["core_role"], "data-reference")
+        self.assertNotIn("classification", form)
+        core = form["core"]
+        self.assertEqual(core["purpose"], "생성 자료의 입력·출처·해석")
+        self.assertEqual(core["non_goals"], "다른 역할의 상태·정책 정본 대체")
+        self.assertEqual(core["status"], "DESIGN_PROPOSAL_NOT_ADOPTED")
+        self.assertEqual(
+            core["rules"],
+            [
+                "single-meaning-owner",
+                "no-synthetic-evidence",
+                "no-release-document-role",
+                "no-package-path-runtime-dependency",
+            ],
+        )
+        (table,) = core["tables"]
+        self.assertEqual(
+            (table["table_id"], table["section_id"], table["required_when"]),
+            ("data-reference.schema", "data-reference.interpretation", "always"),
+        )
+        self.assertEqual(
+            [(c["label"], c["key"], c["value_type"]) for c in table["columns"]],
+            list(DATA_REFERENCE_SCHEMA),
+        )
+        self.assertTrue(all(c["required"] for c in table["columns"]))
+        for item in form["sections"]:
+            for node in (item, *item["children"]):
+                with self.subTest(section=node["section_id"]):
+                    self.assertEqual(node["condition"], "always")
+                    self.assertEqual(node["requiredness"], "required")
+                    self.assertEqual(node["core"]["required_when"], "always")
+                    self.assertTrue(node["core"]["title_ko"].strip())
+                    self.assertTrue(node["core"]["content_rule"].strip())
                     self.assertEqual(
-                        node["section_id"],
-                        f"{node['parent_id']}-{slug(node['title'])}",
+                        "prohibited_content" in node["core"], node["level"] == 2
                     )
+        self.assertEqual(form["extensions"], [])
+        self.assertEqual(rules_of(self.raw), set())
 
-    def test_sources_asks_for_link_grade_and_iso_retrieval_date(self) -> None:
-        sources = self.form["sections"][5]
-        self.assertEqual(sources["title"], "Sources")
-        text = " ".join(sources["required_content"])
-        for needle in ("링크", "등급", "ISO"):
-            self.assertIn(needle, text)
-
-    def test_the_form_holds_thirty_one_conditional_h3_in_registered_order(self) -> None:
-        counts = {}
-        for node in self.form["sections"]:
-            counts[node["title"]] = len(node["children"])
-            self.assertEqual(
-                [c["title"] for c in node["children"]],
-                list(REFERENCE_H3[node["title"]]),
-            )
-            for child in node["children"]:
-                with self.subTest(h3=child["section_id"]):
-                    self.assertEqual(child["level"], 3)
-                    self.assertEqual(child["requiredness"], "conditional")
-                    self.assertNotEqual(child["condition"], "always")
-                    self.assertEqual(child["empty_policy"], "omit_when_condition_false")
-                    self.assertIs(child["link_only"], False)
-        self.assertEqual(counts, self.CONDITIONAL_BY_H2)
-        self.assertEqual(sum(counts.values()), 31)
-
-    def test_each_conditional_h3_names_its_own_report_kind_or_history(self) -> None:
-        conditions = [
-            (c["title"], c["condition"])
-            for s in self.form["sections"]
-            for c in s["children"]
-        ]
-        self.assertEqual(len({text for _, text in conditions}), 31)
-        for title, text in conditions:
-            with self.subTest(h3=title):
-                if title in {
-                    t
-                    for kind in (self.AUDIT_H3, self.DATA_H3)
-                    for v in kind.values()
-                    for t in v
-                }:
-                    self.assertTrue("audit" in text or "data" in text, text)
-                else:
-                    self.assertIn("research", text)
-
-    def test_the_thirty_nine_local_h3_extensions_are_one_document_titles(self) -> None:
-        extensions = self.form["extensions"]
-        self.assertEqual(len(extensions), 39)
-        self.assertEqual(len({e["id"] for e in extensions}), 39)
-        by_id = {s["section_id"]: s for s in self.form["sections"]}
-        counts: dict[str, int] = {}
-        for item in extensions:
-            with self.subTest(extension=item["id"]):
-                self.assertEqual(item["kind"], "local_h3")
-                self.assertEqual(item["owner"], "platform")
-                self.assertEqual(item["verification"], "the form tree check")
-                for field in ("condition", "review", "removal", "title"):
-                    self.assertTrue(item[field])
-                parent = by_id[item["parent_id"]]
-                counts[parent["title"]] = counts.get(parent["title"], 0) + 1
-                self.assertNotIn(
-                    item["title"], [c["title"] for c in parent["children"]]
-                )
-        self.assertEqual(counts, self.EXTENSIONS_BY_H2)
-        under_sources = sorted(
-            e["title"]
-            for e in extensions
-            if e["parent_id"] == "reference-report-sources"
-        )
-        self.assertEqual(under_sources, ["Findings", "Limitations", "Recommendations"])
-        titles = [e["title"] for e in extensions]
-        self.assertTrue(
-            any("\u2014" in title and "2026-" in title for title in titles),
-            "a dated title keeps its em dash and date",
-        )
-
-    def test_the_six_profiles_hold_no_h2_list_and_the_pack_profiles_do_not_change(
+    def test_the_template_carries_the_core_schema_table_and_local_tables(
         self,
     ) -> None:
-        for profile_id in REFERENCE_FORM:
-            with self.subTest(profile=profile_id):
-                raw = profile_of(self.raw, profile_id)
-                self.assertEqual(raw["document_role"], "reference-report")
-                self.assertNotIn("sections", raw)
-                typed = self.profiles[profile_id]
-                self.assertEqual(typed.form.form_id, "reference-report")
-                self.assertEqual(
-                    CONTRACTS.heading_contract(typed).required, REFERENCE_H2
-                )
-        for profile_id in PACK_FORM:
-            self.assertEqual(
-                profile_of(self.raw, profile_id)["document_role"],
-                "reference-pack-readme",
-            )
-        bound = sorted(
-            p["id"]
-            for p in self.raw["profiles"]
-            if p.get("document_role") == "reference-report"
+        twin = profile_of(self.raw, DATA_REFERENCE[1])
+        tables = twin["template_definition"]["tables"]
+        (core,) = [t for t in tables if "table_id" in t]
+        self.assertEqual(core["table_id"], "data-reference.schema")
+        self.assertEqual(
+            [(c["key"], c["id"], c["data_type"]) for c in core["columns"]],
+            list(DATA_REFERENCE_SCHEMA),
         )
-        self.assertEqual(bound, sorted(REFERENCE_FORM))
+        local = [t["name"] for t in tables if "table_id" not in t]
+        self.assertEqual(local, ["Producer", "Source", "Generation command"])
+        dropped = load_raw()
+        table = next(
+            t
+            for t in profile_of(dropped, DATA_REFERENCE[1])["template_definition"][
+                "tables"
+            ]
+            if t.get("table_id") == "data-reference.schema"
+        )
+        table["columns"][2]["data_type"] = "string"
+        self.assertIn("REGISTRY_CORE_TABLE", rules_of(dropped))
 
-    def test_the_nine_tables_use_form_section_ids(self) -> None:
-        ids = {
-            n["section_id"] for s in self.form["sections"] for n in (s, *s["children"])
-        }
-        for twin, expected in REFERENCE_TABLES.items():
+    def test_the_registry_carries_the_core_table_and_the_record_stays_projected(
+        self,
+    ) -> None:
+        # SPEC-0222 WORK-001: the core table identity stays in the registry.
+        tables = profile_of(self.raw, DATA_REFERENCE[1])["template_definition"][
+            "tables"
+        ]
+        (core,) = [t for t in tables if "table_id" in t]
+        self.assertEqual(core["table_id"], "data-reference.schema")
+        self.assertEqual(
+            [c["id"] for c in core["columns"]],
+            [key for _, key, _ in DATA_REFERENCE_SCHEMA],
+        )
+        record = CONTRACTS.template_definition_record(self.raw, DATA_REFERENCE[1])
+        self.assertEqual(record_errors(record), [])
+        self.assertFalse(any("table_id" in t for t in record["tables"]))
+
+    def test_the_data_profiles_leave_the_reference_report_form(self) -> None:
+        for profile_id in DATA_REFERENCE:
+            with self.subTest(profile=profile_id):
+                self.assertEqual(
+                    profile_of(self.raw, profile_id)["document_role"],
+                    "data-reference",
+                )
+        self.assertNotIn(
+            "reference-report",
+            {f["form_id"] for f in self.raw["common_forms"]["forms"]},
+        )
+
+    def test_the_template_passes_the_form_tree(self) -> None:
+        twin = self.profiles[DATA_REFERENCE[1]]
+        path = PurePosixPath(twin.template)
+        text = (ROOT / path).read_text(encoding="utf-8")
+        found = MARKDOWN.validate_document_text(text, path, twin, "strict")
+        self.assertEqual([item.rule_id for item in found], [])
+        self.assertIn("| Field | Type | Unit | Meaning | Limits |", text)
+
+    def test_a_data_report_takes_the_core_tree_and_refuses_the_former_one(
+        self,
+    ) -> None:
+        self.assertEqual(self.rules(self.body()), [])
+        former = md(
+            "# Reference: Sample",
+            *(f"## {h2}\n\nThe {h2} text." for h2 in FORMER_REFERENCE_H2),
+        )
+        found = self.rules(former)
+        self.assertIn("BODY-HEADING-UNSUPPORTED", found)
+        self.assertIn("BODY-HEADING-REQUIRED", found)
+        missing = (
+            ("Purpose", ("Consumers",)),
+            *DATA_REFERENCE_TREE[1:],
+        )
+        self.assertEqual(self.rules(self.body(missing)), ["BODY-H3-REQUIRED"])
+
+
+class ResearchAuditFormTests(unittest.TestCase):
+    """SPEC-0222 WORK-008: the research and audit reports bind their core roles;
+    the thirteen published members keep their former H2 until Q07-CUTOVER."""
+
+    RES = "docs/90.references/research/0001-sample/m{:04d}-sample.md"
+    AUD = "docs/90.references/audits/0001-sample/m{:04d}-sample.md"
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.raw = load_raw()
+        cls.profiles = typed_profiles(cls.raw)
+        cls.forms = {f["form_id"]: f for f in cls.raw["common_forms"]["forms"]}
+
+    @staticmethod
+    def body(tree, extra: str = "") -> str:
+        blocks = ["# Reference: Sample"]
+        for h2, children in tree:
+            blocks.append(f"## {h2}")
+            blocks += [f"### {child}\n\nThe {child} text." for child in children]
+            if h2 == "Analysis" and extra:
+                blocks.append(extra)
+        return md(*blocks)
+
+    @staticmethod
+    def former() -> str:
+        return md(
+            "# Reference: Sample",
+            *(f"## {h2}\n\nThe {h2} text." for h2 in FORMER_REFERENCE_H2),
+        )
+
+    def rules(self, profile_id: str, path: str, text: str, status: str) -> list[str]:
+        return sorted(
+            item.rule_id
+            for item in MARKDOWN._body_diagnostics(
+                PurePosixPath(path), self.profiles[profile_id], text, status
+            )
+        )
+
+    def test_the_forms_carry_their_core_members_and_tables(self) -> None:
+        for form_id, purpose, table_id, columns in (
+            (
+                "research",
+                "외부 근거의 적용 가능한 의미",
+                "research.sources",
+                RESEARCH_SOURCES,
+            ),
+            ("audit", "주장과 증거 사이 차이", "audit.findings", AUDIT_FINDINGS),
+        ):
+            form = self.forms[form_id]
+            with self.subTest(form=form_id):
+                self.assertEqual(form["core_role"], form_id)
+                self.assertEqual(form["core"]["purpose"], purpose)
+                (table,) = form["core"]["tables"]
+                self.assertEqual(
+                    (table["table_id"], table["section_id"], table["required_when"]),
+                    (table_id, table_id, "always"),
+                )
+                self.assertEqual(
+                    [(c["label"], c["key"], c["value_type"]) for c in table["columns"]],
+                    list(columns),
+                )
+                for item in form["sections"]:
+                    for node in (item, *item["children"]):
+                        self.assertEqual(node["condition"], "always")
+                        self.assertEqual(node["core"]["required_when"], "always")
+        classification = self.forms["audit"]["core"]["tables"][0]["columns"][3]
+        self.assertEqual(
+            classification["allowed_values"],
+            ["confirmed", "gap", "conflict", "unverified", "not-applicable"],
+        )
+        self.assertNotIn("reference-report", self.forms)
+        self.assertEqual(rules_of(self.raw), set())
+
+    def test_the_templates_carry_the_core_tables_and_pass_the_tree(self) -> None:
+        for twin, header, columns in (
+            (RESEARCH[1], "| Source ID | Source | Version |", RESEARCH_SOURCES),
+            (AUDIT[1], "| Finding ID | Requirement | Evidence |", AUDIT_FINDINGS),
+        ):
             with self.subTest(twin=twin):
                 tables = profile_of(self.raw, twin)["template_definition"]["tables"]
+                (core,) = [t for t in tables if "table_id" in t]
                 self.assertEqual(
-                    [
-                        (
-                            t["name"],
-                            t["section"],
-                            tuple(c["key"] for c in t["columns"]),
-                            t["minimum_rows"],
-                            t["row_identity"],
-                        )
-                        for t in tables
-                    ],
-                    expected,
+                    [(c["key"], c["id"], c["data_type"]) for c in core["columns"]],
+                    list(columns),
                 )
-                for table in tables:
-                    self.assertIn(table["section"], ids)
-                    self.assertFalse(table["section"].startswith("#"))
-        self.assertEqual(sum(len(v) for v in REFERENCE_TABLES.values()), 9)
-
-    def test_a_table_section_must_be_a_form_section_id(self) -> None:
-        twin = "common/template-reference-research"
-        for section_text in (
-            "### Claim-Source Matrix",
-            "## Sources",
-            "reference-report-nope",
-        ):
-            raw = load_raw()
-            profile_of(raw, twin)["template_definition"]["tables"][0]["section"] = (
-                section_text
-            )
-            with self.subTest(section=section_text):
-                self.assertIn("REGISTRY_TABLE_SECTION", rules_of(raw))
-        self.assertEqual(rules_of(load_raw()), set())
-
-    def test_the_twin_definitions_say_the_role_has_its_own_form(self) -> None:
-        for twin in REFERENCE_TABLES:
-            definition_ = profile_of(self.raw, twin)["template_definition"]
-            with self.subTest(twin=twin):
-                first, second = definition_["non_goals"][:2]
-                self.assertNotIn("has no form", first)
-                self.assertIn("own local form", first)
-                for needle in ("W03-D20", "W03-D26", "W03-D35", "W03-D36"):
-                    self.assertIn(needle, first)
-                self.assertIn("COMMON-DOC-FORM-1", first)
-                self.assertIn("owned by the form", second)
-                for path in (
-                    "scripts/validate-document-contract-registry.py",
-                    "scripts/validation/repository/form_contracts.py",
-                    "scripts/validation/repository/quality.py",
-                ):
-                    self.assertIn(path, definition_["consumer_paths"])
-                    self.assertTrue((ROOT / path).is_file())
-                self.assertEqual(
-                    len(definition_["consumer_paths"]),
-                    len(set(definition_["consumer_paths"])),
-                )
-                text = json.dumps(definition_["validation"])
-                self.assertIn("form tree check", text)
-                self.assertNotIn("heading line", text)
-                self.assertIn("SPEC-0189", definition_["migration"]["meaning_map"])
-        research = profile_of(self.raw, "common/template-reference-research")
-        self.assertIn(
-            "W03-D21", research["template_definition"]["migration"]["meaning_map"]
-        )
-
-    def test_the_three_templates_pass_the_form_tree(self) -> None:
-        for template in ("audit", "research", "data"):
-            twin = self.profiles[f"common/template-reference-{template}"]
-            with self.subTest(template=template):
-                path = PurePosixPath(twin.template)
+                typed = self.profiles[twin]
+                path = PurePosixPath(typed.template)
                 text = (ROOT / path).read_text(encoding="utf-8")
-                found = MARKDOWN.validate_document_text(text, path, twin, "strict")
+                found = MARKDOWN.validate_document_text(text, path, typed, "strict")
                 self.assertEqual([item.rule_id for item in found], [])
+                self.assertIn(header, text)
 
-    def test_a_report_of_each_kind_passes_the_tree(self) -> None:
-        for profile_id, (_, h3) in self.KINDS.items():
-            with self.subTest(profile=profile_id):
-                self.assertEqual(self.rules(profile_id, self.body(h3)), [])
-
-    def test_a_research_report_refuses_an_audit_subheading(self) -> None:
-        wrong = {**self.RESEARCH_H3, "Scope": ("Criteria and Inspected Surface",)}
-        self.assertEqual(self.research(self.body(wrong)), ["BODY-HEADING-INAPPLICABLE"])
-
-    def test_a_report_with_no_h3_passes_and_a_missing_conditional_h3_passes(
-        self,
-    ) -> None:
-        self.assertEqual(self.research(self.body({})), [])
-        partial = {**self.RESEARCH_H3, "Scope": ("Research Questions",)}
-        self.assertEqual(self.research(self.body(partial)), [])
-
-    def test_a_missing_or_renamed_required_h2_fails(self) -> None:
-        text = self.body(self.RESEARCH_H3)
-        missing = text.replace("## Related Documents\n\n- [Owner](owner.md)\n", "")
-        self.assertEqual(self.research(missing), ["BODY-HEADING-REQUIRED"])
-        renamed = text.replace("## Reference Type", "## Kind")
+    def test_the_retained_form_binds_only_the_published_members(self) -> None:
+        research, audit = "reference/research", "reference/audit"
         self.assertEqual(
-            self.research(renamed),
-            ["BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"],
-        )
-
-    def test_a_reordered_h2_fails(self) -> None:
-        text = self.body({})
-        swapped = (
-            text.replace("## Scope", "## @@")
-            .replace("## Overview", "## Scope")
-            .replace("## @@", "## Overview")
-        )
-        self.assertEqual(self.research(swapped), ["BODY-H2-ORDER"])
-
-    def test_a_reordered_conditional_h3_fails(self) -> None:
-        swapped = {**self.RESEARCH_H3, "Scope": ("Method", "Research Questions")}
-        self.assertEqual(self.research(self.body(swapped)), ["BODY-H3-ORDER"])
-
-    def test_an_unregistered_h3_is_refused(self) -> None:
-        stray = {**self.RESEARCH_H3, "Scope": ("Research Questions", "Stray")}
-        self.assertEqual(self.research(self.body(stray)), ["BODY-H3-UNSUPPORTED"])
-
-    def test_an_h3_under_the_wrong_h2_is_refused(self) -> None:
-        wrong = {**self.RESEARCH_H3, "Sources": ("Method",)}
-        self.assertEqual(self.research(self.body(wrong)), ["BODY-H3-PARENT"])
-
-    def test_a_duplicate_h3_is_refused(self) -> None:
-        twice = {**self.RESEARCH_H3, "Scope": ("Method", "Method")}
-        self.assertIn("BODY-H3-DUPLICATE", self.research(self.body(twice)))
-
-    def test_a_registered_extension_is_accepted_only_under_its_h2_and_member(
-        self,
-    ) -> None:
-        item = next(
-            e for e in self.form["extensions"] if e["parent_id"].endswith("-sources")
-        )
-        under_sources = {**self.RESEARCH_H3, "Sources": (item["title"],)}
-        current = self.body(under_sources)
-        bound = PurePosixPath("docs/90.references/research/0002-sample/m0001-sample.md")
-        self.assertFalse(
-            MARKDOWN._body_diagnostics(
-                bound, self.profiles["reference/research"], current, "published"
-            )
-        )
-        self.assertEqual(self.research(current), ["BODY-HEADING-INAPPLICABLE"])
-        under_scope = {**self.RESEARCH_H3, "Scope": (item["title"],)}
-        self.assertEqual(self.research(self.body(under_scope)), ["BODY-H3-PARENT"])
-
-    def test_a_historical_conditional_heading_is_bound_to_its_members(self) -> None:
-        body = self.body({"Scope": ("Historical scope",)})
-        bound = PurePosixPath("docs/90.references/research/0001-sample/m0004-sample.md")
-        self.assertFalse(
-            MARKDOWN._body_diagnostics(
-                bound, self.profiles["reference/research"], body, "published"
-            )
-        )
-        self.assertEqual(self.research(body), ["BODY-HEADING-INAPPLICABLE"])
-        wrong_pack = PurePosixPath(
-            "docs/90.references/research/0002-sample/m0004-sample.md"
+            self.rules(research, self.RES.format(1), self.former(), "published"), []
         )
         self.assertEqual(
-            [
-                item.rule_id
-                for item in MARKDOWN._body_diagnostics(
-                    wrong_pack, self.profiles["reference/research"], body, "published"
-                )
-            ],
-            ["BODY-HEADING-INAPPLICABLE"],
+            self.rules(research, self.RES.format(12), self.former(), "published"), []
         )
         self.assertEqual(
-            self.rules("reference/audit", body), ["BODY-HEADING-INAPPLICABLE"]
+            self.rules(audit, self.AUD.format(1), self.former(), "published"), []
         )
-        template = self.profiles["common/template-reference-research"]
-        self.assertEqual(
-            [
-                item.rule_id
-                for item in MARKDOWN._body_diagnostics(
-                    template.template, template, body, "draft"
-                )
-            ],
-            ["BODY-HEADING-INAPPLICABLE"],
-        )
-
-    def test_historical_member_bindings_reach_the_template_record(self) -> None:
-        record = CONTRACTS.template_definition_record(
-            self.raw, "common/template-reference-research"
-        )
-        scope = next(node for node in record["headings"] if node["title"] == "Scope")
-        historical = next(
-            child for child in scope["children"] if child["title"] == "Historical scope"
-        )
-        self.assertEqual(
-            historical["applicability"],
-            {
-                "source_profile_ids": ["reference/research"],
-                "artifact_ids": [
-                    "RES-0001-m0004",
-                    "RES-0001-m0005",
-                    "RES-0001-m0006",
-                    "RES-0001-m0009",
-                ],
-                "required": False,
-            },
-        )
-        findings = next(
-            extension
-            for extension in record["extensions"]
-            if "reference-extension-sources-findings " in extension["delta"]
-        )
-        self.assertEqual(findings["artifact_ids"], ["RES-0002-m0001"])
-
-    def test_historical_member_bindings_reject_invalid_selectors(self) -> None:
-        raw = copy.deepcopy(self.raw)
-        form = next(
-            form
-            for form in raw["common_forms"]["forms"]
-            if form["form_id"] == "reference-report"
-        )
-        applicability = form["sections"][0]["children"][0]["applicability"]
-        original = applicability["artifact_ids"]
-        for invalid in (
-            [],
-            [original[0]] * 2,
-            ["AUD-0001-m0004"],
-            [original[0] + "\n"],
+        for profile_id, path, status in (
+            (research, self.RES.format(13), "published"),
+            (research, self.RES.format(1), "draft"),
+            (audit, self.AUD.format(3), "published"),
         ):
-            with self.subTest(artifact_ids=invalid):
-                applicability["artifact_ids"] = invalid
-                self.assertEqual(rules_of(raw), {"REGISTRY_SCHEMA"})
-        applicability["artifact_ids"] = original
-        applicability["source_profile_ids"] = ["reference/audit"]
-        self.assertIn("REGISTRY_FORM_CONDITION", rules_of(raw))
-
-    def test_a_bare_or_empty_section_fails(self) -> None:
-        text = self.body(self.RESEARCH_H3)
-        empty = text.replace("The Overview text.", "")
-        self.assertEqual(self.research(empty), ["BODY-SECTION-EMPTY"])
-        hollow = text.replace("The Method text.", "")
-        self.assertEqual(self.research(hollow), ["BODY-SECTION-EMPTY"])
-
-    def test_only_sources_and_related_documents_accept_a_list_of_links(self) -> None:
-        text = self.body(self.RESEARCH_H3)
-        self.assertEqual(self.research(text), [])
-        plain = text.replace("The Overview text.", "- [a](a.md)")
-        self.assertEqual(self.research(plain), ["BODY-SECTION-EMPTY"])
-        listed = self.body({}, sources="- [a](https://example.com/a)\n- [b](b.md)")
-        self.assertEqual(self.research(listed), [])
-
-    def test_the_old_h2_lists_are_refused_on_a_profile_with_a_form(self) -> None:
-        raw = load_raw()
-        profile_of(raw, "reference/research")["sections"] = lists_of(
-            required=list(REFERENCE_H2)
+            with self.subTest(path=path, status=status):
+                self.assertIn(
+                    "BODY-HEADING-UNSUPPORTED",
+                    self.rules(profile_id, path, self.former(), status),
+                )
+        self.assertEqual(
+            self.rules(
+                research, self.RES.format(15), self.body(RESEARCH_TREE), "draft"
+            ),
+            [],
         )
-        self.assertIn("REGISTRY_FORM_LEGACY_LISTS", semantic_rules_of(raw))
+        self.assertEqual(
+            self.rules(audit, self.AUD.format(3), self.body(AUDIT_TREE), "draft"), []
+        )
+
+    def test_the_extensions_name_their_authority_and_removal(self) -> None:
+        for form_id in ("research", "audit"):
+            for extension in self.forms[form_id]["extensions"]:
+                with self.subTest(extension=extension["id"]):
+                    self.assertEqual(extension["authority_ref"], "SPEC-0222")
+                    if extension["kind"] == "retained_form":
+                        self.assertIn("Q07-CUTOVER", extension["removal"])
+                        self.assertEqual(extension["statuses"], ["published"])
+
+    def test_the_claim_matrix_is_a_local_h3_under_analysis_only(self) -> None:
+        research = "reference/research"
+        path = self.RES.format(15)
+        matrix = "### Claim-Source Matrix\n\nThe matrix text."
+        self.assertEqual(
+            self.rules(research, path, self.body(RESEARCH_TREE, matrix), "draft"), []
+        )
+        wrong = self.body(RESEARCH_TREE).replace(
+            "### Primary Sources", matrix + "\n\n### Primary Sources"
+        )
+        self.assertIn("BODY-H3-PARENT", self.rules(research, path, wrong, "draft"))
+
+    def test_artifact_ids_stay_on_the_research_form_only(self) -> None:
+        raw = load_raw()
+        guide = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
+        guide["extensions"][0]["artifact_ids"] = ["RES-0001-m0001"]
+        self.assertIn("REGISTRY_FORM_EXTENSION", rules_of(raw))
 
 
 REQUIREMENT_PATH = PurePosixPath(
     "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md"
 )
-REQUIREMENT_HEADER = (*REQUIREMENT_COLUMNS, *REQUIREMENT_OPTIONAL)
+REQUIREMENT_HEADER = REQUIREMENT_COLUMNS
 OLD_REQUIREMENT_HEADER = (
     "Requirement ID",
     "Requirement",
@@ -5772,7 +5929,7 @@ def requirement_table(
     for number in range(1, rows + 1):
         cells = {
             "Requirement ID": f"REQ-0001-{kind}-{number:04d}",
-            "Priority": "Must",
+            "Priority": "must",
         }
         lines.append(
             "| " + " | ".join(cells.get(key, f"A {key} cell.") for key in header) + " |"
@@ -5836,7 +5993,8 @@ class RequirementFormTests(unittest.TestCase):
             )
         )
 
-    def test_the_form_has_five_h2_ten_h3_and_one_conditional_section(self) -> None:
+    def test_the_form_has_four_h2_eight_h3_all_required(self) -> None:
+        # SPEC-0222 WORK-003: the core requires Quality Requirements always.
         form = next(f for f in self.registry.common_forms if f.form_id == "requirement")
         self.assertEqual(form.title, "Requirement")
         self.assertEqual(
@@ -5844,10 +6002,7 @@ class RequirementFormTests(unittest.TestCase):
             list(REQUIREMENT_TREE),
         )
         every = [n for s in form.sections for n in (s, *s.children)]
-        self.assertEqual(
-            [n.title for n in every if n.requiredness != "required"],
-            ["Quality Requirements"],
-        )
+        self.assertEqual([n.title for n in every if n.requiredness != "required"], [])
         self.assertFalse(any(n.link_only for n in every))
         self.assertEqual(
             [(e.extension_id, e.parent_id, e.title) for e in form.extensions],
@@ -5900,12 +6055,11 @@ class RequirementFormTests(unittest.TestCase):
             },
             REQUIREMENT_TABLE_KEYS,
         )
+        self.assertTrue(all(c.required for t in twin.tables for c in t.columns))
+        (priority,) = (c for t in twin.tables for c in t.columns if c.key == "Priority")
         self.assertEqual(
-            [(t.name, c.key) for t in twin.tables for c in t.columns if not c.required],
-            [
-                ("Functional Requirements", "Priority"),
-                ("Quality Requirements", "Priority"),
-            ],
+            (priority.data_type, priority.allowed_values),
+            ("enum", ("must", "should", "could")),
         )
 
     def test_the_repository_registry_is_valid_and_its_twin_matches(self) -> None:
@@ -5942,15 +6096,42 @@ class RequirementFormTests(unittest.TestCase):
             definition_["vocabulary_refs"], [".agents/knowledge/glossary.md"]
         )
 
-    def test_a_complete_document_passes_with_and_without_quality_requirements(
+    def test_a_complete_document_passes_and_quality_requirements_is_required(
         self,
     ) -> None:
-        for quality in (True, False):
-            with self.subTest(quality=quality):
-                body = requirement_body(quality=quality)
-                self.assertEqual(self.tree(body), [])
-                self.assertEqual(self.tables(body), [])
-        self.assertNotIn("Quality Requirements", requirement_body(quality=False))
+        body = requirement_body()
+        self.assertEqual(self.tree(body), [])
+        self.assertEqual(self.tables(body), [])
+        without = requirement_body(quality=False)
+        self.assertNotIn("Quality Requirements", without)
+        self.assertEqual(self.tree(without), ["BODY-H3-REQUIRED"])
+
+    def test_a_priority_outside_the_core_values_is_refused(self) -> None:
+        body = requirement_body()
+        for value in ("Must", "high", ""):
+            with self.subTest(value=value):
+                changed = body.replace("| must |", f"| {value} |", 1)
+                self.assertNotEqual(changed, body)
+                found = [
+                    item.rule_id
+                    for item in MARKDOWN._core_table_diagnostics(
+                        REQUIREMENT_PATH, self.profile, changed, "approved"
+                    )
+                ]
+                self.assertEqual(found, ["BODY-CORE-TABLE-CELL"])
+        # A row of author prompts is the author-prompt check's, not a value.
+        prompt_row = (
+            "| "
+            + " | ".join(
+                f"<!-- Author prompt: Name the {key}. -->" for key in REQUIREMENT_HEADER
+            )
+            + " |"
+        )
+        prompt = body.replace(
+            requirement_table(), requirement_table() + "\n" + prompt_row, 1
+        )
+        self.assertIn(prompt_row, prompt)
+        self.assertEqual(self.tables(prompt), [])
 
     def test_declared_nfr_needs_its_quality_member(self) -> None:
         frontmatter = (
@@ -6010,7 +6191,9 @@ class RequirementFormTests(unittest.TestCase):
         moved = body.replace(quality + "\n\n", "").replace(
             "## Scope", quality + "\n\n## Scope"
         )
-        self.assertEqual(self.tree(moved), ["BODY-H3-PARENT"])
+        # SPEC-0222 WORK-003: Quality Requirements is required, so moving it
+        # also leaves Requirements without it.
+        self.assertEqual(self.tree(moved), ["BODY-H3-PARENT", "BODY-H3-REQUIRED"])
 
     def test_archived_lineage_and_lifecycle_traceability_belong_under_traceability(
         self,
@@ -6032,13 +6215,14 @@ class RequirementFormTests(unittest.TestCase):
             requirement_table(), requirement_table(OLD_REQUIREMENT_HEADER)
         )
         self.assertEqual(self.tables(old), ["BODY-TABLE-COLUMNS"])
-        for header in (REQUIREMENT_HEADER, REQUIREMENT_COLUMNS):
-            with self.subTest(header=header):
-                body = requirement_body().replace(
-                    requirement_table(), requirement_table(header)
-                )
-                self.assertEqual(self.tables(body), [])
+        body = requirement_body().replace(
+            requirement_table(), requirement_table(REQUIREMENT_HEADER)
+        )
+        self.assertEqual(self.tables(body), [])
+        # SPEC-0222 WORK-003: the core requires Priority, so the former
+        # four-column header without it no longer passes.
         for header in (
+            REQUIREMENT_HEADER[:-1],
             REQUIREMENT_HEADER[:-2],
             (
                 REQUIREMENT_HEADER[0],
@@ -6058,13 +6242,32 @@ class RequirementFormTests(unittest.TestCase):
     def test_a_header_only_functional_table_fails_and_a_header_only_quality_passes(
         self,
     ) -> None:
+        def rules(text: str) -> list[str]:
+            # The core table counts rows across both H3; the quality check keeps
+            # the functional minimum of one member (SPEC-0222 WORK-003).
+            return sorted(
+                [
+                    *self.tables(text),
+                    *(
+                        item.rule_id
+                        for item in MARKDOWN._requirement_quality_diagnostics(
+                            REQUIREMENT_PATH, self.profile, text
+                        )
+                    ),
+                ]
+            )
+
         body = requirement_body()
         empty_quality = body.replace(
             requirement_table(kind="NFR"), requirement_table(kind="NFR", rows=0)
         )
-        self.assertEqual(self.tables(empty_quality), [])
+        self.assertEqual(rules(empty_quality), [])
         empty_functional = body.replace(requirement_table(), requirement_table(rows=0))
-        self.assertEqual(self.tables(empty_functional), ["BODY-TABLE-ROWS"])
+        self.assertEqual(rules(empty_functional), ["BODY-TABLE-ROWS"])
+        both = empty_functional.replace(
+            requirement_table(kind="NFR"), requirement_table(kind="NFR", rows=0)
+        )
+        self.assertEqual(rules(both), ["BODY-TABLE-ROWS", "BODY-TABLE-ROWS"])
 
     def test_the_body_contract_table_is_not_read_as_a_requirement_table(self) -> None:
         body = requirement_body()
@@ -6385,7 +6588,9 @@ class TemplateTwinTableTests(unittest.TestCase):
 
     def test_a_second_twin_without_tables_is_not_refused(self) -> None:
         raw = self.second_twin(load_raw(), tables=False)
-        self.assertEqual(rules_of(raw), set())
+        # SPEC-0222: the twin rule stays silent; the core rule still asks every
+        # guide template for the core guide.steps table.
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_TABLE"})
 
 
 class RetainedFormTests(unittest.TestCase):
@@ -6412,6 +6617,7 @@ class RetainedFormTests(unittest.TestCase):
             "verification": "tests/test_common_form_tree.py",
             "review": "each release",
             "removal": "when no accepted ADR keeps the old headings",
+            "authority_ref": "ADR-0059",
             "statuses": ["accepted"],
             "retained_sections": {
                 "required": ["Context", "Decision", "Consequences"],
@@ -6648,18 +6854,31 @@ ADR_PATH = PurePosixPath("docs/02.architecture/decisions/0062-example.md")
 
 
 def adr_body(*, supersession: bool = True) -> str:
+    """A form-tree ADR: Sources and the optional Supersession stay as H4 under
+    Authority and Effect, and Lifecycle Traceability is the local H3 of Decision."""
+
     blocks = ["# ADR-0062: Decision title"]
     for h2, children in ADR_TREE:
         blocks.append(f"## {h2}")
         for h3 in children:
-            if h3 != "Supersession" or supersession:
-                blocks.append(f"### {h3}\n\nThe {h3} of the decision.")
-    blocks.append(
-        "### Lifecycle Traceability\n\n"
-        "| Decision lineage | Replacement relation | Affected Spec |\n"
-        "| --- | --- | --- |\n"
-        "| Architecture owner | N/A | N/A |"
-    )
+            blocks.append(f"### {h3}\n\nThe {h3} of the decision.")
+            if h3 == "Trade-offs":
+                blocks.append(
+                    "| Option | Benefit | Cost and Risk | Reason |\n"
+                    "| --- | --- | --- | --- |\n"
+                    "| One way | It is simple. | It is slow. | Chosen. |"
+                )
+            if h3 == "Authority and Effect":
+                blocks.append("#### Sources\n\nThe sources of the decision.")
+                if supersession:
+                    blocks.append("#### Supersession\n\nNo predecessor.")
+        if h2 == "Decision":
+            blocks.append(
+                "### Lifecycle Traceability\n\n"
+                "| Decision lineage | Replacement relation | Affected Spec |\n"
+                "| --- | --- | --- |\n"
+                "| Architecture owner | N/A | N/A |"
+            )
     return md(*blocks)
 
 
@@ -6674,16 +6893,14 @@ class AdrFormTests(unittest.TestCase):
         cls.profile = cls.profiles[ADR[0]]
         cls.form = next(f for f in cls.registry.common_forms if f.form_id == "adr")
 
-    def test_the_form_has_five_h2_ten_h3_and_one_conditional_h3(self) -> None:
+    def test_the_form_has_the_four_core_h2_and_eight_required_h3(self) -> None:
         self.assertEqual(self.form.title, "ADR")
         self.assertEqual(
             [(s.title, tuple(c.title for c in s.children)) for s in self.form.sections],
             list(ADR_TREE),
         )
         every = [n for s in self.form.sections for n in (s, *s.children)]
-        self.assertEqual(
-            [n.title for n in every if n.requiredness != "required"], ["Supersession"]
-        )
+        self.assertEqual([n.title for n in every if n.requiredness != "required"], [])
         self.assertFalse(any(n.link_only for n in every))
 
     def test_the_form_registers_one_local_h3_and_one_bounded_retained_form(
@@ -6692,11 +6909,15 @@ class AdrFormTests(unittest.TestCase):
         local, retained = self.form.extensions
         self.assertEqual(
             (local.kind, local.parent_id, local.title),
-            ("local_h3", "adr-traceability", "Lifecycle Traceability"),
+            ("local_h3", "decision.decision", "Lifecycle Traceability"),
         )
         self.assertEqual(
             (retained.kind, retained.statuses, retained.identity_bound),
             ("retained_form", ("accepted",), ADR_BOUND),
+        )
+        # The retained ADRs keep reading their lifecycle table under Traceability.
+        self.assertEqual(
+            retained.body_contract, ("Traceability", "Lifecycle Traceability")
         )
         self.assertEqual(
             retained.retained.required, tuple(ADR_RETAINED_LISTS["required"])
@@ -6710,7 +6931,7 @@ class AdrFormTests(unittest.TestCase):
                 self.assertNotIn("sections", raw)
                 self.assertEqual(raw["document_role"], "adr")
                 contract = raw["relationships"]["body_contract"]
-                self.assertEqual(contract["section"], "Traceability")
+                self.assertEqual(contract["section"], "Decision")
                 self.assertEqual(contract["table_heading"], "Lifecycle Traceability")
                 self.assertEqual(
                     contract["required_columns"],
@@ -6718,7 +6939,7 @@ class AdrFormTests(unittest.TestCase):
                 )
                 self.assertEqual(contract["enforced_statuses"], ["proposed"])
 
-    def test_the_two_tables_are_recorded_on_the_twin_and_copied_to_the_source(
+    def test_the_tables_are_recorded_on_the_twin_and_copied_to_the_source(
         self,
     ) -> None:
         twin, source = (self.profiles[i] for i in reversed(ADR))
@@ -6847,13 +7068,28 @@ class AdrFormTests(unittest.TestCase):
                     self.assertRegex(
                         text, rf"(?m)^### {re.escape(h3)}\n\n<!-- Author prompt:"
                     )
-        for gone in ("## Overview", "## Explicit Non-goals"):
+        # SPEC-0222: the former Traceability H3 stay as H4 under Authority and
+        # Effect, and the local Lifecycle Traceability H3 closes Decision.
+        self.assertRegex(
+            text,
+            r"(?s)### Authority and Effect\n.*\n#### Sources\n\n<!-- Author prompt:"
+            r".*\n#### Supersession\n\n<!-- Author prompt:"
+            r".*\n### Lifecycle Traceability\n.*\n## Consequences\n",
+        )
+        for gone in (
+            "## Overview",
+            "## Explicit Non-goals",
+            "## Alternatives",
+            "## Traceability",
+        ):
             self.assertNotIn(gone, text)
 
 
 # SPEC-0196 (W03-D56, W03-D65): the full TemplateDefinition record.
 RECORD_SCHEMA = ROOT / "docs/99.templates/contracts/template-definition.schema.json"
-COMMON_RECORD_ROLES = frozenset(FORM_IDS[:16])
+# SPEC-0222: the research, audit and data-reference core-role forms outside the
+# first sixteen also take the common contract.
+COMMON_RECORD_ROLES = frozenset(FORM_IDS[:16]) | {"research", "audit", "data-reference"}
 SDLC_ROLES = frozenset(FORM_IDS[:6])
 HEADINGS_EXTENSION = {
     "id": "provider-native-empty-headings",
@@ -6878,13 +7114,14 @@ def record_errors(record: dict) -> list:
 
 
 def form_headings(item: dict) -> dict:
-    """The form section as a package heading: every field but the local flag."""
+    """The form section as a package heading: every field but the local flag and
+    the section core members, which stay in the registry (SPEC-0222)."""
 
     return {
         **{
             key: value
             for key, value in item.items()
-            if key not in {"link_only", "children"}
+            if key not in {"link_only", "children", "core"}
         },
         "children": [form_headings(child) for child in item["children"]],
     }
@@ -6967,12 +7204,37 @@ class TemplateRecordTests(unittest.TestCase):
                     "policy_refs",
                     "vocabulary_refs",
                     "applicability",
-                    "tables",
                     "consumer_paths",
                     "validation",
                     "migration",
                 ):
                     self.assertEqual(record[key], definition[key])
+                # SPEC-0222: the record keeps its own table fields; a core table's
+                # binding stays in the registry.
+                self.assertEqual(
+                    record["tables"],
+                    [
+                        {
+                            "name": table["name"],
+                            "section": table["section"],
+                            "columns": [
+                                {
+                                    key: column[key]
+                                    for key in (
+                                        "key",
+                                        "meaning",
+                                        "data_type",
+                                        "required",
+                                    )
+                                }
+                                for column in table["columns"]
+                            ],
+                            "minimum_rows": table["minimum_rows"],
+                            "row_identity": table["row_identity"],
+                        }
+                        for table in definition["tables"]
+                    ],
+                )
                 form = self.forms.get(profile["document_role"])
                 self.assertEqual(
                     record["headings"],
@@ -7019,9 +7281,7 @@ class TemplateRecordTests(unittest.TestCase):
                 if role in COMMON_RECORD_ROLES
                 else (
                     "STAGE99-LOCAL-FORM-1",
-                    "2.0.0"
-                    if role in {"reference-pack-readme", "reference-report"}
-                    else "1.0.0",
+                    "2.0.0" if role == "reference-pack-readme" else "1.0.0",
                 )
             )
             definition = profile["template_definition"]
@@ -7795,6 +8055,7 @@ class FormlessRoleTableTests(unittest.TestCase):
         ],
         "minimum_rows": 0,
         "row_identity": "Key",
+        "authority_ref": "ADR-0059",
     }
 
     def test_a_table_on_a_role_without_a_form_fails(self) -> None:
@@ -7850,7 +8111,7 @@ class TaskFormTests(unittest.TestCase):
         cls.registry = CONTRACTS.load_registry(ROOT)
         cls.profiles = {p.profile_id: p for p in cls.registry.profiles}
 
-    def test_the_form_has_the_common_sections_and_three_registered_extensions(
+    def test_the_form_has_the_common_sections_and_two_registered_extensions(
         self,
     ) -> None:
         form = next(f for f in self.registry.common_forms if f.form_id == "task")
@@ -7865,11 +8126,9 @@ class TaskFormTests(unittest.TestCase):
             f for f in self.raw["common_forms"]["forms"] if f["form_id"] == "task"
         )
         self.assertEqual(raw_form["extensions"], SDLC_TASK_FORM_EXTENSIONS)
-        columns = next(e for e in form.extensions if e.kind == "local_columns")
-        self.assertEqual(
-            (columns.table, columns.columns),
-            ("Results", ("Work Unit", "Location", "Required", "Resolves")),
-        )
+        # SPEC-0222: the core evidence table names Work Unit, Location, Required
+        # and Resolves, so no column extension remains.
+        self.assertEqual({e.kind for e in form.extensions}, {"local_h3"})
 
     def test_the_two_profiles_carry_no_h2_list_and_the_moved_contract_and_binding(
         self,
@@ -7937,18 +8196,25 @@ class TaskFormTests(unittest.TestCase):
             {"BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"}, tree(old)
         )
 
-    def test_a_column_extension_without_its_table_or_columns_is_refused(self) -> None:
-        for drop in ("table", "columns"):
-            with self.subTest(drop=drop):
-                raw = copy.deepcopy(self.raw)
-                form = next(
-                    f for f in raw["common_forms"]["forms"] if f["form_id"] == "task"
-                )
-                extension = next(
-                    e for e in form["extensions"] if e["kind"] == "local_columns"
-                )
-                del extension[drop]
-                self.assertTrue(rules_of(raw))
+    def test_a_column_extension_is_refused(self) -> None:
+        # SPEC-0222: no local table column extends a core table.
+        raw = copy.deepcopy(self.raw)
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "task")
+        form["extensions"].append(
+            {
+                "id": "task-extra-columns",
+                "kind": "local_columns",
+                "condition": "c",
+                "owner": "platform",
+                "verification": "v",
+                "review": "r",
+                "removal": "x",
+                "authority_ref": "SPEC-0222",
+                "table": "Results",
+                "columns": ["Extra"],
+            }
+        )
+        self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
         raw = copy.deepcopy(self.raw)
         form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "task")
         next(e for e in form["extensions"] if e["id"] == "task-lifecycle-traceability")[
@@ -7956,14 +8222,14 @@ class TaskFormTests(unittest.TestCase):
         ] = ["Extra"]
         self.assertTrue(rules_of(raw))
 
-    def test_the_version_before_the_column_extension_kind_refuses_it(self) -> None:
+    def test_the_extension_kinds_are_the_local_h3_and_the_retained_form(self) -> None:
         schema = json.loads(
             (
                 ROOT / "docs/99.templates/contracts/document-profile.schema.json"
             ).read_text(encoding="utf-8")
         )
         kinds = schema["$defs"]["form_extension"]["properties"]["kind"]["enum"]
-        self.assertEqual(kinds, ["local_h3", "retained_form", "local_columns"])
+        self.assertEqual(kinds, ["local_h3", "retained_form"])
 
 
 class HeadingListRemovalTests(unittest.TestCase):
@@ -8250,6 +8516,1391 @@ class MeaningMapRecoveryPointerTests(unittest.TestCase):
             match = pointer.search(text)
             self.assertIsNotNone(match, text)
             self.assertEqual(re.search(r"SPEC-[0-9]{4}", text).group(0), match[1])
+
+
+def core_bound_guide(raw: dict) -> dict:
+    """SPEC-0222: bind the guide form to a small synthetic core whose one table
+    the guide template carries exactly; the real core members arrive per unit."""
+
+    form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
+    columns = [
+        {
+            "key": "step",
+            "label": "Step",
+            "value_type": "integer",
+            "meaning": "order",
+            "required": True,
+        },
+        {
+            "key": "action",
+            "label": "Action",
+            "value_type": "enum",
+            "meaning": "allowed action",
+            "required": True,
+            "allowed_values": ["run", "check"],
+        },
+    ]
+    form["core_role"] = "guide"
+    form["core"] = {
+        "purpose": "p",
+        "non_goals": "n",
+        "metadata_policy": {},
+        "tables": [
+            {
+                "table_id": "guide.steps",
+                "section_id": "guide.steps",
+                "required_when": "ordered_procedure",
+                "columns": columns,
+                "empty_policy": "no invented rows",
+            }
+        ],
+        "language": {},
+        "status": "s",
+        "relationships": {},
+        "lifecycle": {},
+        "rules": ["r"],
+    }
+    stack = list(form["sections"])
+    while stack:
+        item = stack.pop()
+        stack.extend(item["children"])
+        item["core"] = {
+            "title_ko": "t",
+            "required_when": item["condition"],
+            "content_rule": "c",
+        }
+        if item["level"] == 2:
+            item["core"].update(prohibited_content="x", empty_policy="e")
+    table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
+    table.update(
+        table_id="guide.steps",
+        section="guide.steps",
+        required_when="ordered_procedure",
+        empty_policy="no invented rows",
+        columns=[
+            {
+                "key": c["label"],
+                "id": c["key"],
+                "data_type": c["value_type"],
+                "meaning": c["meaning"],
+                "required": c["required"],
+                **(
+                    {"allowed_values": c["allowed_values"]}
+                    if "allowed_values" in c
+                    else {}
+                ),
+            }
+            for c in columns
+        ],
+    )
+    return raw
+
+
+def unbind_guide(raw: dict) -> dict:
+    """SPEC-0222: the guide form without its core binding, so that a test of a
+    local table rule can use the guide tables as a plain local fixture."""
+
+    form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
+    del form["core_role"], form["core"]
+    stack = list(form["sections"])
+    while stack:
+        item = stack.pop()
+        stack.extend(item["children"])
+        del item["core"]
+    for table in guide_tables(raw):
+        for key in ("table_id", "required_when", "empty_policy"):
+            table.pop(key, None)
+        table.setdefault("authority_ref", "ADR-0059")
+        for column in table["columns"]:
+            column.pop("id", None)
+    return raw
+
+
+# SPEC-0222 WORK-005: the README and skill forms bind their core roles; each
+# template of a role carries the role's core tables with these columns.
+README_CORE_PATHS = (
+    ("Path", "path", "path", "정규 위치"),
+    ("Purpose", "purpose", "string", "독자가 찾을 내용"),
+)
+README_CORE_BINDINGS = {
+    "root-readme": (
+        "사람의 진입·사용·탐색",
+        {"root-readme.paths": ("root-readme.map", "always", README_CORE_PATHS)},
+    ),
+    "stage-readme": (
+        "단계의 소유 내용·현재 탐색",
+        {"stage-readme.paths": ("stage-readme.contents", "always", README_CORE_PATHS)},
+    ),
+    "service-readme": (
+        "선택 서비스 사용과 경계",
+        {
+            "service-readme.interface": (
+                "service-readme.service",
+                "external_interface",
+                (
+                    ("Interface", "interface", "identifier", "경계"),
+                    ("Producer", "producer", "string", "생산자"),
+                    ("Consumer", "consumer", "string", "소비자"),
+                    ("Contract", "contract", "reference", "입출력 의미"),
+                    ("Failure", "failure", "string", "실패 처리"),
+                ),
+            )
+        },
+    ),
+    "skill": ("반복 가능한 호출형 절차", {}),
+}
+
+
+class ReadmeAndSkillCoreBindingTests(unittest.TestCase):
+    """SPEC-0222 VAL-CORE-001: root, stage and service README and skill forms."""
+
+    def test_each_form_binds_its_core_role_and_members(self) -> None:
+        raw = load_raw()
+        forms = {form["form_id"]: form for form in raw["common_forms"]["forms"]}
+        for role, (purpose, tables) in README_CORE_BINDINGS.items():
+            with self.subTest(role=role):
+                form = forms[role]
+                self.assertEqual(form.get("core_role"), role)
+                self.assertEqual(form["core"]["purpose"], purpose)
+                self.assertEqual(form["core"]["status"], "DESIGN_PROPOSAL_NOT_ADOPTED")
+                self.assertEqual(
+                    [table["table_id"] for table in form["core"]["tables"]],
+                    list(tables),
+                )
+                for section in form["sections"]:
+                    for item in (section, *section["children"]):
+                        self.assertEqual(
+                            item["core"]["required_when"], item["condition"]
+                        )
+        self.assertEqual(rules_of(raw), set())
+
+    def test_each_template_carries_its_core_tables_exactly(self) -> None:
+        raw = load_raw()
+        for role, (_, tables) in README_CORE_BINDINGS.items():
+            templates = [
+                profile
+                for profile in raw["profiles"]
+                if profile["mode"] == "template"
+                and profile.get("document_role") == role
+            ]
+            self.assertTrue(templates)
+            for profile in templates:
+                with self.subTest(profile=profile["id"]):
+                    core = [
+                        table
+                        for table in profile["template_definition"]["tables"]
+                        if "table_id" in table
+                    ]
+                    self.assertEqual(
+                        {
+                            table["table_id"]: (
+                                table["section"],
+                                table["required_when"],
+                                tuple(
+                                    (c["key"], c["id"], c["data_type"], c["meaning"])
+                                    for c in table["columns"]
+                                ),
+                            )
+                            for table in core
+                        },
+                        tables,
+                    )
+                    for table in core:
+                        self.assertTrue(all(c["required"] for c in table["columns"]))
+
+
+class CoreRoleBindingTests(unittest.TestCase):
+    """SPEC-0222 VAL-CORE-001: the registry carries the common core binding."""
+
+    def test_the_repository_records_the_core_identity_and_classifications(
+        self,
+    ) -> None:
+        raw = load_raw()
+        self.assertEqual(
+            raw["common_forms"]["core"]["contract_id"],
+            "workspace-document-role-design",
+        )
+        self.assertEqual(raw["common_forms"]["core"]["contract_version"], "4.0.0")
+        forms = raw["common_forms"]["forms"]
+        for form in forms:
+            for extension in form["extensions"]:
+                with self.subTest(extension=extension["id"]):
+                    self.assertTrue(extension["authority_ref"].strip())
+            if form.get("core_role") == "domain":
+                self.assertTrue(form["classification"]["authority_ref"].strip())
+        natives = [
+            p
+            for p in raw["profiles"]
+            if (p.get("template_definition") or {}).get("core_role") == "native"
+        ]
+        self.assertTrue(natives)
+        for profile in natives:
+            self.assertEqual(profile["document_role"], "provider-native")
+        self.assertEqual(rules_of(raw), set())
+
+    def test_the_schema_refuses_a_misplaced_or_missing_core_member(self) -> None:
+        cases = {}
+        raw = load_raw()
+        domain = next(
+            f for f in raw["common_forms"]["forms"] if f.get("core_role") == "domain"
+        )
+        domain["core"] = {}
+        cases["domain with core"] = raw
+        raw = load_raw()
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
+        self.assertEqual(form["core_role"], "guide")
+        del form["core"]
+        cases["core role without core"] = raw
+        raw = load_raw()
+        del raw["common_forms"]["forms"][0]["extensions"][0]["authority_ref"]
+        cases["extension without authority_ref"] = raw
+        raw = load_raw()
+        native = next(
+            p
+            for p in raw["profiles"]
+            if (p.get("template_definition") or {}).get("core_role") == "native"
+        )
+        del native["template_definition"]["classification"]
+        cases["native without classification"] = raw
+        for name, payload in cases.items():
+            with self.subTest(case=name):
+                self.assertIn("REGISTRY_SCHEMA", rules_of(payload))
+
+    def test_a_core_bound_form_with_its_exact_table_passes(self) -> None:
+        self.assertEqual(rules_of(core_bound_guide(load_raw())), set())
+
+    def test_each_table_drift_is_refused(self) -> None:
+        def drift(change) -> set[str]:
+            raw = core_bound_guide(load_raw())
+            table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
+            change(table)
+            return rules_of(raw)
+
+        cases = {
+            "relabeled column": lambda t: t["columns"][0].update(key="Order"),
+            "same label, other type": lambda t: t["columns"][0].update(
+                data_type="string"
+            ),
+            "appended column": lambda t: t["columns"].append(
+                {
+                    "key": "Note",
+                    "id": "note",
+                    "data_type": "string",
+                    "meaning": "m",
+                    "required": False,
+                }
+            ),
+            "reordered columns": lambda t: t["columns"].reverse(),
+            "dropped column": lambda t: t["columns"].pop(),
+            "same type, other allowed values": lambda t: t["columns"][1].update(
+                allowed_values=["run"]
+            ),
+            "allowed values dropped": lambda t: t["columns"][1].pop("allowed_values"),
+            "other condition": lambda t: t.update(required_when="always"),
+            "other section": lambda t: t.update(section="guide.purpose"),
+        }
+        for name, change in cases.items():
+            with self.subTest(case=name):
+                self.assertIn("REGISTRY_CORE_TABLE", drift(change))
+
+    def test_a_missing_core_table_or_section_member_is_refused(self) -> None:
+        raw = core_bound_guide(load_raw())
+        table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
+        for key in ("table_id", "required_when", "empty_policy"):
+            del table[key]
+        # A valid local table now, so only the missing core table is refused.
+        table["authority_ref"] = "ADR-0059"
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_TABLE"})
+        raw = core_bound_guide(load_raw())
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
+        del form["sections"][0]["core"]["empty_policy"]
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_SECTION"})
+
+    def test_a_core_table_id_outside_a_core_role_form_is_refused(self) -> None:
+        raw = unbind_guide(load_raw())
+        table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
+        del table["authority_ref"]
+        table.update(table_id="guide.steps", required_when="w", empty_policy="e")
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_TABLE"})
+
+    def test_a_repeated_core_table_id_cannot_hide_a_drifted_copy(self) -> None:
+        raw = core_bound_guide(load_raw())
+        tables = guide_tables(raw)
+        exact = next(t for t in tables if t["name"] == "Steps")
+        copy = json.loads(json.dumps(exact))
+        copy["name"] = "Shadow"
+        copy["columns"][0]["data_type"] = "string"
+        tables.insert(0, copy)
+        self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
+        raw = core_bound_guide(load_raw())
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
+        form["core"]["tables"].append(json.loads(json.dumps(form["core"]["tables"][0])))
+        self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
+
+    def test_an_extra_core_table_id_is_refused(self) -> None:
+        raw = core_bound_guide(load_raw())
+        table = next(t for t in guide_tables(raw) if t["name"] != "Steps")
+        del table["authority_ref"]
+        table.update(table_id="guide.other", required_when="w", empty_policy="e")
+        self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
+
+    def test_the_core_identity_is_required_once_a_form_binds_a_core_role(
+        self,
+    ) -> None:
+        raw = core_bound_guide(load_raw())
+        del raw["common_forms"]["core"]
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_IDENTITY"})
+
+    def test_a_native_core_role_only_on_a_form_less_provider_native_template(
+        self,
+    ) -> None:
+        raw = load_raw()
+        profile_of(raw, GUIDE[1])["template_definition"].update(
+            core_role="native",
+            classification={
+                "owner": "platform",
+                "reason": "r",
+                "review_trigger": "t",
+                "authority_ref": "a",
+            },
+        )
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_ROLE"})
+
+    def test_section_core_members_follow_the_core(self) -> None:
+        cases = {
+            "condition differs": lambda f: f["sections"][0].update(condition="x"),
+            "missing core": lambda f: f["sections"][0].pop("core"),
+            "H2 missing prohibited_content": lambda f: f["sections"][0]["core"].pop(
+                "prohibited_content"
+            ),
+            "H3 carries empty_policy": lambda f: f["sections"][0]["children"][0][
+                "core"
+            ].update(empty_policy="e"),
+        }
+        for name, change in cases.items():
+            with self.subTest(case=name):
+                raw = core_bound_guide(load_raw())
+                form = next(
+                    f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide"
+                )
+                change(form)
+                self.assertEqual(rules_of(raw), {"REGISTRY_CORE_SECTION"})
+
+
+OPERATIONS_CORE = {
+    "guide": {
+        "guide.steps": ("guide.steps", "ordered_procedure", CORE_STEP_COLUMNS),
+    },
+    "runbook": {
+        "runbook.steps": ("runbook.procedure", "always", CORE_STEP_COLUMNS),
+    },
+    "incident": {
+        "incident.actions": ("incident.response", "always", CORE_ACTION_COLUMNS),
+    },
+    "postmortem": {
+        "postmortem.actions": ("postmortem.actions", "always", CORE_ACTION_COLUMNS),
+    },
+    "policy": {
+        "policy.rules": ("policy.rules", "always", POLICY_RULES_COLUMNS),
+    },
+}
+OPERATIONS_TEMPLATES = {
+    "guide": GUIDE[1],
+    "runbook": RUNBOOK[1],
+    "incident": INCIDENT[1],
+    "postmortem": POSTMORTEM[1],
+    "policy": POLICY_GOVERNANCE[1],
+}
+
+
+class OperationsCoreBindingTests(unittest.TestCase):
+    """SPEC-0222 WORK-004: guide, runbook, incident and postmortem bind the core."""
+
+    @staticmethod
+    def form(raw: dict, role: str) -> dict:
+        return next(f for f in raw["common_forms"]["forms"] if f["form_id"] == role)
+
+    def test_each_form_binds_its_core_role_and_core_tables(self) -> None:
+        raw = load_raw()
+        for role, expected in OPERATIONS_CORE.items():
+            with self.subTest(role=role):
+                form = self.form(raw, role)
+                self.assertEqual(form["core_role"], role)
+                self.assertEqual(
+                    {
+                        t["table_id"]: (
+                            t["section_id"],
+                            t["required_when"],
+                            tuple(c["label"] for c in t["columns"]),
+                        )
+                        for t in form["core"]["tables"]
+                    },
+                    expected,
+                )
+                stack = list(form["sections"])
+                while stack:
+                    item = stack.pop()
+                    stack.extend(item["children"])
+                    self.assertEqual(item["condition"], "always")
+                    self.assertEqual(item["core"]["required_when"], "always")
+                tables = {
+                    t["table_id"]: t
+                    for t in profile_of(raw, OPERATIONS_TEMPLATES[role])[
+                        "template_definition"
+                    ]["tables"]
+                    if "table_id" in t
+                }
+                self.assertEqual(set(tables), set(expected))
+                for table_id, (section_id, condition, labels) in expected.items():
+                    table = tables[table_id]
+                    self.assertEqual(
+                        (table["section"], table["required_when"]),
+                        (section_id, condition),
+                    )
+                    self.assertEqual(tuple(c["key"] for c in table["columns"]), labels)
+                    self.assertEqual(table["row_identity"], labels[0])
+        self.assertEqual(rules_of(raw), set())
+
+    def test_the_core_value_types_reach_the_template_columns(self) -> None:
+        raw = load_raw()
+        types = {
+            role: [
+                (c["id"], c["data_type"])
+                for t in profile_of(raw, OPERATIONS_TEMPLATES[role])[
+                    "template_definition"
+                ]["tables"]
+                if "table_id" in t
+                for c in t["columns"]
+            ]
+            for role in OPERATIONS_CORE
+        }
+        steps = [
+            ("step", "integer"),
+            ("action", "string"),
+            ("expected", "string"),
+            ("on_failure", "string"),
+        ]
+        actions = [
+            ("action", "string"),
+            ("owner", "string"),
+            ("condition", "string"),
+            ("evidence", "reference-or-none"),
+        ]
+        policy = [
+            ("rule_id", "identifier"),
+            ("condition", "condition"),
+            ("requirement", "string"),
+            ("enforcement", "reference-or-none"),
+            ("evidence", "reference-or-none"),
+        ]
+        self.assertEqual(
+            types,
+            {
+                "guide": steps,
+                "runbook": steps,
+                "incident": actions,
+                "postmortem": actions,
+                "policy": policy,
+            },
+        )
+        # Both policy templates carry the same core table.
+        twins = [
+            next(
+                t
+                for t in profile_of(raw, template)["template_definition"]["tables"]
+                if "table_id" in t
+            )
+            for template in (POLICY_GOVERNANCE[1], POLICY_OPERATIONS[1])
+        ]
+        self.assertEqual(twins[0], twins[1])
+
+    def test_a_drifted_operations_core_table_is_refused(self) -> None:
+        cases = {
+            "relabeled": lambda t: t["columns"][0].update(key="Order"),
+            "other type": lambda t: t["columns"][0].update(data_type="text"),
+            "appended": lambda t: t["columns"].append(
+                {
+                    "key": "Note",
+                    "id": "note",
+                    "data_type": "string",
+                    "meaning": "m",
+                    "required": False,
+                }
+            ),
+            "other section": lambda t: t.update(section=t["section"] + ".1"),
+        }
+        for role in OPERATIONS_CORE:
+            for name, change in cases.items():
+                with self.subTest(role=role, case=name):
+                    raw = load_raw()
+                    table = next(
+                        t
+                        for t in profile_of(raw, OPERATIONS_TEMPLATES[role])[
+                            "template_definition"
+                        ]["tables"]
+                        if "table_id" in t
+                    )
+                    change(table)
+                    self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
+
+    def test_the_registry_carries_the_core_tables_and_the_record_stays_projected(
+        self,
+    ) -> None:
+        # SPEC-0222 WORK-001: the core binding of a table stays in the registry,
+        # which the core check reads; the record keeps its own table fields.
+        raw = load_raw()
+        for role, template in OPERATIONS_TEMPLATES.items():
+            with self.subTest(role=role):
+                tables = profile_of(raw, template)["template_definition"]["tables"]
+                self.assertEqual(
+                    {t["table_id"] for t in tables if "table_id" in t},
+                    set(OPERATIONS_CORE[role]),
+                )
+                record = CONTRACTS.template_definition_record(raw, template)
+                self.assertEqual(record_errors(record), [])
+                self.assertFalse(any("table_id" in t for t in record["tables"]))
+
+    def test_every_runbook_renders_the_always_core_steps_table(self) -> None:
+        # SPEC-0222: runbook.steps is always required; a runbook whose steps lack
+        # a stated Expected Result keeps its header-only table (W04-CONTENT).
+        profile = typed_profiles(load_raw())[RUNBOOK[0]]
+        paths = sorted((ROOT / "docs/05.operations/runbooks").glob("0*.md"))
+        self.assertTrue(paths)
+        for path in paths:
+            text = path.read_text(encoding="utf-8")
+            relative = PurePosixPath(path.relative_to(ROOT).as_posix())
+            with self.subTest(path=path.name):
+                section = MARKDOWN._exact_heading_section(text, "## Procedure")
+                headers = [
+                    tuple(header)
+                    for header, _ in MARKDOWN._visible_tables(section)
+                    if header[0] == "Step"
+                ]
+                self.assertEqual(headers, [CORE_STEP_COLUMNS])
+                self.assertEqual(
+                    MARKDOWN._table_diagnostics(relative, profile, text), []
+                )
+
+    def test_the_converted_runbook_passes_and_its_former_header_fails(self) -> None:
+        path = PurePosixPath(
+            "docs/05.operations/runbooks/0012-main-release-preparation-runbook.md"
+        )
+        text = (ROOT / path).read_text(encoding="utf-8")
+        profile = typed_profiles(load_raw())[RUNBOOK[0]]
+        self.assertIn("| Step | Action | Expected Result | On Failure |", text)
+        self.assertEqual(MARKDOWN._table_diagnostics(path, profile, text), [])
+        former = text.replace(
+            "| Step | Action | Expected Result | On Failure |",
+            "| Step | Action | Expected result | Stop / escalate when |",
+        )
+        self.assertEqual(
+            [d.rule_id for d in MARKDOWN._table_diagnostics(path, profile, former)],
+            ["BODY-TABLE-COLUMNS"],
+        )
+
+
+DECISION_CORE_TREE = [
+    ("decision.context", "문제와 조건", ["decision.context.1", "decision.context.2"]),
+    ("decision.options", "대안", ["decision.options.1", "decision.options.2"]),
+    ("decision.decision", "결정", ["decision.decision.1", "decision.decision.2"]),
+    (
+        "decision.consequences",
+        "영향",
+        ["decision.consequences.1", "decision.consequences.2"],
+    ),
+]
+DECISION_OPTIONS_COLUMNS = [
+    ("Option", "option"),
+    ("Benefit", "benefit"),
+    ("Cost and Risk", "cost"),
+    ("Reason", "reason"),
+]
+
+
+class DecisionCoreBindingTests(unittest.TestCase):
+    """SPEC-0222 WORK-006: the ADR form binds the core decision role."""
+
+    def test_the_adr_form_carries_the_decision_core_and_its_table(self) -> None:
+        raw = load_raw()
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "adr")
+        self.assertEqual(form["core_role"], "decision")
+        self.assertEqual(form["core"]["purpose"], "중요 설계 선택의 이유")
+        self.assertEqual(
+            [
+                (
+                    s["section_id"],
+                    s["core"]["title_ko"],
+                    [c["section_id"] for c in s["children"]],
+                )
+                for s in form["sections"]
+            ],
+            DECISION_CORE_TREE,
+        )
+        (core_table,) = form["core"]["tables"]
+        self.assertEqual(
+            (
+                core_table["table_id"],
+                core_table["section_id"],
+                core_table["required_when"],
+                [(c["label"], c["key"]) for c in core_table["columns"]],
+            ),
+            (
+                "decision.options",
+                "decision.options",
+                "always",
+                DECISION_OPTIONS_COLUMNS,
+            ),
+        )
+        table = next(
+            t
+            for t in profile_of(raw, ADR[1])["template_definition"]["tables"]
+            if t.get("table_id") == "decision.options"
+        )
+        self.assertEqual(
+            [(c["key"], c["id"]) for c in table["columns"]], DECISION_OPTIONS_COLUMNS
+        )
+        # The kept Alternatives table is a local table of its own: no core ID.
+        local = next(
+            t
+            for t in profile_of(raw, ADR[1])["template_definition"]["tables"]
+            if t["name"] == "Alternatives"
+        )
+        self.assertEqual(local["authority_ref"], "SPEC-0222")
+        self.assertNotIn("table_id", local)
+        self.assertEqual(rules_of(raw), set())
+        # The record keeps its own table fields (WORK-001); the core binding stays
+        # in the registry, which the core check reads.
+        record = CONTRACTS.template_definition_record(raw, ADR[1])
+        self.assertEqual(record["tables"][0]["name"], "Options")
+        self.assertNotIn("table_id", record["tables"][0])
+        self.assertEqual(current_rules(raw), set())
+
+    def test_the_former_alternatives_header_on_the_adr_template_is_refused(
+        self,
+    ) -> None:
+        raw = load_raw()
+        table = next(
+            t
+            for t in profile_of(raw, ADR[1])["template_definition"]["tables"]
+            if t.get("table_id") == "decision.options"
+        )
+        table["columns"][0]["key"] = "Alternative"
+        self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
+
+    def test_a_core_table_cannot_carry_a_local_authority_ref(self) -> None:
+        raw = load_raw()
+        table = next(
+            t
+            for t in profile_of(raw, ADR[1])["template_definition"]["tables"]
+            if t.get("table_id") == "decision.options"
+        )
+        table["authority_ref"] = "SPEC-0222"
+        self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
+
+    def test_the_owner_lineage_reads_each_adr_where_its_form_keeps_the_table(
+        self,
+    ) -> None:
+        link = "[REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)"
+        expected = "docs-01-requirements-0003-workspace-agent-governance-platform-md"
+        registry = CONTRACTS.load_registry(ROOT)
+        for number, section in (("0064", "Decision"), ("0050", "Traceability")):
+            path = PurePosixPath(
+                f"docs/02.architecture/decisions/{number}-temporary.md"
+            )
+            text = (
+                '---\ntitle: "Decision title"\nversion: "1.0.0"\n'
+                'type: "sdlc/architecture-decision"\nstatus: "accepted"\n'
+                'owner: "platform"\nupdated: "2026-11-17"\n'
+                f'artifact_id: "ADR-{number}"\n---\n\n# ADR-{number}: Decision title\n\n'
+                f"## Context\n\nNo link here.\n\n## {section}\n\nServes {link}.\n"
+            )
+            context = types.SimpleNamespace(
+                root=ROOT,
+                texts={path: text},
+                current_registry=registry,
+                profiles={path: types.SimpleNamespace(profile_id=ADR[0])},
+            )
+            with self.subTest(section=section):
+                self.assertEqual(LINKS._traceability_lineage(context, path), expected)
+
+
+CORE_CHECK_TYPES = (
+    ("Check ID", "check_id", "identifier"),
+    ("Guarantee", "guarantee", "string"),
+    ("Input", "input", "string"),
+    ("Trust Boundary", "trust", "string"),
+    ("Required When", "required_when", "condition"),
+    ("Evidence", "evidence", "string"),
+)
+# SPEC-0222 WORK-003: the requirement, architecture, spec and plan forms bind
+# their core roles; each existing table without a core counterpart stays a
+# registered local table of its own (`authority_ref: ADR-0059`).
+SDLC_CORE = {
+    "requirement": (
+        "필요·목표·검증 가능한 요구",
+        REQUIREMENT[1],
+        {
+            "requirement.requirements": (
+                "requirement.requirements",
+                "always",
+                (
+                    ("Requirement ID", "requirement_id", "identifier"),
+                    ("Statement", "statement", "string"),
+                    ("Rationale", "rationale", "string"),
+                    ("Acceptance", "acceptance", "string"),
+                    ("Priority", "priority", "enum"),
+                ),
+            ),
+            "requirement.quality": (
+                "requirement.requirements",
+                "quality_requirement",
+                (
+                    ("Requirement ID", "requirement_id", "identifier"),
+                    ("Attribute", "attribute", "string"),
+                    ("Measure", "measure", "string"),
+                    ("Unit", "unit", "string"),
+                    ("Environment", "environment", "string"),
+                    ("Criterion", "criterion", "string"),
+                ),
+            ),
+        },
+        ("Lifecycle Traceability",),
+    ),
+    "architecture": (
+        "목표 구조와 현재 적용 상태",
+        ARCHITECTURE[1],
+        {
+            "architecture.interface": (
+                "architecture.structure",
+                "external_interface",
+                (
+                    ("Interface", "interface", "identifier"),
+                    ("Producer", "producer", "string"),
+                    ("Consumer", "consumer", "string"),
+                    ("Contract", "contract", "reference"),
+                    ("Failure", "failure", "string"),
+                ),
+            )
+        },
+        ("Constraints", "Quality Scenarios", "Lifecycle Traceability"),
+    ),
+    "spec": (
+        "범위 있는 변경의 관측 가능한 계약",
+        SPEC_FORM[1],
+        {"spec.checks": ("spec.acceptance", "always", CORE_CHECK_TYPES)},
+        ("Criteria", "Lifecycle Traceability"),
+    ),
+    "plan": (
+        "실행 전략과 의존성",
+        PLAN_FORM[1],
+        {
+            "plan.work_units": (
+                "plan.work",
+                "always",
+                (
+                    ("Work Unit", "work_unit", "identifier"),
+                    ("Outcome", "outcome", "string"),
+                    ("Depends On", "depends_on", "reference-list"),
+                    ("Owner", "owner", "string"),
+                    ("Write Scope", "write_scope", "path-list"),
+                    ("Acceptance", "acceptance", "reference-list"),
+                    ("Checks", "checks", "reference-list"),
+                ),
+            ),
+            "plan.checks": ("plan.verification", "always", CORE_CHECK_TYPES),
+        },
+        ("Work Breakdown", "Promotion"),
+    ),
+}
+# Architecture descriptions that state an external interface render the core
+# table; with no stated failure handling per interface it stays header-only and
+# the missing facts are residue (W04-CONTENT). AD-0006 leaves external service
+# interfaces to their own domains (AD-0007), so it renders none.
+AD_INTERFACE_TABLES = {
+    "0004-argo-rollouts-progressive-delivery.md": 0,
+    "0005-argo-notifications-slack.md": 0,
+    "0006-workspace-agent-governance-platform.md": None,
+    "0007-current-local-gitops-platform.md": 0,
+}
+
+
+def _frontmatter_value(text: str, key: str) -> str:
+    match = re.search(rf'(?m)^{key}: "([^"]*)"$', text.split("\n---", 1)[0])
+    return match.group(1) if match else ""
+
+
+class SdlcCoreBindingTests(unittest.TestCase):
+    """SPEC-0222 WORK-003: requirement, architecture, spec and plan bind the core."""
+
+    @staticmethod
+    def form(raw: dict, role: str) -> dict:
+        return next(f for f in raw["common_forms"]["forms"] if f["form_id"] == role)
+
+    @staticmethod
+    def visible_headers(text: str, heading: str) -> list[tuple[str, ...]]:
+        section = MARKDOWN._exact_heading_section(text, heading) or ""
+        return [tuple(header) for header, _ in MARKDOWN._visible_tables(section)]
+
+    def test_each_form_binds_its_core_role_members_and_section_conditions(
+        self,
+    ) -> None:
+        raw = load_raw()
+        for role, (purpose, _, tables, _) in SDLC_CORE.items():
+            with self.subTest(role=role):
+                form = self.form(raw, role)
+                self.assertEqual(form["core_role"], role)
+                self.assertEqual(form["core"]["purpose"], purpose)
+                self.assertEqual(form["core"]["status"], "DESIGN_PROPOSAL_NOT_ADOPTED")
+                self.assertEqual(
+                    {
+                        t["table_id"]: (
+                            t["section_id"],
+                            t["required_when"],
+                            tuple(
+                                (c["label"], c["key"], c["value_type"])
+                                for c in t["columns"]
+                            ),
+                        )
+                        for t in form["core"]["tables"]
+                    },
+                    tables,
+                )
+                stack = list(form["sections"])
+                while stack:
+                    item = stack.pop()
+                    stack.extend(item["children"])
+                    self.assertEqual(item["condition"], "always")
+                    self.assertEqual(item["requiredness"], "required")
+                    self.assertEqual(item["core"]["required_when"], "always")
+        self.assertEqual(rules_of(raw), set())
+
+    def test_each_template_carries_its_core_tables_and_local_tables_of_its_own(
+        self,
+    ) -> None:
+        raw = load_raw()
+        for role, (_, template, tables, local) in SDLC_CORE.items():
+            with self.subTest(role=role):
+                definition_ = profile_of(raw, template)["template_definition"]
+                core = {
+                    t["table_id"]: t for t in definition_["tables"] if "table_id" in t
+                }
+                self.assertEqual(
+                    {
+                        table_id: (
+                            t["section"],
+                            t["required_when"],
+                            tuple(
+                                (c["key"], c["id"], c["data_type"])
+                                for c in t["columns"]
+                            ),
+                        )
+                        for table_id, t in core.items()
+                    },
+                    tables,
+                )
+                for table in core.values():
+                    self.assertTrue(all(c["required"] for c in table["columns"]))
+                    self.assertEqual(table["row_identity"], table["columns"][0]["key"])
+                    self.assertNotIn("authority_ref", table)
+                own = [t for t in definition_["tables"] if "table_id" not in t]
+                self.assertEqual(sorted(t["name"] for t in own), sorted(local))
+                for table in own:
+                    self.assertEqual(table["authority_ref"], "ADR-0059")
+                # The record keeps its own table fields (WORK-001).
+                record = CONTRACTS.template_definition_record(raw, template)
+                self.assertEqual(record_errors(record), [])
+                self.assertFalse(any("table_id" in t for t in record["tables"]))
+        priority = next(
+            c
+            for t in profile_of(raw, REQUIREMENT[1])["template_definition"]["tables"]
+            if t.get("table_id") == "requirement.requirements"
+            for c in t["columns"]
+            if c["key"] == "Priority"
+        )
+        self.assertEqual(priority["allowed_values"], ["must", "should", "could"])
+        self.assertEqual(rules_of(raw), set())
+
+    def test_a_drifted_sdlc_core_table_is_refused(self) -> None:
+        cases = {
+            "relabeled": lambda t: t["columns"][0].update(key="Name"),
+            "other type": lambda t: t["columns"][0].update(data_type="string"),
+            "appended": lambda t: t["columns"].append(
+                {
+                    "key": "Note",
+                    "id": "note",
+                    "data_type": "string",
+                    "meaning": "m",
+                    "required": False,
+                }
+            ),
+            "other section": lambda t: t.update(section=t["section"] + ".1"),
+            "dropped": lambda t: t["columns"].pop(),
+        }
+        for role, (_, template, tables, _) in SDLC_CORE.items():
+            for table_id in tables:
+                for name, change in cases.items():
+                    with self.subTest(role=role, table=table_id, case=name):
+                        raw = load_raw()
+                        table = next(
+                            t
+                            for t in profile_of(raw, template)["template_definition"][
+                                "tables"
+                            ]
+                            if t.get("table_id") == table_id
+                        )
+                        change(table)
+                        self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
+        raw = load_raw()
+        self.form(raw, "requirement")["sections"][2]["children"][1].update(
+            condition="품질 요구가 적용됨"
+        )
+        self.assertIn("REGISTRY_CORE_SECTION", rules_of(raw))
+
+    def test_every_requirement_renders_the_core_table_with_core_priorities(
+        self,
+    ) -> None:
+        profile = typed_profiles(load_raw())[REQUIREMENT[0]]
+        paths = sorted((ROOT / "docs/01.requirements").glob("0*.md"))
+        self.assertTrue(paths)
+        for path in paths:
+            text = path.read_text(encoding="utf-8")
+            relative = PurePosixPath(path.relative_to(ROOT).as_posix())
+            with self.subTest(path=path.name):
+                section = MARKDOWN._exact_heading_section(text, "## Requirements")
+                self.assertIsNotNone(section)
+                self.assertIn("### Quality Requirements", section)
+                tables = [
+                    (header, rows)
+                    for header, rows in MARKDOWN._visible_tables(section)
+                    if header[0] == "Requirement ID"
+                ]
+                self.assertTrue(tables)
+                for header, rows in tables:
+                    self.assertEqual(tuple(header), REQUIREMENT_COLUMNS)
+                    for row in rows:
+                        self.assertIn(row[-1], {"must", "should", "could"})
+                self.assertEqual(
+                    MARKDOWN._table_diagnostics(relative, profile, text), []
+                )
+                self.assertEqual(
+                    MARKDOWN._requirement_quality_diagnostics(relative, profile, text),
+                    [],
+                )
+
+    def test_each_description_renders_the_interface_table_where_it_applies(
+        self,
+    ) -> None:
+        profile = typed_profiles(load_raw())[ARCHITECTURE[0]]
+        folder = ROOT / "docs/02.architecture/descriptions"
+        self.assertEqual(
+            sorted(p.name for p in folder.glob("0*.md")), sorted(AD_INTERFACE_TABLES)
+        )
+        for name, rows in AD_INTERFACE_TABLES.items():
+            text = (folder / name).read_text(encoding="utf-8")
+            with self.subTest(path=name):
+                section = MARKDOWN._exact_heading_section(text, "### Interfaces") or ""
+                found = [
+                    len(data)
+                    for header, data in MARKDOWN._visible_tables(section)
+                    if tuple(header) == ARCHITECTURE_INTERFACE_COLUMNS
+                ]
+                self.assertEqual(found, [] if rows is None else [rows])
+                relative = PurePosixPath((folder / name).relative_to(ROOT).as_posix())
+                self.assertEqual(
+                    MARKDOWN._table_diagnostics(relative, profile, text), []
+                )
+
+    def test_every_current_spec_and_plan_renders_its_core_tables_unless_retained(
+        self,
+    ) -> None:
+        profiles = typed_profiles(load_raw())
+        cases = {
+            "spec.md": ("sdlc/spec", {"## Acceptance Criteria": [CORE_CHECK_COLUMNS]}),
+            "plan.md": (
+                "sdlc/plan",
+                {
+                    "## Work Breakdown": [CORE_WORK_UNIT_COLUMNS],
+                    "## Verification Plan": [CORE_CHECK_COLUMNS],
+                },
+            ),
+        }
+        retained = []
+        for package in sorted((ROOT / "docs/03.specs").glob("0*/")):
+            for name, (profile_id, headings) in cases.items():
+                path = package / name
+                if not path.is_file():
+                    continue
+                text = path.read_text(encoding="utf-8")
+                profile = profiles[profile_id]
+                identity = _frontmatter_value(text, "artifact_id")
+                status = _frontmatter_value(text, "status")
+                relative = PurePosixPath(path.relative_to(ROOT).as_posix())
+                with self.subTest(path=str(relative)):
+                    core = {CORE_CHECK_COLUMNS, CORE_WORK_UNIT_COLUMNS}
+                    if status == "approved" and profile.form.retains_identity(identity):
+                        # SPEC-0161 and SPEC-0221 keep their approved bytes.
+                        retained.append(identity)
+                        self.assertFalse(
+                            core
+                            & {
+                                tuple(header)
+                                for header, _ in MARKDOWN._visible_tables(text)
+                            }
+                        )
+                    else:
+                        for heading, expected in headings.items():
+                            found = [
+                                header
+                                for header in self.visible_headers(text, heading)
+                                if header in core
+                            ]
+                            self.assertEqual(found, expected)
+                    self.assertEqual(
+                        MARKDOWN._table_diagnostics(relative, profile, text, status),
+                        [],
+                    )
+        self.assertEqual(
+            sorted(retained),
+            [
+                "SPEC-0161",
+                "SPEC-0161-PLAN-0001",
+                "SPEC-0221",
+                "SPEC-0221-PLAN-0001",
+            ],
+        )
+
+    def test_the_core_tables_sit_beside_the_local_tables_their_readers_use(
+        self,
+    ) -> None:
+        profiles = typed_profiles(load_raw())
+        spec = spec_form_body().replace(
+            "### Verification Strategy\n\nThe Verification Strategy of the change.",
+            "### Verification Strategy\n\nThe Verification Strategy of the change.\n\n"
+            + form_table(CORE_CHECK_COLUMNS),
+        )
+        plan = (
+            plan_form_body()
+            .replace(
+                form_table(PLAN_FORM_TABLE_KEYS["Work Breakdown"][1]),
+                form_table(PLAN_FORM_TABLE_KEYS["Work Breakdown"][1])
+                + "\n\n"
+                + form_table(CORE_WORK_UNIT_COLUMNS),
+            )
+            .replace(
+                "### Selected Checks\n\nThe Selected Checks of the work.",
+                "### Selected Checks\n\nThe Selected Checks of the work.\n\n"
+                + form_table(CORE_CHECK_COLUMNS),
+            )
+        )
+        for path, profile_id, text in (
+            (SPEC_PATH, "sdlc/spec", spec),
+            (PLAN_PATH, "sdlc/plan", plan),
+        ):
+            with self.subTest(profile=profile_id):
+                profile = profiles[profile_id]
+                self.assertEqual(MARKDOWN._table_diagnostics(path, profile, text), [])
+                rows = LINKS._body_contract_rows(text, profile)
+                self.assertTrue(rows)
+                self.assertEqual(
+                    tuple(rows[0]), tuple(profile.body_contract.required_columns)
+                )
+                wrong = text.replace(
+                    "| Check ID | Guarantee |", "| Check ID | Promise |"
+                )
+                self.assertEqual(
+                    [
+                        d.rule_id
+                        for d in MARKDOWN._table_diagnostics(path, profile, wrong)
+                    ],
+                    ["BODY-TABLE-COLUMNS"],
+                )
+        relabeled = plan.replace("| Depends On |", "| Dependencies |", 1)
+        self.assertNotIn("Work Unit | Outcome | Depends On", relabeled)
+        self.assertEqual(
+            [
+                d.rule_id
+                for d in MARKDOWN._table_diagnostics(
+                    PLAN_PATH, profiles["sdlc/plan"], relabeled
+                )
+            ],
+            ["BODY-TABLE-COLUMNS"],
+        )
+
+
+class CoreTableDocumentTests(unittest.TestCase):
+    """SPEC-0222 WORK-009: the document validators refuse a missing always core
+    table, a drifted core header and a core cell of the wrong type."""
+
+    AUDIT_PATH = PurePosixPath("docs/90.references/audits/0001-sample/m0003-sample.md")
+    DATA_PATH = PurePosixPath("docs/90.references/data/0001-sample/m0001-sample.md")
+    RES_PATH = "docs/90.references/research/0001-sample/m{:04d}-sample.md"
+    RUNBOOK_TEMPLATE = PurePosixPath(
+        "docs/99.templates/templates/operations/runbook.template.md"
+    )
+    FINDINGS = "| " + " | ".join(label for label, _, _ in AUDIT_FINDINGS) + " |"
+    SCHEMA = "| " + " | ".join(label for label, _, _ in DATA_REFERENCE_SCHEMA) + " |"
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.raw = load_raw()
+        cls.profiles = typed_profiles(cls.raw)
+
+    def rules(
+        self, profile_id: str, path: PurePosixPath, body: str, status: str = "active"
+    ) -> list[str]:
+        profile = self.profiles[profile_id]
+        return sorted(
+            item.rule_id
+            for item in (
+                *MARKDOWN._table_diagnostics(path, profile, body, status),
+                *MARKDOWN._core_table_diagnostics(path, profile, body, status),
+            )
+        )
+
+    @staticmethod
+    def table(header: str, *rows: str) -> str:
+        cells = header.count("|") - 1
+        return "\n".join((header, "| --- " * cells + "|", *rows))
+
+    def runbook(self, steps: str) -> str:
+        return RUNBOOK_BODY.replace("### Steps\n\nRun it.", "### Steps\n\n" + steps)
+
+    def audit(self, *rows: str, header: str = "") -> str:
+        return md(
+            "# Reference: Sample",
+            "## Findings",
+            self.table(header or self.FINDINGS, *rows),
+        )
+
+    def test_a_missing_always_core_table_is_refused(self) -> None:
+        self.assertEqual(
+            self.rules(RUNBOOK[0], RUNBOOK_PATH, RUNBOOK_BODY),
+            ["BODY-CORE-TABLE-MISSING"],
+        )
+        self.assertEqual(
+            self.rules(RUNBOOK[0], RUNBOOK_PATH, self.runbook(RUNBOOK_STEPS)), []
+        )
+        # The table counts only inside its core H2.
+        moved = RUNBOOK_BODY + "\n" + RUNBOOK_STEPS + "\n"
+        self.assertEqual(
+            self.rules(RUNBOOK[0], RUNBOOK_PATH, moved), ["BODY-CORE-TABLE-MISSING"]
+        )
+        # A header-only core table is present: rows come when facts occur.
+        header_only = RUNBOOK_STEPS.rsplit("\n", 1)[0]
+        self.assertEqual(
+            self.rules(RUNBOOK[0], RUNBOOK_PATH, self.runbook(header_only)), []
+        )
+
+    def test_a_relabeled_reordered_appended_or_dropped_column_is_refused(
+        self,
+    ) -> None:
+        row = "| 1 | Restart | Ready | Stop |"
+        for header in (
+            "| Step | Action | Result | On Failure |",
+            "| Step | Expected Result | Action | On Failure |",
+            "| Step | Action | Expected Result | On Failure | Note |",
+            "| Step | Action | Expected Result |",
+        ):
+            with self.subTest(header=header):
+                body = self.runbook(self.table(header, row))
+                self.assertEqual(
+                    self.rules(RUNBOOK[0], RUNBOOK_PATH, body),
+                    ["BODY-CORE-TABLE-MISSING", "BODY-TABLE-COLUMNS"],
+                )
+                # Beside an exact core table the drifted copy is still refused.
+                both = self.runbook(RUNBOOK_STEPS + "\n\n" + self.table(header, row))
+                self.assertEqual(
+                    self.rules(RUNBOOK[0], RUNBOOK_PATH, both), ["BODY-TABLE-COLUMNS"]
+                )
+        relabeled_first = self.table("| No. | Action | Expected Result | On Failure |")
+        self.assertEqual(
+            self.rules(RUNBOOK[0], RUNBOOK_PATH, self.runbook(relabeled_first)),
+            ["BODY-CORE-TABLE-MISSING"],
+        )
+
+    def test_a_core_cell_of_the_wrong_type_is_refused(self) -> None:
+        good = "| F-001 | REQ-0001 | EVD-001 | gap | Fix it | platform | Reviewed |"
+        self.assertEqual(
+            self.rules(AUDIT[0], self.AUDIT_PATH, self.audit(good), "draft"), []
+        )
+        for row in (
+            good.replace("| gap |", "| maybe |"),
+            good.replace("| gap |", "| `gap` |"),
+            good.replace("| Fix it |", "|  |"),
+            "| F-001 | REQ-0001 | EVD-001 | gap |",
+        ):
+            with self.subTest(row=row):
+                # A short row leaves each missing required cell empty.
+                self.assertEqual(
+                    set(
+                        self.rules(AUDIT[0], self.AUDIT_PATH, self.audit(row), "draft")
+                    ),
+                    {"BODY-CORE-TABLE-CELL"},
+                )
+        integer = RUNBOOK_STEPS.replace("| 1 |", "| one |")
+        self.assertEqual(
+            self.rules(RUNBOOK[0], RUNBOOK_PATH, self.runbook(integer)),
+            ["BODY-CORE-TABLE-CELL"],
+        )
+
+    def test_the_shared_cell_check_reads_booleans_and_integer_or_none(self) -> None:
+        column = CONTRACTS.TableColumn
+        table = CONTRACTS.TableContract(
+            name="T",
+            section="s",
+            columns=(
+                column("Count", "m", "integer-or-none", True),
+                column("Flag", "m", "boolean", True, (True, False)),
+            ),
+            minimum_rows=0,
+            row_identity="Count",
+            table_id="t",
+            required_when="always",
+        )
+        self.assertEqual(
+            CONTRACTS.core_cell_faults(table, [["none", "true"], ["3", "false"]]), []
+        )
+        self.assertEqual(
+            CONTRACTS.core_cell_faults(table, [["x", "yes"]]),
+            ["row 1: Count 'x'", "row 1: Flag 'yes'"],
+        )
+
+    def test_a_retained_identity_keeps_its_recorded_tables(self) -> None:
+        former = ResearchAuditFormTests.former()
+        retained = PurePosixPath(self.RES_PATH.format(1))
+        self.assertEqual(self.rules(RESEARCH[0], retained, former, "published"), [])
+        current = PurePosixPath(self.RES_PATH.format(13))
+        self.assertEqual(
+            self.rules(RESEARCH[0], current, former, "published"),
+            ["BODY-CORE-TABLE-MISSING"],
+        )
+
+    def test_a_registered_local_table_with_the_same_first_cell_is_accepted(
+        self,
+    ) -> None:
+        schema = self.table(self.SCHEMA, "| f | text | none | A field | None |")
+        local = self.table("| Field | Producer |", "| f | the collector |")
+        body = md("# Reference: Sample", "## Interpretation", schema, local)
+        self.assertEqual(self.rules(DATA_REFERENCE[0], self.DATA_PATH, body), [])
+        # A header that matches no registered table exactly stays the core's.
+        for header in ("| Field | Producer | Note |", "| Field | Type | Meaning |"):
+            with self.subTest(header=header):
+                drifted = md(
+                    "# Reference: Sample",
+                    "## Interpretation",
+                    schema,
+                    self.table(header),
+                )
+                self.assertEqual(
+                    self.rules(DATA_REFERENCE[0], self.DATA_PATH, drifted),
+                    ["BODY-TABLE-COLUMNS"],
+                )
+
+    def test_a_conditional_core_table_is_required_only_where_present(self) -> None:
+        self.assertEqual(self.rules(GUIDE[0], GUIDE_PATH, guide_body("Run it.")), [])
+        wrong = self.table(
+            "| Step | Action | Expected Result | On Failure |", "| one | a | b | c |"
+        )
+        self.assertEqual(
+            self.rules(GUIDE[0], GUIDE_PATH, guide_body(wrong)),
+            ["BODY-CORE-TABLE-CELL"],
+        )
+
+    def test_a_conditional_core_table_with_a_drifted_first_column_is_refused(
+        self,
+    ) -> None:
+        # Reviewer probe: a relabeled or dropped first column must not read as
+        # "not rendered".
+        for header in (
+            "| Stage | Action | Expected Result | On Failure |",
+            "| Action | Expected Result | On Failure |",
+        ):
+            with self.subTest(header=header):
+                body = guide_body(self.table(header))
+                self.assertEqual(
+                    self.rules(GUIDE[0], GUIDE_PATH, body), ["BODY-TABLE-COLUMNS"]
+                )
+        unrelated = guide_body(self.table("| Stage | Owner |", "| one | platform |"))
+        self.assertEqual(self.rules(GUIDE[0], GUIDE_PATH, unrelated), [])
+
+    def test_a_template_is_checked_for_the_core_header_only(self) -> None:
+        prompt = self.table(
+            "| Step | Action | Expected Result | On Failure |",
+            "| {{STEP}} | {{ACTION}} | {{RESULT}} | {{ON_FAILURE}} |",
+        )
+        self.assertEqual(
+            self.rules(RUNBOOK[1], self.RUNBOOK_TEMPLATE, self.runbook(prompt)), []
+        )
+        self.assertEqual(
+            self.rules(RUNBOOK[1], self.RUNBOOK_TEMPLATE, RUNBOOK_BODY),
+            ["BODY-CORE-TABLE-MISSING"],
+        )
+
+    def test_task_and_forms_without_a_core_table_are_not_checked(self) -> None:
+        for profile in self.profiles.values():
+            if profile.mode == "native":
+                continue
+            core = any(table.table_id for table in profile.tables)
+            task = bool(profile.body_contract and profile.body_contract.task_execution)
+            if core and not task:
+                continue
+            with self.subTest(profile=profile.profile_id):
+                self.assertEqual(
+                    MARKDOWN._core_table_diagnostics(
+                        GUIDE_PATH, profile, "# Title\n", "active"
+                    ),
+                    [],
+                )
+
+    def test_every_local_template_table_carries_its_authority(self) -> None:
+        refs = {
+            (profile["id"], table["name"]): table.get("authority_ref")
+            for profile in self.raw["profiles"]
+            for table in (profile.get("template_definition") or {}).get("tables", ())
+            if "table_id" not in table
+        }
+        self.assertTrue(refs)
+        self.assertEqual(set(refs.values()), {"ADR-0059", "SPEC-0222"})
+        self.assertEqual(
+            {key for key, value in refs.items() if value == "SPEC-0222"},
+            {
+                ("common/template-operation-policy", "Rule Levels"),
+                ("common/template-governance-rule", "Rule Levels"),
+                ("common/template-reference-data", "Producer"),
+                (ADR[1], "Alternatives"),
+            },
+        )
+
+    def test_a_local_template_table_without_authority_is_refused(self) -> None:
+        raw = load_raw()
+        table = next(
+            t
+            for t in profile_of(raw, RUNBOOK[1])["template_definition"]["tables"]
+            if "table_id" not in t
+        )
+        del table["authority_ref"]
+        self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
+
+    def test_every_current_document_of_a_core_role_passes(self) -> None:
+        registry = CONTRACTS.load_registry(ROOT)
+        checked = []
+        found = []
+        for path in CONTRACTS.enumerate_target_markdown(ROOT).current_paths:
+            profile = CONTRACTS.classify_path(registry, path)
+            if profile.mode == "native" or not any(t.table_id for t in profile.tables):
+                continue
+            checked.append(path)
+            text = CONTRACTS.read_repository_text(ROOT, path)
+            found += [
+                f"{path}: {item.rule_id}"
+                for item in MARKDOWN.validate_document_text(
+                    text, path, profile, "strict"
+                )
+                if item.rule_id.startswith("BODY-CORE-")
+                or item.rule_id == "BODY-TABLE-COLUMNS"
+            ]
+        self.assertTrue(checked)
+        self.assertEqual(found, [])
 
 
 if __name__ == "__main__":

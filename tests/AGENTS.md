@@ -6,7 +6,7 @@ rules are for AI agents. The repository root gateway (`AGENTS.md` or
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 Independent behavior coverage and synthetic fixtures for the repository validators: mutations, bad input, timeouts, staged-index ambiguity, zero consumers and failure diagnostics. A PASS here is repository-static evidence only.
 
@@ -20,36 +20,48 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 [`.codex/provider.md`](../.codex/provider.md); approval boundaries are in
 [approval and safety](../.agents/governance/approval-and-safety.md).
 
-### Non-goals
+#### Non-goals
 
 This folder adds no non-goal beyond the parent `AGENTS.md` and the governance policies; if work here must be excluded, state it here.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. Every `tests/test_*.py` module belongs to exactly one suite in `scripts/run-contract-tests.py` or has its own registry command.
 2. Build fixtures synthetically; do not read pinned historical commits or deleted documents.
 3. Delete a test whose only subject is removed behavior; rewrite, do not weaken, a test of a current contract.
 4. Tests never reach a live cluster, provider or credential.
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
+### Authority
+
+#### Stop and Escalate
+
+This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
+
+### Secrets and External Effects
+
+#### Protected Actions
+
+Protected actions are stated in rule 4 under Local Obligations.
 
 ## Verification
 
-### Required Checks
+### Checks
 
 Run the selected checks with `python3 scripts/qa.py staged`, or these
 directly:
@@ -57,16 +69,12 @@ directly:
 - `python3 scripts/run-contract-tests.py --root . --suite <suite>`
 - `ruff check tests`
 
-### Evidence and Limits
+### Reporting
 
-Evidence limits are stated in the opening text of Allowed Surface: a PASS here is repository-static evidence only.
+#### Evidence and Limits
 
-## Safety
+Evidence limits are stated in the opening text of Allowed Scope: a PASS here is repository-static evidence only.
 
-### Protected Actions
+#### Handoff
 
-Protected actions are stated in rule 4 under Local Obligations.
-
-### Stop and Escalate
-
-This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.

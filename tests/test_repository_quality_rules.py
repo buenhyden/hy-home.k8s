@@ -132,6 +132,21 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         self.assertNotEqual(text, changed)
         issues = validator.document_content_diagnostics(ROOT, path, profile, changed)
         self.assertIn("DOC-INDEX-HEADER", {issue.rule_id for issue in issues})
+        # SPEC-0222: the index is the core paths table, read from its core H2
+        # whatever deeper heading holds it, and it takes no appended column.
+        moved = text.replace("#### 문서 인덱스", "#### Documents", 1)
+        self.assertNotEqual(text, moved)
+        self.assertEqual(
+            validator.document_content_diagnostics(ROOT, path, profile, moved), []
+        )
+        owner = text.replace(
+            "| Path | Purpose |\n| --- | --- |",
+            "| Path | Purpose | Owner |\n| --- | --- | --- |",
+            1,
+        )
+        self.assertNotEqual(text, owner)
+        issues = validator.document_content_diagnostics(ROOT, path, profile, owner)
+        self.assertIn("DOC-INDEX-HEADER", {issue.rule_id for issue in issues})
 
     def test_selected_document_gate_keeps_live_matrix_relationships(self):
         validator = self.document_validator
@@ -215,7 +230,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         registry = self.document_registry
         guide = pathlib.PurePosixPath("docs/05.operations/guides/README.md")
         guide_profile = validator.classify_path(registry, guide)
-        empty_index = "### 문서 인덱스\n\n| Path | Purpose |\n| --- | --- |\n"
+        empty_index = "## Current Contents\n\n| Path | Purpose |\n| --- | --- |\n"
         with (
             tempfile.TemporaryDirectory() as temp,
             tempfile.TemporaryDirectory() as outside,

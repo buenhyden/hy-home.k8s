@@ -1,6 +1,6 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.5.4"
+version: "2.5.5"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -275,6 +275,9 @@ kubectl get pods -n istio-system -l app=istiod \
 - istiod와 Istio sidecar는 `prometheus.io/scrape` annotation으로 잡힌다.
 - 외부 Prometheus 쪽에서 job 이름은 `kubernetes-pods`이고 component는 `app`
   label로 구분한다.
+
+| Step | Action | Expected Result | On Failure |
+| --- | --- | --- | --- |
 
 ### Stop Conditions
 

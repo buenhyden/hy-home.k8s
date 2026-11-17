@@ -34,20 +34,20 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ### Functional Requirements
 
-<!-- Author prompt: assign package-dependent stable IDs to functional and implementation-independent interface requirements; give each a statement, a one-sentence rationale that names its source (or explains why none is recorded), its acceptance evidence and an optional priority. -->
+<!-- Author prompt: assign package-dependent stable IDs to functional and implementation-independent interface requirements; give each a statement, a one-sentence rationale that names its source (or explains why none is recorded), its acceptance evidence and its priority (`must`, `should` or `could`). -->
 
 | Requirement ID | Statement | Rationale | Acceptance | Priority |
 | --- | --- | --- | --- | --- |
-| REQ-0001-FR-0001 | State one testable functional requirement. | State the reason and name its source, or explain why none is recorded. | Name the observable acceptance evidence. | Must |
-| REQ-0001-IF-0001 | State one implementation-independent external interface requirement. | State the reason and name its source, or explain why none is recorded. | Name the observable contract evidence. | Must |
+| REQ-0001-FR-0001 | State one testable functional requirement. | State the reason and name its source, or explain why none is recorded. | Name the observable acceptance evidence. | must |
+| REQ-0001-IF-0001 | State one implementation-independent external interface requirement. | State the reason and name its source, or explain why none is recorded. | Name the observable contract evidence. | must |
 
 ### Quality Requirements
 
-<!-- Author prompt: keep this section only when a quality requirement applies; assign stable IDs and state each quality characteristic, its measurement environment and its target or decision-needed value. -->
+<!-- Author prompt: assign stable IDs and state each quality characteristic, its measurement environment and its target or decision-needed value in the same columns as Functional Requirements; when no quality requirement applies, say so in one sentence and delete the table. -->
 
 | Requirement ID | Statement | Rationale | Acceptance | Priority |
 | --- | --- | --- | --- | --- |
-| REQ-0001-NFR-0001 | State one measurable non-functional constraint. | State the reason and name its source, or explain why none is recorded. | Name the observable quality evidence. | Must |
+| REQ-0001-NFR-0001 | State one measurable non-functional constraint. | State the reason and name its source, or explain why none is recorded. | Name the observable quality evidence. | must |
 
 ## Traceability
 

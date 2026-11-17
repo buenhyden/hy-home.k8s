@@ -56,11 +56,11 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 <!-- Author prompt: 재발 방지 조치마다 owner, 기한 상태, Task, 증거를 지정하고, 교훈을 요구사항, 결정, Spec, 가이드, 정책 가운데 알맞은 곳으로 보낸다. -->
 
-<!-- Author prompt: 조치별로 owner와 검증을 나눌 때만 아래 Actions 표를 사용하고, 그렇지 않으면 표를 지운다. -->
+<!-- Author prompt: 아래 Actions 표에 조치마다 owner, 실행·완료 조건, 실제 근거를 적는다. 근거가 아직 없으면 none을 쓰고, 실제 조치가 생기기 전에는 열만 둔다. -->
 
-| Action | Owner | Verification |
-| --- | --- | --- |
-| Name one corrective action. | Name the owner. | Describe how completion is verified. |
+| Action | Owner | Condition | Evidence |
+| --- | --- | --- | --- |
+| Name one corrective action. | Name the owner. | State the completion condition and how it is verified. | Link the actual evidence, or none. |
 
 ### Owners and Checks
 

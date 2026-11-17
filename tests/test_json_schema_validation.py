@@ -50,6 +50,28 @@ class SchemaEvaluationBoundaryTest(unittest.TestCase):
 
         self.assertEqual(str(raised.exception), "invalid local JSON Schema")
 
+    def test_a_schema_is_checked_once_per_distinct_content(self) -> None:
+        json_schema_validation._checked_validator.cache_clear()
+        schema = {"properties": {"a": {"type": "integer"}}}
+        json_schema_validation.schema_errors(schema, {"a": 1})
+        json_schema_validation.schema_errors(dict(schema), {"a": "x"})
+        info = json_schema_validation._checked_validator.cache_info()
+        self.assertEqual((info.misses, info.hits), (1, 1))
+        changed = {"properties": {"a": {"type": "string"}}}
+        self.assertEqual(json_schema_validation.schema_errors(changed, {"a": "x"}), [])
+        self.assertEqual(
+            json_schema_validation._checked_validator.cache_info().misses, 2
+        )
+
+    def test_an_invalid_schema_is_refused_every_time_and_never_cached(self) -> None:
+        json_schema_validation._checked_validator.cache_clear()
+        for _ in range(2):
+            with self.assertRaises(json_schema_validation.SchemaEvaluationError):
+                json_schema_validation.schema_errors({"type": 1}, {})
+        self.assertEqual(
+            json_schema_validation._checked_validator.cache_info().currsize, 0
+        )
+
     def test_import_emits_no_deprecation_warning(self) -> None:
         """A validator writes evidence; a warning on stderr is not evidence.
 

@@ -1,6 +1,6 @@
 ---
 title: "90.references/data"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -65,6 +65,9 @@ data/
 
 이 collection은 현재 data pack을 보유하지 않는다. 이는 현재 처분 결과일 뿐이며,
 고유한 목적과 출처 경계를 갖춘 data pack의 추가를 금지하지 않는다.
+
+| Path | Purpose |
+| --- | --- |
 
 ### Owners
 

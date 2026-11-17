@@ -6,7 +6,7 @@ the requirements stage.
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 Stage 01 holds Requirement Packages: the solution-independent problem, goals,
 stakeholder needs, functional, non-functional and interface requirements,
@@ -19,17 +19,21 @@ contracts to Stage 03.
 | Author the package text and traceability | [doc-writer](../../.agents/roles/doc-writer.md) | `docs-stage-conformance`, `docs-stage-routing`, `requirements-to-design` | `.claude/agents/doc-writer.md` | `.codex/agents/doc-writer.toml` |
 | Keep the README index current | [wiki-curator](../../.agents/roles/wiki-curator.md) | `docs-stage-conformance`, `knowledge-map` | `.claude/agents/wiki-curator.md` | `.codex/agents/wiki-curator.toml` |
 
-### Non-goals
+#### Non-goals
 
-Non-goals are stated in the opening text of Allowed Surface: design belongs to Stage 02 and change contracts to Stage 03.
+Non-goals are stated in the opening text of Allowed Scope: design belongs to Stage 02 and change contracts to Stage 03.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. Profile `sdlc/requirement`; start from
    `docs/99.templates/templates/requirements/requirement-package.template.md`
@@ -57,33 +61,37 @@ Canonical sources are the documents linked or named in the opening paragraph and
 7. When a requirement changes, update the linked AD, ADR and Spec traceability
    and this stage's README index in the same change.
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
+### Authority
+
+#### Stop and Escalate
+
+This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
+
+### Secrets and External Effects
+
+#### Protected Actions
+
+This folder adds no protected action beyond the approval and safety policy; if work here can start one, name it here.
 
 ## Verification
 
-### Required Checks
+### Checks
 
 Select the document checks in the parent `AGENTS.md`; the
 lifecycle check enforces the state edges above.
 
-### Evidence and Limits
+### Reporting
+
+#### Evidence and Limits
 
 This folder adds no evidence rule beyond the quality policy's handoff contract; if a check here has a limit to report, state it here.
 
-## Safety
+#### Handoff
 
-### Protected Actions
-
-This folder adds no protected action beyond the approval and safety policy; if work here can start one, name it here.
-
-### Stop and Escalate
-
-This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.

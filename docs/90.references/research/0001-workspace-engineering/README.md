@@ -1,10 +1,10 @@
 ---
 title: "Workspace Engineering Research Pack"
-version: "0.3.3"
+version: "0.3.4"
 type: "reference/research-pack"
 status: "in-review"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "RES-0001"
 ---
 # Workspace Engineering Research Pack
@@ -69,17 +69,29 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 | 보고서 | 연구 책임 |
 | --- | --- |
 | [Workspace governance](m0001-workspace-governance-and-common-agent-environment.md) | instruction 계층, 공통 정본·provider adapter, context 공유와 handoff |
+| [Workspace governance (m0001 successor)](m0015-workspace-governance-and-common-agent-environment.md) | instruction 계층, 공통 정본·provider adapter, context 공유와 handoff |
 | [Harness and loop](m0002-harness-and-loop-engineering.md) | harness 구성, loop 전이·종료·예산·재시도·복구 |
+| [Harness and loop (m0002 successor)](m0016-harness-and-loop-engineering.md) | harness 구성, loop 전이·종료·예산·재시도·복구 |
 | [Provider surfaces](m0003-provider-implementation-status.md) | Claude·Codex 제품별 공식 기능, discovery·권한·hook·IDE·SDK 비교 |
+| [Provider surfaces (m0003 successor)](m0017-provider-implementation-status.md) | Claude·Codex 제품별 공식 기능, discovery·권한·hook·IDE·SDK 비교 |
 | [SDLC and document contracts](m0004-spec-driven-sdlc-and-document-contracts.md) | spec-driven 원칙, 문서 family·lifecycle·추적성, 프로젝트·이슈 관리 |
+| [SDLC and document contracts (m0004 successor)](m0018-spec-driven-sdlc-and-document-contracts.md) | spec-driven 원칙, 문서 family·lifecycle·추적성, 프로젝트·이슈 관리 |
 | [Documentation architecture](m0005-documentation-architecture-and-diataxis.md) | Diátaxis·C4·ADR·arc42·README의 목적과 독자별 선택 |
+| [Documentation architecture (m0005 successor)](m0019-documentation-architecture-and-diataxis.md) | Diátaxis·C4·ADR·arc42·README의 목적과 독자별 선택 |
 | [LLM-WIKI and knowledge routing](m0006-llm-wiki-and-knowledge-routing.md) | 원저자 제안, 지식 탐색·retrieval 선택지와 freshness·보안 |
+| [LLM-WIKI and knowledge routing (m0006 successor)](m0020-llm-wiki-and-knowledge-routing.md) | 원저자 제안, 지식 탐색·retrieval 선택지와 freshness·보안 |
 | [Infrastructure and security](m0007-kubernetes-infrastructure-and-security.md) | Kubernetes·GitOps·인프라·공급망·보안·복구의 외부 계약 |
+| [Infrastructure and security (m0007 successor)](m0021-kubernetes-infrastructure-and-security.md) | Kubernetes·GitOps·인프라·공급망·보안·복구의 외부 계약 |
 | [CI/CD and QA](m0008-ci-cd-github-actions-and-qa.md) | delivery, GitHub Actions, Git hooks, QA와 Verification/Validation |
+| [CI/CD and QA (m0008 successor)](m0022-ci-cd-github-actions-and-qa.md) | delivery, GitHub Actions, Git hooks, QA와 Verification/Validation |
 | [AI agents and agency-agents](m0009-ai-agents-and-agency-agents.md) | 역할·persona·skill·권한·위임 경계, upstream 구조·license·선택 전략 |
+| [AI agents and agency-agents (m0009 successor)](m0023-ai-agents-and-agency-agents.md) | 역할·persona·skill·권한·위임 경계, upstream 구조·license·선택 전략 |
 | [Model routing](m0010-agent-model-routing-and-configuration.md) | 제품별 모델·설정·비용·한도·fallback·평가 |
+| [Model routing (m0010 successor)](m0024-agent-model-routing-and-configuration.md) | 제품별 모델·설정·비용·한도·fallback·평가 |
 | [Memory management](m0011-agent-memory-tiers-and-management.md) | 단기·장기·도메인 기억, 수명·승격·정정·삭제·복구 |
+| [Memory management (m0011 successor)](m0025-agent-memory-tiers-and-management.md) | 단기·장기·도메인 기억, 수명·승격·정정·삭제·복구 |
 | [Source coverage](m0012-source-coverage.md) | 원 요청·requirement·claim·source 대응, 갱신·이관 처분과 역사적 증거 |
+| [Source coverage (m0012 successor)](m0026-source-coverage.md) | 원 요청·requirement·claim·source 대응, 갱신·이관 처분과 역사적 증거 |
 | [Scope application index](m0013-scope-application-index.md) | 외부 근거를 scope별 후속 조사 질문·selector·합격 기준·승인 경계에 연결 |
 | [Current-state addendum 2026-11-05](m0014-current-state-addendum-2026-11-05.md) | 게시된 m0001~m0012의 당시 저장소 관측 차이와 내부 상충·중복, 현행 QA·양식·제품 발행 소유자 안내 |
 

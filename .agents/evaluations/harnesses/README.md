@@ -1,6 +1,6 @@
 ---
 title: "Agent Evaluation Trial Evidence"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -44,6 +44,9 @@ cycle 하나는 정확히
 
 받아들인 직접 cycle 디렉터리를 여기에 한 번씩 색인한다. 실행하지 않은 시도를 나타내는
 자리표시 행은 두지 않는다.
+
+| Path | Purpose |
+| --- | --- |
 
 ### Owners
 

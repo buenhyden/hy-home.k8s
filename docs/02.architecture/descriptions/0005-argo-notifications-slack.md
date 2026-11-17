@@ -1,10 +1,10 @@
 ---
 title: "Argo Notifications Slack Architecture Description"
-version: "2.1.0"
+version: "2.1.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "AD-0005"
 ---
 
@@ -82,6 +82,9 @@ ArgoCD Notifications evaluates Applications only, so Rollouts events are configu
 - **Data Boundaries**:
   - Slack token values must never appear in docs, manifests, logs, commit messages, or PR descriptions.
   - Human-approved external bootstrap is required before live notification validation.
+
+| Interface | Producer | Consumer | Contract | Failure |
+| --- | --- | --- | --- | --- |
 
 ## Runtime Behavior
 

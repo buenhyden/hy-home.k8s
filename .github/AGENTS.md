@@ -6,7 +6,7 @@ rules are for AI agents. The repository root gateway (`AGENTS.md` or
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 GitHub automation: the `ci.yml` branch metadata, PR title, commit and selected PR checks, greetings and labeler workflows, pinned CI requirements, rulesets and repository templates. Report local QA and hosted evidence against their respective inputs.
 
@@ -20,17 +20,21 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 [`.codex/provider.md`](../.codex/provider.md); approval boundaries are in
 [approval and safety](../.agents/governance/approval-and-safety.md).
 
-### Non-goals
+#### Non-goals
 
 Non-goals are stated in rule 7 under Local Obligations.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. Give `GITHUB_TOKEN` least privilege: `contents: read` at workflow level, and only the job-level permission a step needs.
 2. Pin every Action to a full commit SHA, and use only Actions registered in the allowlist recorded in `.github/rulesets/main-protection.md`. To add one, ask the operator to register its pattern in the remote setting before the pull request runs, and list it in `main-protection.md` in the same change.
@@ -42,19 +46,27 @@ Canonical sources are the documents linked or named in the opening paragraph and
 8. Change `requirements/ci-validation.txt` only with hashes and run the CI Python contract.
 9. Do not change remote settings, rulesets or secrets; document the intended state for the operator.
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
+### Authority
+
+#### Stop and Escalate
+
+Stop and escalation conditions are stated in rules 2 and 9 under Local Obligations.
+
+### Secrets and External Effects
+
+#### Protected Actions
+
+Protected actions are stated in rules 3, 4, 6 and 9 under Local Obligations.
 
 ## Verification
 
-### Required Checks
+### Checks
 
 Run the selected checks with `python3 scripts/qa.py staged`, or these
 directly:
@@ -63,16 +75,12 @@ directly:
 - `python3 scripts/validate-ci-python-contract.py --root .`
 - `python3 scripts/run-contract-tests.py --root . --suite ci-metadata`
 
-### Evidence and Limits
+### Reporting
+
+#### Evidence and Limits
 
 Record the selected hosted guarantees and their exact run identity.
 
-## Safety
+#### Handoff
 
-### Protected Actions
-
-Protected actions are stated in rules 3, 4, 6 and 9 under Local Obligations.
-
-### Stop and Escalate
-
-Stop and escalation conditions are stated in rules 2 and 9 under Local Obligations.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.

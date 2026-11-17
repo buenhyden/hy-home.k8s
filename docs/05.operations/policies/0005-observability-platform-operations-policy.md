@@ -1,6 +1,6 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.6.1"
+version: "1.6.2"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -37,15 +37,25 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
 ### Requirements
 
-| Rule ID | Condition | Level | Evidence | Status |
+| Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
-| OBSERV-R001 | Always | required | OBS-001 | active |
-| OBSERV-R002 | Always | required | OBS-006 | active |
-| OBSERV-R003 | Always | required | OBS-004 | active |
-| OBSERV-R004 | Always | required | OBS-004 | active |
-| OBSERV-R005 | Always | required | OBS-004 | active |
-| OBSERV-R006 | Always | required | OBS-005 | active |
-| OBSERV-R007 | Always | required | OBS-005 | active |
+| OBSERV-R001 | Always | `gitops/platform/external-services/`의 Service와 EndpointSlice 포트 이름은 `<protocol>[-suffix]` 형식이어야 한다. 현재 외부 계약은 Alloy `grpc-otlp`/`http-otlp`, Valkey `tcp-valkey`, Loki와 Tempo의 `http`를 사용한다. suffix-only 이름이나 프로토콜이 없는 이름은 금지한다. | OBS-001 | none |
+| OBSERV-R002 | Always | k8s 메트릭의 기준 수집 경로는 cluster 안 Alloy다 ([ADR-0045](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md)). Alloy는 pod IP와 API server proxy로 scrape하고 외부 Prometheus에 remote write한다. 저장, 조회, alert rule은 외부 workspace가 소유한다. 외부 Prometheus의 NodePort static scrape와 metrics NodePort Service(`30082-30092`)는 폐지되었다. `scripts/validate-infrastructure-contracts.sh`는 `gitops/platform`에 NodePort Service가 다시 생기면 실패한다. 수집을 위해 과도한 kubeconfig 권한을 외부에 부여하지 않는다. | OBS-006 | none |
+| OBSERV-R003 | Always | in-cluster `alloy-k8s-logs`는 `monitoring` namespace에서 Kubernetes API를 통해 pod logs/events를 수집하고 `loki-external.platform.svc.cluster.local:3100`으로 전송한다. | OBS-004 | none |
+| OBSERV-R004 | Always | Alloy는 read-only root filesystem과 전용 storage path를 유지하며, k3d containerd 로그를 Docker socket 또는 host file mount로 수집하지 않는다. | OBS-004 | none |
+| OBSERV-R005 | Always | Prometheus `rule_files`는 필요한 고정 파일을 명시적으로 나열한다. glob이 고정 파일의 존재를 암묵적으로 보장한다고 간주하지 않는다. | OBS-004 | none |
+| OBSERV-R006 | Always | 외부 Grafana는 익명 API 접근을 허용하지 않는다. Kiali는 Viewer role의 Grafana service account token(OpenBao `platform/grafana-api`, ESO `istio-system/kiali-grafana-auth`)으로 호출한다. Editor/Admin token이나 익명 접근은 쓰지 않는다. | OBS-005 | none |
+| OBSERV-R007 | Always | `gitops/clusters/local/appproject-platform.yaml`은 `monitoring` destination을 명시하며 wildcard destination으로 대체하지 않는다. | OBS-005 | none |
+
+| Rule ID | Level | Status |
+| --- | --- | --- |
+| OBSERV-R001 | required | active |
+| OBSERV-R002 | required | active |
+| OBSERV-R003 | required | active |
+| OBSERV-R004 | required | active |
+| OBSERV-R005 | required | active |
+| OBSERV-R006 | required | active |
+| OBSERV-R007 | required | active |
 
 #### Control Register
 
@@ -62,38 +72,17 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
 `OBSERV-R001`
 
-`gitops/platform/external-services/`의 Service와 EndpointSlice 포트 이름은 `<protocol>[-suffix]` 형식이어야 한다.
-현재 외부 계약은 Alloy `grpc-otlp`/`http-otlp`, Valkey `tcp-valkey`,
-Loki와 Tempo의 `http`를 사용한다. suffix-only
-이름이나 프로토콜이 없는 이름은 금지한다.
-
 #### In-Cluster Metric Collection
 
 `OBSERV-R002`
 
-k8s 메트릭의 기준 수집 경로는 cluster 안 Alloy다
-([ADR-0045](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md)).
-Alloy는 pod IP와 API server proxy로 scrape하고 외부 Prometheus에 remote
-write한다. 저장, 조회, alert rule은 외부 workspace가 소유한다. 외부
-Prometheus의 NodePort static scrape와 metrics NodePort Service(`30082-30092`)는
-폐지되었다.
-`scripts/validate-infrastructure-contracts.sh`는 `gitops/platform`에 NodePort
-Service가 다시 생기면 실패한다. 수집을 위해 과도한 kubeconfig 권한을 외부에
-부여하지 않는다.
-
 #### Logs, Rules, and Access
 
-- `OBSERV-R003` in-cluster `alloy-k8s-logs`는 `monitoring` namespace에서 Kubernetes API를
-  통해 pod logs/events를 수집하고 `loki-external.platform.svc.cluster.local:3100`으로 전송한다.
-- `OBSERV-R004` Alloy는 read-only root filesystem과 전용 storage path를 유지하며, k3d
-  containerd 로그를 Docker socket 또는 host file mount로 수집하지 않는다.
-- `OBSERV-R005` Prometheus `rule_files`는 필요한 고정 파일을 명시적으로 나열한다. glob이
-  고정 파일의 존재를 암묵적으로 보장한다고 간주하지 않는다.
-- `OBSERV-R006` 외부 Grafana는 익명 API 접근을 허용하지 않는다. Kiali는 Viewer role의 Grafana
-  service account token(OpenBao `platform/grafana-api`, ESO `istio-system/kiali-grafana-auth`)으로
-  호출한다. Editor/Admin token이나 익명 접근은 쓰지 않는다.
-- `OBSERV-R007` `gitops/clusters/local/appproject-platform.yaml`은 `monitoring` destination을
-  명시하며 wildcard destination으로 대체하지 않는다.
+- `OBSERV-R003`
+- `OBSERV-R004`
+- `OBSERV-R005`
+- `OBSERV-R006`
+- `OBSERV-R007`
 
 ### Exceptions
 

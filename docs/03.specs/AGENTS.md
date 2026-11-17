@@ -5,7 +5,7 @@ parent [`docs/AGENTS.md`](../AGENTS.md) still applies.
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 Stage 03 holds change packages `####-<slug>/`: `spec.md` owns the change
 contract and acceptance criteria, `plan.md` the work order, risks and
@@ -21,17 +21,21 @@ adoption and survey residue as pointers; the Task owns execution state.
 | Run checks and record Task evidence | [quality-engineer](../../.agents/roles/quality-engineer.md) | `k8s-validate`, `workspace-harness-audit` | `.claude/agents/quality-engineer.md` | `.codex/agents/quality-engineer.toml` |
 | Independent or requested change review | [code-reviewer](../../.agents/roles/code-reviewer.md) | `risk-report` | `.claude/agents/code-reviewer.md` | `.codex/agents/code-reviewer.toml` |
 
-### Non-goals
+#### Non-goals
 
 This folder adds no non-goal beyond the parent `AGENTS.md` and the governance policies; if work here must be excluded, state it here.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. Start from `docs/99.templates/templates/specs/{spec,plan,task}.template.md`.
    Do not add a README or other router inside a package.
@@ -46,12 +50,17 @@ Canonical sources are the documents linked or named in the opening paragraph and
    acceptance, or protected-action authority.
 3. Task rows move `draft` → `ready` → `in-progress` → `completed`. A row is
    `completed` only with PASS evidence; record a blocker with its cause,
-   resume condition and next owner.
+   resume condition and next owner. A Task with one item keeps its state in
+   frontmatter `status`, and that row's `Status` holds the marker
+   `frontmatter`. A Task with several items omits frontmatter `status`:
+   readers derive the summary from its rows, and a status that is present must
+   equal that summary (`TASK-EXECUTION-SUMMARY`).
 4. Task evidence is append-only. Keep every recorded `EVD-###` row and its
    factual fields unchanged; add a new row whose `Resolves` cell names the
-   row it closes. Never rewrite completed evidence to fit a later form. The evidence column
-   names follow the common contract by a recorded header map, while every
-   recorded row and its factual fields stay unchanged.
+   row it closes. Never rewrite completed evidence to fit a later form. A
+   Task's tables are read under the header the Task recorded or under the
+   core header of the registry, never a mixture; recorded rows are never
+   rewritten to the core header, and a new Task uses the core header.
 5. Record only observed results with their exact revision or run identity.
    An unobserved hosted or live check stays `NOT_RUN` or `DEFER` with a named
    next owner.
@@ -70,34 +79,38 @@ Canonical sources are the documents linked or named in the opening paragraph and
    staged `LIFECYCLE-PACKAGE-EXIT` check refuses the wrong shape; see the
    [document lifecycle policy](../../.agents/governance/document-lifecycle.md).
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-Handoff is stated in rules 3 and 5 under Local Obligations.
+### Authority
+
+#### Stop and Escalate
+
+Stop and escalation conditions are stated in rules 3, 5 and 7 under Local Obligations.
+
+### Secrets and External Effects
+
+#### Protected Actions
+
+Protected actions are stated in rules 2 and 6 under Local Obligations.
 
 ## Verification
 
-### Required Checks
+### Checks
 
 Select the document checks in the parent `AGENTS.md`. For delivery, the
 staged QA route runs the selected lifecycle and document checks against the
 exact index.
 
-### Evidence and Limits
+### Reporting
+
+#### Evidence and Limits
 
 Evidence rules are stated in rules 4 and 5 under Local Obligations.
 
-## Safety
+#### Handoff
 
-### Protected Actions
-
-Protected actions are stated in rules 2 and 6 under Local Obligations.
-
-### Stop and Escalate
-
-Stop and escalation conditions are stated in rules 3, 5 and 7 under Local Obligations.
+Handoff is stated in rules 3 and 5 under Local Obligations.

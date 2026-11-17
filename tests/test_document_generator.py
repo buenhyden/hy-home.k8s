@@ -149,6 +149,8 @@ SAMPLES: dict[str, tuple[str, str | None, str | None]] = {
 AUTHORING_RULES = frozenset(
     {
         "BODY-AUTHOR-PROMPT",
+        # SPEC-0222: a core cell that holds only its author prompt is empty.
+        "BODY-CORE-TABLE-CELL",
         "BODY-H1-PLACEHOLDER",
         "BODY-HEADING-EMPTY",
         "BODY-SECTION-EMPTY",
@@ -615,12 +617,14 @@ class OutputCheckRefusalTests(TreeCase):
     def test_guide_scaffold_may_omit_the_optional_steps_table(self) -> None:
         self.edit(
             self.GUIDE_TEMPLATE,
-            "| Step | Action | Check |\n| --- | --- | --- |\n"
-            "| 1 | Describe the action. | Describe the observable check. |\n",
+            "| Step | Action | Expected Result | On Failure |\n"
+            "| --- | --- | --- | --- |\n"
+            "| 1 | Describe the action. | Describe the observable result. "
+            "| State where to stop and who owns the next step. |\n",
             "",
         )
         text = self.generate("operation/guide", SAMPLES["operation/guide"][0])
-        self.assertNotIn("| Step | Action | Check |", text)
+        self.assertNotIn("| Step | Action | Expected Result | On Failure |", text)
 
     def test_generator_refuses_a_body_that_does_not_match_the_registry_form(
         self,
@@ -657,13 +661,15 @@ class OutputCheckRefusalTests(TreeCase):
     def test_generator_refuses_wrong_registered_table_columns(self) -> None:
         template = (self.root / self.GUIDE_TEMPLATE).read_text(encoding="utf-8")
         for malformed in (
-            "| Step | Check | Action |",
-            "<pre>\n```\n</pre>\n\n| Action | Step | Check |",
+            "| Step | Expected Result | Action | On Failure |",
+            "<pre>\n```\n</pre>\n\n| Action | Step | Expected Result | On Failure |",
         ):
             with self.subTest(malformed=malformed):
                 self.write(
                     self.GUIDE_TEMPLATE,
-                    template.replace("| Step | Action | Check |", malformed, 1),
+                    template.replace(
+                        "| Step | Action | Expected Result | On Failure |", malformed, 1
+                    ),
                 )
                 error = self.refuse(
                     "GENERATOR-OUTPUT",

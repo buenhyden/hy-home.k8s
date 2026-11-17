@@ -27,13 +27,17 @@ updated: "{{UPDATED}}"
 
 ### Requirements
 
-<!-- Author prompt: write enforceable responsibilities and boundaries for this topic. When the policy states normative rules, give each rule one stable ID of the form <CODE>-R<NNN>, a condition and a level of required, recommended or optional, and write the ID as a code span at the start of the rule's list item, table cell or H4 paragraph. -->
+<!-- Author prompt: write enforceable responsibilities and boundaries for this topic. When the policy states normative rules, give each rule one stable ID of the form <CODE>-R<NNN>, a condition and a level of required, recommended or optional. Write the rule's text in its Rules row; supporting paragraphs, lists and tables stay under an H4 that names the rule with its ID as a code span on a line of its own. -->
 
-<!-- Author prompt: when the policy states normative rules, keep the Rules table below with one row per rule, numbers ascending from 001 without a gap and a Status of active or retired; followed by a successor rule ID or none, and register the policy's code in policy_rule_ids of docs/99.templates/registry.json in the same change; otherwise delete the table. -->
+<!-- Author prompt: when the policy states normative rules, keep the Rules table below with one row per active rule, and the Rule Levels table with one row per issued rule ID, numbers ascending from 001 without a gap, a level and a Status of active or retired; followed by a successor rule ID or none. Register the policy's code in policy_rule_ids of docs/99.templates/registry.json in the same change; otherwise delete both tables. -->
 
-| Rule ID | Condition | Level | Evidence | Status |
+| Rule ID | Condition | Requirement | Enforcement | Evidence |
 | --- | --- | --- | --- | --- |
-| CODE-R001 | State when the rule applies. | required | Name where compliance is observed. | active |
+| CODE-R001 | State when the rule applies. | State what is allowed, required or forbidden. | Name where the rule is enforced, or manual review. | Name how compliance is checked, or none. |
+
+| Rule ID | Level | Status |
+| --- | --- | --- |
+| CODE-R001 | required | active |
 
 ### Exceptions
 

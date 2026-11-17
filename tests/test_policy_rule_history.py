@@ -35,20 +35,27 @@ HISTORY_RULES = {"POLICY-RULE-DELETE", "POLICY-RULE-REISSUE", "POLICY-CODE-CHANG
 
 
 def policy(rows: list[tuple[int, str]] | None, *, code: str = "GIT") -> str:
-    """One policy body whose Requirements section holds the given Rules rows."""
+    """One policy body whose Requirements section holds the given rule rows."""
 
     head = "# Policy\n\n## Rules\n\n### Requirements\n\n"
     if rows is None:
         return head + "No table.\n"
-    table = [
-        "| Rule ID | Condition | Level | Evidence | Status |",
+    # SPEC-0222: the core Rules table holds the active rules; the Rule Levels
+    # table keyed by Rule ID holds every issued ID with its status.
+    core = [
+        "| Rule ID | Condition | Requirement | Enforcement | Evidence |",
         "| --- | --- | --- | --- | --- |",
     ]
-    table += [
-        f"| {code}-R{number:03d} | Always | required | `check` | {status} |"
+    core += [
+        f"| {code}-R{number:03d} | Always | Keep it. | `check` | none |"
         for number, status in rows
+        if status == "active"
     ]
-    return head + "\n".join(table) + "\n"
+    levels = ["| Rule ID | Level | Status |", "| --- | --- | --- |"]
+    levels += [
+        f"| {code}-R{number:03d} | required | {status} |" for number, status in rows
+    ]
+    return head + "\n".join(core) + "\n\n" + "\n".join(levels) + "\n"
 
 
 def registry_blob(codes: dict[str, str] | None, reserved: tuple[str, ...] = ()) -> str:

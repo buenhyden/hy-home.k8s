@@ -433,7 +433,6 @@ class DocumentContentClosureTests(unittest.TestCase):
                     text,
                     reader._document_content_table,
                     navigation.index_columns,
-                    navigation.optional_index_columns,
                 )
 
             self.assertNotIn("DOC-INDEX-PARITY", {item[0] for item in findings()})
@@ -461,7 +460,6 @@ class DocumentContentClosureTests(unittest.TestCase):
                 text,
                 lambda _text, _title: None,
                 index_columns=(),
-                optional_index_columns=(),
             )
             self.assertIn("DOC-INCIDENT-STATE", {item[0] for item in findings})
         scope = DOCUMENTS.scoped_document_content_paths(

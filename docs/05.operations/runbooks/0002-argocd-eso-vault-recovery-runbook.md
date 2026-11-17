@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD ESO OpenBao Recovery Runbook"
-version: "1.6.4"
+version: "1.6.5"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -186,6 +186,9 @@ Steps의 Checklist를 확인하고, 변경할 각 ConfigMap의 적용 전 상태
    [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md) 절차 6의 루트 앱
    `source.path`·`targetRevision` 검사 두 줄을 그대로 다시 실행하고, 둘 다
    통과해야 Verification으로 넘어간다.
+
+| Step | Action | Expected Result | On Failure |
+| --- | --- | --- | --- |
 
 ### Stop Conditions
 

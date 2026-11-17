@@ -737,7 +737,7 @@ def _work_scope(rows: Sequence[Mapping[str, str]]) -> tuple[tuple[str, ...], ...
     return tuple(
         tuple(
             row.get(key, "")
-            for key in ("ID", "Upstream criterion", "Work item", "Owner")
+            for key in ("Item", "Upstream criterion", "Work item", "Owner")
         )
         for row in rows
     )
@@ -861,7 +861,7 @@ def _local_plan_task_contract_issues(
         )
 
     adapter = _link_validator_module()
-    task_scope_heading = _form_heading(registry, "task", "task-scope")
+    task_scope_heading = _form_heading(registry, "task", "task.scope")
     issues: list[tuple[PurePosixPath, str, str, str, str]] = []
 
     def task_scope(text: str) -> str | None:
@@ -1263,7 +1263,7 @@ def _new_approval_receipts(
             row.get(key, "").strip() != value
             for key, value in (
                 ("Result", "PASS"),
-                ("Required", "yes"),
+                ("Required", "true"),
                 ("Resolves", "none"),
             )
         ):

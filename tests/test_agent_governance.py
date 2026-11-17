@@ -446,7 +446,9 @@ class NativeBoundaryTests(unittest.TestCase):
                     self.assert_rejected("AGENT-NATIVE-REFERENCE")
             path.write_text(original)
 
-    GATEWAY_HEADINGS = ("# Gateway", *(f"## Heading {n}" for n in range(1, 16)))
+    # SPEC-0222 WORK-007: one H1, the four H2 and eight H3 of the core tree and
+    # the seven former form headings kept as H4.
+    GATEWAY_HEADINGS = ("# Gateway", *(f"## Heading {n}" for n in range(1, 20)))
 
     def gateway(self, provider, content_lines, headings):
         """A gateway with its loader and required refs, padded to a content size."""
@@ -481,7 +483,7 @@ class NativeBoundaryTests(unittest.TestCase):
 
     def test_gateway_counts_content_lines_not_heading_lines(self):
         for provider in ("codex", "claude"):
-            with self.subTest(provider=provider, case="30 content, 16 headings"):
+            with self.subTest(provider=provider, case="30 content, 20 headings"):
                 self.write_gateway(provider, 30, self.GATEWAY_HEADINGS)
                 self.assertEqual(
                     self.validator.validate_registry(self.root)["roles"], 1
@@ -489,7 +491,7 @@ class NativeBoundaryTests(unittest.TestCase):
             with self.subTest(provider=provider, case="31 content lines"):
                 self.write_gateway(provider, 31, ("# Gateway",))
                 self.assert_rejected("AGENT-NATIVE-REFERENCE")
-            with self.subTest(provider=provider, case="17 heading lines"):
+            with self.subTest(provider=provider, case="21 heading lines"):
                 self.write_gateway(provider, 6, self.GATEWAY_HEADINGS + ("### Last",))
                 self.assert_rejected("AGENT-NATIVE-REFERENCE")
             self.write_gateway(provider, 6, ("# Gateway",))

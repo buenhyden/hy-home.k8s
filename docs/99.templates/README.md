@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.39.0"
+version: "0.41.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 # 99.templates
 
@@ -135,8 +135,13 @@ form 경로의 대응은 Registry만 소유한다.
   `governance-role`(`.agents/roles/*.md`, Current Contract 아래 여덟 H3)과
   `governance-document`(provider 노트 두 개, H2만)도 각자의 지역 form을 쓴다.
   `provider-native`를 뺀 모든 Stage 99 지역 역할은 각자의 지역 form을 쓰며,
-  W03-D35와 W03-D36에 따라 `reference-report`는 감사·연구·데이터 보고서가
-  함께 쓰는 form 하나를 가진다. `provider-native`만 form 없는 Stage 99 지역
+  SPEC-0222에 따라 Stage 90 보고서는 core 역할의 form을 쓴다. 연구 보고서는
+  `research`(`Question and Scope`·`Sources`·`Analysis`·`Application and Limits`,
+  core 표 `research.sources`), 감사 보고서는 `audit`(`Scope`·`Findings`·`Actions`,
+  core 표 `audit.findings`), 자료 보고서는 `data-reference`(`Purpose`·`Provenance`·
+  `Interpretation`, core 표 `data-reference.schema`) form이다. 게시된 RES-0001-m0001~
+  m0012와 AUD-0001-m0001은 identity가 묶인 retained form으로 이전의 여덟 H2를
+  유지하며, 그 처분은 Q07-CUTOVER가 맡는다. `provider-native`만 form 없는 Stage 99 지역
   역할이며 table을 기록하지 않는다. 모든 등록 템플릿에는 TemplateDefinition이
   있다. `template_definition_record`는 Registry의 정의와 profile, form,
   키·관계·생명주기·언어 계약에서 레코드를 유도하며, Registry 검증이 모든 레코드를
@@ -155,6 +160,20 @@ form 경로의 대응은 Registry만 소유한다.
   되며, 그때 Markdown profile 검증은 fence·frontmatter·placeholder 검사만 적용하고
   heading 규칙은 적용하지 않는다. ADR-0001부터 ADR-0061까지의 accepted ADR은
   등록된 retained form의 H2 목록과 그 검사를 ADR-0062에 따라 유지한다.
+  SPEC-0222에 따라 `common_forms.core`는 채택한 공통 core의 `contract_id`,
+  `contract_version`, 원본 SHA-256을 기록한다. form의 `core_role`은 19개 core
+  역할 중 하나이거나 `domain`이며, form이 없는 `provider-native` 템플릿은
+  `template_definition`에 `core_role: native`를 둔다. `domain`과 `native`에는
+  소유자·이유·검토 조건·권한 근거를 담은 `classification`이 있다. core 역할 form은
+  core 구성원을 그대로 담고, 각 템플릿이 core 표의 ID·조건·열·타입을 정확히
+  가지는지 엄격 Registry 검사가 확인한다(`REGISTRY_CORE_TABLE`,
+  `REGISTRY_CORE_SECTION`). 모든 지역 확장과 `table_id`가 없는 템플릿 지역 표는
+  `authority_ref`를 가진다(SPEC-0222 이전 등록은 `ADR-0059`, SPEC-0222가 추가한
+  것은 `SPEC-0222`). 문서 검사는 `required_when`이 `always`인 core 표가 core H2
+  안에 정확한 core 머리글로 있는지(`BODY-CORE-TABLE-MISSING`)와 각 core 셀이 열
+  타입을 지키는지(`BODY-CORE-TABLE-CELL`: 필수 셀 공란, 허용값 밖의 값, 정수 열의
+  비정수)를 확인한다. 템플릿은 머리글만 검사하고, retained identity와 Task 표는
+  제외한다.
 - **Core SDLC forms**: physical `requirements/`, `architecture/`, `specs/`
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
   `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의
@@ -167,8 +186,13 @@ form 경로의 대응은 Registry만 소유한다.
   Decisions and Adoption 아래 같은 두 지역 H3)을 쓰고 H2 목록을 두지 않으며, 각 요구 member를 자신의
   `Upstream requirement` 열에서 인용한다. Requirement는 downstream 링크 열을
   두지 않고, 파생 역조회와 `REQUIREMENT-COVERAGE` 검사가 그 자리를 대신한다.
-  `sdlc/architecture-decision`은 `adr` form(다섯 H2와 열 개 H3, Traceability
-  아래 지역 H3 `Lifecycle Traceability`)을 쓰고 H2 목록을 두지 않는다.
+  `sdlc/architecture-decision`은 core `decision` 역할에 묶인 `adr` form(Context,
+  Options, Decision, Consequences의 네 H2와 여덟 H3, Decision 아래 지역 H3
+  `Lifecycle Traceability`)을 쓰고 H2 목록을 두지 않는다(SPEC-0222). 근거와 선행
+  결정은 Authority and Effect 아래 H4 `Sources`와 `Supersession`에 두고, 대안
+  표는 core `decision.options` 표(`Option`, `Benefit`, `Cost and Risk`,
+  `Reason`)다. 출처 사실이 없는 core 셀이 있는 ADR-0062는 열만 둔 core 표 뒤에
+  기존 `Alternatives` 표를 `authority_ref: SPEC-0222`인 독자 지역 표로 유지한다.
   `sdlc/spec`은 `spec` form(네 H2와 여덟 H3, Acceptance Criteria 아래 지역 H3
   `Lifecycle Traceability`)을, `sdlc/plan`은 `plan` form(다섯 H2와 열 개 H3)을
   쓰며 둘 다 H2 목록을 두지 않는다. 두 form은 4.0.0 설계 목표의 제목과 section
@@ -179,6 +203,21 @@ form 경로의 대응은 Registry만 소유한다.
   `Work Breakdown` 표는 Work Breakdown > Work Units 아래에, 승격 표
   (`Promotion ID`, `Target Owner`, `Acceptance`, `Evidence`)는 Promotion Map의
   Durable Owners 아래에 둔다.
+  SPEC-0222에 따라 이 네 form은 core `requirement`, `architecture`, `spec`,
+  `plan` 역할에 묶인다. 기능·품질 요구사항 표는 core `requirement.requirements`
+  표(`Requirement ID`, `Statement`, `Rationale`, `Acceptance`, `Priority`)의
+  인스턴스이고 `Priority`는 `must`, `should`, `could` 중 하나다
+  (`BODY-CORE-TABLE-CELL`). `Quality Requirements` H3는 항상 두며, core
+  `requirement.quality` 표는 정의만 두고 렌더링하지 않는다. core
+  `task.work_items` 표도 frontmatter `status`와 함께 둘 수 없으므로 Task
+  템플릿은 한 항목 Task의 `status`를 두고 이 표를 작성자 안내로만 둔다. 외부 인터페이스를 밝힌
+  architecture description은 Structure > Interfaces에 core
+  `architecture.interface` 표를 둔다. Spec은 Verification Strategy 아래에 core
+  `spec.checks` 표를, Plan은 Work Units의 `Work Breakdown` 표 뒤에 core
+  `plan.work_units` 표를, Selected Checks 아래에 core `plan.checks` 표를 둔다.
+  기존 `Criteria`, `Work Breakdown`, 승격 표, `Lifecycle Traceability`,
+  `Constraints`, `Quality Scenarios` 표는 `authority_ref: ADR-0059`인 독자 지역
+  표로 남는다.
   ADR-0001부터 ADR-0061까지의 accepted ADR은 승인된 일곱 H2를 등록된
   retained form으로 유지하며(W03-D02, W03-D52, W03-D69), 그 범위 뒤의 ADR은
   accepted를 포함한 모든 상태에서 공통 form을 쓴다.
@@ -197,10 +236,13 @@ form 경로의 대응은 Registry만 소유한다.
   목적·범위·규칙·예외·집행·소유는 form의 `Purpose and Scope`, `Rules`,
   `Enforcement`, `Ownership`에 배치하고, Policy의
   `Lifecycle Traceability` 관계 표는 `Ownership` 아래에서 같은 source·열·상호 참조
-  의미를 유지한다. Policy가 규범적 규칙을 진술하면 `Requirements` 아래에
-  `Rules` 표(Rule ID·Condition·Level·Evidence, 선택 열 Status)를 두고, 규칙 ID는
-  정책의 등록 code로 만든 `<CODE>-R<NNN>`이며 같은 ID를 규칙의 목록 항목·표
-  첫 셀·H4 단락 맨 앞에 코드 스팬으로 적는다. `Status`는 `retired;` 뒤에 후속
+  의미를 유지한다. Policy가 규범적 규칙을 진술하면 `Requirements` 아래에 core
+  `Rules` 표(Rule ID·Condition·Requirement·Enforcement·Evidence)에 현재 규칙마다
+  한 행을, 그 뒤 Rule ID로 묶인 지역 `Rule Levels` 표(Rule ID·Level, 선택 열
+  Status)에 발급한 규칙 ID마다 한 행을 둔다(SPEC-0222). 규칙 ID는 정책의 등록
+  code로 만든 `<CODE>-R<NNN>`이고, 규칙의 내용은 Rules 행에만 있으며 본문의 보충
+  단락·목록은 ID를 코드 스팬 한 줄로 둔 H4 아래에 남는다. 열이 더 많은 규칙 표는
+  Rule ID로 묶인 지역 표로 남는다. `Status`는 `retired;` 뒤에 후속
   ID나 `none`을 적어 폐기한 규칙의 행을 남기는 이 저장소의 조건부 확장이며,
   정확한 값과 code 기록은 Registry의 `policy_rule_ids`가 소유한다. 규칙 ID와 code는
   사용자가 승인한 Q-07 새 baseline까지 영구하다. ID는 삭제하거나 폐기 뒤 다시 `active`로
@@ -216,10 +258,10 @@ form 경로의 대응은 Registry만 소유한다.
   `reference/audit`·`reference/data`·`reference/research` form을 사용한다.
   세 pack README는 W03-D10에 따른 Stage 99 지역 역할의 자체 Reference Pack
   README form을 함께 쓰며, 종류별 계약 절은 `Pack Contract`, 멤버 색인 절은
-  `Pack Index`로 부른다. Registry는 pack 유형별 필수 마감 절과 보고서 유형별
-  선택 소제목의 적용 대상을 원본 profile로 지정한다. 템플릿에도 같은 바인딩을
-  적용한다. 역사적 연구 소제목과 지역 확장은 Registry에 등록된 보고서에만
-  적용하며, 검사기는 문서 경로에서 해당 보고서 ID를 유도한다.
+  `Pack Index`로 부른다. Registry는 pack 유형별 필수 마감 절의 적용 대상을 원본
+  profile로 지정하고 템플릿에도 같은 바인딩을 적용한다. 게시된 멤버의 retained
+  form은 Registry에 등록된 보고서 ID에만 적용하며, 검사기는 문서 경로에서 그
+  ID를 유도한다.
 - **Runtime forms** (`runtime/`): provider가 직접 읽는 binding만 담는다.
   Claude는 `claude-agent.template.md`와 `claude-command.template.md`, Codex는
   `codex-agent.template.toml`이며 이 form들은 provider 소유
@@ -281,8 +323,9 @@ Registry가 소유한다. Governed README도 공통 envelope를 사용하지만
 constant다. Template은 실제 destination path를 hardcode하지 않는다.
 Spec은 변경 계약과 수용 기준을, Plan은 실행 순서와 위험·예정 검증을
 소유한다. 현행 Spec·Plan 상태는 `draft`, `in-review`, `approved`, `cancelled`다.
-`approved`는 현재 계약의 승인·유효성을 뜻한다. Task의 단일 Lifecycle Traceability 표(Execution Log 아래)는 실행 상태·결과와
-증거 포인터를 기록하고, Criterion Decisions 표가 기준별 수용 판정의
+`approved`는 현재 계약의 승인·유효성을 뜻한다. Task의 core Work Items 표(Work Performed의
+첫 표)는 작업 항목별 상태를, Lifecycle Traceability 표(Execution Log 아래)는
+Item별 결과와 증거 포인터를 기록하고, Criterion Decisions 표가 기준별 수용 판정의
 유일한 작성 원본이다. Results 표는 검사 사실을 보존한다. 기존 완료
 Spec·Plan·Task는 당시 Registry 판본으로 읽으며 상태와 승인·검사 근거를 보존한다.
 새로 작성하거나 현행 내용을 바꾸는 Plan은 승인된 Spec의 제약을
@@ -295,16 +338,18 @@ lifecycle reader는 두 위치를 form의 section id로 읽고, 현행 Plan의
 작성·완료 의무는 선택한 입력에 대해 검사한다. Stage 99
 형식 구현은 해당 형식을 위임하는 현행 정책 소유자를 가리킨다.
 
-Plan, Task Lifecycle Traceability, Criterion Decisions, Results 표의 열 이름과 순서, 수용
-값 집합은 Registry의 `body_contract`가 소유하며 이 README는 복제하지 않는다.
+Plan, Task Work Items, Lifecycle Traceability, Criterion Decisions, Results 표의 열 이름과
+순서, 수용 값 집합은 Registry의 `body_contract`와 core 표가 소유하며 이 README는
+복제하지 않는다. 기록된 Task는 기록 당시 머리행 그대로 전환 어댑터가 core 이름으로
+읽고, 한 Task 안에서 두 머리행을 섞지 않는다.
 `not-required`는 취소된 Task와 같은 package의 취소된 Spec에서 해당 기준의
 실제 범위 변경과 승인 근거를 확인한 때만 쓴다. 두 취소 처분 모두 정확한
 기준 ID를 명시하고 Task의 승인 참조는 해당 Spec 결정을 가리킨다. 후속
 Task만 정하거나 활성·
 완료·대체 Task로 끝내는 경우 기준 면제로 바꾸지 않는다. QA의
 `NOT_APPLICABLE`는 검사 대상 판정으로 이 수용 값과 다르다.
-`Required`는 `yes` 또는 `no`, `Resolves`는 `none` 또는 앞선 증거 ID를
-쉼표와 공백으로 연결한다. `no`는 원래 검증 계획에서 비필수인 검사와
+`Required`는 `true` 또는 `false`(기록된 Task의 `yes`·`no`는 같은 뜻으로 읽는다), `Resolves`는 `none` 또는 앞선 증거 ID를
+쉼표와 공백으로 연결한다. `false`는 원래 검증 계획에서 비필수인 검사와
 그 사유에만 쓰며 필수 실패를 사후 재분류하지 않는다. 필수
 `FAIL`·`DEFER`·`NOT_RUN`은 같은 검사·작업
 항목·기준의 뒤따르는 `PASS`가 이전 증거 ID를 명시해야 해소된다. 다른
@@ -314,8 +359,8 @@ PASS로 미해소 필수 결과를 숨기지 않는다. 완료 인계는 필수 
 통합과 보관은 서로의 대체값이 아니다. 취소·대체는 남은 필수 기준의
 후속 Task의 Plan 배정을 명시하고, 관측 결과를 보존한다.
 관측된 `FAIL`은 `PASS`처럼 구체적인 Command·Input·Location을 적는다.
-`NOT_RUN`·`DEFER`에는 아직 실제 결과 위치가 없으면 `Pending`을 쓸 수
-있지만 사유와 다음 owner를 남긴다.
+`NOT_RUN`·`DEFER`에는 아직 실제 결과 위치가 없으면 `none`(기록된 Task는 `Pending`)을
+쓸 수 있지만 사유와 다음 owner를 남긴다.
 resolved Incident에는 시간대를 포함한 실제 resolved_at과 해결 증거가 필요하다.
 
 #### Shared Frontmatter Grammar

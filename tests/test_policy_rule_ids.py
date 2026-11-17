@@ -5,7 +5,6 @@ from __future__ import annotations
 import dataclasses
 import importlib.util
 import json
-import re
 import sys
 import unittest
 from pathlib import Path, PurePosixPath
@@ -22,7 +21,10 @@ TEMPLATES = {
     "common/template-governance-rule": "docs/99.templates/templates/governance/rule.template.md",
     "common/template-operation-policy": "docs/99.templates/templates/operations/policy.template.md",
 }
-COLUMNS = ("Rule ID", "Condition", "Level", "Evidence", "Status")
+# SPEC-0222: the core Rules table and the local Rule Levels table keyed by Rule ID.
+CORE_COLUMNS = ("Rule ID", "Condition", "Requirement", "Enforcement", "Evidence")
+LEVEL_COLUMNS = ("Rule ID", "Level", "Status")
+FORMER_COLUMNS = ("Rule ID", "Condition", "Level", "Evidence", "Status")
 CODES = {
     ".agents/governance/agent-execution.md": "EXEC",
     ".agents/governance/approval-and-safety.md": "SAFE",
@@ -117,7 +119,11 @@ LANGUAGES = {
 
 
 class Fixture:
-    """One synthetic policy for a language; runs the document rules over a body."""
+    """One synthetic policy for a language; runs the document rules over a body.
+
+    SPEC-0222: the core Rules table holds each active rule with its text, and the
+    Rule Levels table keyed by Rule ID holds every issued ID, its level and status.
+    """
 
     def __init__(self, language: str, recorded: bool = True, code="SYN"):
         self.text = LANGUAGES[language]
@@ -128,24 +134,37 @@ class Fixture:
         lead = f"`SYN-R{number:03d}` " if token else ""
         return f"- {lead}{text}"
 
-    def row(self, number, level="required", status="active", code="SYN") -> str:
+    def rule(self, number, text: str | None = None, code="SYN") -> str:
         identifier = f"{code}-R{number:03d}" if isinstance(number, int) else number
-        return (
-            f"| {identifier} | {self.text['when']} | {level} | "
-            f"{self.text['proof']} | {status} |"
-        )
+        text = self.text["one"] if text is None else text
+        return f"| {identifier} | {self.text['when']} | {text} | {self.text['proof']} | none |"
 
     @staticmethod
-    def table(*rows: str, header=COLUMNS) -> str:
+    def level(number, level="required", status="active", code="SYN") -> str:
+        identifier = f"{code}-R{number:03d}" if isinstance(number, int) else number
+        return f"| {identifier} | {level} | {status} |"
+
+    @staticmethod
+    def table(*rows: str, header=CORE_COLUMNS) -> str:
         head = "| " + " | ".join(header) + " |"
         rule = "| " + " | ".join("---" for _ in header) + " |"
         return "\n".join([head, rule, *rows])
 
-    def good(self) -> str:
-        return (
-            f"{self.item(1, self.text['one'])}\n{self.item(2, self.text['two'])}\n\n"
-            + self.table(self.row(1), self.row(2))
+    def tables(self, *numbers: int, retired: tuple[int, ...] = ()) -> str:
+        """Both rule tables for the given rule numbers; `retired` ones leave Rules."""
+
+        core = self.table(*(self.rule(n) for n in numbers if n not in retired))
+        levels = self.table(
+            *(
+                self.level(n, status="retired; none" if n in retired else "active")
+                for n in numbers
+            ),
+            header=LEVEL_COLUMNS,
         )
+        return core + "\n\n" + levels
+
+    def good(self) -> str:
+        return self.tables(1, 2)
 
     @staticmethod
     def body(requirements: str) -> str:
@@ -195,9 +214,7 @@ class RuleCodeTests(EachLanguage):
 
     def test_a_policy_with_a_table_and_no_record_fails(self) -> None:
         self.each(
-            lambda f: self.assertEqual(
-                f.rules(f.table(f.row(1))), ["POLICY-RULE-CODE"]
-            ),
+            lambda f: self.assertEqual(f.rules(f.good()), ["POLICY-RULE-CODE"]),
             recorded=False,
         )
 
@@ -220,63 +237,61 @@ class RuleTableTests(EachLanguage):
     def test_a_prose_only_policy_passes_without_a_table(self) -> None:
         self.each(lambda f: self.assertEqual(f.rules(f.text["prose"]), []))
 
-    def test_a_header_only_table_passes_when_no_rule_is_stated(self) -> None:
-        self.each(lambda f: self.assertEqual(f.rules(f.table()), []))
+    def test_header_only_tables_pass_when_no_rule_is_stated(self) -> None:
+        self.each(lambda f: self.assertEqual(f.rules(f.tables()), []))
 
-    def test_a_missing_table_fails_when_rules_are_stated(self) -> None:
+    def test_missing_tables_fail_when_rules_are_stated(self) -> None:
         def check(f: Fixture) -> None:
-            self.assertEqual(
-                f.rules(f.item(1, f.text["one"], token=False)),
-                ["POLICY-RULE-COVERAGE", "POLICY-RULE-TABLE"],
+            found = f.rules(f.item(1, f.text["one"], token=False))
+            self.assertEqual(set(found), {"POLICY-RULE-COVERAGE", "POLICY-RULE-TABLE"})
+            # Each of the two tables is named once.
+            self.assertEqual(found.count("POLICY-RULE-TABLE"), 2)
+            only_core = f.table(f.rule(1))
+            self.assertIn("POLICY-RULE-TABLE", f.rules(only_core))
+
+        self.each(check)
+
+    def test_the_former_five_column_table_is_not_read(self) -> None:
+        def check(f: Fixture) -> None:
+            former = f.table(
+                "| SYN-R001 | when | required | proof | active |", header=FORMER_COLUMNS
             )
-            # A token has no active row without a table.
-            self.assertEqual(
-                f.rules(f.item(1, f.text["one"])),
-                ["POLICY-RULE-INLINE", "POLICY-RULE-TABLE"],
+            self.assertIn("POLICY-RULE-TABLE", f.rules(former))
+            self.assertEqual(MARKDOWN.policy_rule_rows(f.body(former)), ())
+
+        self.each(check)
+
+    def test_a_level_table_without_the_status_column_fails(self) -> None:
+        def check(f: Fixture) -> None:
+            levels = f.table("| SYN-R001 | required |", header=LEVEL_COLUMNS[:2])
+            self.assertIn(
+                "POLICY-RULE-TABLE", f.rules(f.table(f.rule(1)) + "\n\n" + levels)
             )
 
         self.each(check)
 
-    def test_a_table_without_rows_fails_when_rules_are_stated(self) -> None:
-        self.each(
-            lambda f: self.assertEqual(
-                f.rules(f.item(1, f.text["one"]) + "\n\n" + f.table()),
-                ["POLICY-RULE-INLINE", "POLICY-RULE-TABLE"],
-            )
-        )
-
-    def test_a_table_without_the_status_column_fails(self) -> None:
-        def check(f: Fixture) -> None:
-            table = f.table(
-                "| SYN-R001 | when | required | proof |", header=COLUMNS[:4]
-            )
-            self.assertEqual(
-                f.rules(f.item(1, f.text["one"]) + "\n\n" + table),
-                ["POLICY-RULE-TABLE"],
-            )
-
-        self.each(check)
-
-    def test_a_reordered_or_extra_column_fails(self) -> None:
+    def test_a_reordered_relabeled_or_extra_column_fails(self) -> None:
         def check(f: Fixture) -> None:
             for header in (
-                (COLUMNS[0], COLUMNS[2], COLUMNS[1], *COLUMNS[3:]),
-                (*COLUMNS, "Note"),
+                (CORE_COLUMNS[0], CORE_COLUMNS[2], CORE_COLUMNS[1], *CORE_COLUMNS[3:]),
+                (*CORE_COLUMNS, "Note"),
+                (*CORE_COLUMNS[:3], "Evidence", "Enforcement"),
             ):
-                row = "| " + " | ".join("x" for _ in header) + " |"
-                table = f.table(row, header=header)
+                row = "| SYN-R001 | " + " | ".join("x" for _ in header[1:]) + " |"
+                tables = (
+                    f.table(row, header=header)
+                    + "\n\n"
+                    + f.table(f.level(1), header=LEVEL_COLUMNS)
+                )
                 with self.subTest(header=header):
-                    self.assertIn(
-                        "POLICY-RULE-TABLE",
-                        f.rules(f.item(1, "x", token=False) + "\n\n" + table),
-                    )
+                    self.assertIn("POLICY-RULE-TABLE", f.rules(tables))
 
         self.each(check)
 
     def test_a_level_is_one_of_the_three_registered_values(self) -> None:
         def run(f: Fixture, level: str) -> list[str]:
-            table = f.table(f.row(1, level=level))
-            return f.rules(f.item(1, f.text["one"]) + "\n\n" + table)
+            levels = f.table(f.level(1, level=level), header=LEVEL_COLUMNS)
+            return f.rules(f.table(f.rule(1)) + "\n\n" + levels)
 
         def check(f: Fixture) -> None:
             for level in ("must", "Required", "", "required;"):
@@ -291,10 +306,10 @@ class RuleTableTests(EachLanguage):
     def test_two_tables_or_a_table_outside_requirements_fail(self) -> None:
         def check(f: Fixture) -> None:
             self.assertIn(
-                "POLICY-RULE-TABLE", f.rules(f.good() + "\n\n" + f.table(f.row(1)))
+                "POLICY-RULE-TABLE", f.rules(f.good() + "\n\n" + f.table(f.rule(1)))
             )
             outside = f.body(f.good()).replace(
-                "Checks run in CI.", "Checks run in CI.\n\n" + f.table(f.row(1))
+                "Checks run in CI.", "Checks run in CI.\n\n" + f.table(f.rule(1))
             )
             self.assertIn("POLICY-RULE-TABLE", f.found(outside))
 
@@ -302,8 +317,11 @@ class RuleTableTests(EachLanguage):
 
     def test_the_status_is_active_or_retired_with_a_successor(self) -> None:
         def run(f: Fixture, status: str) -> list[str]:
-            table = f.table(f.row(1), f.row(2, status=status))
-            return f.rules(f.item(1, f.text["one"]) + "\n\n" + table)
+            levels = f.table(
+                f.level(1), f.level(2, status=status), header=LEVEL_COLUMNS
+            )
+            core = f.table(f.rule(1), *((f.rule(2),) if status == "active" else ()))
+            return f.rules(core + "\n\n" + levels)
 
         def check(f: Fixture) -> None:
             self.assertEqual(run(f, "retired; none"), [])
@@ -322,29 +340,83 @@ class RuleTableTests(EachLanguage):
 
         self.each(check)
 
+    def test_the_rules_table_holds_exactly_the_active_rules_in_order(self) -> None:
+        def check(f: Fixture) -> None:
+            self.assertEqual(f.rules(f.tables(1, 2, 3, retired=(2,))), [])
+            levels = f.table(f.level(1), f.level(2), header=LEVEL_COLUMNS)
+            for label, core in (
+                ("missing", f.table(f.rule(1))),
+                ("reordered", f.table(f.rule(2), f.rule(1))),
+                ("extra", f.table(f.rule(1), f.rule(2), f.rule(3))),
+            ):
+                with self.subTest(case=label):
+                    self.assertIn("POLICY-RULE-TABLE", f.rules(core + "\n\n" + levels))
+            retired = f.table(
+                f.level(1), f.level(2, status="retired; none"), header=LEVEL_COLUMNS
+            )
+            core = f.table(f.rule(1), f.rule(2))
+            self.assertIn("POLICY-RULE-TABLE", f.rules(core + "\n\n" + retired))
+
+        self.each(check)
+
+    def test_every_core_cell_holds_a_value(self) -> None:
+        def check(f: Fixture) -> None:
+            levels = f.table(f.level(1), header=LEVEL_COLUMNS)
+            for empty in (
+                f"| SYN-R001 | {f.text['when']} |  | {f.text['proof']} | none |",
+                f"| SYN-R001 |  | {f.text['one']} | {f.text['proof']} | none |",
+                f"| SYN-R001 | {f.text['when']} | {f.text['one']} | {f.text['proof']} |  |",
+            ):
+                with self.subTest(row=empty):
+                    self.assertEqual(
+                        f.rules(f.table(empty) + "\n\n" + levels),
+                        ["POLICY-RULE-TABLE"],
+                    )
+
+        self.each(check)
+
+    def test_a_table_keyed_by_rule_id_names_active_rules_only(self) -> None:
+        def check(f: Fixture) -> None:
+            keyed = f.table(
+                f"| SYN-R001 | {f.text['two']} |", header=("Rule ID", "Detail")
+            )
+            self.assertEqual(f.rules(f.good() + "\n\n" + keyed), [])
+            for own in ("SYN-R003", "OTH-R001"):
+                stray = f.table(f"| {own} | x |", header=("Rule ID", "Detail"))
+                with self.subTest(row=own):
+                    self.assertIn(
+                        "POLICY-RULE-TABLE", f.rules(f.good() + "\n\n" + stray)
+                    )
+            retired = f.table("| SYN-R002 | x |", header=("Rule ID", "Detail"))
+            self.assertIn(
+                "POLICY-RULE-TABLE",
+                f.rules(f.tables(1, 2, retired=(2,)) + "\n\n" + retired),
+            )
+
+        self.each(check)
+
 
 class RuleIdTests(EachLanguage):
     def run_rows(self, f: Fixture, *rows: str) -> list[str]:
-        numbers = sorted(
-            {int(n) for row in rows for n in re.findall(r"R(\d{3})\b", row)}
-        )
-        items = "\n".join(f.item(n, f.text["one"]) for n in numbers)
-        return f.rules(items + "\n\n" + f.table(*rows))
+        levels = f.table(*rows, header=LEVEL_COLUMNS)
+        ids = [row.split("|")[1].strip() for row in rows]
+        core = f.table(*(f.rule(own) for own in ids))
+        return f.rules(core + "\n\n" + levels)
 
     def test_ascending_rows_from_r001_without_a_gap_pass(self) -> None:
         self.each(
             lambda f: self.assertEqual(
-                self.run_rows(f, f.row(1), f.row(2), f.row(3)), []
+                self.run_rows(f, f.level(1), f.level(2), f.level(3)), []
             )
         )
 
     def test_a_gap_a_duplicate_a_late_start_or_a_descent_fails(self) -> None:
         def check(f: Fixture) -> None:
             for label, rows in (
-                ("gap", (f.row(1), f.row(3))),
-                ("duplicate", (f.row(1), f.row(1))),
-                ("late start", (f.row(2), f.row(3))),
-                ("descent", (f.row(2), f.row(1))),
+                ("gap", (f.level(1), f.level(3))),
+                ("duplicate", (f.level(1), f.level(1))),
+                ("late start", (f.level(2), f.level(3))),
+                ("descent", (f.level(2), f.level(1))),
             ):
                 with self.subTest(case=label):
                     self.assertIn("POLICY-RULE-ID", self.run_rows(f, *rows))
@@ -360,11 +432,9 @@ class RuleIdTests(EachLanguage):
                 "syn-R001",
                 "SYN-R0011",
             ):
-                table = f.table(f.row(identifier))
                 with self.subTest(identifier=identifier):
                     self.assertIn(
-                        "POLICY-RULE-ID",
-                        f.rules(f.item(1, f.text["one"]) + "\n\n" + table),
+                        "POLICY-RULE-ID", self.run_rows(f, f.level(identifier))
                     )
 
         self.each(check)
@@ -375,38 +445,55 @@ class RuleIdTests(EachLanguage):
         )
 
 
-class DefinitionTokenTests(EachLanguage):
-    def test_every_active_row_has_exactly_one_token_and_the_reverse(self) -> None:
+class ReferenceTokenTests(EachLanguage):
+    """SPEC-0222: a token left in the body only refers to a current rule."""
+
+    def test_an_h4_reference_names_one_active_row(self) -> None:
         def check(f: Fixture) -> None:
-            table = f.table(f.row(1))
-            none = f.item(1, f.text["one"], token=False)
+            group = f"#### Group\n\n`SYN-R001`\n\n{f.text['prose']}"
+            self.assertEqual(f.rules(f.good() + "\n\n" + group), [])
+            unknown = group.replace("SYN-R001", "SYN-R003")
             self.assertEqual(
-                f.rules(none + "\n\n" + table),
-                ["POLICY-RULE-COVERAGE", "POLICY-RULE-INLINE"],
+                f.rules(f.good() + "\n\n" + unknown), ["POLICY-RULE-INLINE"]
             )
-            stray = f.item(1, f.text["one"]) + "\n" + f.item(2, f.text["two"])
-            self.assertEqual(f.rules(stray + "\n\n" + table), ["POLICY-RULE-INLINE"])
-            twice = f.item(1, f.text["one"]) + "\n" + f.item(1, f.text["two"])
-            self.assertEqual(f.rules(twice + "\n\n" + table), ["POLICY-RULE-INLINE"])
+            twice = group + "\n\n" + group.replace("Group", "Other")
+            self.assertEqual(f.rules(f.good() + "\n\n" + twice), ["POLICY-RULE-INLINE"])
+            retired = group.replace("SYN-R001", "SYN-R002")
+            self.assertEqual(
+                f.rules(f.tables(1, 2, retired=(2,)) + "\n\n" + retired),
+                ["POLICY-RULE-INLINE"],
+            )
 
         self.each(check)
 
-    def test_a_retired_row_has_no_token_and_a_token_on_it_fails(self) -> None:
+    def test_a_token_followed_by_rule_text_is_refused(self) -> None:
         def check(f: Fixture) -> None:
-            table = f.table(f.row(1), f.row(2, status="retired; none"))
-            one = f.item(1, f.text["one"])
-            self.assertEqual(f.rules(one + "\n\n" + table), [])
-            both = one + "\n" + f.item(2, f.text["two"])
-            self.assertEqual(f.rules(both + "\n\n" + table), ["POLICY-RULE-INLINE"])
+            item = f.item(1, f.text["one"])
+            self.assertEqual(f.rules(item + "\n\n" + f.good()), ["POLICY-RULE-INLINE"])
+            nested = f"- **Required**:\n  - `SYN-R001` {f.text['one']}"
+            self.assertEqual(
+                f.rules(nested + "\n\n" + f.good()), ["POLICY-RULE-INLINE"]
+            )
+            row = (
+                "| Item | Meaning |\n| --- | --- |\n"
+                f"| `SYN-R001` {f.text['one']} | {f.text['when']} |"
+            )
+            self.assertEqual(f.rules(row + "\n\n" + f.good()), ["POLICY-RULE-INLINE"])
 
         self.each(check)
 
-    def test_a_reference_outside_a_definition_position_is_not_counted(self) -> None:
+    def test_a_token_only_item_anchors_its_supporting_content(self) -> None:
+        def check(f: Fixture) -> None:
+            anchored = f"- `SYN-R001`\n  - {f.text['two']}\n  - {f.text['prose']}"
+            self.assertEqual(f.rules(anchored + "\n\n" + f.good()), [])
+
+        self.each(check)
+
+    def test_a_reference_outside_a_rule_position_is_not_counted(self) -> None:
         def check(f: Fixture) -> None:
             reference = f"- {f.text['one']} `SYN-R001`"
             self.assertEqual(
-                f.rules(reference + "\n\n" + f.table(f.row(1))),
-                ["POLICY-RULE-COVERAGE", "POLICY-RULE-INLINE"],
+                f.rules(reference + "\n\n" + f.good()), ["POLICY-RULE-COVERAGE"]
             )
             prose = f.good() + "\n\nSee `SYN-R001` and `SYN-R002`."
             self.assertEqual(f.rules(prose), [])
@@ -417,36 +504,13 @@ class DefinitionTokenTests(EachLanguage):
 
     def test_a_token_in_a_fence_or_a_comment_is_not_read(self) -> None:
         def check(f: Fixture) -> None:
-            table = f.table(f.row(1))
             for hidden in (
                 "```\n- `SYN-R001` fenced\n```",
                 "<!-- - `SYN-R001` commented -->",
                 "<!--\n- `SYN-R001` commented\n-->",
             ):
-                requirements = (
-                    f.item(1, f.text["one"], token=False)
-                    + "\n\n"
-                    + hidden
-                    + "\n\n"
-                    + table
-                )
                 with self.subTest(hidden=hidden):
-                    self.assertEqual(
-                        f.rules(requirements),
-                        ["POLICY-RULE-COVERAGE", "POLICY-RULE-INLINE"],
-                    )
-
-        self.each(check)
-
-    def test_a_table_row_and_an_h4_paragraph_are_definition_positions(self) -> None:
-        def check(f: Fixture) -> None:
-            rows = (
-                "| Item | Meaning |\n| --- | --- |\n"
-                f"| `SYN-R001` {f.text['one']} | {f.text['when']} |"
-            )
-            group = f"#### Group\n\n`SYN-R002`\n\n{f.text['two']}\n\n- {f.text['one']}"
-            table = f.table(f.row(1), f.row(2))
-            self.assertEqual(f.rules(rows + "\n\n" + group + "\n\n" + table), [])
+                    self.assertEqual(f.rules(hidden + "\n\n" + f.good()), [])
 
         self.each(check)
 
@@ -454,43 +518,36 @@ class DefinitionTokenTests(EachLanguage):
 class CoverageFloorTests(EachLanguage):
     def test_an_item_or_row_without_a_token_fails(self) -> None:
         def check(f: Fixture) -> None:
-            table = f.table(f.row(1))
-            items = f.item(1, f.text["one"]) + "\n" + f.item(2, "x", token=False)
-            self.assertEqual(f.rules(items + "\n\n" + table), ["POLICY-RULE-COVERAGE"])
-            row = f"| Item | Meaning |\n| --- | --- |\n| plain | {f.text['when']} |"
+            items = f.item(1, "x", token=False)
             self.assertEqual(
-                f.rules(f.item(1, f.text["one"]) + "\n\n" + row + "\n\n" + table),
-                ["POLICY-RULE-COVERAGE"],
+                f.rules(items + "\n\n" + f.good()), ["POLICY-RULE-COVERAGE"]
             )
+            row = f"| Item | Meaning |\n| --- | --- |\n| plain | {f.text['when']} |"
+            self.assertEqual(f.rules(row + "\n\n" + f.good()), ["POLICY-RULE-COVERAGE"])
 
         self.each(check)
 
     def test_an_h4_group_token_covers_the_items_in_the_group(self) -> None:
         def check(f: Fixture) -> None:
-            table = f.table(f.row(1))
             group = f"#### Group\n\n`SYN-R001`\n\n- {f.text['one']}\n- {f.text['two']}"
-            self.assertEqual(f.rules(group + "\n\n" + table), [])
+            self.assertEqual(f.rules(f.good() + "\n\n" + group), [])
             late = f"#### Group\n\n{f.text['prose']}\n\n`SYN-R001`\n\n- {f.text['one']}"
-            self.assertIn("POLICY-RULE-COVERAGE", f.rules(late + "\n\n" + table))
+            self.assertIn("POLICY-RULE-COVERAGE", f.rules(f.good() + "\n\n" + late))
             after = group + f"\n\n#### Other\n\n- {f.text['two']}"
-            self.assertIn("POLICY-RULE-COVERAGE", f.rules(after + "\n\n" + table))
+            self.assertIn("POLICY-RULE-COVERAGE", f.rules(f.good() + "\n\n" + after))
 
         self.each(check)
 
-    def test_a_nested_item_is_not_read_by_the_floor_but_may_carry_a_token(self) -> None:
+    def test_a_nested_item_is_not_read_by_the_floor(self) -> None:
         def check(f: Fixture) -> None:
-            nested = f"{f.item(1, f.text['one'])}\n  - {f.text['two']}"
-            self.assertEqual(f.rules(nested + "\n\n" + f.table(f.row(1))), [])
-            tokened = f"{f.item(1, f.text['one'])}\n  - `SYN-R002` {f.text['two']}"
-            table = f.table(f.row(1), f.row(2))
-            self.assertEqual(f.rules(tokened + "\n\n" + table), [])
+            nested = f"- `SYN-R001`\n  - {f.text['two']}"
+            self.assertEqual(f.rules(nested + "\n\n" + f.good()), [])
 
         self.each(check)
 
-    def test_a_label_over_a_fully_tokened_nested_list_is_covered(self) -> None:
+    def test_a_label_over_token_only_nested_items_is_covered(self) -> None:
         def check(f: Fixture) -> None:
-            table = f.table(f.row(1), f.row(2))
-            nested = f"  - `SYN-R001` {f.text['one']}\n  - `SYN-R002` {f.text['two']}"
+            nested = "  - `SYN-R001`\n  - `SYN-R002`"
             for label in (
                 "**Required**:",
                 "Allowed:",
@@ -498,53 +555,24 @@ class CoverageFloorTests(EachLanguage):
                 "__Allowed__:",
             ):
                 with self.subTest(label=label):
-                    self.assertEqual(f.rules(f"- {label}\n{nested}\n\n{table}"), [])
+                    self.assertEqual(f.rules(f"- {label}\n{nested}\n\n{f.good()}"), [])
 
         self.each(check)
 
     def test_a_label_over_a_partly_tokened_or_untokened_list_fails(self) -> None:
         def check(f: Fixture) -> None:
-            table = f.table(f.row(1))
-            partly = (
-                f"- **Required**:\n  - `SYN-R001` {f.text['one']}\n  - {f.text['two']}"
+            partly = f"- **Required**:\n  - `SYN-R001`\n  - {f.text['two']}"
+            self.assertEqual(
+                f.rules(partly + "\n\n" + f.good()), ["POLICY-RULE-COVERAGE"]
             )
-            self.assertEqual(f.rules(partly + "\n\n" + table), ["POLICY-RULE-COVERAGE"])
             plain = f"- **Required**:\n  - {f.text['one']}\n  - {f.text['two']}"
-            self.assertIn("POLICY-RULE-COVERAGE", f.rules(plain + "\n\n" + table))
+            self.assertIn("POLICY-RULE-COVERAGE", f.rules(plain + "\n\n" + f.good()))
             bare = "- **Required**:"
-            self.assertIn("POLICY-RULE-COVERAGE", f.rules(f.good() + "\n" + bare))
+            self.assertIn("POLICY-RULE-COVERAGE", f.rules(f.good() + "\n\n" + bare))
 
         self.each(check)
 
-    def test_an_untokened_parent_that_is_more_than_a_label_fails(self) -> None:
-        def check(f: Fixture) -> None:
-            table = f.table(f.row(1))
-            nested = f"  - `SYN-R001` {f.text['one']}"
-            for parent in (
-                f"{f.text['prose'].rstrip('.')}:",
-                "**Required**: x:",
-                "Required",
-                "**Required**:  x",
-                "Mandatory:",
-            ):
-                with self.subTest(parent=parent):
-                    self.assertEqual(
-                        f.rules(f"- {parent}\n{nested}\n\n{table}"),
-                        ["POLICY-RULE-COVERAGE"],
-                    )
-
-        self.each(check)
-
-    def test_a_tokened_parent_over_untokened_nested_items_is_covered(self) -> None:
-        def check(f: Fixture) -> None:
-            parent = (
-                f"- `SYN-R001` **Required**:\n  - {f.text['one']}\n  - {f.text['two']}"
-            )
-            self.assertEqual(f.rules(parent + "\n\n" + f.table(f.row(1))), [])
-
-        self.each(check)
-
-    def test_control_register_and_rules_table_rows_are_exempt(self) -> None:
+    def test_control_register_and_rule_table_rows_are_exempt(self) -> None:
         def check(f: Fixture) -> None:
             self.assertEqual(f.rules(f.control()), [])
             self.assertEqual(f.rules(f.good() + "\n\n" + f.control()), [])
@@ -567,18 +595,18 @@ class GateRetiredTests(EachLanguage):
                 raw["policy_rule_ids"]["codes"][0]["state"] = state
                 self.assertIn("REGISTRY_SCHEMA", load_rules(raw))
 
-    def test_rules_with_a_record_and_no_rules_table_are_refused(self) -> None:
+    def test_rules_with_a_record_and_no_rule_tables_are_refused(self) -> None:
         self.each(
             lambda f: self.assertIn(
-                "POLICY-RULE-TABLE", f.rules(f.item(1, f.text["one"]))
+                "POLICY-RULE-TABLE", f.rules(f.item(1, f.text["one"], token=False))
             )
         )
 
-    def test_a_header_only_rules_table_is_refused_when_rules_are_stated(self) -> None:
+    def test_header_only_rule_tables_are_refused_when_rules_are_stated(self) -> None:
         self.each(
             lambda f: self.assertIn(
                 "POLICY-RULE-TABLE",
-                f.rules(f.item(1, f.text["one"]) + "\n\n" + f.table()),
+                f.rules("#### Group\n\n`SYN-R001`\n\n- x\n\n" + f.tables()),
             )
         )
 
@@ -600,7 +628,12 @@ class RegistryRecordTests(unittest.TestCase):
         self.assertEqual(section["reserved_codes"], ["PLAT", "OBS"])
         self.assertEqual(
             section["rules_table"],
-            {"condition": "the policy states normative rules", "minimum_rows": 1},
+            {
+                "condition": "the policy states normative rules",
+                "minimum_rows": 1,
+                "core_table": "Rules",
+                "level_table": "Rule Levels",
+            },
         )
         self.assertEqual({i["path"]: i["code"] for i in section["codes"]}, CODES)
         self.assertEqual(len({i["code"] for i in section["codes"]}), 15)
@@ -619,6 +652,9 @@ class RegistryRecordTests(unittest.TestCase):
         self.assertEqual({r.path: r.code for r in ids.codes}, CODES)
         self.assertEqual(ids.levels, tuple(LEVELS))
         self.assertEqual(ids.rules_table_minimum_rows, 1)
+        self.assertEqual(
+            (ids.rules_table_name, ids.level_table_name), ("Rules", "Rule Levels")
+        )
         for profile in registry.profiles:
             with self.subTest(profile=profile.profile_id):
                 carries = (
@@ -661,6 +697,12 @@ class RegistryRecordTests(unittest.TestCase):
             "levels renamed": lambda s: s.update(
                 levels=["required", "recommended", "mandatory"]
             ),
+            "core table not a template table": lambda s: s["rules_table"].update(
+                core_table="Rule Table"
+            ),
+            "level table not a template table": lambda s: s["rules_table"].update(
+                level_table="Levels"
+            ),
         }
         for label, mutate in cases.items():
             with self.subTest(case=label):
@@ -677,6 +719,8 @@ class RegistryRecordTests(unittest.TestCase):
             "minimum zero": lambda s: s["rules_table"].update(minimum_rows=0),
             "no minimum": lambda s: s["rules_table"].pop("minimum_rows"),
             "no table": lambda s: s.pop("rules_table"),
+            "no core table name": lambda s: s["rules_table"].pop("core_table"),
+            "no level table name": lambda s: s["rules_table"].pop("level_table"),
             "a state key": lambda s: s["codes"][0].update(state="adopted"),
             "extra record field": lambda s: s["codes"][0].update(extra="x"),
             "extra section field": lambda s: s.update(extra="x"),
@@ -704,40 +748,54 @@ class RegistryRecordTests(unittest.TestCase):
 
 
 class RulesTableDefinitionTests(unittest.TestCase):
-    def test_both_definitions_carry_four_required_columns_and_the_optional_status(
-        self,
-    ) -> None:
+    def test_both_definitions_carry_the_core_table_and_the_level_table(self) -> None:
         raw = raw_registry()
         for profile_id in TEMPLATES:
             profile = next(p for p in raw["profiles"] if p["id"] == profile_id)
             definition = profile["template_definition"]
-            table = next(t for t in definition["tables"] if t["name"] == "Rules")
+            tables = {t["name"]: t for t in definition["tables"]}
+            core, level = tables["Rules"], tables["Rule Levels"]
             with self.subTest(profile=profile_id):
-                self.assertEqual([c["key"] for c in table["columns"]], list(COLUMNS))
                 self.assertEqual(
-                    [c["required"] for c in table["columns"]],
-                    [True, True, True, True, False],
+                    [c["key"] for c in core["columns"]], list(CORE_COLUMNS)
                 )
-                self.assertEqual(table["row_identity"], "Rule ID")
-                self.assertEqual(table["minimum_rows"], 0)
-                self.assertEqual(table["section"], "policy.rules.1")
+                self.assertEqual(
+                    [c["id"] for c in core["columns"]],
+                    ["rule_id", "condition", "requirement", "enforcement", "evidence"],
+                )
+                self.assertEqual(
+                    (core["table_id"], core["section"], core["required_when"]),
+                    ("policy.rules", "policy.rules", "always"),
+                )
+                self.assertTrue(all(c["required"] for c in core["columns"]))
+                self.assertEqual(
+                    [c["key"] for c in level["columns"]], list(LEVEL_COLUMNS)
+                )
+                self.assertEqual(
+                    [c["required"] for c in level["columns"]], [True, True, False]
+                )
+                self.assertNotIn("table_id", level)
+                for table in (core, level):
+                    self.assertEqual(table["row_identity"], "Rule ID")
+                    self.assertEqual(table["minimum_rows"], 0)
+                self.assertEqual(level["section"], "policy.rules.1")
                 self.assertIn(
                     "tests/test_policy_rule_ids.py", definition["consumer_paths"]
                 )
 
-    def test_each_template_shows_the_table_with_one_sample_row(self) -> None:
+    def test_each_template_shows_both_tables_with_one_sample_row(self) -> None:
         for template in TEMPLATES.values():
             text = (ROOT / template).read_text("utf-8")
             tables = [
-                (header, rows)
+                (tuple(header), rows)
                 for header, rows in MARKDOWN._visible_tables(text)
                 if header[0] == "Rule ID"
             ]
             with self.subTest(template=template):
-                self.assertEqual(len(tables), 1)
-                header, rows = tables[0]
-                self.assertEqual(tuple(header), COLUMNS)
-                self.assertEqual(len(rows), 1)
+                self.assertEqual(
+                    [header for header, _ in tables], [CORE_COLUMNS, LEVEL_COLUMNS]
+                )
+                self.assertEqual([len(rows) for _, rows in tables], [1, 1])
                 # The prompt that made the table optional is gone.
                 self.assertNotIn("helps the reader", text)
                 self.assertNotIn("읽기 쉬울 때만", text)
@@ -757,12 +815,11 @@ class RulesTableDefinitionTests(unittest.TestCase):
             self.assertTrue(entry[field].strip())
             self.assertNotEqual(entry[field], "unverified")
         self.assertEqual(entry["owner"], shared["owner"])
+        self.assertIn("Rule Levels", entry["condition"])
         self.assertIn("POLICY-RULE-TABLE", entry["verification"])
         self.assertIn("tests/test_policy_rule_ids.py", entry["verification"])
 
-    def test_a_table_headed_by_the_former_key_is_no_longer_the_rules_table(
-        self,
-    ) -> None:
+    def test_a_table_headed_by_another_key_is_no_rule_table(self) -> None:
         f = Fixture("en")
         former = f.table("| a | b | c |", header=("Rule", "Condition", "Evidence"))
         scan = MARKDOWN.policy_rule_units(f.body(former))
@@ -770,8 +827,31 @@ class RulesTableDefinitionTests(unittest.TestCase):
         profile = {p.profile_id: p for p in CONTRACTS.load_registry(ROOT).profiles}[
             "governance/rule"
         ]
-        rules = next(t for t in profile.tables if t.name == "Rules")
-        self.assertEqual(rules.columns[0].key, "Rule ID")
+        names = {t.name: t for t in profile.tables}
+        self.assertEqual(names["Rules"].columns[0].key, "Rule ID")
+        self.assertEqual(names["Rule Levels"].columns[0].key, "Rule ID")
+        self.assertEqual(MARKDOWN.RULE_LEVEL_COLUMNS, LEVEL_COLUMNS)
+
+    def test_the_generic_table_check_leaves_both_rule_tables_to_the_rule_check(
+        self,
+    ) -> None:
+        f = Fixture("en")
+        body = f.body(f.good())
+        self.assertEqual(MARKDOWN._table_diagnostics(f.path, f.profile, body), [])
+        template = {p.profile_id: p for p in CONTRACTS.load_registry(ROOT).profiles}[
+            "common/template-governance-rule"
+        ]
+        # A template has no rule check; each table is matched by its exact header.
+        self.assertEqual(MARKDOWN._table_diagnostics(f.path, template, body), [])
+        wrong = body.replace(
+            "| Rule ID | Level | Status |", "| Rule ID | Status | Level |"
+        )
+        # SPEC-0222: inside the core H2 a header that is no registered table's
+        # exact header drifts the core Rules table too, so both refuse it.
+        self.assertEqual(
+            [d.rule_id for d in MARKDOWN._table_diagnostics(f.path, template, wrong)],
+            ["BODY-TABLE-COLUMNS", "BODY-TABLE-COLUMNS"],
+        )
 
 
 class RealPolicyTests(unittest.TestCase):

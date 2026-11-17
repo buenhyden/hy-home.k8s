@@ -34,6 +34,7 @@ from document_contracts import (
     DocumentProfile,
     EnumConstraint,  # noqa: F401 - re-exported
     classify_path,
+    core_cell_faults,
     diagnostic_sort_key,
     enumerate_tracked_regular_paths,
     enumerate_target_markdown,
@@ -49,6 +50,9 @@ from document_contracts import (
     validated_changed_paths,
     task_status,
     task_contract_issues,
+    read_task_tables,
+    task_core_name,
+    task_header_form,
     direct_parent,
     MARKDOWN_TEMPLATE_PLACEHOLDER,
     validate_registry,  # noqa: F401 - re-exported
@@ -690,7 +694,16 @@ def _body_contract_diagnostics(
                 json.dumps(duplicate_columns),
             )
         ]
-    if tuple(header) != contract.required_columns:
+    # SPEC-0222: an authored Task may keep its recorded header, read under the
+    # core names by the transition adapter; a template carries the core header.
+    task_form = (
+        task_header_form("traceability", header, contract.required_columns)
+        if contract.task_execution is not None
+        else None
+    )
+    if task_form == "recorded" and profile.mode == "authored":
+        header = [task_core_name(column) for column in header]
+    elif tuple(header) != contract.required_columns:
         return [
             _diagnostic(
                 "BODY-CONTRACT-COLUMNS",
@@ -807,16 +820,57 @@ def _table_diagnostics(
     non-unique section headings.
     """
 
-    owned = profile.body_contract.table_heading if profile.body_contract else None
+    if profile.body_contract and profile.body_contract.task_execution:
+        return []  # The Task table reader owns every Task table (SPEC-0222).
+    owned = {profile.body_contract.table_heading} if profile.body_contract else set()
+    if profile.policy_rule_ids is not None:
+        # SPEC-0222: the policy rule check owns the two rule tables.
+        owned |= {
+            profile.policy_rule_ids.rules_table_name,
+            profile.policy_rule_ids.level_table_name,
+        }
     identity = expected_artifact_id(path, profile) or ""
     found: list[Diagnostic] = []
+
+    def exact(header: list[str], table) -> bool:
+        keys = [column.key for column in table.columns]
+        required = sum(column.required for column in table.columns)
+        return header == keys[: len(header)] and len(header) >= required
+
+    def identifies(header: list[str], table) -> bool:
+        keys = [column.key for column in table.columns]
+        return header[0] == keys[0] or sorted(header) == sorted(keys[: len(header)])
+
+    def owner(header: list[str], table) -> bool:
+        """SPEC-0222: tables that share a first key share a header by fit: an
+        exact fit wins. Otherwise a header inside a core section stays a core
+        table's, and among core tables of one section only the best fit claims
+        it, so one drifted table is reported once; a local table takes the
+        header it fits best."""
+
+        rivals = [other for other in profile.tables if identifies(header, other)]
+        if any(exact(header, other) for other in rivals):
+            return exact(header, table)
+
+        def fit(other) -> int:
+            return len(set(header) & {c.key for c in other.columns})
+
+        if table.table_id:
+            cores = [
+                other
+                for other in rivals
+                if other.table_id and other.section == table.section
+            ]
+            return max(cores, key=fit) is table
+        return max(rivals, key=fit) is table
+
     for table in profile.tables:
         heading = (
             None
             if profile.form is None
             else _form_heading(profile.form, table.section, status, identity)
         )
-        if table.name == owned or heading is None:
+        if table.name in owned or heading is None:
             continue
         section = _exact_heading_section(body, "#" * heading[0] + " " + heading[1])
         if section is None:
@@ -827,7 +881,7 @@ def _table_diagnostics(
         present = False
         rows = 0
         for header, data in _visible_tables(section):
-            if header[0] != keys[0] and sorted(header) != sorted(keys[: len(header)]):
+            if not identifies(header, table) or not owner(header, table):
                 continue
             present = True
             rows += len(data)
@@ -864,10 +918,102 @@ def _table_diagnostics(
     return found
 
 
+def _core_table_diagnostics(
+    path: PurePosixPath, profile: DocumentProfile, body: str, status: str = ""
+) -> list[Diagnostic]:
+    """SPEC-0222: the core tables of a core-role form in one document or template.
+
+    A core table whose `required_when` is `always` must appear with exactly its
+    core header inside its core H2 (BODY-CORE-TABLE-MISSING); a conditional one
+    is checked only where present, and a present one whose first column drifted
+    is still refused. In a document, each row of a core table is
+    checked by `core_cell_faults` (BODY-CORE-TABLE-CELL); a template keeps prompt
+    cells, so only its header is checked. A drifted header is BODY-TABLE-COLUMNS.
+    The Task reader owns the Task tables, and a retained identity keeps its
+    recorded tables.
+    """
+
+    core = [table for table in profile.tables if table.table_id]
+    if (
+        not core
+        or profile.form is None
+        or (profile.body_contract and profile.body_contract.task_execution)
+    ):
+        return []
+    identity = expected_artifact_id(path, profile) or ""
+    if profile.form.retained_headings(status, identity) is not None:
+        return []
+    found: list[Diagnostic] = []
+    for table in core:
+        keys = [column.key for column in table.columns]
+        heading = _form_heading(profile.form, table.section, status, identity)
+        section = (
+            None
+            if heading is None
+            else _exact_heading_section(body, "#" * heading[0] + " " + heading[1])
+        )
+        visible = list(_visible_tables(section or ""))
+        tables = [rows for header, rows in visible if header == keys]
+        if table.required_when != "always":
+            # A conditional table is checked only where present, so a header that
+            # holds most core labels but escapes `_table_diagnostics` (its first
+            # column dropped or relabeled) is a drifted core table, not an absent
+            # one. A header another registered table fits stays that table's.
+            for header, _ in visible:
+                if (
+                    header[0] != keys[0]
+                    and sorted(header) != sorted(keys[: len(header)])
+                    and 2 * len(set(header) & set(keys)) > len(keys)
+                    and not any(
+                        header == [c.key for c in other.columns][: len(header)]
+                        for other in profile.tables
+                    )
+                ):
+                    found.append(
+                        _diagnostic(
+                            "BODY-TABLE-COLUMNS",
+                            path,
+                            profile,
+                            f"{table.name}: {json.dumps(keys, ensure_ascii=False)}",
+                            json.dumps(header, ensure_ascii=False),
+                        )
+                    )
+        if not tables and table.required_when == "always":
+            found.append(
+                _diagnostic(
+                    "BODY-CORE-TABLE-MISSING",
+                    path,
+                    profile,
+                    f"{table.table_id}: {json.dumps(keys, ensure_ascii=False)} "
+                    "in its core section",
+                    "no table with exactly the core header",
+                )
+            )
+        if profile.mode == "template":
+            continue
+        for rows in tables:
+            for fault in core_cell_faults(table, rows):
+                found.append(
+                    _diagnostic(
+                        "BODY-CORE-TABLE-CELL",
+                        path,
+                        profile,
+                        f"{table.table_id}: each cell of its core column type",
+                        fault,
+                    )
+                )
+    return found
+
+
 def _requirement_quality_diagnostics(
     path: PurePosixPath, profile: DocumentProfile, body: str
 ) -> list[Diagnostic]:
-    """Keep requirement kinds in their own tables and resolve declared NFRs."""
+    """Keep requirement kinds in their own tables and resolve declared NFRs.
+
+    SPEC-0222: both requirement H3 hold an instance of the core
+    requirement.requirements table; Functional Requirements keeps at least one
+    member.
+    """
 
     package = _requirement_package_number(path)
     if package is None or profile.form is None:
@@ -876,19 +1022,28 @@ def _requirement_quality_diagnostics(
     functional = "requirement.requirements.1"
     quality = "requirement.requirements.2"
     trace = "requirement-lifecycle-traceability"
-    members = {section: set() for section in (functional, quality, trace)}
-    for table in profile.tables:
-        if table.section not in members:
-            continue
-        heading = _form_heading(profile.form, table.section)
-        if heading is None:
+    core, local = (
+        next((t.row_identity for t in profile.tables if match(t)), None)
+        for match in (
+            lambda t: t.table_id == "requirement.requirements",
+            lambda t: t.section == trace,
+        )
+    )
+    identity = {functional: core, quality: core, trace: local}
+    members = {section: set() for section in identity}
+    functional_rows = 0
+    for section_id, row_identity in identity.items():
+        heading = _form_heading(profile.form, section_id)
+        if heading is None or row_identity is None:
             continue
         level, title = heading
         section = _exact_heading_section(body, "#" * level + " " + title)
         for header, rows in _visible_tables(section or ""):
-            if header[0] != table.row_identity:
+            if header[0] != row_identity:
                 continue
-            members[table.section].update(
+            if section_id == functional:
+                functional_rows += len(rows)
+            members[section_id].update(
                 value
                 for row in rows
                 if row and requirement.fullmatch(value := _identifier_text(row[0]))
@@ -898,7 +1053,20 @@ def _requirement_quality_diagnostics(
         value for value in members[trace] if "-NFR-" in value
     }
     misplaced_quality = {value for value in members[quality] if "-NFR-" not in value}
-    return [
+    empty = (
+        [
+            _diagnostic(
+                "BODY-TABLE-ROWS",
+                path,
+                profile,
+                "Functional Requirements: at least 1 data row",
+                "0 rows",
+            )
+        ]
+        if not functional_rows
+        else []
+    )
+    return empty + [
         _diagnostic(rule, path, profile, expected, ", ".join(sorted(values)))
         for rule, expected, values in (
             (
@@ -953,8 +1121,11 @@ class RuleScan:
     rows: tuple[RuleUnit, ...]  # table rows outside control registers and Rules tables
     groups: tuple[RuleUnit, ...]  # H4 groups with content beyond those tables
     control_rows: int
-    tokens: tuple[str, ...]  # every definition token, in reading order
+    tokens: tuple[str, ...]  # every rule reference token, in reading order
     rules_tables: tuple[tuple[tuple[str, ...], tuple[tuple[str, ...], ...]], ...]
+    # SPEC-0222: tokens followed by rule text in a list item or a first table cell;
+    # that text belongs in the core Rules table, so each one is refused.
+    worded: tuple[str, ...] = ()
 
     @property
     def units(self) -> tuple[RuleUnit, ...]:
@@ -975,6 +1146,7 @@ def _scan_requirements(section: str) -> RuleScan:
     rows: list[RuleUnit] = []
     groups: list[RuleUnit] = []
     tokens: list[str] = []
+    worded: list[str] = []
     rules_tables: list[tuple[tuple[str, ...], tuple[tuple[str, ...], ...]]] = []
     control_rows = 0
     # The open H4 group: its title, token, content flag and the units seen in it.
@@ -1052,6 +1224,8 @@ def _scan_requirements(section: str) -> RuleScan:
                         token = match.group(1) if match else None
                         if token is not None:
                             tokens.append(token)
+                            if _RULE_TOKEN_LINE.fullmatch(first) is None:
+                                worded.append(token)
                         rows.append(RuleUnit("row", token, covered(token), first[:60]))
                     if group is not None:
                         group["content"] = True
@@ -1062,6 +1236,8 @@ def _scan_requirements(section: str) -> RuleScan:
             token = match.group(1) if match else None
             if token is not None:
                 tokens.append(token)
+                if _RULE_TOKEN_LINE.fullmatch(item.group(2).strip()) is None:
+                    worded.append(token)
             indent = len(item.group(1))
             if not indent:
                 close_label()
@@ -1094,6 +1270,7 @@ def _scan_requirements(section: str) -> RuleScan:
         control_rows,
         tuple(tokens),
         tuple(rules_tables),
+        tuple(worded),
     )
 
 
@@ -1104,19 +1281,24 @@ def policy_rule_units(text: str, heading: str = "### Requirements") -> RuleScan:
     return _scan_requirements("" if section is None else section)
 
 
-def policy_rule_rows(text: str) -> tuple[tuple[str, str], ...]:
-    """SPEC-0206: the (Rule ID, Status) of each Rules table row of one policy.
+RULE_LEVEL_COLUMNS = ("Rule ID", "Level", "Status")
 
-    The lifecycle check reads policy history through this one reader. A table
-    with no Status column reads every row as `active`; no table reads no row.
+
+def policy_rule_rows(text: str) -> tuple[tuple[str, str], ...]:
+    """SPEC-0206, SPEC-0222: the (Rule ID, Status) of each row of one policy's
+    rule level table, the local table keyed by Rule ID under Requirements.
+
+    The lifecycle check reads policy history through this one reader. Only a
+    table with exactly the level columns is read; no table reads no row.
     """
 
     rows: list[tuple[str, str]] = []
     for header, data in policy_rule_units(text).rules_tables:
-        at = header.index("Status") if "Status" in header else None
+        if header != RULE_LEVEL_COLUMNS:
+            continue
         for row in data:
             if row:
-                status = row[at] if at is not None and at < len(row) else "active"
+                status = row[2] if len(row) > 2 else ""
                 rows.append((_identifier_text(row[0]), status))
     return tuple(rows)
 
@@ -1142,19 +1324,26 @@ def _rules_status_fault(
 def _policy_rule_diagnostics(
     path: PurePosixPath, profile: DocumentProfile, body: str
 ) -> list[Diagnostic]:
-    """SPEC-0194: the policy rule ID rules over one authored policy body.
+    """SPEC-0194, SPEC-0222: the policy rule ID rules over one authored policy.
 
-    A policy with a record applies the table, ID, inline-token and coverage
-    rules; a document with no record fails POLICY-RULE-CODE when it states
-    normative rules or carries a Rules table.
+    Under Requirements the core Rules table holds each current rule (its
+    condition, requirement text, enforcement and evidence) and the local rule
+    level table keyed by Rule ID holds every issued rule ID with its level and
+    status. Another table keyed by Rule ID may keep columns of a rule that the
+    core table has no column for. A rule ID token left in the body only refers
+    to a current rule; a token followed by rule text is refused, because that
+    text belongs in the Rules table. A document with no record fails
+    POLICY-RULE-CODE when it carries a rule table or a rule token.
     """
 
     ids = profile.policy_rule_ids
-    table = next((item for item in profile.tables if item.name == "Rules"), None)
+    tables = {item.name: item for item in profile.tables}
+    core = None if ids is None else tables.get(ids.rules_table_name)
+    level = None if ids is None else tables.get(ids.level_table_name)
     heading = (
         None
-        if ids is None or table is None or profile.form is None
-        else _form_heading(profile.form, table.section)
+        if core is None or level is None or profile.form is None
+        else _form_heading(profile.form, level.section)
     )
     if heading is None or profile.mode != "authored":
         return []
@@ -1171,13 +1360,13 @@ def _policy_rule_diagnostics(
         return _diagnostic(rule, path, profile, expected, actual)
 
     if record is None:
-        if scan.units or carried:
+        if scan.units or scan.tokens or carried:
             return [
                 found(
                     "POLICY-RULE-CODE",
                     "a rule ID code registered in policy_rule_ids for this policy",
                     "no record for a policy that states normative rules "
-                    "or carries a Rules table",
+                    "or carries a rule table",
                 )
             ]
         return []
@@ -1186,84 +1375,114 @@ def _policy_rule_diagnostics(
     def add(rule: str, expected: str, actual: str) -> None:
         found_all.append(found(rule, expected, actual))
 
-    keys = tuple(column.key for column in table.columns)
-    stated = bool(scan.units)
+    core_keys = tuple(column.key for column in core.columns)
+    level_keys = tuple(column.key for column in level.columns)
     if carried != len(scan.rules_tables):
         add(
             "POLICY-RULE-TABLE",
-            "the Rules table under Requirements only",
+            "rule tables under Requirements only",
             f"{carried - len(scan.rules_tables)} outside it",
         )
-    if len(scan.rules_tables) > 1:
-        add("POLICY-RULE-TABLE", "exactly one Rules table", f"{len(scan.rules_tables)}")
-    if stated and not scan.rules_tables:
-        add(
-            "POLICY-RULE-TABLE",
-            f"a Rules table when {ids.rules_table_condition}",
-            "no Rules table",
-        )
-    row_ids: list[str] = []
-    statuses: list[str] = []
-    readable = not scan.rules_tables
-    if scan.rules_tables:
-        header, data = scan.rules_tables[0]
-        readable = header == keys and all(len(row) == len(keys) for row in data)
-        if header != keys:
-            add("POLICY-RULE-TABLE", json.dumps(keys), json.dumps(header))
-        elif not readable:
-            add("POLICY-RULE-TABLE", f"{len(keys)} cells in every row", "ragged row")
-        if readable:
-            if stated and len(data) < ids.rules_table_minimum_rows:
+    cores = [(h, d) for h, d in scan.rules_tables if h == core_keys]
+    levels = [(h, d) for h, d in scan.rules_tables if h == level_keys]
+    keyed = [(h, d) for h, d in scan.rules_tables if h not in (core_keys, level_keys)]
+    stated = bool(scan.units or scan.tokens or keyed)
+    for name, keys, found_tables in (
+        (core.name, core_keys, cores),
+        (level.name, level_keys, levels),
+    ):
+        if len(found_tables) > 1:
+            add(
+                "POLICY-RULE-TABLE", f"exactly one {name} table", f"{len(found_tables)}"
+            )
+        if not found_tables and (stated or cores or levels):
+            add(
+                "POLICY-RULE-TABLE",
+                f"a {name} table {json.dumps(keys)} when {ids.rules_table_condition}",
+                "no table with exactly these columns",
+            )
+    for header, data in scan.rules_tables:
+        if any(len(row) != len(header) for row in data):
+            add("POLICY-RULE-TABLE", f"{len(header)} cells in every row", "ragged row")
+    level_rows = levels[0][1] if len(levels) == 1 else ()
+    core_rows = cores[0][1] if len(cores) == 1 else ()
+    row_ids = [_identifier_text(row[0]) for row in level_rows]
+    statuses = [row[2] if len(row) > 2 else "" for row in level_rows]
+    codes = frozenset(item.code for item in ids.codes)
+    for number, (row, own, status) in enumerate(
+        zip(level_rows, row_ids, statuses), start=1
+    ):
+        if own != f"{record.code}-R{number:03d}":
+            add(
+                "POLICY-RULE-ID",
+                f"{record.code}-R{number:03d}: this policy's code, "
+                "ascending from R001 without a gap or duplicate",
+                own,
+            )
+        if len(row) > 1 and row[1] not in ids.levels:
+            add("POLICY-RULE-TABLE", f"{own}: a level of {list(ids.levels)}", row[1])
+        fault = _rules_status_fault(status, own, row_ids, codes)
+        if fault is not None:
+            add("POLICY-RULE-TABLE", f"{own}: Status {fault}", status)
+    active = [own for own, status in zip(row_ids, statuses) if status == "active"]
+    core_ids = [_identifier_text(row[0]) for row in core_rows]
+    if len(cores) == 1 and len(levels) == 1:
+        if core_ids != active:
+            add(
+                "POLICY-RULE-TABLE",
+                f"{core.name} rows for exactly the active rules, in order: {active}",
+                json.dumps(core_ids),
+            )
+        if stated and len(core_rows) < ids.rules_table_minimum_rows:
+            add(
+                "POLICY-RULE-TABLE",
+                f"at least {ids.rules_table_minimum_rows} row when "
+                f"{ids.rules_table_condition}",
+                f"{len(core_rows)} rows",
+            )
+        for row in core_rows:
+            empty = [key for key, cell in zip(core_keys, row) if not cell.strip()]
+            if empty:
                 add(
                     "POLICY-RULE-TABLE",
-                    f"at least {ids.rules_table_minimum_rows} row when "
-                    f"{ids.rules_table_condition}",
-                    f"{len(data)} rows",
+                    f"{_identifier_text(row[0])}: a value in every core cell",
+                    ", ".join(empty),
                 )
-            level_at, status_at = keys.index("Level"), keys.index("Status")
-            row_ids = [_identifier_text(row[0]) for row in data]
-            statuses = [row[status_at] for row in data]
-            codes = frozenset(item.code for item in ids.codes)
-            for number, (row, own, status) in enumerate(
-                zip(data, row_ids, statuses), start=1
-            ):
-                if own != f"{record.code}-R{number:03d}":
-                    add(
-                        "POLICY-RULE-ID",
-                        f"{record.code}-R{number:03d}: this policy's code, "
-                        "ascending from R001 without a gap or duplicate",
-                        own,
-                    )
-                if row[level_at] not in ids.levels:
-                    add(
-                        "POLICY-RULE-TABLE",
-                        f"{own}: a level of {list(ids.levels)}",
-                        row[level_at],
-                    )
-                fault = _rules_status_fault(status, own, row_ids, codes)
-                if fault is not None:
-                    add("POLICY-RULE-TABLE", f"{own}: Status {fault}", status)
-    if readable:
-        counts = collections.Counter(scan.tokens)
-        active = {own for own, status in zip(row_ids, statuses) if status == "active"}
-        for own in sorted(active):
-            if counts[own] != 1:
+    current = set(active)
+    for header, data in keyed:
+        for row in data:
+            own = _identifier_text(row[0]) if row else ""
+            if own not in current:
                 add(
-                    "POLICY-RULE-INLINE",
-                    f"{own}: one definition token for an active row",
-                    f"{counts[own]} tokens",
+                    "POLICY-RULE-TABLE",
+                    f"a row of a table keyed by Rule ID names an active rule ({header[1:]})",
+                    own,
                 )
-        for token in sorted(set(counts) - active):
+    counts = collections.Counter(scan.tokens)
+    for token in sorted(counts):
+        if token not in current:
             add(
                 "POLICY-RULE-INLINE",
-                f"{token}: an active Rules table row for each definition token",
+                f"{token}: a rule reference names an active {core.name} row",
                 "no active row",
             )
+        elif counts[token] != 1:
+            add(
+                "POLICY-RULE-INLINE",
+                f"{token}: one reference token for a rule",
+                f"{counts[token]} tokens",
+            )
+    for token in scan.worded:
+        add(
+            "POLICY-RULE-INLINE",
+            f"{token}: the rule text in its {core.name} row, not after its token",
+            "a token followed by rule text",
+        )
     for unit in (*scan.items, *scan.rows):
         if not unit.covered:
             add(
                 "POLICY-RULE-COVERAGE",
-                f"a definition token on this {unit.kind} or in its H4 group",
+                f"a reference token on this {unit.kind} or in its H4 group",
                 unit.text,
             )
     return found_all
@@ -2473,7 +2692,6 @@ def document_content_diagnostics(
         text,
         _document_content_table,
         index_columns=navigation.index_columns,
-        optional_index_columns=navigation.optional_index_columns,
     )
     return [
         Diagnostic(rule, path, profile.profile_id, expected, actual, OWNER)
@@ -2516,6 +2734,8 @@ def validate_document_text(
         diagnostics.extend(_body_diagnostics(path, profile, body, status))
         if profile.mode in {"authored", "template"}:
             diagnostics.extend(_table_diagnostics(path, profile, body, status))
+        if profile.mode in {"authored", "template", "router"}:
+            diagnostics.extend(_core_table_diagnostics(path, profile, body, status))
         if profile.mode == "authored" and profile.profile_id == "sdlc/requirement":
             diagnostics.extend(_requirement_quality_diagnostics(path, profile, body))
         if profile.mode == "authored":
@@ -2525,83 +2745,7 @@ def validate_document_text(
         return sorted(diagnostics, key=diagnostic_sort_key)
     binding = profile.body_contract.task_execution if profile.body_contract else None
     if binding and binding.evidence_section:
-        section = _exact_heading_section(body, f"## {binding.evidence_section}")
-        table = _first_visible_table(section or "")
-        if table is None or tuple(table[0]) != binding.evidence_columns or not table[1]:
-            diagnostics.append(
-                _diagnostic(
-                    "TASK-EVIDENCE-COLUMNS",
-                    path,
-                    profile,
-                    repr(binding.evidence_columns),
-                    "missing or malformed evidence table",
-                )
-            )
-        elif profile.mode != "template":
-            if any(len(row) != len(table[0]) for row in table[1]):
-                diagnostics.append(
-                    _diagnostic(
-                        "TASK-EVIDENCE-COLUMNS",
-                        path,
-                        profile,
-                        f"{len(binding.evidence_columns)} cells in every evidence row",
-                        "ragged evidence row",
-                    )
-                )
-                return sorted(diagnostics, key=diagnostic_sort_key)
-            evidence_rows = [dict(zip(table[0], row, strict=True)) for row in table[1]]
-            decision_section = _exact_heading_section(
-                body, f"## {binding.criterion_acceptance_section}"
-            )
-            decision_table = _first_visible_table(decision_section or "")
-            execution_section = _exact_heading_section(
-                body, f"## {profile.body_contract.section}"
-            )
-            execution_table = _first_visible_table(
-                _exact_heading_section(
-                    execution_section or "",
-                    f"### {profile.body_contract.table_heading}",
-                )
-                or ""
-            )
-            if (
-                decision_table is None
-                or tuple(decision_table[0]) != binding.criterion_acceptance_columns
-                or not decision_table[1]
-                or any(len(row) != len(decision_table[0]) for row in decision_table[1])
-            ):
-                diagnostics.append(
-                    _diagnostic(
-                        "TASK-ACCEPTANCE-COLUMNS",
-                        path,
-                        profile,
-                        repr(binding.criterion_acceptance_columns),
-                        "missing or malformed criterion acceptance table",
-                    )
-                )
-            elif (
-                execution_table is not None
-                and tuple(execution_table[0]) == profile.body_contract.required_columns
-                and all(
-                    len(row) == len(execution_table[0]) for row in execution_table[1]
-                )
-            ):
-                work_rows = [
-                    dict(zip(execution_table[0], row, strict=True))
-                    for row in execution_table[1]
-                ]
-                decision_rows = [
-                    dict(zip(decision_table[0], row, strict=True))
-                    for row in decision_table[1]
-                ]
-                diagnostics.extend(
-                    _diagnostic(
-                        rule, path, profile, "valid Task acceptance graph", detail
-                    )
-                    for rule, detail in task_contract_issues(
-                        work_rows, evidence_rows, decision_rows, status, binding
-                    )
-                )
+        diagnostics.extend(_task_table_diagnostics(path, profile, body, status))
     diagnostics.extend(
         _body_contract_diagnostics(
             path,
@@ -2613,6 +2757,94 @@ def validate_document_text(
         )
     )
     return sorted(diagnostics, key=diagnostic_sort_key)
+
+
+def _task_table_diagnostics(
+    path: PurePosixPath, profile: DocumentProfile, body: str, status: str
+) -> list[Diagnostic]:
+    """Read every Task table through the transition adapter (SPEC-0222)."""
+
+    contract = profile.body_contract
+    assert contract is not None and contract.task_execution is not None
+    binding = contract.task_execution
+
+    def table(
+        h2: str | None, h3: str | None = None
+    ) -> tuple[list[str], list[list[str]]] | None:
+        section = _exact_heading_section(body, f"## {h2}") if h2 else None
+        if section is not None and h3 is not None:
+            section = _exact_heading_section(section, f"### {h3}") if h3 else None
+        return _first_visible_table(section) if section is not None else None
+
+    def found(rule: str, expected: str, actual: str) -> Diagnostic:
+        return _diagnostic(rule, path, profile, expected, actual)
+
+    evidence = table(binding.evidence_section)
+    evidence_form = (
+        None
+        if evidence is None or not evidence[1]
+        else task_header_form("evidence", evidence[0], binding.evidence_columns)
+    )
+    if evidence_form is None or (
+        profile.mode == "template" and evidence_form != "core"
+    ):
+        return [
+            found(
+                "TASK-EVIDENCE-COLUMNS",
+                repr(binding.evidence_columns),
+                "missing or malformed evidence table",
+            )
+        ]
+    if profile.mode == "template":
+        return []
+    assert evidence is not None
+    if any(len(row) != len(evidence[0]) for row in evidence[1]):
+        return [
+            found(
+                "TASK-EVIDENCE-COLUMNS",
+                f"{len(evidence[0])} cells in every evidence row",
+                "ragged evidence row",
+            )
+        ]
+    location = profile.body_contract_location(
+        status, expected_artifact_id(path, profile) or ""
+    )
+    section = location[0] if location else contract.section
+    work_items = table(section, binding.work_item_heading or None)
+    if work_items is not None and work_items[0][:1] != list(
+        binding.work_item_columns[:1]
+    ):
+        work_items = None  # The first table there is not the work item table.
+    traceability = table(section, location[1] if location else None)
+    tables = read_task_tables(
+        profile,
+        traceability=traceability if traceability and traceability[1] else None,
+        work_items=work_items,
+        evidence=evidence,
+        acceptance=table(binding.criterion_acceptance_section),
+    )
+    diagnostics = [
+        found(rule, "one Task header form and core cell types", detail)
+        for rule, detail in tables.issues
+    ]
+    if tables.form is None and tables.issues:
+        return diagnostics
+    if tables.acceptance is None or not tables.acceptance:
+        diagnostics.append(
+            found(
+                "TASK-ACCEPTANCE-COLUMNS",
+                repr(binding.criterion_acceptance_columns),
+                "missing or malformed criterion acceptance table",
+            )
+        )
+    elif tables.work is not None and tables.evidence is not None:
+        diagnostics.extend(
+            found(rule, "valid Task acceptance graph", detail)
+            for rule, detail in task_contract_issues(
+                tables.work, tables.evidence, tables.acceptance, status, binding
+            )
+        )
+    return diagnostics
 
 
 def _fixture_path(value: object) -> PurePosixPath:

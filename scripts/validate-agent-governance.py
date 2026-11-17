@@ -1286,9 +1286,10 @@ def _bound_scope(
 
 
 # SPEC-0176 W03-D18: a thin gateway is bounded by its content, not its form
-# headings: one H1 and the AGENTS form's five H2 and ten H3.
+# headings: one H1, the four H2 and eight H3 of the agent-instructions core tree
+# and the seven former form headings it keeps as H4 (SPEC-0222 WORK-007).
 GATEWAY_MAX_CONTENT_LINES = 30
-GATEWAY_MAX_HEADING_LINES = 16
+GATEWAY_MAX_HEADING_LINES = 20
 _GATEWAY_HEADING = re.compile(r"^ {0,3}#{1,6}(\s|$)")
 _GATEWAY_FENCE = re.compile(r"^ {0,3}(```|~~~)")
 

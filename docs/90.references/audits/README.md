@@ -1,6 +1,6 @@
 ---
 title: "90.references/audits"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -65,6 +65,10 @@ audits/
 ```
 
 현재 pack은 [0001-sdlc-governance](./0001-sdlc-governance/README.md) 하나다.
+
+| Path | Purpose |
+| --- | --- |
+| [0001-sdlc-governance/](./0001-sdlc-governance/) | SDLC 거버넌스 감사 (AUD-0001) |
 
 ### Owners
 

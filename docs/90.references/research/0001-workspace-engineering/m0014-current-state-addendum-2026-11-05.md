@@ -1,16 +1,18 @@
 ---
 title: "Reference: Current-State Addendum 2026-11-05"
-version: "0.1.3"
+version: "0.2.0"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "RES-0001-m0014"
 ---
 
 # Reference: Current-State Addendum 2026-11-05
 
-## Overview
+## Question and Scope
+
+### Question
 
 This addendum records, on 2026-11-05, where the local repository statements
 in the published members m0001 to m0012 of this pack no longer describe the
@@ -20,24 +22,7 @@ member with the matching row below. It also records the passages inside
 those members that contradict or repeat each other, so a reader knows which
 statement is the latest.
 
-## Reference Type
-
-Repository-static observation of this repository at branch
-`docs/requirements-conformance` on 2026-11-05, compared line by line with the
-dated local claims of m0001 to m0012. No external source was re-read and no
-runtime, hosted or cluster state was observed.
-
-## Authority Boundary
-
-This addendum establishes only what the tracked files said on 2026-11-05. It
-is not a requirement, decision or policy. The current owners are the linked
-Stage 01, 02 and 05 documents, `.agents/governance/`, the registries and the
-implementing files. External-source claims in the members are not
-re-evaluated here.
-
-## Scope
-
-### Research Questions
+#### Research Questions
 
 1. Which local claims of m0001 to m0012 does the current repository
    contradict, and what does it say instead?
@@ -45,7 +30,16 @@ re-evaluated here.
    same member, and which one is the latest?
 3. Which passages inside one member are material repetitions?
 
-### Method
+#### Reference Type
+
+Repository-static observation of this repository at branch
+`docs/requirements-conformance` on 2026-11-05, compared line by line with the
+dated local claims of m0001 to m0012. No external source was re-read and no
+runtime, hosted or cluster state was observed.
+
+### Scope
+
+#### Method
 
 Read-only reviews compared every local path, count, setting, state and
 owner named in m0001 to m0012 with the tracked tree, `git log` and the
@@ -53,7 +47,36 @@ registries by direct tracked-file reads, citing file and line. Findings marked u
 left out. Line numbers refer to the members as published at commit
 `726e1956`.
 
-## Definitions / Facts
+## Sources
+
+### Primary Sources
+
+| Source ID | Source | Version | Checked At | Finding | Application | Limits |
+| --- | --- | --- | --- | --- | --- | --- |
+
+| Source | Grade | Retrieved | Relevance |
+| --- | --- | --- | --- |
+| [Agent registry](../../../../.agents/roles/registry.json) and `scripts/validate-agent-governance.py` | Repository primary | 2026-11-05 | Roles, providers, projections |
+| [Common governance hub](../../../../.agents/README.md) | Repository primary | 2026-11-05 | Current owners of QA, lifecycle, memory and model selection |
+| [Document registry](../../../99.templates/registry.json) | Repository primary | 2026-11-05 | Profiles and states |
+| [`.github/rulesets/main-protection.md`](../../../../.github/rulesets/main-protection.md) and `.github/workflows/` | Repository primary | 2026-11-05 | Hosted checks and workflows |
+| [`infrastructure/README.md`](../../../../infrastructure/README.md) and `gitops/` | Repository primary | 2026-11-05 | Platform and verifier facts |
+| [ADR-0054](../../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md) and [ADR-0055](../../../02.architecture/decisions/0055-governance-decision-current-state-amendment.md) | Repository decision | 2026-11-05 | Current clause amendments |
+
+#### Related Documents
+
+- [Pack router](README.md)
+- [Source ledger](m0012-source-coverage.md)
+- [Stage 90 rules](../../AGENTS.md)
+
+### Versions and Dates
+
+#### Review and Freshness
+
+Refresh this addendum, or add a later dated one, when a named owner, count or
+path changes again, or when a member of this pack is revised or succeeded.
+
+## Analysis
 
 ### Claim-Source Matrix
 
@@ -131,29 +154,13 @@ m0003 (66-72, 203-231), m0004 (191-228), m0005 (141-152), m0008 (270-272,
 They are research recommendations of their dated cycles, not policy; the
 current rules are in `.agents/governance/`.
 
-## Sources
+### Alternatives
 
-| Source | Grade | Retrieved | Relevance |
-| --- | --- | --- | --- |
-| [Agent registry](../../../../.agents/roles/registry.json) and `scripts/validate-agent-governance.py` | Repository primary | 2026-11-05 | Roles, providers, projections |
-| [Common governance hub](../../../../.agents/README.md) | Repository primary | 2026-11-05 | Current owners of QA, lifecycle, memory and model selection |
-| [Document registry](../../../99.templates/registry.json) | Repository primary | 2026-11-05 | Profiles and states |
-| [`.github/rulesets/main-protection.md`](../../../../.github/rulesets/main-protection.md) and `.github/workflows/` | Repository primary | 2026-11-05 | Hosted checks and workflows |
-| [`infrastructure/README.md`](../../../../infrastructure/README.md) and `gitops/` | Repository primary | 2026-11-05 | Platform and verifier facts |
-| [ADR-0054](../../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md) and [ADR-0055](../../../02.architecture/decisions/0055-governance-decision-current-state-amendment.md) | Repository decision | 2026-11-05 | Current clause amendments |
+This addendum weighs no design alternatives, because it records where the local repository statements of m0001 to m0012 no longer describe the repository; a later member that compares options records them here.
 
-## Review and Freshness
+## Application and Limits
 
-Refresh this addendum, or add a later dated one, when a named owner, count or
-path changes again, or when a member of this pack is revised or succeeded.
-
-### Limitations
-
-Repository-static only; no runtime, hosted or cluster observation. Line
-numbers are fixed to the published members at `726e1956`. Findings the
-reviews marked uncertain are omitted.
-
-### Recommendations
+### Design Implications
 
 Navigation verified on 2026-11-16. The GitHub configuration link in m0008
 names the former path. Use the
@@ -172,8 +179,16 @@ A later research cycle can succeed the most out-of-date members (m0004,
 m0008, m0012) with fresh members instead of relying on this addendum; the
 choice belongs to the pack owner.
 
-## Related Documents
+### Unverified Conditions
 
-- [Pack router](README.md)
-- [Source ledger](m0012-source-coverage.md)
-- [Stage 90 rules](../../AGENTS.md)
+Repository-static only; no runtime, hosted or cluster observation. Line
+numbers are fixed to the published members at `726e1956`. Findings the
+reviews marked uncertain are omitted.
+
+#### Authority Boundary
+
+This addendum establishes only what the tracked files said on 2026-11-05. It
+is not a requirement, decision or policy. The current owners are the linked
+Stage 01, 02 and 05 documents, `.agents/governance/`, the registries and the
+implementing files. External-source claims in the members are not
+re-evaluated here.

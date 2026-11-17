@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.4.5"
+version: "1.4.6"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -153,6 +153,9 @@ kubectl -n argo-rollouts get ingress
 curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
   -o /dev/null -w '%{http_code}' https://rollouts.hy-k8s.home.arpa/
 ```
+
+| Step | Action | Expected Result | On Failure |
+| --- | --- | --- | --- |
 
 ### Stop Conditions
 

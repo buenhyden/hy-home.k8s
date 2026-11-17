@@ -36,11 +36,11 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 <!-- Author prompt: 확인된 명령, 입력, 실행 책임과 모든 조치의 기대 결과를 관측할 수 있게 적고, mutating 명령에는 경계 표지를 함께 둔다. -->
 
-<!-- Author prompt: 트리거별로 조치와 원복을 나눌 때만 아래 Triggers 표를 사용하고, 그렇지 않으면 표를 지운다. -->
+<!-- Author prompt: 아래 Steps 표에 단계마다 순서, 행동, 관측할 결과, 실패 시 중단 지점과 다음 책임자를 이 런북이 밝힌 사실로만 적는다. 실제 단계를 적기 전에는 열만 둔다. -->
 
-| Trigger | Action | Rollback |
-| --- | --- | --- |
-| Name the condition that starts the action. | Describe one bounded operation. | Describe the undo, or state why none exists. |
+| Step | Action | Expected Result | On Failure |
+| --- | --- | --- | --- |
+| 1 | Describe one bounded operation. | Describe the observable result. | State where to stop and who owns the next step. |
 
 ### Stop Conditions
 
@@ -72,7 +72,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ### Recovery or Forward Repair
 
-<!-- Author prompt: 조건부 항목이다. 실행이 상태나 산출물을 바꿀 때만 원복 조건, 절차, 데이터 보존을 사실·가정과 구분해 밝히고, 아니면 이 절을 지운다. -->
+<!-- Author prompt: 원복 조건, 절차, 데이터 보존을 사실·가정과 구분해 밝힌다. 실행이 상태나 산출물을 바꾸지 않으면 그 사실과 이유를 적는다. -->
 
 ### Recovery Procedures
 

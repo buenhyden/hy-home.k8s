@@ -268,7 +268,9 @@
               "skill",
               "workspace-readme",
               "reference-pack-readme",
-              "reference-report",
+              "research",
+              "audit",
+              "data-reference",
               "governance-document",
               "governance-role",
               "knowledge-map",
@@ -463,6 +465,19 @@
                         "minLength": 1
                       },
                       "criterion_acceptance_columns": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "work_item_heading": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "work_item_columns": {
                         "type": "array",
                         "minItems": 1,
                         "uniqueItems": true,
@@ -708,14 +723,6 @@
             "type": "string",
             "minLength": 1
           }
-        },
-        "optional_index_columns": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
         }
       }
     },
@@ -824,6 +831,29 @@
         },
         "approval_ref": {
           "$ref": "#/properties/shared_contract/properties/approval_ref"
+        },
+        "core": {
+          "description": "SPEC-0222: the identity of the adopted common core.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "contract_id",
+            "contract_version",
+            "sha256"
+          ],
+          "properties": {
+            "contract_id": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "contract_version": {
+              "$ref": "#/$defs/numeric_version"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
         }
       },
       "allOf": [
@@ -1126,7 +1156,9 @@
           "additionalProperties": false,
           "required": [
             "condition",
-            "minimum_rows"
+            "minimum_rows",
+            "core_table",
+            "level_table"
           ],
           "properties": {
             "condition": {
@@ -1136,6 +1168,16 @@
             "minimum_rows": {
               "type": "integer",
               "minimum": 1
+            },
+            "core_table": {
+              "description": "SPEC-0222: the template table that carries the core policy.rules table.",
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "level_table": {
+              "description": "SPEC-0222: the local template table keyed by Rule ID that carries each rule's Level and Status.",
+              "type": "string",
+              "pattern": "\\S"
             }
           }
         },
@@ -1343,6 +1385,9 @@
           "items": {
             "$ref": "#/$defs/section"
           }
+        },
+        "core": {
+          "$ref": "#/$defs/section_core"
         }
       }
     },
@@ -1356,7 +1401,8 @@
         "owner",
         "verification",
         "review",
-        "removal"
+        "removal",
+        "authority_ref"
       ],
       "properties": {
         "id": {
@@ -1366,8 +1412,7 @@
         "kind": {
           "enum": [
             "local_h3",
-            "retained_form",
-            "local_columns"
+            "retained_form"
           ]
         },
         "condition": {
@@ -1448,18 +1493,9 @@
             "pattern": "\\S"
           }
         },
-        "table": {
+        "authority_ref": {
           "type": "string",
           "pattern": "\\S"
-        },
-        "columns": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "pattern": "\\S"
-          }
         }
       },
       "allOf": [
@@ -1505,16 +1541,6 @@
                   "required": [
                     "section_titles"
                   ]
-                },
-                {
-                  "required": [
-                    "table"
-                  ]
-                },
-                {
-                  "required": [
-                    "columns"
-                  ]
                 }
               ]
             }
@@ -1551,78 +1577,6 @@
                 {
                   "required": [
                     "title"
-                  ]
-                },
-                {
-                  "required": [
-                    "table"
-                  ]
-                },
-                {
-                  "required": [
-                    "columns"
-                  ]
-                }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "kind": {
-                "const": "local_columns"
-              }
-            },
-            "required": [
-              "kind"
-            ]
-          },
-          "then": {
-            "required": [
-              "table",
-              "columns"
-            ],
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "artifact_ids"
-                  ]
-                },
-                {
-                  "required": [
-                    "parent_id"
-                  ]
-                },
-                {
-                  "required": [
-                    "title"
-                  ]
-                },
-                {
-                  "required": [
-                    "statuses"
-                  ]
-                },
-                {
-                  "required": [
-                    "retained_sections"
-                  ]
-                },
-                {
-                  "required": [
-                    "identity_bound"
-                  ]
-                },
-                {
-                  "required": [
-                    "body_contract"
-                  ]
-                },
-                {
-                  "required": [
-                    "section_titles"
                   ]
                 }
               ]
@@ -1672,7 +1626,9 @@
             "evaluation-results",
             "governance-document",
             "governance-role",
-            "reference-report"
+            "research",
+            "audit",
+            "data-reference"
           ]
         },
         "title": {
@@ -1703,8 +1659,111 @@
           "items": {
             "$ref": "#/$defs/form_extension"
           }
+        },
+        "core_role": {
+          "$ref": "#/$defs/core_role"
+        },
+        "classification": {
+          "$ref": "#/$defs/core_classification"
+        },
+        "core": {
+          "$ref": "#/$defs/role_core"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "core_role"
+            ],
+            "properties": {
+              "core_role": {
+                "enum": [
+                  "domain",
+                  "native"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "classification"
+            ],
+            "not": {
+              "required": [
+                "core"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "core_role"
+            ],
+            "properties": {
+              "core_role": {
+                "enum": [
+                  "requirement",
+                  "architecture",
+                  "decision",
+                  "spec",
+                  "plan",
+                  "task",
+                  "guide",
+                  "runbook",
+                  "policy",
+                  "incident",
+                  "postmortem",
+                  "research",
+                  "audit",
+                  "data-reference",
+                  "root-readme",
+                  "stage-readme",
+                  "service-readme",
+                  "agent-instructions",
+                  "skill"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "core"
+            ],
+            "not": {
+              "required": [
+                "classification"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "not": {
+              "required": [
+                "core_role"
+              ]
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "core"
+                  ]
+                },
+                {
+                  "required": [
+                    "classification"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
     },
     "template_definition": {
       "description": "Stored TemplateDefinition fields. template_definition_record derives the remaining fields and the registry checks the record against template-definition.schema.json. headings_extension, stored only on a role without a form, feeds the derived extensions field.",
@@ -1852,7 +1911,21 @@
               "pattern": "\\S"
             }
           }
+        },
+        "core_role": {
+          "const": "native"
+        },
+        "classification": {
+          "$ref": "#/$defs/core_classification"
         }
+      },
+      "dependentRequired": {
+        "core_role": [
+          "classification"
+        ],
+        "classification": [
+          "core_role"
+        ]
       }
     },
     "template_table": {
@@ -1903,6 +1976,26 @@
               },
               "required": {
                 "type": "boolean"
+              },
+              "id": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "allowed_values": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "\\S"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ]
+                }
               }
             }
           }
@@ -1914,8 +2007,49 @@
         "row_identity": {
           "type": "string",
           "minLength": 1
+        },
+        "table_id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "required_when": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "empty_policy": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "authority_ref": {
+          "description": "SPEC-0222: the decision that registered a local table of its own (ADR-0059 before SPEC-0222, SPEC-0222 for the tables it added); a template table carries exactly one of table_id and authority_ref.",
+          "type": "string",
+          "pattern": "\\S"
         }
-      }
+      },
+      "dependentRequired": {
+        "table_id": [
+          "required_when",
+          "empty_policy"
+        ],
+        "required_when": [
+          "table_id"
+        ],
+        "empty_policy": [
+          "table_id"
+        ]
+      },
+      "oneOf": [
+        {
+          "required": [
+            "table_id"
+          ]
+        },
+        {
+          "required": [
+            "authority_ref"
+          ]
+        }
+      ]
     },
     "shared_extension": {
       "type": "object",
@@ -2298,6 +2432,230 @@
             "type": "string",
             "pattern": "\\S"
           }
+        }
+      }
+    },
+    "core_role": {
+      "description": "SPEC-0222: the common core role a form or native template binds, or its domain or native classification.",
+      "enum": [
+        "requirement",
+        "architecture",
+        "decision",
+        "spec",
+        "plan",
+        "task",
+        "guide",
+        "runbook",
+        "policy",
+        "incident",
+        "postmortem",
+        "research",
+        "audit",
+        "data-reference",
+        "root-readme",
+        "stage-readme",
+        "service-readme",
+        "agent-instructions",
+        "skill",
+        "domain",
+        "native"
+      ]
+    },
+    "core_classification": {
+      "description": "SPEC-0222: why a domain or native form has no core role, and who owns that classification.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "reason",
+        "review_trigger",
+        "authority_ref"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "reason": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "review_trigger": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "authority_ref": {
+          "type": "string",
+          "pattern": "\\S"
+        }
+      }
+    },
+    "core_table": {
+      "description": "SPEC-0222: one core table of a role, verbatim from the adopted common core.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "table_id",
+        "section_id",
+        "required_when",
+        "columns",
+        "empty_policy"
+      ],
+      "properties": {
+        "table_id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "section_id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "required_when": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "columns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "label",
+              "value_type",
+              "meaning",
+              "required"
+            ],
+            "properties": {
+              "key": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "label": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "value_type": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "meaning": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "allowed_values": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "\\S"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "empty_policy": {
+          "type": "string",
+          "pattern": "\\S"
+        }
+      }
+    },
+    "role_core": {
+      "description": "SPEC-0222: the role-level members of the adopted common core, verbatim.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "purpose",
+        "non_goals",
+        "metadata_policy",
+        "tables",
+        "language",
+        "status",
+        "relationships",
+        "lifecycle",
+        "rules"
+      ],
+      "properties": {
+        "purpose": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "non_goals": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "metadata_policy": {
+          "type": "object"
+        },
+        "tables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/core_table"
+          }
+        },
+        "language": {
+          "type": "object"
+        },
+        "status": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "relationships": {
+          "type": "object"
+        },
+        "lifecycle": {
+          "type": "object"
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      }
+    },
+    "section_core": {
+      "description": "SPEC-0222: the core members of one section that have no registry field of the same meaning, and its core required_when, which the section's condition must equal; only an H2 carries prohibited_content and empty_policy.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title_ko",
+        "required_when",
+        "content_rule"
+      ],
+      "properties": {
+        "title_ko": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "content_rule": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "prohibited_content": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "empty_policy": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "required_when": {
+          "type": "string",
+          "pattern": "\\S"
         }
       }
     }
