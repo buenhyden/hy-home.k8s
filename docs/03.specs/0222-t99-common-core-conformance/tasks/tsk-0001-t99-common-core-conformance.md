@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.4.0"
+version: "0.5.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -74,7 +74,7 @@ The result was `MISMATCH` (export `9305a9cc69e61fa5ba5efe28aa7af92ed6fa8fcce5ea5
 
 ### Blockers and Decisions
 
-Spec and Plan approval is open. The 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
+The user approved the Spec and Plan (EVD-006); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
 
 ### Lifecycle Traceability
 
@@ -101,6 +101,7 @@ Spec and Plan approval is open. The 0.1.0 draft failed its review (EVD-003) and 
 | EVD-003 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Independent review of the draft package | A read-only code-reviewer agent over the staged 0.1.0 Spec, Plan and Task, the prompt, D24, the core, the tool, ADR-0059, ADR-0062 and the registry, 2026-11-17; risk class `high` | FAIL | NOT READY. Four blockers: a separate core file contradicts ADR-0059; SPEC-0222's own Spec and Plan cannot adopt new tables after approval; ADR-0062 is accepted outside the retained range; and the export rules for local extensions are undefined. Also high findings: required core cells with no source, the Task header adapter scope, wrong counts (17 reports, `scripts/document-generator.py`), a transition pending list, and bundled criteria. The 0.2.0 draft addresses each. | yes | none |
 | EVD-004 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Independent review of the draft package | The same read-only code-reviewer agent over the staged 0.2.0 Spec, Plan and Task, 2026-11-17; risk class `high` | FAIL | APPROVE WITH CHANGES: 14 findings, among them the Stage 02 rule on accepted ADRs, the staged `core_role` rollout, the core identity and field map, predictable stop cases (policy and requirement tables), native binding, review gates, and tables with no core counterpart. 0.3.0 applies them. | yes | none |
 | EVD-005 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Independent review of the draft package | The same agent over the staged 0.3.0 package, 2026-11-17; risk class `high` | PASS | All 14 earlier findings applied; seven small edits remained (native binding inside `template_definition`, the `classification` member, two counts, these review rows, the work order wording, recorded status reading, Task acceptance values), and 0.4.0 applies them. The reviewer stated the package is ready to approve after these edits. | yes | EVD-003, EVD-004 |
+| EVD-006 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Spec/Plan approval | Direct current-session user answer `요구사항에 작성된 대로 진행하고 구현한다.` (proceed and implement as the requirements state) to the SPEC-0222 approval question naming spec.md `8bff1cd0` and plan.md `4db258c2` of draft commit `f5022431`, 2026-11-17; risk class `high` | PASS | Approves the reviewed Spec and Plan content of `f5022431` for implementation; the approved files differ from it only in `status` and `version`. The answer does not accept a criterion: VAL-CORE-001 to VAL-CORE-004 stay pending until the user's acceptance. | yes | none |
 
 ### Resolution Links
 
