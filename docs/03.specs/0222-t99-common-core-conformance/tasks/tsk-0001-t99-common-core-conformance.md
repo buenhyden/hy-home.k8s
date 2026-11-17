@@ -1,9 +1,9 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.17.0"
+version: "0.17.1"
 type: "sdlc/task"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "SPEC-0222-TSK-0001"
 parent_ids: ["SPEC-0222-PLAN-0001"]
 ---
@@ -213,7 +213,7 @@ Two steps are left to the operator. Publishing each successor needs operator app
 
 ### Blockers and Decisions
 
-The user approved the Spec and Plan (EVD-006); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
+The user approved the Spec and Plan (EVD-006) and renewed that approval for revision 1.1.0 (EVD-032); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
 
 ### Lifecycle Traceability
 
@@ -266,6 +266,7 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | EVD-029 | [VAL-CORE-003](../spec.md#criteria) | WORK-007 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `714de75e` and its commit hooks; pinned venv, 2026-11-17 | PASS | 13 selected gates passed, the agent governance suite among them. | yes | none |
 | EVD-030 | [VAL-CORE-001](../spec.md#criteria) | WORK-008 | Failing first | The WORK-008 tests over the data-only worktree state built on `b6e99e9d`; pinned venv, 2026-11-17 | PASS | Observed the defect: 413 tests with 8 failures and 9 errors (the research and audit forms absent). | yes | none |
 | EVD-031 | [VAL-CORE-003](../spec.md#criteria) | WORK-008 | Focused tests and strict validators after the change | After the merge onto `714de75e`: form tree, terminal contract, generator, reference pack routes, artifact identity and README navigation; the four strict validators; one-time scratch move checks of 17 members; pinned venv, 2026-11-17 | PASS | 572 tests run, with one test changed to read the record projection; its classes then passed. Every validator passed with no published rewrite. The move check found every unit again; the only extra units are core headers and pointer sentences. The first staged run failed one `document` suite test outside the focused set (`test_document_frontmatter_negatives`), which still read the former `Findings and Gaps` heading; it now reads `Conflicts and Gaps` and also checks that the core table comes first. | yes | none |
+| EVD-032 | [VAL-CORE-001](../spec.md#criteria) | WORK-003 | Renewed Spec/Plan approval | Direct current-session user answer `Approve (Recommended)` on 2026-11-18 to the renewed approval question that named spec.md `e8650f1f` and plan.md `68a74b88` of in-review commit `c82b0aea`, revision 1.1.0; risk class `high` | PASS | The user approved the revised Spec and Plan content of `c82b0aea`. The approved files differ from it only in `status`. The revision adds the core check and work unit tables and states the user's review and parallel preparation decisions. It accepts no criterion. | yes | none |
 
 ### Resolution Links
 

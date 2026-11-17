@@ -2,7 +2,7 @@
 title: "T99 Common Core Conformance"
 version: "1.1.0"
 type: "sdlc/spec"
-status: "in-review"
+status: "approved"
 owner: "platform"
 updated: "2026-11-18"
 artifact_id: "SPEC-0222"
