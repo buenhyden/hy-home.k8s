@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "4.1.1"
+version: "4.1.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -120,11 +120,13 @@ This policy excludes no subject within its scope; if one is excluded, name it an
    the owning Spec package; put order, risks, verification, and rollback in its
    Plan and execution evidence in its Task records. A fresh Spec and Plan
    describe authorized, current intent when approved; Task execution and
-   criterion acceptance remain separate from that approval. Keep one Task
-   Lifecycle Traceability table with criterion links, row state, result and evidence. Its frontmatter status is
-   the sole document status marker. For one row, author its state only in
-   frontmatter and use literal `frontmatter` in the row. A multi-row Task
-   follows the row-derived status of
+   criterion acceptance remain separate from that approval. Keep each Task
+   work item's state in the core Work Items table and its criterion links,
+   result and evidence in the Lifecycle Traceability table, joined by Item.
+   Its frontmatter status is the sole document status marker. A one-item Task
+   has no Work Items table and authors its state only in frontmatter; a Task
+   recorded under the earlier header keeps literal `frontmatter` in its row.
+   A multi-row Task follows the row-derived status of
    [DOCLIFE-R009](document-lifecycle.md#requirements).
    Record each criterion's sole authored `pending`, `accepted`, `rejected`, or
    `not-required` disposition in the Task's Criterion Decisions table, with

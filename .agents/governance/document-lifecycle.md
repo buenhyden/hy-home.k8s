@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "3.1.1"
+version: "3.1.2"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -198,8 +198,11 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   Requirement's `approved`, an ADR's `accepted`, an operating document's
   `active`, an Incident's `resolved`, and a Postmortem's `published` retain
   their different role meanings; none is Task `completed`. A
-  current Task keeps execution in one Lifecycle Traceability table (under Execution Log) and one frontmatter status
-  marker. For one row, the marker is the human source; for multiple rows, the
+  current Task keeps each work item's state in the core Work Items table and
+  its result and evidence in the Lifecycle Traceability table (both under
+  Execution Log, joined by Item; a Task recorded under the earlier header keeps
+  the state in its Lifecycle Traceability row) and one frontmatter status
+  marker. For one item, the marker is the human source; for multiple items, the
   row states are the human source, frontmatter `status` is omitted and the
   validators derive the summary from the rows. A multi-row Task that already
   carries `status` must equal the row-derived value, and earlier records are
