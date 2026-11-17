@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.17.1"
+version: "0.18.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-18"
@@ -211,6 +211,13 @@ WORK-008 split the single `reference-report` form into the core `research`, `aud
 
 Two steps are left to the operator. Publishing each successor needs operator approval. Disposing of the predecessors belongs to Q07-CUTOVER after acceptance, because accepted ADR-0026 and ADR-0028 still link to RES-0001-m0007.
 
+WORK-003 bound the requirement, architecture, spec and plan forms to the core (`c82b0aea`).
+
+- **Requirements.** The core makes Quality Requirements an `always` section, so REQ-0001 gains one sentence stating it declares no quality member. The four Requirements' tables are instances of `requirement.requirements`, with Priority values in the core's lower case (68 rows). `requirement.quality` is defined and not rendered.
+- **Architecture.** AD-0004, AD-0005 and AD-0007 state their interfaces but no failure boundary, so they render `architecture.interface` header-only. AD-0006 states that external interfaces stay with their own domains.
+- **Spec and Plan.** They carry `spec.checks`, `plan.work_units` and `plan.checks`, beside the local Criteria, Work Breakdown and Promotion tables their readers use. The four retained identities stay unchanged.
+- **This package's Spec and Plan.** They took those core tables and the user's review and parallel-preparation decisions as revision 1.1.0, returned to `in-review` in `c82b0aea`, and were approved again (EVD-032, `73338831`). The Task changed only after that approval, because the lifecycle check refuses Task execution changes while their parents are in review.
+
 ### Blockers and Decisions
 
 The user approved the Spec and Plan (EVD-006) and renewed that approval for revision 1.1.0 (EVD-032); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
@@ -221,12 +228,12 @@ The user approved the Spec and Plan (EVD-006) and renewed that approval for revi
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-CORE-001](../spec.md#criteria) | Registry core members, `core_role` and classifications | platform | completed | PASS | EVD-007, EVD-008, EVD-010, EVD-011, EVD-012, EVD-013 |
 | WORK-002 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Task core members, tables and transition adapter | platform | completed | PASS | EVD-014, EVD-015, EVD-016, EVD-017 |
-| WORK-003 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Requirement, architecture, spec and plan tables | platform | ready | NOT_RUN | EVD-001 |
+| WORK-003 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Requirement, architecture, spec and plan tables | platform | in-progress | NOT_RUN | EVD-001 |
 | WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | completed | PASS | EVD-018, EVD-019, EVD-020 |
 | WORK-005 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | README tables | platform | completed | PASS | EVD-021, EVD-022, EVD-023 |
 | WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | completed | PASS | EVD-024, EVD-025, EVD-026 |
 | WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | completed | PASS | EVD-027, EVD-028, EVD-029 |
-| WORK-008 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Research, audit and data-reference forms | platform | in-progress | NOT_RUN | EVD-001 |
+| WORK-008 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Research, audit and data-reference forms | platform | completed | PASS | EVD-030, EVD-031, EVD-033 |
 | WORK-009 | [VAL-CORE-002](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Final export, residue closure, review and suite | platform | ready | NOT_RUN | EVD-001 |
 
 ## Verification Evidence
@@ -267,6 +274,9 @@ The user approved the Spec and Plan (EVD-006) and renewed that approval for revi
 | EVD-030 | [VAL-CORE-001](../spec.md#criteria) | WORK-008 | Failing first | The WORK-008 tests over the data-only worktree state built on `b6e99e9d`; pinned venv, 2026-11-17 | PASS | Observed the defect: 413 tests with 8 failures and 9 errors (the research and audit forms absent). | yes | none |
 | EVD-031 | [VAL-CORE-003](../spec.md#criteria) | WORK-008 | Focused tests and strict validators after the change | After the merge onto `714de75e`: form tree, terminal contract, generator, reference pack routes, artifact identity and README navigation; the four strict validators; one-time scratch move checks of 17 members; pinned venv, 2026-11-17 | PASS | 572 tests run, with one test changed to read the record projection; its classes then passed. Every validator passed with no published rewrite. The move check found every unit again; the only extra units are core headers and pointer sentences. The first staged run failed one `document` suite test outside the focused set (`test_document_frontmatter_negatives`), which still read the former `Findings and Gaps` heading; it now reads `Conflicts and Gaps` and also checks that the core table comes first. | yes | none |
 | EVD-032 | [VAL-CORE-001](../spec.md#criteria) | WORK-003 | Renewed Spec/Plan approval | Direct current-session user answer `Approve (Recommended)` on 2026-11-18 to the renewed approval question that named spec.md `e8650f1f` and plan.md `68a74b88` of in-review commit `c82b0aea`, revision 1.1.0; risk class `high` | PASS | The user approved the revised Spec and Plan content of `c82b0aea`. The approved files differ from it only in `status`. The revision adds the core check and work unit tables and states the user's review and parallel preparation decisions. It accepts no criterion. | yes | none |
+| EVD-033 | [VAL-CORE-003](../spec.md#criteria) | WORK-008 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `3d82e960` and its commit hooks; pinned venv, 2026-11-17 | PASS | 12 selected gates passed after the one stale-heading test fix recorded in EVD-031. | yes | none |
+| EVD-034 | [VAL-CORE-001](../spec.md#criteria) | WORK-003 | Failing first | The WORK-003 tests over an export of `3d82e960`: the SDLC core binding, requirement, architecture, spec and plan form, retained Spec and Plan, and repository registry classes; pinned venv, 2026-11-18 | PASS | Observed the defect: 50 tests with 27 failures and 35 errors. | yes | none |
+| EVD-035 | [VAL-CORE-003](../spec.md#criteria) | WORK-003 | Focused tests, strict validators and staged QA | In the prepared worktree, `tests.test_common_form_tree` and 21 focused modules; then `python3 scripts/qa.py staged` on the index of `c82b0aea` and its commit hooks; pinned venv, 2026-11-18 | PASS | 1,076 tests OK with 4 skips; 12 selected gates passed, the `document` suite among them. | yes | none |
 
 ### Resolution Links
 
