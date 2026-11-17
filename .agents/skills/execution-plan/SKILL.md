@@ -3,11 +3,11 @@ name: "execution-plan"
 description: "Use when turning an approved Spec and architecture constraints into ordered, testable implementation work."
 metadata:
   title: "Execution Plan"
-  version: "1.0.4"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,11 +17,15 @@ using this procedure. Skill invocation grants no authority
 
 # execution-plan
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Use this skill as its frontmatter description states.
+
+#### Inputs
+
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### When Not to Use
 
@@ -56,16 +60,16 @@ order, verification, risk, and rollback. Use `task-breakdown` for executable uni
 
 This skill has no failure branch of its own; a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
-
-### Outputs
+### Artifacts
 
 A profile-conformant Plan with explicit dependencies, verification, rollback,
 and links to the current Spec and Tasks.
+
+### Handoff
+
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
 
 ## Verification
 
@@ -73,6 +77,6 @@ and links to the current Spec and Tasks.
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
+The resulting Plan does not create standalone design or test authority, because the Spec owns behavior and the Plan owns order, verification, risk and rollback. Unresolved work is not recorded as done, and execution state and evidence belong to the Tasks rather than the Plan.

@@ -562,7 +562,7 @@ EXCLUSION = f"- {OTHER}: N/A — no description covers it yet; ADR-0001 decides 
 
 
 def _requirement(*, links: str = "", extra: str = "") -> str:
-    section = f"\n### Downstream Links\n\n{links}\n" if links is not None else ""
+    section = f"\n### Verification Links\n\n{links}\n" if links is not None else ""
     return (
         "## Traceability\n"
         f"{section}\n### Lifecycle Traceability\n\n"
@@ -575,7 +575,7 @@ def _requirement(*, links: str = "", extra: str = "") -> str:
 def _ad(*members: str) -> str:
     rows = "".join(f"| {m} | A boundary. | N/A — none |\n" for m in members)
     return (
-        "## Traceability\n\n### Lifecycle Traceability\n\n"
+        "## Decisions and Adoption\n\n### Lifecycle Traceability\n\n"
         "| Upstream requirement | Quality attribute or boundary | ADR / Spec |\n"
         f"| --- | --- | --- |\n{rows}"
     )
@@ -584,7 +584,7 @@ def _ad(*members: str) -> str:
 def _spec(*members: str) -> str:
     rows = "".join(f"| {m} | VAL-X-001 | N/A — fixture | Test. |\n" for m in members)
     return (
-        "## References\n\n### Lifecycle Traceability\n\n"
+        "## Acceptance Criteria\n\n### Lifecycle Traceability\n\n"
         "| Requirement ID | Spec criterion | Architecture | Verification method |\n"
         f"| --- | --- | --- | --- |\n{rows}"
     )
@@ -613,7 +613,7 @@ class SpecArchitectureLinkTests(unittest.TestCase):
 
     def rules(self, cell: str, *, target: str = "sdlc/architecture-description"):
         spec = (
-            "## References\n\n### Lifecycle Traceability\n\n"
+            "## Acceptance Criteria\n\n### Lifecycle Traceability\n\n"
             "| Requirement ID | Spec criterion | Architecture | Verification method |\n"
             f"| --- | --- | --- | --- |\n| N/A — fixture | VAL-X-001 | {cell} | Test. |\n"
         )
@@ -773,7 +773,7 @@ class RequirementCoverageTests(unittest.TestCase):
             [
                 (
                     "REQUIREMENT-COVERAGE",
-                    f"{MEMBER} uncited; no Downstream Links section",
+                    f"{MEMBER} uncited; no Verification Links section",
                 )
             ],
         )

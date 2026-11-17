@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "6.0.0"
+version: "6.0.1"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "REQ-0003"
 ---
 
@@ -127,37 +127,9 @@ Acceptance criteria are abbreviated `AC##` in the `Acceptance` column.
 | REQ-0003-NFR-0003 | Document form and QA/release decisions must trace a dated official primary source to its exact claim, applicable scope, local decision and validation evidence. An external standard is guidance or convention until the repository's current owner adopts a rule; it never establishes certification or remote state. | Serves primary-source traceability with repository conventions labeled separately (AD-0006 Lifecycle Traceability). | Source citations name date, claim and scope. | Must |
 | REQ-0003-NFR-0004 | A discovered baseline defect is handled without weakening the contract, and a false-positive verdict, an environment limit, or an unresolved failure must not be hidden as success. | Serves explicit baseline-failure and environment-limit reporting (AD-0006 Lifecycle Traceability). | Review finds no hidden failure or weakened gate. | Must |
 
-## Acceptance Criteria
-
-### Acceptance Conditions
-
-Each member of the Lifecycle Traceability below is judged by the validation of its linked Architecture and implementation owner.
-The current role/skill projection, document routes, identity, and lifecycle, consumer ownership, the bounded loop, and
-the protected QA contracts are validated with positive/negative fixtures. Provider-runtime and hosted/live results
-are not reported as PASS without their observation, and each limitation has an owner and a retry condition.
-
-- **Acceptance criterion 01**: The owner graph of common policy, machine contracts, and execution evidence is connected.
-- **Acceptance criterion 02**: The trace across REQ-0003, AD-0006, the current ADRs, and approved Spec/Plan/Task is kept.
-- **Acceptance criterion 03**: Gateways are thin projections and keep native, static, and runtime evidence distinct.
-- **Acceptance criterion 04**: The relevant repository static quality gate passes after the change.
-- **Acceptance criterion 05**: No unapproved external format replaces the repository form owner.
-- **Acceptance criterion 06**: The role and surface projections derived from the current Registry agree.
-- **Acceptance criterion 07**: Provider readiness is reported only from an observed, secret-free remote/live session recorded in a Task, and ABSENT/DEFER carries a limit, an owner, and a retry trigger.
-- **Acceptance criterion 08**: Consistency of the machine schema, metadata, and projections is validated.
-- **Acceptance criterion 09**: Runner fixtures validate timeout, output limits and child cleanup, Task evidence records the no-progress stop and handoff, and compaction and resume follow the context policy without sensitive data.
-- **Acceptance criterion 10**: Evidence for role input/output, permission, stop, handoff, evaluation and model fitness names its observed scope and gaps. A representative paired Skill evaluation retains task, both outputs, score and aggregate relationships without claiming coverage of unmeasured roles, Skills or runtime behavior.
-- **Acceptance criterion 11**: Results of applicable focused named behavior/security, affected, exact-index and formatter/diff checks are traceable by actual input; hosted branch metadata and selected PR style have distinct SHA/run results, and historical unrun full QA remains separate. The W06 affected-hosted target also needs its own selected inputs and aggregate run evidence when implemented. The same leaf is not repeated through commit, push, merge and postmerge solely because the delivery stage changed.
-- **Acceptance criterion 12**: Current surfaces carry no duplicate authority, stale claim, or orphan consumer, and actual runtime limits are preserved.
-- **Acceptance criterion 13**: A main release-preparation PR supplies a reviewed `CHANGELOG.md` entry and one SemVer tag/Release producer; development pushes create none, existing SHA tags are preserved, duplicate notifications do not move a tag, and failed checks do not publish.
-- **Acceptance criterion 14**: The active script, test and `.github/` graph has no proven one-off or duplicate execution after consumer succession, while distinct security, document and repository-purpose checks remain covered. Issues express requests, the Spec contract, Task execution and Project a view without copied or bidirectionally overwritten state.
-
-### Verification Method
-
-No separate verification method is stated: each requirement is verified by the evidence named in its `Acceptance` cell, and the acceptance-criterion column of `Lifecycle Traceability` states the acceptance condition of every member.
-
 ## Traceability
 
-### Source and Constraints
+### Sources
 
 SPEC-0152 completed the current manual disposition policy change; its exact completed source and recovery proof are in [Archived Lineage](#archived-lineage). Earlier completed packages, including SPEC-0151 and SPEC-0150, are summarized there and recovered from Git history. The W00–W11 roadmap as recorded at that time is in `git show 4033d38e:docs/03.specs/0152-manual-document-disposition-policy/plan.md` under `Deferred Roadmap`; the current Task and residue ledger record subsequent progress and open work. SPEC-0153 corrected the separately observed broad-history ADR and Task validation failures; its Task criteria were accepted on 2026-11-11, and its completed source and recovery proof are in [Archived Lineage](#archived-lineage). It does not revise SPEC-0152's completed evidence. SPEC-0154, SPEC-0155 and SPEC-0158 completed the W00 survey of that roadmap, and SPEC-0156 and SPEC-0157 completed W01; all five left the tree after the user accepted their criteria and authorized their exit on 2026-11-11, and their summaries and recovery proof are in [Archived Lineage](#archived-lineage). Later stages read their tables from Git history: the requirement crosswalk, Conflict Dispositions and Stage Handoffs with `git show a6f44976:docs/03.specs/0154-requirement-owner-crosswalk/tasks/tsk-0001-requirement-owner-crosswalk.md`; the designated-source, legacy lineage and New Handoffs tables with `git show a6f44976:docs/03.specs/0155-designated-source-applicability/tasks/tsk-0001-designated-source-applicability.md`; and the USER22 links, primary writers and OPEN dispositions with `git show a6f44976:docs/03.specs/0158-w00-obligation-closure/tasks/tsk-0001-w00-obligation-closure.md`. The W01 rejected clauses stay in Scope and Non-goals, and the shared-edition rule stays in the document lifecycle policy. SPEC-0159 completed W02, adding the staged `LIFECYCLE-PACKAGE-EXIT` check under accepted ADR-0057, and SPEC-0160 completed W03, adding front-matter rule tests, audit-form finding columns and owner pointers; both left the tree after the user accepted their criteria and authorized their exit on 2026-11-11, and their summaries and recovery proof are in [Archived Lineage](#archived-lineage). The W03 Q-03 comparison of the package's unapproved 19-role candidate table with the current profiles is read with `git show 5456022f:docs/03.specs/0160-document-form-gaps/tasks/tsk-0001-document-form-gaps.md`; no candidate form was adopted.
 
@@ -239,12 +211,38 @@ The table below records the succession of current meaning. Earlier member IDs ar
 - Current integration: none. SPEC-0140 left the tree; Git history recovers it.
 - Original decision bodies remain in the [decision log](../02.architecture/decisions/README.md); recovery is by Git history (`git show <commit>:<path>`), with summaries in [Archived Lineage](#archived-lineage).
 
-### Downstream Links
+### Verification Links
 
 No downstream link is listed here: the architecture description or Spec that owns each member cites it in its own requirement column, `scripts/document-backlinks.py` derives the reverse view and the `REQUIREMENT-COVERAGE` check of `scripts/validate-links-and-owners.py` refuses a member that no document cites.
 
 - REQ-0003-FR-0032: N/A — AD-0006 does not cover the repository vocabulary, so no description row cites this member; [ADR-0058](../02.architecture/decisions/0058-repository-vocabulary-in-knowledge-surface.md) decides it.
 - Acceptance criterion 13: the release decision is [ADR-0048](../02.architecture/decisions/0048-local-qa-and-semver-release-ownership.md) and the release-preparation procedure is [RUN-0012](../05.operations/runbooks/0012-main-release-preparation-runbook.md).
+
+#### Acceptance Conditions
+
+Each member of the Lifecycle Traceability below is judged by the validation of its linked Architecture and implementation owner.
+The current role/skill projection, document routes, identity, and lifecycle, consumer ownership, the bounded loop, and
+the protected QA contracts are validated with positive/negative fixtures. Provider-runtime and hosted/live results
+are not reported as PASS without their observation, and each limitation has an owner and a retry condition.
+
+- **Acceptance criterion 01**: The owner graph of common policy, machine contracts, and execution evidence is connected.
+- **Acceptance criterion 02**: The trace across REQ-0003, AD-0006, the current ADRs, and approved Spec/Plan/Task is kept.
+- **Acceptance criterion 03**: Gateways are thin projections and keep native, static, and runtime evidence distinct.
+- **Acceptance criterion 04**: The relevant repository static quality gate passes after the change.
+- **Acceptance criterion 05**: No unapproved external format replaces the repository form owner.
+- **Acceptance criterion 06**: The role and surface projections derived from the current Registry agree.
+- **Acceptance criterion 07**: Provider readiness is reported only from an observed, secret-free remote/live session recorded in a Task, and ABSENT/DEFER carries a limit, an owner, and a retry trigger.
+- **Acceptance criterion 08**: Consistency of the machine schema, metadata, and projections is validated.
+- **Acceptance criterion 09**: Runner fixtures validate timeout, output limits and child cleanup, Task evidence records the no-progress stop and handoff, and compaction and resume follow the context policy without sensitive data.
+- **Acceptance criterion 10**: Evidence for role input/output, permission, stop, handoff, evaluation and model fitness names its observed scope and gaps. A representative paired Skill evaluation retains task, both outputs, score and aggregate relationships without claiming coverage of unmeasured roles, Skills or runtime behavior.
+- **Acceptance criterion 11**: Results of applicable focused named behavior/security, affected, exact-index and formatter/diff checks are traceable by actual input; hosted branch metadata and selected PR style have distinct SHA/run results, and historical unrun full QA remains separate. The W06 affected-hosted target also needs its own selected inputs and aggregate run evidence when implemented. The same leaf is not repeated through commit, push, merge and postmerge solely because the delivery stage changed.
+- **Acceptance criterion 12**: Current surfaces carry no duplicate authority, stale claim, or orphan consumer, and actual runtime limits are preserved.
+- **Acceptance criterion 13**: A main release-preparation PR supplies a reviewed `CHANGELOG.md` entry and one SemVer tag/Release producer; development pushes create none, existing SHA tags are preserved, duplicate notifications do not move a tag, and failed checks do not publish.
+- **Acceptance criterion 14**: The active script, test and `.github/` graph has no proven one-off or duplicate execution after consumer succession, while distinct security, document and repository-purpose checks remain covered. Issues express requests, the Spec contract, Task execution and Project a view without copied or bidirectionally overwritten state.
+
+#### Verification Method
+
+No separate verification method is stated: each requirement is verified by the evidence named in its `Acceptance` cell, and the acceptance-criterion column of `Lifecycle Traceability` states the acceptance condition of every member.
 
 ### Lifecycle Traceability
 

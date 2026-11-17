@@ -1,16 +1,16 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.6.1"
+version: "0.6.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 # GitHub Configuration Hub
 
-## Purpose
+## Service
 
-### Service Role
+### Purpose
 
 이 문서는 `hy-home.k8s`의 GitHub 자동화 surface를 안내하는 routing 문서다.
 정책의 정본은 아니다. `.github/README.md`는 GitHub가 저장소 프로필 페이지로
@@ -24,17 +24,7 @@ updated: "2026-11-13"
 - `SECURITY.md` - 취약점 신고 안내
 - `AGENTS.md` - 이 폴더의 에이전트 지시
 
-### Supported Environment
-
-이 디렉터리는 PR branch·title·새 commit metadata, 선택된 PR style 검사와 저장소 유지보수
-자동화를 제공한다.
-로컬 QA와 release 준비는 별도의 현재 소유자가 수행한다. GitHub Actions는
-full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 또는 release
-게시자가 아니다.
-
-## Interfaces
-
-### Inputs and Outputs
+### Interfaces
 
 #### Policy Routing
 
@@ -117,17 +107,27 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on every opened or synchronized pull request; the action matches paths itself. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
 
-### Security Boundary
+#### Security Boundary
 
 이 문서는 secret, credential, 권한 경계만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
 
-## Development
+## Usage
 
-### Local Workflow
+### Prerequisites
+
+이 디렉터리는 PR branch·title·새 commit metadata, 선택된 PR style 검사와 저장소 유지보수
+자동화를 제공한다.
+로컬 QA와 release 준비는 별도의 현재 소유자가 수행한다. GitHub Actions는
+full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 또는 release
+게시자가 아니다.
+
+### Selected Start
 
 이 문서는 GitHub 자동화 surface를 안내하는 routing 문서이며 로컬 작업 절차를 담지 않는다.
 
-### Checks
+## Checks
+
+### Readiness
 
 #### Source Basis
 
@@ -137,12 +137,10 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 - 외부 도구 계약이 바뀌면 공식 출처를 확인하고 현재 소유자와 소비자를
   함께 갱신한다.
 
-## Operations
-
-### Runbook Links
-
-이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
-
-### Observability and Recovery
+### Failure Handling
 
 이 문서는 운영 관측과 복구만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
+
+#### Runbook Links
+
+이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.

@@ -1,10 +1,10 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "3.0.1"
+version: "3.0.2"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "REQ-0004"
 ---
 
@@ -196,27 +196,9 @@ its target is **TBD by the Platform Owner** after a reviewed local-host
 recovery plan and environment are named. One server is not a production HA
 or failover claim. This scenario refines REQ-0004-FR-0001 and NFR-0001.
 
-## Acceptance Criteria
-
-### Acceptance Conditions
-
-The current desired-state structure, Kubernetes syntax, and product static contract must pass their validators.
-Delivery assurance must leave a classification, validation depth, result, and limits for every in-scope surface,
-and does not substitute a static PASS for unobserved remote or runtime state. The per-member trace below states each acceptance condition and routes current architecture to AD-0007.
-
-- **Acceptance criterion 01**: Validate the current platform product static contract.
-- **Acceptance criterion 02**: Validate the GitOps ownership and reconciliation boundaries of root, platform, and workload.
-- **Acceptance criterion 03**: Validate the syntax of tracked Kubernetes manifests.
-- **Acceptance criterion 04**: Validate that current documents link current owners and not archived or deleted documents.
-- **Acceptance criterion 05**: Review the six local product quality scenarios under Quality Requirements against their named source, measurement boundary and owner. A repository-static result does not satisfy a live or external measurement.
-
-### Verification Method
-
-No separate verification method is stated: each requirement is verified by the evidence named in its `Acceptance` cell, and the acceptance-criterion column of `Lifecycle Traceability` states the acceptance condition of every member.
-
 ## Traceability
 
-### Source and Constraints
+### Sources
 
 #### Reviewed member-ID transfer
 
@@ -248,9 +230,25 @@ REQ-0004-FR-0009 also inherits the requirement of the former REQ-0005-FR-0006 (R
 - Shared architecture: [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md).
 - Current self-source and namespace decisions remain in the [decision log](../02.architecture/decisions/README.md).
 
-### Downstream Links
+### Verification Links
 
 No downstream link is listed here: the architecture description or Spec that owns each member cites it in its own requirement column, `scripts/document-backlinks.py` derives the reverse view and the `REQUIREMENT-COVERAGE` check of `scripts/validate-links-and-owners.py` refuses a member that no document cites.
+
+#### Acceptance Conditions
+
+The current desired-state structure, Kubernetes syntax, and product static contract must pass their validators.
+Delivery assurance must leave a classification, validation depth, result, and limits for every in-scope surface,
+and does not substitute a static PASS for unobserved remote or runtime state. The per-member trace below states each acceptance condition and routes current architecture to AD-0007.
+
+- **Acceptance criterion 01**: Validate the current platform product static contract.
+- **Acceptance criterion 02**: Validate the GitOps ownership and reconciliation boundaries of root, platform, and workload.
+- **Acceptance criterion 03**: Validate the syntax of tracked Kubernetes manifests.
+- **Acceptance criterion 04**: Validate that current documents link current owners and not archived or deleted documents.
+- **Acceptance criterion 05**: Review the six local product quality scenarios under Quality Requirements against their named source, measurement boundary and owner. A repository-static result does not satisfy a live or external measurement.
+
+#### Verification Method
+
+No separate verification method is stated: each requirement is verified by the evidence named in its `Acceptance` cell, and the acceptance-criterion column of `Lifecycle Traceability` states the acceptance condition of every member.
 
 ### Lifecycle Traceability
 

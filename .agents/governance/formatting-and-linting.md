@@ -1,15 +1,15 @@
 ---
 title: "Formatting and Linting Policy"
-version: "1.7.0"
+version: "1.8.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-17"
 ---
 
 # Formatting and Linting Policy
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
@@ -17,21 +17,6 @@ Each formatting and linting rule has one semantic owner. Git normalization,
 editor hints and hook delivery may project that rule for their distinct jobs,
 and each suppression states why it exists. A configuration file that no tool
 reads is not a convention; it is drift that reads like one.
-
-### Authority
-
-This policy owns which tool covers which file type, where a shared byte rule
-is declared, and the discipline for suppressing a rule. It does not own lane,
-result, or completion order, which belong to [quality](quality.md); validator
-selection, which belongs to the validation-surface registry; or the rules
-inside a tool's own configuration. Terminal-document immutability belongs to
-[document lifecycle](document-lifecycle.md).
-
-- [Quality Policy](quality.md)
-- [Document Lifecycle Policy](document-lifecycle.md)
-- [Git Policy](git.md)
-
-## Scope
 
 ### Applies To
 
@@ -44,7 +29,7 @@ rule against its own merge input; it does not certify local purpose or
 document-content checks. `.editorconfig` reaches editors only and proves nothing
 about committed bytes.
 
-### Exclusions
+#### Exclusions
 
 Exclusions of files from formatters and linters are stated under Requirements.
 
@@ -120,7 +105,17 @@ Exclusions of files from formatters and linters are stated under Requirements.
   outputs `.agents/evaluations/harnesses/*/baseline.md` and `with-skill.md`
   (Markdown lint ignores the same files). Secret scanners are not excluded.
 
-### Enforcement
+### Exceptions
+
+Exception and escalation conditions are stated under Requirements.
+
+#### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Enforcement
+
+### Mechanisms
 
 Measure a suppression before changing it: remove it in a copy of the tracked
 corpus outside the working tree, run the tool over that copy, and classify
@@ -129,22 +124,29 @@ confined to terminal documents cannot be retired by editing; findings in
 current documents can. Re-measure when a blocking document changes state or
 when a hook revision moves, and record the result in the owning Task.
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-Exception and escalation conditions are stated under Requirements.
-
-### Approval and Review
-
-Approval and review conditions are stated under Requirements.
+A suppression is measured in a copy of the tracked corpus, not in the working tree, so a finding confined to terminal documents cannot be retired by editing and is only classified. The result holds for the measured hook revision and document states, and must be re-measured when a blocking document changes state or a hook revision moves. The hosted `ci-summary` job is not a formatter.
 
 ## Ownership
 
-### Responsibilities
+### Owner
 
-Responsibilities are stated under Authority and Requirements.
+This policy owns which tool covers which file type, where a shared byte rule
+is declared, and the discipline for suppressing a rule. It does not own lane,
+result, or completion order, which belong to [quality](quality.md); validator
+selection, which belongs to the validation-surface registry; or the rules
+inside a tool's own configuration. Terminal-document immutability belongs to
+[document lifecycle](document-lifecycle.md).
 
-### Change and Adoption
+- [Quality Policy](quality.md)
+- [Document Lifecycle Policy](document-lifecycle.md)
+- [Git Policy](git.md)
+
+#### Responsibilities
+
+Responsibilities are stated under Owner and Requirements.
+
+### Review Triggers
 
 This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.

@@ -3,11 +3,11 @@ name: "external-service-contract-audit"
 description: "Use when auditing selectorless external Service/EndpointSlice mappings or repository consumers of external HTTP, database and OTLP endpoints."
 metadata:
   title: "External Service Contract Audit"
-  version: "1.0.4"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,12 +17,16 @@ using this procedure. Skill invocation grants no authority
 
 # external-service-contract-audit
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Check the repository contract between an external service and its Kubernetes
 consumers before changing a port, endpoint, protocol or secret reference.
+
+#### Inputs
+
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### When Not to Use
 
@@ -64,17 +68,17 @@ Stop and report the bounded error; do not echo raw YAML, stderr or credentials.
 Route manifest repair to `k8s-implementer` and contract review to
 `gitops-reviewer`. Live probes require the operator's separately scoped action.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
-
-### Outputs
+### Artifacts
 
 Report affected consumer/field, PASS or FAIL, command and static scope, required
 remediation, and deferred live evidence with its next owner. Preserve separate
 results for general Kubernetes validation and live connectivity.
+
+### Handoff
+
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
 
 ## Verification
 
@@ -82,6 +86,6 @@ results for general Kubernetes validation and live connectivity.
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
+The checker performs no network request, so its static join cannot prove availability or credentials. It is not Kubernetes schema validation or an ESO or security replacement, it fails explicitly on a named targetPort, and invoking the skill never adds a gate or changes an approval.

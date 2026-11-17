@@ -1,16 +1,16 @@
 ---
 title: "90.references/data"
-version: "0.2.5"
+version: "0.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 # 90.references/data
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > 오래 유지할 data pack, 그 dataset, dataset 출처를 두는 곳이다.
 
@@ -32,9 +32,9 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - Operators
 - Documentation Writers
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
-#### In Scope
+##### In Scope
 
 - data pack 색인 자료
 - dataset의 형태, 출처, 수집 방법 기록
@@ -42,7 +42,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - `docs/99.templates/templates/references/data-pack.template.md`로 만든 pack README
 - `docs/99.templates/templates/references/data.template.md`로 만든 dataset
 
-#### Out of Scope
+##### Out of Scope
 
 - 활성 거버넌스 정책이나 provider 실행 규칙
 - runtime roster 변경, hook 연결, 권한 변경
@@ -50,9 +50,13 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - secret 값, credential, 가리지 않은 민감 기록
 - 운영 runbook, release gate, 배포 승인, incident 대응
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 폴더는 활성 거버넌스 정책, runtime 권한, 배포 절차, live cluster 준비 상태, provider 계약을 정의하지 않으며, 이는 계속 `.agents/`, `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/05.operations/`의 정본 소유자가 맡는다. secret 값, credential, 가리지 않은 민감 기록과 운영 runbook, release gate, 배포 승인, incident 대응도 범위 밖이다.
+
+## Current Contents
+
+### Paths
 
 ```text
 data/
@@ -62,13 +66,13 @@ data/
 이 collection은 현재 data pack을 보유하지 않는다. 이는 현재 처분 결과일 뿐이며,
 고유한 목적과 출처 경계를 갖춘 data pack의 추가를 금지하지 않는다.
 
-### Classification
+### Owners
 
 이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. data pack 자료를 추가하거나 바꾸기 전에 해당 Spec 패키지(`docs/03.specs/`)가 있으면 그 Plan과 Task를 읽는다.
 2. `data/####-<slug>/README.md`는
@@ -91,20 +95,18 @@ data/
 - pack README와 멤버에서 저장소 최상위 소스를 가리킬 때는 `../../../../<path>`를 쓴다.
 - 선택 사항이거나 계획 중인 대상 경로는 대상이 생길 때까지 code literal로 둔다.
 
-### Transition and Exit
-
-이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [90.references README](../README.md)
 - [Agent Governance Hub](../../../.agents/README.md)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [Data Pack Template](../../99.templates/templates/references/data-pack.template.md)
 - [Data Reference Template](../../99.templates/templates/references/data.template.md)
 - [Templates README](../../99.templates/README.md)
+
+### Checks
+
+이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.

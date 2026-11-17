@@ -1,10 +1,10 @@
 ---
 title: "Claude Provider Notes"
-version: "1.9.4"
+version: "1.9.5"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 
 # Claude Provider Notes
@@ -20,7 +20,7 @@ Root `CLAUDE.md` is the thin Claude gateway and must not import the Codex
 gateway. `.claude/CLAUDE.md` is the local baseline;
 `.claude/settings.json` carries native permission and hook declarations.
 Their limit is set in
-[agent execution](../.agents/governance/agent-execution.md#authority).
+[agent execution](../.agents/governance/agent-execution.md#owner).
 
 ## Governance Context
 

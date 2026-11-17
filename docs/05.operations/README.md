@@ -1,16 +1,16 @@
 ---
 title: "05.operations"
-version: "0.6.3"
+version: "0.7.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 # 05.operations
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > 안정 상태 운영 지식, 정책, 런북, 사고 기록을 분류하는 operations stage다.
 
@@ -23,32 +23,36 @@ updated: "2026-11-16"
 - Platform Engineers
 - Incident Responders
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
-#### In Scope
+##### In Scope
 
 - 사용자/개발자/운영자 대상 안정 상태 안내
 - 운영 정책, 표준, 예외 처리 기준
 - 순서가 중요한 반복 절차와 복구 런북
 - Incident Record와 Postmortem
 
-#### Out of Scope
+##### Out of Scope
 
 - 요구사항 원문
 - 아키텍처 결정 기록
 - 기능 구현 상세 명세
 - 임시 scratch 로그
 
-#### Release Evidence Boundary
+##### Release Evidence Boundary
 
 반복 가능한 발행 절차는 Runbook `RUN-0012`에 둔다.
 개별 발행의 로컬 변경과 검증은 해당 Task와 Git에 기록하고, 발행 이력은
 [CHANGELOG](../../CHANGELOG.md)에 남긴다. 태그, GitHub Release, hosted CI,
 provider/runtime, 실제 운영 검증은 각각 관측한 결과를 링크한다.
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 stage는 요구사항 원문, 아키텍처 결정 기록, 기능 구현 상세 명세, 임시 scratch 로그를 소유하지 않는다. guides, policies, runbooks, incidents는 각자 맡는 일을 섞지 않으며, 개별 발행의 로컬 변경과 검증은 해당 Task와 Git에, 발행 이력은 `CHANGELOG`에 남는다.
+
+## Current Contents
+
+### Paths
 
 ```text
 05.operations/
@@ -79,7 +83,7 @@ provider/runtime, 실제 운영 검증은 각각 관측한 결과를 링크한�
 - `runbooks/`: 정해진 순서로 실행하고, 검증하고, 실패 시 복구하는 절차다.
 - `incidents/`: 실제 사고의 사실 기록과 postmortem을 보관한다.
 
-### Classification
+### Owners
 
 #### Operations Routing Matrix
 
@@ -123,9 +127,9 @@ repository quality validator의 command boundary 규칙이며, 해당 변경에
 [Approval and Safety](../../.agents/governance/approval-and-safety.md)가 소유한다.
 marker는 실행 권한을 부여하지 않는다.
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. 안정 상태 설명은 `guides/`, 준수해야 할 경계는 `policies/`, 실행 절차는 `runbooks/`, 사고 기록은 `incidents/`로 분리한다.
 2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/<year>/inc-####-<slug>/` 폴더를 만든다. Incident와 Postmortem은 같은 폴더에서 각각 `incident.md`와 `postmortem.md`를 사용한다.
@@ -147,13 +151,7 @@ tool/prompt contract, hook/validator contract 같은 기계 계약 섹션은 영
 cluster, OpenBao, secret, ArgoCD 같은 고위험 명령의 실행 경계는 언어와
 무관하게 위 Operations Mutation Boundary를 따른다.
 
-### Transition and Exit
-
-1. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)에 따라 처분한다. 대체 Guide·Policy·Runbook이 `supersedes`에 선행 문서의 ID를 기록한다. 수명주기 검사기는 그 관계에서 후속 문서를 찾아 현재 소유자를 확인한다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [Guides README](./guides/README.md)
 - [Policies README](./policies/README.md)
@@ -161,9 +159,13 @@ cluster, OpenBao, secret, ArgoCD 같은 고위험 명령의 실행 경계는 언
 - [Incidents README](./incidents/README.md)
 - [Reference Maintenance Runbook](./runbooks/0011-reference-maintenance-runbook.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [Document Stage Routing](../../.agents/governance/document-authoring.md)
 - [Templates README](../99.templates/README.md)
 - [Local Agent Registry](../../.agents/roles/registry.json)
 - [Approval Boundaries](../../.agents/governance/approval-and-safety.md)
+
+### Checks
+
+1. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)에 따라 처분한다. 대체 Guide·Policy·Runbook이 `supersedes`에 선행 문서의 ID를 기록한다. 수명주기 검사기는 그 관계에서 후속 문서를 찾아 현재 소유자를 확인한다.

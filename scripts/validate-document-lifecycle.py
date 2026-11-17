@@ -689,19 +689,31 @@ def _allowed_h2(profile: Any) -> tuple[str, ...]:
     return heading_contract(profile).allowed
 
 
-def _form_heading(registry: Registry, form_id: str, section_id: str) -> str | None:
-    """The heading line (``### Title``) of one form section, or None when it is absent."""
+def _form_heading(
+    registry: Registry,
+    form_id: str,
+    section_id: str,
+    document: LifecycleDocument | None = None,
+) -> str | None:
+    """The heading line (``### Title``) of one form section, or None when it is absent.
+
+    With a document, a retained form's own title for that identity applies
+    (SPEC-0221).
+    """
 
     form = next(
         (item for item in registry.common_forms if item.form_id == form_id), None
     )
-    stack = list(form.sections) if form is not None else []
-    while stack:
-        section = stack.pop()
-        if section.section_id == section_id:
-            return "#" * section.level + " " + section.title
-        stack.extend(section.children)
-    return None
+    found = (
+        None
+        if form is None
+        else form.section_heading(
+            section_id,
+            (document.status or "") if document is not None else "",
+            (document.artifact_id or "") if document is not None else "",
+        )
+    )
+    return None if found is None else "#" * found[0] + " " + found[1]
 
 
 def _task_execution_binding(registry: Registry | None) -> TaskExecution | None:
@@ -825,24 +837,29 @@ def _local_plan_task_contract_issues(
     # A Plan form names the headings by section id; an old-list registry names them
     # by title. A form that lacks a section makes the rule fail instead of skip.
     if plan_form:
-        promotion_heading = _form_heading(
-            registry, "plan", "plan-promotion-map-owner-and-receipt"
-        )
-        goal_heading = _form_heading(
-            registry, "plan", "plan-overview-goal-and-boundary"
-        )
-        constraints_heading = (
-            "#" * (goal_heading.count("#") + 1) + " Global Constraints"
-            if goal_heading
-            else None
-        )
         promotion_header = ["Promotion ID", "Target Owner", "Acceptance", "Evidence"]
         none_row = ["none", "none", "none", "No durable contract was introduced"]
     else:
-        promotion_heading, goal_heading = "## Promotion", None
-        constraints_heading = "## Global Constraints"
         promotion_header = ["Durable contract", "Promoted to", "Where"]
         none_row = ["none", "none", "No durable contract was introduced"]
+
+    def plan_headings(
+        plan: LifecycleDocument,
+    ) -> tuple[str | None, str | None, str | None]:
+        """Promotion, goal and constraints headings; a retained Plan keeps its own."""
+        if not plan_form:
+            return "## Promotion", None, "## Global Constraints"
+        # SPEC-0221: Global Constraints is an H4 of Overview > Constraints.
+        goal = _form_heading(registry, "plan", "plan.intent.2", plan)
+        constraints = (
+            "#" * (goal.count("#") + 1) + " Global Constraints" if goal else None
+        )
+        return (
+            _form_heading(registry, "plan", "plan.promotion.1", plan),
+            goal,
+            constraints,
+        )
+
     adapter = _link_validator_module()
     task_scope_heading = _form_heading(registry, "task", "task-scope")
     issues: list[tuple[PurePosixPath, str, str, str, str]] = []
@@ -859,7 +876,9 @@ def _local_plan_task_contract_issues(
     ) -> None:
         issues.append((path, profile, rule, expected, observed))
 
-    def promotion_valid(path: PurePosixPath, text: str) -> bool:
+    def promotion_valid(
+        path: PurePosixPath, text: str, promotion_heading: str | None
+    ) -> bool:
         """Check receipt structure and current owner; Where semantics need review."""
         if promotion_heading is None:
             return False
@@ -925,15 +944,16 @@ def _local_plan_task_contract_issues(
             )
         ):
             continue
+        promotion_heading, goal_heading, constraints_heading = plan_headings(plan)
         constraints = (
             adapter._exact_heading_section(proposed_texts[path], constraints_heading)
             if constraints_heading
             else None
         )
         visible_constraints = adapter._visible_markdown(constraints or "").strip()
-        # With a form the H4 is the last block of Goal and Boundary, and the section
-        # reader ends an H4 only at the next heading of its level or higher, so an
-        # H4 placed first would read the goal text after it as constraints.
+        # With a form the H4 follows the text of Constraints, and the section reader
+        # ends an H4 only at the next heading of its level or higher, so an H4
+        # placed first would read the constraint text after it as its own.
         placed_after_text = goal_heading is None
         if goal_heading is not None and constraints_heading is not None:
             goal = adapter._exact_heading_section(proposed_texts[path], goal_heading)
@@ -965,7 +985,7 @@ def _local_plan_task_contract_issues(
                 "one substantive Global Constraints section",
                 "changed Plan has no substantive shared constraints",
             )
-        if not promotion_valid(path, proposed_texts[path]):
+        if not promotion_valid(path, proposed_texts[path], promotion_heading):
             issue(
                 path,
                 "sdlc/plan",
@@ -3201,9 +3221,7 @@ def _completion_document_diagnostics(
                 "current Plan must be approved",
             )
 
-        criteria_heading = _form_heading(
-            registry, "spec", "spec-acceptance-criteria-criteria"
-        )
+        criteria_heading = _form_heading(registry, "spec", "spec.acceptance.1")
         success_section = adapter._exact_heading_section(
             texts[spec_path],
             criteria_heading or "## Success Criteria & Verification Plan",

@@ -35,7 +35,7 @@ SYNTHETIC_SKILL = (
     '  updated: "2026-10-05"\n'
     "disable-model-invocation: true\n"
     "---\n\n# Example\n\n"
-    "## Purpose and Trigger\n"
+    "## Trigger\n"
     "\n"
     "### When to Use\n"
     "\n"
@@ -55,13 +55,13 @@ SYNTHETIC_SKILL = (
     "\n"
     "Stop on a failed check.\n"
     "\n"
-    "## Inputs and Outputs\n"
+    "## Outputs\n"
     "\n"
-    "### Inputs\n"
+    "### Artifacts\n"
     "\n"
     "The request.\n"
     "\n"
-    "### Outputs\n"
+    "### Handoff\n"
     "\n"
     "A report.\n"
     "\n"
@@ -71,7 +71,7 @@ SYNTHETIC_SKILL = (
     "\n"
     "Run the suite.\n"
     "\n"
-    "### Completion and Handoff\n"
+    "### Limits\n"
     "\n"
     "Record the result.\n"
 )
@@ -84,7 +84,7 @@ class NativeSkillEnvelopeTests(unittest.TestCase):
         metadata, body = VALIDATOR._frontmatter(SYNTHETIC_SKILL)
         self.assertEqual(metadata["metadata"]["type"], "governance/skill")
         self.assertIs(metadata["disable-model-invocation"], True)
-        self.assertTrue(body.strip().startswith("# Example\n\n## Purpose and Trigger"))
+        self.assertTrue(body.strip().startswith("# Example\n\n## Trigger"))
 
     def test_synthetic_skill_metadata_drives_markdown_and_lifecycle(self) -> None:
         registry = load_registry(ROOT)
@@ -161,7 +161,7 @@ class NativeSkillEnvelopeTests(unittest.TestCase):
                 )
             },
         )
-        heading = "### Recovery Verification\n"
+        heading = "### Verified State\n"
         self.assertIn(heading, changed)
         changed = changed.replace(
             heading,

@@ -3,11 +3,11 @@ name: "task-breakdown"
 description: "Use when decomposing an approved implementation Plan into bounded executable Task records."
 metadata:
   title: "Task Breakdown"
-  version: "1.0.4"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,11 +17,15 @@ using this procedure. Skill invocation grants no authority
 
 # task-breakdown
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Use this skill as its frontmatter description states.
+
+#### Inputs
+
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### When Not to Use
 
@@ -54,16 +58,16 @@ reviewability determine the unit. Delegation still requires authorization.
 
 This skill has no failure branch of its own; a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
-
-### Outputs
+### Artifacts
 
 Ordered, profile-conformant Task records with complete acceptance and evidence
 requirements, ready for authorized execution.
+
+### Handoff
+
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
 
 ## Verification
 
@@ -71,6 +75,6 @@ requirements, ready for authorized execution.
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
+The Task records created are ready for authorized execution but do not themselves authorize it, since delegation still requires authorization. A role without write permission returns the draft and routes the write to `doc-writer`.

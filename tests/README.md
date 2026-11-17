@@ -1,17 +1,17 @@
 ---
 title: "tests"
-version: "0.6.1"
+version: "0.6.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 
 # tests
 
-## Purpose
+## Service
 
-### Service Role
+### Purpose
 
 `tests/`는 저장소 검증 코드의 독립적인 동작 coverage와 합성 fixture를
 소유한다. production validator는 현재 저장소 상태만 검사하고 mutation, 잘못된
@@ -34,27 +34,7 @@ Task는 삭제되었고 Git history에서 복구한다. 그 문서들은 한 번
 - Platform maintainers
 - Validator authors
 
-### Supported Environment
-
-#### In Scope
-
-- production module의 공개 함수·CLI·진단 동작 회귀
-- 임시 저장소와 합성 mutation을 쓰는 실패 경계 검증
-- staged index와 작업 트리 권한의 구분
-- fixture 소비자 소유권과 고아 fixture 방지
-- hook, routing, 문서, Agent governance, GitOps·Kubernetes,
-  Docker·project-template·web·Vault의 실제 저장소 표면에 적용되는 정적 계약
-
-#### Out of Scope
-
-- production runtime 데이터 API
-- 고정된 test case 수나 fixture 수 정책
-- secret, credential, kubeconfig, provider 토큰, live 진단 정보
-- live cluster bootstrap, ArgoCD sync, Vault 변경, 원격 CI 재실행
-
-## Interfaces
-
-### Inputs and Outputs
+### Interfaces
 
 - [Quality policy](../.agents/governance/quality.md)
 - [Work lifecycle](../.agents/workflows/work-lifecycle.md)
@@ -76,13 +56,31 @@ Task는 삭제되었고 Git history에서 복구한다. 그 문서들은 한 번
   gate가 하지 않는 일을 할 때다. 의존성을 patch해 실패 경로에 도달하거나, 정확한
   진단 문자열을 고정하거나, validator가 routing되는지 자체를 증명하는 경우다.
 
-### Security Boundary
+#### Security Boundary
 
 이 문서는 secret, credential, 권한 경계만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
 
-## Development
+## Usage
 
-### Local Workflow
+### Prerequisites
+
+#### In Scope
+
+- production module의 공개 함수·CLI·진단 동작 회귀
+- 임시 저장소와 합성 mutation을 쓰는 실패 경계 검증
+- staged index와 작업 트리 권한의 구분
+- fixture 소비자 소유권과 고아 fixture 방지
+- hook, routing, 문서, Agent governance, GitOps·Kubernetes,
+  Docker·project-template·web·Vault의 실제 저장소 표면에 적용되는 정적 계약
+
+#### Out of Scope
+
+- production runtime 데이터 API
+- 고정된 test case 수나 fixture 수 정책
+- secret, credential, kubeconfig, provider 토큰, live 진단 정보
+- live cluster bootstrap, ArgoCD sync, Vault 변경, 원격 CI 재실행
+
+### Selected Start
 
 #### Working Procedure
 
@@ -101,7 +99,9 @@ Task는 삭제되었고 Git history에서 복구한다. 그 문서들은 한 번
 test module은 책임이 바뀌면 추가, 병합, 폐기될 수 있다. module 수와 정확한
 method 목록은 관찰 결과일 뿐 거버넌스가 아니다.
 
-### Checks
+## Checks
+
+### Readiness
 
 #### Test families
 
@@ -162,14 +162,12 @@ git diff --check
 [Quality policy](../.agents/governance/quality.md)가 소유한다. 이 README는 현재
 테스트 진입점을 나열할 뿐 그 정책을 다시 정의하지 않는다.
 
-## Operations
-
-### Runbook Links
-
-이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
-
-### Observability and Recovery
+### Failure Handling
 
 이 문서에는 운영 관측과 복구만을 다루는 별도 내용이 없으며, 아래 Operations 항목은 제목만 남는다.
 
 #### Operations
+
+#### Runbook Links
+
+이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.

@@ -341,6 +341,36 @@
       }
     },
     {
+      "id": "W03-H45",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "T99-CONFORMANCE",
+      "resume_condition": "When T99-CONFORMANCE compares the target core with a real registry export",
+      "source": {
+        "path": "docs/03.specs/0221-w03-form-target-adoption/tasks/tsk-0001-w03-form-target-adoption.md"
+      }
+    },
+    {
+      "id": "W03-H46",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "T99-CONFORMANCE",
+      "resume_condition": "When T99-CONFORMANCE compares the target core with a real registry export",
+      "source": {
+        "path": "docs/03.specs/0221-w03-form-target-adoption/tasks/tsk-0001-w03-form-target-adoption.md"
+      }
+    },
+    {
+      "id": "W03-H47",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "T99-CONFORMANCE",
+      "resume_condition": "When T99-CONFORMANCE classifies each unmapped role as a mapped form or a native or domain module",
+      "source": {
+        "path": "docs/03.specs/0221-w03-form-target-adoption/tasks/tsk-0001-w03-form-target-adoption.md"
+      }
+    },
+    {
       "id": "W04-H01",
       "kind": "handoff",
       "state": "open",

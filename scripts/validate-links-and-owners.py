@@ -2795,19 +2795,35 @@ def _body_contract_link_is_enforced(
     return status in profile.body_contract.enforced_statuses
 
 
+def _body_contract_location(
+    text: str, profile: DocumentProfile
+) -> tuple[str, str] | None:
+    """Where this document keeps its body-contract table (SPEC-0221)."""
+
+    metadata = frontmatter_mapping(text)
+    status = metadata.get("status")
+    identity = metadata.get("artifact_id")
+    return profile.body_contract_location(
+        status if isinstance(status, str) else "",
+        identity if isinstance(identity, str) else "",
+    )
+
+
 def _body_contract_rows(
     text: str, profile: DocumentProfile
 ) -> list[dict[str, str]] | None:
     """Return a shape-valid lifecycle table; local validation owns shape errors."""
 
     contract = profile.body_contract
-    if contract is None:
+    location = _body_contract_location(text, profile)
+    if contract is None or location is None:
         return None
-    section = _exact_heading_section(text, f"## {contract.section}")
+    section_title, table_heading = location
+    section = _exact_heading_section(text, f"## {section_title}")
     table_section = (
         None
         if section is None
-        else _exact_heading_section(section, f"### {contract.table_heading}")
+        else _exact_heading_section(section, f"### {table_heading}")
     )
     if table_section is None:
         return None
@@ -2953,8 +2969,9 @@ def lifecycle_markdown_evidence(
     if profile.body_contract is not None:
         contract = profile.body_contract
         rows = _body_contract_rows(text, profile)
+        location = _body_contract_location(text, profile)
         relationship_section = _exact_rendered_heading_section(
-            text, f"## {contract.section}"
+            text, f"## {location[0] if location else contract.section}"
         )
         relationship_section_valid = relationship_section is not None
         body_contract_valid = (
@@ -3764,7 +3781,7 @@ def _body_contract_link_diagnostics(
 
 _MEMBER_ID = re.compile(r"REQ-[0-9]{4}-(?:FR|NFR|IF)-[0-9]{4}")
 _COVERAGE_BASIS = "requirement-basis"
-_COVERAGE_SECTION_ID = "requirement-traceability-downstream-links"
+_COVERAGE_SECTION_ID = "requirement.relations.2"
 _COVERAGE_STATUS = "approved"
 
 
@@ -3788,7 +3805,7 @@ def _requirement_coverage_diagnostics(
     The registry relation `requirement-basis` names the citing profiles and the
     body-contract column of each. A member that no citing document cites in an
     enforced status passes only with an explained exclusion line under the
-    Requirement's Downstream Links section, which the form names by section id.
+    Requirement's Verification Links section, which the form names by section id.
     """
 
     registry = context.current_registry or load_registry(context.root)
@@ -3867,7 +3884,7 @@ def _requirement_coverage_diagnostics(
                     path,
                     profile.profile_id,
                     f"{member} cited in a requirement column of a description or "
-                    f"Spec, or an N/A — exclusion line under {title or 'a Downstream Links section'}",
+                    f"Spec, or an N/A — exclusion line under {title or 'a Verification Links section'}",
                     f"{member} uncited"
                     + ("" if section is not None else f"; no {title} section"),
                 )

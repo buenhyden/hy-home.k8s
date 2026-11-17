@@ -1,15 +1,15 @@
 ---
 title: "Git Policy"
-version: "2.8.0"
+version: "2.9.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-17"
 ---
 
 # Git Policy
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
@@ -17,28 +17,13 @@ Keep local changes small, reviewable, and traceable to the active Spec and
 Task. `main` is the default integration base unless repository evidence or the
 approved Plan specifies another base.
 
-### Authority
-
-The user owns push, publication, merge, discard, and history recovery decisions.
-Remote branch protection owns any required hosted metadata checks and cannot
-be inferred from local evidence: observe it before reporting that an
-integration met its required checks; Acceptance stays a criterion decision.
-[Approval and safety](approval-and-safety.md)
-governs protected actions and exceptions.
-
-- [Quality Policy](quality.md)
-- [Approval and Safety](approval-and-safety.md)
-- [Work Lifecycle](../workflows/work-lifecycle.md)
-
-## Scope
-
 ### Applies To
 
 Inspect whether work is in a checkout, linked worktree, or detached HEAD.
 Preserve user changes and host-managed workspaces. Use the active provider's
 branch convention; Codex-created branches normally use `codex/`.
 
-### Exclusions
+#### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
@@ -313,27 +298,44 @@ the source repository. Never change hooksPath, disable a hook, or set a skip
 variable in order to make a failing check pass or to leave a check unrun;
 widening the set of hooks that run is the only supported change.
 
-### Enforcement
+### Exceptions
+
+Exception and escalation conditions are stated under Requirements.
+
+#### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Enforcement
+
+### Mechanisms
 
 Inspect both staged and unstaged diffs after formatters. Rerun the affected
 checks against final bytes. Do not claim a remote check ran from a local workflow-syntax result.
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-Exception and escalation conditions are stated under Requirements.
-
-### Approval and Review
-
-Approval and review conditions are stated under Requirements.
+A local workflow-syntax result does not show that a remote check ran, and a static workflow file cannot establish hosted execution or remote branch protection. Commit-message validation is explicit message evidence, not proof of hook installation or delivery in the source repository.
 
 ## Ownership
 
-### Responsibilities
+### Owner
 
-Responsibilities are stated under Authority and Requirements.
+The user owns push, publication, merge, discard, and history recovery decisions.
+Remote branch protection owns any required hosted metadata checks and cannot
+be inferred from local evidence: observe it before reporting that an
+integration met its required checks; Acceptance stays a criterion decision.
+[Approval and safety](approval-and-safety.md)
+governs protected actions and exceptions.
 
-### Change and Adoption
+- [Quality Policy](quality.md)
+- [Approval and Safety](approval-and-safety.md)
+- [Work Lifecycle](../workflows/work-lifecycle.md)
+
+#### Responsibilities
+
+Responsibilities are stated under Owner and Requirements.
+
+### Review Triggers
 
 This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.

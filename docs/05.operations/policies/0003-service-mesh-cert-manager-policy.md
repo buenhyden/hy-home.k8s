@@ -1,16 +1,16 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.4.1"
+version: "1.5.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "POL-0003"
 ---
 
 # Service Mesh & cert-manager Operations Policy
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
@@ -18,17 +18,6 @@ artifact_id: "POL-0003"
 플랫폼 확장 컴포넌트의 보안 정책, 갱신 제약, 허용/금지 작업을 명시한다.
 클러스터 UI(Headlamp) 통제는 [POL-0004](./0004-rollouts-notifications-headlamp-policy.md),
 k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitops-operations-policy.md)이 소유한다.
-
-### Authority
-
-- **Architecture**: [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- **ADR-0006**: [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
-- **ADR-0008**: [`../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md`](../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md)
-- **ADR-0009**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
-- **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- **Platform Policy**: [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)
-
-## Scope
 
 ### Applies To
 
@@ -40,7 +29,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - **Agents**: 문서/운영 자동화 에이전트
 - **Environments**: Linux server local cluster
 
-### Exclusions
+#### Exclusions
 
 이 정책은 범위에서 제외한다고 따로 표시한 항목을 Applies To에 두지 않으며, 금지 작업은 위 Requirements의 Disallowed 항목에 적혀 있다.
 
@@ -132,7 +121,23 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - `MESH-R029` shell syntax 정적 검증 후 bootstrap-local.sh 변경을 반영한다.
 - `MESH-R030` cert-manager/Istio/Kiali GitOps 리소스는 AppProject `platform` 스코프 내에서만 배포된다.
 
-### Enforcement
+### Exceptions
+
+- rootCA 재발급 시 `mkcert-root-ca` Secret 재주입 후 cert-manager controller 재시작 허용.
+- Istio istiod CrashLoop가 관측되어 requests 변경이 필요한 경우 Platform Owner가
+  현재 `gitops/apps/root/platform-istiod-app.yaml`의 requests(`100m`, `128Mi`)와
+  limits(`500m`, `512Mi`), 실패 증상, 변경안과 rollback을 검토한다. 변경안의
+  memory request는 128Mi 아래로 낮추지 않는다. Platform Owner 승인과
+  [POL-0001의 live 예외](./0001-k8s-gitops-operations-policy.md#exceptions)가
+  필요한 실행은 운영자에게 넘기고 실제 조정 결과를 별도 증거로 기록한다.
+
+#### Approval and Review
+
+예외 승인은 위 Exceptions의 Platform Owner 검토와 POL-0001의 live 예외 승인을 따른다.
+
+## Enforcement
+
+### Mechanisms
 
 - endpoint와 TLS 경계 계약 검증 증적을 남긴다.
 - cert-manager/Istio/Kiali 변경 후 관련 GitOps manifest와 runbook의 계약 값이 일치하는지 확인한다.
@@ -146,29 +151,26 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 
 - **Runbook**: [`../runbooks/0003-platform-expansion-bootstrap-runbook.md`](../runbooks/0003-platform-expansion-bootstrap-runbook.md)
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-- rootCA 재발급 시 `mkcert-root-ca` Secret 재주입 후 cert-manager controller 재시작 허용.
-- Istio istiod CrashLoop가 관측되어 requests 변경이 필요한 경우 Platform Owner가
-  현재 `gitops/apps/root/platform-istiod-app.yaml`의 requests(`100m`, `128Mi`)와
-  limits(`500m`, `512Mi`), 실패 증상, 변경안과 rollback을 검토한다. 변경안의
-  memory request는 128Mi 아래로 낮추지 않는다. Platform Owner 승인과
-  [POL-0001의 live 예외](./0001-k8s-gitops-operations-policy.md#exceptions)가
-  필요한 실행은 운영자에게 넘기고 실제 조정 결과를 별도 증거로 기록한다.
-
-### Approval and Review
-
-예외 승인은 위 Exception Conditions의 Platform Owner 검토와 POL-0001의 live 예외 승인을 따른다.
+이 정책의 현재 구성 검사는 CA, TLS, 외부 Kiali 경로의 복구 시간이나 실제 연결 성공을 증명하지 않는다. 그 경로들의 측정 기준은 REQ-0004의 Secret TLS 복구와 외부 인터페이스 시나리오가 소유한다.
 
 ## Ownership
 
-### Responsibilities
+### Owner
+
+- **Architecture**: [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+- **ADR-0006**: [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
+- **ADR-0008**: [`../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md`](../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md)
+- **ADR-0009**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
+- **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- **Platform Policy**: [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)
+
+#### Responsibilities
 
 책임 주체는 아래 Lifecycle Traceability 표의 Control owner 열에 적혀 있다.
 
-### Change and Adoption
+### Review Triggers
 
 변경 검토 시점은 위 Enforcement의 컴포넌트 버전 변경 및 ADR 변경 항목을 따른다.
 

@@ -643,11 +643,17 @@ def _body_contract_diagnostics(
     ):
         return []
     diagnostics: list[Diagnostic] = []
-    section = _exact_heading_section(body, f"## {contract.section}")
+    location = profile.body_contract_location(
+        status, expected_artifact_id(path, profile) or ""
+    )
+    if location is None:
+        return []
+    section_title, table_heading = location
+    section = _exact_heading_section(body, f"## {section_title}")
     table_section = (
         None
         if section is None
-        else _exact_heading_section(section, f"### {contract.table_heading}")
+        else _exact_heading_section(section, f"### {table_heading}")
     )
     if table_section is None:
         return [
@@ -655,7 +661,7 @@ def _body_contract_diagnostics(
                 "BODY-CONTRACT-HEADING",
                 path,
                 profile,
-                f"one exact H3 '{contract.table_heading}' inside H2 '{contract.section}'",
+                f"one exact H3 '{table_heading}' inside H2 '{section_title}'",
                 "missing, duplicated, or at the wrong level",
             )
         ]
@@ -783,27 +789,16 @@ def _body_contract_diagnostics(
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
-def _form_heading(form: CommonForm, section_id: str) -> tuple[int, str] | None:
+def _form_heading(
+    form: CommonForm, section_id: str, status: str = "", identity: str = ""
+) -> tuple[int, str] | None:
     """The heading level and title of a form section or local H3 extension."""
 
-    for section in form.sections:
-        if section.section_id == section_id:
-            return section.level, section.title
-        for child in section.children:
-            if child.section_id == section_id:
-                return child.level, child.title
-    for extension in form.extensions:
-        if (
-            extension.kind == "local_h3"
-            and extension.extension_id == section_id
-            and extension.title is not None
-        ):
-            return 3, extension.title
-    return None
+    return form.section_heading(section_id, status, identity)
 
 
 def _table_diagnostics(
-    path: PurePosixPath, profile: DocumentProfile, body: str
+    path: PurePosixPath, profile: DocumentProfile, body: str, status: str = ""
 ) -> list[Diagnostic]:
     """SPEC-0169: check the profile's template tables inside their sections.
 
@@ -813,10 +808,13 @@ def _table_diagnostics(
     """
 
     owned = profile.body_contract.table_heading if profile.body_contract else None
+    identity = expected_artifact_id(path, profile) or ""
     found: list[Diagnostic] = []
     for table in profile.tables:
         heading = (
-            None if profile.form is None else _form_heading(profile.form, table.section)
+            None
+            if profile.form is None
+            else _form_heading(profile.form, table.section, status, identity)
         )
         if table.name == owned or heading is None:
             continue
@@ -875,8 +873,8 @@ def _requirement_quality_diagnostics(
     if package is None or profile.form is None:
         return []
     requirement = re.compile(rf"REQ-{package}-(FR|NFR|IF)-[0-9]{{4}}")
-    functional = "requirement-requirements-functional-requirements"
-    quality = "requirement-requirements-quality-requirements"
+    functional = "requirement.requirements.1"
+    quality = "requirement.requirements.2"
     trace = "requirement-lifecycle-traceability"
     members = {section: set() for section in (functional, quality, trace)}
     for table in profile.tables:
@@ -1958,10 +1956,19 @@ def _frontmatter_body(
                         repr(data.get("resolved_at")),
                     )
                 )
-            # SPEC-0171: the Incident form holds resolution evidence in its
-            # unique Recovery Verification H3 (its Resolution parent is
-            # enforced by BODY-H3-PARENT in the tree check, not here).
-            recovery = _exact_heading_section(body, "### Recovery Verification")
+            # SPEC-0171, SPEC-0221: the Incident form holds resolution evidence
+            # in its unique Resolution > Verified State H3, named by section id
+            # (its Resolution parent is enforced by BODY-H3-PARENT, not here).
+            located = (
+                _form_heading(profile.form, "incident.resolution.1")
+                if profile.form is not None
+                else None
+            )
+            recovery = (
+                _exact_heading_section(body, "#" * located[0] + " " + located[1])
+                if located is not None
+                else None
+            )
             if (
                 not recovery
                 or not recovery.strip()
@@ -1972,7 +1979,7 @@ def _frontmatter_body(
                         "INCIDENT-RESOLUTION-EVIDENCE",
                         path,
                         profile,
-                        "concrete Recovery Verification resolution evidence",
+                        "concrete Verified State resolution evidence",
                         "missing resolution evidence",
                     )
                 )
@@ -2508,7 +2515,7 @@ def validate_document_text(
     if include_body:
         diagnostics.extend(_body_diagnostics(path, profile, body, status))
         if profile.mode in {"authored", "template"}:
-            diagnostics.extend(_table_diagnostics(path, profile, body))
+            diagnostics.extend(_table_diagnostics(path, profile, body, status))
         if profile.mode == "authored" and profile.profile_id == "sdlc/requirement":
             diagnostics.extend(_requirement_quality_diagnostics(path, profile, body))
         if profile.mode == "authored":

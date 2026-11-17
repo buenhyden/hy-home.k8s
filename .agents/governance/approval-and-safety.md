@@ -1,32 +1,20 @@
 ---
 title: "Approval and Safety Policy"
-version: "1.6.0"
+version: "1.7.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 
 # Approval and Safety Policy
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
 Agents prepare desired-state changes and local evidence within the user's
 scope. Protected actions require explicit human or operator authority.
-
-### Authority
-
-This policy owns approval decisions. Native sandbox, tool, permission, and
-approval controls may be stricter; static configuration never proves runtime
-enforcement. Runbooks describe authorized procedures, not standing approval.
-
-- [Agent Execution](agent-execution.md)
-- [Git Policy](git.md)
-- [Quality Policy](quality.md)
-
-## Scope
 
 ### Applies To
 
@@ -36,7 +24,7 @@ and validating their configuration.
 
 - Operations Index (`docs/05.operations/README.md`)
 
-### Exclusions
+#### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
@@ -181,29 +169,43 @@ delegate live/secret operations to a subagent.
   obtain necessary native permission for actual resources without bypassing a
   guard or misreporting an unexecuted check.
 
-### Enforcement
+### Exceptions
+
+This policy states no exception condition of its own; the operator approval route is stated under Requirements.
+
+#### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Enforcement
+
+### Mechanisms
 
 Run the affected safety, secret-handling, permission, and policy checks when a
 protected surface changes. Report unexecuted external checks using the
 [quality result vocabulary](quality.md#result-vocabulary). Never bypass a
 failing required check or provider restriction.
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-This policy states no exception condition of its own; the operator approval route is stated under Requirements.
-
-### Approval and Review
-
-Approval and review conditions are stated under Requirements.
+A Python or Node script that opens files itself stays outside shell-write observation, and so do permission rules that match shell file commands, so instruction-level and rule-level controls are advisory for that class. SAFE-R018 states that `read-only-evidence` names what the registry grants, not what an operating system enforces, and the two supported providers differ under that one name. External checks that were not executed are reported as such rather than counted as passed.
 
 ## Ownership
 
-### Responsibilities
+### Owner
 
-Responsibilities are stated under Authority and Requirements.
+This policy owns approval decisions. Native sandbox, tool, permission, and
+approval controls may be stricter; static configuration never proves runtime
+enforcement. Runbooks describe authorized procedures, not standing approval.
 
-### Change and Adoption
+- [Agent Execution](agent-execution.md)
+- [Git Policy](git.md)
+- [Quality Policy](quality.md)
+
+#### Responsibilities
+
+Responsibilities are stated under Owner and Requirements.
+
+### Review Triggers
 
 This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.

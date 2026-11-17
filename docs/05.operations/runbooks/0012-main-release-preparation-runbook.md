@@ -1,25 +1,25 @@
 ---
 title: "Main Release Preparation"
-version: "1.4.1"
+version: "1.4.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "RUN-0012"
 ---
 
 # Main Release Preparation Runbook
 
-## Purpose
+## Trigger and Scope
 
-### Trigger and Outcome
+### Trigger
 
 이 Runbook은 main의 검토된 변경을 정규 `CHANGELOG.md`에 기록하고 한
 생산자로 SemVer tag와 GitHub Release를 준비하는 순서를 제공한다.
 
 main에 통합된 공개 계약 변경을 릴리스하려는 경우 사용한다.
 
-### Scope
+### Targets
 
 릴리스는
 저장소의 공개 계약 이력이다. k3d·ArgoCD·OpenBao의 배포 완료나 live 검증을
@@ -28,9 +28,9 @@ main에 통합된 공개 계약 변경을 릴리스하려는 경우 사용한다
 
 관련 문서: [`CHANGELOG.md`](../../../CHANGELOG.md), [`scripts/release.py`](../../../scripts/release.py)
 
-## Preconditions
+## Preflight
 
-### Authority and Access
+### Authority
 
 - **Type**: Repository release preparation and publication
 - **Executor**: 검토된 main revision과 원격 Release 권한을 확인한 운영자,
@@ -48,16 +48,16 @@ Python과 구현의 trusted resolver가 받아들이는 `git`, `git-cliff`, `gh`
 
 관련 문서: [`.github/workflows/ci.yml`](../../../.github/workflows/ci.yml), [Main protection ruleset](../../../.github/rulesets/main-protection.md), [ADR-0048](../../02.architecture/decisions/0048-local-qa-and-semver-release-ownership.md), [ADR-0052](../../02.architecture/decisions/0052-single-main-trunk-branch-strategy.md)
 
-### Safety Checks
+### Environment
 
 먼저
 [Git Policy](../../../.agents/governance/git.md)와
 [Quality Policy](../../../.agents/governance/quality.md)를 읽고,
 실제 main commit·기존 tag/Release·release 설정을 확인한다.
 
-## Steps
+## Procedure
 
-### Actions
+### Steps
 
 | Step | Action | Expected result | Stop / escalate when |
 | --- | --- | --- | --- |
@@ -73,9 +73,9 @@ Python과 구현의 trusted resolver가 받아들이는 `git`, `git-cliff`, `gh`
 변경의 필수 로컬 검사가 실패했거나 미실행이고, operator 승인이나 원격 대상이
 불확실하면 게시 단계에서 멈춘다.
 
-## Validation
+## Verification
 
-### Service Checks
+### Expected Results
 
 준비 PR의 문서·링크·상태와 실제 index는 해당 Task의 local QA 증거로
 검증한다. 아래는 구현된 `scripts/release.py`의 CLI이며, 현재 소스와
@@ -129,7 +129,7 @@ python3 scripts/release.py --root . publish --version vX.Y.Z --asset relative/pa
 원격 조회가 없으면 그 단계는 `DEFER`다. CLI 옵션과 동작이 실제 구현에서
 달라지면 이 절차를 먼저 수정한다.
 
-### Evidence
+### Unverified Conditions
 
 - 현재 main commit과 release-preparation PR의 reviewed diff
 - 실제 로컬 check receipt와 semantic review 결과가 붙은 Task
@@ -145,7 +145,18 @@ GitHub의 표시와 정적 workflow 설정은 서로 다른 입력이다. 실제
 | --- | --- | --- |
 | N/A — SPEC-0107 (left the tree; Git history recovers it) | Reviewed main release-preparation PR, one SemVer producer and external publication boundary | Release Task, Git history and observed GitHub Release/tag |
 
-## Recovery
+## Escalation
+
+### Next Owner
+
+에스컬레이션: 해당 없음 — 이 런북은 Escalation에 에스컬레이션 담당을 따로 정하지 않는다.
+
+### Recovery or Forward Repair
+
+게시 전에는 준비 PR에서 승인 범위에 해당하는 `CHANGELOG.md` 변경을 원래 main
+내용과 대조해 되돌리고 preview를 다시 실행한다. 이미 main에 통합한 준비 변경은
+Recovery Procedures의 후속 정정 커밋을 사용한다. 게시 이후의 정정은 다음 승인된
+버전에 반영하고 기존 태그와 Release 이력을 보존한다.
 
 ### Recovery Procedures
 
@@ -154,14 +165,3 @@ SemVer tag를 이동하거나 덮어쓰지 않는다. 게시 후 정정이 필�
 operator가 새 버전의 범위와 승인·회복 경로를 결정하고, 원래 Task와
 Release 이력을 보존한다. 원격 결과가 불명확하면 재시도 전에 동일 대상
 존재 여부부터 조회한다.
-
-### Rollback
-
-게시 전에는 준비 PR에서 승인 범위에 해당하는 `CHANGELOG.md` 변경을 원래 main
-내용과 대조해 되돌리고 preview를 다시 실행한다. 이미 main에 통합한 준비 변경은
-Recovery Procedures의 후속 정정 커밋을 사용한다. 게시 이후의 정정은 다음 승인된
-버전에 반영하고 기존 태그와 Release 이력을 보존한다.
-
-### Escalation
-
-에스컬레이션: 해당 없음 — 이 런북은 Recovery에 에스컬레이션 담당을 따로 정하지 않는다.

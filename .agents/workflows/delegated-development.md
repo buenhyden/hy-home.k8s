@@ -1,15 +1,15 @@
 ---
 title: "Delegated Development"
-version: "1.2.0"
+version: "1.3.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 
 # Delegated Development
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
@@ -20,6 +20,13 @@ Related documents: [Roles](../roles/README.md),
 [Model Selection](../governance/model-selection.md),
 [Work Lifecycle](work-lifecycle.md) and
 [Approval and Safety](../governance/approval-and-safety.md).
+
+#### Inputs
+
+Neutral role and skill content lives in common governance; Claude and Codex
+projections add native metadata only. Tracked files do not prove that a runtime
+discovers, loads, or enforces them. Delegation requires explicit user or
+applicable instruction authorization and an available runtime mechanism.
 
 ### When Not to Use
 
@@ -72,18 +79,15 @@ evidence remains distinct from repository-static projection parity.
 
 Failure handling is stated in steps 4 and 6 of Steps.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-Neutral role and skill content lives in common governance; Claude and Codex
-projections add native metadata only. Tracked files do not prove that a runtime
-discovers, loads, or enforces them. Delegation requires explicit user or
-applicable instruction authorization and an available runtime mechanism.
-
-### Outputs
+### Artifacts
 
 This procedure defines no output format of its own beyond the results its Steps describe; if it needs one, define it here.
+
+### Handoff
+
+Completion and handoff are stated in steps 6 and 7 of Steps.
 
 ## Verification
 
@@ -93,6 +97,6 @@ Run registry, projection/config, and semantic/permission checks when a role,
 import, permission, handoff, skill, or provider projection changes. Confirm the
 actual provider mechanism separately before claiming native delegation.
 
-### Completion and Handoff
+### Limits
 
-Completion and handoff are stated in steps 6 and 7 of Steps.
+The static checks do not confirm native delegation, because the actual provider mechanism must be confirmed separately. Tracked files do not prove that a runtime discovers, loads or enforces them, provider-native runtime evidence remains distinct from repository-static projection parity, and a higher capability tier does not grant broader permission.

@@ -1,16 +1,16 @@
 ---
 title: "02.architecture"
-version: "0.9.0"
+version: "0.10.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 # 02.architecture
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > 요구사항을 아키텍처 요구와 결정 기록으로 연결하는 canonical architecture stage다.
 
@@ -29,24 +29,28 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 - GitOps Operators
 - Architecture Reviewers
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
-#### In Scope
+##### In Scope
 
 - 시스템 경계, 품질 속성, 배포 구조, 데이터/인프라 관점의 요구사항
 - 선택지, 결정 근거, 결과를 남기는 Architecture Decision Record
 - Requirement Package, Spec, Plan, Operations 문서로 이어지는 추적 링크
 
-#### Out of Scope
+##### Out of Scope
 
 - 제품 요구사항 원문
 - 파일 단위 구현 명세
 - 실행 순서와 작업 증적
 - 반복 운영 절차
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 stage는 제품 요구사항 원문, 파일 단위 구현 명세, 실행 순서와 작업 증적, 반복 운영 절차를 소유하지 않는다. 상세 구현 계약은 `../03.specs/`로, 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다. 현재 repo-backed 실행계약은 `gitops/`, `scripts/validate-infrastructure-contracts.sh`와 정적 검증 스크립트가 우선하며, 더 이상 현재가 아닌 문서는 현재 실행 권위가 아니다.
+
+## Current Contents
+
+### Paths
 
 | Path | Purpose |
 | --- | --- |
@@ -55,7 +59,7 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 | [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
 
-### Classification
+### Owners
 
 #### Reader Route
 
@@ -67,9 +71,9 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 | 구현자가 따라야 할 계약 | [`../03.specs/`](../03.specs/) | 파일/manifest/API 수준 상세 설계는 Spec stage가 소유한다. |
 | 운영 정책과 복구 절차 | [`../05.operations/`](../05.operations/) | 실행 절차, 정책, runbook은 Operations stage가 소유한다. |
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. 요구사항을 시스템 경계와 품질 속성으로 확장할 때는 `descriptions/`를 갱신한다.
 2. 기술 선택이나 운영 모델 결정은 `decisions/`에 ADR로 기록한다.
@@ -91,13 +95,7 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 - AD/ADR 문서 안의 링크는 각 하위 폴더의 최종 문서 위치 기준으로 다시 계산한다.
 - AD는 자신이 다루는 Requirement의 각 member를 `Lifecycle Traceability`의 `Upstream requirement` 열에서 인용한다. Requirement는 downstream 링크 열을 두지 않으며, 인용되지 않은 member는 `REQUIREMENT-COVERAGE` 검사가 거부한다.
 
-### Transition and Exit
-
-1. ADR 전체를 대체할 때는 후속 ADR의 `supersedes`와 Traceability가 이전 ID를 유지하고 AD Archived Lineage가 요약한다. 삭제 전에는 [문서 수명주기 정책](../../.agents/governance/document-lifecycle.md)의 처분 조건을 확인한다. 일부 조항만 개정할 때는 기존 ADR을 보존하고 후속 ADR의 Traceability에 개정 범위를 적는다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [Requirements README](../01.requirements/README.md)
 - [Architecture Descriptions](./descriptions/README.md)
@@ -106,7 +104,11 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 - [Operations README](../05.operations/README.md)
 - [Archive Index](../98.archive/README.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [Document Stage Routing](../../.agents/governance/document-authoring.md)
 - [Templates README](../99.templates/README.md)
+
+### Checks
+
+1. ADR 전체를 대체할 때는 후속 ADR의 `supersedes`와 Traceability가 이전 ID를 유지하고 AD Archived Lineage가 요약한다. 삭제 전에는 [문서 수명주기 정책](../../.agents/governance/document-lifecycle.md)의 처분 조건을 확인한다. 일부 조항만 개정할 때는 기존 ADR을 보존하고 후속 ADR의 Traceability에 개정 범위를 적는다.

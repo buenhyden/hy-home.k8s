@@ -3,11 +3,11 @@ name: "incident-postmortem"
 description: "Use when writing a cluster incident postmortem or routing post-incident analysis through timeline reconstruction, root cause analysis, impact assessment, and remediation planning. Real-time on-call response, monitoring setup, and alert configuration are outside this skill's scope."
 metadata:
   title: "Incident Postmortem"
-  version: "1.0.5"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,11 +17,19 @@ using this procedure. Skill invocation grants no authority
 
 # Incident Postmortem — Cluster Incident Post-Analysis Pipeline
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 The `incident-responder` agent leads timeline reconstruction → root cause analysis → impact assessment → remediation planning → postmortem report generation.
+
+#### Inputs
+
+Under the execution mode stated above, a read-only role returns the analysis in
+its response and writes nothing. Creating a scratch file under
+`_workspace/repo-support/analysis/` is a write like any other and needs
+authorization. A durable record takes its path, template, and required sections
+from the Stage 99 registry entry for the profile being written.
 
 ### When Not to Use
 
@@ -133,19 +141,17 @@ Keep the language blameless and system-focused.
 - Route to the implementation owner if remediation requires manifest changes.
 - Escalate to the supervising owner if incident scope exceeds cluster boundaries.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-Under the execution mode stated above, a read-only role returns the analysis in
-its response and writes nothing. Creating a scratch file under
-`_workspace/repo-support/analysis/` is a write like any other and needs
-authorization. A durable record takes its path, template, and required sections
-from the Stage 99 registry entry for the profile being written.
-
-### Outputs
+### Artifacts
 
 This procedure defines no output format of its own beyond the results its Steps describe; if it needs one, define it here.
+
+### Handoff
+
+- `rca-methodology` — Detailed 5 Whys, Fishbone, FTA, and change analysis techniques
+- `ops-runbook` — Turning a remediation into a repeatable operational procedure
+- `risk-report` — Recording residual risk for later tracking
 
 ## Verification
 
@@ -168,8 +174,6 @@ The test scenarios are stated below.
 **Prompt**: "The API gateway was slow this morning. Analyze the cause."
 **Expected**: Collect missing details via questions, execute RCA mode, mark uncertain parts clearly.
 
-### Completion and Handoff
+### Limits
 
-- `rca-methodology` — Detailed 5 Whys, Fishbone, FTA, and change analysis techniques
-- `ops-runbook` — Turning a remediation into a repeatable operational procedure
-- `risk-report` — Recording residual risk for later tracking
+The read-only `incident-responder` returns a report draft, and this skill never expands its permissions or writes durable documents. Events reconstructed from verbal accounts, causes not confirmed and incomplete impact data are tagged or given explicit confidence rather than presented as established.

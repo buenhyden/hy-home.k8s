@@ -1,16 +1,16 @@
 ---
 title: "01.requirements"
-version: "0.10.4"
+version: "0.11.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 # 01.requirements
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > hy-home.k8s 플랫폼의 장기간 유지되는 solution-independent Requirement Package를 보관하는 canonical stage다.
 
@@ -27,15 +27,15 @@ updated: "2026-11-16"
 - Platform Engineers
 - Documentation Writers
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
-#### In Scope
+##### In Scope
 
 - 문제·목표, 사용자 및 stakeholder 요구
 - 기능·비기능 요구, 제약, 구현 독립적인 외부 interface 요구
 - acceptance 기준, 범위·비범위, 관련 Architecture·Spec 추적 링크
 
-#### Out of Scope
+##### Out of Scope
 
 - 상세 구현 방법, 변경 한정 설계, 파일 수준 구현 순서
 - 구체 기술 스택 결정과 장기적인 구조 결정
@@ -52,9 +52,13 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 일치한다. PRD, SRS, Interface Requirement를 별도 문서나 profile로 나누지
 않는다.
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 stage는 상세 구현 방법, 변경 한정 설계, 파일 수준 구현 순서와 구체 기술 스택·장기 구조 결정, 장애 대응 절차와 운영 명령을 소유하지 않으며, 이는 각각 `../02.architecture/descriptions/`, `../02.architecture/decisions/`, `../03.specs/`, `../05.operations/runbooks/`로 분리한다. OpenAPI·GraphQL·Proto 같은 실행 가능한 interface 계약은 이를 구현하는 Stage 03 Spec Package가 소유한다.
+
+## Current Contents
+
+### Paths
 
 각 Requirement Package의 상태와 최종 수정일은 해당 문서 frontmatter가 소유한다. 이 표는 현재 요구의 역할과 후속 경로를 안내한다.
 
@@ -67,7 +71,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 | [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
 
-### Classification
+### Owners
 
 #### 상태 해석
 
@@ -77,9 +81,9 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 | `in-review` | 검토 중인 요구 | 같은 작성 범위에서 검토 의견을 반영하고 필요한 근거를 보완한다. |
 | `approved` | 현재 solution-independent 요구 권위 | 관련 AD/ADR/Spec, 적용되는 실행 권한과 구현 증적을 확인한다. |
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. 같은 문제를 다루는 현재 Requirement Package를 먼저 확인하고 중복 package를 만들지 않는다.
 2. `../99.templates/templates/requirements/requirement-package.template.md`를 복사해 `####-<slug>.md`를 만든다. 템플릿은 재사용 가능하도록 `artifact_id`를 비워 두므로, 복사 직후 아직 발급되지 않은 다음 번호를 `REQ-####`로 할당하고 경로 번호와 일치시킨다.
@@ -99,17 +103,28 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 
 #### 연결 규칙
 
-- Requirement Package는 관련 AD, ADR, Spec 링크를 가진다. Requirement는 downstream 링크 열을 쓰지 않는다. 각 요구 member는 소유한 AD 또는 Spec이 자신의 요구 열에서 인용하며, 인용하지 않는 member는 `Traceability` 아래 `Downstream Links`에 `N/A —`와 사유를 적은 한 줄로만 허용된다.
+- Requirement Package는 관련 AD, ADR, Spec 링크를 가진다. Requirement는 downstream 링크 열을 쓰지 않는다. 각 요구 member는 소유한 AD 또는 Spec이 자신의 요구 열에서 인용하며, 인용하지 않는 member는 `Traceability` 아래 `Verification Links`에 `N/A —`와 사유를 적은 한 줄로만 허용된다.
 - AD와 Spec은 `REQ-####-(FR|NFR|IF)-####` 전체 요구 ID를 추적한다.
 - Agent 기능인 경우 사용 시나리오, 허용/금지 행동, human-in-the-loop 요구를 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
-- 후속 AD/ADR/Spec이 아직 없으면 없는 링크를 만들지 않고, 문서 인덱스와 Requirement Package의 `Traceability` 아래 `Downstream Links`에 후속 갭으로 표시한다. 이미 삭제된 문서의 요약은 같은 `Traceability` 아래 `Archived Lineage`에 둔다.
+- 후속 AD/ADR/Spec이 아직 없으면 없는 링크를 만들지 않고, 문서 인덱스와 Requirement Package의 `Traceability` 아래 `Verification Links`에 후속 갭으로 표시한다. 이미 삭제된 문서의 요약은 같은 `Traceability` 아래 `Archived Lineage`에 둔다.
 - 현재 구현과 맞지 않는 변경 한정 실행 계약을 Stage 01에 보존하지 않는다. 대체·완료된 문서는 현재 소유 문서의 Archived Lineage 표에 요약하고, 처분 조건을 확인한 뒤 삭제한다. 원본은 확인된 Git 이력에서 복구한다.
 
 #### 예시
 
 신규 플랫폼 기능은 [`0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md)처럼 사용자 가치, 범위, 성공/수용 기준과 전체 요구 ID를 현재 구현 증적에 연결한다.
 
-### Transition and Exit
+#### Upstream and Downstream
+
+- [Docs README](../README.md)
+- [02.architecture/descriptions](../02.architecture/descriptions/README.md)
+- [03.specs](../03.specs/README.md)
+- [Archive Index](../98.archive/README.md)
+
+#### Policy and Templates
+
+정책과 template: 해당 없음 — 이 stage README는 정책과 template 링크를 관련 문서로 따로 나열하지 않는다.
+
+### Checks
 
 1. 이 stage에는 superseded·retired·deprecated 상태를 두지 않는다. 대체되거나 철회된 요구는 후속 문서의 `supersedes`와 Traceability에 ID를 남기고, 현재 소유 문서의 `Archived Lineage` 표에 요약한다. 같은 변경에서 삭제하기 전에는 [Document Lifecycle](../../.agents/governance/document-lifecycle.md)의 소비자·보존·권한·복구 확인을 거친다.
 
@@ -119,16 +134,3 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 2. `approved` 문서는 현재 요구 권위다. downstream AD/ADR/Spec과 구현 증적을 함께 확인한다.
 3. 구현·운영 적용·완료 판정 전에 적용되는 승인된 근거나 별도로 검증한 범위별 승인을 확인한다. 초안은 해당 범위의 참고 입력으로 두고 문서 상태를 유지한다. 권한과 증거의 확인 기준은 [Document Lifecycle](../../.agents/governance/document-lifecycle.md#requirements)을 따른다.
 4. 과거 문서가 필요한 경우 Git history에서 복구한다(`git show <commit>:<path>`). 대체·완료된 문서는 현재 소유 문서의 Archived Lineage 표에 요약된다([ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md)).
-
-## Related Documents
-
-### Upstream and Downstream
-
-- [Docs README](../README.md)
-- [02.architecture/descriptions](../02.architecture/descriptions/README.md)
-- [03.specs](../03.specs/README.md)
-- [Archive Index](../98.archive/README.md)
-
-### Policy and Templates
-
-정책과 template: 해당 없음 — 이 stage README는 정책과 template 링크를 관련 문서로 따로 나열하지 않는다.

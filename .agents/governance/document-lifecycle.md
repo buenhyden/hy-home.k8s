@@ -1,34 +1,20 @@
 ---
 title: "Document Lifecycle Policy"
-version: "3.0.0"
+version: "3.1.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 
 # Document Lifecycle Policy
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
 This policy governs document promotion, blocking, supersession, retirement,
 withdrawal, and historical recovery across the repository.
-
-### Authority
-
-The Stage 99 registry (`docs/99.templates/registry.json`) is the sole machine
-owner for lifecycle states, directed transitions, and the internal `mutable`,
-`current`, and `terminal` validation classes. Documents carry only their
-profile status. This policy explains evidence obligations and does not repeat
-the machine transition table.
-
-- [Software Development Lifecycle](sdlc.md)
-- Document Profile Registry (`docs/99.templates/registry.json`)
-- [Document Authoring Policy](document-authoring.md)
-
-## Scope
 
 ### Applies To
 
@@ -41,7 +27,7 @@ evidence is not rewritten to satisfy a later profile.
 - [Common Agent Governance](../README.md)
 - Archive Stage (`docs/98.archive/README.md`)
 
-### Exclusions
+#### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
@@ -86,9 +72,9 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   and `cancelled`. Task owns `in-progress`, `blocked` and `completed` work.
   A historical comparison reads the states of its original Registry edition.
 - `DOCLIFE-R002` A newly authored Plan, or one revised for current scope, links the approved
-  Spec's constraints in `Global Constraints`, the last block of Goal and
-  Boundary written as an H4, adds only execution constraints specific to the
-  Plan, and keeps one promotion table under Promotion Map, Owner and Receipt. A
+  Spec's constraints in `Global Constraints`, an H4 of Overview > Constraints
+  placed after that section's text, adds only execution constraints specific to the
+  Plan, and keeps one promotion table under Promotion Map > Durable Owners. A
   Plan for in-progress Task work does not treat an intended promotion target as approval or
   completion evidence.
   When a Spec package is accepted as complete, the Plan's promotion table
@@ -313,7 +299,17 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   The reserved list never shrinks until a user-approved new baseline under the Q-07 contract,
   so the code and its IDs are never issued again.
 
-### Enforcement
+### Exceptions
+
+Exception and escalation conditions are stated under Requirements.
+
+#### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Enforcement
+
+### Mechanisms
 
 Lifecycle validators use bounded regular-file reads, strict UTF-8, explicit
 subprocess timeouts, and stage-zero Git bytes. Illegal edges, incomplete
@@ -326,22 +322,28 @@ package whose Tasks are all terminal (ADR-0057).
 Recovery proof, holds, consumers and authority stay manual. Review this policy
 whenever the registry lifecycle catalog changes.
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-Exception and escalation conditions are stated under Requirements.
-
-### Approval and Review
-
-Approval and review conditions are stated under Requirements.
+The lifecycle validators do not decide recovery proof, holds, consumers or authority, which stay manual. A placeholder or date alone cannot establish resolution, and the manual disposition review of a document's normative, historical, audit and recovery value is not performed by a validator.
 
 ## Ownership
 
-### Responsibilities
+### Owner
 
-Responsibilities are stated under Authority and Requirements.
+The Stage 99 registry (`docs/99.templates/registry.json`) is the sole machine
+owner for lifecycle states, directed transitions, and the internal `mutable`,
+`current`, and `terminal` validation classes. Documents carry only their
+profile status. This policy explains evidence obligations and does not repeat
+the machine transition table.
 
-### Change and Adoption
+- [Software Development Lifecycle](sdlc.md)
+- Document Profile Registry (`docs/99.templates/registry.json`)
+- [Document Authoring Policy](document-authoring.md)
+
+#### Responsibilities
+
+Responsibilities are stated under Owner and Requirements.
+
+### Review Triggers
 
 Change and adoption conditions are stated under Enforcement.

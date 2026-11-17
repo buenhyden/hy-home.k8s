@@ -1,18 +1,18 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.3.2"
+version: "1.3.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "RUN-0010"
 ---
 
 # GitHub 앱 GitOps 온보딩 런북
 
-## Purpose
+## Trigger and Scope
 
-### Trigger and Outcome
+### Trigger
 
 이 런북은 GitHub 레포 기반 애플리케이션을 `hy-home.k8s` 클러스터에 GitOps 방식으로 온보딩하는
 단계별 운영 절차를 제공한다.
@@ -22,7 +22,7 @@ artifact_id: "RUN-0010"
 - canary 배포 실패 후 rollback 및 재배포가 필요할 때
 - OpenBao 시크릿 연동 초기 설정이 필요할 때
 
-### Scope
+### Targets
 
 `examples/sample-app/`은 최소 온보딩 템플릿이고,
 `gitops/workloads/adminer/`는 stable/canary Service와 Istio routing까지 포함한 현재 active reference다.
@@ -31,15 +31,15 @@ artifact_id: "RUN-0010"
 
 관련 문서: **ESO/OpenBao Recovery**: [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md), **예시 템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app), [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer) — fuller active reference pattern
 
-## Preconditions
+## Preflight
 
-### Authority and Access
+### Authority
 
 애플리케이션 소유자는 이미지와 변경 PR을 준비하고 플랫폼 운영자는 대상
 클러스터와 `apps` namespace를 확인한다. 원격 push, 배포에 영향을 주는
 merge, 수동 재조정·중단과 비밀 변경은 각각 본문의 승인 조건을 따른다.
 
-### Safety Checks
+### Environment
 
 #### 사전 점검
 
@@ -69,9 +69,9 @@ Prometheus 수집 상태가 필요하면 외부 observability 운영자에게
 파일이나 임의의 조회 helper를 읽지 않는다. 조회가 미실행이면 그 사실을
 남기고 AnalysisRun 결과를 성공으로 추정하지 않는다.
 
-## Steps
+## Procedure
 
-### Actions
+### Steps
 
 아래 Procedure 1-5를 순서대로 수행한다. 배포 변경은 feature branch와 PR review를 거쳐 GitOps reconciliation으로 반영한다.
 
@@ -182,7 +182,7 @@ kubectl get ingress -n apps ${APP}
 
 Rollout 상세 출력에서 이번 canary 리비전에 속한 AnalysisRun 이름을 확인한다.
 이름이 아직 없거나 결과가 없으면 분석 성공으로 판정하지 않는다. 이름이 있으면
-아래 Recovery의 소유자 확인과 상세 조회로 상태를 확인한다.
+아래 Escalation의 소유자 확인과 상세 조회로 상태를 확인한다.
 
 ```bash
 # 신뢰된 로컬 CA로 TLS와 HTTP 성공을 함께 확인한다.
@@ -217,7 +217,7 @@ kubectl argo rollouts get rollout ${APP} -n apps --watch
 #### Procedure 4: 실패 시 복구 경로로 전환
 
 AnalysisTemplate 실패나 수동 중단이 필요하면 이후 배포를 멈추고
-[Rollback](#rollback)의 승인된 canary 복구
+[Recovery or Forward Repair](#recovery-or-forward-repair)의 승인된 canary 복구
 절차로 전환한다. 이전 stable 버전 복귀와 원인 수정을 확인한 뒤에만
 다음 온보딩 단계를 진행한다.
 
@@ -242,11 +242,11 @@ kubectl get externalsecret -n apps ${APP}-secret
 
 ### Stop Conditions
 
-중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Steps에 두고 실패 시 Escalation의 Next Owner와 Recovery or Forward Repair를 따른다.
 
-## Validation
+## Verification
 
-### Service Checks
+### Expected Results
 
 Procedure 2의 Rollout, Pod, AnalysisRun, Ingress와 CA 검증을 거친 HTTPS 결과가
 아래 기대 상태를 만족하는지 확인한다. CA 파일을 사용할 수 없으면 TLS 완료
@@ -263,7 +263,7 @@ Procedure 2의 Rollout, Pod, AnalysisRun, Ingress와 CA 검증을 거친 HTTPS �
 
 - **Signals**: ArgoCD Application health/sync, Rollout status, AnalysisRun result, Pod readiness, Ingress certificate status
 
-### Evidence
+### Unverified Conditions
 
 - **Evidence to Capture**: PR diff, ArgoCD app status, rollout history, relevant events/log snippets, HTTPS verification output
 
@@ -273,7 +273,32 @@ Procedure 2의 Rollout, Pod, AnalysisRun, Ingress와 CA 검증을 거친 HTTPS �
 | --- | --- | --- |
 | [App GitOps Onboarding Policy](../policies/0007-app-gitops-onboarding-policy.md) | A new GitHub image must enter `gitops/workloads`, or a canary/analysis/ingress/secret integration needs bounded rollback and re-verification. | Application owner supplies image and PR evidence; Platform operator records ArgoCD, Rollout, AnalysisRun, Pod, and ingress/TLS results and owns GitOps rollback, while secret writes remain human-approved. |
 
-## Recovery
+## Escalation
+
+### Next Owner
+
+에스컬레이션: 해당 없음 — 이 런북은 Escalation에 에스컬레이션 담당을 따로 정하지 않는다.
+
+### Recovery or Forward Repair
+
+#### Canary abort and rollback
+
+AnalysisTemplate 실패나 수동 abort가 필요한 경우 승인된 운영자가 다음
+명령으로 workload 범위를 한정해 중단한다. 이전 stable 버전으로의 복귀를
+확인한 뒤 원인을 수정하고 feature branch PR flow로 재배포한다.
+
+```bash
+# operator-approved live abort only
+kubectl argo rollouts abort ${APP} -n apps
+
+# rollback 확인: 이전 stable 버전으로 복귀했는지 상태를 읽는다.
+kubectl argo rollouts get rollout ${APP} -n apps
+```
+
+GitOps manifest 수정이 필요하면 이미지 태그 또는 설정을 수정한다.
+수정 PR도 1-3의 merge 전 검토와 자동 reconciliation 경계를 따른다. Rollout abort와
+완료는 Argo Rollouts 컨트롤러의 알림 엔진이 `slack:hy-home-alerts`로 보낸다
+(ADR-0054, SPEC-0141).
 
 ### Recovery Procedures
 
@@ -342,28 +367,3 @@ kubectl -n argocd get appproject apps -o yaml | grep -A2 "namespaceResourceWhite
 # human-approved AppProject bootstrap/break-glass only
 kubectl apply -f gitops/clusters/local/appproject-apps.yaml
 ```
-
-### Rollback
-
-#### Canary abort and rollback
-
-AnalysisTemplate 실패나 수동 abort가 필요한 경우 승인된 운영자가 다음
-명령으로 workload 범위를 한정해 중단한다. 이전 stable 버전으로의 복귀를
-확인한 뒤 원인을 수정하고 feature branch PR flow로 재배포한다.
-
-```bash
-# operator-approved live abort only
-kubectl argo rollouts abort ${APP} -n apps
-
-# rollback 확인: 이전 stable 버전으로 복귀했는지 상태를 읽는다.
-kubectl argo rollouts get rollout ${APP} -n apps
-```
-
-GitOps manifest 수정이 필요하면 이미지 태그 또는 설정을 수정한다.
-수정 PR도 1-3의 merge 전 검토와 자동 reconciliation 경계를 따른다. Rollout abort와
-완료는 Argo Rollouts 컨트롤러의 알림 엔진이 `slack:hy-home-alerts`로 보낸다
-(ADR-0054, SPEC-0141).
-
-### Escalation
-
-에스컬레이션: 해당 없음 — 이 런북은 Recovery에 에스컬레이션 담당을 따로 정하지 않는다.

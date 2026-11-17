@@ -1,17 +1,17 @@
 ---
 title: "Agent Responsibilities"
-version: "2.4.0"
+version: "2.5.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 
 # Agent Responsibilities
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 작업에 필요한 책임을 먼저 고른 뒤, [agent registry](registry.json)에서 중립
 역할을 찾고 선택한 provider의 구체 값은
@@ -20,7 +20,7 @@ updated: "2026-11-13"
 이 값을 소비하며 검증을 받는 native 소비자다.
 이 라우터는 역할 명단이나 권한 목록의 사본이 아니다.
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
 책임은 도메인 경계를 설명할 뿐이다. 실제로 허용되는 동작은 registry 권한과
 명시적인 Task 소유권이 정한다. 검토 관점은 쓰기 권한이 아니다.
@@ -29,9 +29,13 @@ updated: "2026-11-13"
 guardrail·입력·출력·인계를 소유하고, 이 문서는 각 역할이 맥락으로 읽는 도메인
 경계만 담는다.
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 라우터는 역할 명단이나 권한 목록의 사본이 아니며, 책임은 도메인 경계만 설명한다. 실제로 허용되는 동작은 registry 권한과 명시적인 Task 소유권이 정하고, 구체 역할 본문이 자기 guardrail·입력·출력·인계를 소유하며, provider의 구체 값은 각 bindings가 소유한다. 검토 관점은 쓰기 권한이 아니다.
+
+## Current Contents
+
+### Paths
 
 #### Item Index
 
@@ -57,7 +61,7 @@ guardrail·입력·출력·인계를 소유하고, 이 문서는 각 역할이 �
 | [registry.json](registry.json) | 역할, 권한, skill, 인계를 담은 기계가 읽는 agent registry. |
 | [registry.schema.json](registry.schema.json) | registry.json의 구조를 검증하는 schema. |
 
-### Classification
+### Owners
 
 #### Architecture
 
@@ -165,9 +169,9 @@ registry가, native 설정은 provider binding 표가 소유하고 projection은
 - 독립 검토를 유지하고 의견 충돌이나 승인 필요 사항은 사람에게 넘긴다.
 - 돌아온 결과를 수용 기준과 현재 저장소 증거에 대조한 뒤 최종 인계한다.
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 #### Add and Find
 
@@ -187,21 +191,19 @@ projection을 통해 추가한다. 새 역할 본문은 `status: "draft"`로 만
 Task의 범위가 바뀌면 책임을 다시 판단한다. 정확한 역할, 권한, skill, 인계
 구성은 agent registry에 있다.
 
-### Transition and Exit
-
-상태와 종료 규칙은 위 Add and Find에 함께 있다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [Common Agent Governance](../README.md)
 - [Architecture Index](../../docs/02.architecture/README.md)
 - [Operations Index](../../docs/05.operations/README.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [SDLC Flow](../governance/sdlc.md)
 - [Delegated Development](../workflows/delegated-development.md)
 - [Approval and Safety](../governance/approval-and-safety.md)
 - [Document Authoring](../governance/document-authoring.md)
+
+### Checks
+
+상태와 종료 규칙은 위 Add and Find에 함께 있다.

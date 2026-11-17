@@ -1,39 +1,20 @@
 ---
 title: "Context and Memory Policy"
-version: "1.7.0"
+version: "1.8.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-17"
 ---
 
 # Context and Memory Policy
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
 Retain only the context needed to resume safely. Repository state and the
 owning SDLC document, not a memory ledger, determine current truth; the retired progress ledger stays retired, and the work residue ledger of ADR-0060 is a different, residue-only owner.
-
-### Authority
-
-This policy owns repository context retention, resume verification, and the
-boundary for advisory provider-local memory. It grants no provider/runtime
-capability, execution permission, or approval authority; the active execution,
-approval, and provider controls continue to own those concerns.
-
-The active Task owns work status, verification, and handoff. Requirements,
-ADRs, Specs, Runbooks, and incident records own durable domain knowledge.
-Temporary checkpoints and provider-local memory are advisory and confer no
-execution authority.
-
-- [Work Lifecycle](../workflows/work-lifecycle.md)
-- [Document Lifecycle](document-lifecycle.md)
-- [Approval and Safety](approval-and-safety.md)
-- [Quality Policy](quality.md)
-
-## Scope
 
 ### Applies To
 
@@ -42,7 +23,7 @@ assumptions. Resume only through the [resume decision](#resume-decision).
 
 - Archive Index (`docs/98.archive/README.md`)
 
-### Exclusions
+#### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
@@ -201,28 +182,49 @@ not block independent local work. A summary saying PASS does not waive this
 recheck. These are agent and operator obligations, not a claim of native
 runtime enforcement.
 
-### Enforcement
+### Exceptions
+
+This policy defines no exception condition of its own; exceptions follow the approval and safety policy's operator approval route. If this policy needs its own, state it here.
+
+#### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Enforcement
+
+### Mechanisms
 
 Check summaries for stale owner links, duplicated task state, and sensitive
 data. Report conflicting memory rather than rewriting the repository to match
 it. Use [quality policy](quality.md) for evidence and handoff classification.
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-This policy defines no exception condition of its own; exceptions follow the approval and safety policy's operator approval route. If this policy needs its own, state it here.
-
-### Approval and Review
-
-Approval and review conditions are stated under Requirements.
+Temporary checkpoints and provider-local memory are advisory and confer no execution authority, and this policy grants no provider or runtime capability, execution permission or approval authority. Its checks look for stale owner links, duplicated task state and sensitive data, and conflicting memory is reported rather than used to rewrite the repository.
 
 ## Ownership
 
-### Responsibilities
+### Owner
 
-Responsibilities are stated under Authority and Requirements.
+This policy owns repository context retention, resume verification, and the
+boundary for advisory provider-local memory. It grants no provider/runtime
+capability, execution permission, or approval authority; the active execution,
+approval, and provider controls continue to own those concerns.
 
-### Change and Adoption
+The active Task owns work status, verification, and handoff. Requirements,
+ADRs, Specs, Runbooks, and incident records own durable domain knowledge.
+Temporary checkpoints and provider-local memory are advisory and confer no
+execution authority.
+
+- [Work Lifecycle](../workflows/work-lifecycle.md)
+- [Document Lifecycle](document-lifecycle.md)
+- [Approval and Safety](approval-and-safety.md)
+- [Quality Policy](quality.md)
+
+#### Responsibilities
+
+Responsibilities are stated under Owner and Requirements.
+
+### Review Triggers
 
 This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.

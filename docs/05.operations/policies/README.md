@@ -1,16 +1,16 @@
 ---
 title: "05.operations/policies"
-version: "0.3.2"
+version: "0.4.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 # 05.operations/policies
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > GitOps 플랫폼 운영 정책과 통제 기준(허용/금지/예외/검증)을 관리한다.
 
@@ -28,24 +28,28 @@ updated: "2026-11-13"
 - Operators
 - Documentation Writers
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
-#### In Scope
+##### In Scope
 
 - 운영 정책 문서(Operations Policy)
 - 통제 항목(Required/Allowed/Disallowed)
 - 예외 승인 흐름
 - 정책 검증 방법 및 검토 주기
 
-#### Out of Scope
+##### Out of Scope
 
 - 실행 절차 중심의 명령 순서 문서
 - 장애 타임라인/사후 분석
 - 온보딩 중심 가이드
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 collection은 실행 절차 중심의 명령 순서 문서, 장애 타임라인과 사후 분석, 온보딩 중심 가이드를 소유하지 않는다. 명령 순서, 반복 실행 체크리스트, bootstrap/break-glass 절차, 복구 절차는 runbooks로, 배경과 온보딩 설명은 guides로, 정책 위반이나 장애 기록은 incidents로 보낸다.
+
+## Current Contents
+
+### Paths
 
 #### 문서 인덱스
 
@@ -57,7 +61,7 @@ updated: "2026-11-13"
 | [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | 메트릭·로그·Grafana·AppProject 통합 정책(Alloy remote-write, 은퇴한 metrics NodePort 포함) |
 | [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/OpenBao 기반 앱 온보딩 정책 |
 
-### Classification
+### Owners
 
 | 필요 상황 | 문서 유형 |
 | --- | --- |
@@ -68,9 +72,9 @@ updated: "2026-11-13"
 | 실행 가능한 명령 블록이나 체크리스트를 작성해야 함 | Runbook으로 이동 |
 | 작업 배경과 사용법을 익혀야 함 | Guide로 이동 |
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. 정책 수정 전에 관련 Spec/Runbook을 확인한다.
 2. [policy.template.md](../../99.templates/templates/operations/policy.template.md)를 기준으로 섹션을 유지한다.
@@ -106,13 +110,7 @@ updated: "2026-11-13"
 - sibling operations folder는 `../guides/`, `../runbooks/`, `../incidents/`로 연결한다.
 - upstream docs stage는 `../../02.architecture/`, `../../03.specs/`로 연결한다.
 
-### Transition and Exit
-
-이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [05.operations/guides](../guides/README.md)
 - [05.operations/runbooks](../runbooks/README.md)
@@ -121,7 +119,11 @@ updated: "2026-11-13"
 - [AD](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [Runbook](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [Operation Template](../../99.templates/templates/operations/policy.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)
+
+### Checks
+
+이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.

@@ -1,15 +1,15 @@
 ---
 title: "Software Development Lifecycle"
-version: "4.0.1"
+version: "4.1.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 
 # Software Development Lifecycle
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
@@ -18,24 +18,6 @@ architecture, Spec-driven implementation, operations, and historical recovery.
 Authors, agents and reviewers consume it to choose the responsible document
 owner. It guarantees one owner per kind of knowledge; stage numbers express
 ownership and navigation rather than a one-way approval waterfall.
-
-### Authority
-
-This flow selects the responsible document stage. Exact paths, profile IDs,
-frontmatter, sections, relationships, status classes, and lifecycle edges come
-only from the Stage 99 registry (`docs/99.templates/registry.json`). Provider and
-agent-roster authority is outside Stage 99 and is not defined here.
-
-This document is a Policy on the `governance/rule` profile because it owns an
-invariant that other owners consume rather than a procedure: each change kind
-sets a minimum record set, check set and authoring approval (the change-kind
-table under Requirements).
-
-- [Document Lifecycle Policy](document-lifecycle.md)
-- [Document Authoring Policy](document-authoring.md)
-- [Approval and Safety](approval-and-safety.md)
-
-## Scope
 
 ### Applies To
 
@@ -55,9 +37,9 @@ lineage, and Google SRE informs factual incidents and blameless postmortems.
 
 [Common Agent Governance](../README.md) is the common agent governance entry point.
 
-### Exclusions
+#### Exclusions
 
-Provider and agent-roster authority is excluded and stated under Authority; if another subject is excluded, name it and its owner here.
+Provider and agent-roster authority is excluded and stated under Owner; if another subject is excluded, name it and its owner here.
 
 ## Rules
 
@@ -236,7 +218,17 @@ The Git point names before, during or after commit, push, pull request or
 merge. Status, acceptance, promotion and exit per document role follow the
 [lifecycle policy](document-lifecycle.md).
 
-### Enforcement
+### Exceptions
+
+This policy defines no exception condition of its own; exceptions follow the approval and safety policy's operator approval route. If this policy needs its own, state it here.
+
+#### Approval and Review
+
+This policy defines no exception approval or review step of its own; the approval and safety policy's operator approval route applies. If it needs its own, state it here.
+
+## Enforcement
+
+### Mechanisms
 
 Run the registry, Markdown profile (`scripts/validate-markdown-profiles.py`),
 link/owner, lifecycle (`scripts/validate-document-lifecycle.py`),
@@ -247,22 +239,32 @@ lifecycle catalog in the Stage 99 registry changes.
 
 The checks are owned by the [Quality Policy](quality.md), the [Git Policy](git.md) and the Document Profile Registry (docs/99.templates/registry.json).
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-This policy defines no exception condition of its own; exceptions follow the approval and safety policy's operator approval route. If this policy needs its own, state it here.
-
-### Approval and Review
-
-This policy defines no exception approval or review step of its own; the approval and safety policy's operator approval route applies. If it needs its own, state it here.
+Repository static results are kept separate from hosted, provider-runtime, remote or live evidence. Native provider configuration is not evidence of runtime enforcement (SDLC-R013), and remote GitHub Issue or Project state requires observation rather than being inferred (SDLC-R011).
 
 ## Ownership
 
-### Responsibilities
+### Owner
+
+This flow selects the responsible document stage. Exact paths, profile IDs,
+frontmatter, sections, relationships, status classes, and lifecycle edges come
+only from the Stage 99 registry (`docs/99.templates/registry.json`). Provider and
+agent-roster authority is outside Stage 99 and is not defined here.
+
+This document is a Policy on the `governance/rule` profile because it owns an
+invariant that other owners consume rather than a procedure: each change kind
+sets a minimum record set, check set and authoring approval (the change-kind
+table under Requirements).
+
+- [Document Lifecycle Policy](document-lifecycle.md)
+- [Document Authoring Policy](document-authoring.md)
+- [Approval and Safety](approval-and-safety.md)
+
+#### Responsibilities
 
 The [Ownership and placement](#ownership-and-placement) table states the owner and placement rule of each artifact.
 
-### Change and Adoption
+### Review Triggers
 
 This policy changes as a governed-document change under the work lifecycle and the document lifecycle policy, with no adoption step of its own; if it needs one, state it here.

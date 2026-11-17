@@ -1,16 +1,16 @@
 ---
 title: "Azure GitOps (Platform Manifests)"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 # Azure GitOps (Platform Manifests)
 
-## Purpose
+## Service
 
-### Service Role
+### Purpose
 
 > 이 경로는 Azure 환경에서 클러스터 전반의 공통 플랫폼 리소스를 GitOps 방식으로 관리하는 매니페스트를 포함한다.
 
@@ -31,7 +31,17 @@ gitops/
 - Platform Engineers
 - DevOps Engineers
 
-### Supported Environment
+### Interfaces
+
+이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
+
+#### Security Boundary
+
+보안 경계는 Usage > Prerequisites에 적혀 있다.
+
+## Usage
+
+### Prerequisites
 
 Azure resource ID와 client ID는 검토된 infrastructure 출력으로만 들어오고
 secret 값은 이 manifest에 들어오지 않는다. Managed Identity와 Secret Store CSI
@@ -51,19 +61,7 @@ secret 값은 이 manifest에 들어오지 않는다. Managed Identity와 Secret
 - 클라우드 하드 인프라 프로비저닝 (infrastructure/ 참조)
 - 클러스터 외부의 수동 운영 작업
 
-## Interfaces
-
-### Inputs and Outputs
-
-이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
-
-### Security Boundary
-
-보안 경계는 Supported Environment에 적혀 있다.
-
-## Development
-
-### Local Workflow
+### Selected Start
 
 #### Working Procedure
 
@@ -85,18 +83,18 @@ secret 값은 이 manifest에 들어오지 않는다. Managed Identity와 Secret
 - **Infrastructure**: [../infrastructure/README.md](../infrastructure/README.md)
 - **Repository operations**: GitOps platform runbook (`docs/05.operations/runbooks/README.md`)
 
-### Checks
+## Checks
+
+### Readiness
 
 리뷰 전에 manifest 문법과 저장소 계약을 검증한다. Azure 리소스, identity,
 구독, live AKS 준비 상태를 주장하려면 provider·runtime 증거가 따로 필요하며
 이 스냅샷으로는 성립하지 않는다.
 
-## Operations
-
-### Runbook Links
-
-runbook 링크는 Local Workflow의 Reference Links에 있다.
-
-### Observability and Recovery
+### Failure Handling
 
 이 문서는 참조 전용 예시를 다루며 live 환경을 변경하지 않으므로 관측과 복구 절차가 없다.
+
+#### Runbook Links
+
+runbook 링크는 Selected Start의 Reference Links에 있다.

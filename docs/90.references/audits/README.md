@@ -1,16 +1,16 @@
 ---
 title: "90.references/audits"
-version: "0.2.5"
+version: "0.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 # 90.references/audits
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > 구현 audit pack, 그 보고서, 오래 유지할 audit 증거를 두는 곳이다.
 
@@ -32,9 +32,9 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - Operators
 - Documentation Writers
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
-#### In Scope
+##### In Scope
 
 - audit pack 색인 자료
 - 관찰 날짜가 붙은 구현·적합성 검사
@@ -42,7 +42,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - `docs/99.templates/templates/references/audit-pack.template.md`로 만든 pack README
 - `docs/99.templates/templates/references/audit.template.md`로 만든 보고서
 
-#### Out of Scope
+##### Out of Scope
 
 - 활성 거버넌스 정책이나 provider 실행 규칙
 - runtime roster 변경, hook 연결, 권한 변경
@@ -50,9 +50,13 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - 운영 runbook, release gate, 배포 승인, incident 대응
 - 생성되었거나 병행 관리되는 `docs/superpowers/**` 내용
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 폴더는 활성 거버넌스 정책, runtime 권한, 배포 절차, live cluster 준비 상태, provider 계약을 정의하지 않으며, 이는 계속 `.agents/`, `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/05.operations/`의 정본 소유자가 맡는다. runtime roster 변경, hook 연결, 권한 변경, live 클러스터·provider runtime·secret 검사, 운영 runbook, release gate, 배포 승인, incident 대응도 범위 밖이다.
+
+## Current Contents
+
+### Paths
 
 ```text
 audits/
@@ -62,13 +66,13 @@ audits/
 
 현재 pack은 [0001-sdlc-governance](./0001-sdlc-governance/README.md) 하나다.
 
-### Classification
+### Owners
 
 이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. audit pack 자료를 추가하거나 바꾸기 전에 해당 Spec 패키지(`docs/03.specs/`)가 있으면 그 Plan과 Task를 읽는다.
 2. `audits/####-<slug>/README.md`는
@@ -91,20 +95,18 @@ audits/
 - pack README와 멤버에서 저장소 최상위 소스를 가리킬 때는 `../../../../<path>`를 쓴다.
 - 선택 사항이거나 계획 중인 대상 경로는 대상이 생길 때까지 code literal로 둔다.
 
-### Transition and Exit
-
-이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [90.references README](../README.md)
 - [Agent Governance Hub](../../../.agents/README.md)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [Audit Pack Template](../../99.templates/templates/references/audit-pack.template.md)
 - [Audit Reference Template](../../99.templates/templates/references/audit.template.md)
 - [Templates README](../../99.templates/README.md)
+
+### Checks
+
+이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.

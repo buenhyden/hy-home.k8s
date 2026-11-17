@@ -1,16 +1,16 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.6.1"
+version: "1.7.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "POL-0007"
 ---
 
 # 앱 GitOps 온보딩 정책
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
@@ -22,12 +22,6 @@ artifact_id: "POL-0007"
 이 정책은 현재 앱 온보딩의 기준 계약이다. 실행 순서와 검증·복구 절차는
 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 담당한다.
 
-### Authority
-
-별도 상위 권위 문서 목록은 없으며, 인용된 ADR은 아래 Requirements의 각 통제 본문에 있다.
-
-## Scope
-
 ### Applies To
 
 - `apps` namespace에 배포되는 신규 애플리케이션 workload
@@ -38,9 +32,9 @@ artifact_id: "POL-0007"
 - **Agents**: 문서/운영 자동화 에이전트
 - **Environments**: Linux server local cluster
 
-### Exclusions
+#### Exclusions
 
-이 정책은 Applies To에 적은 범위에서 제외하는 항목을 따로 두지 않으며, bootstrap과 break-glass 예외는 제외가 아니라 Exception Conditions가 가리키는 POL-0001의 공통 예외를 따른다. 제외할 항목이 생기면 그 항목과 담당 문서를 여기에 적는다.
+이 정책은 Applies To에 적은 범위에서 제외하는 항목을 따로 두지 않으며, bootstrap과 break-glass 예외는 제외가 아니라 Exceptions가 가리키는 POL-0001의 공통 예외를 따른다. 제외할 항목이 생기면 그 항목과 담당 문서를 여기에 적는다.
 
 ## Rules
 
@@ -261,7 +255,18 @@ GitOps의 [`allow-egress-apps` 정책](../../../gitops/platform/network-policies
 
 ---
 
-### Enforcement
+### Exceptions
+
+- `kubectl apply` 또는 AppProject live 반영은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의 operator-approved bootstrap/break-glass 공통 예외를 따른다.
+- ExternalSecret이 필요 없는 앱은 OpenBao 연동 파일을 생략할 수 있지만, plaintext Kubernetes Secret manifest는 허용하지 않는다.
+
+#### Approval and Review
+
+예외 승인은 위 Exceptions가 가리키는 POL-0001의 operator-approved bootstrap/break-glass 공통 예외를 따른다.
+
+## Enforcement
+
+### Mechanisms
 
 - 정적 검증 증적: GitOps 구조, k8s manifest, secret-handling 검증이 통과해야 한다.
 - 런타임 증적: 승인된 온보딩 후 명명된 ArgoCD Application의 `Synced/Healthy`, Rollout 상태, 실제 Pod ready/desired 컨테이너 수와 Ingress TLS 상태를 확인한다. 현재 sample의 `2/2`를 모든 새 앱의 고정 컨테이너 수로 취급하지 않는다.
@@ -280,24 +285,21 @@ GitOps의 [`allow-egress-apps` 정책](../../../gitops/platform/network-policies
 - **AppProject**: [`../../../gitops/clusters/local/appproject-apps.yaml`](../../../gitops/clusters/local/appproject-apps.yaml)
 - **NetworkPolicy**: [`../../../gitops/platform/network-policies/apps-egress.yaml`](../../../gitops/platform/network-policies/apps-egress.yaml)
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-- `kubectl apply` 또는 AppProject live 반영은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의 operator-approved bootstrap/break-glass 공통 예외를 따른다.
-- ExternalSecret이 필요 없는 앱은 OpenBao 연동 파일을 생략할 수 있지만, plaintext Kubernetes Secret manifest는 허용하지 않는다.
-
-### Approval and Review
-
-예외 승인은 위 Exception Conditions가 가리키는 POL-0001의 operator-approved bootstrap/break-glass 공통 예외를 따른다.
+정적 검증 근거의 통과는 런타임 상태를 확정하지 않으며, 승인된 onboarding 뒤 이름 있는 ArgoCD Application, Rollout, Pod container 수, Ingress TLS를 따로 관측해야 한다. adminer의 analysis 간격과 canary 설정은 현재 구성 예시일 뿐 새 앱의 보편적 가용성 목표가 아니며, 예시의 `2/2`는 고정된 container 수가 아니다.
 
 ## Ownership
 
-### Responsibilities
+### Owner
+
+별도 상위 권위 문서 목록은 없으며, 인용된 ADR은 아래 Requirements의 각 통제 본문에 있다.
+
+#### Responsibilities
 
 책임 주체는 아래 Lifecycle Traceability 표의 Control owner 열에 적혀 있다.
 
-### Change and Adoption
+### Review Triggers
 
 변경 검토 시점은 위 Enforcement의 새 앱 온보딩 및 계약 변경 시 검토 항목을 따른다.
 

@@ -126,18 +126,18 @@ LOCAL_PROFILE_TABLES = {
 GUIDE = ("operation/guide", "common/template-operation-guide")
 ADR = ("sdlc/architecture-decision", "common/template-sdlc-architecture-decision")
 GUIDE_TREE = (
-    ("Purpose", ("Outcome", "Boundaries")),
-    ("Prerequisites", ("Environment", "Permissions")),
-    ("Procedure", ("Actions", "Exceptions")),
-    ("Verification", ("Expected Result", "Troubleshooting")),
+    ("Purpose", ("Audience", "Outcome")),
+    ("Prerequisites", ("Environment", "Authority")),
+    ("Procedure", ("Steps", "Expected Results")),
+    ("Troubleshooting", ("Symptoms", "Next Action")),
 )
 RUNBOOK = ("operation/runbook", "common/template-operation-runbook")
 RUNBOOK_TREE = (
-    ("Purpose", ("Trigger and Outcome", "Scope")),
-    ("Preconditions", ("Authority and Access", "Safety Checks")),
-    ("Steps", ("Actions", "Stop Conditions")),
-    ("Validation", ("Service Checks", "Evidence")),
-    ("Recovery", ("Rollback", "Escalation")),
+    ("Trigger and Scope", ("Trigger", "Targets")),
+    ("Preflight", ("Authority", "Environment")),
+    ("Procedure", ("Steps", "Stop Conditions")),
+    ("Verification", ("Expected Results", "Unverified Conditions")),
+    ("Escalation", ("Next Owner", "Recovery or Forward Repair")),
 )
 RUNBOOK_EXTENSIONS = [
     {
@@ -153,7 +153,7 @@ RUNBOOK_EXTENSIONS = [
         "removal": (
             "when the common Runbook form gains an H3 for non-rollback recovery"
         ),
-        "parent_id": "runbook-recovery",
+        "parent_id": "runbook.escalation",
         "title": "Recovery Procedures",
     },
     {
@@ -167,13 +167,13 @@ RUNBOOK_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Runbook form version changes",
         "removal": "when runbook lineage has another registered owner",
-        "parent_id": "runbook-validation",
+        "parent_id": "runbook.verification",
         "title": "Lifecycle Traceability",
     },
 ]
 RUNBOOK_TABLE_KEYS = {
     "Triggers": (
-        "runbook-steps-actions",
+        "runbook.procedure.1",
         ("Trigger", "Action", "Rollback"),
         0,
         "Trigger",
@@ -187,30 +187,26 @@ RUNBOOK_TABLE_KEYS = {
 }
 INCIDENT = ("operation/incident", "common/template-operation-incident")
 INCIDENT_TREE = (
-    ("Summary", ("Event", "Current Status")),
-    ("Impact", ("Affected Users", "Severity and Duration")),
-    ("Timeline", ("Events", "Decisions")),
-    ("Resolution", ("Mitigation", "Recovery Verification")),
-    ("Evidence", ("Evidence Sources", "Follow-up Owners")),
+    ("Impact", ("Affected Users", "Observed Scope")),
+    ("Response", ("Timeline", "Actions")),
+    ("Resolution", ("Verified State", "Remaining Work")),
 )
 POSTMORTEM = ("operation/postmortem", "common/template-operation-postmortem")
 POSTMORTEM_TREE = (
-    ("Summary", ("Incident Reference", "Review Scope")),
-    ("Root Cause", ("Causal Analysis", "Contributing Factors")),
-    ("Impact", ("Observed Impact", "Detection and Response")),
-    ("Corrective Actions", ("Actions", "Verification")),
-    ("Evidence", ("Source Records", "Review Decision")),
+    ("Facts", ("Timeline", "Impact")),
+    ("Causes", ("Contributing Factors", "Uncertainty")),
+    ("Actions", ("Prevention", "Owners and Checks")),
 )
 ROOT_FORM = ("common/readme-repository", "common/template-readme-repository")
 ROOT_FORM_TREE = (
-    ("Purpose", ("Project Role", "Boundaries")),
-    ("Repository Map", ("Directories", "Canonical Entry Points")),
-    ("Getting Started", ("Prerequisites", "First Verified Path")),
-    ("References", ("Current Documentation", "Support and Ownership")),
+    ("Purpose", ("Audience", "Outcome")),
+    ("Getting Started", ("Prerequisites", "First Use")),
+    ("Repository Map", ("Current Paths", "Owners")),
+    ("Support", ("Help", "Related Documentation")),
 )
 ROOT_TABLE_KEYS = {
     "Directory Index": (
-        "root-readme-repository-map-directories",
+        "root-readme.map.1",
         ("Path", "Purpose", "Owner"),
         0,
         "Path",
@@ -223,14 +219,13 @@ STAGE_FORM = (
     "common/template-readme-collection-index",
 )
 STAGE_FORM_TREE = (
-    ("Stage Responsibility", ("Purpose and Readers", "Inputs and Outputs")),
-    ("Contents", ("Current Items", "Classification")),
-    ("Workflow", ("Create and Review", "Transition and Exit")),
-    ("Related Documents", ("Upstream and Downstream", "Policy and Templates")),
+    ("Responsibility", ("Purpose", "Excluded Responsibilities")),
+    ("Current Contents", ("Paths", "Owners")),
+    ("Usage", ("Entry Points", "Checks")),
 )
 STAGE_TABLE_KEYS = {
     "Index": (
-        "stage-readme-contents-current-items",
+        "stage-readme.contents.1",
         ("Path", "Purpose", "Owner"),
         0,
         "Path",
@@ -243,14 +238,13 @@ SERVICE_FORM = (
     "common/template-readme-runtime-governance",
 )
 SERVICE_FORM_TREE = (
-    ("Purpose", ("Service Role", "Supported Environment")),
-    ("Interfaces", ("Inputs and Outputs", "Security Boundary")),
-    ("Development", ("Local Workflow", "Checks")),
-    ("Operations", ("Runbook Links", "Observability and Recovery")),
+    ("Service", ("Purpose", "Interfaces")),
+    ("Usage", ("Prerequisites", "Selected Start")),
+    ("Checks", ("Readiness", "Failure Handling")),
 )
 SERVICE_TABLE_KEYS = {
     "Commands": (
-        "service-readme-development-checks",
+        "service-readme.checks.1",
         ("Command", "Output"),
         0,
         "Command",
@@ -259,11 +253,10 @@ SERVICE_TABLE_KEYS = {
 POLICY_GOVERNANCE = ("governance/rule", "common/template-governance-rule")
 POLICY_OPERATIONS = ("operation/policy", "common/template-operation-policy")
 POLICY_TREE = (
-    ("Purpose", ("Objective", "Authority")),
-    ("Scope", ("Applies To", "Exclusions")),
-    ("Rules", ("Requirements", "Enforcement")),
-    ("Exceptions", ("Exception Conditions", "Approval and Review")),
-    ("Ownership", ("Responsibilities", "Change and Adoption")),
+    ("Purpose and Scope", ("Objective", "Applies To")),
+    ("Rules", ("Requirements", "Exceptions")),
+    ("Enforcement", ("Mechanisms", "Limits")),
+    ("Ownership", ("Owner", "Review Triggers")),
 )
 POLICY_EXTENSION = {
     "id": "policy-lifecycle-traceability",
@@ -276,14 +269,14 @@ POLICY_EXTENSION = {
     "verification": "the body-contract check",
     "review": "when the Policy form version changes",
     "removal": "when policy lineage has another registered owner",
-    "parent_id": "policy-ownership",
+    "parent_id": "policy.ownership",
     "title": "Lifecycle Traceability",
 }
 # SPEC-0194 (W03-D65): four common columns and the one optional Status extension.
 POLICY_RULES_COLUMNS = ("Rule ID", "Condition", "Level", "Evidence")
 POLICY_RULES_OPTIONAL = ("Status",)
 POLICY_RULES_TABLE = (
-    "policy-rules-requirements",
+    "policy.rules.1",
     (*POLICY_RULES_COLUMNS, *POLICY_RULES_OPTIONAL),
     0,
     "Rule ID",
@@ -307,10 +300,10 @@ AGENTS_TABLE_KEYS = {
 SKILL_GOVERNANCE = ("governance/skill", "common/template-governance-skill")
 SKILL_NATIVE = ("common/native-skill-package", "common/template-native-skill")
 SKILL_TREE = (
-    ("Purpose and Trigger", ("When to Use", "When Not to Use")),
+    ("Trigger", ("When to Use", "When Not to Use")),
     ("Procedure", ("Steps", "Failure Handling")),
-    ("Inputs and Outputs", ("Inputs", "Outputs")),
-    ("Verification", ("Checks", "Completion and Handoff")),
+    ("Outputs", ("Artifacts", "Handoff")),
+    ("Verification", ("Checks", "Limits")),
 )
 SKILL_EXTENSION = {
     "id": "skill-authority-boundary",
@@ -322,11 +315,11 @@ SKILL_EXTENSION = {
     "verification": "the form tree check",
     "review": "when the Skill form version changes",
     "removal": "when the common Skill form gains an authority H3",
-    "parent_id": "skill-purpose-and-trigger",
+    "parent_id": "skill.trigger",
     "title": "Authority Boundary",
 }
 SKILL_TABLE_KEYS = {
-    "Steps": ("skill-procedure-steps", ("Step", "Input", "Output"), 0, "Step")
+    "Steps": ("skill.procedure.1", ("Step", "Input", "Output"), 0, "Step")
 }
 WORKSPACE_FORM = (
     "common/readme-workspace-staging",
@@ -414,8 +407,7 @@ REQUIREMENT_TREE = (
     ("Overview", ("Problem and Outcome", "Stakeholders")),
     ("Scope", ("In Scope", "Constraints and Exclusions")),
     ("Requirements", ("Functional Requirements", "Quality Requirements")),
-    ("Acceptance Criteria", ("Acceptance Conditions", "Verification Method")),
-    ("Traceability", ("Source and Constraints", "Downstream Links")),
+    ("Traceability", ("Sources", "Verification Links")),
 )
 REQUIREMENT_EXTENSIONS = [
     {
@@ -429,7 +421,7 @@ REQUIREMENT_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Requirement form version changes",
         "removal": "when requirement lineage has another registered owner",
-        "parent_id": "requirement-traceability",
+        "parent_id": "requirement.relations",
         "title": "Lifecycle Traceability",
     },
     {
@@ -443,7 +435,7 @@ REQUIREMENT_EXTENSIONS = [
         "verification": ("the package-exit check and the retired-identity reservation"),
         "review": "when the Requirement form version changes",
         "removal": "when requirement lineage has another registered owner",
-        "parent_id": "requirement-traceability",
+        "parent_id": "requirement.relations",
         "title": "Archived Lineage",
     },
 ]
@@ -451,13 +443,13 @@ REQUIREMENT_COLUMNS = ("Requirement ID", "Statement", "Rationale", "Acceptance")
 REQUIREMENT_OPTIONAL = ("Priority",)
 REQUIREMENT_TABLE_KEYS = {
     "Functional Requirements": (
-        "requirement-requirements-functional-requirements",
+        "requirement.requirements.1",
         (*REQUIREMENT_COLUMNS, *REQUIREMENT_OPTIONAL),
         1,
         "Requirement ID",
     ),
     "Quality Requirements": (
-        "requirement-requirements-quality-requirements",
+        "requirement.requirements.2",
         (*REQUIREMENT_COLUMNS, *REQUIREMENT_OPTIONAL),
         0,
         "Requirement ID",
@@ -477,12 +469,11 @@ ARCHITECTURE = (
     "common/template-sdlc-architecture-description",
 )
 ARCHITECTURE_TREE = (
-    ("Overview", ("Purpose and Readers", "System Boundary")),
-    ("Context and Constraints", ("Context", "Constraints")),
-    ("Current Structure", ("Building Blocks", "Runtime and Deployment")),
-    ("Interfaces", ("Contracts", "Failure Boundaries")),
-    ("Decisions", ("Decision Links", "Quality and Risks")),
-    ("Traceability", ("Requirement Mapping", "Currentness and Lineage")),
+    ("Context and Boundaries", ("System Boundary", "Constraints")),
+    ("Structure", ("Building Blocks", "Interfaces")),
+    ("Runtime Behavior", ("Normal Flow", "Failure and Recovery")),
+    ("Quality Scenarios", ("Scenarios", "Trade-offs")),
+    ("Decisions and Adoption", ("Decisions", "Adoption Boundaries")),
 )
 ARCHITECTURE_EXTENSIONS = [
     {
@@ -497,7 +488,7 @@ ARCHITECTURE_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Architecture form version changes",
         "removal": "when architecture lineage has another registered owner",
-        "parent_id": "architecture-traceability",
+        "parent_id": "architecture.decisions",
         "title": "Lifecycle Traceability",
     },
     {
@@ -512,19 +503,19 @@ ARCHITECTURE_EXTENSIONS = [
         "verification": "the retired-identity reservation",
         "review": "when the Architecture form version changes",
         "removal": "when architecture lineage has another registered owner",
-        "parent_id": "architecture-traceability",
+        "parent_id": "architecture.decisions",
         "title": "Archived Lineage",
     },
 ]
 ARCHITECTURE_TABLE_KEYS = {
     "Constraints": (
-        "architecture-context-and-constraints-constraints",
+        "architecture.context.2",
         ("Architecture ID", "Constraint", "Affected Components"),
         0,
         "Architecture ID",
     ),
     "Quality Scenarios": (
-        "architecture-decisions-quality-and-risks",
+        "architecture.quality.1",
         ("Quality attribute", "Stimulus", "Environment", "Response", "Measure"),
         0,
         "Quality attribute",
@@ -1065,12 +1056,30 @@ LOCAL_LINK_ONLY["reference-report"].add("reference-report-sources")
 # Spec's local H3 extension and the four tables; the profiles carry no H2 list.
 SPEC_FORM = ("sdlc/spec", "common/template-sdlc-spec")
 SPEC_FORM_TREE = (
+    ("Overview", ("Goal", "Consumers")),
+    ("Scope", ("In Scope", "Out of Scope")),
+    ("Behavior Contract", ("Inputs and Outputs", "Failure Behavior")),
+    ("Acceptance Criteria", ("Criteria", "Verification Strategy")),
+)
+# SPEC-0221: the approved and frozen Specs and Plans keep the tree they were
+# approved with, bound to their four identities.
+SPEC_RETAINED_TREE = (
     ("Overview", ("Intent", "Owning Requirements")),
     ("Scope", ("In Scope", "Non-goals")),
     ("Behavior Contract", ("Normal Behavior", "Failure and Edge Cases")),
     ("Acceptance Criteria", ("Criteria", "Evidence Requirements")),
     ("References", ("Normative and Evidence", "Historical and Navigation")),
 )
+PLAN_RETAINED_TREE = (
+    ("Overview", ("Goal and Boundary", "Assumptions")),
+    ("Dependencies", ("Prerequisites", "Dependency Order")),
+    ("Implementation Strategy", ("Work Breakdown", "Change and Rollback")),
+    ("Verification Plan", ("Verification Matrix", "Stage Placement")),
+    ("Risks", ("Risks and Mitigations", "Escalation")),
+    ("Promotion Map", ("Durable Meaning", "Owner and Receipt")),
+)
+SPEC_RETAINED_BOUND = "^SPEC-0(?:161|221)$"
+PLAN_RETAINED_BOUND = "^SPEC-0(?:161|221)-PLAN-0001$"
 SPEC_FORM_EXTENSIONS = [
     {
         "id": "spec-lifecycle-traceability",
@@ -1085,13 +1094,68 @@ SPEC_FORM_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Spec form version changes",
         "removal": "when Spec traceability has another registered owner",
-        "parent_id": "spec-references",
+        "parent_id": "spec.acceptance",
         "title": "Lifecycle Traceability",
-    }
+    },
+    {
+        "id": "spec-approved-retained-form",
+        "kind": "retained_form",
+        "condition": (
+            "an approved Spec of SPEC-0161 or SPEC-0221 keeps the five H2 it was "
+            "approved with and its Lifecycle Traceability table under References; "
+            "every other Spec takes the form tree"
+        ),
+        "owner": "platform",
+        "verification": "tests/test_common_form_tree.py",
+        "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
+        "removal": "when neither package remains in the tree; the bound is never widened",
+        "statuses": ["approved"],
+        "identity_bound": SPEC_RETAINED_BOUND,
+        "retained_sections": {
+            "required": [h2 for h2, _ in SPEC_RETAINED_TREE],
+            "optional": [],
+            "forbidden": [],
+        },
+        "body_contract": {
+            "section": "References",
+            "table_heading": "Lifecycle Traceability",
+        },
+    },
+]
+PLAN_FORM_EXTENSIONS = [
+    {
+        "id": "plan-approved-retained-form",
+        "kind": "retained_form",
+        "condition": (
+            "an approved Plan of SPEC-0161 or SPEC-0221 keeps the six H2 it was "
+            "approved with and its Work Breakdown table under Implementation "
+            "Strategy; every other Plan takes the form tree"
+        ),
+        "owner": "platform",
+        "verification": "tests/test_common_form_tree.py",
+        "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
+        "removal": "when neither package remains in the tree; the bound is never widened",
+        "statuses": ["approved"],
+        "identity_bound": PLAN_RETAINED_BOUND,
+        "retained_sections": {
+            "required": [h2 for h2, _ in PLAN_RETAINED_TREE],
+            "optional": [],
+            "forbidden": [],
+        },
+        "body_contract": {
+            "section": "Implementation Strategy",
+            "table_heading": "Work Breakdown",
+        },
+        "section_titles": {
+            "plan.intent.2": "Goal and Boundary",
+            "plan.work.1": "Work Breakdown",
+            "plan.promotion.1": "Owner and Receipt",
+        },
+    },
 ]
 SPEC_FORM_TABLE_KEYS = {
     "Criteria": (
-        "spec-acceptance-criteria-criteria",
+        "spec.acceptance.1",
         ("Criterion ID", "Expected Result"),
         1,
         "Criterion ID",
@@ -1105,27 +1169,60 @@ SPEC_FORM_TABLE_KEYS = {
 }
 PLAN_FORM = ("sdlc/plan", "common/template-sdlc-plan")
 PLAN_FORM_TREE = (
-    ("Overview", ("Goal and Boundary", "Assumptions")),
-    ("Dependencies", ("Prerequisites", "Dependency Order")),
-    ("Implementation Strategy", ("Work Breakdown", "Change and Rollback")),
-    ("Verification Plan", ("Verification Matrix", "Stage Placement")),
-    ("Risks", ("Risks and Mitigations", "Escalation")),
-    ("Promotion Map", ("Durable Meaning", "Owner and Receipt")),
+    ("Overview", ("Outcome", "Constraints")),
+    ("Dependencies", ("Prerequisites", "Shared Resources")),
+    ("Work Breakdown", ("Work Units", "Dependency Edges")),
+    ("Verification Plan", ("Selected Checks", "Evidence Plan")),
+    ("Promotion Map", ("Durable Owners", "Consumer Updates")),
 )
 PLAN_FORM_TABLE_KEYS = {
     "Work Breakdown": (
-        "plan-implementation-strategy-work-breakdown",
+        "plan.work.1",
         ("Work Unit", "Criteria", "Work", "Dependencies", "Task", "Verification"),
         1,
         "Work Unit",
     ),
     "Promotion": (
-        "plan-promotion-map-owner-and-receipt",
+        "plan.promotion.1",
         ("Promotion ID", "Target Owner", "Acceptance", "Evidence"),
         1,
         "Promotion ID",
     ),
 }
+# SPEC-0221: an adopted form takes the target section IDs, <role>.<group> for
+# an H2 and <role>.<group>.<n> for an H3; every other form keeps the slug IDs.
+TARGET_GROUPS = {
+    "guide": ("purpose", "prerequisites", "steps", "troubleshoot"),
+    "runbook": ("trigger", "preflight", "procedure", "verification", "escalation"),
+    "policy": ("purpose", "rules", "enforcement", "ownership"),
+    "incident": ("impact", "response", "resolution"),
+    "postmortem": ("facts", "causes", "actions"),
+    "requirement": ("intent", "scope", "requirements", "relations"),
+    "architecture": ("context", "structure", "behavior", "quality", "decisions"),
+    "spec": ("intent", "scope", "behavior", "acceptance"),
+    "plan": ("intent", "dependencies", "work", "verification", "promotion"),
+    "root-readme": ("purpose", "start", "map", "support"),
+    "stage-readme": ("scope", "contents", "use"),
+    "service-readme": ("service", "use", "checks"),
+    "skill": ("trigger", "procedure", "output", "verification"),
+}
+
+
+def section_id_of(
+    form_id: str,
+    position: int,
+    title: str,
+    n: int | None = None,
+    child: str | None = None,
+) -> str:
+    groups = TARGET_GROUPS.get(form_id)
+    if groups is not None:
+        h2 = f"{form_id}.{groups[position - 1]}"
+        return h2 if n is None else f"{h2}.{n}"
+    h2 = f"{form_id}-{slug(title)}"
+    return h2 if child is None else f"{h2}-{slug(child)}"
+
+
 SDLC_TASK_FORM = ("sdlc/task", "common/template-sdlc-task")
 SDLC_TASK_FORM_TREE = (
     ("Scope", ("Objective and Parent", "Inputs and Authority")),
@@ -1308,7 +1405,7 @@ INCIDENT_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the form version changes",
         "removal": "when incident lineage has another registered owner",
-        "parent_id": "incident-evidence",
+        "parent_id": "incident.resolution",
         "title": "Lifecycle Traceability",
     }
 ]
@@ -1321,7 +1418,7 @@ POSTMORTEM_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the form version changes",
         "removal": "when incident lineage has another registered owner",
-        "parent_id": "postmortem-corrective-actions",
+        "parent_id": "postmortem.actions",
         "title": "Lifecycle Traceability",
     },
     {
@@ -1334,13 +1431,13 @@ POSTMORTEM_EXTENSIONS = [
         "verification": "the form tree check",
         "review": "when the Postmortem form version changes",
         "removal": "when the common Postmortem form gains a What Went Well H3",
-        "parent_id": "postmortem-impact",
+        "parent_id": "postmortem.facts",
         "title": "What Went Well",
     },
 ]
 INCIDENT_TABLE_KEYS = {
     "Events": (
-        "incident-timeline-events",
+        "incident.response.1",
         ("Timestamp", "Event", "Actor"),
         0,
         "Timestamp",
@@ -1354,7 +1451,7 @@ INCIDENT_TABLE_KEYS = {
 }
 POSTMORTEM_TABLE_KEYS = {
     "Actions": (
-        "postmortem-corrective-actions-actions",
+        "postmortem.actions.1",
         ("Action", "Owner", "Verification"),
         0,
         "Action",
@@ -1382,11 +1479,11 @@ GUIDE_EXTENSION = {
     "verification": "the body-contract check",
     "review": "when the Guide form version changes",
     "removal": "when guide lineage has another registered owner",
-    "parent_id": "guide-verification",
+    "parent_id": "guide.troubleshoot",
     "title": "Lifecycle Traceability",
 }
 GUIDE_TABLE_KEYS = {
-    "Steps": ("guide-procedure-actions", ("Step", "Action", "Check"), 0, "Step"),
+    "Steps": ("guide.steps.1", ("Step", "Action", "Check"), 0, "Step"),
     "Lifecycle Traceability": (
         "guide-lifecycle-traceability",
         ("Promoted owner", "Audience outcome", "Operating surface"),
@@ -1491,7 +1588,7 @@ def extension(**fields: object) -> dict:
 def definition(**fields: object) -> dict:
     item = {
         "contract_id": "COMMON-DOC-FORM-1",
-        "contract_version": "1.0.0",
+        "contract_version": "2.0.0",
         "purpose": "Give authors the guide form.",
         "responsibility": "One guide per procedure.",
         "non_goals": ["Runbook steps"],
@@ -1591,7 +1688,7 @@ class RepositoryRegistryTests(unittest.TestCase):
         )
         common = raw["common_forms"]
         self.assertEqual(common["contract_id"], "COMMON-DOC-FORM-1")
-        self.assertEqual(common["version"], "1.0.0")
+        self.assertEqual(common["version"], "2.0.0")
         by_id = {profile["id"]: profile for profile in raw["profiles"]}
         for form_id, tree, extensions, tables, profiles, body_section in (
             (
@@ -1600,7 +1697,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 [GUIDE_EXTENSION],
                 GUIDE_TABLE_KEYS,
                 GUIDE,
-                "Verification",
+                "Troubleshooting",
             ),
             (
                 "runbook",
@@ -1608,7 +1705,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 RUNBOOK_EXTENSIONS,
                 RUNBOOK_TABLE_KEYS,
                 RUNBOOK,
-                "Validation",
+                "Verification",
             ),
             (
                 "incident",
@@ -1616,7 +1713,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 INCIDENT_EXTENSIONS,
                 INCIDENT_TABLE_KEYS,
                 INCIDENT,
-                "Evidence",
+                "Resolution",
             ),
             (
                 "postmortem",
@@ -1624,7 +1721,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 POSTMORTEM_EXTENSIONS,
                 POSTMORTEM_TABLE_KEYS,
                 POSTMORTEM,
-                "Corrective Actions",
+                "Actions",
             ),
             (
                 "root-readme",
@@ -1717,7 +1814,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ARCHITECTURE_EXTENSIONS,
                 ARCHITECTURE_TABLE_KEYS,
                 ARCHITECTURE,
-                "Traceability",
+                "Decisions and Adoption",
             ),
             (
                 "adr",
@@ -1733,15 +1830,15 @@ class RepositoryRegistryTests(unittest.TestCase):
                 SPEC_FORM_EXTENSIONS,
                 SPEC_FORM_TABLE_KEYS,
                 SPEC_FORM,
-                "References",
+                "Acceptance Criteria",
             ),
             (
                 "plan",
                 PLAN_FORM_TREE,
-                [],
+                PLAN_FORM_EXTENSIONS,
                 PLAN_FORM_TABLE_KEYS,
                 PLAN_FORM,
-                "Implementation Strategy",
+                "Work Breakdown",
             ),
             (
                 "task",
@@ -1769,12 +1866,12 @@ class RepositoryRegistryTests(unittest.TestCase):
                 ],
                 [
                     (
-                        f"{form_id}-{slug(title)}",
+                        section_id_of(form_id, position, title),
                         title,
                         position,
                         [
                             (
-                                f"{form_id}-{slug(title)}-{slug(child)}",
+                                section_id_of(form_id, position, title, n, child),
                                 child,
                                 n,
                             )
@@ -1797,12 +1894,12 @@ class RepositoryRegistryTests(unittest.TestCase):
             self.assertEqual(
                 conditional,
                 {
-                    "runbook": {"runbook-recovery-rollback"},
+                    "runbook": {"runbook.escalation.2"},
                     "reference-pack-readme": {
                         f"reference-pack-readme-{title.lower().replace(' ', '-')}"
                         for title in PACK_NOT_REQUIRED
                     },
-                    "requirement": {"requirement-requirements-quality-requirements"},
+                    "requirement": {"requirement.requirements.2"},
                     "adr": {"adr-traceability-supersession"},
                     "reference-report": {
                         f"reference-report-{slug(h2)}-{slug(h3)}"
@@ -2368,7 +2465,7 @@ class GuideFormRegistryTests(unittest.TestCase):
         steps, lifecycle = twin.tables
         self.assertEqual(
             (steps.name, steps.section, steps.minimum_rows, steps.row_identity),
-            ("Steps", "guide-procedure-actions", 0, "Step"),
+            ("Steps", "guide.steps.1", 0, "Step"),
         )
         self.assertEqual(
             [column.key for column in lifecycle.columns],
@@ -2405,7 +2502,7 @@ class GuideFormRegistryTests(unittest.TestCase):
         raw = load_raw()
         guide_tables(raw)[0]["section"] = "Actions"
         self.assertIn("REGISTRY_TABLE_SECTION", rules_of(raw))
-        for accepted in ("guide-purpose", "guide-verification-troubleshooting"):
+        for accepted in ("guide.purpose", "guide.troubleshoot.1"):
             raw = load_raw()
             guide_tables(raw)[0]["section"] = accepted
             with self.subTest(section=accepted):
@@ -2768,12 +2865,14 @@ def guide_body(actions: str, verification: str = "") -> str:
     return md(
         "# Guide",
         "## Procedure",
-        "### Actions",
+        "### Steps",
         actions,
-        "### Exceptions",
+        "### Expected Results",
+        "Pass.",
+        "## Troubleshooting",
+        "### Next Action",
         "None.",
-        "## Verification",
-        verification or "### Expected Result\n\nPass.",
+        *((verification,) if verification else ()),
     )
 
 
@@ -2852,16 +2951,17 @@ class TableCheckTests(unittest.TestCase):
         body = md(
             "# Guide",
             "## Procedure",
-            "### Actions",
+            "### Steps",
             "Run it.",
-            "### Exceptions",
+            "## Troubleshooting",
+            "### Next Action",
             "| Step | Action |\n| --- | --- |\n| 1 | Run |",
         )
         self.assertEqual(self.found(body), [])
         self.assertEqual(self.found(body, self.strict), ["BODY-TABLE-ROWS"])
 
     def test_a_non_unique_section_heading_is_left_to_the_tree_check(self) -> None:
-        body = guide_body(STEPS) + "\n### Actions\n\n" + OTHER + "\n"
+        body = guide_body(STEPS) + "\n### Steps\n\n" + OTHER + "\n"
         self.assertEqual(self.found(body, self.strict), [])
 
     def test_the_body_contract_table_is_not_checked_twice(self) -> None:
@@ -3008,29 +3108,29 @@ class RootReadmeFormTests(unittest.TestCase):
     def test_a_complete_body_passes_the_tree_and_an_h4_is_allowed(self) -> None:
         self.assertEqual(self.tree(self.BODY), [])
         deeper = self.BODY.replace(
-            "### Boundaries\n\nText.",
-            "### Boundaries\n\nText.\n\n#### In Scope\n\nText.",
+            "### Outcome\n\nText.",
+            "### Outcome\n\nText.\n\n#### In Scope\n\nText.",
         )
         self.assertEqual(self.tree(deeper), [])
 
     def test_a_missing_h3_or_an_old_h2_fails_the_tree(self) -> None:
         self.assertIn(
             "BODY-H3-REQUIRED",
-            self.tree(self.BODY.replace("### Directories", "#### Directories")),
+            self.tree(self.BODY.replace("### Current Paths", "#### Current Paths")),
         )
         self.assertNotEqual(self.tree(self.BODY + "\n## Structure\n\nText.\n"), [])
 
-    def test_the_navigation_section_is_the_directories_h3(self) -> None:
+    def test_the_navigation_section_is_the_current_paths_h3(self) -> None:
         navigation = self.registry.readme_navigation.profiles[ROOT_FORM[0]]
         self.assertEqual(
-            (navigation.section, navigation.complete), ("Directories", False)
+            (navigation.section, navigation.complete), ("Current Paths", False)
         )
 
 
 class StageReadmeFormTests(unittest.TestCase):
     """SPEC-0173: the Stage README form, its Index table and its navigation."""
 
-    HOME = "### Current Items\n\nText."
+    HOME = "### Paths\n\nText."
     HEADER = ("Path", "Purpose", "Owner")
     BODY = md(
         "# Stage",
@@ -3078,8 +3178,8 @@ class StageReadmeFormTests(unittest.TestCase):
             with self.subTest(profile=profile_id):
                 self.assertEqual(self.tree(profile_id, self.BODY), [])
                 deeper = self.BODY.replace(
-                    "### Classification\n\nText.",
-                    "### Classification\n\nText.\n\n#### Matrix\n\nText.",
+                    "### Owners\n\nText.",
+                    "### Owners\n\nText.\n\n#### Matrix\n\nText.",
                 )
                 self.assertEqual(self.tree(profile_id, deeper), [])
                 self.assertNotEqual(
@@ -3089,7 +3189,7 @@ class StageReadmeFormTests(unittest.TestCase):
                     "BODY-H3-REQUIRED",
                     self.tree(
                         profile_id,
-                        self.BODY.replace("### Current Items", "#### Current Items"),
+                        self.BODY.replace("### Paths", "#### Paths"),
                     ),
                 )
 
@@ -3126,26 +3226,24 @@ class StageReadmeFormTests(unittest.TestCase):
                     )
 
     def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
-        wrong = self.with_table(
-            "| Path |", "| --- |", "| a |", home="### Classification"
-        )
+        wrong = self.with_table("| Path |", "| --- |", "| a |", home="### Owners")
         for profile_id in STAGE_FORM[::2]:
             with self.subTest(profile=profile_id):
                 self.assertEqual(self.tables(profile_id, wrong), [])
 
-    def test_the_navigation_section_is_the_current_items_h3(self) -> None:
+    def test_the_navigation_section_is_the_paths_h3(self) -> None:
         for profile_id in STAGE_FORM[::2]:
             navigation = self.registry.readme_navigation.profiles[profile_id]
             with self.subTest(profile=profile_id):
                 self.assertEqual(
-                    (navigation.section, navigation.complete), ("Current Items", True)
+                    (navigation.section, navigation.complete), ("Paths", True)
                 )
 
 
 class ServiceReadmeFormTests(unittest.TestCase):
     """SPEC-0174: the Service README form, its Commands table and navigation."""
 
-    HOME = "### Checks\n\nText."
+    HOME = "### Readiness\n\nText."
     HEADER = ("Command", "Output")
     BODY = md(
         "# Service",
@@ -3193,8 +3291,8 @@ class ServiceReadmeFormTests(unittest.TestCase):
             with self.subTest(profile=profile_id):
                 self.assertEqual(self.tree(profile_id, self.BODY), [])
                 deeper = self.BODY.replace(
-                    "### Service Role\n\nText.",
-                    "### Service Role\n\nText.\n\n#### Matrix\n\nText.",
+                    "### Purpose\n\nText.",
+                    "### Purpose\n\nText.\n\n#### Matrix\n\nText.",
                 )
                 self.assertEqual(self.tree(profile_id, deeper), [])
                 self.assertNotEqual(
@@ -3204,7 +3302,7 @@ class ServiceReadmeFormTests(unittest.TestCase):
                     "BODY-H3-REQUIRED",
                     self.tree(
                         profile_id,
-                        self.BODY.replace("### Checks", "#### Checks"),
+                        self.BODY.replace("### Readiness", "#### Readiness"),
                     ),
                 )
 
@@ -3238,17 +3336,15 @@ class ServiceReadmeFormTests(unittest.TestCase):
 
     def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
         wrong = self.with_table(
-            "| Command |", "| --- |", "| a |", home="### Local Workflow"
+            "| Command |", "| --- |", "| a |", home="### Selected Start"
         )
         for profile_id in SERVICE_FORM[::2]:
             with self.subTest(profile=profile_id):
                 self.assertEqual(self.tables(profile_id, wrong), [])
 
-    def test_the_navigation_section_is_the_service_role_h3(self) -> None:
+    def test_the_navigation_section_is_the_purpose_h3(self) -> None:
         navigation = self.registry.readme_navigation.profiles[SERVICE_FORM[0]]
-        self.assertEqual(
-            (navigation.section, navigation.complete), ("Service Role", False)
-        )
+        self.assertEqual((navigation.section, navigation.complete), ("Purpose", False))
         self.assertNotIn(SERVICE_FORM[2], self.registry.readme_navigation.profiles)
 
 
@@ -3305,20 +3401,20 @@ TRIGGERS = (
 )
 RUNBOOK_BODY = md(
     "# Runbook title",
-    "## Purpose",
-    "### Trigger and Outcome\n\nAn alert starts it.",
-    "### Scope\n\nOne service.",
-    "## Preconditions",
-    "### Authority and Access\n\nOwner approval.",
-    "### Safety Checks\n\nBackup exists.",
-    "## Steps",
-    "### Actions\n\nRun it.",
+    "## Trigger and Scope",
+    "### Trigger\n\nAn alert starts it.",
+    "### Targets\n\nOne service.",
+    "## Preflight",
+    "### Authority\n\nOwner approval.",
+    "### Environment\n\nBackup exists.",
+    "## Procedure",
+    "### Steps\n\nRun it.",
     "### Stop Conditions\n\nStop on error.",
-    "## Validation",
-    "### Service Checks\n\nRead the status.",
-    "### Evidence\n\nNone recorded.",
-    "## Recovery",
-    "### Escalation\n\nCall the owner.",
+    "## Verification",
+    "### Expected Results\n\nRead the status.",
+    "### Unverified Conditions\n\nNone recorded.",
+    "## Escalation",
+    "### Next Owner\n\nCall the owner.",
 )
 
 
@@ -3377,7 +3473,7 @@ class RunbookFormTests(unittest.TestCase):
                 triggers.minimum_rows,
                 triggers.row_identity,
             ),
-            ("Triggers", "runbook-steps-actions", 0, "Trigger"),
+            ("Triggers", "runbook.procedure.1", 0, "Trigger"),
         )
         self.assertEqual(
             [column.key for column in lifecycle.columns],
@@ -3437,15 +3533,17 @@ class RunbookFormTests(unittest.TestCase):
         block = "### Recovery Procedures\n\nRestore the replica from the snapshot."
         self.assertEqual(self.tree(self.under("", block)), [])
         before_rollback = RUNBOOK_BODY.replace(
-            "### Escalation",
-            block + "\n\n### Rollback\n\nUndo step 1.\n\n### Escalation",
+            "### Next Owner\n\nCall the owner.",
+            "### Next Owner\n\nCall the owner.\n\n"
+            + block
+            + "\n\n### Recovery or Forward Repair\n\nUndo step 1.",
         )
         self.assertEqual(self.tree(before_rollback), [])
 
     def test_recovery_procedures_under_another_h2_is_refused(self) -> None:
         block = "### Recovery Procedures\n\nRestore the replica."
         self.assertEqual(
-            self.tree(self.under("## Validation", block)), ["BODY-H3-PARENT"]
+            self.tree(self.under("## Verification", block)), ["BODY-H3-PARENT"]
         )
 
     def test_an_absent_recovery_procedures_passes_and_an_empty_one_fails(self) -> None:
@@ -3462,8 +3560,10 @@ class RunbookFormTests(unittest.TestCase):
             "| Promoted owner | Trigger or control | Evidence or recovery owner |\n"
             "| --- | --- | --- |\n| N/A | None | None |"
         )
-        self.assertEqual(self.tree(self.under("## Recovery", block)), [])
-        self.assertEqual(self.tree(self.under("## Steps", block)), ["BODY-H3-PARENT"])
+        self.assertEqual(self.tree(self.under("## Escalation", block)), [])
+        self.assertEqual(
+            self.tree(self.under("## Procedure", block)), ["BODY-H3-PARENT"]
+        )
 
 
 INCIDENT_PATH = PurePosixPath(
@@ -3471,42 +3571,39 @@ INCIDENT_PATH = PurePosixPath(
 )
 INCIDENT_BODY = md(
     "# Incident title",
-    "## Summary",
-    "### Event\n\n| Field | Value |\n| --- | --- |\n| Severity | SEV-2 |",
-    "### Current Status\n\nInvestigating.",
     "## Impact",
     "### Affected Users\n\nOne team.",
-    "### Severity and Duration\n\nSEV-2 for one hour.",
-    "## Timeline",
-    "### Events\n\nThe alert fired.",
-    "### Decisions\n\nThe commander chose rollback.",
+    "### Observed Scope\n\nSEV-2 for one hour.",
+    "#### Event\n\n| Field | Value |\n| --- | --- |\n| Severity | SEV-2 |",
+    "#### Current Status\n\nInvestigating.",
+    "## Response",
+    "### Timeline\n\nThe alert fired.",
+    "#### Decisions\n\nThe commander chose rollback.",
+    "### Actions\n\nRolled back.",
     "## Resolution",
-    "### Mitigation\n\nRolled back.",
-    "### Recovery Verification\n\nChecks pass.",
-    "## Evidence",
-    "### Evidence Sources\n\nA log link.",
-    "### Follow-up Owners\n\nA Task owner.",
+    "### Verified State\n\nChecks pass.",
+    "### Remaining Work\n\nA Task owner.",
+    "#### Evidence Sources\n\nA log link.",
 )
 POSTMORTEM_PATH = PurePosixPath(
     "docs/05.operations/incidents/2026/inc-0001-example/postmortem.md"
 )
 POSTMORTEM_BODY = md(
     "# Postmortem title",
-    "## Summary",
-    "### Incident Reference\n\nIncident INC-0001 as recorded in the incident folder.",
-    "### Review Scope\n\nThe whole event.",
-    "## Root Cause",
-    "### Causal Analysis\n\nA bad rollout.",
+    "## Facts",
+    "### Timeline\n\nIncident INC-0001 as recorded in the incident folder.",
+    "#### Review Scope\n\nThe whole event.",
+    "### Impact\n\nOne team.",
+    "#### Detection and Response\n\nAn alert fired.",
+    "## Causes",
     "### Contributing Factors\n\nNo canary.",
-    "## Impact",
-    "### Observed Impact\n\nOne team.",
-    "### Detection and Response\n\nAn alert fired.",
-    "## Corrective Actions",
-    "### Actions\n\nAdd a canary.",
-    "### Verification\n\nThe canary catches it.",
-    "## Evidence",
-    "### Source Records\n\nA log link.",
-    "### Review Decision\n\nApproved.",
+    "#### Causal Analysis\n\nA bad rollout.",
+    "### Uncertainty\n\nNone: no open question remains.",
+    "## Actions",
+    "### Prevention\n\nAdd a canary.",
+    "### Owners and Checks\n\nThe canary catches it.",
+    "#### Source Records\n\nA log link.",
+    "#### Review Decision\n\nApproved.",
 )
 
 
@@ -3643,7 +3740,7 @@ class RoleFormBody(unittest.TestCase):
 
     def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
         wrong = self.table(self.HEADER[:2], ("a", "b"))
-        body = self.with_table(wrong, home="### Source Records")
+        body = self.with_table(wrong, home="#### Source Records")
         self.assertEqual(self.tables(body), [])
 
 
@@ -3678,7 +3775,7 @@ class IncidentFormTests(RoleFormBody):
         )
         self.assertEqual(self.tree(self.under("", block)), [])
         self.assertEqual(
-            self.tree(self.under("## Evidence", block)), ["BODY-H3-PARENT"]
+            self.tree(self.under("## Resolution", block)), ["BODY-H3-PARENT"]
         )
 
 
@@ -3697,9 +3794,9 @@ class PostmortemFormTests(RoleFormBody):
     WELL = "### What Went Well\n\nThe alert fired within a minute."
 
     def test_what_went_well_is_accepted_under_impact(self) -> None:
-        self.assertEqual(self.tree(self.under("## Corrective Actions", self.WELL)), [])
+        self.assertEqual(self.tree(self.under("## Causes", self.WELL)), [])
         after_detection = POSTMORTEM_BODY.replace(
-            "## Corrective Actions", self.WELL + "\n\n## Corrective Actions"
+            "## Causes", self.WELL + "\n\n## Causes"
         )
         self.assertLess(
             after_detection.index("### Detection and Response"),
@@ -3707,7 +3804,7 @@ class PostmortemFormTests(RoleFormBody):
         )
 
     def test_what_went_well_under_another_h2_is_refused(self) -> None:
-        for heading in ("## Root Cause", "## Evidence"):
+        for heading in ("## Actions", "### Owners and Checks"):
             with self.subTest(before=heading):
                 self.assertEqual(
                     self.tree(self.under(heading, self.WELL)), ["BODY-H3-PARENT"]
@@ -3717,7 +3814,7 @@ class PostmortemFormTests(RoleFormBody):
     def test_an_absent_what_went_well_passes_and_an_empty_one_fails(self) -> None:
         self.assertNotIn("What Went Well", POSTMORTEM_BODY)
         self.assertEqual(self.tree(POSTMORTEM_BODY), [])
-        empty = self.under("## Corrective Actions", "### What Went Well\n")
+        empty = self.under("## Causes", "### What Went Well\n")
         self.assertEqual(self.tree(empty), ["BODY-SECTION-EMPTY"])
 
     def test_what_went_wrong_is_an_h4_under_contributing_factors(self) -> None:
@@ -3733,8 +3830,8 @@ class PostmortemFormTests(RoleFormBody):
             "| Feedback target |\n| --- | --- | --- | --- |\n"
             "| Cause | Platform | N/A | Spec |"
         )
-        self.assertEqual(self.tree(self.under("## Evidence", block)), [])
-        self.assertEqual(self.tree(self.under("", block)), ["BODY-H3-PARENT"])
+        self.assertEqual(self.tree(self.under("", block)), [])
+        self.assertEqual(self.tree(self.under("## Actions", block)), ["BODY-H3-PARENT"])
 
 
 GOVERNANCE_POLICY_PATH = PurePosixPath(".agents/governance/agent-execution.md")
@@ -3746,21 +3843,21 @@ OPERATIONS_POLICY_PATH = PurePosixPath(
 def policy_body() -> str:
     return md(
         "# Policy title",
-        "## Purpose",
+        "## Purpose and Scope",
         "### Objective\n\nKeep changes reviewable.",
-        "### Authority\n\nPlatform owns this policy.",
-        "## Scope",
         "### Applies To\n\nEvery change.",
-        "### Exclusions\n\nNone: nothing is excluded.",
+        "#### Exclusions\n\nNone: nothing is excluded.",
         "## Rules",
         "### Requirements\n\nReview every change.",
-        "### Enforcement\n\nCI checks it.",
-        "## Exceptions",
-        "### Exception Conditions\n\nNone: no exception exists.",
-        "### Approval and Review\n\nThe owner approves.",
+        "### Exceptions\n\nNone: no exception exists.",
+        "#### Approval and Review\n\nThe owner approves.",
+        "## Enforcement",
+        "### Mechanisms\n\nCI checks it.",
+        "### Limits\n\nCI cannot see a manual change.",
         "## Ownership",
-        "### Responsibilities\n\nPlatform.",
-        "### Change and Adoption\n\nChanges follow the Spec.",
+        "### Owner\n\nPlatform owns this policy.",
+        "#### Responsibilities\n\nPlatform.",
+        "### Review Triggers\n\nChanges follow the Spec.",
     )
 
 
@@ -3822,14 +3919,14 @@ class OperationsPolicyFormTests(RoleFormBody):
     ) -> None:
         body = self.under("", self.BLOCK)
         self.assertLess(
-            body.index("### Change and Adoption"),
+            body.index("### Review Triggers"),
             body.index("### Lifecycle Traceability"),
         )
         self.assertEqual(self.tree(body), [])
         self.assertEqual(self.tables(body), [])
 
     def test_lifecycle_traceability_under_another_h2_is_refused(self) -> None:
-        for heading in ("## Rules", "## Exceptions", "## Ownership"):
+        for heading in ("## Rules", "## Enforcement", "## Ownership"):
             with self.subTest(before=heading):
                 self.assertEqual(
                     self.tree(self.under(heading, self.BLOCK)), ["BODY-H3-PARENT"]
@@ -4068,18 +4165,18 @@ class BareSectionTests(unittest.TestCase):
 def skill_body(*, preface: str = "") -> str:
     blocks = (
         "# Skill title",
-        "## Purpose and Trigger",
+        "## Trigger",
         "### When to Use\n\nUse it when a change needs review.",
         "### When Not to Use\n\nNot for a one-line fix.",
         "## Procedure",
         "### Steps\n\n1. Run the check.",
         "### Failure Handling\n\nStop on a failed check.",
-        "## Inputs and Outputs",
-        "### Inputs\n\nThe request.",
-        "### Outputs\n\nA report.",
+        "## Outputs",
+        "### Artifacts\n\nA report.",
+        "### Handoff\n\nRecord the result.",
         "## Verification",
         "### Checks\n\nRun the suite.",
-        "### Completion and Handoff\n\nRecord the result.",
+        "### Limits\n\nThe suite does not prove live state.",
     )
     return md(*((preface,) if preface else ()), *blocks)
 
@@ -4109,7 +4206,7 @@ class SkillFormBody(RoleFormBody, unittest.TestCase):
     def test_the_table_keys_are_the_step_input_output_columns(self) -> None:
         raw = profile_of(load_raw(), self.PROFILES[1])
         (table,) = raw["template_definition"]["tables"]
-        self.assertEqual(table["section"], "skill-procedure-steps")
+        self.assertEqual(table["section"], "skill.procedure.1")
         self.assertEqual(table["row_identity"], "Step")
         self.assertEqual(table["minimum_rows"], 0)
         self.assertEqual(
@@ -4169,7 +4266,7 @@ class SkillFormBody(RoleFormBody, unittest.TestCase):
         self.assertEqual(self.tree(body), [])
 
     def test_authority_boundary_under_another_h2_is_refused(self) -> None:
-        for heading in ("## Inputs and Outputs", "## Verification"):
+        for heading in ("## Outputs", "## Verification"):
             with self.subTest(before=heading):
                 self.assertEqual(
                     self.tree(self.under(heading, SKILL_AUTHORITY)),
@@ -5698,12 +5795,11 @@ def requirement_body(*, quality: bool = True, lineage: bool = True) -> str:
     if quality:
         blocks.append("### Quality Requirements\n\n" + requirement_table(kind="NFR"))
     blocks += [
-        "## Acceptance Criteria",
-        "### Acceptance Conditions\n\nThe controller is available.",
-        "### Verification Method\n\nEach Acceptance cell names its evidence.",
         "## Traceability",
-        "### Source and Constraints\n\nNo upstream requirement exists.",
-        "### Downstream Links\n\n- **AD**: [AD 0004](../02.architecture/x.md)",
+        "### Sources\n\nNo upstream requirement exists.",
+        "### Verification Links\n\n- **AD**: [AD 0004](../02.architecture/x.md)"
+        "\n\n#### Acceptance Conditions\n\nThe controller is available."
+        "\n\n#### Verification Method\n\nEach Acceptance cell names its evidence.",
         "### Lifecycle Traceability\n\n"
         "| Requirement ID | Acceptance criterion |\n"
         "| --- | --- |\n"
@@ -5903,7 +5999,7 @@ class RequirementFormTests(unittest.TestCase):
             {"BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"}, found
         )
         lost = requirement_body().replace(
-            "### Verification Method\n\nEach Acceptance cell names its evidence.\n\n",
+            "### Sources\n\nNo upstream requirement exists.\n\n",
             "",
         )
         self.assertEqual(self.tree(lost), ["BODY-H3-REQUIRED"])
@@ -5912,7 +6008,7 @@ class RequirementFormTests(unittest.TestCase):
         body = requirement_body()
         quality = "### Quality Requirements\n\n" + requirement_table(kind="NFR")
         moved = body.replace(quality + "\n\n", "").replace(
-            "## Traceability", quality + "\n\n## Traceability"
+            "## Scope", quality + "\n\n## Scope"
         )
         self.assertEqual(self.tree(moved), ["BODY-H3-PARENT"])
 
@@ -5921,7 +6017,7 @@ class RequirementFormTests(unittest.TestCase):
     ) -> None:
         body = requirement_body()
         lineage = "### Archived Lineage\n\nSPEC-0004 left the tree.\n"
-        for heading in ("## Overview", "## Scope", "## Acceptance Criteria"):
+        for heading in ("## Overview", "## Scope", "## Requirements"):
             with self.subTest(before=heading):
                 moved = body.replace(lineage, "").replace(
                     heading, lineage + "\n" + heading, 1
@@ -6053,7 +6149,7 @@ def architecture_body(
                 text += "\n\n" + architecture_table(
                     ARCHITECTURE_TABLE_KEYS["Constraints"][1], rows=constraints
                 )
-            if h3 == "Quality and Risks":
+            if h3 == "Scenarios":
                 text += "\n\n" + architecture_table(quality_header, rows=scenarios)
             blocks.append(f"### {h3}\n\n{text}")
     blocks.append(
@@ -6123,7 +6219,7 @@ class ArchitectureFormTests(unittest.TestCase):
                 self.assertEqual(headings.required, titles)
                 self.assertEqual(headings.allowed, titles)
                 contract = raw["relationships"]["body_contract"]
-                self.assertEqual(contract["section"], "Traceability")
+                self.assertEqual(contract["section"], "Decisions and Adoption")
                 self.assertEqual(contract["table_heading"], "Lifecycle Traceability")
                 self.assertEqual(
                     contract["required_columns"],
@@ -6167,7 +6263,7 @@ class ArchitectureFormTests(unittest.TestCase):
     ) -> None:
         definition_ = self.profiles[ARCHITECTURE[1]].template_definition
         self.assertEqual(definition_["contract_id"], "COMMON-DOC-FORM-1")
-        self.assertEqual(definition_["contract_version"], "1.0.0")
+        self.assertEqual(definition_["contract_version"], "2.0.0")
         for path in (
             "docs/99.templates/registry.json",
             "docs/99.templates/contracts/document-profile.schema.json",
@@ -6205,21 +6301,26 @@ class ArchitectureFormTests(unittest.TestCase):
                 self.assertEqual(self.tables(body), [])
 
     def test_a_previous_h2_or_a_missing_h3_fails_the_tree(self) -> None:
-        old = architecture_body().replace("## Interfaces", "## Data Architecture")
+        old = architecture_body().replace("## Structure", "## Data Architecture")
         self.assertLessEqual(
             {"BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"}, set(self.tree(old))
         )
         lost = architecture_body().replace(
-            "### Failure Boundaries\n\nThe Failure Boundaries of the system.\n\n", ""
+            "### Failure and Recovery\n\nThe Failure and Recovery of the system.\n\n",
+            "",
         )
         self.assertEqual(self.tree(lost), ["BODY-H3-REQUIRED"])
 
-    def test_archived_lineage_and_lifecycle_traceability_belong_under_traceability(
+    def test_archived_lineage_and_lifecycle_traceability_belong_under_decisions_and_adoption(
         self,
     ) -> None:
         body = architecture_body()
         lineage = "### Archived Lineage\n\nSPEC-0004 left the tree.\n"
-        for heading in ("## Overview", "## Interfaces", "## Decisions"):
+        for heading in (
+            "## Context and Boundaries",
+            "## Structure",
+            "## Quality Scenarios",
+        ):
             with self.subTest(before=heading):
                 moved = body.replace(lineage, "").replace(
                     heading, lineage + "\n" + heading, 1
@@ -6660,7 +6761,7 @@ class AdrFormTests(unittest.TestCase):
             ),
         )
         self.assertEqual(definition_["contract_id"], "COMMON-DOC-FORM-1")
-        self.assertEqual(definition_["contract_version"], "1.0.0")
+        self.assertEqual(definition_["contract_version"], "2.0.0")
         self.assertEqual(
             definition_["policy_refs"],
             [".agents/governance/document-authoring.md", ".agents/governance/sdlc.md"],
@@ -7066,7 +7167,7 @@ class TemplateRecordRuleTests(unittest.TestCase):
         raw = load_raw()
         stored = self.definition(raw, GUIDE[1])
         self.assertEqual(stored["contract_id"], "COMMON-DOC-FORM-1")
-        self.assertEqual(stored["contract_version"], "1.0.0")
+        self.assertEqual(stored["contract_version"], "2.0.0")
         record = CONTRACTS.template_definition_record(raw, GUIDE[1])
         self.assertEqual(record["contract_id"], stored["contract_id"])
         self.assertEqual(record["contract_version"], stored["contract_version"])
@@ -7259,11 +7360,11 @@ def plan_form_body(*, constraints_first: bool = False) -> str:
         blocks.append(f"## {h2}")
         for h3 in children:
             text = f"The {h3} of the work."
-            if h3 == "Goal and Boundary":
+            if h3 == "Constraints":
                 text += "\n\n#### Global Constraints\n\nKeep the Spec constraints."
-            if h3 == "Work Breakdown":
+            if h3 == "Work Units":
                 text += "\n\n" + form_table(keys["Work Breakdown"][1])
-            if h3 == "Owner and Receipt":
+            if h3 == "Durable Owners":
                 text += "\n\n" + form_table(keys["Promotion"][1])
             blocks.append(f"### {h3}\n\n{text}")
     return md(*blocks)
@@ -7291,7 +7392,7 @@ class SpecPlanFormTests(unittest.TestCase):
     ) -> None:
         for form_id, tree, extensions in (
             ("spec", SPEC_FORM_TREE, SPEC_FORM_EXTENSIONS),
-            ("plan", PLAN_FORM_TREE, []),
+            ("plan", PLAN_FORM_TREE, PLAN_FORM_EXTENSIONS),
         ):
             with self.subTest(form=form_id):
                 form = next(
@@ -7311,7 +7412,7 @@ class SpecPlanFormTests(unittest.TestCase):
                 self.assertFalse(any(n.link_only for n in every))
                 self.assertEqual(
                     [(e.extension_id, e.parent_id, e.title) for e in form.extensions],
-                    [(e["id"], e["parent_id"], e["title"]) for e in extensions],
+                    [(e["id"], e.get("parent_id"), e.get("title")) for e in extensions],
                 )
         self.assertEqual(
             self.registry.schema_version.split(".")[0], str(AUTHORITY.REGISTRY_MAJOR)
@@ -7323,26 +7424,26 @@ class SpecPlanFormTests(unittest.TestCase):
         for profile_id, section, heading, columns in (
             (
                 "sdlc/spec",
-                "References",
+                "Acceptance Criteria",
                 "Lifecycle Traceability",
                 SPEC_FORM_TABLE_KEYS["Lifecycle Traceability"][1],
             ),
             (
                 "common/template-sdlc-spec",
-                "References",
+                "Acceptance Criteria",
                 "Lifecycle Traceability",
                 SPEC_FORM_TABLE_KEYS["Lifecycle Traceability"][1],
             ),
             (
                 "sdlc/plan",
-                "Implementation Strategy",
                 "Work Breakdown",
+                "Work Units",
                 PLAN_FORM_TABLE_KEYS["Work Breakdown"][1],
             ),
             (
                 "common/template-sdlc-plan",
-                "Implementation Strategy",
                 "Work Breakdown",
+                "Work Units",
                 PLAN_FORM_TABLE_KEYS["Work Breakdown"][1],
             ),
         ):
@@ -7392,7 +7493,7 @@ class SpecPlanFormTests(unittest.TestCase):
             with self.subTest(twin=twin):
                 definition_ = self.profiles[twin].template_definition
                 self.assertEqual(definition_["contract_id"], "COMMON-DOC-FORM-1")
-                self.assertEqual(definition_["contract_version"], "1.0.0")
+                self.assertEqual(definition_["contract_version"], "2.0.0")
                 record = CONTRACTS.template_definition_record(self.raw, twin)
                 self.assertEqual(record["contract_id"], definition_["contract_id"])
                 self.assertEqual(
@@ -7407,7 +7508,7 @@ class SpecPlanFormTests(unittest.TestCase):
     def test_a_complete_document_passes_the_tree_and_a_previous_h2_fails(self) -> None:
         self.assertEqual(self.tree(SPEC_PATH, "sdlc/spec", spec_form_body()), [])
         self.assertEqual(self.tree(PLAN_PATH, "sdlc/plan", plan_form_body()), [])
-        old_spec = spec_form_body().replace("## References", "## Traceability")
+        old_spec = spec_form_body().replace("## Acceptance Criteria", "## Traceability")
         self.assertLessEqual(
             {"BODY-HEADING-REQUIRED", "BODY-HEADING-UNSUPPORTED"},
             set(self.tree(SPEC_PATH, "sdlc/spec", old_spec)),
@@ -7418,7 +7519,7 @@ class SpecPlanFormTests(unittest.TestCase):
             set(self.tree(PLAN_PATH, "sdlc/plan", old_plan)),
         )
 
-    def test_lifecycle_traceability_belongs_under_references(self) -> None:
+    def test_lifecycle_traceability_belongs_under_acceptance_criteria(self) -> None:
         body = spec_form_body()
         block = "### Lifecycle Traceability\n\n" + form_table(
             SPEC_FORM_TABLE_KEYS["Lifecycle Traceability"][1]
@@ -7451,7 +7552,7 @@ class SpecPlanFormTests(unittest.TestCase):
             found and set(found) <= {"BODY-TABLE-COLUMNS", "BODY-TABLE-ROWS"}
         )
 
-    def test_the_templates_pass_the_form_tree_and_keep_global_constraints_last(
+    def test_the_templates_pass_the_form_tree_and_put_global_constraints_after_text(
         self,
     ) -> None:
         for twin_id, forbidden in (
@@ -7473,10 +7574,209 @@ class SpecPlanFormTests(unittest.TestCase):
                 )
                 self.assertNotRegex(text, forbidden)
         plan = (ROOT / self.profiles[PLAN_FORM[1]].template).read_text(encoding="utf-8")
-        goal = plan.split("### Goal and Boundary", 1)[1].split("### Assumptions", 1)[0]
-        self.assertIn("#### Global Constraints", goal)
-        self.assertEqual(goal.count("####"), 1)
+        constraints = plan.split("### Constraints", 1)[1].split("## Dependencies", 1)[0]
+        before, found, _ = constraints.partition("#### Global Constraints")
+        self.assertTrue(found)
+        self.assertNotIn("####", before)
+        self.assertTrue(before.strip())
         self.assertIn("| Promotion ID | Target Owner | Acceptance | Evidence |", plan)
+
+
+def retained_spec_text(artifact_id: str, status: str) -> str:
+    keys = SPEC_FORM_TABLE_KEYS
+    blocks = [
+        "---",
+        'title: "Retained Spec"',
+        'version: "1.0.0"',
+        'type: "sdlc/spec"',
+        f'status: "{status}"',
+        'owner: "platform"',
+        'updated: "2026-11-17"',
+        f'artifact_id: "{artifact_id}"',
+        "---",
+        "",
+        "# Spec title",
+    ]
+    for h2, children in SPEC_RETAINED_TREE:
+        blocks.append(f"## {h2}")
+        for h3 in children:
+            text = f"The {h3} of the change."
+            if h3 == "Criteria":
+                text += "\n\n" + form_table(keys["Criteria"][1])
+            blocks.append(f"### {h3}\n\n{text}")
+    blocks.append(
+        "### Lifecycle Traceability\n\n" + form_table(keys["Lifecycle Traceability"][1])
+    )
+    return md(*blocks)
+
+
+def retained_plan_text(artifact_id: str, status: str) -> str:
+    keys = PLAN_FORM_TABLE_KEYS
+    blocks = [
+        "---",
+        'title: "Retained Plan"',
+        'version: "1.0.0"',
+        'type: "sdlc/plan"',
+        f'status: "{status}"',
+        'owner: "platform"',
+        'updated: "2026-11-17"',
+        f'artifact_id: "{artifact_id}"',
+        f'parent_ids: ["{artifact_id.split("-PLAN")[0]}"]',
+        "---",
+        "",
+        "# Plan title",
+    ]
+    for h2, children in PLAN_RETAINED_TREE:
+        blocks.append(f"## {h2}")
+        for h3 in children:
+            text = f"The {h3} of the work."
+            if h3 == "Goal and Boundary":
+                text += "\n\n#### Global Constraints\n\nKeep the Spec constraints."
+            if h3 == "Work Breakdown":
+                text += "\n\n" + form_table(keys["Work Breakdown"][1])
+            if h3 == "Owner and Receipt":
+                text += "\n\n" + form_table(keys["Promotion"][1])
+            blocks.append(f"### {h3}\n\n{text}")
+    return md(*blocks)
+
+
+class RetainedSpecPlanTests(unittest.TestCase):
+    """SPEC-0221 VAL-FORM-003: four approved identities keep their old tree."""
+
+    CASES = (
+        ("sdlc/spec", "0161-w00-v14-7-delta-intake", "SPEC-0161", "spec.md"),
+        ("sdlc/spec", "0221-w03-form-target-adoption", "SPEC-0221", "spec.md"),
+        ("sdlc/plan", "0161-w00-v14-7-delta-intake", "SPEC-0161-PLAN-0001", "plan.md"),
+        (
+            "sdlc/plan",
+            "0221-w03-form-target-adoption",
+            "SPEC-0221-PLAN-0001",
+            "plan.md",
+        ),
+    )
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = CONTRACTS.load_registry(ROOT)
+        cls.profiles = {p.profile_id: p for p in cls.registry.profiles}
+
+    @staticmethod
+    def text(profile_id: str, artifact_id: str, status: str) -> str:
+        build = retained_spec_text if profile_id == "sdlc/spec" else retained_plan_text
+        return build(artifact_id, status)
+
+    def found(self, profile_id: str, path: PurePosixPath, text: str, status: str):
+        profile = self.profiles[profile_id]
+        return sorted(
+            item.rule_id
+            for item in (
+                *MARKDOWN._body_diagnostics(path, profile, text, status),
+                *MARKDOWN._body_contract_diagnostics(
+                    path, profile, text, status, "registry"
+                ),
+            )
+        )
+
+    def test_each_retained_identity_passes_its_approved_tree_and_table(self) -> None:
+        for profile_id, package, artifact_id, name in self.CASES:
+            with self.subTest(artifact=artifact_id):
+                path = PurePosixPath("docs/03.specs", package, name)
+                text = self.text(profile_id, artifact_id, "approved")
+                profile = self.profiles[profile_id]
+                self.assertEqual(
+                    [
+                        item.rule_id
+                        for item in MARKDOWN._body_diagnostics(
+                            path, profile, text, "approved"
+                        )
+                    ],
+                    [],
+                )
+                # The synthetic rows carry no real identifier; only the table's
+                # location is under test here.
+                self.assertNotIn(
+                    "BODY-CONTRACT-HEADING",
+                    self.found(profile_id, path, text, "approved"),
+                )
+                rows = LINKS._body_contract_rows(text, profile)
+                self.assertTrue(rows)
+
+    def test_only_a_retained_form_may_carry_a_location_or_titles(self) -> None:
+        for key, value in (
+            ("body_contract", {"section": "Scope", "table_heading": "In Scope"}),
+            ("section_titles", {"spec.scope.1": "In Scope"}),
+        ):
+            with self.subTest(key=key):
+                raw = load_raw()
+                form = next(
+                    f for f in raw["common_forms"]["forms"] if f["form_id"] == "spec"
+                )
+                local = next(e for e in form["extensions"] if e["kind"] == "local_h3")
+                local[key] = value
+                self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
+        raw = load_raw()
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "plan")
+        kept = next(e for e in form["extensions"] if e["kind"] == "retained_form")
+        kept["section_titles"] = {}
+        self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
+
+    def test_a_retained_title_applies_only_to_its_bounded_identity(self) -> None:
+        form = self.profiles["sdlc/plan"].form
+        self.assertEqual(
+            form.section_heading("plan.promotion.1", "approved", "SPEC-0221-PLAN-0001"),
+            (3, "Owner and Receipt"),
+        )
+        for status, identity in (
+            ("approved", "SPEC-0162-PLAN-0001"),
+            ("draft", "SPEC-0221-PLAN-0001"),
+        ):
+            with self.subTest(status=status, identity=identity):
+                self.assertEqual(
+                    form.section_heading("plan.promotion.1", status, identity),
+                    (3, "Durable Owners"),
+                )
+
+    def test_the_retained_plan_promotion_table_keeps_its_column_check(self) -> None:
+        path = PurePosixPath("docs/03.specs/0221-w03-form-target-adoption/plan.md")
+        text = (ROOT / path).read_text(encoding="utf-8")
+        profile = self.profiles["sdlc/plan"]
+
+        def tables(body: str) -> list[str]:
+            return [
+                item.rule_id
+                for item in MARKDOWN._table_diagnostics(path, profile, body, "approved")
+            ]
+
+        self.assertEqual(tables(text), [])
+        broken = text.replace(
+            "| Promotion ID | Target Owner |", "| Promotion ID | Owner |"
+        )
+        self.assertIn("BODY-TABLE-COLUMNS", tables(broken))
+
+    def test_another_identity_in_the_old_tree_is_refused(self) -> None:
+        for profile_id, artifact_id, name in (
+            ("sdlc/spec", "SPEC-0162", "spec.md"),
+            ("sdlc/plan", "SPEC-0162-PLAN-0001", "plan.md"),
+        ):
+            with self.subTest(artifact=artifact_id):
+                path = PurePosixPath("docs/03.specs/0162-other", name)
+                text = self.text(profile_id, artifact_id, "approved")
+                found = self.found(profile_id, path, text, "approved")
+                self.assertIn("BODY-HEADING-UNSUPPORTED", found)
+                self.assertIn("BODY-CONTRACT-HEADING", found)
+                self.assertIsNone(
+                    LINKS._body_contract_rows(text, self.profiles[profile_id])
+                )
+
+    def test_a_retained_identity_in_another_status_takes_the_tree(self) -> None:
+        for profile_id, package, artifact_id, name in self.CASES:
+            with self.subTest(artifact=artifact_id):
+                path = PurePosixPath("docs/03.specs", package, name)
+                text = self.text(profile_id, artifact_id, "draft")
+                self.assertIn(
+                    "BODY-HEADING-UNSUPPORTED",
+                    self.found(profile_id, path, text, "draft"),
+                )
 
 
 class FormlessRoleTableTests(unittest.TestCase):
@@ -7610,7 +7910,7 @@ class TaskFormTests(unittest.TestCase):
             SDLC_TASK_FORM_TABLE_KEYS,
         )
         self.assertEqual(twin.template_definition["contract_id"], "COMMON-DOC-FORM-1")
-        self.assertEqual(twin.template_definition["contract_version"], "1.0.0")
+        self.assertEqual(twin.template_definition["contract_version"], "2.0.0")
         self.assertEqual(rules_of(self.raw), set())
         record = CONTRACTS.template_definition_record(self.raw, SDLC_TASK_FORM[1])
         self.assertEqual(record["contract_id"], twin.template_definition["contract_id"])
@@ -7941,13 +8241,15 @@ class MeaningMapRecoveryPointerTests(unittest.TestCase):
             r"recover the map from the (SPEC-[0-9]{4}) recovery proof "
             r"in the REQ-0003 Archived Lineage\.$"
         )
-        pointed = 0
+        # SPEC-0221: a later migration replaces a role's map, so the number of
+        # pointers is history, not a contract; every map that names a recovery
+        # proof must point to it in the one form and name its own package.
         for text in self.meaning_maps(load_raw()):
+            if "recovery proof" not in text:
+                continue
             match = pointer.search(text)
-            if match is not None:
-                pointed += 1
-                self.assertEqual(re.search(r"SPEC-[0-9]{4}", text).group(0), match[1])
-        self.assertGreaterEqual(pointed, 14)
+            self.assertIsNotNone(match, text)
+            self.assertEqual(re.search(r"SPEC-[0-9]{4}", text).group(0), match[1])
 
 
 if __name__ == "__main__":

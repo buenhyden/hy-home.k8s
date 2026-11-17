@@ -83,7 +83,7 @@ class CompletionDiagnosticsTest(unittest.TestCase):
     def test_missing_criteria_table_is_rejected(self):
         documents, texts = dict(self.documents), dict(self.texts)
         texts[self.spec] = re.sub(
-            r"### Criteria\n.*?(?=\n## )",
+            r"### Criteria\n.*?(?=\n### )",
             "### Criteria\n\nNone.\n",
             texts[self.spec],
             flags=re.S,

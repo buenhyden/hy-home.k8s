@@ -1,23 +1,23 @@
 ---
 title: "Agent Evaluation Trial Evidence"
-version: "0.3.1"
+version: "0.4.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 
 # Agent Evaluation Trial Evidence
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 이 라우터는 같은 작업과 기준선에서 관측한 `noSkill`, `withSkill` 출력의
 진입점이다. 안내는 [평가 root](../README.md)가, 승인과 실제 실행 상태는 원래
 Task가 소유한다.
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
 실제 cycle마다 작업과 기준선 식별, 두 조건의 입력과 원시 출력, provider·세션
 출처, 한 번의 짝 실행, 신호, 기준 ID, 불완전한 시도를 보관한다. 생성된 예시,
@@ -32,22 +32,26 @@ cycle 하나는 정확히
 [상위 라우터](../README.md)가 밝히고, [양식](../templates/README.md)은 schema를
 복사하지 않고 Stage 99를 가리킨다.
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 라우터는 안내와 집계 결과를 소유하지 않는다. 안내는 평가 root가, 승인과 실제 실행 상태는 원래 Task가 소유하며, 유일한 집계 결과 소유자는 상위 라우터가 밝힌다. 양식의 schema는 복사하지 않고 Stage 99를 가리키며, 생성된 예시, 실행하지 않은 조건, 과거 합성 응답은 관측된 실행이 아니다.
+
+## Current Contents
+
+### Paths
 
 #### Item Index
 
 받아들인 직접 cycle 디렉터리를 여기에 한 번씩 색인한다. 실행하지 않은 시도를 나타내는
 자리표시 행은 두지 않는다.
 
-### Classification
+### Owners
 
 이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 #### Add and Find
 
@@ -59,18 +63,16 @@ skill과 판본, provider·세션 입력을 보존한다. 주장된 점수마다
 추가하고, rubric이 요구하면 사람 보정과 함께 점수를 유일한 집계 소유자에게
 넘긴다.
 
-### Transition and Exit
-
-상태와 종료 규칙은 위 Add and Find에 함께 있다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [Evaluation root](../README.md)
 - [Evaluation forms router](../templates/README.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [Agent evaluator responsibility](../../roles/agent-evaluator.md)
 - [Quality policy](../../governance/quality.md#agent-evaluation-evidence)
+
+### Checks
+
+상태와 종료 규칙은 위 Add and Find에 함께 있다.

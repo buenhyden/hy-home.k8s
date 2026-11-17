@@ -1,16 +1,16 @@
 ---
 title: "99.templates"
-version: "0.38.1"
+version: "0.39.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 # 99.templates
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > repo-authored 문서와 README가 시작해야 하는 canonical template stage다.
 
@@ -44,13 +44,17 @@ JSON·YAML 등 비 Markdown 파일과 `.codex/`·`.claude/`의 native 문서는
 확장과 아래의 Task 최초 기록·Spec/Plan 직접 전이·조건부 최초 승인 확장은 각각 하나만으로 승인된
 WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
 입력과 출력: 해당 없음 — 이 stage README는 입력과 출력의 범위를 따로 나열하지 않는다.
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 stage는 실제 PRD, AD, ADR, Spec, Plan, Task, 운영 기록이나 기능별 구현 계약을 소유하지 않으며, Form에는 재사용 가능한 구조만 둔다. 공통 규칙은 이 README 또는 `.agents/governance`의 공통 정책으로 돌려보내고, 정확한 경로, profile, frontmatter, 상태, heading, lifecycle, relationship, template 연결은 Document Profile Registry가 단독으로 소유하므로 README는 이 machine contract를 복제하지 않는다.
+
+## Current Contents
+
+### Paths
 
 | Path | Purpose |
 | --- | --- |
@@ -63,7 +67,7 @@ WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
 [form catalog](./templates/README.md)가 소유한다.
 
-### Classification
+### Owners
 
 #### Responsibility Boundary
 
@@ -155,24 +159,26 @@ form 경로의 대응은 Registry만 소유한다.
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
   `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의
   form을 담아 단계별 책임과 handoff를 기록한다. `sdlc/requirement`는 이 중
-  처음으로 `requirement` form(다섯 H2와 열 개 H3, Traceability 아래 지역 H3
+  처음으로 `requirement` form(네 H2와 여덟 H3, Traceability 아래 지역 H3
   `Lifecycle Traceability`와 `Archived Lineage`)을 쓰며 H2 목록을 두지 않는다.
   추적 표에 이 패키지의 NFR ID를 기록하면 같은 ID의 요구 행을
   `Quality Requirements`에 둔다. 기능 요구사항 표에는 FR과 IF 행을 둔다.
-  `sdlc/architecture-description`은 `architecture` form(여섯 H2와 열두 개 H3,
-  같은 두 지역 H3)을 쓰고 H2 목록을 두지 않으며, 각 요구 member를 자신의
+  `sdlc/architecture-description`은 `architecture` form(다섯 H2와 열 개 H3,
+  Decisions and Adoption 아래 같은 두 지역 H3)을 쓰고 H2 목록을 두지 않으며, 각 요구 member를 자신의
   `Upstream requirement` 열에서 인용한다. Requirement는 downstream 링크 열을
   두지 않고, 파생 역조회와 `REQUIREMENT-COVERAGE` 검사가 그 자리를 대신한다.
   `sdlc/architecture-decision`은 `adr` form(다섯 H2와 열 개 H3, Traceability
   아래 지역 H3 `Lifecycle Traceability`)을 쓰고 H2 목록을 두지 않는다.
-  `sdlc/spec`은 `spec` form(다섯 H2와 열 개 H3, References 아래 지역 H3
-  `Lifecycle Traceability`)을, `sdlc/plan`은 `plan` form(여섯 H2와 열두 개 H3)을
-  쓰며 둘 다 H2 목록을 두지 않는다. Spec의 기준 표는 `Criterion ID`와
+  `sdlc/spec`은 `spec` form(네 H2와 여덟 H3, Acceptance Criteria 아래 지역 H3
+  `Lifecycle Traceability`)을, `sdlc/plan`은 `plan` form(다섯 H2와 열 개 H3)을
+  쓰며 둘 다 H2 목록을 두지 않는다. 두 form은 4.0.0 설계 목표의 제목과 section
+  ID(`spec.intent.1` 등)를 쓴다(SPEC-0221). SPEC-0161과 SPEC-0221의 approved
+  Spec·Plan은 승인 당시 H2와 표 위치를 등록된 retained form으로 유지한다. Spec의 기준 표는 `Criterion ID`와
   `Expected Result` 열로 Acceptance Criteria 아래에 두고, `Architecture` 열은
   architecture description이나 ADR 링크 또는 설명된 제외를 검사받는다. Plan의
-  `Work Breakdown` 표는 Implementation Strategy 아래에, 승격 표
+  `Work Breakdown` 표는 Work Breakdown > Work Units 아래에, 승격 표
   (`Promotion ID`, `Target Owner`, `Acceptance`, `Evidence`)는 Promotion Map의
-  Owner and Receipt 아래에 둔다.
+  Durable Owners 아래에 둔다.
   ADR-0001부터 ADR-0061까지의 accepted ADR은 승인된 일곱 H2를 등록된
   retained form으로 유지하며(W03-D02, W03-D52, W03-D69), 그 범위 뒤의 ADR은
   accepted를 포함한 모든 상태에서 공통 form을 쓴다.
@@ -181,14 +187,15 @@ form 경로의 대응은 Registry만 소유한다.
   capacity는 현재 consumer가 없어 Spec 본문과 실제 구현 소유자에게 수렴했다.
 - **Operations forms** (`operations/`): `guide`, `policy`, `runbook`,
   `incident`, `postmortem`의 서로 다른 운영 증거 책임을 유지한다.
-  Guide, Runbook, Incident, Postmortem, Policy는 Registry form을 쓴다. Guide의
-  분류·독자·목표는 `Purpose`, `Lifecycle Traceability` 관계 표는
-  `Verification` 아래에 둔다. Runbook의 트리거·절차·검증·복구는 form의
-  `Purpose`, `Preconditions`, `Steps`, `Validation`, `Recovery`에 배치하고,
-  `Lifecycle Traceability` 관계 표는 `Validation` 아래에 둔다. Incident의
-  `Lifecycle Traceability` 관계 표는 `Evidence` 아래에, Postmortem의 표는
-  `Corrective Actions` 아래에 둔다. Policy의 목적·범위·규칙·예외·소유는 form의
-  `Purpose`, `Scope`, `Rules`, `Exceptions`, `Ownership`에 배치하고, Policy의
+  Guide, Runbook, Incident, Postmortem, Policy는 4.0.0 설계 목표의 제목과 section
+  ID를 쓰는 Registry form을 쓴다(SPEC-0221). Guide의 독자·목표는 `Purpose`,
+  `Lifecycle Traceability` 관계 표는 `Troubleshooting` 아래에 둔다. Runbook의
+  트리거·절차·검증·상향은 form의 `Trigger and Scope`, `Preflight`, `Procedure`,
+  `Verification`, `Escalation`에 배치하고, `Lifecycle Traceability` 관계 표는
+  `Verification` 아래에 둔다. Incident의 `Lifecycle Traceability` 관계 표는
+  `Resolution` 아래에, Postmortem의 표는 `Actions` 아래에 둔다. Policy의
+  목적·범위·규칙·예외·집행·소유는 form의 `Purpose and Scope`, `Rules`,
+  `Enforcement`, `Ownership`에 배치하고, Policy의
   `Lifecycle Traceability` 관계 표는 `Ownership` 아래에서 같은 source·열·상호 참조
   의미를 유지한다. Policy가 규범적 규칙을 진술하면 `Requirements` 아래에
   `Rules` 표(Rule ID·Condition·Level·Evidence, 선택 열 Status)를 두고, 규칙 ID는
@@ -245,9 +252,9 @@ form 경로의 대응은 Registry만 소유한다.
 현재 감사 pack을 안내한다. Data는 자료가 생길 때 사용할 pack과 member
 profile을 유지한다.
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. **Classify**: repository-relative target path를 registry로 분류하고 정확히 하나의
    profile이 선택되는지 확인한다.
@@ -280,8 +287,8 @@ Spec은 변경 계약과 수용 기준을, Plan은 실행 순서와 위험·예�
 Spec·Plan·Task는 당시 Registry 판본으로 읽으며 상태와 승인·검사 근거를 보존한다.
 새로 작성하거나 현행 내용을 바꾸는 Plan은 승인된 Spec의 제약을
 `Global Constraints`에서 연결하고 Plan에만 필요한 추가 실행 제약을 적으며,
-지속 계약의 실제 현행 소유자와 위치를 Promotion Map의 Owner and Receipt 표에
-기록한다. `Global Constraints`는 Goal and Boundary 아래 마지막 H4다. 완료
+지속 계약의 실제 현행 소유자와 위치를 Promotion Map의 Durable Owners 표에
+기록한다. `Global Constraints`는 Overview > Constraints의 본문 뒤에 오는 H4다. 완료
 판정에서는 이 표가 유일한 승격 기록이며, 승격 대상이 없으면
 `none | none | none | No durable contract was introduced` 한 행만 명시한다.
 lifecycle reader는 두 위치를 form의 section id로 읽고, 현행 Plan의
@@ -348,7 +355,16 @@ optional identity만 보존한다.
 Stage 98(`docs/98.archive/`)에는 profile과 form이 없다. 그 경로는 문서
 inventory 밖이며 검증하지 않는다.
 
-### Transition and Exit
+#### Upstream and Downstream
+
+- [Docs README](../README.md)
+
+#### Policy and Templates
+
+- [Agent Governance Hub](../../.agents/README.md)
+- [Document Authoring Policy](../../.agents/governance/document-authoring.md)
+
+### Checks
 
 #### Task Status Authoring
 
@@ -359,14 +375,3 @@ Task 최초 기록이 허용하는 상태와 Spec·Plan의 direct approval·firs
 approval 예외는 Document Lifecycle Policy가 정본이다. 이 README는 그 규칙을
 다시 적지 않는다. 지역 확장의 정확한 이름은 Registry
 `shared_contract.extensions`에 있다.
-
-## Related Documents
-
-### Upstream and Downstream
-
-- [Docs README](../README.md)
-
-### Policy and Templates
-
-- [Agent Governance Hub](../../.agents/README.md)
-- [Document Authoring Policy](../../.agents/governance/document-authoring.md)

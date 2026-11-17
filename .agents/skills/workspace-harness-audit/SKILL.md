@@ -3,11 +3,11 @@ name: "workspace-harness-audit"
 description: "Use when auditing workspace-wide SDLC, agent governance, GitOps, scripts, and QA ownership against an approved request."
 metadata:
   title: "Workspace Harness Audit"
-  version: "1.0.4"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,13 +17,17 @@ using this procedure. Skill invocation grants no authority
 
 # workspace-harness-audit
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Keep broad workspace analysis complete, evidence-backed, and bounded to the
 authorized repository work. Narrow document drift belongs to
 `docs-stage-conformance` instead.
+
+#### Inputs
+
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### When Not to Use
 
@@ -92,16 +96,16 @@ unresolved item into the handoff by name.
 
 This skill has no failure branch of its own; a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
-
-### Outputs
+### Artifacts
 
 A requirement-to-owner coverage map, bounded disposition decisions, approved
 implementation evidence, validation limitations, and a concrete next owner.
+
+### Handoff
+
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
 
 ## Verification
 
@@ -109,6 +113,6 @@ implementation evidence, validation limitations, and a concrete next owner.
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
+An audit request implies no live cluster, OpenBao, cloud, paid, credential or remote action, and tracked configuration shows intent, never discovery or execution. An area with no evidence source is recorded as uninspected rather than clean.

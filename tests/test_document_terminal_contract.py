@@ -792,13 +792,15 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
             "operation/guide": ("common/template-operation-guide",),
             "operation/incident": (
                 "common/template-operation-incident",
+                "Impact",
+                "Response",
                 "Resolution",
-                "Evidence",
             ),
             "operation/postmortem": (
                 "common/template-operation-postmortem",
-                "Corrective Actions",
-                "Evidence",
+                "Facts",
+                "Causes",
+                "Actions",
             ),
             "operation/policy": ("common/template-operation-policy",),
             "operation/runbook": ("common/template-operation-runbook",),

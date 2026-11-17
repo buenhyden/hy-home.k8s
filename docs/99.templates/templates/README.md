@@ -1,17 +1,17 @@
 ---
 title: "99.templates/templates"
-version: "0.6.3"
+version: "0.7.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-17"
 ---
 
 # 99.templates/templates
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 이 디렉터리는 저장소가 인정하는 모든 authored 문서의 physical form을 담는다.
 Form directory는 navigation을 위해 physical responsibility surface별로 묶고,
@@ -21,22 +21,26 @@ profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
 [registry](../registry.json)와 [frontmatter schema](../contracts/frontmatter.schema.json)가
 소유하고, form은 그 계약을 저자가 채울 수 있는 모양으로 보여줄 뿐이다.
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
-#### In Scope
+##### In Scope
 
 - 각 profile이 소유하는 physical form 파일
 - 저자가 채워야 할 값의 placeholder와 author prompt
 
-#### Out of Scope
+##### Out of Scope
 
 - profile 선택 규칙, key 문법, lifecycle 상태 (registry와 schema가 소유)
 - 완성된 문서의 예시나 사본
 - form 디렉터리별 README (이 카탈로그 하나만 둔다)
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 디렉터리는 profile 선택 규칙, key 문법, lifecycle 상태를 소유하지 않으며, 이는 [registry](../registry.json)와 [frontmatter schema](../contracts/frontmatter.schema.json)가 소유한다. 완성된 문서의 예시나 사본도 두지 않고, form 디렉터리별 README도 따로 두지 않는다.
+
+## Current Contents
+
+### Paths
 
 | Path | Purpose |
 | --- | --- |
@@ -50,13 +54,13 @@ profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
 | [runtime/](./runtime/) | claude-agent (Markdown), claude-command (Markdown), codex-agent (TOML) |
 | [specs/](./specs/) | spec, plan, task |
 
-### Classification
+### Owners
 
 이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. 만들려는 문서의 경로로 [registry](../registry.json)에서 profile을 하나만
    해석하고, 그 profile이 지정한 form을 읽는다.
@@ -71,18 +75,16 @@ profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
    `common/template-exception-provider-native-codex` profile을 가진다.
 4. 확장자는 그 form을 읽는 런타임이 읽는 확장자를 쓴다.
 
-### Transition and Exit
-
-이 README는 상태, 승격, 종료 규칙을 따로 두지 않는다. 그런 규칙을 두게 되면 여기에 적는다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [Stage 99 README](../README.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [Document Profile Registry](../registry.json)
 - [Frontmatter Schema](../contracts/frontmatter.schema.json)
 - [Document Authoring Policy](../../../.agents/governance/document-authoring.md)
+
+### Checks
+
+이 README는 상태, 승격, 종료 규칙을 따로 두지 않는다. 그런 규칙을 두게 되면 여기에 적는다.

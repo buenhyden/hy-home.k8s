@@ -1,16 +1,16 @@
 ---
 title: "90.references/research"
-version: "0.2.6"
+version: "0.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 # 90.references/research
 
-## Stage Responsibility
+## Responsibility
 
-### Purpose and Readers
+### Purpose
 
 > 연구 팩과 보고서, 출처 기록과 연구 종합을 두는 곳이다.
 
@@ -32,9 +32,9 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - Operators
 - Documentation Writers
 
-### Inputs and Outputs
+#### Inputs and Outputs
 
-#### In Scope
+##### In Scope
 
 - 연구 팩 색인 자료
 - 오래 유지할 출처 원장과 출처 우선순위 메모
@@ -43,7 +43,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - `docs/99.templates/templates/references/research-pack.template.md`로 만든 pack README
 - `docs/99.templates/templates/references/research.template.md`로 만든 보고서
 
-#### Out of Scope
+##### Out of Scope
 
 - 활성 거버넌스 정책이나 provider 실행 규칙
 - runtime roster 변경, hook 연결, 권한 변경
@@ -51,9 +51,13 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - 운영 runbook, release gate, 배포 승인, incident 대응
 - 생성되었거나 병행 관리되는 `docs/superpowers/**` 내용
 
-## Contents
+### Excluded Responsibilities
 
-### Current Items
+이 폴더는 활성 거버넌스 정책, runtime 권한, 배포 절차, live cluster 준비 상태, provider 계약을 정의하지 않으며, 이는 계속 `.agents/`, `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/05.operations/`의 정본 소유자가 맡는다. 운영 runbook, release gate, 배포 승인, incident 대응도 범위 밖이다.
+
+## Current Contents
+
+### Paths
 
 ```text
 research/
@@ -79,13 +83,13 @@ registry가 요구하는 `m####-` identity prefix 뒤에 의미 있는 주제 �
 이 prefix는 identity이지 정렬 키가 아니다. 새 보고서 파일 이름에 `part-*.md`,
 날짜, 두 번째 정렬 prefix를 붙이지 않는다.
 
-### Classification
+### Owners
 
 이 README는 분류 표를 따로 두지 않는다. 분류 표를 두게 되면 여기에 둔다.
 
-## Workflow
+## Usage
 
-### Create and Review
+### Entry Points
 
 1. research pack 자료를 추가하거나 바꾸기 전에 해당 Spec 패키지(`docs/03.specs/`)가 있으면 그 Plan과 Task를 읽는다.
 2. pack README는
@@ -124,19 +128,17 @@ market scan 발견은 권위가 없다. 맥락, 지형, 용어를 파악하는 �
 있지만 market scan 자료라고 표시해야 하며 공식 문서, 저장소 근거 증거, 저장소의
 정본 소유자를 뒤집을 수 없다.
 
-### Transition and Exit
-
-이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.
-
-## Related Documents
-
-### Upstream and Downstream
+#### Upstream and Downstream
 
 - [90.references README](../README.md)
 - [Agent Governance Hub](../../../.agents/README.md)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
 
-### Policy and Templates
+#### Policy and Templates
 
 - [Research Reference Template](../../99.templates/templates/references/research.template.md)
 - [Templates README](../../99.templates/README.md)
+
+### Checks
+
+이 README는 상태 전환·승격·종료 규칙을 따로 정하지 않는다.

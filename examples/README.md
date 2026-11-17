@@ -1,16 +1,16 @@
 ---
 title: "examples"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 # examples
 
-## Purpose
+## Service
 
-### Service Role
+### Purpose
 
 > `hy-home.k8s` 플랫폼의 앱 온보딩 예시와 cloud target 참조 구현을 관리한다.
 
@@ -58,7 +58,17 @@ examples/
 | `aws/` | Cloud migration reference implementation for AWS. | [`aws/README.md`](aws/README.md) and adjacent executable assets; not live provider-latest guidance. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 | `azure/` | Cloud migration reference implementation for Azure. | [`azure/README.md`](azure/README.md) and adjacent executable assets; not live provider-latest guidance. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 
-### Supported Environment
+### Interfaces
+
+이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
+
+#### Security Boundary
+
+보안 경계는 Usage > Prerequisites에 적혀 있다.
+
+## Usage
+
+### Prerequisites
 
 `examples/`는 자산을 정본 소유 경로로 복사해 검증하기 전까지 참조 전용이다.
 provider credential, secret material, live 계정이나 클러스터 변경은 여기에 두지
@@ -80,19 +90,7 @@ provider credential, secret material, live 계정이나 클러스터 변경은 �
 - production-grade 비용 산정과 SLA 보장
 - secret material 또는 provider credential 저장
 
-## Interfaces
-
-### Inputs and Outputs
-
-이 문서는 참조 자산의 경계만 다루며 별도의 외부 입출력 계약을 정의하지 않는다.
-
-### Security Boundary
-
-보안 경계는 Supported Environment에 적혀 있다.
-
-## Development
-
-### Local Workflow
+### Selected Start
 
 #### Working Procedure
 
@@ -129,19 +127,19 @@ cp -r examples/sample-app gitops/workloads/<appname>
 
 - [`../gitops/workloads/adminer`](../gitops/workloads/adminer) — DB 관리 UI (Rollout + AnalysisTemplate + PeerAuthentication)
 
-### Checks
+## Checks
+
+### Readiness
 
 복사한 예시에 맞춰 `python3 scripts/qa.py full`,
 `bash scripts/validate-k8s-manifests.sh .`,
 `bash scripts/check-secret-handling.sh .`를 실행한다. 이 저장소 정적 검사는
 provider나 live cluster의 준비 상태를 증명하지 않는다.
 
-## Operations
-
-### Runbook Links
-
-이 문서는 참조 전용 예시를 다루므로 runbook 링크가 없다.
-
-### Observability and Recovery
+### Failure Handling
 
 이 문서는 참조 전용 예시를 다루며 live 환경을 변경하지 않으므로 관측과 복구 절차가 없다.
+
+#### Runbook Links
+
+이 문서는 참조 전용 예시를 다루므로 runbook 링크가 없다.

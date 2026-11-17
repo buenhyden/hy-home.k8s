@@ -3,11 +3,11 @@ name: "risk-report"
 description: "Use when identifying, scoring, and reporting cluster-specific operational or security risks as a cluster risk report."
 metadata:
   title: "Risk Report"
-  version: "1.0.6"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,11 +17,15 @@ using this procedure. Skill invocation grants no authority
 
 # risk-report
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Define how to identify, score, and report cluster risks in a repeatable format for `hy-home.k8s`.
+
+#### Inputs
+
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### When Not to Use
 
@@ -31,7 +35,8 @@ Define how to identify, score, and report cluster risks in a repeatable format f
 
 #### Constraints
 
-- Record risks in the response or the active Plan's Risks and Mitigations; no
+- Record risks in the response or under the active Plan's Constraints, as its
+  Risks and Mitigations H4; no
   separate risk register exists.
 - Keep the report specific to `hy-home.k8s`.
 - Prefer repository and approved inspection evidence over generic risk lists.
@@ -99,17 +104,17 @@ given; this matrix scores what no pattern table has classified.
 - If security-critical findings emerge, escalate to the security review owner.
 - If ownership or routing is unclear, escalate to the supervising owner.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
-
-### Outputs
+### Artifacts
 
 - A structured risk summary
 - Severity-ranked recommendations
 - Monitoring or review cues for follow-up work
+
+### Handoff
+
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
 
 ## Verification
 
@@ -117,6 +122,6 @@ This skill takes no input beyond the user's request and the files its Steps name
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
+A risk whose likelihood rests on no evidence is not scored and is recorded as an open question, since an invented score is harder to retract than a stated gap. No separate risk register exists, so the report lives in the response or in the active Plan's Risks and Mitigations.

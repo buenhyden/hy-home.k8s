@@ -1,16 +1,22 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.7.1"
+version: "1.7.2"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 artifact_id: "GDE-0010"
 ---
 
 # CI/CD 및 QA 검증 경계 가이드
 
 ## Purpose
+
+### Audience
+
+- 문서·GitOps·자동화 변경을 작성하거나 검토하는 개발자
+- 정적 검증 결과를 운영 증적으로 해석하는 플랫폼 운영자
+- 허용된 범위 안에서 검증을 수행하고 handoff를 작성하는 AI Agent
 
 ### Outcome
 
@@ -20,13 +26,9 @@ artifact_id: "GDE-0010"
 주된 학습 목적은 `explanation`이다. 독자는 검증 결과가 어떤 증적 등급을
 뜻하는지 구분한다.
 
-- 문서·GitOps·자동화 변경을 작성하거나 검토하는 개발자
-- 정적 검증 결과를 운영 증적으로 해석하는 플랫폼 운영자
-- 허용된 범위 안에서 검증을 수행하고 handoff를 작성하는 AI Agent
-
 관련 문서: [Reference Maintenance Runbook](../runbooks/0011-reference-maintenance-runbook.md)
 
-### Boundaries
+#### Boundaries
 
 실행 순서나
 복구 절차를 복제하지 않고, 현재 검증 진입점과 증적의 한계를 안내한다. 목적 QA는
@@ -45,7 +47,7 @@ artifact_id: "GDE-0010"
 
 도구 판본: 해당 없음 — 명령의 구현은 `scripts/README.md`가 소유하므로 이 가이드는 도구 판본을 고정하지 않는다.
 
-### Permissions
+### Authority
 
 - [Quality Policy](../../../.agents/governance/quality.md)의 증적 경계 이해
 - live cluster나 외부 서비스 검증이 필요하면 별도의 명시적 승인
@@ -54,7 +56,7 @@ artifact_id: "GDE-0010"
 
 ## Procedure
 
-### Actions
+### Steps
 
 #### 1. 변경 표면을 먼저 분류한다
 
@@ -130,25 +132,25 @@ contract가 소유한다. 이 문서는 그 항목을 줄여 옮기지 않는다
 hook 연결과 커밋 메시지 검증 절차는
 [Git policy](../../../.agents/governance/git.md)가 소유한다.
 
-### Exceptions
-
-- 퇴역한 full/ci의 과거 `NOT_RUN`은 해당 입력의 역사로 보존한다. 현재 선택된
-  필수 검사가 미실행이면 그 검사에 `NOT_RUN`과 다음 owner를 기록한다.
-  `NOT_APPLICABLE`는 검사 대상이 없을 때만 사용한다.
-- live cluster, OpenBao, 외부 API 검증은 정적 QA의 기본 범위로 확장하지 않는다.
-
-## Verification
-
-### Expected Result
+### Expected Results
 
 - 로컬 PASS를 required check 또는 배포 성공으로 표현하지 않는다.
 - 문서에 CI job 수나 fixture 수를 고정해 currentness를 대체하지 않는다.
 - 실패한 aggregate gate를 더 작은 PASS 몇 개로 상쇄하지 않는다.
 
-### Troubleshooting
+## Troubleshooting
+
+### Symptoms
 
 - 퇴역 문서의 경로를 redirect 문서로 유지하지 않고 현재 owner로 소비자를
   직접 연결한다.
+
+### Next Action
+
+- 퇴역한 full/ci의 과거 `NOT_RUN`은 해당 입력의 역사로 보존한다. 현재 선택된
+  필수 검사가 미실행이면 그 검사에 `NOT_RUN`과 다음 owner를 기록한다.
+  `NOT_APPLICABLE`는 검사 대상이 없을 때만 사용한다.
+- live cluster, OpenBao, 외부 API 검증은 정적 QA의 기본 범위로 확장하지 않는다.
 
 ### Lifecycle Traceability
 

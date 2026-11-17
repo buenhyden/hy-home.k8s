@@ -647,11 +647,12 @@ class OutputCheckRefusalTests(TreeCase):
                     "> ## Quoted heading\n\n"
                 )
                 source = template.replace(
-                    "## Verification", example + "## Verification", 1
+                    "## Troubleshooting", example + "## Troubleshooting", 1
                 )
+                self.assertNotEqual(source, template)
                 self.write(self.GUIDE_TEMPLATE, source)
                 text = self.generate("operation/guide", SAMPLES["operation/guide"][0])
-                self.assertIn(example + "## Verification", text)
+                self.assertIn(example + "## Troubleshooting", text)
 
     def test_generator_refuses_wrong_registered_table_columns(self) -> None:
         template = (self.root / self.GUIDE_TEMPLATE).read_text(encoding="utf-8")

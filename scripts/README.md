@@ -1,16 +1,16 @@
 ---
 title: "scripts"
-version: "0.15.4"
+version: "0.15.5"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 # scripts
 
-## Purpose
+## Service
 
-### Service Role
+### Purpose
 
 `scripts/`는 저장소의 문서, Agent governance, GitOps, CI, 보안 경계를
 repository-static 방식으로 검증하는 실행 코드의 소유 경로다. 사람에게 보이는
@@ -95,7 +95,19 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `release.py` | main changelog PR을 준비하고 SemVer GitHub Release 하나를 명시적으로 게시한다. 기본은 로컬 읽기 전용 미리보기이며 `publish --execute`는 운영자, 또는 version과 asset을 명시한 운영자의 현재 요청에 따른 agent가 실행하는 operator-approved 작업이다. |
 | `semver_grammar.py` | 문서·계약에는 ASCII 숫자 세 요소 판본 문법과 숫자 비교를 제공한다. `release.py`는 별도의 제품 SemVer 문법과 우선순위 비교로 태그 패턴과 순서를 정한다. |
 
-### Supported Environment
+### Interfaces
+
+- [Agent execution policy](../.agents/governance/agent-execution.md)
+- [Quality policy](../.agents/governance/quality.md)
+- [Document authoring policy](../.agents/governance/document-authoring.md)
+
+#### Security Boundary
+
+이 문서는 secret, credential, 권한 경계만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
+
+## Usage
+
+### Prerequisites
 
 - 문서 route·profile 값은 [Stage 99 계약](../docs/99.templates/README.md)에서만 온다.
 - Agent role, 권한, skill, handoff, projection은
@@ -133,21 +145,7 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 - branch tip, 현재 문서, 현재 스크립트, 줄 번호, corpus 개수를 고정하는 pin
 - Stage 00, SDLC stage, Operations에서 옮겨 온 정책 문장
 
-## Interfaces
-
-### Inputs and Outputs
-
-- [Agent execution policy](../.agents/governance/agent-execution.md)
-- [Quality policy](../.agents/governance/quality.md)
-- [Document authoring policy](../.agents/governance/document-authoring.md)
-
-### Security Boundary
-
-이 문서는 secret, credential, 권한 경계만을 다루는 내용을 따로 두지 않는다. 그런 내용을 두게 되면 여기에 적는다.
-
-## Development
-
-### Local Workflow
+### Selected Start
 
 #### Working Procedure
 
@@ -168,7 +166,9 @@ inventory, 내장 mutation suite를 만들지 않는다. 호스팅 check 이름�
 branch protection의 활성 상태는 실제 원격에서 확인해야 하며, 저장소 파일만으로
 required-check 성공이나 설정을 주장하지 않는다.
 
-### Checks
+## Checks
+
+### Readiness
 
 #### 요청 브리핑 사전 확인
 
@@ -307,12 +307,10 @@ python3 scripts/run-validation-lane.py \
 저장소 정적 PASS는 검사한 저장소 상태만 증명한다. hosted 실행, provider native
 강제, credential, 원격 상태, 배포, live cluster 동작은 증명하지 않는다.
 
-## Operations
-
-### Runbook Links
-
-이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
-
-### Observability and Recovery
+### Failure Handling
 
 이 문서에는 운영 관측과 복구만을 다루는 별도 내용이 없으며, 기본 복구 출처는 Git history다.
+
+#### Runbook Links
+
+이 문서는 runbook이나 운영 가이드 링크를 따로 두지 않는다. 연결할 운영 문서가 생기면 여기에 연결한다.
