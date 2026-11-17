@@ -3,11 +3,11 @@ name: "gitops-workflow"
 description: "Use when onboarding, updating, or diagnosing workloads through the repository-backed GitOps and ArgoCD path."
 metadata:
   title: "GitOps Workflow"
-  version: "1.0.5"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,11 +17,15 @@ using this procedure. Skill invocation grants no authority
 
 # gitops-workflow
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Define the approved GitOps path for workload onboarding, change review, and sync diagnosis in `hy-home.k8s`.
+
+#### Inputs
+
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### When Not to Use
 
@@ -60,17 +64,17 @@ Define the approved GitOps path for workload onboarding, change review, and sync
 - If security findings block progress, hand off to the security review owner.
 - If validation fails, stop and route through `k8s-validate` remediation before continuing.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
-
-### Outputs
+### Artifacts
 
 - Clear next steps for onboarding, updating, or diagnosing a workload
 - Validation prerequisites and review expectations
 - A concise checklist for PR and reconciliation readiness
+
+### Handoff
+
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
 
 ## Verification
 
@@ -78,6 +82,6 @@ This skill takes no input beyond the user's request and the files its Steps name
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
+This skill produces repository-backed changes and read-only diagnosis only; live reconciliation remains operator-owned. Creating a PR or triggering reconciliation requires separate explicit authorization.

@@ -3,11 +3,11 @@ name: "k8s-validate"
 description: "Use when validating Kubernetes manifests, GitOps structure, and secret-handling checks in this cluster repository."
 metadata:
   title: "K8s Validate"
-  version: "1.0.5"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,11 +17,15 @@ using this procedure. Skill invocation grants no authority
 
 # k8s-validate
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Define the validation sequence for manifest changes before GitOps review or merge preparation.
+
+#### Inputs
+
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### When Not to Use
 
@@ -73,18 +77,18 @@ defines; `python3 scripts/qa.py --list` shows what each profile reaches.
 - Route remediation to the implementation owner, or report the finding to the
   supervising owner when the selected role has no implementation handoff.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
-
-### Outputs
+### Artifacts
 
 - Validation summary across selected syntax, render, schema, lint, structure,
   and secret checks, with actual depth and limitations per target
 - Blocking reasons, if any
 - Next action guidance for review or remediation
+
+### Handoff
+
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
 
 ## Verification
 
@@ -92,6 +96,6 @@ This skill takes no input beyond the user's request and the files its Steps name
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
+A syntax pass is not render or schema evidence, and a `quick` result covers syntax, structure and secrets but not lint. API-schema coverage is limited to the built-in kinds and fixed offline source of the registered checker, an unsupported custom-resource schema is not a schema PASS, and unobserved live state is reported as DEFER.

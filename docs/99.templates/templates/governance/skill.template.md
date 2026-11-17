@@ -9,11 +9,15 @@ updated: "{{UPDATED}}"
 
 # [Workflow Name]
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 <!-- Author prompt: state the input, the purpose and the trigger that make this procedure apply, and link the owners it relies on. -->
+
+#### Inputs
+
+<!-- Author prompt: list the documents, data and approvals the procedure reads, and link their owners. -->
 
 ### When Not to Use
 
@@ -39,15 +43,15 @@ updated: "{{UPDATED}}"
 
 <!-- Author prompt: state how to stop, recover or escalate when a step fails, or state that the procedure names none. -->
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-<!-- Author prompt: list the documents, data and approvals the procedure reads, and link their owners. -->
-
-### Outputs
+### Artifacts
 
 <!-- Author prompt: list what the procedure produces or records and where the result is kept. -->
+
+### Handoff
+
+<!-- Author prompt: state when the procedure is complete, what is recorded, and who owns the next step. -->
 
 ## Verification
 
@@ -55,6 +59,6 @@ updated: "{{UPDATED}}"
 
 <!-- Author prompt: list the checks that show the procedure was followed, with their exact commands and pass and fail meaning. -->
 
-### Completion and Handoff
+### Limits
 
-<!-- Author prompt: state when the procedure is complete, what is recorded, and who owns the next step. -->
+<!-- Author prompt: state what the checks and outputs of this skill do not establish, using only facts from this skill. -->

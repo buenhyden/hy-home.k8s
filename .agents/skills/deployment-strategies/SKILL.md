@@ -3,11 +3,11 @@ name: "deployment-strategies"
 description: "Use when comparing or designing Kubernetes and ArgoCD deployment strategies, including Blue-Green, Canary, Rolling update, rollback, zero-downtime deployment, progressive delivery, probes, and DORA metrics. Monitoring tool setup and actual CI pipeline configuration are outside this skill's scope."
 metadata:
   title: "Deployment Strategies"
-  version: "1.0.4"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,12 +17,19 @@ using this procedure. Skill invocation grants no authority
 
 # Deployment Strategies — Choosing and Verifying a Rollout
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Select a rollout strategy for a Kubernetes workload reconciled by Argo CD, then
 design the verification and reversal that make the choice safe to review.
+
+#### Inputs
+
+`references/strategies.md` holds the catalog and `references/verification.md`
+holds probe, abort, and measurement detail. Both are read when a decision needs
+them rather than carried through every use of this skill, because a rollout
+question is usually about one strategy and not about all six.
 
 ### When Not to Use
 
@@ -69,18 +76,15 @@ permission, and an emergency still needs the same authorization boundary.
 
 This skill has no failure branch of its own; a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-`references/strategies.md` holds the catalog and `references/verification.md`
-holds probe, abort, and measurement detail. Both are read when a decision needs
-them rather than carried through every use of this skill, because a rollout
-question is usually about one strategy and not about all six.
-
-### Outputs
+### Artifacts
 
 This procedure defines no output format of its own beyond the results its Steps describe; if it needs one, define it here.
+
+### Handoff
+
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
 
 ## Verification
 
@@ -88,6 +92,6 @@ This procedure defines no output format of its own beyond the results its Steps 
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
+This skill produces a reviewable repository change and never a cluster action. A passing check is evidence, never permission, so no promotion path shortens an approval and an emergency still needs the same authorization boundary.

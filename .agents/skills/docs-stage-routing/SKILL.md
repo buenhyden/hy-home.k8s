@@ -3,11 +3,11 @@ name: "docs-stage-routing"
 description: "Use when selecting the canonical owner and template for an authored document or rejecting parallel document trees."
 metadata:
   title: "Docs Stage Routing"
-  version: "1.1.4"
+  version: "1.2.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,11 +17,15 @@ using this procedure. Skill invocation grants no authority
 
 # docs-stage-routing
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Use this skill as its frontmatter description states.
+
+#### Inputs
+
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### When Not to Use
 
@@ -69,17 +73,17 @@ beyond the active task.
 
 This skill's stop condition is stated in Step 3: no matching profile, or more than one, stops the work rather than being a judgment call; any other failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
-
-### Outputs
+### Artifacts
 
 The canonical path, the selected profile and template, the owner links and
 index changes the change requires, validation evidence, and any authority
 boundary left unresolved.
+
+### Handoff
+
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
 
 ## Verification
 
@@ -87,6 +91,6 @@ boundary left unresolved.
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
+Selecting a template grants no authority to author or execute beyond the active task. Routing never edits global or user-local skills, authentication or configuration, and a profile that is missing or matches more than one stops the work.

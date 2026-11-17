@@ -3,11 +3,11 @@ name: "rca-methodology"
 description: "Use when performing root cause analysis with 5 Whys, Fishbone diagrams, Fault Tree Analysis, change analysis, incident cause analysis, or cognitive-bias checks. Timeline reconstruction and remediation planning are outside this skill's scope."
 metadata:
   title: "RCA Methodology"
-  version: "1.0.4"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,12 +17,18 @@ using this procedure. Skill invocation grants no authority
 
 # RCA Methodology — Tracing an Incident to Its Cause
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Choose a root cause analysis technique for a cluster incident, apply it against
 captured evidence, and return the result in the structure this skill owns.
+
+#### Inputs
+
+`references/techniques.md` holds the five techniques worked through on a
+cluster incident, with their pitfalls and the selection guide. It is read for
+the technique in use rather than in full, since an analysis applies one or two.
 
 ### When Not to Use
 
@@ -50,15 +56,9 @@ captured evidence, and return the result in the structure this skill owns.
 
 This skill has no failure branch of its own; a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-`references/techniques.md` holds the five techniques worked through on a
-cluster incident, with their pitfalls and the selection guide. It is read for
-the technique in use rather than in full, since an analysis applies one or two.
-
-### Outputs
+### Artifacts
 
 The result structure is stated under Output Format.
 
@@ -95,12 +95,16 @@ tree, or change table), each step citing its evidence, ending in the root cause]
 - [ ] System/process focus confirmed (no blame language)
 ```
 
+### Handoff
+
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
+
 ## Verification
 
 ### Checks
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
+A step that rests on recollection is marked as such and is not presented as established. This skill owns the technique and structure but not where a durable finding belongs, which the `incident-postmortem` skill and its Stage 99 profile own.

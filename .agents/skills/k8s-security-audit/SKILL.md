@@ -3,11 +3,11 @@ name: "k8s-security-audit"
 description: "Use when auditing Kubernetes RBAC, NetworkPolicy gaps, Secret handling, container security context, image supply chain, or related cluster security hardening. Real-time intrusion detection and WAF configuration are outside this skill's scope."
 metadata:
   title: "K8s Security Audit"
-  version: "1.0.4"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,12 +17,18 @@ using this procedure. Skill invocation grants no authority
 
 # k8s Security Audit — Cluster Security Assessment
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Assess a repository's Kubernetes security posture across five dimensions and
 report what each one found, at a severity that says what the finding obliges.
+
+#### Inputs
+
+`references/audit-dimensions.md` holds the per-dimension detection targets and
+checklists. It is read a dimension at a time as step 2 works through them,
+which is why it is not carried in the procedure itself.
 
 ### When Not to Use
 
@@ -78,15 +84,9 @@ anything.
   selected role has no implementation handoff.
 - Escalate ambiguous security decisions to the supervising owner.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-`references/audit-dimensions.md` holds the per-dimension detection targets and
-checklists. It is read a dimension at a time as step 2 works through them,
-which is why it is not carried in the procedure itself.
-
-### Outputs
+### Artifacts
 
 ```markdown
 # Security Audit Report
@@ -161,12 +161,16 @@ what an audit may decide for itself, and [the SDLC flow](../../governance/sdlc.m
 never infers approval from a checkbox. A report that carries the acceptance
 box also carries the invitation to tick it.
 
+### Handoff
+
+- `vulnerability-patterns` — Kubernetes manifest vulnerability pattern catalog (YAML/Helm)
+
 ## Verification
 
 ### Checks
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-- `vulnerability-patterns` — Kubernetes manifest vulnerability pattern catalog (YAML/Helm)
+The report's Overall Posture summarises the Closing State and is not an acceptance, and this procedure does not own acceptance of an unresolved CRITICAL finding. A dimension not audited is stated in Dimension Results and is never read as clean, and the static relationship result of `external-service-contract-audit` does not establish security posture.

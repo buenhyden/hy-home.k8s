@@ -1,15 +1,15 @@
 ---
 title: "Work Lifecycle"
-version: "2.4.0"
+version: "2.5.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 
 # Work Lifecycle
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
@@ -20,6 +20,12 @@ Related policy and responsibility documents: [SDLC Flow](../governance/sdlc.md),
 [Document Authoring](../governance/document-authoring.md),
 [Context and Memory](../governance/context-and-memory.md) and
 [Roles](../roles/README.md).
+
+#### Inputs
+
+Start at the current provider gateway, then load the minimum relevant policy,
+role responsibility, provider note, and owning Spec/Plan/Task. Re-observe Git
+state on resume; historical progress and provider-local memory are auxiliary.
 
 ### When Not to Use
 
@@ -134,17 +140,15 @@ evidence, and the progress-ledger rule belongs to [context and memory](../govern
 
 The stop rule is stated under Implementation in Steps ("Bound the attempt").
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-Start at the current provider gateway, then load the minimum relevant policy,
-role responsibility, provider note, and owning Spec/Plan/Task. Re-observe Git
-state on resume; historical progress and provider-local memory are auxiliary.
-
-### Outputs
+### Artifacts
 
 This procedure defines no output format of its own beyond the results its Steps describe; if it needs one, define it here.
+
+### Handoff
+
+Completion and handoff are stated under Completion in Steps.
 
 ## Verification
 
@@ -154,6 +158,6 @@ Run the selected static checks and preserve exact results. Review this
 procedure when intake, delegation, completion, or handoff routing changes;
 keep shared lane meanings in quality policy.
 
-### Completion and Handoff
+### Limits
 
-Completion and handoff are stated under Completion in Steps.
+The selected static checks do not establish provider-native or live behavior, and advisory compaction output is not completion evidence. Hooks are evidence or enforcement only when their intended runtime loads them, and quality preflight creates no business deadline, session timebox or final-validation reserve approval.

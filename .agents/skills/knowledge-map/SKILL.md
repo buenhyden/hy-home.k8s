@@ -3,11 +3,11 @@ name: "knowledge-map"
 description: "Use when auditing governance navigation, role/skill references, stage indexes, or current cross-links."
 metadata:
   title: "Knowledge Map"
-  version: "1.1.4"
+  version: "1.2.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,12 +17,16 @@ using this procedure. Skill invocation grants no authority
 
 # knowledge-map
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Find stale navigation and duplicate authority without turning an index into a
 second policy or role roster.
+
+#### Inputs
+
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### When Not to Use
 
@@ -64,17 +68,20 @@ second policy or role roster.
 
 This skill has no failure branch of its own beyond recording tool limitations (Step 5); a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
-
-### Outputs
+### Artifacts
 
 A bounded gap list with current owners, verification results, limitations, and
 next owner in the active Task. Do not recreate machine roster tables; progress
 follows [context and memory](../../governance/context-and-memory.md#objective). Once the work residue ledger exists, the supervisor records an open gap with no Task owner as a work residue ledger entry.
+
+### Handoff
+
+- `.agents/governance/document-authoring.md`
+- `.agents/governance/context-and-memory.md`
+- `.agents/governance/quality.md`
+- `.agents/knowledge/README.md`
 
 ## Verification
 
@@ -82,9 +89,6 @@ follows [context and memory](../../governance/context-and-memory.md#objective). 
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-- `.agents/governance/document-authoring.md`
-- `.agents/governance/context-and-memory.md`
-- `.agents/governance/quality.md`
-- `.agents/knowledge/README.md`
+A generated graph snapshot is not a required input or an authority for current ownership, and an index row is verified against the tree rather than trusted. Changes are made only when authorized, and this skill does not run an external pipeline implicitly.

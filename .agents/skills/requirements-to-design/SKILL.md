@@ -3,11 +3,11 @@ name: "requirements-to-design"
 description: "Use when tracing Requirement Package members to relevant Architecture Descriptions, ADRs, and Spec contracts."
 metadata:
   title: "Requirements To Design"
-  version: "1.0.5"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -17,11 +17,15 @@ using this procedure. Skill invocation grants no authority
 
 # requirements-to-design
 
-## Purpose and Trigger
+## Trigger
 
 ### When to Use
 
 Use this skill as its frontmatter description states.
+
+#### Inputs
+
+This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
 
 ### When Not to Use
 
@@ -57,16 +61,16 @@ durable choices; Spec owns change-specific implementation behavior. Use
 
 This skill has no failure branch of its own; a failing step is reported and the work lifecycle's bounded-attempt stop rule applies. If a step needs its own recovery, add it here.
 
-## Inputs and Outputs
+## Outputs
 
-### Inputs
-
-This skill takes no input beyond the user's request and the files its Steps name; if a step comes to need another input, list it here.
-
-### Outputs
+### Artifacts
 
 A bounded traceability/gap map with full requirement IDs and current owners,
 plus any authorized link repair and validation evidence.
+
+### Handoff
+
+This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
 
 ## Verification
 
@@ -74,6 +78,6 @@ plus any authorized link repair and validation evidence.
 
 This skill defines no verification step separate from its Steps; the checks the invoking task selects under the quality policy apply. If it needs a separate one, list it here.
 
-### Completion and Handoff
+### Limits
 
-This skill completes and hands off through the work lifecycle's Completion steps and adds no field beyond what its Steps state; if it needs one, list it here.
+The traceability map reports covered, partial, missing or not-applicable relationships and does not auto-create an ADR or implementation document. Requirement evidence does not require an invented architecture artifact when no structural decision or view is needed.

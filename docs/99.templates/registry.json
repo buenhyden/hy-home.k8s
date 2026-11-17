@@ -7326,14 +7326,14 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0177 meaning map moves each sentence of the former six-heading workflow layout into the Skill form without changing meaning; recover the map from the SPEC-0177 recovery proof in the REQ-0003 Archived Lineage.",
-          "retained_history": "Git history retains the previous six-heading workflow layout and its template.",
-          "rollback": "Revert the SPEC-0177 implementation commit."
+          "meaning_map": "The SPEC-0221 heading map moves each sentence of the template and of every current document of this role into the four or three H2 and their H3 of the 4.0.0 design target without changing it; a merged former H3 stays as an H4 with its title, and a new H3 holds only facts the same document states.",
+          "retained_history": "Git history retains the previous layout of this role and its template.",
+          "rollback": "Revert the SPEC-0221 WORK-004 commit."
         },
         "tables": [
           {
             "name": "Steps",
-            "section": "skill-procedure-steps",
+            "section": "skill.procedure.1",
             "columns": [
               {
                 "key": "Step",
@@ -7464,14 +7464,14 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0177 meaning map moves each sentence of the 17 SKILL.md packages into the Skill form without changing meaning; recover the map from the SPEC-0177 recovery proof in the REQ-0003 Archived Lineage.",
-          "retained_history": "Git history retains the previous section layout of the 17 SKILL.md packages.",
-          "rollback": "Revert the SPEC-0177 implementation commit."
+          "meaning_map": "The SPEC-0221 heading map moves each sentence of the template and of every current document of this role into the four or three H2 and their H3 of the 4.0.0 design target without changing it; a merged former H3 stays as an H4 with its title, and a new H3 holds only facts the same document states.",
+          "retained_history": "Git history retains the previous layout of this role and its template.",
+          "rollback": "Revert the SPEC-0221 WORK-004 commit."
         },
         "tables": [
           {
             "name": "Steps",
-            "section": "skill-procedure-steps",
+            "section": "skill.procedure.1",
             "columns": [
               {
                 "key": "Step",
@@ -11743,16 +11743,16 @@
         "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
         "sections": [
           {
-            "section_id": "skill-purpose-and-trigger",
+            "section_id": "skill.trigger",
             "level": 2,
             "parent_id": null,
-            "title": "Purpose and Trigger",
+            "title": "Trigger",
             "order": 1,
             "requiredness": "required",
             "condition": "always",
-            "content": "호출형 절차의 목적",
+            "content": "호출형 절차의 적용 트리거",
             "required_content": [
-              "호출형 절차의 목적에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+              "호출형 절차의 적용 트리거에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
             "prohibited_content": [
               "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
@@ -11763,19 +11763,18 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "skill-purpose-and-trigger-when-to-use",
+                "section_id": "skill.trigger.1",
                 "level": 3,
-                "parent_id": "skill-purpose-and-trigger",
+                "parent_id": "skill.trigger",
                 "title": "When to Use",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "입력·목적·적용 트리거",
+                "content": "입력·목적·적용 트리거와 필수 입력·판본·권한",
                 "required_content": [
-                  "입력·목적·적용 트리거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "입력·목적·적용 트리거와 필수 입력·판본·권한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
@@ -11786,13 +11785,13 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "skill-purpose-and-trigger-when-not-to-use",
+                "section_id": "skill.trigger.2",
                 "level": 3,
-                "parent_id": "skill-purpose-and-trigger",
+                "parent_id": "skill.trigger",
                 "title": "When Not to Use",
                 "order": 2,
                 "requiredness": "required",
@@ -11810,13 +11809,14 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "skill-procedure",
+            "section_id": "skill.procedure",
             "level": 2,
             "parent_id": null,
             "title": "Procedure",
@@ -11836,12 +11836,11 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "skill-procedure-steps",
+                "section_id": "skill.procedure.1",
                 "level": 3,
-                "parent_id": "skill-procedure",
+                "parent_id": "skill.procedure",
                 "title": "Steps",
                 "order": 1,
                 "requiredness": "required",
@@ -11859,13 +11858,13 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "skill-procedure-failure-handling",
+                "section_id": "skill.procedure.2",
                 "level": 3,
-                "parent_id": "skill-procedure",
+                "parent_id": "skill.procedure",
                 "title": "Failure Handling",
                 "order": 2,
                 "requiredness": "required",
@@ -11883,22 +11882,23 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "skill-inputs-and-outputs",
+            "section_id": "skill.output",
             "level": 2,
             "parent_id": null,
-            "title": "Inputs and Outputs",
+            "title": "Outputs",
             "order": 3,
             "requiredness": "required",
             "condition": "always",
-            "content": "인터페이스",
+            "content": "산출물과 인계",
             "required_content": [
-              "인터페이스에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+              "산출물과 인계에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
             "prohibited_content": [
               "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
@@ -11909,38 +11909,13 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "skill-inputs-and-outputs-inputs",
+                "section_id": "skill.output.1",
                 "level": 3,
-                "parent_id": "skill-inputs-and-outputs",
-                "title": "Inputs",
+                "parent_id": "skill.output",
+                "title": "Artifacts",
                 "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "필수 입력·판본·권한",
-                "required_content": [
-                  "필수 입력·판본·권한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "skill-inputs-and-outputs-outputs",
-                "level": 3,
-                "parent_id": "skill-inputs-and-outputs",
-                "title": "Outputs",
-                "order": 2,
                 "requiredness": "required",
                 "condition": "always",
                 "content": "산출물·소비자·보존 범위",
@@ -11956,13 +11931,38 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "skill.output.2",
+                "level": 3,
+                "parent_id": "skill.output",
+                "title": "Handoff",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "완료 범위·잔여·담당",
+                "required_content": [
+                  "완료 범위·잔여·담당을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "skill-verification",
+            "section_id": "skill.verification",
             "level": 2,
             "parent_id": null,
             "title": "Verification",
@@ -11982,12 +11982,11 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "skill-verification-checks",
+                "section_id": "skill.verification.1",
                 "level": 3,
-                "parent_id": "skill-verification",
+                "parent_id": "skill.verification",
                 "title": "Checks",
                 "order": 1,
                 "requiredness": "required",
@@ -12005,34 +12004,35 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "skill-verification-completion-and-handoff",
+                "section_id": "skill.verification.2",
                 "level": 3,
-                "parent_id": "skill-verification",
-                "title": "Completion and Handoff",
+                "parent_id": "skill.verification",
+                "title": "Limits",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "완료 범위·잔여·담당",
+                "content": "검사·산출물이 보장하지 않는 범위",
                 "required_content": [
-                  "완료 범위·잔여·담당을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "검사·산출물이 보장하지 않는 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "역할·정책·승인 체계의 독립 정본이 되지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
                 ],
                 "empty_policy": "explain_none_or_not_applicable",
                 "validation_ids": [
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           }
         ],
         "extensions": [
@@ -12044,7 +12044,7 @@
             "verification": "the form tree check",
             "review": "when the Skill form version changes",
             "removal": "when the common Skill form gains an authority H3",
-            "parent_id": "skill-purpose-and-trigger",
+            "parent_id": "skill.trigger",
             "title": "Authority Boundary"
           }
         ]

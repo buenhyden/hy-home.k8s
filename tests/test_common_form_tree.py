@@ -302,10 +302,10 @@ AGENTS_TABLE_KEYS = {
 SKILL_GOVERNANCE = ("governance/skill", "common/template-governance-skill")
 SKILL_NATIVE = ("common/native-skill-package", "common/template-native-skill")
 SKILL_TREE = (
-    ("Purpose and Trigger", ("When to Use", "When Not to Use")),
+    ("Trigger", ("When to Use", "When Not to Use")),
     ("Procedure", ("Steps", "Failure Handling")),
-    ("Inputs and Outputs", ("Inputs", "Outputs")),
-    ("Verification", ("Checks", "Completion and Handoff")),
+    ("Outputs", ("Artifacts", "Handoff")),
+    ("Verification", ("Checks", "Limits")),
 )
 SKILL_EXTENSION = {
     "id": "skill-authority-boundary",
@@ -317,11 +317,11 @@ SKILL_EXTENSION = {
     "verification": "the form tree check",
     "review": "when the Skill form version changes",
     "removal": "when the common Skill form gains an authority H3",
-    "parent_id": "skill-purpose-and-trigger",
+    "parent_id": "skill.trigger",
     "title": "Authority Boundary",
 }
 SKILL_TABLE_KEYS = {
-    "Steps": ("skill-procedure-steps", ("Step", "Input", "Output"), 0, "Step")
+    "Steps": ("skill.procedure.1", ("Step", "Input", "Output"), 0, "Step")
 }
 WORKSPACE_FORM = (
     "common/readme-workspace-staging",
@@ -1198,6 +1198,7 @@ TARGET_GROUPS = {
     "architecture": ("context", "structure", "behavior", "quality", "decisions"),
     "spec": ("intent", "scope", "behavior", "acceptance"),
     "plan": ("intent", "dependencies", "work", "verification", "promotion"),
+    "skill": ("trigger", "procedure", "output", "verification"),
 }
 
 
@@ -4162,18 +4163,18 @@ class BareSectionTests(unittest.TestCase):
 def skill_body(*, preface: str = "") -> str:
     blocks = (
         "# Skill title",
-        "## Purpose and Trigger",
+        "## Trigger",
         "### When to Use\n\nUse it when a change needs review.",
         "### When Not to Use\n\nNot for a one-line fix.",
         "## Procedure",
         "### Steps\n\n1. Run the check.",
         "### Failure Handling\n\nStop on a failed check.",
-        "## Inputs and Outputs",
-        "### Inputs\n\nThe request.",
-        "### Outputs\n\nA report.",
+        "## Outputs",
+        "### Artifacts\n\nA report.",
+        "### Handoff\n\nRecord the result.",
         "## Verification",
         "### Checks\n\nRun the suite.",
-        "### Completion and Handoff\n\nRecord the result.",
+        "### Limits\n\nThe suite does not prove live state.",
     )
     return md(*((preface,) if preface else ()), *blocks)
 
@@ -4203,7 +4204,7 @@ class SkillFormBody(RoleFormBody, unittest.TestCase):
     def test_the_table_keys_are_the_step_input_output_columns(self) -> None:
         raw = profile_of(load_raw(), self.PROFILES[1])
         (table,) = raw["template_definition"]["tables"]
-        self.assertEqual(table["section"], "skill-procedure-steps")
+        self.assertEqual(table["section"], "skill.procedure.1")
         self.assertEqual(table["row_identity"], "Step")
         self.assertEqual(table["minimum_rows"], 0)
         self.assertEqual(
@@ -4263,7 +4264,7 @@ class SkillFormBody(RoleFormBody, unittest.TestCase):
         self.assertEqual(self.tree(body), [])
 
     def test_authority_boundary_under_another_h2_is_refused(self) -> None:
-        for heading in ("## Inputs and Outputs", "## Verification"):
+        for heading in ("## Outputs", "## Verification"):
             with self.subTest(before=heading):
                 self.assertEqual(
                     self.tree(self.under(heading, SKILL_AUTHORITY)),
