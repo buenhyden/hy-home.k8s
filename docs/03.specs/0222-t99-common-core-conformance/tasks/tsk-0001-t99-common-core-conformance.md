@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.11.0"
+version: "0.12.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -156,9 +156,9 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-CORE-001](../spec.md#criteria) | Registry core members, `core_role` and classifications | platform | completed | PASS | EVD-007, EVD-008, EVD-010, EVD-011, EVD-012, EVD-013 |
-| WORK-002 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Task core members, tables and transition adapter | platform | in-progress | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Task core members, tables and transition adapter | platform | completed | PASS | EVD-014, EVD-015, EVD-016, EVD-017 |
 | WORK-003 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Requirement, architecture, spec and plan tables | platform | ready | NOT_RUN | EVD-001 |
-| WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | ready | NOT_RUN | EVD-001 |
+| WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | in-progress | NOT_RUN | EVD-001 |
 | WORK-005 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | README tables | platform | ready | NOT_RUN | EVD-001 |
 | WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | ready | NOT_RUN | EVD-001 |
 | WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | ready | NOT_RUN | EVD-001 |
@@ -187,6 +187,7 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | EVD-014 | [VAL-CORE-001](../spec.md#criteria) | WORK-002 | Failing first | The changed tests of `tests.test_task_execution_contract`, `test_task_acceptance_contract`, `test_task_acceptance_boundaries`, `test_common_form_tree` and `test_document_lifecycle_cumulative_history` over an export of `b6e99e9d`; pinned venv, 2026-11-17 | PASS | Observed the defect: three modules failed to import the adapter (1 error each), `test_common_form_tree` 428 tests with 9 failures, `test_document_lifecycle_cumulative_history` 50 tests with 8 failures and 1 error. | yes | none |
 | EVD-015 | [VAL-CORE-003](../spec.md#criteria) | WORK-002 | Focused tests and strict validators after the change | 15 modules that read Task tables, the registry or the lifecycle: form tree, task execution, acceptance contract and boundaries, cumulative history, summary derivation, residue ledger, registry schema version, frontmatter keys, generator, package exit, artifact identity, relationship contract, link boundary and shared contract binding; the four strict validators; pinned venv, 2026-11-17 | PASS | 878 tests OK with 3 skips, including 11 `TaskCoreHeaderTests`; the registry, markdown profile, link and lifecycle validators passed; the three recorded Tasks are byte-unchanged. | yes | none |
 | EVD-016 | [VAL-CORE-004](../spec.md#criteria) | WORK-002 | Suite runtime | `scripts/run-contract-tests.py --root . --suite document` timed alone with `time`, on this tree before the fix, on an export of `d5603cc9`, and after the schema check cache, with `tests.test_json_schema_validation` and `tests.test_common_form_tree`; pinned venv, 12 CPUs, load average 7 to 20, 2026-11-17 | PASS | Before: 941 s CPU (1,174 tests) and 966 s CPU on `d5603cc9` (1,163 tests), both above the 900-second gate limit. After: 455 s CPU, 1,176 tests OK. `test_common_form_tree` 256 s to 96 s. Two cache tests prove one check per distinct schema and no caching of an invalid schema. | yes | none |
+| EVD-017 | [VAL-CORE-003](../spec.md#criteria) | WORK-002 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `3909ae40` and its commit hooks; pinned venv, 2026-11-17 | PASS | 17 selected gates passed, the `document` suite among them, after three earlier runs timed out in that suite and committed nothing (EVD-016 records the cause and fix). The independent review of WORK-002 moves to the final WORK-009 review by the user's decision. | yes | none |
 
 ### Resolution Links
 
