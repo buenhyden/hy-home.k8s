@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.5.0"
+version: "0.6.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -80,15 +80,15 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CORE-001](../spec.md#criteria) | Registry core members, `core_role` and classifications | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Task core members, tables and transition adapter | platform | draft | NOT_RUN | EVD-001 |
-| WORK-003 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Requirement, architecture, spec and plan tables | platform | draft | NOT_RUN | EVD-001 |
-| WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | draft | NOT_RUN | EVD-001 |
-| WORK-005 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | README tables | platform | draft | NOT_RUN | EVD-001 |
-| WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | draft | NOT_RUN | EVD-001 |
-| WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | draft | NOT_RUN | EVD-001 |
-| WORK-008 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Research, audit and data-reference forms | platform | draft | NOT_RUN | EVD-001 |
-| WORK-009 | [VAL-CORE-002](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Final export, residue closure, review and suite | platform | draft | NOT_RUN | EVD-001 |
+| WORK-001 | [VAL-CORE-001](../spec.md#criteria) | Registry core members, `core_role` and classifications | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Task core members, tables and transition adapter | platform | ready | NOT_RUN | EVD-001 |
+| WORK-003 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Requirement, architecture, spec and plan tables | platform | ready | NOT_RUN | EVD-001 |
+| WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | ready | NOT_RUN | EVD-001 |
+| WORK-005 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | README tables | platform | ready | NOT_RUN | EVD-001 |
+| WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | ready | NOT_RUN | EVD-001 |
+| WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | ready | NOT_RUN | EVD-001 |
+| WORK-008 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Research, audit and data-reference forms | platform | ready | NOT_RUN | EVD-001 |
+| WORK-009 | [VAL-CORE-002](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Final export, residue closure, review and suite | platform | ready | NOT_RUN | EVD-001 |
 
 ## Verification Evidence
 
