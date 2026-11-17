@@ -1,6 +1,6 @@
 ---
 title: "W03 Form Target Adoption"
-version: "0.8.0"
+version: "0.9.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -29,7 +29,7 @@ This Task executes WORK-001 to WORK-006 of the [Plan](../plan.md) for [SPEC-0221
   - Acceptance: VAL-FORM-001 to VAL-FORM-003.
 
 - **Allowed Paths**: `docs/99.templates/`, the current documents of the twelve roles named in the Spec, `scripts/`, `tests/`, `.agents/governance/`, `docs/*/AGENTS.md`, `docs/03.specs/0221-w03-form-target-adoption/`, `docs/03.specs/README.md`, `docs/03.specs/work-residue-ledger.json`, `docs/01.requirements/0003-workspace-agent-governance-platform.md` (moved headings and Archived Lineage only), `.secrets.baseline` (reviewed line moves only)
-- **Forbidden Paths**: `_workspace/`, `docs/98.archive/`, `docs/03.specs/0161-w00-v14-7-delta-intake/spec.md`, `docs/03.specs/0161-w00-v14-7-delta-intake/plan.md`, `gitops/`, `infrastructure/`, `.github/workflows/`
+- **Forbidden Paths**: `_workspace/`, `docs/98.archive/`, `docs/03.specs/0161-w00-v14-7-delta-intake/spec.md`, `docs/03.specs/0161-w00-v14-7-delta-intake/plan.md`, every file under `gitops/` and `infrastructure/` except their Spec-scoped `README.md` files, `.github/workflows/`
 - **Approval Required**: Spec and Plan approval; criterion acceptance; push, pull request and merge
 - **Static Validation**: strict document validators, ledger gate, focused tests, `scripts/run-contract-tests.py --suite document`, `python3 scripts/qa.py staged`
 - **Live Validation**: DEFER; no live surface in scope
@@ -68,7 +68,9 @@ An independent read-only code-reviewer agent reviewed `2cc30e27..7f5e5838` and r
 - **F3, registry prose.** Six registry validation strings now name Resolution, Verified State, Actions, Facts, Escalation and the Plan promotion section ID.
 - **F4, coverage.** A test shows the schema refusing `body_contract` and `section_titles` outside a retained form, and an identity test shows a retained title applies only to its bounded identity and status.
 
-F5 (the meaning-map pointer count) is kept as recorded in WORK-003: each migration replaces its role's map, and the test now checks the form of every pointer. F6 is informational; the older-registry fallbacks it names predate this package and stay with W05-H09.
+F5 (the meaning-map pointer count) is kept as recorded in WORK-003: each migration replaces its role's map, and the test now checks the form of every pointer. F6 is informational; the older-registry fallbacks it names predate this package and stay with W05-H09. The review fixes are commit `4cedd75f`.
+
+At closing the agent found that the Forbidden Paths entry named all of `gitops/` and `infrastructure/`, while the approved Spec scope lists their five service READMEs, which WORK-005 changed. The entry meant the manifests and scripts there, so it now excludes those README files; no manifest or script under either path changed.
 
 ### Blockers and Decisions
 
@@ -83,7 +85,7 @@ The user approved the Spec and Plan (EVD-002), with acceptance on green checks. 
 | WORK-003 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-002](../spec.md#criteria) | Operations and policy forms and documents | platform | completed | PASS | EVD-009, EVD-010, EVD-011 |
 | WORK-004 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-002](../spec.md#criteria) | Skill form and documents | platform | completed | PASS | EVD-012, EVD-013, EVD-014 |
 | WORK-005 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-002](../spec.md#criteria) | README forms and documents | platform | completed | PASS | EVD-015, EVD-016, EVD-017 |
-| WORK-006 | [VAL-FORM-003](../spec.md#criteria) | Residue, independent review and the `document` suite | platform | in-progress | NOT_RUN | EVD-001 |
+| WORK-006 | [VAL-FORM-003](../spec.md#criteria) | Residue, independent review and the `document` suite | platform | completed | PASS | EVD-020, EVD-021, EVD-022 |
 
 ## Verification Evidence
 
@@ -112,6 +114,7 @@ The user approved the Spec and Plan (EVD-002), with acceptance on green checks. 
 | EVD-019 | [VAL-FORM-003](../spec.md#criteria) | WORK-006 | Failing first | `tests.test_common_form_tree.RetainedSpecPlanTests` and `tests.test_task_execution_contract.AdoptedExecutionParentTests.test_a_retained_plan_reads_its_own_promotion_and_constraints` with the new tests over the code of `7f5e5838`; pinned venv, 2026-11-17 | PASS | Observed the defect: PLAN-PROMOTION and PLAN-GLOBAL-CONSTRAINTS raised for the retained Plan, and the table check could not take the document status. | yes | none |
 | EVD-020 | [VAL-FORM-003](../spec.md#criteria) | WORK-006 | Focused tests and strict validators after the change | `python3 -m unittest tests.test_common_form_tree tests.test_task_execution_contract`; the strict registry, markdown profile, link and lifecycle validators; `validate-document-lifecycle.py --mode completion --include-path` the SPEC-0221 Spec; pinned venv, 2026-11-17 | PASS | 489 tests OK with 3 skips after the expected-extension update; every strict validator passed; the completion run no longer reports a PLAN rule, and only the acceptance rows still pending report. | yes | none |
 | EVD-021 | [VAL-FORM-003](../spec.md#criteria) | WORK-006 | Independent review | The same read-only code-reviewer agent over the staged fix (`git diff --cached` on `7f5e5838`), with a completion-mode lifecycle run, the strict validators and 23 focused tests, 2026-11-17; risk class `high` | PASS | APPROVE: F1 to F3 fixed without widening the retained bound or adding an alias; F5 and F6 accepted. One optional LOW note stays open: no registry check requires a `section_titles` key to name an existing form section, and a wrong key is inert. | yes | EVD-018 |
+| EVD-022 | [VAL-FORM-003](../spec.md#criteria) | WORK-006 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `4cedd75f` (the final code and document tree) and its commit hooks; a separate `scripts/run-contract-tests.py --root . --suite document` run on the WORK-005 tree; pinned venv, 2026-11-17 | PASS | 13 selected gates passed, the `document` contract suite and the work residue ledger gate among them, and the hooks passed at the commit; the separate run passed 1148 tests in 31 modules. | yes | none |
 
 ### Resolution Links
 
@@ -133,20 +136,20 @@ WORK-006 records the Spec's out-of-scope differences here and in `docs/03.specs/
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-FORM-001](../spec.md#criteria) | pending | none | Run WORK-001 to WORK-005 and their checks | platform |
-| [VAL-FORM-002](../spec.md#criteria) | pending | none | Run WORK-002 to WORK-005 and their checks | platform |
-| [VAL-FORM-003](../spec.md#criteria) | pending | none | Run WORK-001 and WORK-006 | platform |
+| [VAL-FORM-001](../spec.md#criteria) | accepted | EVD-002, EVD-004, EVD-005, EVD-009, EVD-012, EVD-015 | Accepted under the user's 2026-11-17 answer `승인, 녹색이면 수용 (권장)` (EVD-002), whose conditions the listed PASS rows meet | platform |
+| [VAL-FORM-002](../spec.md#criteria) | accepted | EVD-007, EVD-008, EVD-010, EVD-011, EVD-013, EVD-014, EVD-016, EVD-017 | Accepted under the user's 2026-11-17 answer `승인, 녹색이면 수용 (권장)` (EVD-002), whose conditions the listed PASS rows meet | platform |
+| [VAL-FORM-003](../spec.md#criteria) | accepted | EVD-004, EVD-019, EVD-020, EVD-021, EVD-022 | Accepted under the user's 2026-11-17 answer `승인, 녹색이면 수용 (권장)` (EVD-002), whose conditions the listed PASS rows meet; the out-of-scope differences are residue W03-H45 to W03-H47 | platform |
 
 ### Remaining Conditions
 
-WORK-002 to WORK-006, the independent review and the user's acceptance remain.
+No work unit remains. The residue rows W03-H45 to W03-H47 stay open for T99-CONFORMANCE, so the package exit waits until they are transferred or closed. Push, pull request and merge follow the user's request for this change.
 
 ## Handoff
 
 ### Promotion Receipt
 
-The Plan's FORM-TREES row is not yet reflected.
+FORM-TREES is reflected: the [document authoring policy](../../../../.agents/governance/document-authoring.md) delegates the exact form rules to the Stage 99 registry, and the registry `common_forms` holds the new trees of the twelve role forms and the retained form for the four approved identities (commits `6ec18e41` to `4cedd75f`).
 
 ### Next Owner
 
-The agent runs WORK-002 to WORK-005, then WORK-006.
+T99-CONFORMANCE owns W03-H45 to W03-H47. The package exit follows once no open residue row is sourced in this Task. The next package prompts, W04-LIFECYCLE and T99-CONFORMANCE, start only when the user enters their scope.
