@@ -1,6 +1,6 @@
 ---
 title: "gitops"
-version: "0.4.1"
+version: "0.4.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -68,6 +68,9 @@ Service/EndpointSlice를 선언하지 않는다.
 ArgoCD resource exclusion 또는 runtime drift 때문에 직접 EndpointSlice
 patch/apply가 필요한 경우에도 이는 human-approved break-glass 예외이며,
 실행 후 실제 endpoint 값을 Git과 운영 증적에 되돌려 맞춰야 한다.
+
+| Interface | Producer | Consumer | Contract | Failure |
+| --- | --- | --- | --- | --- |
 
 #### External Service Contract Matrix
 

@@ -2567,7 +2567,6 @@ def document_content_diagnostics(
         text,
         _document_content_table,
         index_columns=navigation.index_columns,
-        optional_index_columns=navigation.optional_index_columns,
     )
     return [
         Diagnostic(rule, path, profile.profile_id, expected, actual, OWNER)

@@ -20,6 +20,12 @@ updated: "{{UPDATED}}"
 
 <!-- Author prompt: 이 영역의 외부 계약과 경계를 설명하고, 규범 정책과 계약 문서를 링크한다. -->
 
+<!-- Author prompt: 이 문서가 외부 인터페이스를 밝힐 때만 아래 External Interfaces 표를 두고, 경계마다 한 행에 생산자, 소비자, 계약 참조, 실패 처리를 이 문서가 밝힌 사실로 적는다. 외부 인터페이스가 없으면 표를 지운다. -->
+
+| Interface | Producer | Consumer | Contract | Failure |
+| --- | --- | --- | --- | --- |
+| Name one boundary. | Name the producer. | Name the consumer. | Link the contract. | State how a failure is handled. |
+
 #### Boundaries
 
 <!-- Author prompt: 설정이 있다는 것과 런타임 동작이 입증되었다는 것을 구분한다. -->

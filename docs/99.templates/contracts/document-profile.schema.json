@@ -721,14 +721,6 @@
             "type": "string",
             "minLength": 1
           }
-        },
-        "optional_index_columns": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
         }
       }
     },

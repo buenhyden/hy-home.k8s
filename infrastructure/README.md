@@ -1,6 +1,6 @@
 ---
 title: "infrastructure"
-version: "0.4.1"
+version: "0.4.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -64,6 +64,9 @@ infrastructure/
 | `ipaddresspool.yaml` and `l2advertisement.yaml` | MetalLB bootstrap manifests owned by platform maintainers. | Bootstrap-time LoadBalancer address pool and L2 advertisement. | Depends on local network range and MetalLB controller. | Validate manifests statically; live behavior requires cluster networking checks. |
 
 ### Interfaces
+
+| Interface | Producer | Consumer | Contract | Failure |
+| --- | --- | --- | --- | --- |
 
 #### Bootstrap Boundary Matrix
 

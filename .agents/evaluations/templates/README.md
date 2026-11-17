@@ -1,6 +1,6 @@
 ---
 title: "Agent Evaluation Form Router"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -41,6 +41,9 @@ runtime 권한을 주지 않는다.
 Stage 99는 이 정규 파일을 `evaluation-task.template.md`,
 `evaluation-score.template.md`, `evaluation-results.template.md`로 부르며, 이
 라우터는 단계를 건너 개별 양식 파일로 링크하지 않는다.
+
+| Path | Purpose |
+| --- | --- |
 
 ### Owners
 

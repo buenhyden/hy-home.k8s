@@ -204,10 +204,11 @@ ROOT_FORM_TREE = (
     ("Repository Map", ("Current Paths", "Owners")),
     ("Support", ("Help", "Related Documentation")),
 )
+# SPEC-0222: the index tables are the core paths tables of their H2.
 ROOT_TABLE_KEYS = {
     "Directory Index": (
-        "root-readme.map.1",
-        ("Path", "Purpose", "Owner"),
+        "root-readme.map",
+        ("Path", "Purpose"),
         0,
         "Path",
     ),
@@ -225,8 +226,8 @@ STAGE_FORM_TREE = (
 )
 STAGE_TABLE_KEYS = {
     "Index": (
-        "stage-readme.contents.1",
-        ("Path", "Purpose", "Owner"),
+        "stage-readme.contents",
+        ("Path", "Purpose"),
         0,
         "Path",
     ),
@@ -243,6 +244,12 @@ SERVICE_FORM_TREE = (
     ("Checks", ("Readiness", "Failure Handling")),
 )
 SERVICE_TABLE_KEYS = {
+    "External Interfaces": (
+        "service-readme.service",
+        ("Interface", "Producer", "Consumer", "Contract", "Failure"),
+        0,
+        "Interface",
+    ),
     "Commands": (
         "service-readme.checks.1",
         ("Command", "Output"),
@@ -1980,9 +1987,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                         self.assertIs(
                             column["required"],
                             not (
-                                form_id in ("root-readme", "stage-readme")
-                                and column["key"] == "Owner"
-                                or form_id == "policy"
+                                form_id == "policy"
                                 and column["key"] in POLICY_RULES_OPTIONAL
                                 or form_id == "requirement"
                                 and column["key"] in REQUIREMENT_OPTIONAL
@@ -2022,7 +2027,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             "postmortem": ["Actions", "Lifecycle Traceability"],
             "root-readme": ["Directory Index"],
             "stage-readme": ["Index"],
-            "service-readme": ["Commands"],
+            "service-readme": ["External Interfaces", "Commands"],
             "policy": ["Rules", "Rule Levels", "Lifecycle Traceability"],
             "agents": ["Tool Rules"],
             "skill": ["Steps"],
@@ -3162,6 +3167,26 @@ class RootReadmeFormTests(unittest.TestCase):
         )
         self.assertNotEqual(self.tree(self.BODY + "\n## Structure\n\nText.\n"), [])
 
+    def test_the_paths_table_is_read_anywhere_in_repository_map(self) -> None:
+        def tables(home: str, header: str) -> list[str]:
+            row = "| " + " | ".join("x" for _ in header.split("|")[1:-1]) + " |"
+            delimiter = "|" + " --- |" * len(header.split("|")[1:-1])
+            text = self.BODY.replace(home, f"{home}\n\n{header}\n{delimiter}\n{row}", 1)
+            return sorted(
+                item.rule_id
+                for item in MARKDOWN._table_diagnostics(
+                    PurePosixPath("README.md"), self.profile, text
+                )
+            )
+
+        for home in ("### Current Paths\n\nText.", "### Owners\n\nText."):
+            with self.subTest(home=home):
+                self.assertEqual(tables(home, "| Path | Purpose |"), [])
+                self.assertEqual(
+                    tables(home, "| Path | Purpose | Owner |"), ["BODY-TABLE-COLUMNS"]
+                )
+        self.assertEqual(tables("### Help\n\nText.", "| Path | Purpose | Owner |"), [])
+
     def test_the_navigation_section_is_the_current_paths_h3(self) -> None:
         navigation = self.registry.readme_navigation.profiles[ROOT_FORM[0]]
         self.assertEqual(
@@ -3173,7 +3198,7 @@ class StageReadmeFormTests(unittest.TestCase):
     """SPEC-0173: the Stage README form, its Index table and its navigation."""
 
     HOME = "### Paths\n\nText."
-    HEADER = ("Path", "Purpose", "Owner")
+    HEADER = ("Path", "Purpose")
     BODY = md(
         "# Stage",
         *(
@@ -3237,7 +3262,7 @@ class StageReadmeFormTests(unittest.TestCase):
 
     def test_the_index_table_accepts_its_registered_columns(self) -> None:
         for profile_id in STAGE_FORM[::2]:
-            for header in (self.HEADER[:2], self.HEADER):
+            for header in (self.HEADER,):
                 row = tuple("x" for _ in header)
                 text = self.with_table(
                     "| " + " | ".join(header) + " |",
@@ -3254,8 +3279,8 @@ class StageReadmeFormTests(unittest.TestCase):
         for profile_id in STAGE_FORM[::2]:
             for header in (
                 ("Path",),
-                ("Path", "Owner", "Purpose"),
-                (*self.HEADER, "Note"),
+                ("Purpose", "Path"),
+                (*self.HEADER, "Owner"),
             ):
                 text = self.with_table(
                     "| " + " | ".join(header) + " |",
@@ -3267,10 +3292,16 @@ class StageReadmeFormTests(unittest.TestCase):
                         self.tables(profile_id, text), ["BODY-TABLE-COLUMNS"]
                     )
 
-    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
-        wrong = self.with_table("| Path |", "| --- |", "| a |", home="### Owners")
+    def test_the_table_is_read_in_its_core_h2_and_not_outside(self) -> None:
+        # SPEC-0222: the core table belongs to Current Contents, so an Owners
+        # table is read and a Usage table is not.
+        inside = self.with_table("| Path |", "| --- |", "| a |", home="### Owners")
+        wrong = self.with_table("| Path |", "| --- |", "| a |", home="### Entry Points")
         for profile_id in STAGE_FORM[::2]:
             with self.subTest(profile=profile_id):
+                self.assertEqual(
+                    self.tables(profile_id, inside), ["BODY-TABLE-COLUMNS"]
+                )
                 self.assertEqual(self.tables(profile_id, wrong), [])
 
     def test_the_navigation_section_is_the_paths_h3(self) -> None:
@@ -3383,6 +3414,27 @@ class ServiceReadmeFormTests(unittest.TestCase):
         for profile_id in SERVICE_FORM[::2]:
             with self.subTest(profile=profile_id):
                 self.assertEqual(self.tables(profile_id, wrong), [])
+
+    def test_the_interface_table_is_read_in_the_service_h2(self) -> None:
+        header = "| Interface | Producer | Consumer | Contract | Failure |"
+        delimiter = "| --- | --- | --- | --- | --- |"
+        row = "| `api` | p | c | [contract](c.md) | f |"
+        for profile_id in SERVICE_FORM[::2]:
+            for home in ("### Interfaces\n\nText.", "### Purpose\n\nText."):
+                with self.subTest(profile=profile_id, home=home):
+                    ok = self.with_table(header, delimiter, row, home=home)
+                    self.assertEqual(self.tables(profile_id, ok), [])
+                    relabeled = self.with_table(
+                        header.replace("Failure", "Failure mode"),
+                        delimiter,
+                        row,
+                        home=home,
+                    )
+                    self.assertEqual(
+                        self.tables(profile_id, relabeled), ["BODY-TABLE-COLUMNS"]
+                    )
+            # A document without an external interface renders no table.
+            self.assertEqual(self.tables(profile_id, self.BODY), [])
 
     def test_the_navigation_section_is_the_purpose_h3(self) -> None:
         navigation = self.registry.readme_navigation.profiles[SERVICE_FORM[0]]
@@ -8466,6 +8518,99 @@ def unbind_guide(raw: dict) -> dict:
         for column in table["columns"]:
             column.pop("id", None)
     return raw
+
+
+# SPEC-0222 WORK-005: the README and skill forms bind their core roles; each
+# template of a role carries the role's core tables with these columns.
+README_CORE_PATHS = (
+    ("Path", "path", "path", "정규 위치"),
+    ("Purpose", "purpose", "string", "독자가 찾을 내용"),
+)
+README_CORE_BINDINGS = {
+    "root-readme": (
+        "사람의 진입·사용·탐색",
+        {"root-readme.paths": ("root-readme.map", "always", README_CORE_PATHS)},
+    ),
+    "stage-readme": (
+        "단계의 소유 내용·현재 탐색",
+        {"stage-readme.paths": ("stage-readme.contents", "always", README_CORE_PATHS)},
+    ),
+    "service-readme": (
+        "선택 서비스 사용과 경계",
+        {
+            "service-readme.interface": (
+                "service-readme.service",
+                "external_interface",
+                (
+                    ("Interface", "interface", "identifier", "경계"),
+                    ("Producer", "producer", "string", "생산자"),
+                    ("Consumer", "consumer", "string", "소비자"),
+                    ("Contract", "contract", "reference", "입출력 의미"),
+                    ("Failure", "failure", "string", "실패 처리"),
+                ),
+            )
+        },
+    ),
+    "skill": ("반복 가능한 호출형 절차", {}),
+}
+
+
+class ReadmeAndSkillCoreBindingTests(unittest.TestCase):
+    """SPEC-0222 VAL-CORE-001: root, stage and service README and skill forms."""
+
+    def test_each_form_binds_its_core_role_and_members(self) -> None:
+        raw = load_raw()
+        forms = {form["form_id"]: form for form in raw["common_forms"]["forms"]}
+        for role, (purpose, tables) in README_CORE_BINDINGS.items():
+            with self.subTest(role=role):
+                form = forms[role]
+                self.assertEqual(form.get("core_role"), role)
+                self.assertEqual(form["core"]["purpose"], purpose)
+                self.assertEqual(form["core"]["status"], "DESIGN_PROPOSAL_NOT_ADOPTED")
+                self.assertEqual(
+                    [table["table_id"] for table in form["core"]["tables"]],
+                    list(tables),
+                )
+                for section in form["sections"]:
+                    for item in (section, *section["children"]):
+                        self.assertEqual(
+                            item["core"]["required_when"], item["condition"]
+                        )
+        self.assertEqual(rules_of(raw), set())
+
+    def test_each_template_carries_its_core_tables_exactly(self) -> None:
+        raw = load_raw()
+        for role, (_, tables) in README_CORE_BINDINGS.items():
+            templates = [
+                profile
+                for profile in raw["profiles"]
+                if profile["mode"] == "template"
+                and profile.get("document_role") == role
+            ]
+            self.assertTrue(templates)
+            for profile in templates:
+                with self.subTest(profile=profile["id"]):
+                    core = [
+                        table
+                        for table in profile["template_definition"]["tables"]
+                        if "table_id" in table
+                    ]
+                    self.assertEqual(
+                        {
+                            table["table_id"]: (
+                                table["section"],
+                                table["required_when"],
+                                tuple(
+                                    (c["key"], c["id"], c["data_type"], c["meaning"])
+                                    for c in table["columns"]
+                                ),
+                            )
+                            for table in core
+                        },
+                        tables,
+                    )
+                    for table in core:
+                        self.assertTrue(all(c["required"] for c in table["columns"]))
 
 
 class CoreRoleBindingTests(unittest.TestCase):

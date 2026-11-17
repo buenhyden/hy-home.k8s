@@ -1,6 +1,6 @@
 ---
 title: "hy-home.k8s"
-version: "0.5.0"
+version: "0.5.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -175,19 +175,21 @@ hy-home.k8s/
 
 #### Top-level Areas
 
-- `docs/` - 공식 문서 체계, 요구사항부터 운영/회고까지의 단계형 SSoT
-- `gitops/` - ArgoCD App-of-Apps 루트, 플랫폼 리소스, 워크로드 선언
-- `infrastructure/` - k3d 클러스터 설정, ArgoCD Helm values, bootstrap 및 검증 스크립트
-- `examples/` - 앱 GitOps 온보딩용 참조 구현과 AWS/Azure cloud target 예시
-- `scripts/` - 저장소 유지보수와 자동화 보조 스크립트
-- `tests/` - 저장소 validator의 독립 behavior coverage와 synthetic fixtures
-- `policy/` - 추적된 Kubernetes 매니페스트에 적용하는 Conftest/Rego deny 규칙
-- `secrets/` - 로컬 인증서 배치 경로. 키 자료는 추적하지 않는다
-- `_workspace/` - 비밀값을 담지 않는 임시 분석·진단 경계. 자신과 하위 디렉터리의 README 7개만 추적한다
-- `.github/` - `main` PR flow용 CI workflow, PR/issue intake, CODEOWNERS, labeler, dependabot, main 보호 설정 기록, SECURITY 안내 (zizmor hook은 `.pre-commit-config.yaml`)
-- `.agents/` - 공급자 중립 역할·스킬·평가 하니스와 registry. Codex/Claude projection의 공통 의미를 소유하며 native 실행을 증명하지 않는다.
-- `.claude/` - 추적되는 Claude project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
-- `.codex/` - 추적되는 Codex project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
+| Path | Purpose |
+| --- | --- |
+| `docs/` | 공식 문서 체계, 요구사항부터 운영/회고까지의 단계형 SSoT |
+| `gitops/` | ArgoCD App-of-Apps 루트, 플랫폼 리소스, 워크로드 선언 |
+| `infrastructure/` | k3d 클러스터 설정, ArgoCD Helm values, bootstrap 및 검증 스크립트 |
+| `examples/` | 앱 GitOps 온보딩용 참조 구현과 AWS/Azure cloud target 예시 |
+| `scripts/` | 저장소 유지보수와 자동화 보조 스크립트 |
+| `tests/` | 저장소 validator의 독립 behavior coverage와 synthetic fixtures |
+| `policy/` | 추적된 Kubernetes 매니페스트에 적용하는 Conftest/Rego deny 규칙 |
+| `secrets/` | 로컬 인증서 배치 경로. 키 자료는 추적하지 않는다 |
+| `_workspace/` | 비밀값을 담지 않는 임시 분석·진단 경계. 자신과 하위 디렉터리의 README 7개만 추적한다 |
+| `.github/` | `main` PR flow용 CI workflow, PR/issue intake, CODEOWNERS, labeler, dependabot, main 보호 설정 기록, SECURITY 안내 (zizmor hook은 `.pre-commit-config.yaml`) |
+| `.agents/` | 공급자 중립 역할·스킬·평가 하니스와 registry. Codex/Claude projection의 공통 의미를 소유하며 native 실행을 증명하지 않는다. |
+| `.claude/` | 추적되는 Claude project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다. |
+| `.codex/` | 추적되는 Codex project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다. |
 
 #### Tech Stack
 

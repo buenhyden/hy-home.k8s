@@ -38,7 +38,7 @@ updated: "{{UPDATED}}"
 
 <!-- Author prompt: 최상위 폴더나 그 README를 링크한다. 폴더마다 내부 경로는 하나까지만 적고, 트리에는 직접 하위 항목만 보인다. 상태, 날짜, 개수는 각 문서가 직접 가지므로 옮겨 적지 않는다. 경로 매트릭스는 그 멤버를 나열하는 폴더의 README에 둔다. -->
 
-<!-- Author prompt: 폴더별 목적을 표로 보일 때만 아래 Directory Index 표를 사용하고, 그렇지 않으면 표를 지운다. -->
+<!-- Author prompt: 아래 Directory Index 표는 항상 두며 Path와 Purpose 두 열만 쓴다. 실제 경로마다 한 행을 적고, 없는 경로나 목적을 지어내지 않는다. -->
 
 | Path | Purpose |
 | --- | --- |

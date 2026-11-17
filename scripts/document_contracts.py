@@ -984,7 +984,6 @@ class ReadmeNavigation:
     # tables that sealed and frozen proofs read.
     exempt_paths: frozenset[PurePosixPath] = frozenset()
     index_columns: tuple[str, ...] = ()
-    optional_index_columns: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -4798,7 +4797,6 @@ def _readme_navigation_from_mapping(
         pending_paths=frozenset(PurePosixPath(value) for value in raw["pending_paths"]),
         exempt_paths=frozenset(PurePosixPath(value) for value in raw["exempt_paths"]),
         index_columns=tuple(raw.get("index_columns", ())),
-        optional_index_columns=tuple(raw.get("optional_index_columns", ())),
     )
 
 

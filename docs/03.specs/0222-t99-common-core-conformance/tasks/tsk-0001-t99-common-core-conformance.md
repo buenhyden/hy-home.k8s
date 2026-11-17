@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.13.0"
+version: "0.14.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -162,6 +162,23 @@ WORK-004 bound the guide, runbook, policy, incident and postmortem forms to the 
   - DOCLIFE-R009 now names the full set of open results (`FAIL`, `ERROR`, `DEFER`, `NOT_RUN`, `CANCELLED`);
   - the template record stays the projection WORK-001 decided, so the record schema widening from the prepared unit is dropped.
 
+WORK-005 bound the root, stage and service README forms and the skill form to the core.
+
+- **Root and stage.** The index tables take the core `Path | Purpose`; the optional Owner column, used by no tracked index, leaves.
+  - The root README's top-level area list and the Stage 03 package paragraphs become those tables.
+  - Stage READMEs with no tracked child render the header-only table.
+  - The DOC-INDEX reader reads the table in the core H2.
+- **Service.** `Commands` stays a local table of its own. `service-readme.interface` is defined with its `external_interface` condition, and the gitops and infrastructure READMEs, which state interfaces without failure facts, render it header-only.
+- **Skill.** The skill form binds its core role, which has no table.
+- **Commit shape.** The Plan names one commit per README form, but the four forms share interleaved registry and test changes, so they land in one commit.
+
+| Form | Files |
+| --- | --- |
+| root README | `README.md` and `readme-repository.template.md` |
+| stage README | the two stage templates, `docs/03.specs/README.md`, the two evaluation READMEs, and the incidents, audits and data READMEs |
+| service README | the two service templates, `gitops/README.md` and `infrastructure/README.md` |
+| skill | registry only |
+
 ### Blockers and Decisions
 
 The user approved the Spec and Plan (EVD-006); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
@@ -173,8 +190,8 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | WORK-001 | [VAL-CORE-001](../spec.md#criteria) | Registry core members, `core_role` and classifications | platform | completed | PASS | EVD-007, EVD-008, EVD-010, EVD-011, EVD-012, EVD-013 |
 | WORK-002 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Task core members, tables and transition adapter | platform | completed | PASS | EVD-014, EVD-015, EVD-016, EVD-017 |
 | WORK-003 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Requirement, architecture, spec and plan tables | platform | ready | NOT_RUN | EVD-001 |
-| WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | in-progress | NOT_RUN | EVD-001 |
-| WORK-005 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | README tables | platform | ready | NOT_RUN | EVD-001 |
+| WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | completed | PASS | EVD-018, EVD-019, EVD-020 |
+| WORK-005 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | README tables | platform | in-progress | NOT_RUN | EVD-001 |
 | WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | ready | NOT_RUN | EVD-001 |
 | WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | ready | NOT_RUN | EVD-001 |
 | WORK-008 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Research, audit and data-reference forms | platform | ready | NOT_RUN | EVD-001 |
@@ -205,6 +222,9 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | EVD-017 | [VAL-CORE-003](../spec.md#criteria) | WORK-002 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `3909ae40` and its commit hooks; pinned venv, 2026-11-17 | PASS | 17 selected gates passed, the `document` suite among them, after three earlier runs timed out in that suite and committed nothing (EVD-016 records the cause and fix). The independent review of WORK-002 moves to the final WORK-009 review by the user's decision. | yes | none |
 | EVD-018 | [VAL-CORE-001](../spec.md#criteria) | WORK-004 | Failing first | The WORK-004 tests over an export of `b6e99e9d` in the prepared worktree: round one `tests.test_common_form_tree` and `tests.test_document_generator`; round two the policy rule ID, rule history and policy form classes; pinned venv, 2026-11-17 | PASS | Observed the defect: round one 463 tests with 31 failures and 24 errors; round two 95 tests with 122 failures and 31 errors (subtests). | yes | none |
 | EVD-019 | [VAL-CORE-003](../spec.md#criteria) | WORK-004 | Focused tests and strict validators after the change | After the merge onto `67a8081b`: form tree, generator, policy rule IDs and history, shared contract binding, task execution, operations section and lineage, terminal contract and native skill envelope; the four strict validators; one-time scratch move checks of every policy and runbook; pinned venv, 2026-11-17 | PASS | 699 tests run. One test assumed record fields that WORK-001 keeps out of the record; it now checks the registry, and its class with the policy modules passed (74 tests OK). Every validator passed. The move check found every line and cell again, except the listed renames and EXEC-R012's two retired cells. | yes | none |
+| EVD-020 | [VAL-CORE-003](../spec.md#criteria) | WORK-004 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `c91bcc1b` and its commit hooks; pinned venv, 2026-11-17 | PASS | 13 selected gates passed after one Markdown list prefix fix (MD029 on the kept `AUTHOR-R009` token item); the `.secrets.baseline` line shift did not fail the secret scan. | yes | none |
+| EVD-021 | [VAL-CORE-001](../spec.md#criteria) | WORK-005 | Failing first | The WORK-005 tests over an export of `b6e99e9d` in the prepared worktree; pinned venv, 2026-11-17 | PASS | Observed the defect: 460 tests with 26 failures and 1 error. | yes | none |
+| EVD-022 | [VAL-CORE-003](../spec.md#criteria) | WORK-005 | Focused tests and strict validators after the change | After the merge onto `c91bcc1b`: form tree, repository quality rules, scope selection, README navigation, generator, AGENTS routes, native skill envelope and reference pack routes; the four strict validators; one-time scratch move checks; pinned venv, 2026-11-17 | PASS | 571 tests OK with 3 skips; every validator passed; the move check found every line again, except the listed table conversions and four rewritten template prompts. | yes | none |
 
 ### Resolution Links
 
