@@ -1,10 +1,10 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.29"
+version: "0.2.30"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "SPEC-0161-TSK-0001"
 parent_ids: ["SPEC-0161-PLAN-0001"]
 ---
@@ -294,6 +294,7 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-179 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W02 owner and resume condition recheck | The work residue ledger, the W02 Disposition table and the Residue Handoff rows at `84d2e981`, read against the 4.2.0 package prompt list, 2026-11-17 | PASS | The 4.2.0 package splits W10 into seven tasks, so the owner `W10` and the condition "When W10 starts" no longer named one owner or trigger. OPEN-08, R147-16 and W03-H23 now name W10-INFRA with a concrete resume condition. DOC-S99 no longer cites the closed OPEN-09. No entry changed state, and no source, check or user file was removed. | no | none |
 | EVD-180 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-VERSION numeric version recheck | `scripts/semver_grammar.py`, the version patterns of `frontmatter.schema.json`, `document-profile.schema.json` and `template-definition.schema.json`, `scripts/release.py`, and the 24 cases of the package `version-fixtures.json` at `bb0d1887`, 2026-11-17 | PASS | All 24 package cases match `is_numeric_version`, and `numeric_version_order` orders 1.9.0 before 1.10.0. The schema patterns end in `(?![\s\S])`, so a trailing newline fails. Release tags keep their own `v`-prefixed SemVer pattern, Kubernetes API `version: v1` labels stay unchanged, and `contract_id` and `contract_version` are separate fields. `tests.test_semver_grammar`, `tests.test_semver_versions` and `tests.test_frontmatter_key_contract`: 104 tests OK. No change was needed. | no | none |
 | EVD-181 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W04-LIFECYCLE draft, approval and relation recheck | `.agents/governance/document-lifecycle.md` DOCLIFE-R001 to R003, the Spec, Plan, Task and Requirement status domains of `docs/99.templates/registry.json`, the Plan template tables, `readme_navigation.forbidden_index_columns`, the ledger entries W05-H05 and W07-H03, and `tests.test_task_execution_contract`, `tests.test_task_acceptance_contract`, `tests.test_task_acceptance_boundaries`, `tests.test_document_lifecycle_cumulative_history`, `tests.test_current_executable_references`, `tests.test_relationship_contract`, `tests.test_document_lifecycle_package_exit` and `tests.test_shared_contract_binding` at `235fcb73`, 2026-11-17 | PASS | 227 tests OK. Draft creation, revision, review and focused checks stay allowed; a draft parent, a status edit or a writing PASS does not activate a Task; scoped approval binds the current parents and request revision; a changed or cancelled request and a superseded brief block resume; rename, deletion and recreation are refused; the registry status domains equal the policy prose. No change was needed. | no | none |
+| EVD-182 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W04-CONTENT new-claim review and core table fill | The 893 text units new since `537a7428` in 61 of the 116 Stage 01, 02, 05 and 90 documents, read by four read-only reviewers; the 40 staged files; the four strict document validators, `validate-work-residue-ledger.py`, and `bash -n` on the runbook fences; an independent verification review of the staged diff; pinned venv, 2026-11-18 | PASS | Every document has a disposition (55 KEEP, 61 reviewed). The review findings were fixed in 37 documents or recorded as W04-H02 to W04-H07. The validators passed on the staged tree. No cluster, Vault or GitHub operation ran. | no | none |
 
 #### Edition Delta
 
@@ -2411,6 +2412,100 @@ D27 and D28. No attached k8s action targets W04-LIFECYCLE.
 D27 path and numbering changes stay with DOC-PATH-PLAN and Q07-CUTOVER, and
 D28 proposal dispositions with SDLC-STRUCTURE.
 
+#### W04-CONTENT Recheck (4.2.0)
+
+The 2026-11-18 request applies the 4.2.0 W04-CONTENT prompt with the same
+limits, starting from merged `809843e2`. The package marks this task reported
+complete, so only differences new since the W04-CONTENT review at `537a7428`
+are in scope. The designs read were D15, D01, D03, D25, D26 and D28. No
+attached proposal disposition targets W04-CONTENT. SPEC-0222 handed it the
+residue T99-H01 and T99-H04.
+
+**Inventory.** `git ls-files` lists 116 current documents in Stages 01, 02, 05
+and 90 (7, 47, 23 and 39). A temporary table,
+`_workspace/w04-content-review-4.2.0.tsv`, records each path, type, status,
+disposition and SHA-256 at the staged tree. 55 documents are KEEP: 54 are
+unchanged since `537a7428`, so their earlier full or sectioned review stands,
+and one changed by form moves only. 61 documents gained text since
+`537a7428`. Their 893 new text units are units absent from the document at
+`537a7428`, or, for a successor member, absent from its predecessor. Four
+read-only reviewers read those units in context, one each for Stage 01 and
+02, Stage 05, the successor research members, and the other Stage 90
+documents. They compared the units with the code, configuration and owners.
+None found a Git-history restore stated as a new requirement, a Release
+document reintroduced, an always-full check, or a draft treated as sole
+authority. None found an invented fact.
+
+**Decision.** On 2026-11-18 the user chose to fill the header-only core
+tables from stated facts. Each row comes only from the same document's text.
+A cell with no stated fact says `not stated in this document`, and the gap
+stays residue. Numbered procedures, commands and legacy tables stay
+unchanged. Accepted ADR-0062 and published members stay unedited.
+
+**Changes.** 37 documents changed, in four groups.
+
+- *Runbooks.* Nine runbooks gained core Steps rows (52 rows). Next Owner in
+  RUN-0008 to RUN-0010 now names the owners each runbook states elsewhere. The
+  `--hard-refresh` commands in RUN-0001, 0002 and 0004 are labeled
+  operator-triggered state changes, and RUN-0003's `--prune` sync is labeled
+  as needing operator approval.
+- *Architecture and Requirements.* AD-0004, AD-0005 and AD-0007 gained
+  interface rows; no Failure fact is stated, so those cells say not stated.
+  The gitops and infrastructure READMEs gained service interface rows.
+  ADR-0063's Reason cells now come from its own text, and it no longer claims
+  observed timings. It says the workflow is implemented in `ci.yml` (EVD-166)
+  while adoption is pending. AD-0006 and AD-0007 now describe the same CI
+  leaves. REQ-0001 AC04 and REQ-0003 AC11 lost stale state wording only.
+- *Policies.* POL-0003 MESH-R012 and R013 and POL-0007 ONBOARD-R005 now name
+  only what a check enforces. POL-0001 GITOPS-R014 adds PLAT-005 for wildcard
+  review.
+- *References.* The research members m0013 to m0026 and pack 0002 m0001
+  filled their core source tables from their own source text and legacy
+  tables. The audit members m0002 and m0003 filled their findings tables, and
+  the pack README marks m0003 as a draft until it is published. The registry
+  registers the policy Control Register and Responsibilities tables as local
+  tables (`authority_ref: ADR-0059`), and `tests.test_common_form_tree` pins
+  them and the new interface row counts. The incident `Field | Value` table
+  stays unregistered. SPEC-0171 decided it is free incident metadata and not a
+  contract table (its EVD-006 and `test_the_metadata_table_is_not_a_contract_table`),
+  and registering it failed that test. The Stage 99 README now states this
+  exception.
+
+**Verification review.** An independent read-only reviewer traced about 80 percent of the added cells to their documents. It found ten cells that went beyond the same document's text, and each was corrected:
+
+- research m0017 and m0013: a Checked At date applied to a group the text does not date;
+- research m0023: a Limits cell taken from another source;
+- the writers' "Dated historical provenance" Application label;
+- pack 0002 m0001 S16 to S23: findings split into Limits;
+- audit F-06 Acceptance, which is now the stated `Accepted deferral`, and F-07, which is now `confirmed` because the audit lists it as an observed finding that was fixed;
+- the RUN-0001 step 6 result;
+- the POL-0007 ONBOARD-R005 wording;
+- the AD-0007 external service row, which now names only the management Valkey interface for ArgoCD, as the document states;
+- the gitops README consumer.
+
+Some changes correct a claim against the implementation (D15) rather than fill a core table. These rest on cited repository evidence, not on the same document's text:
+
+- the `--hard-refresh` and `--prune` labels;
+- the ADR-0063, AD-0006 and AD-0007 workflow wording, which rests on `ci.yml` and EVD-166.
+
+Runbook Expected Result cells that place a Verification bullet on a step by topic stay as they are. The audit m0002 classifications F-08 to F-10 follow that member's own finding text.
+
+One writer restored pack 0002 m0001 from `HEAD` once inside its own assignment, after a refused `git checkout`, and redid the edit.
+
+**Kept.** RUN-0011's recovery-proof steps stay, because the Stage 03 rule 7
+ordinary-disposition recovery proof is current. REQ-0003's lineage narrative
+records ordinary recoverable disposition and stays. The ADR-0001 to ADR-0061
+range in the Stage 02 rules stays.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Every current 01/02/05/90 document has a review state or a reason | KEEP_VERIFIED | Inventory table; EVD-182 | none |
+| New claims since `537a7428` against code, configuration and owners | CHANGED | EVD-182 | none |
+| T99-H01 header-only core tables | CHANGED; unstated cells to W04-H02 to W04-H04 | SPEC-0222 EVD-046 | platform |
+| T99-H04 unregistered policy and incident tables | CHANGED for policy; incident metadata table KEEP by SPEC-0171 | SPEC-0222 EVD-046 | none |
+| Structure PASS is not operational validity; runbooks were not run against a cluster | RUNTIME_ONLY | `bash -n` on 90 fences only | platform operator |
+| Requirement mechanism text in REQ-0002 and REQ-0003 | Residue | Needs a Requirement revision with approval (W04-H07) | platform |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -2505,6 +2600,12 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W03-H43 | No legacy row: the `requirement` lifecycle domain yields no creation state, so a new Requirement is refused by the lifecycle creation rule and by the document generator (W03-D48); the repair is a lifecycle contract change of its own | terminal | W03 | When the registry admits a creation state for the `requirement` lifecycle domain | EVD-116 |
 | W03-H44 | No legacy row: the Requirement `Downstream owner` column is a hand-written reciprocal field, 10 of the 68 members are not cited in their description's own `Upstream requirement` column and 17 of its 91 cells are not a single link (W03-D55); the Architecture form package completes the citing rows and then removes the column with a derived coverage check in place of its link check | terminal | W03 | When the Architecture form package (SPEC-0197) completes the citing rows | EVD-093 |
 | W04-H01 | Verified current operating supersession and Spec/Plan state model in W04 Current and Historical Lifecycle Models. Origin: SPEC-0211 Task EVD-019 at `d0ae8cf6` | open | W04 | After the user accepts the verified current lifecycle model | none |
+| W04-H02 | Core Steps cells that the runbooks do not state: Expected Result in RUN-0001 steps 1, 2 and 5, RUN-0002 steps 1 to 4, RUN-0008 steps 1 and 3 and RUN-0009 step 4; On Failure in RUN-0010 steps 3 and 5 and RUN-0011 steps 2 to 4 | open | platform | When the runbook owner observes or states each result and failure action | none |
+| W04-H03 | Interface Failure cells with no stated failure boundary: AD-0004, AD-0005, AD-0007 and the gitops README; the gitops README OpenBao, Prometheus and Grafana consumer | open | platform | When the architecture owner states each interface's failure boundary | none |
+| W04-H04 | Reference core cells with no stated fact: Version, Application or Limits in the source tables of research m0013 to m0026 and pack 0002 m0001; Requirement in audit findings F-01 to F-09 and F-06 Acceptance | open | platform | When the reference maintainer re-observes the sources under RUN-0011 or states the requirement | none |
+| W04-H05 | Policy rules whose Enforcement names only a runbook: POL-0004 ROLLOUT-R001, R002, R005, R006, R007, R013, R014, R015, R020 to R024; POL-0007 ONBOARD-R013 | open | platform | When each rule gains a check or is reclassified as semantic review | none |
+| W04-H06 | No runbook names a distinct escalation contact; RUN-0012 Next Owner reads none; RUN-0009 and RUN-0010 break-glass steps name no approver beyond human approval | open | platform | When the Stage 05 owner names the escalation contact and approver | none |
+| W04-H07 | Mechanism text in approved Requirements: REQ-0003 FR-0017 and REQ-0002 AC05 declarations and rationale belong to AD-0006 and AD-0005 | open | platform | When the Requirement owner revises REQ-0002 and REQ-0003 with approval | none |
 | W05-H01 | Legacy row `Link-only section` of `Document Form Handoff`: the hard-coded link-only section list must follow the registry | terminal | W05 | When W05 starts | EVD-174 |
 | W05-H02 | Legacy row `scripts set` of `Read Denominator`: 8 partial and 53 listed-only tracked scripts | terminal | W05 | When W05 re-reads its files before editing | EVD-136 |
 | W05-H03 | Legacy row `tests set` of `Read Denominator`: 5 partial and 68 listed-only tracked tests | terminal | W05 | When W05 re-reads its files before editing | EVD-136 |

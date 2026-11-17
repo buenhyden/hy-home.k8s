@@ -1,10 +1,10 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.3.5"
+version: "1.3.6"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RUN-0010"
 ---
 
@@ -242,6 +242,11 @@ kubectl get externalsecret -n apps ${APP}-secret
 
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
+| 1 | GitOps 매니페스트 생성 및 배포: 예시를 복사해 플레이스홀더를 교체하고 접속 이름을 확인한 뒤 commit·push하고 Application 생성을 확인한다. | `apps-generator`가 `path.basename` 이름의 새 Application을 생성한다. | 로컬 commit이나 push만으로 생성되었다고 판정하지 않는다. Application이 생성되지 않으면 Recovery Procedures의 Application 미생성 항목을 따른다. 자동 동기화가 실패하거나 멈춘 Application만 운영자가 승인된 범위에서 수동 재조정한다. |
+| 2 | 배포 상태 검증: Rollout, Pod, Ingress, AnalysisRun, HTTPS를 확인한다. | Verification > Expected Results의 기대값(Rollout `Healthy` / `Stable`, AnalysisRun `Successful`, HTTPS 성공 응답)을 만족한다. | AnalysisRun 이름이 없거나 결과가 없으면 분석 성공으로 판정하지 않는다. CA 파일을 사용할 수 없으면 TLS 완료 판정을 보류하고 인증서 owner에게 넘긴다. |
+| 3 | canary 배포 업데이트(이미지 버전 갱신): 이미지 태그를 feature branch에서 갱신하고 PR 경로로 반영한다. | 자동 reconciliation 결과로 새 canary Rollout이 진행된다. | not stated in this document |
+| 4 | 실패 시 복구 경로로 전환: AnalysisTemplate 실패나 수동 중단이 필요하면 이후 배포를 멈춘다. | 이전 stable 버전으로 복귀하고 원인 수정이 확인된다. | 승인된 canary 복구 절차(Recovery or Forward Repair)로 전환하고, 복귀와 원인 수정을 확인한 뒤에만 다음 온보딩 단계를 진행한다. |
+| 5 | OpenBao 시크릿 연동 추가: `external-secret.yaml`을 활성화하고 Rollout의 `envFrom`을 연결한다. | `READY=True`, `STATUS=SecretSynced`이며 secret value는 출력하지 않는다. | not stated in this document |
 
 ### Stop Conditions
 
@@ -280,7 +285,7 @@ Procedure 2의 Rollout, Pod, AnalysisRun, Ingress와 CA 검증을 거친 HTTPS �
 
 ### Next Owner
 
-에스컬레이션: 해당 없음 — 이 런북은 Escalation에 에스컬레이션 담당을 따로 정하지 않는다.
+에스컬레이션: GitOps rollback과 ArgoCD·Rollout·AnalysisRun·Pod·ingress/TLS 결과 기록은 Platform operator(Preflight > Authority의 플랫폼 운영자, Lifecycle Traceability), 이미지와 PR 증적은 애플리케이션 소유자가 맡는다. 비밀 변경은 승인된 OpenBao operator의 인간 승인 사항이며(Procedure 5), TLS 완료 판정 보류는 인증서 owner에게 넘긴다(Verification > Expected Results).
 
 ### Recovery or Forward Repair
 

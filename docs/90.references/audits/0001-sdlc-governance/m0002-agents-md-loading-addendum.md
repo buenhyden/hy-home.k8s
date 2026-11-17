@@ -1,10 +1,10 @@
 ---
 title: "AGENTS.md Loading Addendum"
-version: "0.2.0"
+version: "0.2.1"
 type: "reference/audit"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "AUD-0001-m0002"
 ---
 
@@ -72,6 +72,9 @@ documentation, read 2026-11-06; repository history at `296e3379`.
 
 | Finding ID | Requirement | Evidence | Classification | Action | Owner | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- |
+| F-08 | not stated in this document | Hooks documentation; guard output | gap | The guard supplies each target's folder `AGENTS.md` chain, root excluded, through `additionalContext`, once per session (SPEC-0149) | platform | Done 2026-11-06 under SPEC-0149; criteria accepted (REQ-0003 Archived Lineage) |
+| F-09 | not stated in this document | Memory and Codex documentation | gap | Guard supplies the folder `AGENTS.md` chain (SPEC-0149); sibling one-line `CLAUDE.md` import and session-start hook (SPEC-0151) | platform | Done 2026-11-06 |
+| F-10 | `docs/90.references/AGENTS.md` rule 3 | m0001 history | conflict | Later changes go into a new dated member; `REFERENCE_PUBLISHED_REWRITE` refusal (SPEC-0150) | platform | Decided and enforced 2026-11-06 |
 
 | Finding or gap | Severity | Evidence |
 | --- | --- | --- |

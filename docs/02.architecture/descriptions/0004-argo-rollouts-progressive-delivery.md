@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts Progressive Delivery Architecture Description"
-version: "2.1.1"
+version: "2.1.2"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -82,6 +82,10 @@ The platform owns the controller install, dashboard access, AppProject permissio
 
 | Interface | Producer | Consumer | Contract | Failure |
 | --- | --- | --- | --- | --- |
+| Rollouts dashboard `rollouts.hy-k8s.home.arpa` | `argo-rollouts` dashboard | Browser users | [Rollouts Application](../../../gitops/apps/root/platform-rollouts-app.yaml) | not stated in this document |
+| Controller metrics `argo-rollouts:8090` | Argo Rollouts controller | In-cluster Alloy, remote-written to the external Prometheus | [ADR-0045](../decisions/0045-in-cluster-telemetry-collection.md) | not stated in this document |
+| `Rollout` and `AnalysisTemplate` CRDs | Application teams through workload manifests | Argo Rollouts controller | `gitops/workloads/adminer/rollout.yaml` | not stated in this document |
+| Analysis queries to `https://prometheus.hy.home.arpa` | Reference `AnalysisTemplate` | External Prometheus | [ADR-0046](../decisions/0046-external-services-over-host-addresses.md) | not stated in this document |
 
 ## Runtime Behavior
 

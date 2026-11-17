@@ -1,10 +1,10 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.4.5"
+version: "1.4.6"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RUN-0003"
 ---
 
@@ -99,6 +99,12 @@ Steps의 Checklist에서 CA 입력과 외부 의존성을 확인한다. CA 개�
 
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
+| 0 | k8s router 이름 해석 확인 | 이름 해석이 k8s router 192.168.0.14를 가리킨다 | 중단하고 Escalation의 Next Owner(서비스 메시·cert-manager 운영 정책을 담당하는 플랫폼 운영자)와 Recovery or Forward Repair를 따른다 |
+| 1 | 기본 플랫폼 부트스트랩을 RUN-0001 절차로 완료한다 | cert-manager namespace와 mkcert-root-ca Secret이 준비된다 | 중단하고 Escalation의 Next Owner(서비스 메시·cert-manager 운영 정책을 담당하는 플랫폼 운영자)와 Recovery or Forward Repair를 따른다 |
+| 2 | cert-manager ClusterIssuer 상태 확인 | ClusterIssuer mkcert-ca-issuer Ready=True | READY=False이면 cert-manager ClusterIssuer NotReady 복구 절차를 따른다; CA 입력을 복구할 수 없거나 승인된 조치 뒤에도 준비되지 않으면 서비스 메시·cert-manager 운영 정책을 담당하는 플랫폼 운영자에게 넘긴다 |
+| 3 | Istio 가용성 확인 | istio.io CRD 10개 이상, istiod deployment 가용 | CRD 없이 istiod 설치 오류이면 Istio CRD 복구 절차를 따르고, istiod CrashLoop/OOMKilled이면 해당 복구 절차를 따른다; 그 밖에는 중단하고 Escalation의 Next Owner(서비스 메시·cert-manager 운영 정책을 담당하는 플랫폼 운영자)와 Recovery or Forward Repair를 따른다 |
+| 4 | Kiali 가용성 + Prometheus 연결 확인 | kiali deployment 가용 | Kiali Prometheus 연결 오류는 RUN-0007을 따른다; 그 밖에는 중단하고 Escalation의 Next Owner(서비스 메시·cert-manager 운영 정책을 담당하는 플랫폼 운영자)와 Recovery or Forward Repair를 따른다 |
+| 5 | 아래 Verification의 정적 계약과 런타임 검사를 실행한다 | 정적 계약, ClusterIssuer, istiod·kiali deployment, TLS 접근 검사를 수행한다(기대 HTTP 코드는 이 문서에 명시 없음) | 중단하고 Escalation의 Next Owner(서비스 메시·cert-manager 운영 정책을 담당하는 플랫폼 운영자)와 Recovery or Forward Repair를 따른다 |
 
 ### Stop Conditions
 
@@ -202,7 +208,7 @@ Kiali의 Prometheus·Grafana·Tempo 연결 복구는
 # 1. istio-base sync 상태 확인
 argocd app get platform-istio-base
 
-# 2. operator-triggered reconciliation only (sync-wave 강제)
+# 2. operator-triggered reconciliation only (sync-wave 강제). --prune은 리소스를 삭제하므로 operator 승인이 필요하다
 argocd app sync platform-istio-base --prune
 
 # 3. CRD 설치 확인 후 istiod sync

@@ -1,10 +1,10 @@
 ---
 title: "gitops"
-version: "0.4.2"
+version: "0.4.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 # gitops
 
@@ -71,6 +71,8 @@ patch/apply가 필요한 경우에도 이는 human-approved break-glass 예외�
 
 | Interface | Producer | Consumer | Contract | Failure |
 | --- | --- | --- | --- | --- |
+| 외부 서비스 Service와 EndpointSlice 파일 | 외부 management Valkey·Loki·Tempo·Alloy | 이 문서에 명시 없음 | [External Service Contract Matrix](#external-service-contract-matrix) | 이 문서에 명시 없음 |
+| OpenBao·Prometheus·Grafana 외부 HTTPS 이름 | 외부 서비스 | 이 문서에 명시 없음 | [External Service Contract Matrix](#external-service-contract-matrix) | 이 문서에 명시 없음 |
 
 #### External Service Contract Matrix
 

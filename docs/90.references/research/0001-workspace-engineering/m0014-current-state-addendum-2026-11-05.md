@@ -1,10 +1,10 @@
 ---
 title: "Reference: Current-State Addendum 2026-11-05"
-version: "0.2.0"
+version: "0.2.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RES-0001-m0014"
 ---
 
@@ -53,6 +53,12 @@ left out. Line numbers refer to the members as published at commit
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
+| M0014-S01 | [Agent registry](../../../../.agents/roles/registry.json) and `scripts/validate-agent-governance.py` | not stated in this document | 2026-11-05 | Roles, providers, projections | not stated in this document | Repository-static only; no runtime, hosted or cluster observation |
+| M0014-S02 | [Common governance hub](../../../../.agents/README.md) | not stated in this document | 2026-11-05 | Current owners of QA, lifecycle, memory and model selection | not stated in this document | Repository-static only; no runtime, hosted or cluster observation |
+| M0014-S03 | [Document registry](../../../99.templates/registry.json) | not stated in this document | 2026-11-05 | Profiles and states | not stated in this document | Repository-static only; no runtime, hosted or cluster observation |
+| M0014-S04 | [`.github/rulesets/main-protection.md`](../../../../.github/rulesets/main-protection.md) and `.github/workflows/` | not stated in this document | 2026-11-05 | Hosted checks and workflows | not stated in this document | Repository-static only; no runtime, hosted or cluster observation |
+| M0014-S05 | [`infrastructure/README.md`](../../../../infrastructure/README.md) and `gitops/` | not stated in this document | 2026-11-05 | Platform and verifier facts | not stated in this document | Repository-static only; no runtime, hosted or cluster observation |
+| M0014-S06 | [ADR-0054](../../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md) and [ADR-0055](../../../02.architecture/decisions/0055-governance-decision-current-state-amendment.md) | not stated in this document | 2026-11-05 | Current clause amendments | not stated in this document | Repository-static only; no runtime, hosted or cluster observation |
 
 | Source | Grade | Retrieved | Relevance |
 | --- | --- | --- | --- |
@@ -162,7 +168,7 @@ This addendum weighs no design alternatives, because it records where the local 
 
 ### Design Implications
 
-Navigation verified on 2026-11-16. The GitHub configuration link in m0008
+Navigation verified on 2026-11-16 (method not stated in this document). The GitHub configuration link in m0008
 names the former path. Use the
 [GitHub repository surface](../../../../.github/repository-surface.md) for current configuration.
 For m0012's document QA terminology, use the

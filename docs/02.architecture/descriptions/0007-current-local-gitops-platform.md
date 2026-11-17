@@ -1,6 +1,6 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "2.1.1"
+version: "2.1.2"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -201,7 +201,8 @@ renderer and installed schema engine; a local renderer implementation or a
 second schema CLI would duplicate their responsibilities. Remote bases,
 generators and plugin flexibility are outside the reviewed loading contract.
 Retired full/CI sweeps are not completion gates. The current workflow declares
-hosted metadata and selected style validation. Affected hosted product
+hosted metadata, selected style, changed CI lock and affected GitOps identity
+validation, as [AD-0006](./0006-workspace-agent-governance-platform.md) describes. Affected hosted product
 validation remains a delivery target under [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md).
 Each hosted result requires its own observed input and run. Live cluster
 health requires a separate operating observation.
@@ -246,6 +247,9 @@ The Istio CNI manifest is desired state and proves no actual admission or networ
 
 | Interface | Producer | Consumer | Contract | Failure |
 | --- | --- | --- | --- | --- |
+| Git manifests reconciled into the local cluster | Git repository | ArgoCD | [root Application](../../../gitops/clusters/local/root-application.yaml) | not stated in this document |
+| `vault-backend` ClusterSecretStore to OpenBao paths | External OpenBao | External Secrets Operator | [ESO configuration](../../../gitops/platform/eso/) | not stated in this document |
+| `Service` and `EndpointSlice` interface `valkey-external:6379` | External management Valkey at host `192.168.0.13:26379` | ArgoCD | [external service interfaces](../../../gitops/platform/external-services/) | not stated in this document |
 
 ## Runtime Behavior
 

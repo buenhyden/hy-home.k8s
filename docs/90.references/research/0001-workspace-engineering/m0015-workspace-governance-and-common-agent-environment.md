@@ -1,10 +1,10 @@
 ---
 title: "Reference: Workspace Governance and Common Agent Environment"
-version: "0.1.0"
+version: "0.1.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RES-0001-m0015"
 supersedes: "RES-0001-m0001"
 ---
@@ -31,8 +31,11 @@ Primary owner of U03, U05, U06, U31, U32 and U38, preserving REQ-WERPC-003 and R
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
+| SRC-WERPC-004, 005, 008, 009, 013, 087, 123, 125, 137, 155–158, 238, 243 | [m0026 current source observations](m0026-source-coverage.md#current-source-observations) | not stated in this document | 2026-09-27 | Direct reads on instruction loading, shared governance and context handoff across Claude Code and Codex | Synthesis of instruction loading, shared governance and handoff; a small versioned entrypoint plus provider adapters is a conditional design option | Access date is not publisher freshness; OpenAI harness published 2026-02-11, Anthropic long-running harness 2025-11-26, context engineering 2025-09-29, MCP Resources revision 2026-07-28; other publication or modification dates not exposed |
+| SRC-WERPC-004–008 | Official Anthropic Claude Code documentation | not stated in this document | 2026-08-08 | Establishes product-specific surfaces only | not stated in this document | Historical check, not a current read |
+| SRC-WERPC-009–013 | Official OpenAI Codex documentation | not stated in this document | 2026-08-08 | A non-repository manual cache was the first review surface | Dated historical provenance; the ledger official URLs are the durable citation | The manual cache is ephemeral |
 
-Current source and claim metadata, exact original/final URLs, access dates, versions, limitations and refresh triggers are owned by [m0012 current source observations](m0026-source-coverage.md#current-source-observations). This synthesis uses SRC-WERPC-004, 005, 008, 009, 013, 087, 123, 125, 137, 155–158, 238 and 243; all current direct reads occurred on 2026-09-27. OpenAI harness is published 2026-02-11; Anthropic long-running harness 2025-11-26 and context engineering 2025-09-29. MCP Resources is revision 2026-07-28. Other publication/modification dates were not exposed; access date is not publisher freshness.
+Current source and claim metadata, exact original/final URLs, access dates, versions, limitations and refresh triggers are owned by [m0026 current source observations](m0026-source-coverage.md#current-source-observations). This synthesis uses SRC-WERPC-004, 005, 008, 009, 013, 087, 123, 125, 137, 155–158, 238 and 243; all current direct reads occurred on 2026-09-27. OpenAI harness is published 2026-02-11; Anthropic long-running harness 2025-11-26 and context engineering 2025-09-29. MCP Resources is revision 2026-07-28. Other publication/modification dates were not exposed; access date is not publisher freshness.
 
 #### Historical source provenance
 

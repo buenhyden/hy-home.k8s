@@ -169,7 +169,8 @@ form 경로의 대응은 Registry만 소유한다.
   가지는지 엄격 Registry 검사가 확인한다(`REGISTRY_CORE_TABLE`,
   `REGISTRY_CORE_SECTION`). 모든 지역 확장과 `table_id`가 없는 템플릿 지역 표는
   `authority_ref`를 가진다(SPEC-0222 이전 등록은 `ADR-0059`, SPEC-0222가 추가한
-  것은 `SPEC-0222`). 문서 검사는 `required_when`이 `always`인 core 표가 core H2
+  것은 `SPEC-0222`). Incident 템플릿의 `Field | Value` 메타데이터 표는 계약 표가
+  아니므로 등록하지 않는다(SPEC-0171). 문서 검사는 `required_when`이 `always`인 core 표가 core H2
   안에 정확한 core 머리글로 있는지(`BODY-CORE-TABLE-MISSING`)와 각 core 셀이 열
   타입을 지키는지(`BODY-CORE-TABLE-CELL`: 필수 셀 공란, 허용값 밖의 값, 정수 열의
   비정수)를 확인한다. 템플릿은 머리글만 검사하고, retained identity와 Task 표는

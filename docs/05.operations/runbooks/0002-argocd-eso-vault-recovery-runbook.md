@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD ESO OpenBao Recovery Runbook"
-version: "1.6.5"
+version: "1.6.6"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RUN-0002"
 ---
 
@@ -145,7 +145,7 @@ Steps의 Checklist를 확인하고, 변경할 각 ConfigMap의 적용 전 상태
 6. 필요 시 ArgoCD 재평가/동기화를 수행한다.
 
    ```bash
-   argocd app get platform-eso-config --hard-refresh
+   argocd app get platform-eso-config --hard-refresh   # operator-triggered refresh: 읽기 전용 점검이 아니라 Application 상태를 바꾼다
    argocd app get platform-argocd-config --hard-refresh
    # operator-triggered reconciliation only
    argocd app sync platform-eso-config
@@ -189,6 +189,15 @@ Steps의 Checklist를 확인하고, 변경할 각 ConfigMap의 적용 전 상태
 
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
+| 1 | 사전 스냅샷을 저장한다 | not stated in this document | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
+| 2 | sealed 상태, 경로, 인증서를 먼저 분류한다 | not stated in this document | sealed:true이면 cluster 설정을 수정하지 않고 OpenBao unseal이 먼저다; host에서 sys/health가 응답하지 않으면 외부 workspace 운영자에게 넘긴다; 그 밖에는 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
+| 3 | OpenBao가 sealed 상태면 operator-bound unseal 절차를 수행한다 | not stated in this document | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
+| 4 | 이름 해석이나 CA drift가 확인된 경우에만 bootstrap [7.3/11]과 같은 입력으로 다시 적용한다 | not stated in this document | CoreDNS custom zone 재적용이 상황을 악화시키면 Steps 1단계의 스냅샷으로 되돌린다; CA bundle 이전 입력이 없거나 신뢰를 확인할 수 없으면 CA 소유자에게 넘긴다 |
+| 5 | Store/ExternalSecret/ArgoCD 상태를 재평가한다 | vault-backend Ready=True, argocd-external-valkey Ready=True | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
+| 6 | 필요 시 ArgoCD 재평가/동기화를 수행한다 | platform-eso-config, platform-argocd-config Degraded 해소 | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
+| 7 | 복구한 경로에 해당하는 라이브 계약을 운영자가 선택해 검증한다 | 포트/서비스 계약 회귀 없음, argocd·external-secrets egress 통과, ingress/TLS 계약 유지 | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
+| 8 | 저장소 정적 계약 회귀를 검증한다 | 선택한 저장소 정적 계약 통과 | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
+| 9 | GitOps source gate를 확인한다 | RUN-0001 절차 6의 source.path·targetRevision 검사 두 줄이 모두 통과한다 | 중단하고 Escalation의 Next Owner(동일 증상이 반복되면 Operations 예외 승인 절차)와 Recovery or Forward Repair를 따른다 |
 
 ### Stop Conditions
 

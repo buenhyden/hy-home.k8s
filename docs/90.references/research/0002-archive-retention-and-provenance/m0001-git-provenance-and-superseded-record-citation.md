@@ -1,10 +1,10 @@
 ---
 title: "Reference: Git Provenance and Superseded Record Citation"
-version: "0.3.0"
+version: "0.3.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RES-0002-m0001"
 ---
 
@@ -56,6 +56,29 @@ repository's local choices.
 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
+| M0001-S01 | [gitrevisions](https://git-scm.com/docs/gitrevisions) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S02 | [git-cat-file](https://git-scm.com/docs/git-cat-file) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S03 | [git-gc](https://git-scm.com/docs/git-gc) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S04 | [git-clone](https://git-scm.com/docs/git-clone) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S05 | [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S06 | [SRE Book, Postmortem Culture](https://sre.google/sre-book/postmortem-culture/) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | Fetched after one HTTP 403 retry |
+| M0001-S07 | [SRE Workbook, Postmortem Culture](https://sre.google/workbook/postmortem-culture/) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S08 | [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S09 | [GitHub, Removing sensitive data](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S10 | [Understanding JSON Schema, Conditionals](https://json-schema.org/understanding-json-schema/reference/conditionals) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S11 | [Understanding JSON Schema, Annotations](https://json-schema.org/understanding-json-schema/reference/annotations) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S12 | [Understanding JSON Schema, Type](https://json-schema.org/understanding-json-schema/reference/type) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S13 | [CommonMark Spec 0.31.2](https://spec.commonmark.org/0.31.2/) | 0.31.2 | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S14 | [Diátaxis](https://diataxis.fr/) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S15 | [PREMIS Ontology](https://www.loc.gov/standards/premis/ontology/index.html) | not stated in this document | 2026-09-15 | `unreachable`: HTTP 403 twice, and `https://www.loc.gov/standards/premis/v3/` also returned HTTP 403 | not stated in this document | no claim recorded |
+| M0001-S16 | [DPC, Retention and review](https://www.dpconline.org/handbook/organisational-activities/retention-and-review) | not stated in this document | 2026-09-28 | Read directly; no local Git or status prescription | not stated in this document | not stated in this document |
+| M0001-S17 | [DPC, Acquisition and appraisal](https://www.dpconline.org/handbook/organisational-activities/acquisition-and-appraisal) | not stated in this document | 2026-09-28 | Read directly; appraisal principles, no age-only disposal | not stated in this document | not stated in this document |
+| M0001-S18 | [AWS, ADR process](https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html) | not stated in this document | 2026-09-28 | Read directly; old-ADR marking differs from frozen local bodies | not stated in this document | not stated in this document |
+| M0001-S19 | [GitHub, About READMEs](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes) | not stated in this document | 2026-09-28 | Read directly; no universal deep-link prohibition | not stated in this document | not stated in this document |
+| M0001-S20 | [Git, gitrevisions](https://git-scm.com/docs/gitrevisions) | not stated in this document | 2026-09-28 | Read directly; distinguishes revision path from index path | not stated in this document | not stated in this document |
+| M0001-S21 | [Git, git-ls-tree](https://git-scm.com/docs/git-ls-tree) | not stated in this document | 2026-09-28 | Read directly; tree mode/type/object/path with recursive NUL output | not stated in this document | not stated in this document |
+| M0001-S22 | [Git, git-ls-files](https://git-scm.com/docs/git-ls-files) | not stated in this document | 2026-09-28 | Read directly; stage and eol expose index/worktree facts | not stated in this document | not stated in this document |
+| M0001-S23 | [Git, gitattributes](https://git-scm.com/docs/gitattributes) | not stated in this document | 2026-09-28 | Read directly; path attributes and checkout transformations | not stated in this document | not stated in this document |
 
 | Source                                                                                                                                                      | Grade      | Retrieved  | Relevance                                                                                                               |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------- |

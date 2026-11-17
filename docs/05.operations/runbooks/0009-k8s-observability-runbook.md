@@ -1,10 +1,10 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.5.5"
+version: "2.5.6"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RUN-0009"
 ---
 
@@ -278,6 +278,11 @@ kubectl get pods -n istio-system -l app=istiod \
 
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
+| 1 | 전체 상태 진단: 외부 Prometheus, alloy-k8s-logs 파드, remote write 오류, Loki 로그를 조회한다. | 정상 상태 기준값 표와 일치한다(파드 `1/1 Running`, job 세 개 존재, Loki 스트림 수 > 0). | 승인된 조회 경로가 401, `x509` 오류를 내거나 응답하지 않으면 Procedure 4로 이동하고 인증·TLS 복구는 외부 observability owner에게 넘긴다. 인증된 조회 경로가 없으면 Prometheus 결과는 `DEFER`하고 Kubernetes 진단을 계속한다. 명령이 실패하면 빈 결과와 구분해 조회 오류를 기록한다. |
+| 2 | platform-monitoring ArgoCD App 배포 복구: AppProject가 `monitoring` namespace를 허용하는지 확인한다. | destination 조회가 `true`이고 `monitoring` 리소스가 배포된다. | 조회가 실패하거나 `false`면 먼저 AppProject 반영 상태를 해결한다. destination이 없으면 `platform-cluster-config`가 검토된 변경을 반영할 때까지 기다린다. |
+| 3 | alloy-k8s-logs CrashLoop 복구: 로그와 describe로 원인을 파악하고 오류 시그니처별로 조치한 뒤 재배포한다. | alloy-k8s-logs 파드가 `1/1 Running`이다. | 오류 시그니처별 조치 표를 따르고, `loki-external` `connection refused`는 Procedure 4로 이동한다. `checksum/config` 값이 다르면 `validate-infrastructure-contracts.sh`가 실패한다. |
+| 4 | remote write와 로그 전송 경로 복구: 외부 route, 이름 해석, CA, 자격 증명, Loki EndpointSlice, egress를 확인한다. | not stated in this document | 판정 기준을 따른다. route 무응답, `401`, `404`는 외부 workspace가 소유하고, `no such host`, `x509`는 RUN-0002 Steps 4단계로, EndpointSlice 불일치는 RUN-0001 External Endpoint Recovery로, NetworkPolicy 오류는 Git에서 고쳐 reconciliation으로 반영한다. |
+| 5 | target 누락 복구: 빠진 component의 label과 port를 relabel 규칙과 비교한다. | `kubernetes-pods` job에 component가 `app` label별 target으로 나타난다(Verification > Expected Results). | chart 업그레이드로 이름이나 port가 바뀌었으면 해당 relabel 규칙을 고친다. |
 
 ### Stop Conditions
 
@@ -323,7 +328,7 @@ Loki 스트림은 전체 상태 진단의 조회를 사용하고 실행 결과�
 
 ### Next Owner
 
-에스컬레이션: 해당 없음 — 이 런북은 Escalation에 에스컬레이션 담당을 따로 정하지 않는다.
+에스컬레이션: 클러스터 리소스 복구는 GitOps owner, 근거 수집은 Platform operator, 외부 Prometheus/Loki 게시와 설정 복구는 observability owner가 맡는다(Lifecycle Traceability의 Evidence or recovery owner). 외부 인증·TLS 복구는 외부 observability owner에게 넘긴다(Procedure 1).
 
 ### Recovery or Forward Repair
 

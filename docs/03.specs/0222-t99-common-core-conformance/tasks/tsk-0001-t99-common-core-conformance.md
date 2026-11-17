@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.22.0"
+version: "0.22.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-18"
@@ -324,6 +324,7 @@ The user approved the Spec and Plan (EVD-006) and renewed that approval for revi
 | EVD-043 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | `document` suite | `scripts/run-contract-tests.py --suite document` on the staged tree `f16bdef1`; pinned venv, 2026-11-18 | PASS | 1197 tests in 31 modules OK (4 skipped) in 510 s; the run on `66fe7808` before the review fix also passed (1196 tests). | yes | none |
 | EVD-044 | [VAL-CORE-002](../spec.md#criteria) | WORK-009 | Final template export and comparison | The exporter over the staged tree `f16bdef1` and the package comparator (sha256 `f6ee2636`) with `--workspace-root`; pinned venv, 2026-11-18 | PASS | `DECLARED_CORE_MATCH`: 19 roles, 0 unmapped templates, 15 classified templates, 43 declared extensions, 0 not-applicable roles. | yes | none |
 | EVD-045 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `321cb2cf` and its commit hooks; pinned venv, 2026-11-18 | PASS | 11 selected gates passed. The first hook run refused the ledger because its entries were not sorted by ID, so they were sorted. The second hook run passed all 11 gates but returned 1 with no gate failure, while worktree backups ran beside it. A direct `qa.py staged` on the same index returned 0, and the commit hook then passed. | yes | none |
+| EVD-046 | [VAL-CORE-002](../spec.md#criteria) | WORK-009 | Residue closure by W04-CONTENT | The W04-CONTENT change on `claude/w04-content` (SPEC-0161 EVD-182); the four strict document validators on its staged tree; pinned venv, 2026-11-18 | PASS | T99-H01: every listed header-only core table now holds rows written from its own document's text, and cells with no stated fact moved to W04-H02 to W04-H04. T99-H04: the registry registers the policy Control Register and Responsibilities tables with `authority_ref: ADR-0059`. The incident Field/Value table stays a free metadata table, which SPEC-0171 decided and a test pins. | yes | none |
 
 ### Resolution Links
 
@@ -335,10 +336,10 @@ WORK-009 records the residue this Task leaves here and in `docs/03.specs/work-re
 
 | ID | Residue | State | Owner | Resume condition | Closure |
 | --- | --- | --- | --- | --- | --- |
-| T99-H01 | Header-only core tables with no source fact: the Steps table of nine runbooks, ADR-0062's Options Benefit cells, the `service-readme.interface` table of the gitops and infrastructure READMEs, the `architecture.interface` Failure cells of AD-0004, AD-0005 and AD-0007, and the core tables of the research and audit successor members | open | W04-CONTENT | When W04-CONTENT writes each missing fact from its source, or records that none exists | none |
+| T99-H01 | Header-only core tables with no source fact: the Steps table of nine runbooks, ADR-0062's Options Benefit cells, the `service-readme.interface` table of the gitops and infrastructure READMEs, the `architecture.interface` Failure cells of AD-0004, AD-0005 and AD-0007, and the core tables of the research and audit successor members | terminal | W04-CONTENT | When W04-CONTENT writes each missing fact from its source, or records that none exists | EVD-046 |
 | T99-H02 | Publishing the successor members RES-0001-m0015 to m0026 and AUD-0001-m0003, which are draft | open | operator | When the operator approves publishing each successor | none |
 | T99-H03 | Disposal of the 13 published predecessors and their two identity-bound retained forms; accepted ADR-0026 and ADR-0028 still link to RES-0001-m0007 | open | Q07 | At Q07-CUTOVER, after every work package's acceptance | none |
-| T99-H04 | The policy template's Control Register and Responsibilities tables and the incident template's status table are not in `template_definition` (existing since `a8bc8c0b`) | open | W04-CONTENT | When W04-CONTENT registers them as local tables with `authority_ref` or folds them into a core table | none |
+| T99-H04 | The policy template's Control Register and Responsibilities tables and the incident template's status table are not in `template_definition` (existing since `a8bc8c0b`) | terminal | W04-CONTENT | When W04-CONTENT registers them as local tables with `authority_ref` or folds them into a core table | EVD-046 |
 
 ## Acceptance Decision
 

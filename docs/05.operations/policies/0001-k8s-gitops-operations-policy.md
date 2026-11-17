@@ -1,10 +1,10 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.8.2"
+version: "1.8.3"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "POL-0001"
 ---
 
@@ -54,7 +54,7 @@ artifact_id: "POL-0001"
 | GITOPS-R011 | 검토된 변경일 때 | Allowed: 검토된 Git desired state 변경과 ArgoCD reconciliation | PLAT-006 | none |
 | GITOPS-R012 | Always | Allowed: read-only 진단과 소유 Runbook에 따른 복구 | RUN-0002 | none |
 | GITOPS-R013 | 명시적 human approval과 증적이 있을 때 | Allowed: 명시적 human approval과 증적을 갖춘 bootstrap/break-glass 작업 | Semantic review | none |
-| GITOPS-R014 | Always | Disallowed: 평문 시크릿 커밋, 승인 없는 권한 확장, wildcard AppProject 허용 | PLAT-003 | none |
+| GITOPS-R014 | Always | Disallowed: 평문 시크릿 커밋, 승인 없는 권한 확장, wildcard AppProject 허용 | PLAT-003, PLAT-005 | none |
 | GITOPS-R015 | Always | Disallowed: 로컬 파일 또는 정적 PASS만으로 runtime 배포·복구 완료 선언 | PLAT-006 | none |
 | GITOPS-R016 | Always | Disallowed: k3d agent 동시 재시작 또는 production HA로의 과장된 증적 표현 | PLAT-001 | none |
 | GITOPS-R017 | Always | Disallowed: Git desired state 없이 EndpointSlice를 상시 수동 관리 | PLAT-002 | none |

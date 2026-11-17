@@ -1,10 +1,10 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.5.2"
+version: "1.5.3"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "POL-0003"
 ---
 
@@ -50,8 +50,8 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 | MESH-R009 | Always | **Disallowed**: ClusterIssuer 다중 운영 (이름 오염 위험) | Semantic review | none |
 | MESH-R010 | Always | **Required**: IngressGateway를 선언하지 않는다 (istiod Application values에 gateway 없음, ADR-0008) | Semantic review | none |
 | MESH-R011 | Always | **Required**: sidecar 주입 opt-in: namespace `istio-injection=enabled` 레이블 명시적 부여 | Semantic review | none |
-| MESH-R012 | Always | **Required**: istiod 자원 예산: `cpu: 100m, memory: 128Mi` (requests) | RUN-0003 | none |
-| MESH-R013 | Always | **Required**: sync-wave 순서 강제: `istio-base`·`istio-cni`(wave:1) → `istiod`(wave:2, `pilot.cni.enabled: true`) | RUN-0003 | none |
+| MESH-R012 | Always | **Required**: istiod 자원 예산: `cpu: 100m, memory: 128Mi` (requests) | Semantic review | none |
+| MESH-R013 | Always | **Required**: sync-wave 순서 강제: `istio-base`·`istio-cni`(wave:1) → `istiod`(wave:2, `pilot.cni.enabled: true`) | Semantic review | none |
 | MESH-R014 | Mesh 내 namespace일 때 | **Allowed**: Mesh 내 namespace에 `istio-injection=enabled` 레이블 추가 | Semantic review | none |
 | MESH-R015 | Always | **Disallowed**: `argocd`, `cert-manager`, `headlamp`, `external-secrets`, `platform` namespace에 `istio-injection=enabled` 레이블 부여 | Semantic review | none |
 | MESH-R016 | Always | **Disallowed**: mesh 대상인 [`apps`](../../../gitops/platform/namespaces/namespace-apps.yaml)와 [`traefik`](../../../gitops/platform/namespaces/namespace-traefik.yaml)의 `istio-injection=enabled` 레이블 제거 | Semantic review | none |

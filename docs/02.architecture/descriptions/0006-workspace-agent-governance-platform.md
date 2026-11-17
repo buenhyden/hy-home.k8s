@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture Description (AD)"
-version: "3.1.0"
+version: "3.1.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "AD-0006"
 ---
 
@@ -291,9 +291,9 @@ invalid PR base or source branch, a failed commit identity/range check, or an
 unexpected event/ref fails that job; PR branch policy is not applicable on
 main. The workflow and its inline projection remain PR-editable, so independent
 protected workflow control requires separate remote evidence. Historical hosted
-full QA `NOT_RUN` records remain historical evidence. The W06 candidate
-extends `style-pr` with read-only affected GitOps identity validation using
-the candidate merge tree and reviewed base tooling. It aggregates style, CI
+full QA `NOT_RUN` records remain historical evidence. The current `style-pr`
+declaration in `.github/workflows/ci.yml` includes read-only affected GitOps identity validation using
+the candidate merge tree and reviewed base tooling; adoption under proposed ADR-0063 is pending. It aggregates style, CI
 lock and GitOps outcomes against the cumulative PR change plan. Each leaf
 reports its own guarantee. Local render, schema and unit evidence have their
 own inputs. [ADR-0063](../decisions/0063-affected-pr-gitops-validation.md) records

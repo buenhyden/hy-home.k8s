@@ -1,10 +1,10 @@
 ---
 title: "SDLC Governance Audit"
-version: "0.1.0"
+version: "0.1.1"
 type: "reference/audit"
 status: "draft"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "AUD-0001-m0003"
 supersedes: "AUD-0001-m0001"
 ---
@@ -84,6 +84,13 @@ already makes; this audit added none.
 
 | Finding ID | Requirement | Evidence | Classification | Action | Owner | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- |
+| F-01 | not stated in this document | `sdlc/spec` sources; template prompts | gap | `sdlc.md` `Cross-artifact conformance`; Spec template prompts (SPEC-0146 WORK-001, WORK-002); machine-checked `Architecture` column (D-1, SPEC-0147) | platform | Done 2026-11-06 under SPEC-0146; criteria accepted (REQ-0003 Archived Lineage) |
+| F-02 | not stated in this document | Conflict-handling rows in Evidence | gap | `sdlc.md` `Cross-artifact conformance` (SPEC-0146 WORK-001, WORK-002); content stays reviewer-judged (R-1) | platform | Done 2026-11-06 under SPEC-0146; criteria accepted (REQ-0003 Archived Lineage); no automation, semantic review in `quality.md` is the control (R-1) |
+| F-03 | not stated in this document | `spec.template.md` | gap | Spec template prompts (SPEC-0146 WORK-001, WORK-002); content stays reviewer-judged (R-1) | platform | Done 2026-11-06 under SPEC-0146; criteria accepted (REQ-0003 Archived Lineage) |
+| F-04 | not stated in this document | `plan.template.md` | gap | Plan template compliance-check prompt (WORK-002) | platform | Done 2026-11-06 under SPEC-0146 (REQ-0003 Archived Lineage) |
+| F-05 | not stated in this document | `decision.template.md` | gap | ADR template requirement prompt (WORK-002) | platform | Done 2026-11-06 under SPEC-0146 (REQ-0003 Archived Lineage) |
+| F-06 | not stated in this document | No Codex session run | unverified | Observe Codex loading in a Codex session | operator | Accepted deferral |
+| F-07 | not stated in this document | Observed 2026-11-06 on an unpushed SPEC-0146 commit; `TASK-ITEM-DELETE` and `TASK-ITEM-EDGE` refusals | confirmed | Refuse a body-contract row whose cell count differs from its header | operator | Fixed 2026-11-06 under SPEC-0148: `BODY-CONTRACT-ROW-WIDTH` |
 
 | Finding or gap | Severity | Evidence |
 | --- | --- | --- |

@@ -411,6 +411,19 @@ POLICY_GOVERNANCE_TABLE_KEYS = {
 POLICY_OPERATIONS_TABLE_KEYS = {
     "Rules": POLICY_RULES_TABLE,
     "Rule Levels": POLICY_LEVELS_TABLE,
+    # W04-CONTENT: the Control Register and Responsibilities H4 tables are local.
+    "Control Register": (
+        "policy.rules.1",
+        ("Control", "Accountable role", "Enforcement surface", "Evidence"),
+        0,
+        "Control",
+    ),
+    "Responsibilities": (
+        "policy.ownership.1",
+        ("Role", "Responsibility", "Escalation owner"),
+        0,
+        "Role",
+    ),
     "Lifecycle Traceability": (
         "policy-lifecycle-traceability",
         ("Promoted owner", "Control owner", "Enforcement surface"),
@@ -2151,7 +2164,13 @@ class RepositoryRegistryTests(unittest.TestCase):
             "root-readme": ["Directory Index"],
             "stage-readme": ["Index"],
             "service-readme": ["External Interfaces", "Commands"],
-            "policy": ["Rules", "Rule Levels", "Lifecycle Traceability"],
+            "policy": [
+                "Rules",
+                "Rule Levels",
+                "Control Register",
+                "Responsibilities",
+                "Lifecycle Traceability",
+            ],
             "agents": [],
             "skill": ["Steps"],
             "workspace-readme": [],
@@ -9317,10 +9336,11 @@ SDLC_CORE = {
 # the missing facts are residue (W04-CONTENT). AD-0006 leaves external service
 # interfaces to their own domains (AD-0007), so it renders none.
 AD_INTERFACE_TABLES = {
-    "0004-argo-rollouts-progressive-delivery.md": 0,
-    "0005-argo-notifications-slack.md": 0,
+    # W04-CONTENT: the interface rows written from each description's own text.
+    "0004-argo-rollouts-progressive-delivery.md": 4,
+    "0005-argo-notifications-slack.md": 5,
     "0006-workspace-agent-governance-platform.md": None,
-    "0007-current-local-gitops-platform.md": 0,
+    "0007-current-local-gitops-platform.md": 3,
 }
 
 

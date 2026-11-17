@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.4.6"
+version: "1.4.7"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "RUN-0004"
 ---
 
@@ -156,6 +156,11 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 
 | Step | Action | Expected Result | On Failure |
 | --- | --- | --- | --- |
+| 1 | OpenBao Notifications Secret 확인 | argocd-notifications-secret과 argo-rollouts-notification-secret ESO 동기화 완료 | OpenBao secret과 ExternalSecret 동기화 상태를 먼저 복구하고 controller 재시작은 마지막 수단으로 둔다; ESO auth 복구는 RUN-0002를 따른다 |
+| 2 | ArgoCD Notifications 활성화 확인 | argocd-notifications-controller Pod Running, argocd-notifications-cm ConfigMap 존재 | slack token is empty이면 OpenBao platform/notifications의 slack_token 미등록 또는 ESO 미동기화를 확인한다; 그 밖에는 중단하고 Escalation의 Next Owner와 Recovery or Forward Repair를 따른다 |
+| 3 | Argo Rollouts 상태 확인 | argo-rollouts namespace에 controller와 dashboard Pod Running, Rollout CRD 존재, argo-rollouts-notification-configmap 존재 | Rollouts 알림 설정은 ConfigMap을 직접 고치지 않고 Git 수정과 ArgoCD reconciliation으로 바로잡는다; CRD not found이면 installCRDs: true와 sync wave 순서를 확인한다 |
+| 4 | Headlamp 접근 검증 | headlamp namespace에 Pod Running, Ingress Ready, headlamp URL 200 응답, hy-k8s.home.arpa/headlamp 301 응답 | Ingress/TLS와 k8s router 경로를 확인하고 Dashboard 재도입이 아니라 Headlamp 경로를 복구한다 |
+| 5 | Rollouts Dashboard 접근 검증 | rollouts URL 200 응답, hy-k8s.home.arpa/rollouts 301 응답 | Dashboard 502이면 dashboard Pod 미기동과 service port 3100을 확인한다; 그 밖에는 중단하고 Escalation의 Next Owner와 Recovery or Forward Repair를 따른다 |
 
 ### Stop Conditions
 
@@ -263,6 +268,8 @@ kubectl -n headlamp describe certificate headlamp-tls
 kubectl -n cert-manager logs deploy/cert-manager | grep -i "headlamp" | tail -20
 argocd app get platform-headlamp-config --hard-refresh
 ```
+
+`--hard-refresh`는 읽기 전용 점검이 아니라 Application 상태를 바꾸는 operator-triggered refresh다.
 
 Ingress는 `ingressClassName: nginx`(IngressClass `nginx`, 실제 컨트롤러는 Traefik)를
 쓰므로 이름 `nginx`를 ingress-nginx 잔존으로 해석하지 않는다.
