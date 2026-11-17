@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.9.0"
+version: "0.10.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -126,8 +126,8 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CORE-001](../spec.md#criteria) | Registry core members, `core_role` and classifications | platform | in-progress | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Task core members, tables and transition adapter | platform | ready | NOT_RUN | EVD-001 |
+| WORK-001 | [VAL-CORE-001](../spec.md#criteria) | Registry core members, `core_role` and classifications | platform | completed | PASS | EVD-007, EVD-008, EVD-010, EVD-011, EVD-012, EVD-013 |
+| WORK-002 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Task core members, tables and transition adapter | platform | in-progress | NOT_RUN | EVD-001 |
 | WORK-003 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Requirement, architecture, spec and plan tables | platform | ready | NOT_RUN | EVD-001 |
 | WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | ready | NOT_RUN | EVD-001 |
 | WORK-005 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | README tables | platform | ready | NOT_RUN | EVD-001 |
@@ -153,6 +153,8 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | EVD-009 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Independent review | A read-only code-reviewer agent over `git show fa35445c`, the Spec, Plan, field map, ADR-0059, the core and the comparison tool, with in-memory registry probes, 2026-11-17; risk class `high` | FAIL | APPROVE WITH FINDINGS. Two HIGH findings blocked WORK-002: `allowed_values` could not be stored or compared, and a repeated `table_id` hid a drifted copy. Medium: the identity was optional, native `core_role` was unbound, the record was silent, and section `required_when` was unchecked. Low: test placement and coverage gaps. No assertion was weakened; the rename and scope were correct. | yes | none |
 | EVD-010 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Failing first | `python3 -m unittest tests.test_common_form_tree.CoreRoleBindingTests` with the extended tests over an export of `fa35445c`; pinned venv, 2026-11-17 | PASS | Observed the defects: 11 tests, 19 failures. | yes | none |
 | EVD-011 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Focused tests and strict validators after the change | `python3 -m unittest tests.test_common_form_tree`; the strict registry, markdown profile, link and lifecycle validators; pinned venv, 2026-11-17 | PASS | 428 tests OK with 3 skips, including 11 `CoreRoleBindingTests`; every listed validator passed. | yes | none |
+| EVD-012 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Independent review | The same read-only code-reviewer agent over `git show db0eb818`, rerunning its earlier in-memory probes, 2026-11-17; risk class `high` | PASS | APPROVE: H1, H2, M1, M2 and M4 closed (each probe now refused or accepted as expected); M3 accepted as decided. Remaining notes are low: a core-role form without a template is unchecked, and a same-named local table without `table_id` is accepted, which is not a bypass because the core table is still required by ID. | yes | EVD-009 |
+| EVD-013 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the indexes of `fa35445c` and `db0eb818`, and their commit hooks; pinned venv, 2026-11-17 | PASS | 12 selected gates, the `document` suite among them, passed on each exact index. The first hook run of `db0eb818` timed out in the `document` suite (`rc=-9`, load average about 7) and committed nothing; the unchanged retry passed. | yes | EVD-001 |
 
 ### Resolution Links
 
