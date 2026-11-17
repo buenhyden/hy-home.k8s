@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD 메트릭 Prometheus 수집 복구 Runbook"
-version: "2.4.2"
+version: "2.4.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -50,13 +50,13 @@ static scrape(`30082-30086`)는 폐지되었다. Alloy 자체, remote write, egr
 
 ### Authority
 
-승인·권한 조건: 해당 없음 — 이 런북은 Preconditions에 소유자·승인·권한 항목을 따로 정하지 않는다.
+승인·권한 조건: 해당 없음 — 이 런북은 Preflight에 소유자·승인·권한 항목을 따로 정하지 않는다.
 
 관련 문서: [Operations Policy](../policies/0005-observability-platform-operations-policy.md)
 
 ### Environment
 
-안전 점검: 해당 없음 — 이 런북은 Preconditions에 백업·가용성·동시성·비밀 보호 항목을 따로 정하지 않는다.
+안전 점검: 해당 없음 — 이 런북은 Preflight에 백업·가용성·동시성·비밀 보호 항목을 따로 정하지 않는다.
 
 ## Procedure
 
@@ -102,7 +102,7 @@ argocd app sync platform-monitoring
 
 ### Stop Conditions
 
-중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Steps에 두고 실패 시 Escalation의 Next Owner와 Recovery or Forward Repair를 따른다.
 
 ## Verification
 
@@ -131,7 +131,7 @@ argocd app sync platform-monitoring
 
 ### Next Owner
 
-에스컬레이션: 해당 없음 — 이 런북은 Recovery에 에스컬레이션 담당을 따로 정하지 않는다.
+에스컬레이션: 해당 없음 — 이 런북은 Escalation에 에스컬레이션 담당을 따로 정하지 않는다.
 
 ### Recovery or Forward Repair
 

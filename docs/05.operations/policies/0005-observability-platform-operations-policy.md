@@ -1,6 +1,6 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.6.0"
+version: "1.6.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -31,7 +31,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
 #### Exclusions
 
-범위에서 제외한다고 따로 표시한 항목은 Scope 절에 없으며, 외부 observability 설정의 소유 경계는 아래 Exception Conditions에 적혀 있다.
+범위에서 제외한다고 따로 표시한 항목은 Purpose and Scope 절에 없으며, 외부 observability 설정의 소유 경계는 아래 Exceptions에 적혀 있다.
 
 ## Rules
 
@@ -105,7 +105,7 @@ Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소
 
 #### Approval and Review
 
-예외 승인은 위 Exception Conditions가 가리키는 POL-0001의 공통 live 변경 예외를 따른다.
+예외 승인은 위 Exceptions가 가리키는 POL-0001의 공통 live 변경 예외를 따른다.
 
 ## Enforcement
 

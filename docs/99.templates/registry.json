@@ -5166,14 +5166,14 @@
           ],
           "negative": [
             "A reordered, missing or extra Events column fails BODY-TABLE-COLUMNS.",
-            "A Lifecycle Traceability H3 outside Evidence fails BODY-H3-PARENT.",
+            "A Lifecycle Traceability H3 outside Resolution fails BODY-H3-PARENT.",
             "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT.",
-            "A resolved incident whose Recovery Verification holds no concrete evidence fails INCIDENT-RESOLUTION-EVIDENCE."
+            "A resolved incident whose Verified State holds no concrete evidence fails INCIDENT-RESOLUTION-EVIDENCE."
           ],
           "regression": [
             "The loaded incident profiles keep heading lists equal to the form H2 titles.",
             "tests/test_common_form_tree.py asserts exactly the forms and definitions the repository registry carries.",
-            "tests/test_native_skill_envelope.py shows INCIDENT-RESOLUTION-EVIDENCE failing without Recovery Verification evidence and passing with it."
+            "tests/test_native_skill_envelope.py shows INCIDENT-RESOLUTION-EVIDENCE failing without Verified State evidence and passing with it."
           ]
         },
         "migration": {
@@ -5544,7 +5544,7 @@
           ],
           "negative": [
             "A reordered, missing or extra Actions column fails BODY-TABLE-COLUMNS.",
-            "A Lifecycle Traceability H3 outside Corrective Actions or a What Went Well H3 outside Impact fails BODY-H3-PARENT.",
+            "A Lifecycle Traceability H3 outside Actions or a What Went Well H3 outside Facts fails BODY-H3-PARENT.",
             "A What Went Well H3 with no body fails BODY-SECTION-EMPTY.",
             "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT."
           ],
@@ -5737,7 +5737,7 @@
           ],
           "negative": [
             "A reordered, missing or extra Triggers column fails BODY-TABLE-COLUMNS.",
-            "A Recovery Procedures H3 outside Recovery fails BODY-H3-PARENT and an empty one fails BODY-SECTION-EMPTY.",
+            "A Recovery Procedures H3 outside Escalation fails BODY-H3-PARENT and an empty one fails BODY-SECTION-EMPTY.",
             "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT.",
             "A table section outside the form fails REGISTRY_TABLE_SECTION."
           ],
@@ -17503,6 +17503,11 @@
             "body_contract": {
               "section": "Implementation Strategy",
               "table_heading": "Work Breakdown"
+            },
+            "section_titles": {
+              "plan.intent.2": "Goal and Boundary",
+              "plan.work.1": "Work Breakdown",
+              "plan.promotion.1": "Owner and Receipt"
             }
           }
         ]
@@ -18811,7 +18816,7 @@
           "test": "test_promotion_requires_current_owner_and_sole_none_decision"
         },
         "gaps": [
-          "The Plan promotion table is read by the lifecycle script from its form section (plan-promotion-map-owner-and-receipt) and not by a body contract."
+          "The Plan promotion table is read by the lifecycle script from its form section (plan.promotion.1, or the title a retained Plan keeps for it) and not by a body contract."
         ]
       },
       {

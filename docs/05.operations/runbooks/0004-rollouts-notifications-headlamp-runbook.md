@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.4.4"
+version: "1.4.5"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -39,7 +39,7 @@ Argo Rollouts controller의 자체 notification engine이 같은 채널로 보�
 ### Authority
 
 대상 클러스터를 확인한 운영자가 진단한다. ESO 재동기화, 컨트롤러 재시작,
-Rollout의 수동 진행과 복구는 Recovery의 승인 범위에서만 수행한다.
+Rollout의 수동 진행과 복구는 Escalation의 승인 범위에서만 수행한다.
 
 관련 문서: **Operations**: [`../policies/0004-rollouts-notifications-headlamp-policy.md`](../policies/0004-rollouts-notifications-headlamp-policy.md); **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md); **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md); **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md); **ADR-0054**: [`../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md`](../../02.architecture/decisions/0054-platform-decision-current-state-amendment.md)
 
@@ -156,7 +156,7 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 
 ### Stop Conditions
 
-중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Steps에 두고 실패 시 Escalation의 Next Owner와 Recovery or Forward Repair를 따른다.
 
 ## Verification
 

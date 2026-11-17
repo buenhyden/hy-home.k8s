@@ -1417,6 +1417,32 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             self.rules(base=base, proposed=proposed, completion_plan=self.plan),
         )
 
+    def test_a_retained_plan_reads_its_own_promotion_and_constraints(self) -> None:
+        """SPEC-0221: an approved retained Plan keeps Owner and Receipt and Goal
+        and Boundary, and the Plan rules read them through the retained form."""
+
+        package = PurePosixPath("docs/03.specs/0221-w03-form-target-adoption")
+        owner = PurePosixPath(".agents/governance/document-authoring.md")
+        base = {
+            path: (ROOT / path).read_text(encoding="utf-8")
+            for path in (package / "spec.md", package / "plan.md", owner)
+        }
+        found = self.rules(
+            base=base, proposed=base, completion_plan=package / "plan.md"
+        )
+        self.assertNotIn("PLAN-PROMOTION", found)
+        self.assertNotIn("PLAN-GLOBAL-CONSTRAINTS", found)
+        broken = {
+            **base,
+            package / "plan.md": base[package / "plan.md"].replace(
+                "| Promotion ID | Target Owner |", "| Promotion | Target Owner |"
+            ),
+        }
+        self.assertIn(
+            "PLAN-PROMOTION",
+            self.rules(base=base, proposed=broken, completion_plan=package / "plan.md"),
+        )
+
     def test_exact_completed_parent_extension_keeps_historical_authority(self) -> None:
         domain = next(
             domain

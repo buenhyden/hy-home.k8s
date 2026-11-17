@@ -1,6 +1,6 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.5.3"
+version: "2.5.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -278,7 +278,7 @@ kubectl get pods -n istio-system -l app=istiod \
 
 ### Stop Conditions
 
-중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Steps에 두고 실패 시 Escalation의 Next Owner와 Recovery or Forward Repair를 따른다.
 
 ## Verification
 
@@ -320,7 +320,7 @@ Loki 스트림은 전체 상태 진단의 조회를 사용하고 실행 결과�
 
 ### Next Owner
 
-에스컬레이션: 해당 없음 — 이 런북은 Recovery에 에스컬레이션 담당을 따로 정하지 않는다.
+에스컬레이션: 해당 없음 — 이 런북은 Escalation에 에스컬레이션 담당을 따로 정하지 않는다.
 
 ### Recovery or Forward Repair
 

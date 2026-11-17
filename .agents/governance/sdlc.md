@@ -1,6 +1,6 @@
 ---
 title: "Software Development Lifecycle"
-version: "4.1.0"
+version: "4.1.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -39,7 +39,7 @@ lineage, and Google SRE informs factual incidents and blameless postmortems.
 
 #### Exclusions
 
-Provider and agent-roster authority is excluded and stated under Authority; if another subject is excluded, name it and its owner here.
+Provider and agent-roster authority is excluded and stated under Owner; if another subject is excluded, name it and its owner here.
 
 ## Rules
 

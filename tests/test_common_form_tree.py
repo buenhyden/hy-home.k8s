@@ -1146,6 +1146,11 @@ PLAN_FORM_EXTENSIONS = [
             "section": "Implementation Strategy",
             "table_heading": "Work Breakdown",
         },
+        "section_titles": {
+            "plan.intent.2": "Goal and Boundary",
+            "plan.work.1": "Work Breakdown",
+            "plan.promotion.1": "Owner and Receipt",
+        },
     },
 ]
 SPEC_FORM_TABLE_KEYS = {
@@ -7695,6 +7700,58 @@ class RetainedSpecPlanTests(unittest.TestCase):
                 )
                 rows = LINKS._body_contract_rows(text, profile)
                 self.assertTrue(rows)
+
+    def test_only_a_retained_form_may_carry_a_location_or_titles(self) -> None:
+        for key, value in (
+            ("body_contract", {"section": "Scope", "table_heading": "In Scope"}),
+            ("section_titles", {"spec.scope.1": "In Scope"}),
+        ):
+            with self.subTest(key=key):
+                raw = load_raw()
+                form = next(
+                    f for f in raw["common_forms"]["forms"] if f["form_id"] == "spec"
+                )
+                local = next(e for e in form["extensions"] if e["kind"] == "local_h3")
+                local[key] = value
+                self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
+        raw = load_raw()
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "plan")
+        kept = next(e for e in form["extensions"] if e["kind"] == "retained_form")
+        kept["section_titles"] = {}
+        self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
+
+    def test_a_retained_title_applies_only_to_its_bounded_identity(self) -> None:
+        form = self.profiles["sdlc/plan"].form
+        self.assertEqual(
+            form.section_heading("plan.promotion.1", "approved", "SPEC-0221-PLAN-0001"),
+            (3, "Owner and Receipt"),
+        )
+        for status, identity in (
+            ("approved", "SPEC-0162-PLAN-0001"),
+            ("draft", "SPEC-0221-PLAN-0001"),
+        ):
+            with self.subTest(status=status, identity=identity):
+                self.assertEqual(
+                    form.section_heading("plan.promotion.1", status, identity),
+                    (3, "Durable Owners"),
+                )
+
+    def test_the_retained_plan_promotion_table_keeps_its_column_check(self) -> None:
+        path = PurePosixPath("docs/03.specs/0221-w03-form-target-adoption/plan.md")
+        text = (ROOT / path).read_text(encoding="utf-8")
+        profile = self.profiles["sdlc/plan"]
+
+        def tables(body: str) -> list[str]:
+            return [
+                item.rule_id
+                for item in MARKDOWN._table_diagnostics(path, profile, body, "approved")
+            ]
+
+        self.assertEqual(tables(text), [])
+        broken = text.replace(
+            "| Promotion ID | Target Owner |", "| Promotion ID | Owner |"
+        )
+        self.assertIn("BODY-TABLE-COLUMNS", tables(broken))
 
     def test_another_identity_in_the_old_tree_is_refused(self) -> None:
         for profile_id, artifact_id, name in (

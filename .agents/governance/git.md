@@ -1,6 +1,6 @@
 ---
 title: "Git Policy"
-version: "2.9.0"
+version: "2.9.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -334,7 +334,7 @@ governs protected actions and exceptions.
 
 #### Responsibilities
 
-Responsibilities are stated under Authority and Requirements.
+Responsibilities are stated under Owner and Requirements.
 
 ### Review Triggers
 

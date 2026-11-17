@@ -1,6 +1,6 @@
 ---
 title: "05.operations/runbooks"
-version: "0.5.0"
+version: "0.5.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -93,8 +93,8 @@ updated: "2026-11-17"
 이 영역은 운영자가 정해진 순서대로 실행할 절차가 필요할 때 사용한다.
 
 1. 관련 Policy와 Spec에서 허용 범위와 계약값을 확인한다.
-2. Runbook의 `Purpose`와 `Preconditions`를 확인한 뒤 `Steps`를 따라 실행한다.
-3. 실행 후 `Validation`과 그 `Evidence`에 맞춰 증적을 남긴다.
+2. Runbook의 `Trigger and Scope`와 `Preflight`를 확인한 뒤 `Steps`를 따라 실행한다.
+3. 실행 후 `Verification`과 그 `Unverified Conditions`에 맞춰 증적을 남긴다.
 
 #### Verification and Monitoring
 

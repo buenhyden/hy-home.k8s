@@ -1,6 +1,6 @@
 ---
 title: "Approval and Safety Policy"
-version: "1.7.0"
+version: "1.7.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -204,7 +204,7 @@ enforcement. Runbooks describe authorized procedures, not standing approval.
 
 #### Responsibilities
 
-Responsibilities are stated under Authority and Requirements.
+Responsibilities are stated under Owner and Requirements.
 
 ### Review Triggers
 

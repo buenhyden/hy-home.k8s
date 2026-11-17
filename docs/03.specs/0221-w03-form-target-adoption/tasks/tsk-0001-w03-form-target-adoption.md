@@ -1,6 +1,6 @@
 ---
 title: "W03 Form Target Adoption"
-version: "0.7.0"
+version: "0.8.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -57,7 +57,18 @@ WORK-003 moved the guide, runbook, policy, incident and postmortem forms, their 
 
 WORK-004 moved the skill form, its two templates, the 17 native skills and the two workflows by the Spec map, with every non-heading line kept. The former Inputs H3 stays as an H4 under When to Use, and the former Completion and Handoff text becomes Outputs > Handoff. Each skill's new Limits section restates the non-guarantees of its own Steps, Failure Handling or Outputs text; a read-only drafting agent proposed the texts, and the agent reviewed them before use. The local Authority Boundary H3 now sits under Trigger, and the Steps table under `skill.procedure.1`. Each skill and workflow takes a MINOR version for the new section. WORK-004 is commit `eafc7cc0`.
 
-WORK-005 moved the root, stage and service README forms, their five templates and the 43 READMEs by the Spec map, with every non-heading line kept. The root README's reader list moves to the new Audience H3, and its role paragraphs and Boundaries to Outcome. Each stage README's new Excluded Responsibilities section restates the out-of-scope and owner text of its own Purpose and Inputs and Outputs; read-only drafting agents proposed 21 of the 22 texts, and the agent wrote the Stage 99 template catalog's text from its own Out of Scope list. The `readme_navigation` sections now name Current Paths, Paths and Purpose. Three adjustments kept the checks intact. First, the gitops README's Secret Management Responsibility Matrix stays an H4 next to Security Boundary, because the README matrix reader deliberately refuses an H5. Second, 23 prose sentences that named a renamed heading (Supported Environment, Local Workflow, Service Role) now name Usage > Prerequisites, Selected Start or Purpose. Third, the document authoring policy's link to Stage 99 `#create-and-review` now points to `#entry-points`. The root and stage READMEs take a MINOR version for the new sections, and the service READMEs a PATCH version.
+WORK-005 moved the root, stage and service README forms, their five templates and the 43 READMEs by the Spec map, with every non-heading line kept. The root README's reader list moves to the new Audience H3, and its role paragraphs and Boundaries to Outcome. Each stage README's new Excluded Responsibilities section restates the out-of-scope and owner text of its own Purpose and Inputs and Outputs; read-only drafting agents proposed 21 of the 22 texts, and the agent wrote the Stage 99 template catalog's text from its own Out of Scope list. The `readme_navigation` sections now name Current Paths, Paths and Purpose. Three adjustments kept the checks intact. First, the gitops README's Secret Management Responsibility Matrix stays an H4 next to Security Boundary, because the README matrix reader deliberately refuses an H5. Second, 23 prose sentences that named a renamed heading (Supported Environment, Local Workflow, Service Role) now name Usage > Prerequisites, Selected Start or Purpose. Third, the document authoring policy's link to Stage 99 `#create-and-review` now points to `#entry-points`. The root and stage READMEs take a MINOR version for the new sections, and the service READMEs a PATCH version. WORK-005 is commit `7f5e5838`.
+
+WORK-006 recorded the three out-of-scope differences of the Spec as the residue rows W03-H45 to W03-H47, owned by T99-CONFORMANCE, whose prompt compares the common core with the actual forms and classifies unmapped roles. Every new required section (Trade-offs, Limits, Audience, Excluded Responsibilities) holds text from its own document, so none is an empty or N/A section.
+
+An independent read-only code-reviewer agent reviewed `2cc30e27..7f5e5838` and requested changes (EVD-018). The agent fixed each finding in this change:
+
+- **F1, retained Plan rules.** The lifecycle Plan rules and the markdown table check read the Promotion and Constraints sections only by the form's titles, so the retained SPEC-0221 Plan failed PLAN-PROMOTION and PLAN-GLOBAL-CONSTRAINTS at completion and its Promotion table went unchecked. The retained form now carries `section_titles`, the H3 title a retained document keeps for a form section ID, which the schema allows only on a retained form. `CommonForm.section_heading` resolves a section's heading for one status and identity, and the lifecycle and table readers use it. Two RED tests fail first and pass after (EVD-019, EVD-020).
+- **F2, stale prose.** 25 runbook, policy and governance sentences that named a removed heading (Actions, Recovery, Validation, Service Checks, Preconditions, Exception Conditions, Scope, Authority) now name the receiving heading, and each document takes a PATCH version.
+- **F3, registry prose.** Six registry validation strings now name Resolution, Verified State, Actions, Facts, Escalation and the Plan promotion section ID.
+- **F4, coverage.** A test shows the schema refusing `body_contract` and `section_titles` outside a retained form, and an identity test shows a retained title applies only to its bounded identity and status.
+
+F5 (the meaning-map pointer count) is kept as recorded in WORK-003: each migration replaces its role's map, and the test now checks the form of every pointer. F6 is informational; the older-registry fallbacks it names predate this package and stay with W05-H09.
 
 ### Blockers and Decisions
 
@@ -71,8 +82,8 @@ The user approved the Spec and Plan (EVD-002), with acceptance on green checks. 
 | WORK-002 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-002](../spec.md#criteria) | Requirement and architecture forms and documents | platform | completed | PASS | EVD-006, EVD-007, EVD-008 |
 | WORK-003 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-002](../spec.md#criteria) | Operations and policy forms and documents | platform | completed | PASS | EVD-009, EVD-010, EVD-011 |
 | WORK-004 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-002](../spec.md#criteria) | Skill form and documents | platform | completed | PASS | EVD-012, EVD-013, EVD-014 |
-| WORK-005 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-002](../spec.md#criteria) | README forms and documents | platform | in-progress | NOT_RUN | EVD-001 |
-| WORK-006 | [VAL-FORM-003](../spec.md#criteria) | Residue, independent review and the `document` suite | platform | ready | NOT_RUN | EVD-001 |
+| WORK-005 | [VAL-FORM-001](../spec.md#criteria), [VAL-FORM-002](../spec.md#criteria) | README forms and documents | platform | completed | PASS | EVD-015, EVD-016, EVD-017 |
+| WORK-006 | [VAL-FORM-003](../spec.md#criteria) | Residue, independent review and the `document` suite | platform | in-progress | NOT_RUN | EVD-001 |
 
 ## Verification Evidence
 
@@ -96,10 +107,25 @@ The user approved the Spec and Plan (EVD-002), with acceptance on green checks. 
 | EVD-014 | [VAL-FORM-002](../spec.md#criteria) | WORK-004 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the WORK-004 index and the commit hooks of `eafc7cc0`; pinned venv, 2026-11-17 | PASS | 14 selected gates, the `document` suite among them, passed on the exact index, and the hooks passed at the commit. | yes | none |
 | EVD-015 | [VAL-FORM-001](../spec.md#criteria) | WORK-005 | Failing first | `python3 -m unittest tests.test_common_form_tree tests.test_readme_navigation` with the changed tests over an export of `eafc7cc0`; pinned venv, 2026-11-17 | PASS | Observed the defect: 452 tests, 34 failures against the old README forms. | yes | none |
 | EVD-016 | [VAL-FORM-002](../spec.md#criteria) | WORK-005 | Focused tests and strict validators after the change | The same two modules with `tests.test_semver_versions`, `tests.test_validate_knowledge_surface`, `tests.test_document_lifecycle_cumulative_history`, `tests.test_operations_lineage_contract`, `tests.test_prompt_input`, `tests.test_repository_quality_rules`, `tests.test_native_skill_envelope` and `tests.test_common_agents_document_routes`; the strict registry, markdown profile, link and lifecycle validators; pinned venv, 2026-11-17 | PASS | 615 tests OK with 3 skips; registry strict PASS over 297 paths; every listed validator passed after the matrix, prose and anchor repairs. | yes | none |
+| EVD-017 | [VAL-FORM-002](../spec.md#criteria) | WORK-005 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the WORK-005 index and the commit hooks of `7f5e5838`; pinned venv, 2026-11-17 | PASS | 13 selected gates, the `document` suite among them, passed on the exact index, and the hooks passed at the commit. | yes | none |
+| EVD-018 | [VAL-FORM-003](../spec.md#criteria) | WORK-006 | Independent review | A read-only code-reviewer agent over `git diff 2cc30e27..7f5e5838`, the Spec and Plan, the strict validators, a completion-mode lifecycle run and seven test modules, 2026-11-17; risk class `high` | FAIL | REQUEST CHANGES: F1 (HIGH) retained Plan fails PLAN-PROMOTION and PLAN-GLOBAL-CONSTRAINTS and its Promotion table is unchecked; F2 and F3 (MEDIUM) prose and registry strings name removed headings; F4 and F5 (LOW) coverage; F6 informational. Meaning preservation, the Spec map and the retained bound verified clean. | yes | none |
+| EVD-019 | [VAL-FORM-003](../spec.md#criteria) | WORK-006 | Failing first | `tests.test_common_form_tree.RetainedSpecPlanTests` and `tests.test_task_execution_contract.AdoptedExecutionParentTests.test_a_retained_plan_reads_its_own_promotion_and_constraints` with the new tests over the code of `7f5e5838`; pinned venv, 2026-11-17 | PASS | Observed the defect: PLAN-PROMOTION and PLAN-GLOBAL-CONSTRAINTS raised for the retained Plan, and the table check could not take the document status. | yes | none |
+| EVD-020 | [VAL-FORM-003](../spec.md#criteria) | WORK-006 | Focused tests and strict validators after the change | `python3 -m unittest tests.test_common_form_tree tests.test_task_execution_contract`; the strict registry, markdown profile, link and lifecycle validators; `validate-document-lifecycle.py --mode completion --include-path` the SPEC-0221 Spec; pinned venv, 2026-11-17 | PASS | 489 tests OK with 3 skips after the expected-extension update; every strict validator passed; the completion run no longer reports a PLAN rule, and only the acceptance rows still pending report. | yes | none |
+| EVD-021 | [VAL-FORM-003](../spec.md#criteria) | WORK-006 | Independent review | The same read-only code-reviewer agent over the staged fix (`git diff --cached` on `7f5e5838`), with a completion-mode lifecycle run, the strict validators and 23 focused tests, 2026-11-17; risk class `high` | PASS | APPROVE: F1 to F3 fixed without widening the retained bound or adding an alias; F5 and F6 accepted. One optional LOW note stays open: no registry check requires a `section_titles` key to name an existing form section, and a wrong key is inert. | yes | EVD-018 |
 
 ### Resolution Links
 
-The Resolves column names the earlier row each PASS row closes: EVD-005 closes EVD-001 for WORK-001. EVD-003 records the observed failing-first run, and EVD-004 the passing run after the change.
+The Resolves column names the earlier row each PASS row closes: EVD-005 closes EVD-001 for WORK-001, and EVD-021 closes the review row EVD-018. EVD-003 records the observed failing-first run, and EVD-004 the passing run after the change.
+
+### Residue Handoff
+
+WORK-006 records the Spec's out-of-scope differences here and in `docs/03.specs/work-residue-ledger.json`. Each row names the package prompt that owns the next comparison.
+
+| ID | Residue | State | Owner | Resume condition | Closure |
+| --- | --- | --- | --- | --- | --- |
+| W03-H45 | The 4.0.0 design targets' table columns and their typed tables, metadata policy, relationships and lifecycle members are not adopted; current tables and columns stay unchanged (Spec Non-goals) | open | T99-CONFORMANCE | When T99-CONFORMANCE compares the target core with a real registry export | none |
+| W03-H46 | The task role keeps its slug section IDs; its headings already match the target (Spec Non-goals) | open | T99-CONFORMANCE | When T99-CONFORMANCE compares the target core with a real registry export | none |
+| W03-H47 | The ADR, AGENTS, workspace README, reference report and pack, knowledge map, vocabulary, prompt, governance document and role, and evaluation forms keep their trees and slug section IDs, and the target roles decision, research, audit, data-reference and agent-instructions have no mapping (Spec Non-goals) | open | T99-CONFORMANCE | When T99-CONFORMANCE classifies each unmapped role as a mapped form or a native or domain module | none |
 
 ## Acceptance Decision
 

@@ -1,6 +1,6 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.8.0"
+version: "1.8.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -142,7 +142,7 @@ desired state와 맞추고 승인·검증 증적을 남긴다. 예외는 만료 
 
 #### Approval and Review
 
-예외의 승인과 검토 주체는 위 Exception Conditions의 승인 문장과 Ownership의 Responsibilities 표에 적혀 있다.
+예외의 승인과 검토 주체는 위 Exceptions의 승인 문장과 Ownership의 Responsibilities 표에 적혀 있다.
 
 ## Enforcement
 

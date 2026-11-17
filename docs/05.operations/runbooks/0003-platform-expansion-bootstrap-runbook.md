@@ -1,6 +1,6 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.4.3"
+version: "1.4.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -38,7 +38,7 @@ Kiali와 외부 observability 연결 복구는
 ### Authority
 
 플랫폼 운영자는 대상 클러스터와 승인 범위를 확인한다. CA Secret 재주입과
-컨트롤러 재시작은 아래 Recovery의 bootstrap 또는 승인된 복구 조건을 따른다.
+컨트롤러 재시작은 아래 Escalation의 bootstrap 또는 승인된 복구 조건을 따른다.
 
 관련 문서: **Operations**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md); **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md); [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
 
@@ -95,11 +95,11 @@ Steps의 Checklist에서 CA 입력과 외부 의존성을 확인한다. CA 개�
    kubectl -n istio-system logs deploy/kiali | grep -i prometheus | tail -5
    ```
 
-5. 아래 Validation의 정적 계약과 런타임 검사를 실행한다.
+5. 아래 Verification의 정적 계약과 런타임 검사를 실행한다.
 
 ### Stop Conditions
 
-중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Steps에 두고 실패 시 Escalation의 Next Owner와 Recovery or Forward Repair를 따른다.
 
 ## Verification
 
@@ -141,7 +141,7 @@ CA 입력을 복구할 수 없거나 승인된 조치 뒤에도 ClusterIssuer가
 
 확장 변경을 되돌릴 때는 operator-approved 범위와 적용 전 Git 리비전을 확인한다.
 기본 플랫폼 변경은 [RUN-0001의 롤백 절차](./0001-argocd-platform-bootstrap-runbook.md#recovery-or-forward-repair)를
-따른다. 확장 Application 설정을 되돌린 뒤 이 런북의 Service Checks로 영향받은
+따른다. 확장 Application 설정을 되돌린 뒤 이 런북의 Expected Results로 영향받은
 컴포넌트와 Git·ArgoCD 상태를 다시 대조한다.
 
 ### Recovery Procedures

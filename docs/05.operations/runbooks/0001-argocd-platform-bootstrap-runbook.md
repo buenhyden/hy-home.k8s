@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.5.3"
+version: "1.5.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -163,7 +163,7 @@ Steps의 Checklist에서 호스트·CA 입력과 필수 Valkey 경로를 확인�
 
 ### Stop Conditions
 
-중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Steps에 두고 실패 시 Escalation의 Next Owner와 Recovery or Forward Repair를 따른다.
 
 ## Verification
 
@@ -214,7 +214,7 @@ Steps의 Checklist에서 호스트·CA 입력과 필수 Valkey 경로를 확인�
 `root-platform`은 `main`을 자동 동기화하며 prune과 self-heal을 사용한다.
 운영자는 문제가 생긴 변경과 복구할 Git 리비전을 확인한다. 승인된 복구 PR로
 해당 변경을 되돌린 뒤 자동 reconciliation을 관측한다. root와 영향을 받은
-Application의 리비전·Sync·Health 및 해당 Service Checks를 다시 확인한다.
+Application의 리비전·Sync·Health 및 해당 Expected Results를 다시 확인한다.
 
 ### Recovery Procedures
 

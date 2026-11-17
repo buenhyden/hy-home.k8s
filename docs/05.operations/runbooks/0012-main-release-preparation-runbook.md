@@ -1,6 +1,6 @@
 ---
 title: "Main Release Preparation"
-version: "1.4.2"
+version: "1.4.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -149,7 +149,7 @@ GitHub의 표시와 정적 workflow 설정은 서로 다른 입력이다. 실제
 
 ### Next Owner
 
-에스컬레이션: 해당 없음 — 이 런북은 Recovery에 에스컬레이션 담당을 따로 정하지 않는다.
+에스컬레이션: 해당 없음 — 이 런북은 Escalation에 에스컬레이션 담당을 따로 정하지 않는다.
 
 ### Recovery or Forward Repair
 

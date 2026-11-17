@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.6.0"
+version: "1.6.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -122,7 +122,7 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 
 #### Approval and Review
 
-예외 승인은 위 Exception Conditions의 platform owner 승인과 연결된 PR 요건을 따른다.
+예외 승인은 위 Exceptions의 platform owner 승인과 연결된 PR 요건을 따른다.
 
 ## Enforcement
 

@@ -1,6 +1,6 @@
 ---
 title: "Formatting and Linting Policy"
-version: "1.8.0"
+version: "1.8.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -145,7 +145,7 @@ inside a tool's own configuration. Terminal-document immutability belongs to
 
 #### Responsibilities
 
-Responsibilities are stated under Authority and Requirements.
+Responsibilities are stated under Owner and Requirements.
 
 ### Review Triggers
 

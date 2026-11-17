@@ -1,6 +1,6 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.5.0"
+version: "1.5.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -133,7 +133,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 
 #### Approval and Review
 
-예외 승인은 위 Exception Conditions의 Platform Owner 검토와 POL-0001의 live 예외 승인을 따른다.
+예외 승인은 위 Exceptions의 Platform Owner 검토와 POL-0001의 live 예외 승인을 따른다.
 
 ## Enforcement
 

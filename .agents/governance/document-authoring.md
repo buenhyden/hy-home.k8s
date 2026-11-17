@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "4.1.0"
+version: "4.1.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -425,7 +425,7 @@ owns agent procedure, not a second machine contract.
 
 #### Responsibilities
 
-Responsibilities are stated under Authority and Requirements.
+Responsibilities are stated under Owner and Requirements.
 
 ### Review Triggers
 

@@ -1436,6 +1436,18 @@
             }
           }
         },
+        "section_titles": {
+          "description": "SPEC-0221: on a retained form only, the H3 title the retained document keeps for a form section id.",
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*(?:\\.[a-z][a-z0-9-]*)*(?:\\.[0-9]+)?$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
         "table": {
           "type": "string",
           "pattern": "\\S"
@@ -1487,6 +1499,11 @@
                 {
                   "required": [
                     "body_contract"
+                  ]
+                },
+                {
+                  "required": [
+                    "section_titles"
                   ]
                 },
                 {
@@ -1601,6 +1618,11 @@
                 {
                   "required": [
                     "body_contract"
+                  ]
+                },
+                {
+                  "required": [
+                    "section_titles"
                   ]
                 }
               ]

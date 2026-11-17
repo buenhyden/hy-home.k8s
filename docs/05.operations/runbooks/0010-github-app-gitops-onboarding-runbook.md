@@ -1,6 +1,6 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.3.3"
+version: "1.3.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -182,7 +182,7 @@ kubectl get ingress -n apps ${APP}
 
 Rollout 상세 출력에서 이번 canary 리비전에 속한 AnalysisRun 이름을 확인한다.
 이름이 아직 없거나 결과가 없으면 분석 성공으로 판정하지 않는다. 이름이 있으면
-아래 Recovery의 소유자 확인과 상세 조회로 상태를 확인한다.
+아래 Escalation의 소유자 확인과 상세 조회로 상태를 확인한다.
 
 ```bash
 # 신뢰된 로컬 CA로 TLS와 HTTP 성공을 함께 확인한다.
@@ -242,7 +242,7 @@ kubectl get externalsecret -n apps ${APP}-secret
 
 ### Stop Conditions
 
-중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Steps에 두고 실패 시 Escalation의 Next Owner와 Recovery or Forward Repair를 따른다.
 
 ## Verification
 
@@ -277,7 +277,7 @@ Procedure 2의 Rollout, Pod, AnalysisRun, Ingress와 CA 검증을 거친 HTTPS �
 
 ### Next Owner
 
-에스컬레이션: 해당 없음 — 이 런북은 Recovery에 에스컬레이션 담당을 따로 정하지 않는다.
+에스컬레이션: 해당 없음 — 이 런북은 Escalation에 에스컬레이션 담당을 따로 정하지 않는다.
 
 ### Recovery or Forward Repair
 

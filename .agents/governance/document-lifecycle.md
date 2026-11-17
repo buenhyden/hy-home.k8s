@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "3.1.0"
+version: "3.1.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -342,7 +342,7 @@ the machine transition table.
 
 #### Responsibilities
 
-Responsibilities are stated under Authority and Requirements.
+Responsibilities are stated under Owner and Requirements.
 
 ### Review Triggers
 

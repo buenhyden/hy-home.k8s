@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD ESO OpenBao Recovery Runbook"
-version: "1.6.3"
+version: "1.6.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -153,7 +153,7 @@ Steps의 Checklist를 확인하고, 변경할 각 ConfigMap의 적용 전 상태
    ```
 
 7. 복구한 경로에 해당하는 라이브 계약을 운영자가 선택해 검증한다. ESO
-   readiness는 아래 `Validation`의 metadata 조회로 확인하고,
+   readiness는 아래 `Verification`의 metadata 조회로 확인하고,
    NetworkPolicy와 ingress/TLS를 수정한 경우에만 각 검증 스크립트를
    실행한다. 모든 live 전제가 충족된 별도 전체 플랫폼 수용 작업에서만
    `infrastructure/verify/run-all.sh`를 사용한다.
@@ -185,11 +185,11 @@ Steps의 Checklist를 확인하고, 변경할 각 ConfigMap의 적용 전 상태
 9. GitOps source gate를 확인한다(로컬 파일 수정만으로 반영되지 않음).
    [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md) 절차 6의 루트 앱
    `source.path`·`targetRevision` 검사 두 줄을 그대로 다시 실행하고, 둘 다
-   통과해야 Validation으로 넘어간다.
+   통과해야 Verification으로 넘어간다.
 
 ### Stop Conditions
 
-중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Steps에 두고 실패 시 Escalation의 Next Owner와 Recovery or Forward Repair를 따른다.
 
 ## Verification
 

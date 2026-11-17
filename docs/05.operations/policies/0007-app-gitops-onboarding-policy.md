@@ -1,6 +1,6 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.7.0"
+version: "1.7.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -34,7 +34,7 @@ artifact_id: "POL-0007"
 
 #### Exclusions
 
-이 정책은 Applies To에 적은 범위에서 제외하는 항목을 따로 두지 않으며, bootstrap과 break-glass 예외는 제외가 아니라 Exception Conditions가 가리키는 POL-0001의 공통 예외를 따른다. 제외할 항목이 생기면 그 항목과 담당 문서를 여기에 적는다.
+이 정책은 Applies To에 적은 범위에서 제외하는 항목을 따로 두지 않으며, bootstrap과 break-glass 예외는 제외가 아니라 Exceptions가 가리키는 POL-0001의 공통 예외를 따른다. 제외할 항목이 생기면 그 항목과 담당 문서를 여기에 적는다.
 
 ## Rules
 
@@ -262,7 +262,7 @@ GitOps의 [`allow-egress-apps` 정책](../../../gitops/platform/network-policies
 
 #### Approval and Review
 
-예외 승인은 위 Exception Conditions가 가리키는 POL-0001의 operator-approved bootstrap/break-glass 공통 예외를 따른다.
+예외 승인은 위 Exceptions가 가리키는 POL-0001의 operator-approved bootstrap/break-glass 공통 예외를 따른다.
 
 ## Enforcement
 

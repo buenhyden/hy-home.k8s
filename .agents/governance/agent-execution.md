@@ -1,6 +1,6 @@
 ---
 title: "Agent Execution Policy"
-version: "1.12.0"
+version: "1.12.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -126,7 +126,7 @@ boundaries, never expand them.
 
 #### Responsibilities
 
-Responsibilities are stated under Authority and Requirements.
+Responsibilities are stated under Owner and Requirements.
 
 ### Review Triggers
 

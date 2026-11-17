@@ -1,6 +1,6 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "2.2.3"
+version: "2.2.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -206,7 +206,7 @@ kubectl -n istio-system logs deploy/kiali --since=2m | rg -i 'grafana|401'
 
 ### Stop Conditions
 
-중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
+중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Steps에 두고 실패 시 Escalation의 Next Owner와 Recovery or Forward Repair를 따른다.
 
 ## Verification
 

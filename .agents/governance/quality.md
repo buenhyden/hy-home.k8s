@@ -1,6 +1,6 @@
 ---
 title: "Quality and Evidence Policy"
-version: "3.1.0"
+version: "3.1.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -466,7 +466,7 @@ counts in prose.
 
 #### Responsibilities
 
-Responsibilities are stated under Authority and Requirements.
+Responsibilities are stated under Owner and Requirements.
 
 ### Review Triggers
 
