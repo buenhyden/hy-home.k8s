@@ -8277,10 +8277,6 @@ class MeaningMapRecoveryPointerTests(unittest.TestCase):
             self.assertEqual(re.search(r"SPEC-[0-9]{4}", text).group(0), match[1])
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 def core_bound_guide(raw: dict) -> dict:
     """SPEC-0222: bind the guide form to a small synthetic core whose one table
     the guide template carries exactly; the real core members arrive per unit."""
@@ -8297,9 +8293,10 @@ def core_bound_guide(raw: dict) -> dict:
         {
             "key": "action",
             "label": "Action",
-            "value_type": "string",
+            "value_type": "enum",
             "meaning": "allowed action",
             "required": True,
+            "allowed_values": ["run", "check"],
         },
     ]
     form["core_role"] = "guide"
@@ -8326,7 +8323,11 @@ def core_bound_guide(raw: dict) -> dict:
     while stack:
         item = stack.pop()
         stack.extend(item["children"])
-        item["core"] = {"title_ko": "t", "content_rule": "c"}
+        item["core"] = {
+            "title_ko": "t",
+            "required_when": item["condition"],
+            "content_rule": "c",
+        }
         if item["level"] == 2:
             item["core"].update(prohibited_content="x", empty_policy="e")
     table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
@@ -8342,6 +8343,11 @@ def core_bound_guide(raw: dict) -> dict:
                 "data_type": c["value_type"],
                 "meaning": c["meaning"],
                 "required": c["required"],
+                **(
+                    {"allowed_values": c["allowed_values"]}
+                    if "allowed_values" in c
+                    else {}
+                ),
             }
             for c in columns
         ],
@@ -8430,6 +8436,11 @@ class CoreRoleBindingTests(unittest.TestCase):
                 }
             ),
             "reordered columns": lambda t: t["columns"].reverse(),
+            "dropped column": lambda t: t["columns"].pop(),
+            "same type, other allowed values": lambda t: t["columns"][1].update(
+                allowed_values=["run"]
+            ),
+            "allowed values dropped": lambda t: t["columns"][1].pop("allowed_values"),
             "other condition": lambda t: t.update(required_when="always"),
             "other section": lambda t: t.update(section="guide.purpose"),
         }
@@ -8453,3 +8464,69 @@ class CoreRoleBindingTests(unittest.TestCase):
         table = next(t for t in guide_tables(raw) if t["name"] == "Steps")
         table.update(table_id="guide.steps", required_when="w", empty_policy="e")
         self.assertEqual(rules_of(raw), {"REGISTRY_CORE_TABLE"})
+
+    def test_a_repeated_core_table_id_cannot_hide_a_drifted_copy(self) -> None:
+        raw = core_bound_guide(load_raw())
+        tables = guide_tables(raw)
+        exact = next(t for t in tables if t["name"] == "Steps")
+        copy = json.loads(json.dumps(exact))
+        copy["name"] = "Shadow"
+        copy["columns"][0]["data_type"] = "string"
+        tables.insert(0, copy)
+        self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
+        raw = core_bound_guide(load_raw())
+        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide")
+        form["core"]["tables"].append(json.loads(json.dumps(form["core"]["tables"][0])))
+        self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
+
+    def test_an_extra_core_table_id_is_refused(self) -> None:
+        raw = core_bound_guide(load_raw())
+        table = next(t for t in guide_tables(raw) if t["name"] != "Steps")
+        table.update(table_id="guide.other", required_when="w", empty_policy="e")
+        self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
+
+    def test_the_core_identity_is_required_once_a_form_binds_a_core_role(
+        self,
+    ) -> None:
+        raw = core_bound_guide(load_raw())
+        del raw["common_forms"]["core"]
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_IDENTITY"})
+
+    def test_a_native_core_role_only_on_a_form_less_provider_native_template(
+        self,
+    ) -> None:
+        raw = load_raw()
+        profile_of(raw, GUIDE[1])["template_definition"].update(
+            core_role="native",
+            classification={
+                "owner": "platform",
+                "reason": "r",
+                "review_trigger": "t",
+                "authority_ref": "a",
+            },
+        )
+        self.assertEqual(rules_of(raw), {"REGISTRY_CORE_ROLE"})
+
+    def test_section_core_members_follow_the_core(self) -> None:
+        cases = {
+            "condition differs": lambda f: f["sections"][0].update(condition="x"),
+            "missing core": lambda f: f["sections"][0].pop("core"),
+            "H2 missing prohibited_content": lambda f: f["sections"][0]["core"].pop(
+                "prohibited_content"
+            ),
+            "H3 carries empty_policy": lambda f: f["sections"][0]["children"][0][
+                "core"
+            ].update(empty_policy="e"),
+        }
+        for name, change in cases.items():
+            with self.subTest(case=name):
+                raw = core_bound_guide(load_raw())
+                form = next(
+                    f for f in raw["common_forms"]["forms"] if f["form_id"] == "guide"
+                )
+                change(form)
+                self.assertEqual(rules_of(raw), {"REGISTRY_CORE_SECTION"})
+
+
+if __name__ == "__main__":
+    unittest.main()

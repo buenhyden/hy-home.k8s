@@ -2055,6 +2055,15 @@
               "id": {
                 "type": "string",
                 "pattern": "\\S"
+              },
+              "allowed_values": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "\\S"
+                }
               }
             }
           }
@@ -2588,6 +2597,15 @@
               },
               "required": {
                 "type": "boolean"
+              },
+              "allowed_values": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "\\S"
+                }
               }
             }
           }
@@ -2654,11 +2672,12 @@
       }
     },
     "section_core": {
-      "description": "SPEC-0222: the core members of one section that have no registry field of the same meaning; an H2 also carries prohibited_content and empty_policy.",
+      "description": "SPEC-0222: the core members of one section that have no registry field of the same meaning, and its core required_when, which the section's condition must equal; only an H2 carries prohibited_content and empty_policy.",
       "type": "object",
       "additionalProperties": false,
       "required": [
         "title_ko",
+        "required_when",
         "content_rule"
       ],
       "properties": {
@@ -2675,6 +2694,10 @@
           "pattern": "\\S"
         },
         "empty_policy": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "required_when": {
           "type": "string",
           "pattern": "\\S"
         }

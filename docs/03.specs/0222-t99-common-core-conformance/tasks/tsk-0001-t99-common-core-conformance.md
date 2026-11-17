@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.8.0"
+version: "0.9.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -83,12 +83,12 @@ Recorded before any code changes, as the Spec requires. A registry member that h
 | `purpose`, `non_goals`, `metadata_policy`, `language`, `status`, `relationships`, `lifecycle`, `rules` | form `core.<member>` | New; verbatim core values |
 | section `section_id`, `level`, `parent_id`, `order` | section `section_id`, `level`, `parent_id`, `order` | Existing; equal values |
 | section `title_en` | section `title` | Existing; equal value |
-| section `required_when` | section `condition` | Existing; takes the core value |
+| section `required_when` | section `condition` and `core.required_when` | Existing `condition` takes the core value; `core.required_when` holds it verbatim and the check requires them equal |
 | section `title_ko`, `content_rule`, `prohibited_content` (string), `empty_policy` (H2 sentence) | section `core.title_ko`, `.content_rule`, `.prohibited_content`, `.empty_policy` | New; verbatim. The registry `content`, `required_content`, `prohibited_content` list, `empty_policy` code, `validation_ids` and `link_only` stay local authoring bindings |
 | `subsections` | section `children` | Existing; equal structure |
 | `tables` | form `core.tables` | New; verbatim core tables |
 | table `table_id`, `section_id`, `required_when`, `empty_policy` | template table `table_id`, `section`, `required_when`, `empty_policy` | `table_id`, `required_when` and `empty_policy` are new; `section` takes the core H2 ID |
-| column `label`, `key`, `value_type`, `meaning`, `required` | template column `key`, `id`, `data_type`, `meaning`, `required` | `key` carries the label as the header text; `id` is new and holds the core key; `data_type` takes the core value type; `meaning` and `required` take core values |
+| column `label`, `key`, `value_type`, `meaning`, `required`, `allowed_values` | template column `key`, `id`, `data_type`, `meaning`, `required`, `allowed_values` | `key` carries the label as the header text; `id` is new and holds the core key; `data_type` takes the core value type; `meaning`, `required` and `allowed_values` take core values |
 | extension `reason`, `validation`, `review_trigger`, `authority_ref` | extension `condition`, `verification`, `review`, `authority_ref` | `authority_ref` is new: `ADR-0059` for entries before this Spec, `SPEC-0222` for new ones |
 
 WORK-001 implemented the field map's registry side:
@@ -104,6 +104,19 @@ WORK-001 implemented the field map's registry side:
   - a template table that is missing, or differs from the core in section, condition, empty policy, labels, keys, types, meanings, requiredness, order or column count (`REGISTRY_CORE_TABLE`), and a core table ID outside a core-role form.
 
 The identity hash key is `sha256`, not `source_sha256` as first written in the field map. The first staged run failed `detect-secrets` on that line, and the repository's identity-key exclusion admits only the `sha256` key. No form carries a core role yet; each later unit adds its own. The Stage 99 README describes the binding.
+
+The independent WORK-001 review (EVD-009) returned two HIGH findings, which blocked WORK-002, and the agent fixed each finding:
+
+- **Enums.** Core columns carry `allowed_values`, which the schema could not hold and the check did not compare. Both the core column and the template column now carry it, and the check compares it.
+- **Repeated table IDs.** A repeated `table_id` in a template or in a form core could hide a drifted copy. Both are now refused.
+- **Medium and low findings, also fixed:**
+  - the core identity is required once a form binds a core role (`REGISTRY_CORE_IDENTITY`);
+  - `core_role` in a TemplateDefinition is admitted only for a form-less provider-native template (`REGISTRY_CORE_ROLE`);
+  - a section's `condition` must equal its core `required_when`, which `section.core` now holds;
+  - an H3 core may not carry the H2-only members;
+  - the new tests sit above the module's `__main__` guard;
+  - new negative tests cover a dropped column, an enum difference, a repeated ID, an extra core table ID, the identity and the section members.
+- **Record.** The TemplateDefinition record and its schema stay unchanged on purpose. The one-time export reads the registry directly, and no record consumer needs the classification.
 
 ### Blockers and Decisions
 
@@ -137,6 +150,9 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | EVD-006 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Spec/Plan approval | Direct current-session user answer `요구사항에 작성된 대로 진행하고 구현한다.` (proceed and implement as the requirements state) to the SPEC-0222 approval question naming spec.md `8bff1cd0` and plan.md `4db258c2` of draft commit `f5022431`, 2026-11-17; risk class `high` | PASS | Approves the reviewed Spec and Plan content of `f5022431` for implementation; the approved files differ from it only in `status` and `version`. The answer does not accept a criterion: VAL-CORE-001 to VAL-CORE-004 stay pending until the user's acceptance. | yes | none |
 | EVD-007 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Failing first | `python3 -m unittest tests.test_common_form_tree.CoreRoleBindingTests` with the new tests over an export of `294156dc`; pinned venv, 2026-11-17 | PASS | Observed the defect: 6 tests, 9 failures and 2 errors; the registry carried no core identity, classification or `authority_ref`, and no drift check existed. | yes | none |
 | EVD-008 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Focused tests and strict validators after the change | The 32 test modules that read the registry, its schema or TemplateDefinitions; the strict registry, markdown profile, link and lifecycle validators; agent governance and ledger gates; pinned venv, 2026-11-17 | PASS | `tests.test_common_form_tree` 423 tests OK with 3 skips after 25 extension fixtures gained `authority_ref`; the other 31 modules passed in the first run; every validator passed. | yes | none |
+| EVD-009 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Independent review | A read-only code-reviewer agent over `git show fa35445c`, the Spec, Plan, field map, ADR-0059, the core and the comparison tool, with in-memory registry probes, 2026-11-17; risk class `high` | FAIL | APPROVE WITH FINDINGS. Two HIGH findings blocked WORK-002: `allowed_values` could not be stored or compared, and a repeated `table_id` hid a drifted copy. Medium: the identity was optional, native `core_role` was unbound, the record was silent, and section `required_when` was unchecked. Low: test placement and coverage gaps. No assertion was weakened; the rename and scope were correct. | yes | none |
+| EVD-010 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Failing first | `python3 -m unittest tests.test_common_form_tree.CoreRoleBindingTests` with the extended tests over an export of `fa35445c`; pinned venv, 2026-11-17 | PASS | Observed the defects: 11 tests, 19 failures. | yes | none |
+| EVD-011 | [VAL-CORE-001](../spec.md#criteria) | WORK-001 | Focused tests and strict validators after the change | `python3 -m unittest tests.test_common_form_tree`; the strict registry, markdown profile, link and lifecycle validators; pinned venv, 2026-11-17 | PASS | 428 tests OK with 3 skips, including 11 `CoreRoleBindingTests`; every listed validator passed. | yes | none |
 
 ### Resolution Links
 

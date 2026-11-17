@@ -3822,6 +3822,7 @@ CORE_ROLES = frozenset(
 
 
 def _core_role_diagnostics(
+    common_forms: Mapping[str, Any],
     forms: Sequence[Mapping[str, Any]],
     profiles_by_id: Mapping[str, Mapping[str, Any]],
 ) -> list[tuple[str, str, str, str]]:
@@ -3829,6 +3830,32 @@ def _core_role_diagnostics(
     templates carries each core table exactly; no other table claims a core ID."""
 
     faults: list[tuple[str, str, str, str]] = []
+    if "core" not in common_forms and any(
+        form.get("core_role") in CORE_ROLES for form in forms
+    ):
+        faults.append(
+            (
+                "REGISTRY_CORE_IDENTITY",
+                "common_forms records the adopted core identity once a form binds a core role",
+                "common_forms.core is absent",
+                "",
+            )
+        )
+    form_ids = {form["form_id"] for form in forms}
+    for profile_id, profile in profiles_by_id.items():
+        definition = profile.get("template_definition") or {}
+        if "core_role" in definition and (
+            profile.get("document_role") != "provider-native"
+            or "provider-native" in form_ids
+        ):
+            faults.append(
+                (
+                    "REGISTRY_CORE_ROLE",
+                    "core_role in a TemplateDefinition only for a form-less provider-native template",
+                    f"role {profile.get('document_role')}",
+                    profile_id,
+                )
+            )
     for form in forms:
         form_id = form["form_id"]
         templates = [
@@ -3856,30 +3883,60 @@ def _core_role_diagnostics(
             section = stack.pop()
             stack.extend(section["children"])
             core = section.get("core")
-            missing = (
-                ["core"]
+            problems = (
+                ["missing core"]
                 if core is None
                 else [
-                    key
+                    f"missing {key}"
                     for key in ("prohibited_content", "empty_policy")
                     if section["level"] == 2 and key not in core
                 ]
+                + [
+                    f"H3 carries {key}"
+                    for key in ("prohibited_content", "empty_policy")
+                    if section["level"] == 3 and key in core
+                ]
+                + (
+                    ["condition differs from the core required_when"]
+                    if core.get("required_when") != section["condition"]
+                    else []
+                )
             )
-            if missing:
+            if problems:
                 faults.append(
                     (
                         "REGISTRY_CORE_SECTION",
                         "every section of a core-role form carries its core members",
-                        f"{section['section_id']}: missing {', '.join(missing)}",
+                        f"{section['section_id']}: {', '.join(problems)}",
                         "",
                     )
                 )
+        core_ids = [table["table_id"] for table in form["core"]["tables"]]
         core_tables = {table["table_id"]: table for table in form["core"]["tables"]}
+        for table_id in sorted({i for i in core_ids if core_ids.count(i) > 1}):
+            faults.append(
+                (
+                    "REGISTRY_CORE_TABLE",
+                    "one core table per table ID",
+                    f"{table_id} repeats in the form core",
+                    "",
+                )
+            )
         for profile_id, profile in templates:
             tables = (profile.get("template_definition") or {}).get("tables", ())
+            ids = [table["table_id"] for table in tables if "table_id" in table]
             by_id = {
                 table["table_id"]: table for table in tables if "table_id" in table
             }
+            for table_id in sorted({i for i in ids if ids.count(i) > 1}):
+                faults.append(
+                    (
+                        "REGISTRY_CORE_TABLE",
+                        "one template table per core table ID",
+                        f"{table_id} repeats",
+                        profile_id,
+                    )
+                )
             for table_id in sorted(set(by_id) - set(core_tables)):
                 faults.append(
                     (
@@ -3902,6 +3959,7 @@ def _core_role_diagnostics(
                             c["value_type"],
                             c["meaning"],
                             c["required"],
+                            c.get("allowed_values"),
                         )
                         for c in core_table["columns"]
                     ],
@@ -3920,6 +3978,7 @@ def _core_role_diagnostics(
                                 c["data_type"],
                                 c["meaning"],
                                 c["required"],
+                                c.get("allowed_values"),
                             )
                             for c in table["columns"]
                         ],
@@ -3964,7 +4023,11 @@ def _form_registry_diagnostics(
         )
     roles_with_form = set(form_ids)
     forms_by_role = {form["form_id"]: form for form in forms}
-    faults.extend(_core_role_diagnostics(forms, profiles_by_id))
+    faults.extend(
+        _core_role_diagnostics(
+            raw_registry.get("common_forms") or {}, forms, profiles_by_id
+        )
+    )
     for profile_id, profile in profiles_by_id.items():
         role = profile.get("document_role")
         if "sections" in profile:
