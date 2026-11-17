@@ -299,21 +299,14 @@ POLICY_LEVELS_TABLE = (
     "Rule ID",
 )
 AGENTS = ("common/folder-agents-guide", "common/template-agents-guide")
+# SPEC-0222 WORK-007: the agent-instructions core tree; the core has no table.
 AGENTS_TREE = (
-    ("Scope", ("Allowed Surface", "Non-goals")),
-    ("Required Policies", ("Canonical Sources", "Local Obligations")),
-    ("Workflow", ("Inspect and Change", "Handoff")),
-    ("Verification", ("Required Checks", "Evidence and Limits")),
-    ("Safety", ("Protected Actions", "Stop and Escalate")),
+    ("Scope", ("Allowed Scope", "Instruction Precedence")),
+    ("Workflow", ("Intake", "Execution")),
+    ("Boundaries", ("Authority", "Secrets and External Effects")),
+    ("Verification", ("Checks", "Reporting")),
 )
-AGENTS_TABLE_KEYS = {
-    "Tool Rules": (
-        "agents-required-policies-local-obligations",
-        ("Rule", "Trigger", "Effect"),
-        0,
-        "Rule",
-    )
-}
+AGENTS_TABLE_KEYS: dict = {}
 SKILL_GOVERNANCE = ("governance/skill", "common/template-governance-skill")
 SKILL_NATIVE = ("common/native-skill-package", "common/template-native-skill")
 SKILL_TREE = (
@@ -1253,9 +1246,10 @@ TARGET_GROUPS = {
     # SPEC-0222: the Task form takes the core section IDs.
     "task": ("scope", "work", "evidence", "acceptance", "handoff"),
     "adr": ("context", "options", "decision", "consequences"),
+    "agents": ("scope", "workflow", "limits", "verification"),
 }
 # SPEC-0222: a form whose ID differs from its core role takes the role's prefix.
-CORE_PREFIX = {"adr": "decision"}
+CORE_PREFIX = {"adr": "decision", "agents": "agent-instructions"}
 
 
 def section_id_of(
@@ -2044,7 +2038,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             "stage-readme": ["Index"],
             "service-readme": ["External Interfaces", "Commands"],
             "policy": ["Rules", "Rule Levels", "Lifecycle Traceability"],
-            "agents": ["Tool Rules"],
+            "agents": [],
             "skill": ["Steps"],
             "workspace-readme": [],
             "reference-pack-readme": [],
@@ -3819,6 +3813,16 @@ class RoleFormBody(unittest.TestCase):
         self.assertEqual(self.tree(self.BODY), [])
         self.assertEqual(self.tables(self.BODY), [])
 
+
+class RoleFormTableBody(RoleFormBody):
+    """Shared checks for a role form that carries a table."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        if cls is RoleFormTableBody:
+            raise unittest.SkipTest("shared base; its subclasses run the checks")
+        super().setUpClass()
+
     def test_the_optional_table_passes_with_the_registered_columns(self) -> None:
         row = tuple("x" for _ in self.HEADER)
         body = self.with_table(self.table(self.HEADER, row))
@@ -3860,7 +3864,7 @@ class RoleFormBody(unittest.TestCase):
         self.assertEqual(self.tables(body), [])
 
 
-class IncidentFormTests(RoleFormBody):
+class IncidentFormTests(RoleFormTableBody):
     """SPEC-0171 VAL-INCIDENTFORM-001: the Incident form, its tables and extension."""
 
     PATH = INCIDENT_PATH
@@ -3908,7 +3912,7 @@ class IncidentFormTests(RoleFormBody):
         )
 
 
-class PostmortemFormTests(RoleFormBody):
+class PostmortemFormTests(RoleFormTableBody):
     """SPEC-0171 VAL-INCIDENTFORM-001: the Postmortem form, tables and extensions."""
 
     PATH = POSTMORTEM_PATH
@@ -3997,7 +4001,7 @@ def policy_body() -> str:
     )
 
 
-class GovernancePolicyFormTests(RoleFormBody):
+class GovernancePolicyFormTests(RoleFormTableBody):
     """SPEC-0175 VAL-POLICY-001: the Policy form on governance rules."""
 
     PATH = GOVERNANCE_POLICY_PATH
@@ -4028,7 +4032,7 @@ class GovernancePolicyFormTests(RoleFormBody):
         self.assertEqual(self.tables(body), [])
 
 
-class OperationsPolicyFormTests(RoleFormBody):
+class OperationsPolicyFormTests(RoleFormTableBody):
     """SPEC-0175 VAL-POLICY-001: the Policy form on operations policies."""
 
     PATH = OPERATIONS_POLICY_PATH
@@ -4100,27 +4104,55 @@ def agents_body() -> str:
         "# AGENTS.md",
         "Agent instructions for `scripts/`.",
         "## Scope",
-        "### Allowed Surface\n\nValidators only.",
-        "### Non-goals\n\nThis folder adds no non-goal beyond the parent `AGENTS.md`; "
-        "if work here must be excluded, state it here.",
-        "## Required Policies",
-        "### Canonical Sources\n\nThe quality policy.",
-        "### Local Obligations\n\n1. Keep the change small.",
+        "### Allowed Scope\n\nValidators only.",
+        "#### Non-goals\n\nThis folder adds no non-goal beyond the parent "
+        "`AGENTS.md`; if work here must be excluded, state it here.",
+        "### Instruction Precedence",
+        "#### Canonical Sources\n\nThe quality policy.",
         "## Workflow",
-        "### Inspect and Change\n\nFollow the rules above.",
-        "### Handoff\n\nThis folder hands off through the work lifecycle's Completion "
-        "steps with no extra field; if it needs one, state it here.",
+        "### Intake",
+        "#### Local Obligations\n\n1. Keep the change small.",
+        "### Execution\n\nFollow the rules above.",
+        "## Boundaries",
+        "### Authority",
+        "#### Stop and Escalate\n\nStop on a failed check.",
+        "### Secrets and External Effects",
+        "#### Protected Actions\n\nNone beyond the policy.",
         "## Verification",
-        "### Required Checks\n\nRun the suite.",
-        "### Evidence and Limits\n\nRepository-static only.",
-        "## Safety",
-        "### Protected Actions\n\nNone beyond the policy.",
-        "### Stop and Escalate\n\nStop on a failed check.",
+        "### Checks\n\nRun the suite.",
+        "### Reporting",
+        "#### Evidence and Limits\n\nRepository-static only.",
+        "#### Handoff\n\nThis folder hands off through the work lifecycle's "
+        "Completion steps with no extra field; if it needs one, state it here.",
     )
 
 
+# SPEC-0222 WORK-007: the agent-instructions core members the form carries.
+AGENTS_CORE_IDS = (
+    "agent-instructions.scope",
+    "agent-instructions.scope.1",
+    "agent-instructions.scope.2",
+    "agent-instructions.workflow",
+    "agent-instructions.workflow.1",
+    "agent-instructions.workflow.2",
+    "agent-instructions.limits",
+    "agent-instructions.limits.1",
+    "agent-instructions.limits.2",
+    "agent-instructions.verification",
+    "agent-instructions.verification.1",
+    "agent-instructions.verification.2",
+)
+AGENTS_CORE_H2 = {
+    "agent-instructions.scope": ("실행 범위", "작업 경로·우선권·허용 행동"),
+    "agent-instructions.workflow": ("절차", "필요 정책·계획·브리핑"),
+    "agent-instructions.limits": ("제한", "권한·실패·중단"),
+    "agent-instructions.verification": ("완료", "관련 검사와 보고"),
+}
+
+
 class AgentsFormTests(RoleFormBody):
-    """SPEC-0176 VAL-AGENTS-001: the AGENTS form on every AGENTS.md."""
+    """SPEC-0176 VAL-AGENTS-001: the AGENTS form on every AGENTS.md; SPEC-0222
+    WORK-007 binds it to the agent-instructions core tree."""
 
     PATH = AGENTS_PATH
     PROFILES = AGENTS
@@ -4128,8 +4160,47 @@ class AgentsFormTests(RoleFormBody):
     TREE = AGENTS_TREE
     TABLE_KEYS = AGENTS_TABLE_KEYS
     BODY = agents_body()
-    HEADER = ("Rule", "Trigger", "Effect")
-    HOME = "1. Keep the change small."
+
+    def test_the_form_binds_the_agent_instructions_core(self) -> None:
+        form = next(
+            f for f in load_raw()["common_forms"]["forms"] if f["form_id"] == "agents"
+        )
+        self.assertEqual(form["core_role"], "agent-instructions")
+        core = form["core"]
+        self.assertEqual(core["purpose"], "허용 범위의 도구 독립 실행 규칙")
+        self.assertEqual(core["non_goals"], "다른 역할의 상태·정책 정본 대체")
+        self.assertEqual(core["tables"], [])
+        self.assertEqual(core["status"], "DESIGN_PROPOSAL_NOT_ADOPTED")
+        self.assertEqual(core["metadata_policy"]["envelope"], "native")
+        self.assertEqual(
+            core["rules"],
+            [
+                "single-meaning-owner",
+                "no-synthetic-evidence",
+                "no-release-document-role",
+                "no-package-path-runtime-dependency",
+            ],
+        )
+        nodes = [n for s in form["sections"] for n in (s, *s["children"])]
+        self.assertEqual(tuple(n["section_id"] for n in nodes), AGENTS_CORE_IDS)
+        for node in nodes:
+            with self.subTest(section=node["section_id"]):
+                self.assertEqual(node["condition"], "always")
+                self.assertEqual(node["core"]["required_when"], "always")
+                if node["level"] == 2:
+                    self.assertEqual(
+                        (node["core"]["title_ko"], node["core"]["content_rule"]),
+                        AGENTS_CORE_H2[node["section_id"]],
+                    )
+                else:
+                    self.assertEqual(node["core"]["title_ko"], node["title"])
+                    self.assertIn(node["title"], node["core"]["content_rule"])
+
+    def test_the_template_carries_no_table(self) -> None:
+        twin = profile_of(load_raw(), self.PROFILES[1])
+        self.assertEqual(twin["template_definition"]["tables"], [])
+        template = (ROOT / twin["template_source"]).read_text(encoding="utf-8")
+        self.assertNotIn("|", template)
 
     def test_the_loaded_heading_lists_equal_the_form_h2_titles(self) -> None:
         # The AGENTS profiles stay native: they carry no H2 lists, so an empty
@@ -4217,22 +4288,26 @@ class AgentsFormTests(RoleFormBody):
 
     def test_a_missing_or_renamed_form_heading_fails_the_tree(self) -> None:
         self.assertEqual(
-            self.tree(self.BODY.replace("### Handoff", "### Handover")),
+            self.tree(self.BODY.replace("### Reporting", "### Report")),
             ["BODY-H3-REQUIRED", "BODY-H3-UNSUPPORTED"],
         )
         self.assertEqual(
-            self.tree(self.BODY.replace("### Handoff\n", "### Handoff\n\n#### Deep\n")),
+            self.tree(self.BODY.replace("### Checks\n", "### Checks\n\n#### Deep\n")),
             [],
         )
         self.assertEqual(
-            self.tree(self.under("## Safety", "### Stray\n\nText.")),
+            self.tree(self.under("## Verification", "### Stray\n\nText.")),
             ["BODY-H3-UNSUPPORTED"],
         )
 
-    def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
-        wrong = self.table(self.HEADER[:2], ("a", "b"))
-        body = self.with_table(wrong, home="The quality policy.")
-        self.assertEqual(self.tables(body), [])
+    def test_a_former_form_heading_is_refused_as_an_h3(self) -> None:
+        for old, new in (
+            ("### Allowed Scope", "### Allowed Surface"),
+            ("#### Local Obligations", "### Local Obligations"),
+            ("## Boundaries", "## Safety"),
+        ):
+            with self.subTest(heading=new):
+                self.assertNotEqual(self.tree(self.BODY.replace(old, new)), [])
 
 
 GOVERNANCE_SKILL_PATH = PurePosixPath(".agents/workflows/work-lifecycle.md")
@@ -4260,7 +4335,7 @@ class BareSectionTests(unittest.TestCase):
             for item in MARKDOWN._body_diagnostics(AGENTS_PATH, profile, text, "active")
         )
 
-    def with_line(self, line: str, heading: str = "### Handoff") -> str:
+    def with_line(self, line: str, heading: str = "### Execution") -> str:
         body = agents_body()
         start = body.index(heading) + len(heading)
         end = body.index("\n\n##", start)
@@ -4334,7 +4409,7 @@ def skill_body(*, preface: str = "") -> str:
 
 
 # TestCase is named again so the static collector sees a runnable base.
-class SkillFormBody(RoleFormBody, unittest.TestCase):
+class SkillFormBody(RoleFormTableBody, unittest.TestCase):
     """Shared Skill checks; the two Skill profile pairs share one form."""
 
     FORM_ID = "skill"

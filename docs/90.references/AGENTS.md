@@ -6,7 +6,7 @@ applies.
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 Stage 90 holds evidence: external research, audits and data packs with their
 observation dates, claims and coverage. It informs Stages 01 to 05 but is
@@ -21,17 +21,21 @@ never policy or current authority by itself.
 `docs-researcher` is read-only (`read-only-research`); a writing role records
 its findings.
 
-### Non-goals
+#### Non-goals
 
 Non-goals are stated in rule 5 under Local Obligations.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. Every collection keeps three levels: the collection `README.md`, a pack
    router `####-<slug>/README.md` with the `reference/<kind>-pack` profile,
@@ -48,33 +52,37 @@ Canonical sources are the documents linked or named in the opening paragraph and
 5. Never present a Stage 90 claim as a requirement, decision or policy; link
    the Stage 01, 02 or 05 owner that adopts it.
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-Handoff is stated in rule 5 under Local Obligations.
+### Authority
+
+#### Stop and Escalate
+
+This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
+
+### Secrets and External Effects
+
+#### Protected Actions
+
+This folder adds no protected action beyond the approval and safety policy; if work here can start one, name it here.
 
 ## Verification
 
-### Required Checks
+### Checks
 
 Select the document checks in the parent `AGENTS.md`. When pack topology
 changes, use `validate-document-contract-registry.py` for that boundary.
 
-### Evidence and Limits
+### Reporting
+
+#### Evidence and Limits
 
 Evidence rules are stated in rule 2 under Local Obligations.
 
-## Safety
+#### Handoff
 
-### Protected Actions
-
-This folder adds no protected action beyond the approval and safety policy; if work here can start one, name it here.
-
-### Stop and Escalate
-
-This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
+Handoff is stated in rule 5 under Local Obligations.

@@ -6,7 +6,7 @@ its contracts and the form catalog. The parent
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 Stage 99 is the machine contract every governed document is validated
 against. `registry.json` declares each profile's path pattern, frontmatter,
@@ -20,17 +20,21 @@ sections, lifecycle and relationships; `contracts/` holds the JSON Schemas;
 | Document form text | [doc-writer](../../.agents/roles/doc-writer.md) | `docs-stage-conformance`, `docs-stage-routing`, `requirements-to-design` | `.claude/agents/doc-writer.md` | `.codex/agents/doc-writer.toml` |
 | Validate the contract change | [quality-engineer](../../.agents/roles/quality-engineer.md) | `k8s-validate`, `workspace-harness-audit` | `.claude/agents/quality-engineer.md` | `.codex/agents/quality-engineer.toml` |
 
-### Non-goals
+#### Non-goals
 
 This folder adds no non-goal beyond the parent `AGENTS.md` and the governance policies; if work here must be excluded, state it here.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. A change to `registry.json`, a schema or a form is a contract change, not
    an ordinary document edit. Scope it in a Spec, add the focused regression
@@ -46,34 +50,38 @@ Canonical sources are the documents linked or named in the opening paragraph and
    When it does, move the `.secrets.baseline` line number in its own commit
    first; the non-style gate scans against the HEAD baseline.
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
+### Authority
+
+#### Stop and Escalate
+
+This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
+
+### Secrets and External Effects
+
+#### Protected Actions
+
+This folder adds no protected action beyond the approval and safety policy; if work here can start one, name it here.
 
 ## Verification
 
-### Required Checks
+### Checks
 
 `python3 scripts/validate-document-contract-registry.py --root . --mode strict`,
 the strict Markdown-profile and lifecycle checks from the parent `AGENTS.md`,
 and `python3 scripts/run-contract-tests.py --root . --suite document`.
 
-### Evidence and Limits
+### Reporting
+
+#### Evidence and Limits
 
 This folder adds no evidence rule beyond the quality policy's handoff contract; if a check here has a limit to report, state it here.
 
-## Safety
+#### Handoff
 
-### Protected Actions
-
-This folder adds no protected action beyond the approval and safety policy; if work here can start one, name it here.
-
-### Stop and Escalate
-
-This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.

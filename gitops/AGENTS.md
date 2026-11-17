@@ -6,7 +6,7 @@ rules are for AI agents. The repository root gateway (`AGENTS.md` or
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 The Git desired state that Argo CD reconciles for the local k3d platform: cluster bootstrap, AppProjects and ApplicationSets (`clusters/local`), root Applications (`apps/root`), shared platform components (`platform/*`) and workload patterns (`workloads/*`). `platform/external-services` is the source of truth for external service endpoints.
 
@@ -23,17 +23,21 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 [`.codex/provider.md`](../.codex/provider.md); approval boundaries are in
 [approval and safety](../.agents/governance/approval-and-safety.md).
 
-### Non-goals
+#### Non-goals
 
 This folder adds no non-goal beyond the parent `AGENTS.md` and the governance policies; if work here must be excluded, state it here.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. Change the platform only through this tree, a reviewed pull request and Argo CD reconciliation. Never run `kubectl apply`, `delete`, `patch` or `argocd app sync` against the live cluster; those are bootstrap-only or break-glass and need explicit approval.
 2. Never commit a secret value. Reference secrets through ExternalSecret and the Vault/OpenBao store; Vault and ESO own the values.
@@ -41,19 +45,27 @@ Canonical sources are the documents linked or named in the opening paragraph and
 4. Change external endpoints only in `platform/external-services/` and keep them consistent with REQ-0004.
 5. Static checks are repository evidence; live sync and health need a separate read-only observation.
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
+### Authority
+
+#### Stop and Escalate
+
+Stop and escalation conditions are stated in rule 1 under Local Obligations.
+
+### Secrets and External Effects
+
+#### Protected Actions
+
+Protected actions are stated in rules 1 and 2 under Local Obligations.
 
 ## Verification
 
-### Required Checks
+### Checks
 
 Run the selected checks with `python3 scripts/qa.py staged`, or these
 directly:
@@ -64,16 +76,12 @@ directly:
 - `python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD`
 - `python3 scripts/validate-vault-eso-contracts.py --root .`
 
-### Evidence and Limits
+### Reporting
+
+#### Evidence and Limits
 
 Evidence limits are stated in rule 5 under Local Obligations.
 
-## Safety
+#### Handoff
 
-### Protected Actions
-
-Protected actions are stated in rules 1 and 2 under Local Obligations.
-
-### Stop and Escalate
-
-Stop and escalation conditions are stated in rule 1 under Local Obligations.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.

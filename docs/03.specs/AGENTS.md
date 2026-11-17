@@ -5,7 +5,7 @@ parent [`docs/AGENTS.md`](../AGENTS.md) still applies.
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 Stage 03 holds change packages `####-<slug>/`: `spec.md` owns the change
 contract and acceptance criteria, `plan.md` the work order, risks and
@@ -21,17 +21,21 @@ adoption and survey residue as pointers; the Task owns execution state.
 | Run checks and record Task evidence | [quality-engineer](../../.agents/roles/quality-engineer.md) | `k8s-validate`, `workspace-harness-audit` | `.claude/agents/quality-engineer.md` | `.codex/agents/quality-engineer.toml` |
 | Independent or requested change review | [code-reviewer](../../.agents/roles/code-reviewer.md) | `risk-report` | `.claude/agents/code-reviewer.md` | `.codex/agents/code-reviewer.toml` |
 
-### Non-goals
+#### Non-goals
 
 This folder adds no non-goal beyond the parent `AGENTS.md` and the governance policies; if work here must be excluded, state it here.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. Start from `docs/99.templates/templates/specs/{spec,plan,task}.template.md`.
    Do not add a README or other router inside a package.
@@ -71,34 +75,38 @@ Canonical sources are the documents linked or named in the opening paragraph and
    staged `LIFECYCLE-PACKAGE-EXIT` check refuses the wrong shape; see the
    [document lifecycle policy](../../.agents/governance/document-lifecycle.md).
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-Handoff is stated in rules 3 and 5 under Local Obligations.
+### Authority
+
+#### Stop and Escalate
+
+Stop and escalation conditions are stated in rules 3, 5 and 7 under Local Obligations.
+
+### Secrets and External Effects
+
+#### Protected Actions
+
+Protected actions are stated in rules 2 and 6 under Local Obligations.
 
 ## Verification
 
-### Required Checks
+### Checks
 
 Select the document checks in the parent `AGENTS.md`. For delivery, the
 staged QA route runs the selected lifecycle and document checks against the
 exact index.
 
-### Evidence and Limits
+### Reporting
+
+#### Evidence and Limits
 
 Evidence rules are stated in rules 4 and 5 under Local Obligations.
 
-## Safety
+#### Handoff
 
-### Protected Actions
-
-Protected actions are stated in rules 2 and 6 under Local Obligations.
-
-### Stop and Escalate
-
-Stop and escalation conditions are stated in rules 3, 5 and 7 under Local Obligations.
+Handoff is stated in rules 3 and 5 under Local Obligations.

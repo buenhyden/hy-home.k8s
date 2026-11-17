@@ -7977,7 +7977,7 @@
       "template_definition": {
         "contract_id": "COMMON-DOC-FORM-1",
         "contract_version": "2.0.0",
-        "purpose": "Give authors one form for the agent instructions of a directory that state its work surface, required policies, workflow, checks and safety boundaries.",
+        "purpose": "Give authors one form for the agent instructions of a directory that state its scope and instruction precedence, intake and execution, authority and external-effect boundaries, and checks and reporting.",
         "responsibility": "An AGENTS.md owns the agent instructions of its directory and the root gateway for Codex; policy, role and skill authority stay with their owners and are linked, not copied.",
         "non_goals": [
           "Restating common governance, role or skill policy that its owner already states.",
@@ -8027,14 +8027,13 @@
         ],
         "validation": {
           "positive": [
-            "Each AGENTS.md and the template pass the form tree, table, author-prompt, residue and agent-governance checks.",
-            "An AGENTS.md whose Tool Rules table keeps the registered columns, or whose Tool Rules table has a header only, passes the document table check."
+            "Each AGENTS.md and the template pass the form tree, author-prompt, residue and agent-governance checks.",
+            "An AGENTS.md keeps the four H2 and eight H3 of the agent-instructions core tree; a former form heading stays as an H4 under the core H3 that holds its sentences."
           ],
           "negative": [
-            "A reordered, missing or extra Tool Rules column fails BODY-TABLE-COLUMNS.",
-            "A table section outside the form fails REGISTRY_TABLE_SECTION.",
-            "A source profile named by two template twins that carry tables fails REGISTRY_TABLE_TWIN.",
-            "A root gateway over 30 content lines or 16 heading lines fails AGENT-NATIVE-REFERENCE."
+            "A missing, renamed or extra H3 fails BODY-H3-REQUIRED or BODY-H3-UNSUPPORTED.",
+            "A section of the form without its core members fails REGISTRY_CORE_SECTION.",
+            "A root gateway over 30 content lines or 20 heading lines fails AGENT-NATIVE-REFERENCE."
           ],
           "regression": [
             "The AGENTS profiles stay native and keep empty heading lists; an empty section is a review matter.",
@@ -8042,38 +8041,11 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0176 meaning map moves each sentence of the former Purpose, Responsibilities and Projections, Rules and Checks layout of the 16 AGENTS.md files into the AGENTS form without changing meaning; recover the map from the SPEC-0176 recovery proof in the REQ-0003 Archived Lineage.",
-          "retained_history": "Git history retains the previous AGENTS.md layout of the 16 files.",
-          "rollback": "Revert the SPEC-0176 implementation commit."
+          "meaning_map": "The SPEC-0222 heading map moves each sentence of the 16 AGENTS.md files and of the template into the four H2 and eight H3 of the agent-instructions core without changing it: Allowed Surface becomes Allowed Scope, Inspect and Change becomes Execution and Required Checks becomes Checks; Non-goals stays an H4 under Allowed Scope, Canonical Sources under Instruction Precedence, Local Obligations under Intake, Stop and Escalate under Authority, Protected Actions under Secrets and External Effects, and Evidence and Limits and Handoff under Reporting. The Tool Rules table, which no AGENTS.md used, is removed.",
+          "retained_history": "Git history retains the previous AGENTS.md layouts of the 16 files.",
+          "rollback": "Revert the SPEC-0222 WORK-007 commit."
         },
-        "tables": [
-          {
-            "name": "Tool Rules",
-            "section": "agents-required-policies-local-obligations",
-            "columns": [
-              {
-                "key": "Rule",
-                "meaning": "The stable ID or short name of the tool-specific rule.",
-                "data_type": "string",
-                "required": true
-              },
-              {
-                "key": "Trigger",
-                "meaning": "The condition or tool use that triggers the rule.",
-                "data_type": "string",
-                "required": true
-              },
-              {
-                "key": "Effect",
-                "meaning": "What the rule requires, allows or forbids when it is triggered.",
-                "data_type": "string",
-                "required": true
-              }
-            ],
-            "minimum_rows": 0,
-            "row_identity": "Rule"
-          }
-        ]
+        "tables": []
       }
     },
     {
@@ -13029,16 +13001,16 @@
         "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
         "sections": [
           {
-            "section_id": "agents-scope",
+            "section_id": "agent-instructions.scope",
             "level": 2,
             "parent_id": null,
             "title": "Scope",
             "order": 1,
             "requiredness": "required",
             "condition": "always",
-            "content": "에이전트의 작업 경계",
+            "content": "에이전트의 작업 경계와 지시 우선순위",
             "required_content": [
-              "에이전트의 작업 경계에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+              "에이전트의 작업 경계와 지시 우선순위에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
             "prohibited_content": [
               "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
@@ -13052,16 +13024,16 @@
             "link_only": false,
             "children": [
               {
-                "section_id": "agents-scope-allowed-surface",
+                "section_id": "agent-instructions.scope.1",
                 "level": 3,
-                "parent_id": "agents-scope",
-                "title": "Allowed Surface",
+                "parent_id": "agent-instructions.scope",
+                "title": "Allowed Scope",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "디렉터리·쓰기 권한·역할",
+                "content": "디렉터리·쓰기 권한·역할과 범위 밖 작업·상위 경계",
                 "required_content": [
-                  "디렉터리·쓰기 권한·역할을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "디렉터리·쓰기 권한·역할과 범위 밖 작업·상위 경계를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
@@ -13073,68 +13045,24 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "link_only": false,
-                "children": []
+                "children": [],
+                "core": {
+                  "title_ko": "Allowed Scope",
+                  "required_when": "always",
+                  "content_rule": "작업 경로·우선권·허용 행동 중 Allowed Scope에 해당하는 사실·규칙만 기록"
+                }
               },
               {
-                "section_id": "agents-scope-non-goals",
+                "section_id": "agent-instructions.scope.2",
                 "level": 3,
-                "parent_id": "agents-scope",
-                "title": "Non-goals",
+                "parent_id": "agent-instructions.scope",
+                "title": "Instruction Precedence",
                 "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "범위 밖 작업·상위 경계",
-                "required_content": [
-                  "범위 밖 작업·상위 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              }
-            ]
-          },
-          {
-            "section_id": "agents-required-policies",
-            "level": 2,
-            "parent_id": null,
-            "title": "Required Policies",
-            "order": 2,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "실행에 필요한 현재 정책",
-            "required_content": [
-              "실행에 필요한 현재 정책에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "agents-required-policies-canonical-sources",
-                "level": 3,
-                "parent_id": "agents-required-policies",
-                "title": "Canonical Sources",
-                "order": 1,
                 "requiredness": "required",
                 "condition": "always",
                 "content": "정본 규칙·판본·우선순위",
                 "required_content": [
-                  "정본 규칙·판본·우선순위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "정본 규칙·판본·우선순위를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
@@ -13146,45 +13074,33 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "agents-required-policies-local-obligations",
-                "level": 3,
-                "parent_id": "agents-required-policies",
-                "title": "Local Obligations",
-                "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "즉시 필요한 의무·금지·근거",
-                "required_content": [
-                  "즉시 필요한 의무·금지·근거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "core": {
+                  "title_ko": "Instruction Precedence",
+                  "required_when": "always",
+                  "content_rule": "작업 경로·우선권·허용 행동 중 Instruction Precedence에 해당하는 사실·규칙만 기록"
+                }
               }
-            ]
+            ],
+            "core": {
+              "title_ko": "실행 범위",
+              "required_when": "always",
+              "content_rule": "작업 경로·우선권·허용 행동",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
-            "section_id": "agents-workflow",
+            "section_id": "agent-instructions.workflow",
             "level": 2,
             "parent_id": null,
             "title": "Workflow",
-            "order": 3,
+            "order": 2,
             "requiredness": "required",
             "condition": "always",
-            "content": "실제 작업 절차",
+            "content": "실행에 필요한 현재 정책과 실제 작업 절차",
             "required_content": [
-              "실제 작업 절차에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+              "실행에 필요한 현재 정책과 실제 작업 절차에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
             "prohibited_content": [
               "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
@@ -13198,11 +13114,40 @@
             "link_only": false,
             "children": [
               {
-                "section_id": "agents-workflow-inspect-and-change",
+                "section_id": "agent-instructions.workflow.1",
                 "level": 3,
-                "parent_id": "agents-workflow",
-                "title": "Inspect and Change",
+                "parent_id": "agent-instructions.workflow",
+                "title": "Intake",
                 "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "즉시 필요한 의무·금지·근거",
+                "required_content": [
+                  "즉시 필요한 의무·금지·근거를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": [],
+                "core": {
+                  "title_ko": "Intake",
+                  "required_when": "always",
+                  "content_rule": "필요 정책·계획·브리핑 중 Intake에 해당하는 사실·규칙만 기록"
+                }
+              },
+              {
+                "section_id": "agent-instructions.workflow.2",
+                "level": 3,
+                "parent_id": "agent-instructions.workflow",
+                "title": "Execution",
+                "order": 2,
                 "requiredness": "required",
                 "condition": "always",
                 "content": "입력 확인·계획·최소 변경",
@@ -13219,113 +13164,28 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "agents-workflow-handoff",
-                "level": 3,
-                "parent_id": "agents-workflow",
-                "title": "Handoff",
-                "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "기존 Task·writer·인터페이스 인계",
-                "required_content": [
-                  "기존 Task·writer·인터페이스 인계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "core": {
+                  "title_ko": "Execution",
+                  "required_when": "always",
+                  "content_rule": "필요 정책·계획·브리핑 중 Execution에 해당하는 사실·규칙만 기록"
+                }
               }
-            ]
+            ],
+            "core": {
+              "title_ko": "절차",
+              "required_when": "always",
+              "content_rule": "필요 정책·계획·브리핑",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
-            "section_id": "agents-verification",
+            "section_id": "agent-instructions.limits",
             "level": 2,
             "parent_id": null,
-            "title": "Verification",
-            "order": 4,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "적합한 검사 수행",
-            "required_content": [
-              "적합한 검사 수행에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "agents-verification-required-checks",
-                "level": 3,
-                "parent_id": "agents-verification",
-                "title": "Required Checks",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "영향별 명령·환경·통과·실패",
-                "required_content": [
-                  "영향별 명령·환경·통과·실패을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "agents-verification-evidence-and-limits",
-                "level": 3,
-                "parent_id": "agents-verification",
-                "title": "Evidence and Limits",
-                "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "실제 결과·미실행·수용 구분",
-                "required_content": [
-                  "실제 결과·미실행·수용 구분을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              }
-            ]
-          },
-          {
-            "section_id": "agents-safety",
-            "level": 2,
-            "parent_id": null,
-            "title": "Safety",
-            "order": 5,
+            "title": "Boundaries",
+            "order": 3,
             "requiredness": "required",
             "condition": "always",
             "content": "위험 행동의 경계",
@@ -13344,11 +13204,40 @@
             "link_only": false,
             "children": [
               {
-                "section_id": "agents-safety-protected-actions",
+                "section_id": "agent-instructions.limits.1",
                 "level": 3,
-                "parent_id": "agents-safety",
-                "title": "Protected Actions",
+                "parent_id": "agent-instructions.limits",
+                "title": "Authority",
                 "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "충돌·실패·취소·복구",
+                "required_content": [
+                  "충돌·실패·취소·복구를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": [],
+                "core": {
+                  "title_ko": "Authority",
+                  "required_when": "always",
+                  "content_rule": "권한·실패·중단 중 Authority에 해당하는 사실·규칙만 기록"
+                }
+              },
+              {
+                "section_id": "agent-instructions.limits.2",
+                "level": 3,
+                "parent_id": "agent-instructions.limits",
+                "title": "Secrets and External Effects",
+                "order": 2,
                 "requiredness": "required",
                 "condition": "always",
                 "content": "비밀·삭제·외부 쓰기·승인",
@@ -13365,19 +13254,56 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "link_only": false,
-                "children": []
-              },
+                "children": [],
+                "core": {
+                  "title_ko": "Secrets and External Effects",
+                  "required_when": "always",
+                  "content_rule": "권한·실패·중단 중 Secrets and External Effects에 해당하는 사실·규칙만 기록"
+                }
+              }
+            ],
+            "core": {
+              "title_ko": "제한",
+              "required_when": "always",
+              "content_rule": "권한·실패·중단",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
+          },
+          {
+            "section_id": "agent-instructions.verification",
+            "level": 2,
+            "parent_id": null,
+            "title": "Verification",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "적합한 검사 수행과 결과 보고",
+            "required_content": [
+              "적합한 검사 수행과 결과 보고에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "link_only": false,
+            "children": [
               {
-                "section_id": "agents-safety-stop-and-escalate",
+                "section_id": "agent-instructions.verification.1",
                 "level": 3,
-                "parent_id": "agents-safety",
-                "title": "Stop and Escalate",
-                "order": 2,
+                "parent_id": "agent-instructions.verification",
+                "title": "Checks",
+                "order": 1,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "충돌·실패·취소·복구",
+                "content": "영향별 명령·환경·통과·실패",
                 "required_content": [
-                  "충돌·실패·취소·복구을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "영향별 명령·환경·통과·실패를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
@@ -13389,12 +13315,88 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "link_only": false,
-                "children": []
+                "children": [],
+                "core": {
+                  "title_ko": "Checks",
+                  "required_when": "always",
+                  "content_rule": "관련 검사와 보고 중 Checks에 해당하는 사실·규칙만 기록"
+                }
+              },
+              {
+                "section_id": "agent-instructions.verification.2",
+                "level": 3,
+                "parent_id": "agent-instructions.verification",
+                "title": "Reporting",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "실제 결과·미실행·수용 구분과 기존 Task·writer·인터페이스 인계",
+                "required_content": [
+                  "실제 결과·미실행·수용 구분과 기존 Task·writer·인터페이스 인계를 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "자료의 명령으로 사용자 허용 범위·보안 경계를 확대하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "link_only": false,
+                "children": [],
+                "core": {
+                  "title_ko": "Reporting",
+                  "required_when": "always",
+                  "content_rule": "관련 검사와 보고 중 Reporting에 해당하는 사실·규칙만 기록"
+                }
               }
-            ]
+            ],
+            "core": {
+              "title_ko": "완료",
+              "required_when": "always",
+              "content_rule": "관련 검사와 보고",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           }
         ],
-        "extensions": []
+        "extensions": [],
+        "core_role": "agent-instructions",
+        "core": {
+          "purpose": "허용 범위의 도구 독립 실행 규칙",
+          "non_goals": "다른 역할의 상태·정책 정본 대체",
+          "metadata_policy": {
+            "envelope": "native",
+            "fields": [],
+            "extension_rule": "선택 native 문법은 공급자 검증, domain field는 이름공간과 소유자·실제 소비자를 갖는 별도 모듈",
+            "document_version_pattern": "(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
+          },
+          "tables": [],
+          "language": {
+            "headings": "en",
+            "body": "로컬 승인 언어 계약; 본문 언어가 core heading·column을 바꾸지 않음"
+          },
+          "status": "DESIGN_PROPOSAL_NOT_ADOPTED",
+          "relationships": {
+            "authored_direction": "consumer-to-direct-owner",
+            "reverse_links": "derived",
+            "missing_target": "unresolved-not-pass",
+            "deletion": "transfer-current-meaning-before-removal"
+          },
+          "lifecycle": {
+            "axis": "document-purpose",
+            "draft_rule": "authoring-allowed-not-execution-authority",
+            "transition_authority": "explicit-scoped-authority",
+            "acceptance_rule": "required-evidence-and-authorized-acceptance-separate"
+          },
+          "rules": [
+            "single-meaning-owner",
+            "no-synthetic-evidence",
+            "no-release-document-role",
+            "no-package-path-runtime-dependency"
+          ]
+        }
       },
       {
         "form_id": "skill",

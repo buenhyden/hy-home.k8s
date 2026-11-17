@@ -6,7 +6,7 @@ applies.
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 Stage 02 holds Architecture Descriptions (AD), which expand requirements into
 system boundaries, views and quality attributes, and Architecture Decision
@@ -19,17 +19,21 @@ Records (ADR), which record durable technical and operating decisions.
 | Review a decision's risk | [code-reviewer](../../.agents/roles/code-reviewer.md) | `risk-report` | `.claude/agents/code-reviewer.md` | `.codex/agents/code-reviewer.toml` |
 | Keep collection indexes current | [wiki-curator](../../.agents/roles/wiki-curator.md) | `docs-stage-conformance`, `knowledge-map` | `.claude/agents/wiki-curator.md` | `.codex/agents/wiki-curator.toml` |
 
-### Non-goals
+#### Non-goals
 
 Non-goals are stated in rules 5 and 6 under Local Obligations.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. The parent folder decides the type: `descriptions/####-<slug>.md` uses
    `sdlc/architecture-description`, `decisions/####-<slug>.md` uses
@@ -63,32 +67,36 @@ Canonical sources are the documents linked or named in the opening paragraph and
 7. Update `descriptions/README.md` or `decisions/README.md` in the same change
    that adds, retitles or deletes a document.
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-Handoff is stated in rule 6 under Local Obligations.
+### Authority
 
-## Verification
+#### Stop and Escalate
 
-### Required Checks
+Stop and escalation conditions are stated in rule 2 under Local Obligations.
 
-Select the document checks in the parent `AGENTS.md`.
+### Secrets and External Effects
 
-### Evidence and Limits
-
-This folder adds no evidence rule beyond the quality policy's handoff contract; if a check here has a limit to report, state it here.
-
-## Safety
-
-### Protected Actions
+#### Protected Actions
 
 Protected actions are stated in rules 2 and 3 under Local Obligations.
 
-### Stop and Escalate
+## Verification
 
-Stop and escalation conditions are stated in rule 2 under Local Obligations.
+### Checks
+
+Select the document checks in the parent `AGENTS.md`.
+
+### Reporting
+
+#### Evidence and Limits
+
+This folder adds no evidence rule beyond the quality policy's handoff contract; if a check here has a limit to report, state it here.
+
+#### Handoff
+
+Handoff is stated in rule 6 under Local Obligations.

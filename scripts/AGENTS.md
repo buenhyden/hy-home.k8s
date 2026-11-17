@@ -6,7 +6,7 @@ rules are for AI agents. The repository root gateway (`AGENTS.md` or
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 Executable repository-static validation for documents, agent governance, GitOps, CI and security boundaries, plus release and QA entrypoints. `validation/registry.json` is the single owner of check selection and command mapping; each validator owns its diagnostics.
 
@@ -21,17 +21,21 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 [`.codex/provider.md`](../.codex/provider.md); approval boundaries are in
 [approval and safety](../.agents/governance/approval-and-safety.md).
 
-### Non-goals
+#### Non-goals
 
 This folder adds no non-goal beyond the parent `AGENTS.md` and the governance policies; if work here must be excluded, state it here.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. Register every new gate in `validation/registry.json` with its surface, lanes and fallback, and add its regression module to a suite in `run-contract-tests.py`.
 2. Make the smallest change, show a failing case for changed behavior and then the passing result, and never weaken a gate or a test to finish.
@@ -39,19 +43,27 @@ Canonical sources are the documents linked or named in the opening paragraph and
 4. Bound every subprocess, file read and output; keep the existing bounded helpers.
 5. Run `graphify update .` after changing code when the knowledge graph is in use.
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
+### Authority
+
+#### Stop and Escalate
+
+Stop and escalation conditions are stated in rule 2 under Local Obligations.
+
+### Secrets and External Effects
+
+#### Protected Actions
+
+This folder adds no protected action beyond the approval and safety policy; if work here can start one, name it here.
 
 ## Verification
 
-### Required Checks
+### Checks
 
 Run the selected checks with `python3 scripts/qa.py staged`, or these
 directly:
@@ -60,16 +72,12 @@ directly:
 - `ruff check scripts tests`
 - `python3 scripts/run-contract-tests.py --root . --suite <suite>`
 
-### Evidence and Limits
+### Reporting
+
+#### Evidence and Limits
 
 This folder adds no evidence rule beyond the quality policy's handoff contract; if a check here has a limit to report, state it here.
 
-## Safety
+#### Handoff
 
-### Protected Actions
-
-This folder adds no protected action beyond the approval and safety policy; if work here can start one, name it here.
-
-### Stop and Escalate
-
-Stop and escalation conditions are stated in rule 2 under Local Obligations.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.

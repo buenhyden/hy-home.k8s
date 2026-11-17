@@ -7,7 +7,7 @@ and `.agents/governance/` still apply.
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 `docs/` is the staged documentation source of truth: requirements (01),
 architecture (02), change Specs (03), operations (05), references (90), the
@@ -33,17 +33,21 @@ skill. A documentation change request follows the
 [`.claude/provider.md`](../.claude/provider.md) and
 [`.codex/provider.md`](../.codex/provider.md).
 
-### Non-goals
+#### Non-goals
 
-Non-goals are stated in the opening text of Allowed Surface: agents here do not change runtime state.
+Non-goals are stated in the opening text of Allowed Scope: agents here do not change runtime state.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. Follow the [work lifecycle](../.agents/workflows/work-lifecycle.md),
    [document authoring](../.agents/governance/document-authoring.md) and
@@ -69,32 +73,36 @@ Canonical sources are the documents linked or named in the opening paragraph and
    executable changes select the focused checks registered for those surfaces.
    The staged delivery route checks the exact index.
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
+### Authority
+
+#### Stop and Escalate
+
+This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
+
+### Secrets and External Effects
+
+#### Protected Actions
+
+Protected actions are stated in the opening text of Allowed Scope: agents here do not change runtime state.
 
 ## Verification
 
-### Required Checks
+### Checks
 
 Required checks are stated in rule 8 under Local Obligations.
 
-### Evidence and Limits
+### Reporting
+
+#### Evidence and Limits
 
 This folder adds no evidence rule beyond the quality policy's handoff contract; if a check here has a limit to report, state it here.
 
-## Safety
+#### Handoff
 
-### Protected Actions
-
-Protected actions are stated in the opening text of Allowed Surface: agents here do not change runtime state.
-
-### Stop and Escalate
-
-This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.

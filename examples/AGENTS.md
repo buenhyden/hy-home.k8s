@@ -6,7 +6,7 @@ rules are for AI agents. The repository root gateway (`AGENTS.md` or
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 Reference-only examples for designing a new app or cloud target: `sample-app/` is the minimal local GitOps onboarding template, and `aws/` and `azure/` are cloud reference implementations. `gitops/` is the active desired state; nothing here is reconciled or deployed.
 
@@ -20,36 +20,48 @@ permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 [`.codex/provider.md`](../.codex/provider.md); approval boundaries are in
 [approval and safety](../.agents/governance/approval-and-safety.md).
 
-### Non-goals
+#### Non-goals
 
-Non-goals are stated in the opening text of Allowed Surface: nothing here is reconciled or deployed.
+Non-goals are stated in the opening text of Allowed Scope: nothing here is reconciled or deployed.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. Never change an account or a live cluster from an example.
 2. Promote an example into `gitops/` only through an owned change with its own Spec.
 3. Never commit credentials, kubeconfigs or deployment outputs.
 4. Read a deeper `AGENTS.md` (for example `azure/AGENTS.md`) before working there.
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
+### Authority
+
+#### Stop and Escalate
+
+This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
+
+### Secrets and External Effects
+
+#### Protected Actions
+
+Protected actions are stated in rules 1 and 3 under Local Obligations.
 
 ## Verification
 
-### Required Checks
+### Checks
 
 Run the selected checks with `python3 scripts/qa.py staged`, or these
 directly:
@@ -57,16 +69,12 @@ directly:
 - `bash scripts/validate-k8s-manifests.sh .`
 - `bash scripts/validate-policy-gates.sh .`
 
-### Evidence and Limits
+### Reporting
+
+#### Evidence and Limits
 
 This folder adds no evidence rule beyond the quality policy's handoff contract; if a check here has a limit to report, state it here.
 
-## Safety
+#### Handoff
 
-### Protected Actions
-
-Protected actions are stated in rules 1 and 3 under Local Obligations.
-
-### Stop and Escalate
-
-This folder adds no stop condition beyond the work lifecycle's stop rule and the approval and safety policy; if work here needs its own, state it here.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.

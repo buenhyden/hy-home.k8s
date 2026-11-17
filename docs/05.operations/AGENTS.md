@@ -6,7 +6,7 @@ Agent instructions for `docs/05.operations/` and its `guides/`, `policies/`,
 
 ## Scope
 
-### Allowed Surface
+### Allowed Scope
 
 Stage 05 holds the operating documents of the platform: stable guides, shared
 policies, executable runbooks, and incident records with their postmortems.
@@ -20,17 +20,21 @@ They describe how operators act; they are not permission for an agent to act.
 | Secret, Vault and access procedures | [security-auditor](../../.agents/roles/security-auditor.md) | `k8s-security-audit`, `vulnerability-patterns` | `.claude/agents/security-auditor.md` | `.codex/agents/security-auditor.toml` |
 | Alerting and observability procedures | [observability-reviewer](../../.agents/roles/observability-reviewer.md) | `risk-report` | `.claude/agents/observability-reviewer.md` | `.codex/agents/observability-reviewer.toml` |
 
-### Non-goals
+#### Non-goals
 
-Non-goals are stated in the opening text of Allowed Surface: operating documents are not permission for an agent to act.
+Non-goals are stated in the opening text of Allowed Scope: operating documents are not permission for an agent to act.
 
-## Required Policies
+### Instruction Precedence
 
-### Canonical Sources
+#### Canonical Sources
 
 Canonical sources are the documents linked or named in the opening paragraph and in the rules under Local Obligations.
 
-### Local Obligations
+## Workflow
+
+### Intake
+
+#### Local Obligations
 
 1. Profiles: `operation/guide`, `operation/policy`, `operation/runbook`,
    `operation/incident` and `operation/postmortem`, started from
@@ -55,34 +59,38 @@ Canonical sources are the documents linked or named in the opening paragraph and
 7. Update the collection README in the same change that adds, retitles or
    removes a document.
 
-## Workflow
-
-### Inspect and Change
+### Execution
 
 Inspecting and changing files follows the rules under Local Obligations.
 
-### Handoff
+## Boundaries
 
-This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.
+### Authority
+
+#### Stop and Escalate
+
+Stop and escalation conditions are stated in rules 2 and 4 under Local Obligations.
+
+### Secrets and External Effects
+
+#### Protected Actions
+
+Protected actions are stated in rules 2, 3 and 5 under Local Obligations.
 
 ## Verification
 
-### Required Checks
+### Checks
 
 Select the document checks in the parent `AGENTS.md`. When an executable
 snippet or its safety boundary changes, also check command boundary markers
 with `python3 scripts/validation/repository/quality.py --root .`.
 
-### Evidence and Limits
+### Reporting
+
+#### Evidence and Limits
 
 Evidence rules are stated in rules 4 and 5 under Local Obligations.
 
-## Safety
+#### Handoff
 
-### Protected Actions
-
-Protected actions are stated in rules 2, 3 and 5 under Local Obligations.
-
-### Stop and Escalate
-
-Stop and escalation conditions are stated in rules 2 and 4 under Local Obligations.
+This folder hands off through the work lifecycle's Completion steps with no extra field; if it needs one, state it here.

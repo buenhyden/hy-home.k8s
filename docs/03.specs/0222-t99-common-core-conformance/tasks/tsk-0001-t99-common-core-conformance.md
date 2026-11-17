@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.15.0"
+version: "0.16.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-17"
@@ -188,6 +188,17 @@ WORK-006 bound the `adr` form to the core `decision` role.
 - **ADR-0063** takes the user-accepted split of its Trade-off cells.
 - **Merge.** The record schema widening of the prepared unit is dropped, as in WORK-004.
 
+WORK-007 bound the `agents` form to the core `agent-instructions` role.
+
+- **Form.** The H2s are now Scope, Workflow, Boundaries and Verification, with the core section IDs.
+- **The 16 AGENTS.md files.** They move headings only:
+  - Allowed Surface is renamed Allowed Scope.
+  - Inspect and Change is renamed Execution, and Required Checks is renamed Checks.
+  - Non-goals, Canonical Sources, Local Obligations, Stop and Escalate, Protected Actions, Evidence and Limits, and Handoff stay as H4s under the core H3 that holds their sentences.
+  - Every rule number and sentence is kept, and the sibling `CLAUDE.md` imports are unchanged.
+- **Removed.** The unused `Tool Rules` table leaves with its tests, because no document or check used it.
+- **Gateway heading cap.** It rises from 16 to 20. That cap was derived from the AGENTS form shape, and the root `AGENTS.md` keeps every sentence under the new form; the user accepted this.
+
 ### Blockers and Decisions
 
 The user approved the Spec and Plan (EVD-006); criterion acceptance stays with the user. Before that, the 0.1.0 draft failed its review (EVD-003) and was revised to 0.2.0 by the prompt's requirements; the review of 0.2.0 returned APPROVE WITH CHANGES (EVD-004), and the confirming review of 0.3.0 returned seven small changes (EVD-005), which 0.4.0 applies. The user approves the exact 0.4.0 bytes.
@@ -201,8 +212,8 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | WORK-003 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Requirement, architecture, spec and plan tables | platform | ready | NOT_RUN | EVD-001 |
 | WORK-004 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Operations and policy tables | platform | completed | PASS | EVD-018, EVD-019, EVD-020 |
 | WORK-005 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | README tables | platform | completed | PASS | EVD-021, EVD-022, EVD-023 |
-| WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | in-progress | NOT_RUN | EVD-001 |
-| WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | ready | NOT_RUN | EVD-001 |
+| WORK-006 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Decision form | platform | completed | PASS | EVD-024, EVD-025, EVD-026 |
+| WORK-007 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Agent-instructions form | platform | in-progress | NOT_RUN | EVD-001 |
 | WORK-008 | [VAL-CORE-001](../spec.md#criteria), [VAL-CORE-003](../spec.md#criteria) | Research, audit and data-reference forms | platform | ready | NOT_RUN | EVD-001 |
 | WORK-009 | [VAL-CORE-002](../spec.md#criteria), [VAL-CORE-004](../spec.md#criteria) | Final export, residue closure, review and suite | platform | ready | NOT_RUN | EVD-001 |
 
@@ -237,6 +248,9 @@ The user approved the Spec and Plan (EVD-006); criterion acceptance stays with t
 | EVD-023 | [VAL-CORE-003](../spec.md#criteria) | WORK-005 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `a26515a9` and its commit hooks; pinned venv, 2026-11-17 | PASS | 13 selected gates passed. | yes | none |
 | EVD-024 | [VAL-CORE-001](../spec.md#criteria) | WORK-006 | Failing first | The WORK-006 tests over an export of `b6e99e9d` in the prepared worktree, in two rounds; pinned venv, 2026-11-17 | PASS | Observed the defect: round one 431 tests with 16 failures and 2 errors; round two 30 tests with 5 failures and 1 error. | yes | none |
 | EVD-025 | [VAL-CORE-003](../spec.md#criteria) | WORK-006 | Focused tests and strict validators after the change | After the merge onto `a26515a9`: form tree, generator, link boundary, artifact identity, frontmatter keys and relationship contract; the four strict validators; owner keys of all 38 ADRs compared with `b6e99e9d`; pinned venv, 2026-11-17 | PASS | 612 tests run, with one test changed to read the record projection; the ADR and decision classes then passed. Every validator passed; owner keys are byte-identical; the 36 retained ADRs are unchanged. | yes | none |
+| EVD-026 | [VAL-CORE-003](../spec.md#criteria) | WORK-006 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `30eb8ba2` and its commit hooks; pinned venv, 2026-11-17 | PASS | 12 selected gates passed. | yes | none |
+| EVD-027 | [VAL-CORE-001](../spec.md#criteria) | WORK-007 | Failing first | The WORK-007 tests over an export of `b6e99e9d` in the prepared worktree; pinned venv, 2026-11-17 | PASS | Observed the defect: 490 tests with 25 failures and 3 errors. | yes | none |
+| EVD-028 | [VAL-CORE-003](../spec.md#criteria) | WORK-007 | Focused tests and strict validators after the change | After the merge onto `30eb8ba2`: form tree, agent governance, AGENTS routes, repository quality rules, document language, agent core and harness contract; the four strict validators and agent governance; one-time scratch move checks of the 16 files; pinned venv, 2026-11-17 | PASS | 577 tests OK with 4 skips; every validator passed; every line of each AGENTS.md was found again, and only the four template lines of the removed table left. | yes | none |
 
 ### Resolution Links
 
