@@ -4501,12 +4501,14 @@
           "positive": [
             "The four descriptions and the template pass the form tree, table, body-contract, author-prompt and residue checks.",
             "A description whose Lifecycle Traceability table cites requirement members and ends with an Archived Lineage section passes the form tree.",
-            "The Constraints and Quality Scenarios tables accept zero rows."
+            "The Constraints and Quality Scenarios tables accept zero rows.",
+            "A description that states an external interface carries the core architecture.interface table in Structure, header-only while a stated fact is missing; a description that states none carries no such table."
           ],
           "negative": [
             "A description that keeps a previous H2 title such as Current Structure fails the form tree.",
             "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT.",
-            "An H3 under the wrong H2, including Archived Lineage outside Decisions and Adoption, fails BODY-H3-PARENT."
+            "An H3 under the wrong H2, including Archived Lineage outside Decisions and Adoption, fails BODY-H3-PARENT.",
+            "An interface table whose columns differ from Interface, Producer, Consumer, Contract and Failure fails BODY-TABLE-COLUMNS."
           ],
           "regression": [
             "The loaded description profiles keep heading lists equal to the form H2 titles.",
@@ -4514,11 +4516,57 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0221 heading map moves each sentence of the four descriptions and of the template into the five H2 and ten H3 of the 4.0.0 design target without changing it: Purpose and Readers and Context become H4 under Context and Boundaries > System Boundary, Contracts becomes Structure > Interfaces, Runtime and Deployment and Failure Boundaries become Runtime Behavior > Normal Flow and Failure and Recovery, Quality and Risks becomes Quality Scenarios > Scenarios, Decision Links becomes Decisions with Requirement Mapping as its H4, Currentness and Lineage becomes Adoption Boundaries, Trade-offs is written from each description's own facts, and Lifecycle Traceability and Archived Lineage stay local H3 under Decisions and Adoption.",
-          "retained_history": "Git history retains the six-H2 Architecture Description layout of SPEC-0197 and its template.",
-          "rollback": "Revert the SPEC-0221 WORK-002 commit."
+          "meaning_map": "The SPEC-0221 heading map moves each sentence of the four descriptions and of the template into the five H2 and ten H3 of the 4.0.0 design target without changing it: Purpose and Readers and Context become H4 under Context and Boundaries > System Boundary, Contracts becomes Structure > Interfaces, Runtime and Deployment and Failure Boundaries become Runtime Behavior > Normal Flow and Failure and Recovery, Quality and Risks becomes Quality Scenarios > Scenarios, Decision Links becomes Decisions with Requirement Mapping as its H4, Currentness and Lineage becomes Adoption Boundaries, Trade-offs is written from each description's own facts, and Lifecycle Traceability and Archived Lineage stay local H3 under Decisions and Adoption. SPEC-0222 WORK-003 binds the form to the core architecture role: the core architecture.interface table sits under Structure > Interfaces, header-only in AD-0004, AD-0005 and AD-0007, which state no failure handling per interface; AD-0006 leaves external service interfaces to AD-0007 and carries none; the Constraints, Quality Scenarios and Lifecycle Traceability tables stay local tables of their own; the SPEC-0222 Task records each placement.",
+          "retained_history": "Git history retains the six-H2 Architecture Description layout of SPEC-0197, the table set of SPEC-0221 and their templates.",
+          "rollback": "Revert the SPEC-0222 WORK-003 commit, then the SPEC-0221 WORK-002 commit."
         },
         "tables": [
+          {
+            "name": "External Interfaces",
+            "section": "architecture.structure",
+            "columns": [
+              {
+                "key": "Interface",
+                "id": "interface",
+                "meaning": "경계",
+                "data_type": "identifier",
+                "required": true
+              },
+              {
+                "key": "Producer",
+                "id": "producer",
+                "meaning": "생산자",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Consumer",
+                "id": "consumer",
+                "meaning": "소비자",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Contract",
+                "id": "contract",
+                "meaning": "입출력 의미",
+                "data_type": "reference",
+                "required": true
+              },
+              {
+                "key": "Failure",
+                "id": "failure",
+                "meaning": "실패 처리",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Interface",
+            "table_id": "architecture.interface",
+            "required_when": "external_interface",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+          },
           {
             "name": "Constraints",
             "section": "architecture.context.2",
@@ -4543,7 +4591,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Architecture ID"
+            "row_identity": "Architecture ID",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Quality Scenarios",
@@ -4581,7 +4630,8 @@
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Quality attribute"
+            "row_identity": "Quality attribute",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Lifecycle Traceability",
@@ -4607,7 +4657,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Upstream requirement"
+            "row_identity": "Upstream requirement",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -4728,12 +4779,14 @@
         "validation": {
           "positive": [
             "A Plan in the form, with Global Constraints as the first H4 of Constraints after its text, its Work Breakdown table under Work Units and its promotion table under Durable Owners, passes the form tree, table, body-contract and lifecycle checks.",
-            "A promotion table with one explicit none row passes PLAN-PROMOTION."
+            "A promotion table with one explicit none row passes PLAN-PROMOTION.",
+            "A Plan with the core plan.work_units table after its Work Breakdown table under Work Units and the core plan.checks table under Selected Checks passes, and its body contract still reads the Work Breakdown table; the retained identities carry no core table."
           ],
           "negative": [
             "A Plan that keeps a previous H2 title such as Implementation Strategy, outside the retained identities, fails the form tree.",
             "A changed Plan without a valid promotion table fails PLAN-PROMOTION and one without shared constraints that link the parent Spec fails PLAN-GLOBAL-CONSTRAINTS.",
-            "A Plan whose Global Constraints heading has no constraint text before it under Constraints fails PLAN-GLOBAL-CONSTRAINTS."
+            "A Plan whose Global Constraints heading has no constraint text before it under Constraints fails PLAN-GLOBAL-CONSTRAINTS.",
+            "A work-unit or checks table whose columns differ from the core plan.work_units or plan.checks columns fails BODY-TABLE-COLUMNS."
           ],
           "regression": [
             "The loaded Plan profiles keep heading lists equal to the form H2 titles.",
@@ -4742,11 +4795,124 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0221 heading map moves each body of the Plan template into the five H2 and ten H3 of the 4.0.0 design target without changing a sentence: Goal and Boundary becomes Outcome, Assumptions becomes Constraints with Global Constraints, Risks and Mitigations and Escalation as its H4 in that order, Implementation Strategy becomes Work Breakdown with Work Units and Change and Rollback as its H4, Dependency Order becomes Dependency Edges, Verification Matrix and Stage Placement become Selected Checks and Evidence Plan, Owner and Receipt becomes Durable Owners, Durable Meaning becomes Consumer Updates, and Shared Resources is new. The approved Plans of SPEC-0161 and SPEC-0221 keep their form through the retained form.",
-          "retained_history": "Git history retains the six-H2 Plan layout of SPEC-0200 and its template.",
-          "rollback": "Revert the SPEC-0221 WORK-001 commit."
+          "meaning_map": "The SPEC-0221 heading map moves each body of the Plan template into the five H2 and ten H3 of the 4.0.0 design target without changing a sentence: Goal and Boundary becomes Outcome, Assumptions becomes Constraints with Global Constraints, Risks and Mitigations and Escalation as its H4 in that order, Implementation Strategy becomes Work Breakdown with Work Units and Change and Rollback as its H4, Dependency Order becomes Dependency Edges, Verification Matrix and Stage Placement become Selected Checks and Evidence Plan, Owner and Receipt becomes Durable Owners, Durable Meaning becomes Consumer Updates, and Shared Resources is new. The approved Plans of SPEC-0161 and SPEC-0221 keep their form through the retained form. SPEC-0222 WORK-003 binds the form to the core plan role: the core plan.work_units table follows the Work Breakdown table under Work Breakdown > Work Units and the core plan.checks table sits under Verification Plan > Selected Checks, and the Work Breakdown and Promotion tables stay local tables of their own; the approved Plans of SPEC-0161 and SPEC-0221 keep their bytes through the retained form.",
+          "retained_history": "Git history retains the six-H2 Plan layout of SPEC-0200, the table set of SPEC-0221 and their templates.",
+          "rollback": "Revert the SPEC-0222 WORK-003 commit, then the SPEC-0221 WORK-001 commit."
         },
         "tables": [
+          {
+            "name": "Units",
+            "section": "plan.work",
+            "columns": [
+              {
+                "key": "Work Unit",
+                "id": "work_unit",
+                "meaning": "실행 단위",
+                "data_type": "identifier",
+                "required": true
+              },
+              {
+                "key": "Outcome",
+                "id": "outcome",
+                "meaning": "산출·고유 보장",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Depends On",
+                "id": "depends_on",
+                "meaning": "선행 단위",
+                "data_type": "reference-list",
+                "required": true
+              },
+              {
+                "key": "Owner",
+                "id": "owner",
+                "meaning": "실행 소유자",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Write Scope",
+                "id": "write_scope",
+                "meaning": "허용 수정 범위",
+                "data_type": "path-list",
+                "required": true
+              },
+              {
+                "key": "Acceptance",
+                "id": "acceptance",
+                "meaning": "상위 기준",
+                "data_type": "reference-list",
+                "required": true
+              },
+              {
+                "key": "Checks",
+                "id": "checks",
+                "meaning": "선택된 검증",
+                "data_type": "reference-list",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Work Unit",
+            "table_id": "plan.work_units",
+            "required_when": "always",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+          },
+          {
+            "name": "Checks",
+            "section": "plan.verification",
+            "columns": [
+              {
+                "key": "Check ID",
+                "id": "check_id",
+                "meaning": "고유 검사",
+                "data_type": "identifier",
+                "required": true
+              },
+              {
+                "key": "Guarantee",
+                "id": "guarantee",
+                "meaning": "검사의 고유 보장",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Input",
+                "id": "input",
+                "meaning": "필요 입력",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Trust Boundary",
+                "id": "trust",
+                "meaning": "검사 신뢰 경계",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Required When",
+                "id": "required_when",
+                "meaning": "선택 조건",
+                "data_type": "condition",
+                "required": true
+              },
+              {
+                "key": "Evidence",
+                "id": "evidence",
+                "meaning": "생성해야 할 증거 유형",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Check ID",
+            "table_id": "plan.checks",
+            "required_when": "always",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+          },
           {
             "name": "Work Breakdown",
             "section": "plan.work.1",
@@ -4789,7 +4955,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Work Unit"
+            "row_identity": "Work Unit",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Promotion",
@@ -4821,7 +4988,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Promotion ID"
+            "row_identity": "Promotion ID",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -6478,14 +6646,17 @@
         "validation": {
           "positive": [
             "The four Requirements and the template pass the form tree, table, body-contract, author-prompt and residue checks.",
-            "A Requirement without a Quality Requirements section passes the form tree.",
-            "A requirement table with the four required columns, with or without the optional trailing Priority, passes BODY-TABLE-COLUMNS and BODY-TABLE-ROWS."
+            "A Requirement whose Quality Requirements section states that it declares no quality member passes the form tree.",
+            "A requirement table with the five core requirement.requirements columns and a lower-case Priority passes BODY-TABLE-COLUMNS, BODY-TABLE-VALUE and BODY-TABLE-ROWS."
           ],
           "negative": [
             "The previous four-column requirement header, whose second and fourth columns are not Statement and Acceptance, fails BODY-TABLE-COLUMNS.",
             "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT.",
             "A table section outside the form fails REGISTRY_TABLE_SECTION.",
-            "An H3 under the wrong H2, including Archived Lineage outside Traceability, fails BODY-H3-PARENT."
+            "An H3 under the wrong H2, including Archived Lineage outside Traceability, fails BODY-H3-PARENT.",
+            "A Requirement without a Quality Requirements section fails BODY-H3-REQUIRED.",
+            "A requirement table without Priority fails BODY-TABLE-COLUMNS, and a Priority outside must, should and could fails BODY-TABLE-VALUE.",
+            "A Requirement without a Functional Requirements member fails BODY-TABLE-ROWS."
           ],
           "regression": [
             "The loaded requirement profiles keep heading lists equal to the form H2 titles.",
@@ -6493,86 +6664,114 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0221 heading map moves each sentence of the four Requirements and of the template into the four H2 and eight H3 of the 4.0.0 design target without changing it: the Acceptance Criteria H2 leaves, its Acceptance Conditions and Verification Method become H4 under Traceability > Verification Links, Source and Constraints becomes Sources, Downstream Links becomes Verification Links, and Lifecycle Traceability and Archived Lineage stay local H3 under Traceability.",
-          "retained_history": "Git history retains the five-H2 Requirement layout of SPEC-0195 and its template.",
-          "rollback": "Revert the SPEC-0221 WORK-002 commit."
+          "meaning_map": "The SPEC-0221 heading map moves each sentence of the four Requirements and of the template into the four H2 and eight H3 of the 4.0.0 design target without changing it: the Acceptance Criteria H2 leaves, its Acceptance Conditions and Verification Method become H4 under Traceability > Verification Links, Source and Constraints becomes Sources, Downstream Links becomes Verification Links, and Lifecycle Traceability and Archived Lineage stay local H3 under Traceability. SPEC-0222 WORK-003 binds the form to the core requirement role: Quality Requirements is required, the Functional and Quality Requirements tables are instances of the core requirement.requirements table with Priority required in the core's lower case (Must becomes must), the core requirement.quality table is defined and not rendered, REQ-0001 states in its new Quality Requirements section that it declares no quality member, and Lifecycle Traceability stays a local table of its own; the SPEC-0222 Task records each placement.",
+          "retained_history": "Git history retains the five-H2 Requirement layout of SPEC-0195, the optional trailing Priority of SPEC-0221 and their templates.",
+          "rollback": "Revert the SPEC-0222 WORK-003 commit, then the SPEC-0221 WORK-002 commit."
         },
         "tables": [
           {
-            "name": "Functional Requirements",
-            "section": "requirement.requirements.1",
+            "name": "Requirements",
+            "section": "requirement.requirements",
             "columns": [
               {
                 "key": "Requirement ID",
-                "meaning": "Stable full requirement ID of the functional or interface member.",
-                "data_type": "string",
+                "id": "requirement_id",
+                "meaning": "요구 식별자",
+                "data_type": "identifier",
                 "required": true
               },
               {
                 "key": "Statement",
-                "meaning": "The testable requirement statement.",
+                "id": "statement",
+                "meaning": "필요한 동작·품질",
                 "data_type": "string",
                 "required": true
               },
               {
                 "key": "Rationale",
-                "meaning": "One sentence that states why the requirement exists and names its source, or explains why none is recorded.",
+                "id": "rationale",
+                "meaning": "필요 이유",
                 "data_type": "string",
                 "required": true
               },
               {
                 "key": "Acceptance",
-                "meaning": "The observable acceptance evidence or the acceptance criterion that verifies the requirement.",
+                "id": "acceptance",
+                "meaning": "판정 가능한 조건",
                 "data_type": "string",
                 "required": true
               },
               {
                 "key": "Priority",
-                "meaning": "Optional trailing priority of the requirement.",
-                "data_type": "string",
-                "required": false
+                "id": "priority",
+                "meaning": "must/should/could",
+                "data_type": "enum",
+                "required": true,
+                "allowed_values": [
+                  "must",
+                  "should",
+                  "could"
+                ]
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Requirement ID"
+            "row_identity": "Requirement ID",
+            "table_id": "requirement.requirements",
+            "required_when": "always",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
           },
           {
-            "name": "Quality Requirements",
-            "section": "requirement.requirements.2",
+            "name": "Quality Measures",
+            "section": "requirement.requirements",
             "columns": [
               {
                 "key": "Requirement ID",
-                "meaning": "Stable full requirement ID of the quality member.",
+                "id": "requirement_id",
+                "meaning": "품질 요구",
+                "data_type": "identifier",
+                "required": true
+              },
+              {
+                "key": "Attribute",
+                "id": "attribute",
+                "meaning": "품질 특성",
                 "data_type": "string",
                 "required": true
               },
               {
-                "key": "Statement",
-                "meaning": "The testable requirement statement.",
+                "key": "Measure",
+                "id": "measure",
+                "meaning": "측정 정의",
                 "data_type": "string",
                 "required": true
               },
               {
-                "key": "Rationale",
-                "meaning": "One sentence that states why the requirement exists and names its source, or explains why none is recorded.",
+                "key": "Unit",
+                "id": "unit",
+                "meaning": "단위",
                 "data_type": "string",
                 "required": true
               },
               {
-                "key": "Acceptance",
-                "meaning": "The observable acceptance evidence or the acceptance criterion that verifies the requirement.",
+                "key": "Environment",
+                "id": "environment",
+                "meaning": "측정 환경",
                 "data_type": "string",
                 "required": true
               },
               {
-                "key": "Priority",
-                "meaning": "Optional trailing priority of the requirement.",
+                "key": "Criterion",
+                "id": "criterion",
+                "meaning": "사용자 목적에 맞는 수용값",
                 "data_type": "string",
-                "required": false
+                "required": true
               }
             ],
             "minimum_rows": 0,
-            "row_identity": "Requirement ID"
+            "row_identity": "Requirement ID",
+            "table_id": "requirement.quality",
+            "required_when": "quality_requirement",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
           },
           {
             "name": "Lifecycle Traceability",
@@ -6592,7 +6791,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Requirement ID"
+            "row_identity": "Requirement ID",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -6714,12 +6914,14 @@
         "validation": {
           "positive": [
             "A Spec in the form, with its criteria table under Criteria and its Lifecycle Traceability table under Acceptance Criteria, passes the form tree, table, body-contract and link checks.",
-            "A Spec whose Architecture cell links an architecture description or an ADR, or states an explicit exclusion with its reason, passes."
+            "A Spec whose Architecture cell links an architecture description or an ADR, or states an explicit exclusion with its reason, passes.",
+            "A Spec with the core spec.checks table under Verification Strategy, before its H4, keeps its Criteria table as the first table under Criteria and passes; the retained identities carry no core table."
           ],
           "negative": [
             "A Spec that keeps a previous H2 title such as References, outside the retained identities, fails the form tree.",
             "A Spec whose Architecture cell has no link, a broken link or a link to a document of another profile fails the body-contract link check.",
-            "A Spec without the criteria table under Criteria fails COMPLETION-CRITERIA."
+            "A Spec without the criteria table under Criteria fails COMPLETION-CRITERIA.",
+            "A checks table whose columns differ from the core spec.checks columns fails BODY-TABLE-COLUMNS."
           ],
           "regression": [
             "The loaded Spec profiles keep heading lists equal to the form H2 titles.",
@@ -6727,11 +6929,64 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0221 heading map moves each body of the Spec template into the four H2 and eight H3 of the 4.0.0 design target without changing a sentence: Intent becomes Goal with Owning Requirements as its H4, Non-goals becomes Out of Scope, Normal Behavior becomes Inputs and Outputs, Failure and Edge Cases becomes Failure Behavior, Evidence Requirements becomes Verification Strategy with the former References H3 as its H4, Consumers is new, and Lifecycle Traceability stays a local H3 under Acceptance Criteria. The approved Specs of SPEC-0161 and SPEC-0221 keep their form through the retained form.",
-          "retained_history": "Git history retains the five-H2 Spec layout of SPEC-0200 and its template.",
-          "rollback": "Revert the SPEC-0221 WORK-001 commit."
+          "meaning_map": "The SPEC-0221 heading map moves each body of the Spec template into the four H2 and eight H3 of the 4.0.0 design target without changing a sentence: Intent becomes Goal with Owning Requirements as its H4, Non-goals becomes Out of Scope, Normal Behavior becomes Inputs and Outputs, Failure and Edge Cases becomes Failure Behavior, Evidence Requirements becomes Verification Strategy with the former References H3 as its H4, Consumers is new, and Lifecycle Traceability stays a local H3 under Acceptance Criteria. The approved Specs of SPEC-0161 and SPEC-0221 keep their form through the retained form. SPEC-0222 WORK-003 binds the form to the core spec role: the core spec.checks table sits under Acceptance Criteria > Verification Strategy, and the Criteria and Lifecycle Traceability tables stay local tables of their own; the approved Specs of SPEC-0161 and SPEC-0221 keep their bytes through the retained form.",
+          "retained_history": "Git history retains the five-H2 Spec layout of SPEC-0200, the table set of SPEC-0221 and their templates.",
+          "rollback": "Revert the SPEC-0222 WORK-003 commit, then the SPEC-0221 WORK-001 commit."
         },
         "tables": [
+          {
+            "name": "Checks",
+            "section": "spec.acceptance",
+            "columns": [
+              {
+                "key": "Check ID",
+                "id": "check_id",
+                "meaning": "고유 검사",
+                "data_type": "identifier",
+                "required": true
+              },
+              {
+                "key": "Guarantee",
+                "id": "guarantee",
+                "meaning": "검사의 고유 보장",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Input",
+                "id": "input",
+                "meaning": "필요 입력",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Trust Boundary",
+                "id": "trust",
+                "meaning": "검사 신뢰 경계",
+                "data_type": "string",
+                "required": true
+              },
+              {
+                "key": "Required When",
+                "id": "required_when",
+                "meaning": "선택 조건",
+                "data_type": "condition",
+                "required": true
+              },
+              {
+                "key": "Evidence",
+                "id": "evidence",
+                "meaning": "생성해야 할 증거 유형",
+                "data_type": "string",
+                "required": true
+              }
+            ],
+            "minimum_rows": 0,
+            "row_identity": "Check ID",
+            "table_id": "spec.checks",
+            "required_when": "always",
+            "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+          },
           {
             "name": "Criteria",
             "section": "spec.acceptance.1",
@@ -6750,7 +7005,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Criterion ID"
+            "row_identity": "Criterion ID",
+            "authority_ref": "ADR-0059"
           },
           {
             "name": "Lifecycle Traceability",
@@ -6782,7 +7038,8 @@
               }
             ],
             "minimum_rows": 1,
-            "row_identity": "Spec criterion"
+            "row_identity": "Spec criterion",
+            "authority_ref": "ADR-0059"
           }
         ]
       }
@@ -17450,7 +17707,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Problem and Outcome",
+                  "required_when": "always",
+                  "content_rule": "사용자 문제·필요·가치 중 Problem and Outcome에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "requirement.intent.2",
@@ -17474,10 +17736,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Stakeholders",
+                  "required_when": "always",
+                  "content_rule": "사용자 문제·필요·가치 중 Stakeholders에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "목적",
+              "required_when": "always",
+              "content_rule": "사용자 문제·필요·가치",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "requirement.scope",
@@ -17523,7 +17797,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "In Scope",
+                  "required_when": "always",
+                  "content_rule": "적용·제외·제약 중 In Scope에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "requirement.scope.2",
@@ -17547,10 +17826,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Constraints and Exclusions",
+                  "required_when": "always",
+                  "content_rule": "적용·제외·제약 중 Constraints and Exclusions에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "범위",
+              "required_when": "always",
+              "content_rule": "적용·제외·제약",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "requirement.requirements",
@@ -17596,7 +17887,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Functional Requirements",
+                  "required_when": "always",
+                  "content_rule": "기능·품질·수용조건 중 Functional Requirements에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "requirement.requirements.2",
@@ -17604,8 +17900,8 @@
                 "parent_id": "requirement.requirements",
                 "title": "Quality Requirements",
                 "order": 2,
-                "requiredness": "conditional",
-                "condition": "품질 요구가 적용됨",
+                "requiredness": "required",
+                "condition": "always",
                 "content": "품질 특성·측정 환경·목표 또는 결정 필요 값",
                 "required_content": [
                   "품질 특성·측정 환경·목표 또는 결정 필요 값을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
@@ -17614,16 +17910,28 @@
                   "구현 상세·Task 상태의 소유권을 빼앗지 않는다.",
                   "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
                 ],
-                "empty_policy": "omit_when_condition_false",
+                "empty_policy": "explain_none_or_not_applicable",
                 "validation_ids": [
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Quality Requirements",
+                  "required_when": "always",
+                  "content_rule": "기능·품질·수용조건 중 Quality Requirements에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "요구사항",
+              "required_when": "always",
+              "content_rule": "기능·품질·수용조건",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "requirement.relations",
@@ -17669,7 +17977,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Sources",
+                  "required_when": "always",
+                  "content_rule": "현재 설계로 이어지는 관계; 실행상태 복제 금지 중 Sources에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "requirement.relations.2",
@@ -17693,10 +18006,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Verification Links",
+                  "required_when": "always",
+                  "content_rule": "현재 설계로 이어지는 관계; 실행상태 복제 금지 중 Verification Links에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "관계",
+              "required_when": "always",
+              "content_rule": "현재 설계로 이어지는 관계; 실행상태 복제 금지",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           }
         ],
         "extensions": [
@@ -17724,7 +18049,178 @@
             "title": "Archived Lineage",
             "authority_ref": "ADR-0059"
           }
-        ]
+        ],
+        "core_role": "requirement",
+        "core": {
+          "purpose": "필요·목표·검증 가능한 요구",
+          "non_goals": "다른 역할의 상태·정책 정본 대체",
+          "metadata_policy": {
+            "envelope": "frontmatter",
+            "fields": [
+              {
+                "key": "title",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "문서 목적을 나타내는 제목"
+              },
+              {
+                "key": "version",
+                "value_type": "document-semver",
+                "required_when": "always",
+                "meaning": "ASCII 숫자 세 요소 판본"
+              },
+              {
+                "key": "type",
+                "value_type": "role-binding",
+                "required_when": "always",
+                "meaning": "역할과 정확하게 대응하는 문서 타입"
+              },
+              {
+                "key": "owner",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "현재 의미 소유자"
+              },
+              {
+                "key": "updated",
+                "value_type": "date",
+                "required_when": "always",
+                "meaning": "실제 문서 변경일"
+              },
+              {
+                "key": "status",
+                "value_type": "role-state",
+                "required_when": "always",
+                "meaning": "역할에 따른 상태; 실행 승인이나 인수를 대체하지 않음"
+              }
+            ],
+            "extension_rule": "선택 native 문법은 공급자 검증, domain field는 이름공간과 소유자·실제 소비자를 갖는 별도 모듈",
+            "document_version_pattern": "(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
+          },
+          "tables": [
+            {
+              "table_id": "requirement.requirements",
+              "section_id": "requirement.requirements",
+              "required_when": "always",
+              "columns": [
+                {
+                  "key": "requirement_id",
+                  "label": "Requirement ID",
+                  "value_type": "identifier",
+                  "meaning": "요구 식별자",
+                  "required": true
+                },
+                {
+                  "key": "statement",
+                  "label": "Statement",
+                  "value_type": "string",
+                  "meaning": "필요한 동작·품질",
+                  "required": true
+                },
+                {
+                  "key": "rationale",
+                  "label": "Rationale",
+                  "value_type": "string",
+                  "meaning": "필요 이유",
+                  "required": true
+                },
+                {
+                  "key": "acceptance",
+                  "label": "Acceptance",
+                  "value_type": "string",
+                  "meaning": "판정 가능한 조건",
+                  "required": true
+                },
+                {
+                  "key": "priority",
+                  "label": "Priority",
+                  "value_type": "enum",
+                  "meaning": "must/should/could",
+                  "required": true,
+                  "allowed_values": [
+                    "must",
+                    "should",
+                    "could"
+                  ]
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            },
+            {
+              "table_id": "requirement.quality",
+              "section_id": "requirement.requirements",
+              "required_when": "quality_requirement",
+              "columns": [
+                {
+                  "key": "requirement_id",
+                  "label": "Requirement ID",
+                  "value_type": "identifier",
+                  "meaning": "품질 요구",
+                  "required": true
+                },
+                {
+                  "key": "attribute",
+                  "label": "Attribute",
+                  "value_type": "string",
+                  "meaning": "품질 특성",
+                  "required": true
+                },
+                {
+                  "key": "measure",
+                  "label": "Measure",
+                  "value_type": "string",
+                  "meaning": "측정 정의",
+                  "required": true
+                },
+                {
+                  "key": "unit",
+                  "label": "Unit",
+                  "value_type": "string",
+                  "meaning": "단위",
+                  "required": true
+                },
+                {
+                  "key": "environment",
+                  "label": "Environment",
+                  "value_type": "string",
+                  "meaning": "측정 환경",
+                  "required": true
+                },
+                {
+                  "key": "criterion",
+                  "label": "Criterion",
+                  "value_type": "string",
+                  "meaning": "사용자 목적에 맞는 수용값",
+                  "required": true
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            }
+          ],
+          "language": {
+            "headings": "en",
+            "body": "로컬 승인 언어 계약; 본문 언어가 core heading·column을 바꾸지 않음"
+          },
+          "status": "DESIGN_PROPOSAL_NOT_ADOPTED",
+          "relationships": {
+            "authored_direction": "consumer-to-direct-owner",
+            "reverse_links": "derived",
+            "missing_target": "unresolved-not-pass",
+            "deletion": "transfer-current-meaning-before-removal"
+          },
+          "lifecycle": {
+            "axis": "document-purpose",
+            "draft_rule": "authoring-allowed-not-execution-authority",
+            "transition_authority": "explicit-scoped-authority",
+            "acceptance_rule": "required-evidence-and-authorized-acceptance-separate"
+          },
+          "rules": [
+            "single-meaning-owner",
+            "no-synthetic-evidence",
+            "no-release-document-role",
+            "no-package-path-runtime-dependency"
+          ]
+        }
       },
       {
         "form_id": "architecture",
@@ -17777,7 +18273,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "System Boundary",
+                  "required_when": "always",
+                  "content_rule": "외부 시스템·책임·제약 중 System Boundary에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "architecture.context.2",
@@ -17801,10 +18302,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Constraints",
+                  "required_when": "always",
+                  "content_rule": "외부 시스템·책임·제약 중 Constraints에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "문맥과 경계",
+              "required_when": "always",
+              "content_rule": "외부 시스템·책임·제약",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "architecture.structure",
@@ -17851,7 +18364,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Building Blocks",
+                  "required_when": "always",
+                  "content_rule": "컴포넌트·인터페이스·데이터 중 Building Blocks에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "architecture.structure.2",
@@ -17875,10 +18393,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Interfaces",
+                  "required_when": "always",
+                  "content_rule": "컴포넌트·인터페이스·데이터 중 Interfaces에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "구조",
+              "required_when": "always",
+              "content_rule": "컴포넌트·인터페이스·데이터",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "architecture.behavior",
@@ -17925,7 +18455,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Normal Flow",
+                  "required_when": "always",
+                  "content_rule": "정상·실패·권한·운영 중 Normal Flow에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "architecture.behavior.2",
@@ -17949,10 +18484,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Failure and Recovery",
+                  "required_when": "always",
+                  "content_rule": "정상·실패·권한·운영 중 Failure and Recovery에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "동작",
+              "required_when": "always",
+              "content_rule": "정상·실패·권한·운영",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "architecture.quality",
@@ -17998,7 +18545,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Scenarios",
+                  "required_when": "always",
+                  "content_rule": "품질 시나리오와 검증 중 Scenarios에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "architecture.quality.2",
@@ -18022,10 +18574,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Trade-offs",
+                  "required_when": "always",
+                  "content_rule": "품질 시나리오와 검증 중 Trade-offs에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "품질",
+              "required_when": "always",
+              "content_rule": "품질 시나리오와 검증",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "architecture.decisions",
@@ -18071,7 +18635,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Decisions",
+                  "required_when": "always",
+                  "content_rule": "대안·선택 근거·현재 적용 차이 중 Decisions에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "architecture.decisions.2",
@@ -18095,10 +18664,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Adoption Boundaries",
+                  "required_when": "always",
+                  "content_rule": "대안·선택 근거·현재 적용 차이 중 Adoption Boundaries에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "결정과 적용",
+              "required_when": "always",
+              "content_rule": "대안·선택 근거·현재 적용 차이",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           }
         ],
         "extensions": [
@@ -18126,7 +18707,123 @@
             "title": "Archived Lineage",
             "authority_ref": "ADR-0059"
           }
-        ]
+        ],
+        "core_role": "architecture",
+        "core": {
+          "purpose": "목표 구조와 현재 적용 상태",
+          "non_goals": "다른 역할의 상태·정책 정본 대체",
+          "metadata_policy": {
+            "envelope": "frontmatter",
+            "fields": [
+              {
+                "key": "title",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "문서 목적을 나타내는 제목"
+              },
+              {
+                "key": "version",
+                "value_type": "document-semver",
+                "required_when": "always",
+                "meaning": "ASCII 숫자 세 요소 판본"
+              },
+              {
+                "key": "type",
+                "value_type": "role-binding",
+                "required_when": "always",
+                "meaning": "역할과 정확하게 대응하는 문서 타입"
+              },
+              {
+                "key": "owner",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "현재 의미 소유자"
+              },
+              {
+                "key": "updated",
+                "value_type": "date",
+                "required_when": "always",
+                "meaning": "실제 문서 변경일"
+              },
+              {
+                "key": "status",
+                "value_type": "role-state",
+                "required_when": "always",
+                "meaning": "역할에 따른 상태; 실행 승인이나 인수를 대체하지 않음"
+              }
+            ],
+            "extension_rule": "선택 native 문법은 공급자 검증, domain field는 이름공간과 소유자·실제 소비자를 갖는 별도 모듈",
+            "document_version_pattern": "(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
+          },
+          "tables": [
+            {
+              "table_id": "architecture.interface",
+              "section_id": "architecture.structure",
+              "required_when": "external_interface",
+              "columns": [
+                {
+                  "key": "interface",
+                  "label": "Interface",
+                  "value_type": "identifier",
+                  "meaning": "경계",
+                  "required": true
+                },
+                {
+                  "key": "producer",
+                  "label": "Producer",
+                  "value_type": "string",
+                  "meaning": "생산자",
+                  "required": true
+                },
+                {
+                  "key": "consumer",
+                  "label": "Consumer",
+                  "value_type": "string",
+                  "meaning": "소비자",
+                  "required": true
+                },
+                {
+                  "key": "contract",
+                  "label": "Contract",
+                  "value_type": "reference",
+                  "meaning": "입출력 의미",
+                  "required": true
+                },
+                {
+                  "key": "failure",
+                  "label": "Failure",
+                  "value_type": "string",
+                  "meaning": "실패 처리",
+                  "required": true
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            }
+          ],
+          "language": {
+            "headings": "en",
+            "body": "로컬 승인 언어 계약; 본문 언어가 core heading·column을 바꾸지 않음"
+          },
+          "status": "DESIGN_PROPOSAL_NOT_ADOPTED",
+          "relationships": {
+            "authored_direction": "consumer-to-direct-owner",
+            "reverse_links": "derived",
+            "missing_target": "unresolved-not-pass",
+            "deletion": "transfer-current-meaning-before-removal"
+          },
+          "lifecycle": {
+            "axis": "document-purpose",
+            "draft_rule": "authoring-allowed-not-execution-authority",
+            "transition_authority": "explicit-scoped-authority",
+            "acceptance_rule": "required-evidence-and-authorized-acceptance-separate"
+          },
+          "rules": [
+            "single-meaning-owner",
+            "no-synthetic-evidence",
+            "no-release-document-role",
+            "no-package-path-runtime-dependency"
+          ]
+        }
       },
       {
         "form_id": "adr",
@@ -18702,7 +19399,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Goal",
+                  "required_when": "always",
+                  "content_rule": "부모 요구와 가치 중 Goal에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "spec.intent.2",
@@ -18726,10 +19428,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Consumers",
+                  "required_when": "always",
+                  "content_rule": "부모 요구와 가치 중 Consumers에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "변경 목적",
+              "required_when": "always",
+              "content_rule": "부모 요구와 가치",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "spec.scope",
@@ -18775,7 +19489,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "In Scope",
+                  "required_when": "always",
+                  "content_rule": "대상·제외·허용 권한 중 In Scope에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "spec.scope.2",
@@ -18799,10 +19518,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Out of Scope",
+                  "required_when": "always",
+                  "content_rule": "대상·제외·허용 권한 중 Out of Scope에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "범위",
+              "required_when": "always",
+              "content_rule": "대상·제외·허용 권한",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "spec.behavior",
@@ -18848,7 +19579,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Inputs and Outputs",
+                  "required_when": "always",
+                  "content_rule": "정상·경계·실패·취소 중 Inputs and Outputs에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "spec.behavior.2",
@@ -18872,10 +19608,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Failure Behavior",
+                  "required_when": "always",
+                  "content_rule": "정상·경계·실패·취소 중 Failure Behavior에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "동작 계약",
+              "required_when": "always",
+              "content_rule": "정상·경계·실패·취소",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "spec.acceptance",
@@ -18921,7 +19669,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Criteria",
+                  "required_when": "always",
+                  "content_rule": "실제 판정 가능한 기준과 필요한 증거 중 Criteria에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "spec.acceptance.2",
@@ -18945,10 +19698,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Verification Strategy",
+                  "required_when": "always",
+                  "content_rule": "실제 판정 가능한 기준과 필요한 증거 중 Verification Strategy에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "수용 조건",
+              "required_when": "always",
+              "content_rule": "실제 판정 가능한 기준과 필요한 증거",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           }
         ],
         "extensions": [
@@ -18993,7 +19758,130 @@
             },
             "authority_ref": "ADR-0059"
           }
-        ]
+        ],
+        "core_role": "spec",
+        "core": {
+          "purpose": "범위 있는 변경의 관측 가능한 계약",
+          "non_goals": "다른 역할의 상태·정책 정본 대체",
+          "metadata_policy": {
+            "envelope": "frontmatter",
+            "fields": [
+              {
+                "key": "title",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "문서 목적을 나타내는 제목"
+              },
+              {
+                "key": "version",
+                "value_type": "document-semver",
+                "required_when": "always",
+                "meaning": "ASCII 숫자 세 요소 판본"
+              },
+              {
+                "key": "type",
+                "value_type": "role-binding",
+                "required_when": "always",
+                "meaning": "역할과 정확하게 대응하는 문서 타입"
+              },
+              {
+                "key": "owner",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "현재 의미 소유자"
+              },
+              {
+                "key": "updated",
+                "value_type": "date",
+                "required_when": "always",
+                "meaning": "실제 문서 변경일"
+              },
+              {
+                "key": "status",
+                "value_type": "role-state",
+                "required_when": "always",
+                "meaning": "역할에 따른 상태; 실행 승인이나 인수를 대체하지 않음"
+              }
+            ],
+            "extension_rule": "선택 native 문법은 공급자 검증, domain field는 이름공간과 소유자·실제 소비자를 갖는 별도 모듈",
+            "document_version_pattern": "(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
+          },
+          "tables": [
+            {
+              "table_id": "spec.checks",
+              "section_id": "spec.acceptance",
+              "required_when": "always",
+              "columns": [
+                {
+                  "key": "check_id",
+                  "label": "Check ID",
+                  "value_type": "identifier",
+                  "meaning": "고유 검사",
+                  "required": true
+                },
+                {
+                  "key": "guarantee",
+                  "label": "Guarantee",
+                  "value_type": "string",
+                  "meaning": "검사의 고유 보장",
+                  "required": true
+                },
+                {
+                  "key": "input",
+                  "label": "Input",
+                  "value_type": "string",
+                  "meaning": "필요 입력",
+                  "required": true
+                },
+                {
+                  "key": "trust",
+                  "label": "Trust Boundary",
+                  "value_type": "string",
+                  "meaning": "검사 신뢰 경계",
+                  "required": true
+                },
+                {
+                  "key": "required_when",
+                  "label": "Required When",
+                  "value_type": "condition",
+                  "meaning": "선택 조건",
+                  "required": true
+                },
+                {
+                  "key": "evidence",
+                  "label": "Evidence",
+                  "value_type": "string",
+                  "meaning": "생성해야 할 증거 유형",
+                  "required": true
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            }
+          ],
+          "language": {
+            "headings": "en",
+            "body": "로컬 승인 언어 계약; 본문 언어가 core heading·column을 바꾸지 않음"
+          },
+          "status": "DESIGN_PROPOSAL_NOT_ADOPTED",
+          "relationships": {
+            "authored_direction": "consumer-to-direct-owner",
+            "reverse_links": "derived",
+            "missing_target": "unresolved-not-pass",
+            "deletion": "transfer-current-meaning-before-removal"
+          },
+          "lifecycle": {
+            "axis": "document-purpose",
+            "draft_rule": "authoring-allowed-not-execution-authority",
+            "transition_authority": "explicit-scoped-authority",
+            "acceptance_rule": "required-evidence-and-authorized-acceptance-separate"
+          },
+          "rules": [
+            "single-meaning-owner",
+            "no-synthetic-evidence",
+            "no-release-document-role",
+            "no-package-path-runtime-dependency"
+          ]
+        }
       },
       {
         "form_id": "plan",
@@ -19046,7 +19934,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Outcome",
+                  "required_when": "always",
+                  "content_rule": "부모 Spec와 가정 중 Outcome에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "plan.intent.2",
@@ -19070,10 +19963,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Constraints",
+                  "required_when": "always",
+                  "content_rule": "부모 Spec와 가정 중 Constraints에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "목표와 전제",
+              "required_when": "always",
+              "content_rule": "부모 Spec와 가정",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "plan.dependencies",
@@ -19119,7 +20024,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Prerequisites",
+                  "required_when": "always",
+                  "content_rule": "입력·자원·권한·선행 중 Prerequisites에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "plan.dependencies.2",
@@ -19143,10 +20053,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Shared Resources",
+                  "required_when": "always",
+                  "content_rule": "입력·자원·권한·선행 중 Shared Resources에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "의존성",
+              "required_when": "always",
+              "content_rule": "입력·자원·권한·선행",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "plan.work",
@@ -19192,7 +20114,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Work Units",
+                  "required_when": "always",
+                  "content_rule": "산출물·수정범위·DAG·통합책임 중 Work Units에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "plan.work.2",
@@ -19216,10 +20143,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Dependency Edges",
+                  "required_when": "always",
+                  "content_rule": "산출물·수정범위·DAG·통합책임 중 Dependency Edges에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "작업 분해",
+              "required_when": "always",
+              "content_rule": "산출물·수정범위·DAG·통합책임",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "plan.verification",
@@ -19265,7 +20204,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Selected Checks",
+                  "required_when": "always",
+                  "content_rule": "입력·단계·고유보장·실패 처리 중 Selected Checks에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "plan.verification.2",
@@ -19289,10 +20233,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Evidence Plan",
+                  "required_when": "always",
+                  "content_rule": "입력·단계·고유보장·실패 처리 중 Evidence Plan에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "검증 계획",
+              "required_when": "always",
+              "content_rule": "입력·단계·고유보장·실패 처리",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           },
           {
             "section_id": "plan.promotion",
@@ -19338,7 +20294,12 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Durable Owners",
+                  "required_when": "always",
+                  "content_rule": "현재 장기 문서 소유자와 반영 조건 중 Durable Owners에 해당하는 사실·규칙만 기록"
+                }
               },
               {
                 "section_id": "plan.promotion.2",
@@ -19362,10 +20323,22 @@
                   "FORM-CONTENT-REVIEW"
                 ],
                 "children": [],
-                "link_only": false
+                "link_only": false,
+                "core": {
+                  "title_ko": "Consumer Updates",
+                  "required_when": "always",
+                  "content_rule": "현재 장기 문서 소유자와 반영 조건 중 Consumer Updates에 해당하는 사실·규칙만 기록"
+                }
               }
             ],
-            "link_only": false
+            "link_only": false,
+            "core": {
+              "title_ko": "지속 의미 반영",
+              "required_when": "always",
+              "content_rule": "현재 장기 문서 소유자와 반영 조건",
+              "prohibited_content": "다른 문서의 실행상태·승인을 복제하거나 미관측 동작을 완료로 서술하지 않음",
+              "empty_policy": "필수 핵심은 구체 내용으로 작성한다. 조건부 소절은 해당할 때만 렌더링하며 빈 placeholder를 완료 문서에 남기지 않는다."
+            }
           }
         ],
         "extensions": [
@@ -19404,7 +20377,187 @@
             },
             "authority_ref": "ADR-0059"
           }
-        ]
+        ],
+        "core_role": "plan",
+        "core": {
+          "purpose": "실행 전략과 의존성",
+          "non_goals": "다른 역할의 상태·정책 정본 대체",
+          "metadata_policy": {
+            "envelope": "frontmatter",
+            "fields": [
+              {
+                "key": "title",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "문서 목적을 나타내는 제목"
+              },
+              {
+                "key": "version",
+                "value_type": "document-semver",
+                "required_when": "always",
+                "meaning": "ASCII 숫자 세 요소 판본"
+              },
+              {
+                "key": "type",
+                "value_type": "role-binding",
+                "required_when": "always",
+                "meaning": "역할과 정확하게 대응하는 문서 타입"
+              },
+              {
+                "key": "owner",
+                "value_type": "string",
+                "required_when": "always",
+                "meaning": "현재 의미 소유자"
+              },
+              {
+                "key": "updated",
+                "value_type": "date",
+                "required_when": "always",
+                "meaning": "실제 문서 변경일"
+              },
+              {
+                "key": "status",
+                "value_type": "role-state",
+                "required_when": "always",
+                "meaning": "역할에 따른 상태; 실행 승인이나 인수를 대체하지 않음"
+              }
+            ],
+            "extension_rule": "선택 native 문법은 공급자 검증, domain field는 이름공간과 소유자·실제 소비자를 갖는 별도 모듈",
+            "document_version_pattern": "(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
+          },
+          "tables": [
+            {
+              "table_id": "plan.work_units",
+              "section_id": "plan.work",
+              "required_when": "always",
+              "columns": [
+                {
+                  "key": "work_unit",
+                  "label": "Work Unit",
+                  "value_type": "identifier",
+                  "meaning": "실행 단위",
+                  "required": true
+                },
+                {
+                  "key": "outcome",
+                  "label": "Outcome",
+                  "value_type": "string",
+                  "meaning": "산출·고유 보장",
+                  "required": true
+                },
+                {
+                  "key": "depends_on",
+                  "label": "Depends On",
+                  "value_type": "reference-list",
+                  "meaning": "선행 단위",
+                  "required": true
+                },
+                {
+                  "key": "owner",
+                  "label": "Owner",
+                  "value_type": "string",
+                  "meaning": "실행 소유자",
+                  "required": true
+                },
+                {
+                  "key": "write_scope",
+                  "label": "Write Scope",
+                  "value_type": "path-list",
+                  "meaning": "허용 수정 범위",
+                  "required": true
+                },
+                {
+                  "key": "acceptance",
+                  "label": "Acceptance",
+                  "value_type": "reference-list",
+                  "meaning": "상위 기준",
+                  "required": true
+                },
+                {
+                  "key": "checks",
+                  "label": "Checks",
+                  "value_type": "reference-list",
+                  "meaning": "선택된 검증",
+                  "required": true
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            },
+            {
+              "table_id": "plan.checks",
+              "section_id": "plan.verification",
+              "required_when": "always",
+              "columns": [
+                {
+                  "key": "check_id",
+                  "label": "Check ID",
+                  "value_type": "identifier",
+                  "meaning": "고유 검사",
+                  "required": true
+                },
+                {
+                  "key": "guarantee",
+                  "label": "Guarantee",
+                  "value_type": "string",
+                  "meaning": "검사의 고유 보장",
+                  "required": true
+                },
+                {
+                  "key": "input",
+                  "label": "Input",
+                  "value_type": "string",
+                  "meaning": "필요 입력",
+                  "required": true
+                },
+                {
+                  "key": "trust",
+                  "label": "Trust Boundary",
+                  "value_type": "string",
+                  "meaning": "검사 신뢰 경계",
+                  "required": true
+                },
+                {
+                  "key": "required_when",
+                  "label": "Required When",
+                  "value_type": "condition",
+                  "meaning": "선택 조건",
+                  "required": true
+                },
+                {
+                  "key": "evidence",
+                  "label": "Evidence",
+                  "value_type": "string",
+                  "meaning": "생성해야 할 증거 유형",
+                  "required": true
+                }
+              ],
+              "empty_policy": "발생하지 않은 관측·승인을 만들지 않음. 정의에는 열만 두며 실제 행은 발생 또는 적용 때 작성"
+            }
+          ],
+          "language": {
+            "headings": "en",
+            "body": "로컬 승인 언어 계약; 본문 언어가 core heading·column을 바꾸지 않음"
+          },
+          "status": "DESIGN_PROPOSAL_NOT_ADOPTED",
+          "relationships": {
+            "authored_direction": "consumer-to-direct-owner",
+            "reverse_links": "derived",
+            "missing_target": "unresolved-not-pass",
+            "deletion": "transfer-current-meaning-before-removal"
+          },
+          "lifecycle": {
+            "axis": "document-purpose",
+            "draft_rule": "authoring-allowed-not-execution-authority",
+            "transition_authority": "explicit-scoped-authority",
+            "acceptance_rule": "required-evidence-and-authorized-acceptance-separate"
+          },
+          "rules": [
+            "single-meaning-owner",
+            "no-synthetic-evidence",
+            "no-release-document-role",
+            "no-package-path-runtime-dependency"
+          ]
+        }
       },
       {
         "form_id": "task",

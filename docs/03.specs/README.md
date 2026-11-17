@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.25.1"
+version: "0.26.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 # 03.specs
 
@@ -124,7 +124,7 @@ SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-sla
 4. 실행 가능한 인터페이스 계약은 실제 구현 소유 경로에 두고 Spec에서 그 owner와 검증을 추적한다.
 5. Agent 변경은 목표·동작·경계·실패 조건을 Spec에, 구현 순서와 rollback을 Plan에 기록한다.
 6. Feature-local Task records가 해당 work-unit의 실행과 evidence를 소유한다. Validator의 독립 실행 테스트와 fixture는 top-level `tests/`와 `tests/fixtures/` 아래에 두고, production module은 이를 import하거나 runtime data로 읽지 않는다. `validation/tests/` 또는 Spec-package-local test control plane은 만들지 않는다.
-7. Spec의 `Lifecycle Traceability` 표(Acceptance Criteria 아래)는 Requirement ID를 기준에 잇고, Plan의 `Work Breakdown` 표(Work Breakdown > Work Units 아래)는 각 work unit을 Task에 잇는다. SPEC-0161과 SPEC-0221의 승인된 Spec·Plan은 승인 당시 양식을 retained form으로 유지한다.
+7. Spec의 `Lifecycle Traceability` 표(Acceptance Criteria 아래)는 Requirement ID를 기준에 잇고, Plan의 `Work Breakdown` 표(Work Breakdown > Work Units 아래)는 각 work unit을 Task에 잇는다. Spec의 core `spec.checks` 표는 Verification Strategy 아래에, Plan의 core `plan.work_units` 표는 `Work Breakdown` 표 뒤에, core `plan.checks` 표는 Selected Checks 아래에 둔다(SPEC-0222). SPEC-0161과 SPEC-0221의 승인된 Spec·Plan은 승인 당시 양식을 retained form으로 유지한다.
 
 #### Helper Templates
 

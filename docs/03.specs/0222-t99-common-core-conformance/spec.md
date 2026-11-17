@@ -1,10 +1,10 @@
 ---
 title: "T99 Common Core Conformance"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/spec"
-status: "approved"
+status: "in-review"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "SPEC-0222"
 ---
 
@@ -162,7 +162,18 @@ New Tasks use the core header. A Task that already holds a recorded table, inclu
 
 - The strict registry, markdown profile, link and owner, and lifecycle validators. The work residue ledger gate. The `document` suite once on the final tree. `python3 scripts/qa.py staged` through the commit hooks on each exact index.
 - Focused RED and GREEN tests for each changed check. The source hash of each export script and export, and the comparison results, are recorded in the Task.
-- Risk class `high` (registry model, validators and table contracts): an independent read-only review after WORK-001, after WORK-002 and before acceptance.
+- Risk class `high` (registry model, validators and table contracts): an independent read-only review after WORK-001 and, by the user's decision recorded in the Task, one final review of WORK-002 and every later unit in WORK-009 before acceptance.
+
+| Check ID | Guarantee | Input | Trust Boundary | Required When | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| CHK-CORE-REGISTRY | Refuses a form without `core_role` (from WORK-009 on), a core-role form whose sections or tables lack a core member or carry a wrong type, a template whose form or native profile has no `core_role` (from WORK-009 on), an extension without `authority_ref` and a column appended to a core table. | `docs/99.templates/registry.json` and its schema | Registry drift only; the tables of templates and documents belong to CHK-CORE-DOCUMENT. | Every work unit | Strict registry check result |
+| CHK-CORE-DOCUMENT | Refuses a core table with a missing, reordered or relabeled column, a cell of the wrong type, a heading or table placed only inside a fence, quote or HTML block, and a mixed recorded and core Task header. | Every template and current document of each changed role | Templates and documents only; recorded Task rows are read through the adapter, which writes nothing. | Every work unit that changes a role | Strict markdown profile, link and owner, and lifecycle validator results |
+| CHK-CORE-FOCUSED | Each changed check fails before its change and passes after it. | The focused tests of each changed check | Covers only its changed check; the `document` suite runs once on the final tree. | Each changed check | RED and GREEN results in the Task |
+| CHK-CORE-STAGED | `python3 scripts/qa.py staged` passes on the exact index of each commit. | The exact index of each commit | The commit hooks run it on the index, not on the working tree. | Each commit | Staged QA result |
+| CHK-CORE-EXPORT | A fresh export returns `DECLARED_CORE_MATCH` with source hashes rechecked, and each negative export returns non-match. | A reviewed one-time export of the registry and every template, and the package comparison tool | `DECLARED_CORE_MATCH` covers form and template definitions only: not current documents, retained identities, runtime or approval. | WORK-009 | Source hashes of the export script and export, and the comparison results, in the Task |
+| CHK-CORE-SUITE | The `document` suite passes. | The final tree | Runs once, on the final tree. | WORK-009 | Suite result |
+| CHK-CORE-LEDGER | The residue rows W03-H45 to W03-H47 close, and any new residue is recorded. | The work residue ledger and the SPEC-0221 Task | Only the State and Closure cells of the SPEC-0221 residue rows change. | WORK-009 | Ledger gate result |
+| CHK-CORE-REVIEW | An independent read-only review of the change. | The reviewed change, this Spec and its Plan | Read-only; it records findings and changes nothing. | Risk class `high`, at the points the Plan's Evidence Plan names | Review record in the Task |
 
 #### Normative and Evidence
 

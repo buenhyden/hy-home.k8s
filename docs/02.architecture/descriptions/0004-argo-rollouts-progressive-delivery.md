@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts Progressive Delivery Architecture Description"
-version: "2.1.0"
+version: "2.1.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "AD-0004"
 ---
 
@@ -79,6 +79,9 @@ The platform owns the controller install, dashboard access, AppProject permissio
   - Controller metrics are scraped in-cluster by Alloy ([ADR-0045](../decisions/0045-in-cluster-telemetry-collection.md)) and remote-written to the external Prometheus; no metrics NodePort remains.
 - **Data Boundaries**:
   - No credentials are introduced by Rollouts itself; the reference analysis consumes the ESO-synced `prometheus-api-auth` Secret and the `hy-home-root-ca` ConfigMap from the app namespace.
+
+| Interface | Producer | Consumer | Contract | Failure |
+| --- | --- | --- | --- | --- |
 
 ## Runtime Behavior
 

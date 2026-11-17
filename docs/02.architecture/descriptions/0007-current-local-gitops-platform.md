@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "2.1.0"
+version: "2.1.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "AD-0007"
 ---
 
@@ -243,6 +243,9 @@ The Istio CNI manifest is desired state and proves no actual admission or networ
 - **Data Boundaries**:
   - Secret values, tokens, and private keys stay outside Git.
   - Active docs store current contract facts only.
+
+| Interface | Producer | Consumer | Contract | Failure |
+| --- | --- | --- | --- | --- |
 
 ## Runtime Behavior
 

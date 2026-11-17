@@ -57,6 +57,12 @@ parent_ids: ["{{PARENT_ID}}"]
 | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#criteria) | One bounded implementation outcome | None | [Task]({{TASK_RELATIVE_PATH}}) | Named deterministic check and expected evidence |
 
+<!-- Author prompt: give each work unit one row in the table below: its outcome, the units it depends on, its owner, the paths it may write, the criteria it serves and the checks it selects. -->
+
+| Work Unit | Outcome | Depends On | Owner | Write Scope | Acceptance | Checks |
+| --- | --- | --- | --- | --- | --- | --- |
+| WORK-001 | One bounded implementation outcome | none | {{OWNER}} | Name the paths this unit may write. | VAL-FEATURE-001 | Name the selected checks. |
+
 #### Change and Rollback
 
 <!-- Author prompt: state what each work unit changes, how, and the order in which a change is undone. -->
@@ -72,6 +78,11 @@ parent_ids: ["{{PARENT_ID}}"]
 <!-- Author prompt: map every work package to deterministic checks and evidence lanes. -->
 <!-- Author prompt: include an architecture compliance check that each work package stays within the views and ADRs named in Assumptions; a departure returns the Spec to in-review. -->
 <!-- Author prompt: define the conditions that close work without claiming live evidence. -->
+<!-- Author prompt: give each selected check one row in the Checks table below: its unique guarantee, required input, trust boundary, the condition that selects it and the evidence type it must produce. -->
+
+| Check ID | Guarantee | Input | Trust Boundary | Required When | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| <!-- Author prompt: Name one stable check ID. --> | <!-- Author prompt: State what only this check guarantees. --> | <!-- Author prompt: State the input it needs. --> | <!-- Author prompt: State what the check trusts and what it cannot prove. --> | <!-- Author prompt: State the condition that selects it. --> | <!-- Author prompt: Name the evidence type it must produce. --> |
 
 ### Evidence Plan
 

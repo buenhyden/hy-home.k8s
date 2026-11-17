@@ -419,8 +419,11 @@ POLICY_OPERATIONS_TABLE_KEYS = {
     ),
 }
 # SPEC-0195 (W03-D03, W03-D08, W03-D55): the Requirement form, its two local H3
-# extensions and its three tables (the requirement id, statement, rationale and
-# acceptance of the common contract, then the optional trailing Priority).
+# extensions and its tables. SPEC-0222 WORK-003: the Functional and Quality
+# Requirements tables are instances of the core requirement.requirements table
+# (Priority required, in the core's lower case), the core requirement.quality
+# table is defined and not rendered, and Lifecycle Traceability stays a local
+# table of its own.
 REQUIREMENT = ("sdlc/requirement", "common/template-sdlc-requirement")
 REQUIREMENT_TREE = (
     ("Overview", ("Problem and Outcome", "Stakeholders")),
@@ -460,18 +463,31 @@ REQUIREMENT_EXTENSIONS = [
         "title": "Archived Lineage",
     },
 ]
-REQUIREMENT_COLUMNS = ("Requirement ID", "Statement", "Rationale", "Acceptance")
-REQUIREMENT_OPTIONAL = ("Priority",)
+REQUIREMENT_COLUMNS = (
+    "Requirement ID",
+    "Statement",
+    "Rationale",
+    "Acceptance",
+    "Priority",
+)
+REQUIREMENT_QUALITY_COLUMNS = (
+    "Requirement ID",
+    "Attribute",
+    "Measure",
+    "Unit",
+    "Environment",
+    "Criterion",
+)
 REQUIREMENT_TABLE_KEYS = {
-    "Functional Requirements": (
-        "requirement.requirements.1",
-        (*REQUIREMENT_COLUMNS, *REQUIREMENT_OPTIONAL),
+    "Requirements": (
+        "requirement.requirements",
+        REQUIREMENT_COLUMNS,
         1,
         "Requirement ID",
     ),
-    "Quality Requirements": (
-        "requirement.requirements.2",
-        (*REQUIREMENT_COLUMNS, *REQUIREMENT_OPTIONAL),
+    "Quality Measures": (
+        "requirement.requirements",
+        REQUIREMENT_QUALITY_COLUMNS,
         0,
         "Requirement ID",
     ),
@@ -530,7 +546,20 @@ ARCHITECTURE_EXTENSIONS = [
         "title": "Archived Lineage",
     },
 ]
+ARCHITECTURE_INTERFACE_COLUMNS = (
+    "Interface",
+    "Producer",
+    "Consumer",
+    "Contract",
+    "Failure",
+)
 ARCHITECTURE_TABLE_KEYS = {
+    "External Interfaces": (
+        "architecture.structure",
+        ARCHITECTURE_INTERFACE_COLUMNS,
+        0,
+        "Interface",
+    ),
     "Constraints": (
         "architecture.context.2",
         ("Architecture ID", "Constraint", "Affected Components"),
@@ -1234,7 +1263,25 @@ PLAN_FORM_EXTENSIONS = [
         },
     },
 ]
+CORE_CHECK_COLUMNS = (
+    "Check ID",
+    "Guarantee",
+    "Input",
+    "Trust Boundary",
+    "Required When",
+    "Evidence",
+)
+CORE_WORK_UNIT_COLUMNS = (
+    "Work Unit",
+    "Outcome",
+    "Depends On",
+    "Owner",
+    "Write Scope",
+    "Acceptance",
+    "Checks",
+)
 SPEC_FORM_TABLE_KEYS = {
+    "Checks": ("spec.acceptance", CORE_CHECK_COLUMNS, 0, "Check ID"),
     "Criteria": (
         "spec.acceptance.1",
         ("Criterion ID", "Expected Result"),
@@ -1257,6 +1304,8 @@ PLAN_FORM_TREE = (
     ("Promotion Map", ("Durable Owners", "Consumer Updates")),
 )
 PLAN_FORM_TABLE_KEYS = {
+    "Units": ("plan.work", CORE_WORK_UNIT_COLUMNS, 0, "Work Unit"),
+    "Checks": ("plan.verification", CORE_CHECK_COLUMNS, 0, "Check ID"),
     "Work Breakdown": (
         "plan.work.1",
         ("Work Unit", "Criteria", "Work", "Dependencies", "Task", "Verification"),
@@ -2007,7 +2056,6 @@ class RepositoryRegistryTests(unittest.TestCase):
                         f"reference-pack-readme-{title.lower().replace(' ', '-')}"
                         for title in PACK_NOT_REQUIRED
                     },
-                    "requirement": {"requirement.requirements.2"},
                 }.get(form_id, set()),
             )
             self.assertTrue(all(isinstance(n.get("link_only"), bool) for n in every))
@@ -2066,8 +2114,6 @@ class RepositoryRegistryTests(unittest.TestCase):
                             not (
                                 form_id == "policy"
                                 and column["key"] in POLICY_RULES_OPTIONAL
-                                or form_id == "requirement"
-                                and column["key"] in REQUIREMENT_OPTIONAL
                             ),
                         )
         for profile_id, profile in by_id.items():
@@ -2111,18 +2157,19 @@ class RepositoryRegistryTests(unittest.TestCase):
             "workspace-readme": [],
             "reference-pack-readme": [],
             "requirement": [
-                "Functional Requirements",
-                "Quality Requirements",
+                "Requirements",
+                "Quality Measures",
                 "Lifecycle Traceability",
             ],
             "architecture": [
+                "External Interfaces",
                 "Constraints",
                 "Quality Scenarios",
                 "Lifecycle Traceability",
             ],
             "adr": ["Options", "Alternatives", "Lifecycle Traceability"],
-            "spec": ["Criteria", "Lifecycle Traceability"],
-            "plan": ["Work Breakdown", "Promotion"],
+            "spec": ["Checks", "Criteria", "Lifecycle Traceability"],
+            "plan": ["Units", "Checks", "Work Breakdown", "Promotion"],
             "task": [
                 "Work Items",
                 "Lifecycle Traceability",
@@ -5863,7 +5910,7 @@ class ResearchAuditFormTests(unittest.TestCase):
 REQUIREMENT_PATH = PurePosixPath(
     "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md"
 )
-REQUIREMENT_HEADER = (*REQUIREMENT_COLUMNS, *REQUIREMENT_OPTIONAL)
+REQUIREMENT_HEADER = REQUIREMENT_COLUMNS
 OLD_REQUIREMENT_HEADER = (
     "Requirement ID",
     "Requirement",
@@ -5882,7 +5929,7 @@ def requirement_table(
     for number in range(1, rows + 1):
         cells = {
             "Requirement ID": f"REQ-0001-{kind}-{number:04d}",
-            "Priority": "Must",
+            "Priority": "must",
         }
         lines.append(
             "| " + " | ".join(cells.get(key, f"A {key} cell.") for key in header) + " |"
@@ -5946,7 +5993,8 @@ class RequirementFormTests(unittest.TestCase):
             )
         )
 
-    def test_the_form_has_five_h2_ten_h3_and_one_conditional_section(self) -> None:
+    def test_the_form_has_four_h2_eight_h3_all_required(self) -> None:
+        # SPEC-0222 WORK-003: the core requires Quality Requirements always.
         form = next(f for f in self.registry.common_forms if f.form_id == "requirement")
         self.assertEqual(form.title, "Requirement")
         self.assertEqual(
@@ -5954,10 +6002,7 @@ class RequirementFormTests(unittest.TestCase):
             list(REQUIREMENT_TREE),
         )
         every = [n for s in form.sections for n in (s, *s.children)]
-        self.assertEqual(
-            [n.title for n in every if n.requiredness != "required"],
-            ["Quality Requirements"],
-        )
+        self.assertEqual([n.title for n in every if n.requiredness != "required"], [])
         self.assertFalse(any(n.link_only for n in every))
         self.assertEqual(
             [(e.extension_id, e.parent_id, e.title) for e in form.extensions],
@@ -6010,12 +6055,11 @@ class RequirementFormTests(unittest.TestCase):
             },
             REQUIREMENT_TABLE_KEYS,
         )
+        self.assertTrue(all(c.required for t in twin.tables for c in t.columns))
+        (priority,) = (c for t in twin.tables for c in t.columns if c.key == "Priority")
         self.assertEqual(
-            [(t.name, c.key) for t in twin.tables for c in t.columns if not c.required],
-            [
-                ("Functional Requirements", "Priority"),
-                ("Quality Requirements", "Priority"),
-            ],
+            (priority.data_type, priority.allowed_values),
+            ("enum", ("must", "should", "could")),
         )
 
     def test_the_repository_registry_is_valid_and_its_twin_matches(self) -> None:
@@ -6052,15 +6096,36 @@ class RequirementFormTests(unittest.TestCase):
             definition_["vocabulary_refs"], [".agents/knowledge/glossary.md"]
         )
 
-    def test_a_complete_document_passes_with_and_without_quality_requirements(
+    def test_a_complete_document_passes_and_quality_requirements_is_required(
         self,
     ) -> None:
-        for quality in (True, False):
-            with self.subTest(quality=quality):
-                body = requirement_body(quality=quality)
-                self.assertEqual(self.tree(body), [])
-                self.assertEqual(self.tables(body), [])
-        self.assertNotIn("Quality Requirements", requirement_body(quality=False))
+        body = requirement_body()
+        self.assertEqual(self.tree(body), [])
+        self.assertEqual(self.tables(body), [])
+        without = requirement_body(quality=False)
+        self.assertNotIn("Quality Requirements", without)
+        self.assertEqual(self.tree(without), ["BODY-H3-REQUIRED"])
+
+    def test_a_priority_outside_the_core_values_is_refused(self) -> None:
+        body = requirement_body()
+        for value in ("Must", "high", ""):
+            with self.subTest(value=value):
+                changed = body.replace("| must |", f"| {value} |", 1)
+                self.assertNotEqual(changed, body)
+                self.assertEqual(self.tables(changed), ["BODY-TABLE-VALUE"])
+        # A row of author prompts is the author-prompt check's, not a value.
+        prompt_row = (
+            "| "
+            + " | ".join(
+                f"<!-- Author prompt: Name the {key}. -->" for key in REQUIREMENT_HEADER
+            )
+            + " |"
+        )
+        prompt = body.replace(
+            requirement_table(), requirement_table() + "\n" + prompt_row, 1
+        )
+        self.assertIn(prompt_row, prompt)
+        self.assertEqual(self.tables(prompt), [])
 
     def test_declared_nfr_needs_its_quality_member(self) -> None:
         frontmatter = (
@@ -6120,7 +6185,9 @@ class RequirementFormTests(unittest.TestCase):
         moved = body.replace(quality + "\n\n", "").replace(
             "## Scope", quality + "\n\n## Scope"
         )
-        self.assertEqual(self.tree(moved), ["BODY-H3-PARENT"])
+        # SPEC-0222 WORK-003: Quality Requirements is required, so moving it
+        # also leaves Requirements without it.
+        self.assertEqual(self.tree(moved), ["BODY-H3-PARENT", "BODY-H3-REQUIRED"])
 
     def test_archived_lineage_and_lifecycle_traceability_belong_under_traceability(
         self,
@@ -6142,13 +6209,14 @@ class RequirementFormTests(unittest.TestCase):
             requirement_table(), requirement_table(OLD_REQUIREMENT_HEADER)
         )
         self.assertEqual(self.tables(old), ["BODY-TABLE-COLUMNS"])
-        for header in (REQUIREMENT_HEADER, REQUIREMENT_COLUMNS):
-            with self.subTest(header=header):
-                body = requirement_body().replace(
-                    requirement_table(), requirement_table(header)
-                )
-                self.assertEqual(self.tables(body), [])
+        body = requirement_body().replace(
+            requirement_table(), requirement_table(REQUIREMENT_HEADER)
+        )
+        self.assertEqual(self.tables(body), [])
+        # SPEC-0222 WORK-003: the core requires Priority, so the former
+        # four-column header without it no longer passes.
         for header in (
+            REQUIREMENT_HEADER[:-1],
             REQUIREMENT_HEADER[:-2],
             (
                 REQUIREMENT_HEADER[0],
@@ -6168,13 +6236,32 @@ class RequirementFormTests(unittest.TestCase):
     def test_a_header_only_functional_table_fails_and_a_header_only_quality_passes(
         self,
     ) -> None:
+        def rules(text: str) -> list[str]:
+            # The core table counts rows across both H3; the quality check keeps
+            # the functional minimum of one member (SPEC-0222 WORK-003).
+            return sorted(
+                [
+                    *self.tables(text),
+                    *(
+                        item.rule_id
+                        for item in MARKDOWN._requirement_quality_diagnostics(
+                            REQUIREMENT_PATH, self.profile, text
+                        )
+                    ),
+                ]
+            )
+
         body = requirement_body()
         empty_quality = body.replace(
             requirement_table(kind="NFR"), requirement_table(kind="NFR", rows=0)
         )
-        self.assertEqual(self.tables(empty_quality), [])
+        self.assertEqual(rules(empty_quality), [])
         empty_functional = body.replace(requirement_table(), requirement_table(rows=0))
-        self.assertEqual(self.tables(empty_functional), ["BODY-TABLE-ROWS"])
+        self.assertEqual(rules(empty_functional), ["BODY-TABLE-ROWS"])
+        both = empty_functional.replace(
+            requirement_table(kind="NFR"), requirement_table(kind="NFR", rows=0)
+        )
+        self.assertEqual(rules(both), ["BODY-TABLE-ROWS", "BODY-TABLE-ROWS"])
 
     def test_the_body_contract_table_is_not_read_as_a_requirement_table(self) -> None:
         body = requirement_body()
@@ -9123,6 +9210,409 @@ class DecisionCoreBindingTests(unittest.TestCase):
             )
             with self.subTest(section=section):
                 self.assertEqual(LINKS._traceability_lineage(context, path), expected)
+
+
+CORE_CHECK_TYPES = (
+    ("Check ID", "check_id", "identifier"),
+    ("Guarantee", "guarantee", "string"),
+    ("Input", "input", "string"),
+    ("Trust Boundary", "trust", "string"),
+    ("Required When", "required_when", "condition"),
+    ("Evidence", "evidence", "string"),
+)
+# SPEC-0222 WORK-003: the requirement, architecture, spec and plan forms bind
+# their core roles; each existing table without a core counterpart stays a
+# registered local table of its own (`authority_ref: ADR-0059`).
+SDLC_CORE = {
+    "requirement": (
+        "필요·목표·검증 가능한 요구",
+        REQUIREMENT[1],
+        {
+            "requirement.requirements": (
+                "requirement.requirements",
+                "always",
+                (
+                    ("Requirement ID", "requirement_id", "identifier"),
+                    ("Statement", "statement", "string"),
+                    ("Rationale", "rationale", "string"),
+                    ("Acceptance", "acceptance", "string"),
+                    ("Priority", "priority", "enum"),
+                ),
+            ),
+            "requirement.quality": (
+                "requirement.requirements",
+                "quality_requirement",
+                (
+                    ("Requirement ID", "requirement_id", "identifier"),
+                    ("Attribute", "attribute", "string"),
+                    ("Measure", "measure", "string"),
+                    ("Unit", "unit", "string"),
+                    ("Environment", "environment", "string"),
+                    ("Criterion", "criterion", "string"),
+                ),
+            ),
+        },
+        ("Lifecycle Traceability",),
+    ),
+    "architecture": (
+        "목표 구조와 현재 적용 상태",
+        ARCHITECTURE[1],
+        {
+            "architecture.interface": (
+                "architecture.structure",
+                "external_interface",
+                (
+                    ("Interface", "interface", "identifier"),
+                    ("Producer", "producer", "string"),
+                    ("Consumer", "consumer", "string"),
+                    ("Contract", "contract", "reference"),
+                    ("Failure", "failure", "string"),
+                ),
+            )
+        },
+        ("Constraints", "Quality Scenarios", "Lifecycle Traceability"),
+    ),
+    "spec": (
+        "범위 있는 변경의 관측 가능한 계약",
+        SPEC_FORM[1],
+        {"spec.checks": ("spec.acceptance", "always", CORE_CHECK_TYPES)},
+        ("Criteria", "Lifecycle Traceability"),
+    ),
+    "plan": (
+        "실행 전략과 의존성",
+        PLAN_FORM[1],
+        {
+            "plan.work_units": (
+                "plan.work",
+                "always",
+                (
+                    ("Work Unit", "work_unit", "identifier"),
+                    ("Outcome", "outcome", "string"),
+                    ("Depends On", "depends_on", "reference-list"),
+                    ("Owner", "owner", "string"),
+                    ("Write Scope", "write_scope", "path-list"),
+                    ("Acceptance", "acceptance", "reference-list"),
+                    ("Checks", "checks", "reference-list"),
+                ),
+            ),
+            "plan.checks": ("plan.verification", "always", CORE_CHECK_TYPES),
+        },
+        ("Work Breakdown", "Promotion"),
+    ),
+}
+# Architecture descriptions that state an external interface render the core
+# table; with no stated failure handling per interface it stays header-only and
+# the missing facts are residue (W04-CONTENT). AD-0006 leaves external service
+# interfaces to their own domains (AD-0007), so it renders none.
+AD_INTERFACE_TABLES = {
+    "0004-argo-rollouts-progressive-delivery.md": 0,
+    "0005-argo-notifications-slack.md": 0,
+    "0006-workspace-agent-governance-platform.md": None,
+    "0007-current-local-gitops-platform.md": 0,
+}
+
+
+def _frontmatter_value(text: str, key: str) -> str:
+    match = re.search(rf'(?m)^{key}: "([^"]*)"$', text.split("\n---", 1)[0])
+    return match.group(1) if match else ""
+
+
+class SdlcCoreBindingTests(unittest.TestCase):
+    """SPEC-0222 WORK-003: requirement, architecture, spec and plan bind the core."""
+
+    @staticmethod
+    def form(raw: dict, role: str) -> dict:
+        return next(f for f in raw["common_forms"]["forms"] if f["form_id"] == role)
+
+    @staticmethod
+    def visible_headers(text: str, heading: str) -> list[tuple[str, ...]]:
+        section = MARKDOWN._exact_heading_section(text, heading) or ""
+        return [tuple(header) for header, _ in MARKDOWN._visible_tables(section)]
+
+    def test_each_form_binds_its_core_role_members_and_section_conditions(
+        self,
+    ) -> None:
+        raw = load_raw()
+        for role, (purpose, _, tables, _) in SDLC_CORE.items():
+            with self.subTest(role=role):
+                form = self.form(raw, role)
+                self.assertEqual(form["core_role"], role)
+                self.assertEqual(form["core"]["purpose"], purpose)
+                self.assertEqual(form["core"]["status"], "DESIGN_PROPOSAL_NOT_ADOPTED")
+                self.assertEqual(
+                    {
+                        t["table_id"]: (
+                            t["section_id"],
+                            t["required_when"],
+                            tuple(
+                                (c["label"], c["key"], c["value_type"])
+                                for c in t["columns"]
+                            ),
+                        )
+                        for t in form["core"]["tables"]
+                    },
+                    tables,
+                )
+                stack = list(form["sections"])
+                while stack:
+                    item = stack.pop()
+                    stack.extend(item["children"])
+                    self.assertEqual(item["condition"], "always")
+                    self.assertEqual(item["requiredness"], "required")
+                    self.assertEqual(item["core"]["required_when"], "always")
+        self.assertEqual(rules_of(raw), set())
+
+    def test_each_template_carries_its_core_tables_and_local_tables_of_its_own(
+        self,
+    ) -> None:
+        raw = load_raw()
+        for role, (_, template, tables, local) in SDLC_CORE.items():
+            with self.subTest(role=role):
+                definition_ = profile_of(raw, template)["template_definition"]
+                core = {
+                    t["table_id"]: t for t in definition_["tables"] if "table_id" in t
+                }
+                self.assertEqual(
+                    {
+                        table_id: (
+                            t["section"],
+                            t["required_when"],
+                            tuple(
+                                (c["key"], c["id"], c["data_type"])
+                                for c in t["columns"]
+                            ),
+                        )
+                        for table_id, t in core.items()
+                    },
+                    tables,
+                )
+                for table in core.values():
+                    self.assertTrue(all(c["required"] for c in table["columns"]))
+                    self.assertEqual(table["row_identity"], table["columns"][0]["key"])
+                    self.assertNotIn("authority_ref", table)
+                own = [t for t in definition_["tables"] if "table_id" not in t]
+                self.assertEqual(sorted(t["name"] for t in own), sorted(local))
+                for table in own:
+                    self.assertEqual(table["authority_ref"], "ADR-0059")
+                # The record keeps its own table fields (WORK-001).
+                record = CONTRACTS.template_definition_record(raw, template)
+                self.assertEqual(record_errors(record), [])
+                self.assertFalse(any("table_id" in t for t in record["tables"]))
+        priority = next(
+            c
+            for t in profile_of(raw, REQUIREMENT[1])["template_definition"]["tables"]
+            if t.get("table_id") == "requirement.requirements"
+            for c in t["columns"]
+            if c["key"] == "Priority"
+        )
+        self.assertEqual(priority["allowed_values"], ["must", "should", "could"])
+        self.assertEqual(rules_of(raw), set())
+
+    def test_a_drifted_sdlc_core_table_is_refused(self) -> None:
+        cases = {
+            "relabeled": lambda t: t["columns"][0].update(key="Name"),
+            "other type": lambda t: t["columns"][0].update(data_type="string"),
+            "appended": lambda t: t["columns"].append(
+                {
+                    "key": "Note",
+                    "id": "note",
+                    "data_type": "string",
+                    "meaning": "m",
+                    "required": False,
+                }
+            ),
+            "other section": lambda t: t.update(section=t["section"] + ".1"),
+            "dropped": lambda t: t["columns"].pop(),
+        }
+        for role, (_, template, tables, _) in SDLC_CORE.items():
+            for table_id in tables:
+                for name, change in cases.items():
+                    with self.subTest(role=role, table=table_id, case=name):
+                        raw = load_raw()
+                        table = next(
+                            t
+                            for t in profile_of(raw, template)["template_definition"][
+                                "tables"
+                            ]
+                            if t.get("table_id") == table_id
+                        )
+                        change(table)
+                        self.assertIn("REGISTRY_CORE_TABLE", rules_of(raw))
+        raw = load_raw()
+        self.form(raw, "requirement")["sections"][2]["children"][1].update(
+            condition="품질 요구가 적용됨"
+        )
+        self.assertIn("REGISTRY_CORE_SECTION", rules_of(raw))
+
+    def test_every_requirement_renders_the_core_table_with_core_priorities(
+        self,
+    ) -> None:
+        profile = typed_profiles(load_raw())[REQUIREMENT[0]]
+        paths = sorted((ROOT / "docs/01.requirements").glob("0*.md"))
+        self.assertTrue(paths)
+        for path in paths:
+            text = path.read_text(encoding="utf-8")
+            relative = PurePosixPath(path.relative_to(ROOT).as_posix())
+            with self.subTest(path=path.name):
+                section = MARKDOWN._exact_heading_section(text, "## Requirements")
+                self.assertIsNotNone(section)
+                self.assertIn("### Quality Requirements", section)
+                tables = [
+                    (header, rows)
+                    for header, rows in MARKDOWN._visible_tables(section)
+                    if header[0] == "Requirement ID"
+                ]
+                self.assertTrue(tables)
+                for header, rows in tables:
+                    self.assertEqual(tuple(header), REQUIREMENT_COLUMNS)
+                    for row in rows:
+                        self.assertIn(row[-1], {"must", "should", "could"})
+                self.assertEqual(
+                    MARKDOWN._table_diagnostics(relative, profile, text), []
+                )
+                self.assertEqual(
+                    MARKDOWN._requirement_quality_diagnostics(relative, profile, text),
+                    [],
+                )
+
+    def test_each_description_renders_the_interface_table_where_it_applies(
+        self,
+    ) -> None:
+        profile = typed_profiles(load_raw())[ARCHITECTURE[0]]
+        folder = ROOT / "docs/02.architecture/descriptions"
+        self.assertEqual(
+            sorted(p.name for p in folder.glob("0*.md")), sorted(AD_INTERFACE_TABLES)
+        )
+        for name, rows in AD_INTERFACE_TABLES.items():
+            text = (folder / name).read_text(encoding="utf-8")
+            with self.subTest(path=name):
+                section = MARKDOWN._exact_heading_section(text, "### Interfaces") or ""
+                found = [
+                    len(data)
+                    for header, data in MARKDOWN._visible_tables(section)
+                    if tuple(header) == ARCHITECTURE_INTERFACE_COLUMNS
+                ]
+                self.assertEqual(found, [] if rows is None else [rows])
+                relative = PurePosixPath((folder / name).relative_to(ROOT).as_posix())
+                self.assertEqual(
+                    MARKDOWN._table_diagnostics(relative, profile, text), []
+                )
+
+    def test_every_current_spec_and_plan_renders_its_core_tables_unless_retained(
+        self,
+    ) -> None:
+        profiles = typed_profiles(load_raw())
+        cases = {
+            "spec.md": ("sdlc/spec", {"## Acceptance Criteria": [CORE_CHECK_COLUMNS]}),
+            "plan.md": (
+                "sdlc/plan",
+                {
+                    "## Work Breakdown": [CORE_WORK_UNIT_COLUMNS],
+                    "## Verification Plan": [CORE_CHECK_COLUMNS],
+                },
+            ),
+        }
+        retained = []
+        for package in sorted((ROOT / "docs/03.specs").glob("0*/")):
+            for name, (profile_id, headings) in cases.items():
+                path = package / name
+                if not path.is_file():
+                    continue
+                text = path.read_text(encoding="utf-8")
+                profile = profiles[profile_id]
+                identity = _frontmatter_value(text, "artifact_id")
+                status = _frontmatter_value(text, "status")
+                relative = PurePosixPath(path.relative_to(ROOT).as_posix())
+                with self.subTest(path=str(relative)):
+                    core = {CORE_CHECK_COLUMNS, CORE_WORK_UNIT_COLUMNS}
+                    if status == "approved" and profile.form.retains_identity(identity):
+                        # SPEC-0161 and SPEC-0221 keep their approved bytes.
+                        retained.append(identity)
+                        self.assertFalse(
+                            core
+                            & {
+                                tuple(header)
+                                for header, _ in MARKDOWN._visible_tables(text)
+                            }
+                        )
+                    else:
+                        for heading, expected in headings.items():
+                            found = [
+                                header
+                                for header in self.visible_headers(text, heading)
+                                if header in core
+                            ]
+                            self.assertEqual(found, expected)
+                    self.assertEqual(
+                        MARKDOWN._table_diagnostics(relative, profile, text, status),
+                        [],
+                    )
+        self.assertEqual(
+            sorted(retained),
+            [
+                "SPEC-0161",
+                "SPEC-0161-PLAN-0001",
+                "SPEC-0221",
+                "SPEC-0221-PLAN-0001",
+            ],
+        )
+
+    def test_the_core_tables_sit_beside_the_local_tables_their_readers_use(
+        self,
+    ) -> None:
+        profiles = typed_profiles(load_raw())
+        spec = spec_form_body().replace(
+            "### Verification Strategy\n\nThe Verification Strategy of the change.",
+            "### Verification Strategy\n\nThe Verification Strategy of the change.\n\n"
+            + form_table(CORE_CHECK_COLUMNS),
+        )
+        plan = (
+            plan_form_body()
+            .replace(
+                form_table(PLAN_FORM_TABLE_KEYS["Work Breakdown"][1]),
+                form_table(PLAN_FORM_TABLE_KEYS["Work Breakdown"][1])
+                + "\n\n"
+                + form_table(CORE_WORK_UNIT_COLUMNS),
+            )
+            .replace(
+                "### Selected Checks\n\nThe Selected Checks of the work.",
+                "### Selected Checks\n\nThe Selected Checks of the work.\n\n"
+                + form_table(CORE_CHECK_COLUMNS),
+            )
+        )
+        for path, profile_id, text in (
+            (SPEC_PATH, "sdlc/spec", spec),
+            (PLAN_PATH, "sdlc/plan", plan),
+        ):
+            with self.subTest(profile=profile_id):
+                profile = profiles[profile_id]
+                self.assertEqual(MARKDOWN._table_diagnostics(path, profile, text), [])
+                rows = LINKS._body_contract_rows(text, profile)
+                self.assertTrue(rows)
+                self.assertEqual(
+                    tuple(rows[0]), tuple(profile.body_contract.required_columns)
+                )
+                wrong = text.replace(
+                    "| Check ID | Guarantee |", "| Check ID | Promise |"
+                )
+                self.assertEqual(
+                    [
+                        d.rule_id
+                        for d in MARKDOWN._table_diagnostics(path, profile, wrong)
+                    ],
+                    ["BODY-TABLE-COLUMNS"],
+                )
+        relabeled = plan.replace("| Depends On |", "| Dependencies |", 1)
+        self.assertNotIn("Work Unit | Outcome | Depends On", relabeled)
+        self.assertEqual(
+            [
+                d.rule_id
+                for d in MARKDOWN._table_diagnostics(
+                    PLAN_PATH, profiles["sdlc/plan"], relabeled
+                )
+            ],
+            ["BODY-TABLE-COLUMNS"],
+        )
 
 
 if __name__ == "__main__":

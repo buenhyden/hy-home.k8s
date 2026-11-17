@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.40.1"
+version: "0.41.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 # 99.templates
 
@@ -197,6 +197,19 @@ form 경로의 대응은 Registry만 소유한다.
   `Work Breakdown` 표는 Work Breakdown > Work Units 아래에, 승격 표
   (`Promotion ID`, `Target Owner`, `Acceptance`, `Evidence`)는 Promotion Map의
   Durable Owners 아래에 둔다.
+  SPEC-0222에 따라 이 네 form은 core `requirement`, `architecture`, `spec`,
+  `plan` 역할에 묶인다. 기능·품질 요구사항 표는 core `requirement.requirements`
+  표(`Requirement ID`, `Statement`, `Rationale`, `Acceptance`, `Priority`)의
+  인스턴스이고 `Priority`는 `must`, `should`, `could` 중 하나다
+  (`BODY-TABLE-VALUE`). `Quality Requirements` H3는 항상 두며, core
+  `requirement.quality` 표는 정의만 두고 렌더링하지 않는다. 외부 인터페이스를 밝힌
+  architecture description은 Structure > Interfaces에 core
+  `architecture.interface` 표를 둔다. Spec은 Verification Strategy 아래에 core
+  `spec.checks` 표를, Plan은 Work Units의 `Work Breakdown` 표 뒤에 core
+  `plan.work_units` 표를, Selected Checks 아래에 core `plan.checks` 표를 둔다.
+  기존 `Criteria`, `Work Breakdown`, 승격 표, `Lifecycle Traceability`,
+  `Constraints`, `Quality Scenarios` 표는 `authority_ref: ADR-0059`인 독자 지역
+  표로 남는다.
   ADR-0001부터 ADR-0061까지의 accepted ADR은 승인된 일곱 H2를 등록된
   retained form으로 유지하며(W03-D02, W03-D52, W03-D69), 그 범위 뒤의 ADR은
   accepted를 포함한 모든 상태에서 공통 form을 쓴다.

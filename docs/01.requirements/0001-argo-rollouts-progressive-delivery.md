@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts Progressive Delivery Requirement Package"
-version: "3.0.2"
+version: "3.0.3"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "REQ-0001"
 ---
 
@@ -80,12 +80,16 @@ This update does not claim to have observed runtime state or received live notif
 
 | Requirement ID | Statement | Rationale | Acceptance | Priority |
 | --- | --- | --- | --- | --- |
-| REQ-0001-FR-0001 | The platform must provide progressive delivery within the standard GitOps flow. The ADR/Spec owns the implementing product and chart/version. | Serves the GitOps-owned install boundary of the shared controller and dashboard (AD-0004 Lifecycle Traceability). | Acceptance criterion 01: the controller is available and reconciled from Git. | Must |
-| REQ-0001-FR-0002 | The Rollouts Dashboard UI must be exposed on the approved local TLS path. | Serves the Dashboard TLS boundary through the Traefik ingress controller (ADR-0050) and cert-manager (AD-0004 Lifecycle Traceability). | Acceptance criterion 02: HTTPS access to the Dashboard path succeeds. | Must |
-| REQ-0001-FR-0003 | Controller metrics must be collectable so operators can observe rollout state and failure signals. | Serves the external Prometheus observability boundary of controller metrics (AD-0004 Lifecycle Traceability). | Static validation shows the metrics exposure and scrape contract. | Must |
-| REQ-0001-IF-0001 | The platform must be able to track the sync and health state of progressive deliveries in the GitOps state model. The downstream Spec owns the concrete resources and permissions. | Serves the AppProject allow-list and ArgoCD health tracking boundary (AD-0004 Lifecycle Traceability). | Acceptance criterion 03: ArgoCD reports the `Rollout` health. | Must |
-| REQ-0001-IF-0002 | The default promotion policy must not force automatic promotion, and a per-application deployment must be able to abort/rollback automatically on failure through an approved safety check. | Serves a default that imposes no promotion mode, and failure safety through an approved AnalysisTemplate (AD-0004 Lifecycle Traceability). | The platform imposes no promotion mode, and a failing safety check aborts the reference Rollout and returns traffic to the stable version. | Must |
-| REQ-0001-IF-0003 | Access to the approved Dashboard local path must be provided through the standard local route. | Serves the route boundary between the k8s router and the cluster ingress (AD-0004 Lifecycle Traceability). | The shared local entry point forwards its Rollouts path to the Dashboard host, distinct from the direct TLS access of FR-0002. | Must |
+| REQ-0001-FR-0001 | The platform must provide progressive delivery within the standard GitOps flow. The ADR/Spec owns the implementing product and chart/version. | Serves the GitOps-owned install boundary of the shared controller and dashboard (AD-0004 Lifecycle Traceability). | Acceptance criterion 01: the controller is available and reconciled from Git. | must |
+| REQ-0001-FR-0002 | The Rollouts Dashboard UI must be exposed on the approved local TLS path. | Serves the Dashboard TLS boundary through the Traefik ingress controller (ADR-0050) and cert-manager (AD-0004 Lifecycle Traceability). | Acceptance criterion 02: HTTPS access to the Dashboard path succeeds. | must |
+| REQ-0001-FR-0003 | Controller metrics must be collectable so operators can observe rollout state and failure signals. | Serves the external Prometheus observability boundary of controller metrics (AD-0004 Lifecycle Traceability). | Static validation shows the metrics exposure and scrape contract. | must |
+| REQ-0001-IF-0001 | The platform must be able to track the sync and health state of progressive deliveries in the GitOps state model. The downstream Spec owns the concrete resources and permissions. | Serves the AppProject allow-list and ArgoCD health tracking boundary (AD-0004 Lifecycle Traceability). | Acceptance criterion 03: ArgoCD reports the `Rollout` health. | must |
+| REQ-0001-IF-0002 | The default promotion policy must not force automatic promotion, and a per-application deployment must be able to abort/rollback automatically on failure through an approved safety check. | Serves a default that imposes no promotion mode, and failure safety through an approved AnalysisTemplate (AD-0004 Lifecycle Traceability). | The platform imposes no promotion mode, and a failing safety check aborts the reference Rollout and returns traffic to the stable version. | must |
+| REQ-0001-IF-0003 | Access to the approved Dashboard local path must be provided through the standard local route. | Serves the route boundary between the k8s router and the cluster ingress (AD-0004 Lifecycle Traceability). | The shared local entry point forwards its Rollouts path to the Dashboard host, distinct from the direct TLS access of FR-0002. | must |
+
+### Quality Requirements
+
+This package declares no quality requirement member; every member above is a functional or interface requirement.
 
 ## Traceability
 

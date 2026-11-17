@@ -884,6 +884,30 @@ def _table_diagnostics(
                         json.dumps(header, ensure_ascii=False),
                     )
                 )
+            elif table.table_id and profile.mode != "template":
+                # SPEC-0222: a core enum cell takes one of the core's values. A row
+                # with no visible cell is a template's author-prompt row, which the
+                # author-prompt check owns.
+                for row in data:
+                    if not any(cell.strip() for cell in row):
+                        continue
+                    for column, cell in zip(table.columns, row, strict=False):
+                        if column.allowed_values is not None and cell.strip() not in {
+                            str(value).lower() if isinstance(value, bool) else value
+                            for value in column.allowed_values
+                        }:
+                            found.append(
+                                _diagnostic(
+                                    "BODY-TABLE-VALUE",
+                                    path,
+                                    profile,
+                                    f"{table.name} {column.key}: one of "
+                                    + json.dumps(
+                                        list(column.allowed_values), ensure_ascii=False
+                                    ),
+                                    cell.strip(),
+                                )
+                            )
         if profile.mode == "template" and table.minimum_rows and not present:
             found.append(
                 _diagnostic(
@@ -910,7 +934,12 @@ def _table_diagnostics(
 def _requirement_quality_diagnostics(
     path: PurePosixPath, profile: DocumentProfile, body: str
 ) -> list[Diagnostic]:
-    """Keep requirement kinds in their own tables and resolve declared NFRs."""
+    """Keep requirement kinds in their own tables and resolve declared NFRs.
+
+    SPEC-0222: both requirement H3 hold an instance of the core
+    requirement.requirements table; Functional Requirements keeps at least one
+    member.
+    """
 
     package = _requirement_package_number(path)
     if package is None or profile.form is None:
@@ -919,19 +948,28 @@ def _requirement_quality_diagnostics(
     functional = "requirement.requirements.1"
     quality = "requirement.requirements.2"
     trace = "requirement-lifecycle-traceability"
-    members = {section: set() for section in (functional, quality, trace)}
-    for table in profile.tables:
-        if table.section not in members:
-            continue
-        heading = _form_heading(profile.form, table.section)
-        if heading is None:
+    core, local = (
+        next((t.row_identity for t in profile.tables if match(t)), None)
+        for match in (
+            lambda t: t.table_id == "requirement.requirements",
+            lambda t: t.section == trace,
+        )
+    )
+    identity = {functional: core, quality: core, trace: local}
+    members = {section: set() for section in identity}
+    functional_rows = 0
+    for section_id, row_identity in identity.items():
+        heading = _form_heading(profile.form, section_id)
+        if heading is None or row_identity is None:
             continue
         level, title = heading
         section = _exact_heading_section(body, "#" * level + " " + title)
         for header, rows in _visible_tables(section or ""):
-            if header[0] != table.row_identity:
+            if header[0] != row_identity:
                 continue
-            members[table.section].update(
+            if section_id == functional:
+                functional_rows += len(rows)
+            members[section_id].update(
                 value
                 for row in rows
                 if row and requirement.fullmatch(value := _identifier_text(row[0]))
@@ -941,7 +979,20 @@ def _requirement_quality_diagnostics(
         value for value in members[trace] if "-NFR-" in value
     }
     misplaced_quality = {value for value in members[quality] if "-NFR-" not in value}
-    return [
+    empty = (
+        [
+            _diagnostic(
+                "BODY-TABLE-ROWS",
+                path,
+                profile,
+                "Functional Requirements: at least 1 data row",
+                "0 rows",
+            )
+        ]
+        if not functional_rows
+        else []
+    )
+    return empty + [
         _diagnostic(rule, path, profile, expected, ", ".join(sorted(values)))
         for rule, expected, values in (
             (

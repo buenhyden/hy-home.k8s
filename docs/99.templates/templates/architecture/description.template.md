@@ -43,6 +43,11 @@ artifact_id: "{{ARTIFACT_ID}}"
 ### Interfaces
 
 <!-- Author prompt: state data ownership, flow, retention, integrity constraints and the contracts between components. -->
+<!-- Author prompt: keep the External Interfaces table below only when this description states an external interface; give each boundary one row with its producer, consumer, contract reference and failure handling as this description states them, and keep only the header while a stated fact is missing. Delete the table when the description states no external interface. -->
+
+| Interface | Producer | Consumer | Contract | Failure |
+| --- | --- | --- | --- | --- |
+| <!-- Author prompt: Name one boundary. --> | <!-- Author prompt: Name the producer. --> | <!-- Author prompt: Name the consumer. --> | <!-- Author prompt: Link the contract. --> | <!-- Author prompt: State how a failure is handled. --> |
 
 ## Runtime Behavior
 

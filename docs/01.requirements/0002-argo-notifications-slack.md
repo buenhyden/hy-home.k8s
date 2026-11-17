@@ -1,10 +1,10 @@
 ---
 title: "Argo Notifications Slack Requirement Package"
-version: "3.0.2"
+version: "3.0.3"
 type: "sdlc/requirement"
 status: "approved"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 artifact_id: "REQ-0002"
 ---
 
@@ -79,17 +79,17 @@ This update adds no runtime observation.
 
 | Requirement ID | Statement | Rationale | Acceptance | Priority |
 | --- | --- | --- | --- | --- |
-| REQ-0002-FR-0001 | The platform must deliver GitOps events to the operators' Slack channel. The downstream Spec owns the controller and the concrete settings. | Serves the ownership boundary of the Notifications controller inside the ArgoCD release (AD-0005 Lifecycle Traceability). | Acceptance criteria 01, 03 and 04. | Must |
-| REQ-0002-FR-0002 | Slack credential material must be consumed only through an approved external secret source and a bounded sync boundary, and must not appear in plaintext in the Requirement Package, manifests, or logs. | Serves the one-way OpenBao → ESO → Kubernetes Secret credential boundary (AD-0005 Lifecycle Traceability). | Acceptance criterion 02, and secret scanning finds no token in Git. | Must |
-| REQ-0002-FR-0003 | Notification templates and triggers must express deployment completion, health degradation, sync failure, Rollouts completion, and Rollouts abort events. | Serves the separation between ArgoCD application notifications and the Rollouts controller's notification engine (AD-0005 Lifecycle Traceability). | Both event owners declare their respective templates and triggers. Acceptance criterion 05 requires an observed abort notification. | Must |
-| REQ-0002-IF-0001 | An application team must be able to subscribe per app to an additional Slack channel for deployment completion notifications. The AD/Spec owns the native annotation syntax. | Serves the optional annotation-based per-app opt-in boundary (the implemented default is the shared `subscriptions` block) (AD-0005 Lifecycle Traceability). | A per-app subscription can be declared without changing the platform default. | Must |
-| REQ-0002-IF-0002 | Notification credential bootstrap must be performed only as a human-approved external task. | Serves the approval boundary that separates Slack/OpenBao bootstrap from repository changes (AD-0005 Lifecycle Traceability). | No repository change or agent action writes the credential to the secret backend. | Must |
+| REQ-0002-FR-0001 | The platform must deliver GitOps events to the operators' Slack channel. The downstream Spec owns the controller and the concrete settings. | Serves the ownership boundary of the Notifications controller inside the ArgoCD release (AD-0005 Lifecycle Traceability). | Acceptance criteria 01, 03 and 04. | must |
+| REQ-0002-FR-0002 | Slack credential material must be consumed only through an approved external secret source and a bounded sync boundary, and must not appear in plaintext in the Requirement Package, manifests, or logs. | Serves the one-way OpenBao → ESO → Kubernetes Secret credential boundary (AD-0005 Lifecycle Traceability). | Acceptance criterion 02, and secret scanning finds no token in Git. | must |
+| REQ-0002-FR-0003 | Notification templates and triggers must express deployment completion, health degradation, sync failure, Rollouts completion, and Rollouts abort events. | Serves the separation between ArgoCD application notifications and the Rollouts controller's notification engine (AD-0005 Lifecycle Traceability). | Both event owners declare their respective templates and triggers. Acceptance criterion 05 requires an observed abort notification. | must |
+| REQ-0002-IF-0001 | An application team must be able to subscribe per app to an additional Slack channel for deployment completion notifications. The AD/Spec owns the native annotation syntax. | Serves the optional annotation-based per-app opt-in boundary (the implemented default is the shared `subscriptions` block) (AD-0005 Lifecycle Traceability). | A per-app subscription can be declared without changing the platform default. | must |
+| REQ-0002-IF-0002 | Notification credential bootstrap must be performed only as a human-approved external task. | Serves the approval boundary that separates Slack/OpenBao bootstrap from repository changes (AD-0005 Lifecycle Traceability). | No repository change or agent action writes the credential to the secret backend. | must |
 
 ### Quality Requirements
 
 | Requirement ID | Statement | Rationale | Acceptance | Priority |
 | --- | --- | --- | --- | --- |
-| REQ-0002-NFR-0001 | The common default notification policy must apply health degradation and sync failure to every app. Deployment completion may be part of the same default. The presence of the current settings does not prove an all-app subscription or actual receipt. | Serves the shared-channel default subscription boundary for common health/sync failures and deployments (AD-0005 Lifecycle Traceability). | The default subscription names both triggers; receipt is proven by acceptance criteria 03 and 04. | Must |
+| REQ-0002-NFR-0001 | The common default notification policy must apply health degradation and sync failure to every app. Deployment completion may be part of the same default. The presence of the current settings does not prove an all-app subscription or actual receipt. | Serves the shared-channel default subscription boundary for common health/sync failures and deployments (AD-0005 Lifecycle Traceability). | The default subscription names both triggers; receipt is proven by acceptance criteria 03 and 04. | must |
 
 ## Traceability
 
