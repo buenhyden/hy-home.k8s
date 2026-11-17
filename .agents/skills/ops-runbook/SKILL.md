@@ -3,11 +3,11 @@ name: "ops-runbook"
 description: "Use when authoring or reviewing operations runbooks for bootstrap, recovery, deployment, backup, and incident procedures in hy-home.k8s."
 metadata:
   title: "Ops Runbook"
-  version: "1.1.3"
+  version: "1.1.4"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-15"
+  updated: "2026-11-17"
 disable-model-invocation: true
 ---
 
@@ -60,8 +60,9 @@ use without requiring cluster access delegation.
    under Escalation.
 6. Link the relevant Argo CD apps, OpenBao paths, or
    ExternalSecret/ClusterSecretStore (`vault-backend`) resources inline by type:
-   normative links in Preconditions > Authority and Access, evidence links in
-   Validation > Evidence, and navigation links in Purpose > Scope.
+   normative links in Preflight > Authority, evidence links in
+   Verification > Unverified Conditions, and navigation links in Trigger and
+   Scope > Targets.
 7. An authorized author saves the file at the resolved runbook profile path.
 8. Update `docs/05.operations/runbooks/README.md` to include the new runbook link.
 

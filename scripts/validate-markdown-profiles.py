@@ -1964,10 +1964,19 @@ def _frontmatter_body(
                         repr(data.get("resolved_at")),
                     )
                 )
-            # SPEC-0171: the Incident form holds resolution evidence in its
-            # unique Recovery Verification H3 (its Resolution parent is
-            # enforced by BODY-H3-PARENT in the tree check, not here).
-            recovery = _exact_heading_section(body, "### Recovery Verification")
+            # SPEC-0171, SPEC-0221: the Incident form holds resolution evidence
+            # in its unique Resolution > Verified State H3, named by section id
+            # (its Resolution parent is enforced by BODY-H3-PARENT, not here).
+            located = (
+                _form_heading(profile.form, "incident.resolution.1")
+                if profile.form is not None
+                else None
+            )
+            recovery = (
+                _exact_heading_section(body, "#" * located[0] + " " + located[1])
+                if located is not None
+                else None
+            )
             if (
                 not recovery
                 or not recovery.strip()
@@ -1978,7 +1987,7 @@ def _frontmatter_body(
                         "INCIDENT-RESOLUTION-EVIDENCE",
                         path,
                         profile,
-                        "concrete Recovery Verification resolution evidence",
+                        "concrete Verified State resolution evidence",
                         "missing resolution evidence",
                     )
                 )

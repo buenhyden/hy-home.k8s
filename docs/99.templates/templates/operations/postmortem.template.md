@@ -10,21 +10,29 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 # Postmortem: [Incident Title]
 
-## Summary
+## Facts
 
-### Incident Reference
+### Timeline
 
 <!-- Author prompt: 대상 incident의 사실 기록을 실제 참조로 링크한다. -->
 
-### Review Scope
+#### Review Scope
 
 <!-- Author prompt: 얻은 교훈과 회고 범위를 요약한다. -->
 
-## Root Cause
+### Impact
 
-### Causal Analysis
+<!-- Author prompt: 확인된 영향만 적는다. -->
 
-<!-- Author prompt: 증거를 바탕으로 분석해 근본 원인과 증상을 구분한다. -->
+#### Detection and Response
+
+<!-- Author prompt: incident를 어떻게 탐지했는지, 어떤 대응 결정이 완화를 돕거나 늦췄는지 설명하고 Incident 타임라인의 증거를 인용한다. -->
+
+### What Went Well
+
+<!-- Author prompt: 선택 항목이다. 영향을 줄인 통제나 대응 행동이 있을 때만 밝히고, 없으면 이 절을 지운다. -->
+
+## Causes
 
 ### Contributing Factors
 
@@ -34,23 +42,17 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 <!-- Author prompt: 틀린 가정과 제대로 작동하지 않은 통제, 탐지, 협업을 밝힌다. -->
 
-## Impact
+#### Causal Analysis
 
-### Observed Impact
+<!-- Author prompt: 증거를 바탕으로 분석해 근본 원인과 증상을 구분한다. -->
 
-<!-- Author prompt: 확인된 영향만 적는다. -->
+### Uncertainty
 
-### Detection and Response
+<!-- Author prompt: 아직 확인되지 않은 원인·가정·증거와 그것을 확정할 증거를 적는다. -->
 
-<!-- Author prompt: incident를 어떻게 탐지했는지, 어떤 대응 결정이 완화를 돕거나 늦췄는지 설명하고 Incident 타임라인의 증거를 인용한다. -->
+## Actions
 
-### What Went Well
-
-<!-- Author prompt: 선택 항목이다. 영향을 줄인 통제나 대응 행동이 있을 때만 밝히고, 없으면 이 절을 지운다. -->
-
-## Corrective Actions
-
-### Actions
+### Prevention
 
 <!-- Author prompt: 재발 방지 조치마다 owner, 기한 상태, Task, 증거를 지정하고, 교훈을 요구사항, 결정, Spec, 가이드, 정책 가운데 알맞은 곳으로 보낸다. -->
 
@@ -60,9 +62,17 @@ artifact_id: "{{ARTIFACT_ID}}"
 | --- | --- | --- |
 | Name one corrective action. | Name the owner. | Describe how completion is verified. |
 
-### Verification
+### Owners and Checks
 
 <!-- Author prompt: 조치가 재발을 어떻게 막는지와 종료를 어떻게 검증할지 정하고, 조치 owner, 기한 날짜 또는 상태, 완료 증거, 남은 위험을 나열한다. -->
+
+#### Source Records
+
+<!-- Author prompt: incident 기록, 로그, 결정을 실제 참조로 링크한다. -->
+
+#### Review Decision
+
+<!-- Author prompt: 종료 승인자와 검토·게시 결정, 미결 사항을 적는다. -->
 
 ### Lifecycle Traceability
 
@@ -71,13 +81,3 @@ artifact_id: "{{ARTIFACT_ID}}"
 | Root cause or action | Owner and due state | Follow-up Task | Feedback target |
 | --- | --- | --- | --- |
 | Evidence-backed cause or prevention action | owner / due date / state | Task owner | Requirement, ADR, Spec, Guide, or Policy owner |
-
-## Evidence
-
-### Source Records
-
-<!-- Author prompt: incident 기록, 로그, 결정을 실제 참조로 링크한다. -->
-
-### Review Decision
-
-<!-- Author prompt: 종료 승인자와 검토·게시 결정, 미결 사항을 적는다. -->

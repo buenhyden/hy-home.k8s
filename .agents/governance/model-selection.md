@@ -1,37 +1,20 @@
 ---
 title: "Model Selection Policy"
-version: "1.8.0"
+version: "1.9.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-17"
 ---
 
 # Model Selection Policy
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
 Use capability appropriate to the task without turning model age, role names,
 or static configuration into claims of observed fitness.
-
-### Authority
-
-The [agent registry](../roles/registry.json) owns each role's
-capability-tier reference and neutral permission class. This policy defines
-the tier meanings and escalation boundary. The native binding tables at
-`.claude/bindings.json` and `.codex/bindings.json` own their respective
-configured model, reasoning and permission values. Role projections consume
-those tables under the neutral class ceiling; neither table nor projection
-proves availability, entitlement, resolution or execution.
-
-- [Agent Registry](../roles/registry.json)
-- [Codex Provider](../../.codex/provider.md)
-- [Claude Provider](../../.claude/provider.md)
-- [Quality Policy](quality.md)
-
-## Scope
 
 ### Applies To
 
@@ -39,7 +22,7 @@ Capability, permissions, and responsibility are independent. Escalating a
 bounded task to a stronger permitted model does not grant new tools, writes,
 delegation, or approval, and does not change the role's registry membership.
 
-### Exclusions
+#### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
@@ -115,29 +98,48 @@ unverified, not an invented task-wide stop or a claim of native enforcement.
 - `MODEL-R007` Do not maintain dated per-model fitness snapshots, branch pins, or copied
   role censuses as current policy. Evidence belongs to its dated owner.
 
-### Enforcement
+### Exceptions
+
+Exception and escalation conditions are stated under Requirements.
+
+#### Approval and Review
+
+This policy defines no exception approval or review step of its own; the approval and safety policy's operator approval route applies. If it needs its own, state it here.
+
+## Enforcement
+
+### Mechanisms
 
 Validate registry tier references, native binding tables, neutral permission
 ceilings and provider projections after changes.
 Assess model behavior with authorized, secret-free task evidence before
 claiming improved fitness.
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-Exception and escalation conditions are stated under Requirements.
-
-### Approval and Review
-
-This policy defines no exception approval or review step of its own; the approval and safety policy's operator approval route applies. If it needs its own, state it here.
+The enforcement checks cover registry tier references, native binding tables, permission ceilings and provider projections. Escalating a bounded task to a stronger permitted model does not grant new tools, writes, delegation or approval, and improved model fitness is not claimed without authorized, secret-free task evidence.
 
 ## Ownership
 
-### Responsibilities
+### Owner
+
+The [agent registry](../roles/registry.json) owns each role's
+capability-tier reference and neutral permission class. This policy defines
+the tier meanings and escalation boundary. The native binding tables at
+`.claude/bindings.json` and `.codex/bindings.json` own their respective
+configured model, reasoning and permission values. Role projections consume
+those tables under the neutral class ceiling; neither table nor projection
+proves availability, entitlement, resolution or execution.
+
+- [Agent Registry](../roles/registry.json)
+- [Codex Provider](../../.codex/provider.md)
+- [Claude Provider](../../.claude/provider.md)
+- [Quality Policy](quality.md)
+
+#### Responsibilities
 
 Responsibilities are stated under Authority and Requirements.
 
-### Change and Adoption
+### Review Triggers
 
 Change and adoption conditions are stated under Enforcement.

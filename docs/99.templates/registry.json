@@ -608,7 +608,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Verification",
+          "section": "Troubleshooting",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -760,7 +760,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Validation",
+          "section": "Verification",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -835,7 +835,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Evidence",
+          "section": "Resolution",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "detected",
@@ -904,7 +904,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Corrective Actions",
+          "section": "Actions",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4927,7 +4927,7 @@
           "operation/guide"
         ],
         "body_contract": {
-          "section": "Verification",
+          "section": "Troubleshooting",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4997,14 +4997,14 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0169 meaning map moves each GDE-0010 sentence into its Purpose, Prerequisites, Procedure or Verification section without changing meaning; recover the map from the SPEC-0169 recovery proof in the REQ-0003 Archived Lineage.",
-          "retained_history": "Git history retains the previous six-section guide layout and its template.",
-          "rollback": "Revert the SPEC-0169 implementation commit."
+          "meaning_map": "The SPEC-0221 heading map moves each sentence of the template and of every current document of this role into the 4.0.0 design target without changing it: Purpose gets a new Audience H3 and keeps Outcome with Boundaries as its H4; Permissions becomes Authority; Actions becomes Procedure > Steps and Expected Result becomes Procedure > Expected Results; Troubleshooting becomes Troubleshooting > Symptoms and Exceptions becomes Next Action; Lifecycle Traceability stays a local H3, now under Troubleshooting.",
+          "retained_history": "Git history retains the previous layout of this role and its template.",
+          "rollback": "Revert the SPEC-0221 WORK-003 commit."
         },
         "tables": [
           {
             "name": "Steps",
-            "section": "guide-procedure-actions",
+            "section": "guide.steps.1",
             "columns": [
               {
                 "key": "Step",
@@ -5100,7 +5100,7 @@
           "operation/incident"
         ],
         "body_contract": {
-          "section": "Evidence",
+          "section": "Resolution",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "detected",
@@ -5177,14 +5177,14 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0171 incident template map moves each of the ten former H2 sections into the Summary, Impact, Timeline, Resolution or Evidence section without changing meaning; recover the map from the SPEC-0171 recovery proof in the REQ-0003 Archived Lineage.",
-          "retained_history": "Git history retains the previous ten-section incident template; no incident document exists.",
-          "rollback": "Revert the SPEC-0171 implementation commit."
+          "meaning_map": "The SPEC-0221 heading map moves each sentence of the template and of every current document of this role into the 4.0.0 design target without changing it: Summary leaves: Event and Current Status become H4 under Impact > Observed Scope, the former Severity and Duration; Events becomes Response > Timeline with Decisions as its H4, Mitigation becomes Response > Actions, Recovery Verification becomes Resolution > Verified State, and Follow-up Owners becomes Remaining Work with Evidence Sources as its H4; Lifecycle Traceability stays a local H3, now under Resolution.",
+          "retained_history": "Git history retains the previous layout of this role and its template.",
+          "rollback": "Revert the SPEC-0221 WORK-003 commit."
         },
         "tables": [
           {
             "name": "Events",
-            "section": "incident-timeline-events",
+            "section": "incident.response.1",
             "columns": [
               {
                 "key": "Timestamp",
@@ -5366,14 +5366,14 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0175 meaning map moves each sentence of the former six-section operations policy layout into its Purpose, Scope, Rules, Exceptions or Ownership section without changing meaning; recover the map from the SPEC-0175 recovery proof in the REQ-0003 Archived Lineage.",
-          "retained_history": "Git history retains the previous six-section operations policy layout and its template.",
-          "rollback": "Revert the SPEC-0175 implementation commit."
+          "meaning_map": "The SPEC-0221 heading map moves each sentence of the template and of every current document of this role into the 4.0.0 design target without changing it: Purpose and Scope takes Objective and Applies To with Exclusions as its H4; Rules takes Requirements and Exceptions with Approval and Review as its H4; Enforcement takes Mechanisms (the former Enforcement H3) and a new Limits written from each policy's own text; Ownership takes Owner (the former Authority, with Responsibilities as its H4) and Review Triggers (the former Change and Adoption); Lifecycle Traceability stays a local H3 under Ownership.",
+          "retained_history": "Git history retains the previous layout of this role and its template.",
+          "rollback": "Revert the SPEC-0221 WORK-003 commit."
         },
         "tables": [
           {
             "name": "Rules",
-            "section": "policy-rules-requirements",
+            "section": "policy.rules.1",
             "columns": [
               {
                 "key": "Rule ID",
@@ -5478,7 +5478,7 @@
           "operation/postmortem"
         ],
         "body_contract": {
-          "section": "Corrective Actions",
+          "section": "Actions",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -5554,14 +5554,14 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0171 postmortem template map moves each of the twelve former H2 sections into the Summary, Root Cause, Impact, Corrective Actions or Evidence section without changing meaning; recover the map from the SPEC-0171 recovery proof in the REQ-0003 Archived Lineage.",
-          "retained_history": "Git history retains the previous twelve-section postmortem template; no postmortem document exists.",
-          "rollback": "Revert the SPEC-0171 implementation commit."
+          "meaning_map": "The SPEC-0221 heading map moves each sentence of the template and of every current document of this role into the 4.0.0 design target without changing it: Incident Reference becomes Facts > Timeline with Review Scope as its H4, Observed Impact becomes Facts > Impact with Detection and Response as its H4, Contributing Factors keeps its title under Causes with Causal Analysis as its H4, Uncertainty is new, Actions becomes Actions > Prevention and Verification becomes Owners and Checks with Source Records and Review Decision as its H4; Lifecycle Traceability stays a local H3, now under Actions.",
+          "retained_history": "Git history retains the previous layout of this role and its template.",
+          "rollback": "Revert the SPEC-0221 WORK-003 commit."
         },
         "tables": [
           {
             "name": "Actions",
-            "section": "postmortem-corrective-actions-actions",
+            "section": "postmortem.actions.1",
             "columns": [
               {
                 "key": "Action",
@@ -5663,7 +5663,7 @@
           "operation/runbook"
         ],
         "body_contract": {
-          "section": "Validation",
+          "section": "Verification",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -5747,14 +5747,14 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0170 meaning map moves each runbook sentence into its Purpose, Preconditions, Steps, Validation or Recovery section without changing meaning; recover the map from the SPEC-0170 recovery proof in the REQ-0003 Archived Lineage.",
-          "retained_history": "Git history retains the previous six-section runbook layout, its four-column step table and its template.",
-          "rollback": "Revert the SPEC-0170 implementation commit."
+          "meaning_map": "The SPEC-0221 heading map moves each sentence of the template and of every current document of this role into the 4.0.0 design target without changing it: Purpose becomes Trigger and Scope (Trigger, Targets), Preconditions becomes Preflight (Authority, Environment), Steps becomes Procedure (Steps, Stop Conditions), Validation becomes Verification (Expected Results, Unverified Conditions) and Recovery becomes Escalation (Next Owner, Recovery or Forward Repair, the latter still conditional on a state change); Lifecycle Traceability stays a local H3 under Verification and Recovery Procedures under Escalation.",
+          "retained_history": "Git history retains the previous layout of this role and its template.",
+          "rollback": "Revert the SPEC-0221 WORK-003 commit."
         },
         "tables": [
           {
             "name": "Triggers",
-            "section": "runbook-steps-actions",
+            "section": "runbook.procedure.1",
             "columns": [
               {
                 "key": "Trigger",
@@ -7180,14 +7180,14 @@
           ]
         },
         "migration": {
-          "meaning_map": "The SPEC-0175 meaning map moves each sentence of the former six-section governance rule layout into its Purpose, Scope, Rules, Exceptions or Ownership section without changing meaning; recover the map from the SPEC-0175 recovery proof in the REQ-0003 Archived Lineage.",
-          "retained_history": "Git history retains the previous six-section governance rule layout and its template.",
-          "rollback": "Revert the SPEC-0175 implementation commit."
+          "meaning_map": "The SPEC-0221 heading map moves each sentence of the template and of every current document of this role into the 4.0.0 design target without changing it: Purpose and Scope takes Objective and Applies To with Exclusions as its H4; Rules takes Requirements and Exceptions with Approval and Review as its H4; Enforcement takes Mechanisms (the former Enforcement H3) and a new Limits written from each policy's own text; Ownership takes Owner (the former Authority, with Responsibilities as its H4) and Review Triggers (the former Change and Adoption); Lifecycle Traceability stays a local H3 under Ownership.",
+          "retained_history": "Git history retains the previous layout of this role and its template.",
+          "rollback": "Revert the SPEC-0221 WORK-003 commit."
         },
         "tables": [
           {
             "name": "Rules",
-            "section": "policy-rules-requirements",
+            "section": "policy.rules.1",
             "columns": [
               {
                 "key": "Rule ID",
@@ -8943,7 +8943,7 @@
         "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
         "sections": [
           {
-            "section_id": "guide-purpose",
+            "section_id": "guide.purpose",
             "level": 2,
             "parent_id": null,
             "title": "Purpose",
@@ -8963,43 +8963,42 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "guide-purpose-outcome",
+                "section_id": "guide.purpose.1",
                 "level": 3,
-                "parent_id": "guide-purpose",
-                "title": "Outcome",
+                "parent_id": "guide.purpose",
+                "title": "Audience",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "작업 결과와 독자",
+                "content": "가이드의 대상 독자",
                 "required_content": [
-                  "작업 결과와 독자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "가이드의 대상 독자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
                 ],
                 "empty_policy": "explain_none_or_not_applicable",
                 "validation_ids": [
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "guide-purpose-boundaries",
+                "section_id": "guide.purpose.2",
                 "level": 3,
-                "parent_id": "guide-purpose",
-                "title": "Boundaries",
+                "parent_id": "guide.purpose",
+                "title": "Outcome",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "범위·비목표",
+                "content": "작업 결과와 범위·비목표",
                 "required_content": [
-                  "범위·비목표을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "작업 결과와 범위·비목표을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
@@ -9010,13 +9009,14 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "guide-prerequisites",
+            "section_id": "guide.prerequisites",
             "level": 2,
             "parent_id": null,
             "title": "Prerequisites",
@@ -9036,12 +9036,11 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "guide-prerequisites-environment",
+                "section_id": "guide.prerequisites.1",
                 "level": 3,
-                "parent_id": "guide-prerequisites",
+                "parent_id": "guide.prerequisites",
                 "title": "Environment",
                 "order": 1,
                 "requiredness": "required",
@@ -9059,14 +9058,14 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "guide-prerequisites-permissions",
+                "section_id": "guide.prerequisites.2",
                 "level": 3,
-                "parent_id": "guide-prerequisites",
-                "title": "Permissions",
+                "parent_id": "guide.prerequisites",
+                "title": "Authority",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
@@ -9083,13 +9082,14 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "guide-procedure",
+            "section_id": "guide.steps",
             "level": 2,
             "parent_id": null,
             "title": "Procedure",
@@ -9109,13 +9109,12 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "guide-procedure-actions",
+                "section_id": "guide.steps.1",
                 "level": 3,
-                "parent_id": "guide-procedure",
-                "title": "Actions",
+                "parent_id": "guide.steps",
+                "title": "Steps",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
@@ -9132,14 +9131,87 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "guide-procedure-exceptions",
+                "section_id": "guide.steps.2",
                 "level": 3,
-                "parent_id": "guide-procedure",
-                "title": "Exceptions",
+                "parent_id": "guide.steps",
+                "title": "Expected Results",
+                "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "성공·실패 관측과 확인 방법",
+                "required_content": [
+                  "성공·실패 관측과 확인 방법을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "guide.troubleshoot",
+            "level": 2,
+            "parent_id": null,
+            "title": "Troubleshooting",
+            "order": 4,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "실패 진단과 다음 행동",
+            "required_content": [
+              "실패 진단과 다음 행동에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "guide.troubleshoot.1",
+                "level": 3,
+                "parent_id": "guide.troubleshoot",
+                "title": "Symptoms",
+                "order": 1,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "진단·안전한 복구·담당",
+                "required_content": [
+                  "진단·안전한 복구·담당을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "guide.troubleshoot.2",
+                "level": 3,
+                "parent_id": "guide.troubleshoot",
+                "title": "Next Action",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
@@ -9156,83 +9228,11 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
-          },
-          {
-            "section_id": "guide-verification",
-            "level": 2,
-            "parent_id": null,
-            "title": "Verification",
-            "order": 4,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "작업 결과 확인",
-            "required_content": [
-              "작업 결과 확인에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
-            "prohibited_content": [
-              "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "guide-verification-expected-result",
-                "level": 3,
-                "parent_id": "guide-verification",
-                "title": "Expected Result",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "성공·실패 관측과 확인 방법",
-                "required_content": [
-                  "성공·실패 관측과 확인 방법을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "guide-verification-troubleshooting",
-                "level": 3,
-                "parent_id": "guide-verification",
-                "title": "Troubleshooting",
-                "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "진단·안전한 복구·담당",
-                "required_content": [
-                  "진단·안전한 복구·담당을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "비밀값·존재하지 않는 명령·자동 운영 권한을 포함하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              }
-            ]
+            "link_only": false
           }
         ],
         "extensions": [
@@ -9244,7 +9244,7 @@
             "verification": "the body-contract check",
             "review": "when the Guide form version changes",
             "removal": "when guide lineage has another registered owner",
-            "parent_id": "guide-verification",
+            "parent_id": "guide.troubleshoot",
             "title": "Lifecycle Traceability"
           }
         ]
@@ -9257,16 +9257,16 @@
         "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
         "sections": [
           {
-            "section_id": "runbook-purpose",
+            "section_id": "runbook.trigger",
             "level": 2,
             "parent_id": null,
-            "title": "Purpose",
+            "title": "Trigger and Scope",
             "order": 1,
             "requiredness": "required",
             "condition": "always",
-            "content": "운영 절차의 목적",
+            "content": "운영 절차의 트리거와 범위",
             "required_content": [
-              "운영 절차의 목적에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+              "운영 절차의 트리거와 범위에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
             "prohibited_content": [
               "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
@@ -9277,13 +9277,12 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "runbook-purpose-trigger-and-outcome",
+                "section_id": "runbook.trigger.1",
                 "level": 3,
-                "parent_id": "runbook-purpose",
-                "title": "Trigger and Outcome",
+                "parent_id": "runbook.trigger",
+                "title": "Trigger",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
@@ -9300,14 +9299,14 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "runbook-purpose-scope",
+                "section_id": "runbook.trigger.2",
                 "level": 3,
-                "parent_id": "runbook-purpose",
-                "title": "Scope",
+                "parent_id": "runbook.trigger",
+                "title": "Targets",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
@@ -9324,16 +9323,17 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "runbook-preconditions",
+            "section_id": "runbook.preflight",
             "level": 2,
             "parent_id": null,
-            "title": "Preconditions",
+            "title": "Preflight",
             "order": 2,
             "requiredness": "required",
             "condition": "always",
@@ -9350,13 +9350,12 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "runbook-preconditions-authority-and-access",
+                "section_id": "runbook.preflight.1",
                 "level": 3,
-                "parent_id": "runbook-preconditions",
-                "title": "Authority and Access",
+                "parent_id": "runbook.preflight",
+                "title": "Authority",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
@@ -9373,14 +9372,14 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "runbook-preconditions-safety-checks",
+                "section_id": "runbook.preflight.2",
                 "level": 3,
-                "parent_id": "runbook-preconditions",
-                "title": "Safety Checks",
+                "parent_id": "runbook.preflight",
+                "title": "Environment",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
@@ -9397,16 +9396,17 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "runbook-steps",
+            "section_id": "runbook.procedure",
             "level": 2,
             "parent_id": null,
-            "title": "Steps",
+            "title": "Procedure",
             "order": 3,
             "requiredness": "required",
             "condition": "always",
@@ -9423,13 +9423,12 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "runbook-steps-actions",
+                "section_id": "runbook.procedure.1",
                 "level": 3,
-                "parent_id": "runbook-steps",
-                "title": "Actions",
+                "parent_id": "runbook.procedure",
+                "title": "Steps",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
@@ -9446,13 +9445,13 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "runbook-steps-stop-conditions",
+                "section_id": "runbook.procedure.2",
                 "level": 3,
-                "parent_id": "runbook-steps",
+                "parent_id": "runbook.procedure",
                 "title": "Stop Conditions",
                 "order": 2,
                 "requiredness": "required",
@@ -9470,16 +9469,17 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "runbook-validation",
+            "section_id": "runbook.verification",
             "level": 2,
             "parent_id": null,
-            "title": "Validation",
+            "title": "Verification",
             "order": 4,
             "requiredness": "required",
             "condition": "always",
@@ -9496,13 +9496,12 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "runbook-validation-service-checks",
+                "section_id": "runbook.verification.1",
                 "level": 3,
-                "parent_id": "runbook-validation",
-                "title": "Service Checks",
+                "parent_id": "runbook.verification",
+                "title": "Expected Results",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
@@ -9519,14 +9518,14 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "runbook-validation-evidence",
+                "section_id": "runbook.verification.2",
                 "level": 3,
-                "parent_id": "runbook-validation",
-                "title": "Evidence",
+                "parent_id": "runbook.verification",
+                "title": "Unverified Conditions",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
@@ -9543,22 +9542,23 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "runbook-recovery",
+            "section_id": "runbook.escalation",
             "level": 2,
             "parent_id": null,
-            "title": "Recovery",
+            "title": "Escalation",
             "order": 5,
             "requiredness": "required",
             "condition": "always",
-            "content": "복구와 상향 인계",
+            "content": "상향 인계와 복구",
             "required_content": [
-              "복구와 상향 인계에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+              "상향 인계와 복구에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
             "prohibited_content": [
               "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
@@ -9569,38 +9569,13 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "runbook-recovery-rollback",
+                "section_id": "runbook.escalation.1",
                 "level": 3,
-                "parent_id": "runbook-recovery",
-                "title": "Rollback",
+                "parent_id": "runbook.escalation",
+                "title": "Next Owner",
                 "order": 1,
-                "requiredness": "conditional",
-                "condition": "실행·변경이 상태나 산출물을 변경함",
-                "content": "원복 조건·절차·데이터 보존",
-                "required_content": [
-                  "원복 조건·절차·데이터 보존을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "omit_when_condition_false",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "runbook-recovery-escalation",
-                "level": 3,
-                "parent_id": "runbook-recovery",
-                "title": "Escalation",
-                "order": 2,
                 "requiredness": "required",
                 "condition": "always",
                 "content": "운영자·인계 근거·복구 불가 조건",
@@ -9616,10 +9591,35 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
+              },
+              {
+                "section_id": "runbook.escalation.2",
+                "level": 3,
+                "parent_id": "runbook.escalation",
+                "title": "Recovery or Forward Repair",
+                "order": 2,
+                "requiredness": "conditional",
+                "condition": "실행·변경이 상태나 산출물을 변경함",
+                "content": "원복 조건·절차·데이터 보존",
+                "required_content": [
+                  "원복 조건·절차·데이터 보존을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "실행 승인과 절차 안내를 혼동하거나 비밀값을 저장하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "omit_when_condition_false",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           }
         ],
         "extensions": [
@@ -9631,7 +9631,7 @@
             "verification": "the form tree check",
             "review": "when the Runbook form version changes",
             "removal": "when the common Runbook form gains an H3 for non-rollback recovery",
-            "parent_id": "runbook-recovery",
+            "parent_id": "runbook.escalation",
             "title": "Recovery Procedures"
           },
           {
@@ -9642,7 +9642,7 @@
             "verification": "the body-contract check",
             "review": "when the Runbook form version changes",
             "removal": "when runbook lineage has another registered owner",
-            "parent_id": "runbook-validation",
+            "parent_id": "runbook.verification",
             "title": "Lifecycle Traceability"
           }
         ]
@@ -9655,84 +9655,11 @@
         "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
         "sections": [
           {
-            "section_id": "incident-summary",
-            "level": 2,
-            "parent_id": null,
-            "title": "Summary",
-            "order": 1,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "사건의 확인 사실",
-            "required_content": [
-              "사건의 확인 사실에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "incident-summary-event",
-                "level": 3,
-                "parent_id": "incident-summary",
-                "title": "Event",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "식별자·발생·탐지 시각",
-                "required_content": [
-                  "식별자·발생·탐지 시각을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "incident-summary-current-status",
-                "level": 3,
-                "parent_id": "incident-summary",
-                "title": "Current Status",
-                "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "현재 상태와 확인 범위",
-                "required_content": [
-                  "현재 상태와 확인 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              }
-            ]
-          },
-          {
-            "section_id": "incident-impact",
+            "section_id": "incident.impact",
             "level": 2,
             "parent_id": null,
             "title": "Impact",
-            "order": 2,
+            "order": 1,
             "requiredness": "required",
             "condition": "always",
             "content": "영향과 범위",
@@ -9748,12 +9675,11 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "incident-impact-affected-users",
+                "section_id": "incident.impact.1",
                 "level": 3,
-                "parent_id": "incident-impact",
+                "parent_id": "incident.impact",
                 "title": "Affected Users",
                 "order": 1,
                 "requiredness": "required",
@@ -9771,20 +9697,20 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "incident-impact-severity-and-duration",
+                "section_id": "incident.impact.2",
                 "level": 3,
-                "parent_id": "incident-impact",
-                "title": "Severity and Duration",
+                "parent_id": "incident.impact",
+                "title": "Observed Scope",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "심각도·기간·추정 구분",
+                "content": "심각도·기간·추정 구분과 사건 식별·현재 상태",
                 "required_content": [
-                  "심각도·기간·추정 구분을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "심각도·기간·추정 구분과 사건 식별·현재 상태을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
@@ -9795,22 +9721,23 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "incident-timeline",
+            "section_id": "incident.response",
             "level": 2,
             "parent_id": null,
-            "title": "Timeline",
-            "order": 3,
+            "title": "Response",
+            "order": 2,
             "requiredness": "required",
             "condition": "always",
-            "content": "사실의 시간 순서",
+            "content": "대응 순서와 행동",
             "required_content": [
-              "사실의 시간 순서에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+              "대응 순서와 행동에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
             "prohibited_content": [
               "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
@@ -9821,19 +9748,18 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "incident-timeline-events",
+                "section_id": "incident.response.1",
                 "level": 3,
-                "parent_id": "incident-timeline",
-                "title": "Events",
+                "parent_id": "incident.response",
+                "title": "Timeline",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "시각·행위자·관측·행동",
+                "content": "시각·행위자·관측·행동과 당시 결정",
                 "required_content": [
-                  "시각·행위자·관측·행동을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "시각·행위자·관측·행동과 당시 결정을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
@@ -9844,64 +9770,15 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "incident-timeline-decisions",
+                "section_id": "incident.response.2",
                 "level": 3,
-                "parent_id": "incident-timeline",
-                "title": "Decisions",
+                "parent_id": "incident.response",
+                "title": "Actions",
                 "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "당시 결정·근거·권한",
-                "required_content": [
-                  "당시 결정·근거·권한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              }
-            ]
-          },
-          {
-            "section_id": "incident-resolution",
-            "level": 2,
-            "parent_id": null,
-            "title": "Resolution",
-            "order": 4,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "대응과 복원",
-            "required_content": [
-              "대응과 복원에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "incident-resolution-mitigation",
-                "level": 3,
-                "parent_id": "incident-resolution",
-                "title": "Mitigation",
-                "order": 1,
                 "requiredness": "required",
                 "condition": "always",
                 "content": "실제 완화·복구·되돌림",
@@ -9917,15 +9794,40 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
-              },
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "incident.resolution",
+            "level": 2,
+            "parent_id": null,
+            "title": "Resolution",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "복원과 남은 일",
+            "required_content": [
+              "복원과 남은 일에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
               {
-                "section_id": "incident-resolution-recovery-verification",
+                "section_id": "incident.resolution.1",
                 "level": 3,
-                "parent_id": "incident-resolution",
-                "title": "Recovery Verification",
-                "order": 2,
+                "parent_id": "incident.resolution",
+                "title": "Verified State",
+                "order": 1,
                 "requiredness": "required",
                 "condition": "always",
                 "content": "복원 관측·잔여 위험",
@@ -9941,69 +9843,20 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
-              }
-            ]
-          },
-          {
-            "section_id": "incident-evidence",
-            "level": 2,
-            "parent_id": null,
-            "title": "Evidence",
-            "order": 5,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "근거와 후속",
-            "required_content": [
-              "근거와 후속에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "incident-evidence-evidence-sources",
-                "level": 3,
-                "parent_id": "incident-evidence",
-                "title": "Evidence Sources",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "로그·측정·원문·접근 제한",
-                "required_content": [
-                  "로그·측정·원문·접근 제한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "incident-evidence-follow-up-owners",
+                "section_id": "incident.resolution.2",
                 "level": 3,
-                "parent_id": "incident-evidence",
-                "title": "Follow-up Owners",
+                "parent_id": "incident.resolution",
+                "title": "Remaining Work",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "재발 방지 Task·담당·조건",
+                "content": "재발 방지 Task·담당·조건과 근거",
                 "required_content": [
-                  "재발 방지 Task·담당·조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "재발 방지 Task·담당·조건과 근거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "추측을 관측 사실로 쓰거나 역사 로그를 변경하지 않는다.",
@@ -10014,10 +9867,11 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           }
         ],
         "extensions": [
@@ -10029,7 +9883,7 @@
             "verification": "the body-contract check",
             "review": "when the form version changes",
             "removal": "when incident lineage has another registered owner",
-            "parent_id": "incident-evidence",
+            "parent_id": "incident.resolution",
             "title": "Lifecycle Traceability"
           }
         ]
@@ -10042,16 +9896,16 @@
         "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
         "sections": [
           {
-            "section_id": "postmortem-summary",
+            "section_id": "postmortem.facts",
             "level": 2,
             "parent_id": null,
-            "title": "Summary",
+            "title": "Facts",
             "order": 1,
             "requiredness": "required",
             "condition": "always",
-            "content": "회고 범위",
+            "content": "회고 대상 사실",
             "required_content": [
-              "회고 범위에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+              "회고 대상 사실에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
             "prohibited_content": [
               "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
@@ -10062,19 +9916,18 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "postmortem-summary-incident-reference",
+                "section_id": "postmortem.facts.1",
                 "level": 3,
-                "parent_id": "postmortem-summary",
-                "title": "Incident Reference",
+                "parent_id": "postmortem.facts",
+                "title": "Timeline",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "대상 사건·판본·독자",
+                "content": "대상 사건·판본·독자와 검토 범위",
                 "required_content": [
-                  "대상 사건·판본·독자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "대상 사건·판본·독자와 검토 범위을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
@@ -10085,20 +9938,20 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "postmortem-summary-review-scope",
+                "section_id": "postmortem.facts.2",
                 "level": 3,
-                "parent_id": "postmortem-summary",
-                "title": "Review Scope",
+                "parent_id": "postmortem.facts",
+                "title": "Impact",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "검토 범위·사실/가정 구별",
+                "content": "관측 영향·범위·기간과 탐지·대응 평가",
                 "required_content": [
-                  "검토 범위·사실/가정 구별을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "관측 영향·범위·기간과 탐지·대응 평가을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
@@ -10109,16 +9962,17 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "postmortem-root-cause",
+            "section_id": "postmortem.causes",
             "level": 2,
             "parent_id": null,
-            "title": "Root Cause",
+            "title": "Causes",
             "order": 2,
             "requiredness": "required",
             "condition": "always",
@@ -10135,92 +9989,18 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "postmortem-root-cause-causal-analysis",
+                "section_id": "postmortem.causes.1",
                 "level": 3,
-                "parent_id": "postmortem-root-cause",
-                "title": "Causal Analysis",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "증거에 근거한 원인 연결",
-                "required_content": [
-                  "증거에 근거한 원인 연결을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "postmortem-root-cause-contributing-factors",
-                "level": 3,
-                "parent_id": "postmortem-root-cause",
+                "parent_id": "postmortem.causes",
                 "title": "Contributing Factors",
-                "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "기여 조건·탐지 공백·불확실성",
-                "required_content": [
-                  "기여 조건·탐지 공백·불확실성을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              }
-            ]
-          },
-          {
-            "section_id": "postmortem-impact",
-            "level": 2,
-            "parent_id": null,
-            "title": "Impact",
-            "order": 3,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "사용자와 서비스 영향",
-            "required_content": [
-              "사용자와 서비스 영향에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "postmortem-impact-observed-impact",
-                "level": 3,
-                "parent_id": "postmortem-impact",
-                "title": "Observed Impact",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "관측 영향·범위·기간",
+                "content": "증거에 근거한 원인 연결·기여 조건·탐지 공백",
                 "required_content": [
-                  "관측 영향·범위·기간을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "증거에 근거한 원인 연결·기여 조건·탐지 공백을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
@@ -10231,41 +10011,42 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "postmortem-impact-detection-and-response",
+                "section_id": "postmortem.causes.2",
                 "level": 3,
-                "parent_id": "postmortem-impact",
-                "title": "Detection and Response",
+                "parent_id": "postmortem.causes",
+                "title": "Uncertainty",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "탐지·대응 평가와 근거",
+                "content": "확인되지 않은 원인·가정·필요한 추가 증거",
                 "required_content": [
-                  "탐지·대응 평가와 근거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "확인되지 않은 원인·가정·필요한 추가 증거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
                 ],
                 "empty_policy": "explain_none_or_not_applicable",
                 "validation_ids": [
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "postmortem-corrective-actions",
+            "section_id": "postmortem.actions",
             "level": 2,
             "parent_id": null,
-            "title": "Corrective Actions",
-            "order": 4,
+            "title": "Actions",
+            "order": 3,
             "requiredness": "required",
             "condition": "always",
             "content": "재발 방지 실행 계약",
@@ -10281,19 +10062,18 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "postmortem-corrective-actions-actions",
+                "section_id": "postmortem.actions.1",
                 "level": 3,
-                "parent_id": "postmortem-corrective-actions",
-                "title": "Actions",
+                "parent_id": "postmortem.actions",
+                "title": "Prevention",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "조치·담당·기준·기한 대신 재개 조건",
+                "content": "조치·담당·기준·재개 조건",
                 "required_content": [
-                  "조치·담당·기준·기한 대신 재개 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "조치·담당·기준·재개 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
@@ -10304,20 +10084,20 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "postmortem-corrective-actions-verification",
+                "section_id": "postmortem.actions.2",
                 "level": 3,
-                "parent_id": "postmortem-corrective-actions",
-                "title": "Verification",
+                "parent_id": "postmortem.actions",
+                "title": "Owners and Checks",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "효과 검증·후속 Task 참조",
+                "content": "효과 검증·후속 Task·근거·검토 결정",
                 "required_content": [
-                  "효과 검증·후속 Task 참조을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "효과 검증·후속 Task·근거·검토 결정을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
@@ -10328,83 +10108,11 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
-          },
-          {
-            "section_id": "postmortem-evidence",
-            "level": 2,
-            "parent_id": null,
-            "title": "Evidence",
-            "order": 5,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "회고의 근거",
-            "required_content": [
-              "회고의 근거에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
-            "prohibited_content": [
-              "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "postmortem-evidence-source-records",
-                "level": 3,
-                "parent_id": "postmortem-evidence",
-                "title": "Source Records",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "사건·로그·결정 연결",
-                "required_content": [
-                  "사건·로그·결정 연결을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "postmortem-evidence-review-decision",
-                "level": 3,
-                "parent_id": "postmortem-evidence",
-                "title": "Review Decision",
-                "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "검토·게시·미결 사항",
-                "required_content": [
-                  "검토·게시·미결 사항을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "검증하지 않은 원인 확정·책임 전가·미실행 조치 완료를 금지한다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              }
-            ]
+            "link_only": false
           }
         ],
         "extensions": [
@@ -10416,7 +10124,7 @@
             "verification": "the body-contract check",
             "review": "when the form version changes",
             "removal": "when incident lineage has another registered owner",
-            "parent_id": "postmortem-corrective-actions",
+            "parent_id": "postmortem.actions",
             "title": "Lifecycle Traceability"
           },
           {
@@ -10427,7 +10135,7 @@
             "verification": "the form tree check",
             "review": "when the Postmortem form version changes",
             "removal": "when the common Postmortem form gains a What Went Well H3",
-            "parent_id": "postmortem-impact",
+            "parent_id": "postmortem.facts",
             "title": "What Went Well"
           }
         ]
@@ -11346,16 +11054,16 @@
         "extension_policy": "미등록 H2/H3를 임의 생성하지 않는다. 실제 고유 의미는 조건·위치·이름·소유자·시험을 공통 확장 정의에 등록하며 다른 역할의 양식을 강제하지 않는다.",
         "sections": [
           {
-            "section_id": "policy-purpose",
+            "section_id": "policy.purpose",
             "level": 2,
             "parent_id": null,
-            "title": "Purpose",
+            "title": "Purpose and Scope",
             "order": 1,
             "requiredness": "required",
             "condition": "always",
-            "content": "규칙의 목적",
+            "content": "규칙의 목적과 적용 범위",
             "required_content": [
-              "규칙의 목적에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+              "규칙의 목적과 적용 범위에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
             ],
             "prohibited_content": [
               "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
@@ -11366,12 +11074,11 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "policy-purpose-objective",
+                "section_id": "policy.purpose.1",
                 "level": 3,
-                "parent_id": "policy-purpose",
+                "parent_id": "policy.purpose",
                 "title": "Objective",
                 "order": 1,
                 "requiredness": "required",
@@ -11389,93 +11096,20 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "policy-purpose-authority",
+                "section_id": "policy.purpose.2",
                 "level": 3,
-                "parent_id": "policy-purpose",
-                "title": "Authority",
-                "order": 2,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "정책 소유자·개정 근거",
-                "required_content": [
-                  "정책 소유자·개정 근거을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              }
-            ]
-          },
-          {
-            "section_id": "policy-scope",
-            "level": 2,
-            "parent_id": null,
-            "title": "Scope",
-            "order": 2,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "적용 범위",
-            "required_content": [
-              "적용 범위에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "policy-scope-applies-to",
-                "level": 3,
-                "parent_id": "policy-scope",
+                "parent_id": "policy.purpose",
                 "title": "Applies To",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "대상·환경·소비자",
-                "required_content": [
-                  "대상·환경·소비자을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
-              },
-              {
-                "section_id": "policy-scope-exclusions",
-                "level": 3,
-                "parent_id": "policy-scope",
-                "title": "Exclusions",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "비적용 조건·다른 정본과 경계",
+                "content": "대상·환경·소비자와 비적용 조건",
                 "required_content": [
-                  "비적용 조건·다른 정본과 경계을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "대상·환경·소비자와 비적용 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
@@ -11486,17 +11120,18 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "policy-rules",
+            "section_id": "policy.rules",
             "level": 2,
             "parent_id": null,
             "title": "Rules",
-            "order": 3,
+            "order": 2,
             "requiredness": "required",
             "condition": "always",
             "content": "규범 규칙의 단일 정본",
@@ -11512,12 +11147,11 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "policy-rules-requirements",
+                "section_id": "policy.rules.1",
                 "level": 3,
-                "parent_id": "policy-rules",
+                "parent_id": "policy.rules",
                 "title": "Requirements",
                 "order": 1,
                 "requiredness": "required",
@@ -11535,15 +11169,64 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "policy-rules-enforcement",
+                "section_id": "policy.rules.2",
                 "level": 3,
-                "parent_id": "policy-rules",
-                "title": "Enforcement",
+                "parent_id": "policy.rules",
+                "title": "Exceptions",
                 "order": 2,
+                "requiredness": "required",
+                "condition": "always",
+                "content": "예외 사유·범위·위험·기한과 승인·재검토",
+                "required_content": [
+                  "예외 사유·범위·위험·기한과 승인·재검토을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                ],
+                "prohibited_content": [
+                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                ],
+                "empty_policy": "explain_none_or_not_applicable",
+                "validation_ids": [
+                  "FORM-STRUCTURE",
+                  "FORM-CONTENT-REVIEW"
+                ],
+                "children": [],
+                "link_only": false
+              }
+            ],
+            "link_only": false
+          },
+          {
+            "section_id": "policy.enforcement",
+            "level": 2,
+            "parent_id": null,
+            "title": "Enforcement",
+            "order": 3,
+            "requiredness": "required",
+            "condition": "always",
+            "content": "집행 지점과 한계",
+            "required_content": [
+              "집행 지점과 한계에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
+            ],
+            "prohibited_content": [
+              "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
+              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
+            ],
+            "empty_policy": "explain_none_or_not_applicable",
+            "validation_ids": [
+              "FORM-STRUCTURE",
+              "FORM-CONTENT-REVIEW"
+            ],
+            "children": [
+              {
+                "section_id": "policy.enforcement.1",
+                "level": 3,
+                "parent_id": "policy.enforcement",
+                "title": "Mechanisms",
+                "order": 1,
                 "requiredness": "required",
                 "condition": "always",
                 "content": "집행 지점·검사·수동 확인·실패 조치",
@@ -11559,90 +11242,42 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
-              }
-            ]
-          },
-          {
-            "section_id": "policy-exceptions",
-            "level": 2,
-            "parent_id": null,
-            "title": "Exceptions",
-            "order": 4,
-            "requiredness": "required",
-            "condition": "always",
-            "content": "예외의 제한된 계약",
-            "required_content": [
-              "예외의 제한된 계약에 필요한 사실·근거·판정 조건을 해당 절에 적는다."
-            ],
-            "prohibited_content": [
-              "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
-              "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
-            ],
-            "empty_policy": "explain_none_or_not_applicable",
-            "validation_ids": [
-              "FORM-STRUCTURE",
-              "FORM-CONTENT-REVIEW"
-            ],
-            "link_only": false,
-            "children": [
-              {
-                "section_id": "policy-exceptions-exception-conditions",
-                "level": 3,
-                "parent_id": "policy-exceptions",
-                "title": "Exception Conditions",
-                "order": 1,
-                "requiredness": "required",
-                "condition": "always",
-                "content": "사유·범위·위험·기한",
-                "required_content": [
-                  "사유·범위·위험·기한을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
-                ],
-                "prohibited_content": [
-                  "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
-                ],
-                "empty_policy": "explain_none_or_not_applicable",
-                "validation_ids": [
-                  "FORM-STRUCTURE",
-                  "FORM-CONTENT-REVIEW"
-                ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "policy-exceptions-approval-and-review",
+                "section_id": "policy.enforcement.2",
                 "level": 3,
-                "parent_id": "policy-exceptions",
-                "title": "Approval and Review",
+                "parent_id": "policy.enforcement",
+                "title": "Limits",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "예외 권한·검증·재검토·철회",
+                "content": "집행이 보장하지 않는 범위와 잔여 위험",
                 "required_content": [
-                  "예외 권한·검증·재검토·철회을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "집행이 보장하지 않는 범위와 잔여 위험을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
-                  "코드 펜스·인용·주석의 동명 제목으로 실제 섹션을 대체하지 않는다."
+                  "제목만 두거나 설명 없는 TODO·TBD·N/A·양식 안내 주석만으로 충족 처리하지 않는다."
                 ],
                 "empty_policy": "explain_none_or_not_applicable",
                 "validation_ids": [
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           },
           {
-            "section_id": "policy-ownership",
+            "section_id": "policy.ownership",
             "level": 2,
             "parent_id": null,
             "title": "Ownership",
-            "order": 5,
+            "order": 4,
             "requiredness": "required",
             "condition": "always",
             "content": "변경·채택 책임",
@@ -11658,19 +11293,18 @@
               "FORM-STRUCTURE",
               "FORM-CONTENT-REVIEW"
             ],
-            "link_only": false,
             "children": [
               {
-                "section_id": "policy-ownership-responsibilities",
+                "section_id": "policy.ownership.1",
                 "level": 3,
-                "parent_id": "policy-ownership",
-                "title": "Responsibilities",
+                "parent_id": "policy.ownership",
+                "title": "Owner",
                 "order": 1,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "작성·검토·승인·실행 책임",
+                "content": "정책 소유자·개정 근거·작성·검토·승인 책임",
                 "required_content": [
-                  "작성·검토·승인·실행 책임을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "정책 소유자·개정 근거·작성·검토·승인 책임을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
@@ -11681,20 +11315,20 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               },
               {
-                "section_id": "policy-ownership-change-and-adoption",
+                "section_id": "policy.ownership.2",
                 "level": 3,
-                "parent_id": "policy-ownership",
-                "title": "Change and Adoption",
+                "parent_id": "policy.ownership",
+                "title": "Review Triggers",
                 "order": 2,
                 "requiredness": "required",
                 "condition": "always",
-                "content": "판본·이행·채택·드리프트 검증",
+                "content": "판본·이행·채택·드리프트 검증 조건",
                 "required_content": [
-                  "판본·이행·채택·드리프트 검증을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
+                  "판본·이행·채택·드리프트 검증 조건을 사실/가정과 구분해 명시하고 실제 참조로 연결한다."
                 ],
                 "prohibited_content": [
                   "테스트의 편의에 맞춰 규범을 완화하지 않는다.",
@@ -11705,10 +11339,11 @@
                   "FORM-STRUCTURE",
                   "FORM-CONTENT-REVIEW"
                 ],
-                "link_only": false,
-                "children": []
+                "children": [],
+                "link_only": false
               }
-            ]
+            ],
+            "link_only": false
           }
         ],
         "extensions": [
@@ -11720,7 +11355,7 @@
             "verification": "the body-contract check",
             "review": "when the Policy form version changes",
             "removal": "when policy lineage has another registered owner",
-            "parent_id": "policy-ownership",
+            "parent_id": "policy.ownership",
             "title": "Lifecycle Traceability"
           }
         ]

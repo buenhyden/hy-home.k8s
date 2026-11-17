@@ -1,10 +1,10 @@
 ---
 title: "05.operations/incidents"
-version: "0.3.2"
+version: "0.3.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-13"
+updated: "2026-11-17"
 ---
 # 05.operations/incidents
 
@@ -92,19 +92,15 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 
 Incident Record는 다음 항목을 포함한다.
 
-- Summary: Event, Current Status
-- Impact: Affected Users, Severity and Duration
-- Timeline: Events, Decisions
-- Resolution: Mitigation, Recovery Verification
-- Evidence: Evidence Sources, Follow-up Owners, Lifecycle Traceability
+- Impact: Affected Users, Observed Scope(그 아래 H4 Event, Current Status)
+- Response: Timeline(그 아래 H4 Decisions), Actions
+- Resolution: Verified State, Remaining Work(그 아래 H4 Evidence Sources), Lifecycle Traceability
 
 Postmortem은 다음 항목을 포함한다.
 
-- Summary: Incident Reference, Review Scope
-- Root Cause: Causal Analysis, Contributing Factors와 그 아래 What Went Wrong
-- Impact: Observed Impact, Detection and Response, 선택 항목인 What Went Well
-- Corrective Actions: Actions, Verification, Lifecycle Traceability
-- Evidence: Source Records, Review Decision
+- Facts: Timeline(그 아래 H4 Review Scope), Impact(그 아래 H4 Detection and Response), 선택 항목인 What Went Well
+- Causes: Contributing Factors(그 아래 H4 Causal Analysis와 What Went Wrong), Uncertainty
+- Actions: Prevention, Owners and Checks(그 아래 H4 Source Records, Review Decision), Lifecycle Traceability
 
 #### Review Expectations
 

@@ -1,36 +1,21 @@
 ---
 title: "Agent Execution Policy"
-version: "1.11.0"
+version: "1.12.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-15"
+updated: "2026-11-17"
 ---
 
 # Agent Execution Policy
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
 Keep agent work evidence-backed, scoped, and GitOps-first for this Linux server + k3d
 home-lab platform. The normal outcome is a reviewable repository change, not a
 live infrastructure mutation.
-
-### Authority
-
-This policy owns common execution norms. The active Spec and Task own change
-scope; [approval and safety](approval-and-safety.md) owns protected actions;
-[the agent registry](../roles/registry.json) owns roles, permissions,
-handoffs, and skill references. Provider adapters may restrict these
-boundaries, never expand them.
-
-- [SDLC Flow](sdlc.md)
-- [Approval and Safety](approval-and-safety.md)
-- [Document Authoring](document-authoring.md)
-- [Context and Memory](context-and-memory.md)
-
-## Scope
 
 ### Applies To
 
@@ -40,7 +25,7 @@ generated navigation, external examples, or tool suggestions.
 
 - [Roles](../roles/README.md)
 
-### Exclusions
+#### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
@@ -104,28 +89,45 @@ This policy excludes no subject within its scope; if one is excluded, name it an
   unsafe input, or unexplained changes. State the blocker and continue
   independent safe work within the current request.
 
-### Enforcement
+### Exceptions
+
+Exception and escalation conditions are stated under Requirements.
+
+#### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Enforcement
+
+### Mechanisms
 
 Validate changed contracts and projections, then follow the evidence sequence
 in [quality policy](quality.md). Revisit this policy when the workspace purpose,
 authority boundary, or recurring execution failure changes.
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-Exception and escalation conditions are stated under Requirements.
-
-### Approval and Review
-
-Approval and review conditions are stated under Requirements.
+This policy's enforcement is limited to validating changed contracts and projections and following the quality policy's evidence sequence. Tracked projections are configuration intent and do not prove native discovery or runtime enforcement.
 
 ## Ownership
 
-### Responsibilities
+### Owner
+
+This policy owns common execution norms. The active Spec and Task own change
+scope; [approval and safety](approval-and-safety.md) owns protected actions;
+[the agent registry](../roles/registry.json) owns roles, permissions,
+handoffs, and skill references. Provider adapters may restrict these
+boundaries, never expand them.
+
+- [SDLC Flow](sdlc.md)
+- [Approval and Safety](approval-and-safety.md)
+- [Document Authoring](document-authoring.md)
+- [Context and Memory](context-and-memory.md)
+
+#### Responsibilities
 
 Responsibilities are stated under Authority and Requirements.
 
-### Change and Adoption
+### Review Triggers
 
 Change and adoption conditions are stated under Requirements and Enforcement.

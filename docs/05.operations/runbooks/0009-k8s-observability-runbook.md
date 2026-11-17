@@ -1,18 +1,18 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.5.2"
+version: "2.5.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "RUN-0009"
 ---
 
 # k8s Observability 복구 Runbook
 
-## Purpose
+## Trigger and Scope
 
-### Trigger and Outcome
+### Trigger
 
 이 런북은 cluster 안 Alloy(`monitoring/alloy-k8s-logs`)의 k8s 메트릭·로그 수집에
 장애가 났을 때 진단하고 복구하는 절차를 제공한다.
@@ -37,7 +37,7 @@ artifact_id: "RUN-0009"
 5. **AppProject destinations 미포함**: `monitoring` 네임스페이스가 AppProject에 없어
    Application 배포 실패
 
-### Scope
+### Targets
 
 ArgoCD component별 확인은
 [RUN-0008](./0008-argocd-metrics-prometheus-runbook.md)이 다룬다.
@@ -62,9 +62,9 @@ Prometheus의 NodePort static scrape는 폐지되었다.
 
 관련 문서: [Kiali Connectivity Runbook](./0007-kiali-observability-connectivity-runbook.md), [`../../../gitops/platform/monitoring`](../../../gitops/platform/monitoring)
 
-## Preconditions
+## Preflight
 
-### Authority and Access
+### Authority
 
 대상 클러스터와 namespace를 확인하고 읽기 권한으로 먼저 진단한다.
 수동 ArgoCD sync는 운영자가 수행한다. 직접 적용은 대상·범위를 명시해
@@ -72,14 +72,14 @@ Prometheus의 NodePort static scrape는 폐지되었다.
 
 관련 문서: [Observability Platform Policy](../policies/0005-observability-platform-operations-policy.md)
 
-### Safety Checks
+### Environment
 
 Loki 조회는 해당 endpoint에 접근할 수 있는 승인된 진단 환경에서 수행한다.
 조회 예시에는 Bash, `curl`, `jq`가 필요하다.
 
-## Steps
+## Procedure
 
-### Actions
+### Steps
 
 아래 절차는 전체 상태 진단, platform-monitoring App 복구, Alloy CrashLoop 복구,
 remote write 복구, target 누락 복구 순서로 수행한다.
@@ -280,9 +280,9 @@ kubectl get pods -n istio-system -l app=istiod \
 
 중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
 
-## Validation
+## Verification
 
-### Service Checks
+### Expected Results
 
 ```bash
 echo "[1] alloy-k8s-logs"
@@ -304,7 +304,7 @@ Loki 스트림은 전체 상태 진단의 조회를 사용하고 실행 결과�
 
 - **Signals**: Alloy pod readiness, Alloy remote write errors, `up{cluster="k3d-hyhome"}` by job and app, Loki stream count.
 
-### Evidence
+### Unverified Conditions
 
 실제 쿼리 결과와 시각이 없으면 이 부분은 검증 완료가 아니다.
 
@@ -316,14 +316,14 @@ Loki 스트림은 전체 상태 진단의 조회를 사용하고 실행 결과�
 | --- | --- | --- |
 | [Observability Platform Operations Policy](../policies/0005-observability-platform-operations-policy.md) | In-cluster metric collection, remote write, ArgoCD metrics, Alloy log/event collection, or monitoring AppProject admission is degraded. | Platform operator captures pod, remote write, job, Loki, and ArgoCD evidence; GitOps owner restores cluster resources and the observability owner restores external Prometheus/Loki publication and settings. |
 
-## Recovery
+## Escalation
 
-### Rollback
+### Next Owner
+
+에스컬레이션: 해당 없음 — 이 런북은 Recovery에 에스컬레이션 담당을 따로 정하지 않는다.
+
+### Recovery or Forward Repair
 
 - Monitoring manifest changes should be reverted through GitOps if relabel, remote write, or egress changes regress collection.
 - External Prometheus, Loki, dashboard, and alert rule changes are reverted in the owning external workspace.
 - AppProject destination changes require reviewed GitOps updates; direct cluster edits remain bootstrap/break-glass only.
-
-### Escalation
-
-에스컬레이션: 해당 없음 — 이 런북은 Recovery에 에스컬레이션 담당을 따로 정하지 않는다.

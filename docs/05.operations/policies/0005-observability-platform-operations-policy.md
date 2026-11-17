@@ -1,30 +1,22 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.5.0"
+version: "1.6.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-11-14"
+updated: "2026-11-17"
 artifact_id: "POL-0005"
 ---
 
 # Observability Platform Operations Policy
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
 이 문서는 local cluster와 외부 observability backend 사이의 메트릭·로그
 수집 통제를 하나의 정책으로 정의한다. 서비스 포트, in-cluster Alloy 수집과 remote write,
 Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
-
-### Authority
-
-이 정책이 근거로 삼는 상위 문서는 다음과 같다.
-
-- [Service Mesh and cert-manager Policy](./0003-service-mesh-cert-manager-policy.md)
-
-## Scope
 
 ### Applies To
 
@@ -37,7 +29,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 - **Roles**: Platform Owner, Observability Owner, approved operator
 - **Environment**: Linux server local cluster와 연결된 external observability services
 
-### Exclusions
+#### Exclusions
 
 범위에서 제외한다고 따로 표시한 항목은 Scope 절에 없으며, 외부 observability 설정의 소유 경계는 아래 Exception Conditions에 적혀 있다.
 
@@ -103,7 +95,21 @@ Service가 다시 생기면 실패한다. 수집을 위해 과도한 kubeconfig 
 - `OBSERV-R007` `gitops/clusters/local/appproject-platform.yaml`은 `monitoring` destination을
   명시하며 wildcard destination으로 대체하지 않는다.
 
-### Enforcement
+### Exceptions
+
+AppProject live 변경은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의
+공통 live 변경 예외를 따른다. 이 정책이 추가하는 조건은 manifest와 관련
+Runbook을 같은 변경으로 동기화하는 것이다. 외부
+Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소유하며
+이 저장소의 Runbook은 그 결과를 검증만 한다.
+
+#### Approval and Review
+
+예외 승인은 위 Exception Conditions가 가리키는 POL-0001의 공통 live 변경 예외를 따른다.
+
+## Enforcement
+
+### Mechanisms
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
@@ -125,23 +131,19 @@ Alloy의 relabel·remote-write 설정과 실제 외부 Prometheus의 series 수�
 - [ArgoCD Metrics Runbook](../runbooks/0008-argocd-metrics-prometheus-runbook.md)
 - [K8s Observability Runbook](../runbooks/0009-k8s-observability-runbook.md)
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-AppProject live 변경은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의
-공통 live 변경 예외를 따른다. 이 정책이 추가하는 조건은 manifest와 관련
-Runbook을 같은 변경으로 동기화하는 것이다. 외부
-Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소유하며
-이 저장소의 Runbook은 그 결과를 검증만 한다.
-
-### Approval and Review
-
-예외 승인은 위 Exception Conditions가 가리키는 POL-0001의 공통 live 변경 예외를 따른다.
+Alloy relabel과 remote-write 구성은 외부 Prometheus에 실제로 series가 도착했다는 증거와 종류가 다르다. 이름 있는 클러스터와 외부 endpoint를 관측하기 전까지 `up`과 `argocd_app_info` 조건은 미확인으로 남으며, 이 정책과 RUN-0008, RUN-0009는 담당과 검증 경로를, REQ-0004 telemetry 시나리오는 공식·표본·목표를 제공한다.
 
 ## Ownership
 
-### Responsibilities
+### Owner
+
+이 정책이 근거로 삼는 상위 문서는 다음과 같다.
+
+- [Service Mesh and cert-manager Policy](./0003-service-mesh-cert-manager-policy.md)
+
+#### Responsibilities
 
 | Role | Responsibility | Escalation owner |
 | --- | --- | --- |
@@ -149,7 +151,7 @@ Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소
 | Observability Owner | Prometheus, Grafana, Loki, Alloy 수집 계약을 유지한다. | Platform Owner |
 | Approved operator | Runbook에 따라 runtime 증적과 복구 결과를 기록한다. | Platform Owner |
 
-### Change and Adoption
+### Review Triggers
 
 변경 검토 조건은 위 Enforcement의 검토 문단에 적혀 있다.
 

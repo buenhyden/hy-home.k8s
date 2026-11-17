@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.38.3"
+version: "0.38.4"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -183,14 +183,15 @@ form 경로의 대응은 Registry만 소유한다.
   capacity는 현재 consumer가 없어 Spec 본문과 실제 구현 소유자에게 수렴했다.
 - **Operations forms** (`operations/`): `guide`, `policy`, `runbook`,
   `incident`, `postmortem`의 서로 다른 운영 증거 책임을 유지한다.
-  Guide, Runbook, Incident, Postmortem, Policy는 Registry form을 쓴다. Guide의
-  분류·독자·목표는 `Purpose`, `Lifecycle Traceability` 관계 표는
-  `Verification` 아래에 둔다. Runbook의 트리거·절차·검증·복구는 form의
-  `Purpose`, `Preconditions`, `Steps`, `Validation`, `Recovery`에 배치하고,
-  `Lifecycle Traceability` 관계 표는 `Validation` 아래에 둔다. Incident의
-  `Lifecycle Traceability` 관계 표는 `Evidence` 아래에, Postmortem의 표는
-  `Corrective Actions` 아래에 둔다. Policy의 목적·범위·규칙·예외·소유는 form의
-  `Purpose`, `Scope`, `Rules`, `Exceptions`, `Ownership`에 배치하고, Policy의
+  Guide, Runbook, Incident, Postmortem, Policy는 4.0.0 설계 목표의 제목과 section
+  ID를 쓰는 Registry form을 쓴다(SPEC-0221). Guide의 독자·목표는 `Purpose`,
+  `Lifecycle Traceability` 관계 표는 `Troubleshooting` 아래에 둔다. Runbook의
+  트리거·절차·검증·상향은 form의 `Trigger and Scope`, `Preflight`, `Procedure`,
+  `Verification`, `Escalation`에 배치하고, `Lifecycle Traceability` 관계 표는
+  `Verification` 아래에 둔다. Incident의 `Lifecycle Traceability` 관계 표는
+  `Resolution` 아래에, Postmortem의 표는 `Actions` 아래에 둔다. Policy의
+  목적·범위·규칙·예외·집행·소유는 form의 `Purpose and Scope`, `Rules`,
+  `Enforcement`, `Ownership`에 배치하고, Policy의
   `Lifecycle Traceability` 관계 표는 `Ownership` 아래에서 같은 source·열·상호 참조
   의미를 유지한다. Policy가 규범적 규칙을 진술하면 `Requirements` 아래에
   `Rules` 표(Rule ID·Condition·Level·Evidence, 선택 열 Status)를 두고, 규칙 ID는

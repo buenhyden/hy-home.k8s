@@ -1,18 +1,18 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.4.2"
+version: "1.4.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 artifact_id: "RUN-0003"
 ---
 
 # Platform Expansion Bootstrap Runbook
 
-## Purpose
+## Trigger and Scope
 
-### Trigger and Outcome
+### Trigger
 
 이 런북은 기본 플랫폼 위에 추가된 cert-manager, Istio(현재 1.25.2), Kiali를 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다.
 
@@ -21,7 +21,7 @@ artifact_id: "RUN-0003"
 - cert-manager ClusterIssuer NotReady 복구
 - Istio/Kiali 배포 실패 복구
 
-### Scope
+### Targets
 
 Ingress controller는 Traefik이며 Istio 업그레이드(ADR-0051)는 아직 실행되지 않았다.
 
@@ -33,23 +33,23 @@ Kiali와 외부 observability 연결 복구는
 
 관련 문서: **Architecture**: [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 
-## Preconditions
+## Preflight
 
-### Authority and Access
+### Authority
 
 플랫폼 운영자는 대상 클러스터와 승인 범위를 확인한다. CA Secret 재주입과
 컨트롤러 재시작은 아래 Recovery의 bootstrap 또는 승인된 복구 조건을 따른다.
 
 관련 문서: **Operations**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md); **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md); [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
 
-### Safety Checks
+### Environment
 
 Steps의 Checklist에서 CA 입력과 외부 의존성을 확인한다. CA 개인 키는
 승인된 Secret 입력에만 사용하고 명령 출력이나 운영 증적에 남기지 않는다.
 
-## Steps
+## Procedure
 
-### Actions
+### Steps
 
 #### Checklist
 
@@ -101,9 +101,9 @@ Steps의 Checklist에서 CA 입력과 외부 의존성을 확인한다. CA 개�
 
 중단 조건: 별도 목록 없음 — 이 런북은 중단 조건을 한곳에 모으지 않으며, 단계 안의 확인 조건은 Actions에 두고 실패 시 Recovery와 Escalation을 따른다.
 
-## Validation
+## Verification
 
-### Service Checks
+### Expected Results
 
 ```bash
 # 정적 계약
@@ -120,7 +120,7 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 
 - **Signals**: ClusterIssuer readiness, Istiod/Kiali deployment availability, ArgoCD Application health.
 
-### Evidence
+### Unverified Conditions
 
 - **Evidence to Capture**: static contract output, relevant Kubernetes events, cert-manager logs, Kiali Prometheus connection logs.
 
@@ -130,7 +130,19 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 | --- | --- | --- |
 | [Service Mesh and cert-manager Operations Policy](../policies/0003-service-mesh-cert-manager-policy.md) | Initial expansion or recovery of cert-manager, Istio, or Kiali must preserve CA-secret, namespace-injection, and sync-wave controls. | Platform operator captures ClusterIssuer, ingress/TLS, deployment, and static-contract evidence; approved break-glass operator owns bounded recovery actions. |
 
-## Recovery
+## Escalation
+
+### Next Owner
+
+CA 입력을 복구할 수 없거나 승인된 조치 뒤에도 ClusterIssuer가 준비되지 않으면
+[서비스 메시·cert-manager 운영 정책](../policies/0003-service-mesh-cert-manager-policy.md)을 담당하는 플랫폼 운영자에게 넘긴다.
+
+### Recovery or Forward Repair
+
+확장 변경을 되돌릴 때는 operator-approved 범위와 적용 전 Git 리비전을 확인한다.
+기본 플랫폼 변경은 [RUN-0001의 롤백 절차](./0001-argocd-platform-bootstrap-runbook.md#recovery-or-forward-repair)를
+따른다. 확장 Application 설정을 되돌린 뒤 이 런북의 Service Checks로 영향받은
+컴포넌트와 Git·ArgoCD 상태를 다시 대조한다.
 
 ### Recovery Procedures
 
@@ -195,15 +207,3 @@ kubectl get crd | grep istio.io | wc -l
 # operator-triggered reconciliation only
 argocd app sync platform-istiod
 ```
-
-### Rollback
-
-확장 변경을 되돌릴 때는 operator-approved 범위와 적용 전 Git 리비전을 확인한다.
-기본 플랫폼 변경은 [RUN-0001의 롤백 절차](./0001-argocd-platform-bootstrap-runbook.md#rollback)를
-따른다. 확장 Application 설정을 되돌린 뒤 이 런북의 Service Checks로 영향받은
-컴포넌트와 Git·ArgoCD 상태를 다시 대조한다.
-
-### Escalation
-
-CA 입력을 복구할 수 없거나 승인된 조치 뒤에도 ClusterIssuer가 준비되지 않으면
-[서비스 메시·cert-manager 운영 정책](../policies/0003-service-mesh-cert-manager-policy.md)을 담당하는 플랫폼 운영자에게 넘긴다.

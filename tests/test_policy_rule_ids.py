@@ -720,7 +720,7 @@ class RulesTableDefinitionTests(unittest.TestCase):
                 )
                 self.assertEqual(table["row_identity"], "Rule ID")
                 self.assertEqual(table["minimum_rows"], 0)
-                self.assertEqual(table["section"], "policy-rules-requirements")
+                self.assertEqual(table["section"], "policy.rules.1")
                 self.assertIn(
                     "tests/test_policy_rule_ids.py", definition["consumer_paths"]
                 )

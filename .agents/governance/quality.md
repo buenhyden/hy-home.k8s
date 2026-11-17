@@ -1,35 +1,20 @@
 ---
 title: "Quality and Evidence Policy"
-version: "3.0.1"
+version: "3.1.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 
 # Quality and Evidence Policy
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
 Report exactly what was checked, over which bytes and scope, and with which
 limitations. Passing a local command is not proof of provider or live behavior.
-
-### Authority
-
-This policy owns lane, result, completion-order, and handoff meanings.
-The validation-surface contract selects executable checks; validators own
-their rules and bounded execution limits. Aggregates compose those checks.
-Do not duplicate limit constants, fixture matrices, mutable digests, or corpus
-counts in prose.
-
-- [Approval and Safety](approval-and-safety.md)
-- [Work Lifecycle](../workflows/work-lifecycle.md)
-- [Git Policy](git.md)
-- [Formatting and Linting Policy](formatting-and-linting.md)
-
-## Scope
 
 ### Applies To
 
@@ -41,7 +26,7 @@ Reviewers assess acceptance and regression coverage, not merely test counts.
 Provider projections preserve role and permission semantics while using native
 metadata; static parity never proves discovery, model resolution, or execution.
 
-### Exclusions
+#### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
@@ -441,7 +426,17 @@ recovery objects. Their owning contract records purpose and
 refresh/recovery procedure. Branch HEADs, current docs, local validators, and
 inventory counts are not policy pins.
 
-### Enforcement
+### Exceptions
+
+This policy defines no exception condition of its own; exceptions follow the approval and safety policy's operator approval route. If this policy needs its own, state it here.
+
+#### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Enforcement
+
+### Mechanisms
 
 Refresh this policy when evidence semantics change, not when a corpus count or
 implementation constant changes. Preserve the distinction between repository,
@@ -450,22 +445,29 @@ cannot silently advance a task to completion.
 
 - [Validation Routing Registry](../../scripts/validation/registry.json)
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-This policy defines no exception condition of its own; exceptions follow the approval and safety policy's operator approval route. If this policy needs its own, state it here.
-
-### Approval and Review
-
-Approval and review conditions are stated under Requirements.
+Passing a local command is not proof of provider or live behavior, and a static workflow file cannot establish hosted execution or remote branch protection. A recorded response does not prove that a native skill loaded or a command ran, and formatters or deferred tools cannot silently advance a task to completion; repository, provider-runtime, hosted CI and live checks stay distinct.
 
 ## Ownership
 
-### Responsibilities
+### Owner
+
+This policy owns lane, result, completion-order, and handoff meanings.
+The validation-surface contract selects executable checks; validators own
+their rules and bounded execution limits. Aggregates compose those checks.
+Do not duplicate limit constants, fixture matrices, mutable digests, or corpus
+counts in prose.
+
+- [Approval and Safety](approval-and-safety.md)
+- [Work Lifecycle](../workflows/work-lifecycle.md)
+- [Git Policy](git.md)
+- [Formatting and Linting Policy](formatting-and-linting.md)
+
+#### Responsibilities
 
 Responsibilities are stated under Authority and Requirements.
 
-### Change and Adoption
+### Review Triggers
 
 Change and adoption conditions are stated under Enforcement.

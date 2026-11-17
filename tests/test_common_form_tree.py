@@ -126,18 +126,18 @@ LOCAL_PROFILE_TABLES = {
 GUIDE = ("operation/guide", "common/template-operation-guide")
 ADR = ("sdlc/architecture-decision", "common/template-sdlc-architecture-decision")
 GUIDE_TREE = (
-    ("Purpose", ("Outcome", "Boundaries")),
-    ("Prerequisites", ("Environment", "Permissions")),
-    ("Procedure", ("Actions", "Exceptions")),
-    ("Verification", ("Expected Result", "Troubleshooting")),
+    ("Purpose", ("Audience", "Outcome")),
+    ("Prerequisites", ("Environment", "Authority")),
+    ("Procedure", ("Steps", "Expected Results")),
+    ("Troubleshooting", ("Symptoms", "Next Action")),
 )
 RUNBOOK = ("operation/runbook", "common/template-operation-runbook")
 RUNBOOK_TREE = (
-    ("Purpose", ("Trigger and Outcome", "Scope")),
-    ("Preconditions", ("Authority and Access", "Safety Checks")),
-    ("Steps", ("Actions", "Stop Conditions")),
-    ("Validation", ("Service Checks", "Evidence")),
-    ("Recovery", ("Rollback", "Escalation")),
+    ("Trigger and Scope", ("Trigger", "Targets")),
+    ("Preflight", ("Authority", "Environment")),
+    ("Procedure", ("Steps", "Stop Conditions")),
+    ("Verification", ("Expected Results", "Unverified Conditions")),
+    ("Escalation", ("Next Owner", "Recovery or Forward Repair")),
 )
 RUNBOOK_EXTENSIONS = [
     {
@@ -153,7 +153,7 @@ RUNBOOK_EXTENSIONS = [
         "removal": (
             "when the common Runbook form gains an H3 for non-rollback recovery"
         ),
-        "parent_id": "runbook-recovery",
+        "parent_id": "runbook.escalation",
         "title": "Recovery Procedures",
     },
     {
@@ -167,13 +167,13 @@ RUNBOOK_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the Runbook form version changes",
         "removal": "when runbook lineage has another registered owner",
-        "parent_id": "runbook-validation",
+        "parent_id": "runbook.verification",
         "title": "Lifecycle Traceability",
     },
 ]
 RUNBOOK_TABLE_KEYS = {
     "Triggers": (
-        "runbook-steps-actions",
+        "runbook.procedure.1",
         ("Trigger", "Action", "Rollback"),
         0,
         "Trigger",
@@ -187,19 +187,15 @@ RUNBOOK_TABLE_KEYS = {
 }
 INCIDENT = ("operation/incident", "common/template-operation-incident")
 INCIDENT_TREE = (
-    ("Summary", ("Event", "Current Status")),
-    ("Impact", ("Affected Users", "Severity and Duration")),
-    ("Timeline", ("Events", "Decisions")),
-    ("Resolution", ("Mitigation", "Recovery Verification")),
-    ("Evidence", ("Evidence Sources", "Follow-up Owners")),
+    ("Impact", ("Affected Users", "Observed Scope")),
+    ("Response", ("Timeline", "Actions")),
+    ("Resolution", ("Verified State", "Remaining Work")),
 )
 POSTMORTEM = ("operation/postmortem", "common/template-operation-postmortem")
 POSTMORTEM_TREE = (
-    ("Summary", ("Incident Reference", "Review Scope")),
-    ("Root Cause", ("Causal Analysis", "Contributing Factors")),
-    ("Impact", ("Observed Impact", "Detection and Response")),
-    ("Corrective Actions", ("Actions", "Verification")),
-    ("Evidence", ("Source Records", "Review Decision")),
+    ("Facts", ("Timeline", "Impact")),
+    ("Causes", ("Contributing Factors", "Uncertainty")),
+    ("Actions", ("Prevention", "Owners and Checks")),
 )
 ROOT_FORM = ("common/readme-repository", "common/template-readme-repository")
 ROOT_FORM_TREE = (
@@ -259,11 +255,10 @@ SERVICE_TABLE_KEYS = {
 POLICY_GOVERNANCE = ("governance/rule", "common/template-governance-rule")
 POLICY_OPERATIONS = ("operation/policy", "common/template-operation-policy")
 POLICY_TREE = (
-    ("Purpose", ("Objective", "Authority")),
-    ("Scope", ("Applies To", "Exclusions")),
-    ("Rules", ("Requirements", "Enforcement")),
-    ("Exceptions", ("Exception Conditions", "Approval and Review")),
-    ("Ownership", ("Responsibilities", "Change and Adoption")),
+    ("Purpose and Scope", ("Objective", "Applies To")),
+    ("Rules", ("Requirements", "Exceptions")),
+    ("Enforcement", ("Mechanisms", "Limits")),
+    ("Ownership", ("Owner", "Review Triggers")),
 )
 POLICY_EXTENSION = {
     "id": "policy-lifecycle-traceability",
@@ -276,14 +271,14 @@ POLICY_EXTENSION = {
     "verification": "the body-contract check",
     "review": "when the Policy form version changes",
     "removal": "when policy lineage has another registered owner",
-    "parent_id": "policy-ownership",
+    "parent_id": "policy.ownership",
     "title": "Lifecycle Traceability",
 }
 # SPEC-0194 (W03-D65): four common columns and the one optional Status extension.
 POLICY_RULES_COLUMNS = ("Rule ID", "Condition", "Level", "Evidence")
 POLICY_RULES_OPTIONAL = ("Status",)
 POLICY_RULES_TABLE = (
-    "policy-rules-requirements",
+    "policy.rules.1",
     (*POLICY_RULES_COLUMNS, *POLICY_RULES_OPTIONAL),
     0,
     "Rule ID",
@@ -1194,6 +1189,11 @@ PLAN_FORM_TABLE_KEYS = {
 # SPEC-0221: an adopted form takes the target section IDs, <role>.<group> for
 # an H2 and <role>.<group>.<n> for an H3; every other form keeps the slug IDs.
 TARGET_GROUPS = {
+    "guide": ("purpose", "prerequisites", "steps", "troubleshoot"),
+    "runbook": ("trigger", "preflight", "procedure", "verification", "escalation"),
+    "policy": ("purpose", "rules", "enforcement", "ownership"),
+    "incident": ("impact", "response", "resolution"),
+    "postmortem": ("facts", "causes", "actions"),
     "requirement": ("intent", "scope", "requirements", "relations"),
     "architecture": ("context", "structure", "behavior", "quality", "decisions"),
     "spec": ("intent", "scope", "behavior", "acceptance"),
@@ -1398,7 +1398,7 @@ INCIDENT_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the form version changes",
         "removal": "when incident lineage has another registered owner",
-        "parent_id": "incident-evidence",
+        "parent_id": "incident.resolution",
         "title": "Lifecycle Traceability",
     }
 ]
@@ -1411,7 +1411,7 @@ POSTMORTEM_EXTENSIONS = [
         "verification": "the body-contract check",
         "review": "when the form version changes",
         "removal": "when incident lineage has another registered owner",
-        "parent_id": "postmortem-corrective-actions",
+        "parent_id": "postmortem.actions",
         "title": "Lifecycle Traceability",
     },
     {
@@ -1424,13 +1424,13 @@ POSTMORTEM_EXTENSIONS = [
         "verification": "the form tree check",
         "review": "when the Postmortem form version changes",
         "removal": "when the common Postmortem form gains a What Went Well H3",
-        "parent_id": "postmortem-impact",
+        "parent_id": "postmortem.facts",
         "title": "What Went Well",
     },
 ]
 INCIDENT_TABLE_KEYS = {
     "Events": (
-        "incident-timeline-events",
+        "incident.response.1",
         ("Timestamp", "Event", "Actor"),
         0,
         "Timestamp",
@@ -1444,7 +1444,7 @@ INCIDENT_TABLE_KEYS = {
 }
 POSTMORTEM_TABLE_KEYS = {
     "Actions": (
-        "postmortem-corrective-actions-actions",
+        "postmortem.actions.1",
         ("Action", "Owner", "Verification"),
         0,
         "Action",
@@ -1472,11 +1472,11 @@ GUIDE_EXTENSION = {
     "verification": "the body-contract check",
     "review": "when the Guide form version changes",
     "removal": "when guide lineage has another registered owner",
-    "parent_id": "guide-verification",
+    "parent_id": "guide.troubleshoot",
     "title": "Lifecycle Traceability",
 }
 GUIDE_TABLE_KEYS = {
-    "Steps": ("guide-procedure-actions", ("Step", "Action", "Check"), 0, "Step"),
+    "Steps": ("guide.steps.1", ("Step", "Action", "Check"), 0, "Step"),
     "Lifecycle Traceability": (
         "guide-lifecycle-traceability",
         ("Promoted owner", "Audience outcome", "Operating surface"),
@@ -1690,7 +1690,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 [GUIDE_EXTENSION],
                 GUIDE_TABLE_KEYS,
                 GUIDE,
-                "Verification",
+                "Troubleshooting",
             ),
             (
                 "runbook",
@@ -1698,7 +1698,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 RUNBOOK_EXTENSIONS,
                 RUNBOOK_TABLE_KEYS,
                 RUNBOOK,
-                "Validation",
+                "Verification",
             ),
             (
                 "incident",
@@ -1706,7 +1706,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 INCIDENT_EXTENSIONS,
                 INCIDENT_TABLE_KEYS,
                 INCIDENT,
-                "Evidence",
+                "Resolution",
             ),
             (
                 "postmortem",
@@ -1714,7 +1714,7 @@ class RepositoryRegistryTests(unittest.TestCase):
                 POSTMORTEM_EXTENSIONS,
                 POSTMORTEM_TABLE_KEYS,
                 POSTMORTEM,
-                "Corrective Actions",
+                "Actions",
             ),
             (
                 "root-readme",
@@ -1887,7 +1887,7 @@ class RepositoryRegistryTests(unittest.TestCase):
             self.assertEqual(
                 conditional,
                 {
-                    "runbook": {"runbook-recovery-rollback"},
+                    "runbook": {"runbook.escalation.2"},
                     "reference-pack-readme": {
                         f"reference-pack-readme-{title.lower().replace(' ', '-')}"
                         for title in PACK_NOT_REQUIRED
@@ -2458,7 +2458,7 @@ class GuideFormRegistryTests(unittest.TestCase):
         steps, lifecycle = twin.tables
         self.assertEqual(
             (steps.name, steps.section, steps.minimum_rows, steps.row_identity),
-            ("Steps", "guide-procedure-actions", 0, "Step"),
+            ("Steps", "guide.steps.1", 0, "Step"),
         )
         self.assertEqual(
             [column.key for column in lifecycle.columns],
@@ -2495,7 +2495,7 @@ class GuideFormRegistryTests(unittest.TestCase):
         raw = load_raw()
         guide_tables(raw)[0]["section"] = "Actions"
         self.assertIn("REGISTRY_TABLE_SECTION", rules_of(raw))
-        for accepted in ("guide-purpose", "guide-verification-troubleshooting"):
+        for accepted in ("guide.purpose", "guide.troubleshoot.1"):
             raw = load_raw()
             guide_tables(raw)[0]["section"] = accepted
             with self.subTest(section=accepted):
@@ -2858,12 +2858,14 @@ def guide_body(actions: str, verification: str = "") -> str:
     return md(
         "# Guide",
         "## Procedure",
-        "### Actions",
+        "### Steps",
         actions,
-        "### Exceptions",
+        "### Expected Results",
+        "Pass.",
+        "## Troubleshooting",
+        "### Next Action",
         "None.",
-        "## Verification",
-        verification or "### Expected Result\n\nPass.",
+        *((verification,) if verification else ()),
     )
 
 
@@ -2942,16 +2944,17 @@ class TableCheckTests(unittest.TestCase):
         body = md(
             "# Guide",
             "## Procedure",
-            "### Actions",
+            "### Steps",
             "Run it.",
-            "### Exceptions",
+            "## Troubleshooting",
+            "### Next Action",
             "| Step | Action |\n| --- | --- |\n| 1 | Run |",
         )
         self.assertEqual(self.found(body), [])
         self.assertEqual(self.found(body, self.strict), ["BODY-TABLE-ROWS"])
 
     def test_a_non_unique_section_heading_is_left_to_the_tree_check(self) -> None:
-        body = guide_body(STEPS) + "\n### Actions\n\n" + OTHER + "\n"
+        body = guide_body(STEPS) + "\n### Steps\n\n" + OTHER + "\n"
         self.assertEqual(self.found(body, self.strict), [])
 
     def test_the_body_contract_table_is_not_checked_twice(self) -> None:
@@ -3395,20 +3398,20 @@ TRIGGERS = (
 )
 RUNBOOK_BODY = md(
     "# Runbook title",
-    "## Purpose",
-    "### Trigger and Outcome\n\nAn alert starts it.",
-    "### Scope\n\nOne service.",
-    "## Preconditions",
-    "### Authority and Access\n\nOwner approval.",
-    "### Safety Checks\n\nBackup exists.",
-    "## Steps",
-    "### Actions\n\nRun it.",
+    "## Trigger and Scope",
+    "### Trigger\n\nAn alert starts it.",
+    "### Targets\n\nOne service.",
+    "## Preflight",
+    "### Authority\n\nOwner approval.",
+    "### Environment\n\nBackup exists.",
+    "## Procedure",
+    "### Steps\n\nRun it.",
     "### Stop Conditions\n\nStop on error.",
-    "## Validation",
-    "### Service Checks\n\nRead the status.",
-    "### Evidence\n\nNone recorded.",
-    "## Recovery",
-    "### Escalation\n\nCall the owner.",
+    "## Verification",
+    "### Expected Results\n\nRead the status.",
+    "### Unverified Conditions\n\nNone recorded.",
+    "## Escalation",
+    "### Next Owner\n\nCall the owner.",
 )
 
 
@@ -3467,7 +3470,7 @@ class RunbookFormTests(unittest.TestCase):
                 triggers.minimum_rows,
                 triggers.row_identity,
             ),
-            ("Triggers", "runbook-steps-actions", 0, "Trigger"),
+            ("Triggers", "runbook.procedure.1", 0, "Trigger"),
         )
         self.assertEqual(
             [column.key for column in lifecycle.columns],
@@ -3527,15 +3530,17 @@ class RunbookFormTests(unittest.TestCase):
         block = "### Recovery Procedures\n\nRestore the replica from the snapshot."
         self.assertEqual(self.tree(self.under("", block)), [])
         before_rollback = RUNBOOK_BODY.replace(
-            "### Escalation",
-            block + "\n\n### Rollback\n\nUndo step 1.\n\n### Escalation",
+            "### Next Owner\n\nCall the owner.",
+            "### Next Owner\n\nCall the owner.\n\n"
+            + block
+            + "\n\n### Recovery or Forward Repair\n\nUndo step 1.",
         )
         self.assertEqual(self.tree(before_rollback), [])
 
     def test_recovery_procedures_under_another_h2_is_refused(self) -> None:
         block = "### Recovery Procedures\n\nRestore the replica."
         self.assertEqual(
-            self.tree(self.under("## Validation", block)), ["BODY-H3-PARENT"]
+            self.tree(self.under("## Verification", block)), ["BODY-H3-PARENT"]
         )
 
     def test_an_absent_recovery_procedures_passes_and_an_empty_one_fails(self) -> None:
@@ -3552,8 +3557,10 @@ class RunbookFormTests(unittest.TestCase):
             "| Promoted owner | Trigger or control | Evidence or recovery owner |\n"
             "| --- | --- | --- |\n| N/A | None | None |"
         )
-        self.assertEqual(self.tree(self.under("## Recovery", block)), [])
-        self.assertEqual(self.tree(self.under("## Steps", block)), ["BODY-H3-PARENT"])
+        self.assertEqual(self.tree(self.under("## Escalation", block)), [])
+        self.assertEqual(
+            self.tree(self.under("## Procedure", block)), ["BODY-H3-PARENT"]
+        )
 
 
 INCIDENT_PATH = PurePosixPath(
@@ -3561,42 +3568,39 @@ INCIDENT_PATH = PurePosixPath(
 )
 INCIDENT_BODY = md(
     "# Incident title",
-    "## Summary",
-    "### Event\n\n| Field | Value |\n| --- | --- |\n| Severity | SEV-2 |",
-    "### Current Status\n\nInvestigating.",
     "## Impact",
     "### Affected Users\n\nOne team.",
-    "### Severity and Duration\n\nSEV-2 for one hour.",
-    "## Timeline",
-    "### Events\n\nThe alert fired.",
-    "### Decisions\n\nThe commander chose rollback.",
+    "### Observed Scope\n\nSEV-2 for one hour.",
+    "#### Event\n\n| Field | Value |\n| --- | --- |\n| Severity | SEV-2 |",
+    "#### Current Status\n\nInvestigating.",
+    "## Response",
+    "### Timeline\n\nThe alert fired.",
+    "#### Decisions\n\nThe commander chose rollback.",
+    "### Actions\n\nRolled back.",
     "## Resolution",
-    "### Mitigation\n\nRolled back.",
-    "### Recovery Verification\n\nChecks pass.",
-    "## Evidence",
-    "### Evidence Sources\n\nA log link.",
-    "### Follow-up Owners\n\nA Task owner.",
+    "### Verified State\n\nChecks pass.",
+    "### Remaining Work\n\nA Task owner.",
+    "#### Evidence Sources\n\nA log link.",
 )
 POSTMORTEM_PATH = PurePosixPath(
     "docs/05.operations/incidents/2026/inc-0001-example/postmortem.md"
 )
 POSTMORTEM_BODY = md(
     "# Postmortem title",
-    "## Summary",
-    "### Incident Reference\n\nIncident INC-0001 as recorded in the incident folder.",
-    "### Review Scope\n\nThe whole event.",
-    "## Root Cause",
-    "### Causal Analysis\n\nA bad rollout.",
+    "## Facts",
+    "### Timeline\n\nIncident INC-0001 as recorded in the incident folder.",
+    "#### Review Scope\n\nThe whole event.",
+    "### Impact\n\nOne team.",
+    "#### Detection and Response\n\nAn alert fired.",
+    "## Causes",
     "### Contributing Factors\n\nNo canary.",
-    "## Impact",
-    "### Observed Impact\n\nOne team.",
-    "### Detection and Response\n\nAn alert fired.",
-    "## Corrective Actions",
-    "### Actions\n\nAdd a canary.",
-    "### Verification\n\nThe canary catches it.",
-    "## Evidence",
-    "### Source Records\n\nA log link.",
-    "### Review Decision\n\nApproved.",
+    "#### Causal Analysis\n\nA bad rollout.",
+    "### Uncertainty\n\nNone: no open question remains.",
+    "## Actions",
+    "### Prevention\n\nAdd a canary.",
+    "### Owners and Checks\n\nThe canary catches it.",
+    "#### Source Records\n\nA log link.",
+    "#### Review Decision\n\nApproved.",
 )
 
 
@@ -3733,7 +3737,7 @@ class RoleFormBody(unittest.TestCase):
 
     def test_the_table_is_not_looked_at_outside_its_section(self) -> None:
         wrong = self.table(self.HEADER[:2], ("a", "b"))
-        body = self.with_table(wrong, home="### Source Records")
+        body = self.with_table(wrong, home="#### Source Records")
         self.assertEqual(self.tables(body), [])
 
 
@@ -3768,7 +3772,7 @@ class IncidentFormTests(RoleFormBody):
         )
         self.assertEqual(self.tree(self.under("", block)), [])
         self.assertEqual(
-            self.tree(self.under("## Evidence", block)), ["BODY-H3-PARENT"]
+            self.tree(self.under("## Resolution", block)), ["BODY-H3-PARENT"]
         )
 
 
@@ -3787,9 +3791,9 @@ class PostmortemFormTests(RoleFormBody):
     WELL = "### What Went Well\n\nThe alert fired within a minute."
 
     def test_what_went_well_is_accepted_under_impact(self) -> None:
-        self.assertEqual(self.tree(self.under("## Corrective Actions", self.WELL)), [])
+        self.assertEqual(self.tree(self.under("## Causes", self.WELL)), [])
         after_detection = POSTMORTEM_BODY.replace(
-            "## Corrective Actions", self.WELL + "\n\n## Corrective Actions"
+            "## Causes", self.WELL + "\n\n## Causes"
         )
         self.assertLess(
             after_detection.index("### Detection and Response"),
@@ -3797,7 +3801,7 @@ class PostmortemFormTests(RoleFormBody):
         )
 
     def test_what_went_well_under_another_h2_is_refused(self) -> None:
-        for heading in ("## Root Cause", "## Evidence"):
+        for heading in ("## Actions", "### Owners and Checks"):
             with self.subTest(before=heading):
                 self.assertEqual(
                     self.tree(self.under(heading, self.WELL)), ["BODY-H3-PARENT"]
@@ -3807,7 +3811,7 @@ class PostmortemFormTests(RoleFormBody):
     def test_an_absent_what_went_well_passes_and_an_empty_one_fails(self) -> None:
         self.assertNotIn("What Went Well", POSTMORTEM_BODY)
         self.assertEqual(self.tree(POSTMORTEM_BODY), [])
-        empty = self.under("## Corrective Actions", "### What Went Well\n")
+        empty = self.under("## Causes", "### What Went Well\n")
         self.assertEqual(self.tree(empty), ["BODY-SECTION-EMPTY"])
 
     def test_what_went_wrong_is_an_h4_under_contributing_factors(self) -> None:
@@ -3823,8 +3827,8 @@ class PostmortemFormTests(RoleFormBody):
             "| Feedback target |\n| --- | --- | --- | --- |\n"
             "| Cause | Platform | N/A | Spec |"
         )
-        self.assertEqual(self.tree(self.under("## Evidence", block)), [])
-        self.assertEqual(self.tree(self.under("", block)), ["BODY-H3-PARENT"])
+        self.assertEqual(self.tree(self.under("", block)), [])
+        self.assertEqual(self.tree(self.under("## Actions", block)), ["BODY-H3-PARENT"])
 
 
 GOVERNANCE_POLICY_PATH = PurePosixPath(".agents/governance/agent-execution.md")
@@ -3836,21 +3840,21 @@ OPERATIONS_POLICY_PATH = PurePosixPath(
 def policy_body() -> str:
     return md(
         "# Policy title",
-        "## Purpose",
+        "## Purpose and Scope",
         "### Objective\n\nKeep changes reviewable.",
-        "### Authority\n\nPlatform owns this policy.",
-        "## Scope",
         "### Applies To\n\nEvery change.",
-        "### Exclusions\n\nNone: nothing is excluded.",
+        "#### Exclusions\n\nNone: nothing is excluded.",
         "## Rules",
         "### Requirements\n\nReview every change.",
-        "### Enforcement\n\nCI checks it.",
-        "## Exceptions",
-        "### Exception Conditions\n\nNone: no exception exists.",
-        "### Approval and Review\n\nThe owner approves.",
+        "### Exceptions\n\nNone: no exception exists.",
+        "#### Approval and Review\n\nThe owner approves.",
+        "## Enforcement",
+        "### Mechanisms\n\nCI checks it.",
+        "### Limits\n\nCI cannot see a manual change.",
         "## Ownership",
-        "### Responsibilities\n\nPlatform.",
-        "### Change and Adoption\n\nChanges follow the Spec.",
+        "### Owner\n\nPlatform owns this policy.",
+        "#### Responsibilities\n\nPlatform.",
+        "### Review Triggers\n\nChanges follow the Spec.",
     )
 
 
@@ -3912,14 +3916,14 @@ class OperationsPolicyFormTests(RoleFormBody):
     ) -> None:
         body = self.under("", self.BLOCK)
         self.assertLess(
-            body.index("### Change and Adoption"),
+            body.index("### Review Triggers"),
             body.index("### Lifecycle Traceability"),
         )
         self.assertEqual(self.tree(body), [])
         self.assertEqual(self.tables(body), [])
 
     def test_lifecycle_traceability_under_another_h2_is_refused(self) -> None:
-        for heading in ("## Rules", "## Exceptions", "## Ownership"):
+        for heading in ("## Rules", "## Enforcement", "## Ownership"):
             with self.subTest(before=heading):
                 self.assertEqual(
                     self.tree(self.under(heading, self.BLOCK)), ["BODY-H3-PARENT"]
@@ -8182,13 +8186,15 @@ class MeaningMapRecoveryPointerTests(unittest.TestCase):
             r"recover the map from the (SPEC-[0-9]{4}) recovery proof "
             r"in the REQ-0003 Archived Lineage\.$"
         )
-        pointed = 0
+        # SPEC-0221: a later migration replaces a role's map, so the number of
+        # pointers is history, not a contract; every map that names a recovery
+        # proof must point to it in the one form and name its own package.
         for text in self.meaning_maps(load_raw()):
+            if "recovery proof" not in text:
+                continue
             match = pointer.search(text)
-            if match is not None:
-                pointed += 1
-                self.assertEqual(re.search(r"SPEC-[0-9]{4}", text).group(0), match[1])
-        self.assertGreaterEqual(pointed, 14)
+            self.assertIsNotNone(match, text)
+            self.assertEqual(re.search(r"SPEC-[0-9]{4}", text).group(0), match[1])
 
 
 if __name__ == "__main__":

@@ -161,7 +161,7 @@ class NativeSkillEnvelopeTests(unittest.TestCase):
                 )
             },
         )
-        heading = "### Recovery Verification\n"
+        heading = "### Verified State\n"
         self.assertIn(heading, changed)
         changed = changed.replace(
             heading,

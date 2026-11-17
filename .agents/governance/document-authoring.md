@@ -1,32 +1,20 @@
 ---
 title: "Document Authoring Policy"
-version: "4.0.0"
+version: "4.1.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-17"
 ---
 
 # Document Authoring Policy
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
 Select the document owner by purpose, author from its canonical template, and
 close the change with traceable evidence.
-
-### Authority
-
-Stage 99 README (`docs/99.templates/README.md`) is the human authoring guide.
-Its registry (`docs/99.templates/registry.json`) alone owns exact paths,
-profiles, IDs, sections, metadata, lifecycle, and relationships. This policy
-owns agent procedure, not a second machine contract.
-
-- [Document Lifecycle](document-lifecycle.md)
-- [Work Lifecycle](../workflows/work-lifecycle.md)
-
-## Scope
 
 ### Applies To
 
@@ -37,7 +25,7 @@ express ownership, not a one-way waterfall.
 - Stage 99 Author Guide (`docs/99.templates/README.md`)
 - Archive Index (`docs/98.archive/README.md`)
 
-### Exclusions
+#### Exclusions
 
 This policy excludes no subject within its scope; if one is excluded, name it and its owner here.
 
@@ -403,28 +391,42 @@ A registered code never changes and is never given to another policy, and the
 document lifecycle check refuses a missing ID, a retired row made active, a
 changed code and a shrunken `reserved_codes` list.
 
-### Enforcement
+### Exceptions
+
+Exception and escalation conditions are stated under Requirements.
+
+#### Approval and Review
+
+Approval and review conditions are stated under Requirements.
+
+## Enforcement
+
+### Mechanisms
 
 Run strict registry, Markdown-profile, link/owner, and lifecycle checks when
 their contracts are affected. A deletion or consolidation requires replacement
 coverage and consumer disposition in the same logical change.
 
-## Exceptions
+### Limits
 
-### Exception Conditions
-
-Exception and escalation conditions are stated under Requirements.
-
-### Approval and Review
-
-Approval and review conditions are stated under Requirements.
+The strict registry, Markdown-profile, link/owner and lifecycle checks run only when their contracts are affected. Native skill metadata does not grant execution authority, and a deletion or consolidation still requires replacement coverage and consumer disposition in the same logical change.
 
 ## Ownership
 
-### Responsibilities
+### Owner
+
+Stage 99 README (`docs/99.templates/README.md`) is the human authoring guide.
+Its registry (`docs/99.templates/registry.json`) alone owns exact paths,
+profiles, IDs, sections, metadata, lifecycle, and relationships. This policy
+owns agent procedure, not a second machine contract.
+
+- [Document Lifecycle](document-lifecycle.md)
+- [Work Lifecycle](../workflows/work-lifecycle.md)
+
+#### Responsibilities
 
 Responsibilities are stated under Authority and Requirements.
 
-### Change and Adoption
+### Review Triggers
 
 Change and adoption conditions are stated under Requirements.

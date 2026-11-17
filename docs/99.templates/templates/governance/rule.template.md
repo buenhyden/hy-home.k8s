@@ -9,23 +9,17 @@ updated: "{{UPDATED}}"
 
 # [Rule Topic] Policy
 
-## Purpose
+## Purpose and Scope
 
 ### Objective
 
 <!-- Author prompt: name the governed concern, intended reader, current outcome and the risk the rule controls, and link the canonical upstream owners. -->
 
-### Authority
-
-<!-- Author prompt: name the owner and the basis for amending this rule, distinguish this authority from adjacent contracts and runtime state, and link the normative documents. -->
-
-## Scope
-
 ### Applies To
 
 <!-- Author prompt: state the decisions, constraints, targets, environments and consumers that shape this rule, and link the downstream owners and navigation entries. -->
 
-### Exclusions
+#### Exclusions
 
 <!-- Author prompt: state what this rule does not cover and which other owner governs it, or state that none exists and why. -->
 
@@ -41,26 +35,34 @@ updated: "{{UPDATED}}"
 | --- | --- | --- | --- | --- |
 | CODE-R001 | State when the rule applies. | required | Name where compliance is observed. | active |
 
-### Enforcement
-
-<!-- Author prompt: define deterministic checks, manual confirmation, failure handling, refresh triggers and evidence limits, and link the validation owners. -->
-
-## Exceptions
-
-### Exception Conditions
+### Exceptions
 
 <!-- Author prompt: state the reason, scope, risk and expiry under which an exception is allowed, or state that none exists and why. -->
 
-### Approval and Review
+#### Approval and Review
 
 <!-- Author prompt: state who may approve, verify, re-review or revoke an exception, or state that none exists and why. -->
 
+## Enforcement
+
+### Mechanisms
+
+<!-- Author prompt: define deterministic checks, manual confirmation, failure handling, refresh triggers and evidence limits, and link the validation owners. -->
+
+### Limits
+
+<!-- Author prompt: state what the enforcement does not cover or guarantee: advisory checks, manual steps, unobserved runtime and residual risk. -->
+
 ## Ownership
 
-### Responsibilities
+### Owner
+
+<!-- Author prompt: name the owner and the basis for amending this rule, distinguish this authority from adjacent contracts and runtime state, and link the normative documents. -->
+
+#### Responsibilities
 
 <!-- Author prompt: state who writes, reviews, approves and executes this rule. -->
 
-### Change and Adoption
+### Review Triggers
 
 <!-- Author prompt: state the canonical version, migration, adoption and drift verification path, or state that none exists and why. -->
