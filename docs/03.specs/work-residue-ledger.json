@@ -15,21 +15,29 @@
     {
       "id": "CI-SCOPE",
       "kind": "conflict",
-      "state": "open",
+      "state": "terminal",
       "owner": "W06",
       "resume_condition": "When ADR-0063 or another ADR-0048 successor is accepted with the REQ-0003 FR-0017 amendment",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-188"
       }
     },
     {
       "id": "COMMIT-AFTER",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W06",
       "resume_condition": "With the Git-point binding change to `.agents/governance/git.md`",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-189"
       }
     },
     {
@@ -87,11 +95,15 @@
     {
       "id": "MERGE-AFTER",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W06",
       "resume_condition": "With the Git-point binding change to `.agents/governance/git.md`",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-189"
       }
     },
     {
@@ -111,11 +123,15 @@
     {
       "id": "OLD-RULE-TESTS",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W06",
       "resume_condition": "With CI-SCOPE",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-188"
       }
     },
     {
@@ -131,11 +147,15 @@
     {
       "id": "PUSH-BEFORE",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W06",
       "resume_condition": "With the Git-point binding change to `.agents/governance/git.md`",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-189"
       }
     },
     {
@@ -193,11 +213,15 @@
     {
       "id": "R147-06",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W06",
       "resume_condition": "With the Git-point binding change to `.agents/governance/git.md`",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-189"
       }
     },
     {
@@ -527,7 +551,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "platform",
-      "resume_condition": "When the Requirement owner revises REQ-0002 and REQ-0003 with approval",
+      "resume_condition": "When the Requirement owner revises REQ-0002 with approval",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -642,6 +666,26 @@
       "closure": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
         "evidence": "EVD-187"
+      }
+    },
+    {
+      "id": "W06-H02",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W06",
+      "resume_condition": "At the first pull request that changes `gitops/` or the CI lock",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W06-H03",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W06",
+      "resume_condition": "When a successor decision selects the next hosted affected leaf",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
     },
     {

@@ -1,10 +1,10 @@
 ---
 title: "Software Development Lifecycle"
-version: "4.1.2"
+version: "4.1.3"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 
 # Software Development Lifecycle
@@ -141,7 +141,7 @@ each artifact lives and the rules that govern it.
 | SDLC-R013 | Native configuration is not evidence of runtime enforcement. |
 | SDLC-R014 | Lives under `.agents/skills/`; native discovery depends on the provider contract. A plain procedure reference is not a native registration. |
 | SDLC-R015 | A hook need not run QA, and a test fixture is never production policy input. |
-| SDLC-R016 | This public repository runs repository-static QA locally. The hosted `ci-summary` job checks branch and commit metadata. `style-pr` runs the selected style gate, the CI Python contract check when a lock changes, and the static GitOps identity check when GitOps data changes; its adoption awaits ADR-0063 acceptance. Neither job replays the rest of that QA. Argo CD reconciles declared GitOps state only under the operating boundary. |
+| SDLC-R016 | This public repository runs repository-static QA locally. The hosted `ci-summary` job checks branch and commit metadata. `style-pr` runs the selected style gate, the CI Python contract check when a lock changes, and the static GitOps identity check when GitOps data changes, and reports them as one fail-closed aggregate under ADR-0063, accepted on 2026-11-18. Neither job replays the rest of that QA. Argo CD reconciles declared GitOps state only under the operating boundary. |
 | SDLC-R017 | Neither follows automatically from local validation or a commit. |
 | SDLC-R018 | Stage 05. |
 | SDLC-R019 | Task and Git own change evidence; Git owns source recovery. Stage 98 is unvalidated history. |

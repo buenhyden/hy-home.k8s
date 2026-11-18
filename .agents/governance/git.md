@@ -1,10 +1,10 @@
 ---
 title: "Git Policy"
-version: "2.9.2"
+version: "2.10.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 
 # Git Policy
@@ -48,6 +48,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | GIT-R013 | Always | Codex asks before every network command and forbids a prefix subset ([Codex provider notes](../../.codex/provider.md)). | Semantic review | none |
 | GIT-R014 | Always | Remote protection and rulesets are recorded in [`.github/rulesets/main-protection.md`](../../.github/rulesets/main-protection.md) and are proven only by a dated read-back. | Semantic review | none |
 | GIT-R015 | Always | [`.cz.toml`](../../.cz.toml) is the single Commitizen grammar owner for supported types, optional scope, subject and body/footer syntax of ordinary authored messages. [`.gitmessage`](../../.gitmessage) explains that grammar to authors; a second commitlint grammar must not duplicate it. The configured commit-msg hook is the local enforcement point. Exact generated Git `Merge` and `Revert` syntax exceptions grant no merge or history rewrite authority. The pinned Commitizen hook accepts these two prefixes; the paired `scripts/commit-message-exceptions.py` hook narrows that acceptance using the generated patterns in `.cz.toml`. These checks validate syntax only: a manually authored message with the same shape also passes. They authenticate neither Git generation, an actual merge/revert, nor its provenance or authority. A prefix alone, `Pull request`, `fixup!`, `squash!`, or `amend!` does not receive an exception. The configured commit-msg stage permits an empty message so Git can abort the commit. | `commit-message-exceptions` hook of `.pre-commit-config.yaml` | none |
+| GIT-R016 | Always | Bind each Git point to its own subject: a commit to the exact staged index, a push to ref protection and transfer, a pull request to the cumulative `base..candidate` impact, and a merge to the new guarantee of the final candidate. Never select a check from only the last commit. Each event names its check, where it runs and its evidence lane in the table under this rule; a cell that reads `none` is a decision, not a gap. A hosted or remote lane is established only by an observed run or dated read-back. | Semantic review | none |
 
 | Rule ID | Level | Status |
 | --- | --- | --- |
@@ -66,6 +67,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | GIT-R013 | required | active |
 | GIT-R014 | required | active |
 | GIT-R015 | required | active |
+| GIT-R016 | required | active |
 
 #### Branch and integration routing
 
@@ -196,6 +198,17 @@ is explicit message evidence, not proof of hook installation or delivery in
 the source repository. Never change hooksPath, disable a hook, or set a skip
 variable in order to make a failing check pass or to leave a check unrun;
 widening the set of hooks that run is the only supported change.
+
+#### Git-point binding
+
+`GIT-R016`
+
+| Point | Before | During | After |
+| --- | --- | --- | --- |
+| Commit (exact staged index) | `commit-msg` and `pre-commit` entries of `scripts/githooks` via `chained-hook.sh`; installed hooks `staged-qa`, `commitizen`, `commit-message-exceptions` of `.pre-commit-config.yaml`; lane: local staged QA | The same installed hooks over the staged index | none: no `post-commit` hook is installed or dispatched; the record is the active Task's evidence row |
+| Push (ref protection and transfer) | none from this repository: `scripts/githooks/pre-push` dispatches to an installed workspace or global `pre-push` hook if one exists and otherwise drains input and exits 0; lane: none | Ref protection is the GitHub classic `main` branch protection ([record](../../.github/rulesets/main-protection.md)) and the provider deny rules, not a local hook; lane: dated remote read-back | none |
+| Pull request (cumulative `base..candidate`) | Local QA on the bounded final branch snapshot; lane: local | Hosted `ci-summary` (branch metadata, PR title and `base..head` messages) and `style-pr` (selected style, a changed CI lock and affected GitOps identities over the cumulative base-to-merge diff, one fail-closed aggregate under ADR-0063) of `ci.yml` on `pull_request`; lane: hosted, per PR SHA | none |
+| Merge (final candidate) | Required `ci-summary` and `style-pr`, `strict` latest head, from the main-protection record; lane: remote read-back | GitHub merge commit under the same protection | `ci.yml` runs only `ci-summary` on `push` to `main`; it reports `NOT_APPLICABLE` for the ref and adds no regression check, so no post-merge regression lane is adopted. Strict protection requires the PR checks on the latest head and `style-pr` checks the exact merge with both parents, so a replay on the merged tree would repeat a proven leaf (QUAL-R001). The merged `main` is compared with what was checked (GIT-R009), and the run is the observed push record |
 
 ### Exceptions
 

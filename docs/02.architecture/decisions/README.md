@@ -1,10 +1,10 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.13.0"
+version: "0.13.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 
 # 02.architecture/decisions (ADR)
@@ -74,7 +74,7 @@ updated: "2026-11-17"
 | [`./0045-in-cluster-telemetry-collection.md`](./0045-in-cluster-telemetry-collection.md) | In-cluster telemetry collection 결정 |
 | [`./0046-external-services-over-host-addresses.md`](./0046-external-services-over-host-addresses.md) | External service transport 결정 |
 | [`./0047-agent-contract-and-resource-ownership.md`](./0047-agent-contract-and-resource-ownership.md) | Agent 계약과 resource 소유 경계의 한정 개정 |
-| [`./0048-local-qa-and-semver-release-ownership.md`](./0048-local-qa-and-semver-release-ownership.md) | 로컬 QA 단계별 책임과 단일 SemVer 릴리스 생산자 결정. 호스팅 검사 조항 개정안은 ADR-0063에서 검토한다. |
+| [`./0048-local-qa-and-semver-release-ownership.md`](./0048-local-qa-and-semver-release-ownership.md) | 로컬 QA 단계별 책임과 단일 SemVer 릴리스 생산자 결정. 호스팅 검사 조항은 ADR-0063이 개정한다. |
 | [`./0049-external-data-service-contract-alignment.md`](./0049-external-data-service-contract-alignment.md) | 외부 데이터 서비스의 management/development 및 현행 K8s 소비 경계 한정 개정 |
 | [`./0050-ingress-nginx-replacement-with-traefik.md`](./0050-ingress-nginx-replacement-with-traefik.md) | 은퇴한 ingress-nginx를 Traefik ingress-nginx provider로 교체 |
 | [`./0051-istio-supported-release-upgrade.md`](./0051-istio-supported-release-upgrade.md) | Istio 1.31.2 이상으로 재구축하는 결정. 재구축은 미실행 상태이며 현재 GitOps 선언은 1.25.2다. |
@@ -89,7 +89,7 @@ updated: "2026-11-17"
 | [`./0060-work-residue-ledger-amendment.md`](./0060-work-residue-ledger-amendment.md) | 작업 잔여물(미완료 handoff, conflict, adoption, survey)만 담는 단일 JSON work residue ledger를 허용하도록 ADR-0031, ADR-0036, ADR-0047, ADR-0048의 무원장 조항을 "경쟁하는 progress ledger 금지"로 좁히는 개정 |
 | [`./0061-registry-schema-version-semver.md`](./0061-registry-schema-version-semver.md) | Amendment that makes the Stage 99 registry `schema_version` a SemVer string (generation 10 is `10.0.0`, adoption edition is `11.0.0`) and states the four-level bump rule, amending the integer sentences of ADR-0033 and ADR-0059 Decision 1. The current edition is recorded in `docs/99.templates/registry.json`. |
 | [`./0062-accepted-decision-retained-form.md`](./0062-accepted-decision-retained-form.md) | Amendment that keeps the seven-H2 form for accepted ADRs in the closed range ADR-0001 to ADR-0061 as a registered retained form, gives every later ADR the common ADR form in every status, and narrows ADR-0059 Decision 5 for the ADR role |
-| [`./0063-affected-pr-gitops-validation.md`](./0063-affected-pr-gitops-validation.md) | PR의 누적 변경이 GitOps에 영향을 줄 때 기존 필수 job에서 정적 검사를 선택하는 제안 |
+| [`./0063-affected-pr-gitops-validation.md`](./0063-affected-pr-gitops-validation.md) | PR의 누적 변경에 따라 기존 필수 job `style-pr`에서 style, CI lock, 정적 GitOps identity 검사를 선택해 fail-closed aggregate로 보고하도록 ADR-0048의 호스팅 검사 조항만 개정 (2026-11-18 승인). 선택된 CI lock·GitOps leaf가 실제로 실행된 호스팅 run은 아직 관측되지 않았다. |
 
 ### Owners
 
