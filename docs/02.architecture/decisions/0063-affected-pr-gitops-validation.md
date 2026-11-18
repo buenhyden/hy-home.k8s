@@ -1,8 +1,8 @@
 ---
 title: "Affected Pull Request GitOps Validation"
-version: "0.1.3"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-11-18"
 artifact_id: "ADR-0063"
@@ -21,7 +21,7 @@ and rejects malformed, unsupported, missing or duplicate objects.
 
 ### Decision Scope
 
-This proposal amends the hosted-validation clause of ADR-0048. It covers
+This decision amends the hosted-validation clause of ADR-0048. It covers
 selection, execution and reporting of static GitOps identity validation on
 main-targeting PRs. The existing local render, schema and operational checks
 keep their respective input and authority boundaries.
@@ -54,12 +54,15 @@ outcome for each unselected leaf.
 
 ### Authority and Effect
 
-The W06 implementation request authorizes developing and testing the candidate.
-The operator's ADR acceptance, the associated policy update and an observed
-hosted run establish adoption evidence. The workflow is implemented in
-`.github/workflows/ci.yml` on `main` (EVD-166) with read-only repository
-permission and without persistent checkout credentials; adoption of this
-decision is pending. The workflow definition itself remains editable by a PR.
+The operator accepted this decision on 2026-11-18, on the basis of the
+implemented workflow and the observed aggregate runs. The workflow is
+implemented in `.github/workflows/ci.yml` on `main` (EVD-166) with read-only
+repository permission and without persistent checkout credentials. The hosted
+aggregate was observed on PR runs with the CI lock and GitOps leaves skipped
+for absent affected paths; EVD-166 records the run on `c2243ef9`. A hosted run
+in which the CI lock or GitOps leaf is selected and executes remains
+unobserved, and the first PR that changes `gitops/` or the CI lock owns that
+observation. The workflow definition itself remains editable by a PR.
 
 #### Sources
 
@@ -71,21 +74,23 @@ and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md).
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0048 hosted validation clause](./0048-local-qa-and-semver-release-ownership.md#one-local-validation-graph) | Proposed clause amendment | [SPEC-0161](../../03.specs/0161-w00-v14-7-delta-intake/spec.md) |
+| [ADR-0048 hosted validation clause](./0048-local-qa-and-semver-release-ownership.md#one-local-validation-graph) | Amends only the hosted validation clause; every other clause stays | [SPEC-0161](../../03.specs/0161-w00-v14-7-delta-intake/spec.md) |
 
 ## Consequences
 
 ### Impacts
 
-Implemented in `.github/workflows/ci.yml` (EVD-166); adoption as a decision is
-pending. The changed GitOps scope gets an additional static identity result on
-the exact PR merge input. A metadata edit still verifies applicable candidate
-checks when same-input hosted evidence cannot be authenticated.
+Implemented in `.github/workflows/ci.yml` (EVD-166) and accepted by the
+operator on 2026-11-18. The changed GitOps scope gets an additional static
+identity result on the exact PR merge input. A metadata edit still verifies
+applicable candidate checks when same-input hosted evidence cannot be
+authenticated.
 
 ### Follow-up
 
 The topology update reached `main` through PR #290 before any change to the
 CI dependency lock. The owning Spec package's Task records the hosted
 aggregate, and required-check read-back in EVD-166.
-The GitOps leaf was inapplicable on that candidate. An affected hosted GitOps
-run and the operator's adoption decision remain outstanding.
+The GitOps leaf was inapplicable on that candidate. A hosted run in which the
+CI lock or GitOps leaf is selected and executes remains unobserved; the first
+PR that changes `gitops/` or the CI lock owns that observation.
