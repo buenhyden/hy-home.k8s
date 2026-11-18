@@ -65,6 +65,16 @@
       }
     },
     {
+      "id": "DOC-H01",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "Q07",
+      "resume_condition": "In the Q07-CUTOVER task, after every package is closed and Q07-H01 is converted",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
       "id": "DOC-S90",
       "kind": "handoff",
       "state": "terminal",
