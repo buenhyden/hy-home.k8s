@@ -284,6 +284,39 @@ class QaTests(unittest.TestCase):
                 ):
                     self.assertEqual(self.qa.main(), 1)
 
+    def test_an_unplanned_result_cannot_join_the_required_set(self):
+        # D04 4.1.0: the expected required set and the observed results are equal.
+        contract = {
+            "profiles": {"quick": ["fixture"]},
+            "validators": [
+                {"id": "fixture", "optional": False},
+                {"id": "unplanned", "optional": False},
+            ],
+        }
+
+        def report(*_args, observed_results, **_kwargs):
+            observed_results["fixture"] = "PASS"
+            observed_results["unplanned"] = "PASS"
+            return 0
+
+        with (
+            mock.patch.object(
+                sys, "argv", ["qa.py", "quick", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["fixture"]},
+            ),
+            mock.patch.object(self.qa.runner, "run_selected", side_effect=report),
+            mock.patch.object(self.qa.LocalEvidenceStore, "record_pass") as record,
+        ):
+            self.assertEqual(self.qa.main(), 1)
+        record.assert_not_called()
+
     def test_merge_parent_change_cannot_report_qa_success(self):
         contract = {"profiles": {"quick": []}, "validators": []}
         for private in (False, True):
@@ -976,6 +1009,11 @@ class LocalEvidenceTests(unittest.TestCase):
         (self.root / "file.txt").chmod(0o644)
         (self.root / "new.txt").write_text("new\n")
         self.assertNotEqual(initial, identity())
+        (self.root / "new.txt").unlink()
+        # A validator may read the Asia/Seoul date, so another day is another input.
+        self.assertEqual(initial, identity())
+        with mock.patch.object(self.qa, "validation_date", return_value="2099-01-01"):
+            self.assertNotEqual(initial, identity())
 
     def test_quick_repeat_and_exact_quick_to_staged_run_once(self):
         (self.root / "check.py").write_text("print('gate passed')\n")

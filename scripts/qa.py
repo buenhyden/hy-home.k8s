@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 from contextlib import contextmanager, nullcontext
 import hashlib
 import importlib.util
@@ -16,6 +17,7 @@ from typing import Any, Mapping, Sequence
 import stat
 import sys
 import tempfile
+from zoneinfo import ZoneInfo
 
 _spec = importlib.util.spec_from_file_location(
     "qa_validation_runner", Path(__file__).with_name("run-validation-lane.py")
@@ -422,6 +424,11 @@ def changed_paths(root: Path, *, staged: bool) -> list[str]:
     return result
 
 
+def validation_date() -> str:
+    """The Asia/Seoul date that date-aware validators read as today."""
+    return dt.datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()
+
+
 def gate_input_identity(
     snapshot: Path,
     gate: Mapping[str, Any],
@@ -469,8 +476,10 @@ def gate_input_identity(
     executable = Path(sys.executable).resolve(strict=True)
     executable_stat = executable.stat()
     fields = {
-        "version": 3,
+        "version": 4,
         "gate": gate["id"],
+        # A validator may compare dates with today, so a result holds for one day.
+        "date": validation_date(),
         "lane": canonical_lane,
         "paths": sorted(set(paths)),
         "base": base_ref,
@@ -705,6 +714,11 @@ def main() -> int:
                 and base_revision(root, args.profile, args.base_ref) != baseline
             ):
                 raise ValueError("explicit QA base changed during QA")
+            unplanned = sorted(set(observed_results) - set(ids))
+            if unplanned:
+                raise ValueError(
+                    "result for an unplanned gate: " + ", ".join(unplanned[:8])
+                )
             if not result:
                 for identifier in ids:
                     status = observed_results.get(identifier)

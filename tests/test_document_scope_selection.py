@@ -64,7 +64,11 @@ class DocumentScopeSelectionTests(unittest.TestCase):
 
     def test_document_only_paths_skip_unrelated_product_gates(self) -> None:
         affected = ROUTES.select_paths(CONTRACT, DOCUMENT_READERS, "affected")
-        readers = DOCUMENT_GATES | {"document-contract-tests"}
+        # Reader code and its tests also select the whole-tree ownership checks.
+        readers = DOCUMENT_GATES | {
+            "document-contract-tests",
+            "tooling-ownership-tests",
+        }
         self.assertEqual(set(affected["validators"]), readers)
         self.assertEqual(affected["protectedLevel"], "protected")
 
@@ -85,7 +89,11 @@ class DocumentScopeSelectionTests(unittest.TestCase):
                 self.assertEqual(
                     set(selected["validators"]),
                     DOCUMENT_GATES
-                    | {"document-contract-tests", "document-lifecycle-tests"},
+                    | {
+                        "document-contract-tests",
+                        "document-lifecycle-tests",
+                        "tooling-ownership-tests",
+                    },
                 )
                 self.assertNotIn("k8s-manifests", selected["validators"])
 
@@ -100,6 +108,7 @@ class DocumentScopeSelectionTests(unittest.TestCase):
             {
                 "affected-surface-contract",
                 "repository-quality",
+                "tooling-ownership-tests",
                 "validation-routing-tests",
             },
         )

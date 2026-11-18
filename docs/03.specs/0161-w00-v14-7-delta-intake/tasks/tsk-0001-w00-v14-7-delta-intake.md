@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.30"
+version: "0.2.31"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -295,6 +295,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-180 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W03-VERSION numeric version recheck | `scripts/semver_grammar.py`, the version patterns of `frontmatter.schema.json`, `document-profile.schema.json` and `template-definition.schema.json`, `scripts/release.py`, and the 24 cases of the package `version-fixtures.json` at `bb0d1887`, 2026-11-17 | PASS | All 24 package cases match `is_numeric_version`, and `numeric_version_order` orders 1.9.0 before 1.10.0. The schema patterns end in `(?![\s\S])`, so a trailing newline fails. Release tags keep their own `v`-prefixed SemVer pattern, Kubernetes API `version: v1` labels stay unchanged, and `contract_id` and `contract_version` are separate fields. `tests.test_semver_grammar`, `tests.test_semver_versions` and `tests.test_frontmatter_key_contract`: 104 tests OK. No change was needed. | no | none |
 | EVD-181 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W04-LIFECYCLE draft, approval and relation recheck | `.agents/governance/document-lifecycle.md` DOCLIFE-R001 to R003, the Spec, Plan, Task and Requirement status domains of `docs/99.templates/registry.json`, the Plan template tables, `readme_navigation.forbidden_index_columns`, the ledger entries W05-H05 and W07-H03, and `tests.test_task_execution_contract`, `tests.test_task_acceptance_contract`, `tests.test_task_acceptance_boundaries`, `tests.test_document_lifecycle_cumulative_history`, `tests.test_current_executable_references`, `tests.test_relationship_contract`, `tests.test_document_lifecycle_package_exit` and `tests.test_shared_contract_binding` at `235fcb73`, 2026-11-17 | PASS | 227 tests OK. Draft creation, revision, review and focused checks stay allowed; a draft parent, a status edit or a writing PASS does not activate a Task; scoped approval binds the current parents and request revision; a changed or cancelled request and a superseded brief block resume; rename, deletion and recreation are refused; the registry status domains equal the policy prose. No change was needed. | no | none |
 | EVD-182 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W04-CONTENT new-claim review and core table fill | The 893 text units new since `537a7428` in 61 of the 116 Stage 01, 02, 05 and 90 documents, read by four read-only reviewers; the 40 staged files; the four strict document validators, `validate-work-residue-ledger.py`, and `bash -n` on the runbook fences; an independent verification review of the staged diff; pinned venv, 2026-11-18 | PASS | Every document has a disposition (55 KEEP, 61 reviewed). The review findings were fixed in 37 documents or recorded as W04-H02 to W04-H07. The validators passed on the staged tree. No cluster, Vault or GitHub operation ran. | no | none |
+| EVD-183 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W05-GATES exact set, reuse and ownership selection | `scripts/qa.py`, `scripts/validation/registry.json`, `scripts/run-contract-tests.py` and the routing and ownership tests on `claude/w05-gates`; failing first: the unplanned-result, date-identity and reuse-list tests (`tests.test_qa_runner`, `tests.test_validation_profiles`) and the ownership collection check on `main`; then the `qa-runner` (42), `validation-routing` (162), `tooling-ownership` (15) suites, `tests.test_document_scope_selection` and an injected uncollected mixin class; pinned venv, 2026-11-18 | PASS | All three new tests and the collection check failed before the change and pass after it; the injected mixin class is still reported while a two-level `TestCase` subclass is collected; the 11 fixture selection cases and five pinned lists that changed differ only by `tooling-ownership-tests`; the same-index repeat fell from 66.4 s to 28.5 s. | no | none |
+| EVD-184 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W05 residue mapping to current checks | QA-03: the six registry readers (`validate-markdown-profiles.py`, `validate-links-and-owners.py`, `validate-document-lifecycle.py`, `validate-document-contract-registry.py`, `validate-work-residue-ledger.py`, `document-generator.py`) and `tests.test_registry_schema_version`; QA-17: SPEC-0222 EVD-034 to EVD-041 and `tests.test_common_form_tree`; R147-05: the `validation-routing`, `qa-runner` and `tooling-ownership` suites; R147-20: `qa.py` `gate_input_identity` version 4 and `tests.test_qa_runner` identity and run-once tests; SDLC-08: `test_another_major_number_is_refused`, `test_an_integer_is_refused_with_a_message_that_names_the_mapping` and `test_the_strict_schema_pins_the_exact_current_value`; pinned venv, 2026-11-18 | PASS | Each rule maps to a current check that passed in this change: every validator reads the current registry edition; the reformed registry's new violations fail; the QA registry, tests and scripts agree; reuse needs the same gate, argv, lane, paths, base, environment, tool, Git, HEAD, refs, files and date; and an older registry edition is refused as a strict pass basis. | no | none |
 
 #### Edition Delta
 
@@ -2506,6 +2508,63 @@ range in the Stage 02 rules stays.
 | Structure PASS is not operational validity; runbooks were not run against a cluster | RUNTIME_ONLY | `bash -n` on 90 fences only | platform operator |
 | Requirement mechanism text in REQ-0002 and REQ-0003 | Residue | Needs a Requirement revision with approval (W04-H07) | platform |
 
+#### W05-GATES Recheck (4.2.0)
+
+The 2026-11-18 request applies the 4.2.0 W05-GATES prompt with the same
+limits, starting from merged `000238cd`. The package marks this task reported
+complete, so only differences new in 4.1.0 and 4.2.0 are in scope, together
+with the residue that names W05 as its next actor. The designs read were D04,
+D12, D15, D25 and D26. No attached proposal disposition targets W05-GATES.
+
+**Call graph and findings.** The commit `pre-commit` hook runs `qa.py
+staged` on the exact index. The registry classifies each path into exactly one
+surface, and the bounded runner invokes each selected gate. The checks found
+the following:
+
+- *Exact required set (D04 4.1.0).* `qa.py` refused a missing or invalid
+  required result but not a result for an unplanned gate. It now refuses a
+  result for a gate outside the planned set.
+- *Repeated execution (QUAL-R001).* Only `document-contract-registry` carried
+  a reuse contract. A commit after a direct `qa.py staged` on the same index
+  therefore replayed every other document gate, including the
+  `document` suite. The reuse identity now also binds the Asia/Seoul date,
+  because `validate-markdown-profiles.py` reads today's date, and its version
+  is 4. Six gates that are pure Python over the repository bytes, Git and that
+  date now opt in: the `document` and `document-lifecycle` suites, document
+  lifecycle, the residue ledger, links and Markdown profiles. Gates that run a
+  tool outside the identity, such as selected style, kubeconform or conftest,
+  stay outside reuse.
+- *Selector gap.* `tests/test_validation_tooling_ownership.py` checks every
+  test and script, for example that every declared test class is collected.
+  It ran only when the routing files changed. Its collection check also
+  followed local bases one level deep, so it misreported four classes added in
+  `714de75e` whose base is two levels from `TestCase`. The module is now the
+  `tooling-ownership` suite and the `tooling-ownership-tests` gate. All 19
+  surfaces that classify a test, a script or `.pre-commit-config.yaml` select
+  it, and it left the `validation-routing` suite, so nothing runs twice. The
+  check now follows local bases at any depth.
+- *No duplicate leaves (D04 4.2.0).* No two gates share an argv, and no test
+  module sits in two suites.
+- *Short document edit.* A one-sentence runbook edit selects seven document
+  and style gates and no regression suite.
+
+**Measurement.** Both trees were clones on this host with Python 3.12.3 and
+the pinned venv. The input was the same one-sentence RUN-0008 edit, and
+`qa.py staged` ran twice on the same index, N=1 per variant. On `main` the
+runs took 68.4 s and 66.4 s, and the second reused only the registry gate. On
+this change they took 77.1 s and 28.5 s, and the second reused five document
+gates. The first-run difference is within single-run noise.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Expected required set equals observed results | CHANGED | EVD-183 | none |
+| Same-input replay of document gates | CHANGED | EVD-183; measurement above | none |
+| Tooling ownership selection and depth | CHANGED | EVD-183 | none |
+| Duplicate leaves and short-edit selection | KEEP_VERIFIED | EVD-183 | none |
+| QA-03, QA-17, R147-05, R147-20, SDLC-08 | Closed by mapping | EVD-184 | none |
+| DOC-S99 tests that hard-code form headings | Narrowed: 9 test modules, mostly deliberate registry pins | Resume condition | W05 |
+| Hosted runs and native hook replay of the new reuse | RUNTIME_ONLY | Local clone runs only | W06 |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -2526,7 +2585,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | DOC-12 | Legacy row `DOC-12` of `Conflicts`: display renumbering of Stage 01, 02 and 03; also an OPEN row of Requirement Changes | open | Q07 | After W11 and every applicable docs task, in the separate Q07 task | none |
 | DOC-S00 | Legacy row `DOC-S00` of `Stage QA Handoff`: vocabulary rule_id binding | terminal | W05 | When W05 starts | EVD-138 |
 | DOC-S90 | Legacy row `DOC-S90` of `Stage QA Handoff`: Stage 90 source, edition and freshness checks | open | W05 | At the next Stage 90 profile or validator change | none |
-| DOC-S99 | Legacy row `DOC-S99` of `Stage QA Handoff`: tests hard-code current headings | open | W05 | When W05 makes the tests that hard-code current section headings read them from the registry | none |
+| DOC-S99 | Legacy row `DOC-S99` of `Stage QA Handoff`: tests hard-code current headings | open | W05 | At the next change to a form's heading tree, for the tests of that form; deliberate registry pins in tests.test_common_form_tree stay | none |
 | GOV-04 | Legacy row `GOV-04` of `Requirement Changes`: the approved registry as a reform target | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | GOV-06 | Legacy row `GOV-06` of `Requirement Changes`: single-writer registry reformed | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | LEDGER | Legacy row `LEDGER` of `Conflicts`: the work residue ledger; built by this package | terminal | W03 | After the user accepts the SPEC-0191 criteria | EVD-055 |
@@ -2543,24 +2602,24 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | OPEN-09 | Legacy row `OPEN-09` of `OPEN Dispositions`: hard-coded current headings in tests | terminal | W05 | When W05 moves the hard-coded headings | EVD-139 |
 | PR-DURING | Legacy row `PR-DURING` of `Stage QA Handoff`: PR-DURING scope decision (CI-SCOPE) | terminal | W06 | When CI-SCOPE closes | EVD-139 |
 | PUSH-BEFORE | Legacy row `PUSH-BEFORE` of `Stage QA Handoff`: pre-push has no target | open | W06 | With the Git-point binding change to `.agents/governance/git.md` | none |
-| QA-03 | Legacy row `QA-03` of `Requirement Changes`: validator input is the reformed registry edition | open | W05 | When an evidence row maps each rule to a current check or a narrower residue row | none |
-| QA-17 | Legacy row `QA-17` of `Requirement Changes`: validators changed for the reformed registry | open | W05 | When an evidence row maps each rule to a current check or a narrower residue row | none |
+| QA-03 | Legacy row `QA-03` of `Requirement Changes`: validator input is the reformed registry edition | terminal | W05 | When an evidence row maps each rule to a current check or a narrower residue row | EVD-184 |
+| QA-17 | Legacy row `QA-17` of `Requirement Changes`: validators changed for the reformed registry | terminal | W05 | When an evidence row maps each rule to a current check or a narrower residue row | EVD-184 |
 | R147-03 | Legacy row `R147-03` of `Requirement Changes`: approved norms are reform targets | terminal | W03 | Same as GOV-04 | EVD-110 |
 | R147-04 | Legacy row `R147-04` of `Requirement Changes`: common H2 and H3 forms in templates and consumers | terminal | W03 | When the common forms reach every role (phase 3) | EVD-110 |
-| R147-05 | Legacy row `R147-05` of `Requirement Changes`: tests, QA and scripts follow QA-ALIGNMENT | open | W05 | When an evidence row maps each rule to a current check or a narrower residue row | none |
+| R147-05 | Legacy row `R147-05` of `Requirement Changes`: tests, QA and scripts follow QA-ALIGNMENT | terminal | W05 | When an evidence row maps each rule to a current check or a narrower residue row | EVD-184 |
 | R147-06 | Legacy row `R147-06` of `Requirement Changes`: bind Git before, during and after cells | open | W06 | With the Git-point binding change to `.agents/governance/git.md` | none |
 | R147-07 | Legacy row `R147-07` of `Requirement Changes`: separate SDLC stage from document STAGE | terminal | W04 | When W04 starts | EVD-169 |
 | R147-10 | Legacy row `R147-10` of `Requirement Changes`: migrate the registry to the CI chain | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | R147-16 | Legacy row `R147-16` of `Requirement Changes`: Kubernetes impact of governance changes | open | W10-INFRA | When W10-INFRA maps the manifest and GitOps consumers that a governance change can affect | none |
 | R147-17 | Legacy row `R147-17` of `Requirement Changes`: harness static versus live provider evidence | open | W07 | At the next provider note edit or at RUNTIME-CLOSE | none |
-| R147-20 | Legacy row `R147-20` of `Requirement Changes`: reuse only equivalent results | open | W05 | When an evidence row maps equivalent-result reuse to the `scripts/qa.py` identity contract | none |
+| R147-20 | Legacy row `R147-20` of `Requirement Changes`: reuse only equivalent results | terminal | W05 | When an evidence row maps equivalent-result reuse to the `scripts/qa.py` identity contract | EVD-184 |
 | R45-06 | Legacy row `R45-06` of `Requirement Changes`: reform the approved registry itself | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | R45-07 | Legacy row `R45-07` of `Requirement Changes`: reform forms and consumers in place | terminal | W03 | When the registry reform finishes with phase 3 | EVD-110 |
 | R45-10 | Legacy row `R45-10` of `Requirement Changes`: a TemplateDefinition per real template | terminal | W03 | When every template has its TemplateDefinition (W03-H13, W03-H15) | EVD-107 |
 | R45-12 | Legacy row `R45-12` of `Requirement Changes`: verify common adoption across four purposes | terminal | W11 | When another repository's adoption evidence exists (this workspace only) | EVD-137 |
 | SCOPE-10 | Legacy row `SCOPE-10` of `Requirement Changes`: current-copy migration against historical bytes | terminal | W03 | With the migration map of the form change (phase 3) | EVD-110 |
 | SDLC-07 | Legacy row `SDLC-07` of `Requirement Changes`: transition rules in the registry | terminal | W04 | When the owner decides between per-family policy edges and the registry-only transition rule | EVD-177 |
-| SDLC-08 | Legacy row `SDLC-08` of `Requirement Changes`: old approved registry edition is not a pass basis | open | W05 | When a negative test refuses an old approved edition as a pass basis, or with W05-H09 | none |
+| SDLC-08 | Legacy row `SDLC-08` of `Requirement Changes`: old approved registry edition is not a pass basis | terminal | W05 | When a negative test refuses an old approved edition as a pass basis, or with W05-H09 | EVD-184 |
 | SDLC-ROWS | Legacy row `SDLC rows` of `Stage QA Handoff`: PLAN-PROMOTION anchor, member and receipt cross-check | open | W05 | At the next change to the PLAN-PROMOTION check or the Plan promotion form | none |
 | SPEC-0205-STALE-TEXT | No legacy row: three texts left stale by the H2-list removal of SPEC-0205 and outside its Spec scope: the Plan sentence "a draft until its review and approval receipts exist", the word `sections` in `docs/99.templates/AGENTS.md`, and the TemplateDefinition `validation` strings of `docs/99.templates/registry.json` that say "keep heading lists". Transferred from the closed SPEC-0205 Task (EVD-111) | open | W04+ platform | When the owner of the Plan text, of the Stage 99 `AGENTS.md` and of the registry TemplateDefinition text next edits them in its own package | none |
 | SPEC-0211-REGISTRY-TEXT | No legacy row: wording faults found by the W03-H34 read of `docs/99.templates/registry.json` at `d0ae8cf6` (SPEC-0211 Task EVD-019), beyond `SPEC-0205-STALE-TEXT`: four "keep empty heading lists" pack strings, one "listed their H2 headings" and the provider-native twin "H2 lists" strings; copied or wrong TemplateDefinition and profile text (the data-pack consumer path names the collection README, the collection and runtime-governance template texts copy the stage and implementation texts, the postmortem extension removal names incident lineage, two `review` strings do not name their form, the governance-document form calls itself a provider note); one failure named by both `BODY-HEADING-REQUIRED` and `BODY-H3-REQUIRED`; "A audit" and "a operations policy"; about 28 Korean object particles (을 for 를) in generated `required_content`. Recorded under SPEC-0211 (user answer "Residue to owners, close H34 (Recommended)", 2026-11-15) | open | W04+ platform | When the owner of those registry TemplateDefinition, form and profile texts next edits them in its own package | none |

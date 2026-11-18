@@ -62,11 +62,12 @@ SUITES = {
         "validate_affected_surfaces",
         "validation_profiles",
         "run_validation_lane",
-        "validation_tooling_ownership",
         "validation_bounded_io",
         "selected_style",
         "validate_selected_nonstyle",
     ),
+    # Whole-tree invariants over every test and script, selected by each of them.
+    "tooling-ownership": _modules("validation_tooling_ownership"),
     "qa-runner": _modules("qa_runner"),
     "ci-metadata": _modules(
         "validate_ci_python_contract",
