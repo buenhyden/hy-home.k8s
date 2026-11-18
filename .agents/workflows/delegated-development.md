@@ -1,10 +1,10 @@
 ---
 title: "Delegated Development"
-version: "1.3.0"
+version: "1.4.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 
 # Delegated Development
@@ -53,6 +53,15 @@ roster or tool inventory.
    follows writing scope. Dependent implementation or operation needs current
    execution authority. Recheck the binding on resume and stop the dependent
    action if approval is stale or revoked.
+   Before handing a worker a mutation, resuming a worker after a correction
+   or compaction, or making a state change for it, re-confirm the current
+   request from its source and run the explicit preflight
+   `scripts/validate-execution-brief.py` with the worker's brief. A refusal
+   stops only the refused action. A read-only investigation or review handoff
+   and a clear low-risk task proceed on the short brief in the handoff itself,
+   with no per-file re-approval. The preflight checks correspondence and
+   scope only. It grants no authority, and a provider path that does not call
+   it is an enforcement gap, not a check.
 3. Treat write scope as the intersection of authorization, registry permission,
    responsibility boundary, and task ownership. Read-only roles remain
    read-only; an orchestration role delegates mutation rather than acquiring it.

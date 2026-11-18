@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.35"
+version: "0.2.36"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -302,6 +302,7 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-187 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W05-H10 disposition | `.agents/governance/sdlc.md` SDLC-R034 and its enforcement cell; `scripts/validation/registry.json` surfaces; the test-only changes of EVD-183 and EVD-185; D04 4.1.0; 2026-11-18 | PASS | SDLC-R034 turns on the reason for a change, and the registry names no test-to-producer owner. Its policy enforcement is semantic review, and a mechanical rule would refuse the legitimate test-only changes recorded in EVD-183 and EVD-185. No check was added. | no | none |
 | EVD-188 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | ADR-0063 acceptance and FR-0017 amendment | User answer `Accept now` on 2026-11-18; ADR-0063, REQ-0003 FR-0017, AD-0006, the ADR index, QUAL-R006 and SDLC-R016; `tests.test_validate_ci_python_contract` and the four strict document validators on the staged tree; hosted `style-pr` runs of PR #297 to #302; pinned venv, 2026-11-18 | PASS | ADR-0063 is accepted at 1.0.0, and FR-0017 states the need and acceptance with its mechanism in AD-0006. The CI contract tests and validators pass. Each PR run executed the aggregate with the CI lock and GitOps leaves skipped; a selected-leaf hosted run is W06-H02. | no | none |
 | EVD-189 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Git-point binding (GIT-R016) | `scripts/githooks/{pre-commit,commit-msg,pre-push,chained-hook.sh}`, `.pre-commit-config.yaml`, `.github/workflows/ci.yml` triggers and jobs, the main-protection record, `gh run list` push runs on `main`, and the six PR job timings; `tests.test_policy_rule_ids`; 2026-11-18 | PASS | Each Git point names its check, location and evidence lane. No post-commit hook exists, the pre-push dispatcher runs only installed hooks, and no post-merge regression lane is adopted, with the reason recorded. Hosted queue medians are 2 s, and run medians are 39 s for `style-pr` and 6 s for `ci-summary`. | no | none |
+| EVD-190 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-BRIEF partial invalidation and preflight consumer | `scripts/validate-execution-brief.py`; the new `test_a_material_change_stops_only_the_actions_that_read_it` first against the unchanged script, then `tests.test_task_execution_contract.ExecutionBriefCliTests`; `.agents/workflows/delegated-development.md`; the strict profile, link and lifecycle validators and `validate-agent-governance.py`; pinned venv, 2026-11-18 | PASS | The new test failed against the old script and passes now, with 13 brief tests. An action that names its inputs passes after an unrelated Task append. An action without `inputs`, an action that reads the changed input and an unknown input name are refused. The workflow names the preflight before mutation handoffs, resumes and state changes. | no | none |
 
 #### Edition Delta
 
@@ -2642,6 +2643,51 @@ filter hides a required job, because `ci.yml` triggers on every
 | Hosted run with a selected CI lock or GitOps leaf | RUNTIME_ONLY | W06-H02 | W06 |
 | Hosted affected implementation and product checks beyond style, lock and GitOps identity | Target kept in QUAL-R006 | W06-H03 | W06 |
 | FR-0017 mechanism text (W04-H07 part) | Moved to AD-0006 | W04-H07 narrowed to REQ-0002 | platform |
+
+
+#### W07-BRIEF Recheck (4.2.0)
+
+The 2026-11-18 request applies the 4.2.0 W07-BRIEF prompt from merged
+`5e1536a7`, limited to that prompt. The designs read were D08, D03 and D25.
+No attached proposal disposition targets W07-BRIEF. The earlier W07 brief
+work added the explicit preflight `scripts/validate-execution-brief.py` and
+its tests.
+
+**Differences found.** Two 4.1.0 conditions of D08 were not met:
+
+- *Partial invalidation.* The preflight compared every bound field, including
+  all `material_inputs`, and read every material file. A change to any material
+  input, such as an evidence-only append to the Task, therefore refused every
+  action. D08 4.1.0 invalidates only the affected work.
+- *Consumer.* No procedure called the preflight. The delegated-development
+  workflow said to recheck the binding on resume but named no check.
+
+**Changes.**
+
+- An action binding in `allowed_actions` may now list the material `inputs` it
+  reads. Such an action compares and reads only its target paths and those
+  inputs. An action without `inputs` binds every material input, as before, so
+  the default stays strict. An unknown input name is refused. Every other bound
+  field still binds all actions.
+- The delegated-development workflow now requires the preflight before a
+  worker mutation handoff, a resume after a correction or compaction, and a
+  state change for a worker. A refusal stops only the refused action. A
+  read-only or review handoff and a clear low-risk task proceed on the short
+  brief, with no per-file re-approval. The workflow states that the preflight
+  grants no authority, and that a provider path that does not call it is an
+  enforcement gap.
+- The `scripts/README.md` usage text documents `inputs`.
+
+**Kept.** The preflight already treats authenticity as the caller's job,
+because a brief and a current request written by one author prove nothing.
+Questions block only their affected actions. A withdrawn or changed request,
+a stale brief revision and a changed HEAD are still refused.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Material change stops only the affected action | CHANGED | EVD-190 | none |
+| Dispatch, resume and state-change consumer of the preflight | CHANGED | EVD-190; delegated-development step 2 | none |
+| Native direct, nested, resume and compact consumption and the question roundtrip | RUNTIME_ONLY | AGENT-04 (W07) | W07 |
 
 ### Resolution Links
 

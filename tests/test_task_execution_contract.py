@@ -3145,6 +3145,115 @@ class ExecutionBriefCliTests(unittest.TestCase):
         target.unlink()
         self.assert_refused("invalid or unavailable input", **arguments)
 
+    def test_a_material_change_stops_only_the_actions_that_read_it(self) -> None:
+        # D08 4.1.0: a material change invalidates only the affected work. An
+        # action that names its inputs ignores an unrelated input; an action
+        # that names none still binds every material input.
+        task = self.root / "task.md"
+        task.write_text("Evidence row one.\n", encoding="utf-8")
+        self.git("add", "task.md")
+        self.baseline = self.git("commit-tree", self.git("write-tree"), "-m", "task")
+        self.git("update-ref", "HEAD", self.baseline)
+        digest = hashlib.sha256(task.read_bytes()).hexdigest()
+        current = {
+            **self.current,
+            "authority_ref": "fixture:independent-source",
+            "baseline_id": self.baseline,
+            "material_inputs": {**self.current["material_inputs"], "task.md": digest},
+            "allowed_actions": {
+                **self.current["allowed_actions"],
+                "scoped-write": {
+                    "operation": "state-change",
+                    "paths": ["notes.md"],
+                    "inputs": ["request.md"],
+                },
+            },
+        }
+        brief = {
+            **self.brief,
+            "authority_ref": "fixture:independent-source",
+            "baseline_id": self.baseline,
+            "material_inputs": current["material_inputs"],
+        }
+        self.assertEqual(
+            self.run_brief(
+                brief=brief,
+                current=current,
+                operation="state-change",
+                action="scoped-write",
+                path="notes.md",
+            ).returncode,
+            0,
+        )
+        # An evidence-only append to the Task, committed and re-bound.
+        task.write_text("Evidence row one.\nEvidence row two.\n", encoding="utf-8")
+        self.git("add", "task.md")
+        self.baseline = self.git(
+            "commit-tree", self.git("write-tree"), "-p", self.baseline, "-m", "append"
+        )
+        self.git("update-ref", "HEAD", self.baseline)
+        changed = {
+            **current,
+            "baseline_id": self.baseline,
+            "material_inputs": {
+                **current["material_inputs"],
+                "task.md": hashlib.sha256(task.read_bytes()).hexdigest(),
+            },
+        }
+        stale = {**brief, "baseline_id": self.baseline}
+        scoped = self.run_brief(
+            brief=stale,
+            current=changed,
+            operation="state-change",
+            action="scoped-write",
+            path="notes.md",
+        )
+        self.assertEqual(scoped.returncode, 0, scoped.stderr)
+        self.assert_refused(
+            "material_inputs",
+            brief=stale,
+            current=changed,
+            operation="state-change",
+            action="write",
+            path="notes.md",
+        )
+        reads_task = {
+            **changed,
+            "allowed_actions": {
+                "scoped-write": {
+                    "operation": "state-change",
+                    "paths": ["notes.md"],
+                    "inputs": ["task.md"],
+                }
+            },
+        }
+        self.assert_refused(
+            "material_inputs",
+            brief=stale,
+            current=reads_task,
+            operation="state-change",
+            action="scoped-write",
+            path="notes.md",
+        )
+        unknown = {
+            **changed,
+            "allowed_actions": {
+                "scoped-write": {
+                    "operation": "state-change",
+                    "paths": ["notes.md"],
+                    "inputs": ["missing.md"],
+                }
+            },
+        }
+        self.assert_refused(
+            "material input",
+            brief=stale,
+            current=unknown,
+            operation="state-change",
+            action="scoped-write",
+            path="notes.md",
+        )
+
     def test_new_target_must_remain_absent(self) -> None:
         path = "new/notes.md"
         binding = {
