@@ -1,10 +1,10 @@
 ---
 title: "Work Lifecycle"
-version: "2.5.0"
+version: "2.5.1"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 
 # Work Lifecycle
@@ -121,8 +121,8 @@ end the loop.
 2. Follow the delivery route and ordered sequence in
    [quality policy](../governance/quality.md#delivery-ownership). Record local
    selected QA and pre-commit lint/format over their actual snapshots. PR branch
-   metadata and selected hosted style have distinct SHA/run evidence. Push and
-   merge do not replay an identical leaf.
+   metadata and the selected hosted `style-pr` leaves have distinct SHA/run
+   evidence. Push and merge do not replay an identical leaf.
 3. Review final diff scope and remove task-owned scratch/debug residue.
 4. Record the canonical handoff fields in the active Task; include failures,
    skipped optional tools, unavailable runtime checks, review disposition,

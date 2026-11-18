@@ -9,6 +9,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import graphlib
 import re
 import subprocess
 import sys
@@ -809,6 +810,76 @@ def _draft_requirement_basis(
     )
 
 
+_PLAN_UNIT = re.compile(r"WORK-[0-9]{3}(?![0-9])")
+_PLAN_UNIT_RANGE = re.compile(r"WORK-([0-9]{3}) to WORK-([0-9]{3})(?![0-9])")
+_PLAN_TABLE_RULE = re.compile(r"\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*")
+
+
+def _plan_work_dependency_problem(visible: str) -> str | None:
+    """D26 section 6: the work units of a Plan form a known, acyclic graph.
+
+    Every table with a Work Unit column registers its units; a Dependencies or
+    Depends On column adds edges, and `WORK-a to WORK-b` names the inclusive range.
+    """
+
+    def cells(line: str) -> list[str]:
+        return [cell.strip() for cell in line.strip().strip("|").split("|")]
+
+    def expand(match: re.Match[str]) -> str:
+        start, end = int(match[1]), int(match[2])
+        if start > end:
+            raise ValueError(f"reversed range {match[0]}")
+        return " ".join(f"WORK-{number:03d}" for number in range(start, end + 1))
+
+    edges: dict[str, set[str]] = {}
+    lines = visible.splitlines()
+    index = 0
+    while index < len(lines):
+        if not (
+            lines[index].lstrip().startswith("|")
+            and index + 1 < len(lines)
+            and _PLAN_TABLE_RULE.fullmatch(lines[index + 1])
+        ):
+            index += 1
+            continue
+        header = cells(lines[index])
+        column = next(
+            (name for name in ("Dependencies", "Depends On") if name in header), None
+        )
+        index += 2
+        table_units: set[str] = set()
+        while index < len(lines) and lines[index].lstrip().startswith("|"):
+            row = cells(lines[index])
+            index += 1
+            if "Work Unit" not in header or len(row) != len(header):
+                continue
+            values = dict(zip(header, row, strict=True))
+            unit = values["Work Unit"].strip("`")
+            if _PLAN_UNIT.fullmatch(unit) is None:
+                return f"unreadable work unit {values['Work Unit']!r}"
+            if unit in table_units:
+                return f"duplicate work unit {unit}"
+            table_units.add(unit)
+            found = edges.setdefault(unit, set())
+            if column is not None:
+                try:
+                    named = _PLAN_UNIT_RANGE.sub(expand, values[column])
+                except ValueError as error:
+                    return f"{unit} has a {error}"
+                found.update(_PLAN_UNIT.findall(named))
+    for unit, dependencies in edges.items():
+        if unit in dependencies:
+            return f"{unit} depends on itself"
+        unknown = sorted(dependencies - edges.keys())
+        if unknown:
+            return f"{unit} depends on unknown {', '.join(unknown)}"
+    try:
+        tuple(graphlib.TopologicalSorter(edges).static_order())
+    except graphlib.CycleError as error:
+        return f"work unit dependency cycle {' -> '.join(error.args[1])}"
+    return None
+
+
 def _local_plan_task_contract_issues(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -1032,6 +1103,17 @@ def _local_plan_task_contract_issues(
                 "PLAN-PROMOTION",
                 "one Promotion table with a current .agents/ or Stage 01/02/05 owner or explicit none",
                 "changed Plan has no valid durable-owner receipt",
+            )
+        dependency_problem = _plan_work_dependency_problem(
+            adapter._visible_markdown(proposed_texts[path])
+        )
+        if dependency_problem is not None:
+            issue(
+                path,
+                "sdlc/plan",
+                "PLAN-WORK-DEPENDENCY",
+                "unique work units whose dependencies name known units without a cycle",
+                dependency_problem,
             )
 
     for path, task in proposed_documents.items():

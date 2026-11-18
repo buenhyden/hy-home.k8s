@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.44"
+version: "0.2.45"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -322,6 +322,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-207 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W09-ENV live test cluster lifecycle and egress probes | User answers `Yes, throwaway k3d` and `namespaces + network-policies`; this host (Linux 6.8 x86_64, 12 CPUs, 31 GiB, 68.5 GiB free disk, rootful Docker 29.9.2 whose socket is root-equivalent, k3d 5.9.0, kubectl 1.36.4, image `rancher/k3s:v1.35.0-k3s1`); runs `abe7e2e3`, an interrupted run, killed run `d0b8e7b0` and reinstall `75eb22e6`; `kubectl run` and `kubectl delete` issued directly were refused by the provider deny rules and not worked around; 2026-11-18 | PASS | The catalog derived from the real manifests found 5 runnable apps, the root and 14 apps needing charts or CRDs, and the refusals held on the real tree. Run `abe7e2e3` applied 10 namespaces and 6 network policies to a cluster whose API was bound to `127.0.0.1:44075` only. Its folder was 0700, its kubeconfig 0600 and ignored by Git. `down` refused an unowned run and deleted the owned one. A SIGTERM during `up` exited 130 with nothing left. A SIGKILL during `up` left a cluster that `sweep` deleted. A reinstall applied the same 6 policies and was removed. No `hyk8s-test` network or volume remained, the 57 pre-existing containers were the same set, and the default kubeconfig still had no current context. The first ownership check read k3d's JSON, which omits the run label, and was corrected to read the Docker label. Its probes are superseded by EVD-208. | no | none |
 | EVD-208 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W09-ENV independent review, probe corrections and egress denial | Independent `code-reviewer` sub-agent on the change, read-only, with mock experiments only, 2026-11-18; then the new and changed cases first against the reviewed code; live runs `6ef9e517`, `311ae737` and `0b1a8e48` on this host with the corrected tool | PASS | The review found no way to touch a cluster the workspace does not own. Its findings were: a failed delete during `up` cleanup orphaned the cluster; a probe counted a pod that never ran as denied; `doctor`'s read of the default kubeconfig context was undocumented; a dependency cycle raised a traceback; `sweep` stopped at its first error and left stray state; probe targets were unvalidated in `sh -c`; run IDs accepted Unicode; state writes were not atomic; `status` crashed on a foreign name; a create could delete a foreign cluster of the same name; and catalog errors aborted the catalog. Against the reviewed code 15 cases failed or errored; all 19 pass now. The probes recorded in EVD-207 were invalid: the first read `kubectl`'s exit code; then a fast connect exited before `kubectl run -i` attached; then the first pod in a new namespace ran before its default service account existed. Each later version reported `valid: false` instead of a verdict, and is fixed. The pod sleeps before connecting, the probe waits for the service account and for the policy to settle, and it requires one `rc=` line per pod. With the final code, two LAN probes and one in-cluster probe were valid and denied: 192.168.0.13:443 was reachable from the open namespace and unreachable from the denied one, the closed-port control was unreachable, and the CoreDNS pod behaved the same under a 10.42.0.0/16 deny. So the k3s network policy controller enforces egress here. After each run no labelled container or run folder remained, and the 57 pre-existing containers were unchanged. | no | none |
 | EVD-209 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | SDLC-STRUCTURE responsibility layers, work selection and done | User answer `Adopt, move at Q07` to SDD-WOWNER, 2026-11-18; package 4.2.0 D26, D28 and the k8s rows K-A01, K-A02 and K-W03 of the 40 proposal dispositions; `.agents/governance/sdlc.md` 4.2.0 SDLC-R036 and SDLC-R037; the root `AGENTS.md` and `CLAUDE.md` with `scripts/validate-agent-governance.py` gateway checks; `gh issue list` and `gh project list` read-only on 2026-11-18 | PASS | Each governance policy and each of the 21 approval and safety rules has one layer owner: SAFE-R011, SAFE-R012 and SAFE-R017 to SAFE-R019 are A, the other sixteen W, so W and A hold no second approval source. An independent read-only `code-reviewer` sub-agent found no blocker; its three should-fix findings were applied: SAFE-R008 and SAFE-R010 moved to W because they make the operator the verifier, SDLC-R037 points to QUAL-R022 and the Completion steps instead of restating done, and SDLC-R036 names what it classifies. No `docs/00.workspace/` path is created or referenced as existing; the W move waits for Q07 (SDLC-H01). K-A01 keeps its current shape: Claude 2.1.319 reads no `AGENTS.md` beside a `CLAUDE.md`, so a neutral router imported by `CLAUDE.md` would load the Codex-only reads; both gateways instead read the common bootstrap `.agents/workflows/work-lifecycle.md` and the same five canonical pointers, and the validator holds each gateway to its own loader set. The repository has no open Issue and no Project was listed, so SDLC-R037 names the operator's request as the selection source and declares no Project process. Codex loading of the root gateway was not observed again here. | no | none |
+| EVD-210 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | SDD-CONFORMANCE Plan work unit dependency graph | Branch `claude/sdd-conformance` from `3893c769`; `scripts/validate-document-lifecycle.py` rule `PLAN-WORK-DEPENDENCY`; `tests/test_task_execution_contract.py` with the new case first run against the unchanged validator; a one-off read of the three current Plans; Python 3.12.3 in `~/.venvs/hyhome-validation`, 2026-11-18 | PASS | Before the change the case failed six times: an unknown unit, a self-dependency, a two-unit and a three-unit cycle, a duplicate unit and a cycle in a second `Depends On` table were all accepted. An independent read-only `code-reviewer` sub-agent found no blocker. Its findings were applied, each with a new case: a unit cell that is not exactly `WORK-NNN` is refused, a reversed range is refused, a table without a dependency column still registers its units, `WORK-0030` is no prefix match, and `graphlib` replaces the recursive cycle walk; QUAL-R052 now cites QUAL-R001 for the no-replay rule instead of restating it. After the fixes, all 86 module tests pass. The rule reads every Plan table with a `Work Unit` column, takes edges from a `Dependencies` or `Depends On` column, expands `WORK-a to WORK-b`, and runs only on a changed Plan inside the existing lifecycle check. The current Plans of SPEC-0161, SPEC-0221 and SPEC-0222 pass, and strict lifecycle validation passes. | true | none |
+| EVD-211 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | SDD-CONFORMANCE hosted CI scope measurement | `gh run view` step conclusions of `ci.yml` for the 20 latest pull request runs, and `gh pr diff --name-only` of PRs #295, #297 and #298, read-only, 2026-11-18; `.github/workflows/ci.yml` selector | PASS | The GitOps identity leaf was selected and succeeded in runs 44022017734 (PR #295), 44187524165 (PR #297) and 44201001023 (PR #298). Each of those PRs changed only `README.md` or `AGENTS.md` files under `gitops/`, and the selector picks the leaf for any `gitops/` path. In the other 17 runs, including PR #312, both the GitOps leaf and the CI lock leaf were skipped. The CI lock leaf never ran. The step logs of the three runs came back empty here, so what the leaf read is not observed. QUAL-R006 claimed that a selected leaf run was unobserved, and W06-H02 claimed only skipped aggregates; both now state this narrower fact. | false | none |
 
 #### Edition Delta
 
@@ -3136,6 +3138,45 @@ owners.
 | Physical move of W to `docs/00.workspace/` | DEFERRED by the user's choice | SDLC-H01 | Q07 |
 | Codex reading the root gateway in a new session | UNVERIFIED: not observed again here | EVD-209 | RUNTIME-CLOSE |
 
+#### SDD-CONFORMANCE (4.2.0)
+
+The 2026-11-18 request applies the 4.2.0 SDD-CONFORMANCE prompt from merged
+`3893c769`, limited to that prompt. The designs read were D26, D24, D03, D04,
+D25 and D28. The k8s rows K-W04 and K-W05 belong to it. The attachment is
+proposal-only.
+
+**Investigation.** The trace from criterion to work unit, Task, evidence,
+decision and promotion receipt is enforced by the lifecycle and Task
+validators, with negative tests from W03 and W04:
+
+- unknown or unmapped criteria;
+- an evidence row that maps to no criterion of its work unit;
+- an unresolved required failure, an optional PASS or a mismatched resolution;
+- acceptance without a decision, or acceptance taken from a PASS;
+- a terminal Task without a decision for each assigned criterion;
+- draft-only activation;
+- a Plan without a promotion owner, and a receipt without each promotion.
+
+The Plan `Dependencies` cell was free text, so a cycle, a self-dependency or
+an unknown unit passed. The descriptions of the hosted lane agree with
+ADR-0063, but QUAL-R006 called a selected GitOps leaf run unobserved when one
+had run. No rule said how one run can give both verification and validation.
+
+**Not run.** The package trace tool `check_sdd_trace.py` was not run on
+a real export. Its single input identity cannot describe a Task whose
+evidence spans many commits, so it would report every row as stale. The
+lifecycle validator already checks the same relations on the real documents.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Work unit dependencies: unknown, self, cycle, duplicate | CHANGED | EVD-210 | none |
+| Criterion, unit, Task, evidence, decision and receipt path; refusal of a bad mapping, a hidden failure and draft-only completion | KEEP_VERIFIED | W03 and W04 validators; EVD-210 module run | none |
+| K-W04 hosted lane wording and measured scope | CHANGED | QUAL-R006, QUAL-R031, work lifecycle Completion 2; EVD-211 | none |
+| K-W05 residue, package exit and release owners | KEEP_VERIFIED | SDLC-R006; work lifecycle Completion 4; no release profile in the registry | none |
+| One run for verification and validation | CHANGED | QUAL-R052 | none |
+| Small document fix without a package or duplicate QA | KEEP_VERIFIED | SDLC-R025, SDLC-R026; ordinary document selection | none |
+| Hosted run of the CI lock leaf or of the GitOps leaf over a changed manifest | UNVERIFIED | W06-H02 narrowed | W06 |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -3245,7 +3286,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W05-H07 | No legacy row: the registry validator fixes no transition edge set for the `requirement` lifecycle family, so an added `draft` to `approved` edge gives no diagnostic; pre-existing, found by the SPEC-0210 security read (SPEC-0210 Task EVD-029). Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W05 | When W05 starts (validators) | EVD-168 |
 | W05-H08 | No legacy row: validator and schema points found by the W03-H34 read at `d0ae8cf6` (SPEC-0211 Task EVD-019): the policy-authority relation lists only `scripts/document_contracts.py` and the schema as consumer paths while its checks `LINK-BROKEN` and `LINK-STAGE-BOUNDARY` run in `scripts/validate-links-and-owners.py`, and its gap text says no rule checks a `policy_refs` path; the positive normative link test is named as a negative case, and seven relations use one test as both positive and negative; the schema `relation_owner.carrier` allows `section`, which no relation uses, and `relation.kind` is a free string not tied to the relation kind IDs. Recorded under SPEC-0211 (user answer "Residue to owners, close H34 (Recommended)", 2026-11-15) | terminal | W05 | At the next edit of the relationship contract schema | EVD-185 |
 | W06-H01 | Legacy row `workflows set` of `Read Denominator`: 2 listed-only workflow files | terminal | W06 | When W06 re-reads its files before editing | EVD-136 |
-| W06-H02 | No legacy row: a hosted `style-pr` run in which the CI lock or GitOps identity leaf is selected and executes; ADR-0063 was accepted on 2026-11-18 with only skipped-leaf aggregates observed | open | W06 | At the first pull request that changes `gitops/` or the CI lock | none |
+| W06-H02 | No legacy row: a hosted `style-pr` run in which the CI lock leaf, or the GitOps identity leaf over a changed GitOps manifest, is selected and executes. ADR-0063 was accepted on 2026-11-18; the GitOps leaf has run only on documentation changes under `gitops/` (EVD-211) | open | W06 | At the first pull request that changes a GitOps manifest or the CI lock | none |
 | W06-H03 | No legacy row: the 2026-11-12 target of hosted PR-time affected implementation and product checks beyond style, CI lock and GitOps identity (QUAL-R006) | open | W06 | When a successor decision selects the next hosted affected leaf | none |
 | W07-H01 | Legacy row `hooks set` of `Read Denominator`: 2 listed-only hook files | terminal | W07 | When W07 re-reads its files before editing | EVD-136 |
 | W07-H02 | No legacy row: GOV-08, allow tests for approved local reads, reversible edits and narrow tests, and deny tests for secret access and out-of-scope writes. Frozen SPEC-0166 Handoffs, W07 row, and Trace GOV-08; PKG W01:414-420. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | terminal | W07 | When a trusted Claude tool session can record sensitive-path allow and deny cases (RUNTIME-CLOSE) | EVD-191 |
