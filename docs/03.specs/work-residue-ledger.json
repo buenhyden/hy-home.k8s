@@ -725,6 +725,16 @@
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
         "evidence": "EVD-144"
       }
+    },
+    {
+      "id": "W07-H05",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W07",
+      "resume_condition": "When the Desktop host owner supplies the outgoing turn permission fields or a client fix, rerun the read-only reviewer write denial on that path",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
     }
   ]
 }

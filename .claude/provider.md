@@ -1,6 +1,6 @@
 ---
 title: "Claude Provider Notes"
-version: "1.9.6"
+version: "1.9.7"
 type: "governance/provider"
 status: "active"
 owner: "platform"
@@ -104,7 +104,8 @@ invocation. The common procedure retains the selected role and user scope.
   - the `Read(./secrets/**)` and `Bash(* secrets/*)` deny rules refused a read
     of a tracked non-secret file there, also in both;
   - an approved local read passed.
-  Delivery on `resume` stays unobserved.
+  A `claude -p --resume` run on 2.1.327 (2026-11-18, SPEC-0161 EVD-192) ran
+  the `SessionStart` hook for `resume` and received its additional context.
 - Here the `read-only-evidence` permission class withholds the structured
   write tools while leaving a shell available, so a shell write is prohibited
   by policy and observed advisorily rather than blocked. How this differs from
