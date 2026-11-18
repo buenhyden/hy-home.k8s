@@ -215,21 +215,13 @@ class WorkspaceMemoryTest(unittest.TestCase):
         self.assertEqual([ref["path"] for ref in source_refs], ["policy.md"])
         self.assertEqual(len(source_refs[0]["sha256"]), 64)
 
-    def test_legacy_unbound_idempotency_key_fails_closed_without_loss(self) -> None:
-        first = self.write()
+    def test_store_of_an_older_schema_is_unavailable(self) -> None:
         with sqlite3.connect(self.store.path) as connection:
-            connection.execute("drop table idempotency")
             connection.execute(
-                "create table idempotency (key text primary key, result text not null)"
+                "update meta set value = '1' where key = 'schema_version'"
             )
-            connection.execute(
-                "insert into idempotency values (?, ?)",
-                ("old-key", json.dumps(first)),
-            )
-        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_CONFLICT"):
-            self.write(idempotency_key="old-key")
-        self.assertEqual(self.store.get(first["memory_id"])["body"], SHORT)
-        self.assertEqual(self.write(idempotency_key="new-key")["revision"], 1)
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_UNAVAILABLE"):
+            MEMORY.Store.open(self.root)
 
     def test_capacity_refusal_keeps_existing_memory(self) -> None:
         kept = self.write()
@@ -264,7 +256,13 @@ class WorkspaceMemoryTest(unittest.TestCase):
 
     def test_default_query_excludes_stale_sources_but_history_keeps_them(self) -> None:
         fresh = self.write(source_refs=["policy.md"])
-        self.store.set_eligibility(fresh["memory_id"], "current", expected_revision=1)
+        self.store.set_eligibility(
+            fresh["memory_id"],
+            "current",
+            expected_revision=1,
+            expected_eligibility="candidate",
+            owner="platform",
+        )
         candidate = self.write()
         self.assertEqual(
             [item["memory_id"] for item in self.store.query()], [fresh["memory_id"]]
@@ -292,7 +290,13 @@ class WorkspaceMemoryTest(unittest.TestCase):
         with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_SCHEMA"):
             self.write(source_refs=["pipe"])
         fresh = self.write(source_refs=["policy.md"])
-        self.store.set_eligibility(fresh["memory_id"], "current", expected_revision=1)
+        self.store.set_eligibility(
+            fresh["memory_id"],
+            "current",
+            expected_revision=1,
+            expected_eligibility="candidate",
+            owner="platform",
+        )
         (self.root / "policy.md").unlink()
         (self.root / "policy.md").symlink_to(external)
         self.assertEqual(self.store.query(), [])
@@ -314,7 +318,13 @@ class WorkspaceMemoryTest(unittest.TestCase):
         item = linked_store.write(
             tier="short-term", body=SHORT, owner="platform", source_refs=["policy.md"]
         )
-        linked_store.set_eligibility(item["memory_id"], "current", expected_revision=1)
+        linked_store.set_eligibility(
+            item["memory_id"],
+            "current",
+            expected_revision=1,
+            expected_eligibility="candidate",
+            owner="platform",
+        )
         self.assertEqual(len(linked_store.query()), 1)
         self.assertEqual(self.store.query(), [])
 
@@ -326,17 +336,10 @@ class WorkspaceMemoryTest(unittest.TestCase):
                 MEMORY.DATABASE_LIMIT // page_size,
             )
 
-    def test_no_api_deletes_memory_and_backup_preserves_all_revisions(self) -> None:
-        self.assertFalse(
-            [name for name in dir(MEMORY.Store) if "delete" in name or "purge" in name]
-        )
+    def test_backup_failure_keeps_the_previous_copy(self) -> None:
         first = self.write()
         self.write(memory_id=first["memory_id"], expected_revision=1, body=SHORT)
         result = self.store.backup()
-        with sqlite3.connect(result["path"]) as copy:
-            self.assertEqual(
-                copy.execute("select count(*) from revision").fetchone()[0], 2
-            )
         with mock.patch.object(MEMORY.os, "replace", side_effect=OSError("disk full")):
             with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_BACKUP_FAILED"):
                 self.store.backup()
@@ -347,6 +350,114 @@ class WorkspaceMemoryTest(unittest.TestCase):
         self.assertLessEqual(
             len(os.listdir(self.store.path.parent)), MEMORY.RUNTIME_FILE_LIMIT
         )
+
+    def test_only_an_approved_itemized_erase_removes_a_memory(self) -> None:
+        self.assertEqual(
+            [n for n in dir(MEMORY.Store) if "delete" in n or "purge" in n], []
+        )
+        marker = "erase-me-7f3c"
+        erased = self.write(body=SHORT | {"narrative": marker}, idempotency_key="k1")
+        self.write(
+            memory_id=erased["memory_id"],
+            expected_revision=0,
+            body=SHORT | {"narrative": marker + "-conflict"},
+        )
+        kept = self.write()
+        self.store.backup()
+        for approval in ("", "  "):
+            with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_SCHEMA"):
+                self.store.erase(
+                    erased["memory_id"], owner="platform", approval_ref=approval
+                )
+        result = self.store.erase(
+            erased["memory_id"], owner="platform", approval_ref="user 2026-11-18"
+        )
+        self.assertEqual(
+            (result["revisions"], result["conflicts"], result["backup"]),
+            (1, 1, "refreshed"),
+        )
+        for read in (self.store.get, self.store.history):
+            with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_ERASED"):
+                read(erased["memory_id"])
+        self.assertEqual(self.store.get(kept["memory_id"])["body"], SHORT)
+        for path in (self.store.path, self.store.path.parent / MEMORY.BACKUP_NAME):
+            self.assertNotIn(marker.encode(), path.read_bytes())
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_ERASED"):
+            self.write(body=SHORT | {"narrative": marker}, idempotency_key="k1")
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_ERASED"):
+            self.write(memory_id=erased["memory_id"], expected_revision=1)
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_ERASED"):
+            self.store.erase(
+                erased["memory_id"], owner="platform", approval_ref="user 2026-11-18"
+            )
+        for path in (self.store.path, self.store.path.parent / MEMORY.BACKUP_NAME):
+            self.assertNotIn(marker.encode(), path.read_bytes())
+
+    def test_erase_reports_a_backup_that_still_holds_the_memory(self) -> None:
+        erased = self.write()
+        self.store.backup()
+        with mock.patch.object(MEMORY.os, "replace", side_effect=OSError("disk full")):
+            with self.assertRaisesRegex(
+                MEMORY.MemoryError_, "MEMORY_ERASE_BACKUP_STALE"
+            ):
+                self.store.erase(
+                    erased["memory_id"], owner="platform", approval_ref="user"
+                )
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_ERASED"):
+            self.store.get(erased["memory_id"])
+
+    def test_concurrent_reviews_of_one_state_never_both_win(self) -> None:
+        first = self.write()
+        state = {"expected_revision": 1, "expected_eligibility": "candidate"}
+        self.store.set_eligibility(
+            first["memory_id"], "current", owner="reviewer-a", **state
+        )
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_CONFLICT"):
+            self.store.set_eligibility(
+                first["memory_id"], "withdrawn", owner="reviewer-b", **state
+            )
+        retried = self.store.set_eligibility(
+            first["memory_id"], "current", owner="reviewer-a", **state
+        )
+        self.assertEqual(retried["eligibility"], "current")
+        reviews = self.store.history(first["memory_id"])["reviews"]
+        self.assertEqual(
+            [(r["owner"], r["from"], r["to"], r["revision"]) for r in reviews],
+            [("reviewer-a", "candidate", "current", 1)],
+        )
+        self.write(memory_id=first["memory_id"], expected_revision=1, owner="writer")
+        self.assertEqual(
+            self.store.get(first["memory_id"])["eligibility"], "needs-review"
+        )
+        self.assertEqual(self.store.query(), [])
+        self.assertEqual(
+            self.store.history(first["memory_id"])["reviews"][-1],
+            self.store.history(first["memory_id"])["reviews"][-1]
+            | {
+                "owner": "writer",
+                "from": "current",
+                "to": "needs-review",
+                "revision": 2,
+            },
+        )
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_CONFLICT"):
+            self.store.set_eligibility(
+                first["memory_id"],
+                "withdrawn",
+                owner="reviewer-b",
+                expected_revision=1,
+                expected_eligibility="current",
+            )
+
+    def test_store_refuses_to_run_without_the_rollback_journal(self) -> None:
+        holder = sqlite3.connect(self.store.path)
+        self.addCleanup(holder.close)
+        holder.execute("pragma journal_mode=wal")
+        holder.execute("begin")
+        holder.execute("select count(*) from memory").fetchone()
+        with mock.patch.object(MEMORY, "BUSY_TIMEOUT_MS", 0):
+            with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_UNAVAILABLE"):
+                self.store.get("mem-any")
 
     def test_restored_backup_reads_the_same_records(self) -> None:
         first = self.write()

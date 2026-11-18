@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.15.6"
+version: "0.15.7"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -313,6 +313,17 @@ python3 scripts/run-validation-lane.py \
 ### Failure Handling
 
 이 문서에는 운영 관측과 복구만을 다루는 별도 내용이 없으며, 기본 복구 출처는 Git history다.
+
+공유 workspace memory 저장소(`.workspace-memory/memory.sqlite3`)를 백업에서
+되돌릴 때는 다음 순서를 따른다.
+
+1. 저장소에 쓰는 모든 세션을 멈춘다.
+2. 저장소 옆에 남은 `memory.sqlite3-journal`을 지운다.
+3. `memory.backup.sqlite3`을 저장소 파일 위에 복사한다.
+4. `pragma integrity_check`가 `ok`인지 확인한다. 복원한 저장소는 같은 기록을 읽는다.
+
+`erase`로 지운 기억은 백업을 갱신한 뒤에는 백업에도 없다. `MEMORY_ERASE_BACKUP_STALE`이 보고된 이전 백업으로 되돌리면 지운 기억이 다시 나타나므로, 그 백업은 복원에 쓰지 않는다. 다른 schema 판본의
+저장소는 열리지 않으며, 변환은 운영자가 명시적으로 수행한다.
 
 #### Runbook Links
 
