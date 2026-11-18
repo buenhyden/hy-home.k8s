@@ -765,6 +765,16 @@
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
+    },
+    {
+      "id": "W08-H04",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W08",
+      "resume_condition": "After 2026-11-19 03:00 KST, read `session_analysis.py status` and the journal for a scheduled run that analyzed 2026-11-18",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
     }
   ]
 }

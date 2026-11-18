@@ -3,7 +3,7 @@
 
 The archive holds pointers and structure only: provider, session and event
 IDs, the transcript path, byte offsets, line digests, record kinds, times,
-tool names and ordinals. Values that are not identifiers or ISO times are
+tool names, ordinals and tool-failure flags. Values that are not identifiers or ISO times are
 replaced, so no prompt, response, tool argument or output text is copied; the
 text stays in the provider's own transcript file. A transcript is read only
 inside the provider's own session directory. A lifecycle hook only records one
@@ -27,7 +27,7 @@ from typing import Any, Iterator, Sequence
 
 import workspace_memory as memory
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 CAPTURE_NAME = "sessions.sqlite3"
 HOOK_EVENTS = frozenset(
     {"SessionStart", "Stop", "PreCompact", "SubagentStop", "SessionEnd"}
@@ -67,7 +67,7 @@ create table if not exists cursor (
 create table if not exists record (
   provider text not null, session_id text not null, path text not null,
   offset integer not null, length integer not null, sha256 text not null,
-  kind text not null, occurred_at text, ordinal integer, tool text,
+  kind text not null, occurred_at text, ordinal integer, tool text, error integer,
   primary key (provider, session_id, path, offset));
 create table if not exists forgotten (
   provider text not null, session_id text not null, forgotten_at text not null,
@@ -107,44 +107,47 @@ def transcript_path(provider: str, value: Any) -> str | None:
 
 
 def describe(provider: str, line: bytes) -> dict[str, Any]:
-    """Structure of one transcript line: identifiers and times only, never text."""
+    """Structure of one transcript line: identifiers, times and flags, never text."""
 
+    shape: dict[str, Any] = {
+        "kind": "unparsable",
+        "occurred_at": None,
+        "ordinal": None,
+        "tool": None,
+        "error": None,
+    }
     try:
         data = json.loads(line)
     except ValueError:
-        data = None
+        return shape
     if not isinstance(data, dict):
-        return {
-            "kind": "unparsable",
-            "occurred_at": None,
-            "ordinal": None,
-            "tool": None,
-        }
-    kind = _match(KIND, data.get("type")) or "other"
-    tool, ordinal = None, None
+        return shape
+    shape["kind"] = _match(KIND, data.get("type")) or "other"
+    shape["occurred_at"] = _match(ISO_TIME, data.get("timestamp"))
     if provider == "codex":
         payload = data.get("payload") if isinstance(data.get("payload"), dict) else {}
         if "type" in payload:
-            kind = f"{kind}/{_match(KIND, payload['type']) or 'other'}"
+            shape["kind"] += f"/{_match(KIND, payload['type']) or 'other'}"
         if payload.get("type") in CODEX_TOOL_ITEMS:
-            tool = _match(TOOL, payload.get("name")) or "other"
-        if isinstance(data.get("ordinal"), int) and not isinstance(
-            data["ordinal"], bool
-        ):
-            ordinal = data["ordinal"]
-    else:
-        message = data.get("message") if isinstance(data.get("message"), dict) else {}
-        content = message.get("content")
-        for part in content if isinstance(content, list) else ():
-            if isinstance(part, dict) and part.get("type") == "tool_use":
-                tool = _match(TOOL, part.get("name")) or "other"
-                break
-    return {
-        "kind": kind,
-        "occurred_at": _match(ISO_TIME, data.get("timestamp")),
-        "ordinal": ordinal,
-        "tool": tool,
-    }
+            shape["tool"] = _match(TOOL, payload.get("name")) or "other"
+        code = payload.get("exit_code")
+        if payload.get("type") == "exec_command_end" and type(code) is int:
+            shape["error"] = int(code != 0)
+        if type(data.get("ordinal")) is int:
+            shape["ordinal"] = data["ordinal"]
+        return shape
+    message = data.get("message") if isinstance(data.get("message"), dict) else {}
+    content = message.get("content")
+    for part in content if isinstance(content, list) else ():
+        if not isinstance(part, dict):
+            continue
+        if part.get("type") == "tool_use":
+            shape["tool"] = _match(TOOL, part.get("name")) or "other"
+            break
+        if part.get("type") == "tool_result":
+            shape["error"] = int(part.get("is_error") is True)
+            break
+    return shape
 
 
 def _lines(chunk: bytes) -> list[bytes]:
@@ -428,7 +431,7 @@ class Capture:
                 ).fetchone()
                 if existing is None:
                     connection.execute(
-                        "insert into record values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        "insert into record values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         (
                             *key,
                             position,
@@ -438,6 +441,7 @@ class Capture:
                             shape["occurred_at"],
                             shape["ordinal"],
                             shape["tool"],
+                            shape["error"],
                         ),
                     )
                     if (
@@ -497,7 +501,7 @@ class Capture:
                 key,
             ).fetchone()
             records = connection.execute(
-                "select offset, length, sha256, kind, occurred_at, ordinal, tool"
+                "select offset, length, sha256, kind, occurred_at, ordinal, tool, error"
                 " from record where provider = ? and session_id = ? and path = ?"
                 " order by offset",
                 key,
@@ -553,6 +557,7 @@ class Capture:
                             "occurred_at",
                             "ordinal",
                             "tool",
+                            "error",
                         ),
                         r,
                     )
