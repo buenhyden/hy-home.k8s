@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.45"
+version: "0.2.46"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -324,6 +324,7 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-209 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | SDLC-STRUCTURE responsibility layers, work selection and done | User answer `Adopt, move at Q07` to SDD-WOWNER, 2026-11-18; package 4.2.0 D26, D28 and the k8s rows K-A01, K-A02 and K-W03 of the 40 proposal dispositions; `.agents/governance/sdlc.md` 4.2.0 SDLC-R036 and SDLC-R037; the root `AGENTS.md` and `CLAUDE.md` with `scripts/validate-agent-governance.py` gateway checks; `gh issue list` and `gh project list` read-only on 2026-11-18 | PASS | Each governance policy and each of the 21 approval and safety rules has one layer owner: SAFE-R011, SAFE-R012 and SAFE-R017 to SAFE-R019 are A, the other sixteen W, so W and A hold no second approval source. An independent read-only `code-reviewer` sub-agent found no blocker; its three should-fix findings were applied: SAFE-R008 and SAFE-R010 moved to W because they make the operator the verifier, SDLC-R037 points to QUAL-R022 and the Completion steps instead of restating done, and SDLC-R036 names what it classifies. No `docs/00.workspace/` path is created or referenced as existing; the W move waits for Q07 (SDLC-H01). K-A01 keeps its current shape: Claude 2.1.319 reads no `AGENTS.md` beside a `CLAUDE.md`, so a neutral router imported by `CLAUDE.md` would load the Codex-only reads; both gateways instead read the common bootstrap `.agents/workflows/work-lifecycle.md` and the same five canonical pointers, and the validator holds each gateway to its own loader set. The repository has no open Issue and no Project was listed, so SDLC-R037 names the operator's request as the selection source and declares no Project process. Codex loading of the root gateway was not observed again here. | no | none |
 | EVD-210 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | SDD-CONFORMANCE Plan work unit dependency graph | Branch `claude/sdd-conformance` from `3893c769`; `scripts/validate-document-lifecycle.py` rule `PLAN-WORK-DEPENDENCY`; `tests/test_task_execution_contract.py` with the new case first run against the unchanged validator; a one-off read of the three current Plans; Python 3.12.3 in `~/.venvs/hyhome-validation`, 2026-11-18 | PASS | Before the change the case failed six times: an unknown unit, a self-dependency, a two-unit and a three-unit cycle, a duplicate unit and a cycle in a second `Depends On` table were all accepted. An independent read-only `code-reviewer` sub-agent found no blocker. Its findings were applied, each with a new case: a unit cell that is not exactly `WORK-NNN` is refused, a reversed range is refused, a table without a dependency column still registers its units, `WORK-0030` is no prefix match, and `graphlib` replaces the recursive cycle walk; QUAL-R052 now cites QUAL-R001 for the no-replay rule instead of restating it. After the fixes, all 86 module tests pass. The rule reads every Plan table with a `Work Unit` column, takes edges from a `Dependencies` or `Depends On` column, expands `WORK-a to WORK-b`, and runs only on a changed Plan inside the existing lifecycle check. The current Plans of SPEC-0161, SPEC-0221 and SPEC-0222 pass, and strict lifecycle validation passes. | true | none |
 | EVD-211 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | SDD-CONFORMANCE hosted CI scope measurement | `gh run view` step conclusions of `ci.yml` for the 20 latest pull request runs, and `gh pr diff --name-only` of PRs #295, #297 and #298, read-only, 2026-11-18; `.github/workflows/ci.yml` selector | PASS | The GitOps identity leaf was selected and succeeded in runs 44022017734 (PR #295), 44187524165 (PR #297) and 44201001023 (PR #298). Each of those PRs changed only `README.md` or `AGENTS.md` files under `gitops/`, and the selector picks the leaf for any `gitops/` path. In the other 17 runs, including PR #312, both the GitOps leaf and the CI lock leaf were skipped. The CI lock leaf never ran. The step logs of the three runs came back empty here, so what the leaf read is not observed. QUAL-R006 claimed that a selected leaf run was unobserved, and W06-H02 claimed only skipped aggregates; both now state this narrower fact. | false | none |
+| EVD-212 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | DOC-PATH-PLAN path plan and rehearsal on a throwaway copy | User answer `Adopt at Q07` to SDD-PATHS, 2026-11-19; `git archive` of `59e418e0` into a scratch Git repository outside the checkout; two one-off rewrite passes for the folder moves of the DOC-PATH-PLAN plan table; `validate-agent-governance.py`, `validate-document-contract-registry.py`, `validate-markdown-profiles.py`, `validate-links-and-owners.py`, `validate-document-lifecycle.py`, `validate-knowledge-surface.py`, `validate-work-residue-ledger.py`, `validation/repository/quality.py` and `validate-affected-surfaces.py` run on the copy; `document-generator.py` for `docs/03.specs/0001-first-spec/spec.md` after removing the copy's three packages; Python 3.12.3 in `~/.venvs/hyhome-validation` | PASS | Path strings and parent-relative links moved mechanically in 149 files, and the escaped registry and code patterns in 5 more. After that, agent governance, lifecycle, knowledge surface and the residue ledger passed on the renamed copy. The remaining failures name the consumers that need hand edits: the alternation over `audits`, `data` and `research` in the registry README route and in `validate-links-and-owners.py`; the `contracts/` exclusion of the `template-documents` surface in `scripts/validation/registry.json` (SURFACE-PATH-AMBIGUOUS); and the segment tuple `("docs", "99.templates", "templates")` in `validate-document-contract-registry.py` (template path is not terminal). The five EXECUTABLE-HISTORY errors and the uncovered `docs/98.archive/README.md` route appear on the unrenamed copy too, so the move does not cause them. The generator refused `SPEC-0001` because the Archived Lineage of REQ-0004 reserves it, and the lifecycle check refused the removal of the three packages because none is finished. No target path exists in the checkout, no name under `docs/` is non-ASCII or collides by case, and `docs/` holds no symlink. The rehearsal did not change the checkout. The copy and its scripts stay in the session scratchpad outside the checkout, because their deletion was denied in this session; they are not consumed by any check. | false | none |
 
 #### Edition Delta
 
@@ -3177,6 +3178,101 @@ lifecycle validator already checks the same relations on the real documents.
 | Small document fix without a package or duplicate QA | KEEP_VERIFIED | SDLC-R025, SDLC-R026; ordinary document selection | none |
 | Hosted run of the CI lock leaf or of the GitOps leaf over a changed manifest | UNVERIFIED | W06-H02 narrowed | W06 |
 
+#### DOC-PATH-PLAN (4.2.0)
+
+The 2026-11-19 request applies the 4.2.0 DOC-PATH-PLAN prompt from merged
+`59e418e0`, limited to that prompt and in its design-only mode. The designs
+read were D27, D28, D14 and D24, with the attachment's numbering table. The
+k8s rows K-W02 and K-W06 belong to it. Nothing moves, and no number is reset
+or allocated here.
+
+**Decision.** Asked on 2026-11-19, the user adopted the numbered category
+folders, applied once at Q07 together with the W move of SDLC-H01. The order
+follows the attachment. `05.releases`, a Release role, a Stage 04 document
+and placeholder Stage 98 documents are not adopted. Subfolders of the
+template folder, native directories and GitOps or service data keep their
+names.
+
+**Three kinds of change.** A category move renames one folder and keeps the
+depth, so links inside it still resolve. A document renumbering changes
+identities and file numbers by role, 1 to N, with the next new Spec at 0001
+under Q02. A content version (`X.X.X`) is not reset by either.
+
+**Path plan.** Each digest is the Git tree or blob ID at `59e418e0`. The
+consumer count lists tracked files outside Stage 98 that name the path; its
+method is the path string, so a consumer that spells only the segment is
+listed separately below.
+
+| source_path | target_path | kind | source_digest | consumer_refs | operation | applicable_phase | decision_ref |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `docs/02.architecture/descriptions/` | `docs/02.architecture/01.descriptions/` | category move | `01ec042c201a` | 38 files; registry 6 | rename folder; rewrite consumers | Q07 | SDD-PATHS |
+| `docs/02.architecture/decisions/` | `docs/02.architecture/02.decisions/` | category move | `3e8b695733bb` | 53 files; registry 4 | rename folder; rewrite consumers | Q07 | SDD-PATHS |
+| `docs/03.specs/<package>/tasks/` | `docs/03.specs/<package>/01.tasks/` | category move | `82906cff2371`, `28e816a89bf9`, `333bf8af9903` | 48 files; `package / "tasks"` in 3 modules | rename in each package that exists then | Q07 | SDD-PATHS |
+| `docs/05.operations/guides/` | `docs/05.operations/01.guides/` | category move | `3d905bfe67e8` | 27 files; registry 3 | rename folder; rewrite consumers | Q07 | SDD-PATHS |
+| `docs/05.operations/policies/` | `docs/05.operations/02.policies/` | category move | `5026ec3480d0` | 32 files; registry 12 | rename folder; rewrite consumers | Q07 | SDD-PATHS |
+| `docs/05.operations/runbooks/` | `docs/05.operations/03.runbooks/` | category move | `9afb22d66c52` | 44 files; registry 12 | rename folder; rewrite consumers | Q07 | SDD-PATHS |
+| `docs/05.operations/incidents/` | `docs/05.operations/04.incidents/` | category move | `f4f959a348ab` | 20 files; registry 5 | rename folder; rewrite consumers | Q07 | SDD-PATHS |
+| `docs/90.references/research/` | `docs/90.references/01.research/` | category move | `e40b44600f9c` | 21 files; registry 4 | rename folder; rewrite consumers | Q07 | SDD-PATHS |
+| `docs/90.references/audits/` | `docs/90.references/02.audits/` | category move | `b5d9d81e9905` | 12 files; registry 3 | rename folder; rewrite consumers | Q07 | SDD-PATHS |
+| `docs/90.references/data/` | `docs/90.references/03.data/` | category move | `573a3c810d0a` | 8 files; registry 3 | rename folder; rewrite consumers | Q07 | SDD-PATHS |
+| `docs/99.templates/contracts/` | `docs/99.templates/01.contracts/` | category move | `60481b9529a0` | 28 files; registry 36 | rename folder; rewrite schema `$ref` and loaders | Q07 | SDD-PATHS |
+| `docs/99.templates/templates/` | `docs/99.templates/02.templates/` | category move | `b3ec6931199b` | 50 files; registry 115 | rename folder; rewrite every `template_source` | Q07 | SDD-PATHS |
+| `.agents/governance/sdlc.md` | `docs/00.workspace/02.process/sdlc.md` | W owner move | `77d61a6588f7` | 22 files | move whole | Q07 | SDD-WOWNER, SDLC-H01 |
+| `.agents/governance/document-authoring.md` | `docs/00.workspace/02.process/document-authoring.md` | W owner move | `ed0044a333ca` | 40 files | move whole | Q07 | SDD-WOWNER, SDLC-H01 |
+| `.agents/governance/document-lifecycle.md` | `docs/00.workspace/02.process/document-lifecycle.md` | W owner move | `c93905eb3344` | 38 files | move whole | Q07 | SDD-WOWNER, SDLC-H01 |
+| `.agents/governance/git.md` | `docs/00.workspace/02.process/git.md` | W owner move | `30ede57c844a` | 27 files | move; its agent delivery commands stay in `.agents/governance/` | Q07 | SDD-WOWNER, SDLC-H01 |
+| `.agents/governance/approval-and-safety.md` | `docs/00.workspace/02.process/approval-and-safety.md` | W owner move | `01d5aeaa9ef2` | 65 files | split by the SDLC-R036 rule lists; the A rules stay | Q07 | SDD-WOWNER, SDLC-H01 |
+| `.agents/governance/quality.md` | `docs/00.workspace/03.quality/quality.md` | W owner move | `e8a1a475400c` | 79 files | move whole | Q07 | SDD-WOWNER, SDLC-H01 |
+| `.agents/governance/formatting-and-linting.md` | `docs/00.workspace/03.quality/formatting-and-linting.md` | W owner move | `1b347d145da1` | 8 files | move whole | Q07 | SDD-WOWNER, SDLC-H01 |
+| Stage 01, 02, 03 and 05 document identities | role order 1 to N; next new Spec 0001 | document renumbering | the tree at the Q07 freeze | registry identity bounds, Archived Lineage reservations, generator | renumber on a copied allocation state first | Q07 | Q02 |
+| `docs/98.archive/` skeleton folders | none | data removal | the tree at the Q07 freeze | none | dispose with the approved history; no placeholder document | Q07 | Q01, Q10 |
+
+`docs/00.workspace/01.project/` receives no file in this plan; it is created
+only if a W project document is written. Gaps between category numbers are
+allowed.
+
+**Consumers the rehearsal found.**
+
+- Plain path strings and parent-relative links in documents, code and JSON:
+  mechanical.
+- Escaped regular-expression paths in `docs/99.templates/registry.json`,
+  `scripts/validation/registry.json`, `scripts/validate-work-residue-ledger.py`
+  and `scripts/validation/repository/quality.py`: mechanical, but each new
+  dot must stay escaped.
+- Alternations and exclusions that spell only the segment:
+  - the registry README route with `(?:audits|data|research)`;
+  - `scripts/validate-links-and-owners.py`;
+  - the `template-documents` surface exclusion of `contracts/`.
+
+  Each needs a hand edit.
+- Segment literals in code: the `docs/99.templates/templates` tuple in
+  `validate-document-contract-registry.py`, and `package / "tasks"` in
+  `validate-document-lifecycle.py`, `document_lifecycle.py` and a lifecycle
+  test.
+  - Quoted `guides`, `policies`, `runbooks`, `incidents`, `research`,
+    `audits`, `data` and `templates` strings also appear in
+    `document_contracts.py`, `document_content.py`, `provider_write_guard.py`,
+    `validate-agent-governance.py` and about ten test modules.
+  - Some of these quoted strings are document role names, not paths, so Q07
+    checks each one.
+- Generated files: `.secrets.baseline`, regenerated from the moved tree, not
+  rewritten.
+
+**Preconditions for Q07.** Every package is closed first: the three current
+Specs and Plans are `approved`, so the lifecycle check refuses their removal
+today. The Archived Lineage reservation of `SPEC-0001` and the other
+history-bound checks of Q07-H01 are converted before the reset. The
+rewrite runs on a copy, the full validator set runs there, and only then does
+the cutover apply it. No mapping, past SHA or temporary package is kept after
+acceptance.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| K-W02 numbered category folders | DEFERRED by the user's choice to Q07; plan and rehearsal done | EVD-212, DOC-H01 | Q07 |
+| K-W06 temporary boundary and disposal guard | KEEP_VERIFIED: no Release role, no Stage 04 or Stage 98 placeholder, Q01, Q02 and Q10 unchanged | This section | none |
+| Next Spec 0001 not consumed by preparation | VERIFIED: the generator ran only on the copy, and the reservation refusal is recorded | EVD-212 | Q07 |
+| Hand-edit consumers and preconditions | Handed off | DOC-H01 | Q07 |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -3298,6 +3394,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W08-H04 | No legacy row: the first nightly run of `hy-home-k8s-session-analysis.timer` over a captured day, and its catch-up after real downtime, are not yet observed; the timer is enabled for 2026-11-19 03:00 KST (EVD-204). Recorded under W08-ANALYSIS on 2026-11-18 | open | W08 | After 2026-11-19 03:00 KST, read `session_analysis.py status` and the journal for a scheduled run that analyzed 2026-11-18 | none |
 | W09-H02 | No legacy row: the product network policies allow egress to 192.168.0.13 from `apps`, `platform`, `monitoring` and other namespaces, and NetworkPolicies only add allowances, so a test workload with pods in those namespaces could reach the production LAN. Blocking it for a whole test cluster needs a host firewall rule on its Docker network or a dedicated VM, which need root (EVD-208). The approved closure runs no product pod. Recorded under W09-ENV on 2026-11-18 | open | W09 | Before a test cluster runs product pods in a namespace whose policy allows 192.168.0.13, or when the user provides a host firewall rule or a dedicated VM | none |
 | SDLC-H01 | No legacy row: the user adopted `docs/00.workspace/` as the physical owner of the W layer on 2026-11-18 and chose to move it once with the final path cutover. The move takes the W rows of the SDLC-R036 table and splits approval and safety along its rule lists, updating routers, validators, registry routes and links in one change (EVD-209) | open | Q07 | In the Q07-CUTOVER task, together with the SDD-PATHS renumbering | none |
+| DOC-H01 | No legacy row: the DOC-PATH-PLAN path plan, adopted by the user on 2026-11-19 (SDD-PATHS), with its hand-edit consumers and preconditions; the category moves, the W owner moves of SDLC-H01, the renumbering and the Stage 98 disposal run once at the cutover after a full validator run on a copy (EVD-212) | open | Q07 | In the Q07-CUTOVER task, after every package is closed and Q07-H01 is converted | none |
 | W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W07 | When W07 starts (provider projections) | EVD-144 |
 | W05-H09 | No legacy row: remove the checks of finished one-time transitions and the compatibility branches for older registry generations found by the SPEC-0219 audit, with their tests, and give any guarantee they still hold to a current contract. The audit names `RETIRED_REFERENCE_ALIASES` in `scripts/validate-links-and-owners.py`, the `docs/00.agent-governance` absence test, the retired progress-ledger and full/ci QA mode checks, the legacy empty-body rule of `validate-markdown-profiles.py`, the old Task and Requirement form layouts in tests, the legacy idempotency-key test of the memory store, the provenance-string assertions on the registry `migration.meaning_map`, and the readers of registry majors 10 to 19. Overlaps: W05-H06 (`done` and `archived` branches) and W05-H08 (validator and schema points) stay separate; W03-H11 holds the qa-runner fixture branch name | terminal | W05 | At the next change to a file that holds the retired aliases or readable majors | EVD-185 |
 | W05-H10 | No legacy row: SDLC-R034 conflict order and one-change-set rule. A test or downstream document edited without its owner is refused only by semantic review; split from W05-H05 on 2026-11-18 | terminal | W05 | When a change-set selection rule can name each owner of a test or downstream document | EVD-187 |
