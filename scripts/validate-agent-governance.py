@@ -48,16 +48,31 @@ PROVIDER_HOOK_PATHS = {
 }
 # A pre-action event is registered on both providers. A Stop, compaction, or
 # session event that ran whole QA or called another agent would re-enter this
-# repository's own validation, so the only other event is Claude's
-# SessionStart on compact|resume, whose handler only prints the folder
-# AGENTS.md reading instruction (SPEC-0151).
+# repository's own validation, so every lifecycle event runs only the
+# provider's capture adapter, which records one row and returns (W08-CAPTURE).
+# Claude's SessionStart on compact|resume may also print the folder AGENTS.md
+# reading instruction (SPEC-0151).
+LIFECYCLE_HOOK_EVENTS = frozenset(
+    {"SessionStart", "Stop", "PreCompact", "SubagentStop", "SessionEnd"}
+)
 PROVIDER_HOOK_EVENTS = {
-    "claude": frozenset({"PreToolUse", "SessionStart"}),
-    "codex": frozenset({"PreToolUse"}),
+    "claude": frozenset({"PreToolUse"}) | LIFECYCLE_HOOK_EVENTS,
+    "codex": frozenset({"PreToolUse"}) | LIFECYCLE_HOOK_EVENTS,
+}
+# Each lifecycle handler is exactly one of these commands, so nothing can be
+# chained after the adapter.
+CAPTURE_HOOK_COMMANDS = {
+    "claude": 'bash "$CLAUDE_PROJECT_DIR/.claude/hooks/session-capture.sh"',
+    "codex": (
+        'hook="$(git rev-parse --show-toplevel 2>/dev/null)'
+        '/.codex/hooks/session-capture.sh" ; [ -f "$hook" ] || exit 0 ;'
+        ' exec bash "$hook"'
+    ),
 }
 SESSION_START_MATCHER = "compact|resume"
-# The only session-event handler; it prints guidance and runs no QA or agent.
+# The guidance handler; it prints the reading instruction and runs no QA or agent.
 SESSION_START_SCRIPT = ".claude/hooks/session-start.sh"
+SESSION_START_COMMAND = 'bash "$CLAUDE_PROJECT_DIR/' + SESSION_START_SCRIPT + '"'
 PROVIDER_HOOK_ROOTS = (".claude/hooks/", ".codex/hooks/")
 PROVIDER_HOOK_TIMEOUT_RANGE = range(1, 61)
 REGISTRY_PROJECTION_ROOTS = {
@@ -1095,23 +1110,26 @@ def validate_provider_hooks(root: Path, provider: str, hooks: Any) -> None:
 
     if not isinstance(hooks, dict) or set(hooks) != PROVIDER_HOOK_EVENTS[provider]:
         fail("AGENT-NATIVE-HOOK", f"{provider}: unregistered hook event set")
-    for group in hooks.get("SessionStart") or []:
-        handlers = group.get("hooks") if isinstance(group, dict) else None
-        if (
-            not isinstance(group, dict)
-            or group.get("matcher") != SESSION_START_MATCHER
-            or not isinstance(handlers, list)
-            or any(
-                not isinstance(handler, dict)
-                or SESSION_START_SCRIPT not in str(handler.get("command", ""))
+    for event in LIFECYCLE_HOOK_EVENTS:
+        for group in hooks.get(event) or []:
+            handlers = group.get("hooks") if isinstance(group, dict) else None
+            guidance = (
+                provider == "claude"
+                and event == "SessionStart"
+                and isinstance(group, dict)
+                and group.get("matcher") == SESSION_START_MATCHER
+            )
+            command = (
+                SESSION_START_COMMAND if guidance else CAPTURE_HOOK_COMMANDS[provider]
+            )
+            if not isinstance(handlers, list) or any(
+                not isinstance(handler, dict) or handler.get("command") != command
                 for handler in handlers
-            )
-        ):
-            fail(
-                "AGENT-NATIVE-HOOK",
-                f"{provider}: SessionStart runs beyond {SESSION_START_SCRIPT} "
-                "on compact|resume",
-            )
+            ):
+                fail(
+                    "AGENT-NATIVE-HOOK",
+                    f"{provider}: {event} runs something other than {command}",
+                )
     for event, groups in hooks.items():
         if not isinstance(groups, list) or not groups:
             fail("AGENT-NATIVE-HOOK", f"{provider}: empty hook event")

@@ -81,6 +81,8 @@ class NativeBoundaryTests(unittest.TestCase):
             ".codex/rules/default.rules",
             ".claude/hooks/k8s-pre-edit.sh",
             ".claude/hooks/session-start.sh",
+            ".claude/hooks/session-capture.sh",
+            ".codex/hooks/session-capture.sh",
             ".agents/governance/model-selection.md",
             ".agents/workflows/work-lifecycle.md",
             # The common authority directory is a closed set checked in both
@@ -136,7 +138,32 @@ class NativeBoundaryTests(unittest.TestCase):
                         }
                     ],
                 }
-            ]
+            ],
+            **{
+                event: [
+                    {
+                        "matcher": "*",
+                        "hooks": [
+                            {
+                                "type": "command",
+                                "command": (
+                                    'hook="$(git rev-parse --show-toplevel 2>/dev/null)'
+                                    '/.codex/hooks/session-capture.sh" ; [ -f "$hook" ]'
+                                    ' || exit 0 ; exec bash "$hook"'
+                                ),
+                                "timeout": 3,
+                            }
+                        ],
+                    }
+                ]
+                for event in (
+                    "SessionStart",
+                    "Stop",
+                    "PreCompact",
+                    "SubagentStop",
+                    "SessionEnd",
+                )
+            },
         },
     }
 
@@ -1046,6 +1073,57 @@ class NativeBoundaryTests(unittest.TestCase):
         )
         codex.write_text(json.dumps(hooks))
         self.assert_rejected("AGENT-NATIVE-HOOK")
+
+    def test_lifecycle_events_run_only_the_capture_adapter(self):
+        """W08-CAPTURE: every lifecycle event only enqueues a capture record."""
+        import copy
+        import json
+
+        for provider, path, original in (
+            (
+                "claude",
+                self.root / ".claude/settings.json",
+                json.loads((self.root / ".claude/settings.json").read_text()),
+            ),
+            ("codex", self.root / ".codex/hooks.json", self.CODEX_HOOKS),
+        ):
+            hooks = original["hooks"]
+            self.assertEqual(
+                {"SessionStart", "Stop", "PreCompact", "SubagentStop", "SessionEnd"}
+                - set(hooks),
+                set(),
+            )
+            for event in ("Stop", "SessionEnd"):
+                with self.subTest(provider=provider, event=event, case="other script"):
+                    changed = copy.deepcopy(original)
+                    changed["hooks"][event][0]["hooks"][0]["command"] = (
+                        f'bash "$CLAUDE_PROJECT_DIR/.{provider}/hooks/'
+                        f'{"k8s-pre-edit" if provider == "claude" else "pre-tool-use"}.sh"'
+                    )
+                    path.write_text(json.dumps(changed))
+                    self.assert_rejected("AGENT-NATIVE-HOOK")
+                with self.subTest(provider=provider, event=event, case="missing"):
+                    changed = copy.deepcopy(original)
+                    del changed["hooks"][event]
+                    path.write_text(json.dumps(changed))
+                    self.assert_rejected("AGENT-NATIVE-HOOK")
+            for extra in ("; python3 scripts/qa.py staged", " && curl example.invalid"):
+                with self.subTest(provider=provider, case="chained", extra=extra):
+                    changed = copy.deepcopy(original)
+                    handler = changed["hooks"]["SessionEnd"][0]["hooks"][0]
+                    handler["command"] += extra
+                    path.write_text(json.dumps(changed))
+                    self.assert_rejected("AGENT-NATIVE-HOOK")
+            with self.subTest(provider=provider, case="other provider adapter"):
+                other = "codex" if provider == "claude" else "claude"
+                changed = copy.deepcopy(original)
+                changed["hooks"]["Stop"][0]["hooks"][0]["command"] = (
+                    f'bash "$CLAUDE_PROJECT_DIR/.{other}/hooks/session-capture.sh"'
+                )
+                path.write_text(json.dumps(changed))
+                self.assert_rejected("AGENT-NATIVE-HOOK")
+            path.write_text(json.dumps(original))
+        self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
 
     def test_registered_guard_command_carries_no_dead_environment(self):
         """A variable the guard never reads is residue, not configuration."""

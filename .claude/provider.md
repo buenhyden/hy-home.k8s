@@ -1,6 +1,6 @@
 ---
 title: "Claude Provider Notes"
-version: "1.9.7"
+version: "1.10.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
@@ -106,6 +106,17 @@ invocation. The common procedure retains the selected role and user scope.
   - an approved local read passed.
   A `claude -p --resume` run on 2.1.327 (2026-11-18, SPEC-0161 EVD-192) ran
   the `SessionStart` hook for `resume` and received its additional context.
+- Tracked settings also register `.claude/hooks/session-capture.sh` on
+  `SessionStart`, `Stop`, `PreCompact`, `SubagentStop` and `SessionEnd`. It
+  forwards the payload to `scripts/session_capture.py hook`, which records one
+  pointer row and returns; [context and memory](../.agents/governance/context-and-memory.md)
+  CTX-R022 owns what it keeps. Observed on Claude Code 2.1.327 (2026-11-18,
+  SPEC-0161 EVD-200): a `claude -p` run and its `--resume` delivered
+  `SessionStart` (`startup`, `resume`), `Stop` and `SessionEnd`, and a scan
+  then read the whole transcript as `complete`. The running session also
+  picked up the changed settings and delivered `Stop` and `SubagentStop`, the
+  latter with the sub-agent's own transcript path. `PreCompact` delivery stays
+  unobserved.
 - Here the `read-only-evidence` permission class withholds the structured
   write tools while leaving a shell available, so a shell write is prohibited
   by policy and observed advisorily rather than blocked. How this differs from

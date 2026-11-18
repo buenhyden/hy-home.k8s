@@ -13,6 +13,66 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hook=\"$(git rev-parse --show-toplevel 2>/dev/null)/.codex/hooks/session-capture.sh\" ; [ -f \"$hook\" ] || exit 0 ; exec bash \"$hook\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hook=\"$(git rev-parse --show-toplevel 2>/dev/null)/.codex/hooks/session-capture.sh\" ; [ -f \"$hook\" ] || exit 0 ; exec bash \"$hook\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hook=\"$(git rev-parse --show-toplevel 2>/dev/null)/.codex/hooks/session-capture.sh\" ; [ -f \"$hook\" ] || exit 0 ; exec bash \"$hook\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hook=\"$(git rev-parse --show-toplevel 2>/dev/null)/.codex/hooks/session-capture.sh\" ; [ -f \"$hook\" ] || exit 0 ; exec bash \"$hook\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hook=\"$(git rev-parse --show-toplevel 2>/dev/null)/.codex/hooks/session-capture.sh\" ; [ -f \"$hook\" ] || exit 0 ; exec bash \"$hook\"",
+            "timeout": 3
+          }
+        ]
+      }
     ]
   }
 }

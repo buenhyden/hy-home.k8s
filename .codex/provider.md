@@ -1,10 +1,10 @@
 ---
 title: "Codex Provider Notes"
-version: "1.8.1"
+version: "1.9.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-11-16"
+updated: "2026-11-18"
 ---
 
 # Codex Provider Notes
@@ -186,6 +186,17 @@ team document, not a special automatic entry filename.
   an intermediate validation Registry edit was incomplete, followed by a
   bounded repair and selected repository checks. That is further hook invocation
   evidence, not proof that the sandbox started.
+- `hooks.json` also registers `.codex/hooks/session-capture.sh` on
+  `SessionStart`, `Stop`, `PreCompact`, `SubagentStop` and `SessionEnd` for the
+  local session capture of CTX-R022 in
+  [context and memory](../.agents/governance/context-and-memory.md). On Codex
+  CLI 0.169.0 (2026-11-18, SPEC-0161 EVD-201) a `codex exec` in this checkout
+  parsed the entries and clamped the `SessionEnd` timeout to 3 seconds, but ran
+  none of them: the client runs a project hook only after the user trusts that
+  entry in the `/hooks` review, which stores a `trusted_hash` per entry in the
+  user configuration. Only the pre-tool entry was trusted. The repository
+  never edits that user configuration, so Codex capture starts after the
+  user's review, and its delivery stays unobserved until then.
 - Use the shared workspace memory store from
   [context and memory](../.agents/governance/context-and-memory.md) instead of
   native memory, and re-observe repository/task state on resume. Shared context and safety rules live in policies, not this note.

@@ -1,10 +1,10 @@
 ---
 title: "Codex Native Adapter"
-version: "2.5.2"
+version: "2.5.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 
 # Codex Native Adapter
@@ -21,13 +21,15 @@ updated: "2026-11-17"
   skill, 권한의 정규 값.
 - `CODEX.md`: 명시적으로 읽는 provider baseline.
 - [provider.md](provider.md): provider별 적재·지원 계약.
-- `hooks.json`: 사전 동작 guard 등록. Claude 쪽과 같은 validator 규칙
+- `hooks.json`: 사전 동작 guard와 세션 수명주기 수집 hook 등록. Claude 쪽과 같은 validator 규칙
   family로 판정한다. 등록은 추적되는 설정일 뿐이며, 설치된 client가 hook을
   발견·적재·전달했다는 근거가 아니다.
 - `hooks/pre-tool-use.sh`: 공유 쓰기 경계의 Codex adapter. 자기 provider
   이름을 붙여 payload를 넘길 뿐이고, 경계 자체는
   `scripts/provider_write_guard.py`가 소유한다. 이 디렉터리에는 공유 logic이
   없다.
+- 같은 hook 디렉터리의 `session-capture.sh`: 세션 수명주기 이벤트를 `scripts/session_capture.py`에
+  넘기는 수집 adapter. Codex는 사용자가 `/hooks`에서 신뢰한 hook만 실행한다.
 - 프로젝트 `commands/`나 `prompts/` 디렉터리는 채택하지 않는다. 중립
   `.agents/prompts/` 계약은 명시적으로 읽고 `scripts/prompt-input.py`가
   소비한다. Claude는 이를 native command로도 투영하지만 그것은 Claude의 편의
