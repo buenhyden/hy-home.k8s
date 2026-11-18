@@ -8,6 +8,8 @@ import unittest
 from unittest import mock
 from pathlib import Path
 
+from tests.form_headings import form_body
+
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 BUILDER_PATH = REPOSITORY_ROOT / "scripts" / "prompt-input.py"
@@ -38,17 +40,25 @@ def load_builder():
 
 
 def contract(command: str, subject: str = "Subject") -> str:
+    sections = {
+        "Overview": ["Identifier `sample`."],
+        "Authority Boundary": ["It grants nothing."],
+        "Inputs": [
+            "| Input | Command | Why it is needed |\n"
+            "| --- | --- | --- |\n"
+            f"| {subject} | `{command}` | The subject |",
+            f"The subject input is `{subject}`. When it is empty the contract refuses.",
+        ],
+        "Output": ["A draft."],
+        "Validation": ["Reviewed."],
+        "Refusal Conditions": ["Empty subject."],
+        "Related Documents": ["- none"],
+    }
     return (
         FRONTMATTER
-        + "# Sample Contract\n\n## Overview\n\nIdentifier `sample`.\n\n"
-        + "## Authority Boundary\n\nIt grants nothing.\n\n"
-        + "## Inputs\n\n"
-        + "| Input | Command | Why it is needed |\n"
-        + "| --- | --- | --- |\n"
-        + f"| {subject} | `{command}` | The subject |\n\n"
-        + f"The subject input is `{subject}`. When it is empty the contract refuses.\n\n"
-        + "## Output\n\nA draft.\n\n## Validation\n\nReviewed.\n\n"
-        + "## Refusal Conditions\n\nEmpty subject.\n\n## Related Documents\n\n- none\n"
+        + "# Sample Contract\n\n"
+        + "\n\n".join(form_body("prompt", sections))
+        + "\n"
     )
 
 

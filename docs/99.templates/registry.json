@@ -22338,7 +22338,7 @@
         },
         "negative_test": {
           "module": "tests/test_task_execution_contract.py",
-          "test": "test_promotion_requires_current_owner_and_sole_none_decision"
+          "test": "test_promotion_refuses_retired_stage_00_owner"
         },
         "gaps": [
           "The Plan promotion table is read by the lifecycle script from its form section (plan.promotion.1, or the title a retained Plan keeps for it) and not by a body contract."
@@ -22575,8 +22575,8 @@
           "test": "test_direct_parent_cancellation_and_evidence_table_are_required"
         },
         "negative_test": {
-          "module": "tests/test_task_execution_contract.py",
-          "test": "test_direct_parent_cancellation_and_evidence_table_are_required"
+          "module": "tests/test_relationship_contract.py",
+          "test": "test_an_evidence_row_without_a_valid_criterion_is_refused"
         },
         "gaps": [
           "No changed-file rule compares a criterion identifier with the criteria its parent Spec defines; the link path is checked by BODY-LINK-BROKEN and its fragment by LINK-FRAGMENT, and the completion mode compares the Plan allocations."
@@ -23140,7 +23140,7 @@
         ],
         "positive_test": {
           "module": "tests/test_documentation_link_boundary.py",
-          "test": "test_forward_relationship_link_still_fails_broken_or_wrong_profile"
+          "test": "test_a_valid_forward_relationship_link_passes_and_a_broken_or_wrong_profile_one_fails"
         },
         "negative_test": {
           "module": "tests/test_documentation_link_boundary.py",
@@ -23167,7 +23167,7 @@
         },
         "negative_test": {
           "module": "tests/test_task_acceptance_boundaries.py",
-          "test": "test_failed_check_requires_concrete_provenance"
+          "test": "test_checked_result_keeps_placeholder_guard"
         },
         "gaps": [
           "Only that a cell is concrete is checked, not that the location resolves."
@@ -23187,7 +23187,7 @@
         },
         "negative_test": {
           "module": "tests/test_documentation_link_boundary.py",
-          "test": "test_an_archive_target_and_its_fragment_are_not_checked"
+          "test": "test_a_historical_link_outside_the_archive_is_checked_and_refused"
         },
         "gaps": [
           "Reachability of a commit:path reference stays a manual review (ADR-0056 Decision 6).",

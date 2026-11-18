@@ -1620,16 +1620,6 @@ def _scan_required_h2_content(
     return RequiredH2Content(tuple(empty), tuple(nested_roles))
 
 
-def empty_required_h2_sections(
-    markdown: str, required_headings: Sequence[str]
-) -> tuple[str, ...]:
-    """Return empty required H2 bodies under the historical content rule."""
-
-    return _scan_required_h2_content(
-        scan_headings(markdown), required_headings, substantive_body=False
-    ).empty
-
-
 def _diagnostic(
     rule_id: str,
     path: PurePosixPath,

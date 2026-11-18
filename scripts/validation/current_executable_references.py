@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import stat
@@ -10,6 +11,8 @@ from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
+from .repository.bounded_io import read_text
+
 
 _SEGMENT = r"[A-Za-z0-9_](?:[A-Za-z0-9_.-]*[A-Za-z0-9_])?"
 _SCRIPT_REFERENCE = re.compile(
@@ -17,9 +20,33 @@ _SCRIPT_REFERENCE = re.compile(
     rf"(?P<path>(?:(?:\.agents/skills/{_SEGMENT}/)?scripts/|\.agents/evaluations/)(?:{_SEGMENT}/)*{_SEGMENT})"
     rf"(?![A-Za-z0-9_./-])"
 )
-_TERMINAL_STATUSES = frozenset(
-    {"accepted", "cancelled", "completed", "rejected", "superseded"}
+_DOCUMENT_REGISTRY = (
+    Path(__file__).resolve().parents[2] / "docs/99.templates/registry.json"
 )
+_DOCUMENT_REGISTRY_MAX_BYTES = 8 * 1024 * 1024
+
+
+def terminal_statuses_from_registry(registry: Mapping[str, object]) -> frozenset[str]:
+    """Every state a document registry lifecycle domain marks terminal."""
+
+    domains = registry.get("lifecycle_domains")
+    if not isinstance(domains, list) or not domains:
+        raise ValueError("document registry has no lifecycle domains")
+    return frozenset(
+        state
+        for domain in domains
+        for state, kind in domain["states"].items()
+        if kind == "terminal"
+    )
+
+
+# A document in a terminal state records history, so its script references need
+# only Git recovery. An accepted ADR stays current in its domain but is kept here
+# deliberately: its decision is a past record, the route accepted-ADR references
+# take.
+_TERMINAL_STATUSES = terminal_statuses_from_registry(
+    json.loads(read_text(_DOCUMENT_REGISTRY, max_bytes=_DOCUMENT_REGISTRY_MAX_BYTES))
+) | {"accepted"}
 _GIT = "/usr/bin/git"
 _GIT_TIMEOUT_SECONDS = 5.0
 _CLOSED_GIT_ENVIRONMENT = {

@@ -14,6 +14,8 @@ import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
+from tests.form_headings import form_body
+
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = REPOSITORY_ROOT / "scripts"
 SCHEMA_REL = "docs/99.templates/contracts/work-residue-ledger.schema.json"
@@ -101,7 +103,8 @@ def task_text(
     extra: str = "",
 ) -> str:
     evidence = {"EVD-001": "PASS", "EVD-002": "FAIL"} if evidence is None else evidence
-    text = "# Task\n\n## Verification Evidence\n\n### Results\n\n" + EVIDENCE_HEADER
+    headings = form_body("task", {"Results": []}, partial=True)
+    text = "# Task\n\n" + "\n\n".join(headings) + "\n\n" + EVIDENCE_HEADER
     text += "".join(
         f"| {key} | c | w | k | i | {value} | l | yes | none |\n"
         for key, value in evidence.items()
@@ -628,3 +631,11 @@ class ViewTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FormHeadingFixtureTests(unittest.TestCase):
+    def test_a_title_the_form_does_not_register_is_refused(self) -> None:
+        # A renamed registry section must fail its fixtures, not drop out of them.
+        self.assertIn("### Results", form_body("task", {"Results": []}, partial=True))
+        with self.assertRaises(KeyError):
+            form_body("task", {"Results": [], "Enforcement": []})

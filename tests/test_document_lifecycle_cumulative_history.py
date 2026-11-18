@@ -284,6 +284,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 "| none | none | none | No durable contract was introduced |",
             )
             if name == "plan.md":
+                # Anchors into the registered template text, not a heading list.
                 text = text.replace(
                     "### Constraints\n\n",
                     "### Constraints\n\nThe synthetic goal and its boundary.\n\n",

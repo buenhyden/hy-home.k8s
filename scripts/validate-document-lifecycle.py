@@ -19,6 +19,7 @@ from functools import lru_cache
 from pathlib import Path, PurePosixPath
 from types import MappingProxyType, ModuleType
 from typing import Any, Callable, Mapping, Sequence
+from urllib.parse import unquote
 
 from document_contracts import (
     ROOT_FILES,
@@ -934,6 +935,45 @@ def _local_plan_task_contract_issues(
             seen.add(identity)
         return True
 
+    def promotion_receipt_valid(path: PurePosixPath, task: LifecycleDocument) -> bool:
+        """SDLC-ROWS: the receipt names each Plan promotion ID and each anchor exists.
+
+        Whether the receipt evidence is true is meaning-level and stays review.
+        """
+        plan_path, _ = direct_parent(path, "sdlc/task") or (None, None)
+        plan = proposed_documents.get(plan_path) if plan_path else None
+        promotion_heading = plan_headings(plan)[0] if plan is not None else None
+        receipt_heading = _form_heading(registry, "task", "task.handoff.1", task)
+        if (
+            plan_path not in proposed_texts
+            or promotion_heading is None
+            or receipt_heading is None
+        ):
+            return False
+        plan_text = proposed_texts[plan_path]
+        section = adapter._exact_heading_section(plan_text, promotion_heading)
+        table = adapter._first_visible_table(adapter._visible_markdown(section or ""))
+        if table is None or table[0] != promotion_header:
+            return False
+        rows = table[1]
+        if len(rows) == 1 and rows[0] == none_row:
+            return True
+        receipt = adapter._visible_markdown(
+            adapter._exact_heading_section(proposed_texts[path], receipt_heading) or ""
+        )
+        for promotion_id, owner, *_ in rows:
+            if not promotion_id.strip() or promotion_id.strip() not in receipt:
+                return False
+            for link in adapter._extract_links(owner, definitions_text=plan_text):
+                fragment = unquote(link.partition("#")[2])
+                target = adapter._local_destination(plan_path, link)[1]
+                if fragment and (
+                    target not in proposed_texts
+                    or fragment not in adapter._heading_anchors(proposed_texts[target])
+                ):
+                    return False
+        return True
+
     for path, plan in proposed_documents.items():
         if (
             plan.profile_id != "sdlc/plan"
@@ -1001,6 +1041,14 @@ def _local_plan_task_contract_issues(
             or base_texts.get(path) == proposed_texts[path]
         ):
             continue
+        if task.status == "completed" and not promotion_receipt_valid(path, task):
+            issue(
+                path,
+                "sdlc/task",
+                "TASK-PROMOTION-RECEIPT",
+                "every Plan Promotion ID in the Promotion Receipt and each Target Owner anchor present",
+                "completed Task receipt omits a promotion or names a missing anchor",
+            )
         task_profile = profiles.get("sdlc/task")
         rows = (
             adapter._body_contract_rows(proposed_texts[path], task_profile) or ()

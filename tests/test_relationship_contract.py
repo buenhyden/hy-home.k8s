@@ -182,13 +182,43 @@ class RelationshipRegistryTests(unittest.TestCase):
                 self.assertIn("REGISTRY_RELATION", contract_rules(raw))
         for label, relation_id, key in (
             ("body-contract column", "requirement-basis", "No Such Column"),
-            ("section", "promotion", "No Such Section"),
             ("registry key", "consumer-impact", "template_definition.no_such_field"),
         ):
             with self.subTest(label=label):
                 raw = raw_registry()
                 relation(raw, relation_id)["canonical_owners"][0]["key"] = key
                 self.assertIn("REGISTRY_RELATION", contract_rules(raw))
+
+    def test_an_evidence_row_without_a_valid_criterion_is_refused(self) -> None:
+        # verification-evidence: the Task evidence row names the Spec criterion.
+        profile = next(
+            item
+            for item in CONTRACTS.load_registry(ROOT).profiles
+            if item.profile_id == "sdlc/task"
+        )
+        binding = profile.body_contract.task_execution
+        row = {
+            "Evidence ID": "EVD-001",
+            "Criteria": "[VAL-P03-001](../spec.md#criteria)",
+            "Work Unit": "WORK-001",
+            "Command": "Focused test",
+            "Input": "revision one",
+            "Result": "PASS",
+            "Location": "tests/focused_fixture.py",
+            "Required": "true",
+            "Resolves": "none",
+        }
+
+        def rules(criteria: str) -> set[str]:
+            issues = CONTRACTS.task_evidence_issues(
+                ({**row, "Criteria": criteria},), binding
+            )
+            return {rule for rule, _ in issues}
+
+        self.assertNotIn("TASK-EVIDENCE-CRITERION", rules(row["Criteria"]))
+        for criteria in ("not a criterion", f"{row['Criteria']}, {row['Criteria']}"):
+            with self.subTest(criteria=criteria):
+                self.assertIn("TASK-EVIDENCE-CRITERION", rules(criteria))
 
     def test_a_consumer_check_path_and_rule_must_resolve(self) -> None:
         mutations = {
@@ -306,6 +336,15 @@ class RelationshipRegistryTests(unittest.TestCase):
                     for item in caught.exception.diagnostics
                 )
             )
+
+    def test_the_schema_relation_kind_enum_is_the_relation_kind_ids(self) -> None:
+        schema = json.loads(
+            (
+                ROOT / "docs/99.templates/contracts/document-profile.schema.json"
+            ).read_text("utf-8")
+        )
+        kind = schema["$defs"]["relation"]["properties"]["kind"]
+        self.assertEqual(kind.get("enum"), list(CONTRACTS.RELATION_KIND_IDS))
 
     def test_policy_authority_is_read_from_template_definition_policy_refs(
         self,

@@ -122,6 +122,7 @@ method 목록은 관찰 결과일 뿐 거버넌스가 아니다.
 | Module | 책임 |
 | --- | --- |
 | `git_fixture.py` | lifecycle·release 회귀 테스트를 위해 임시 root에 정확한 Git 객체를 만든다 |
+| `form_headings.py` | Stage 99 registry form의 제목 트리로 현재 form fixture 본문을 만든다. 등록되지 않은 제목은 `KeyError`로 거부한다 |
 | `affected_surface_mutations.py` | affected surface 선택을 위한 routing mutation 사례 |
 | `gitops_change_set_cases.py` | GitOps diff rendering을 위한 change set 사례 |
 | `vault_eso_contract_cases.py` | Vault·ESO 계약과 보안 사례 |
