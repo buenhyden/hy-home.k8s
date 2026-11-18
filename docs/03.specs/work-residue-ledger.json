@@ -805,6 +805,16 @@
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
+    },
+    {
+      "id": "W10-H01",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W10",
+      "resume_condition": "At the next authorized Codex session in this workspace",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
     }
   ]
 }
