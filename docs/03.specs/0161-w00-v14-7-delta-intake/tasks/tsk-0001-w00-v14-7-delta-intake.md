@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.40"
+version: "0.2.41"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -311,6 +311,10 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-196 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-MEMORY Claude and Codex round trip on one store | User answer `Run after 16:29`; a synthetic Git repository and store in the session scratchpad, not the live store; this Claude session (Claude Code 2.1.327) and one `codex exec` on Codex CLI 0.169.0 at 16:31 KST, `-s workspace-write`, thread `01a1ed91-…`; the staged `scripts/workspace_memory.py`; 2026-11-18 | PASS | Claude wrote revision 1 with a source ref and reviewed it to `current`. Codex ran four commands, confirmed as command executions in its JSONL: it read revision 1, wrote revision 2 with expected revision 1, and its stale write with expected revision 1 returned `conflict` with `stored: true`. Its review from the outdated state was refused with `MEMORY_CONFLICT`, exit 2. Claude then read revision 2 from Codex in `needs-review`, with owners `claude, codex`, one Codex conflict, and both reviews logged with their owners. After Claude re-reviewed it to `current`, a change to the source file removed it from the default query and listed it as stale. Codex ran outside this checkout, so its project hooks and rules were not part of this run. | no | none |
 | EVD-197 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-RETRIEVAL lexical recall: engine comparison and `search` | Synthetic one-off comparison (session scratchpad, not committed) of a normalized scan, FTS5 `unicode61` and FTS5 trigram on SQLite 3.45.1 with 8 labelled cases (exact ID, path, Korean with and without spacing, a two-character Korean term, a mixed hyphenated ID, an updated fact, no answer) at N = 100, 1,000 and 5,000, 31 runs per query, x86_64 with 12 CPUs; the 4 new `search` tests first against the unchanged script, then `python3 -m unittest tests.test_workspace_memory`; `Store.search` timed on synthetic stores of 1,000 and 5,000 current memories with 5 queries times 20; 2026-11-18 | PASS | The scan answered 8 of 8 cases at every N; `unicode61` 6, missing both Korean spacing cases; trigram 5, unable to match a term shorter than three characters and missing the no-space case. Index lookups took under 0.1 ms, the scan 38 ms p95 at 5,000. The 4 tests failed against the unchanged script and all 34 pass now. `Store.search` took p50 18 ms, p95 24 ms at 1,000 and p50 95 ms, p95 127 ms at 5,000. Withdrawn, erased, superseded, candidate and stale memories are absent; an unresolved conflict is counted; no admissible match abstains. Context tokens were not measured. | no | none |
 | EVD-198 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-RETRIEVAL Claude and Codex search after withdrawal and erase | User answer `Yes, one bounded run`; a synthetic Git repository and store in the session scratchpad; this Claude session made memories A `current`, B withdrawn and C erased; one `codex exec` on Codex CLI 0.169.0 at 18:17 KST, `-s workspace-write`, thread `01a1edf2-…`, four commands confirmed as command executions in its JSONL; 2026-11-18 | PASS | Codex's search for the shared phrase returned only A. Its searches by the IDs of B and C abstained with no results, and `get` of C returned `MEMORY_ERASED`, exit 2. Neither the withdrawn nor the erased body appears anywhere in the Codex output. Claude's search afterwards returned only A. | no | none |
+| EVD-199 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-CAPTURE session capture, lifecycle hook registration and validator rule | Branch `claude/w08-capture` from `89cc8be3`; new `scripts/session_capture.py` and `tests/test_session_capture.py`, first run against the absent module; the lifecycle entries in `.claude/settings.json` and `.codex/hooks.json` first against the unchanged `scripts/validate-agent-governance.py`, then `tests.test_agent_governance` with the new lifecycle case; Python 3.12.3, SQLite 3.45.1; 2026-11-18 | PASS | The capture tests failed to import before the module existed. The unchanged validator refused the new registrations with `AGENT-NATIVE-HOOK`. After the review fixes of EVD-202, all 20 capture tests and 65 governance tests pass. They cover: prompt, response and tool text never reaching the archive; a duplicate hook kept as one row; a foreign workspace ignored; a hook failure that never raises; a partial last line that waits; a rescan or a lost cursor adding no duplicate; a rewritten or replaced file never reported `complete`; a Codex ordinal gap counted; a missing transcript reported `unavailable`; a session end alone not `complete`; a forgotten session or sub-agent refused later; a sub-agent transcript keeping its own cursor. The validator now refuses another script, a missing event, the other provider's adapter and a chained command on a lifecycle event. | no | none |
+| EVD-200 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-CAPTURE Claude lifecycle hook delivery and scan | User answer `Yes, both`; installed Claude Code 2.1.327 in this checkout on the branch, 18:39 KST: `claude -p --model haiku` with a one-line prompt, then `--resume` of session `dfbd64ba-…`; this running session after the settings change; `scripts/session_capture.py scan` and `status`, pointer and structure rows only; after EVD-202 the archive file was rebuilt by replaying the recorded hook fields through the adapter against the same transcript | PASS | The archive recorded `SessionStart` with `startup`, `Stop` and `SessionEnd` for the first run, and `SessionStart` with `resume`, `Stop` and `SessionEnd` for the resumed run. This running session picked up the changed settings and delivered `Stop` at 09:46 UTC and `SubagentStop` at 09:49 UTC, with the reviewer sub-agent's transcript path under `subagents/`. With the fixed code the scan read 682,131 of 682,131 bytes as 66 records, 45 with ISO times, and the session reported `complete`. The probe phrase appears 18 times in the transcript and 0 times in the archive. `PreCompact` did not occur. | no | none |
+| EVD-201 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-CAPTURE Codex lifecycle hook delivery | User answer `Yes, both`; installed Codex CLI 0.169.0, one `codex exec` in this checkout on the branch, 18:40 KST, thread `01a1ee07-…`, a one-line prompt with no tool call; then `session_capture.py sessions`; the hook trust keys of the user Codex configuration read for their names only | DEFER | Codex parsed the new entries and reported `clamping SessionEnd hook timeout to 3s`, but recorded no session: it ran none of the lifecycle entries. The user configuration holds a `trusted_hash` only for this checkout's `pre_tool_use` entry, and Codex runs a project hook only after the user trusts it in `/hooks`. The repository does not edit that configuration. Next owner: the user's `/hooks` review, then a Codex run observes delivery (W08-H03). | no | none |
+| EVD-202 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-CAPTURE independent review and fixes | Independent `code-reviewer` sub-agent on the staged diff, read-only, with experiments on temporary repositories only, 2026-11-18; then the rewritten `tests/test_session_capture.py` and the chained-command case first against the reviewed code, then against the fixed code | PASS | The review confirmed the hook never blocks, prints to stdout or crashes a session. It found seven defects: the workspace check compared the payload's own directory with itself; a hook could name any absolute file for `scan` to hash; line `type`, `name` and `timestamp` values were stored unfiltered; `forget` could be bypassed by a racing scan, a changed path, a shared path or a sub-agent ID, and matched case-insensitively; a resumed session could stay `complete`; a long scan could hold the lock past a hook's wait; and the validator accepted a command chained after the adapter. Against the reviewed code 15 of 20 capture cases and 2 chained-command cases failed. All pass now: the hook compares against the adapter's own checkout; transcripts must lie, unlinked, in the provider's session directory; only identifiers and ISO times are stored; rows are keyed by provider, session and path; `forget` matches exactly and rechecks inside each scan transaction; a start reopens a session and status checks file identity; scans commit 4 MiB batches and report an oversized line; the archive is capped at 256 MiB; lifecycle handlers must be exactly the adapter command; the adapters run without `timeout` where it is absent. | no | none |
 
 #### Edition Delta
 
@@ -2909,6 +2913,74 @@ and Codex's search returned neither body. Claude's search then agreed.
 | Session cursor, transcript and memory poisoning from capture | Not in scope | W08-CAPTURE | W08-CAPTURE |
 | Context tokens per result | Not measured | EVD-197 | W08 |
 
+#### W08-CAPTURE (4.2.0)
+
+The 2026-11-18 request applies the 4.2.0 W08-CAPTURE prompt from merged
+`89cc8be3`, limited to that prompt. The designs read were D07, D17 and D06,
+with D25 for the open items. The prerequisites W08-MEMORY and W07-ADAPTER
+are merged. Handoff row 29 of the policy comparison above, CTX-R006, is this
+work. Q06 confirms local capture.
+
+**Decisions.** Asked on 2026-11-18, the user chose two options:
+
+- `Pointers + events`: the archive keeps provider, session and event IDs,
+  transcript paths, byte offsets, line digests, record kinds, times, tool
+  names and ordinals. No prompt, response or tool text is copied, so the
+  text stays in the provider's own file.
+- `Session lifecycle`: the hooks are `SessionStart`, `Stop`, `PreCompact`,
+  `SubagentStop` and `SessionEnd` on both providers, with no prompt or tool
+  hook.
+
+The user also approved one native probe run for each provider.
+
+**Support found.**
+
+- Claude Code 2.1.327 passes `session_id`, `transcript_path` and `cwd` to
+  every hook. Its transcript lines have no sequence number, so the cursor
+  keeps the byte offset and the digest of the last line it read.
+- The Codex 0.169.0 binary names these events and `transcript_path`, and its
+  rollout lines carry an `ordinal`. Codex runs a project hook only after the
+  user trusts it in `/hooks` (EVD-201).
+- Neither transcript format is a stable API. The adapter reads only `type`,
+  `timestamp`, `ordinal` and tool names, and any other line is recorded as
+  `unknown` or `unparsable` with its digest.
+
+**Changes.**
+
+- `scripts/session_capture.py` and the thin `session-capture.sh` adapters:
+  - The hook records one row in `.workspace-memory/sessions.sqlite3` and
+    returns. It runs no network call, no QA and no analysis, and prints
+    nothing on stdout.
+  - `scan` reads only the transcripts the hooks named, by cursor, and commits
+    each record with its cursor.
+  - `status` reports `complete`, `partial` or `unavailable`, with ordinal
+    gaps, a partial last line and a rewrite. A session end alone is not
+    `complete`.
+  - `forget` takes an approval reference and refuses later capture of that
+    session.
+- The governance validator lets a lifecycle event run only the provider's
+  capture adapter, apart from Claude's existing `compact|resume` guidance.
+  New routes register the `session-capture-regressions` check.
+- Policy and notes:
+  - CTX-R006 and the new CTX-R022 are in policy 1.11.0.
+  - SAFE-R014 is in approval and safety 1.8.0: the capture route is its only
+    transcript-reading exception.
+  - The provider notes and READMEs are updated.
+
+**Kept separate.** The archive is not memory and not Task evidence, and
+nothing is promoted automatically. Scheduled scans and analysis belong to
+W08-ANALYSIS, which runs `scan`. Ephemeral runs without a session file are
+`unavailable`, and a sub-agent transcript has its own cursor.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Approved local capture replacing the transcript ban (CTX-R006, row 29) | CHANGED | EVD-199; CTX-R022; SAFE-R014 | none |
+| Bounded enqueue, cursor, duplicate, partial write, rewrite, gap, unavailable and forget handling | CHANGED | EVD-199 | none |
+| Claude `SessionStart`, `Stop`, `SubagentStop` and `SessionEnd` delivery and a `complete` scan | VERIFIED | EVD-200 | none |
+| Review findings on workspace check, file scope, stored values, `forget`, completeness, locking and command pinning | CHANGED | EVD-202 | none |
+| Claude `PreCompact` delivery; Codex delivery after the user's `/hooks` review | RUNTIME_ONLY | EVD-201; W08-H03 | user, then W08 |
+| Scheduled scan, analysis and promotion proposals | Not in scope | W08-ANALYSIS | W08-ANALYSIS |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -3026,6 +3098,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W07-H05 | No legacy row: the Windows Desktop over SSH read-only reviewer ran its shell with workspace write (EVD-163 FAIL); the client sent a null request profile (EVD-167 FAIL). Recorded under RUNTIME-CLOSE on 2026-11-18 | open | W07 | When the Desktop host owner supplies the outgoing turn permission fields or a client fix, rerun the read-only reviewer write denial on that path | none |
 | W08-H01 | No legacy row: the memory store takes `owner` and `approval_ref` as caller-supplied strings, and any process of the same local account can open the SQLite file directly, so the store authenticates neither. D06 asks for an OS or broker boundary before an untrusted writer uses it. Recorded under W08-MEMORY on 2026-11-18 | open | W08 | When a second local account, an untrusted writer or a remote host must use the store | none |
 | W08-H02 | No legacy row: memory `search` normalizes case and whitespace only, so a query with a Korean particle or inflection the memory lacks (for example `저장소를` against `저장소`) does not match, and context tokens per result are not measured. Recorded under W08-RETRIEVAL on 2026-11-18 | open | W08 | When a real memory query misses because of a particle or inflection, or when current memories exceed 1,000 or live search p95 exceeds 100 ms | none |
+| W08-H03 | No legacy row: session capture delivery not yet observed. Codex 0.169.0 runs the new lifecycle entries only after the user trusts them in `/hooks` (EVD-201), and Claude `PreCompact` did not occur in EVD-200. Recorded under W08-CAPTURE on 2026-11-18 | open | W08 | When the user has reviewed the Codex hooks in `/hooks`, observe a Codex session and a Claude compaction in `session_capture.py status` | none |
 | W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W07 | When W07 starts (provider projections) | EVD-144 |
 | W05-H09 | No legacy row: remove the checks of finished one-time transitions and the compatibility branches for older registry generations found by the SPEC-0219 audit, with their tests, and give any guarantee they still hold to a current contract. The audit names `RETIRED_REFERENCE_ALIASES` in `scripts/validate-links-and-owners.py`, the `docs/00.agent-governance` absence test, the retired progress-ledger and full/ci QA mode checks, the legacy empty-body rule of `validate-markdown-profiles.py`, the old Task and Requirement form layouts in tests, the legacy idempotency-key test of the memory store, the provenance-string assertions on the registry `migration.meaning_map`, and the readers of registry majors 10 to 19. Overlaps: W05-H06 (`done` and `archived` branches) and W05-H08 (validator and schema points) stay separate; W03-H11 holds the qa-runner fixture branch name | terminal | W05 | At the next change to a file that holds the retired aliases or readable majors | EVD-185 |
 | W05-H10 | No legacy row: SDLC-R034 conflict order and one-change-set rule. A test or downstream document edited without its owner is refused only by semantic review; split from W05-H05 on 2026-11-18 | terminal | W05 | When a change-set selection rule can name each owner of a test or downstream document | EVD-187 |

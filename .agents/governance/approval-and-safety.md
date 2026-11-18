@@ -1,10 +1,10 @@
 ---
 title: "Approval and Safety Policy"
-version: "1.7.2"
+version: "1.8.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 
 # Approval and Safety Policy
@@ -47,7 +47,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | SAFE-R011 | Immediately before execution and again on resume | Compare the intended invocation against those bound inputs immediately before execution and again on resume. Missing/unavailable source, mismatch, expiry or revocation does not authorize the dependent action. Continue independent safe work and route the blocked action to the operator. | Semantic review | none |
 | SAFE-R012 | Always | Subagents never mutate live clusters. Approved bootstrap or break-glass actions remain operator-bound, not delegated background work. | Semantic review | none |
 | SAFE-R013 | Always | `kubectl apply/patch/delete`, Helm installation or upgrade, forced Argo CD reconciliation, and external secret writes are not default agent actions. | Semantic review | none |
-| SAFE-R014 | Always | Never read or record tokens, authentication files, private keys, plaintext Kubernetes secrets, shell history, raw transcripts, or environment dumps. Secret-bearing scratch needs human-directed handling; do not destroy local evidence under a generic cleanup request. | `secret-handling` | none |
+| SAFE-R014 | Always | Never read or record tokens, authentication files, private keys, plaintext Kubernetes secrets, shell history, raw transcripts, or environment dumps. The one exception is the session capture route of CTX-R022 in the context and memory policy, which reads this workspace's own transcripts to record pointers and structure and never their text. Secret-bearing scratch needs human-directed handling; do not destroy local evidence under a generic cleanup request. | `secret-handling` | none |
 | SAFE-R015 | When reviewing an ExternalSecret | ExternalSecret reviews use only secret references, mount, and property names, never their values. Follow existing isolation and AppProject controls. | `vault-eso-contracts` | none |
 | SAFE-R016 | Always | GitHub Actions is repository QA/CI, not live deployment CD. | Semantic review | none |
 | SAFE-R017 | Always | Write-path guards observe structured file tools, patch envelopes, and the obvious write targets of a shell command. A patch envelope's file headers reach the same evaluation a structured write reaches. A shell target does not: it is reported and never blocked. A program that opens files itself, such as a Python or Node script, stays outside the observation entirely, and so do permission rules that match shell file commands. Treat instruction-level and rule-level controls as advisory for that class. | `scripts/provider_write_guard.py` | none |

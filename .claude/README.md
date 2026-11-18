@@ -1,10 +1,10 @@
 ---
 title: "Claude Native Adapter"
-version: "2.5.2"
+version: "2.5.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 
 # Claude Native Adapter
@@ -22,13 +22,16 @@ updated: "2026-11-17"
 - `CLAUDE.md`: 명시적으로 읽는 provider baseline.
 - [provider.md](provider.md): provider별 적재·지원 계약.
 - `settings.json`: 현재 권한(allow, ask, deny), bypass 모드 비활성화, 등록된
-  사전 동작 hook, native 자동 memory 비활성화(`autoMemoryEnabled: false`).
+  사전 동작 hook과 세션 수집 hook, native 자동 memory 비활성화(`autoMemoryEnabled: false`).
   권한 범위와 남은 한계는 [provider.md](provider.md)가 소유한다.
 - `hooks/k8s-pre-edit.sh`: shell과 구조화 파일 도구에 대한 동기식 쓰기
   경계의 Claude adapter. 자기 provider 이름을 붙여 payload를 넘길 뿐이고,
   경계 자체는 `scripts/provider_write_guard.py`가 소유한다. provider마다 자기
   adapter를 등록하므로 두 provider가 함께 의존하는 통제를 한 provider
   디렉터리가 소유하지 않는다.
+- 같은 hook 디렉터리의 `session-capture.sh`: 세션 수명주기 이벤트를 로컬 세션 수집기
+  `scripts/session_capture.py`에 넘기는 adapter. 위치와 구조만 기록하고 본문은
+  복사하지 않으며, 실패해도 세션을 멈추지 않는다.
 - `skills/<id>`: 공통 skill package마다 상대 링크 하나.
 - `commands/<id>.md`: 공통 prompt 계약마다 진입점 하나. 각 진입점은 자기
   식별자로 `scripts/prompt-input.py`를 호출할 뿐 자체 계약을 갖지 않으며,

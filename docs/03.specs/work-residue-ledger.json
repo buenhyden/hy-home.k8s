@@ -755,6 +755,16 @@
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
+    },
+    {
+      "id": "W08-H03",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W08",
+      "resume_condition": "When the user has reviewed the Codex hooks in `/hooks`, observe a Codex session and a Claude compaction in `session_capture.py status`",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
     }
   ]
 }

@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.15.7"
+version: "0.15.8"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -80,6 +80,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `validate-agent-governance.py` | role·schema, native metadata, 권한, skill |
 | `prompt-input.py` | 선언된 계약에서 모델 호출 없이 prompt 요청을 조립 |
 | `workspace_memory.py` | Claude와 Codex 세션이 공유하는 workspace memory 저장소. memory는 결정 맥락일 뿐 Task 상태나 증거가 아니다. |
+| `session_capture.py` | 이 workspace의 Claude·Codex 세션 수명주기 hook과 transcript cursor scan으로 위치·구조만 기록하는 로컬 세션 수집기. 본문은 복사하지 않으며 memory나 Task 증거가 아니다. |
 
 #### Platform and supply-chain owners
 
