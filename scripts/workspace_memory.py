@@ -93,6 +93,10 @@ def _canonical(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
+def _squash(text: str) -> str:
+    return re.sub(r"\s+", "", text.casefold())
+
+
 def representative_root(cwd: Path) -> Path:
     """The main worktree owning the Git common directory, never a linked one."""
 
@@ -621,9 +625,13 @@ class Store:
             "workspace_id": self.workspace_id,
         }
 
-    _CURRENT = """select m.memory_id, m.tier, m.domain_id, m.owner, m.eligibility, m.sensitivity,
-        r.revision, r.source_refs, r.body from memory m join revision r
+    _COLUMNS = """select m.memory_id, m.tier, m.domain_id, m.owner, m.eligibility, m.sensitivity,
+        r.revision, r.source_refs, r.body"""
+    _CURRENT = (
+        _COLUMNS
+        + """ from memory m join revision r
         on r.memory_id = m.memory_id and r.revision = m.current_revision"""
+    )
 
     def get(self, memory_id: str) -> dict[str, Any]:
         with self._connect() as connection:
@@ -649,6 +657,61 @@ class Store:
         return (
             records if include_stale else [r for r in records if not r["stale_sources"]]
         )
+
+    def search(
+        self, text: str, *, tier: str | None = None, include_stale: bool = False
+    ) -> dict[str, Any]:
+        """Lexical recall over the default view; returned bodies are data, not instructions.
+
+        Admissibility (eligibility, tier) is applied in SQL before matching and
+        source freshness only for matches. Every term must occur in the
+        memory ID, a source path or a body value after casefolding and removing
+        whitespace, so Korean spacing variants and short terms match. There is
+        no index or cache to fall out of step with the records.
+        """
+
+        terms = [_squash(term) for term in text.split()]
+        if not terms:
+            raise MemoryError_("MEMORY_SCHEMA: search needs at least one term")
+        with self._connect() as connection:
+            rows = connection.execute(
+                self._COLUMNS + ", (select count(*) from conflict c where"
+                " c.memory_id = m.memory_id and c.current_revision = m.current_revision)"
+                " from memory m join revision r on r.memory_id = m.memory_id"
+                " and r.revision = m.current_revision where m.eligibility = 'current'"
+                " and (? is null or m.tier = ?) order by m.memory_id",
+                (tier, tier),
+            ).fetchall()
+        results = []
+        for row in rows:
+            memory_id, paths = row[0], [ref["path"] for ref in json.loads(row[7])]
+            values = json.loads(row[8]).values()
+            haystack = _squash(" ".join([memory_id, *paths, *map(str, values)]))
+            if not all(term in haystack for term in terms):
+                continue
+            record = self._record(row[:9])
+            if record["stale_sources"] and not include_stale:
+                continue
+            reason = (
+                "exact-id"
+                if _squash(memory_id) in terms
+                else "path"
+                if any(term in _squash(" ".join(paths)) for term in terms)
+                else "text"
+            )
+            results.append(
+                record | {"selection_reason": reason, "open_conflicts": row[9]}
+            )
+        order = {"exact-id": 0, "path": 1, "text": 2}
+        results.sort(
+            key=lambda item: (order[item["selection_reason"]], item["memory_id"])
+        )
+        return {
+            "query": text,
+            "results": results,
+            "abstain": not results,
+            "completeness": "complete",
+        }
 
     def history(self, memory_id: str) -> dict[str, Any]:
         """Every retained revision and conflict, labelled as history."""
@@ -824,6 +887,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     query = commands.add_parser("query")
     query.add_argument("--tier")
     query.add_argument("--include-stale", action="store_true")
+    search = commands.add_parser("search")
+    search.add_argument("text")
+    search.add_argument("--tier")
+    search.add_argument("--include-stale", action="store_true")
     eligibility = commands.add_parser("eligibility")
     eligibility.add_argument("memory_id")
     eligibility.add_argument("value")
@@ -851,6 +918,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 result = store.get(args.memory_id)
             elif args.command == "history":
                 result = store.history(args.memory_id)
+            elif args.command == "search":
+                result = store.search(
+                    args.text, tier=args.tier, include_stale=args.include_stale
+                )
             elif args.command == "query":
                 result = store.query(tier=args.tier, include_stale=args.include_stale)
             elif args.command == "eligibility":

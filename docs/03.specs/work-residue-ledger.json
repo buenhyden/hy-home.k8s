@@ -745,6 +745,16 @@
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
+    },
+    {
+      "id": "W08-H02",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W08",
+      "resume_condition": "When a real memory query misses because of a particle or inflection, or when current memories exceed 1,000 or live search p95 exceeds 100 ms",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
     }
   ]
 }
