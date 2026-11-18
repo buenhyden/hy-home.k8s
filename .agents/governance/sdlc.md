@@ -1,6 +1,6 @@
 ---
 title: "Software Development Lifecycle"
-version: "4.2.0"
+version: "4.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -84,6 +84,7 @@ Provider and agent-roster authority is excluded and stated under Owner; if anoth
 | SDLC-R035 | Always | Three separate axes describe where work stands, and one never implies another. The document STAGE (Stage 01 to 99) names the owner and place of a document. The SDLC phase (Clarify to Complete above) names the work step. The Git point names before, during or after commit, push, pull request or merge. Status, acceptance, promotion and exit per document role follow the [lifecycle policy](document-lifecycle.md). | Semantic review | none |
 | SDLC-R036 | Always | Each governance policy and each approval and safety rule has one responsibility-layer owner from the [Responsibility layers](#responsibility-layers) table. A meaning shared by people and agents (W) and an agent's execution difference for it (A) are never two sources: W states what a protected action is, what an approval binds and that the operator verifies it through the original trusted interaction, and A states only how an agent compares its intended call with that bound approval before execution and on resume, delegates, keeps context and stops. Machine-read inputs such as hook configuration and native permissions stay with I and the provider adapters; they never move as prose. | Semantic review | none |
 | SDLC-R037 | Always | The operator's current request selects and orders work. An Issue, a Project, a package prompt, a residue ledger entry or a memory candidate proposes work and never selects it. When work is done is owned by [QUAL-R022](quality.md#requirements) and the [work lifecycle](../workflows/work-lifecycle.md) Completion steps, applied to the records the change kind requires (SDLC-R024); a merge, a check PASS or a status edit alone is not done. | Semantic review | none |
+| SDLC-R038 | When a Plan or Task states a duration forecast | A duration forecast is a planning reference, never an approval, a deadline, a timeout or a reason to skip or shorten a required check. Record it with `scripts/work_forecast.py` before the work starts, and record the run's start and outcome there; the Task cites the record ID and its digest. The tool fixes every time with its own clock and refuses a clock that moves backwards, a start before its forecast and a second forecast for one task reference. It never rewrites a number: only an unstarted forecast is superseded, by a new revision. The start is the caller's declaration, so the Task's own history shows whether the forecast came first. Verification, runner wait and user wait stay apart, a cancelled, failed or incomplete run stays censored, and unstarted and open records are counted beside the completed ones. P30, P50 and P80 are quantiles of one task type, time basis and unit; P30 to P80 is not an 80% interval, and quantiles of parallel work are never summed, so a parallel run is forecast as one record by convention. The tool labels every forecast uncalibrated; any calibration claim rests on the observed coverage, pinball loss and N. | Semantic review | none |
 
 | Rule ID | Level | Status |
 | --- | --- | --- |
@@ -124,6 +125,7 @@ Provider and agent-roster authority is excluded and stated under Owner; if anoth
 | SDLC-R035 | required | active |
 | SDLC-R036 | required | active |
 | SDLC-R037 | required | active |
+| SDLC-R038 | required | active |
 
 #### Stage 04 slot
 
