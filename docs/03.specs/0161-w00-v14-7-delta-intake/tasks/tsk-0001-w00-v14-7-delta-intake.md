@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.38"
+version: "0.2.39"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -305,6 +305,10 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-190 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-BRIEF partial invalidation and preflight consumer | `scripts/validate-execution-brief.py`; the new `test_a_material_change_stops_only_the_actions_that_read_it` first against the unchanged script, then `tests.test_task_execution_contract.ExecutionBriefCliTests`; `.agents/workflows/delegated-development.md`; the strict profile, link and lifecycle validators and `validate-agent-governance.py`; pinned venv, 2026-11-18 | PASS | The new test failed against the old script and passes now, with 13 brief tests. An action that names its inputs passes after an unrelated Task append. An action without `inputs`, an action that reads the changed input and an unknown input name are refused. The workflow names the preflight before mutation handoffs, resumes and state changes. | no | none |
 | EVD-191 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Claude native runtime observation | Installed Claude Code 2.1.327 in this trusted session, 2026-11-18: one `/compact`; a structured `Write` to a scratch path outside the checkout; a `Read` and a shell `head -3` of the tracked `README.md` of the `secrets/` folder, which holds no secret, approved by the user answer `Run both`; a `Read` of `docs/AGENTS.md`; the same three refusals and the allowed read from one nested sub-agent; `git config --get core.hooksPath` and the installed hook list | PASS | After the compaction the session received the `SessionStart` additional context of `session-start.sh`. The pre-tool adapter refused the outside write with `HOOK-PATH-ROOT` and exit 2, in the main session and in the nested sub-agent. The `Read(./secrets/**)` and `Bash(* secrets/*)` deny rules refused both reads there, in both. The approved local read passed in both. Hooks resolve from `scripts/githooks`; only `pre-commit` and `commit-msg` are installed. Delivery on `resume` was not observed. | no | none |
 | EVD-192 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | RUNTIME-CLOSE Claude resume hook delivery | Installed Claude Code 2.1.327 in this checkout, 2026-11-18 14:58 KST, user answer `Claude resume`: `claude -p --model haiku --output-format stream-json --verbose` with a one-line prompt, then `claude -p --resume` of that session ID with the same flags and `--debug-file` | PASS | The resumed run emitted `SessionStart:resume`, and `.claude/hooks/session-start.sh` finished with exit 0 in 111 ms. The client logged that it provided `additionalContext` (401 chars), the text of the script. The first run fired only `SessionStart:startup`, which the hook's compact and resume matcher does not select, and the project script did not run. The model's own answer about that context was wrong, so only the hook events count. | no | none |
+| EVD-193 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-MEMORY review CAS, itemized erase, rollback journal and schema 2 | `scripts/workspace_memory.py` and `tests/test_workspace_memory.py` on branch `claude/w08-memory` from `993e028c`; Python 3.12.3 linking SQLite 3.45.1 on local ext4; the new and changed tests first against the unchanged script, then `python3 -m unittest tests.test_workspace_memory`; pinned venv, 2026-11-18 | PASS | Against the unchanged script, 8 of 30 tests failed. Now 30 pass. Two reviews from one revision and eligibility no longer both win, and each change records its owner. `erase` needs an approval reference, removes one memory with its revisions, conflicts and reviews, leaves its bytes in neither the store nor the refreshed backup, and reports a backup it could not refresh. The store refuses to run when it cannot keep the rollback journal, and a schema-1 store reports `MEMORY_UNAVAILABLE`. | no | none |
+| EVD-194 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-MEMORY live store conversion to schema 2 | The Git-ignored live store `.workspace-memory/memory.sqlite3` (one long-term revision, no idempotency or conflict rows); a pre-conversion copy and a rehearsal copy in the session scratchpad; a one-time conversion script kept outside the repository; 2026-11-18 | PASS | The rehearsal copy converted and opened with the same workspace ID and record. The live conversion kept workspace ID `83ced050-…`, one revision with an unchanged row digest and the rollback journal, and `integrity_check` returned `ok`. `get` and `history` read it through the new code. No compatibility branch stays in the repository. | no | none |
+| EVD-195 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-MEMORY independent review and fixes | Independent `code-reviewer` sub-agent on the staged diff, read-only, with experiments on temporary stores only, 2026-11-18; then the strengthened tests first against the reviewed script, then `python3 -m unittest tests.test_workspace_memory` | PASS | The review found no material defect and no data left after erase, and three low-severity items. A write to an erased memory said `MEMORY_NOT_FOUND`; a new revision of a `current` memory stayed `current` unreviewed; a retried create after erase recreated the body. The 2 changed tests failed against the reviewed script, and now all 30 pass. A write, a retry and a read of an erased memory report `MEMORY_ERASED`, the erase test also covers the conflict body, and a new revision of a `current` memory becomes `needs-review` with a logged review. Not changed: an empty `owner` string is still accepted, as before, and the backup lock wait stays unbounded. | no | none |
+| EVD-196 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-MEMORY Claude and Codex round trip on one store | User answer `Run after 16:29`; a synthetic Git repository and store in the session scratchpad, not the live store; this Claude session (Claude Code 2.1.327) and one `codex exec` on Codex CLI 0.169.0 at 16:31 KST, `-s workspace-write`, thread `01a1ed91-…`; the staged `scripts/workspace_memory.py`; 2026-11-18 | PASS | Claude wrote revision 1 with a source ref and reviewed it to `current`. Codex ran four commands, confirmed as command executions in its JSONL: it read revision 1, wrote revision 2 with expected revision 1, and its stale write with expected revision 1 returned `conflict` with `stored: true`. Its review from the outdated state was refused with `MEMORY_CONFLICT`, exit 2. Claude then read revision 2 from Codex in `needs-review`, with owners `claude, codex`, one Codex conflict, and both reviews logged with their owners. After Claude re-reviewed it to `current`, a change to the source file removed it from the default query and listed it as stale. Codex ran outside this checkout, so its project hooks and rules were not part of this run. | no | none |
 
 #### Edition Delta
 
@@ -2766,6 +2770,88 @@ three cases.
 | Codex direct, nested and resume delivery; Codex note refresh | RUNTIME_ONLY: usage limit, not run | AGENT-04; R147-17 | W07 |
 | Windows Desktop reviewer write denial | RUNTIME_ONLY: FAIL stands | W07-H05 | W07, Desktop host owner |
 
+#### W08-MEMORY (4.2.0)
+
+The 2026-11-18 request applies the 4.2.0 W08-MEMORY prompt from merged
+`993e028c`, limited to that prompt. The designs read were D06 and D16, with
+D18 and D25 for the start and the open items. The prerequisite W01-CONTRACT
+is complete. Handoff rows 30 and 31 of the policy comparison above route
+CTX-R012 and CTX-R016 here; row 12, search and recall, belongs to
+W08-RETRIEVAL.
+
+**Brief.** The existing store `scripts/workspace_memory.py` already meets
+most of D06:
+
+- one SQLite file per clone, shared by its linked worktrees, with a random
+  `workspace_id`;
+- immutable revisions, and CAS on writes that keeps a stale write as a
+  conflict;
+- idempotency bound to the whole request;
+- tier and domain quotas, a 0700 store directory and stale-source
+  exclusion;
+- rejection of Task status, evidence and approval fields.
+
+A file store would lose those transaction guarantees, and a server has no
+consumer on one host, so the SQLite store stays.
+
+**Differences found.**
+
+- *Lost review.* `set_eligibility` compared only the content revision. Two
+  reviewers of the same state both won, and no owner was kept.
+- *No erase path.* Q04 and Q05 need an itemized deletion with approval. The
+  store had none, and CTX-R012 forbade one.
+- *Journal not enforced.* The linked SQLite 3.45.1 has neither the WAL-reset
+  fix nor a listed backport. The store asked for the rollback journal but
+  did not check the answer.
+- *Compatibility branch.* `write` altered the live store's old idempotency
+  table on first use, against `scripts/AGENTS.md` rule 3.
+- *Backup detail in policy.* CTX-R016 held the restore procedure.
+
+**Changes.** Interface: `eligibility --expected-revision --expected-eligibility --owner`
+and `erase --owner --approval-ref`. Failures: `MEMORY_CONFLICT`,
+`MEMORY_ERASED`, `MEMORY_ERASE_BACKUP_STALE` and `MEMORY_UNAVAILABLE`.
+
+- Schema 2 adds the `review` and `erasure` tables and makes the request
+  digest required.
+- An eligibility change compares the revision and the eligibility the
+  reviewer saw. A retry that finds the requested state returns the same
+  result.
+- `erase` removes one memory in one transaction with `secure_delete`. It
+  keeps an erasure record without the body and refreshes an existing backup.
+- `_connect` refuses to run unless the rollback journal holds.
+- CTX-R009, R012, R013, R014 and R016 state these rules (policy 1.9.0). The
+  restore steps moved to the scripts README.
+- The live store was converted explicitly (EVD-194).
+- An independent review led to three more fixes (EVD-195). A write, a
+  retry or a read of an erased memory reports `MEMORY_ERASED`, and a new
+  revision of a `current` memory becomes `needs-review`.
+
+**Kept as designed.** No derived index exists, so there is no outbox to
+link; W08-RETRIEVAL adds both together. The tiers keep their meaning:
+`short-term` is session context, `long-term` a reviewed decision and
+`domain` an experience with symptom, cause and resolution. `domain_id`
+stays on the domain tier only. No gate opens the live store, so a store
+outage does not block QA or unrelated work.
+
+**Both providers.** EVD-196 used one synthetic store in a throwaway Git
+repository. Claude wrote and reviewed the memory, and Codex read and updated
+it. Codex's stale write was kept as a conflict, and its review from an
+outdated state was refused. Claude then read Codex's revision as
+`needs-review`. A changed source then removed it from the default view. This
+is a real run of both installed clients, not the live store or a mock.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Workspace and linked-worktree identity, CAS write, conflicts, request-bound idempotency, quotas, Task-state rejection | KEEP_VERIFIED | EVD-193 | none |
+| Concurrent eligibility review, review owner and review of a new revision | CHANGED | EVD-193, EVD-195 | none |
+| Itemized erase with approval (CTX-R012, row 30) | CHANGED | EVD-193, EVD-195 | none |
+| Rollback journal enforcement and backup detail (CTX-R016, row 31) | CHANGED | EVD-193; scripts README | none |
+| Live store conversion without a compatibility branch | CHANGED | EVD-194 | none |
+| Claude write, Codex read and update, Claude latest revision, conflict and stale source | VERIFIED on both installed clients | EVD-196 | none |
+| Caller-supplied owner and approval reference; same-account access | Limit recorded | W08-H01 | W08 |
+| Baseline identity and exclusion at cutover | Not in scope | Q07-CUTOVER | Q07 |
+| Search, ranking, index and outbox | Not in scope | Row 12 | W08-RETRIEVAL |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -2881,6 +2967,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W07-H02 | No legacy row: GOV-08, allow tests for approved local reads, reversible edits and narrow tests, and deny tests for secret access and out-of-scope writes. Frozen SPEC-0166 Handoffs, W07 row, and Trace GOV-08; PKG W01:414-420. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | terminal | W07 | When a trusted Claude tool session can record sensitive-path allow and deny cases (RUNTIME-CLOSE) | EVD-191 |
 | W07-H03 | No legacy row: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash). Frozen SPEC-0166 Requirement Trace, W01-B row; its Handoffs table does not list it. Recover the frozen Task as for W05-H04. Seeded under W03-D81 by SPEC-0213 | open | W07 | At the next approval or receipt validator change, or at W11-ACCEPT | none |
 | W07-H05 | No legacy row: the Windows Desktop over SSH read-only reviewer ran its shell with workspace write (EVD-163 FAIL); the client sent a null request profile (EVD-167 FAIL). Recorded under RUNTIME-CLOSE on 2026-11-18 | open | W07 | When the Desktop host owner supplies the outgoing turn permission fields or a client fix, rerun the read-only reviewer write denial on that path | none |
+| W08-H01 | No legacy row: the memory store takes `owner` and `approval_ref` as caller-supplied strings, and any process of the same local account can open the SQLite file directly, so the store authenticates neither. D06 asks for an OS or broker boundary before an untrusted writer uses it. Recorded under W08-MEMORY on 2026-11-18 | open | W08 | When a second local account, an untrusted writer or a remote host must use the store | none |
 | W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W07 | When W07 starts (provider projections) | EVD-144 |
 | W05-H09 | No legacy row: remove the checks of finished one-time transitions and the compatibility branches for older registry generations found by the SPEC-0219 audit, with their tests, and give any guarantee they still hold to a current contract. The audit names `RETIRED_REFERENCE_ALIASES` in `scripts/validate-links-and-owners.py`, the `docs/00.agent-governance` absence test, the retired progress-ledger and full/ci QA mode checks, the legacy empty-body rule of `validate-markdown-profiles.py`, the old Task and Requirement form layouts in tests, the legacy idempotency-key test of the memory store, the provenance-string assertions on the registry `migration.meaning_map`, and the readers of registry majors 10 to 19. Overlaps: W05-H06 (`done` and `archived` branches) and W05-H08 (validator and schema points) stay separate; W03-H11 holds the qa-runner fixture branch name | terminal | W05 | At the next change to a file that holds the retired aliases or readable majors | EVD-185 |
 | W05-H10 | No legacy row: SDLC-R034 conflict order and one-change-set rule. A test or downstream document edited without its owner is refused only by semantic review; split from W05-H05 on 2026-11-18 | terminal | W05 | When a change-set selection rule can name each owner of a test or downstream document | EVD-187 |

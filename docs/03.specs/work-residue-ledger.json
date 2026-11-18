@@ -735,6 +735,16 @@
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
+    },
+    {
+      "id": "W08-H01",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W08",
+      "resume_condition": "When a second local account, an untrusted writer or a remote host must use the store",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
     }
   ]
 }

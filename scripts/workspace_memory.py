@@ -3,7 +3,8 @@
 
 One SQLite file at the representative worktree root keeps every memory
 revision and conflict. Memory is decision context, never Task status,
-evidence, approval or acceptance. Nothing here deletes a memory body.
+evidence, approval or acceptance. Only an approved itemized erase removes a
+memory body.
 """
 
 from __future__ import annotations
@@ -25,7 +26,7 @@ import uuid
 from pathlib import Path
 from typing import Any, Iterator, Sequence
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 STORE_DIR = ".workspace-memory"
 STORE_NAME = "memory.sqlite3"
 BACKUP_NAME = "memory.backup.sqlite3"
@@ -69,7 +70,14 @@ create table if not exists conflict (
   created_at text not null, owner text not null, source_refs text not null,
   body text not null, payload_bytes integer not null);
 create table if not exists idempotency (
-  key text primary key, result text not null, request_hash text);
+  key text primary key, result text not null, request_hash text not null);
+create table if not exists review (
+  memory_id text not null references memory(memory_id), revision integer not null,
+  from_eligibility text not null, to_eligibility text not null,
+  owner text not null, created_at text not null);
+create table if not exists erasure (
+  memory_id text primary key, erased_at text not null, owner text not null,
+  approval_ref text not null, revisions integer not null, conflicts integer not null);
 """
 
 
@@ -191,7 +199,17 @@ class Store:
         )
         try:
             connection.execute(f"pragma busy_timeout={BUSY_TIMEOUT_MS}")
-            connection.execute("pragma journal_mode=delete")
+            # The linked SQLite may predate the WAL-reset fix; refuse WAL.
+            try:
+                mode = connection.execute("pragma journal_mode=delete").fetchone()[0]
+            except sqlite3.OperationalError as exc:
+                raise MemoryError_(
+                    "MEMORY_UNAVAILABLE: rollback journal is unavailable"
+                ) from exc
+            if mode != "delete":
+                raise MemoryError_(
+                    "MEMORY_UNAVAILABLE: rollback journal is unavailable"
+                )
             connection.execute("pragma foreign_keys=on")
             page_size = connection.execute("pragma page_size").fetchone()[0]
             limit = DATABASE_LIMIT // page_size
@@ -344,13 +362,6 @@ class Store:
             raise MemoryError_("MEMORY_CAPACITY_EXCEEDED: revision payload limit")
         with self._write() as connection:
             if idempotency_key is not None:
-                if "request_hash" not in {
-                    column[1]
-                    for column in connection.execute("pragma table_info(idempotency)")
-                }:
-                    connection.execute(
-                        "alter table idempotency add column request_hash text"
-                    )
                 seen = connection.execute(
                     "select result, request_hash from idempotency where key = ?",
                     (idempotency_key,),
@@ -360,7 +371,12 @@ class Store:
                         raise MemoryError_(
                             "MEMORY_CONFLICT: idempotency key belongs to another request"
                         )
-                    return json.loads(seen[0])
+                    replay = json.loads(seen[0])
+                    if replay["outcome"] == "erased":
+                        raise MemoryError_(
+                            "MEMORY_ERASED: the memory was erased on approval"
+                        )
+                    return replay
             if memory_id is None:
                 if expected_revision is not None:
                     raise MemoryError_("MEMORY_SCHEMA: a new memory has no revision")
@@ -373,12 +389,11 @@ class Store:
                 )
                 revision = 1
             else:
-                row = connection.execute(
-                    "select tier, domain_id, current_revision from memory where memory_id = ?",
-                    (memory_id,),
-                ).fetchone()
-                if row is None:
-                    raise MemoryError_("MEMORY_NOT_FOUND: unknown memory_id")
+                row = self._live(
+                    connection,
+                    memory_id,
+                    "tier, domain_id, current_revision, eligibility",
+                )
                 if (row[0], row[1]) != (tier, domain_id):
                     raise MemoryError_("MEMORY_SCHEMA: tier and domain never change")
                 if expected_revision != row[2]:
@@ -415,10 +430,17 @@ class Store:
                 if not self._fits(connection, tier, domain_id, size):
                     raise MemoryError_("MEMORY_CAPACITY_EXCEEDED: tier or domain limit")
                 revision = row[2] + 1
+                # A review covers only the revision it saw.
+                eligibility = "needs-review" if row[3] == "current" else row[3]
                 connection.execute(
-                    "update memory set current_revision = ? where memory_id = ?",
-                    (revision, memory_id),
+                    "update memory set current_revision = ?, eligibility = ? where memory_id = ?",
+                    (revision, eligibility, memory_id),
                 )
+                if eligibility != row[3]:
+                    connection.execute(
+                        "insert into review values (?, ?, ?, ?, ?, ?)",
+                        (memory_id, revision, row[3], eligibility, owner, _now()),
+                    )
             connection.execute(
                 "insert into revision values (?, ?, ?, ?, ?, ?, ?)",
                 (
@@ -445,23 +467,124 @@ class Store:
             return result
 
     def set_eligibility(
-        self, memory_id: str, eligibility: str, *, expected_revision: int
+        self,
+        memory_id: str,
+        eligibility: str,
+        *,
+        expected_revision: int,
+        expected_eligibility: str,
+        owner: str,
     ) -> dict[str, Any]:
-        if eligibility not in ELIGIBILITY:
+        """Compare-and-set over the revision and eligibility the reviewer saw."""
+
+        if eligibility not in ELIGIBILITY or expected_eligibility not in ELIGIBILITY:
             raise MemoryError_("MEMORY_SCHEMA: unknown eligibility")
         with self._write() as connection:
-            row = connection.execute(
-                "select current_revision from memory where memory_id = ?", (memory_id,)
-            ).fetchone()
-            if row is None:
-                raise MemoryError_("MEMORY_NOT_FOUND: unknown memory_id")
-            if row[0] != expected_revision:
-                raise MemoryError_("MEMORY_CONFLICT: revision changed")
+            row = self._live(connection, memory_id, "current_revision, eligibility")
+            result = {
+                "memory_id": memory_id,
+                "eligibility": eligibility,
+                "revision": expected_revision,
+            }
+            if row == (expected_revision, eligibility):
+                return result
+            if row != (expected_revision, expected_eligibility):
+                raise MemoryError_("MEMORY_CONFLICT: revision or eligibility changed")
             connection.execute(
                 "update memory set eligibility = ? where memory_id = ?",
                 (eligibility, memory_id),
             )
-        return {"memory_id": memory_id, "eligibility": eligibility}
+            connection.execute(
+                "insert into review values (?, ?, ?, ?, ?, ?)",
+                (
+                    memory_id,
+                    expected_revision,
+                    expected_eligibility,
+                    eligibility,
+                    owner,
+                    _now(),
+                ),
+            )
+        return result
+
+    @staticmethod
+    def _live(
+        connection: sqlite3.Connection, memory_id: str, columns: str
+    ) -> tuple[Any, ...]:
+        row = connection.execute(
+            f"select {columns} from memory where memory_id = ?", (memory_id,)
+        ).fetchone()
+        if row is not None:
+            return tuple(row)
+        if connection.execute(
+            "select 1 from erasure where memory_id = ?", (memory_id,)
+        ).fetchone():
+            raise MemoryError_("MEMORY_ERASED: the memory was erased on approval")
+        raise MemoryError_("MEMORY_NOT_FOUND: unknown memory_id")
+
+    def erase(self, memory_id: str, *, owner: str, approval_ref: str) -> dict[str, Any]:
+        """Remove one memory with every revision, conflict and review.
+
+        Freed pages are overwritten (secure_delete) and an existing backup is
+        refreshed; physical remnants on the device are not claimed erased.
+        """
+
+        if not isinstance(approval_ref, str) or not approval_ref.strip():
+            raise MemoryError_("MEMORY_SCHEMA: erase needs the approval reference")
+        with self._connect() as connection:
+            connection.execute("pragma secure_delete=on")
+            connection.execute("begin immediate")
+            try:
+                self._live(connection, memory_id, "1")
+                counts = {
+                    table: connection.execute(
+                        f"select count(*) from {table} where memory_id = ?",
+                        (memory_id,),
+                    ).fetchone()[0]
+                    for table in ("revision", "conflict")
+                }
+                # Keep a body-free replay marker so a retried request cannot recreate it.
+                connection.execute(
+                    "update idempotency set result = ? where json_extract(result, '$.memory_id') = ?",
+                    (
+                        _canonical({"outcome": "erased", "memory_id": memory_id}),
+                        memory_id,
+                    ),
+                )
+                for table in ("review", "conflict", "revision", "memory"):
+                    connection.execute(
+                        f"delete from {table} where memory_id = ?", (memory_id,)
+                    )
+                connection.execute(
+                    "insert into erasure values (?, ?, ?, ?, ?, ?)",
+                    (
+                        memory_id,
+                        _now(),
+                        owner,
+                        approval_ref,
+                        counts["revision"],
+                        counts["conflict"],
+                    ),
+                )
+            except BaseException:
+                connection.execute("rollback")
+                raise
+            connection.execute("commit")
+        backup = "absent"
+        if (self.path.parent / BACKUP_NAME).exists():
+            try:
+                self.backup()
+            except MemoryError_ as exc:
+                raise MemoryError_(
+                    "MEMORY_ERASE_BACKUP_STALE: the store erased it; the previous backup still holds it"
+                ) from exc
+            backup = "refreshed"
+        return {
+            "memory_id": memory_id,
+            "revisions": counts["revision"],
+            "conflicts": counts["conflict"],
+            "backup": backup,
+        }
 
     def _record(self, row: sqlite3.Row | tuple) -> dict[str, Any]:
         (
@@ -507,8 +630,8 @@ class Store:
             row = connection.execute(
                 self._CURRENT + " where m.memory_id = ?", (memory_id,)
             ).fetchone()
-        if row is None:
-            raise MemoryError_("MEMORY_NOT_FOUND: unknown memory_id")
+            if row is None:
+                self._live(connection, memory_id, "1")
         return self._record(row)
 
     def query(
@@ -531,6 +654,12 @@ class Store:
         """Every retained revision and conflict, labelled as history."""
 
         with self._connect() as connection:
+            self._live(connection, memory_id, "1")
+            reviews = connection.execute(
+                "select revision, from_eligibility, to_eligibility, owner, created_at"
+                " from review where memory_id = ? order by rowid",
+                (memory_id,),
+            ).fetchall()
             revisions = connection.execute(
                 "select revision, created_at, owner, source_refs, body from revision"
                 " where memory_id = ? order by revision",
@@ -541,8 +670,6 @@ class Store:
                 " where memory_id = ? order by conflict_id",
                 (memory_id,),
             ).fetchall()
-        if not revisions:
-            raise MemoryError_("MEMORY_NOT_FOUND: unknown memory_id")
         return {
             "memory_id": memory_id,
             "view": "history",
@@ -566,6 +693,16 @@ class Store:
                     "body": json.loads(c[5]),
                 }
                 for c in conflicts
+            ],
+            "reviews": [
+                {
+                    "revision": r[0],
+                    "from": r[1],
+                    "to": r[2],
+                    "owner": r[3],
+                    "created_at": r[4],
+                }
+                for r in reviews
             ],
         }
 
@@ -634,6 +771,8 @@ class Store:
                                     "revision",
                                     "conflict",
                                     "idempotency",
+                                    "review",
+                                    "erasure",
                                 )
                             ),
                         )
@@ -689,6 +828,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     eligibility.add_argument("memory_id")
     eligibility.add_argument("value")
     eligibility.add_argument("--expected-revision", type=int, required=True)
+    eligibility.add_argument("--expected-eligibility", required=True)
+    eligibility.add_argument("--owner", required=True)
+    erase = commands.add_parser("erase")
+    erase.add_argument("memory_id")
+    erase.add_argument("--owner", required=True)
+    erase.add_argument("--approval-ref", required=True)
     args = parser.parse_args(argv)
     try:
         if args.command == "init":
@@ -710,7 +855,15 @@ def main(argv: Sequence[str] | None = None) -> int:
                 result = store.query(tier=args.tier, include_stale=args.include_stale)
             elif args.command == "eligibility":
                 result = store.set_eligibility(
-                    args.memory_id, args.value, expected_revision=args.expected_revision
+                    args.memory_id,
+                    args.value,
+                    expected_revision=args.expected_revision,
+                    expected_eligibility=args.expected_eligibility,
+                    owner=args.owner,
+                )
+            elif args.command == "erase":
+                result = store.erase(
+                    args.memory_id, owner=args.owner, approval_ref=args.approval_ref
                 )
             else:
                 result = store.write(
