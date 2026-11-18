@@ -683,7 +683,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W06",
-      "resume_condition": "At the first pull request that changes `gitops/` or the CI lock",
+      "resume_condition": "At the first pull request that changes a GitOps manifest or the CI lock",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }

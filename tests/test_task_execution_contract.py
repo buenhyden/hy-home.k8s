@@ -1297,7 +1297,9 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             "---\n# Spec\n"
         )
 
-    def plan_text(self, status: str = "approved") -> str:
+    def plan_text(
+        self, status: str = "approved", work_units: list[str] | None = None
+    ) -> str:
         return (
             "---\n"
             'title: "Fixture Plan"\nversion: "0.1.0"\n'
@@ -1317,6 +1319,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
                             "#### Global Constraints",
                             self.CONSTRAINTS.rstrip("\n"),
                         ],
+                        **({"Work Units": work_units} if work_units else {}),
                         "Durable Owners": [
                             "Each row of the table below names one durable contract.",
                             "| Promotion ID | Target Owner | Acceptance | Evidence |",
@@ -1464,6 +1467,83 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             "PLAN-GLOBAL-CONSTRAINTS",
             self.rules(base=base, proposed={**base, self.plan: with_prompt}),
         )
+
+    def test_changed_plan_work_unit_dependencies_form_a_known_acyclic_graph(
+        self,
+    ) -> None:
+        # D26 section 6: an unknown unit, a self-dependency or a cycle fails.
+        def plan(rows: list[tuple[str, str]], extra: str = "") -> str:
+            lines = [
+                "| Work Unit | Criteria | Work | Dependencies | Task | Verification |",
+                "| --- | --- | --- | --- | --- | --- |",
+            ] + [
+                f"| {unit} | [VAL-P02-001](spec.md) | Work | {deps} "
+                "| [Task](tasks/tsk-0001-fixture.md) | Check |"
+                for unit, deps in rows
+            ]
+            if extra:
+                lines += ["", extra]
+            return self.plan_text(work_units=lines)
+
+        base = {self.spec: self.spec_text(), self.plan: self.plan_text()}
+        good = (
+            [("WORK-001", "Approval"), ("WORK-002", "WORK-001")],
+            [
+                ("WORK-001", "none"),
+                ("WORK-002", "WORK-001"),
+                ("WORK-003", "WORK-001"),
+                ("WORK-004", "WORK-002 to WORK-003"),
+            ],
+            [("`WORK-001`", "Approval"), ("`WORK-002`", "`WORK-001` review")],
+            # WORK-0030 is no unit ID, so it never reads as an unknown WORK-003.
+            [("WORK-001", "none"), ("WORK-002", "Ticket WORK-0030")],
+        )
+        for rows in good:
+            with self.subTest(good=rows):
+                proposed = {**base, self.plan: plan(rows)}
+                self.assertNotIn(
+                    "PLAN-WORK-DEPENDENCY", self.rules(base=base, proposed=proposed)
+                )
+        bad = (
+            [("WORK-001", "WORK-009")],
+            [("WORK-001", "WORK-001")],
+            [("WORK-001", "WORK-002"), ("WORK-002", "WORK-001")],
+            [
+                ("WORK-001", "WORK-003"),
+                ("WORK-002", "WORK-001"),
+                ("WORK-003", "WORK-001 to WORK-002"),
+            ],
+            [("WORK-001", "none"), ("WORK-001", "none")],
+            [("WORK-001", "none"), ("WORK-003", "WORK-002 to WORK-001")],
+            [("WORK-001 (rework)", "none")],
+        )
+        for rows in bad:
+            with self.subTest(bad=rows):
+                proposed = {**base, self.plan: plan(rows)}
+                self.assertIn(
+                    "PLAN-WORK-DEPENDENCY", self.rules(base=base, proposed=proposed)
+                )
+        # A unit table without a dependency column still registers its units.
+        registered = "| Work Unit | Outcome |\n| --- | --- |\n| WORK-003 | Out |"
+        proposed = {
+            **base,
+            self.plan: plan([("WORK-001", "WORK-003")], registered),
+        }
+        self.assertNotIn(
+            "PLAN-WORK-DEPENDENCY", self.rules(base=base, proposed=proposed)
+        )
+        # A second unit table with a Depends On column is read as well.
+        second = (
+            "| Work Unit | Outcome | Depends On | Owner |\n"
+            "| --- | --- | --- | --- |\n"
+            "| WORK-001 | Out | WORK-002 | platform |\n"
+            "| WORK-002 | Out | WORK-001 | platform |"
+        )
+        proposed = {
+            **base,
+            self.plan: plan([("WORK-001", "none"), ("WORK-002", "WORK-001")], second),
+        }
+        self.assertIn("PLAN-WORK-DEPENDENCY", self.rules(base=base, proposed=proposed))
 
     def test_completed_task_receipt_names_each_promotion_and_anchor(self) -> None:
         # SDLC-ROWS: each Plan promotion row reaches its anchor and the Task receipt.
