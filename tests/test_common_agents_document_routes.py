@@ -14,6 +14,18 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import document_contracts as contracts  # noqa: E402
+from tests.form_headings import form_body  # noqa: E402
+
+SKILL_SECTIONS = {
+    "When to Use": ["Use it when a change needs review."],
+    "When Not to Use": ["Not for a one-line fix."],
+    "Steps": ["1. Run the check."],
+    "Failure Handling": ["Stop on a failed check."],
+    "Artifacts": ["The request."],
+    "Handoff": ["A report."],
+    "Checks": ["Run the suite."],
+    "Limits": ["Record the result."],
+}
 
 SPEC = importlib.util.spec_from_file_location(
     "common_agents_markdown_profiles", ROOT / "scripts/validate-markdown-profiles.py"
@@ -106,45 +118,8 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
             '  type: "governance/skill"\n  status: "active"\n'
             '  owner: "platform"\n  updated: "2026-10-06"\n'
             "disable-model-invocation: true\n---\n\n# Routing\n\n"
-            "## Trigger\n"
-            "\n"
-            "### When to Use\n"
-            "\n"
-            "Use it when a change needs review.\n"
-            "\n"
-            "### When Not to Use\n"
-            "\n"
-            "Not for a one-line fix.\n"
-            "\n"
-            "## Procedure\n"
-            "\n"
-            "### Steps\n"
-            "\n"
-            "1. Run the check.\n"
-            "\n"
-            "### Failure Handling\n"
-            "\n"
-            "Stop on a failed check.\n"
-            "\n"
-            "## Outputs\n"
-            "\n"
-            "### Artifacts\n"
-            "\n"
-            "The request.\n"
-            "\n"
-            "### Handoff\n"
-            "\n"
-            "A report.\n"
-            "\n"
-            "## Verification\n"
-            "\n"
-            "### Checks\n"
-            "\n"
-            "Run the suite.\n"
-            "\n"
-            "### Limits\n"
-            "\n"
-            "Record the result.\n"
+            + "\n\n".join(form_body("skill", SKILL_SECTIONS))
+            + "\n"
         )
         schema = MARKDOWN.load_frontmatter_schema(ROOT)
         self.assertEqual(

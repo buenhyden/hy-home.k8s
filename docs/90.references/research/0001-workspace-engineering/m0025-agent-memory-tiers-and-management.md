@@ -1,6 +1,6 @@
 ---
 title: "Reference: Agent Memory Tiers and Management"
-version: "0.1.1"
+version: "0.1.2"
 type: "reference/research"
 status: "draft"
 owner: "platform"
@@ -32,9 +32,9 @@ Primary owner of U30 and existing REQ-WERPC-029 through REQ-WERPC-032. Includes 
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
 | SRC-WERPC-004, 049, 050, 066, 068, 087, 096, 123, 125, 137 | [m0026 current source observations](m0026-source-coverage.md#current-source-observations) | not stated in this document | 2026-09-27 | MCP current revision externally confirmed as 2026-07-28 | Agent memory tier synthesis | Says nothing about a connected client; context-engineering article published 2025-09-29, long-running harness 2025-11-26, other pages exposed no publication or modification date; product storage, default and eligibility controls are not a local privacy, retention or secure-erasure guarantee |
-| SRC-WERPC-049–050 | [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/) | not stated in this document | 2026-08-08, re-checked 2026-08-10 | not stated in this document | not stated in this document | not stated in this document |
-| SRC-WERPC-051 | [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory) | not stated in this document | 2026-08-08, re-checked 2026-08-10 | not stated in this document | not stated in this document | not stated in this document |
-| SRC-WERPC-052 | [MCP Resources specification 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25/server/resources) | 2025-11-25 | 2026-08-08, re-checked 2026-08-10 | Confirmed superseded | not stated in this document | not stated in this document |
+| SRC-WERPC-049–050 | [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/) | not stated in this document | 2026-08-10 | not stated in this document | not stated in this document | not stated in this document; first checked 2026-08-08 |
+| SRC-WERPC-051 | [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory) | not stated in this document | 2026-08-10 | not stated in this document | not stated in this document | not stated in this document; first checked 2026-08-08 |
+| SRC-WERPC-052 | [MCP Resources specification 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25/server/resources) | 2025-11-25 | 2026-08-10 | Confirmed superseded | not stated in this document | not stated in this document; first checked 2026-08-08 |
 | SRC-WERPC-066 | [MCP versioning](https://modelcontextprotocol.io/specification/versioning) and [2026-07-28 Resources specification](https://modelcontextprotocol.io/specification/2026-07-28/server/resources) | 2026-07-28 | 2026-08-10 | not stated in this document | not stated in this document | not stated in this document |
 
 Current [source observations](m0026-source-coverage.md#current-source-observations) own exact URLs/claim support for SRC-WERPC-004, 049, 050, 066, 068, 087, 096, 123, 125 and 137. Direct external reads: 2026-09-27. MCP current revision is externally confirmed as 2026-07-28; this says nothing about a connected client. Anthropic context-engineering article is published 2025-09-29; long-running harness 2025-11-26. Other read pages exposed no publication/modification date. Product storage/default/eligibility controls are not a local privacy, retention or secure-erasure guarantee.

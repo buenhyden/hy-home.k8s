@@ -88,6 +88,7 @@ def guide_profile(*, substantive_body: bool, **lists):
 
 def rules(body: str, *, substantive_body: bool = True) -> list[str]:
     profile = guide_profile(substantive_body=substantive_body)
+    # Literal on purpose: a retained form; the heading matches retained_extension.
     diagnostics = markdown._body_diagnostics(
         GUIDE_PATH, profile, f"# Example\n\n## Purpose\n{body}\n", RETAINED_STATUS
     )

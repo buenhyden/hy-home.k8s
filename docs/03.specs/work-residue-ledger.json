@@ -59,21 +59,29 @@
     {
       "id": "DOC-S90",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "At the next Stage 90 profile or validator change",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-185"
       }
     },
     {
       "id": "DOC-S99",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "At the next change to a form's heading tree, for the tests of that form; deliberate registry pins in tests.test_common_form_tree stay",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-185"
       }
     },
     {
@@ -271,11 +279,15 @@
     {
       "id": "SDLC-ROWS",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "At the next change to the PLAN-PROMOTION check or the Plan promotion form",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-185"
       }
     },
     {
@@ -537,31 +549,43 @@
     {
       "id": "W05-H04",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "At the next change to a derived-copy surface",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-185"
       }
     },
     {
       "id": "W05-H05",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "At the next change to approval receipt validation",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-185"
       }
     },
     {
       "id": "W05-H06",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "At the next change to `scripts/validation/current_executable_references.py`",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-185"
       }
     },
     {
@@ -581,19 +605,37 @@
     {
       "id": "W05-H08",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "At the next edit of the relationship contract schema",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-185"
       }
     },
     {
       "id": "W05-H09",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "At the next change to a file that holds the retired aliases or readable majors",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-185"
+      }
+    },
+    {
+      "id": "W05-H10",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W05",
+      "resume_condition": "When a change-set selection rule can name each owner of a test or downstream document",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }

@@ -1,6 +1,6 @@
 ---
 title: "Reference: AI Agents and Agency-Agents"
-version: "0.1.1"
+version: "0.1.2"
 type: "reference/research"
 status: "draft"
 owner: "platform"
@@ -54,7 +54,7 @@ are primary-owned by the sibling references.
 | SRC-WERPC-127, 048 | [Agency Agents tree](https://github.com/msitarzewski/agency-agents/tree/053ddbbf392a1688fc7043d81529f47ef2cf86c8) and [MIT license](https://github.com/msitarzewski/agency-agents/blob/053ddbbf392a1688fc7043d81529f47ef2cf86c8/LICENSE) | commit 053ddbbf392a1688fc7043d81529f47ef2cf86c8, dated 2026-09-22T02:38:51Z | 2026-09-27 | Tree response nontruncated | not stated in this document | not stated in this document |
 | SRC-WERPC-215–220 | Six role bodies listed in this report at the same pin | not stated in this document | 2026-09-27 | Persona analysis | not stated in this document | No complete roster-quality claim |
 | SRC-WERPC-221, 222 | [converter](https://github.com/msitarzewski/agency-agents/blob/053ddbbf392a1688fc7043d81529f47ef2cf86c8/scripts/convert.sh) and [installer](https://github.com/msitarzewski/agency-agents/blob/053ddbbf392a1688fc7043d81529f47ef2cf86c8/scripts/install.sh) | not stated in this document | 2026-09-27 | Converter lines 171–190; installer options lines 1–55, copy and link lines 281–282, default Codex path lines 1028–1040 | not stated in this document | Inspected only, never executed |
-| SRC-WERPC-047–048 | Historical pinned Agency Agents tree, MIT license, converter and installer | commit ebe9c99acb5c96f9468de368d8bead775387d1a7 | 2026-08-08, re-checked 2026-08-10 | not stated in this document | not stated in this document | not stated in this document |
+| SRC-WERPC-047–048 | Historical pinned Agency Agents tree, MIT license, converter and installer | commit ebe9c99acb5c96f9468de368d8bead775387d1a7 | 2026-08-10 | not stated in this document | not stated in this document | not stated in this document; first checked 2026-08-08 |
 
 #### Current primary sources
 

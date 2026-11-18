@@ -17,6 +17,7 @@ import tempfile
 import unittest
 from pathlib import Path, PurePosixPath
 
+from tests.form_headings import form_body
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
@@ -120,6 +121,7 @@ def task_text(status: str, rows: list[str], *, old_form: bool = False) -> str:
         *decisions,
     ]
     if old_form:
+        # The pre-SPEC-0203 layout is deliberately literal: no registry form owns it.
         return "\n".join(
             [
                 *front,
@@ -148,37 +150,31 @@ def task_text(status: str, rows: list[str], *, old_form: bool = False) -> str:
     return "\n".join(
         [
             *front,
-            "## Scope",
-            "### Objective and Parent",
-            "Example.",
-            "### Inputs and Authority",
-            "[Spec](../spec.md) and [Plan](../plan.md).",
-            "## Execution Log",
-            "### Work Performed",
-            "The rows below record the work.",
-            "### Blockers and Decisions",
-            "No blocker is recorded.",
-            "### Lifecycle Traceability",
-            HEADER,
-            SEPARATOR,
-            *rows,
-            "## Verification Evidence",
-            "### Results",
-            CHECK_HEADER,
-            CHECK_SEPARATOR,
-            *checks,
-            "### Resolution Links",
-            "The Resolves column names the row each PASS row closes.",
-            "## Acceptance Decision",
-            "### Criterion Decisions",
-            *decision_table,
-            "### Remaining Conditions",
-            "No condition remains.",
-            "## Handoff",
-            "### Promotion Receipt",
-            "No durable contract is promoted.",
-            "### Next Owner",
-            "Example.",
+            *form_body(
+                "task",
+                {
+                    "Objective and Parent": ["Example."],
+                    "Inputs and Authority": [
+                        "[Spec](../spec.md) and [Plan](../plan.md)."
+                    ],
+                    "Work Performed": ["The rows below record the work."],
+                    "Blockers and Decisions": [
+                        "No blocker is recorded.",
+                        "### Lifecycle Traceability",
+                        HEADER,
+                        SEPARATOR,
+                        *rows,
+                    ],
+                    "Results": [CHECK_HEADER, CHECK_SEPARATOR, *checks],
+                    "Resolution Links": [
+                        "The Resolves column names the row each PASS row closes."
+                    ],
+                    "Criterion Decisions": decision_table,
+                    "Remaining Conditions": ["No condition remains."],
+                    "Promotion Receipt": ["No durable contract is promoted."],
+                    "Next Owner": ["Example."],
+                },
+            ),
             "",
         ]
     )
@@ -216,36 +212,35 @@ def _frontmatter(kind: str, artifact: str, extra: str = "") -> list[str]:
 def form_spec_text() -> str:
     """A Spec in the COMMON-DOC-FORM-1 shape (SPEC-0200)."""
 
-    def block(title: str, *children: str) -> list[str]:
-        return [f"## {title}"] + [
-            line
-            for child in children
-            for line in (f"### {child}", "Concrete fixture text.")
-        ]
-
     return "\n".join(
         [
             *_frontmatter("spec", "SPEC-0106"),
             "# Spec",
-            *block("Overview", "Goal", "Consumers"),
-            *block("Scope", "In Scope", "Out of Scope"),
-            *block("Behavior Contract", "Inputs and Outputs", "Failure Behavior"),
-            "## Acceptance Criteria",
-            "### Criteria",
-            "| Criterion ID | Expected Result |",
-            "| --- | --- |",
-            "| VAL-P02-001 | Focused test PASS |",
-            "### Verification Strategy",
-            "Concrete fixture text.",
-            "",
-            # SPEC-0222: the always core checks table, header-only.
-            "| Check ID | Guarantee | Input | Trust Boundary | Required When | Evidence |",
-            "| --- | --- | --- | --- | --- | --- |",
-            "### Lifecycle Traceability",
-            "| Requirement ID | Spec criterion | Architecture | Verification method |",
-            "| --- | --- | --- | --- |",
-            "| N/A — approved direct package | VAL-P02-001 | None apply: fixture | Focused test |",
-            "",
+            *form_body(
+                "spec",
+                {
+                    "Criteria": [
+                        "| Criterion ID | Expected Result |",
+                        "| --- | --- |",
+                        "| VAL-P02-001 | Focused test PASS |",
+                    ],
+                    "Verification Strategy": [
+                        "Concrete fixture text.",
+                        "",
+                        # SPEC-0222: the always core checks table, header-only.
+                        "| Check ID | Guarantee | Input | Trust Boundary "
+                        "| Required When | Evidence |",
+                        "| --- | --- | --- | --- | --- | --- |",
+                        "### Lifecycle Traceability",
+                        "| Requirement ID | Spec criterion | Architecture "
+                        "| Verification method |",
+                        "| --- | --- | --- | --- |",
+                        "| N/A — approved direct package | VAL-P02-001 "
+                        "| None apply: fixture | Focused test |",
+                        "",
+                    ],
+                },
+            ),
         ]
     )
 
@@ -253,54 +248,46 @@ def form_spec_text() -> str:
 def form_plan_text() -> str:
     """A Plan in the COMMON-DOC-FORM-1 shape (SPEC-0200)."""
 
-    def block(title: str, *children: str) -> list[str]:
-        return [f"## {title}"] + [
-            line
-            for child in children
-            for line in (f"### {child}", "Concrete fixture text.")
-        ]
-
     return "\n".join(
         [
             *_frontmatter("plan", "SPEC-0106-PLAN-0001", 'parent_ids: ["SPEC-0106"]'),
             "# Plan",
-            "## Overview",
-            "### Outcome",
-            "Concrete fixture goal.",
-            "### Constraints",
-            "Concrete fixture text.",
-            "#### Global Constraints",
-            "Keep the approved [Spec](spec.md#scope) parent contract.",
-            *block("Dependencies", "Prerequisites", "Shared Resources"),
-            "## Work Breakdown",
-            "### Work Units",
-            "| Work Unit | Criteria | Work | Dependencies | Task | Verification |",
-            "| --- | --- | --- | --- | --- | --- |",
-            "| WORK-001 | [VAL-P02-001](spec.md#criteria) | Verify | none | "
-            "[SPEC-0106-TSK-0001](tasks/tsk-0001-example.md) | Focused test |",
-            "",
-            # SPEC-0222: the always core work units table, header-only.
-            "| Work Unit | Outcome | Depends On | Owner | Write Scope | Acceptance "
-            "| Checks |",
-            "| --- | --- | --- | --- | --- | --- | --- |",
-            "### Dependency Edges",
-            "Concrete fixture text.",
-            "## Verification Plan",
-            "### Selected Checks",
-            "Concrete fixture text.",
-            "",
-            # SPEC-0222: the always core checks table, header-only.
-            "| Check ID | Guarantee | Input | Trust Boundary | Required When | Evidence |",
-            "| --- | --- | --- | --- | --- | --- |",
-            "### Evidence Plan",
-            "Concrete fixture text.",
-            "## Promotion Map",
-            "### Durable Owners",
-            "| Promotion ID | Target Owner | Acceptance | Evidence |",
-            "| --- | --- | --- | --- |",
-            "| none | none | none | No durable contract was introduced |",
-            "### Consumer Updates",
-            "Concrete fixture text.",
+            *form_body(
+                "plan",
+                {
+                    "Outcome": ["Concrete fixture goal."],
+                    "Constraints": [
+                        "Concrete fixture text.",
+                        "#### Global Constraints",
+                        "Keep the approved [Spec](spec.md#scope) parent contract.",
+                    ],
+                    "Work Units": [
+                        "| Work Unit | Criteria | Work | Dependencies | Task "
+                        "| Verification |",
+                        "| --- | --- | --- | --- | --- | --- |",
+                        "| WORK-001 | [VAL-P02-001](spec.md#criteria) | Verify | none | "
+                        "[SPEC-0106-TSK-0001](tasks/tsk-0001-example.md) | Focused test |",
+                        "",
+                        # SPEC-0222: the always core work units table, header-only.
+                        "| Work Unit | Outcome | Depends On | Owner | Write Scope "
+                        "| Acceptance | Checks |",
+                        "| --- | --- | --- | --- | --- | --- | --- |",
+                    ],
+                    "Selected Checks": [
+                        "Concrete fixture text.",
+                        "",
+                        # SPEC-0222: the always core checks table, header-only.
+                        "| Check ID | Guarantee | Input | Trust Boundary "
+                        "| Required When | Evidence |",
+                        "| --- | --- | --- | --- | --- | --- |",
+                    ],
+                    "Durable Owners": [
+                        "| Promotion ID | Target Owner | Acceptance | Evidence |",
+                        "| --- | --- | --- | --- |",
+                        "| none | none | none | No durable contract was introduced |",
+                    ],
+                },
+            ),
             "",
         ]
     )
@@ -496,6 +483,11 @@ class TaskExecutionContractTests(unittest.TestCase):
 
     def test_direct_parent_cancellation_and_evidence_table_are_required(self) -> None:
         text = task_text("draft", [row()])
+        # The unchanged fixture is the passing case of each refusal below.
+        self.assertFalse(
+            {"PARENT-IDENTITY", "TASK-EVIDENCE-COLUMNS", "FM-CANCELLATION"}
+            & set(self.rules(text))
+        )
         self.assertIn(
             "PARENT-IDENTITY",
             self.rules(text.replace("SPEC-0106-PLAN-0001", "SPEC-9999-PLAN-0001")),
@@ -595,40 +587,40 @@ def core_task_text(
     return "\n".join(
         [
             *front,
-            "## Scope",
-            "### Objective and Parent",
-            "Example.",
-            "### Inputs and Authority",
-            "[Spec](../spec.md) and [Plan](../plan.md).",
-            "## Execution Log",
-            "### Work Performed",
-            "The rows below record the work.",
-            "",
-            *work,
-            "",
-            "### Blockers and Decisions",
-            "No blocker is recorded.",
-            "### Lifecycle Traceability",
-            CORE_TRACE_HEADER,
-            separator(CORE_TRACE_HEADER),
-            *trace,
-            "## Verification Evidence",
-            "### Results",
-            *evidence,
-            "### Resolution Links",
-            "The Resolves column names the row each PASS row closes.",
-            "## Acceptance Decision",
-            "### Criterion Decisions",
-            CORE_DECISION_HEADER,
-            separator(CORE_DECISION_HEADER),
-            decision,
-            "### Remaining Conditions",
-            "No condition remains.",
-            "## Handoff",
-            "### Promotion Receipt",
-            "No durable contract is promoted.",
-            "### Next Owner",
-            "Example.",
+            *form_body(
+                "task",
+                {
+                    "Objective and Parent": ["Example."],
+                    "Inputs and Authority": [
+                        "[Spec](../spec.md) and [Plan](../plan.md)."
+                    ],
+                    "Work Performed": [
+                        "The rows below record the work.",
+                        "",
+                        *work,
+                        "",
+                    ],
+                    "Blockers and Decisions": [
+                        "No blocker is recorded.",
+                        "### Lifecycle Traceability",
+                        CORE_TRACE_HEADER,
+                        separator(CORE_TRACE_HEADER),
+                        *trace,
+                    ],
+                    "Results": evidence,
+                    "Resolution Links": [
+                        "The Resolves column names the row each PASS row closes."
+                    ],
+                    "Criterion Decisions": [
+                        CORE_DECISION_HEADER,
+                        separator(CORE_DECISION_HEADER),
+                        decision,
+                    ],
+                    "Remaining Conditions": ["No condition remains."],
+                    "Promotion Receipt": ["No durable contract is promoted."],
+                    "Next Owner": ["Example."],
+                },
+            ),
             "",
         ]
     )
@@ -1314,19 +1306,28 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             'artifact_id: "SPEC-0900-PLAN-0001"\n'
             'parent_ids: ["SPEC-0900"]\n'
             "---\n# Plan\n"
-            "## Overview\n"
-            "### Outcome\n"
-            "The fixture goal and its boundary.\n"
-            "### Constraints\n"
-            "The fixture assumptions.\n"
-            "#### Global Constraints\n"
-            f"{self.CONSTRAINTS}"
-            "## Promotion Map\n"
-            "### Durable Owners\n"
-            "Each row of the table below names one durable contract.\n"
-            "| Promotion ID | Target Owner | Acceptance | Evidence |\n"
-            "| --- | --- | --- | --- |\n"
-            "| none | none | none | No durable contract was introduced |\n"
+            # A partial Plan: the lifecycle authority reads only these sections.
+            + "\n".join(
+                form_body(
+                    "plan",
+                    {
+                        "Outcome": ["The fixture goal and its boundary."],
+                        "Constraints": [
+                            "The fixture assumptions.",
+                            "#### Global Constraints",
+                            self.CONSTRAINTS.rstrip("\n"),
+                        ],
+                        "Durable Owners": [
+                            "Each row of the table below names one durable contract.",
+                            "| Promotion ID | Target Owner | Acceptance | Evidence |",
+                            "| --- | --- | --- | --- |",
+                            self.NONE_ROW,
+                        ],
+                    },
+                    partial=True,
+                )
+            )
+            + "\n"
         )
 
     def task_text(
@@ -1343,7 +1344,9 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             'artifact_id: "SPEC-0900-TSK-0001"\n'
             f'parent_ids: ["{parent_id}"]\n'
             "---\n# Task\n"
-            "## Execution Log\n### Lifecycle Traceability\n"
+            # A partial Task: only the Execution Log carries the traced rows.
+            + form_body("task", {"Execution Log": []}, partial=True)[0]
+            + "\n### Lifecycle Traceability\n"
             "| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |\n"
             "| --- | --- | --- | --- | --- | --- | --- |\n"
             f"| WORK-001 | [VAL-P02-001](../spec.md) | Verify | platform | {row_status} | {'PASS' if status == 'completed' else 'NOT_RUN'} | Fixture |\n"
@@ -1460,6 +1463,43 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         self.assertNotIn(
             "PLAN-GLOBAL-CONSTRAINTS",
             self.rules(base=base, proposed={**base, self.plan: with_prompt}),
+        )
+
+    def test_completed_task_receipt_names_each_promotion_and_anchor(self) -> None:
+        # SDLC-ROWS: each Plan promotion row reaches its anchor and the Task receipt.
+        owner_path = PurePosixPath(".agents/governance/document-lifecycle.md")
+        owner_text = (ROOT / owner_path).read_text(encoding="utf-8")
+        target = "../../../.agents/governance/document-lifecycle.md"
+        none_plan = self.plan_text()
+        plan = none_plan.replace(
+            self.NONE_ROW,
+            f"| Lifecycle contract | [owner]({target}#rules) | In force | Rules |",
+        )
+        receipt = "## Handoff\n### Promotion Receipt\nLifecycle contract is in force.\n"
+        base = {
+            self.spec: self.spec_text(),
+            self.plan: plan,
+            owner_path: owner_text,
+            self.task: self.task_text("in-progress", row_status="in-progress"),
+        }
+        completed = self.task_text("completed", row_status="completed")
+        rule = "TASK-PROMOTION-RECEIPT"
+        self.assertNotIn(
+            rule,
+            self.rules(base=base, proposed={**base, self.task: completed + receipt}),
+        )
+        missing_anchor = plan.replace("#rules", "#no-such-anchor")
+        for proposed in (
+            {**base, self.task: completed},
+            {**base, self.task: completed + receipt.replace("Lifecycle", "Other")},
+            {**base, self.plan: missing_anchor, self.task: completed + receipt},
+        ):
+            with self.subTest(task=proposed[self.task][-40:]):
+                self.assertIn(rule, self.rules(base=base, proposed=proposed))
+        none_base = {**base, self.plan: none_plan}
+        self.assertNotIn(
+            rule,
+            self.rules(base=none_base, proposed={**none_base, self.task: completed}),
         )
 
     def test_promotion_requires_current_owner_and_sole_none_decision(self) -> None:
@@ -1648,6 +1688,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             {self.task: authorized + evidence(2, {**receipt, "scope": ["SPEC-0901"]})},
             {self.task: authorized + evidence(2, {**receipt, "validity": "expired"})},
             {self.task: authorized + evidence(2, {**receipt, "revocation": "revoked"})},
+            {self.task: authorized + evidence(2, {**receipt, "actor": "agent"})},
         ):
             with self.subTest(update=update):
                 self.assertIn(
@@ -1884,6 +1925,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
     OLD_ROW = "| none | none | No durable contract was introduced |"
 
     def old_plan_text(self) -> str:
+        # The pre-SPEC-0200 Plan layout stays literal: no current form owns it.
         return (
             self.plan_text().split("## Overview\n", 1)[0]
             + "## Overview\nThe fixture.\n"

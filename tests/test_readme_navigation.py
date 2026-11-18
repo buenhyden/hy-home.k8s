@@ -79,6 +79,7 @@ def codes(text, **kwargs):
     return sorted({item.rule_id for item in run(text, **kwargs)})
 
 
+# "Document Index" is the heading the synthetic navigation() profile names.
 GOOD_ROUTER = (
     "# S\n\n## Document Index\n\n"
     "| Package | Purpose |\n| --- | --- |\n"

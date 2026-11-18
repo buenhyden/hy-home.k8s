@@ -10,6 +10,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from tests.form_headings import form_body
+
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = REPOSITORY_ROOT / "scripts" / "validate-knowledge-surface.py"
@@ -33,6 +35,7 @@ OWNER_TEXT = (
     "request rather than a direct cluster mutation.\n"
 )
 
+# The knowledge README is read only for its links; no registered form owns these headings.
 README_TEMPLATE = (
     "# Common Knowledge\n\n"
     "## Item Index\n\n"
@@ -57,18 +60,21 @@ def load_validator():
 def document(
     rows: str, prose: str = "This map points at owners and states no policy of its own."
 ) -> str:
+    sections = {
+        "Overview": [prose],
+        "Authority Boundary": ["Every row points; none decides."],
+        "Pointer Index": [
+            "| Area | Owner path | Entry path | Stays valid while |\n"
+            "| --- | --- | --- | --- |\n" + rows
+        ],
+        "Validation and Refresh": ["The validator judges this file."],
+        "Related Documents": ["- none"],
+    }
     return (
         FRONTMATTER
         + "# Sample Map\n\n"
-        + "## Overview\n\n"
-        + prose
-        + "\n\n## Authority Boundary\n\nEvery row points; none decides.\n\n"
-        + "## Pointer Index\n\n"
-        + "| Area | Owner path | Entry path | Stays valid while |\n"
-        + "| --- | --- | --- | --- |\n"
-        + rows
-        + "\n\n## Validation and Refresh\n\nThe validator judges this file.\n\n"
-        + "## Related Documents\n\n- none\n"
+        + "\n\n".join(form_body("knowledge-map", sections))
+        + "\n"
     )
 
 

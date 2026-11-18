@@ -9,6 +9,8 @@ import sys
 import unittest
 from pathlib import Path, PurePosixPath
 
+from tests.form_headings import form_body
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -168,10 +170,15 @@ class Fixture:
 
     @staticmethod
     def body(requirements: str) -> str:
+        # Requirements and the sibling section that ends it, from the policy form.
+        sections = {
+            "Requirements": [requirements.strip("\n")],
+            "Exceptions": ["Checks run in CI."],
+        }
         return (
-            "# Policy\n\n## Rules\n\n### Requirements\n\n"
-            + requirements.strip("\n")
-            + "\n\n### Enforcement\n\nChecks run in CI.\n"
+            "# Policy\n\n"
+            + "\n\n".join(form_body("policy", sections, partial=True))
+            + "\n"
         )
 
     def found(self, body: str) -> list[str]:
@@ -224,7 +231,12 @@ class RuleCodeTests(EachLanguage):
         )
 
     def test_a_policy_without_a_requirements_section_is_not_read(self) -> None:
-        body = "# Policy\n\n## Rules\n\n### Enforcement\n\nChecks run in CI.\n"
+        sections = {"Exceptions": ["Checks run in CI."]}
+        body = (
+            "# Policy\n\n"
+            + "\n\n".join(form_body("policy", sections, partial=True))
+            + "\n"
+        )
         self.each(lambda f: self.assertEqual(f.found(body), []), recorded=False)
 
     def test_a_profile_without_the_section_is_not_read(self) -> None:

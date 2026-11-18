@@ -314,8 +314,10 @@ def core_cell_faults(
     Only what the core states without further meaning is checked: a required
     cell left empty, a value outside the column's allowed values (a boolean reads
     as `true` or `false`), and a non-integer in an `integer` or `integer-or-none`
-    column (the latter also admits `none`). Identifier, reference, path,
-    condition, timestamp, list and free-text values are not interpreted here.
+    column (the latter also admits `none`). A `timestamp` or `date` cell holds an
+    ISO date `YYYY-MM-DD`, optionally followed by `THH:MM[:SS][Z]`, or exactly
+    the gap marker `not stated in this document` (DOC-S90). Identifier,
+    reference, path, condition, list and free-text values are not interpreted.
     """
 
     faults: list[str] = []
@@ -337,6 +339,16 @@ def core_cell_faults(
                 (column.required and not cell)
                 or (allowed is not None and cell not in allowed)
                 or (integer and re.fullmatch(r"-?[0-9]+", cell) is None)
+                or (
+                    column.data_type in {"timestamp", "date"}
+                    and cell != "not stated in this document"
+                    and re.fullmatch(
+                        r"[0-9]{4}-[0-9]{2}-[0-9]{2}"
+                        r"(T[0-9]{2}:[0-9]{2}(:[0-9]{2})?Z?)?",
+                        cell,
+                    )
+                    is None
+                )
             ):
                 faults.append(f"row {number}: {column.key} {cell!r}")
     return faults
@@ -2847,7 +2859,6 @@ def _declared_columns(profile: Mapping[str, Any]) -> set[str]:
 def _owner_fault(
     owner: Mapping[str, str],
     profiles: Mapping[str, Any],
-    forms: Mapping[str, Any],
 ) -> str:
     """Name what a canonical owner entry declares that its profile does not."""
 
@@ -2860,11 +2871,6 @@ def _owner_fault(
         declared = key in {*lists["required"], *lists["optional"]}
     elif carrier == "body_contract":
         declared = key in _declared_columns(profile)
-    elif carrier == "section":
-        form = forms.get(profile.get("document_role"))
-        declared = form is not None and key in {
-            item["title"] for item in form["sections"]
-        }
     elif carrier == "registry_key":
         head, _, leaf = str(key).partition(".")
         definition = profile.get("template_definition")
@@ -2918,10 +2924,6 @@ def _relationship_faults(
         fault("REGISTRY_RELATION", "a relationship_contract section", "missing")
         return faults
     profiles = {item["id"]: item for item in raw_registry["profiles"]}
-    forms = {
-        item["form_id"]: item
-        for item in (raw_registry.get("common_forms") or {}).get("forms", ())
-    }
     for section, expected in (
         ("relation_kinds", RELATION_KIND_IDS),
         ("relations", RELATION_IDS),
@@ -2965,7 +2967,7 @@ def _relationship_faults(
                         f"{name}: {field} names {profile_id!r}",
                     )
         for owner in item["canonical_owners"]:
-            problem = _owner_fault(owner, profiles, forms)
+            problem = _owner_fault(owner, profiles)
             if problem:
                 fault(
                     "REGISTRY_RELATION",

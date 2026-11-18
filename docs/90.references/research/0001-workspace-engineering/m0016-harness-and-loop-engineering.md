@@ -1,6 +1,6 @@
 ---
 title: "Reference: Harness and Loop Engineering"
-version: "0.1.1"
+version: "0.1.2"
 type: "reference/research"
 status: "draft"
 owner: "platform"
@@ -32,7 +32,7 @@ Primary owner of U01 and U02 and existing REQ-WERPC-001 and REQ-WERPC-002. Cover
 | Source ID | Source | Version | Checked At | Finding | Application | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
 | SRC-WERPC-006, 012, 049, 050, 096, 123, 124, 155, 163, 166, 232, 234, 236, 237, 239, 241, 242 | [m0026 current source observations](m0026-source-coverage.md#current-source-observations) | not stated in this document | 2026-09-27 | Direct reads with per-URL claims and limits owned by the m0026 ledger | Harness and loop engineering synthesis | Publication dates: OpenAI harness 2026-02-11, Anthropic long-running harness 2025-11-26, effective-agents article 2024-12-19, loops article 2026-06-30; access dates are not release or modification dates; unversioned SDK pages do not prove an installed package revision |
-| SRC-WERPC-009–013 | Official OpenAI Codex materials | not stated in this document | 2026-08-08, re-checked 2026-08-10 | A locally supplied manual cache outside the repository was the first consultation surface | The ledger records each direct URL, adopted claim boundary and refresh trigger | The manual cache is ephemeral and not reproducible; the durable citation is the official URL |
+| SRC-WERPC-009–013 | Official OpenAI Codex materials | not stated in this document | 2026-08-10 | A locally supplied manual cache outside the repository was the first consultation surface | The ledger records each direct URL, adopted claim boundary and refresh trigger | The manual cache is ephemeral and not reproducible; the durable citation is the official URL; first checked 2026-08-08 |
 
 See [current source observations](m0026-source-coverage.md#current-source-observations) for SRC-WERPC-006, 012, 049, 050, 096, 123, 124, 155, 163, 166, 232, 234, 236, 237, 239, 241 and 242 and their per-URL claims/limits. All were directly read on 2026-09-27. Engineering publication dates: OpenAI harness 2026-02-11, Anthropic long-running harness 2025-11-26, effective-agents article 2024-12-19 and loops article 2026-06-30. Access dates are not release or modification dates; unversioned SDK pages do not prove an installed package revision.
 

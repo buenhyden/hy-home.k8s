@@ -2214,7 +2214,6 @@
           "enum": [
             "frontmatter",
             "body_contract",
-            "section",
             "registry_key"
           ]
         },
@@ -2279,8 +2278,15 @@
           "pattern": "\\S"
         },
         "kind": {
-          "type": "string",
-          "pattern": "\\S"
+          "enum": [
+            "authority",
+            "structural-ownership",
+            "constraint",
+            "traceability",
+            "promotion",
+            "supersession",
+            "change-impact"
+          ]
         },
         "direction": {
           "enum": [

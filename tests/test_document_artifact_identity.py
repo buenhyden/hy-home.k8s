@@ -332,6 +332,7 @@ class LineageRetiredIdentityTest(unittest.TestCase):
     @classmethod
     def lineage(cls, *cells: str, heading: str = "### Archived Lineage") -> str:
         rows = "".join(f"| {cell} | kind | summary | `path` |\n" for cell in cells)
+        # Arbitrary neighbours on purpose: the lineage reader keys on its own heading.
         return (
             "## Other\n\n| Source | Kind |\n| --- | --- |\n| SPEC-0999 | x |\n\n"
             f"{heading}\n\nNote.\n\n| Source | Kind | Summary | Path |\n"

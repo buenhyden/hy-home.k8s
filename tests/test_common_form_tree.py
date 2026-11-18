@@ -5262,7 +5262,6 @@ class SmallLocalFormTests(unittest.TestCase):
                 self.assertEqual("REGISTRY_TABLE_SECTION" in checks, bool(tables))
                 self.assertEqual("BODY-TABLE-COLUMNS" in checks, bool(tables))
                 self.assertEqual("BODY-TABLE-ROWS" in checks, bool(tables))
-                self.assertIn("SPEC-0186", definition_["migration"]["meaning_map"])
 
     def test_the_repository_registry_is_valid_and_its_twins_match(self) -> None:
         self.assertEqual(rules_of(load_raw()), set())
@@ -5530,9 +5529,6 @@ class GovernanceRoleFormTests(unittest.TestCase):
                 )
                 self.assertNotIn("H2 list the profile records", checks)
                 self.assertIn("form tree", checks)
-                self.assertIn("SPEC-0188", definition_["migration"]["meaning_map"])
-        role = profile_of(self.raw, GOVERNANCE_ROLE_FORM[1])["template_definition"]
-        self.assertIn("eight H3", role["migration"]["meaning_map"])
 
     def test_the_repository_registry_is_valid_and_its_twins_match(self) -> None:
         self.assertEqual(rules_of(load_raw()), set())
@@ -9784,6 +9780,37 @@ class CoreTableDocumentTests(unittest.TestCase):
             CONTRACTS.core_cell_faults(table, [["x", "yes"]]),
             ["row 1: Count 'x'", "row 1: Flag 'yes'"],
         )
+
+    def test_the_shared_cell_check_reads_a_timestamp_as_an_iso_date(self) -> None:
+        """DOC-S90: a Checked At cell holds a date a check reads, or the gap marker."""
+        table = CONTRACTS.TableContract(
+            name="T",
+            section="s",
+            columns=(CONTRACTS.TableColumn("Checked At", "m", "timestamp", True),),
+            minimum_rows=0,
+            row_identity="Checked At",
+            table_id="t",
+            required_when="always",
+        )
+        for cell in (
+            "2026-08-10",
+            "2026-08-10T09:30Z",
+            "2026-08-10T09:30:15",
+            "not stated in this document",
+        ):
+            with self.subTest(cell=cell):
+                self.assertEqual(CONTRACTS.core_cell_faults(table, [[cell]]), [])
+        for cell in (
+            "2026-08-08, re-checked 2026-08-10",
+            "per-row Checked on dates in the register",
+            "2026-8-10",
+            "Not stated in this document",
+        ):
+            with self.subTest(cell=cell):
+                self.assertEqual(
+                    CONTRACTS.core_cell_faults(table, [[cell]]),
+                    [f"row 1: Checked At {cell!r}"],
+                )
 
     def test_a_retained_identity_keeps_its_recorded_tables(self) -> None:
         former = ResearchAuditFormTests.former()

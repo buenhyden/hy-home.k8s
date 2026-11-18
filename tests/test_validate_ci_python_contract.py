@@ -25,7 +25,7 @@ VALIDATOR = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = VALIDATOR
 SPEC.loader.exec_module(VALIDATOR)
 
-RETIRED_HOSTED_QA_COMMAND = 'python3 scripts/qa.py ci --base-ref "$BASE_SHA"'
+HOSTED_QA_COMMAND = "python3 -m unittest discover -s tests"
 
 
 DIRECT_INPUT = """\
@@ -442,7 +442,7 @@ class CiPythonContractTests(unittest.TestCase):
 
     def test_hosted_jobs_reject_full_qa(self):
         root = self.make_valid_root()
-        self.inject_validation_step(root, RETIRED_HOSTED_QA_COMMAND)
+        self.inject_validation_step(root, HOSTED_QA_COMMAND)
         self.assert_rule(root, "CI-QA-EXECUTION")
 
     def test_valid_temporary_repository_passes(self) -> None:
@@ -1357,7 +1357,7 @@ class MetadataAndStyleCiContractTests(unittest.TestCase):
     def test_extra_hosted_jobs_and_qa_execution_are_rejected(self):
         for name in ("qa", "qa-source", "qa-isolated", "branch-policy"):
             workflow = self.workflow()
-            workflow["jobs"][name] = {"steps": [{"run": RETIRED_HOSTED_QA_COMMAND}]}
+            workflow["jobs"][name] = {"steps": [{"run": HOSTED_QA_COMMAND}]}
             with self.subTest(job=name), self.assertRaises(VALIDATOR.ContractError):
                 VALIDATOR.validate_workflow(workflow)
 
@@ -1376,9 +1376,7 @@ class MetadataAndStyleCiContractTests(unittest.TestCase):
         workflow["jobs"]["ci-summary"]["steps"][0]["if"] = "success()"
         variants.append(workflow)
         workflow = copy.deepcopy(baseline)
-        workflow["jobs"]["ci-summary"]["steps"].append(
-            {"run": RETIRED_HOSTED_QA_COMMAND}
-        )
+        workflow["jobs"]["ci-summary"]["steps"].append({"run": HOSTED_QA_COMMAND})
         variants.append(workflow)
         workflow = copy.deepcopy(baseline)
         workflow["jobs"]["ci-summary"]["steps"].append({"uses": "actions/checkout@abc"})

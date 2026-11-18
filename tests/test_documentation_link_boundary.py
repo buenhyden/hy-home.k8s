@@ -173,7 +173,7 @@ class RetainedLinkAndTemplateTests(unittest.TestCase):
         authored = PurePosixPath("docs/03.specs/0140-archive-check-removal/spec.md")
         self.assertEqual(validator._local_destination(authored, expected)[0], "local")
 
-    def test_forward_relationship_link_still_fails_broken_or_wrong_profile(
+    def test_a_valid_forward_relationship_link_passes_and_a_broken_or_wrong_profile_one_fails(
         self,
     ) -> None:
         # Any open Spec whose Traceability cites a Requirement serves; packages
@@ -542,6 +542,24 @@ class FragmentLinkTests(unittest.TestCase):
 
     def test_an_archive_target_and_its_fragment_are_not_checked(self) -> None:
         self.assertEqual(self.fragments(f"[x](../{self.archive}#missing)\n"), [])
+
+    def test_a_historical_link_outside_the_archive_is_checked_and_refused(
+        self,
+    ) -> None:
+        # Only the archive is exempt: past content written as a live path to a
+        # removed document, not as a commit:path reference, is a broken link.
+        context = replace(
+            self.context,
+            paths=(self.source,),
+            texts={
+                **self.context.texts,
+                self.source: "[x](03.specs/0000-removed/spec.md#gone)\n",
+            },
+        )
+        self.assertIn(
+            "LINK-BROKEN",
+            {item.rule_id for item in validator._link_diagnostics(context)},
+        )
 
     def test_the_tree_holds_no_broken_fragment(self) -> None:
         context = validator._build_context(ROOT)

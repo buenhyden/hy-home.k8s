@@ -1,6 +1,6 @@
 ---
 title: "Reference: Source Coverage"
-version: "0.1.1"
+version: "0.1.2"
 type: "reference/research"
 status: "draft"
 owner: "platform"
@@ -34,7 +34,7 @@ Thirteen retained pack members, U01–U39, REQ-WERPC-001–040, existing source/
 | Current source observations | [Current source observations](#current-source-observations) | not stated in this document | 2026-09-27 | URL-specific rows, each directly read on 2026-09-27 Asia/Seoul except three explicitly unreachable attempts | Current provenance for the pack | A page footer revision does not pin all rendered content; publication or update dates unknown when not exposed; a new observation does not mean all sibling URLs of an older bundle were reread |
 | 2026-10-27 required-source observations | [2026-10-27 required-source observations](#2026-10-27-required-source-observations) | not stated in this document | 2026-10-27 | Ten required sources read directly under SPEC-0124; SRC-WERPC-267 to 275 are new | Required-source coverage | No source content installed, copied or run; workspace application not observed in this cycle |
 | SRC-WERPC-015, 033 | [2026-10-27 SSDF edition check](#2026-10-27-ssdf-edition-check) | SP 800-218 Rev. 1 (SSDF 1.2) initial public draft published 2025-12-17; SSDF 1.1 (February 2022) is the final edition | 2026-10-27 | NIST lists no final 1.2 edition; the r1/final page returns 404 | SSDF 1.1 stays the cited edition | The 1.2 draft is not policy input until NIST publishes it as final |
-| SRC-WERPC-001 onward (historical register) | [Source register](#source-register) | not stated in this document | per-row Checked on dates in the register | Dated historical register retained as history | Historical provenance | Present-tense wording applies only to the recorded observation date; historical statuses are not today implementation status |
+| SRC-WERPC-001 onward (historical register) | [Source register](#source-register) | not stated in this document | 2026-08-18 | Dated historical register retained as history | Historical provenance | Present-tense wording applies only to the recorded observation date; historical statuses are not today implementation status; dates vary per row in the register |
 
 Current URL-specific observations and historical registers below own provenance. Primary publisher documents were read by delegated researchers; inaccessible attempts support only their stated access limits. The predecessor framing is in [m0012](m0012-source-coverage.md).
 

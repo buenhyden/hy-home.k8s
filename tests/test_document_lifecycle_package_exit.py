@@ -11,6 +11,7 @@ import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path, PurePosixPath
 
+from tests.form_headings import form_body
 from tests.git_fixture import GitFixture
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -47,9 +48,12 @@ PACKAGE = (SPEC_PATH, PLAN_PATH, TASK_PATH)
 LINEAGE = f"| SPEC-0042 | completed spec | Summary. | `{PKG}/` |\n"
 
 
+TRACEABILITY = form_body("requirement", {"Traceability": []}, partial=True)[0]
+
+
 def requirement(lineage: str = "", heading: str = "###") -> str:
     return (
-        f"# Requirement\n\n## Traceability\n\n{heading} Archived Lineage\n\n"
+        f"# Requirement\n\n{TRACEABILITY}\n\n{heading} Archived Lineage\n\n"
         f"{lineage}\n## Other\n\n`{PKG}/`\n"
     )
 

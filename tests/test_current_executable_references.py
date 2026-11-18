@@ -151,6 +151,39 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
 
         self.assertEqual([item.code for item in diagnostics], ["EXECUTABLE-HISTORY"])
 
+    def test_terminal_statuses_are_the_registry_terminal_states_and_accepted(
+        self,
+    ) -> None:
+        registry = json.loads(
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
+        )
+        terminal = {
+            state
+            for domain in registry["lifecycle_domains"]
+            for state, kind in domain["states"].items()
+            if kind == "terminal"
+        }
+        self.assertEqual(references._TERMINAL_STATUSES, terminal | {"accepted"})
+
+    def test_rejected_superseded_and_retired_references_use_git_first_recovery(
+        self,
+    ) -> None:
+        target = PurePosixPath("scripts/retired/deep/check-contract.py")
+        for source, status in (
+            ("docs/02.architecture/decisions/0001-example.md", "rejected"),
+            (".agents/governance/example.md", "superseded"),
+            ("docs/05.operations/guides/example.md", "retired"),
+        ):
+            with self.subTest(status=status):
+                recovered: list[PurePosixPath] = []
+                diagnostics = self.validate(
+                    source,
+                    f"---\nstatus: {status}\n---\n\nHistorical: `{target}`.\n",
+                    historical_path_exists=lambda path: recovered.append(path) or True,
+                )
+                self.assertEqual(diagnostics, ())
+                self.assertEqual(recovered, [target])
+
     def test_archive_reference_is_not_checked(self) -> None:
         invoked: list[PurePosixPath] = []
         diagnostics = self.validate(
