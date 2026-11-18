@@ -633,11 +633,15 @@
     {
       "id": "W05-H10",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "When a change-set selection rule can name each owner of a test or downstream document",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-187"
       }
     },
     {
