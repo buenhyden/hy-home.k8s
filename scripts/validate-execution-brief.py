@@ -230,7 +230,9 @@ def check(brief, current, root, *, operation, action, paths):
         raise BriefError("current request lacks scoped actions")
     if current["state"] != "current":
         raise BriefError("current request was withdrawn or is unavailable")
-    for key in sorted(BOUND_FIELDS):
+    # D08 4.1.0: a material change invalidates only the work that reads it, so
+    # material inputs are compared per action below; every other field binds all.
+    for key in sorted(BOUND_FIELDS - {"material_inputs"}):
         if brief[key] != current[key]:
             raise BriefError(f"brief does not match current {key}")
     root = root.resolve(strict=True)
@@ -244,7 +246,11 @@ def check(brief, current, root, *, operation, action, paths):
     ):
         raise BriefError("action is outside current scope or needs clarification")
     selected = actions[action]
-    _object(selected, {"operation", "paths"})
+    if not isinstance(selected, dict) or set(selected) not in (
+        {"operation", "paths"},
+        {"operation", "paths", "inputs"},
+    ):
+        raise BriefError("invalid action binding")
     _strings(selected["paths"])
     if selected["operation"] != operation:
         raise BriefError("operation is outside current action scope")
@@ -259,8 +265,19 @@ def check(brief, current, root, *, operation, action, paths):
     material_inputs = current["material_inputs"]
     if set(paths) - material_inputs.keys():
         raise BriefError("mutation target lacks a material input binding")
-    for path, expected in material_inputs.items():
-        _check_material_input(root / _relative(path), expected)
+    # An action that names its inputs reads only them and its targets; an
+    # action that names none reads every material input, as before.
+    if "inputs" in selected:
+        _strings(selected["inputs"])
+        if set(selected["inputs"]) - material_inputs.keys():
+            raise BriefError("action names an unknown material input")
+        read = set(paths) | set(selected["inputs"])
+    else:
+        read = set(material_inputs)
+    for path in sorted(read):
+        if brief["material_inputs"].get(path) != material_inputs[path]:
+            raise BriefError("brief does not match current material_inputs")
+        _check_material_input(root / _relative(path), material_inputs[path])
     if current["baseline_id"] != _identity(root):
         raise BriefError("Git baseline changed during preflight")
 

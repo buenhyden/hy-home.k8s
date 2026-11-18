@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.15.5"
+version: "0.15.6"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 # scripts
 
@@ -192,7 +192,10 @@ python3 scripts/validate-execution-brief.py --root . \
 `"absent"`를 기록한다. 누락된 대상, 달라진 내용, 예상과 달리 생기거나
 사라진 파일, 안전하게 읽을 수 없는 경로는 검사에 실패한다. 현재 요청의
 `allowed_actions`는 호출자가 확인한 행동 ID별 `operation`과 정확한
-`paths`의 매핑이다. `state`는 호출자가 확인한 최신 유효 상태다.
+`paths`의 매핑이다. 행동이 선택적 `inputs`로 자신이 읽는 material 입력을
+밝히면 그 입력과 대상 경로만 비교하므로, 관련 없는 입력(예: Task의 증거 행
+추가)의 변경은 그 행동을 막지 않는다. `inputs`가 없으면 모든 material 입력을
+비교한다. `state`는 호출자가 확인한 최신 유효 상태다.
 최신 브리핑 ID·판본과 미해결 질문은 양쪽 입력에서 일치해야 한다.
 브리핑에 확인된 사실과 출처, 가정을 따로 담는다. 파일은 임시 입력으로
 사용하고 원문 권한 확인은 기존 절차를 따른다.
