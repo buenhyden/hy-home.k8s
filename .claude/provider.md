@@ -1,10 +1,10 @@
 ---
 title: "Claude Provider Notes"
-version: "1.9.5"
+version: "1.9.6"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-18"
 ---
 
 # Claude Provider Notes
@@ -96,6 +96,15 @@ invocation. The common procedure retains the selected role and user scope.
   never blocked. A program that opens files itself stays outside it; see
   [approval and safety](../.agents/governance/approval-and-safety.md).
   Run QA explicitly; edit, Stop, and compaction events do not run whole QA.
+  Observed on Claude Code 2.1.327 (2026-11-18, SPEC-0161 EVD-191):
+  - after a compaction, the session received the `SessionStart` hook's
+    additional context;
+  - the pre-tool adapter refused a structured `Write` outside the checkout
+    (`HOOK-PATH-ROOT`), both in the main session and in a nested sub-agent;
+  - the `Read(./secrets/**)` and `Bash(* secrets/*)` deny rules refused a read
+    of a tracked non-secret file there, also in both;
+  - an approved local read passed.
+  Delivery on `resume` stays unobserved.
 - Here the `read-only-evidence` permission class withholds the structured
   write tools while leaving a shell available, so a shell write is prohibited
   by policy and observed advisorily rather than blocked. How this differs from
