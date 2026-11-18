@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.37"
+version: "0.2.38"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -304,6 +304,7 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-189 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | Git-point binding (GIT-R016) | `scripts/githooks/{pre-commit,commit-msg,pre-push,chained-hook.sh}`, `.pre-commit-config.yaml`, `.github/workflows/ci.yml` triggers and jobs, the main-protection record, `gh run list` push runs on `main`, and the six PR job timings; `tests.test_policy_rule_ids`; 2026-11-18 | PASS | Each Git point names its check, location and evidence lane. No post-commit hook exists, the pre-push dispatcher runs only installed hooks, and no post-merge regression lane is adopted, with the reason recorded. Hosted queue medians are 2 s, and run medians are 39 s for `style-pr` and 6 s for `ci-summary`. | no | none |
 | EVD-190 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-BRIEF partial invalidation and preflight consumer | `scripts/validate-execution-brief.py`; the new `test_a_material_change_stops_only_the_actions_that_read_it` first against the unchanged script, then `tests.test_task_execution_contract.ExecutionBriefCliTests`; `.agents/workflows/delegated-development.md`; the strict profile, link and lifecycle validators and `validate-agent-governance.py`; pinned venv, 2026-11-18 | PASS | The new test failed against the old script and passes now, with 13 brief tests. An action that names its inputs passes after an unrelated Task append. An action without `inputs`, an action that reads the changed input and an unknown input name are refused. The workflow names the preflight before mutation handoffs, resumes and state changes. | no | none |
 | EVD-191 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W07-ADAPTER Claude native runtime observation | Installed Claude Code 2.1.327 in this trusted session, 2026-11-18: one `/compact`; a structured `Write` to a scratch path outside the checkout; a `Read` and a shell `head -3` of the tracked `README.md` of the `secrets/` folder, which holds no secret, approved by the user answer `Run both`; a `Read` of `docs/AGENTS.md`; the same three refusals and the allowed read from one nested sub-agent; `git config --get core.hooksPath` and the installed hook list | PASS | After the compaction the session received the `SessionStart` additional context of `session-start.sh`. The pre-tool adapter refused the outside write with `HOOK-PATH-ROOT` and exit 2, in the main session and in the nested sub-agent. The `Read(./secrets/**)` and `Bash(* secrets/*)` deny rules refused both reads there, in both. The approved local read passed in both. Hooks resolve from `scripts/githooks`; only `pre-commit` and `commit-msg` are installed. Delivery on `resume` was not observed. | no | none |
+| EVD-192 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | RUNTIME-CLOSE Claude resume hook delivery | Installed Claude Code 2.1.327 in this checkout, 2026-11-18 14:58 KST, user answer `Claude resume`: `claude -p --model haiku --output-format stream-json --verbose` with a one-line prompt, then `claude -p --resume` of that session ID with the same flags and `--debug-file` | PASS | The resumed run emitted `SessionStart:resume`, and `.claude/hooks/session-start.sh` finished with exit 0 in 111 ms. The client logged that it provided `additionalContext` (401 chars), the text of the script. The first run fired only `SessionStart:startup`, which the hook's compact and resume matcher does not select, and the project script did not run. The model's own answer about that context was wrong, so only the hook events count. | no | none |
 
 #### Edition Delta
 
@@ -2724,6 +2725,47 @@ paths move to RUNTIME-CLOSE.
 | Codex direct, nested, resume and compact delivery; Codex note refresh (R147-17) | RUNTIME_ONLY: the probe stopped at the account usage limit | AGENT-04; R147-17 | W07, at RUNTIME-CLOSE |
 | Approval and receipt rejection tests (W07-H03) | Not triggered: no approval or receipt validator changed | W07-H03 | W07 |
 
+#### RUNTIME-CLOSE (4.2.0)
+
+The 2026-11-18 request applies the 4.2.0 RUNTIME-CLOSE prompt from merged
+`3255b3c2`, limited to that prompt. The designs read were D17, D18, D25,
+D08, D11 and D05. The open native residue was AGENT-04 and R147-17, the
+brief checker native consumer from the R00 table, and the Windows Desktop
+reviewer FAIL of EVD-163 and EVD-167. The user approved three bounded runs:
+`Codex direct + resume`, `Codex nested` and `Claude resume`. Every write
+target was synthetic. No secret was read.
+
+**Claude.** EVD-192 observed `resume` delivery of the `SessionStart`
+hook. With EVD-191, Claude direct, nested, compact and resume delivery are
+observed on 2.1.327. `.claude/provider.md` records it.
+
+**Brief checker.** `tests.test_task_execution_contract.ExecutionBriefCliTests`
+ran again on this branch: 13 tests pass. They cover a changed or cancelled
+request, a material change, a changed HEAD and a superseded brief. That
+reuses EVD-190. No provider calls the preflight from a native event. The
+delegated-development workflow names that enforcement gap, so the native
+dispatch, resume and revocation path stays a procedure, not a native
+observation.
+
+**Windows Desktop.** No Windows Desktop client is reachable from this host.
+The EVD-163 and EVD-167 FAIL stands. W07-H05 now carries it in the residue
+ledger.
+
+**Codex.** The approved Codex probes did not run. The account usage limit
+from the W07-ADAPTER probe lasted until 16:29 KST, and the user moved to the
+next prompt before then. No Codex hook, rule, sandbox or nested result was
+observed, and `.codex/provider.md` is unchanged. The probe script and its
+prompts are in the session scratchpad only; a later run reuses the same
+three cases.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Claude direct, nested, compact and resume hook delivery | KEEP_VERIFIED | EVD-191, EVD-192 | none |
+| Brief checker local refusals | KEEP_VERIFIED | EVD-190; 13 tests pass again | none |
+| Brief checker native dispatch, resume and revocation | Not provided: no native event calls it | delegated-development step 2 | none |
+| Codex direct, nested and resume delivery; Codex note refresh | RUNTIME_ONLY: usage limit, not run | AGENT-04; R147-17 | W07 |
+| Windows Desktop reviewer write denial | RUNTIME_ONLY: FAIL stands | W07-H05 | W07, Desktop host owner |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -2838,6 +2880,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W07-H01 | Legacy row `hooks set` of `Read Denominator`: 2 listed-only hook files | terminal | W07 | When W07 re-reads its files before editing | EVD-136 |
 | W07-H02 | No legacy row: GOV-08, allow tests for approved local reads, reversible edits and narrow tests, and deny tests for secret access and out-of-scope writes. Frozen SPEC-0166 Handoffs, W07 row, and Trace GOV-08; PKG W01:414-420. Recover the frozen Task as for W05-H04. Seeded under W03-D78 by SPEC-0213 | terminal | W07 | When a trusted Claude tool session can record sensitive-path allow and deny cases (RUNTIME-CLOSE) | EVD-191 |
 | W07-H03 | No legacy row: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash). Frozen SPEC-0166 Requirement Trace, W01-B row; its Handoffs table does not list it. Recover the frozen Task as for W05-H04. Seeded under W03-D81 by SPEC-0213 | open | W07 | At the next approval or receipt validator change, or at W11-ACCEPT | none |
+| W07-H05 | No legacy row: the Windows Desktop over SSH read-only reviewer ran its shell with workspace write (EVD-163 FAIL); the client sent a null request profile (EVD-167 FAIL). Recorded under RUNTIME-CLOSE on 2026-11-18 | open | W07 | When the Desktop host owner supplies the outgoing turn permission fields or a client fix, rerun the read-only reviewer write denial on that path | none |
 | W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W07 | When W07 starts (provider projections) | EVD-144 |
 | W05-H09 | No legacy row: remove the checks of finished one-time transitions and the compatibility branches for older registry generations found by the SPEC-0219 audit, with their tests, and give any guarantee they still hold to a current contract. The audit names `RETIRED_REFERENCE_ALIASES` in `scripts/validate-links-and-owners.py`, the `docs/00.agent-governance` absence test, the retired progress-ledger and full/ci QA mode checks, the legacy empty-body rule of `validate-markdown-profiles.py`, the old Task and Requirement form layouts in tests, the legacy idempotency-key test of the memory store, the provenance-string assertions on the registry `migration.meaning_map`, and the readers of registry majors 10 to 19. Overlaps: W05-H06 (`done` and `archived` branches) and W05-H08 (validator and schema points) stay separate; W03-H11 holds the qa-runner fixture branch name | terminal | W05 | At the next change to a file that holds the retired aliases or readable majors | EVD-185 |
 | W05-H10 | No legacy row: SDLC-R034 conflict order and one-change-set rule. A test or downstream document edited without its owner is refused only by semantic review; split from W05-H05 on 2026-11-18 | terminal | W05 | When a change-set selection rule can name each owner of a test or downstream document | EVD-187 |
