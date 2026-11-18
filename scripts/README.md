@@ -84,6 +84,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `session_analysis.py` | 세션 수집 기록을 Asia/Seoul 날짜별로 결정론적으로 집계해 개선 후보를 만드는 예약 분석. lease·재시도·취소·따라잡기를 갖추며, 후보는 검토 뒤에만 memory 후보나 Task 참조가 된다. |
 | `test_cluster.py` | 이 workspace가 소유한 일회성 k3d 시험 클러스터에 선택한 GitOps 앱 closure만 올리고, 소유가 입증된 클러스터만 지우는 진입점. 전체·와일드카드·root 선택은 거부한다. |
 | `work_forecast.py` | 작업 시작 전에 P30/P50/P80 예측을 도구 시계로 고정하고, 시작·결과를 한 번씩 기록한 뒤 유형·시간기준·단위별 coverage와 pinball 손실을 N과 함께 보고하는 로컬 저장소. 수정은 새 revision이며, 취소·실패는 censored로 따로 센다. 예측은 승인·기한·timeout이 아니다. |
+| `work_parallel.py` | 계획의 work unit을 입력·출력·의존성·공유 자원과 함께 받아, 겹치지 않는 unit만 각자의 clone에서 동시에 실행하고 통합 clone에서 통합 검사를 다시 실행하는 dispatcher. 잠금마다 fencing generation을 두어 만료·취소된 시도의 결과를 거부하고, 소유 경로 밖 변경을 거부하며, 동시 서비스 합집합을 `test_cluster.py` 한도로 묶는다. 결과는 `candidate.patch`이며 원본 checkout은 쓰지 않는다. `sweep`은 죽은 dispatcher가 남긴 worker와 clone을 정리한다. clone은 파일 분리일 뿐 sandbox가 아니다. |
 
 #### Platform and supply-chain owners
 
