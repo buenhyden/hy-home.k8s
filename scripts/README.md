@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.15.9"
+version: "0.15.10"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -82,6 +82,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `workspace_memory.py` | Claude와 Codex 세션이 공유하는 workspace memory 저장소. memory는 결정 맥락일 뿐 Task 상태나 증거가 아니다. |
 | `session_capture.py` | 이 workspace의 Claude·Codex 세션 수명주기 hook과 transcript cursor scan으로 위치·구조만 기록하는 로컬 세션 수집기. 본문은 복사하지 않으며 memory나 Task 증거가 아니다. |
 | `session_analysis.py` | 세션 수집 기록을 Asia/Seoul 날짜별로 결정론적으로 집계해 개선 후보를 만드는 예약 분석. lease·재시도·취소·따라잡기를 갖추며, 후보는 검토 뒤에만 memory 후보나 Task 참조가 된다. |
+| `test_cluster.py` | 이 workspace가 소유한 일회성 k3d 시험 클러스터에 선택한 GitOps 앱 closure만 올리고, 소유가 입증된 클러스터만 지우는 진입점. 전체·와일드카드·root 선택은 거부한다. |
 
 #### Platform and supply-chain owners
 

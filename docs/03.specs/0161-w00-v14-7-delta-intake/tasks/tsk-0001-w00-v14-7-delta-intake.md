@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.42"
+version: "0.2.43"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -318,6 +318,9 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-203 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-ANALYSIS deterministic scheduled analysis and capture failure flag | Branch `claude/w08-analysis` from `7bc0c54f`; the capture error-flag test first against the unchanged `scripts/session_capture.py` (schema 1), then capture schema 2; new `scripts/session_analysis.py` and `tests/test_session_analysis.py`, written first but not run before the module existed; the cancellation fix with its two tests in the same change; Python 3.12.3; 2026-11-18 | PASS | The error-flag test failed against schema 1, and all 21 capture tests pass now, recording Claude `is_error` and Codex `exec_command_end` exit codes as flags, not text. After the review fixes of EVD-205, all 20 analysis tests pass. They cover: a scheduled run analyzing the previous Asia/Seoul day; an unchanged day skipped; late input reanalyzed without a duplicate candidate; missed days caught up in order; a held lease returning `busy`; an expired lease taken over and the old token fenced; a busy store retried twice; a persistent failure ending `failed` and releasing the lease; a cancellation releasing the lease and reporting only committed days; a killed run marked `abandoned`; fencing tokens that stay monotonic after a release; an unexpected error ending `failed`; a reanalyzed day withdrawing unreviewed candidates; no pointer left to a forgotten session; promotion once and final; promotion refused before an accepted review, with the promoted memory left a `candidate`; and the daily 03:00 Asia/Seoul timer with catch-up. No candidate or state row contains transcript text. | no | none |
 | EVD-204 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-ANALYSIS user timer and live run observations | User answers `Deterministic only` and `03:00 KST, cap $0.20`; `session_analysis.py install-timer` on this host (systemd user manager, linger on, Asia/Seoul); a transient `systemd-run` timer starting the installed service at 19:41 KST; concurrent and signalled CLI runs against the live store; one real SIGTERM against a synthetic store of 300 captured days in the session scratchpad; the live capture file converted to schema 2 explicitly; 2026-11-18 | PASS | The timer is enabled with its next run at 2026-11-19 03:00 KST. The timer-started service ran at 19:41:03, exited 0 after 3 seconds, and analyzed no day, because every captured session is from today. Of two concurrent runs one completed and one returned `busy`. A SIGTERM 0.25 seconds into a run exposed a defect: the run left the lease held and its row `running`. After the flag-based fix, the next run took over the expired lease with token 2 and marked that row `abandoned`. A real SIGTERM against the synthetic store produced `cancelled by signal`, exit 0 and a released lease; the next run finished the remaining 246 of 321 days without repeating one. The deterministic backend made no paid call. The first nightly run over a captured day has not happened yet. | no | none |
 | EVD-205 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-ANALYSIS independent review and fixes | Independent `code-reviewer` sub-agent on the staged diff, read-only, with experiments on temporary repositories only, 2026-11-18; then 7 new or changed cases first against the reviewed code, then against the fixed code; the reinstalled timer and one service start at 20:13 KST | PASS | The review found two high and three medium defects, reproduced on temporary stores. A release deleted the lease row, so tokens restarted at 1 and a stalled run was not fenced. An unexpected exception left a run row `running`. The session-without-end rule almost never fired, because it required 24 hours before the 03:00 run. A reanalysis kept stale unreviewed candidates, and a forgotten session's ID stayed in the analysis. Capture schema 2 makes an older archive unavailable with no documented step. Smaller findings: unquoted unit paths, tool attribution that file order cannot support, promotion repeatable, and the memory store route not running the analysis tests. Against the reviewed code 6 cases failed and 1 errored, and all 20 pass now. The released lease row is kept, so tokens grow. Any exception ends the run `failed`. A session without an end at the analysis is flagged, and its state is part of the watermark. A reanalysis replaces unreviewed candidates and filters reviewed ones' pointers, and a forgotten day stays in range. Failures are counted per day, not per tool. A promoted candidate is final. Unit paths are quoted with `%` escaped. CTX-R022 states the explicit conversion. The reinstalled service ran with `Result=success`, and the released lease row persists empty. | no | none |
+| EVD-206 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W09-ENV workspace-owned test cluster tool | Branch `claude/w09-env` from `81eb2a51`; new `scripts/test_cluster.py` and `tests/test_test_cluster.py`, first run against the absent module; the Docker-label and probe-control tests first against the code they changed; registry routes and `.gitignore`; Python 3.12.3 with PyYAML; 2026-11-18 | PASS | The tests failed to import before the module existed, and the two later tests failed against the code they corrected. After the review fixes of EVD-208, all 19 pass. They cover: a closure that adds the namespace provider in order; refusal of empty, `all`, wildcard, root, chart, CRD, orphan-namespace and unknown selections and of a closure above the limit; a cluster command bound to `127.0.0.1` with no load balancer, LAN address, published port, volume or default-kubeconfig update; tools run with the run's kubeconfig only; `down` and `sweep` limited to clusters whose name, Docker label and state file match; a failed `up` deleting its cluster; and a probe that reads the pod's own result and is invalid without a closed-port control. | no | none |
+| EVD-207 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W09-ENV live test cluster lifecycle and egress probes | User answers `Yes, throwaway k3d` and `namespaces + network-policies`; this host (Linux 6.8 x86_64, 12 CPUs, 31 GiB, 68.5 GiB free disk, rootful Docker 29.9.2 whose socket is root-equivalent, k3d 5.9.0, kubectl 1.36.4, image `rancher/k3s:v1.35.0-k3s1`); runs `abe7e2e3`, an interrupted run, killed run `d0b8e7b0` and reinstall `75eb22e6`; `kubectl run` and `kubectl delete` issued directly were refused by the provider deny rules and not worked around; 2026-11-18 | PASS | The catalog derived from the real manifests found 5 runnable apps, the root and 14 apps needing charts or CRDs, and the refusals held on the real tree. Run `abe7e2e3` applied 10 namespaces and 6 network policies to a cluster whose API was bound to `127.0.0.1:44075` only. Its folder was 0700, its kubeconfig 0600 and ignored by Git. `down` refused an unowned run and deleted the owned one. A SIGTERM during `up` exited 130 with nothing left. A SIGKILL during `up` left a cluster that `sweep` deleted. A reinstall applied the same 6 policies and was removed. No `hyk8s-test` network or volume remained, the 57 pre-existing containers were the same set, and the default kubeconfig still had no current context. The first ownership check read k3d's JSON, which omits the run label, and was corrected to read the Docker label. Its probes are superseded by EVD-208. | no | none |
+| EVD-208 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W09-ENV independent review, probe corrections and egress denial | Independent `code-reviewer` sub-agent on the change, read-only, with mock experiments only, 2026-11-18; then the new and changed cases first against the reviewed code; live runs `6ef9e517`, `311ae737` and `0b1a8e48` on this host with the corrected tool | PASS | The review found no way to touch a cluster the workspace does not own. Its findings were: a failed delete during `up` cleanup orphaned the cluster; a probe counted a pod that never ran as denied; `doctor`'s read of the default kubeconfig context was undocumented; a dependency cycle raised a traceback; `sweep` stopped at its first error and left stray state; probe targets were unvalidated in `sh -c`; run IDs accepted Unicode; state writes were not atomic; `status` crashed on a foreign name; a create could delete a foreign cluster of the same name; and catalog errors aborted the catalog. Against the reviewed code 15 cases failed or errored; all 19 pass now. The probes recorded in EVD-207 were invalid: the first read `kubectl`'s exit code; then a fast connect exited before `kubectl run -i` attached; then the first pod in a new namespace ran before its default service account existed. Each later version reported `valid: false` instead of a verdict, and is fixed. The pod sleeps before connecting, the probe waits for the service account and for the policy to settle, and it requires one `rc=` line per pod. With the final code, two LAN probes and one in-cluster probe were valid and denied: 192.168.0.13:443 was reachable from the open namespace and unreachable from the denied one, the closed-port control was unreachable, and the CoreDNS pod behaved the same under a 10.42.0.0/16 deny. So the k3s network policy controller enforces egress here. After each run no labelled container or run folder remained, and the 57 pre-existing containers were unchanged. | no | none |
 
 #### Edition Delta
 
@@ -3033,6 +3036,65 @@ itself. A model-based analyzer is a separate approval.
 | First nightly 03:00 run over a captured day and catch-up after real downtime | RUNTIME_ONLY | W08-H04 | W08 |
 | Model-based analysis, cost metering and notification beyond the journal | Not adopted: the user chose deterministic only | EVD-204 | none |
 
+#### W09-ENV (4.2.0)
+
+The 2026-11-18 request applies the 4.2.0 W09-ENV prompt from merged
+`81eb2a51`, limited to that prompt. The designs read were D11 and D17, with
+D25 for the open items. The prerequisite W00-DELTA is complete. The
+Kubernetes profile of D11 applies: a dedicated kubeconfig, a unique test
+cluster and an explicit workload, with no production kubeconfig, current
+context or whole GitOps sync.
+
+**Investigation.**
+
+- The host runs rootful Docker, so its socket is root-equivalent, and 57
+  containers belong to another workspace.
+- k3d and kubectl are installed, no k3d cluster exists, and the default
+  kubeconfig has no current context.
+- The only existing cluster tooling is the production `infrastructure/k3d`
+  config and `bootstrap-local.sh`. Both bind the LAN addresses 192.168.0.13
+  and 192.168.0.14 and need secrets, so neither may serve as a test
+  environment.
+- Of 21 root Applications, 5 render to built-in API groups only. The rest
+  need remote charts or CRDs, and `platform-cluster-config` is the
+  App-of-Apps root.
+- The product network policies allow egress to 192.168.0.13 from several
+  namespaces.
+
+**Decisions.** Asked on 2026-11-18, the user approved two things:
+throwaway k3d clusters for acceptance, and the closure of
+`platform-namespaces` and `platform-network-policies` as the workload. That
+also meets `infrastructure/AGENTS.md` rule 1, explicit operator approval.
+
+**Changes.**
+
+- `scripts/test_cluster.py` provides `doctor`, `catalog`, `plan`, `up`,
+  `probe`, `status`, `down` and `sweep`.
+- The closure is derived from the manifests, so no dependency table can
+  drift.
+- Selection refusals, loopback-only clusters, run-only kubeconfigs,
+  ownership by name, Docker label and state file, and cleanup on failure
+  are as EVD-206 and EVD-207 record.
+- New routes register the `test-cluster-regressions` check.
+  `.workspace-test/` is ignored by Git.
+- The infrastructure and scripts READMEs describe it.
+
+**Not covered.**
+
+- The approved workload deploys no pod of the product. The harness's own
+  probe pods use one pinned public image.
+- One-time runners and CI candidates are out of scope here: no CI job
+  creates clusters.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Selective closure, whole and wildcard refusal, root refusal, closure limit | CHANGED | EVD-206, EVD-207 | none |
+| Isolated cluster, run-only kubeconfig, default context unchanged, existing containers untouched | VERIFIED | EVD-207 | none |
+| Owned cleanup on failure, signal and crash; reinstall and removal | VERIFIED | EVD-207 | none |
+| Egress denial from harness pods to the production LAN | VERIFIED | EVD-208 | none |
+| Review findings on cleanup, probe validity, run IDs, state writes, status, sweep and catalog | CHANGED | EVD-208 | none |
+| Cluster-wide LAN isolation when a test workload runs pods in namespaces whose product policies allow 192.168.0.13 | BLOCKED: policies add allowances, so only a host firewall rule or a dedicated VM can block it, and both need root | W09-H02 | user, W09 |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -3152,6 +3214,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W08-H02 | No legacy row: memory `search` normalizes case and whitespace only, so a query with a Korean particle or inflection the memory lacks (for example `저장소를` against `저장소`) does not match, and context tokens per result are not measured. Recorded under W08-RETRIEVAL on 2026-11-18 | open | W08 | When a real memory query misses because of a particle or inflection, or when current memories exceed 1,000 or live search p95 exceeds 100 ms | none |
 | W08-H03 | No legacy row: session capture delivery not yet observed. Codex 0.169.0 runs the new lifecycle entries only after the user trusts them in `/hooks` (EVD-201), and Claude `PreCompact` did not occur in EVD-200. Recorded under W08-CAPTURE on 2026-11-18 | open | W08 | When the user has reviewed the Codex hooks in `/hooks`, observe a Codex session and a Claude compaction in `session_capture.py status` | none |
 | W08-H04 | No legacy row: the first nightly run of `hy-home-k8s-session-analysis.timer` over a captured day, and its catch-up after real downtime, are not yet observed; the timer is enabled for 2026-11-19 03:00 KST (EVD-204). Recorded under W08-ANALYSIS on 2026-11-18 | open | W08 | After 2026-11-19 03:00 KST, read `session_analysis.py status` and the journal for a scheduled run that analyzed 2026-11-18 | none |
+| W09-H02 | No legacy row: the product network policies allow egress to 192.168.0.13 from `apps`, `platform`, `monitoring` and other namespaces, and NetworkPolicies only add allowances, so a test workload with pods in those namespaces could reach the production LAN. Blocking it for a whole test cluster needs a host firewall rule on its Docker network or a dedicated VM, which need root (EVD-208). The approved closure runs no product pod. Recorded under W09-ENV on 2026-11-18 | open | W09 | Before a test cluster runs product pods in a namespace whose policy allows 192.168.0.13, or when the user provides a host firewall rule or a dedicated VM | none |
 | W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W07 | When W07 starts (provider projections) | EVD-144 |
 | W05-H09 | No legacy row: remove the checks of finished one-time transitions and the compatibility branches for older registry generations found by the SPEC-0219 audit, with their tests, and give any guarantee they still hold to a current contract. The audit names `RETIRED_REFERENCE_ALIASES` in `scripts/validate-links-and-owners.py`, the `docs/00.agent-governance` absence test, the retired progress-ledger and full/ci QA mode checks, the legacy empty-body rule of `validate-markdown-profiles.py`, the old Task and Requirement form layouts in tests, the legacy idempotency-key test of the memory store, the provenance-string assertions on the registry `migration.meaning_map`, and the readers of registry majors 10 to 19. Overlaps: W05-H06 (`done` and `archived` branches) and W05-H08 (validator and schema points) stay separate; W03-H11 holds the qa-runner fixture branch name | terminal | W05 | At the next change to a file that holds the retired aliases or readable majors | EVD-185 |
 | W05-H10 | No legacy row: SDLC-R034 conflict order and one-change-set rule. A test or downstream document edited without its owner is refused only by semantic review; split from W05-H05 on 2026-11-18 | terminal | W05 | When a change-set selection rule can name each owner of a test or downstream document | EVD-187 |
