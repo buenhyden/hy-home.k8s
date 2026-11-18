@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.43"
+version: "0.2.44"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -321,6 +321,7 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-206 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W09-ENV workspace-owned test cluster tool | Branch `claude/w09-env` from `81eb2a51`; new `scripts/test_cluster.py` and `tests/test_test_cluster.py`, first run against the absent module; the Docker-label and probe-control tests first against the code they changed; registry routes and `.gitignore`; Python 3.12.3 with PyYAML; 2026-11-18 | PASS | The tests failed to import before the module existed, and the two later tests failed against the code they corrected. After the review fixes of EVD-208, all 19 pass. They cover: a closure that adds the namespace provider in order; refusal of empty, `all`, wildcard, root, chart, CRD, orphan-namespace and unknown selections and of a closure above the limit; a cluster command bound to `127.0.0.1` with no load balancer, LAN address, published port, volume or default-kubeconfig update; tools run with the run's kubeconfig only; `down` and `sweep` limited to clusters whose name, Docker label and state file match; a failed `up` deleting its cluster; and a probe that reads the pod's own result and is invalid without a closed-port control. | no | none |
 | EVD-207 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W09-ENV live test cluster lifecycle and egress probes | User answers `Yes, throwaway k3d` and `namespaces + network-policies`; this host (Linux 6.8 x86_64, 12 CPUs, 31 GiB, 68.5 GiB free disk, rootful Docker 29.9.2 whose socket is root-equivalent, k3d 5.9.0, kubectl 1.36.4, image `rancher/k3s:v1.35.0-k3s1`); runs `abe7e2e3`, an interrupted run, killed run `d0b8e7b0` and reinstall `75eb22e6`; `kubectl run` and `kubectl delete` issued directly were refused by the provider deny rules and not worked around; 2026-11-18 | PASS | The catalog derived from the real manifests found 5 runnable apps, the root and 14 apps needing charts or CRDs, and the refusals held on the real tree. Run `abe7e2e3` applied 10 namespaces and 6 network policies to a cluster whose API was bound to `127.0.0.1:44075` only. Its folder was 0700, its kubeconfig 0600 and ignored by Git. `down` refused an unowned run and deleted the owned one. A SIGTERM during `up` exited 130 with nothing left. A SIGKILL during `up` left a cluster that `sweep` deleted. A reinstall applied the same 6 policies and was removed. No `hyk8s-test` network or volume remained, the 57 pre-existing containers were the same set, and the default kubeconfig still had no current context. The first ownership check read k3d's JSON, which omits the run label, and was corrected to read the Docker label. Its probes are superseded by EVD-208. | no | none |
 | EVD-208 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W09-ENV independent review, probe corrections and egress denial | Independent `code-reviewer` sub-agent on the change, read-only, with mock experiments only, 2026-11-18; then the new and changed cases first against the reviewed code; live runs `6ef9e517`, `311ae737` and `0b1a8e48` on this host with the corrected tool | PASS | The review found no way to touch a cluster the workspace does not own. Its findings were: a failed delete during `up` cleanup orphaned the cluster; a probe counted a pod that never ran as denied; `doctor`'s read of the default kubeconfig context was undocumented; a dependency cycle raised a traceback; `sweep` stopped at its first error and left stray state; probe targets were unvalidated in `sh -c`; run IDs accepted Unicode; state writes were not atomic; `status` crashed on a foreign name; a create could delete a foreign cluster of the same name; and catalog errors aborted the catalog. Against the reviewed code 15 cases failed or errored; all 19 pass now. The probes recorded in EVD-207 were invalid: the first read `kubectl`'s exit code; then a fast connect exited before `kubectl run -i` attached; then the first pod in a new namespace ran before its default service account existed. Each later version reported `valid: false` instead of a verdict, and is fixed. The pod sleeps before connecting, the probe waits for the service account and for the policy to settle, and it requires one `rc=` line per pod. With the final code, two LAN probes and one in-cluster probe were valid and denied: 192.168.0.13:443 was reachable from the open namespace and unreachable from the denied one, the closed-port control was unreachable, and the CoreDNS pod behaved the same under a 10.42.0.0/16 deny. So the k3s network policy controller enforces egress here. After each run no labelled container or run folder remained, and the 57 pre-existing containers were unchanged. | no | none |
+| EVD-209 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | SDLC-STRUCTURE responsibility layers, work selection and done | User answer `Adopt, move at Q07` to SDD-WOWNER, 2026-11-18; package 4.2.0 D26, D28 and the k8s rows K-A01, K-A02 and K-W03 of the 40 proposal dispositions; `.agents/governance/sdlc.md` 4.2.0 SDLC-R036 and SDLC-R037; the root `AGENTS.md` and `CLAUDE.md` with `scripts/validate-agent-governance.py` gateway checks; `gh issue list` and `gh project list` read-only on 2026-11-18 | PASS | Each governance policy and each of the 21 approval and safety rules has one layer owner: SAFE-R011, SAFE-R012 and SAFE-R017 to SAFE-R019 are A, the other sixteen W, so W and A hold no second approval source. An independent read-only `code-reviewer` sub-agent found no blocker; its three should-fix findings were applied: SAFE-R008 and SAFE-R010 moved to W because they make the operator the verifier, SDLC-R037 points to QUAL-R022 and the Completion steps instead of restating done, and SDLC-R036 names what it classifies. No `docs/00.workspace/` path is created or referenced as existing; the W move waits for Q07 (SDLC-H01). K-A01 keeps its current shape: Claude 2.1.319 reads no `AGENTS.md` beside a `CLAUDE.md`, so a neutral router imported by `CLAUDE.md` would load the Codex-only reads; both gateways instead read the common bootstrap `.agents/workflows/work-lifecycle.md` and the same five canonical pointers, and the validator holds each gateway to its own loader set. The repository has no open Issue and no Project was listed, so SDLC-R037 names the operator's request as the selection source and declares no Project process. Codex loading of the root gateway was not observed again here. | no | none |
 
 #### Edition Delta
 
@@ -3095,6 +3096,46 @@ also meets `infrastructure/AGENTS.md` rule 1, explicit operator approval.
 | Review findings on cleanup, probe validity, run IDs, state writes, status, sweep and catalog | CHANGED | EVD-208 | none |
 | Cluster-wide LAN isolation when a test workload runs pods in namespaces whose product policies allow 192.168.0.13 | BLOCKED: policies add allowances, so only a host firewall rule or a dedicated VM can block it, and both need root | W09-H02 | user, W09 |
 
+#### SDLC-STRUCTURE (4.2.0)
+
+The 2026-11-18 request applies the 4.2.0 SDLC-STRUCTURE prompt from merged
+`e0c984d3`, limited to that prompt. The designs read were D26 and D28, with
+D00 and the profile designs D19 to D22 for the workspace boundary. Of the 40
+proposal dispositions, the k8s rows K-A01, K-A02 and K-W03 belong to this
+prompt; the other seven keep the owners recorded under W00-DELTA. The
+attachment is proposal-only and authorizes nothing.
+
+**Investigation.**
+
+- `.agents/governance/` holds both the shared human and agent policies and
+  the agent execution policies; about 200 files reference them.
+- `sdlc.md` already owns the change kinds, proportional transitions and
+  artifact placement, but no responsibility layer, work selection source or
+  done definition.
+- [Approval and safety](../../../../.agents/governance/approval-and-safety.md)
+  is the only approval source. Its rules mix shared meaning with the agent's
+  verification steps in one file, so no second source exists today.
+- The root gateways already separate a common core from provider reads, and
+  the validator enforces each gateway's loader set.
+- The repository has no open Issue, and no Project was listed.
+
+**Decision.** Asked on 2026-11-18, the user adopted `docs/00.workspace/` as
+the W owner, with the move made once at the Q07 path cutover.
+
+**Changes.** `sdlc.md` 4.2.0 adds SDLC-R036, the layer table with each
+policy's and each approval and safety rule's owner and the cutover split, and
+SDLC-R037, work selection by the operator's request with done left to its
+owners.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| K-A02 W and A meaning split, one approval source | CHANGED | EVD-209 | none |
+| K-W03 selection source and done | CHANGED | EVD-209 | none |
+| K-A01 provider-neutral root entry | KEEP_VERIFIED | EVD-209 | none |
+| Change kinds and proportional records | KEEP_VERIFIED | SDLC-R024 to SDLC-R030 | none |
+| Physical move of W to `docs/00.workspace/` | DEFERRED by the user's choice | SDLC-H01 | Q07 |
+| Codex reading the root gateway in a new session | UNVERIFIED: not observed again here | EVD-209 | RUNTIME-CLOSE |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -3215,6 +3256,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W08-H03 | No legacy row: session capture delivery not yet observed. Codex 0.169.0 runs the new lifecycle entries only after the user trusts them in `/hooks` (EVD-201), and Claude `PreCompact` did not occur in EVD-200. Recorded under W08-CAPTURE on 2026-11-18 | open | W08 | When the user has reviewed the Codex hooks in `/hooks`, observe a Codex session and a Claude compaction in `session_capture.py status` | none |
 | W08-H04 | No legacy row: the first nightly run of `hy-home-k8s-session-analysis.timer` over a captured day, and its catch-up after real downtime, are not yet observed; the timer is enabled for 2026-11-19 03:00 KST (EVD-204). Recorded under W08-ANALYSIS on 2026-11-18 | open | W08 | After 2026-11-19 03:00 KST, read `session_analysis.py status` and the journal for a scheduled run that analyzed 2026-11-18 | none |
 | W09-H02 | No legacy row: the product network policies allow egress to 192.168.0.13 from `apps`, `platform`, `monitoring` and other namespaces, and NetworkPolicies only add allowances, so a test workload with pods in those namespaces could reach the production LAN. Blocking it for a whole test cluster needs a host firewall rule on its Docker network or a dedicated VM, which need root (EVD-208). The approved closure runs no product pod. Recorded under W09-ENV on 2026-11-18 | open | W09 | Before a test cluster runs product pods in a namespace whose policy allows 192.168.0.13, or when the user provides a host firewall rule or a dedicated VM | none |
+| SDLC-H01 | No legacy row: the user adopted `docs/00.workspace/` as the physical owner of the W layer on 2026-11-18 and chose to move it once with the final path cutover. The move takes the W rows of the SDLC-R036 table and splits approval and safety along its rule lists, updating routers, validators, registry routes and links in one change (EVD-209) | open | Q07 | In the Q07-CUTOVER task, together with the SDD-PATHS renumbering | none |
 | W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W07 | When W07 starts (provider projections) | EVD-144 |
 | W05-H09 | No legacy row: remove the checks of finished one-time transitions and the compatibility branches for older registry generations found by the SPEC-0219 audit, with their tests, and give any guarantee they still hold to a current contract. The audit names `RETIRED_REFERENCE_ALIASES` in `scripts/validate-links-and-owners.py`, the `docs/00.agent-governance` absence test, the retired progress-ledger and full/ci QA mode checks, the legacy empty-body rule of `validate-markdown-profiles.py`, the old Task and Requirement form layouts in tests, the legacy idempotency-key test of the memory store, the provenance-string assertions on the registry `migration.meaning_map`, and the readers of registry majors 10 to 19. Overlaps: W05-H06 (`done` and `archived` branches) and W05-H08 (validator and schema points) stay separate; W03-H11 holds the qa-runner fixture branch name | terminal | W05 | At the next change to a file that holds the retired aliases or readable majors | EVD-185 |
 | W05-H10 | No legacy row: SDLC-R034 conflict order and one-change-set rule. A test or downstream document edited without its owner is refused only by semantic review; split from W05-H05 on 2026-11-18 | terminal | W05 | When a change-set selection rule can name each owner of a test or downstream document | EVD-187 |
