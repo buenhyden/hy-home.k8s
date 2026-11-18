@@ -548,6 +548,84 @@ class WorkspaceMemoryTest(unittest.TestCase):
                 connection.execute("pragma journal_mode").fetchone()[0], "delete"
             )
 
+    def current(self, body, **changes):
+        written = self.write(body=SHORT | body, **changes)
+        self.store.set_eligibility(
+            written["memory_id"],
+            "current",
+            expected_revision=1,
+            expected_eligibility="candidate",
+            owner="reviewer",
+        )
+        return written["memory_id"]
+
+    def found(self, text, **options):
+        return [
+            (item["memory_id"], item["selection_reason"])
+            for item in self.store.search(text, **options)["results"]
+        ]
+
+    def test_search_matches_id_path_korean_and_mixed_identifiers(self) -> None:
+        (self.root / "gitops").mkdir()
+        (self.root / "gitops/values.yaml").write_text("x\n", encoding="utf-8")
+        ko = self.current(
+            {"narrative": "띄어쓰기 규칙 변경 뒤 검증 스크립트가 실패했다"}
+        )
+        short = self.current({"narrative": "캐시 만료 때문에 빌드가 느렸다"})
+        mixed = self.current(
+            {"narrative": "cert-manager 인증서는 hy-home-issuer 로 갱신"}
+        )
+        path = self.current(
+            {"narrative": "retention"}, source_refs=["gitops/values.yaml"]
+        )
+        self.assertEqual(self.found(ko), [(ko, "exact-id")])
+        self.assertEqual(self.found("gitops/values"), [(path, "path")])
+        for query in ("띄어 쓰기", "검증스크립트", "띄어쓰기 실패"):
+            with self.subTest(query=query):
+                self.assertEqual(self.found(query), [(ko, "text")])
+        self.assertEqual(self.found("캐시"), [(short, "text")])
+        self.assertEqual(self.found("HY-HOME-ISSUER 인증서"), [(mixed, "text")])
+        self.assertEqual(self.found("narrative"), [])
+
+    def test_search_abstains_without_an_admissible_answer(self) -> None:
+        self.current({"narrative": "postgres port 는 5433"})
+        result = self.store.search("kafka 파티션")
+        self.assertEqual((result["results"], result["abstain"]), ([], True))
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_SCHEMA"):
+            self.store.search("   ")
+
+    def test_search_never_returns_inadmissible_memories(self) -> None:
+        marker = "admissible-probe"
+        visible = self.current({"narrative": marker}, source_refs=["policy.md"])
+        candidate = self.write(body=SHORT | {"narrative": marker})
+        withdrawn = self.current({"narrative": marker})
+        self.store.set_eligibility(
+            withdrawn,
+            "withdrawn",
+            expected_revision=1,
+            expected_eligibility="current",
+            owner="reviewer",
+        )
+        updated = self.current({"narrative": marker})
+        self.write(
+            memory_id=updated, expected_revision=1, body=SHORT | {"narrative": marker}
+        )
+        erased = self.current({"narrative": marker})
+        self.store.erase(erased, owner="platform", approval_ref="user")
+        self.assertEqual(self.found(marker), [(visible, "text")])
+        self.assertNotIn(candidate["memory_id"], str(self.store.search(marker)))
+        (self.root / "policy.md").write_text("v2\n", encoding="utf-8")
+        self.assertEqual(self.found(marker), [])
+        self.assertEqual(self.found(marker, include_stale=True), [(visible, "text")])
+
+    def test_search_marks_an_unresolved_conflict(self) -> None:
+        item = self.current({"narrative": "port 5433"})
+        self.write(
+            memory_id=item, expected_revision=0, body=SHORT | {"narrative": "port 5432"}
+        )
+        result = self.store.search("port")["results"][0]
+        self.assertEqual(result["open_conflicts"], 1)
+
     def test_cli_round_trip(self) -> None:
         body = self.root.parent / "body.json"
         body.write_text(json.dumps(SHORT), encoding="utf-8")

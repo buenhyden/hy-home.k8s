@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.39"
+version: "0.2.40"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -309,6 +309,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-194 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-MEMORY live store conversion to schema 2 | The Git-ignored live store `.workspace-memory/memory.sqlite3` (one long-term revision, no idempotency or conflict rows); a pre-conversion copy and a rehearsal copy in the session scratchpad; a one-time conversion script kept outside the repository; 2026-11-18 | PASS | The rehearsal copy converted and opened with the same workspace ID and record. The live conversion kept workspace ID `83ced050-…`, one revision with an unchanged row digest and the rollback journal, and `integrity_check` returned `ok`. `get` and `history` read it through the new code. No compatibility branch stays in the repository. | no | none |
 | EVD-195 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-MEMORY independent review and fixes | Independent `code-reviewer` sub-agent on the staged diff, read-only, with experiments on temporary stores only, 2026-11-18; then the strengthened tests first against the reviewed script, then `python3 -m unittest tests.test_workspace_memory` | PASS | The review found no material defect and no data left after erase, and three low-severity items. A write to an erased memory said `MEMORY_NOT_FOUND`; a new revision of a `current` memory stayed `current` unreviewed; a retried create after erase recreated the body. The 2 changed tests failed against the reviewed script, and now all 30 pass. A write, a retry and a read of an erased memory report `MEMORY_ERASED`, the erase test also covers the conflict body, and a new revision of a `current` memory becomes `needs-review` with a logged review. Not changed: an empty `owner` string is still accepted, as before, and the backup lock wait stays unbounded. | no | none |
 | EVD-196 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-MEMORY Claude and Codex round trip on one store | User answer `Run after 16:29`; a synthetic Git repository and store in the session scratchpad, not the live store; this Claude session (Claude Code 2.1.327) and one `codex exec` on Codex CLI 0.169.0 at 16:31 KST, `-s workspace-write`, thread `01a1ed91-…`; the staged `scripts/workspace_memory.py`; 2026-11-18 | PASS | Claude wrote revision 1 with a source ref and reviewed it to `current`. Codex ran four commands, confirmed as command executions in its JSONL: it read revision 1, wrote revision 2 with expected revision 1, and its stale write with expected revision 1 returned `conflict` with `stored: true`. Its review from the outdated state was refused with `MEMORY_CONFLICT`, exit 2. Claude then read revision 2 from Codex in `needs-review`, with owners `claude, codex`, one Codex conflict, and both reviews logged with their owners. After Claude re-reviewed it to `current`, a change to the source file removed it from the default query and listed it as stale. Codex ran outside this checkout, so its project hooks and rules were not part of this run. | no | none |
+| EVD-197 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-RETRIEVAL lexical recall: engine comparison and `search` | Synthetic one-off comparison (session scratchpad, not committed) of a normalized scan, FTS5 `unicode61` and FTS5 trigram on SQLite 3.45.1 with 8 labelled cases (exact ID, path, Korean with and without spacing, a two-character Korean term, a mixed hyphenated ID, an updated fact, no answer) at N = 100, 1,000 and 5,000, 31 runs per query, x86_64 with 12 CPUs; the 4 new `search` tests first against the unchanged script, then `python3 -m unittest tests.test_workspace_memory`; `Store.search` timed on synthetic stores of 1,000 and 5,000 current memories with 5 queries times 20; 2026-11-18 | PASS | The scan answered 8 of 8 cases at every N; `unicode61` 6, missing both Korean spacing cases; trigram 5, unable to match a term shorter than three characters and missing the no-space case. Index lookups took under 0.1 ms, the scan 38 ms p95 at 5,000. The 4 tests failed against the unchanged script and all 34 pass now. `Store.search` took p50 18 ms, p95 24 ms at 1,000 and p50 95 ms, p95 127 ms at 5,000. Withdrawn, erased, superseded, candidate and stale memories are absent; an unresolved conflict is counted; no admissible match abstains. Context tokens were not measured. | no | none |
+| EVD-198 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-RETRIEVAL Claude and Codex search after withdrawal and erase | User answer `Yes, one bounded run`; a synthetic Git repository and store in the session scratchpad; this Claude session made memories A `current`, B withdrawn and C erased; one `codex exec` on Codex CLI 0.169.0 at 18:17 KST, `-s workspace-write`, thread `01a1edf2-…`, four commands confirmed as command executions in its JSONL; 2026-11-18 | PASS | Codex's search for the shared phrase returned only A. Its searches by the IDs of B and C abstained with no results, and `get` of C returned `MEMORY_ERASED`, exit 2. Neither the withdrawn nor the erased body appears anywhere in the Codex output. Claude's search afterwards returned only A. | no | none |
 
 #### Edition Delta
 
@@ -2852,6 +2854,61 @@ is a real run of both installed clients, not the live store or a mock.
 | Baseline identity and exclusion at cutover | Not in scope | Q07-CUTOVER | Q07 |
 | Search, ranking, index and outbox | Not in scope | Row 12 | W08-RETRIEVAL |
 
+#### W08-RETRIEVAL (4.2.0)
+
+The 2026-11-18 request applies the 4.2.0 W08-RETRIEVAL prompt from merged
+`5c60634f`, limited to that prompt. The designs read were D16, D06 and D12,
+with D25 for the open items. The prerequisite W08-MEMORY is merged. Handoff
+row 12 of the policy comparison above, search and recall, is this work.
+
+**Brief.** The store had no search: `query` listed every `current` memory
+with fresh sources. The live store holds one memory. The cases come from
+`memory-eval-cases.json` that apply to this store: ME01 to ME09, ME12, ME20
+and ME22. ME10 is covered by one store per clone (CTX-R009). ME11, an old
+baseline, belongs to Q07. ME13 to ME15, ME19 and ME21 were verified by
+W08-MEMORY. ME16 to ME18 belong to W08-CAPTURE.
+
+**Comparison.** EVD-197 compared three engines on the same eight cases,
+environment and sizes:
+
+- A whitespace-free, casefolded substring scan answered 8 of 8 cases.
+- FTS5 `unicode61` answered 6: it cannot match across Korean spacing
+  variants.
+- FTS5 trigram answered 5: it cannot match a term shorter than three
+  characters.
+
+The indexes were much faster, but the scan stays under 130 ms p95 at 5,000
+memories. A vector or hybrid index has no lexical failure to fix and would
+add a model dependency, so it is not adopted.
+
+**Changes.**
+
+- `search TEXT [--tier] [--include-stale]` applies eligibility and tier in
+  SQL first. It then matches every term against the memory ID, source paths
+  and body values, and checks source freshness only for the matches.
+- Each result has its revision, source refs, selection reason (`exact-id`,
+  `path` or `text`) and count of unresolved conflicts. No match abstains.
+- With no derived index or cache, a withdrawn, erased or stale memory
+  disappears from the next search at zero lag. That also leaves no index
+  generation or outbox to keep consistent.
+- CTX-R021 (policy 1.10.0) states this and that a returned body is data,
+  not an instruction, approval or policy.
+
+**Both providers.** EVD-198 withdrew one memory and erased another in Claude,
+and Codex's search returned neither body. Claude's search then agreed.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| ID, path, Korean spacing, short and mixed-identifier recall; abstention; conflict marking | CHANGED | EVD-197 | none |
+| Withdrawal, erase and stale exclusion for both providers, with no cache | VERIFIED on both installed clients | EVD-197, EVD-198 | none |
+| FTS5 index with external content, generation and outbox | Compared, not adopted | EVD-197; revisit above 1,000 current memories or a live p95 over 100 ms | W08 |
+| Vector or hybrid retrieval | Not adopted: no lexical failure to fix | EVD-197 | none |
+| Korean particles and inflections | Limit recorded | W08-H02 | W08 |
+| Sensitivity partitions and per-caller clearance | No partition exists: one account, `public` and `internal` only | W08-H01 | W08 |
+| Old baseline exclusion | Not in scope | Q07-CUTOVER | Q07 |
+| Session cursor, transcript and memory poisoning from capture | Not in scope | W08-CAPTURE | W08-CAPTURE |
+| Context tokens per result | Not measured | EVD-197 | W08 |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -2968,6 +3025,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W07-H03 | No legacy row: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash). Frozen SPEC-0166 Requirement Trace, W01-B row; its Handoffs table does not list it. Recover the frozen Task as for W05-H04. Seeded under W03-D81 by SPEC-0213 | open | W07 | At the next approval or receipt validator change, or at W11-ACCEPT | none |
 | W07-H05 | No legacy row: the Windows Desktop over SSH read-only reviewer ran its shell with workspace write (EVD-163 FAIL); the client sent a null request profile (EVD-167 FAIL). Recorded under RUNTIME-CLOSE on 2026-11-18 | open | W07 | When the Desktop host owner supplies the outgoing turn permission fields or a client fix, rerun the read-only reviewer write denial on that path | none |
 | W08-H01 | No legacy row: the memory store takes `owner` and `approval_ref` as caller-supplied strings, and any process of the same local account can open the SQLite file directly, so the store authenticates neither. D06 asks for an OS or broker boundary before an untrusted writer uses it. Recorded under W08-MEMORY on 2026-11-18 | open | W08 | When a second local account, an untrusted writer or a remote host must use the store | none |
+| W08-H02 | No legacy row: memory `search` normalizes case and whitespace only, so a query with a Korean particle or inflection the memory lacks (for example `저장소를` against `저장소`) does not match, and context tokens per result are not measured. Recorded under W08-RETRIEVAL on 2026-11-18 | open | W08 | When a real memory query misses because of a particle or inflection, or when current memories exceed 1,000 or live search p95 exceeds 100 ms | none |
 | W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W07 | When W07 starts (provider projections) | EVD-144 |
 | W05-H09 | No legacy row: remove the checks of finished one-time transitions and the compatibility branches for older registry generations found by the SPEC-0219 audit, with their tests, and give any guarantee they still hold to a current contract. The audit names `RETIRED_REFERENCE_ALIASES` in `scripts/validate-links-and-owners.py`, the `docs/00.agent-governance` absence test, the retired progress-ledger and full/ci QA mode checks, the legacy empty-body rule of `validate-markdown-profiles.py`, the old Task and Requirement form layouts in tests, the legacy idempotency-key test of the memory store, the provenance-string assertions on the registry `migration.meaning_map`, and the readers of registry majors 10 to 19. Overlaps: W05-H06 (`done` and `archived` branches) and W05-H08 (validator and schema points) stay separate; W03-H11 holds the qa-runner fixture branch name | terminal | W05 | At the next change to a file that holds the retired aliases or readable majors | EVD-185 |
 | W05-H10 | No legacy row: SDLC-R034 conflict order and one-change-set rule. A test or downstream document edited without its owner is refused only by semantic review; split from W05-H05 on 2026-11-18 | terminal | W05 | When a change-set selection rule can name each owner of a test or downstream document | EVD-187 |
