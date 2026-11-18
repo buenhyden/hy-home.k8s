@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.41"
+version: "0.2.42"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -315,6 +315,9 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-200 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-CAPTURE Claude lifecycle hook delivery and scan | User answer `Yes, both`; installed Claude Code 2.1.327 in this checkout on the branch, 18:39 KST: `claude -p --model haiku` with a one-line prompt, then `--resume` of session `dfbd64ba-…`; this running session after the settings change; `scripts/session_capture.py scan` and `status`, pointer and structure rows only; after EVD-202 the archive file was rebuilt by replaying the recorded hook fields through the adapter against the same transcript | PASS | The archive recorded `SessionStart` with `startup`, `Stop` and `SessionEnd` for the first run, and `SessionStart` with `resume`, `Stop` and `SessionEnd` for the resumed run. This running session picked up the changed settings and delivered `Stop` at 09:46 UTC and `SubagentStop` at 09:49 UTC, with the reviewer sub-agent's transcript path under `subagents/`. With the fixed code the scan read 682,131 of 682,131 bytes as 66 records, 45 with ISO times, and the session reported `complete`. The probe phrase appears 18 times in the transcript and 0 times in the archive. `PreCompact` did not occur. | no | none |
 | EVD-201 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-CAPTURE Codex lifecycle hook delivery | User answer `Yes, both`; installed Codex CLI 0.169.0, one `codex exec` in this checkout on the branch, 18:40 KST, thread `01a1ee07-…`, a one-line prompt with no tool call; then `session_capture.py sessions`; the hook trust keys of the user Codex configuration read for their names only | DEFER | Codex parsed the new entries and reported `clamping SessionEnd hook timeout to 3s`, but recorded no session: it ran none of the lifecycle entries. The user configuration holds a `trusted_hash` only for this checkout's `pre_tool_use` entry, and Codex runs a project hook only after the user trusts it in `/hooks`. The repository does not edit that configuration. Next owner: the user's `/hooks` review, then a Codex run observes delivery (W08-H03). | no | none |
 | EVD-202 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-CAPTURE independent review and fixes | Independent `code-reviewer` sub-agent on the staged diff, read-only, with experiments on temporary repositories only, 2026-11-18; then the rewritten `tests/test_session_capture.py` and the chained-command case first against the reviewed code, then against the fixed code | PASS | The review confirmed the hook never blocks, prints to stdout or crashes a session. It found seven defects: the workspace check compared the payload's own directory with itself; a hook could name any absolute file for `scan` to hash; line `type`, `name` and `timestamp` values were stored unfiltered; `forget` could be bypassed by a racing scan, a changed path, a shared path or a sub-agent ID, and matched case-insensitively; a resumed session could stay `complete`; a long scan could hold the lock past a hook's wait; and the validator accepted a command chained after the adapter. Against the reviewed code 15 of 20 capture cases and 2 chained-command cases failed. All pass now: the hook compares against the adapter's own checkout; transcripts must lie, unlinked, in the provider's session directory; only identifiers and ISO times are stored; rows are keyed by provider, session and path; `forget` matches exactly and rechecks inside each scan transaction; a start reopens a session and status checks file identity; scans commit 4 MiB batches and report an oversized line; the archive is capped at 256 MiB; lifecycle handlers must be exactly the adapter command; the adapters run without `timeout` where it is absent. | no | none |
+| EVD-203 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-ANALYSIS deterministic scheduled analysis and capture failure flag | Branch `claude/w08-analysis` from `7bc0c54f`; the capture error-flag test first against the unchanged `scripts/session_capture.py` (schema 1), then capture schema 2; new `scripts/session_analysis.py` and `tests/test_session_analysis.py`, written first but not run before the module existed; the cancellation fix with its two tests in the same change; Python 3.12.3; 2026-11-18 | PASS | The error-flag test failed against schema 1, and all 21 capture tests pass now, recording Claude `is_error` and Codex `exec_command_end` exit codes as flags, not text. After the review fixes of EVD-205, all 20 analysis tests pass. They cover: a scheduled run analyzing the previous Asia/Seoul day; an unchanged day skipped; late input reanalyzed without a duplicate candidate; missed days caught up in order; a held lease returning `busy`; an expired lease taken over and the old token fenced; a busy store retried twice; a persistent failure ending `failed` and releasing the lease; a cancellation releasing the lease and reporting only committed days; a killed run marked `abandoned`; fencing tokens that stay monotonic after a release; an unexpected error ending `failed`; a reanalyzed day withdrawing unreviewed candidates; no pointer left to a forgotten session; promotion once and final; promotion refused before an accepted review, with the promoted memory left a `candidate`; and the daily 03:00 Asia/Seoul timer with catch-up. No candidate or state row contains transcript text. | no | none |
+| EVD-204 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-ANALYSIS user timer and live run observations | User answers `Deterministic only` and `03:00 KST, cap $0.20`; `session_analysis.py install-timer` on this host (systemd user manager, linger on, Asia/Seoul); a transient `systemd-run` timer starting the installed service at 19:41 KST; concurrent and signalled CLI runs against the live store; one real SIGTERM against a synthetic store of 300 captured days in the session scratchpad; the live capture file converted to schema 2 explicitly; 2026-11-18 | PASS | The timer is enabled with its next run at 2026-11-19 03:00 KST. The timer-started service ran at 19:41:03, exited 0 after 3 seconds, and analyzed no day, because every captured session is from today. Of two concurrent runs one completed and one returned `busy`. A SIGTERM 0.25 seconds into a run exposed a defect: the run left the lease held and its row `running`. After the flag-based fix, the next run took over the expired lease with token 2 and marked that row `abandoned`. A real SIGTERM against the synthetic store produced `cancelled by signal`, exit 0 and a released lease; the next run finished the remaining 246 of 321 days without repeating one. The deterministic backend made no paid call. The first nightly run over a captured day has not happened yet. | no | none |
+| EVD-205 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W08-ANALYSIS independent review and fixes | Independent `code-reviewer` sub-agent on the staged diff, read-only, with experiments on temporary repositories only, 2026-11-18; then 7 new or changed cases first against the reviewed code, then against the fixed code; the reinstalled timer and one service start at 20:13 KST | PASS | The review found two high and three medium defects, reproduced on temporary stores. A release deleted the lease row, so tokens restarted at 1 and a stalled run was not fenced. An unexpected exception left a run row `running`. The session-without-end rule almost never fired, because it required 24 hours before the 03:00 run. A reanalysis kept stale unreviewed candidates, and a forgotten session's ID stayed in the analysis. Capture schema 2 makes an older archive unavailable with no documented step. Smaller findings: unquoted unit paths, tool attribution that file order cannot support, promotion repeatable, and the memory store route not running the analysis tests. Against the reviewed code 6 cases failed and 1 errored, and all 20 pass now. The released lease row is kept, so tokens grow. Any exception ends the run `failed`. A session without an end at the analysis is flagged, and its state is part of the watermark. A reanalysis replaces unreviewed candidates and filters reviewed ones' pointers, and a forgotten day stays in range. Failures are counted per day, not per tool. A promoted candidate is final. Unit paths are quoted with `%` escaped. CTX-R022 states the explicit conversion. The reinstalled service ran with `Result=success`, and the released lease row persists empty. | no | none |
 
 #### Edition Delta
 
@@ -2981,6 +2984,55 @@ W08-ANALYSIS, which runs `scan`. Ephemeral runs without a session file are
 | Claude `PreCompact` delivery; Codex delivery after the user's `/hooks` review | RUNTIME_ONLY | EVD-201; W08-H03 | user, then W08 |
 | Scheduled scan, analysis and promotion proposals | Not in scope | W08-ANALYSIS | W08-ANALYSIS |
 
+#### W08-ANALYSIS (4.2.0)
+
+The 2026-11-18 request applies the 4.2.0 W08-ANALYSIS prompt from merged
+`7bc0c54f`, limited to that prompt. The designs read were D07, D12 and D16,
+with D25 for the open items. The prerequisite W08-CAPTURE is merged.
+
+**Decisions.** Q06 confirms one approved analysis path. The local settings
+named no backend. Two other workspaces on this host already run nightly
+analysis as user systemd timers at 03:00 Asia/Seoul with catch-up. Asked on
+2026-11-18, the user chose two options:
+
+- `Deterministic only`: no model call, so the cost is a known zero.
+- `03:00 KST, cap $0.20`: install the same timer for this workspace. The
+  cap has no effect without a model call.
+
+**Changes.**
+
+- Capture schema 2 adds a tool-failure flag to each line, so the analysis
+  can count failures without reading text. The live capture file was
+  converted explicitly.
+- `scripts/session_analysis.py`:
+  - `run` scans the capture, then analyzes each past Asia/Seoul day whose
+    captured input changed. A missed day is caught up and an unchanged day
+    is skipped.
+  - One lease with a fencing token admits one writer. A busy store is
+    retried at most twice.
+  - A signal only sets a flag that the run checks at safe points, and a run
+    left by a killed process is marked `abandoned`.
+  - Four rules write candidates in fixed wording with pointer `source_refs`:
+    repeated tool failures in a day, a session without an end at the analysis,
+    incomplete capture and frequent compaction.
+  - `review` and `promote` keep a candidate a proposal until an accepted
+    review. Promotion makes only a memory candidate or a Task reference.
+  - `install-timer` writes and enables the user units.
+- CTX-R022 and the new CTX-R023 are in policy 1.12.0, and the scripts
+  README is updated.
+
+**Kept separate.** The analysis never changes a policy, skill, check or
+itself. A model-based analyzer is a separate approval.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Deterministic aggregation and candidates linked to captured sessions | CHANGED | EVD-203 | none |
+| Timezone, catch-up, idempotency, lease, fencing, bounded retry, cancellation and failure exit | CHANGED | EVD-203, EVD-204 | none |
+| Timer-started run, duplicate refusal, takeover and real cancellation | VERIFIED | EVD-204 | none |
+| Review findings on fencing, failed runs, the open-session rule, stale candidates, forgotten pointers, schema conversion, unit quoting and promotion | CHANGED | EVD-205 | none |
+| First nightly 03:00 run over a captured day and catch-up after real downtime | RUNTIME_ONLY | W08-H04 | W08 |
+| Model-based analysis, cost metering and notification beyond the journal | Not adopted: the user chose deterministic only | EVD-204 | none |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -3099,6 +3151,7 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | W08-H01 | No legacy row: the memory store takes `owner` and `approval_ref` as caller-supplied strings, and any process of the same local account can open the SQLite file directly, so the store authenticates neither. D06 asks for an OS or broker boundary before an untrusted writer uses it. Recorded under W08-MEMORY on 2026-11-18 | open | W08 | When a second local account, an untrusted writer or a remote host must use the store | none |
 | W08-H02 | No legacy row: memory `search` normalizes case and whitespace only, so a query with a Korean particle or inflection the memory lacks (for example `저장소를` against `저장소`) does not match, and context tokens per result are not measured. Recorded under W08-RETRIEVAL on 2026-11-18 | open | W08 | When a real memory query misses because of a particle or inflection, or when current memories exceed 1,000 or live search p95 exceeds 100 ms | none |
 | W08-H03 | No legacy row: session capture delivery not yet observed. Codex 0.169.0 runs the new lifecycle entries only after the user trusts them in `/hooks` (EVD-201), and Claude `PreCompact` did not occur in EVD-200. Recorded under W08-CAPTURE on 2026-11-18 | open | W08 | When the user has reviewed the Codex hooks in `/hooks`, observe a Codex session and a Claude compaction in `session_capture.py status` | none |
+| W08-H04 | No legacy row: the first nightly run of `hy-home-k8s-session-analysis.timer` over a captured day, and its catch-up after real downtime, are not yet observed; the timer is enabled for 2026-11-19 03:00 KST (EVD-204). Recorded under W08-ANALYSIS on 2026-11-18 | open | W08 | After 2026-11-19 03:00 KST, read `session_analysis.py status` and the journal for a scheduled run that analyzed 2026-11-18 | none |
 | W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W07 | When W07 starts (provider projections) | EVD-144 |
 | W05-H09 | No legacy row: remove the checks of finished one-time transitions and the compatibility branches for older registry generations found by the SPEC-0219 audit, with their tests, and give any guarantee they still hold to a current contract. The audit names `RETIRED_REFERENCE_ALIASES` in `scripts/validate-links-and-owners.py`, the `docs/00.agent-governance` absence test, the retired progress-ledger and full/ci QA mode checks, the legacy empty-body rule of `validate-markdown-profiles.py`, the old Task and Requirement form layouts in tests, the legacy idempotency-key test of the memory store, the provenance-string assertions on the registry `migration.meaning_map`, and the readers of registry majors 10 to 19. Overlaps: W05-H06 (`done` and `archived` branches) and W05-H08 (validator and schema points) stay separate; W03-H11 holds the qa-runner fixture branch name | terminal | W05 | At the next change to a file that holds the retired aliases or readable majors | EVD-185 |
 | W05-H10 | No legacy row: SDLC-R034 conflict order and one-change-set rule. A test or downstream document edited without its owner is refused only by semantic review; split from W05-H05 on 2026-11-18 | terminal | W05 | When a change-set selection rule can name each owner of a test or downstream document | EVD-187 |

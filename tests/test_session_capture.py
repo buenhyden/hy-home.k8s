@@ -173,6 +173,48 @@ class SessionCaptureTest(unittest.TestCase):
         )
         self.assertNotIn(PRIVATE_TEXT.encode(), self.stored_bytes())
 
+    def test_tool_failure_is_recorded_as_a_flag_not_text(self) -> None:
+        self.hook("SessionStart", source="startup")
+        self.append(
+            {
+                "type": "user",
+                "message": {
+                    "content": [
+                        {
+                            "type": "tool_result",
+                            "is_error": True,
+                            "content": PRIVATE_TEXT,
+                        }
+                    ]
+                },
+            },
+            {"type": "user", "message": {"content": [{"type": "tool_result"}]}},
+            {"type": "assistant"},
+        )
+        rollout = self.codex_file("rollout-errors.jsonl")
+        self.hook(
+            "SessionStart",
+            provider="codex",
+            session_id="c-1",
+            transcript_path=str(rollout),
+        )
+        self.append(
+            {
+                "type": "event_msg",
+                "payload": {"type": "exec_command_end", "exit_code": 2},
+            },
+            {
+                "type": "event_msg",
+                "payload": {"type": "exec_command_end", "exit_code": 0},
+            },
+            path=rollout,
+        )
+        self.capture.scan()
+        claude = [r["error"] for r in self.capture.status("claude", "s-1")["records"]]
+        codex = [r["error"] for r in self.capture.status("codex", "c-1")["records"]]
+        self.assertEqual((claude, codex), ([1, 0, None], [1, 0]))
+        self.assertNotIn(PRIVATE_TEXT.encode(), self.stored_bytes())
+
     def test_partial_tail_waits_and_rescan_never_duplicates(self) -> None:
         self.hook("SessionStart", source="startup")
         self.append({"type": "user"}, tail='{"type": "assist')
