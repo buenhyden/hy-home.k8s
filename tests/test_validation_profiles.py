@@ -158,10 +158,23 @@ class ValidationProfileTests(unittest.TestCase):
 
     def test_reuse_declaration_is_opt_in_and_invalid_forms_fail(self):
         reusable = [row for row in self.contract["validators"] if "reuse" in row]
+        # Each opt-in gate is pure Python over the repository bytes, Git and the
+        # date that the reuse identity binds; tools outside it never opt in.
         self.assertEqual(
-            [row["id"] for row in reusable], ["document-contract-registry"]
+            [row["id"] for row in reusable],
+            [
+                "document-contract-registry",
+                "document-contract-tests",
+                "document-lifecycle-tests",
+                "document-lifecycle",
+                "work-residue-ledger",
+                "links-and-owners",
+                "markdown-profiles",
+            ],
         )
-        self.assertEqual(reusable[0]["reuse"], {"mode": "change-scoped"})
+        self.assertTrue(
+            all(row["reuse"] == {"mode": "change-scoped"} for row in reusable)
+        )
 
         def synthetic_contract(reuse):
             contract = copy.deepcopy(self.contract)

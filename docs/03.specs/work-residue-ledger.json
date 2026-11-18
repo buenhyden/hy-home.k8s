@@ -71,7 +71,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W05",
-      "resume_condition": "When W05 makes the tests that hard-code current section headings read them from the registry",
+      "resume_condition": "At the next change to a form's heading tree, for the tests of that form; deliberate registry pins in tests.test_common_form_tree stay",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -143,31 +143,43 @@
     {
       "id": "QA-03",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "When an evidence row maps each rule to a current check or a narrower residue row",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-184"
       }
     },
     {
       "id": "QA-17",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "When an evidence row maps each rule to a current check or a narrower residue row",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-184"
       }
     },
     {
       "id": "R147-05",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "When an evidence row maps each rule to a current check or a narrower residue row",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-184"
       }
     },
     {
@@ -217,11 +229,15 @@
     {
       "id": "R147-20",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "When an evidence row maps equivalent-result reuse to the `scripts/qa.py` identity contract",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-184"
       }
     },
     {
@@ -241,11 +257,15 @@
     {
       "id": "SDLC-08",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W05",
       "resume_condition": "When a negative test refuses an old approved edition as a pass basis, or with W05-H09",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-184"
       }
     },
     {

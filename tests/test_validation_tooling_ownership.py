@@ -381,12 +381,23 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
         uncollected: list[str] = []
         for module in sorted((ROOT / "tests").glob("test_*.py")):
             tree = ast.parse(module.read_text(encoding="utf-8"))
-            local_case_bases = {
-                node.name
+            # A local base collects its subclasses at any depth.
+            classes = {
+                node.name: {ast.unparse(base) for base in node.bases}
                 for node in tree.body
                 if isinstance(node, ast.ClassDef)
-                and any("TestCase" in ast.unparse(base) for base in node.bases)
             }
+            local_case_bases: set[str] = set()
+            changed = True
+            while changed:
+                changed = False
+                for name, bases in classes.items():
+                    if name not in local_case_bases and (
+                        any("TestCase" in base for base in bases)
+                        or bases & local_case_bases
+                    ):
+                        local_case_bases.add(name)
+                        changed = True
             for node in tree.body:
                 if not isinstance(node, ast.ClassDef):
                     continue

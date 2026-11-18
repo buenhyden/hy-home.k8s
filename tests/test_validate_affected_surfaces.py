@@ -367,6 +367,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                         "affected-surface-contract",
                         "release-tests",
                         "repository-quality",
+                        "tooling-ownership-tests",
                     ],
                 )
                 self.assertEqual(
@@ -377,6 +378,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                         "repository-quality",
                         "selected-nonstyle",
                         "selected-style",
+                        "tooling-ownership-tests",
                     ],
                 )
 
@@ -428,6 +430,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                         "repository-quality",
                         "selected-nonstyle",
                         "selected-style",
+                        "tooling-ownership-tests",
                         "validation-routing-tests",
                     ],
                 )

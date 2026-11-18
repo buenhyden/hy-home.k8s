@@ -260,6 +260,7 @@
           "links-and-owners",
           "markdown-profiles",
           "repository-quality",
+          "tooling-ownership-tests",
           "workspace-boundary"
         ],
         "protectedLevel": "review",
@@ -327,7 +328,8 @@
           "knowledge-surface",
           "links-and-owners",
           "markdown-profiles",
-          "repository-quality"
+          "repository-quality",
+          "tooling-ownership-tests"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -353,6 +355,7 @@
           "markdown-profiles",
           "qa-runner-tests",
           "repository-quality",
+          "tooling-ownership-tests",
           "validation-routing-tests"
         ],
         "protectedLevel": "protected",
@@ -387,7 +390,8 @@
         "validators": [
           "agent-governance",
           "ci-python-contract",
-          "repository-quality"
+          "repository-quality",
+          "tooling-ownership-tests"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -448,6 +452,7 @@
           "policy-gates",
           "repository-quality",
           "secret-handling",
+          "tooling-ownership-tests",
           "vault-eso-contracts"
         ],
         "protectedLevel": "protected",
@@ -465,6 +470,7 @@
           "affected-surface-contract",
           "agent-governance",
           "repository-quality",
+          "tooling-ownership-tests",
           "tooling-tests"
         ],
         "protectedLevel": "protected",
@@ -486,7 +492,8 @@
           "k8s-manifests",
           "policy-gates",
           "repository-quality",
-          "secret-handling"
+          "secret-handling",
+          "tooling-ownership-tests"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -500,7 +507,8 @@
       ],
       "expected": {
         "validators": [
-          "repository-quality"
+          "repository-quality",
+          "tooling-ownership-tests"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -523,7 +531,8 @@
           "markdown-profiles",
           "repository-quality",
           "selected-nonstyle",
-          "selected-style"
+          "selected-style",
+          "tooling-ownership-tests"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -541,7 +550,8 @@
           "ci-metadata-tests",
           "ci-python-contract",
           "github-actions-security",
-          "repository-quality"
+          "repository-quality",
+          "tooling-ownership-tests"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -568,6 +578,7 @@
           "affected-surface-contract",
           "document-contract-tests",
           "repository-quality",
+          "tooling-ownership-tests",
           "work-residue-ledger"
         ],
         "protectedLevel": "protected",
