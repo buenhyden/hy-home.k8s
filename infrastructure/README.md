@@ -1,6 +1,6 @@
 ---
 title: "infrastructure"
-version: "0.4.3"
+version: "0.5.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -191,6 +191,32 @@ Traefik이 모든 주소의 443을 점유하면 runtime blocker로 기록한다.
 실행한다. repair 후 `kubectl version --request-timeout=5s`와
 `bash infrastructure/verify/run-all.sh`가 기본 kubeconfig로 통과해야 하며,
 rollback은 백업 파일을 `~/.kube/config`로 되돌리는 방식이다.
+
+#### Throwaway Test Clusters
+
+운영 `hyhome` 클러스터와 별개로, 이 workspace가 소유한 일회성 k3d 클러스터에
+선택한 GitOps 앱만 올려 시험할 수 있다(`scripts/test_cluster.py`).
+
+- `doctor`는 호스트, 도구 판본, Docker socket의 root 동등 여부, 기본
+  kubeconfig의 current-context 이름만 보고한다.
+- `plan APP...`은 선택한 root Application의 manifest에서 필요한 namespace
+  제공 앱을 더해 closure를 만든다. 빈 선택, `all`·와일드카드, App-of-Apps
+  root, 원격 chart 또는 CRD가 필요한 앱, 4개를 넘는 closure는 거부한다.
+- `up APP...`은 `hyk8s-test-<run>` 클러스터를 server 1개, load balancer 없이,
+  API를 `127.0.0.1`에만 열어 만들고 node에 run 라벨을 붙인다. kubeconfig는
+  Git이 무시하는 `.workspace-test/<run>/`에만 두며 모든 도구가 그 파일만
+  쓴다. 실패나 중단 시 자기 클러스터를 지운다.
+- `down RUN`과 `sweep`은 이름, Docker 라벨, run 상태 파일이 모두 맞는
+  클러스터만 지운다. `sweep`은 만든 프로세스가 사라진 run을 지우고 소유하지
+  않은 클러스터는 보고만 한다.
+- `probe RUN`은 열린 namespace와 거부 정책 namespace에서 대상 TCP 연결을
+  시험한다. 닫힌 포트 대조가 unreachable이어야 결과가 유효하다.
+
+이 호스트의 k3s `v1.35.0-k3s1`(k3d 5.9)에서 거부 정책 namespace의 운영망
+egress는 실제로 막혔다. 다만 제품 정책은 여러 namespace에서 `192.168.0.13`으로의
+egress를 허용하고 NetworkPolicy는 허용만 더하므로, 그 namespace에서 pod를
+돌리는 시험은 운영망에 닿을 수 있다. 클러스터 전체 차단은 호스트 방화벽이나
+전용 VM이 필요하다(SPEC-0161 W09-H02).
 
 #### Infrastructure Test Inventory
 

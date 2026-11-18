@@ -775,6 +775,16 @@
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
+    },
+    {
+      "id": "W09-H02",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W09",
+      "resume_condition": "Before a test cluster runs product pods in a namespace whose policy allows 192.168.0.13, or when the user provides a host firewall rule or a dedicated VM",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
     }
   ]
 }

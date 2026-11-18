@@ -113,6 +113,23 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "test-cluster-regressions",
+      "argv": [
+        "python3",
+        "tests/test_test_cluster.py"
+      ],
+      "lanes": [
+        "affected",
+        "staged"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Test cluster environment regressions are required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "git-hook-chain-regressions",
       "argv": [
         "python3",
@@ -1261,7 +1278,8 @@
         "markdown-profiles",
         "policy-gates",
         "repository-quality",
-        "secret-handling"
+        "secret-handling",
+        "test-cluster-regressions"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1854,6 +1872,29 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "test-cluster-implementation",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/test_cluster.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance",
+        "repository-quality",
+        "secret-handling",
+        "tooling-ownership-tests",
+        "test-cluster-regressions"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Test cluster changes require direct behavior regressions and script safety checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "workspace-memory-tests",
       "routes": [
         {
@@ -1916,6 +1957,28 @@
       "fallback": {
         "status": "FAIL",
         "reason": "Session analysis regression changes require their direct test gate."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "test-cluster-tests",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "tests/test_test_cluster.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance",
+        "repository-quality",
+        "tooling-ownership-tests",
+        "test-cluster-regressions"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Test cluster changes require direct behavior regressions and script safety checks."
       },
       "evidenceLane": "repo-static"
     },
@@ -2330,7 +2393,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)(?:README|AGENTS|CLAUDE)\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|frontmatter_yaml\\.py|semver_grammar\\.py|document-generator\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle|execution-brief|pr-metadata|ci-python-contract)\\.py)$)(?!scripts/validate-agent-governance\\.py$)(?!scripts/(?:validate-work-residue-ledger|work-residue-ledger)\\.py$)(?!scripts/workspace_memory\\.py$)(?!scripts/session_capture\\.py$)(?!scripts/session_analysis\\.py$)(?!scripts/githooks/(?:pre-commit|commit-msg|pre-push|chained-hook\\.sh)$)(?!scripts/(?:check-secret-handling|render-platform-chart-kinds|validate-(?:gitops-structure|infrastructure-contracts|k8s-manifests|policy-gates))\\.sh$)(?!scripts/validate-(?:gitops-change-set|vault-eso-contracts)\\.py$)(?!scripts/validation/platform/)(?!scripts/(?:commit-message-exceptions|prompt-input|provider_write_guard|validate-selected-nonstyle)\\.py$)(?!scripts/validation/(?:current_executable_references|repository/(?:form_contracts|sample_app_contract))\\.py$)(?!scripts/(?:run-contract-tests|run-validation-lane|select-affected-surfaces|validate-affected-surfaces|validate-selected-style|validate-workspace-boundary|validate-knowledge-surface)\\.py$)(?!scripts/validation/repository/(?:bounded_io|quality)\\.py$)(?!scripts/validate-github-actions-security\\.py$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)(?:README|AGENTS|CLAUDE)\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|frontmatter_yaml\\.py|semver_grammar\\.py|document-generator\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle|execution-brief|pr-metadata|ci-python-contract)\\.py)$)(?!scripts/validate-agent-governance\\.py$)(?!scripts/(?:validate-work-residue-ledger|work-residue-ledger)\\.py$)(?!scripts/workspace_memory\\.py$)(?!scripts/session_capture\\.py$)(?!scripts/session_analysis\\.py$)(?!scripts/test_cluster\\.py$)(?!scripts/githooks/(?:pre-commit|commit-msg|pre-push|chained-hook\\.sh)$)(?!scripts/(?:check-secret-handling|render-platform-chart-kinds|validate-(?:gitops-structure|infrastructure-contracts|k8s-manifests|policy-gates))\\.sh$)(?!scripts/validate-(?:gitops-change-set|vault-eso-contracts)\\.py$)(?!scripts/validation/platform/)(?!scripts/(?:commit-message-exceptions|prompt-input|provider_write_guard|validate-selected-nonstyle)\\.py$)(?!scripts/validation/(?:current_executable_references|repository/(?:form_contracts|sample_app_contract))\\.py$)(?!scripts/(?:run-contract-tests|run-validation-lane|select-affected-surfaces|validate-affected-surfaces|validate-selected-style|validate-workspace-boundary|validate-knowledge-surface)\\.py$)(?!scripts/validation/repository/(?:bounded_io|quality)\\.py$)(?!scripts/validate-github-actions-security\\.py$)scripts/.*$"
         }
       ],
       "validators": [
@@ -2492,7 +2555,8 @@
       "git-hook-chain-regressions",
       "workspace-memory-regressions",
       "session-capture-regressions",
-      "session-analysis-regressions"
+      "session-analysis-regressions",
+      "test-cluster-regressions"
     ],
     "staged": [
       "affected-surface-contract",
@@ -2531,7 +2595,8 @@
       "git-hook-chain-regressions",
       "workspace-memory-regressions",
       "session-capture-regressions",
-      "session-analysis-regressions"
+      "session-analysis-regressions",
+      "test-cluster-regressions"
     ]
   }
 }

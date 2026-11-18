@@ -113,3 +113,4 @@ sessions/
 # Shared workspace memory store (scripts/workspace_memory.py); runtime data,
 # never tracked. SPEC-0109 introduced it; Git history recovers that package.
 /.workspace-memory/
+/.workspace-test/
