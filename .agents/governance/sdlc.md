@@ -1,6 +1,6 @@
 ---
 title: "Software Development Lifecycle"
-version: "4.1.3"
+version: "4.2.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -82,6 +82,8 @@ Provider and agent-roster authority is excluded and stated under Owner; if anoth
 | SDLC-R033 | When a Spec or Plan needs to depart from a current Architecture Description or ADR | A Spec or Plan that needs to depart from a current Architecture Description or ADR returns to `in-review` under the [lifecycle policy](document-lifecycle.md), and dependent work stops until a new or amended ADR is accepted or the departure is removed. | `document-lifecycle` | none |
 | SDLC-R034 | When implementation and an approved Requirement, Architecture or Spec disagree | When implementation and an approved Requirement, Architecture or Spec disagree, resolve in the order current user requirement, approved contract, implementation and tests. Record the divergence in the active Task, then either amend the owning document through its own review or correct the implementation, changing producer, reader, schema, current guidance and tests in one change set. An unapproved test expectation never becomes policy, a test is never edited alone to make a violation pass, and a requirement is never relaxed by editing a downstream document alone. This order never authorizes a protected action: [approval and safety](approval-and-safety.md) still binds, and no package or agent message counts as user approval. | Semantic review | none |
 | SDLC-R035 | Always | Three separate axes describe where work stands, and one never implies another. The document STAGE (Stage 01 to 99) names the owner and place of a document. The SDLC phase (Clarify to Complete above) names the work step. The Git point names before, during or after commit, push, pull request or merge. Status, acceptance, promotion and exit per document role follow the [lifecycle policy](document-lifecycle.md). | Semantic review | none |
+| SDLC-R036 | Always | Each governance policy and each approval and safety rule has one responsibility-layer owner from the [Responsibility layers](#responsibility-layers) table. A meaning shared by people and agents (W) and an agent's execution difference for it (A) are never two sources: W states what a protected action is, what an approval binds and that the operator verifies it through the original trusted interaction, and A states only how an agent compares its intended call with that bound approval before execution and on resume, delegates, keeps context and stops. Machine-read inputs such as hook configuration and native permissions stay with I and the provider adapters; they never move as prose. | Semantic review | none |
+| SDLC-R037 | Always | The operator's current request selects and orders work. An Issue, a Project, a package prompt, a residue ledger entry or a memory candidate proposes work and never selects it. When work is done is owned by [QUAL-R022](quality.md#requirements) and the [work lifecycle](../workflows/work-lifecycle.md) Completion steps, applied to the records the change kind requires (SDLC-R024); a merge, a check PASS or a status edit alone is not done. | Semantic review | none |
 
 | Rule ID | Level | Status |
 | --- | --- | --- |
@@ -120,6 +122,8 @@ Provider and agent-roster authority is excluded and stated under Owner; if anoth
 | SDLC-R033 | required | active |
 | SDLC-R034 | required | active |
 | SDLC-R035 | required | active |
+| SDLC-R036 | required | active |
+| SDLC-R037 | required | active |
 
 #### Stage 04 slot
 
@@ -189,6 +193,35 @@ document content change does not trigger them.
 #### Three axes
 
 `SDLC-R035`
+
+#### Responsibility layers
+
+`SDLC-R036`
+
+The layers classify responsibility; they are not seven directories. On
+2026-11-18 the operator adopted `docs/00.workspace/` as the physical owner of
+W, with the move made once in the final path cutover (Q07) together with the
+path renumbering. Until that cutover the current paths below remain the
+owners, and no reference names `docs/00.workspace/` as an existing path.
+
+| Layer | Meaning owned | Current owner |
+| --- | --- | --- |
+| W, workspace | Purpose, responsibility, work selection, change kinds, document, quality and Git rules, and done in quality | This policy, [document authoring](document-authoring.md), [document lifecycle](document-lifecycle.md), [quality](quality.md), [formatting and linting](formatting-and-linting.md), [Git](git.md) except its agent delivery commands, and the W rules of [approval and safety](approval-and-safety.md): SAFE-R001 to SAFE-R010, SAFE-R013 to SAFE-R016, SAFE-R020 and SAFE-R021 |
+| P, product | Durable requirements, structure, quality scenarios, operating procedures | Stage 01, Stage 02 and Stage 05 |
+| R, request | Change scope, normal and failure behavior, acceptance, work, evidence | One Stage 03 package: Spec, Plan and Tasks |
+| C, events | Deployment, incident, retrospective and observation facts | Task evidence, Stage 05 Incident and Postmortem records, Git, `CHANGELOG.md`, tags and GitHub Releases |
+| A, agent | Role selection, delegation, approval-source and revocation checks, context, stop | [Agent execution](agent-execution.md), [context and memory](context-and-memory.md), [model selection](model-selection.md), SAFE-R011 and SAFE-R012 (delegation) and SAFE-R017 to SAFE-R019, the Git agent delivery commands, `.agents/roles/`, `.agents/skills/`, `.agents/workflows/`, the root and folder gateways and the provider adapters |
+| I, enforcement | Validators, hooks, CI, tests and permission enforcement | `scripts/`, `tests/`, `.github/workflows/`, native settings and hook files |
+| T, form | Common sections, tables, types, states and path bindings | `docs/99.templates/` registry, schema and templates |
+
+The cutover moves only the W rows and splits approval and safety along the
+rule lists above, so SAFE-R011 leaves the SAFE-R008 lead-in list that W
+keeps; the A, I and T rows and every machine-read input stay where
+they are.
+
+#### Work selection and done
+
+`SDLC-R037`
 
 ### Exceptions
 

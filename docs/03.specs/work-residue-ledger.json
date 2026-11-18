@@ -301,6 +301,16 @@
       }
     },
     {
+      "id": "SDLC-H01",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "Q07",
+      "resume_condition": "In the Q07-CUTOVER task, together with the SDD-PATHS renumbering",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
       "id": "SDLC-ROWS",
       "kind": "handoff",
       "state": "terminal",
