@@ -322,8 +322,17 @@ def labelled_runs() -> dict[str, str]:
 
 
 def up(
-    root: Path, selection: Sequence[str], *, run_id: str | None = None
+    root: Path,
+    selection: Sequence[str],
+    *,
+    authority: str | None,
+    run_id: str | None = None,
 ) -> dict[str, Any]:
+    # A live cluster action names the operator approval it runs under, or it
+    # does nothing (infrastructure/AGENTS.md rule 1). The name is recorded, not
+    # authenticated: whether the approval is real stays the caller's check.
+    if not isinstance(authority, str) or not authority.strip():
+        raise ClusterError("CLUSTER_AUTHORITY: name the operator approval for this run")
     apps = catalog(root)
     ordered = plan(apps, selection)
     run_id = run_id or uuid.uuid4().hex[:8]
@@ -336,6 +345,7 @@ def up(
         "run_id": run_id,
         "cluster": name,
         "apps": ordered,
+        "authority": authority.strip(),
         "pid": os.getpid(),
         "status": "creating",
         "created_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
@@ -481,8 +491,12 @@ def probe(root: Path, run_id: str, target: str, cidr: str) -> dict[str, Any]:
     host, _, port = target.rpartition(":")
     if not HOST.fullmatch(host) or not PORT.fullmatch(port):
         raise ClusterError("CLUSTER_SCHEMA: target is HOST:PORT")
-    if _read_state(root, run_id) is None:
+    record = _read_state(root, run_id)
+    if record is None:
         raise ClusterError("CLUSTER_NOT_OWNED: no run state")
+    authority = record.get("authority")
+    if not isinstance(authority, str) or not authority.strip():
+        raise ClusterError("CLUSTER_AUTHORITY: the run names no operator approval")
     env = tool_environment(_state_dir(root, run_id))
     _run(["kubectl", "create", "namespace", "hyk8s-probe-open"], env=env, check=False)
     _run(["kubectl", "create", "namespace", "hyk8s-probe-denied"], env=env, check=False)
@@ -609,6 +623,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     for name in ("plan", "up"):
         sub = commands.add_parser(name)
         sub.add_argument("apps", nargs="*")
+        if name == "up":
+            sub.add_argument(
+                "--authority",
+                required=True,
+                help="the operator approval this live run is made under",
+            )
     probe_parser = commands.add_parser("probe")
     probe_parser.add_argument("run_id")
     probe_parser.add_argument("--target", required=True)
@@ -634,7 +654,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         elif args.command == "plan":
             result = plan(catalog(root), args.apps)
         elif args.command == "up":
-            result = up(root, args.apps)
+            result = up(root, args.apps, authority=args.authority)
         elif args.command == "probe":
             result = probe(root, args.run_id, args.target, args.deny_cidr)
         elif args.command == "down":
