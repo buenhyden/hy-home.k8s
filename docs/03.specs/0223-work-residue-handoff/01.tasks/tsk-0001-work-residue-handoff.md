@@ -633,6 +633,15 @@ The pinned QA suite passes 50 cases, routing/document selection passes 56,
 and existing hook-chain coverage passes 16. Formatter changes are confined
 to the reviewed Python test; source formatting and diff checks are clean.
 
+Implementation commit `17f2e4c9` passed the active exact-index hook and both
+message checks in 90.812 seconds, with eleven selected direct checks for ten
+files and no implementation suite replay. After that commit, the same empty
+staged scope through the installed pre-commit took 6.910, 6.738, 6.682 seconds
+(median 6.738, about 64% below the prechange median); every sample passed
+and preserved canonical index bytes. Both measurements use warm prepared
+environments, not cold installs. The ten-file commit is a different scope,
+not a paired speed comparison or proof of the proposed small-input budget.
+
 ### Lifecycle Traceability
 
 | Item | Upstream criterion | Result | Evidence |
@@ -674,6 +683,8 @@ to the reviewed Python test; source formatting and diff checks are clean.
 | EVD-025 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | P02 clean initial HEAD and empty canonical index; existing venv and installed hook chain | Python 3.12.3, pre-commit 4.6.1; warm environment; N=3 per hook | Actual `scripts/githooks/pre-commit`; commit-msg with task-owned synthetic message; pre-push with synthetic ref stdin; bounded ownership/worktree probes | 0 | PASS | P02 investigation above: index preserved, pre-commit median 18.691s, message median 747.06ms, no-consumer pre-push median 25.43ms, ownership scan median 18.52ms; no network/cold/p95 claim | false | none |
 | EVD-026 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P02 QA, staged registry selection and covering synthetic fixtures on initial HEAD | Existing pinned validation Python; repository checkers and Ruff | `python -m unittest tests.test_qa_runner`; `python -m unittest tests.test_validate_affected_surfaces tests.test_document_scope_selection`; `python -m unittest tests.test_chained_git_hooks`; `python scripts/validate-affected-surfaces.py`; scoped strict document checks | 0 | PASS | QA 50, selection 56 and hook chain 16 cases PASS; focused RED/GREEN and doc profile/link/lifecycle PASS. First system-Python attempt lacked locked YAML dependency; pinned environment resolved it without installation. Format-only refresh uses the same focused QA cases | false | none |
 | EVD-027 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | Frozen P02 source/registry/tests and current owner/Task diff against initial HEAD; Python test formatting only refreshed afterwards | Independent code-reviewer and security-auditor, separate contexts, instructed read-only | Exact diff semantic/core checklist: acceptance alignment, one writer, owners, removed checks, secret exposure, mutation/cache/error boundaries and normal-PR rollback | none | PASS | Both reviewers report no BLOCK/FIX; no permission, trigger, hook source or protected target changed. Removed staged suites remain quick/PR. Original evidence, criterion cells and residue rows preserved by inline comparison. Review does not grant user acceptance or native/live proof | false | none |
+| EVD-028 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | Exact ten-file P02 index producing `17f2e4c9`; later changes are this measurement receipt only | Installed chained hooks and existing pinned validation venv | `git commit -m 'fix: bound local QA to staged feedback'` runs exact-index staged QA, Commitizen and generated-message checks | 0 | PASS | All active hooks PASS, total 90.812s. Selected direct checks: affected surfaces, agent governance, document registry/lifecycle, residue ledger, knowledge surface, links, profiles, repository quality, selected nonstyle/style. No bypass or automatic staging | false | none |
+| EVD-029 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | Clean `17f2e4c9`, zero staged changes, same installed chain/venv as EVD-025; N=3 warm | Inline subprocess timer and canonical index byte comparison; no timing file | `scripts/githooks/pre-commit`, three invocations without network | 0 | PASS | 6.910, 6.738, 6.682s; median 6.738s versus 18.691s before edits for the same empty scope; index preserved in every run. No p95, cold, nonempty speed or IDE-experience claim | false | none |
 
 ### Resolution Links
 
@@ -736,9 +747,10 @@ The Plan promotes no durable contract.
 
 ### Next Owner
 
-Current handoff: P02 implementation and focused local verification are
-recorded above; exact-index delivery and post-change hook measurements are
-recorded with their actual results before completion. P00/P01 remain retained
+Current handoff: P02 implementation, focused local verification, independent
+reviews, exact-index commit and post-change hook measurements are EVD-025 to
+EVD-029. This receipt receives its own selected document commit hook; hosted
+and merge results are reported on the actual delivery. P00/P01 remain retained
 through EVD-015 to EVD-024 and PR 331 to PR 334. User acceptance of P00/P01/P02
 is separate and is not inferred from implementation, tests or merge.
 The next input is
