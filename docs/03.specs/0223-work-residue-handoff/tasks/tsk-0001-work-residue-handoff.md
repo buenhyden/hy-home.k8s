@@ -1,6 +1,6 @@
 ---
 title: "Work Residue Handoff"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-19"
@@ -45,7 +45,7 @@ packages. Input revision: `93f130a8`.
 | --- | --- | --- | --- | --- |
 | WORK-001 | WORK-001 | platform | completed | none |
 | WORK-002 | WORK-002 | platform | completed | none |
-| WORK-003 | WORK-003 | platform | in-progress | none |
+| WORK-003 | WORK-003 | platform | completed | none |
 
 The analysis read the three packages and every consumer that names them. Every
 path in the three Specs and Plans exists. The conflicts are: SPEC-0221 and
@@ -145,13 +145,13 @@ No earlier failure is open; the Resolves column names the row each PASS row clos
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [VAL-RESIDUE-001](../spec.md#criteria) | undecided | pending | EVD-001 | none | none | platform | none |
-| [VAL-RESIDUE-002](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [VAL-RESIDUE-003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
+| [VAL-RESIDUE-001](../spec.md#criteria) | accept | accepted | EVD-001, EVD-002 | User answer 'Accept all (Recommended)' of 2026-11-19 in this session | user | platform | none |
+| [VAL-RESIDUE-002](../spec.md#criteria) | accept | accepted | EVD-005 | User answer 'Accept all (Recommended)' of 2026-11-19 in this session | user | platform | none |
+| [VAL-RESIDUE-003](../spec.md#criteria) | accept | accepted | EVD-007 | User answer 'Accept all (Recommended)' of 2026-11-19 in this session | user | platform | none |
 
 ### Remaining Conditions
 
-WORK-003 stays in-progress until the user accepts the criteria; each open residue row names its owner.
+The user accepted every criterion on 2026-11-19. This package stays as the live residue host until Q07; each open residue row names its owner.
 
 ## Handoff
 
