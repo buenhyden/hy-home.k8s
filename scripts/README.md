@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.17.0"
+version: "0.17.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -244,44 +244,19 @@ index에는 `qa.py staged`를 쓴다. 하위 runner는 진단용 인터페이스
 
 #### Reproducing the local dependency identity
 
-validator는 자신을 호출한 interpreter에서 실행된다. 다른 로컬 머신의
-library 차이를 통제하려면 검토된 lock으로 task-owned 환경을 구성하고
-실제로 선택된 interpreter와 도구 identity를 Task에 기록한다. lock의
-존재만으로 검증 실행이나 hosted identity를 주장하지 않는다.
+검토된 hash lock으로 checkout 밖의 환경을 준비하고 실제 interpreter·도구
+identity를 확인하는 방법은 [local validation environment guide](../docs/00.workspace/05.environment/0011-local-validation-environment.md)가
+소유한다. 준비한 Python으로 `scripts/qa.py quick` 또는 `scripts/qa.py staged`를
+현재 입력에 맞춰 실행한다. Python gate는 호출한 interpreter를 쓰고,
+selected style·nonstyle gate는 그 Python의 `pre_commit` module이 없으면
+`STYLE-TOOL` 또는 `NONSTYLE-TOOL`로 실패한다. shell validator는 닫힌 시스템
+`PATH`를 사용한다. gitleaks와 conftest의 신뢰할 수 있는 interpreter 인접
+경로 또는 계정 소유 fallback 선택은 실행 구현이 소유한다. lock의 존재나
+환경 준비만으로 검증 PASS 또는 hosted identity를 주장하지 않는다.
 
-```bash
-# Choose a task-owned environment outside the checkout being validated,
-# under account-owned directories with no group/other write permission.
-python3 -m venv "$VALIDATION_VENV"
-"$VALIDATION_VENV/bin/python" -m pip install --disable-pip-version-check \
-  --only-binary :all: --require-hashes \
-  --requirement .github/requirements/ci-validation.txt
-# After staging the reviewed logical input:
-"$VALIDATION_VENV/bin/python" scripts/qa.py staged
-```
-
-먼저 `VALIDATION_VENV`를 승인된 환경 경로로 설정한다. Python gate에는 호출한
-Python이 그대로 쓰인다. selected style·nonstyle gate는 그 Python의
-`pre_commit` 모듈을 실행하므로 이 모듈이 없으면 `STYLE-TOOL` 또는
-`NONSTYLE-TOOL`로 실패한다. 다른 도구는 고정된 시스템 경로를 쓰며 gitleaks와
-conftest만 신뢰할 수 있는 interpreter 인접 경로나 계정 소유의 정확한 fallback도
-허용한다. 시스템 Python에 `ensurepip`가 없으면 `uv venv`와 `uv pip install
---require-hashes`로 같은 lock을 설치할 수 있다.
-
-커밋 hook은 Git 설정 `hyhome.validationVenv`가 가리키는 이 환경을
-`PATH` 맨 앞에 두고 워크스페이스 hook을 실행한다. 설정이 없거나, 환경이
-checkout 안에 있거나, group·other 쓰기 권한이나 다른 계정 소유 파일이
-있으면 `HOOK-ENV`로 커밋을 막는다. 구성 명령과 범위는
+커밋 hook은 Git 설정 `hyhome.validationVenv`가 가리키는 환경을 `PATH` 맨 앞에
+두고 실행한다. hook 연결과 `HOOK-ENV` 실패 조건은
 [Git policy](../docs/00.workspace/03.process/git.md)가 소유한다.
-저장소 로컬 venv나 namespace가 매핑된 상위 디렉터리 소유권 때문에 그 fallback이
-달라질 수 있으므로, venv 활성화 여부가 아니라 실제로 해석된 실행 파일을
-기록한다. shell validator의 `python3`는 닫힌 시스템 PATH를 따르므로 그 library
-identity도 따로 관찰해야 한다. HOME은 닫힌 상태로 두고 리뷰를 거친
-pre-commit·Go·Rust·Node cache는 계정 소유의 cache 디렉터리 아래에 둔다.
-
-잠긴 의존성이 소유하는 module을 바꾸기 전이나 로컬 도구 재현성이 필요한
-경우에 이 방법을 쓴다. 실제 실행 결과도 검증한 입력과 로컬 환경에만
-적용된다.
 
 staged QA는 첫 commit부터 정확한 index와 staged 설정을 읽으며, 무관한
 unstaged·미추적 파일을 입력으로 삼지 않는다. 구현 회귀 suite는 affected quick과

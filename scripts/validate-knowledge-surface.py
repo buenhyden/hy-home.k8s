@@ -29,9 +29,9 @@ from validation.repository.bounded_io import (
 KNOWLEDGE_ROOT = ".agents/knowledge"
 KNOWLEDGE_README = f"{KNOWLEDGE_ROOT}/README.md"
 POINTER_HEADING = "## Pointer Index"
-# The common vocabulary is a workspace project document (SDLC-R036 W layer)
-# that this surface checks together with the agent knowledge documents.
-GLOSSARY = "docs/00.workspace/01.project/glossary.md"
+GLOSSARIES = frozenset(
+    (".agents/knowledge/glossary.md", "docs/00.workspace/01.project/glossary.md")
+)
 VOCABULARY_HEADING = "## Repository Vocabulary"
 EXTENSION_HEADING = "## Local Extensions"
 MAX_DOCUMENT_BYTES = 256 * 1024
@@ -139,8 +139,9 @@ def _knowledge_documents(root: Path) -> list[str]:
         if entry.is_file() and entry.suffix == ".md" and entry.name != "README.md"
     )
     documents = [f"{KNOWLEDGE_ROOT}/{name}" for name in names]
-    if (root / GLOSSARY).is_file():
-        documents.append(GLOSSARY)
+    local_glossary = "docs/00.workspace/01.project/glossary.md"
+    if (root / local_glossary).is_file():
+        documents.append(local_glossary)
     return documents
 
 
@@ -251,7 +252,9 @@ def _check_facts(root: Path, document: str, text: str) -> list[Finding]:
     return []
 
 
-def _check_vocabulary(document: str, body: str) -> tuple[list[Finding], list[str]]:
+def _check_vocabulary(
+    document: str, body: str, term_owners: dict[str, str]
+) -> tuple[list[Finding], list[str]]:
     """Check the glossary's term tables; return findings and every term row."""
 
     markdown = import_module("validate-links-and-owners")
@@ -287,6 +290,16 @@ def _check_vocabulary(document: str, body: str) -> tuple[list[Finding], list[str
                     f"`{term_id}` is defined more than once",
                 )
             )
+        elif term_id in term_owners:
+            findings.append(
+                Finding(
+                    "KNOWLEDGE-TERM-DUPLICATE",
+                    document,
+                    f"`{term_id}` is also defined in {term_owners[term_id]}",
+                )
+            )
+        elif TERM_ID.match(term_id):
+            term_owners[term_id] = document
         seen.add(term_id)
         if len(cells) < 7 or not is_numeric_version(cells[6]):
             findings.append(
@@ -299,13 +312,15 @@ def _check_vocabulary(document: str, body: str) -> tuple[list[Finding], list[str
     return findings, rows
 
 
-def _check_document(root: Path, document: str) -> list[Finding]:
+def _check_document(
+    root: Path, document: str, term_owners: dict[str, str]
+) -> list[Finding]:
     text = _read_document(root / document, document)
     body = _body(text)
     findings = _check_facts(root, document, text)
 
-    if document == GLOSSARY:
-        vocabulary_findings, rows = _check_vocabulary(document, body)
+    if document in GLOSSARIES:
+        vocabulary_findings, rows = _check_vocabulary(document, body, term_owners)
         findings.extend(vocabulary_findings)
         if not rows:
             return findings
@@ -360,8 +375,9 @@ def validate_knowledge_surface(root: str | os.PathLike[str]) -> list[Finding]:
     repository_root = Path(root).resolve()
     documents = _knowledge_documents(repository_root)
     findings = list(_check_readme(repository_root, documents))
+    term_owners: dict[str, str] = {}
     for document in documents:
-        findings.extend(_check_document(repository_root, document))
+        findings.extend(_check_document(repository_root, document, term_owners))
     return findings
 
 

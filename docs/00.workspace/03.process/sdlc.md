@@ -1,10 +1,10 @@
 ---
 title: "Software Development Lifecycle"
-version: "4.4.0"
+version: "4.5.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 ---
 
 # Software Development Lifecycle
@@ -134,7 +134,8 @@ Provider and agent-roster authority is excluded and stated under Owner; if anoth
 #### Ownership and placement
 
 The meaning of each term below is owned by the
-[Repository Vocabulary](../01.project/glossary.md); this table owns only where
+[Repository Vocabulary](../../../.agents/knowledge/glossary.md); local Kubernetes
+meanings belong to the [workspace glossary](../01.project/glossary.md). This table owns only where
 each artifact lives and the rules that govern it.
 
 | Rule ID | Owner and placement rule |
@@ -203,7 +204,9 @@ document content change does not trigger them.
 The layers classify responsibility; they are not seven directories. On
 2026-11-18 the operator adopted `docs/00.workspace/` as the physical owner of
 W, and on 2026-11-19 the path cutover moved the W rows there together with the
-category renumbering of `docs/` (SPEC-0224, ADR-0064).
+category renumbering of `docs/` (SPEC-0224). P03 retains that physical separation
+and gives common terms their own owner; the current architecture decision is
+listed in the [workspace decision index](../02.architecture/02.decisions/README.md).
 
 | Layer | Meaning owned | Current owner |
 | --- | --- | --- |

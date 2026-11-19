@@ -7,17 +7,18 @@ people and agents. The parent [`docs/AGENTS.md`](../AGENTS.md) still applies.
 
 ### Allowed Scope
 
-This stage owns how work is done here: the vocabulary (`01.project/`), the
+This stage owns how work is done here: local Kubernetes vocabulary (`01.project/`), the
 work-system architecture (`02.architecture/`), SDLC, document and Git process
 (`03.process/`), quality, formatting and approval (`04.quality/`) and
-maintenance (`06.maintenance/`), as SDLC-R036 assigns the W layer.
+reproducible local validation preparation (`05.environment/`) and maintenance
+(`06.maintenance/`), as SDLC-R036 assigns the W layer.
 
 | Work here | Role (`.agents/roles/`) | Skills | Claude | Codex |
 | --- | --- | --- | --- | --- |
 | Change a workspace policy or its rule IDs | [governance-steward](../../.agents/roles/governance-steward.md) | `workspace-harness-audit`, `knowledge-map` | `.claude/agents/governance-steward.md` | `.codex/agents/governance-steward.toml` |
 | Work-system AD or ADR | [architect](../../.agents/roles/architect.md) | `requirements-to-design`, `docs-stage-routing` | `.claude/agents/architect.md` | `.codex/agents/architect.toml` |
-| Author guide, runbook or README text | [doc-writer](../../.agents/roles/doc-writer.md) | `docs-stage-conformance`, `docs-stage-routing` | `.claude/agents/doc-writer.md` | `.codex/agents/doc-writer.toml` |
-| Vocabulary and indexes | [wiki-curator](../../.agents/roles/wiki-curator.md) | `docs-stage-conformance`, `knowledge-map` | `.claude/agents/wiki-curator.md` | `.codex/agents/wiki-curator.toml` |
+| Author vocabulary, guide, runbook or README text | [doc-writer](../../.agents/roles/doc-writer.md) | `docs-stage-conformance`, `docs-stage-routing` | `.claude/agents/doc-writer.md` | `.codex/agents/doc-writer.toml` |
+| Indexes and owner navigation | [wiki-curator](../../.agents/roles/wiki-curator.md) | `docs-stage-conformance`, `knowledge-map` | `.claude/agents/wiki-curator.md` | `.codex/agents/wiki-curator.toml` |
 
 #### Non-goals
 

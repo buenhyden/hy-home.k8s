@@ -578,7 +578,7 @@
       "family": "operation",
       "mode": "authored",
       "document_role": "guide",
-      "path_pattern": "^(?:docs/05\\.operations/01\\.guides|docs/00\\.workspace/04\\.quality)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^(?:docs/05\\.operations/01\\.guides|docs/00\\.workspace/(?:04\\.quality|05\\.environment))/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^GDE-[0-9]{4}$",
       "template_source": "docs/99.templates/02.templates/05.operations/guide.template.md",
       "frontmatter": {
@@ -1111,7 +1111,7 @@
       "family": "governance",
       "mode": "authored",
       "document_role": "knowledge-map",
-      "path_pattern": "^\\.agents/knowledge/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^\\.agents/knowledge/(?!(?:README|glossary)\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/02.templates/91.agent-governance/knowledge.template.md",
       "frontmatter": {
@@ -1168,7 +1168,7 @@
       "family": "governance",
       "mode": "authored",
       "document_role": "vocabulary",
-      "path_pattern": "^docs/00\\.workspace/01\\.project/glossary\\.md$",
+      "path_pattern": "^(?:\\.agents/knowledge|docs/00\\.workspace/01\\.project)/glossary\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/02.templates/00.workspace/vocabulary.template.md",
       "frontmatter": {
@@ -1594,7 +1594,7 @@
       "family": "common",
       "mode": "router",
       "document_role": "stage-readme",
-      "path_pattern": "^(?:\\.agents/knowledge/README\\.md|docs/00\\.workspace/(?:01\\.project|02\\.architecture|02\\.architecture/01\\.descriptions|02\\.architecture/02\\.decisions|03\\.process|04\\.quality|06\\.maintenance)/README\\.md|\\.agents/prompts/README\\.md|\\.agents/roles/README\\.md|docs/02\\.architecture/02\\.decisions/README\\.md|docs/02\\.architecture/01\\.descriptions/README\\.md|docs/05\\.operations/01\\.guides/README\\.md|docs/05\\.operations/04\\.incidents/README\\.md|docs/05\\.operations/02\\.policies/README\\.md|docs/05\\.operations/03\\.runbooks/README\\.md|docs/90\\.references/(?:01\\.research|02\\.audits|03\\.data)/README\\.md|docs/99\\.templates/02\\.templates/README\\.md|\\.agents/evaluations/(?:harnesses|templates)/README\\.md)$",
+      "path_pattern": "^(?:\\.agents/knowledge/README\\.md|docs/00\\.workspace/(?:01\\.project|02\\.architecture|02\\.architecture/01\\.descriptions|02\\.architecture/02\\.decisions|03\\.process|04\\.quality|05\\.environment|06\\.maintenance)/README\\.md|\\.agents/prompts/README\\.md|\\.agents/roles/README\\.md|docs/02\\.architecture/02\\.decisions/README\\.md|docs/02\\.architecture/01\\.descriptions/README\\.md|docs/05\\.operations/01\\.guides/README\\.md|docs/05\\.operations/04\\.incidents/README\\.md|docs/05\\.operations/02\\.policies/README\\.md|docs/05\\.operations/03\\.runbooks/README\\.md|docs/90\\.references/(?:01\\.research|02\\.audits|03\\.data)/README\\.md|docs/99\\.templates/02\\.templates/README\\.md|\\.agents/evaluations/(?:harnesses|templates)/README\\.md)$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/02.templates/93.common/readme-collection-index.template.md",
       "frontmatter": {
@@ -2310,7 +2310,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The repository README.md and its template.",
         "consumer_paths": [
@@ -2437,7 +2437,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The seven stage READMEs and their template.",
         "consumer_paths": [
@@ -2570,7 +2570,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The fifteen collection READMEs and their template.",
         "consumer_paths": [
@@ -2712,7 +2712,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The 20 implementation READMEs of the code, configuration, agent and provider folders and their template.",
         "consumer_paths": [
@@ -2906,7 +2906,7 @@
           "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every audit pack README under docs/90.references/ and its template; the research, audit and data packs share one form and carry only their own closure section.",
         "consumer_paths": [
@@ -3010,7 +3010,7 @@
           "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every data pack README under docs/90.references/ and its template; the research, audit and data packs share one form and carry only their own closure section.",
         "consumer_paths": [
@@ -3114,7 +3114,7 @@
           "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every research pack README under docs/90.references/ and its template; the research, audit and data packs share one form and carry only their own closure section.",
         "consumer_paths": [
@@ -3214,7 +3214,7 @@
           "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The seven tracked Workspace READMEs under _workspace/ outside the read-only input folder, and their template.",
         "consumer_paths": [
@@ -3316,7 +3316,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The .github/repository-surface.md README and its template.",
         "consumer_paths": [
@@ -3491,7 +3491,7 @@
           "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Audit members under docs/90.references/02.audits/ and their template.",
         "tables": [
@@ -3795,7 +3795,7 @@
           "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Research members under docs/90.references/01.research/ and their template.",
         "tables": [
@@ -4020,7 +4020,7 @@
           "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Data members under docs/90.references/03.data/ and their template.",
         "tables": [
@@ -4271,7 +4271,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every sdlc/architecture-decision document under docs/02.architecture/02.decisions/ or docs/00.workspace/02.architecture/02.decisions/ and its template; an accepted ADR that carries retained_form keeps the seven H2 it was accepted with under the retained form.",
         "consumer_paths": [
@@ -4491,7 +4491,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every sdlc/architecture-description document under docs/02.architecture/01.descriptions/ and its template.",
         "consumer_paths": [
@@ -4773,7 +4773,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every sdlc/plan document under docs/03.specs/ and its template.",
         "consumer_paths": [
@@ -5191,7 +5191,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every sdlc/task document under docs/03.specs/ and its template.",
         "consumer_paths": [
@@ -5601,7 +5601,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every operation/guide document under docs/05.operations/01.guides/ and its template.",
         "consumer_paths": [
@@ -5788,7 +5788,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every operation/incident document under docs/05.operations/04.incidents/ and its template.",
         "consumer_paths": [
@@ -6011,7 +6011,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every operation/policy document under docs/05.operations/02.policies/ and its template.",
         "consumer_paths": [
@@ -6305,7 +6305,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every operation/postmortem document under docs/05.operations/04.incidents/ and its template.",
         "consumer_paths": [
@@ -6506,7 +6506,7 @@
           "docs/00.workspace/04.quality/approval-and-safety.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every operation/runbook document under docs/05.operations/03.runbooks/ and its template.",
         "consumer_paths": [
@@ -6704,7 +6704,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every sdlc/requirement document under docs/01.requirements/ and its template.",
         "consumer_paths": [
@@ -6975,7 +6975,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every sdlc/spec document under docs/03.specs/ and its template.",
         "consumer_paths": [
@@ -7179,7 +7179,7 @@
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The .claude/agents/*.md files under the common/provider-native-metadata profile and their template.",
         "tables": [],
@@ -7278,7 +7278,7 @@
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The .claude/commands/*.md files under the common/provider-native-command profile and their template.",
         "tables": [],
@@ -7368,7 +7368,7 @@
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The .codex/agents/*.toml files under the common/codex-agent-binding profile and their template.",
         "tables": [],
@@ -7483,7 +7483,7 @@
           ".agents/governance/context-and-memory.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Pointer documents under .agents/knowledge/ other than the README and the glossary, and their template.",
         "tables": [],
@@ -7587,9 +7587,9 @@
           ".agents/governance/context-and-memory.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
-        "applicability": "The glossary document docs/00.workspace/01.project/glossary.md and its template.",
+        "applicability": "The common glossary .agents/knowledge/glossary.md, the local glossary docs/00.workspace/01.project/glossary.md, and their shared template.",
         "tables": [
           {
             "name": "Term ID",
@@ -7654,6 +7654,7 @@
           "scripts/validation/repository/form_contracts.py",
           "scripts/validation/repository/quality.py",
           "tests/test_common_form_tree.py",
+          ".agents/knowledge/glossary.md",
           "docs/00.workspace/01.project/glossary.md",
           "tests/test_validate_knowledge_surface.py"
         ],
@@ -7745,7 +7746,7 @@
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Prompt contracts under .agents/prompts/ other than the README, and their template.",
         "tables": [],
@@ -7849,7 +7850,7 @@
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The governance/provider profile document and its template.",
         "tables": [],
@@ -7952,7 +7953,7 @@
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The governance/role profile document and its template.",
         "tables": [],
@@ -8056,7 +8057,7 @@
           "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every governance/rule document under .agents/governance/ and its template.",
         "consumer_paths": [
@@ -8251,7 +8252,7 @@
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every governance/skill workflow under .agents/workflows/ and its template.",
         "consumer_paths": [
@@ -8373,7 +8374,7 @@
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every SKILL.md package under .agents/skills/ and its template.",
         "consumer_paths": [
@@ -8500,7 +8501,7 @@
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "Every AGENTS.md outside docs/98.archive/, the repository root file and the folder files, and its template.",
         "consumer_paths": [
@@ -8792,7 +8793,7 @@
           "docs/00.workspace/04.quality/quality.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The evaluation/task profile documents under .agents/evaluations/ and their template.",
         "tables": [
@@ -8987,7 +8988,7 @@
           "docs/00.workspace/04.quality/quality.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The evaluation/score profile documents under .agents/evaluations/ and their template.",
         "tables": [
@@ -9194,7 +9195,7 @@
           "docs/00.workspace/04.quality/quality.md"
         ],
         "vocabulary_refs": [
-          "docs/00.workspace/01.project/glossary.md"
+          ".agents/knowledge/glossary.md"
         ],
         "applicability": "The evaluation/results profile documents under .agents/evaluations/ and their template.",
         "tables": [

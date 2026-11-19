@@ -1,6 +1,6 @@
 ---
 title: "Work Residue Handoff"
-version: "0.8.0"
+version: "0.9.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-20"
@@ -162,6 +162,26 @@ the one exact-index commit-hook run. The user's current request authorizes
 delivery to `buenhyden/hy-home.k8s`, this branch and `main`; no revocation is
 present. Revert through a normal PR is rollback. No deployment, credentials,
 global setting changes, later prompt or history rewrite is authorized.
+
+#### P03 1.1.0 current authorization
+
+The user's current request selects P03-OWNERSHIP only from the 1.1.0 package,
+including README, D03, fixed decisions, execution contract, questions/sources
+and the k8s profile/findings. Start: clean `codex/p01-ci-routing` in the
+invoking repository-root checkout, common directory `.git`, HEAD `5798fa2b`.
+P00/P01/P02 and the eleven completed streams are retained predecessors.
+This separate current authorization covers common/local vocabulary and its
+registry/validator/router consumers, actual environment preparation ownership,
+the narrow architecture/role corrections and their tests; the original
+Spec/Plan's completed residue-transfer constraints and accepted criteria are
+historical, not authority for this follow-up. Architecture alternatives and
+predecessor obligations remain explicit; new draft states do not manufacture
+acceptance. The user authorizes this agent's commit, push, PR and merge to
+`buenhyden/hy-home.k8s` on this branch and `main`; validity is current and no
+revocation is present. Risk is high for policy/selector consumers, requiring
+focused negative cases and independent review. Revert by normal PR is rollback.
+No native observation, live deployment, credentials, later prompt or history
+rewrite is authorized. This Task remains the evidence owner, not a new ledger.
 
 ## Execution Log
 
@@ -642,6 +662,37 @@ and preserved canonical index bytes. Both measurements use warm prepared
 environments, not cold installs. The ten-file commit is a different scope,
 not a paired speed comparison or proof of the proposed small-input budget.
 
+#### P03 ownership reconciliation
+
+The inventory classifies rule groups by their actual subject, readers and
+enforcement owner; rule bodies stay at those owners. No cross-owner Rule ID
+duplication was found in the inspected policy tables.
+
+| Surface | Subject and readers | Authority and consumer/enforcer | Disposition |
+| --- | --- | --- | --- |
+| docs00/01.project | Workspace purpose and local terminology; people and agents | Local glossary, Stage 99 vocabulary form and knowledge checker | Split common meanings from scoped K8s terms |
+| docs00/02.architecture | Development, validation, memory and harness; design readers | AD-0006, workspace ADRs, profile/link/lifecycle checks | Retain subject split; preserve ADR-0064 obligations in proposed ADR-0065 |
+| docs00/03.process | Human/agent work, document and Git procedure | SDLC/AUTHOR/DOCLIFE; W GIT-R001–010,014–016; registry/lifecycle/QA | Keep rules; update term routing and move only environment preparation |
+| docs00/04.quality | Quality, review, acceptance and protected operations | QUAL/FMT; W SAFE-R001–010,013–016,020–021; selected gates | Retain P01/P02 and existing risk/approval meaning |
+| docs00/05.environment | Reproducible local validation preparation; developers | GDE-0011, existing guide form, hash lock and Git/scripts consumers | Create real owner; no installation or native result inferred |
+| docs00/06.maintenance | Workspace reference maintenance; maintainers | Existing maintenance runbook and current reference owners | Retain |
+| .agents/governance | Shared agent execution and memory; agents | EXEC/CTX/MODEL; A SAFE-R011,012,017–019 and GIT-R011–013; governance/memory checks | Retain execution rules; CTX-R007 points to both meaning owners |
+| .agents/roles,skills,workflows,prompts | Responsibilities, procedures and handoff; agents | Neutral registry, role/skill bodies, lifecycle and prompt readers | Retain; correct architect subject paths and knowledge navigation |
+| .agents/knowledge | Owner routing and shared meanings; both providers | Pointer forms plus common vocabulary form, knowledge checker | One shared definition owner; no copied operating rule |
+| .claude and .codex | Provider-native options and thin adapters; their clients | Existing bindings/settings/config/hooks/rules and shared imports | Retain; static configuration is not native enforcement evidence |
+| docs/02.architecture | GitOps product and deployment interfaces; product readers | AD-0007, product ADRs, manifests and operations | Keep product structure; replace agent description duplication with workspace links |
+
+The predecessor's valid W/A split, architecture subjects, numbered categories,
+shared AD/ADR sequence and stable IDs remain. Its exact bytes were compared
+with Git recovery before removal; AD-0006 records lineage. New ADR-0065,
+common vocabulary and environment guide retain their initial proposed/draft
+states. The current P03 request supplies implementation authority, not their
+acceptance. The existing vocabulary's valid definitions/IDs/row versions move
+once; missing shared terms and local cluster/context/namespace/application
+meanings are added. Stage 99 uses the existing forms, and the checker rejects
+TERM IDs reused across the two files. Native configuration, P02 hook behavior,
+old acceptance cells and all residue obligations remain distinct.
+
 ### Lifecycle Traceability
 
 | Item | Upstream criterion | Result | Evidence |
@@ -689,6 +740,11 @@ not a paired speed comparison or proof of the proposed small-input budget.
 | EVD-031 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | Independent follow-up FIX: both `topic/a` and its NBSP-suffixed ref exist at the same commit before comparing identity | Existing pinned Python/formatter; synthetic Git refs | Focused cache identity RED/GREEN and three cache cases; pinned Ruff format and lint | 0 | PASS | Reviewer reproduced a collision caused by Unicode whitespace stripping. Removing only the trailing Git LF preserves exact ref identity; three cache cases PASS in 3.04s. Receipt commit `f54f26aa` previously passed its document/message hooks in 72.278s, so nonempty small-input latency remains above the proposed 10s goal | false | none |
 | EVD-032 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | PR 335 head `180f550f`, test merge `3ec00d9f`, CI run 44596273387, style-pr job 135815290567 | GitHub Actions pinned runner; job steps and logs API | `python3 -I scripts/run-validation-lane.py --lane affected --plan-file pr-plan.json --combine-documents` | 1 | FAIL | Required PR check blocked merge: two validation-profile expectations still required staged quick-suite parity and cross-lane document regression reuse. Other eleven purpose leaves and style passed. Historical follow-up evidence does not reopen accepted residue criteria; a fresh required CI PASS is still necessary before merge | false | none |
 | EVD-033 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | Correction to the two stale profile expectations from EVD-032, preserving quick/PR regressions and malformed reuse rejection | Existing pinned validation Python and formatter | `python scripts/run-contract-tests.py --root . --suite validation-routing`; focused two-case RED/GREEN; Ruff format/lint | 0 | PASS | Two failures reproduced first; corrected profile tests and all 173 routing cases PASS in 11.988s. Test dynamically identifies regression gates and rejects affected-only change-scoped reuse. This local fix is not a remote CI PASS; observe the new PR head before merge | false | none |
+| EVD-034 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | Delivered P02: PR 335 head `86b35da1`, test merge `35c9f3cd`, CI run 44598399713; integrated `5798fa2b` is this P03 initial HEAD | GitHub required jobs/logs and merge read-back; local Git tree comparison | `python3 -I scripts/run-validation-lane.py --lane affected --plan-file pr-plan.json --combine-documents` | 0 | PASS | Both required checks and all twelve selected purpose leaves PASS; merged tree equals the checked candidate, worktree clean. Later remote success after the initial profile-expectation failure; EVD-032 remains historical, non-required evidence for the original residue criteria | false | none |
+| EVD-035 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | P03 initial `5798fa2b`, same-package D03/k8s evidence and current owner inventory | Git, current file reads, graph-assisted navigation and read-only owner/environment audits | Root/common-dir/branch/HEAD/status; profile-SHA diff; open PR and PR335 merge read-back; policy/role/provider/architecture consumer inventory | 0 | PASS | Inventory above retains K8S-03 and repairs K8S-04 plus actual environment gap. No open PR at intake; P00/P01/P02 and eleven completed streams excluded; no whole-architecture move, final renumber or native success claim | false | none |
+| EVD-036 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P03 vocabulary/owner routes and duplicate-ID checker, new guide/README routes, affected form/generator consumers; final focused cases after pinned formatting | Existing pinned validation Python, Ruff/pre-commit and current registry/profile/knowledge/governance checkers | `python -m unittest tests.test_validate_knowledge_surface tests.test_common_agents_document_routes tests.test_common_form_tree tests.test_document_generator`; final first two modules; focused strict registry/profile/knowledge checks; agent governance | 0 | PASS | Four-module run: 508 cases in 192.614s, four shared base classes intentionally skipped while subclasses execute; final focused 32 PASS in 1.379s. Two new duplicate/route RED cases became GREEN. Registry, knowledge, profile and governance PASS. Direct template-link and stale owner navigation findings fixed. Untracked new/deleted inventory prevents final link/lifecycle verdict until staged QA; an architect snapshot command returned no captured result, its process ended, and no PASS is inferred | false | none |
+| EVD-037 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | P03 code, registry, new docs, changed owners and Task authority/inventory/evidence on initial `5798fa2b` | Independent code-reviewer and security-auditor, separate read-only contexts | Core-diff checklist: scope/requirements, single owners, consumer routes, term preservation, removed checks, authority, secrets, recovery and acceptance boundaries | none | PASS | Both reviewers report no remaining BLOCK/FIX after correcting product/root glossary navigation and local vocabulary authoring roles. Existing term definitions/IDs/row versions preserved; no binding, native permission, manifest, secret or CI permission change. New artifacts retain draft/proposed states; review and implementation authority do not grant their acceptance | false | none |
+| EVD-038 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | First P03 exact 29-path index before Task record portability/resolution correction | Installed staged hook and pinned validation venv | `git commit -m 'refactor: separate shared and local governance owners'` invokes `python3 scripts/qa.py staged` | 1 | FAIL | Commit blocked: lifecycle rejected the new non-required evidence resolution edge; repository quality rejected the new host-specific checkout path. Other selected content, secret and style checks passed. Correct only the Task input and restage before a fresh hook result; original evidence and acceptance cells stay unchanged | false | none |
 
 ### Resolution Links
 
@@ -751,20 +807,19 @@ The Plan promotes no durable contract.
 
 ### Next Owner
 
-Current handoff: P02 implementation, focused local verification, independent
-reviews, exact-index commit and post-change hook measurements are EVD-025 to
-EVD-033. This receipt receives its own selected document commit hook; hosted
-and merge results are reported on the actual delivery. P00/P01 remain retained
-through EVD-015 to EVD-024 and PR 331 to PR 334. User acceptance of P00/P01/P02
-is separate and is not inferred from implementation, tests or merge.
-The next input is
-`_workspace/workspace_governance_remediation_1_1_0_20261120/prompts/P03-OWNERSHIP.md`,
-using delivered P00/P01 and P02's actual local feedback result. Do not execute
-P03 automatically. Q-01 to Q-04 remain resolved. Keep this input package
-through P17, other active work, persistent memory and reusable QA cache.
-Cold installation, IDE experience, native provider delivery and live cluster
-guarantees are not established by these local samples. The 1.0.0 handoff below
-is historical context only.
+Current handoff: P03 owner changes, retained boundaries and focused verification
+are recorded above. Final exact-index document/link/lifecycle checks, independent
+review and actual delivery are recorded with their observed results. P00/P01
+remain retained through EVD-015 to EVD-024 and PR 331 to PR 334; P02 delivery is
+EVD-034 and PR 335. New common vocabulary and GDE-0011 remain draft; ADR-0065
+remains proposed. Their acceptance and P03 user acceptance are not inferred
+from implementation, tests or merge. No environment installation, provider
+runtime or live cluster result is claimed. The next input is
+`_workspace/workspace_governance_remediation_1_1_0_20261120/prompts/P04-TEMPLATES.md`,
+using delivered P00/P01/P02 and this P03 ownership result. Do not execute P04
+automatically. Q-01 to Q-04 remain resolved. Keep this package through P17,
+other active work, persistent memory and reusable QA cache. The 1.0.0 handoff
+below is historical context only.
 
 Inline timing/profiling left no script or raw trace. The synthetic message
 was deleted, fixture/private-snapshot directories clean up on exit and no

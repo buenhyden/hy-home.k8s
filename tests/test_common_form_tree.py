@@ -4805,7 +4805,7 @@ class LocalReadmeForm(unittest.TestCase):
                 )
                 self.assertEqual(
                     definition_["vocabulary_refs"],
-                    ["docs/00.workspace/01.project/glossary.md"],
+                    [".agents/knowledge/glossary.md"],
                 )
                 paths = definition_["consumer_paths"]
                 self.assertEqual(len(paths), len(set(paths)))
@@ -6043,7 +6043,7 @@ class RequirementFormTests(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            definition_["vocabulary_refs"], ["docs/00.workspace/01.project/glossary.md"]
+            definition_["vocabulary_refs"], [".agents/knowledge/glossary.md"]
         )
 
     def test_a_complete_document_passes_and_quality_requirements_is_required(
@@ -6446,7 +6446,7 @@ class ArchitectureFormTests(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            definition_["vocabulary_refs"], ["docs/00.workspace/01.project/glossary.md"]
+            definition_["vocabulary_refs"], [".agents/knowledge/glossary.md"]
         )
 
     def test_a_complete_document_passes_with_and_without_rows_or_lineage(self) -> None:

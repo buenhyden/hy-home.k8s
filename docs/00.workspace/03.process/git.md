@@ -1,6 +1,6 @@
 ---
 title: "Git Policy"
-version: "2.13.0"
+version: "2.13.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -139,15 +139,13 @@ prevent, so widening it to a new hook means adding the matching entry rather
 than assuming the chain already covers the name.
 
 The workspace hook runs with one pinned validation environment first on
-`PATH`, named by the Git option `hyhome.validationVenv`. Build it once per
-account, outside every checkout, from the hashed lock:
-
-```bash
-umask 022 && python3 -m venv "$HOME/.venvs/hyhome-validation"
-"$HOME/.venvs/hyhome-validation/bin/python" -m pip install --only-binary :all: \
-  --require-hashes -r .github/requirements/ci-validation.txt
-git config --global hyhome.validationVenv "$HOME/.venvs/hyhome-validation"
-```
+`PATH`, named by the Git option `hyhome.validationVenv`. Prepare the
+account-owned environment outside every checkout from the hashed lock using
+the [local validation environment guide](../05.environment/0011-local-validation-environment.md).
+Connect the prepared environment to the hook with
+`git config --global hyhome.validationVenv "$HOME/.venvs/hyhome-validation"`
+after reviewing the existing option and the applicable authority. Git owns
+this hook connection; the guide owns environment preparation.
 
 The chain refuses the workspace hook with `HOOK-ENV` when the option is unset
 or empty, or when the environment lies inside a worktree. It also refuses an

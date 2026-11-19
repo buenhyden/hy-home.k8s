@@ -1,10 +1,10 @@
 ---
 title: "Domain Index"
-version: "0.2.0"
+version: "0.3.0"
 type: "governance/knowledge"
 status: "draft"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-11-20"
 ---
 
 # Domain Index
@@ -35,6 +35,7 @@ and the row is stale.
 | Application onboarding | `gitops/workloads/` | `docs/05.operations/02.policies/README.md` | New workloads enter through the onboarding path rather than direct cluster change |
 | Documents, profiles and templates | `docs/99.templates/` | `docs/99.templates/README.md` | One profile owns each physical document form |
 | Validation routing and gates | `scripts/validation/` | `scripts/README.md` | Validator routing stays declarative and registry-owned |
+| Local validation environment | `docs/00.workspace/05.environment/` | `docs/00.workspace/05.environment/README.md` | The hashed validation lock and external-checkout tool environment remain the preparation inputs |
 | Agent responsibilities and permissions | `.agents/roles/` | `.agents/roles/README.md` | The registry stays the single source for roles and permission classes |
 
 ## Validation and Refresh

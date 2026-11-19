@@ -221,13 +221,18 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
         )
         self.assertNotIn("KNOWLEDGE-INDEX-MISSING", self.codes())
 
-    def write_glossary(self, common: str, local: str = "") -> None:
+    def write_glossary(
+        self,
+        common: str,
+        local: str = "",
+        path: str = "docs/00.workspace/01.project/glossary.md",
+    ) -> None:
         header = (
             "| Term ID | Term | Korean | Definition | Not to Confuse | Policy Owner "
             "| Contract Version |\n| --- | --- | --- | --- | --- | --- | --- |\n"
         )
         self.write_readme()
-        glossary = self.root / "docs/00.workspace/01.project/glossary.md"
+        glossary = self.root / path
         glossary.parent.mkdir(parents=True, exist_ok=True)
         glossary.write_text(
             FRONTMATTER.replace("governance/knowledge", "governance/vocabulary")
@@ -245,11 +250,31 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
         return f"| {term_id} | Term | 용어 | A short meaning. | Other | `{owner}` | 1.0.0 |"
 
     def test_workspace_glossary_is_checked_where_it_lives(self) -> None:
-        # The common vocabulary moved to docs/00.workspace/01.project (Q07):
-        # a defect there must surface, not pass because nothing was read.
+        # Local definitions still need the same validation as common terms.
         self.write_glossary(self.term("TERM-ONE"), self.term("TERM-ONE"))
         self.assertIn("KNOWLEDGE-TERM-DUPLICATE", self.codes())
-        self.assertFalse((self.surface / "glossary.md").exists())
+
+    def test_common_glossary_is_checked_as_vocabulary(self) -> None:
+        self.write_glossary(
+            self.term("TERM-COMMON", "absent/POLICY.md"),
+            path=".agents/knowledge/glossary.md",
+        )
+        self.assertIn("KNOWLEDGE-PATH-MISSING", self.codes())
+        self.assertNotIn("KNOWLEDGE-POINTER-EMPTY", self.codes())
+
+    def test_duplicate_term_id_across_physical_glossaries_fails(self) -> None:
+        self.write_glossary(self.term("TERM-SHARED"))
+        self.write_glossary(
+            self.term("TERM-SHARED"), path=".agents/knowledge/glossary.md"
+        )
+        self.assertIn("KNOWLEDGE-TERM-DUPLICATE", self.codes())
+
+    def test_common_glossary_rejects_malformed_contract_version(self) -> None:
+        self.write_glossary(
+            self.term("TERM-COMMON").replace("1.0.0", "v1.0"),
+            path=".agents/knowledge/glossary.md",
+        )
+        self.assertIn("KNOWLEDGE-CONTRACT-VERSION", self.codes())
 
     def test_valid_vocabulary_passes(self) -> None:
         self.write_glossary(self.term("TERM-ONE"), self.term("TERM-LOCAL-TWO"))
