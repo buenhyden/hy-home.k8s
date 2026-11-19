@@ -43,9 +43,9 @@ target. Input revision: `4b2b670d` on branch `claude/q07-workspace-cutover`.
 
 | Item | Work Unit | Owner | Status | Blocker |
 | --- | --- | --- | --- | --- |
-| WORK-001 | WORK-001 | platform | in-progress | none |
-| WORK-002 | WORK-002 | platform | in-progress | none |
-| WORK-003 | WORK-003 | platform | in-progress | none |
+| WORK-001 | WORK-001 | platform | completed | none |
+| WORK-002 | WORK-002 | platform | completed | none |
+| WORK-003 | WORK-003 | platform | completed | none |
 
 A one-time script outside the tree ran `git mv` for 152 tracked files and
 recomputed relative links and repository-root path strings, protecting
@@ -147,15 +147,16 @@ EVD-010 resolves EVD-005 and EVD-009. EVD-001, EVD-006 and EVD-007 are non-requi
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [VAL-CUTOVER-001](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [VAL-CUTOVER-002](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [VAL-CUTOVER-003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
+| [VAL-CUTOVER-001](../spec.md#criteria) | accept | accepted | EVD-002, EVD-011, EVD-012 | User message of 2026-11-19 in this session accepting VAL-CUTOVER-001 to VAL-CUTOVER-003 | user | platform | none |
+| [VAL-CUTOVER-002](../spec.md#criteria) | accept | accepted | EVD-003, EVD-008 | User message of 2026-11-19 in this session accepting VAL-CUTOVER-001 to VAL-CUTOVER-003 | user | platform | none |
+| [VAL-CUTOVER-003](../spec.md#criteria) | accept | accepted | EVD-004, EVD-010 | User message of 2026-11-19 in this session accepting VAL-CUTOVER-001 to VAL-CUTOVER-003 | user | platform | none |
 
 ### Remaining Conditions
 
-The user's acceptance of VAL-CUTOVER-001 to VAL-CUTOVER-003. SDLC-H01 is
-terminal here (EVD-010); DOC-H01 stays open here for ID renumbering and Stage
-98 disposal under Q07-CUTOVER. Push and pull request stay with the user.
+The user accepted VAL-CUTOVER-001 to VAL-CUTOVER-003 on 2026-11-19.
+SDLC-H01 is terminal here (EVD-010); DOC-H01 stays open here for ID
+renumbering and Stage 98 disposal under Q07-CUTOVER, so this package remains
+the host of that residue. Push and pull request stay with the user.
 
 ## Handoff
 
@@ -166,8 +167,7 @@ Document move rule: DOCLIFE-R023 is in force in the
 
 ### Next Owner
 
-Every item has PASS evidence and stays in-progress until the user accepts its
-criterion, since a completed Task requires accepted criteria; the local staged
-QA of each commit passed, and no hosted, provider or cluster check ran (not in scope). The user
+Every item is completed with PASS evidence and an accepted criterion; the
+local staged QA of each commit passed, and no hosted, provider or cluster check ran (not in scope). The user
 owns criterion acceptance, push and pull request. Q07-CUTOVER keeps DOC-H01
 (document ID renumbering and Stage 98 disposal) after Q07-H01.
