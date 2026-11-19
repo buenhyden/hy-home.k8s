@@ -1,6 +1,6 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.50"
+version: "0.2.51"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -331,6 +331,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-216 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W10-PARALLEL real runs on this repository with shell workers | `python3 scripts/work_parallel.py run` on HEAD `891c9deb`, with the real brief preflight, three units each running a test module and appending to `scripts/README.md`, `tests/README.md` or `infrastructure/README.md`; 12 CPUs, 31 GiB; 2026-11-19 | PASS | The brief's first revision was refused for all units with `PARALLEL_BRIEF: material input changed` after this branch edited `scripts/README.md`, so the preflight stops a stale brief on the real path; revision 2 with current hashes ran. With units `a` and `c` sharing `k3d:test-cluster`, parallel runs took 7.68 and 7.56 seconds and serial runs 8.63 and 8.91 seconds, and `c` started only after `a` ended. Without the shared resource, parallel runs took 6.95 and 7.43 seconds and serial runs 8.45 and 8.29 seconds. Every elapsed time includes clone setup of 1.1 to 1.5 seconds and integration of 0.6 to 0.9 seconds; all runs completed with integration PASS. N is 2 per mode, so the gain of about 13 to 14 percent describes this host and plan only. A SIGTERM to a run cancelled every unit, skipped integration and left no recorded process or clone. A SIGKILL of the dispatcher left both workers running; `sweep` then killed them and removed the run directory. The source checkout was never written. No service, cluster or container was started. | false | none |
 | EVD-217 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W10-PARALLEL git trust hardening after the merge of PR #316 | Branch `claude/w10-parallel-hardening` from `5a09f407`; `python3 tests/test_work_parallel.py`, plainly, with SIGINT and SIGTERM blocked, and through the lane's bounded runner, 2026-11-19 | PASS | An automated security review of the pushed change raised two MEDIUM findings. First, a worker owns its clone's `.git`, so a setting such as `diff.noprefix` or an attributes file could make the ownership list and the patch disagree. Second, the list and the patch came from separate reads, and the patch file sits beside the clones, where a later worker can reach it. The second was confirmed: a dependent unit rewrote its upstream unit's patch to change `src.txt`, and integration applied it with PASS. Failing tests came first. Now an attempt whose `.git/config` or `.git/info` changed is refused with `PARALLEL_GITCONFIG`. One `write-tree` snapshot feeds both the list and the patch, through `diff-tree` with pinned diff settings. The integrator rereads each patch's paths with `git apply --numstat` in its own clean clone and refuses one that leaves its unit's owned paths. 29 tests pass in all three runs. | false | none |
 | EVD-218 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W10-PARALLEL integration check on applied paths after PR #317 | Branch `claude/w10-parallel-applied-check` from `0a58cf1d`; `python3 tests/test_work_parallel.py`, plainly, with SIGINT and SIGTERM blocked, and through the lane's bounded runner; one real `run` of the shared-lock plan with brief revision 3, 2026-11-19 | PASS | A second automated security review raised one HIGH and two MEDIUM findings on EVD-217. HIGH: the integrator's `git apply --numstat` reading of a patch can be misled by rename or copy headers. MEDIUM: the integrator checked the patch file and then applied it from disk again. MEDIUM: the `.git` digest was taken after the worker started, so a worker could change the baseline it was compared with. The HIGH finding was confirmed: a dependent unit rewrote its upstream unit's patch into a rename of the unowned `src.txt` onto the upstream's new file, and integration passed. A failing test came first. Now the integrator reads each patch once, within the 16 MiB bound, and applies those bytes through stdin. It then checks the paths that `diff-tree` reports between its index trees before and after, and refuses one outside the unit's owned paths. The digest is taken before the worker starts. The dispatcher's git ignores replace refs and global config. 30 tests pass in all three runs, and the real run completed with integration PASS in 7.53 seconds. | false | none |
+| EVD-219 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W10-REVIEW rules, review packet and `review_delta.py` | Branch `claude/w10-review` from `d1f53d99`; `python3 tests/test_review_delta.py` and `python3 -m unittest tests.test_prompt_input`, 2026-11-19 | PASS | Test-first: 6 cases failed with the module missing, then passed. One packet review by a `code-reviewer` sub-agent in a separate context took 67.7 seconds and about 45.7k tokens, with 9 tool calls. It found 1 BLOCK: `tasks/CLAUDE.md` passed as evidence, confirmed by running the regex. It also found 4 FIX and 2 NOTE: status `M` accepted deletions, the rules claimed more than the tool does, the low checklist lost two items, and missing requirements were not covered. Each was fixed with failing tests first. A re-review of only the fix delta, under the new QUAL-R054, took 43.5 seconds and about 14k more tokens, with 6 tool calls. It confirmed 5 findings resolved and 2 partly resolved, and found 1 new FIX: a deleted line starting with `--` was read as a diff header. An automated security review flagged the same root cause in parsing diff text, through binary output. Growth is now read from the two blobs with `difflib`; a NUL fails, only front matter `version` and `updated` lines may be deleted, and ledger keys other than `entries` must stay equal. That last fix was verified by its counterexample tests, not by another review. 12 review-delta and 24 prompt-input tests pass. | false | none |
+| EVD-220 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W10-REVIEW review measurements and native reviewer write probe | Earlier review rows EVD-195, EVD-202, EVD-205, EVD-208, EVD-213, EVD-215, EVD-217 and EVD-218; `review_delta.classify` over the last 300 non-merge commits of `main`; a `code-reviewer` sub-agent probe on Claude Code 2.1.327, 2026-11-19 | PASS | Before this change, six tasks each had one independent review round, and every BLOCK was confirmed by a reproduction; no false block is recorded. W10-PARALLEL's review, without a packet, took 250 seconds and about 79.7k tokens and found 2 BLOCK and 10 FIX. It missed 2 defects that staged QA found, and 2 bypasses that automated security reviews found only after push, which cost two more pull requests. The packet review above covered a smaller change, so its cost is not comparable as an improvement; N is 1. Of the last 300 commits, 89 touched only Task or ledger paths, but only 11 kept their evidence growth-only, so `EVIDENCE_ONLY` spares a review rarely and never for an edited row. In the probe, the `read-only-evidence` reviewer had no Write or Edit tool, and its Read passed. Its shell writes passed with exit 0 inside the checkout, in the ignored `.workspace-test/review-probe.txt`, and outside it, in the scratchpad. No hook refused them, matching SAFE-R018: a shell write is observed, not blocked. Removing the two 6-byte probe files was refused by the permission settings, so they remain. | false | none |
 
 #### Edition Delta
 
@@ -3363,6 +3365,44 @@ the store at the merge.
 | Real provider workers (`claude -p`, `codex exec`) | RUNTIME_ONLY by the user's choice | W10-H02 | user, W10 |
 | Worker-controlled git settings and a patch swapped before integration | CHANGED after the merge: refused, and the applied paths rechecked | EVD-217, EVD-218 | none |
 | OS containment of a worker: `setsid`, writes outside its clone, total disk use | Limit recorded: a clone separates files only | W10-H03 | W10 |
+
+#### W10-REVIEW (4.2.0)
+
+The 2026-11-19 request applies the 4.2.0 W10-REVIEW prompt from merged
+`d1f53d99`, after W10-PARALLEL at the user's chosen order. The designs read
+were D05, D04 and D17, with D25 for the open items, and decision Q08. The
+prerequisite W01-CONTRACT is complete.
+
+**Investigation.** Review is called by the semantic review contract in
+`quality.md`, the `code-reviewer` and specialist roles, the `change-review`
+prompt contract and work-lifecycle Completion. Hosted CI calls no review.
+QUAL-R015 already required an independent review for a high-risk change and
+an author check for a low one, so row 18 of the W02 rule table is settled.
+QUAL-R018 still required the full checklist for every change, which row 19
+names. There was no rule for grading a finding that needs a specific input,
+for scoping a re-review, or for evidence-only commits, and no review packet.
+
+**Design.** The rules carry the meaning and the existing prompt contract
+carries the packet; no new reviewer role or paid call is added.
+`scripts/review_delta.py` makes the evidence-only exception mechanical,
+because a prose exception could hide a behavior change. The rejected
+alternative, comparing only file names, let `tasks/CLAUDE.md` and deleted
+rows through.
+
+**Prior forecast for this work.** Store record 9, digest `d84de4c6d252`, fixed
+at 2026-11-19T00:30Z: elapsed from branch creation to merge, P30 70, P50 100
+and P80 150 minutes, uncalibrated with N 1.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| W02 row 18, QUAL-R015 independent review for high risk | KEEP: already in force | `quality.md` | none |
+| W02 rows 19 and 22, QUAL-R018 checklist and recovery for low risk | CHANGED: author checklist, revert as recovery | EVD-219 | none |
+| Reachable-input findings, missing requirements, taste, duplicates | CHANGED: QUAL-R053 | EVD-219 | none |
+| Re-review scope and evidence-only commits | CHANGED: QUAL-R054 and `review_delta.py` | EVD-219, EVD-220 | none |
+| One review packet, no repeated PASS, measured review time | CHANGED: QUAL-R055 and `change-review` 0.2.0 | EVD-219 | none |
+| Read-only reviewer write refusal | Observed: no structured write tool; shell writes pass, as SAFE-R018 states | EVD-220 | none |
+| Review cost before and after | Measured, N 1 per side, not comparable as a gain | EVD-220 | none |
+| User acceptance of the high-risk W10-PARALLEL change | Requested in the completion report; never inferred from merge | QUAL-R022 | user |
 
 ### Resolution Links
 

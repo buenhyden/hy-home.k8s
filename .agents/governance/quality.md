@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "3.2.0"
+version: "3.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-19"
 ---
 
 # Quality and Evidence Policy
@@ -53,7 +53,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | QUAL-R015 | Always | Record the risk class, the applicable checks, a core-diff checklist over the exact snapshot, and the owner's acceptance and applicable recovery evidence. Low-risk changes use focused checks and the author's review. High-risk changes require review by an independent human or authorized reviewer who did not write the change. Record the review inputs, outcome and any unresolved finding. The independent review grants no execution permission or user acceptance. Choose a reviewer within the approved budget. This rule requires no paid model call or standing multiple-reviewer requirement. For an approved irreversible transition, record the applicable pre-transition and forward-correction checks in place of a recovery route for its authorized removal targets. | Semantic review | none |
 | QUAL-R016 | Always | Record the risk class in the existing handoff evidence: `low` for a document-only change outside policy, registry, validator, hook, workflow and permission files; `medium` for a policy, registry, template, validator or test change; `high` for a permission, secret-handling, hook, workflow, protected-action or data-loss path. A disputed class takes the higher one. | Semantic review | none |
 | QUAL-R017 | Always | Run the applicable checks selected by the validation registry. Automation establishes only what those checks cover. | `scripts/qa.py` | none |
-| QUAL-R018 | Always | Complete the core-diff checklist against the actual diff, current owners, acceptance criteria and command results, not the author's summary: acceptance and implementation alignment, document completion or supersession, one writer per file, consistency with current contracts and policies, removed or weakened checks, secret exposure and the applicable recovery path (rollback commit or bounded procedure). For approved final removal targets, record candidate validation, exact scope and the stop or forward-correction procedure from Rule 15. A `high` change also lists each changed permission, trigger and protected action. | Semantic review | none |
+| QUAL-R018 | Always | For a `low` change, the core-diff checklist is the author's check of the actual diff for acceptance alignment, scope, consistency with current contracts and policies, one writer per file, secret exposure and removed or weakened checks, and reverting its commit is the recovery path. For a `medium` or `high` change, complete the full core-diff checklist against the actual diff, current owners, acceptance criteria and command results, not the author's summary: acceptance and implementation alignment, document completion or supersession, one writer per file, consistency with current contracts and policies, removed or weakened checks, secret exposure and the applicable recovery path (rollback commit or bounded procedure). For approved final removal targets, record candidate validation, exact scope and the stop or forward-correction procedure from Rule 15. A `high` change also lists each changed permission, trigger and protected action. | Semantic review | none |
 | QUAL-R019 | Always | Grade every finding `BLOCK`, `FIX` or `NOTE`. `BLOCK` is a correctness, security or data-loss defect or a violation of a current contract or policy; it must be fixed before merge. `FIX` should be fixed, in the same change or in a tracked follow-up with a named owner. `NOTE` is informational. A `BLOCK` from an optional review blocks in the same way until fixed or dispositioned by the owner. | Semantic review | none |
 | QUAL-R020 | Always | Record the checked snapshot, check results, risk class, checklist outcome, findings, the reviewing role and identity when independent review is required, and the disposition in the existing handoff evidence. The writer repairs findings and refreshes the affected checks and checklist after changes. Reuse unchanged evidence under the validation lane contract. | Semantic review | none |
 | QUAL-R021 | For a pull request | For a pull request, complete the checklist over the final diff of the exact head. | Semantic review | none |
@@ -88,6 +88,9 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | QUAL-R050 | Always | residual risk and next owner. | Semantic review | none |
 | QUAL-R051 | Where byte identity is the security contract | Retain immutable identities where byte identity is the security contract: pinned external Actions/hooks, resolved dependency artifacts, or Git-backed recovery objects. Their owning contract records purpose and refresh/recovery procedure. Branch HEADs, current docs, local validators, and inventory counts are not policy pins. | `github-actions-security` | none |
 | QUAL-R052 | When one run serves both verification and validation | One observed run may give both verification and validation only when its input and guarantee cover both. The Task cites that one evidence row for both and states what each purpose checked and why the run's input suffices. Replaying the same check only to fill the second name is the replay [QUAL-R001](#requirements) forbids, and a run that covers only one purpose leaves the other open. | Semantic review | none |
+| QUAL-R053 | When a finding is graded | Grade a finding by its location, the current contract it breaks, a counterexample and its impact. A defect reproduced on an input that the current contract, configuration or deployment accepts is `BLOCK` or `FIX` by that impact; needing a specific or crafted input never lowers it to `NOTE`. A missing required item is graded by the contract it breaks and is never omitted. A suspicion with neither a reproduction nor a reachable input is recorded with its uncertainty, not as `BLOCK`; a security suspicion is escalated to its owner, not dropped. A preference with no failure condition is `NOTE` and blocks nothing. Report one finding per root cause; a number of findings or comments is never a review target. | Semantic review | none |
+| QUAL-R054 | When a reviewed change changes again | Review again only what changed after the reviewed commit and the findings that change touches; widen to the whole change when a permission or security boundary, the base or the history changes. A later commit that only adds evidence keeps the review once `scripts/review_delta.py --reviewed <commit>` reports `EVIDENCE_ONLY` (Task records and the residue ledger that only grow), and that result is recorded instead of a new review. Editing an existing Task row, or closing a ledger entry, is a change to review. The tool classifies changed paths only; widening to transitive impact or a whole boundary is the reviewer's judgment. A changed SHA alone never orders a new review pass. The same reviewer under another label, or the author rerunning their own role, is not an independent review. | `scripts/review_delta.py` | none |
+| QUAL-R055 | When a review runs | Give the reviewer one packet, as the [change-review prompt contract](../prompts/change-review.md) lists: candidate commit and base, changed paths, acceptance IDs, risk class, the check results already observed on that candidate and the scope left unreviewed. The reviewer reruns a check only to test a finding, never to repeat a recorded PASS. Record, when observed, the review's wait, context loading, active review and rerun time separately, and the findings by grade with how many were confirmed, false or duplicates. A reviewer with a shell is read-only by policy, not by enforcement ([SAFE-R018](approval-and-safety.md#execution-controls)). | Semantic review | none |
 
 | Rule ID | Level | Status |
 | --- | --- | --- |
@@ -143,6 +146,9 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | QUAL-R050 | required | active |
 | QUAL-R051 | required | active |
 | QUAL-R052 | required | active |
+| QUAL-R053 | required | active |
+| QUAL-R054 | required | active |
+| QUAL-R055 | required | active |
 
 #### Validation lane contract
 
