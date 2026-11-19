@@ -125,10 +125,11 @@ proposed until the user accepts it.
 | EVD-007 | [VAL-CUTOVER-002](../spec.md#criteria) | WORK-002 | automated | `RelocationGuardTest` and the relocation case of `CumulativeLifecycleHistoryTest` against the `4b2b670d` validator | pinned `hyhome-validation` venv | `python -m unittest tests.test_document_lifecycle_cumulative_history -k relocation -k Relocation` | 1 | FAIL | one failure and three errors: moves refused, guard helpers absent | false | none |
 | EVD-008 | [VAL-CUTOVER-002](../spec.md#criteria) | WORK-002 | automated | Same tests after the three fixes, and the whole module | pinned `hyhome-validation` venv | `python -m unittest tests.test_document_lifecycle_cumulative_history` | 0 | PASS | this Task | true | none |
 | EVD-009 | [VAL-CUTOVER-003](../spec.md#criteria) | WORK-003 | automated | Staged cutover index against `4b2b670d`, including the workspace architecture split | pinned `hyhome-validation` venv | `python3 scripts/qa.py staged` | 1 | FAIL | 23 of 24 gates PASS; `selected-nonstyle` fails because detect-secrets reads the trusted HEAD `.secrets.baseline`, which names the pre-move paths of 17 unchanged findings. Stage 99 rule 6 needs the baseline commit first | true | none |
+| EVD-010 | [VAL-CUTOVER-003](../spec.md#criteria) | WORK-003 | automated | Exact index of commit `8557aa8e` on `0806c3b0`, whose `.secrets.baseline` names the moved paths | pinned `hyhome-validation` venv; the `staged-qa` pre-commit hook | `python3 scripts/qa.py staged` | 0 | PASS | commit `8557aa8e`; every selected gate, `selected-nonstyle` included, passed in the hook | true | EVD-005, EVD-009 |
 
 ### Resolution Links
 
-No required failure is open; EVD-001, EVD-006 and EVD-007 are non-required observations followed by EVD-004 and EVD-008.
+EVD-010 resolves EVD-005 and EVD-009. EVD-001, EVD-006 and EVD-007 are non-required observations followed by EVD-004 and EVD-008.
 
 ## Acceptance Decision
 
@@ -142,9 +143,7 @@ No required failure is open; EVD-001, EVD-006 and EVD-007 are non-required obser
 
 ### Remaining Conditions
 
-The `.secrets.baseline` path update committed alone before the cutover commit
-(Stage 99 rule 6), then a staged QA rerun that closes EVD-009 and EVD-005; the
-user's approval of the Spec and Plan, acceptance of the criteria and of
+The user's approval of the Spec and Plan, acceptance of the criteria and of
 ADR-0064; then the residue rows SDLC-H01 (closed by this change) and DOC-H01
 (narrowed to ID renumbering, history rewrite and Stage 98 disposal) in the
 SPEC-0223 Task. Push and pull request stay with the user.
