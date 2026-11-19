@@ -13,26 +13,24 @@ from document_contracts import (  # noqa: E402
     TaskExecution,
     task_contract_issues as _task_contract_issues,
     task_evidence_issues as _task_evidence_issues,
-    task_recorded_row,
 )
+from tests.task_rows import core_row  # noqa: E402
 
 
-# The fixtures below are rows of a Task recorded under the SPEC-0203 header; the
-# rules read them as the transition adapter hands them over (SPEC-0222).
+# The fixtures below use the compact SPEC-0203 names; `core_row` renames them to
+# the core names the rules read.
 def task_contract_issues(works, checks, decisions, status, binding):
     return _task_contract_issues(
-        [task_recorded_row("traceability", row) for row in works],
-        [task_recorded_row("evidence", row) for row in checks],
-        [task_recorded_row("acceptance", row) for row in decisions],
+        [core_row("traceability", row) for row in works],
+        [core_row("evidence", row) for row in checks],
+        [core_row("acceptance", row) for row in decisions],
         status,
         binding,
     )
 
 
 def task_evidence_issues(rows, binding):
-    return _task_evidence_issues(
-        [task_recorded_row("evidence", row) for row in rows], binding
-    )
+    return _task_evidence_issues([core_row("evidence", row) for row in rows], binding)
 
 
 FIRST = "[VAL-P03-001](../spec.md#criteria)"

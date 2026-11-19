@@ -58,9 +58,7 @@ Canonical sources are the documents linked or named in the opening paragraph and
 4. Task evidence is append-only. Keep every recorded `EVD-###` row and its
    factual fields unchanged; add a new row whose `Resolves` cell names the
    row it closes. Never rewrite completed evidence to fit a later form. A
-   Task's tables are read under the header the Task recorded or under the
-   core header of the registry, never a mixture; recorded rows are never
-   rewritten to the core header, and a new Task uses the core header.
+   Task's tables are read only under the core header of the registry.
 5. Record only observed results with their exact revision or run identity.
    An unobserved hosted or live check stays `NOT_RUN` or `DEFER` with a named
    next owner.

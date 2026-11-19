@@ -737,10 +737,7 @@ def _task_profile(registry: Registry | None) -> DocumentProfile | None:
 
 def _work_scope(rows: Sequence[Mapping[str, str]]) -> tuple[tuple[str, ...], ...]:
     return tuple(
-        tuple(
-            row.get(key, "")
-            for key in ("Item", "Upstream criterion", "Work item", "Owner")
-        )
+        tuple(row.get(key, "") for key in ("Item", "Upstream criterion", "Owner"))
         for row in rows
     )
 

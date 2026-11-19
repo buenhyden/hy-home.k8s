@@ -18,9 +18,9 @@ from document_contracts import (  # noqa: E402
     extension_name,
     load_registry,
     local_extension_names,
-    task_recorded_row,
     validate_registry,
 )
+from tests.task_rows import core_row  # noqa: E402
 from document_lifecycle import (  # noqa: E402
     LifecycleDocument,
     LifecycleEvidenceContext,
@@ -84,11 +84,10 @@ class TaskHistoryRetentionTests(unittest.TestCase):
             "Required": "yes",
             "Resolves": "none",
         }
-        # Rows of a Task recorded under the SPEC-0203 header, as the transition
-        # adapter reads them (SPEC-0222).
-        changed = task_recorded_row("evidence", base_check | (evidence_changes or {}))
-        base_work = task_recorded_row("traceability", base_work)
-        base_check = task_recorded_row("evidence", base_check)
+        # Fixture rows renamed to the core names the rules read.
+        changed = core_row("evidence", base_check | (evidence_changes or {}))
+        base_work = core_row("traceability", base_work)
+        base_check = core_row("evidence", base_check)
         proposed = () if drop else (tuple(changed.items()),)
         document = LifecycleDocument(path, "sdlc/task", "blocked")
         view = LifecycleEvidenceDocument(
@@ -246,12 +245,12 @@ class SpecPlanAuthorityTests(unittest.TestCase):
             'artifact_id: "SPEC-0999-TSK-0001"\n'
             'parent_ids: ["SPEC-0999-PLAN-0001"]\n---\n\n'
             "# Example Task\n\n## Verification Evidence\n\n### Results\n\n"
-            "| Evidence ID | Consumer | Work Unit | Command | Input | Result | Location | Required | Resolves |\n"
-            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
-            f"| EVD-001 | {CRITERION} | WORK-001 | Independent semantic review | {prior_review_input} | PASS | older synthetic review | yes | none |\n"
-            f"| EVD-002 | {CRITERION} | WORK-001 | Spec/Plan first-record approval | {prior_approval_input} | PASS | older synthetic approval | yes | none |\n"
-            f"| EVD-003 | {CRITERION} | WORK-001 | Independent semantic review | {review_input} | PASS | current synthetic reviewer receipt | yes | none |\n"
-            f"| EVD-004 | {CRITERION} | WORK-001 | Spec/Plan first-record approval | {approval_input} | PASS | synthetic chat reply | yes | none |\n"
+            "| Evidence ID | Criteria | Work Unit | Method | Input | Tool and Config | Command | Exit | Result | Location | Required | Resolves |\n"
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+            f"| EVD-001 | {CRITERION} | WORK-001 | review | {prior_review_input} | none | Independent semantic review | none | PASS | older synthetic review | true | none |\n"
+            f"| EVD-002 | {CRITERION} | WORK-001 | observation | {prior_approval_input} | none | Spec/Plan first-record approval | none | PASS | older synthetic approval | true | none |\n"
+            f"| EVD-003 | {CRITERION} | WORK-001 | review | {review_input} | none | Independent semantic review | none | PASS | current synthetic reviewer receipt | true | none |\n"
+            f"| EVD-004 | {CRITERION} | WORK-001 | observation | {approval_input} | none | Spec/Plan first-record approval | none | PASS | synthetic chat reply | true | none |\n"
         )
         documents = {
             path: LifecycleDocument(path, profile, "approved")

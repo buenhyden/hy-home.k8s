@@ -24,13 +24,12 @@ SCRIPTS = ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 from document_contracts import (  # noqa: E402
     HeadingContract,
-    IdentifierColumn,
     TaskExecution,
     load_registry,
     task_contract_issues,
     task_execution_issues,
-    task_recorded_row,
 )
+from tests.task_rows import core_row  # noqa: E402
 from document_lifecycle import (  # noqa: E402
     LifecycleDocument,
     compare_lifecycle,
@@ -57,50 +56,69 @@ TASK = PurePosixPath(
 )
 SPEC = TASK.parent.parent / "spec.md"
 UPSTREAM = "[VAL-P02-001](../spec.md#criteria)"
-HEADER = "| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |"
-SEPARATOR = "| --- | --- | --- | --- | --- | --- | --- |"
-OLD_CHECK_HEADER = "| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |"
-CHECK_HEADER = "| Evidence ID | Consumer | Work Unit | Command | Input | Result | Location | Required | Resolves |"
-CHECK_SEPARATOR = "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"
 RESULTS = ("NOT_RUN", "PASS", "FAIL", "DEFER", "NOT_APPLICABLE")
 
 
-def recorded(rows) -> list[dict[str, str]]:
-    """Work rows of a Task recorded under the SPEC-0203 header, as the transition
-    adapter hands them to the rules (SPEC-0222)."""
+CORE_WORK_HEADER = "| Item | Work Unit | Owner | Status | Blocker |"
+CORE_TRACE_HEADER = "| Item | Upstream criterion | Result | Evidence |"
+CORE_CHECK_HEADER = (
+    "| Evidence ID | Criteria | Work Unit | Method | Input | Tool and Config | "
+    "Command | Exit | Result | Location | Required | Resolves |"
+)
+CORE_DECISION_HEADER = (
+    "| Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | "
+    "Current Owner | Reassigned To |"
+)
 
-    return [task_recorded_row("traceability", row) for row in rows]
+
+def separator(header: str) -> str:
+    return "|" + " --- |" * header.count(" | ") + " --- |"
+
+
+def recorded(rows) -> list[dict[str, str]]:
+    """Compact fixture rows renamed to the core names the rules read."""
+
+    return [core_row("traceability", row) for row in rows]
 
 
 def _cells(line: str) -> list[str]:
     return [cell.strip() for cell in line.strip("|").split(" | ")]
 
 
-def task_text(status: str, rows: list[str], *, old_form: bool = False) -> str:
-    """Render one Task whose checks and verdicts follow its rows.
+def task_text(status: str, rows: list[str]) -> str:
+    """Render one Task whose checks and verdicts follow its compact rows.
 
-    The default is the SPEC-0203 form; `old_form` renders the seven-heading layout
-    and the old evidence header that a registry from before the form binds.
+    A compact row (`row()`) names the work item, criterion, work, owner, state,
+    result and evidence. The default renders the core form (SPEC-0222): Work Items
+    for more than one row, the local Lifecycle Traceability and the core evidence
+    and decision tables.
     """
 
     checks, decisions, decided = [], [], set()
+    work_rows, trace = [], []
     for number, line in enumerate(rows, 1):
-        work, criterion, _, _, state, result, _ = _cells(line)
+        work, criterion, _, owner, state, result, evidence = _cells(line)
         outcome = result if result in RESULTS else "NOT_RUN"
         linked = re.findall(r"\[VAL-[^\]]+\]\([^)]*\)", criterion)
+        located = outcome in ("PASS", "FAIL")
         checks.append(
             f"| EVD-{number:03d} | {', '.join(linked) or criterion} | {work} | "
-            f"Focused test | Synthetic fixture | {outcome} | "
-            f"{'tests/fixture.py' if outcome in ('PASS', 'FAIL') else 'Pending'} | "
-            "yes | none |"
+            f"automated | Synthetic fixture | none | Focused test | "
+            f"{'0' if outcome == 'PASS' else ('1' if outcome == 'FAIL' else 'none')} | "
+            f"{outcome} | {'tests/fixture.py' if located else 'none'} | true | none |"
         )
+        work_rows.append(f"| {work} | {work} | {owner} | {state} | none |")
+        trace.append(f"| {work} | {criterion} | {result} | {evidence} |")
         for link in linked:
             if link not in decided:
                 decided.add(link)
                 accepted = "completed" in (status, state) and outcome == "PASS"
+                evd = f"EVD-{number:03d}" if accepted else "none"
                 decisions.append(
-                    f"| {link} | {'accepted' if accepted else 'pending'} | "
-                    f"{f'EVD-{number:03d}' if accepted else 'none'} | Fixture | platform |"
+                    f"| {link} | {'accept' if accepted else 'undecided'} | "
+                    f"{'accepted' if accepted else 'pending'} | {evd} | "
+                    f"{'Fixture decision' if accepted else 'none'} | "
+                    f"{'user' if accepted else 'none'} | platform | none |"
                 )
     front = [
         "---",
@@ -115,38 +133,11 @@ def task_text(status: str, rows: list[str], *, old_form: bool = False) -> str:
         "---",
         "# Task: Example",
     ]
-    decision_table = [
-        "| Criterion | Acceptance | Evidence | Disposition | Current owner |",
-        "| --- | --- | --- | --- | --- |",
-        *decisions,
-    ]
-    if old_form:
-        # The pre-SPEC-0203 layout is deliberately literal: no registry form owns it.
-        return "\n".join(
-            [
-                *front,
-                "## Overview",
-                "Example.",
-                "## Inputs",
-                "[Spec](../spec.md) and [Plan](../plan.md).",
-                "## Task Table",
-                "### Lifecycle Traceability",
-                HEADER,
-                SEPARATOR,
-                *rows,
-                "## Task Evidence",
-                OLD_CHECK_HEADER,
-                CHECK_SEPARATOR,
-                *checks,
-                "## Criterion Acceptance",
-                *decision_table,
-                "## Approval and Safety Boundaries",
-                "Example.",
-                "## Verification Summary",
-                "Example.",
-                "",
-            ]
-        )
+    work_table = (
+        [CORE_WORK_HEADER, separator(CORE_WORK_HEADER), *work_rows, ""]
+        if len(rows) > 1
+        else []
+    )
     return "\n".join(
         [
             *front,
@@ -157,19 +148,31 @@ def task_text(status: str, rows: list[str], *, old_form: bool = False) -> str:
                     "Inputs and Authority": [
                         "[Spec](../spec.md) and [Plan](../plan.md)."
                     ],
-                    "Work Performed": ["The rows below record the work."],
+                    "Work Performed": [
+                        "The rows below record the work.",
+                        "",
+                        *work_table,
+                    ],
                     "Blockers and Decisions": [
                         "No blocker is recorded.",
                         "### Lifecycle Traceability",
-                        HEADER,
-                        SEPARATOR,
-                        *rows,
+                        CORE_TRACE_HEADER,
+                        separator(CORE_TRACE_HEADER),
+                        *trace,
                     ],
-                    "Results": [CHECK_HEADER, CHECK_SEPARATOR, *checks],
+                    "Results": [
+                        CORE_CHECK_HEADER,
+                        separator(CORE_CHECK_HEADER),
+                        *checks,
+                    ],
                     "Resolution Links": [
                         "The Resolves column names the row each PASS row closes."
                     ],
-                    "Criterion Decisions": decision_table,
+                    "Criterion Decisions": [
+                        CORE_DECISION_HEADER,
+                        separator(CORE_DECISION_HEADER),
+                        *decisions,
+                    ],
                     "Remaining Conditions": ["No condition remains."],
                     "Promotion Receipt": ["No durable contract is promoted."],
                     "Next Owner": ["Example."],
@@ -437,7 +440,11 @@ class TaskExecutionContractTests(unittest.TestCase):
     def test_unknown_row_state_and_multi_criterion_cell_are_checked(self) -> None:
         self.assertIn(
             "TASK-EXECUTION-STATUS",
-            self.rules(task_text("draft", [row(status="done")])),
+            self.rules(
+                task_text(
+                    "draft", [row(status="done"), row("WORK-002", status="draft")]
+                )
+            ),
         )
         two_links = UPSTREAM + ", [VAL-P02-002](../spec.md#criteria)"
         self.assertEqual(
@@ -496,7 +503,7 @@ class TaskExecutionContractTests(unittest.TestCase):
             "TASK-EVIDENCE-COLUMNS",
             self.rules(
                 text.replace(
-                    "| Evidence ID | Consumer |", "| Evidence ID | Criterion |"
+                    "| Evidence ID | Criteria |", "| Evidence ID | Criterion |"
                 )
             ),
         )
@@ -504,22 +511,6 @@ class TaskExecutionContractTests(unittest.TestCase):
             "cancelled", [row(evidence="Reason: optional work withdrawn")]
         )
         self.assertIn("FM-CANCELLATION", self.rules(cancelled))
-
-
-CORE_WORK_HEADER = "| Item | Work Unit | Owner | Status | Blocker |"
-CORE_TRACE_HEADER = "| Item | Upstream criterion | Result | Evidence |"
-CORE_CHECK_HEADER = (
-    "| Evidence ID | Criteria | Work Unit | Method | Input | Tool and Config | "
-    "Command | Exit | Result | Location | Required | Resolves |"
-)
-CORE_DECISION_HEADER = (
-    "| Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | "
-    "Current Owner | Reassigned To |"
-)
-
-
-def separator(header: str) -> str:
-    return "|" + " --- |" * header.count(" | ") + " --- |"
 
 
 def core_task_text(
@@ -534,7 +525,6 @@ def core_task_text(
     decision: str = (
         f"| {UPSTREAM} | undecided | pending | none | none | none | platform | none |"
     ),
-    recorded_evidence: bool = False,
 ) -> str:
     """A Task under the core header (SPEC-0222): Work Items under Work Performed
     for more than one item, the local Lifecycle Traceability, the core evidence and
@@ -560,17 +550,7 @@ def core_task_text(
         f"{'tests/fixture.py' if result == 'PASS' else 'none'} | {required} | none |"
         for number, (item, _, result) in enumerate(items, 1)
     ]
-    evidence = (
-        [CHECK_HEADER, CHECK_SEPARATOR]
-        + [
-            f"| EVD-{number:03d} | {UPSTREAM} | {item} | Focused test | Synthetic "
-            f"fixture | {result} | {'tests/fixture.py' if result == 'PASS' else 'Pending'} "
-            "| yes | none |"
-            for number, (item, _, result) in enumerate(items, 1)
-        ]
-        if recorded_evidence
-        else [CORE_CHECK_HEADER, separator(CORE_CHECK_HEADER), *checks]
-    )
+    evidence = [CORE_CHECK_HEADER, separator(CORE_CHECK_HEADER), *checks]
     front = [
         "---",
         'title: "Example"',
@@ -627,7 +607,7 @@ def core_task_text(
 
 
 class TaskCoreHeaderTests(unittest.TestCase):
-    """SPEC-0222 WORK-002: the core-bound Task form and the transition adapter."""
+    """SPEC-0222 WORK-002: the core-bound Task form."""
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -637,6 +617,32 @@ class TaskCoreHeaderTests(unittest.TestCase):
         )
         cls.raw = json.loads(
             (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
+        )
+
+    def test_a_task_table_under_the_retired_recorded_header_is_not_read(
+        self,
+    ) -> None:
+        """SPEC-0223 WORK-003: with the recorded Tasks gone, only the core header
+        of a Task table is read."""
+
+        from document_contracts import task_table_rows
+
+        recorded = (
+            "ID",
+            "Upstream criterion",
+            "Work item",
+            "Owner",
+            "Status",
+            "Result",
+            "Evidence",
+        )
+        row = ("WORK-001", "VAL-X-001", "Item", "platform", "ready", "NOT_RUN", "none")
+        self.assertIsNone(
+            task_table_rows(
+                "traceability",
+                (recorded, [row]),
+                self.profile.body_contract.required_columns,
+            )
         )
 
     def rules(self, text: str) -> set[str]:
@@ -709,19 +715,6 @@ class TaskCoreHeaderTests(unittest.TestCase):
             "ready", [row(status="ready"), row("WORK-002", status="draft")]
         )
         self.assertEqual(self.rules(recorded), set())
-
-    def test_a_mixed_header_is_refused(self) -> None:
-        mixed = core_task_text(recorded_evidence=True)
-        self.assertIn("TASK-HEADER-MIXED", self.rules(mixed))
-        recorded_work = task_text("draft", [row()]).replace(
-            "### Work Performed\nThe rows below record the work.",
-            "### Work Performed\n\n"
-            + CORE_WORK_HEADER
-            + "\n"
-            + separator(CORE_WORK_HEADER)
-            + "\n| WORK-001 | WORK-001 | platform | draft | none |\n",
-        )
-        self.assertIn("TASK-HEADER-MIXED", self.rules(recorded_work))
 
     def test_core_required_takes_true_or_false_only(self) -> None:
         self.assertEqual(self.rules(core_task_text(required="false")), set())
@@ -1122,7 +1115,7 @@ class CompletionIndexTests(unittest.TestCase):
             ),
             (
                 self.task,
-                passed.replace("| Evidence ID | Consumer |", "| Result | Status |"),
+                passed.replace("| Evidence ID | Criteria |", "| Result | Status |"),
                 "TASK-EVIDENCE-COLUMNS",
             ),
             (
@@ -1297,7 +1290,28 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         status: str = "ready",
         parent_id: str = "SPEC-0900-PLAN-0001",
         row_status: str = "frontmatter",
+        *,
+        owner: str = "platform",
+        extra_work: bool = False,
     ) -> str:
+        """A partial core Task: one item takes the frontmatter status; a named
+        item status or a second item adds the Work Items table."""
+
+        result = "PASS" if status == "completed" else "NOT_RUN"
+        items = [("WORK-001", "[VAL-P02-001](../spec.md)", row_status, result)]
+        if extra_work:
+            items.append(("WORK-002", "[VAL-P02-002](../spec.md)", "ready", "NOT_RUN"))
+        work = ""
+        if row_status != "frontmatter" or extra_work:
+            work = (
+                f"\n### Work Performed\n{CORE_WORK_HEADER}\n"
+                f"{separator(CORE_WORK_HEADER)}\n"
+                + "".join(
+                    f"| {item} | {item} | {owner} | "
+                    f"{status if state == 'frontmatter' else state} | none |\n"
+                    for item, _, state, _ in items
+                )
+            )
         return (
             "---\n"
             'title: "Fixture Task"\nversion: "0.1.0"\n'
@@ -1308,10 +1322,13 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             "---\n# Task\n"
             # A partial Task: only the Execution Log carries the traced rows.
             + form_body("task", {"Execution Log": []}, partial=True)[0]
+            + work
             + "\n### Lifecycle Traceability\n"
-            "| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |\n"
-            "| --- | --- | --- | --- | --- | --- | --- |\n"
-            f"| WORK-001 | [VAL-P02-001](../spec.md) | Verify | platform | {row_status} | {'PASS' if status == 'completed' else 'NOT_RUN'} | Fixture |\n"
+            f"{CORE_TRACE_HEADER}\n{separator(CORE_TRACE_HEADER)}\n"
+            + "".join(
+                f"| {item} | {criterion} | {outcome} | Fixture |\n"
+                for item, criterion, _, outcome in items
+            )
         )
 
     def rules(
@@ -1636,7 +1653,11 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         self.assertNotIn("TASK-PARENT-APPROVAL", self.rules(proposed=blocked))
         working_blocked = {
             **blocked,
-            self.task: self.task_text("blocked", row_status="in-progress"),
+            # A one-item Task takes its frontmatter status, so the working item
+            # is one of two.
+            self.task: self.task_text(
+                "blocked", row_status="in-progress", extra_work=True
+            ),
         }
         self.assertIn("TASK-PARENT-APPROVAL", self.rules(proposed=working_blocked))
         evidence_blocked = {
@@ -1660,8 +1681,8 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         }
         task = self.task_text("draft") + (
             "## Verification Evidence\n### Results\n"
-            f"{CHECK_HEADER}\n{CHECK_SEPARATOR}\n"
-            "| EVD-001 | [VAL-P02-001](../spec.md) | WORK-001 | Check draft links | Exact draft fixture | PASS | Fixture | no | none |\n"
+            f"{CORE_CHECK_HEADER}\n{separator(CORE_CHECK_HEADER)}\n"
+            "| EVD-001 | [VAL-P02-001](../spec.md) | WORK-001 | review | Exact draft fixture | none | Check draft links | none | PASS | Fixture | false | none |\n"
         )
         self.assertEqual(
             len(
@@ -1687,7 +1708,8 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             1,
         )
         base = {self.spec: spec, self.plan: plan}
-        work = (("WORK-001", "[VAL-P02-001](../spec.md)", "Verify", "platform"),)
+        # A one-item core Task carries no Work Items row, so it names no Owner.
+        work = (("WORK-001", "[VAL-P02-001](../spec.md)", ""),)
         receipt = {
             "actor": "user",
             "approval_ref": "fixture-user-request",
@@ -1704,12 +1726,11 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         }
         header = (
             "## Verification Evidence\n### Results\n"
-            "| Evidence ID | Consumer | Work Unit | Command | Input | Result | Location | Required | Resolves |\n"
-            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+            f"{CORE_CHECK_HEADER}\n{separator(CORE_CHECK_HEADER)}\n"
         )
 
         def evidence(number, facts):
-            return f"| EVD-{number:03d} | VAL-P02-001 | WORK-001 | Scoped execution approval | {json.dumps(facts)} | PASS | Fixture | yes | none |\n"
+            return f"| EVD-{number:03d} | VAL-P02-001 | WORK-001 | observation | {json.dumps(facts)} | none | Scoped execution approval | none | PASS | Fixture | true | none |\n"
 
         authorized = task + header + evidence(1, receipt)
         approved = {**base, self.task: authorized}
@@ -1718,7 +1739,13 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         )
         for update in (
             {self.spec: spec + "A different request scope.\n"},
-            {self.task: authorized.replace("| Verify |", "| Publish |", 1)},
+            {
+                self.task: authorized.replace(
+                    "| WORK-001 | [VAL-P02-001](../spec.md) |",
+                    "| WORK-001 | [VAL-P02-002](../spec.md) |",
+                    1,
+                )
+            },
             {
                 self.task: authorized.replace(
                     "Read fixtures only.", "Publish artifacts."
@@ -1902,10 +1929,8 @@ class AdoptedExecutionParentTests(unittest.TestCase):
                 },
             ),
         )
-        added_work = old_task.replace(
-            "| WORK-001 |",
-            "| WORK-002 | [VAL-P02-002](../spec.md) | New work | platform | ready | NOT_RUN | Fixture |\n| WORK-001 |",
-            1,
+        added_work = self.task_text(
+            "completed", row_status="completed", extra_work=True
         )
         self.assertIn(
             "TASK-PARENT-APPROVAL",
@@ -1914,7 +1939,11 @@ class AdoptedExecutionParentTests(unittest.TestCase):
                 proposed={**prior_execution, self.task: added_work},
             ),
         )
-        changed_work = old_task.replace("| Verify |", "| New obligation |", 1)
+        changed_work = old_task.replace(
+            "| WORK-001 | [VAL-P02-001](../spec.md) |",
+            "| WORK-001 | [VAL-P02-002](../spec.md) |",
+            1,
+        )
         self.assertIn(
             "TASK-PARENT-APPROVAL",
             self.rules(
@@ -2356,325 +2385,6 @@ OLD_TASK_H2 = (
     "Approval and Safety Boundaries",
     "Verification Summary",
 )
-OLD_EVIDENCE_COLUMNS = (
-    "Evidence",
-    "Criteria",
-    "Work Unit",
-    "Check",
-    "Input",
-    "Result",
-    "Location",
-    "Required",
-    "Resolves",
-)
-
-
-RECORDED_WORK_COLUMNS = tuple(_cells(HEADER))
-RECORDED_ACCEPTANCE_COLUMNS = (
-    "Criterion",
-    "Acceptance",
-    "Evidence",
-    "Disposition",
-    "Current owner",
-)
-RECORDED_IDENTIFIERS = (
-    IdentifierColumn("ID", "work-item"),
-    IdentifierColumn("Upstream criterion", "criterion"),
-)
-
-
-def old_task_registry(registry):
-    """The registry as it stood before the Task form (SPEC-0203), derived from the
-    repository registry: the seven H2 lists, the old evidence section and columns,
-    the old acceptance section, no Task form and no core binding (SPEC-0222)."""
-
-    profiles = []
-    for profile in registry.profiles:
-        if profile.profile_id == "sdlc/task":
-            binding = replace(
-                profile.body_contract.task_execution,
-                evidence_section="Task Evidence",
-                evidence_columns=OLD_EVIDENCE_COLUMNS,
-                criterion_acceptance_section="Criterion Acceptance",
-                criterion_acceptance_columns=RECORDED_ACCEPTANCE_COLUMNS,
-                work_item_heading="",
-                work_item_columns=(),
-            )
-            profile = replace(
-                profile,
-                listed_headings=HeadingContract(
-                    required=OLD_TASK_H2, allowed=OLD_TASK_H2
-                ),
-                body_contract=replace(
-                    profile.body_contract,
-                    section="Task Table",
-                    required_columns=RECORDED_WORK_COLUMNS,
-                    identifier_columns=RECORDED_IDENTIFIERS,
-                    task_execution=binding,
-                ),
-                form=None,
-            )
-        profiles.append(profile)
-    return replace(
-        registry,
-        profiles=tuple(profiles),
-        common_forms=tuple(f for f in registry.common_forms if f.form_id != "task"),
-    )
-
-
-def old_registry_json(raw: dict) -> dict:
-    """The same undoing on the registry JSON, for a temporary repository."""
-
-    raw = json.loads(json.dumps(raw))
-    # MAJOR 15 is the registry before the Task form; the history reading builds the
-    # H2 lists such a registry carried (SPEC-0205).
-    raw["schema_version"] = "15.0.0"
-    forms = raw["common_forms"]["forms"]
-    raw["common_forms"]["forms"] = [f for f in forms if f["form_id"] != "task"]
-    for profile in raw["profiles"]:
-        if profile["id"] in ("sdlc/task", "common/template-sdlc-task"):
-            profile["sections"] = {
-                "required": list(OLD_TASK_H2),
-                "optional": [],
-                "forbidden": [],
-            }
-            contract = profile["relationships"]["body_contract"]
-            contract["section"] = "Task Table"
-            contract["required_columns"] = list(RECORDED_WORK_COLUMNS)
-            contract["identifier_columns"] = [
-                {"column": item.column, "kind": item.kind}
-                for item in RECORDED_IDENTIFIERS
-            ]
-            binding = contract["task_execution"]
-            binding["evidence_section"] = "Task Evidence"
-            binding["evidence_columns"] = list(OLD_EVIDENCE_COLUMNS)
-            binding["criterion_acceptance_section"] = "Criterion Acceptance"
-            binding["criterion_acceptance_columns"] = list(RECORDED_ACCEPTANCE_COLUMNS)
-            del binding["work_item_heading"], binding["work_item_columns"]
-            profile.pop("template_definition", None)
-    raw["work_residue"]["task_table"]["section"] = "Task Evidence"
-    return raw
-
-
-class TaskFormTwoRegistryTests(unittest.TestCase):
-    """SPEC-0203: each side of a Task comparison is read with its own registry."""
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.registry = load_registry(ROOT)
-        cls.old = old_task_registry(cls.registry)
-
-    def rules(self, before: str, after: str, *, old_base: bool) -> list[str]:
-        base_registry = self.old if old_base else self.registry
-        base = document_from_text(base_registry, TASK, before)
-        proposed = document_from_text(self.registry, TASK, after)
-        context = LIFECYCLE_CLI._evidence_context(
-            self.registry,
-            {TASK: base},
-            {TASK: proposed},
-            {TASK: before},
-            {TASK: after},
-            base_registry=base_registry,
-        )
-        return [
-            item.rule_id
-            for item in compare_lifecycle(
-                self.registry,
-                {TASK: base},
-                {TASK: proposed},
-                base_mode="staged",
-                evidence_context=context,
-                enforce_task_execution=True,
-            )
-        ]
-
-    @staticmethod
-    def rows() -> list[str]:
-        return [
-            row(status="completed", result="PASS", evidence="focused test PASS"),
-            row("WORK-002", status="in-progress"),
-        ]
-
-    def pair(self) -> tuple[str, str]:
-        return (
-            task_text("in-progress", self.rows(), old_form=True),
-            task_text("in-progress", self.rows()),
-        )
-
-    def edit_cell(self, text: str, column: int, value: str) -> str:
-        """Change one cell of the first evidence data row of the form Task."""
-
-        lines = text.split("\n")
-        start = next(
-            i for i, line in enumerate(lines) if line.startswith("| Evidence ID |")
-        )
-        cells = _cells(lines[start + 2])
-        cells[column] = value
-        lines[start + 2] = "| " + " | ".join(cells) + " |"
-        return "\n".join(lines)
-
-    def test_a_moving_commit_with_identical_rows_passes_every_rule(self) -> None:
-        before, after = self.pair()
-        found = self.rules(before, after, old_base=True)
-        compared = [
-            item
-            for item in found
-            if item.startswith("TASK-ITEM-") or item == "TASK-EVIDENCE-RETENTION"
-        ]
-        self.assertEqual(compared, [], found)
-
-    def test_the_same_move_with_one_edited_cell_fails_retention_once_per_column(
-        self,
-    ) -> None:
-        before, after = self.pair()
-        columns = {
-            1: "[VAL-P02-009](../spec.md#criteria)",
-            2: "WORK-009",
-            3: "Other command",
-            4: "Other input",
-            5: "FAIL",
-            6: "elsewhere",
-            7: "no",
-            8: "EVD-009",
-        }
-        for column, value in columns.items():
-            with self.subTest(column=column):
-                found = self.rules(
-                    before, self.edit_cell(after, column, value), old_base=True
-                )
-                self.assertEqual(found.count("TASK-EVIDENCE-RETENTION"), 1, found)
-
-    def test_the_same_move_with_a_changed_removed_or_reordered_row_fails(self) -> None:
-        before, after = self.pair()
-        removed = task_text("in-progress", [self.rows()[1]])
-        self.assertIn("TASK-ITEM-DELETE", self.rules(before, removed, old_base=True))
-        hidden = after.replace(
-            "[VAL-P02-001](../spec.md#criteria)",
-            "[VAL-P02-002](../spec.md#criteria)",
-            1,
-        )
-        self.assertIn("TASK-ITEM-HIDE", self.rules(before, hidden, old_base=True))
-        reopened = task_text(
-            "in-progress",
-            [row(status="ready"), row("WORK-002", status="in-progress")],
-        )
-        self.assertIn("TASK-ITEM-EDGE", self.rules(before, reopened, old_base=True))
-        reset = task_text(
-            "in-progress",
-            [
-                row(status="completed", result="NOT_RUN"),
-                row("WORK-002", status="in-progress"),
-            ],
-        )
-        self.assertIn("TASK-ITEM-RESET", self.rules(before, reset, old_base=True))
-        reordered = after.replace("| EVD-001 |", "| EVD-009 |", 1)
-        self.assertIn(
-            "TASK-EVIDENCE-RETENTION", self.rules(before, reordered, old_base=True)
-        )
-
-    def test_a_task_that_loses_its_recorded_rows_never_passes_on_nothing(self) -> None:
-        before, after = self.pair()
-        lost = after.replace("## Verification Evidence", "## Elsewhere", 1)
-        found = self.rules(before, lost, old_base=True)
-        self.assertIn("TASK-EVIDENCE-RETENTION", found)
-
-    def test_a_column_missing_from_a_recorded_row_is_an_error_not_an_empty_cell(
-        self,
-    ) -> None:
-        before, after = self.pair()
-        for lacking in ("| Command |", "| Consumer |"):
-            with self.subTest(lacking=lacking):
-                bad = after.replace(lacking, "| Renamed |", 1)
-                self.assertIn(
-                    "TASK-EVIDENCE-RETENTION", self.rules(before, bad, old_base=True)
-                )
-
-    def test_a_table_that_keeps_the_old_header_fails_under_the_new_registry(
-        self,
-    ) -> None:
-        _, after = self.pair()
-        old_header = after.replace(CHECK_HEADER, OLD_CHECK_HEADER, 1)
-        profile = next(p for p in self.registry.profiles if p.profile_id == "sdlc/task")
-        found = {
-            item.rule_id
-            for item in MARKDOWN.validate_document_text(
-                old_header, TASK, profile, "strict"
-            )
-        }
-        self.assertIn("TASK-EVIDENCE-COLUMNS", found)
-
-    def test_rules_stay_active_on_the_repository_registry_for_a_form_task(self) -> None:
-        before = task_text("in-progress", self.rows())
-        edited = self.edit_cell(before, 4, "Other input")
-        self.assertIn(
-            "TASK-EVIDENCE-RETENTION", self.rules(before, edited, old_base=False)
-        )
-        removed = task_text("in-progress", [self.rows()[1]])
-        self.assertIn("TASK-ITEM-DELETE", self.rules(before, removed, old_base=False))
-        reopened = task_text(
-            "in-progress",
-            [row(status="ready"), row("WORK-002", status="in-progress")],
-        )
-        self.assertIn("TASK-ITEM-EDGE", self.rules(before, reopened, old_base=False))
-        hidden = before.replace(
-            "[VAL-P02-001](../spec.md#criteria)",
-            "[VAL-P02-002](../spec.md#criteria)",
-            1,
-        )
-        self.assertIn("TASK-ITEM-HIDE", self.rules(before, hidden, old_base=False))
-        reset = task_text(
-            "in-progress",
-            [
-                row(status="completed", result="NOT_RUN"),
-                row("WORK-002", status="in-progress"),
-            ],
-        )
-        self.assertIn("TASK-ITEM-RESET", self.rules(before, reset, old_base=False))
-
-    def test_each_reader_handles_a_form_an_old_and_a_binding_less_registry(
-        self,
-    ) -> None:
-        form_binding = next(
-            p for p in self.registry.profiles if p.profile_id == "sdlc/task"
-        ).body_contract.task_execution
-        old_binding = next(
-            p for p in self.old.profiles if p.profile_id == "sdlc/task"
-        ).body_contract.task_execution
-        before, after = self.pair()
-        current = LINKS.task_base_evidence_rows(after, form_binding)
-        carried = LINKS.task_base_evidence_rows(before, old_binding)
-        literal = LINKS.task_base_evidence_rows(before)
-        self.assertEqual(current, carried)
-        self.assertEqual(current, literal)
-        # SPEC-0222: every side is read under the core names.
-        self.assertEqual(
-            list(current[0]),
-            [
-                "Evidence ID",
-                "Criteria",
-                "Work Unit",
-                "Command",
-                "Input",
-                "Result",
-                "Location",
-                "Required",
-                "Resolves",
-            ],
-        )
-        self.assertIsNone(LINKS.task_base_evidence_rows(after, old_binding))
-        self.assertIsNone(LINKS.task_base_evidence_rows(before, form_binding))
-
-    def test_the_header_map_is_a_history_reading_and_leaves_current_names_alone(
-        self,
-    ) -> None:
-        from document_contracts import carry_evidence_rows
-
-        binding = next(
-            p for p in self.registry.profiles if p.profile_id == "sdlc/task"
-        ).body_contract.task_execution
-        rows = [{"Evidence ID": "EVD-001", "Consumer": "c", "Command": "k"}]
-        self.assertEqual(carry_evidence_rows(rows, binding), rows)
-        self.assertIsNone(carry_evidence_rows(None, binding))
 
 
 class TaskFormRegistryCheckTests(unittest.TestCase):
@@ -2735,87 +2445,6 @@ class TaskFormRegistryCheckTests(unittest.TestCase):
             "evidence_columns"
         ].append("Extra")
         self.assertIn("REGISTRY_TASK_BINDING", self.faults(raw))
-
-
-class TaskFormStagedMoveTests(unittest.TestCase):
-    """SPEC-0203: the staged check reads the base registry from the base commit."""
-
-    def setUp(self) -> None:
-        self.temporary = tempfile.TemporaryDirectory(prefix="task-form-move-")
-        self.addCleanup(self.temporary.cleanup)
-        self.root = Path(self.temporary.name)
-        shutil.copytree(
-            ROOT / "docs/99.templates",
-            self.root / "docs/99.templates",
-            ignore=shutil.ignore_patterns("__pycache__"),
-        )
-        self.registry_path = self.root / "docs/99.templates/registry.json"
-        raw = json.loads(self.registry_path.read_text(encoding="utf-8"))
-        for profile in raw["profiles"]:
-            for named in profile.get("template_definition", {}).get(
-                "consumer_paths", ()
-            ):
-                target = self.root / named
-                if not target.exists():
-                    target.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copyfile(ROOT / named, target)
-        self.new_registry = self.registry_path.read_text(encoding="utf-8")
-        self.registry_path.write_text(
-            json.dumps(old_registry_json(raw), indent=2, ensure_ascii=False) + "\n",
-            encoding="utf-8",
-        )
-        self.rows = [
-            row(status="completed", result="PASS", evidence="focused test PASS"),
-            row("WORK-002", status="in-progress"),
-        ]
-        self.write(SPEC, form_spec_text())
-        self.write(SPEC.parent / "plan.md", form_plan_text())
-        self.write(TASK, task_text("in-progress", self.rows, old_form=True))
-        subprocess.run(["git", "init", "--quiet"], cwd=self.root, check=True)
-        subprocess.run(["git", "add", "--", "docs"], cwd=self.root, check=True)
-        subprocess.run(
-            [
-                "git",
-                "-c",
-                "user.name=Fixture",
-                "-c",
-                "user.email=f@example.invalid",
-                "commit",
-                "--quiet",
-                "-m",
-                "base",
-            ],
-            cwd=self.root,
-            check=True,
-        )
-        # The index now binds the form; the working tree is not read for the base.
-        self.registry_path.write_text(self.new_registry, encoding="utf-8")
-
-    def write(self, path: PurePosixPath, text: str) -> None:
-        target = self.root / path
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(text, encoding="utf-8")
-
-    def staged(self, task: str) -> tuple[int, str]:
-        self.write(TASK, task)
-        subprocess.run(["git", "add", "--", "docs"], cwd=self.root, check=True)
-        output = io.StringIO()
-        with contextlib.redirect_stdout(output), contextlib.redirect_stderr(output):
-            result = LIFECYCLE_CLI.main(["--root", str(self.root), "--mode", "staged"])
-        return result, output.getvalue()
-
-    def test_identical_rows_pass_and_an_edited_or_removed_row_fails(self) -> None:
-        moved = task_text("in-progress", self.rows)
-        result, output = self.staged(moved)
-        self.assertEqual(result, 0, output)
-        edited = moved.replace("Synthetic fixture", "Edited fixture", 1)
-        result, output = self.staged(edited)
-        self.assertEqual(result, 1, output)
-        self.assertIn("TASK-EVIDENCE-RETENTION", output)
-        removed = task_text("in-progress", [self.rows[1]])
-        result, output = self.staged(removed)
-        self.assertEqual(result, 1, output)
-        self.assertIn("TASK-ITEM-DELETE", output)
 
 
 class ExecutionBriefCliTests(unittest.TestCase):
