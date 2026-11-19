@@ -4269,7 +4269,7 @@
         "vocabulary_refs": [
           "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "Every sdlc/architecture-decision document under docs/02.architecture/02.decisions/ and its template; an accepted ADR from ADR-0001 to ADR-0061 keeps the seven H2 it was accepted with under the retained form.",
+        "applicability": "Every sdlc/architecture-decision document under docs/02.architecture/02.decisions/ or docs/00.workspace/02.architecture/02.decisions/ and its template; an accepted ADR from ADR-0001 to ADR-0061 keeps the seven H2 it was accepted with under the retained form.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
           "docs/99.templates/01.contracts/document-profile.schema.json",
