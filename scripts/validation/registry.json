@@ -68,8 +68,7 @@
         "tests/test_workspace_memory.py"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -85,8 +84,7 @@
         "tests/test_session_capture.py"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -102,8 +100,7 @@
         "tests/test_session_analysis.py"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -119,8 +116,7 @@
         "tests/test_test_cluster.py"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -136,8 +132,7 @@
         "tests/test_work_forecast.py"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -153,8 +148,7 @@
         "tests/test_work_parallel.py"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -170,8 +164,7 @@
         "tests/test_review_delta.py"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -187,8 +180,7 @@
         "tests/test_chained_git_hooks.py"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -244,7 +236,7 @@
     {
       "id": "document-contract-tests",
       "reuse": {
-        "mode": "change-scoped"
+        "mode": "same-lane"
       },
       "argv": [
         "python3",
@@ -255,8 +247,7 @@
         "document"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "timeoutSeconds": 900,
@@ -269,7 +260,7 @@
     {
       "id": "document-lifecycle-tests",
       "reuse": {
-        "mode": "change-scoped"
+        "mode": "same-lane"
       },
       "argv": [
         "python3",
@@ -280,8 +271,7 @@
         "document-lifecycle"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -301,8 +291,7 @@
         "validation-routing"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -322,8 +311,7 @@
         "tooling-ownership"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -343,8 +331,7 @@
         "qa-runner"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -364,8 +351,7 @@
         "ci-metadata"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -385,8 +371,7 @@
         "release"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -406,8 +391,7 @@
         "agent-governance"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -427,8 +411,7 @@
         "tooling"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -448,8 +431,7 @@
         "cluster-gate"
       ],
       "lanes": [
-        "affected",
-        "staged"
+        "affected"
       ],
       "optional": false,
       "fallback": {
@@ -2753,16 +2735,6 @@
       "agent-governance",
       "ci-python-contract",
       "document-contract-registry",
-      "document-contract-tests",
-      "document-lifecycle-tests",
-      "validation-routing-tests",
-      "tooling-ownership-tests",
-      "qa-runner-tests",
-      "ci-metadata-tests",
-      "release-tests",
-      "agent-governance-tests",
-      "tooling-tests",
-      "cluster-gate-tests",
       "document-lifecycle",
       "work-residue-ledger",
       "external-service-contracts",
@@ -2781,15 +2753,7 @@
       "selected-nonstyle",
       "selected-style",
       "vault-eso-contracts",
-      "workspace-boundary",
-      "git-hook-chain-regressions",
-      "workspace-memory-regressions",
-      "session-capture-regressions",
-      "session-analysis-regressions",
-      "test-cluster-regressions",
-      "work-forecast-regressions",
-      "work-parallel-regressions",
-      "review-delta-regressions"
+      "workspace-boundary"
     ],
     "pull-request": [
       "affected-surface-contract",

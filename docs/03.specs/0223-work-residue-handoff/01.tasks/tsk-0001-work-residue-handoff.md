@@ -1,6 +1,6 @@
 ---
 title: "Work Residue Handoff"
-version: "0.7.1"
+version: "0.8.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-20"
@@ -144,6 +144,24 @@ gate, implementation, policy or acceptance change. The user is the approving
 actor, the current Codex agent executes delivery to `buenhyden/hy-home.k8s`
 on the current branch and `main`, and no revocation is present. Revert is the
 rollback. Native operations, live deployment and later prompts are excluded.
+
+#### P02 1.1.0 current authorization
+
+The user selects only P02-LOCAL-FEEDBACK from the 1.1.0 package and
+authorizes implementation, verification, commit, push, PR and merge. README,
+P02, D02, execution contract, fixed decisions/questions, sources and k8s
+profile/findings are the inputs. Start: clean `codex/p01-ci-routing`,
+HEAD `2860ac25d412b8e827b842e0a3ad429786d6b210`, common directory `.git`.
+P00/P01 and the eleven completed streams remain predecessor evidence.
+Write scope: local QA, staged registry membership, covering tests/fixtures,
+the existing Git/quality/tooling owners and this Task (`sdlc/task`).
+The quality-engineer owns registered checks; this agent owns documentation
+and delivery. Risk is high because incorrect selection could conceal failure;
+independent correctness/security review and focused negative cases precede
+the one exact-index commit-hook run. The user's current request authorizes
+delivery to `buenhyden/hy-home.k8s`, this branch and `main`; no revocation is
+present. Revert through a normal PR is rollback. No deployment, credentials,
+global setting changes, later prompt or history rewrite is authorized.
 
 ## Execution Log
 
@@ -570,6 +588,51 @@ P00 and the retained P01 result; do not execute it automatically. Keep the
 package through P17. No one-use wrapper, test script or `_workspace/` output
 was created; existing fixture temporary directories clean up on exit.
 
+#### P02 local feedback investigation
+
+Effective clone-local `core.hooksPath` points to `scripts/githooks`; the
+installed workspace pre-commit and commit-msg hooks run through that chain.
+The configured external validation venv supplies Python 3.12.3 and
+pre-commit 4.6.1. The obsolete generated hook interpreter path is absent;
+the installed hook successfully uses its pinned PATH fallback. No hook or
+global setting is replaced. A subagent's direct global-setting query was
+denied by automatic approval review; effective-origin inspection and native
+chain execution supply the bounded installation evidence instead.
+
+Warm, empty-index actual pre-commit samples before edits: 19.564, 18.691,
+17.616 seconds (median 18.691); all passed and preserved index bytes. Native
+commit-msg samples: 739.84, 747.06, 778.37 ms (median 747.06). No-consumer
+pre-push with synthetic ref stdin: 25.43, 31.62, 16.58 ms (median 25.43).
+Venv/interpreter ownership-mode scans: 20.61, 18.45, 18.52 ms (median 18.52);
+worktree-list median 4.38 ms. Retain those security scans. Restricted-process
+UID mapping initially caused HOOK-ENV; approved native execution resolved
+the environment discrepancy without changing owners, modes or installation.
+
+One diagnostic cProfile run took 23.665 seconds, with 39 bounded Git calls;
+process discovery/cleanup dominated and snapshot/tree reads also contributed.
+Concurrent source edits made that diagnostic fail the old full-tree guard;
+it is not a passing performance sample. Keep process containment and reduce
+unnecessary work instead. Cold bootstrap, IDE feedback and network transport
+are separate observations, not these warm values or a p95 claim. The existing
+hook-chain regression tests pass all 16 cases, including multi-ref stdin,
+create/delete, first failure, missing tools, global ordering and recursion.
+
+P02 changes the existing staged profile, not the hosted profile: implementation
+regression suites remain in quick/PR; syntax, selected style/nonstyle, secret,
+content and global identity protections remain. The exact-index reader ignores
+unrelated working-tree bytes, supports unborn HEAD, skips private snapshots
+for empty input and detects canonical index, HEAD/symbolic-ref and ref changes.
+Private candidate mutation checks remain. Existing changed-platform argv is
+used for both execution and cache identity; identity version 5 binds HEAD ref.
+Local document combination stays disabled. No dependency, wrapper, native
+provider policy or hook installation is added.
+
+TDD first reproduced four old failures, then verified the bounded fixes;
+additional cases reject broken HEAD and private unborn branch retargeting.
+The pinned QA suite passes 50 cases, routing/document selection passes 56,
+and existing hook-chain coverage passes 16. Formatter changes are confined
+to the reviewed Python test; source formatting and diff checks are clean.
+
 ### Lifecycle Traceability
 
 | Item | Upstream criterion | Result | Evidence |
@@ -608,6 +671,9 @@ was created; existing fixture temporary directories clean up on exit.
 | EVD-022 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | Six P01 requirements against current workflow/runner/registry/document/platform consumers, permanent tests and EVD-015/016, at `d778c5f3` | Separate quality-engineer context, instructed read-only audit; actual PR/protection read-back by the parent | Requirement-to-consumer audit and review of evidence reuse boundaries | none | PASS | No material missing implementation; W06-H02, live/CRD and user acceptance remain distinct. PR 331/333 merge and run 44587710232 success re-read; no new code or behavior test added | false | none |
 | EVD-023 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | P01 1.1.0 Task-only retention diff on `d778c5f3`, including EVD-021/022 and current authorization | Independent code-reviewer, separate context and policy read-only restriction | Semantic diff review against P01/D01, fixed decisions and evidence/acceptance boundaries | none | PASS | No BLOCK/FIX; unchanged implementation evidence remains scoped, no same-coverage speed/p95 claim, old EVD/criterion cells retained; no native or live proof claimed | false | none |
 | EVD-024 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P01 1.1.0 exact Task-only staged input producing `b3f481d6`; this receipt is the only later local change | Existing pinned validation venv and active chained pre-commit/commit-msg hooks | `git commit -m 'docs: verify retained P01 CI routing for version 1.1'` invokes `python3 scripts/qa.py staged`, Commitizen and generated-message checks | 0 | PASS | Staged document QA and both message checks PASS. This evidence-only receipt retains EVD-023's operative review scope and receives its own selected commit-hook checks; unchanged implementation suites are not replayed | false | none |
+| EVD-025 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | P02 clean initial HEAD and empty canonical index; existing venv and installed hook chain | Python 3.12.3, pre-commit 4.6.1; warm environment; N=3 per hook | Actual `scripts/githooks/pre-commit`; commit-msg with task-owned synthetic message; pre-push with synthetic ref stdin; bounded ownership/worktree probes | 0 | PASS | P02 investigation above: index preserved, pre-commit median 18.691s, message median 747.06ms, no-consumer pre-push median 25.43ms, ownership scan median 18.52ms; no network/cold/p95 claim | false | none |
+| EVD-026 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P02 QA, staged registry selection and covering synthetic fixtures on initial HEAD | Existing pinned validation Python; repository checkers and Ruff | `python -m unittest tests.test_qa_runner`; `python -m unittest tests.test_validate_affected_surfaces tests.test_document_scope_selection`; `python -m unittest tests.test_chained_git_hooks`; `python scripts/validate-affected-surfaces.py`; scoped strict document checks | 0 | PASS | QA 50, selection 56 and hook chain 16 cases PASS; focused RED/GREEN and doc profile/link/lifecycle PASS. First system-Python attempt lacked locked YAML dependency; pinned environment resolved it without installation. Format-only refresh uses the same focused QA cases | false | none |
+| EVD-027 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | Frozen P02 source/registry/tests and current owner/Task diff against initial HEAD; Python test formatting only refreshed afterwards | Independent code-reviewer and security-auditor, separate contexts, instructed read-only | Exact diff semantic/core checklist: acceptance alignment, one writer, owners, removed checks, secret exposure, mutation/cache/error boundaries and normal-PR rollback | none | PASS | Both reviewers report no BLOCK/FIX; no permission, trigger, hook source or protected target changed. Removed staged suites remain quick/PR. Original evidence, criterion cells and residue rows preserved by inline comparison. Review does not grant user acceptance or native/live proof | false | none |
 
 ### Resolution Links
 
@@ -670,23 +736,19 @@ The Plan promotes no durable contract.
 
 ### Next Owner
 
-Current handoff: P01 1.1.0 is retained after current-source and boundary
-verification (EVD-021/022); P00 1.1.0 reconciles the fixed decisions and current source;
-the P01 retention record's review and exact-index document QA are EVD-023/024.
-implementation and local verification are recorded in EVD-017 to EVD-020.
-P01 implementation and verification are retained through PR 331/332 and
-EVD-015/016. The next input is
-`_workspace/workspace_governance_remediation_1_1_0_20261120/prompts/P02-LOCAL-FEEDBACK.md`,
-using this reconciliation and the P01 selected-CI result. Do not execute P02
-automatically. P00/P01 new user acceptance is not recorded. Q-01 to Q-04
-are resolved; no generic content, history-scope or native-cost question is open.
-Keep the 1.1.0 package through P17 and preserve other active work and memory.
-This evidence-only receipt changes no operative disposition or resume
-condition beyond the reviewed reconciliation. EVD-018 remains applicable;
-the receipt's selected document QA is checked through its own commit hook.
-No one-use script or `_workspace/` output was created. The guidance input
-was deleted, reusable QA cache retained, and no other package was cleaned.
-The 1.0.0 handoff below is retained historical context only.
+Current handoff: P02 implementation and focused local verification are
+recorded above; exact-index delivery and post-change hook measurements are
+recorded with their actual results before completion. P00/P01 remain retained
+through EVD-015 to EVD-024 and PR 331 to PR 334. User acceptance of P00/P01/P02
+is separate and is not inferred from implementation, tests or merge.
+The next input is
+`_workspace/workspace_governance_remediation_1_1_0_20261120/prompts/P03-OWNERSHIP.md`,
+using delivered P00/P01 and P02's actual local feedback result. Do not execute
+P03 automatically. Q-01 to Q-04 remain resolved. Keep this input package
+through P17, other active work, persistent memory and reusable QA cache.
+Cold installation, IDE experience, native provider delivery and live cluster
+guarantees are not established by these local samples. The 1.0.0 handoff below
+is historical context only.
 
 WORK-001 to WORK-003 remain completed and accepted; do not rerun them.
 For P00, the source and residue classification is implemented, with final

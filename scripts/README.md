@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.16.0"
+version: "0.17.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -282,6 +282,12 @@ pre-commit·Go·Rust·Node cache는 계정 소유의 cache 디렉터리 아래�
 잠긴 의존성이 소유하는 module을 바꾸기 전이나 로컬 도구 재현성이 필요한
 경우에 이 방법을 쓴다. 실제 실행 결과도 검증한 입력과 로컬 환경에만
 적용된다.
+
+staged QA는 첫 commit부터 정확한 index와 staged 설정을 읽으며, 무관한
+unstaged·미추적 파일을 입력으로 삼지 않는다. 구현 회귀 suite는 affected quick과
+PR CI가 실행한다. 로컬 commit은 선택된 syntax·style·secret·내용 계약을 검사하고,
+변경이 없으면 snapshot 준비 없이 종료한다. manifest·render·policy는 기존 변경
+범위 선택기를 사용하되 전역 GitOps identity 보호는 유지한다.
 
 formatter는 직접 호출하지 말고 `pre-commit`으로 실행한다. hook 설정은 일부러
 `ruff-format`을 Python으로만 좁혀 둔다. 그냥 명령을 실행하면 Markdown까지

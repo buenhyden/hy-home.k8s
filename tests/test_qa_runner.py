@@ -251,6 +251,208 @@ class QaTests(unittest.TestCase):
             self.assertEqual(self.qa.main(), 1)
         record.assert_not_called()
 
+    def test_staged_ignores_unrelated_worktree_bytes(self):
+        (self.root / "file.txt").write_text("staged candidate\n")
+        self.git("add", "file.txt")
+        (self.root / "file.txt").write_text("unstaged edit\n")
+        (self.root / "untracked-large.bin").write_bytes(
+            b"x" * (self.qa.SNAPSHOT_FILE_LIMIT_BYTES + 1)
+        )
+        index_before = (self.root / ".git/index").read_bytes()
+        contract = {"validators": [{"id": "fixture", "optional": False}]}
+
+        def inspect_candidate(snapshot, *_args, **kwargs):
+            self.assertEqual((snapshot / "file.txt").read_text(), "staged candidate\n")
+            self.assertFalse((snapshot / "untracked-large.bin").exists())
+            kwargs["observed_results"]["fixture"] = "PASS"
+            return 0
+
+        with (
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["fixture"]},
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "profile_gate_ids", return_value=["fixture"]
+            ),
+            mock.patch.object(
+                self.qa.runner, "run_selected", side_effect=inspect_candidate
+            ),
+        ):
+            self.assertEqual(self.qa.main(), 0)
+        self.assertEqual((self.root / ".git/index").read_bytes(), index_before)
+        self.assertEqual((self.root / "file.txt").read_text(), "unstaged edit\n")
+
+    def test_empty_staged_skips_worktree_and_snapshot_but_checks_index(self):
+        with (
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa, "tree_identity", side_effect=AssertionError("worktree scanned")
+            ),
+            mock.patch.object(
+                self.qa,
+                "repository_snapshot",
+                side_effect=AssertionError("snapshot created"),
+            ),
+        ):
+            self.assertEqual(self.qa.main(), 0)
+
+        def change_index(*_args, **_kwargs):
+            (self.root / "file.txt").write_text("raced candidate\n")
+            self.git("add", "file.txt")
+            return []
+
+        with (
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+            mock.patch.object(self.qa, "changed_paths", side_effect=change_index),
+        ):
+            self.assertEqual(self.qa.main(), 1)
+
+    def test_empty_unborn_staged_has_no_index_or_snapshot(self):
+        self.git("checkout", "--orphan", "initial")
+        self.git("rm", "-qr", "--cached", ".")
+        (self.root / ".git/index").unlink(missing_ok=True)
+        with (
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa,
+                "repository_snapshot",
+                side_effect=AssertionError("snapshot created"),
+            ),
+        ):
+            self.assertEqual(self.qa.main(), 0)
+
+    def test_invalid_head_object_is_not_treated_as_unborn(self):
+        (self.root / ".git/refs/heads/qa-fixture").write_text("f" * 40 + "\n")
+        with self.assertRaisesRegex(ValueError, "HEAD"):
+            self.qa.head_commit(self.root)
+
+    def test_malformed_head_ref_is_not_treated_as_unborn(self):
+        (self.root / ".git/refs/heads/qa-fixture").write_text("not-an-object\n")
+        with self.assertRaisesRegex(ValueError, "HEAD"):
+            self.qa.head_commit(self.root)
+
+    def test_private_unborn_branch_retarget_is_not_a_pass(self):
+        self.git("checkout", "--orphan", "initial")
+        self.git("rm", "-qr", "--cached", ".")
+        (self.root / "file.txt").write_text("first commit\n")
+        self.git("add", "file.txt")
+        with self.qa.repository_snapshot(self.root, staged=True) as snapshot:
+            head_before = self.qa.head_commit(snapshot)
+            head_ref_before = self.qa.git(snapshot, "symbolic-ref", "-q", "HEAD")
+            raw_index_before = self.qa.read_bounded_bytes(
+                self.qa.index_file(snapshot), max_bytes=self.qa.GIT_INDEX_LIMIT_BYTES
+            )
+            tree_before = self.qa.tree_identity(snapshot)
+            self.qa.git(snapshot, "symbolic-ref", "HEAD", "refs/heads/other")
+            with self.assertRaisesRegex(ValueError, "head-ref"):
+                self.qa.require_unchanged_private_snapshot(
+                    snapshot,
+                    head_before=head_before,
+                    head_ref_before=head_ref_before,
+                    raw_index_before=raw_index_before,
+                    tree_before=tree_before,
+                )
+
+    def test_unborn_staged_checks_index_candidate(self):
+        self.git("checkout", "--orphan", "initial")
+        self.git("rm", "-qr", "--cached", ".")
+        (self.root / "file.txt").write_text("first commit\n")
+        self.git("add", "file.txt")
+        contract = {"validators": [{"id": "fixture", "optional": False}]}
+
+        def inspect_candidate(snapshot, _lane, paths, *_args, **kwargs):
+            self.assertIn("file.txt", paths)
+            self.assertEqual((snapshot / "file.txt").read_text(), "first commit\n")
+            self.assertEqual(kwargs["base_ref"], "EMPTY")
+            kwargs["observed_results"]["fixture"] = "PASS"
+            return 0
+
+        with (
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["fixture"]},
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "profile_gate_ids", return_value=["fixture"]
+            ),
+            mock.patch.object(
+                self.qa.runner, "run_selected", side_effect=inspect_candidate
+            ),
+        ):
+            self.assertEqual(self.qa.main(), 0)
+
+    def test_scoped_manifest_not_applicable_is_valid(self):
+        contract = {
+            "validators": [
+                {
+                    "id": "k8s-manifests",
+                    "argv": ["bash", "scripts/validate-k8s-manifests.sh", "."],
+                    "reuse": {"mode": "same-lane"},
+                    "optional": False,
+                }
+            ]
+        }
+        effective_argv = []
+
+        def capture_identity(_snapshot, gate, **_kwargs):
+            effective_argv.extend(gate["argv"])
+            return "a" * 64
+
+        def scoped_result(_snapshot, *_args, **kwargs):
+            self.assertTrue(kwargs["scope_platform"])
+            kwargs["observed_results"]["k8s-manifests"] = "NOT_APPLICABLE"
+            return 0
+
+        (self.root / "file.txt").write_text("candidate\n")
+        self.git("add", "file.txt")
+        with (
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["k8s-manifests"]},
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "profile_gate_ids",
+                return_value=["k8s-manifests"],
+            ),
+            mock.patch.object(
+                self.qa, "gate_input_identity", side_effect=capture_identity
+            ),
+            mock.patch.object(
+                self.qa.runner, "run_selected", side_effect=scoped_result
+            ),
+        ):
+            self.assertEqual(self.qa.main(), 0)
+        self.assertIn("--changed-path=file.txt", effective_argv)
+
     def test_zero_runner_exit_cannot_hide_an_invalid_required_result(self):
         contract = {
             "profiles": {"quick": ["fixture"]},
@@ -414,6 +616,9 @@ class QaTests(unittest.TestCase):
                 self.qa.require_unchanged_private_snapshot(
                     snapshot,
                     head_before=head_before,
+                    head_ref_before=self.qa.git(
+                        snapshot, "symbolic-ref", "-q", "HEAD", optional=True
+                    ),
                     raw_index_before=raw_index_before,
                     tree_before=tree_before,
                 )
@@ -430,6 +635,9 @@ class QaTests(unittest.TestCase):
                 self.qa.require_unchanged_private_snapshot(
                     snapshot,
                     head_before=head_before,
+                    head_ref_before=self.qa.git(
+                        snapshot, "symbolic-ref", "-q", "HEAD", optional=True
+                    ),
                     raw_index_before=raw_index_before,
                     tree_before=tree_before,
                 )
@@ -446,6 +654,9 @@ class QaTests(unittest.TestCase):
                 self.qa.require_unchanged_private_snapshot(
                     snapshot,
                     head_before=head_before,
+                    head_ref_before=self.qa.git(
+                        snapshot, "symbolic-ref", "-q", "HEAD", optional=True
+                    ),
                     raw_index_before=raw_index_before,
                     tree_before=tree_before,
                 )
@@ -907,6 +1118,9 @@ class QaTests(unittest.TestCase):
                 self.qa.require_unchanged_private_snapshot(
                     snapshot,
                     head_before=head_before,
+                    head_ref_before=self.qa.git(
+                        snapshot, "symbolic-ref", "-q", "HEAD", optional=True
+                    ),
                     raw_index_before=raw_index_before,
                     tree_before=tree_before,
                 )

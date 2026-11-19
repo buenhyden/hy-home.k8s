@@ -524,15 +524,12 @@
         "validators": [
           "affected-surface-contract",
           "document-contract-registry",
-          "document-contract-tests",
           "document-lifecycle",
-          "document-lifecycle-tests",
           "links-and-owners",
           "markdown-profiles",
           "repository-quality",
           "selected-nonstyle",
-          "selected-style",
-          "tooling-ownership-tests"
+          "selected-style"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []

@@ -72,21 +72,43 @@ def git(root: Path, *args: str, optional: bool = False) -> bytes | None:
     return result.stdout.retained
 
 
+def head_commit(root: Path) -> bytes | None:
+    """Return the commit at HEAD, or None only for an unborn branch."""
+    commit = git(root, "rev-parse", "--verify", "HEAD^{commit}", optional=True)
+    if commit is None:
+        if git(root, "rev-parse", "--verify", "HEAD", optional=True) is not None:
+            raise ValueError("HEAD does not resolve to a commit")
+        if git(root, "symbolic-ref", "-q", "HEAD", optional=True) is None:
+            raise ValueError("HEAD is neither a commit nor an unborn branch")
+    return commit
+
+
+def raw_index_bytes(path: Path) -> bytes | None:
+    return (
+        read_bounded_bytes(path, max_bytes=GIT_INDEX_LIMIT_BYTES)
+        if os.path.lexists(path)
+        else None
+    )
+
+
 @contextmanager
 def _disposable_git_index(root: Path):
     """Let read-only diffs refresh a copy, never the source or private index."""
     canonical = index_file(root)
-    before = read_bounded_bytes(canonical, max_bytes=GIT_INDEX_LIMIT_BYTES)
+    before = raw_index_bytes(canonical)
     temporary = tempfile.NamedTemporaryFile(
         mode="w+b", prefix="qa-read-index-", dir=canonical.parent, delete=False
     )
     disposable = Path(temporary.name)
     try:
         with temporary:
-            temporary.write(before)
-            temporary.flush()
+            if before is not None:
+                temporary.write(before)
+                temporary.flush()
+        if before is None:
+            disposable.unlink()
         yield disposable
-        if read_bounded_bytes(canonical, max_bytes=GIT_INDEX_LIMIT_BYTES) != before:
+        if raw_index_bytes(canonical) != before:
             raise ValueError("Git source index changed during read")
     finally:
         disposable.unlink(missing_ok=True)
@@ -128,6 +150,8 @@ def indexed_snapshot_leaf(root: Path, path: str) -> bool:
 
 
 def head_snapshot_leaf(root: Path, path: str) -> bool:
+    if head_commit(root) is None:
+        return False
     entry = git(root, "--literal-pathspecs", "ls-tree", "-z", "HEAD", "--", path)
     metadata, _, name = entry.rstrip(b"\0").partition(b"\t")
     fields = metadata.split()
@@ -234,7 +258,7 @@ def merge_head_bytes(root: Path) -> bytes | None:
 def repository_snapshot(root: Path, *, staged: bool = False):
     """Copy only Git-selected bytes; never write the source worktree or index."""
     root = root.resolve()
-    head = git(root, "rev-parse", "HEAD")
+    head = head_commit(root)
     source_index = index_file(root)
     index_bytes = read_bounded_bytes(source_index, max_bytes=GIT_INDEX_LIMIT_BYTES)
     merge_head = merge_head_bytes(root)
@@ -251,7 +275,7 @@ def repository_snapshot(root: Path, *, staged: bool = False):
             str(root),
             str(snapshot),
         )
-        if git(snapshot, "rev-parse", "HEAD") != head:
+        if head_commit(snapshot) != head:
             raise ValueError("source HEAD changed during snapshot")
         # The clone maps the source's branches to remote-tracking refs and
         # drops the source's own remote-tracking refs. A checkout whose default
@@ -319,7 +343,7 @@ def repository_snapshot(root: Path, *, staged: bool = False):
         if (
             read_bounded_bytes(source_index, max_bytes=GIT_INDEX_LIMIT_BYTES)
             != index_bytes
-            or git(root, "rev-parse", "HEAD") != head
+            or head_commit(root) != head
             or merge_head_bytes(root) != merge_head
         ):
             raise ValueError("source index or HEAD changed during snapshot")
@@ -331,7 +355,8 @@ def repository_snapshot(root: Path, *, staged: bool = False):
 def require_unchanged_private_snapshot(
     root: Path,
     *,
-    head_before: bytes,
+    head_before: bytes | None,
+    head_ref_before: bytes | None,
     raw_index_before: bytes,
     tree_before: dict[str, tuple[int, bytes] | None],
     merge_head_before: bytes | None = None,
@@ -339,8 +364,10 @@ def require_unchanged_private_snapshot(
 ) -> None:
     """Catch changes to the private candidate and its merge parents."""
     changed: list[str] = []
-    if git(root, "rev-parse", "HEAD") != head_before:
+    if head_commit(root) != head_before:
         changed.append("HEAD")
+    if git(root, "symbolic-ref", "-q", "HEAD", optional=True) != head_ref_before:
+        changed.append("head-ref")
     if merge_head_bytes(root) != merge_head_before:
         changed.append("MERGE_HEAD")
     if refs_before is not None and reference_projection(root) != refs_before:
@@ -360,6 +387,18 @@ def reference_projection(root: Path) -> bytes:
     return git(root, "for-each-ref", "--format=%(refname) %(objectname) %(symref)")
 
 
+def source_snapshot_state(root: Path, *, staged: bool) -> tuple:
+    """Bind the index and refs; working-tree bytes matter only to quick QA."""
+    return (
+        head_commit(root),
+        git(root, "symbolic-ref", "-q", "HEAD", optional=True),
+        merge_head_bytes(root),
+        raw_index_bytes(index_file(root)),
+        reference_projection(root),
+        None if staged else tree_identity(root),
+    )
+
+
 def base_revision(root: Path, profile: str, value: str | None) -> str:
     if value and set(value) == {"0"}:
         return "EMPTY"
@@ -371,11 +410,13 @@ def base_revision(root: Path, profile: str, value: str | None) -> str:
         ):
             raise ValueError("unsafe base reference")
         return git(root, "rev-parse", "--verify", value + "^{commit}").decode().strip()
+    if head_commit(root) is None:
+        return "EMPTY"
     default_ref = "refs/remotes/origin/main"
     remote = git(root, "for-each-ref", "--format=%(refname)", default_ref)
     if default_ref.encode("ascii") in remote.splitlines():
         return git(root, "merge-base", "HEAD", default_ref).decode().strip()
-    return git(root, "rev-parse", "HEAD").decode().strip()
+    return head_commit(root).decode().strip()
 
 
 def changed_paths(root: Path, *, staged: bool) -> list[str]:
@@ -476,7 +517,7 @@ def gate_input_identity(
     executable = Path(sys.executable).resolve(strict=True)
     executable_stat = executable.stat()
     fields = {
-        "version": 4,
+        "version": 5,
         "gate": gate["id"],
         # A validator may compare dates with today, so a result holds for one day.
         "date": validation_date(),
@@ -494,7 +535,10 @@ def gate_input_identity(
             versions,
         ],
         "gitVersion": git(snapshot, "--version").decode("ascii").strip(),
-        "head": git(snapshot, "rev-parse", "HEAD").decode("ascii").strip(),
+        "head": (head_commit(snapshot) or b"EMPTY").decode("ascii").strip(),
+        "headRef": (git(snapshot, "symbolic-ref", "-q", "HEAD", optional=True) or b"")
+        .decode("ascii")
+        .strip(),
         "mergeHead": (merge_head_bytes(snapshot) or b"").decode("ascii").strip(),
         "refs": (
             reference_projection(snapshot) if captured_refs is None else captured_refs
@@ -618,17 +662,16 @@ def main() -> int:
             return 0
         if args.profile == "staged":
             require_canonical_staged_index(root)
-        source_head_before = git(root, "rev-parse", "HEAD")
-        source_merge_head_before = merge_head_bytes(root)
-        source_refs_before = reference_projection(root)
-        source_index_path = index_file(root)
-        source_index_before = read_bounded_bytes(
-            source_index_path, max_bytes=GIT_INDEX_LIMIT_BYTES
-        )
-        source_tree_before = tree_identity(root)
+        staged = args.profile == "staged"
+        source_before = source_snapshot_state(root, staged=staged)
         baseline = base_revision(root, args.profile, args.base_ref)
-        paths = changed_paths(root, staged=args.profile == "staged")
-        with repository_snapshot(root, staged=args.profile == "staged") as snapshot:
+        paths = changed_paths(root, staged=staged)
+        if staged and not paths:
+            if source_snapshot_state(root, staged=True) != source_before:
+                raise ValueError("source HEAD, index, or refs changed during QA")
+            print("[NOT_APPLICABLE] qa staged index has no changes")
+            return 0
+        with repository_snapshot(root, staged=staged) as snapshot:
             contract = contract_module.validate_contract(snapshot)
             lane = "staged" if args.profile == "staged" else "affected"
             selected = contract_module.select_paths(contract, paths, lane, snapshot)
@@ -639,7 +682,10 @@ def main() -> int:
             print(
                 f"[INFO] qa profile={args.profile} snapshot={'index' if args.profile == 'staged' else 'working-tree'} gates={len(ids)}"
             )
-            private_head_before = git(snapshot, "rev-parse", "HEAD")
+            private_head_before = head_commit(snapshot)
+            private_head_ref_before = git(
+                snapshot, "symbolic-ref", "-q", "HEAD", optional=True
+            )
             private_merge_head_before = merge_head_bytes(snapshot)
             private_refs_before = reference_projection(snapshot)
             private_index_before = read_bounded_bytes(
@@ -656,7 +702,14 @@ def main() -> int:
                     continue
                 effective = dict(gate)
                 effective["argv"] = runner.validator_argv(
-                    snapshot, lane, paths, gate, contract, contract_module, baseline
+                    snapshot,
+                    lane,
+                    paths,
+                    gate,
+                    contract,
+                    contract_module,
+                    baseline,
+                    scope_platform=True,
                 )
                 resolved_tool = runner.resolve_tool(effective["argv"][0], snapshot)
                 if resolved_tool is None:
@@ -686,29 +739,19 @@ def main() -> int:
                 base_ref=baseline,
                 reuse_candidates=candidates,
                 observed_results=observed_results,
+                scope_platform=True,
             )
             require_unchanged_private_snapshot(
                 snapshot,
                 head_before=private_head_before,
+                head_ref_before=private_head_ref_before,
                 raw_index_before=private_index_before,
                 tree_before=private_tree_before,
                 merge_head_before=private_merge_head_before,
                 refs_before=private_refs_before,
             )
-            if (
-                git(root, "rev-parse", "HEAD") != source_head_before
-                or merge_head_bytes(root) != source_merge_head_before
-                or read_bounded_bytes(
-                    source_index_path, max_bytes=GIT_INDEX_LIMIT_BYTES
-                )
-                != source_index_before
-                or tree_identity(root) != source_tree_before
-            ):
-                raise ValueError(
-                    "source HEAD, index, or selected files changed during QA"
-                )
-            if reference_projection(root) != source_refs_before:
-                raise ValueError("source Git refs changed during QA")
+            if source_snapshot_state(root, staged=staged) != source_before:
+                raise ValueError("source HEAD, index, refs, or files changed during QA")
             if (
                 args.base_ref
                 and base_revision(root, args.profile, args.base_ref) != baseline
@@ -727,7 +770,14 @@ def main() -> int:
                         or (status == "REUSED" and identifier in candidates)
                         or (
                             status == "NOT_APPLICABLE"
-                            and identifier in {"selected-style", "selected-nonstyle"}
+                            and identifier
+                            in {
+                                "selected-style",
+                                "selected-nonstyle",
+                                "platform-assurance",
+                                "k8s-manifests",
+                                "policy-gates",
+                            }
                         )
                         or validators[identifier]["optional"]
                     ):
