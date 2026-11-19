@@ -549,6 +549,8 @@ start P02 automatically.
 | EVD-016 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | P01 W06-H03 follow-up; PR 331 head `e9f72ced`, test merge `43d84095`, CI run 44581637168, integrated merge `60ff97bd` | GitHub ubuntu-latest, pinned Actions and dependency lock, read-only candidate; GitHub jobs/logs API and local Git tree comparison | `python3 -I scripts/run-validation-lane.py --root . --lane affected --plan-file "$RUNNER_TEMP/pr-plan.json" --combine-documents`; `gh run view 44581637168 --job 135763534198 --log`; `git diff --exit-code e9f72ced7297e86c287b9634958ea838ac01bec7 HEAD` after integration | 0 | PASS | Both required checks and all 25 selected purpose leaves PASS; integrated tree identical; hosted scope/times above. Closes the W06-H03 implementation/hosted-coverage residue, not P01 user acceptance, W06-H02 or live/CRD guarantees | false | none |
 | EVD-017 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | P00 1.1.0 at clean `517be785`, profile `6c352064`, decision revision 2026-11-20 and current two-file reconciliation | Git, GitHub PR/run read-back, Python standard library, installed provider version commands and pinned validation venv | Git root/common-dir/branch/HEAD/status and profile diff; `git ls-files -z`; PR 331/332 and CI read-back; inline input/finding/residue coverage and preserved-cell assertions; `python3 scripts/validate-work-residue-ledger.py --root .`; selected style over this Task and ledger | 0 | PASS | All package finding IDs and current ledger IDs have one disposition; current 27 open/3 terminal; old EVD and criterion cells preserved; only W10-H02 resume condition changes. Ledger and two-file style PASS. No new provider/live/session-content operation | false | none |
 | EVD-018 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | P00 1.1.0 Task/ledger diff on `517be785`, including EVD-017 and actor/executor/target clarification | Independent code-reviewer, separate context, policy read-only restriction; current risk-report procedure | Semantic review against P00/D00 and the fixed Q-01 to Q-04 decisions | none | PASS | No BLOCK/FIX; W10-H02 stays open with containment prerequisite, Task/ledger condition matches, P01 and past acceptance preserved; no native enforcement or runtime proof claimed | false | none |
+| EVD-019 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P00 1.1.0 exact two-file index producing `e527d29786f92f4ef51c34c1c396dc97b2fe05e4`; this evidence receipt is the only later local change | Existing pinned validation venv and active chained pre-commit/commit-msg hooks | `git commit -m 'docs: reconcile P00 with confirmed decision revision'` invokes `python3 scripts/qa.py staged`, Commitizen and generated-message checks | 0 | PASS | Staged QA and both message checks PASS; existing template/profile/link/lifecycle/ledger and selected style consumers cover the changed input. Receipt-only additions use the same document route; no unchanged behavior suite or native/live probe is replayed | false | none |
+| EVD-020 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | Temporary k8s guidance input: P00 complete with decision revision 2026-11-20 and EVD-017/018/019; P01 retained with EVD-015/016 and PR 331/332 | Python standard library; this 1.1.0 package's read-only guidance tool | `python3 tools/next_prompt.py --workspace k8s --state TEMP_PROGRESS` with the package's actual tool path | 0 | PASS | NEXT is `prompts/P02-LOCAL-FEEDBACK.md`; no prompt executed. Empty open_runtime describes only the two supplied records, not completion of future native work. Temporary input/directory removed; no parallel permanent progress ledger | false | none |
 
 ### Resolution Links
 
@@ -612,6 +614,7 @@ The Plan promotes no durable contract.
 ### Next Owner
 
 Current handoff: P00 1.1.0 reconciles the fixed decisions and current source;
+implementation and local verification are recorded in EVD-017 to EVD-020.
 P01 implementation and verification are retained through PR 331/332 and
 EVD-015/016. The next input is
 `_workspace/workspace_governance_remediation_1_1_0_20261120/prompts/P02-LOCAL-FEEDBACK.md`,
@@ -619,6 +622,11 @@ using this reconciliation and the P01 selected-CI result. Do not execute P02
 automatically. P00/P01 new user acceptance is not recorded. Q-01 to Q-04
 are resolved; no generic content, history-scope or native-cost question is open.
 Keep the 1.1.0 package through P17 and preserve other active work and memory.
+This evidence-only receipt changes no operative disposition or resume
+condition beyond the reviewed reconciliation. EVD-018 remains applicable;
+the receipt's selected document QA is checked through its own commit hook.
+No one-use script or `_workspace/` output was created. The guidance input
+was deleted, reusable QA cache retained, and no other package was cleaned.
 The 1.0.0 handoff below is retained historical context only.
 
 WORK-001 to WORK-003 remain completed and accepted; do not rerun them.
