@@ -1,6 +1,6 @@
 ---
 title: "Work Residue Handoff"
-version: "0.6.0"
+version: "0.6.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-20"
@@ -404,8 +404,50 @@ below one second. CI-lock and GitOps leaves were skipped. This older run had
 no affected purpose guarantee, so its wall time is not a same-coverage speed
 comparison with P01. The final PR's own step times must be reported separately.
 
-The requirements are implemented locally; final verification and integration
-are still in progress at this record. User acceptance is pending. Q-01 to
+P01 implementation, final exact-index staged QA, commit-message checks and
+hosted verification are complete. [PR 331](https://github.com/buenhyden/hy-home.k8s/pull/331)
+integrated commit `e9f72ced7297e86c287b9634958ea838ac01bec7` as
+`60ff97bd63c87e233cc00cb1f4ac64b53d7bdf16`. Its test merge was
+`43d84095135e08b5d5769da3e224bc20ef9eae96` over base `6c352064`.
+`git diff --exit-code e9f72ced7297e86c287b9634958ea838ac01bec7 HEAD`
+was empty after fast-forwarding to the integrated result. These identities
+describe this execution; they create no general approval gate.
+
+[CI run 44581637168](https://github.com/buenhyden/hy-home.k8s/actions/runs/44581637168)
+completed successfully on 2026-11-19 UTC (2026-11-20 Asia/Seoul). Both required
+checks passed, and all 25 selected purpose leaves passed. No unrelated memory,
+forecast or parallel-worker suite was selected. Hosted document regressions
+took 300.365 seconds, QA-runner regressions 65.795 seconds and routing
+regressions 8.002 seconds. The shared links/profile invocation took 17.363
+seconds for both leaf results; it is not two separately timed executions.
+
+| Hosted phase | Observed elapsed time | Boundary |
+| --- | --- | --- |
+| CI end to end | 479 seconds | Run creation to completion; N=1 |
+| style-pr queue / job | 3 / 475 seconds | Run creation to job start / job start to completion |
+| Checkout | 6 seconds | Reviewed base and complete candidate history |
+| Python setup / dependency installation | Below one second / 2 seconds | Existing runner tool cache; locked dependency installation |
+| Candidate binding and plan | Below one second | One saved cumulative plan |
+| Selected style | 20 seconds | Reviewed-base configuration |
+| Selected tool preparation | 3 seconds | Kustomize download and pinned Conftest pull |
+| Purpose execution | 438 seconds | Related static contracts and regressions |
+| Aggregate | Below one second | Required selected outcomes verified |
+
+The new hosted run has more guarantees than baseline PR 330, so their wall
+times are not a same-coverage speed comparison. Timestamp values below one
+second are limited by the API's one-second resolution. These are observations,
+not a p95 claim. Platform rendering and static policy passed; absent external
+CRD schemas and live observation remain DEFER. The platform report routes its
+syntax depth to the separate manifest leaf. W06-H03 is terminal on EVD-016.
+W06-H02 remains open because this PR changed neither the CI lock nor a GitOps
+manifest; a workflow-triggered CI contract PASS does not satisfy that input
+condition. P14-K8S retains actual manifest/runtime observation.
+
+The six task-owned temporary execution briefs, PR-body file, style path list
+and merge-message file were removed; the input package, other active work,
+persistent memory and reusable QA cache were retained. This delivery receipt
+is checked through the existing document consumers without replaying unchanged
+implementation suites. User acceptance of P01 is pending. Q-01 to
 Q-04 add no P01 dependency: no remote history deletion, new transcript
 collection, paid provider observation or Blog publication boundary is needed.
 After P01's delivery result, the next input is
@@ -435,14 +477,14 @@ start P02 automatically.
 | EVD-006 | [VAL-RESIDUE-003](../spec.md#criteria) | WORK-003 | automated | `test_a_task_table_under_the_retired_recorded_header_is_not_read` on `eac89a91` before the removal | pinned `hyhome-validation` venv | `python -m unittest tests.test_task_execution_contract` (one test) | 1 | FAIL | the recorded header was still read as `recorded` | false | none |
 | EVD-007 | [VAL-RESIDUE-003](../spec.md#criteria) | WORK-003 | automated | Branch `claude/task-adapter-removal` on `eac89a91`: `TASK_RECORDED_HEADERS`, its helpers, the `pre_core` branch and the unreachable `TASK-HEADER-MIXED` result removed; readers in the link and profile validators read only the core header; the two pre-core registry transition test classes, the mixed-header test and the cumulative-history replay across the pre-core column names deleted; fixtures moved to the core form; `tests/task_rows.py` keeps the compact fixture renaming test-side | pinned `hyhome-validation` venv | the new test, `tests.test_task_execution_contract`, `tests.test_task_acceptance_contract`, `tests.test_task_acceptance_boundaries`, `tests.test_document_lifecycle_completion`, `tests.test_common_form_tree`, `ruff check` and `git grep` for `TASK_RECORDED_HEADERS` | 0 | PASS | this Task | true | none |
 | EVD-008 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | `main` `91ba3a10` after the Q07 path cutover (SPEC-0224); the eight checks named by Q07-H01 | `git grep` and source reads | Read each Q07-H01 check in `scripts/`, `tests/` and the registry | 0 | PASS | this Task, Residue Handoff Q07-H01: the `historical_tables` path is gone (value `[]`; the schema key and its reader in `scripts/validate-work-residue-ledger.py` stay), and the other seven checks stay active. They are `FIRST_ADR_OUTSIDE_RETAINED_RANGE` (`scripts/document_contracts.py`) with the ADR-0001 to ADR-0061 registry bounds; `reserved_codes` `PLAT`, `OBS` and the never-shrink check (`scripts/document_lifecycle.py`); the Archived Lineage reservations of `document_lifecycle.py` and `document-generator.py`; `reachable_git_path_exists` used by `scripts/validation/repository/quality.py`, with 31 `git show <sha>:` references in 12 current files; the cumulative replay of up to 256 first-parent commits over registry majors 10 to 21; the requirement-path tests in `tests/test_common_form_tree.py` and `tests/test_document_artifact_identity.py`; and `historical_major` in `scripts/document_contracts.py`. None of them reads a category folder, so the path cutover did not touch them | false | none |
-
 | EVD-009 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | P00 1.0.0 on `main` `6c352064`; same-SHA k8s profile and current tree, 2026-11-20 Asia/Seoul | Git; GitHub connector; installed Codex/Claude version commands | `git status --short`; `git rev-parse --show-toplevel --git-common-dir --abbrev-ref HEAD`; `git rev-parse HEAD`; `git diff PROFILE_SHA..HEAD --stat`; `git ls-files` over the owner inventory; GitHub open/merged PR searches; `codex --version`; `claude --version` | 0 | PASS | this Task, P00 snapshot, owner inventory and individual decisions; no open PR, no post-profile local delta; hosted/native execution is not established | false | none |
 | EVD-010 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | Initial P00 Task prose on `6c352064`; source index read-only in the active execution environment | Python 3.12.3 in `/home/hyunyoun/.venvs/hyhome-validation/` | `/home/hyunyoun/.venvs/hyhome-validation/bin/python3 scripts/qa.py quick` | 1 | FAIL | QA could not create `.git/qa-read-index-*`; environment restriction before selected checks, not a document verdict | true | none |
 | EVD-011 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | Same initial P00 prose, before the subsequent historical-evidence citation corrections | Same validation venv; native permission granted for QA temporary Git-index/snapshot files | `/home/hyunyoun/.venvs/hyhome-validation/bin/python3 scripts/qa.py quick` | 0 | PASS | Five selected leaves: document-contract-registry, document-lifecycle, work-residue-ledger, links-and-owners and markdown-profiles; all repository-static; source index and HEAD preserved | true | EVD-010 |
 | EVD-012 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P00 table after historical-evidence correction; package finding IDs, current ledger IDs and original Task at HEAD | Python standard library; inline, no script file | Assert each input finding and ledger ID has one classification; compare original EVD, live Residue Handoff and Criterion Decisions against HEAD; `git diff --cached --name-only -z`; `git diff --check` | 0 | PASS | Each of the 22 findings and 30 entries occurs once; original evidence, residue and acceptance rows unchanged; index clean | false | none |
 | EVD-013 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | P00-only Task diff on `6c352064`, after evidence-citation corrections; no executable or governance contract change | Independent code-reviewer subagent in separate context, read-only by policy | Semantic diff review against P00 completion conditions | none | PASS | Two FIX findings resolved: numeric-version validation now cites actual EVD-180; EVD-208 PASS probes distinguished from whole-cluster LAN defect. No remaining BLOCK/FIX. No native read-only enforcement claim | false | none |
-
 | EVD-014 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | Final P00 classification, corrected historical citations and EVD-009 to EVD-013 on `main` `6c352064`; only this receipt and the Next Owner receipt wording added afterwards | Python 3.12.3 in `/home/hyunyoun/.venvs/hyhome-validation/`; same selected QA configuration | `/home/hyunyoun/.venvs/hyhome-validation/bin/python3 scripts/qa.py quick` | 0 | PASS | All five selected document/ledger leaves PASS; inline preservation/coverage assertions and `git diff --check` PASS; no staged, hosted, native or live execution claimed | false | none |
+| EVD-015 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | Final P01 exact staged tree producing `e9f72ced`, after portable Task paths and pinned shell formatting were corrected | Existing pinned validation venv and active chained pre-commit/commit-msg hooks | `git commit -m 'ci: route PR checks through affected purpose validation'` invokes `python3 scripts/qa.py staged`, Commitizen and generated-message checks | 0 | PASS | Exact-index QA and both message hooks PASS; focused negative tests and independent correctness/security review recorded above; no hook bypass | false | none |
+| EVD-016 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | P01 W06-H03 follow-up; PR 331 head `e9f72ced`, test merge `43d84095`, CI run 44581637168, integrated merge `60ff97bd` | GitHub ubuntu-latest, pinned Actions and dependency lock, read-only candidate; GitHub jobs/logs API and local Git tree comparison | `python3 -I scripts/run-validation-lane.py --root . --lane affected --plan-file "$RUNNER_TEMP/pr-plan.json" --combine-documents`; `gh run view 44581637168 --job 135763534198 --log`; `git diff --exit-code e9f72ced7297e86c287b9634958ea838ac01bec7 HEAD` after integration | 0 | PASS | Both required checks and all 25 selected purpose leaves PASS; integrated tree identical; hosted scope/times above. Closes the W06-H03 implementation/hosted-coverage residue, not P01 user acceptance, W06-H02 or live/CRD guarantees | false | none |
 
 ### Resolution Links
 
@@ -468,7 +510,7 @@ The Resolves column names the row each PASS row closes.
 | W04-H06 | No runbook names a distinct escalation contact; RUN-0012 Next Owner reads none; RUN-0009 and RUN-0010 break-glass steps name no approver beyond human approval | open | platform | When the Stage 05 owner names the escalation contact and approver | none |
 | W04-H07 | Mechanism text in approved REQ-0002: AC05 declarations and rationale belong to AD-0005. The REQ-0003 FR-0017 part moved to AD-0006 on 2026-11-18 (EVD-188) | open | platform | When the Requirement owner revises REQ-0002 with approval | none |
 | W06-H02 | No legacy row: a hosted `style-pr` run in which the CI lock leaf, or the GitOps identity leaf over a changed GitOps manifest, is selected and executes. ADR-0063 was accepted on 2026-11-18; the GitOps leaf has run only on documentation changes under `gitops/` (EVD-211) | open | W06 | At the first pull request that changes a GitOps manifest or the CI lock | none |
-| W06-H03 | No legacy row: the 2026-11-12 target of hosted PR-time affected implementation and product checks beyond style, CI lock and GitOps identity (QUAL-R006). P01 now implements the selected purpose profile; hosted execution and user acceptance remain distinct | open | W06 | After the P01 pull request records the selected affected purpose checks on its exact candidate and run, reconcile the remaining acceptance or observation conditions | none |
+| W06-H03 | No legacy row: the 2026-11-12 target of hosted PR-time affected implementation and product checks beyond style, CI lock and GitOps identity (QUAL-R006). P01 implements the selected purpose profile and PR 331 observed its execution; user acceptance and live guarantees remain separate | terminal | W06 | After the P01 pull request records the selected affected purpose checks on its exact candidate and run, reconcile the remaining acceptance or observation conditions | EVD-016 |
 | W07-H03 | No legacy row: W01-B, rejection tests (an approval is not a Git object, status, checkbox, successful QA or reviewer verdict; no check grants integration; no approval is inferred from a role name or hash). Frozen SPEC-0166 Requirement Trace, W01-B row; its Handoffs table does not list it. Recover the frozen Task as for W05-H04. Seeded under W03-D81 by SPEC-0213 | open | W07 | At the next approval or receipt validator change, or at W11-ACCEPT | none |
 | W07-H05 | No legacy row: the Windows Desktop over SSH read-only reviewer ran its shell with workspace write (EVD-163 FAIL); the client sent a null request profile (EVD-167 FAIL). Recorded under RUNTIME-CLOSE on 2026-11-18 | open | W07 | When the Desktop host owner supplies the outgoing turn permission fields or a client fix, rerun the read-only reviewer write denial on that path | none |
 | W08-H01 | No legacy row: the memory store takes `owner` and `approval_ref` as caller-supplied strings, and any process of the same local account can open the SQLite file directly, so the store authenticates neither. D06 asks for an OS or broker boundary before an untrusted writer uses it. Recorded under W08-MEMORY on 2026-11-18 | open | W08 | When a second local account, an untrusted writer or a remote host must use the store | none |
@@ -505,9 +547,11 @@ The Plan promotes no durable contract.
 
 ### Next Owner
 
-The current follow-up is P01; its local implementation is present, with final
-selected QA and hosted delivery still to be recorded. The next authorized
-input after its result is P02-LOCAL-FEEDBACK; do not start it automatically.
+P01 implementation, selected QA and hosted verification are delivered in
+PR 331; EVD-015 and EVD-016 record the actual results. Its receipt-only
+follow-up is checked by the selected document consumers. P01 user acceptance
+is pending. The next input is P02-LOCAL-FEEDBACK after this delivery record,
+using P00 reconciliation and the P01 selected-CI result; do not start it automatically.
 The P00 handoff below is retained predecessor context.
 
 WORK-001 to WORK-003 remain completed and accepted; do not rerun them.

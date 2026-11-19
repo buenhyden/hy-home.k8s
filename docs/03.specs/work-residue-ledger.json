@@ -169,11 +169,15 @@
     {
       "id": "W06-H03",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W06",
       "resume_condition": "After the P01 pull request records the selected affected purpose checks on its exact candidate and run, reconcile the remaining acceptance or observation conditions",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
+        "evidence": "EVD-016"
       }
     },
     {
