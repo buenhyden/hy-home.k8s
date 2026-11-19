@@ -29,7 +29,7 @@
       "owner": "Q07",
       "resume_condition": "In the Q07-CUTOVER task, after every package is closed and Q07-H01 is converted",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0224-workspace-path-cutover/01.tasks/tsk-0001-workspace-path-cutover.md"
       }
     },
     {
@@ -55,11 +55,15 @@
     {
       "id": "SDLC-H01",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "Q07",
       "resume_condition": "In the Q07-CUTOVER task, together with the SDD-PATHS renumbering",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0224-workspace-path-cutover/01.tasks/tsk-0001-workspace-path-cutover.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0224-workspace-path-cutover/01.tasks/tsk-0001-workspace-path-cutover.md",
+        "evidence": "EVD-010"
       }
     },
     {

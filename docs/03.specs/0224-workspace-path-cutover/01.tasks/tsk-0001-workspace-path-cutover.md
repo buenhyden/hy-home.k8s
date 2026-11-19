@@ -107,9 +107,9 @@ Criterion acceptance stays a separate decision.
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [VAL-CUTOVER-001](../spec.md#criteria) | NOT_RUN | Draft until the Spec and Plan are approved; observed checks are in Results |
-| WORK-002 | [VAL-CUTOVER-002](../spec.md#criteria) | NOT_RUN | Draft until the Spec and Plan are approved; observed checks are in Results |
-| WORK-003 | [VAL-CUTOVER-003](../spec.md#criteria) | NOT_RUN | Draft until the Spec and Plan are approved; observed checks are in Results |
+| WORK-001 | [VAL-CUTOVER-001](../spec.md#criteria) | PASS | EVD-002, EVD-011, EVD-012 |
+| WORK-002 | [VAL-CUTOVER-002](../spec.md#criteria) | PASS | EVD-003, EVD-008 |
+| WORK-003 | [VAL-CUTOVER-003](../spec.md#criteria) | PASS | EVD-004, EVD-010 |
 
 ## Verification Evidence
 
@@ -134,6 +134,13 @@ Criterion acceptance stays a separate decision.
 
 EVD-010 resolves EVD-005 and EVD-009. EVD-001, EVD-006 and EVD-007 are non-required observations followed by EVD-004 and EVD-008.
 
+### Residue Handoff
+
+| ID | Residue | State | Owner | Resume condition | Closure |
+| --- | --- | --- | --- | --- | --- |
+| DOC-H01 | No legacy row: the DOC-PATH-PLAN path plan, adopted by the user on 2026-11-19 (SDD-PATHS), with its hand-edit consumers and preconditions (SPEC-0161 EVD-212, moved from the SPEC-0223 Task). The category moves and the W owner moves ran in this package (EVD-010); the document ID renumbering and the Stage 98 disposal remain for the cutover, after a full validator run on a copy | open | Q07 | In the Q07-CUTOVER task, after every package is closed and Q07-H01 is converted | none |
+| SDLC-H01 | No legacy row: the user adopted `docs/00.workspace/` as the physical owner of the W layer on 2026-11-18 and chose to move it once with the final path cutover (SPEC-0161 EVD-209, moved from the SPEC-0223 Task). This package moved the W rows of the SDLC-R036 table and split approval and safety and Git along their rule lists, with routers, validators, registry routes and links in one change | terminal | Q07 | In the Q07-CUTOVER task, together with the SDD-PATHS renumbering | EVD-010 |
+
 ## Acceptance Decision
 
 ### Criterion Decisions
@@ -146,9 +153,9 @@ EVD-010 resolves EVD-005 and EVD-009. EVD-001, EVD-006 and EVD-007 are non-requi
 
 ### Remaining Conditions
 
-The user's acceptance of the criteria; then the residue rows SDLC-H01 (closed by this change) and DOC-H01
-(narrowed to ID renumbering, history rewrite and Stage 98 disposal) in the
-SPEC-0223 Task. Push and pull request stay with the user.
+The user's acceptance of VAL-CUTOVER-001 to VAL-CUTOVER-003. SDLC-H01 is
+terminal here (EVD-010); DOC-H01 stays open here for ID renumbering and Stage
+98 disposal under Q07-CUTOVER. Push and pull request stay with the user.
 
 ## Handoff
 
@@ -159,5 +166,8 @@ Document move rule: DOCLIFE-R023 is in force in the
 
 ### Next Owner
 
-platform, after the user's approval and acceptance; Q07-CUTOVER keeps ID
-renumbering, history rewrite and Stage 98 disposal after Q07-H01.
+Every item has PASS evidence and stays in-progress until the user accepts its
+criterion, since a completed Task requires accepted criteria; the local staged
+QA of each commit passed, and no hosted, provider or cluster check ran (not in scope). The user
+owns criterion acceptance, push and pull request. Q07-CUTOVER keeps DOC-H01
+(document ID renumbering and Stage 98 disposal) after Q07-H01.
