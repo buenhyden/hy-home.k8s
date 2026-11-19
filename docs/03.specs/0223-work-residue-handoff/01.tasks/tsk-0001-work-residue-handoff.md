@@ -1,6 +1,6 @@
 ---
 title: "Work Residue Handoff"
-version: "0.7.0"
+version: "0.7.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-20"
@@ -99,7 +99,7 @@ edits. Read-only security/correctness reviews are policy restrictions, not
 native Desktop sandbox evidence. P00's pre-existing uncommitted Task prose
 is preserved in this delivery.
 
-#### P00 1.1.0 current authorization
+#### P00 1.1.0 authorization
 
 The current user request selects only `prompts/P00-RECONCILE.md` from
 `_workspace/workspace_governance_remediation_1_1_0_20261120/` and explicitly
@@ -127,6 +127,23 @@ and `main`, using only the reviewed two-file change and its evidence receipt.
 P17 owns the Q-01 history operation after its readiness and rehearsal checks;
 P00 performs no history rewrite, native probe, session-content read or live
 service operation. The package remains available through P17.
+
+#### P01 1.1.0 current authorization
+
+The current user request selects only `prompts/P01-CI-ROUTING.md` from
+`_workspace/workspace_governance_remediation_1_1_0_20261120/` and authorizes
+commit, push, PR and merge after verification. Its README, P01, D01,
+execution contract, fixed decisions/questions, sources and k8s profile/findings
+are the inputs. P00 1.1.0 is delivered in PR 333; previous completed work is
+excluded. This Task records the P01 retention result, not another rollout.
+
+The initial state is clean `codex/p01-ci-routing` at
+`d778c5f383ba233624c27b60b7dd1379e9839d3e`. The write scope is this Task only,
+with the existing `sdlc/task` profile and template. Risk is low: no workflow,
+gate, implementation, policy or acceptance change. The user is the approving
+actor, the current Codex agent executes delivery to `buenhyden/hy-home.k8s`
+on the current branch and `main`, and no revocation is present. Revert is the
+rollback. Native operations, live deployment and later prompts are excluded.
 
 ## Execution Log
 
@@ -517,6 +534,42 @@ After P01's delivery result, the next input is
 P00's retained reconciliation and P01's actual selected-CI result. Do not
 start P02 automatically.
 
+#### P01 1.1.0 retention verification
+
+The six P01 work items remain implemented by the consumers in the tables
+above. `git diff --name-only 60ff97bd..HEAD` at the initial `d778c5f3` names
+only this Task and the ledger. The workflow, scripts, tests, dependency lock,
+validation registry, provider surfaces and relevant policy/form bytes are
+unchanged. Thus EVD-015/016 and the existing broader regression evidence
+remain applicable to their implementation/trust boundary. Changed document
+content receives its own selected checks; old feature evidence is not used to
+assert that new prose passed. No completed implementation is repeated.
+
+The current narrow `PullRequestPlanTest` and `HostedStyleJobBoundaryTests`
+run passes 16 cases in 1.541 seconds. It confirms the current-HEAD plan
+binding, changed-unit selection, selector self checks, empty versus unknown
+or missing-base input, independent document results and strict aggregate.
+The workflow's cumulative parent-bound NUL diff, saved plan, read-only token,
+reviewed-base style configuration and selected tool preparation are retained.
+The separate read-only audit found no material missing implementation.
+
+Remote protection still requires `ci-summary` and `style-pr` from App 15368,
+strict latest-head checks, administrator enforcement and zero approving
+reviews. PR 331 is merged; PR 333 and run 44587710232 confirm the P00 result.
+The latter selected only five document leaves and completed in 53 seconds.
+The existing phase table and N=1 shared-parser comparison retain their exact
+input limits; no new p95 or same-coverage hosted speed claim is made.
+
+Disposition: retain P01 implementation and verification. Q-01 to Q-04
+introduce no additional P01 CI behavior; their other owners stay as assigned
+by P00. W06-H02 remains an actual changed-manifest/lock hosted observation
+for P14-K8S, not a missing selector or a synthetic-test PASS. External CRD
+schema and live guarantees remain separate. P01 user acceptance is pending.
+The next input is P02-LOCAL-FEEDBACK from this 1.1.0 package, using delivered
+P00 and the retained P01 result; do not execute it automatically. Keep the
+package through P17. No one-use wrapper, test script or `_workspace/` output
+was created; existing fixture temporary directories clean up on exit.
+
 ### Lifecycle Traceability
 
 | Item | Upstream criterion | Result | Evidence |
@@ -551,6 +604,9 @@ start P02 automatically.
 | EVD-018 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | P00 1.1.0 Task/ledger diff on `517be785`, including EVD-017 and actor/executor/target clarification | Independent code-reviewer, separate context, policy read-only restriction; current risk-report procedure | Semantic review against P00/D00 and the fixed Q-01 to Q-04 decisions | none | PASS | No BLOCK/FIX; W10-H02 stays open with containment prerequisite, Task/ledger condition matches, P01 and past acceptance preserved; no native enforcement or runtime proof claimed | false | none |
 | EVD-019 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P00 1.1.0 exact two-file index producing `e527d29786f92f4ef51c34c1c396dc97b2fe05e4`; this evidence receipt is the only later local change | Existing pinned validation venv and active chained pre-commit/commit-msg hooks | `git commit -m 'docs: reconcile P00 with confirmed decision revision'` invokes `python3 scripts/qa.py staged`, Commitizen and generated-message checks | 0 | PASS | Staged QA and both message checks PASS; existing template/profile/link/lifecycle/ledger and selected style consumers cover the changed input. Receipt-only additions use the same document route; no unchanged behavior suite or native/live probe is replayed | false | none |
 | EVD-020 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | Temporary k8s guidance input: P00 complete with decision revision 2026-11-20 and EVD-017/018/019; P01 retained with EVD-015/016 and PR 331/332 | Python standard library; this 1.1.0 package's read-only guidance tool | `python3 tools/next_prompt.py --workspace k8s --state TEMP_PROGRESS` with the package's actual tool path | 0 | PASS | NEXT is `prompts/P02-LOCAL-FEEDBACK.md`; no prompt executed. Empty open_runtime describes only the two supplied records, not completion of future native work. Temporary input/directory removed; no parallel permanent progress ledger | false | none |
+| EVD-021 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P01 1.1.0 retention read at clean `d778c5f3`; implementation merge `60ff97bd`; current package D01 and fixed decisions | Git and existing pinned validation venv; actual CI/plan contract tests | `git diff --name-only 60ff97bd..HEAD`; scoped `git diff --exit-code` over CI/scripts/tests/config/policy/forms; `python3 -m unittest tests.test_run_validation_lane.PullRequestPlanTest tests.test_validate_ci_python_contract.HostedStyleJobBoundaryTests` | 0 | PASS | Only Task/ledger changed since implementation; scoped implementation comparison empty; all 16 current plan/CI boundary cases PASS in 1.541 seconds. Broader prior guarantees reused only for unchanged inputs; no new native/live claim | false | none |
+| EVD-022 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | Six P01 requirements against current workflow/runner/registry/document/platform consumers, permanent tests and EVD-015/016, at `d778c5f3` | Separate quality-engineer context, instructed read-only audit; actual PR/protection read-back by the parent | Requirement-to-consumer audit and review of evidence reuse boundaries | none | PASS | No material missing implementation; W06-H02, live/CRD and user acceptance remain distinct. PR 331/333 merge and run 44587710232 success re-read; no new code or behavior test added | false | none |
+| EVD-023 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | P01 1.1.0 Task-only retention diff on `d778c5f3`, including EVD-021/022 and current authorization | Independent code-reviewer, separate context and policy read-only restriction | Semantic diff review against P01/D01, fixed decisions and evidence/acceptance boundaries | none | PASS | No BLOCK/FIX; unchanged implementation evidence remains scoped, no same-coverage speed/p95 claim, old EVD/criterion cells retained; no native or live proof claimed | false | none |
 
 ### Resolution Links
 
@@ -613,7 +669,8 @@ The Plan promotes no durable contract.
 
 ### Next Owner
 
-Current handoff: P00 1.1.0 reconciles the fixed decisions and current source;
+Current handoff: P01 1.1.0 is retained after current-source and boundary
+verification (EVD-021/022); P00 1.1.0 reconciles the fixed decisions and current source;
 implementation and local verification are recorded in EVD-017 to EVD-020.
 P01 implementation and verification are retained through PR 331/332 and
 EVD-015/016. The next input is
