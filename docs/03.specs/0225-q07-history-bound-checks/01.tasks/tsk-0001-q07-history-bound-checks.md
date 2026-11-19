@@ -43,10 +43,10 @@ baseline for the reserved policy codes, and the lineage reservations and
 
 | Item | Work Unit | Owner | Status | Blocker |
 | --- | --- | --- | --- | --- |
-| WORK-001 | WORK-001 | platform | draft | none |
-| WORK-002 | WORK-002 | platform | draft | none |
-| WORK-003 | WORK-003 | platform | draft | none |
-| WORK-004 | WORK-004 | platform | draft | none |
+| WORK-001 | WORK-001 | platform | ready | none |
+| WORK-002 | WORK-002 | platform | ready | none |
+| WORK-003 | WORK-003 | platform | ready | none |
+| WORK-004 | WORK-004 | platform | ready | none |
 
 WORK-001 set `READABLE_REGISTRY_MAJORS` to the current MAJOR and removed the
 code whose own removal condition that meets: `historical_major`, the
