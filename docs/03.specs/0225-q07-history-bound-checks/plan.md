@@ -2,7 +2,7 @@
 title: "Q07 History-Bound Check Conversion Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-11-19"
 artifact_id: "SPEC-0225-PLAN-0001"

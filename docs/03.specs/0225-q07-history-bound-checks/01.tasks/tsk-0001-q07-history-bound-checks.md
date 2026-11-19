@@ -73,7 +73,7 @@ Task now names the data left for the cutover.
 
 ### Blockers and Decisions
 
-The Spec and Plan are draft until the user approves them.
+On 2026-11-19 the user approved the Spec and Plan over commit `7f211684` (EVD-007).
 
 ### Lifecycle Traceability
 
@@ -95,10 +95,12 @@ The Spec and Plan are draft until the user approves them.
 | EVD-003 | [VAL-HISTORY-002](../spec.md#criteria) | WORK-003 | automated | Same test after WORK-003 | pinned `hyhome-validation` venv | `python -m unittest tests.test_policy_rule_history` | 0 | PASS | this Task | true | none |
 | EVD-004 | [VAL-HISTORY-003](../spec.md#criteria) | WORK-004 | automated | Working tree with the marker | pinned `hyhome-validation` venv | `python -m unittest tests.test_common_form_tree tests.test_frontmatter_key_contract` and strict registry and Markdown profile checks | 0 | PASS | this Task; 433 form tree tests | true | none |
 | EVD-005 | [VAL-HISTORY-004](../spec.md#criteria) | WORK-004 | automated | Staged conversion index against `cabab987` | pinned `hyhome-validation` venv | `python3 scripts/qa.py staged` | none | NOT_RUN | pending the committed staged run | true | none |
+| EVD-006 | [VAL-HISTORY-004](../spec.md#criteria) | WORK-004 | automated | Exact index of commit `7f211684` on `9082116c` | pinned `hyhome-validation` venv; the `staged-qa` pre-commit hook | `python3 scripts/qa.py staged` | 0 | PASS | commit `7f211684`; every selected gate passed in the hook | true | EVD-005 |
+| EVD-007 | [VAL-HISTORY-001](../spec.md#criteria) | WORK-001 | observation | {"actor": "user", "approval_ref": "user answer 'Approve' of 2026-11-19 in this session, after commit 7f211684", "scope": ["SPEC-0225", "SPEC-0225-PLAN-0001"], "reviewed_commit": "7f211684", "validity": "confirmed", "revocation": "none"} | none | Spec/Plan approval | none | PASS | this Task | true | none |
 
 ### Resolution Links
 
-EVD-001 is a non-required observation followed by EVD-003; EVD-005 waits for the commit.
+EVD-001 is a non-required observation followed by EVD-003; EVD-006 resolves EVD-005.
 
 ## Acceptance Decision
 
@@ -113,7 +115,7 @@ EVD-001 is a non-required observation followed by EVD-003; EVD-005 waits for the
 
 ### Remaining Conditions
 
-The user's approval of the Spec and Plan and acceptance of the criteria.
+The user's acceptance of the criteria.
 Q07-H01 stays open for the cutover data it names.
 
 ## Handoff
