@@ -123,13 +123,27 @@ class ValidationProfileTests(unittest.TestCase):
                 )
                 self.assertEqual(surface["protectedLevel"], "protected")
 
-    def test_staged_adds_only_commit_boundary_style_to_quick(self):
-        """Iteration gates stay focused; the staged commit boundary adds style."""
+    def test_staged_adds_style_and_defers_regressions_to_affected(self):
+        """Commit checks add style while implementation suites run in quick and PR."""
 
         quick = set(self.contract["profiles"]["quick"])
         staged = set(self.contract["profiles"]["staged"])
+        regressions = {
+            row["id"]
+            for row in self.contract["validators"]
+            if "scripts/run-contract-tests.py" in row["argv"]
+            or any(arg.startswith("tests/test_") for arg in row["argv"])
+        }
         self.assertEqual(staged - quick, {"selected-style", "selected-nonstyle"})
-        self.assertEqual(quick - staged, set())
+        self.assertEqual(quick - staged, regressions)
+        self.assertTrue(regressions <= set(self.contract["profiles"]["pull-request"]))
+        self.assertTrue(
+            all(
+                row["lanes"] == ["affected"]
+                for row in self.contract["validators"]
+                if row["id"] in regressions
+            )
+        )
 
     def test_unknown_profile_fails_with_named_error(self):
         with self.assertRaises(ROUTES.ContractError) as unknown:
@@ -172,8 +186,17 @@ class ValidationProfileTests(unittest.TestCase):
                 "markdown-profiles",
             ],
         )
-        self.assertTrue(
-            all(row["reuse"] == {"mode": "change-scoped"} for row in reusable)
+        self.assertEqual(
+            {row["id"]: row["reuse"]["mode"] for row in reusable},
+            {
+                "document-contract-registry": "change-scoped",
+                "document-contract-tests": "same-lane",
+                "document-lifecycle-tests": "same-lane",
+                "document-lifecycle": "change-scoped",
+                "work-residue-ledger": "change-scoped",
+                "links-and-owners": "change-scoped",
+                "markdown-profiles": "change-scoped",
+            },
         )
 
         def synthetic_contract(reuse):
@@ -205,6 +228,14 @@ class ValidationProfileTests(unittest.TestCase):
         contract, row = synthetic_contract({"mode": "change-scoped"})
         row["optional"] = True
         with self.assertRaises(ROUTES.ContractError):
+            ROUTES.validate_contract(ROOT, contract)
+
+        contract, row = synthetic_contract({"mode": "same-lane"})
+        row["lanes"] = ["affected"]
+        contract["profiles"]["staged"].remove(row["id"])
+        ROUTES.validate_contract(ROOT, contract)
+        row["reuse"] = {"mode": "change-scoped"}
+        with self.assertRaisesRegex(ROUTES.ContractError, "SURFACE-REUSE"):
             ROUTES.validate_contract(ROOT, contract)
 
     def test_document_gate_uses_identical_effective_argv_for_change_lanes(self):
