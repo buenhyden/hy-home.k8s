@@ -379,11 +379,15 @@
     {
       "id": "T99-H02",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "operator",
       "resume_condition": "When the operator approves publishing each successor",
       "source": {
         "path": "docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md",
+        "evidence": "EVD-047"
       }
     },
     {
@@ -413,11 +417,15 @@
     {
       "id": "W03-FORMS-D01",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W03-FORMS",
       "resume_condition": "When candidate verification and user acceptance are recorded",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-227"
       }
     },
     {
@@ -521,11 +529,15 @@
     {
       "id": "W04-H01",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "W04",
       "resume_condition": "After the user accepts the verified current lifecycle model",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
+        "evidence": "EVD-227"
       }
     },
     {

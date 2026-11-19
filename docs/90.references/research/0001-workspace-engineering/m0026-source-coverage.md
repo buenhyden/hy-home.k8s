@@ -2,7 +2,7 @@
 title: "Reference: Source Coverage"
 version: "0.1.3"
 type: "reference/research"
-status: "in-review"
+status: "published"
 owner: "platform"
 updated: "2026-11-18"
 artifact_id: "RES-0001-m0026"

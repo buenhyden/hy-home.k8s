@@ -2,7 +2,7 @@
 title: "Reference: Provider Implementation Status"
 version: "0.1.1"
 type: "reference/research"
-status: "in-review"
+status: "published"
 owner: "platform"
 updated: "2026-11-18"
 artifact_id: "RES-0001-m0017"
