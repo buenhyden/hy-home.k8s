@@ -792,47 +792,6 @@ class TaskCoreHeaderTests(unittest.TestCase):
         self.assertEqual(task_status({}, missing, self.profile), "")
         self.assertIn("TASK-WORK-ITEMS", self.rules(missing))
 
-    def test_the_tracked_recorded_tasks_are_read_and_pass(self) -> None:
-        from document_contracts import task_header_form
-
-        paths = sorted((ROOT / "docs/03.specs").glob("*/tasks/tsk-*.md"))
-        recorded = 0
-        for path in paths:
-            text = path.read_text(encoding="utf-8")
-            relative = PurePosixPath(path.relative_to(ROOT).as_posix())
-            header = next(
-                (
-                    line
-                    for line in text.splitlines()
-                    if line.startswith("| Evidence ID |")
-                ),
-                None,
-            )
-            if (
-                header is None
-                or task_header_form(
-                    "evidence",
-                    _cells(header),
-                    self.profile.body_contract.task_execution.evidence_columns,
-                )
-                != "recorded"
-            ):
-                continue
-            recorded += 1
-            with self.subTest(path=relative.as_posix()):
-                tables = LINKS.task_tables(text, self.profile)
-                self.assertEqual((tables.form, tables.issues), ("recorded", ()))
-                self.assertEqual(
-                    [
-                        item.rule_id
-                        for item in MARKDOWN.validate_document_text(
-                            text, relative, self.profile, "strict"
-                        )
-                    ],
-                    [],
-                )
-        self.assertGreater(recorded, 0)
-
 
 class V4TaskRowTests(unittest.TestCase):
     """The current seven-column Task row; verdicts live in Acceptance Decision."""
@@ -1887,32 +1846,6 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         self.assertIn(
             "PLAN-PROMOTION",
             self.rules(base=base, proposed=proposed, completion_plan=self.plan),
-        )
-
-    def test_a_retained_plan_reads_its_own_promotion_and_constraints(self) -> None:
-        """SPEC-0221: an approved retained Plan keeps Owner and Receipt and Goal
-        and Boundary, and the Plan rules read them through the retained form."""
-
-        package = PurePosixPath("docs/03.specs/0221-w03-form-target-adoption")
-        owner = PurePosixPath(".agents/governance/document-authoring.md")
-        base = {
-            path: (ROOT / path).read_text(encoding="utf-8")
-            for path in (package / "spec.md", package / "plan.md", owner)
-        }
-        found = self.rules(
-            base=base, proposed=base, completion_plan=package / "plan.md"
-        )
-        self.assertNotIn("PLAN-PROMOTION", found)
-        self.assertNotIn("PLAN-GLOBAL-CONSTRAINTS", found)
-        broken = {
-            **base,
-            package / "plan.md": base[package / "plan.md"].replace(
-                "| Promotion ID | Target Owner |", "| Promotion | Target Owner |"
-            ),
-        }
-        self.assertIn(
-            "PLAN-PROMOTION",
-            self.rules(base=base, proposed=broken, completion_plan=package / "plan.md"),
         )
 
     def test_exact_completed_parent_extension_keeps_historical_authority(self) -> None:

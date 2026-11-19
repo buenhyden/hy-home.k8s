@@ -19820,35 +19820,6 @@
             "parent_id": "spec.acceptance",
             "title": "Lifecycle Traceability",
             "authority_ref": "ADR-0059"
-          },
-          {
-            "id": "spec-approved-retained-form",
-            "kind": "retained_form",
-            "condition": "an approved Spec of SPEC-0161 or SPEC-0221 keeps the five H2 it was approved with and its Lifecycle Traceability table under References; every other Spec takes the form tree",
-            "owner": "platform",
-            "verification": "tests/test_common_form_tree.py",
-            "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
-            "removal": "when neither package remains in the tree; the bound is never widened",
-            "statuses": [
-              "approved"
-            ],
-            "identity_bound": "^SPEC-0(?:161|221)$",
-            "retained_sections": {
-              "required": [
-                "Overview",
-                "Scope",
-                "Behavior Contract",
-                "Acceptance Criteria",
-                "References"
-              ],
-              "optional": [],
-              "forbidden": []
-            },
-            "body_contract": {
-              "section": "References",
-              "table_heading": "Lifecycle Traceability"
-            },
-            "authority_ref": "ADR-0059"
           }
         ],
         "core_role": "spec",
@@ -20433,43 +20404,7 @@
             }
           }
         ],
-        "extensions": [
-          {
-            "id": "plan-approved-retained-form",
-            "kind": "retained_form",
-            "condition": "an approved Plan of SPEC-0161 or SPEC-0221 keeps the six H2 it was approved with and its Work Breakdown table under Implementation Strategy; every other Plan takes the form tree",
-            "owner": "platform",
-            "verification": "tests/test_common_form_tree.py",
-            "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
-            "removal": "when neither package remains in the tree; the bound is never widened",
-            "statuses": [
-              "approved"
-            ],
-            "identity_bound": "^SPEC-0(?:161|221)-PLAN-0001$",
-            "retained_sections": {
-              "required": [
-                "Overview",
-                "Dependencies",
-                "Implementation Strategy",
-                "Verification Plan",
-                "Risks",
-                "Promotion Map"
-              ],
-              "optional": [],
-              "forbidden": []
-            },
-            "body_contract": {
-              "section": "Implementation Strategy",
-              "table_heading": "Work Breakdown"
-            },
-            "section_titles": {
-              "plan.intent.2": "Goal and Boundary",
-              "plan.work.1": "Work Breakdown",
-              "plan.promotion.1": "Owner and Receipt"
-            },
-            "authority_ref": "ADR-0059"
-          }
-        ],
+        "extensions": [],
         "core_role": "plan",
         "core": {
           "purpose": "실행 전략과 의존성",
@@ -22028,28 +21963,7 @@
         "Closure"
       ]
     },
-    "historical_tables": [
-      {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "heading": "Document Form Handoff"
-      },
-      {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "heading": "Stage QA Handoff"
-      },
-      {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "heading": "Conflicts"
-      },
-      {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "heading": "Stage Follow-up Handoffs"
-      },
-      {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "heading": "W03 Decisions"
-      }
-    ]
+    "historical_tables": []
   },
   "relationship_contract": {
     "relation_kinds": [

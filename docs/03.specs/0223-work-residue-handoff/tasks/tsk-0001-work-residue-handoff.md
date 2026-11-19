@@ -1,6 +1,6 @@
 ---
 title: "Work Residue Handoff"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-19"
@@ -44,8 +44,8 @@ packages. Input revision: `93f130a8`.
 | Item | Work Unit | Owner | Status | Blocker |
 | --- | --- | --- | --- | --- |
 | WORK-001 | WORK-001 | platform | completed | none |
-| WORK-002 | WORK-002 | platform | ready | none |
-| WORK-003 | WORK-003 | platform | ready | none |
+| WORK-002 | WORK-002 | platform | in-progress | none |
+| WORK-003 | WORK-003 | platform | in-progress | none |
 
 The analysis read the three packages and every consumer that names them. Every
 path in the three Specs and Plans exists. The conflicts are: SPEC-0221 and
@@ -59,6 +59,13 @@ entries; no owner, state or resume condition changed. The user then ran the
 handed-over deletion, so W09-H03 closed: none of the ten approved paths
 remains, and the 4.2.0 package, `.workspace-memory/` and `sessions/` stay.
 
+WORK-002 used the WORK-001 commit `49f7a6f2` as the recovery source. Every
+file matched its blob byte for byte before deletion. The guard hook refused
+the agent's `git rm`, so the user ran it. Only the REQ-0003 lineage and proofs
+still name the deleted paths. Citations by ID, such as `SPEC-0161 EVD-191`,
+stay as the Spec states. ADR-0063 changed only its link target, and its
+sentence and facts are unchanged.
+
 ### Blockers and Decisions
 
 None is open.
@@ -68,7 +75,7 @@ None is open.
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
 | WORK-001 | [VAL-RESIDUE-001](../spec.md#criteria) | PASS | EVD-001 |
-| WORK-002 | [VAL-RESIDUE-002](../spec.md#criteria) | NOT_RUN | Pending the exit commit |
+| WORK-002 | [VAL-RESIDUE-002](../spec.md#criteria) | PASS | EVD-005 |
 | WORK-003 | [VAL-RESIDUE-003](../spec.md#criteria) | NOT_RUN | Pending the adapter removal |
 
 ## Verification Evidence
@@ -81,6 +88,7 @@ None is open.
 | EVD-002 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | The ten paths the user approved under SPEC-0161 EVD-226, after the user ran the handed-over deletion command in this session, 2026-11-19 | `test -e` per path | `test -e PATH` for each of the ten paths | 0 | PASS | this Task | true | none |
 | EVD-003 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | {"spec_sha256": "5ede5efa66a40122c5d0651d8ba854b8f9929da56a68cfd27cfde2b5dfc81b94", "plan_sha256": "98c32d79128a767feee943a1afc5cea719771db3fe1c39b3ef368a7f194fab51"} | read-only code-reviewer sub-agent, separate context | Independent semantic review | none | PASS | this Task; review: no BLOCK, four FIX applied (adapter readers named, VAL-RESIDUE-003 added, consumer list completed, count of 30 stated), NOTE: WORK-003 after WORK-002 | true | none |
 | EVD-004 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | {"actor": "user", "approval_ref": "user answer 'Approve (Recommended)' of 2026-11-19 in this session", "review_ref": "EVD-003", "scope": ["SPEC-0223", "SPEC-0223-PLAN-0001"], "reviewed_spec_sha256": "5ede5efa66a40122c5d0651d8ba854b8f9929da56a68cfd27cfde2b5dfc81b94", "reviewed_plan_sha256": "98c32d79128a767feee943a1afc5cea719771db3fe1c39b3ef368a7f194fab51", "validity": "confirmed", "revocation": "none"} | none | Spec/Plan first-record approval | none | PASS | this Task | true | none |
+| EVD-005 | [VAL-RESIDUE-002](../spec.md#criteria) | WORK-002 | automated | Staged exit index on `49f7a6f2`: the nine files of SPEC-0161, SPEC-0221 and SPEC-0222 deleted; REQ-0003 lineage rows and recovery proof; 42 terminal ledger entries of the deleted Tasks removed; registry `historical_tables` emptied and the Spec and Plan retained forms removed; four baseline entries, the Stage 03 and Stage 99 README sentences, ADR-0063's link and the retained-form tests removed | pinned `hyhome-validation` venv | strict lifecycle, profile, link and registry validators; ledger gate; `git grep` for the three package paths | 0 | PASS | REQ-0003 Archived Lineage; this Task | true | none |
 
 ### Resolution Links
 
@@ -133,7 +141,7 @@ No earlier failure is open; the Resolves column names the row each PASS row clos
 
 ### Remaining Conditions
 
-WORK-002 and WORK-003 remain; each open residue row names its owner.
+WORK-003 remains; each open residue row names its owner.
 
 ## Handoff
 

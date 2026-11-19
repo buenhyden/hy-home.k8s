@@ -13,48 +13,6 @@
       }
     },
     {
-      "id": "CI-SCOPE",
-      "kind": "conflict",
-      "state": "terminal",
-      "owner": "W06",
-      "resume_condition": "When ADR-0063 or another ADR-0048 successor is accepted with the REQ-0003 FR-0017 amendment",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-188"
-      }
-    },
-    {
-      "id": "COMMIT-AFTER",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W06",
-      "resume_condition": "With the Git-point binding change to `.agents/governance/git.md`",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-189"
-      }
-    },
-    {
-      "id": "COMMIT-BEFORE",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W06",
-      "resume_condition": "When W06 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-171"
-      }
-    },
-    {
       "id": "DOC-12",
       "kind": "conflict",
       "state": "open",
@@ -75,104 +33,6 @@
       }
     },
     {
-      "id": "DOC-S90",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "At the next Stage 90 profile or validator change",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-185"
-      }
-    },
-    {
-      "id": "DOC-S99",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "At the next change to a form's heading tree, for the tests of that form; deliberate registry pins in tests.test_common_form_tree stay",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-185"
-      }
-    },
-    {
-      "id": "MERGE-AFTER",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W06",
-      "resume_condition": "With the Git-point binding change to `.agents/governance/git.md`",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-189"
-      }
-    },
-    {
-      "id": "MERGE-BEFORE",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W06",
-      "resume_condition": "When W06 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-173"
-      }
-    },
-    {
-      "id": "OLD-RULE-TESTS",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W06",
-      "resume_condition": "With CI-SCOPE",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-188"
-      }
-    },
-    {
-      "id": "OPEN-08",
-      "kind": "survey",
-      "state": "terminal",
-      "owner": "W10-INFRA",
-      "resume_condition": "When an operator authorizes a named live or cluster observation for W10-INFRA; native paths stay with AGENT-04 and W07-H02",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-224"
-      }
-    },
-    {
-      "id": "PUSH-BEFORE",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W06",
-      "resume_condition": "With the Git-point binding change to `.agents/governance/git.md`",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-189"
-      }
-    },
-    {
       "id": "Q07-H01",
       "kind": "handoff",
       "state": "open",
@@ -180,90 +40,6 @@
       "resume_condition": "In the Q07-CUTOVER task, after W11",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
-      }
-    },
-    {
-      "id": "QA-03",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "When an evidence row maps each rule to a current check or a narrower residue row",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-184"
-      }
-    },
-    {
-      "id": "QA-17",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "When an evidence row maps each rule to a current check or a narrower residue row",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-184"
-      }
-    },
-    {
-      "id": "R147-05",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "When an evidence row maps each rule to a current check or a narrower residue row",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-184"
-      }
-    },
-    {
-      "id": "R147-06",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W06",
-      "resume_condition": "With the Git-point binding change to `.agents/governance/git.md`",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-189"
-      }
-    },
-    {
-      "id": "R147-07",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W04",
-      "resume_condition": "When W04 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-169"
-      }
-    },
-    {
-      "id": "R147-16",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W10-INFRA",
-      "resume_condition": "When W10-INFRA maps the manifest and GitOps consumers that a governance change can affect",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-225"
       }
     },
     {
@@ -277,48 +53,6 @@
       }
     },
     {
-      "id": "R147-20",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "When an evidence row maps equivalent-result reuse to the `scripts/qa.py` identity contract",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-184"
-      }
-    },
-    {
-      "id": "SDLC-07",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W04",
-      "resume_condition": "When the owner decides between per-family policy edges and the registry-only transition rule",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-177"
-      }
-    },
-    {
-      "id": "SDLC-08",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "When a negative test refuses an old approved edition as a pass basis, or with W05-H09",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-184"
-      }
-    },
-    {
       "id": "SDLC-H01",
       "kind": "handoff",
       "state": "open",
@@ -326,20 +60,6 @@
       "resume_condition": "In the Q07-CUTOVER task, together with the SDD-PATHS renumbering",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
-      }
-    },
-    {
-      "id": "SDLC-ROWS",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "At the next change to the PLAN-PROMOTION check or the Plan promotion form",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-185"
       }
     },
     {
@@ -363,34 +83,6 @@
       }
     },
     {
-      "id": "T99-H01",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W04-CONTENT",
-      "resume_condition": "When W04-CONTENT writes each missing fact from its source, or records that none exists",
-      "source": {
-        "path": "docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md",
-        "evidence": "EVD-046"
-      }
-    },
-    {
-      "id": "T99-H02",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "operator",
-      "resume_condition": "When the operator approves publishing each successor",
-      "source": {
-        "path": "docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md",
-        "evidence": "EVD-047"
-      }
-    },
-    {
       "id": "T99-H03",
       "kind": "handoff",
       "state": "open",
@@ -398,146 +90,6 @@
       "resume_condition": "At Q07-CUTOVER, after every work package's acceptance",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
-      }
-    },
-    {
-      "id": "T99-H04",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W04-CONTENT",
-      "resume_condition": "When W04-CONTENT registers them as local tables with `authority_ref` or folds them into a core table",
-      "source": {
-        "path": "docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md",
-        "evidence": "EVD-046"
-      }
-    },
-    {
-      "id": "W03-FORMS-D01",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W03-FORMS",
-      "resume_condition": "When candidate verification and user acceptance are recorded",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-227"
-      }
-    },
-    {
-      "id": "W03-H05",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W04",
-      "resume_condition": "When W04 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-170"
-      }
-    },
-    {
-      "id": "W03-H11",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "When W05 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-175"
-      }
-    },
-    {
-      "id": "W03-H12",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "When W05 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-172"
-      }
-    },
-    {
-      "id": "W03-H23",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W10-INFRA",
-      "resume_condition": "When W10-INFRA aligns the root README prerequisites with the token prompt of `infrastructure/bootstrap-local.sh`",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-225"
-      }
-    },
-    {
-      "id": "W03-H45",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "T99-CONFORMANCE",
-      "resume_condition": "When T99-CONFORMANCE compares the target core with a real registry export",
-      "source": {
-        "path": "docs/03.specs/0221-w03-form-target-adoption/tasks/tsk-0001-w03-form-target-adoption.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0221-w03-form-target-adoption/tasks/tsk-0001-w03-form-target-adoption.md",
-        "evidence": "EVD-023"
-      }
-    },
-    {
-      "id": "W03-H46",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "T99-CONFORMANCE",
-      "resume_condition": "When T99-CONFORMANCE compares the target core with a real registry export",
-      "source": {
-        "path": "docs/03.specs/0221-w03-form-target-adoption/tasks/tsk-0001-w03-form-target-adoption.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0221-w03-form-target-adoption/tasks/tsk-0001-w03-form-target-adoption.md",
-        "evidence": "EVD-023"
-      }
-    },
-    {
-      "id": "W03-H47",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "T99-CONFORMANCE",
-      "resume_condition": "When T99-CONFORMANCE classifies each unmapped role as a mapped form or a native or domain module",
-      "source": {
-        "path": "docs/03.specs/0221-w03-form-target-adoption/tasks/tsk-0001-w03-form-target-adoption.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0221-w03-form-target-adoption/tasks/tsk-0001-w03-form-target-adoption.md",
-        "evidence": "EVD-023"
-      }
-    },
-    {
-      "id": "W04-H01",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W04",
-      "resume_condition": "After the user accepts the verified current lifecycle model",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-227"
       }
     },
     {
@@ -601,118 +153,6 @@
       }
     },
     {
-      "id": "W05-H01",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "When W05 starts",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-174"
-      }
-    },
-    {
-      "id": "W05-H04",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "At the next change to a derived-copy surface",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-185"
-      }
-    },
-    {
-      "id": "W05-H05",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "At the next change to approval receipt validation",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-185"
-      }
-    },
-    {
-      "id": "W05-H06",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "At the next change to `scripts/validation/current_executable_references.py`",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-185"
-      }
-    },
-    {
-      "id": "W05-H07",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "When W05 starts (validators)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-168"
-      }
-    },
-    {
-      "id": "W05-H08",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "At the next edit of the relationship contract schema",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-185"
-      }
-    },
-    {
-      "id": "W05-H09",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "At the next change to a file that holds the retired aliases or readable majors",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-185"
-      }
-    },
-    {
-      "id": "W05-H10",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W05",
-      "resume_condition": "When a change-set selection rule can name each owner of a test or downstream document",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-187"
-      }
-    },
-    {
       "id": "W06-H02",
       "kind": "handoff",
       "state": "open",
@@ -733,20 +173,6 @@
       }
     },
     {
-      "id": "W07-H02",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W07",
-      "resume_condition": "When a trusted Claude tool session can record sensitive-path allow and deny cases (RUNTIME-CLOSE)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-191"
-      }
-    },
-    {
       "id": "W07-H03",
       "kind": "handoff",
       "state": "open",
@@ -754,20 +180,6 @@
       "resume_condition": "At the next approval or receipt validator change, or at W11-ACCEPT",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
-      }
-    },
-    {
-      "id": "W07-H04",
-      "kind": "handoff",
-      "state": "terminal",
-      "owner": "W07",
-      "resume_condition": "When W07 starts (provider projections)",
-      "source": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
-      },
-      "closure": {
-        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md",
-        "evidence": "EVD-144"
       }
     },
     {
