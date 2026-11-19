@@ -614,7 +614,7 @@ class ReviewTest(Fixture):
     def test_a_git_failure_fails_only_that_unit(self):
         report = self.run_plan(
             self.plan(
-                self.unit("a", self.sh("rm -r .git"), ["docs/a.md"]),
+                self.unit("a", self.sh("echo junk > .git/index"), ["docs/a.md"]),
                 self.unit("b", write("docs/b.md", "B\n"), ["docs/b.md"]),
             )
         )
@@ -730,6 +730,42 @@ class ReviewTest(Fixture):
             self.assertTrue(live.exists())
         self.assertEqual(PARALLEL.sweep(self.runtime), ["0123abcd"])
         self.assertTrue(bad.exists())
+
+
+class GitTrustTest(Fixture):
+    def sh(self, script: str) -> list[str]:
+        return ["sh", "-c", script]
+
+    def test_a_worker_that_changes_its_git_config_is_refused(self):
+        for script in (
+            "echo A > docs/a.md; git config diff.noprefix true",
+            "echo A > docs/a.md; mkdir -p .git/info; echo '* -diff' > .git/info/attributes",
+        ):
+            with self.subTest(script=script):
+                report = self.run_plan(
+                    self.plan(self.unit("a", self.sh(script), ["docs/a.md"]))
+                )
+                unit = report["units"]["a"]
+                self.assertEqual(unit["state"], "refused", unit)
+                self.assertIn("PARALLEL_GITCONFIG", unit["reason"])
+
+    def test_a_patch_swapped_after_promotion_is_rechecked_at_integration(self):
+        # Unit b runs after a is promoted and rewrites a's patch to touch src.txt.
+        forged = (
+            "diff --git a/src.txt b/src.txt\n"
+            "--- a/src.txt\n+++ b/src.txt\n@@ -1 +1 @@\n-source\n+stolen\n"
+        )
+        swap = self.sh(f"printf '{forged}' > ../a.patch; echo B > docs/b.md")
+        report = self.run_plan(
+            self.plan(
+                self.unit("a", write("docs/a.md", "A\n"), ["docs/a.md"]),
+                self.unit("b", swap, ["docs/b.md"], depends_on=["a"]),
+            )
+        )
+        self.assertEqual(report["integration"]["state"], "REFUSED")
+        self.assertIn("PARALLEL_OWNERSHIP", report["integration"]["reason"])
+        self.assertIsNone(report["candidate"])
+        self.assertEqual(report["state"], "failed")
 
 
 if __name__ == "__main__":

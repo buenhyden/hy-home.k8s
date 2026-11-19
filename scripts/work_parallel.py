@@ -327,9 +327,49 @@ def _git_env() -> dict[str, str]:
     return env
 
 
+# Settings a worker could set in its clone's config to change what the
+# dispatcher's own git calls report or write.
+SAFE_CONFIG = [
+    part
+    for item in (
+        "core.hooksPath=/dev/null",
+        "core.fsmonitor=false",
+        "core.attributesFile=/dev/null",
+        "diff.noprefix=false",
+        "diff.mnemonicPrefix=false",
+    )
+    for part in ("-c", item)
+]
+
+
+def _git_meta(clone: Path) -> str:
+    """Digest of the clone's config and info files, which only git should own."""
+    digest = hashlib.sha256()
+    git_dir = clone / ".git"
+    files = [git_dir / "config", *sorted((git_dir / "info").rglob("*"))]
+    for path in files:
+        digest.update(str(path.relative_to(git_dir)).encode() + b"\0")
+        if path.is_symlink():
+            digest.update(b"link:" + os.readlink(path).encode())
+        elif path.is_file():
+            with path.open("rb") as handle:
+                digest.update(handle.read(OUTPUT_LIMIT + 1))
+    return digest.hexdigest()
+
+
+def _patch_paths(cwd: Path, patch: Path) -> list[str]:
+    """Every path a patch would touch, read by the integrator's own clean git."""
+    raw = _git(cwd, "apply", "--numstat", "-z", str(patch), binary=True)
+    paths = []
+    for record in raw.split(b"\0"):
+        if record:
+            paths.append(record.split(b"\t", 2)[-1].decode(errors="surrogateescape"))
+    return paths
+
+
 def _git(cwd: Path, *args: str, binary: bool = False):
     """Run git with bounded output; a clone's own hooks and fsmonitor never run."""
-    command = ["git", "-c", "core.hooksPath=/dev/null", "-c", "core.fsmonitor=false"]
+    command = ["git", *SAFE_CONFIG]
     with tempfile.TemporaryFile() as out, tempfile.TemporaryFile() as err:
         try:
             code = subprocess.run(
@@ -608,6 +648,7 @@ class _Run:
             "proc": proc,
             "clone": clone,
             "tree": tree,
+            "meta": _git_meta(clone),
             "tokens": tokens,
             "begin": time.monotonic(),
             "deadline": time.monotonic() + unit["timeout"],
@@ -646,11 +687,17 @@ class _Run:
     def promote(self, uid: str, work: dict[str, Any]) -> None:
         unit, rec = self.units[uid], self.rec[uid]
         clone = work["clone"]
+        if _git_meta(clone) != work["meta"]:
+            rec.update(
+                state="refused", reason="PARALLEL_GITCONFIG: worker changed .git"
+            )
+            return
         _git(clone, "add", "-A")
-        # --no-renames: a rename must list its source too, or a deletion hides.
-        changed = _paths(
-            clone, "diff", "--cached", "--no-renames", "--name-only", "-z", work["tree"]
-        )
+        # One snapshot tree feeds both the ownership list and the patch, through
+        # plumbing that ignores porcelain diff settings.
+        snapshot = _git(clone, "write-tree")
+        compare = ["diff-tree", "-r", "--no-renames", "--no-ext-diff", "--no-textconv"]
+        changed = _paths(clone, *compare, "--name-only", "-z", work["tree"], snapshot)
         rec["changed"] = changed
         rec["ignored"] = _paths(
             clone, "ls-files", "-z", "--others", "--ignored", "--exclude-standard"
@@ -670,11 +717,12 @@ class _Run:
             return
         patch = _git(
             clone,
-            "diff",
-            "--cached",
-            "--no-renames",
+            *compare,
+            "-p",
             "--binary",
+            "--full-index",
             work["tree"],
+            snapshot,
             binary=True,
         )
         (self.dir / f"{uid}.patch").write_bytes(patch)
@@ -731,6 +779,19 @@ class _Run:
                 patch = self.dir / f"{uid}.patch"
                 if not patch.stat().st_size:
                     continue
+                # The patch file sits beside the worker clones, so a worker can
+                # reach it; recheck what it touches before applying it.
+                owned = self.units[uid]["owned_paths"]
+                outside = [
+                    p
+                    for p in _patch_paths(path, patch)
+                    if not any(covers(o, p) for o in owned)
+                ]
+                if outside:
+                    reason = (
+                        f"PARALLEL_OWNERSHIP: {uid} patch touches {', '.join(outside)}"
+                    )
+                    return {"state": "REFUSED", "unit": uid, "reason": reason}, None
                 try:
                     _git(path, "apply", "--index", "--binary", str(patch))
                 except ParallelError as exc:
