@@ -323,7 +323,13 @@ def lock_keys(owned: list[str], resources: list[str]) -> tuple[list[str], list[s
 
 def _git_env() -> dict[str, str]:
     env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
-    env["GIT_CONFIG_NOSYSTEM"] = "1"
+    # A worker runs as the same user: ignore its replace refs and any global
+    # config it could have written.
+    env.update(
+        GIT_CONFIG_NOSYSTEM="1",
+        GIT_CONFIG_GLOBAL="/dev/null",
+        GIT_NO_REPLACE_OBJECTS="1",
+    )
     return env
 
 
@@ -357,26 +363,23 @@ def _git_meta(clone: Path) -> str:
     return digest.hexdigest()
 
 
-def _patch_paths(cwd: Path, patch: Path) -> list[str]:
-    """Every path a patch would touch, read by the integrator's own clean git."""
-    raw = _git(cwd, "apply", "--numstat", "-z", str(patch), binary=True)
-    paths = []
-    for record in raw.split(b"\0"):
-        if record:
-            paths.append(record.split(b"\t", 2)[-1].decode(errors="surrogateescape"))
-    return paths
-
-
-def _git(cwd: Path, *args: str, binary: bool = False):
+def _git(cwd: Path, *args: str, binary: bool = False, data: bytes | None = None):
     """Run git with bounded output; a clone's own hooks and fsmonitor never run."""
     command = ["git", *SAFE_CONFIG]
-    with tempfile.TemporaryFile() as out, tempfile.TemporaryFile() as err:
+    with (
+        tempfile.TemporaryFile() as out,
+        tempfile.TemporaryFile() as err,
+        tempfile.TemporaryFile() as source,
+    ):
+        if data is not None:
+            source.write(data)
+            source.seek(0)
         try:
             code = subprocess.run(
                 [*command, *args],
                 cwd=cwd,
                 env=_git_env(),
-                stdin=subprocess.DEVNULL,
+                stdin=source if data is not None else subprocess.DEVNULL,
                 stdout=out,
                 stderr=err,
                 timeout=GIT_TIMEOUT,
@@ -625,6 +628,7 @@ class _Run:
                 HYK8S_PARALLEL_ATTEMPT=str(rec["attempts"]),
                 HYK8S_PARALLEL_TOKENS=json.dumps(tokens, sort_keys=True),
             )
+            meta = _git_meta(clone)  # the baseline, before the worker can run
             with (self.dir / f"{uid}-{rec['attempts']}.log").open("wb") as log:
                 proc = subprocess.Popen(
                     unit["command"],
@@ -648,7 +652,7 @@ class _Run:
             "proc": proc,
             "clone": clone,
             "tree": tree,
-            "meta": _git_meta(clone),
+            "meta": meta,
             "tokens": tokens,
             "begin": time.monotonic(),
             "deadline": time.monotonic() + unit["timeout"],
@@ -779,12 +783,33 @@ class _Run:
                 patch = self.dir / f"{uid}.patch"
                 if not patch.stat().st_size:
                     continue
-                # The patch file sits beside the worker clones, so a worker can
-                # reach it; recheck what it touches before applying it.
+                # The patch file sits beside the worker clones, where a worker can
+                # reach it: read it once, apply those bytes, then check the paths
+                # the index actually changed, not what the patch text claims.
+                with patch.open("rb") as handle:
+                    payload = handle.read(OUTPUT_LIMIT + 1)
+                if len(payload) > OUTPUT_LIMIT:
+                    reason = f"PARALLEL_PATCH: {uid} patch exceeds {OUTPUT_LIMIT} bytes"
+                    return {"state": "REFUSED", "unit": uid, "reason": reason}, None
+                before = _git(path, "write-tree")
+                try:
+                    _git(path, "apply", "--index", "--binary", "-", data=payload)
+                except ParallelError as exc:
+                    return {"state": "CONFLICT", "unit": uid, "reason": str(exc)}, None
+                after = _git(path, "write-tree")
                 owned = self.units[uid]["owned_paths"]
                 outside = [
                     p
-                    for p in _patch_paths(path, patch)
+                    for p in _paths(
+                        path,
+                        "diff-tree",
+                        "-r",
+                        "--no-renames",
+                        "--name-only",
+                        "-z",
+                        before,
+                        after,
+                    )
                     if not any(covers(o, p) for o in owned)
                 ]
                 if outside:
@@ -792,10 +817,6 @@ class _Run:
                         f"PARALLEL_OWNERSHIP: {uid} patch touches {', '.join(outside)}"
                     )
                     return {"state": "REFUSED", "unit": uid, "reason": reason}, None
-                try:
-                    _git(path, "apply", "--index", "--binary", str(patch))
-                except ParallelError as exc:
-                    return {"state": "CONFLICT", "unit": uid, "reason": str(exc)}, None
             candidate = self.dir / "candidate.patch"
             candidate.write_bytes(
                 _git(path, "diff", "--cached", "--binary", self.base, binary=True)
