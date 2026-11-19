@@ -1,6 +1,6 @@
 ---
 title: "T99 Common Core Conformance"
-version: "0.22.2"
+version: "0.22.3"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-19"
@@ -326,6 +326,7 @@ The user approved the Spec and Plan (EVD-006) and renewed that approval for revi
 | EVD-045 | [VAL-CORE-004](../spec.md#criteria) | WORK-009 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `321cb2cf` and its commit hooks; pinned venv, 2026-11-18 | PASS | 11 selected gates passed. The first hook run refused the ledger because its entries were not sorted by ID, so they were sorted. The second hook run passed all 11 gates but returned 1 with no gate failure, while worktree backups ran beside it. A direct `qa.py staged` on the same index returned 0, and the commit hook then passed. | yes | none |
 | EVD-046 | [VAL-CORE-002](../spec.md#criteria) | WORK-009 | Residue closure by W04-CONTENT | The W04-CONTENT change on `claude/w04-content` (SPEC-0161 EVD-182); the four strict document validators on its staged tree; pinned venv, 2026-11-18 | PASS | T99-H01: every listed header-only core table now holds rows written from its own document's text, and cells with no stated fact moved to W04-H02 to W04-H04. T99-H04: the registry registers the policy Control Register and Responsibilities tables with `authority_ref: ADR-0059`. The incident Field/Value table stays a free metadata table, which SPEC-0171 decided and a test pins. | yes | none |
 | EVD-047 | [VAL-CORE-002](../spec.md#criteria) | WORK-009 | T99-H02 successor publication | The user's approval of 2026-11-19 under SPEC-0161 W11-ACCEPT (EVD-227); RES-0001-m0015 to m0026 and AUD-0001-m0003; `validate-document-lifecycle.py --mode strict` on each staged step, 2026-11-19 | PASS | The 13 successors moved from draft to in-review in one commit and to published in the next, because the lifecycle allows one declared edge per change; a direct draft-to-published change was refused with `LIFECYCLE-EDGE` in a throwaway clone. The predecessors stay published until T99-H03 disposes of them at the cutover. | false | none |
+| EVD-048 | [VAL-CORE-002](../spec.md#criteria) | WORK-009 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-19 decision "Delete now, move residues (Recommended)" under SPEC-0223; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | false | none |
 
 ### Resolution Links
 
@@ -339,7 +340,6 @@ WORK-009 records the residue this Task leaves here and in `docs/03.specs/work-re
 | --- | --- | --- | --- | --- | --- |
 | T99-H01 | Header-only core tables with no source fact: the Steps table of nine runbooks, ADR-0062's Options Benefit cells, the `service-readme.interface` table of the gitops and infrastructure READMEs, the `architecture.interface` Failure cells of AD-0004, AD-0005 and AD-0007, and the core tables of the research and audit successor members | terminal | W04-CONTENT | When W04-CONTENT writes each missing fact from its source, or records that none exists | EVD-046 |
 | T99-H02 | Publishing the successor members RES-0001-m0015 to m0026 and AUD-0001-m0003, which are draft | terminal | operator | When the operator approves publishing each successor | EVD-047 |
-| T99-H03 | Disposal of the 13 published predecessors and their two identity-bound retained forms; accepted ADR-0026 and ADR-0028 still link to RES-0001-m0007 | open | Q07 | At Q07-CUTOVER, after every work package's acceptance | none |
 | T99-H04 | The policy template's Control Register and Responsibilities tables and the incident template's status table are not in `template_definition` (existing since `a8bc8c0b`) | terminal | W04-CONTENT | When W04-CONTENT registers them as local tables with `authority_ref` or folds them into a core table | EVD-046 |
 
 ## Acceptance Decision
@@ -356,6 +356,13 @@ WORK-009 records the residue this Task leaves here and in `docs/03.specs/work-re
 ### Remaining Conditions
 
 No work unit or criterion remains. The residue rows T99-H01 to T99-H04 stay open for their owners. Push, pull request and merge follow the user's request.
+
+Frozen package disposition decision:
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: Current consumers: the registry `authority_ref` values name SPEC-0222 by ID only, which stays reserved by its lineage row. SPEC-0223 holds the open residue that this package hosted, and REQ-0003 Archived Lineage keeps its summary.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The disposition authority is the user's 2026-11-19 decision "Delete now, move residues (Recommended)". If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Handoff
 

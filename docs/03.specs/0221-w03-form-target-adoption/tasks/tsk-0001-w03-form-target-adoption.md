@@ -1,9 +1,9 @@
 ---
 title: "W03 Form Target Adoption"
-version: "0.10.0"
+version: "0.10.1"
 type: "sdlc/task"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-19"
 artifact_id: "SPEC-0221-TSK-0001"
 parent_ids: ["SPEC-0221-PLAN-0001"]
 ---
@@ -116,6 +116,7 @@ The user approved the Spec and Plan (EVD-002), with acceptance on green checks. 
 | EVD-021 | [VAL-FORM-003](../spec.md#criteria) | WORK-006 | Independent review | The same read-only code-reviewer agent over the staged fix (`git diff --cached` on `7f5e5838`), with a completion-mode lifecycle run, the strict validators and 23 focused tests, 2026-11-17; risk class `high` | PASS | APPROVE: F1 to F3 fixed without widening the retained bound or adding an alias; F5 and F6 accepted. One optional LOW note stays open: no registry check requires a `section_titles` key to name an existing form section, and a wrong key is inert. | yes | EVD-018 |
 | EVD-022 | [VAL-FORM-003](../spec.md#criteria) | WORK-006 | Strict document validators and staged QA | `python3 scripts/qa.py staged` on the index of `4cedd75f` (the final code and document tree) and its commit hooks; a separate `scripts/run-contract-tests.py --root . --suite document` run on the WORK-005 tree; pinned venv, 2026-11-17 | PASS | 13 selected gates passed, the `document` contract suite and the work residue ledger gate among them, and the hooks passed at the commit; the separate run passed 1148 tests in 31 modules. | yes | none |
 | EVD-023 | [VAL-FORM-003](../spec.md#criteria) | WORK-006 | Residue closure by T99-CONFORMANCE | The SPEC-0222 export of `66fe7808` with the package comparator (sha256 `f6ee2636`) against the 4.0.0 design targets (sha256 `3ac2806e`); pinned venv, 2026-11-18 | PASS | W03-H45: `common_forms.core` binds the 4.0.0 targets, and every core-role form carries their sections, typed tables, metadata policy, relationships and lifecycle. W03-H46: the task form's section IDs are the core IDs `task.scope` to `task.handoff`. W03-H47: every form carries `core_role`. The ADR form maps to decision and AGENTS to agent-instructions, the reference report splits into research, audit and data-reference, and the other forms are classified `domain`. The export returned `DECLARED_CORE_MATCH` with 0 unmapped templates ([SPEC-0222 Task](../../0222-t99-common-core-conformance/tasks/tsk-0001-t99-common-core-conformance.md#results), EVD-039). | yes | none |
+| EVD-024 | [VAL-FORM-001](../spec.md#criteria) | WORK-001 | Manual package-exit decision freeze | This package's `spec.md`, `plan.md` and Task; the consumers named below; the user's 2026-11-19 decision "Delete now, move residues (Recommended)" under SPEC-0223; Git-history-only method | PASS | The consumer, preservation, hold, authority and method decision is frozen below before this package's final source commit. Each file's committed `commit:path`, retained-ref reachability and byte comparison are recorded in REQ-0003 Archived Lineage before deletion. An unresolved condition defers the affected deletion. | false | none |
 
 ### Resolution Links
 
@@ -144,6 +145,13 @@ WORK-006 records the Spec's out-of-scope differences here and in `docs/03.specs/
 ### Remaining Conditions
 
 No work unit remains. T99-CONFORMANCE closed the residue rows W03-H45 to W03-H47 (EVD-023), so no open residue row is sourced in this Task. Push, pull request and merge follow the user's request for this change.
+
+Frozen package disposition decision:
+
+- **Target and method**: After the final source commit, retire only this Stage 03 package (`spec.md`, `plan.md` and this Task) through Git-history-only recovery. No other document is selected.
+- **Consumers and preservation**: Current consumers: the registry retained Spec and Plan form exceptions and the tests that read these files; the exit change updates each. SPEC-0223 holds the open residue that this package hosted, and REQ-0003 Archived Lineage keeps its summary.
+- **Hold and authority**: The current repository documents and the user's request identify no hold on these files. The disposition authority is the user's 2026-11-19 decision "Delete now, move residues (Recommended)". If a hold or unmet consumer is identified before deletion, the affected deletion is deferred and its source kept. Remote retention is not inferred from local refs.
+- **Proof handoff**: This Task freezes the decision before its final source commit. After that commit, each file's exact `commit:path`, blob availability, reachability from the retained local ref and a byte comparison with the source still in the tree are recorded in REQ-0003 Archived Lineage before any file is deleted.
 
 ## Handoff
 
