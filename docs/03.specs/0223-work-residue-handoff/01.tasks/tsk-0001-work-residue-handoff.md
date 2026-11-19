@@ -685,6 +685,8 @@ not a paired speed comparison or proof of the proposed small-input budget.
 | EVD-027 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | Frozen P02 source/registry/tests and current owner/Task diff against initial HEAD; Python test formatting only refreshed afterwards | Independent code-reviewer and security-auditor, separate contexts, instructed read-only | Exact diff semantic/core checklist: acceptance alignment, one writer, owners, removed checks, secret exposure, mutation/cache/error boundaries and normal-PR rollback | none | PASS | Both reviewers report no BLOCK/FIX; no permission, trigger, hook source or protected target changed. Removed staged suites remain quick/PR. Original evidence, criterion cells and residue rows preserved by inline comparison. Review does not grant user acceptance or native/live proof | false | none |
 | EVD-028 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | Exact ten-file P02 index producing `17f2e4c9`; later changes are this measurement receipt only | Installed chained hooks and existing pinned validation venv | `git commit -m 'fix: bound local QA to staged feedback'` runs exact-index staged QA, Commitizen and generated-message checks | 0 | PASS | All active hooks PASS, total 90.812s. Selected direct checks: affected surfaces, agent governance, document registry/lifecycle, residue ledger, knowledge surface, links, profiles, repository quality, selected nonstyle/style. No bypass or automatic staging | false | none |
 | EVD-029 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | Clean `17f2e4c9`, zero staged changes, same installed chain/venv as EVD-025; N=3 warm | Inline subprocess timer and canonical index byte comparison; no timing file | `scripts/githooks/pre-commit`, three invocations without network | 0 | PASS | 6.910, 6.738, 6.682s; median 6.738s versus 18.691s before edits for the same empty scope; index preserved in every run. No p95, cold, nonempty speed or IDE-experience claim | false | none |
+| EVD-030 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P02 final cache-edge check after `f54f26aa`: valid `topic/한글` and another branch at the same commit | Existing pinned Python and formatter; synthetic Git fixture | `LocalEvidenceTests.test_unicode_branch_name_is_a_stable_reuse_identity_input` RED then GREEN; three focused cache tests; pinned Ruff format and lint | 0 | PASS | Additional review reproduced ASCII decoding failure, fixed by using the existing UTF-8/surrogateescape ref encoding. Same branch identity stable, changed branch differs; three cache cases PASS. Empty-input timing path is unchanged. No prior evidence is overwritten | false | none |
+| EVD-031 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | Independent follow-up FIX: both `topic/a` and its NBSP-suffixed ref exist at the same commit before comparing identity | Existing pinned Python/formatter; synthetic Git refs | Focused cache identity RED/GREEN and three cache cases; pinned Ruff format and lint | 0 | PASS | Reviewer reproduced a collision caused by Unicode whitespace stripping. Removing only the trailing Git LF preserves exact ref identity; three cache cases PASS in 3.04s. Receipt commit `f54f26aa` previously passed its document/message hooks in 72.278s, so nonempty small-input latency remains above the proposed 10s goal | false | none |
 
 ### Resolution Links
 
@@ -749,7 +751,7 @@ The Plan promotes no durable contract.
 
 Current handoff: P02 implementation, focused local verification, independent
 reviews, exact-index commit and post-change hook measurements are EVD-025 to
-EVD-029. This receipt receives its own selected document commit hook; hosted
+EVD-031. This receipt receives its own selected document commit hook; hosted
 and merge results are reported on the actual delivery. P00/P01 remain retained
 through EVD-015 to EVD-024 and PR 331 to PR 334. User acceptance of P00/P01/P02
 is separate and is not inferred from implementation, tests or merge.
@@ -761,6 +763,11 @@ through P17, other active work, persistent memory and reusable QA cache.
 Cold installation, IDE experience, native provider delivery and live cluster
 guarantees are not established by these local samples. The 1.0.0 handoff below
 is historical context only.
+
+Inline timing/profiling left no script or raw trace. The synthetic message
+was deleted, fixture/private-snapshot directories clean up on exit and no
+one-use `_workspace/` output was created. Generated graph and reusable cache
+remain persistent tools, distinct from task scratch.
 
 WORK-001 to WORK-003 remain completed and accepted; do not rerun them.
 For P00, the source and residue classification is implemented, with final

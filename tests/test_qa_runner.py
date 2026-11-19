@@ -1229,6 +1229,31 @@ class LocalEvidenceTests(unittest.TestCase):
         with mock.patch.object(self.qa, "validation_date", return_value="2099-01-01"):
             self.assertNotEqual(initial, identity())
 
+    def test_unicode_branch_name_is_a_stable_reuse_identity_input(self):
+        gate = {
+            "id": "fixture-change-scoped",
+            "argv": ["python3", "check.py"],
+            "reuse": {"mode": "change-scoped"},
+        }
+
+        def identity():
+            return self.qa.gate_input_identity(
+                self.root,
+                gate,
+                lane="affected",
+                paths=("file.txt",),
+                base_ref="fixed-base",
+                environment={"LANG": "C.UTF-8"},
+            )
+
+        self.git("branch", "topic/a")
+        self.git("branch", "topic/a\u00a0")
+        self.git("checkout", "-q", "topic/a")
+        initial = identity()
+        self.assertEqual(initial, identity())
+        self.git("checkout", "-q", "topic/a\u00a0")
+        self.assertNotEqual(initial, identity())
+
     def test_quick_repeat_and_exact_quick_to_staged_run_once(self):
         (self.root / "check.py").write_text("print('gate passed')\n")
         contract = {

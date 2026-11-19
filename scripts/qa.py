@@ -537,8 +537,8 @@ def gate_input_identity(
         "gitVersion": git(snapshot, "--version").decode("ascii").strip(),
         "head": (head_commit(snapshot) or b"EMPTY").decode("ascii").strip(),
         "headRef": (git(snapshot, "symbolic-ref", "-q", "HEAD", optional=True) or b"")
-        .decode("ascii")
-        .strip(),
+        .decode("utf-8", errors="surrogateescape")
+        .removesuffix("\n"),
         "mergeHead": (merge_head_bytes(snapshot) or b"").decode("ascii").strip(),
         "refs": (
             reference_projection(snapshot) if captured_refs is None else captured_refs
