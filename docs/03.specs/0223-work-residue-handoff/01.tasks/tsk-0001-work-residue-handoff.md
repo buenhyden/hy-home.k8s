@@ -745,6 +745,7 @@ old acceptance cells and all residue obligations remain distinct.
 | EVD-036 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P03 vocabulary/owner routes and duplicate-ID checker, new guide/README routes, affected form/generator consumers; final focused cases after pinned formatting | Existing pinned validation Python, Ruff/pre-commit and current registry/profile/knowledge/governance checkers | `python -m unittest tests.test_validate_knowledge_surface tests.test_common_agents_document_routes tests.test_common_form_tree tests.test_document_generator`; final first two modules; focused strict registry/profile/knowledge checks; agent governance | 0 | PASS | Four-module run: 508 cases in 192.614s, four shared base classes intentionally skipped while subclasses execute; final focused 32 PASS in 1.379s. Two new duplicate/route RED cases became GREEN. Registry, knowledge, profile and governance PASS. Direct template-link and stale owner navigation findings fixed. Untracked new/deleted inventory prevents final link/lifecycle verdict until staged QA; an architect snapshot command returned no captured result, its process ended, and no PASS is inferred | false | none |
 | EVD-037 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | P03 code, registry, new docs, changed owners and Task authority/inventory/evidence on initial `5798fa2b` | Independent code-reviewer and security-auditor, separate read-only contexts | Core-diff checklist: scope/requirements, single owners, consumer routes, term preservation, removed checks, authority, secrets, recovery and acceptance boundaries | none | PASS | Both reviewers report no remaining BLOCK/FIX after correcting product/root glossary navigation and local vocabulary authoring roles. Existing term definitions/IDs/row versions preserved; no binding, native permission, manifest, secret or CI permission change. New artifacts retain draft/proposed states; review and implementation authority do not grant their acceptance | false | none |
 | EVD-038 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | First P03 exact 29-path index before Task record portability/resolution correction | Installed staged hook and pinned validation venv | `git commit -m 'refactor: separate shared and local governance owners'` invokes `python3 scripts/qa.py staged` | 1 | FAIL | Commit blocked: lifecycle rejected the new non-required evidence resolution edge; repository quality rejected the new host-specific checkout path. Other selected content, secret and style checks passed. Correct only the Task input and restage before a fresh hook result; original evidence and acceptance cells stay unchanged | false | none |
+| EVD-039 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | Corrected exact 29-path P03 index producing `8783421f`; later edits are this observed-result receipt only | Installed chained pre-commit/commit-msg hooks and existing pinned validation venv | `git commit -m 'refactor: separate shared and local governance owners'` invokes `python3 scripts/qa.py staged` | 0 | PASS | All twelve selected staged checks and both message checks PASS after the Task record correction from EVD-038; standalone lifecycle and repository-quality diagnostics also PASS. New/deleted file inventory and all real link consumers validated on the staged candidate. No hook bypass, native install, live operation or new acceptance claim | false | none |
 
 ### Resolution Links
 
@@ -807,9 +808,10 @@ The Plan promotes no durable contract.
 
 ### Next Owner
 
-Current handoff: P03 owner changes, retained boundaries and focused verification
-are recorded above. Final exact-index document/link/lifecycle checks, independent
-review and actual delivery are recorded with their observed results. P00/P01
+Current handoff: P03 owner changes, retained boundaries, focused verification,
+independent review and final exact-index checks are EVD-035 to EVD-039. This
+receipt receives its own selected document hook; hosted/merge results are
+reported on actual delivery. P00/P01
 remain retained through EVD-015 to EVD-024 and PR 331 to PR 334; P02 delivery is
 EVD-034 and PR 335. New common vocabulary and GDE-0011 remain draft; ADR-0065
 remains proposed. Their acceptance and P03 user acceptance are not inferred
@@ -820,6 +822,13 @@ using delivered P00/P01/P02 and this P03 ownership result. Do not execute P04
 automatically. Q-01 to Q-04 remain resolved. Keep this package through P17,
 other active work, persistent memory and reusable QA cache. The 1.0.0 handoff
 below is historical context only.
+
+Read-only review here means a separate reviewer instructed not to write; no new
+native restriction probe was run and W07-H05 remains open. The task-owned ADR
+recovery file was deleted, regression/private-snapshot directories clean up on
+exit, and no one-use `_workspace/` output was created. Keep the input package,
+generated navigation, reusable QA cache and persistent memory through their
+existing retention boundaries.
 
 Inline timing/profiling left no script or raw trace. The synthetic message
 was deleted, fixture/private-snapshot directories clean up on exit and no
