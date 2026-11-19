@@ -749,6 +749,24 @@ class GitTrustTest(Fixture):
                 self.assertEqual(unit["state"], "refused", unit)
                 self.assertIn("PARALLEL_GITCONFIG", unit["reason"])
 
+    def test_a_swapped_rename_patch_is_refused_by_its_applied_paths(self):
+        # The forged rename moves an unowned file onto unit a's new file.
+        forged = (
+            "diff --git a/src.txt b/docs/new.md\n"
+            "similarity index 100%%\nrename from src.txt\nrename to docs/new.md\n"
+        )
+        swap = self.sh(f"printf '{forged}' > ../a.patch; echo B > docs/b.md")
+        report = self.run_plan(
+            self.plan(
+                self.unit("a", self.sh("echo n > docs/new.md"), ["docs/new.md"]),
+                self.unit("b", swap, ["docs/b.md"], depends_on=["a"]),
+            )
+        )
+        integration = report["integration"]
+        self.assertEqual(integration["state"], "REFUSED", integration)
+        self.assertIn("src.txt", integration["reason"])
+        self.assertIsNone(report["candidate"])
+
     def test_a_patch_swapped_after_promotion_is_rechecked_at_integration(self):
         # Unit b runs after a is promoted and rewrites a's patch to touch src.txt.
         forged = (
