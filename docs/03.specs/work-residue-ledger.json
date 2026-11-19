@@ -791,7 +791,17 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W08",
-      "resume_condition": "After 2026-11-19 03:00 KST, read `session_analysis.py status` and the journal for a scheduled run that analyzed 2026-11-18",
+      "resume_condition": "After the host has been off across a 03:00 KST run, read `session_analysis.py status` and the journal for the catch-up run",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W08-H05",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W08",
+      "resume_condition": "At the next capture schema change, or when a failure candidate cannot be acted on",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }
@@ -832,6 +842,16 @@
       "state": "open",
       "owner": "W10",
       "resume_condition": "Before an untrusted or provider worker is dispatched",
+      "source": {
+        "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
+      }
+    },
+    {
+      "id": "W10-H04",
+      "kind": "handoff",
+      "state": "open",
+      "owner": "W10",
+      "resume_condition": "After the 2026-11-21 03:00 KST run, read `session_analysis.py candidates` for candidate 1",
       "source": {
         "path": "docs/03.specs/0161-w00-v14-7-delta-intake/tasks/tsk-0001-w00-v14-7-delta-intake.md"
       }

@@ -66,6 +66,10 @@ create table if not exists candidate (
   risk text not null, acceptance_test text not null, decision text not null,
   reviewer text, reviewed_at text, promoted_to text, promoted_ref text,
   unique (window, pattern, subject));
+create table if not exists recheck (
+  candidate_id integer not null, window text not null, outcome text not null,
+  frequency integer not null, sessions integer not null, observed_at text not null,
+  primary key (candidate_id, window));
 """
 
 RULES = {
@@ -355,6 +359,7 @@ class Analysis:
                                 item["acceptance_test"],
                             ),
                         )
+                    self._recheck(connection, window, members, found, now)
                     for identifier, refs in connection.execute(
                         "select candidate_id, source_refs from candidate where window = ?",
                         (window,),
@@ -403,38 +408,88 @@ class Analysis:
             )
         return sessions
 
+    @staticmethod
+    def _measure(members: list[dict[str, Any]]) -> dict[str, list[str]]:
+        """Every pattern's matching refs for one day, matched or not."""
+        # A failed result is not tied to its tool call here, so failures are counted
+        # for the day as a whole rather than attributed to one tool.
+        return {
+            "repeated-tool-failure": [
+                f"{session['provider']}:{session['session_id']}:{record['offset']}"
+                for session in members
+                for record in session["status"]["records"]
+                if record["error"] == 1
+            ],
+            "session-without-end": [
+                f"{s['provider']}:{s['session_id']}"
+                for s in members
+                if not s["status"]["ended"]
+            ],
+            "capture-incomplete": [
+                f"{s['provider']}:{s['session_id']}"
+                for s in members
+                if s["status"]["ended"] and s["status"]["completeness"] != "complete"
+            ],
+            "frequent-compaction": [
+                f"{s['provider']}:{s['session_id']}"
+                for s in members
+                if s["compactions"] >= COMPACTION_THRESHOLD
+            ],
+        }
+
     def _analyze_window(
         self, window: str, members: list[dict[str, Any]], now: dt.datetime
     ) -> list[dict[str, Any]]:
         found = []
-        # A failed result is not tied to its tool call here, so failures are counted
-        # for the day as a whole rather than attributed to one tool.
-        failures = [
-            f"{session['provider']}:{session['session_id']}:{record['offset']}"
-            for session in members
-            for record in session["status"]["records"]
-            if record["error"] == 1
-        ]
-        if len(failures) >= FAILURE_THRESHOLD:
-            found.append(
-                self._candidate("repeated-tool-failure", window, "tools", failures)
-            )
-        open_sessions = [s for s in members if not s["status"]["ended"]]
-        incomplete = [
-            s
-            for s in members
-            if s["status"]["ended"] and s["status"]["completeness"] != "complete"
-        ]
-        compacted = [s for s in members if s["compactions"] >= COMPACTION_THRESHOLD]
-        for pattern, group in (
-            ("session-without-end", open_sessions),
-            ("capture-incomplete", incomplete),
-            ("frequent-compaction", compacted),
-        ):
-            if group:
-                refs = [f"{s['provider']}:{s['session_id']}" for s in group]
-                found.append(self._candidate(pattern, window, "sessions", refs))
+        for pattern, refs in self._measure(members).items():
+            subject = "tools" if pattern == "repeated-tool-failure" else "sessions"
+            limit = FAILURE_THRESHOLD if subject == "tools" else 1
+            if len(refs) >= limit:
+                found.append(self._candidate(pattern, window, subject, refs))
         return found
+
+    @staticmethod
+    def _recheck(connection, window, members, found, now) -> None:
+        """Test each accepted candidate's acceptance on a later day that has sessions.
+
+        This is the re-evaluation step of the improvement loop. A day records
+        `recurred` when the pattern shows up again; `met` only when it stays
+        below its condition on at least as many sessions as the candidate's own
+        evidence named; otherwise the day was too thin and is `inconclusive`.
+        A reanalyzed day replaces its rechecks, so a day that lost its sessions
+        keeps none.
+        """
+        connection.execute("delete from recheck where window = ?", (window,))
+        if not members:
+            return
+        seen = {(item["pattern"], item["subject"]) for item in found}
+        measured = Analysis._measure(members)
+        day = dt.date.fromisoformat(window)
+        for identifier, pattern, subject, reviewed_at, refs in connection.execute(
+            "select candidate_id, pattern, subject, reviewed_at, source_refs"
+            " from candidate where decision = 'accepted' and window < ?",
+            (window,),
+        ).fetchall():
+            if reviewed_at is None or _day(reviewed_at) >= day:
+                continue
+            floor = len({":".join(ref.split(":")[:2]) for ref in json.loads(refs)})
+            if (pattern, subject) in seen:
+                outcome = "recurred"
+            elif len(members) >= max(1, floor):
+                outcome = "met"
+            else:
+                outcome = "inconclusive"
+            connection.execute(
+                "insert into recheck values (?, ?, ?, ?, ?, ?)",
+                (
+                    identifier,
+                    window,
+                    outcome,
+                    len(measured.get(pattern, [])),
+                    len(members),
+                    _iso(now),
+                ),
+            )
 
     @staticmethod
     def _candidate(
@@ -463,9 +518,35 @@ class Analysis:
             rows = connection.execute(
                 "select * from candidate order by window, pattern, subject"
             ).fetchall()
-        return [
-            dict(row) | {"source_refs": json.loads(row["source_refs"])} for row in rows
-        ]
+            checks: dict[int, list[dict[str, Any]]] = {}
+            for check in connection.execute(
+                "select * from recheck order by window"
+            ).fetchall():
+                checks.setdefault(check["candidate_id"], []).append(
+                    {
+                        k: check[k]
+                        for k in ("window", "outcome", "frequency", "sessions")
+                    }
+                )
+        result = []
+        for row in rows:
+            rechecks = checks.get(row["candidate_id"], [])
+            outcomes = {check["outcome"] for check in rechecks}
+            result.append(
+                dict(row)
+                | {
+                    "source_refs": json.loads(row["source_refs"]),
+                    "rechecks": rechecks,
+                    # A recurrence is never hidden by a later met day; unverified
+                    # until a later comparable day is observed.
+                    "acceptance": "recurred"
+                    if "recurred" in outcomes
+                    else "met"
+                    if "met" in outcomes
+                    else "unverified",
+                }
+            )
+        return result
 
     def status(self) -> dict[str, Any]:
         with self._connect() as connection:
@@ -479,7 +560,14 @@ class Analysis:
             "lease": dict(lease) if lease else None,
         }
 
-    def review(self, candidate_id: int, *, decision: str, owner: str) -> dict[str, Any]:
+    def review(
+        self,
+        candidate_id: int,
+        *,
+        decision: str,
+        owner: str,
+        now: dt.datetime | None = None,
+    ) -> dict[str, Any]:
         if decision not in ("accepted", "rejected"):
             raise AnalysisError("ANALYSIS_SCHEMA: decision is accepted or rejected")
         with self._write() as connection:
@@ -492,7 +580,12 @@ class Analysis:
             changed = connection.execute(
                 "update candidate set decision = ?, reviewer = ?, reviewed_at = ?"
                 " where candidate_id = ?",
-                (decision, owner, _iso(dt.datetime.now(dt.timezone.utc)), candidate_id),
+                (
+                    decision,
+                    owner,
+                    _iso(now or dt.datetime.now(dt.timezone.utc)),
+                    candidate_id,
+                ),
             ).rowcount
         if not changed:
             raise AnalysisError("ANALYSIS_NOT_FOUND: unknown candidate")
