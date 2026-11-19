@@ -1,10 +1,10 @@
 ---
 title: "Change Review Prompt Contract"
-version: "0.1.1"
+version: "0.2.0"
 type: "governance/prompt"
 status: "draft"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-19"
 ---
 
 # Change Review Prompt Contract
@@ -29,15 +29,32 @@ protected actions. The contract names no reviewer role and grants none.
 | Staged difference | `git diff --cached` | Separates what is already staged from what is not |
 | Changed path set | `git status --porcelain` | Establishes the owner boundaries the change touches |
 | Whitespace check | `git diff --check` | A defect class a reviewer should not have to find by eye |
+| Staged paths | `git diff --cached --name-only` | The exact path set that the staged checks ran on |
 
 The subject inputs are `Local difference` and `Staged difference`. When both
 are empty the contract refuses, because there is no difference to review.
 
+The requesting author also supplies, once, the review packet that Git cannot,
+so the reviewer does not reconstruct it ([QUAL-R055](../governance/quality.md#requirements)):
+
+- the branch and the commit the difference sits on, or the new commit once
+  made, so a later change can be classified against it; a repository with no
+  commit yet has none;
+- the risk class and its reason (QUAL-R016);
+- the acceptance IDs the change claims to meet;
+- the check results already observed on the candidate commit, with their
+  snapshot, which the reviewer does not rerun to repeat a PASS;
+- for a re-review, the reviewed commit, the earlier findings and the
+  `scripts/review_delta.py` result (QUAL-R054);
+- the scope left unreviewed, such as live or provider behavior.
+
 ## Output
 
-An ordered finding list. Each finding names the file and line, states the defect
-in one sentence, and gives the concrete condition under which it goes wrong. A
-finding without a failure condition is a preference and is reported as such.
+An ordered finding list, one finding per root cause. Each finding names the
+file and line, states the defect in one sentence, gives the concrete condition
+under which it goes wrong, and carries its grade under
+[QUAL-R053](../governance/quality.md#requirements). A finding without a failure
+condition is a preference and is reported as `NOTE`.
 
 ## Validation
 
