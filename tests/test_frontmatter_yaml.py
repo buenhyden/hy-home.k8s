@@ -144,12 +144,23 @@ class MissingLibraryTests(unittest.TestCase):
             with self.assertRaises(ImportError) as caught:
                 spec.loader.exec_module(module)
         message = str(caught.exception)
+        guide_path = (
+            "docs/00.workspace/05.environment/0011-local-validation-environment.md"
+        )
+        guide = (ROOT / guide_path).read_text("utf-8")
+        self.assertIn(guide_path, message)
         self.assertIn(".github/requirements/ci-validation.txt", message)
-        self.assertIn("docs/00.workspace/03.process/git.md", message)
-        policy = (ROOT / "docs/00.workspace/03.process/git.md").read_text("utf-8")
-        install = "--require-hashes -r .github/requirements/ci-validation.txt"
-        self.assertIn(install, message)
-        self.assertIn(install, policy)
+        self.assertIn("same interpreter", message)
+        self.assertIn(
+            '"$HOME/.venvs/hyhome-validation/bin/python" -m pip install', guide
+        )
+        for part in (
+            "--only-binary :all:",
+            "--require-hashes",
+            "--requirement .github/requirements/ci-validation.txt",
+        ):
+            with self.subTest(part=part):
+                self.assertIn(part, guide)
 
 
 class CallSiteDiagnosticTests(unittest.TestCase):
