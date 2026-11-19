@@ -42,7 +42,6 @@ from document_contracts import (
     scoped_document_content_paths,
     validated_changed_paths,
     TaskTables,
-    carry_evidence_rows,
     read_task_tables,
     task_header_form,
     task_table_rows,
@@ -2811,6 +2810,7 @@ def _body_contract_location(
     return profile.body_contract_location(
         status if isinstance(status, str) else "",
         identity if isinstance(identity, str) else "",
+        "retained_form" in metadata,
     )
 
 
@@ -2955,10 +2955,7 @@ def task_base_evidence_rows(
         or any(len(row) != len(table[0]) for row in table[1])
     ):
         return None
-    rows = carry_evidence_rows(
-        [dict(zip(table[0], row, strict=True)) for row in table[1]],
-        binding if columns else None,
-    )
+    rows = [dict(zip(table[0], row, strict=True)) for row in table[1]]
     core = (
         bool(columns)
         and "Evidence" not in columns

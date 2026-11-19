@@ -637,6 +637,7 @@ def _body_contract_diagnostics(
     status: str,
     body_contracts: str,
     path_prefixes: tuple[PurePosixPath, ...] = (),
+    marked: bool = False,
 ) -> list[Diagnostic]:
     """Validate one registry-owned lifecycle table deterministically."""
 
@@ -647,7 +648,7 @@ def _body_contract_diagnostics(
         return []
     diagnostics: list[Diagnostic] = []
     location = profile.body_contract_location(
-        status, expected_artifact_id(path, profile) or ""
+        status, expected_artifact_id(path, profile) or "", marked
     )
     if location is None:
         return []
@@ -793,15 +794,23 @@ def _body_contract_diagnostics(
 
 
 def _form_heading(
-    form: CommonForm, section_id: str, status: str = "", identity: str = ""
+    form: CommonForm,
+    section_id: str,
+    status: str = "",
+    identity: str = "",
+    marked: bool = False,
 ) -> tuple[int, str] | None:
     """The heading level and title of a form section or local H3 extension."""
 
-    return form.section_heading(section_id, status, identity)
+    return form.section_heading(section_id, status, identity, marked)
 
 
 def _table_diagnostics(
-    path: PurePosixPath, profile: DocumentProfile, body: str, status: str = ""
+    path: PurePosixPath,
+    profile: DocumentProfile,
+    body: str,
+    status: str = "",
+    marked: bool = False,
 ) -> list[Diagnostic]:
     """SPEC-0169: check the profile's template tables inside their sections.
 
@@ -858,7 +867,7 @@ def _table_diagnostics(
         heading = (
             None
             if profile.form is None
-            else _form_heading(profile.form, table.section, status, identity)
+            else _form_heading(profile.form, table.section, status, identity, marked)
         )
         if table.name in owned or heading is None:
             continue
@@ -909,7 +918,11 @@ def _table_diagnostics(
 
 
 def _core_table_diagnostics(
-    path: PurePosixPath, profile: DocumentProfile, body: str, status: str = ""
+    path: PurePosixPath,
+    profile: DocumentProfile,
+    body: str,
+    status: str = "",
+    marked: bool = False,
 ) -> list[Diagnostic]:
     """SPEC-0222: the core tables of a core-role form in one document or template.
 
@@ -931,12 +944,12 @@ def _core_table_diagnostics(
     ):
         return []
     identity = expected_artifact_id(path, profile) or ""
-    if profile.form.retained_headings(status, identity) is not None:
+    if profile.form.retained_headings(status, identity, marked) is not None:
         return []
     found: list[Diagnostic] = []
     for table in core:
         keys = [column.key for column in table.columns]
-        heading = _form_heading(profile.form, table.section, status, identity)
+        heading = _form_heading(profile.form, table.section, status, identity, marked)
         section = (
             None
             if heading is None
@@ -2121,8 +2134,9 @@ def _frontmatter_body(
                         "missing or invalid cancellation",
                     )
                 )
-        # W03-D22, W03-D52: the key stays only on an accepted ADR inside the
-        # retained range, so the identity bound of the form is its discriminator.
+        # W03-D22, SPEC-0225: the layer key stays only on an accepted ADR that
+        # keeps the retained form, which its retained_form marker selects.
+        marked = "retained_form" in data
         if (
             "layer" in data
             and "layer" in contract.allowed
@@ -2131,7 +2145,7 @@ def _frontmatter_body(
                 or (
                     profile.form is not None
                     and not profile.form.retains_identity(
-                        expected_artifact_id(path, profile) or ""
+                        expected_artifact_id(path, profile) or "", marked
                     )
                 )
             )
@@ -2141,8 +2155,24 @@ def _frontmatter_body(
                     "FM-LAYER-ADR",
                     path,
                     profile,
-                    "layer only on an accepted document inside the retained range",
+                    "layer only on an accepted document that keeps the retained form",
                     f"layer on status {data.get('status')!r} of {path.name}",
+                )
+            )
+        # SPEC-0225 (Q07-H01): the marker selects the retained ADR form, so it
+        # stays only on an accepted ADR; a later status drops the retained form.
+        if (
+            "retained_form" in data
+            and "retained_form" in contract.allowed
+            and data.get("status") != "accepted"
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "FM-RETAINED-FORM",
+                    path,
+                    profile,
+                    "retained_form only on an accepted document",
+                    f"retained_form on status {data.get('status')!r} of {path.name}",
                 )
             )
         if (
@@ -2417,6 +2447,7 @@ def _body_diagnostics(
     profile: DocumentProfile,
     body: str,
     status: str = "",
+    marked: bool = False,
 ) -> list[Diagnostic]:
     scan = scan_headings(body)
     readme = profile.profile_class == "readme"
@@ -2434,7 +2465,7 @@ def _body_diagnostics(
     tree = profile.form is not None
     if profile.form is not None:
         headings = profile.form.retained_headings(
-            status, expected_artifact_id(path, profile) or ""
+            status, expected_artifact_id(path, profile) or "", marked
         )
         if headings is not None:
             tree = False
@@ -2721,12 +2752,16 @@ def validate_document_text(
         except ContractError:
             metadata = {}
         status = task_status(metadata, text, profile)
+    # SPEC-0225 (Q07-H01): the retained form is chosen by the document's marker.
+    marked = "retained_form" in metadata
     if include_body:
-        diagnostics.extend(_body_diagnostics(path, profile, body, status))
+        diagnostics.extend(_body_diagnostics(path, profile, body, status, marked))
         if profile.mode in {"authored", "template"}:
-            diagnostics.extend(_table_diagnostics(path, profile, body, status))
+            diagnostics.extend(_table_diagnostics(path, profile, body, status, marked))
         if profile.mode in {"authored", "template", "router"}:
-            diagnostics.extend(_core_table_diagnostics(path, profile, body, status))
+            diagnostics.extend(
+                _core_table_diagnostics(path, profile, body, status, marked)
+            )
         if profile.mode == "authored" and profile.profile_id == "sdlc/requirement":
             diagnostics.extend(_requirement_quality_diagnostics(path, profile, body))
         if profile.mode == "authored":
@@ -2736,7 +2771,7 @@ def validate_document_text(
         return sorted(diagnostics, key=diagnostic_sort_key)
     binding = profile.body_contract.task_execution if profile.body_contract else None
     if binding and binding.evidence_section:
-        diagnostics.extend(_task_table_diagnostics(path, profile, body, status))
+        diagnostics.extend(_task_table_diagnostics(path, profile, body, status, marked))
     diagnostics.extend(
         _body_contract_diagnostics(
             path,
@@ -2745,13 +2780,18 @@ def validate_document_text(
             status,
             body_contracts,
             body_contract_path_prefixes,
+            marked,
         )
     )
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
 def _task_table_diagnostics(
-    path: PurePosixPath, profile: DocumentProfile, body: str, status: str
+    path: PurePosixPath,
+    profile: DocumentProfile,
+    body: str,
+    status: str,
+    marked: bool = False,
 ) -> list[Diagnostic]:
     """Read every Task table under the core header (SPEC-0222)."""
 
@@ -2798,7 +2838,7 @@ def _task_table_diagnostics(
             )
         ]
     location = profile.body_contract_location(
-        status, expected_artifact_id(path, profile) or ""
+        status, expected_artifact_id(path, profile) or "", marked
     )
     section = location[0] if location else contract.section
     work_items = table(section, binding.work_item_heading or None)

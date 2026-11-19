@@ -475,10 +475,24 @@ class LineageRetiredIdentityTest(unittest.TestCase):
 
 class ScopedDocumentMetadataTests(unittest.TestCase):
     def test_scoped_cli_keeps_global_duplicate_identity_and_pending_census(self):
-        unrelated = PurePosixPath(
-            "docs/01.requirements/0004-current-local-gitops-platform.md"
+        # SPEC-0225 (Q07-H01): two current requirement documents, found by the
+        # route rather than by number; the unrelated one borrows the other's ID.
+        found = sorted(
+            (ROOT / "docs/01.requirements").glob("[0-9][0-9][0-9][0-9]-*.md")
         )
-        selected = "docs/01.requirements/0003-workspace-agent-governance-platform.md"
+        selected_path, unrelated_path = found[0], found[1]
+        unrelated = PurePosixPath(unrelated_path.relative_to(ROOT).as_posix())
+        selected = selected_path.relative_to(ROOT).as_posix()
+
+        def artifact_id(path: Path) -> str:
+            line = next(
+                item
+                for item in path.read_text(encoding="utf-8").splitlines()
+                if item.startswith("artifact_id: ")
+            )
+            return line.split('"')[1]
+
+        borrowed, own = artifact_id(selected_path), artifact_id(unrelated_path)
         source_registry = MARKDOWN.load_registry(ROOT)
         language = dataclasses.replace(
             source_registry.document_language,
@@ -491,7 +505,7 @@ class ScopedDocumentMetadataTests(unittest.TestCase):
             text = original_read(root, path)
             if path == unrelated:
                 return text.replace(
-                    'artifact_id: "REQ-0004"', 'artifact_id: "REQ-0003"', 1
+                    f'artifact_id: "{own}"', f'artifact_id: "{borrowed}"', 1
                 )
             return text
 
@@ -535,8 +549,11 @@ class ScopedDocumentMetadataTests(unittest.TestCase):
                 self.assertEqual(MARKDOWN.main(options), 2)
 
     def test_unselected_body_is_skipped_but_malformed_frontmatter_still_fails(self):
+        # SPEC-0225: a current requirement document found by route, not number.
         path = PurePosixPath(
-            "docs/01.requirements/0003-workspace-agent-governance-platform.md"
+            sorted((ROOT / "docs/01.requirements").glob("[0-9][0-9][0-9][0-9]-*.md"))[0]
+            .relative_to(ROOT)
+            .as_posix()
         )
         registry = MARKDOWN.load_registry(ROOT)
         profile = MARKDOWN.classify_path(registry, path)

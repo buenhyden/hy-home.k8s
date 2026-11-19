@@ -58,8 +58,15 @@ def policy(rows: list[tuple[int, str]] | None, *, code: str = "GIT") -> str:
     return head + "\n".join(core) + "\n\n" + "\n".join(levels) + "\n"
 
 
-def registry_blob(codes: dict[str, str] | None, reserved: tuple[str, ...] = ()) -> str:
-    """The registry blob; `None` is a registry from before SPEC-0194."""
+def registry_blob(
+    codes: dict[str, str] | None,
+    reserved: tuple[str, ...] = (),
+    baseline: int | None = None,
+) -> str:
+    """The registry blob; `None` is a registry from before SPEC-0194.
+
+    `baseline` None leaves the key out, which reads as baseline 1 (SPEC-0225).
+    """
 
     # MAJOR 1 is not readable by the history reader, so the typed reading falls
     # back to the current registry and only the plain section read is exercised.
@@ -69,6 +76,8 @@ def registry_blob(codes: dict[str, str] | None, reserved: tuple[str, ...] = ()) 
             "reserved_codes": list(reserved),
             "codes": [{"path": path, "code": code} for path, code in codes.items()],
         }
+        if baseline is not None:
+            blob["policy_rule_ids"]["baseline"] = baseline
     return json.dumps(blob, indent=2) + "\n"
 
 
@@ -238,6 +247,31 @@ class PolicyHistoryTest(unittest.TestCase):
             }
         )
         self.assertEqual(self.history(base, proposed), {"POLICY-CODE-CHANGE"})
+
+    def test_a_declared_new_baseline_is_the_only_reset(self) -> None:
+        # SPEC-0225 (Q07-H01): within one baseline (an absent key reads as 1) a
+        # reserved code and a rule ID are kept; raising the baseline is the
+        # user-approved Q-07 reset that may drop them.
+        def run(before: int | None, after: int | None) -> set[str]:
+            base = self.snapshot(
+                {
+                    REGISTRY: registry_blob({GIT_POLICY: "GIT"}, ("OLD",), before),
+                    GIT_POLICY: policy([(1, "active"), (2, "active")]),
+                }
+            )
+            proposed = self.snapshot(
+                {
+                    REGISTRY: registry_blob({GIT_POLICY: "GIT"}, (), after),
+                    GIT_POLICY: policy([(1, "active")]),
+                }
+            )
+            return self.history(base, proposed)
+
+        refused = {"POLICY-CODE-CHANGE", "POLICY-RULE-DELETE"}
+        self.assertEqual(run(None, None), refused)
+        self.assertEqual(run(None, 1), refused)
+        self.assertEqual(run(1, 1), refused)
+        self.assertEqual(run(1, 2), set())
 
     def test_departing_policy_passes_only_with_its_code_reserved(self) -> None:
         kept = {SDLC_POLICY: policy([(1, "active")], code="SDLC")}

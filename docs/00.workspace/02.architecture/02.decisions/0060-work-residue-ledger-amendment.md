@@ -6,6 +6,7 @@ status: "accepted"
 owner: "platform"
 updated: "2026-11-13"
 artifact_id: "ADR-0060"
+retained_form: "adr-accepted-retained-form"
 ---
 
 # ADR-0060: Work Residue Ledger Amendment

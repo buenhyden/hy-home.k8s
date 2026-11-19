@@ -360,7 +360,12 @@ class DocumentContentClosureTests(unittest.TestCase):
                 )
 
     def test_ordinary_document_limits_body_to_current_changed_path(self) -> None:
-        selected = "docs/01.requirements/0003-workspace-agent-governance-platform.md"
+        # SPEC-0225: a current requirement document found by route, not number.
+        selected = (
+            sorted((ROOT / "docs/01.requirements").glob("[0-9][0-9][0-9][0-9]-*.md"))[0]
+            .relative_to(ROOT)
+            .as_posix()
+        )
         scope = DOCUMENTS.scoped_document_content_paths(
             self.registry, (selected,), self.current
         )

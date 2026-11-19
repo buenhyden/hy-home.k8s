@@ -7,6 +7,7 @@ owner: "platform"
 updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0026"
+retained_form: "adr-accepted-retained-form"
 ---
 
 # ADR-0026: Argo CD Source Integrity Non-adoption

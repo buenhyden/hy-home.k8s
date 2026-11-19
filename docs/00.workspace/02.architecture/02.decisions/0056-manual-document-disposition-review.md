@@ -7,6 +7,7 @@ owner: "platform"
 updated: "2026-11-10"
 layer: "architecture"
 artifact_id: "ADR-0056"
+retained_form: "adr-accepted-retained-form"
 ---
 
 # ADR-0056: Manual Document Disposition Review

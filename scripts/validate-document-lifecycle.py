@@ -33,7 +33,6 @@ from document_contracts import (
     TaskExecution,
     classify_path,
     enumerate_target_markdown,
-    heading_contract,
     is_opaque_evaluation_output,
     verify_opaque_evaluation_output,
     load_registry,
@@ -688,12 +687,6 @@ def _body_text(text: str) -> str:
     return text if closing < 0 else text[closing + 5 :]
 
 
-def _allowed_h2(profile: Any) -> tuple[str, ...]:
-    """The H2 titles an old-shape profile allows, through the heading accessor."""
-
-    return heading_contract(profile).allowed
-
-
 def _form_heading(
     registry: Registry,
     form_id: str,
@@ -902,25 +895,17 @@ def _local_plan_task_contract_issues(
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     plan_profile = profiles.get("sdlc/plan")
     plan_form = any(item.form_id == "plan" for item in registry.common_forms)
-    if plan_profile is None or (
-        not plan_form and "Promotion" not in _allowed_h2(plan_profile)
-    ):
-        return ()  # Older committed registries did not own this local extension.
-    # A Plan form names the headings by section id; an old-list registry names them
-    # by title. A form that lacks a section makes the rule fail instead of skip.
-    if plan_form:
-        promotion_header = ["Promotion ID", "Target Owner", "Acceptance", "Evidence"]
-        none_row = ["none", "none", "none", "No durable contract was introduced"]
-    else:
-        promotion_header = ["Durable contract", "Promoted to", "Where"]
-        none_row = ["none", "none", "No durable contract was introduced"]
+    if plan_profile is None or not plan_form:
+        return ()
+    # The Plan form names the headings by section id. A form that lacks a section
+    # makes the rule fail instead of skip (SPEC-0225: no old-list registry is read).
+    promotion_header = ["Promotion ID", "Target Owner", "Acceptance", "Evidence"]
+    none_row = ["none", "none", "none", "No durable contract was introduced"]
 
     def plan_headings(
         plan: LifecycleDocument,
     ) -> tuple[str | None, str | None, str | None]:
         """Promotion, goal and constraints headings; a retained Plan keeps its own."""
-        if not plan_form:
-            return "## Promotion", None, "## Global Constraints"
         # SPEC-0221: Global Constraints is an H4 of Overview > Constraints.
         goal = _form_heading(registry, "plan", "plan.intent.2", plan)
         constraints = (
@@ -3009,12 +2994,16 @@ def _policy_code_section(
             codes.setdefault(item["code"], item["path"])
         paths = {item["path"]: item["code"] for item in section["codes"]}
         reserved = frozenset(section["reserved_codes"])
+        baseline = section.get("baseline", 1)
+        if type(baseline) is not int or baseline < 1:
+            raise TypeError("baseline is not a positive integer")
     except (KeyError, TypeError) as exc:
         raise InvocationError("policy_rule_ids section is malformed") from exc
     return PolicyCodeSection(
         codes=MappingProxyType(codes),
         reserved=reserved,
         paths=MappingProxyType(paths),
+        baseline=baseline,
     )
 
 

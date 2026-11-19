@@ -7,6 +7,7 @@ owner: "platform"
 updated: "2026-11-03"
 layer: "architecture"
 artifact_id: "ADR-0049"
+retained_form: "adr-accepted-retained-form"
 ---
 
 # ADR-0049: External Data Service Contract Alignment

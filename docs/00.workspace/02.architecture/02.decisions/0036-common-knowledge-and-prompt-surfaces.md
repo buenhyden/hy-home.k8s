@@ -7,6 +7,7 @@ owner: "platform"
 updated: "2026-11-13"
 layer: "architecture"
 artifact_id: "ADR-0036"
+retained_form: "adr-accepted-retained-form"
 supersedes: "ADR-0035"
 ---
 

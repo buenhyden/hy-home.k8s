@@ -50,10 +50,11 @@ Canonical sources are the documents linked or named in the opening paragraph and
    `Archived Lineage` and delete it in the same change, as the
    [document lifecycle policy](../00.workspace/03.process/document-lifecycle.md)
    requires; otherwise defer.
-3. Never edit an accepted decision in place; an accepted ADR from ADR-0001 to
-   ADR-0061 keeps the form it was accepted in until a successor replaces it.
-   A heading or table move that keeps every sentence and fact of an accepted
-   ADR outside ADR-0001 to ADR-0061 is not an in-place edit of the decision.
+3. Never edit an accepted decision in place; an accepted ADR that carries
+   `retained_form` keeps the form it was accepted in until a successor
+   replaces it, and its number does not decide that (SPEC-0225). A heading or
+   table move that keeps every sentence and fact of an accepted ADR without
+   the marker is not an in-place edit of the decision.
    Write a successor ADR whose
    `supersedes` and Traceability keep the predecessor ID, summarize the
    predecessor in the owning AD's `Archived Lineage` table, and delete it in

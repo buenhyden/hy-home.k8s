@@ -7,6 +7,7 @@ owner: "platform"
 updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0043"
+retained_form: "adr-accepted-retained-form"
 ---
 
 # ADR-0043: Dedicated Kubernetes Ingress Router on hy-k8s.home.arpa

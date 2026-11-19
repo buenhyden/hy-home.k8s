@@ -49,6 +49,7 @@ KEYS = (
     "supersedes",
     "superseded_by",
     "layer",
+    "retained_form",
     "cancellation",
     "description",
     "parent_ids",
@@ -93,9 +94,12 @@ ADR = {
     "artifact_id": '"ADR-0999"',
 }
 RETAINED_ADR_PATH = "docs/02.architecture/02.decisions/0050-example.md"
-RETAINED_ADR = {**ADR, "artifact_id": '"ADR-0050"'}
+MARKER = '"adr-accepted-retained-form"'
+# SPEC-0225 (Q07-H01): a retained ADR is the one that carries the marker; its
+# number no longer decides.
+RETAINED_ADR = {**ADR, "artifact_id": '"ADR-0050"', "retained_form": MARKER}
 LAST_ADR_PATH = "docs/02.architecture/02.decisions/0061-example.md"
-LAST_ADR = {**ADR, "artifact_id": '"ADR-0061"'}
+LAST_ADR = {**ADR, "artifact_id": '"ADR-0061"', "retained_form": MARKER}
 FIRST_NEW_ADR_PATH = "docs/02.architecture/02.decisions/0062-example.md"
 FIRST_NEW_ADR = {**ADR, "artifact_id": '"ADR-0062"'}
 PLAN_PATH = "docs/03.specs/0999-example/plan.md"
@@ -230,8 +234,27 @@ class KeyProfileCheckTests(unittest.TestCase):
             "FM-SCHEMA",
         )
 
+    def test_retained_form_accepted(self) -> None:
+        # SPEC-0225: the marker on an accepted ADR, whatever its number.
+        self.accepted(RETAINED_ADR_PATH, RETAINED_ADR)
+        self.accepted(ADR_PATH, {**ADR, "retained_form": MARKER})
+        self.accepted(ADR_PATH, layered({**ADR, "retained_form": MARKER}))
+
+    def test_retained_form_refused(self) -> None:
+        for status in ("proposed", "rejected"):
+            with self.subTest(status=status):
+                self.refused(
+                    RETAINED_ADR_PATH,
+                    {**RETAINED_ADR, "status": f'"{status}"'},
+                    "FM-RETAINED-FORM",
+                )
+        self.assertTrue(
+            self.rules(RETAINED_ADR_PATH, {**RETAINED_ADR, "retained_form": '"other"'})
+        )
+        self.refused(SPEC_PATH, {**SPEC, "retained_form": MARKER}, "FM-KEYSET")
+
     def test_layer_accepted(self) -> None:
-        # W03-D22, W03-D52: only an accepted ADR inside ADR-0001 to ADR-0061.
+        # W03-D22, SPEC-0225: only an accepted ADR that carries retained_form.
         self.accepted(ADR_PATH, ADR)
         self.accepted(RETAINED_ADR_PATH, RETAINED_ADR)
         self.accepted(RETAINED_ADR_PATH, layered(RETAINED_ADR))

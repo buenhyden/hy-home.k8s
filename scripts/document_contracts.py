@@ -152,47 +152,11 @@ def direct_parent(
     )
 
 
-# SPEC-0203 (W03-D65): the evidence table of a registry below the Task form binds the
-# names Evidence, Check and Criteria; the current names are Evidence ID, Command and
-# Consumer. This map is a history reading, not a current name set: the current
-# registry and a current Task carry the new names only. Consumers: the evidence
-# reader task_base_evidence_rows in scripts/validate-links-and-owners.py and, through
-# its rows, the six call sites and _evidence_context in
-# scripts/validate-document-lifecycle.py and the retention, evidence and TASK-ITEM-
-# rules of scripts/document_lifecycle.py. Remove it, with its tests, when
-# READABLE_REGISTRY_MAJORS holds no MAJOR below the one that introduced the form.
 # SPEC-0222: the core evidence results that leave a required check open until a
 # later PASS of the same check resolves it.
 UNRESOLVED_EVIDENCE_RESULTS = frozenset(
     {"FAIL", "ERROR", "DEFER", "NOT_RUN", "CANCELLED"}
 )
-
-TASK_EVIDENCE_HEADER_MAP = {
-    "Evidence": "Evidence ID",
-    "Check": "Command",
-    "Criteria": "Consumer",
-}
-
-
-def carry_evidence_rows(
-    rows: Sequence[Mapping[str, str]] | None, binding: TaskExecution | None
-) -> list[dict[str, str]] | None:
-    """Carry the rows of a side that binds the old names under the current names.
-
-    `binding` is the evidence binding of the registry of the side that is read; None
-    is a registry from before the binding existed, which also read the old names.
-    A side whose binding already lists the current names is returned unchanged.
-    """
-
-    if rows is None:
-        return None
-    if binding is not None and "Evidence" not in binding.evidence_columns:
-        return [dict(row) for row in rows]
-    return [
-        {TASK_EVIDENCE_HEADER_MAP.get(key, key): value for key, value in row.items()}
-        for row in rows
-    ]
-
 
 # The one reader of a Task table header: a Task table is read only under the
 # core header of the registry (SPEC-0222). The recorded SPEC-0203 header left
@@ -1098,6 +1062,9 @@ class FormExtension:
     # SPEC-0198 (W03-D52): an anchored expression over the artifact identity that
     # bounds a retained form; None keeps the kind's selection by status alone.
     identity_bound: str | None = None
+    # SPEC-0225 (Q07-H01): a frontmatter key whose presence selects the retained
+    # form instead of an identity bound, so no ID number selects it.
+    frontmatter_marker: str | None = None
     # SPEC-0221: where a retained document keeps its body-contract table, as
     # (section, table heading); None keeps the profile's body contract.
     body_contract: tuple[str, str] | None = None
@@ -1107,9 +1074,15 @@ class FormExtension:
     # SPEC-0222: the decision that registered this extension.
     authority_ref: str = ""
 
-    def keeps_identity(self, identity: str) -> bool:
-        """Whether a retained form's bound admits this artifact identity."""
+    def keeps_identity(self, identity: str, marked: bool = False) -> bool:
+        """Whether a retained form admits this document.
 
+        A marker form admits exactly a document that carries its frontmatter
+        marker; otherwise the identity bound, if any, decides.
+        """
+
+        if self.frontmatter_marker is not None:
+            return marked
         return self.identity_bound is None or bool(
             re.search(self.identity_bound, identity)
         )
@@ -1133,7 +1106,7 @@ class CommonForm:
     core: Mapping[str, Any] | None = None
 
     def retained_headings(
-        self, status: str, identity: str = ""
+        self, status: str, identity: str = "", marked: bool = False
     ) -> HeadingContract | None:
         """The retained H2 lists that replace the tree for this status and identity.
 
@@ -1146,13 +1119,13 @@ class CommonForm:
             if (
                 extension.kind == "retained_form"
                 and status in extension.statuses
-                and extension.keeps_identity(identity)
+                and extension.keeps_identity(identity, marked)
             ):
                 return extension.retained
         return None
 
     def retained_body_contract(
-        self, status: str, identity: str = ""
+        self, status: str, identity: str = "", marked: bool = False
     ) -> tuple[str, str] | None:
         """The (section, table heading) a retained document keeps, if any."""
 
@@ -1160,13 +1133,17 @@ class CommonForm:
             if (
                 extension.kind == "retained_form"
                 and status in extension.statuses
-                and extension.keeps_identity(identity)
+                and extension.keeps_identity(identity, marked)
             ):
                 return extension.body_contract
         return None
 
     def section_heading(
-        self, section_id: str, status: str = "", identity: str = ""
+        self,
+        section_id: str,
+        status: str = "",
+        identity: str = "",
+        marked: bool = False,
     ) -> tuple[int, str] | None:
         """The (level, title) of a form section or local H3 for one document.
 
@@ -1192,17 +1169,18 @@ class CommonForm:
             if (
                 extension.kind == "retained_form"
                 and status in extension.statuses
-                and extension.keeps_identity(identity)
+                and extension.keeps_identity(identity, marked)
             ):
                 kept = dict(extension.section_titles).get(section_id)
                 return (found[0], kept) if kept is not None else found
         return found
 
-    def retains_identity(self, identity: str) -> bool:
-        """Whether any retained form of this form admits the artifact identity."""
+    def retains_identity(self, identity: str, marked: bool = False) -> bool:
+        """Whether any retained form of this form admits the document."""
 
         return any(
-            extension.kind == "retained_form" and extension.keeps_identity(identity)
+            extension.kind == "retained_form"
+            and extension.keeps_identity(identity, marked)
             for extension in self.extensions
         )
 
@@ -1272,18 +1250,9 @@ class DocumentProfile:
     tables: tuple[TableContract, ...] = ()
     # SPEC-0194: set on the authored profiles of the policy role only.
     policy_rule_ids: PolicyRuleIds | None = None
-    # SPEC-0205 (W03-D63): the H2 lists a registry of an earlier MAJOR carried, for
-    # the replay of an earlier commit only (line 778 of the W03 prompt keeps that
-    # replay). The current registry has none; read the headings of a profile through
-    # heading_contract, never this field. Its only readers are the history reading in
-    # _typed_registry_from_mapping, reached from registry_at of
-    # scripts/validate-document-lifecycle.py (the cumulative-history replay and the
-    # base side of the staged check). Remove it, with its tests, when
-    # READABLE_REGISTRY_MAJORS holds no MAJOR below the one that removed `sections`.
-    listed_headings: HeadingContract | None = None
 
     def body_contract_location(
-        self, status: str, identity: str = ""
+        self, status: str, identity: str = "", marked: bool = False
     ) -> tuple[str, str] | None:
         """The H2 and H3 that hold this document's body-contract table.
 
@@ -1295,7 +1264,7 @@ class DocumentProfile:
         if self.body_contract is None:
             return None
         if self.form is not None:
-            kept = self.form.retained_body_contract(status, identity)
+            kept = self.form.retained_body_contract(status, identity, marked)
             if kept is not None:
                 return kept
         return self.body_contract.section, self.body_contract.table_heading
@@ -2095,9 +2064,7 @@ def _schema_rule_id(error: Any) -> str:
     return "REGISTRY_SCHEMA"
 
 
-def _body_contract(
-    raw: Mapping[str, Any] | None, *, historical_major: int | None = None
-) -> BodyContract | None:
+def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
     if raw is None:
         return None
     execution = raw.get("task_execution")
@@ -2133,12 +2100,7 @@ def _body_contract(
                 evidence_result_states=tuple(
                     execution.get("evidence_result_states", ())
                 ),
-                # Early generation 10 recorded acceptance in Task Evidence.
-                criterion_acceptance_section=(
-                    execution.get("criterion_acceptance_section", "")
-                    if historical_major == 10
-                    else execution["criterion_acceptance_section"]
-                ),
+                criterion_acceptance_section=execution["criterion_acceptance_section"],
                 criterion_acceptance_columns=tuple(
                     execution.get("criterion_acceptance_columns", ())
                 ),
@@ -2182,7 +2144,7 @@ def heading_contract(profile: DocumentProfile) -> HeadingContract:
             required=tuple(title for title, use in uses.items() if use == "required"),
             allowed=tuple(title for title, use in uses.items() if use != "forbidden"),
         )
-    return profile.listed_headings or HeadingContract(required=(), allowed=())
+    return HeadingContract(required=(), allowed=())
 
 
 def _tables_from_definition(
@@ -2220,9 +2182,8 @@ def _profile_from_mapping(
     *,
     lifecycle_domain: LifecycleDomain | None,
     form: CommonForm | None = None,
-    historical_major: int | None = None,
 ) -> DocumentProfile:
-    """Type one profile and retain the recorded fields on historical reads."""
+    """Type one registry profile."""
 
     frontmatter = raw["frontmatter"]
     lifecycle = raw["lifecycle"]
@@ -2258,25 +2219,11 @@ def _profile_from_mapping(
         ),
         constants=tuple(constants.items()),
         status_domain=status_domain,
-        listed_headings=(
-            HeadingContract(
-                required=tuple(raw["sections"]["required"]),
-                allowed=tuple(
-                    raw["sections"]["required"] + raw["sections"]["optional"]
-                ),
-                substantive_body=raw["sections"].get("substantive_body", False),
-                ordered=raw["sections"].get("ordered", False),
-            )
-            if historical_major is not None and "sections" in raw
-            else None
-        ),
         template=_normalize_relative_path(template) if template is not None else None,
         mode=raw["mode"],
         source_profile_ids=tuple(raw["relationships"]["source_profile_ids"]),
         placeholder_policy=raw["placeholder_policy"],
-        body_contract=_body_contract(
-            raw["relationships"]["body_contract"], historical_major=historical_major
-        ),
+        body_contract=_body_contract(raw["relationships"]["body_contract"]),
         lifecycle_domain=lifecycle_domain,
         document_role=raw.get("document_role"),
         form=form,
@@ -3776,29 +3723,38 @@ def frontmatter_key_table(
     return tuple(rows)
 
 
-# The first ADR identity outside the retained range (SPEC-0198, W03-D69): a bound
-# of the ADR role that matches it widens the range, which no ADR may do.
-FIRST_ADR_OUTSIDE_RETAINED_RANGE = "ADR-0062"
-
-
 def _identity_bound_faults(
     form_id: str, extension: Mapping[str, Any], where: str
 ) -> list[tuple[str, str, str]]:
-    """SPEC-0198: a retained form's bound compiles, is anchored and stays closed."""
+    """SPEC-0198: a retained form's bound compiles and is anchored; SPEC-0225: the
+    ADR retained form uses a frontmatter marker instead of a bound."""
 
     bound = extension.get("identity_bound")
-    if bound is None:
-        if form_id == "adr":
+    marker = extension.get("frontmatter_marker")
+    if form_id == "adr":
+        # SPEC-0225 (Q07-H01): the ADR retained form is selected by its marker,
+        # never by an ID range that a renumbering would change.
+        if marker is None or bound is not None:
             return [
                 (
                     "REGISTRY_FORM_EXTENSION",
-                    "an identity_bound on a retained form of the ADR role",
+                    "a frontmatter_marker and no identity_bound on the ADR retained form",
                     where,
                 )
             ]
         return []
+    if marker is not None and bound is not None:
+        return [
+            (
+                "REGISTRY_FORM_EXTENSION",
+                "either a frontmatter_marker or an identity_bound, not both",
+                where,
+            )
+        ]
+    if bound is None:
+        return []
     try:
-        pattern = re.compile(bound)
+        re.compile(bound)
     except re.error as error:
         return [
             (
@@ -3812,14 +3768,6 @@ def _identity_bound_faults(
             (
                 "REGISTRY_FORM_EXTENSION",
                 "an anchored identity_bound (^...$)",
-                f"{where}: {bound!r}",
-            )
-        ]
-    if form_id == "adr" and pattern.search(FIRST_ADR_OUTSIDE_RETAINED_RANGE):
-        return [
-            (
-                "REGISTRY_FORM_EXTENSION",
-                f"an ADR identity_bound that does not match {FIRST_ADR_OUTSIDE_RETAINED_RANGE}",
                 f"{where}: {bound!r}",
             )
         ]
@@ -4488,6 +4436,7 @@ def _common_form_from_mapping(raw: Mapping[str, Any]) -> CommonForm:
             title=item.get("title"),
             statuses=tuple(item.get("statuses", ())),
             identity_bound=item.get("identity_bound"),
+            frontmatter_marker=item.get("frontmatter_marker"),
             authority_ref=item.get("authority_ref", ""),
             body_contract=(
                 None
@@ -4552,11 +4501,7 @@ def _common_forms_record_from_mapping(
 
 
 def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
-    # SPEC-0205: a registry below REGISTRY_MAJOR is read by the history reading, which
-    # builds the H2 lists it carried; the current MAJOR is read with none.
     schema_version = registry_schema_version(raw)
-    major = int(schema_version.split(".")[0])
-    historical_major = major if major < REGISTRY_MAJOR else None
     domains = tuple(
         LifecycleDomain(
             family=item["family"],
@@ -4584,7 +4529,6 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
             profile,
             lifecycle_domain=domains_by_profile.get(profile["id"]),
             form=forms_by_role.get(profile.get("document_role")),
-            historical_major=historical_major,
         )
 
     profiles = tuple(typed_profile(profile) for profile in raw["profiles"])

@@ -23,7 +23,6 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 from document_contracts import (  # noqa: E402
-    HeadingContract,
     TaskExecution,
     load_registry,
     task_contract_issues,
@@ -1966,20 +1965,6 @@ class AdoptedExecutionParentTests(unittest.TestCase):
     OLD_CONSTRAINTS = "Keep the approved [Spec](spec.md#scope) parent contract.\n"
     OLD_ROW = "| none | none | No durable contract was introduced |"
 
-    def old_plan_text(self) -> str:
-        # The pre-SPEC-0200 Plan layout stays literal: no current form owns it.
-        return (
-            self.plan_text().split("## Overview\n", 1)[0]
-            + "## Overview\nThe fixture.\n"
-            + "## Global Constraints\n"
-            + self.OLD_CONSTRAINTS
-            + "## Promotion\n"
-            + "| Durable contract | Promoted to | Where |\n"
-            + "| --- | --- | --- |\n"
-            + self.OLD_ROW
-            + "\n"
-        )
-
     def registry_with(self, *, drop_sections: tuple[str, ...] = ()):
         """The repository registry whose Plan form lacks the named sections."""
 
@@ -1997,26 +1982,6 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             for form in self.registry.common_forms
         )
         return dataclasses.replace(self.registry, common_forms=forms)
-
-    def old_list_registry(self, allowed: tuple[str, ...] | None):
-        """A registry from before the Plan form: the H2 lists, no form."""
-
-        profiles = tuple(
-            dataclasses.replace(
-                item,
-                form=None,
-                listed_headings=HeadingContract(
-                    required=("Overview",), allowed=allowed or ("Overview",)
-                ),
-            )
-            if item.profile_id == "sdlc/plan"
-            else item
-            for item in self.registry.profiles
-        )
-        forms = tuple(
-            form for form in self.registry.common_forms if form.form_id != "plan"
-        )
-        return dataclasses.replace(self.registry, profiles=profiles, common_forms=forms)
 
     def rules_under(self, registry, base, proposed) -> set[str]:
         saved = self.registry
@@ -2103,71 +2068,6 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             with self.subTest(dropped=dropped):
                 registry = self.registry_with(drop_sections=(dropped,))
                 self.assertIn(rule, self.rules_under(registry, base, changed))
-
-    def test_each_reader_handles_form_old_list_and_neither_registry(self) -> None:
-        form_base = {self.spec: self.spec_text(), self.plan: self.plan_text()}
-        form_bad = {
-            **form_base,
-            self.plan: self.plan_text().replace("### Durable Owners\n", "### Other\n"),
-        }
-        self.assertIn(
-            "PLAN-PROMOTION", self.rules_under(self.registry, form_base, form_bad)
-        )
-        old = self.old_list_registry(("Overview", "Global Constraints", "Promotion"))
-        old_base = {self.spec: self.spec_text(), self.plan: self.old_plan_text()}
-        old_good = {**old_base, self.plan: self.old_plan_text() + "\nNote.\n"}
-        old_bad = {
-            **old_base,
-            self.plan: self.old_plan_text().replace("## Promotion\n", "## Other\n"),
-        }
-        self.assertEqual(
-            {"PLAN-PROMOTION", "PLAN-GLOBAL-CONSTRAINTS"}
-            & self.rules_under(old, old_base, old_good),
-            set(),
-        )
-        self.assertIn("PLAN-PROMOTION", self.rules_under(old, old_base, old_bad))
-        neither = self.old_list_registry(None)
-        self.assertEqual(
-            {"PLAN-PROMOTION", "PLAN-GLOBAL-CONSTRAINTS", "TASK-PARENT-APPROVAL"}
-            & self.rules_under(
-                neither,
-                old_base,
-                {**old_bad, self.task: self.task_text(parent_id="SPEC-9999-PLAN-0001")},
-            ),
-            set(),
-        )
-
-    def test_the_old_shape_branch_reads_the_list_field_through_one_accessor(
-        self,
-    ) -> None:
-        source = (SCRIPTS / "validate-document-lifecycle.py").read_text(
-            encoding="utf-8"
-        )
-        # SPEC-0205: the one accessor function reads the list through heading_contract.
-        self.assertEqual(source.count("heading_contract(profile).allowed"), 1)
-        self.assertEqual(source.count("profile.headings"), 0)
-        old_base = {self.spec: self.spec_text(), self.plan: self.old_plan_text()}
-        old_bad = {
-            **old_base,
-            self.plan: self.old_plan_text().replace("## Promotion\n", "## Other\n"),
-        }
-        listing_without = self.old_list_registry(None)
-        listing_with = self.old_list_registry(("Overview", "Promotion"))
-        original = LIFECYCLE_CLI._allowed_h2
-        try:
-            LIFECYCLE_CLI._allowed_h2 = lambda profile: ("Promotion",)
-            self.assertIn(
-                "PLAN-PROMOTION", self.rules_under(listing_without, old_base, old_bad)
-            )
-            LIFECYCLE_CLI._allowed_h2 = lambda profile: ()
-            self.assertNotIn(
-                "PLAN-PROMOTION", self.rules_under(listing_with, old_base, old_bad)
-            )
-        finally:
-            LIFECYCLE_CLI._allowed_h2 = original
-        self.assertIn(
-            "PLAN-PROMOTION", self.rules_under(listing_with, old_base, old_bad)
-        )
 
     def test_text_read_after_the_move_equals_the_old_constraints_body(self) -> None:
         text = self.plan_text()
