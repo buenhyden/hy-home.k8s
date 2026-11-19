@@ -1,10 +1,10 @@
 ---
 title: "Affected Pull Request GitOps Validation"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-19"
 artifact_id: "ADR-0063"
 ---
 
@@ -74,7 +74,7 @@ and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md).
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0048 hosted validation clause](./0048-local-qa-and-semver-release-ownership.md#one-local-validation-graph) | Amends only the hosted validation clause; every other clause stays | [SPEC-0161](../../03.specs/0161-w00-v14-7-delta-intake/spec.md) |
+| [ADR-0048 hosted validation clause](./0048-local-qa-and-semver-release-ownership.md#one-local-validation-graph) | Amends only the hosted validation clause; every other clause stays | [SPEC-0161](../../01.requirements/0003-workspace-agent-governance-platform.md#archived-lineage) |
 
 ## Consequences
 

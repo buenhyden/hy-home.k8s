@@ -1181,25 +1181,6 @@ SPEC_FORM_TREE = (
     ("Behavior Contract", ("Inputs and Outputs", "Failure Behavior")),
     ("Acceptance Criteria", ("Criteria", "Verification Strategy")),
 )
-# SPEC-0221: the approved and frozen Specs and Plans keep the tree they were
-# approved with, bound to their four identities.
-SPEC_RETAINED_TREE = (
-    ("Overview", ("Intent", "Owning Requirements")),
-    ("Scope", ("In Scope", "Non-goals")),
-    ("Behavior Contract", ("Normal Behavior", "Failure and Edge Cases")),
-    ("Acceptance Criteria", ("Criteria", "Evidence Requirements")),
-    ("References", ("Normative and Evidence", "Historical and Navigation")),
-)
-PLAN_RETAINED_TREE = (
-    ("Overview", ("Goal and Boundary", "Assumptions")),
-    ("Dependencies", ("Prerequisites", "Dependency Order")),
-    ("Implementation Strategy", ("Work Breakdown", "Change and Rollback")),
-    ("Verification Plan", ("Verification Matrix", "Stage Placement")),
-    ("Risks", ("Risks and Mitigations", "Escalation")),
-    ("Promotion Map", ("Durable Meaning", "Owner and Receipt")),
-)
-SPEC_RETAINED_BOUND = "^SPEC-0(?:161|221)$"
-PLAN_RETAINED_BOUND = "^SPEC-0(?:161|221)-PLAN-0001$"
 SPEC_FORM_EXTENSIONS = [
     {
         "id": "spec-lifecycle-traceability",
@@ -1218,64 +1199,8 @@ SPEC_FORM_EXTENSIONS = [
         "parent_id": "spec.acceptance",
         "title": "Lifecycle Traceability",
     },
-    {
-        "id": "spec-approved-retained-form",
-        "kind": "retained_form",
-        "condition": (
-            "an approved Spec of SPEC-0161 or SPEC-0221 keeps the five H2 it was "
-            "approved with and its Lifecycle Traceability table under References; "
-            "every other Spec takes the form tree"
-        ),
-        "owner": "platform",
-        "verification": "tests/test_common_form_tree.py",
-        "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
-        "removal": "when neither package remains in the tree; the bound is never widened",
-        "authority_ref": "ADR-0059",
-        "statuses": ["approved"],
-        "identity_bound": SPEC_RETAINED_BOUND,
-        "retained_sections": {
-            "required": [h2 for h2, _ in SPEC_RETAINED_TREE],
-            "optional": [],
-            "forbidden": [],
-        },
-        "body_contract": {
-            "section": "References",
-            "table_heading": "Lifecycle Traceability",
-        },
-    },
 ]
-PLAN_FORM_EXTENSIONS = [
-    {
-        "id": "plan-approved-retained-form",
-        "kind": "retained_form",
-        "condition": (
-            "an approved Plan of SPEC-0161 or SPEC-0221 keeps the six H2 it was "
-            "approved with and its Work Breakdown table under Implementation "
-            "Strategy; every other Plan takes the form tree"
-        ),
-        "owner": "platform",
-        "verification": "tests/test_common_form_tree.py",
-        "review": "when SPEC-0161 or SPEC-0221 leaves the tree",
-        "removal": "when neither package remains in the tree; the bound is never widened",
-        "authority_ref": "ADR-0059",
-        "statuses": ["approved"],
-        "identity_bound": PLAN_RETAINED_BOUND,
-        "retained_sections": {
-            "required": [h2 for h2, _ in PLAN_RETAINED_TREE],
-            "optional": [],
-            "forbidden": [],
-        },
-        "body_contract": {
-            "section": "Implementation Strategy",
-            "table_heading": "Work Breakdown",
-        },
-        "section_titles": {
-            "plan.intent.2": "Goal and Boundary",
-            "plan.work.1": "Work Breakdown",
-            "plan.promotion.1": "Owner and Receipt",
-        },
-    },
-]
+PLAN_FORM_EXTENSIONS: list[dict] = []
 CORE_CHECK_COLUMNS = (
     "Check ID",
     "Guarantee",
@@ -7857,203 +7782,6 @@ class SpecPlanFormTests(unittest.TestCase):
         self.assertIn("| Promotion ID | Target Owner | Acceptance | Evidence |", plan)
 
 
-def retained_spec_text(artifact_id: str, status: str) -> str:
-    keys = SPEC_FORM_TABLE_KEYS
-    blocks = [
-        "---",
-        'title: "Retained Spec"',
-        'version: "1.0.0"',
-        'type: "sdlc/spec"',
-        f'status: "{status}"',
-        'owner: "platform"',
-        'updated: "2026-11-17"',
-        f'artifact_id: "{artifact_id}"',
-        "---",
-        "",
-        "# Spec title",
-    ]
-    for h2, children in SPEC_RETAINED_TREE:
-        blocks.append(f"## {h2}")
-        for h3 in children:
-            text = f"The {h3} of the change."
-            if h3 == "Criteria":
-                text += "\n\n" + form_table(keys["Criteria"][1])
-            blocks.append(f"### {h3}\n\n{text}")
-    blocks.append(
-        "### Lifecycle Traceability\n\n" + form_table(keys["Lifecycle Traceability"][1])
-    )
-    return md(*blocks)
-
-
-def retained_plan_text(artifact_id: str, status: str) -> str:
-    keys = PLAN_FORM_TABLE_KEYS
-    blocks = [
-        "---",
-        'title: "Retained Plan"',
-        'version: "1.0.0"',
-        'type: "sdlc/plan"',
-        f'status: "{status}"',
-        'owner: "platform"',
-        'updated: "2026-11-17"',
-        f'artifact_id: "{artifact_id}"',
-        f'parent_ids: ["{artifact_id.split("-PLAN")[0]}"]',
-        "---",
-        "",
-        "# Plan title",
-    ]
-    for h2, children in PLAN_RETAINED_TREE:
-        blocks.append(f"## {h2}")
-        for h3 in children:
-            text = f"The {h3} of the work."
-            if h3 == "Goal and Boundary":
-                text += "\n\n#### Global Constraints\n\nKeep the Spec constraints."
-            if h3 == "Work Breakdown":
-                text += "\n\n" + form_table(keys["Work Breakdown"][1])
-            if h3 == "Owner and Receipt":
-                text += "\n\n" + form_table(keys["Promotion"][1])
-            blocks.append(f"### {h3}\n\n{text}")
-    return md(*blocks)
-
-
-class RetainedSpecPlanTests(unittest.TestCase):
-    """SPEC-0221 VAL-FORM-003: four approved identities keep their old tree."""
-
-    CASES = (
-        ("sdlc/spec", "0161-w00-v14-7-delta-intake", "SPEC-0161", "spec.md"),
-        ("sdlc/spec", "0221-w03-form-target-adoption", "SPEC-0221", "spec.md"),
-        ("sdlc/plan", "0161-w00-v14-7-delta-intake", "SPEC-0161-PLAN-0001", "plan.md"),
-        (
-            "sdlc/plan",
-            "0221-w03-form-target-adoption",
-            "SPEC-0221-PLAN-0001",
-            "plan.md",
-        ),
-    )
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.registry = CONTRACTS.load_registry(ROOT)
-        cls.profiles = {p.profile_id: p for p in cls.registry.profiles}
-
-    @staticmethod
-    def text(profile_id: str, artifact_id: str, status: str) -> str:
-        build = retained_spec_text if profile_id == "sdlc/spec" else retained_plan_text
-        return build(artifact_id, status)
-
-    def found(self, profile_id: str, path: PurePosixPath, text: str, status: str):
-        profile = self.profiles[profile_id]
-        return sorted(
-            item.rule_id
-            for item in (
-                *MARKDOWN._body_diagnostics(path, profile, text, status),
-                *MARKDOWN._body_contract_diagnostics(
-                    path, profile, text, status, "registry"
-                ),
-            )
-        )
-
-    def test_each_retained_identity_passes_its_approved_tree_and_table(self) -> None:
-        for profile_id, package, artifact_id, name in self.CASES:
-            with self.subTest(artifact=artifact_id):
-                path = PurePosixPath("docs/03.specs", package, name)
-                text = self.text(profile_id, artifact_id, "approved")
-                profile = self.profiles[profile_id]
-                self.assertEqual(
-                    [
-                        item.rule_id
-                        for item in MARKDOWN._body_diagnostics(
-                            path, profile, text, "approved"
-                        )
-                    ],
-                    [],
-                )
-                # The synthetic rows carry no real identifier; only the table's
-                # location is under test here.
-                self.assertNotIn(
-                    "BODY-CONTRACT-HEADING",
-                    self.found(profile_id, path, text, "approved"),
-                )
-                rows = LINKS._body_contract_rows(text, profile)
-                self.assertTrue(rows)
-
-    def test_only_a_retained_form_may_carry_a_location_or_titles(self) -> None:
-        for key, value in (
-            ("body_contract", {"section": "Scope", "table_heading": "In Scope"}),
-            ("section_titles", {"spec.scope.1": "In Scope"}),
-        ):
-            with self.subTest(key=key):
-                raw = load_raw()
-                form = next(
-                    f for f in raw["common_forms"]["forms"] if f["form_id"] == "spec"
-                )
-                local = next(e for e in form["extensions"] if e["kind"] == "local_h3")
-                local[key] = value
-                self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
-        raw = load_raw()
-        form = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "plan")
-        kept = next(e for e in form["extensions"] if e["kind"] == "retained_form")
-        kept["section_titles"] = {}
-        self.assertIn("REGISTRY_SCHEMA", rules_of(raw))
-
-    def test_a_retained_title_applies_only_to_its_bounded_identity(self) -> None:
-        form = self.profiles["sdlc/plan"].form
-        self.assertEqual(
-            form.section_heading("plan.promotion.1", "approved", "SPEC-0221-PLAN-0001"),
-            (3, "Owner and Receipt"),
-        )
-        for status, identity in (
-            ("approved", "SPEC-0162-PLAN-0001"),
-            ("draft", "SPEC-0221-PLAN-0001"),
-        ):
-            with self.subTest(status=status, identity=identity):
-                self.assertEqual(
-                    form.section_heading("plan.promotion.1", status, identity),
-                    (3, "Durable Owners"),
-                )
-
-    def test_the_retained_plan_promotion_table_keeps_its_column_check(self) -> None:
-        path = PurePosixPath("docs/03.specs/0221-w03-form-target-adoption/plan.md")
-        text = (ROOT / path).read_text(encoding="utf-8")
-        profile = self.profiles["sdlc/plan"]
-
-        def tables(body: str) -> list[str]:
-            return [
-                item.rule_id
-                for item in MARKDOWN._table_diagnostics(path, profile, body, "approved")
-            ]
-
-        self.assertEqual(tables(text), [])
-        broken = text.replace(
-            "| Promotion ID | Target Owner |", "| Promotion ID | Owner |"
-        )
-        self.assertIn("BODY-TABLE-COLUMNS", tables(broken))
-
-    def test_another_identity_in_the_old_tree_is_refused(self) -> None:
-        for profile_id, artifact_id, name in (
-            ("sdlc/spec", "SPEC-0162", "spec.md"),
-            ("sdlc/plan", "SPEC-0162-PLAN-0001", "plan.md"),
-        ):
-            with self.subTest(artifact=artifact_id):
-                path = PurePosixPath("docs/03.specs/0162-other", name)
-                text = self.text(profile_id, artifact_id, "approved")
-                found = self.found(profile_id, path, text, "approved")
-                self.assertIn("BODY-HEADING-UNSUPPORTED", found)
-                self.assertIn("BODY-CONTRACT-HEADING", found)
-                self.assertIsNone(
-                    LINKS._body_contract_rows(text, self.profiles[profile_id])
-                )
-
-    def test_a_retained_identity_in_another_status_takes_the_tree(self) -> None:
-        for profile_id, package, artifact_id, name in self.CASES:
-            with self.subTest(artifact=artifact_id):
-                path = PurePosixPath("docs/03.specs", package, name)
-                text = self.text(profile_id, artifact_id, "draft")
-                self.assertIn(
-                    "BODY-HEADING-UNSUPPORTED",
-                    self.found(profile_id, path, text, "draft"),
-                )
-
-
 class FormlessRoleTableTests(unittest.TestCase):
     """VAL-TDREC-002: a role without a form records no table (SPEC-0196, W03-D56)."""
 
@@ -9526,7 +9254,7 @@ class SdlcCoreBindingTests(unittest.TestCase):
                     MARKDOWN._table_diagnostics(relative, profile, text), []
                 )
 
-    def test_every_current_spec_and_plan_renders_its_core_tables_unless_retained(
+    def test_every_current_spec_and_plan_renders_its_core_tables(
         self,
     ) -> None:
         profiles = typed_profiles(load_raw())
@@ -9540,7 +9268,6 @@ class SdlcCoreBindingTests(unittest.TestCase):
                 },
             ),
         }
-        retained = []
         for package in sorted((ROOT / "docs/03.specs").glob("0*/")):
             for name, (profile_id, headings) in cases.items():
                 path = package / name
@@ -9548,42 +9275,21 @@ class SdlcCoreBindingTests(unittest.TestCase):
                     continue
                 text = path.read_text(encoding="utf-8")
                 profile = profiles[profile_id]
-                identity = _frontmatter_value(text, "artifact_id")
                 status = _frontmatter_value(text, "status")
                 relative = PurePosixPath(path.relative_to(ROOT).as_posix())
                 with self.subTest(path=str(relative)):
                     core = {CORE_CHECK_COLUMNS, CORE_WORK_UNIT_COLUMNS}
-                    if status == "approved" and profile.form.retains_identity(identity):
-                        # SPEC-0161 and SPEC-0221 keep their approved bytes.
-                        retained.append(identity)
-                        self.assertFalse(
-                            core
-                            & {
-                                tuple(header)
-                                for header, _ in MARKDOWN._visible_tables(text)
-                            }
-                        )
-                    else:
-                        for heading, expected in headings.items():
-                            found = [
-                                header
-                                for header in self.visible_headers(text, heading)
-                                if header in core
-                            ]
-                            self.assertEqual(found, expected)
+                    for heading, expected in headings.items():
+                        found = [
+                            header
+                            for header in self.visible_headers(text, heading)
+                            if header in core
+                        ]
+                        self.assertEqual(found, expected)
                     self.assertEqual(
                         MARKDOWN._table_diagnostics(relative, profile, text, status),
                         [],
                     )
-        self.assertEqual(
-            sorted(retained),
-            [
-                "SPEC-0161",
-                "SPEC-0161-PLAN-0001",
-                "SPEC-0221",
-                "SPEC-0221-PLAN-0001",
-            ],
-        )
 
     def test_the_core_tables_sit_beside_the_local_tables_their_readers_use(
         self,

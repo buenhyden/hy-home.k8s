@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.41.0"
+version: "0.41.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-19"
 ---
 # 99.templates
 
@@ -197,8 +197,8 @@ form 경로의 대응은 Registry만 소유한다.
   `sdlc/spec`은 `spec` form(네 H2와 여덟 H3, Acceptance Criteria 아래 지역 H3
   `Lifecycle Traceability`)을, `sdlc/plan`은 `plan` form(다섯 H2와 열 개 H3)을
   쓰며 둘 다 H2 목록을 두지 않는다. 두 form은 4.0.0 설계 목표의 제목과 section
-  ID(`spec.intent.1` 등)를 쓴다(SPEC-0221). SPEC-0161과 SPEC-0221의 approved
-  Spec·Plan은 승인 당시 H2와 표 위치를 등록된 retained form으로 유지한다. Spec의 기준 표는 `Criterion ID`와
+  ID(`spec.intent.1` 등)를 쓴다(SPEC-0221).
+  Spec의 기준 표는 `Criterion ID`와
   `Expected Result` 열로 Acceptance Criteria 아래에 두고, `Architecture` 열은
   architecture description이나 ADR 링크 또는 설명된 제외를 검사받는다. Plan의
   `Work Breakdown` 표는 Work Breakdown > Work Units 아래에, 승격 표
