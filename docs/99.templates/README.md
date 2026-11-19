@@ -116,7 +116,9 @@ form 경로의 대응은 Registry만 소유한다.
   문서 frontmatter와 native 봉투로 구별한다. workflow는 등록된 지역 H3
   `Authority Boundary`를 쓸 수 있다.
   `governance/knowledge`는 `.agents/knowledge/`의 포인터 문서를,
-  `governance/vocabulary`는 그 안의 `glossary.md` 용어 정의 문서 하나를,
+  `governance/vocabulary`는 `.agents/knowledge/glossary.md`의 공통 용어와
+  `docs/00.workspace/01.project/glossary.md`의 로컬 용어를 같은 form으로 검증하며,
+  두 문서는 서로 다른 TERM ID의 정의를 소유한다.
   `governance/prompt`는 `.agents/prompts/`의 요청 계약을 소유하며 두 surface의
   README는 공통 router profile로 해석한다.
   `governance/*`는 기존 path/role identity를 유지한다. 기존 optional

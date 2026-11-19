@@ -11,11 +11,11 @@ updated: "{{UPDATED}}"
 
 ## Purpose
 
-<!-- Author prompt: state that this document owns the meaning of shared terms and that each policy keeps its operating rules. -->
+<!-- Author prompt: state whether this is the common glossary or the local glossary. Each owns only its own term meanings; policy owners keep operating rules. -->
 
 ## Scope
 
-<!-- Author prompt: name the terms in scope and what stays with policy, registry and procedure owners. -->
+<!-- Author prompt: the common glossary defines cross-workspace terms; the local glossary defines this workspace's terms and links to the common glossary. Name what stays with policy, registry and procedure owners. -->
 
 ## Normative Language
 
@@ -23,7 +23,7 @@ updated: "{{UPDATED}}"
 
 ## Repository Vocabulary
 
-<!-- Author prompt: one row per common term with the contract's Term ID, term, Korean name, definition, confusion, owner role linked to its existing owner file, and contract version; restate no rule. -->
+<!-- Author prompt: one row per term owned by this document, with the contract's Term ID, term, Korean name, definition, confusion, owner role linked to its existing owner file, and contract version. Never repeat a term from the other glossary or restate a policy rule. -->
 
 | Term ID | Term | Korean | Definition | Not to Confuse | Policy Owner | Contract Version |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -31,11 +31,11 @@ updated: "{{UPDATED}}"
 
 ## Local Extensions
 
-<!-- Author prompt: repository-specific terms with the same columns; never reuse a common Term ID; say why when there are none. -->
+<!-- Author prompt: any additional terms in this document use the same columns and unique IDs; say why when there are none. A local glossary may place its local terms in Repository Vocabulary and leave this section empty. -->
 
 ## Maintenance
 
-<!-- Author prompt: name who changes a term, how a contract edition is adopted, and the check that judges this file. -->
+<!-- Author prompt: name who changes a term, how a contract edition is adopted, and the check that judges both physical glossaries and duplicate TERM IDs across them. -->
 
 ## References
 

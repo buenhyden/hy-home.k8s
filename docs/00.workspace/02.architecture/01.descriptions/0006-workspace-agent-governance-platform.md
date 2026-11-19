@@ -1,6 +1,6 @@
 ---
 title: "Agent and Document Governance Architecture Description (AD)"
-version: "3.4.0"
+version: "3.5.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -78,7 +78,9 @@ No constraint is recorded separately in this description; the boundaries and non
 | Entry | Root `AGENTS.md` and `CLAUDE.md` | Explicitly select common policy and relevant procedures |
 | Workspace policy (W) | `docs/00.workspace/` (`03.process/`, `04.quality/`) | SDLC, document, Git, quality, formatting and approval meaning shared by people and agents |
 | Agent policy (A) | `.agents/governance/` | Agent execution, context and memory, model selection, and the agent halves of approval and Git (SAFE-R011, SAFE-R012, SAFE-R017 to SAFE-R019, GIT-R011 to GIT-R013) |
-| Workspace vocabulary | `docs/00.workspace/01.project/glossary.md` | Term meanings with stable TERM IDs; rules stay in their policies |
+| Common vocabulary | `.agents/knowledge/glossary.md` | Shared meanings with stable TERM IDs, scope and consumer/policy-owner links; rules stay in their policies |
+| Local vocabulary | `docs/00.workspace/01.project/glossary.md` | Kubernetes/GitOps meanings scoped to this workspace and links to common definitions |
+| Workspace environment | [Environment preparation](../../05.environment/README.md) | Reproducible tool and validation preparation, linking actual lock, sandbox and resource owners without claiming runtime evidence |
 | Role metadata | `.agents/roles/registry.json` and adjacent schema | Stable IDs, neutral permission classes, handoffs, skills and provider binding paths |
 | Role bodies and procedures | `.agents/roles/` and `.agents/skills/` | Neutral responsibilities and reusable work steps |
 | Provider contract | `.claude/provider.md` and `.codex/provider.md` | Supported native syntax, loading route, and evidence limits |
@@ -97,6 +99,12 @@ is needed. A native hook is registered only for an actual supported event;
 routine tool completion does not invoke whole-repository QA. ADR-0036 owns the
 current authority location and carries forward the QA and CD boundary
 its deleted predecessors decided (see Archived Lineage).
+
+[ADR-0065](../02.decisions/0065-shared-vocabulary-and-workspace-ownership.md)
+records the common/local vocabulary and environment ownership correction under
+the separate current P03 authorization. It retains the workspace/product subject
+split and the W/A policy split. The successor remains proposed; the Task records
+implementation and verification separately from the user's decision acceptance.
 
 #### Authority planes
 
@@ -494,12 +502,13 @@ historical evidence rather than parallel operating instructions.
 
 ### Archived Lineage
 
-These documents were deleted from `docs/98.archive/` or the decision log under SPEC-0140 and are recovered with `git show 69445fca:<path>`.
+Unless a row states a later disposition and recovery source, these documents were deleted from `docs/98.archive/` or the decision log under SPEC-0140 and are recovered with `git show 69445fca:<path>`.
 The ADR-0013 to ADR-0025 and ADR-0035 rows were already deleted from `docs/98.archive/superseded/` at that commit
 (`fe3bd418`); recover them with `git show 9a509be9:<path>`.
 
 | Source | Kind | Summary | Original path |
 | --- | --- | --- | --- |
+| ADR-0064 | replaced decision | Accepted on 2026-11-19, recorded in SPEC-0224 Task EVD-012. Established the physical W owner, W/A SAFE and GIT split, workspace/product architecture subjects, numbered categories, shared AD/ADR sequence and stable IDs. P03's explicit current request replaces its one-local-glossary clause through proposed ADR-0065 while retaining those obligations and ADR-0058's meaning-only glossary admission. This successor's acceptance is pending. Exact predecessor bytes are recoverable with `git show 5798fa2b9a45041d43fb852a2ec9246be80d5740:docs/00.workspace/02.architecture/02.decisions/0064-workspace-layer-physical-owner.md`; byte-identical recovery was checked before deletion. | `docs/00.workspace/02.architecture/02.decisions/0064-workspace-layer-physical-owner.md` |
 | ADR-0013 | superseded decision | Stage 00 Canonical Adapter Model: kept AI Agent governance in one Stage 00 common root and separated provider-native adapters, local adapters and symlink views. Provider-specific shared surfaces and the custom-hook model were replaced by ADR-0030. | `docs/98.archive/superseded/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md` |
 | ADR-0015 | superseded decision | Declarative Document Contract Registry: made one machine-readable registry the owner of document routes, metadata profiles, lifecycle states, section profiles and README profiles. ADR-0030 replaced its fixed metadata baseline and profile inventory and kept the registry as sole machine authority. | `docs/98.archive/superseded/02.architecture/decisions/0015-declarative-document-contract-registry.md` |
 | ADR-0016 | superseded decision | Program-to-Tranche Document Lineage: defined numeric and semantic lineage for one program PRD implemented through several dependent Specs. ADR-0031 superseded its instance-roster and validation-routing authority. | `docs/98.archive/superseded/02.architecture/decisions/0016-program-to-tranche-document-lineage.md` |

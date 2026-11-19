@@ -1,10 +1,10 @@
 ---
 title: "Architect Responsibility"
-version: "1.0.1"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-11-06"
+updated: "2026-11-20"
 ---
 
 # architect Responsibility
@@ -15,7 +15,7 @@ Own structural decisions and architecture descriptions, and trace them to requir
 
 ## Authority Boundary
 
-Under [agent execution](../governance/agent-execution.md) this role writes only Stage 02 decisions and architecture descriptions under `docs/02.architecture/`, never edits an accepted ADR in place. It hands prose repair to [doc-writer](doc-writer.md), implementation to [k8s-implementer](k8s-implementer.md), trust-boundary judgment to [security-auditor](security-auditor.md), and ownership questions to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes only decisions and architecture descriptions at their subject owner: product architecture under `docs/02.architecture/` and workspace architecture under `docs/00.workspace/02.architecture/`. It never edits an accepted ADR in place. It hands prose repair to [doc-writer](doc-writer.md), implementation to [k8s-implementer](k8s-implementer.md), trust-boundary judgment to [security-auditor](security-auditor.md), and ownership questions to [supervisor](supervisor.md). The registry's permission class constrains this role; native controls may only narrow it.
 
 ## Governance Context
 
@@ -30,10 +30,10 @@ for the broader responsibility context.
 
 Decide and record the structure: which components exist, which decision binds,
 and what that decision gives up. Writing the prose of a document that is not a
-Stage 02 decision or description is `doc-writer.md`'s; the manifest consequences
+architecture decision or description is `doc-writer.md`'s; the manifest consequences
 of a structure are `k8s-implementer.md`'s; a decision that turns on a trust
 boundary is `security-auditor.md`'s judgment. The reciprocal holds too: once a
-Stage 02 decision is settled, prose-level repair of that document goes back to
+architecture decision is settled, prose-level repair of that document goes back to
 `doc-writer.md`.
 
 ### When to Use
@@ -48,7 +48,7 @@ content is not a structural choice, is a different task.
 
 ### Outputs
 
-- A successor ADR or an updated Architecture Description at its canonical Stage 02 path, naming the alternatives considered and the property given up
+- A successor ADR or an updated Architecture Description at its product or workspace subject path, naming the alternatives considered and the property given up
 
 ### Guardrails
 
@@ -73,7 +73,7 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Per [work lifecycle](../workflows/work-lifecycle.md), run `scripts/validate-markdown-profiles.py --mode strict`, `scripts/validate-links-and-owners.py --mode strict` and `scripts/validate-document-lifecycle.py --mode strict` on the touched Stage 02 documents; report each as repository evidence under the [validation lane contract](../../docs/00.workspace/04.quality/quality.md#validation-lane-contract). Review it when its responsibility changes. Review this role when its responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run `scripts/validate-markdown-profiles.py --mode strict`, `scripts/validate-links-and-owners.py --mode strict` and `scripts/validate-document-lifecycle.py --mode strict` on the touched product or workspace architecture documents; report each as repository evidence under the [validation lane contract](../../docs/00.workspace/04.quality/quality.md#validation-lane-contract). Review it when its responsibility changes. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 

@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "2.1.2"
+version: "2.1.3"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 artifact_id: "AD-0007"
 ---
 
@@ -50,11 +50,12 @@ The architecture's core goals are local reproducibility, GitOps-first ownership,
 
 #### Agent architecture requirements
 
-- **Model/Provider Strategy**: Provider adapters must route to Common agent governance and current active docs.
-- **Tooling Boundary**: Agents may inspect and edit repo files inside the workspace; live mutation requires approval.
-- **Memory & Context Strategy**: durable execution evidence goes in the package-local Task, common rules in `.agents/governance/`, and temporary checkpoints in ignored recovery state.
-- **Guardrail Boundary**: Superseded/ended records are non-authoritative history; deleted documents are never current guidance ([ADR-0053](../../00.workspace/02.architecture/02.decisions/0053-unvalidated-archive.md)).
-- **Latency / Cost Budget**: Not applicable to platform runtime.
+Agent execution, provider, memory and validation structure belongs to the
+[workspace architecture](../../00.workspace/02.architecture/01.descriptions/0006-workspace-agent-governance-platform.md).
+[Approval and safety](../../00.workspace/04.quality/approval-and-safety.md)
+owns protected live actions, and the [document lifecycle](../../00.workspace/03.process/document-lifecycle.md)
+owns document authority and disposition. This product view consumes those owners
+without defining their rules again.
 
 ## Structure
 
@@ -368,7 +369,7 @@ lives; nothing is copied between this description, the ADRs and REQ-0004.
 | 9 Architecture decisions | The [decision log](../02.decisions/) | none |
 | 10 Quality requirements | [Scenarios](#scenarios); REQ-0004 scenarios | Measured values remain operator observations |
 | 11 Risks and technical debt | [Implementation owners and remaining boundaries](#implementation-owners-and-remaining-boundaries) | No separate risk register; residuals stay with their owners |
-| 12 Glossary | [Repository Vocabulary](../../00.workspace/01.project/glossary.md) | Shared terms use the vocabulary owner. |
+| 12 Glossary | [Repository Vocabulary](../../../.agents/knowledge/glossary.md); [local Kubernetes vocabulary](../../00.workspace/01.project/glossary.md) | Shared meanings and platform terminology have separate owners. |
 
 ### Lifecycle Traceability
 

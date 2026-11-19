@@ -3,11 +3,11 @@ name: "knowledge-map"
 description: "Use when auditing governance navigation, role/skill references, stage indexes, or current cross-links."
 metadata:
   title: "Knowledge Map"
-  version: "1.2.0"
+  version: "1.3.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-11-17"
+  updated: "2026-11-20"
 disable-model-invocation: true
 ---
 
@@ -44,7 +44,8 @@ This skill takes no input beyond the user's request and the files its Steps name
    document profiles and indexes from the Stage 99 registry. Read
    `.agents/knowledge/project-map.md` for the tree that owns a path and
    `.agents/knowledge/domains.md` for the entry document of a domain, and
-   `docs/00.workspace/01.project/glossary.md` for what a shared term means; take the
+   `.agents/knowledge/glossary.md` for shared term meanings and
+   `docs/00.workspace/01.project/glossary.md` for local Kubernetes meanings; take the
    owner path, entry path and validity condition from the row and verify each
    against the tree rather than trusting the row.
 3. Apply the current document-authoring rule: outside-doc navigation reaches

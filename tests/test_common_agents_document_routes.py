@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 import tempfile
 import unittest
@@ -40,6 +41,51 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.registry = contracts.load_registry(ROOT)
+
+    def test_common_and_local_glossaries_share_the_vocabulary_form(self) -> None:
+        for path in (
+            ".agents/knowledge/glossary.md",
+            "docs/00.workspace/01.project/glossary.md",
+        ):
+            with self.subTest(path=path):
+                profile = contracts.classify_path(self.registry, PurePosixPath(path))
+                self.assertEqual(profile.profile_id, "governance/vocabulary")
+                self.assertEqual(profile.document_role, "vocabulary")
+
+    def test_vocabulary_template_names_both_physical_consumers(self) -> None:
+        registry = json.loads(
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
+        )
+        definition = next(
+            profile["template_definition"]
+            for profile in registry["profiles"]
+            if profile["id"] == "common/template-governance-vocabulary"
+        )
+        for path in (
+            ".agents/knowledge/glossary.md",
+            "docs/00.workspace/01.project/glossary.md",
+        ):
+            self.assertIn(path, definition["consumer_paths"])
+        self.assertEqual(
+            definition["vocabulary_refs"], [".agents/knowledge/glossary.md"]
+        )
+
+    def test_environment_collection_and_guide_have_existing_forms(self) -> None:
+        for path, expected in (
+            (
+                "docs/00.workspace/05.environment/README.md",
+                "common/readme-collection-index",
+            ),
+            (
+                "docs/00.workspace/05.environment/0001-local-validation.md",
+                "operation/guide",
+            ),
+            ("docs/00.workspace/04.quality/0001-example.md", "operation/guide"),
+            ("docs/05.operations/01.guides/0001-example.md", "operation/guide"),
+        ):
+            with self.subTest(path=path):
+                profile = contracts.classify_path(self.registry, PurePosixPath(path))
+                self.assertEqual(profile.profile_id, expected)
 
     def test_dedicated_nested_resources_have_owned_document_routes(self):
         for path, expected in (

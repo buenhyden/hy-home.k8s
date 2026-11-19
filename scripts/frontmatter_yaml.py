@@ -17,9 +17,10 @@ try:
 except ImportError as exc:  # pragma: no cover - exercised by the missing-library test
     raise ImportError(
         "frontmatter needs ruamel.yaml, which the hashed lock "
-        ".github/requirements/ci-validation.txt pins. Install it with the command "
-        "in docs/00.workspace/03.process/git.md: python3 -m pip install --only-binary :all: "
-        "--require-hashes -r .github/requirements/ci-validation.txt"
+        ".github/requirements/ci-validation.txt pins. Prepare a checkout-external "
+        "Python environment and install the lock with the command in "
+        "docs/00.workspace/05.environment/0011-local-validation-environment.md. "
+        "Run validation with that same interpreter."
     ) from exc
 
 _TIMESTAMP = "tag:yaml.org,2002:timestamp"
