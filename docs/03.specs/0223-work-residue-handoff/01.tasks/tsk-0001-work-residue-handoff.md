@@ -607,6 +607,7 @@ was created; existing fixture temporary directories clean up on exit.
 | EVD-021 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P01 1.1.0 retention read at clean `d778c5f3`; implementation merge `60ff97bd`; current package D01 and fixed decisions | Git and existing pinned validation venv; actual CI/plan contract tests | `git diff --name-only 60ff97bd..HEAD`; scoped `git diff --exit-code` over CI/scripts/tests/config/policy/forms; `python3 -m unittest tests.test_run_validation_lane.PullRequestPlanTest tests.test_validate_ci_python_contract.HostedStyleJobBoundaryTests` | 0 | PASS | Only Task/ledger changed since implementation; scoped implementation comparison empty; all 16 current plan/CI boundary cases PASS in 1.541 seconds. Broader prior guarantees reused only for unchanged inputs; no new native/live claim | false | none |
 | EVD-022 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | Six P01 requirements against current workflow/runner/registry/document/platform consumers, permanent tests and EVD-015/016, at `d778c5f3` | Separate quality-engineer context, instructed read-only audit; actual PR/protection read-back by the parent | Requirement-to-consumer audit and review of evidence reuse boundaries | none | PASS | No material missing implementation; W06-H02, live/CRD and user acceptance remain distinct. PR 331/333 merge and run 44587710232 success re-read; no new code or behavior test added | false | none |
 | EVD-023 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | P01 1.1.0 Task-only retention diff on `d778c5f3`, including EVD-021/022 and current authorization | Independent code-reviewer, separate context and policy read-only restriction | Semantic diff review against P01/D01, fixed decisions and evidence/acceptance boundaries | none | PASS | No BLOCK/FIX; unchanged implementation evidence remains scoped, no same-coverage speed/p95 claim, old EVD/criterion cells retained; no native or live proof claimed | false | none |
+| EVD-024 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P01 1.1.0 exact Task-only staged input producing `b3f481d6`; this receipt is the only later local change | Existing pinned validation venv and active chained pre-commit/commit-msg hooks | `git commit -m 'docs: verify retained P01 CI routing for version 1.1'` invokes `python3 scripts/qa.py staged`, Commitizen and generated-message checks | 0 | PASS | Staged document QA and both message checks PASS. This evidence-only receipt retains EVD-023's operative review scope and receives its own selected commit-hook checks; unchanged implementation suites are not replayed | false | none |
 
 ### Resolution Links
 
@@ -671,6 +672,7 @@ The Plan promotes no durable contract.
 
 Current handoff: P01 1.1.0 is retained after current-source and boundary
 verification (EVD-021/022); P00 1.1.0 reconciles the fixed decisions and current source;
+the P01 retention record's review and exact-index document QA are EVD-023/024.
 implementation and local verification are recorded in EVD-017 to EVD-020.
 P01 implementation and verification are retained through PR 331/332 and
 EVD-015/016. The next input is
