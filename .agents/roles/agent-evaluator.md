@@ -105,4 +105,4 @@ Per [work lifecycle](../workflows/work-lifecycle.md), run only bounded paired tr
 - [governance-steward](governance-steward.md)
 - [quality-engineer](quality-engineer.md)
 - [supervisor](supervisor.md)
-- [Quality policy](../governance/quality.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md)

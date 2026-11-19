@@ -11,7 +11,7 @@ metadata:
 disable-model-invocation: true
 ---
 
-Read `.agents/governance/approval-and-safety.md` and the selected role before
+Read `docs/00.workspace/04.quality/approval-and-safety.md` and the selected role before
 using this procedure. Skill invocation grants no authority
 ([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
@@ -21,7 +21,7 @@ using this procedure. Skill invocation grants no authority
 
 ### When to Use
 
-Author and review operations runbooks (`docs/05.operations/runbooks/`) for this repository's
+Author and review operations runbooks (`docs/05.operations/03.runbooks/`) for this repository's
 Linux server + k3d + ArgoCD platform. Ensure runbooks are executable, verifiable, and safe for operator
 use without requiring cluster access delegation.
 
@@ -47,7 +47,7 @@ This skill takes no input beyond the user's request and the files its Steps name
 ### Steps
 
 1. Identify the runbook type and the runbook index
-   (`docs/05.operations/runbooks/README.md`). Resolve its `operation/runbook`
+   (`docs/05.operations/03.runbooks/README.md`). Resolve its `operation/runbook`
    profile through `docs-stage-routing`; the Stage 99 owner supplies the path
    grammar and the form
    (registry entry; see [Stage 99 templates](../../../docs/99.templates/README.md)). Runbooks are
@@ -68,7 +68,7 @@ This skill takes no input beyond the user's request and the files its Steps name
    Verification > Unverified Conditions, and navigation links in Trigger and
    Scope > Targets.
 7. An authorized author saves the file at the resolved runbook profile path.
-8. Update `docs/05.operations/runbooks/README.md` to include the new runbook link.
+8. Update `docs/05.operations/03.runbooks/README.md` to include the new runbook link.
 
 Section names and order follow the Runbook form: Purpose; Preconditions;
 Steps; Validation; Recovery.

@@ -19,7 +19,7 @@ responsibility, least privilege, and independent evidence.
 Related documents: [Roles](../roles/README.md),
 [Model Selection](../governance/model-selection.md),
 [Work Lifecycle](work-lifecycle.md) and
-[Approval and Safety](../governance/approval-and-safety.md).
+[Approval and Safety](../../docs/00.workspace/04.quality/approval-and-safety.md).
 
 #### Inputs
 
@@ -77,7 +77,7 @@ roster or tool inventory.
    combined candidate. A clone separates files only; it is not a sandbox, and
    a worker's own PASS never replaces the integration check.
 6. Require returning workers to report the
-   [quality handoff fields](../governance/quality.md#handoff-evidence-contract).
+   [quality handoff fields](../../docs/00.workspace/04.quality/quality.md#handoff-evidence-contract).
    Review actual changes and commands; a worker's assertion alone is not
    verification. Reconcile the worker snapshot, file hashes and outstanding
    writes using the [resume decision](../governance/context-and-memory.md#resume-decision).

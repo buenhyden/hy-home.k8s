@@ -10,6 +10,7 @@ import importlib.util
 import json
 import os
 import graphlib
+import posixpath
 import re
 import subprocess
 import sys
@@ -80,8 +81,8 @@ from validation.repository.bounded_io import (
 
 COMPLETION_AUTHORITY_PATHS = (
     CURRENT_REGISTRY_PATH,
-    PurePosixPath("docs/99.templates/contracts/document-profile.schema.json"),
-    PurePosixPath("docs/99.templates/contracts/frontmatter.schema.json"),
+    PurePosixPath("docs/99.templates/01.contracts/document-profile.schema.json"),
+    PurePosixPath("docs/99.templates/01.contracts/frontmatter.schema.json"),
 )
 OBJECT_ID = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
 FIXED_GIT_ENVIRONMENT = {
@@ -403,7 +404,7 @@ def _merge_base(root: Path, base_commit: str, to_commit: str) -> str:
     return bases[0]
 
 
-def _parse_changes(raw: bytes) -> tuple[Change, ...]:
+def _parse_changes(raw: bytes, *, similar: bool = False) -> tuple[Change, ...]:
     records = raw.split(b"\0")
     if not records or records[-1] != b"":
         raise InvocationError("Git name-status output is not NUL terminated")
@@ -416,7 +417,9 @@ def _parse_changes(raw: bytes) -> tuple[Change, ...]:
             status = status_raw.decode("ascii")
         except UnicodeDecodeError as exc:
             raise InvocationError("Git returned a non-ASCII change status") from exc
-        if status.startswith("R") and status[1:] == "100":
+        if status.startswith("R") and (
+            status[1:] == "100" or (similar and status[1:].isdigit())
+        ):
             if cursor + 1 >= len(records) - 1:
                 raise InvocationError("Git rename record is truncated")
             old_path = _decode_path(records[cursor])
@@ -983,6 +986,7 @@ def _local_plan_task_contract_issues(
             if kind not in {"local", "anchor"} or target is None:
                 return False
             current_owner = target.parts[:1] == (".agents",) or target.parts[:2] in {
+                ("docs", "00.workspace"),
                 ("docs", "01.requirements"),
                 ("docs", "02.architecture"),
                 ("docs", "05.operations"),
@@ -1485,7 +1489,10 @@ def _approved_initial_paths(
             proposed_texts[plan_path].encode("utf-8")
         ).hexdigest()
         for task_path, task in proposed_documents.items():
-            if task.profile_id != "sdlc/task" or task_path.parent != package / "tasks":
+            if (
+                task.profile_id != "sdlc/task"
+                or task_path.parent != package / "01.tasks"
+            ):
                 continue
             task_parent = direct_parent(task_path, "sdlc/task")
             if task_parent != (plan_path, plan_id):
@@ -2997,11 +3004,18 @@ def _policy_code_section(
     if section is None:
         return None
     try:
-        codes = {item["code"]: item["path"] for item in section["codes"]}
+        codes: dict[str, str] = {}
+        for item in section["codes"]:
+            codes.setdefault(item["code"], item["path"])
+        paths = {item["path"]: item["code"] for item in section["codes"]}
         reserved = frozenset(section["reserved_codes"])
     except (KeyError, TypeError) as exc:
         raise InvocationError("policy_rule_ids section is malformed") from exc
-    return PolicyCodeSection(codes=MappingProxyType(codes), reserved=reserved)
+    return PolicyCodeSection(
+        codes=MappingProxyType(codes),
+        reserved=reserved,
+        paths=MappingProxyType(paths),
+    )
 
 
 def _policy_rules(
@@ -3013,7 +3027,7 @@ def _policy_rules(
     if section is None:
         return rows
     reader = _load_canonical_markdown_module().policy_rule_rows
-    for raw in sorted(section.codes.values()):
+    for raw in sorted(section.paths or section.codes.values()):
         path = PurePosixPath(raw)
         for rule_id, status in reader(texts.get(path, "")):
             rows.setdefault(rule_id, (path, status))
@@ -3042,6 +3056,241 @@ def _retained_rejected_adr_diagnostics(
         if document.profile_id == "sdlc/architecture-decision"
         and document.status == "rejected"
     )
+
+
+_RELOCATED_LINK = re.compile(
+    r"(\]\(\s*<?)([^)\s>]+)(>?(?:\s+\"[^\"]*\")?\s*\))|(^\s*\[[^\]]+\]:\s*)(\S+)",
+    re.MULTILINE,
+)
+
+
+def _relocated_links(
+    text: str,
+    old_path: PurePosixPath,
+    new_path: PurePosixPath,
+    relocations: Mapping[PurePosixPath, PurePosixPath],
+    folders: Mapping[PurePosixPath, PurePosixPath] | None = None,
+) -> str:
+    """Recompute relative link destinations of a base text after a relocation.
+
+    Only destinations whose file, or whose folder, moved under `relocations`
+    and the document's own move are rewritten, so a proposed text equal to
+    the result differs from its base only by the relocation (Q07).
+    """
+
+    folders = folders or {}
+
+    def target(raw: str) -> str:
+        if re.match(r"^[a-z][a-z0-9+.-]*:", raw) or raw.startswith(("#", "/")):
+            return raw
+        path, hashmark, anchor = raw.partition("#")
+        if not path:
+            return raw
+        joined = posixpath.normpath(posixpath.join(old_path.parent.as_posix(), path))
+        if joined.startswith(".."):
+            return raw
+        resolved = PurePosixPath(joined)
+        moved = relocations.get(resolved)
+        if moved is None:
+            for folder in (resolved, *resolved.parents):
+                if folder in folders:
+                    moved = folders[folder] / resolved.relative_to(folder)
+                    break
+        moved = moved or resolved
+        if moved == resolved and old_path.parent == new_path.parent:
+            return raw
+        relative = posixpath.relpath(
+            moved.as_posix(), new_path.parent.as_posix() or "."
+        )
+        if path.endswith("/"):
+            relative += "/"
+        if path.startswith("./") and not relative.startswith("."):
+            relative = "./" + relative
+        return relative + hashmark + anchor
+
+    def substitute(match: re.Match[str]) -> str:
+        if match.group(1) is not None:
+            return match.group(1) + target(match.group(2)) + match.group(3)
+        return match.group(4) + target(match.group(5))
+
+    return _RELOCATED_LINK.sub(substitute, text)
+
+
+def _relocated_folders(
+    relocations: Mapping[PurePosixPath, PurePosixPath],
+    base_paths: frozenset[PurePosixPath],
+) -> Mapping[PurePosixPath, PurePosixPath]:
+    """Folders renamed whole: every base file under them moved to one new folder.
+
+    A folder is mapped only when the same-depth prefix change holds for every
+    base file below it, so a single moved file never redirects links to its
+    unmoved siblings; a conflicting target drops the folder.
+    """
+
+    candidates: dict[PurePosixPath, set[PurePosixPath]] = {}
+    for old, new in relocations.items():
+        if len(old.parts) != len(new.parts):
+            continue
+        for depth in range(1, len(old.parts)):
+            before = PurePosixPath(*old.parts[:depth])
+            after = PurePosixPath(*new.parts[:depth])
+            if before != after:
+                candidates.setdefault(before, set()).add(after)
+    found: dict[PurePosixPath, PurePosixPath] = {}
+    for before, targets in candidates.items():
+        if len(targets) != 1:
+            continue
+        after = next(iter(targets))
+        members = [path for path in base_paths if before in path.parents]
+        if members and all(
+            relocations.get(path) == after / path.relative_to(before)
+            for path in members
+        ):
+            found[before] = after
+    return found
+
+
+def _split_origins(
+    registry_blob: Mapping[str, object] | None,
+    base_blobs: Mapping[PurePosixPath, str],
+    base_registry_blob: Mapping[str, object] | None = None,
+    base_rules: Callable[[PurePosixPath], frozenset[str]] = lambda path: frozenset(),
+) -> Mapping[PurePosixPath, PurePosixPath]:
+    """New half -> original path of each SDLC-R036 policy split.
+
+    The base registry must have held the code once, at the original path, and
+    every rule ID the new half lists must be a Rules row of the original base
+    text; otherwise the new half is an ordinary new document.
+    """
+
+    base_section = (base_registry_blob or {}).get("policy_rule_ids")
+    base_codes: dict[str, list[str]] = {}
+    if isinstance(base_section, Mapping):
+        for item in base_section.get("codes", ()):
+            if isinstance(item, Mapping) and "code" in item and "path" in item:
+                base_codes.setdefault(str(item["code"]), []).append(str(item["path"]))
+
+    section = (registry_blob or {}).get("policy_rule_ids")
+    if not isinstance(section, Mapping):
+        return {}
+    by_code: dict[str, list[tuple[PurePosixPath, frozenset[str]]]] = {}
+    for item in section.get("codes", ()):
+        if (
+            isinstance(item, Mapping)
+            and item.get("rules")
+            and "code" in item
+            and "path" in item
+        ):
+            by_code.setdefault(str(item["code"]), []).append(
+                (PurePosixPath(str(item["path"])), frozenset(map(str, item["rules"])))
+            )
+    found: dict[PurePosixPath, PurePosixPath] = {}
+    for code, halves in by_code.items():
+        existing = [path for path, _ in halves if path in base_blobs]
+        if len(halves) < 2 or len(existing) != 1:
+            continue
+        original = existing[0]
+        if base_codes.get(code) != [original.as_posix()]:
+            continue
+        original_rules = base_rules(original)
+        for path, rules in halves:
+            if path != original and rules <= original_rules:
+                found[path] = original
+    return found
+
+
+def _similar_renames(
+    root: Path, base_commit: str, proposed_commit: str | None
+) -> tuple[tuple[PurePosixPath, PurePosixPath], ...]:
+    """Git renames at 50% similarity, so a moved document whose links moved too pairs."""
+
+    target = () if proposed_commit is None else (proposed_commit,)
+    raw = _run_git(
+        root,
+        (
+            "diff",
+            *(("--cached",) if proposed_commit is None else ()),
+            "--no-ext-diff",
+            "--no-textconv",
+            "--ignore-submodules=none",
+            "--name-status",
+            "-z",
+            "--find-renames=50%",
+            "-l0",
+            base_commit,
+            *target,
+            "--",
+        ),
+    )
+    return tuple(
+        (change.old_path, change.path)
+        for change in _parse_changes(raw, similar=True)
+        if change.kind == "R" and change.old_path is not None
+    )
+
+
+def _relocations(
+    renames: Sequence[tuple[PurePosixPath, PurePosixPath]],
+    base_registry: Registry,
+    registry: Registry,
+    identity: Callable[[PurePosixPath, PurePosixPath], bool] = lambda old, new: True,
+) -> Mapping[PurePosixPath, PurePosixPath]:
+    """Q07 relocation: a rename that keeps its profile is the same document.
+
+    The old path is classified with the base commit's registry and the new path
+    with the current one. Only an equal profile with an unchanged file name and
+    artifact ID relocates (the name keeps two ID-less documents that Git pairs
+    by similarity from passing as one); any other rename
+    stays a rename and is refused by the comparison (LIFECYCLE-RENAME). The
+    relocated base is then compared at its new path, so state, version,
+    approval and Task evidence rules apply unchanged (document lifecycle
+    DOCLIFE relocation rule).
+    """
+
+    found: dict[PurePosixPath, PurePosixPath] = {}
+    for old, new in renames:
+        try:
+            before = classify_path(base_registry, old).profile_id
+            after = classify_path(registry, new).profile_id
+        except DocumentContractError:
+            continue
+        if before == after and old.name == new.name and identity(old, new):
+            found[old] = new
+    return found
+
+
+def _artifact_identity(text: str | None) -> object:
+    try:
+        return frontmatter_mapping(text or "").get("artifact_id")
+    except (ValueError, TypeError):
+        return None
+
+
+def _relocate_changes(
+    changes: Sequence[Change],
+    relocations: Mapping[PurePosixPath, PurePosixPath],
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> tuple[Change, ...]:
+    """Replace each relocated pair by an edit (or nothing) at its new path."""
+
+    targets = frozenset(relocations.values())
+    out: list[Change] = []
+    for change in changes:
+        if change.kind == "R" and change.old_path in relocations:
+            if relocations[change.old_path] != change.path:
+                out.append(change)
+            elif base_blobs.get(change.path) != proposed_blobs.get(change.path):
+                out.append(Change("M", change.path))
+            continue
+        if change.kind == "D" and change.path in relocations:
+            continue
+        if change.kind == "A" and change.path in targets:
+            if base_blobs.get(change.path) != proposed_blobs.get(change.path):
+                out.append(Change("M", change.path))
+            continue
+        out.append(change)
+    return tuple(out)
 
 
 def _evaluate_comparison(
@@ -3081,6 +3330,63 @@ def _evaluate_comparison(
         proposed_blobs = _tree_blob_map(root, proposed_commit)
         changes = _tree_changes(root, base_commit, proposed_commit)
 
+    # Q07 relocation: a document moved under an unchanged profile is read at its
+    # new path on the base side too, so the comparison follows the document.
+    def same_identity(old: PurePosixPath, new: PurePosixPath) -> bool:
+        # A relocation keeps the document's artifact ID; a rename that changes
+        # it is a new document and stays refused.
+        return _artifact_identity(
+            _blob_text(root, base_blobs.get(old), old)
+        ) == _artifact_identity(_blob_text(root, proposed_blobs.get(new), new))
+
+    relocations = _relocations(
+        _similar_renames(root, base_commit, proposed_commit),
+        _history_registry(root, base_commit, registry),
+        registry,
+        same_identity,
+    )
+    folders = _relocated_folders(relocations, frozenset(base_blobs))
+    if relocations:
+        base_blobs = {
+            relocations.get(path, path): oid for path, oid in base_blobs.items()
+        }
+        changes = _relocate_changes(changes, relocations, base_blobs, proposed_blobs)
+    # SDLC-R036 split: when the proposed registry lists one policy code at two
+    # paths with disjoint rules and only one path exists at the base, the new
+    # half continues that policy, so its base is the original policy blob.
+    proposed_registry_blob_oid = (
+        _index_blob_oid(root, CURRENT_REGISTRY_PATH)
+        if proposed_commit is None
+        else _tree_blob_oid(root, proposed_commit, CURRENT_REGISTRY_PATH)
+    )
+    base_registry_blob_oid = _tree_blob_oid(root, base_commit, CURRENT_REGISTRY_PATH)
+
+    def original_rules(path: PurePosixPath) -> frozenset[str]:
+        text = _blob_text(root, base_blobs.get(path), path) or ""
+        reader = _load_canonical_markdown_module().policy_rule_rows
+        return frozenset(rule_id for rule_id, _ in reader(text))
+
+    split_origins = _split_origins(
+        None
+        if proposed_registry_blob_oid is None
+        else _registry_blob(root, proposed_registry_blob_oid),
+        base_blobs,
+        None
+        if base_registry_blob_oid is None
+        else _registry_blob(root, base_registry_blob_oid),
+        original_rules,
+    )
+    if split_origins:
+        base_blobs = dict(base_blobs)
+        for half, original in split_origins.items():
+            base_blobs[half] = base_blobs[original]
+        changes = tuple(
+            Change("M", change.path)
+            if change.kind == "A" and change.path in split_origins
+            else change
+            for change in changes
+        )
+
     # The comparison base is classified with the current registry. A historical
     # registry is never parsed, so keys it carries that the current schema
     # retired cannot fail base loading.
@@ -3110,6 +3416,15 @@ def _evaluate_comparison(
     base_snapshot, base_texts = _snapshot_projection(
         root, base_classification_registry, base_blobs, base_side=True
     )
+    if relocations or split_origins:
+        origin = {new: old for old, new in relocations.items()}
+        origin.update(split_origins)
+        base_texts = {
+            path: _relocated_links(
+                text, origin.get(path, path), path, relocations, folders
+            )
+            for path, text in base_texts.items()
+        }
     proposed_snapshot, proposed_texts = _snapshot_projection(
         root, proposed_classification_registry, proposed_blobs
     )
@@ -3252,7 +3567,9 @@ def _evaluate_completion(
         snapshot_hash.update(staged_authority_bytes(root, path) + b"\0")
     digest = snapshot_hash.hexdigest()
     documents, texts = _snapshot_projection(root, registry, blobs)
-    schema_path = PurePosixPath("docs/99.templates/contracts/frontmatter.schema.json")
+    schema_path = PurePosixPath(
+        "docs/99.templates/01.contracts/frontmatter.schema.json"
+    )
     schema_text = staged_authority_bytes(root, schema_path).decode("utf-8")
     schema = json.loads(schema_text, object_pairs_hook=_unique_json_object)
     return _completion_document_diagnostics(
@@ -3328,7 +3645,8 @@ def _completion_document_diagnostics(
         plan_path = package / "plan.md"
         for path, document in documents.items():
             if path in {spec_path, plan_path} or (
-                path.parent == package / "tasks" and document.profile_id == "sdlc/task"
+                path.parent == package / "01.tasks"
+                and document.profile_id == "sdlc/task"
             ):
                 for finding in owner.validate_document_text(
                     texts[path],
@@ -3427,7 +3745,7 @@ def _completion_document_diagnostics(
                     for link in source_links
                 )
                 or task_path is None
-                or task_path.parent != package / "tasks"
+                or task_path.parent != package / "01.tasks"
                 or task_path not in documents
                 or documents[task_path].profile_id != "sdlc/task"
             ):
@@ -3450,7 +3768,7 @@ def _completion_document_diagnostics(
         if base_mode == "completion":
             for current_path, current_doc in documents.items():
                 if current_path not in {spec_path, plan_path} and not (
-                    current_path.parent == package / "tasks"
+                    current_path.parent == package / "01.tasks"
                     and current_doc.profile_id == "sdlc/task"
                 ):
                     continue
@@ -3475,7 +3793,7 @@ def _completion_document_diagnostics(
         for diagnostic in validate_current_task_evidence(
             context, base_mode="explicit-ref"
         ):
-            if diagnostic.path.parent == package / "tasks":
+            if diagnostic.path.parent == package / "01.tasks":
                 fail(
                     diagnostic.path, diagnostic.rule_id, diagnostic.observed_transition
                 )
@@ -3485,7 +3803,7 @@ def _completion_document_diagnostics(
             ):
                 if (
                     diagnostic.path == plan_path
-                    or diagnostic.path.parent == package / "tasks"
+                    or diagnostic.path.parent == package / "01.tasks"
                 ):
                     fail(
                         diagnostic.path,
@@ -3500,7 +3818,7 @@ def _completion_document_diagnostics(
             (
                 path
                 for path, doc in documents.items()
-                if path.parent == package / "tasks" and doc.profile_id == "sdlc/task"
+                if path.parent == package / "01.tasks" and doc.profile_id == "sdlc/task"
             ),
             key=PurePosixPath.as_posix,
         )

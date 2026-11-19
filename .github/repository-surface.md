@@ -28,7 +28,7 @@ updated: "2026-11-17"
 
 #### Policy Routing
 
-- branch 전략은 `.agents/governance/git.md`가 소유한다.
+- branch 전략은 `docs/00.workspace/03.process/git.md`가 소유한다.
   `workflows/ci.yml`의 `ci-summary` job은 PR의 base와 source prefix를
   검사하고, PR title을 신뢰된 base SHA의 `.cz.toml` authored schema로
   검사한다. 같은 job은 PR merge의 부모를 base·head SHA와 대조하고 전체
@@ -40,7 +40,7 @@ updated: "2026-11-17"
   목적·단위·문서 내용 검사의 통과를 뜻하지 않는다.
 - 로컬 QA 명령과 gate 구성은 `scripts/qa.py`와 validation registry가
   소유한다. 로컬 커밋, PR, main 통합과 인계의 증거 순서는
-  [Quality policy](../.agents/governance/quality.md#delivery-ownership)가
+  [Quality policy](../docs/00.workspace/04.quality/quality.md#delivery-ownership)가
   소유한다. hosted `ci-summary`와 `style-pr` 결과는 각각 별도의 SHA·run
   identity를 가진다. [main 보호 설정 기록](rulesets/main-protection.md)의
   2026-10-15 원격 read-back은 두 job 모두 GitHub Actions App `15368`의
@@ -132,7 +132,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 #### Source Basis
 
 - 현재 workflow 계약은 `.github/workflows/*.yml`과 공통
-  [Quality policy](../.agents/governance/quality.md)가 소유한다.
+  [Quality policy](../docs/00.workspace/04.quality/quality.md)가 소유한다.
 - 과거 SPEC-0103과 완료 증거는 Git history에서 복구한다. 완료 Spec을 현재 실행 권위로 사용하지 않는다.
 - 외부 도구 계약이 바뀌면 공식 출처를 확인하고 현재 소유자와 소비자를
   함께 갱신한다.

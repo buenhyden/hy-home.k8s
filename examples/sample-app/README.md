@@ -42,7 +42,7 @@ examples/sample-app/
 
 ### Interfaces
 
-- Policy: `../../docs/05.operations/policies/README.md` (`docs/05.operations/policies/README.md`)
+- Policy: `../../docs/05.operations/policies/README.md` (`docs/05.operations/02.policies/README.md`)
 
 #### Security Boundary
 
@@ -147,4 +147,4 @@ Kubernetes manifest, secret 처리 검사를 실행한다.
 
 #### Runbook Links
 
-- Runbook: `../../docs/05.operations/runbooks/README.md` (`docs/05.operations/runbooks/README.md`)
+- Runbook: `../../docs/05.operations/runbooks/README.md` (`docs/05.operations/03.runbooks/README.md`)

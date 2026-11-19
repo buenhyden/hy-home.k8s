@@ -2190,8 +2190,8 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         validator = next(
             row for row in contract["validators"] if row["id"] == "markdown-profiles"
         )
-        old = "docs/05.operations/policies/0003-old.md"
-        new = "docs/05.operations/policies/0004-new.md"
+        old = "docs/05.operations/02.policies/0003-old.md"
+        new = "docs/05.operations/02.policies/0004-new.md"
         with tempfile.TemporaryDirectory(prefix="changed-doc-runner-") as temporary:
             root = Path(temporary)
             target = root / new
@@ -2218,7 +2218,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
             row for row in contract["validators"] if row["id"] == "markdown-profiles"
         )
         paths = [
-            f"docs/05.operations/policies/{index:04d}-example.md"
+            f"docs/05.operations/02.policies/{index:04d}-example.md"
             for index in range(600)
         ]
         with tempfile.TemporaryDirectory(prefix="changed-doc-runner-") as temporary:

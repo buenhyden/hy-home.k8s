@@ -23,7 +23,7 @@ first; the Codex-only reads follow in their own block.
 - Shared execution policy: `.agents/governance/agent-execution.md`
 - Role and skill authority: `.agents/roles/registry.json`
 - Responsibilities: `.agents/roles/README.md`
-- Validation and handoff: `.agents/governance/quality.md`
+- Validation and handoff: `docs/00.workspace/04.quality/quality.md`
 - Document authoring: `docs/99.templates/README.md`
 
 Codex-only provider reads:

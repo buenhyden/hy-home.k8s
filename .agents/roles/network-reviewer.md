@@ -80,4 +80,4 @@ Per [work lifecycle](../workflows/work-lifecycle.md), this role reads the reposi
 - [security-auditor](security-auditor.md)
 - [gitops-reviewer](gitops-reviewer.md)
 - [supervisor](supervisor.md)
-- [Quality policy](../governance/quality.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md)

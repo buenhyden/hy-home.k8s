@@ -59,5 +59,5 @@ enforces the remaining conditions below.
 ## Related Documents
 
 - [Common Prompt Contracts](README.md)
-- [Document Authoring](../governance/document-authoring.md)
+- [Document Authoring](../../docs/00.workspace/03.process/document-authoring.md)
 - Document profiles and templates (`docs/99.templates/README.md`)

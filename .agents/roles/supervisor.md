@@ -97,4 +97,4 @@ Per [work lifecycle](../workflows/work-lifecycle.md), this role runs no check it
 - [security-auditor](security-auditor.md)
 - [wiki-curator](wiki-curator.md)
 - [Context and memory policy](../governance/context-and-memory.md)
-- [Quality policy](../governance/quality.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md)

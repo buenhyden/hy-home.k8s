@@ -72,8 +72,8 @@ class NativeBoundaryTests(unittest.TestCase):
             ".claude/provider.md",
             ".codex/provider.md",
             ".agents/governance/agent-execution.md",
-            ".agents/governance/approval-and-safety.md",
-            ".agents/governance/quality.md",
+            "docs/00.workspace/04.quality/approval-and-safety.md",
+            "docs/00.workspace/04.quality/quality.md",
             "RTK.md",
             "CLAUDE.md",
             ".claude/settings.json",
@@ -450,7 +450,9 @@ class NativeBoundaryTests(unittest.TestCase):
 
     def test_codex_gateway_requires_explicit_reads(self):
         path = self.root / "AGENTS.md"
-        path.write_text(path.read_text() + "\n@.agents/governance/quality.md\n")
+        path.write_text(
+            path.read_text() + "\n@docs/00.workspace/04.quality/quality.md\n"
+        )
         self.assert_rejected("AGENT-NATIVE-REFERENCE")
 
     def test_gateways_keep_each_native_loader_reference_once(self):
@@ -939,8 +941,8 @@ class NativeBoundaryTests(unittest.TestCase):
         reads = (
             self.validator.REGISTRY_PATH.as_posix(),
             ".agents/governance/agent-execution.md",
-            ".agents/governance/approval-and-safety.md",
-            ".agents/governance/quality.md",
+            "docs/00.workspace/04.quality/approval-and-safety.md",
+            "docs/00.workspace/04.quality/quality.md",
         )
         path = self.root / ".claude/CLAUDE.md"
         path.write_text(self._baseline(reads))

@@ -142,6 +142,11 @@ def setUpModule():
                 ROOT / "docs/99.templates/registry.json",
                 checkout / "docs/99.templates/registry.json",
             )
+            # The registry names its forms by path, so a form-tree move in
+            # flight (Q07) travels with it.
+            forms = checkout / "docs/99.templates/02.templates"
+            if not forms.exists():
+                shutil.copytree(ROOT / "docs/99.templates/02.templates", forms)
     except BaseException:
         _LINKED_FIXTURE.cleanup()
         _LINKED_FIXTURE = None
@@ -165,7 +170,9 @@ class PreEditAcceptanceTest(unittest.TestCase):
     """Paths inside this repository are accepted and resolved to their own root."""
 
     def test_common_governance_path_is_accepted_without_qa(self):
-        result = run_hook(scalar_payload(".agents/governance/quality.md"), ROOT)
+        result = run_hook(
+            scalar_payload("docs/00.workspace/04.quality/quality.md"), ROOT
+        )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertNotIn("qa profile=", result.stdout + result.stderr)
 
@@ -234,19 +241,19 @@ class PreEditAcceptanceTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("`sdlc/requirement`", result.stdout)
         self.assertIn(
-            "`docs/99.templates/templates/requirements/requirement-package.template.md`",
+            "`docs/99.templates/02.templates/01.requirements/requirement-package.template.md`",
             result.stdout,
         )
 
     def test_terminal_spec_task_route_is_selected_from_registry(self):
-        target = "docs/03.specs/9999-example-feature/tasks/tsk-0001-implement.md"
+        target = "docs/03.specs/9999-example-feature/01.tasks/tsk-0001-implement.md"
 
         result = run_hook(scalar_payload(target), ROOT)
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("`sdlc/task`", result.stdout)
         self.assertIn(
-            "`docs/99.templates/templates/specs/task.template.md`",
+            "`docs/99.templates/02.templates/03.specs/task.template.md`",
             result.stdout,
         )
 
@@ -325,7 +332,9 @@ class PreEditRejectionTest(unittest.TestCase):
             (outside / "requirement-package.template.md").write_text(
                 "# escaped\n", encoding="utf-8"
             )
-            (registry_dir / "templates").symlink_to(outside, target_is_directory=True)
+            (registry_dir / "02.templates").symlink_to(
+                outside, target_is_directory=True
+            )
             (registry_dir / "registry.json").write_text(
                 json.dumps(
                     {
@@ -337,7 +346,7 @@ class PreEditRejectionTest(unittest.TestCase):
                                     r"^docs/01\.requirements/[0-9]{4}-[a-z-]+\.md$"
                                 ),
                                 "template_source": (
-                                    "docs/99.templates/templates/"
+                                    "docs/99.templates/02.templates/"
                                     "requirement-package.template.md"
                                 ),
                             }

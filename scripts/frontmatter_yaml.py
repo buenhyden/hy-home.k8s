@@ -16,7 +16,7 @@ except ImportError as exc:  # pragma: no cover - exercised by the missing-librar
     raise ImportError(
         "frontmatter needs ruamel.yaml, which the hashed lock "
         ".github/requirements/ci-validation.txt pins. Install it with the command "
-        "in .agents/governance/git.md: python3 -m pip install --only-binary :all: "
+        "in docs/00.workspace/03.process/git.md: python3 -m pip install --only-binary :all: "
         "--require-hashes -r .github/requirements/ci-validation.txt"
     ) from exc
 

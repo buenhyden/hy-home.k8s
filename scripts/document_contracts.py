@@ -73,7 +73,7 @@ TARGET_ROOTS = (
 )
 REGISTRY_PATH = PurePosixPath("docs/99.templates/registry.json")
 PROFILE_SCHEMA_PATH = PurePosixPath(
-    "docs/99.templates/contracts/document-profile.schema.json"
+    "docs/99.templates/01.contracts/document-profile.schema.json"
 )
 # Compatibility name for direct callers of ``validate_registry``.  The only
 # schema it may load is the root-registry profile schema.
@@ -1213,6 +1213,9 @@ class PolicyRuleCode:
 
     path: str
     code: str
+    # SDLC-R036 split: the rule IDs this path owns when its code spans a
+    # workspace and an agent policy; empty for a code with one path.
+    rules: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -1735,16 +1738,16 @@ def scoped_document_content_paths(
         elif (
             len(parts) == 4
             and parts[:2] == ("docs", "05.operations")
-            and parts[2] in {"guides", "policies", "runbooks"}
+            and parts[2] in {"01.guides", "02.policies", "03.runbooks"}
             and path.suffix == ".md"
         ):
             owner = f"docs/05.operations/{parts[2]}/README.md"
         elif len(parts) >= 4 and parts[:3] == (
             "docs",
             "05.operations",
-            "incidents",
+            "04.incidents",
         ):
-            owner = "docs/05.operations/incidents/README.md"
+            owner = "docs/05.operations/04.incidents/README.md"
         elif len(parts) >= 2 and parts[0] == "infrastructure":
             owner = "infrastructure/README.md"
             if len(parts) == 3 and parts[1] == "verify" and path.suffix == ".sh":
@@ -3065,15 +3068,41 @@ def _policy_rule_faults(
         if profile["mode"] == "authored" and profile.get("document_role") == "policy"
     ]
     seen_paths: set[str] = set()
-    seen_codes: set[str] = set()
+    by_code: dict[str, list[Mapping[str, Any]]] = {}
+    for item in section["codes"]:
+        by_code.setdefault(item["code"], []).append(item)
+    for code, items in by_code.items():
+        if len(items) == 1:
+            if "rules" in items[0]:
+                fault(
+                    "a rules list only on a code split across policies",
+                    f"{code} ({items[0]['path']})",
+                )
+            continue
+        # SDLC-R036: one code may span a W and an A policy only when every
+        # record lists its rule IDs and each rule ID has exactly one owner.
+        owners: dict[str, str] = {}
+        for item in items:
+            if not item.get("rules"):
+                fault(
+                    "one record per code, or a rules list on every record of a split code",
+                    f"repeated code {code} ({item['path']})",
+                )
+                continue
+            for rule in item["rules"]:
+                if not rule.startswith(f"{code}-R"):
+                    fault(f"a rule ID of code {code}", f"{item['path']}: {rule}")
+                if rule in owners:
+                    fault(
+                        "one owner per rule ID",
+                        f"{rule} in {owners[rule]} and {item['path']}",
+                    )
+                owners.setdefault(rule, item["path"])
     for item in section["codes"]:
         path, code = item["path"], item["code"]
         if path in seen_paths:
             fault("one record per path", f"repeated path {path}")
-        if code in seen_codes:
-            fault("one record per code", f"repeated code {code} ({path})")
         seen_paths.add(path)
-        seen_codes.add(code)
         if code_pattern.fullmatch(code) is None:
             fault(f"a code matching {section['code_pattern']}", f"{path}: {code!r}")
         if code in reserved:
@@ -3235,7 +3264,7 @@ TEMPLATE_RECORD_FIELDS = (
     "extensions",
 )
 TEMPLATE_SCHEMA_PATH = PurePosixPath(
-    "docs/99.templates/contracts/template-definition.schema.json"
+    "docs/99.templates/01.contracts/template-definition.schema.json"
 )
 HEADINGS_EXTENSION_ID = "provider-native-empty-headings"
 HEADINGS_EXTENSION_TEXTS = ("condition", "owner", "verification", "review", "removal")
@@ -4634,7 +4663,8 @@ def _policy_rule_ids_from_mapping(
         rules_table_condition=raw["rules_table"]["condition"],
         rules_table_minimum_rows=raw["rules_table"]["minimum_rows"],
         codes=tuple(
-            PolicyRuleCode(item["path"], item["code"]) for item in raw["codes"]
+            PolicyRuleCode(item["path"], item["code"], tuple(item.get("rules", ())))
+            for item in raw["codes"]
         ),
         # The schema requires both names; a same-MAJOR base registry read by the
         # lifecycle comparison may predate them (as WORK-001 reads authority_ref).
@@ -4833,6 +4863,9 @@ def _document_language_from_mapping(
     )
 
 
+WORKSPACE_GLOSSARY_ROOT = "docs/00.workspace/01.project/"
+
+
 def _document_language_registry_diagnostics(
     raw_registry: Mapping[str, Any],
     profiles_by_id: Mapping[str, Mapping[str, Any]],
@@ -4854,9 +4887,14 @@ def _document_language_registry_diagnostics(
         if not root.endswith("/"):
             faults.append(f"english-only root {root} does not end in /")
     for root in contract.get("korean_allowed_markdown_roots", ()):
-        if root != ".agents/" or root not in roots:
+        # The agent root relaxes its English-only rule; the workspace project
+        # root holds the glossary's Korean term column (Q07 moved it there).
+        if not (
+            (root == ".agents/" and root in roots) or root == WORKSPACE_GLOSSARY_ROOT
+        ):
             faults.append(
-                f"Korean-allowed Markdown root {root} is not an English-only .agents/ root"
+                f"Korean-allowed Markdown root {root} is neither the English-only "
+                f".agents/ root nor {WORKSPACE_GLOSSARY_ROOT}"
             )
     for suffix in contract["english_only_suffixes"]:
         if not suffix.startswith("."):

@@ -54,12 +54,12 @@ LOADER = importlib.import_module("frontmatter_yaml")
 SPEC = "docs/03.specs/9001-sample"
 SAMPLES: dict[str, tuple[str, str | None, str | None]] = {
     "sdlc/architecture-description": (
-        "docs/02.architecture/descriptions/9001-sample.md",
+        "docs/02.architecture/01.descriptions/9001-sample.md",
         "AD-9001",
         None,
     ),
     "sdlc/architecture-decision": (
-        "docs/02.architecture/decisions/9001-sample.md",
+        "docs/02.architecture/02.decisions/9001-sample.md",
         "ADR-9001",
         None,
     ),
@@ -67,67 +67,71 @@ SAMPLES: dict[str, tuple[str, str | None, str | None]] = {
     "sdlc/spec": (f"{SPEC}/spec.md", "SPEC-9001", None),
     "sdlc/plan": (f"{SPEC}/plan.md", "SPEC-9001-PLAN-0001", "SPEC-9001"),
     "sdlc/task": (
-        f"{SPEC}/tasks/tsk-0001-sample.md",
+        f"{SPEC}/01.tasks/tsk-0001-sample.md",
         "SPEC-9001-TSK-0001",
         "SPEC-9001-PLAN-0001",
     ),
-    "operation/guide": ("docs/05.operations/guides/9001-sample.md", "GDE-9001", None),
+    "operation/guide": (
+        "docs/05.operations/01.guides/9001-sample.md",
+        "GDE-9001",
+        None,
+    ),
     "operation/policy": (
-        "docs/05.operations/policies/9001-sample.md",
+        "docs/05.operations/02.policies/9001-sample.md",
         "POL-9001",
         None,
     ),
     "operation/runbook": (
-        "docs/05.operations/runbooks/9001-sample.md",
+        "docs/05.operations/03.runbooks/9001-sample.md",
         "RUN-9001",
         None,
     ),
     "operation/incident": (
-        "docs/05.operations/incidents/2026/inc-9001-sample/incident.md",
+        "docs/05.operations/04.incidents/2026/inc-9001-sample/incident.md",
         "inc-2026-9001",
         None,
     ),
     "operation/postmortem": (
-        "docs/05.operations/incidents/2026/inc-9001-sample/postmortem.md",
+        "docs/05.operations/04.incidents/2026/inc-9001-sample/postmortem.md",
         "inc-2026-9001-PM",
         None,
     ),
     "reference/audit": (
-        "docs/90.references/audits/9001-sample/m0001-sample.md",
+        "docs/90.references/02.audits/9001-sample/m0001-sample.md",
         "AUD-9001-m0001",
         None,
     ),
     "reference/research": (
-        "docs/90.references/research/9001-sample/m0001-sample.md",
+        "docs/90.references/01.research/9001-sample/m0001-sample.md",
         "RES-9001-m0001",
         None,
     ),
     "reference/data": (
-        "docs/90.references/data/9001-sample/m0001-sample.md",
+        "docs/90.references/03.data/9001-sample/m0001-sample.md",
         "DATA-9001-m0001",
         None,
     ),
     "reference/audit-pack": (
-        "docs/90.references/audits/9001-sample/README.md",
+        "docs/90.references/02.audits/9001-sample/README.md",
         "AUD-9001",
         None,
     ),
     "reference/research-pack": (
-        "docs/90.references/research/9001-sample/README.md",
+        "docs/90.references/01.research/9001-sample/README.md",
         "RES-9001",
         None,
     ),
     "reference/data-pack": (
-        "docs/90.references/data/9001-sample/README.md",
+        "docs/90.references/03.data/9001-sample/README.md",
         "DATA-9001",
         None,
     ),
     "governance/knowledge": (".agents/knowledge/sample.md", None, None),
-    "governance/vocabulary": (".agents/knowledge/glossary.md", None, None),
+    "governance/vocabulary": ("docs/00.workspace/01.project/glossary.md", None, None),
     "governance/prompt": (".agents/prompts/sample.md", None, None),
     "governance/provider": (".claude/provider.md", None, None),
     "governance/role": (".agents/roles/sample.md", None, None),
-    "governance/rule": (".agents/governance/git.md", None, None),
+    "governance/rule": ("docs/00.workspace/03.process/git.md", None, None),
     "governance/skill": (".agents/workflows/work-lifecycle.md", None, None),
     "common/readme-repository": ("README.md", None, None),
     "common/readme-stage-index": ("docs/01.requirements/README.md", None, None),
@@ -413,7 +417,7 @@ class RoundTripTests(TreeCase):
         self.prepare("sdlc/spec")
         text = self.generate("sdlc/spec", SAMPLES["sdlc/spec"][0], title="Another")
         template = (
-            ROOT / "docs/99.templates/templates/specs/spec.template.md"
+            ROOT / "docs/99.templates/02.templates/03.specs/spec.template.md"
         ).read_text(encoding="utf-8")
         heading = next(line for line in template.splitlines() if line.startswith("# "))
         self.assertIn("\n" + heading + "\n", text)
@@ -430,7 +434,7 @@ class ProfileAndRouteRefusalTests(TreeCase):
             "common/provider-native-metadata": ".claude/agents/sample.md",
             "common/provider-native-command": ".claude/commands/sample.md",
             "common/codex-agent-binding": ".codex/agents/sample.toml",
-            "common/template-sdlc-spec": "docs/99.templates/templates/specs/x.md",
+            "common/template-sdlc-spec": "docs/99.templates/02.templates/03.specs/x.md",
             "common/native-skill-reference": ".agents/skills/sample/references/x.md",
         }
         for profile_id, target in cases.items():
@@ -441,11 +445,11 @@ class ProfileAndRouteRefusalTests(TreeCase):
         for target in (
             "/tmp/9001-sample.md",
             "../9001-sample.md",
-            "docs/05.operations/guides/../guides/9001-sample.md",
-            "docs/05.operations/guides/./9001-sample.md",
-            "docs/05.operations/guides//9001-sample.md",
-            "docs/05.operations/guides/9001-sample.md/",
-            "docs/05.operations/guides/9001-Sample.md",
+            "docs/05.operations/01.guides/../01.guides/9001-sample.md",
+            "docs/05.operations/01.guides/./9001-sample.md",
+            "docs/05.operations/01.guides//9001-sample.md",
+            "docs/05.operations/01.guides/9001-sample.md/",
+            "docs/05.operations/01.guides/9001-Sample.md",
             "notes/9001-sample.md",
             "",
         ):
@@ -469,15 +473,15 @@ class ProfileAndRouteRefusalTests(TreeCase):
         self.write(guide, "keep\n")
         self.refuse("GENERATOR-OCCUPIED", "operation/guide", guide)
         self.assertEqual((self.root / guide).read_text(encoding="utf-8"), "keep\n")
-        folder = "docs/05.operations/guides/9002-sample.md"
+        folder = "docs/05.operations/01.guides/9002-sample.md"
         (self.root / folder).mkdir()
         self.refuse("GENERATOR-OCCUPIED", "operation/guide", folder)
-        link = "docs/05.operations/guides/9003-sample.md"
+        link = "docs/05.operations/01.guides/9003-sample.md"
         (self.root / link).symlink_to("missing-target")
         self.refuse("GENERATOR-OCCUPIED", "operation/guide", link)
 
     def test_exclusive_create_never_overwrites(self) -> None:
-        name = "docs/05.operations/guides/9001-sample.md"
+        name = "docs/05.operations/01.guides/9001-sample.md"
         path = self.write(name, "keep\n")
         with self.assertRaises(GENERATOR.Refusal) as caught:
             GENERATOR.create_exclusive(self.root, PurePosixPath(name), "new\n")
@@ -486,7 +490,7 @@ class ProfileAndRouteRefusalTests(TreeCase):
 
     def test_failed_create_leaves_no_folder_behind(self) -> None:
         before = snapshot(self.root)
-        target = PurePosixPath("docs/90.references/audits/9001-sample/README.md")
+        target = PurePosixPath("docs/90.references/02.audits/9001-sample/README.md")
         with mock.patch.object(GENERATOR.os, "open", side_effect=FileExistsError):
             with self.assertRaises(GENERATOR.Refusal) as caught:
                 GENERATOR.create_exclusive(self.root, target, "new\n")
@@ -506,7 +510,7 @@ class IdentityParentAndStatusRefusalTests(TreeCase):
 
     def test_identity_owned_by_a_document_at_another_path(self) -> None:
         self.write(
-            "docs/05.operations/guides/9001-other.md",
+            "docs/05.operations/01.guides/9001-other.md",
             '---\nartifact_id: "GDE-9001"\n---\n\n# Other\n',
         )
         self.refuse(
@@ -534,7 +538,7 @@ class IdentityParentAndStatusRefusalTests(TreeCase):
 
     def test_template_status_outside_the_creation_states_is_refused(self) -> None:
         self.edit(
-            "docs/99.templates/templates/specs/spec.template.md",
+            "docs/99.templates/02.templates/03.specs/spec.template.md",
             'status: "draft"',
             'status: "approved"',
         )
@@ -544,7 +548,7 @@ class IdentityParentAndStatusRefusalTests(TreeCase):
         self,
     ) -> None:
         self.edit(
-            "docs/99.templates/templates/requirements/requirement-package.template.md",
+            "docs/99.templates/02.templates/01.requirements/requirement-package.template.md",
             'status: "draft"',
             'status: "approved"',
         )
@@ -554,7 +558,7 @@ class IdentityParentAndStatusRefusalTests(TreeCase):
 
     def test_template_without_status_in_a_stateful_domain_is_refused(self) -> None:
         self.edit(
-            "docs/99.templates/templates/specs/spec.template.md",
+            "docs/99.templates/02.templates/03.specs/spec.template.md",
             'status: "draft"\n',
             "",
         )
@@ -592,10 +596,10 @@ class InputRefusalTests(TreeCase):
 
 
 class OutputCheckRefusalTests(TreeCase):
-    GUIDE_TEMPLATE = "docs/99.templates/templates/operations/guide.template.md"
+    GUIDE_TEMPLATE = "docs/99.templates/02.templates/05.operations/guide.template.md"
 
     def test_spec_scaffold_needs_a_visible_criteria_table(self) -> None:
-        path = "docs/99.templates/templates/specs/spec.template.md"
+        path = "docs/99.templates/02.templates/03.specs/spec.template.md"
         source = (self.root / path).read_text(encoding="utf-8")
         table = (
             "| Criterion ID | Expected Result |\n| --- | --- |\n"

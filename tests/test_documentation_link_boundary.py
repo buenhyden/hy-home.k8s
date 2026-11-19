@@ -43,9 +43,9 @@ STAGE_PREFIXES = validator._stage_document_prefixes(validator.load_registry(ROOT
 
 class RetainedLinkAndTemplateTests(unittest.TestCase):
     def test_deleted_target_selects_one_hop_incoming_body_reader(self) -> None:
-        deleted = PurePosixPath("docs/05.operations/runbooks/deleted.md")
-        incoming = PurePosixPath("docs/05.operations/guides/0001-incoming.md")
-        unrelated = PurePosixPath("docs/05.operations/guides/0002-unrelated.md")
+        deleted = PurePosixPath("docs/05.operations/03.runbooks/deleted.md")
+        incoming = PurePosixPath("docs/05.operations/01.guides/0001-incoming.md")
+        unrelated = PurePosixPath("docs/05.operations/01.guides/0002-unrelated.md")
         context = validator.Context(
             root=ROOT,
             paths=(incoming, unrelated),
@@ -59,7 +59,7 @@ class RetainedLinkAndTemplateTests(unittest.TestCase):
                 ),
             },
             texts={
-                incoming: "[missing](../runbooks/deleted.md#step)",
+                incoming: "[missing](../03.runbooks/deleted.md#step)",
                 unrelated: "[incoming](0001-incoming.md)",
             },
             metadata={},
@@ -126,8 +126,8 @@ class RetainedLinkAndTemplateTests(unittest.TestCase):
         self,
     ) -> None:
         forms = (
-            PurePosixPath("docs/99.templates/templates/specs/plan.template.md"),
-            PurePosixPath("docs/99.templates/templates/specs/task.template.md"),
+            PurePosixPath("docs/99.templates/02.templates/03.specs/plan.template.md"),
+            PurePosixPath("docs/99.templates/02.templates/03.specs/task.template.md"),
         )
         # LINK-BROKEN comes only from the link pass, so check just the forms
         # instead of every diagnostic over the whole corpus.
@@ -205,12 +205,12 @@ class RetainedLinkAndTemplateTests(unittest.TestCase):
         self.assertEqual(rules(original), [])
         broken = original.replace(parent, "../../01.requirements/9999-missing.md")
         self.assertIn("BODY-LINK-BROKEN", rules(broken))
-        design = "../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md"
+        design = "../../00.workspace/02.architecture/01.descriptions/0006-workspace-agent-governance-platform.md"
         wrong = original.replace(f"]({parent})", f"]({design})")
         self.assertIn("BODY-LINK-SOURCE-PROFILE", rules(wrong))
 
     def test_full_uppercase_placeholder_is_only_a_template_destination(self) -> None:
-        form = PurePosixPath("docs/99.templates/templates/specs/plan.template.md")
+        form = PurePosixPath("docs/99.templates/02.templates/03.specs/plan.template.md")
         for variable in (
             "CHILD_RELATIVE_PATH",
             "SPEC_RELATIVE_PATH",
@@ -253,9 +253,9 @@ def _grammar(
 class StageLinkBoundaryTests(unittest.TestCase):
     def test_reports_every_numbered_stage_target_written_outside_docs(self) -> None:
         for target in (
-            "docs/02.architecture/decisions/0031-validation-ownership.md",
+            "docs/02.architecture/02.decisions/0031-validation-ownership.md",
             "docs/03.specs/0140-archive-check-removal/spec.md",
-            "docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md",
+            "docs/05.operations/03.runbooks/0001-argocd-platform-bootstrap-runbook.md",
             "docs/99.templates/registry.json",
         ):
             with self.subTest(target=target):
@@ -343,7 +343,7 @@ class StageLinkBoundaryTests(unittest.TestCase):
     def test_leaves_targets_outside_the_numbered_stage_tree_alone(self) -> None:
         for target in (
             "scripts/README.md",
-            ".agents/governance/quality.md",
+            "docs/00.workspace/04.quality/quality.md",
             "docs-extra/notes.md",
         ):
             with self.subTest(target=target):
@@ -362,10 +362,12 @@ class StagePathGrammarTests(unittest.TestCase):
     def test_derives_its_prefixes_from_the_registry(self) -> None:
         """A literal list here would be the same defect the rule exists to stop."""
 
-        self.assertIn("docs/05.operations/incidents/", STAGE_PREFIXES)
+        self.assertIn("docs/05.operations/04.incidents/", STAGE_PREFIXES)
         self.assertIn("docs/03.specs/", STAGE_PREFIXES)
-        self.assertIn("docs/05.operations/runbooks/", STAGE_PREFIXES)
-        self.assertNotIn("docs/99.templates/templates/operations/", STAGE_PREFIXES)
+        self.assertIn("docs/05.operations/03.runbooks/", STAGE_PREFIXES)
+        self.assertNotIn(
+            "docs/99.templates/02.templates/05.operations/", STAGE_PREFIXES
+        )
 
     def test_a_pattern_that_opens_on_a_branch_contributes_no_prefix(self) -> None:
         """Two roots share one profile, so no single directory literal holds."""
@@ -379,9 +381,9 @@ class StagePathGrammarTests(unittest.TestCase):
         )
         self.assertEqual(
             validator._fixed_directory_prefix(
-                r"^docs/05\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z]+/incident\.md$"
+                r"^docs/05\.operations/04\.incidents/[0-9]{4}/inc-[0-9]{4}-[a-z]+/incident\.md$"
             ),
-            "docs/05.operations/incidents/",
+            "docs/05.operations/04.incidents/",
         )
 
     def test_a_leading_root_group_contributes_one_prefix_per_root(self) -> None:
@@ -398,23 +400,38 @@ class StagePathGrammarTests(unittest.TestCase):
             ),
         )
 
+    def test_a_heading_anchor_does_not_hide_an_existing_document(self) -> None:
+        # Q07 moved policies under docs/00.workspace; their `#anchor` citations
+        # from outside docs/ name an existing document, while a missing one is
+        # still reported without its anchor.
+        present = "docs/03.specs/0140-archive-check-removal/spec.md"
+        body = (
+            f"See `{present}#criteria` and `docs/03.specs/0141-gone/spec.md#criteria`."
+        )
+        diagnostics = _grammar(body, exists=lambda target: target == present)
+
+        self.assertEqual(
+            [item.actual for item in diagnostics], ["docs/03.specs/0141-gone/spec.md"]
+        )
+
     def test_reports_a_route_written_out_as_a_grammar(self) -> None:
         body = (
             "Durable incident bundles live under\n"
-            "`docs/05.operations/incidents/YYYY/INC-###-<title>/`: the fact record is\n"
+            "`docs/05.operations/04.incidents/YYYY/INC-###-<title>/`: the fact record is\n"
             "`INC-###-<title>.md`.\n"
         )
         diagnostics = _grammar(body)
 
         self.assertEqual([item.rule_id for item in diagnostics], ["PATH-STAGE-GRAMMAR"])
         self.assertEqual(
-            diagnostics[0].actual, "docs/05.operations/incidents/YYYY/INC-###-<title>/"
+            diagnostics[0].actual,
+            "docs/05.operations/04.incidents/YYYY/INC-###-<title>/",
         )
 
     def test_reports_each_distinct_grammar_once(self) -> None:
         body = (
-            "records in `docs/05.operations/incidents/YYYY/INC-###-x/`\n"
-            "reports in `docs/05.operations/incidents/YYYY/INC-###-x/`\n"
+            "records in `docs/05.operations/04.incidents/YYYY/INC-###-x/`\n"
+            "reports in `docs/05.operations/04.incidents/YYYY/INC-###-x/`\n"
         )
 
         self.assertEqual(len(_grammar(body)), 1)
@@ -423,14 +440,14 @@ class StagePathGrammarTests(unittest.TestCase):
         """Naming the collection couples nothing; the registry still owns the route."""
 
         for body in (
-            "Save the file under `docs/05.operations/runbooks/`.",
-            "Runbooks live in docs/05.operations/runbooks and nowhere else.",
+            "Save the file under `docs/05.operations/03.runbooks/`.",
+            "Runbooks live in docs/05.operations/03.runbooks and nowhere else.",
         ):
             with self.subTest(body=body):
                 self.assertEqual(_grammar(body), [])
 
     def test_admits_a_path_that_resolves_to_a_document(self) -> None:
-        body = "See `docs/05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md`."
+        body = "See `docs/05.operations/03.runbooks/0002-argocd-eso-vault-recovery-runbook.md`."
 
         self.assertEqual(_grammar(body, exists=lambda target: True), [])
         self.assertEqual(len(_grammar(body, exists=lambda target: False)), 1)
@@ -443,8 +460,8 @@ class StagePathGrammarTests(unittest.TestCase):
         self.assertEqual(_grammar(body), [])
 
     def test_leaves_documents_inside_docs_to_their_own_contracts(self) -> None:
-        body = "`docs/05.operations/incidents/YYYY/INC-###-<title>/incident.md`"
-        source = PurePosixPath("docs/02.architecture/decisions/0024-terminal.md")
+        body = "`docs/05.operations/04.incidents/YYYY/INC-###-<title>/incident.md`"
+        source = PurePosixPath("docs/02.architecture/02.decisions/0024-terminal.md")
 
         self.assertEqual(_grammar(body, source=source), [])
 
@@ -572,7 +589,7 @@ class FragmentLinkTests(unittest.TestCase):
 
 
 REQ_PATH = PurePosixPath("docs/01.requirements/9001-synthetic.md")
-AD_PATH = PurePosixPath("docs/02.architecture/descriptions/9001-synthetic.md")
+AD_PATH = PurePosixPath("docs/02.architecture/01.descriptions/9001-synthetic.md")
 SPEC_PATH = PurePosixPath("docs/03.specs/9001-synthetic/spec.md")
 MEMBER = "REQ-9001-FR-0001"
 OTHER = "REQ-9001-NFR-0001"
@@ -611,7 +628,7 @@ def _spec(*members: str) -> str:
 class SpecArchitectureLinkTests(unittest.TestCase):
     """SPEC-0200 (W03-D51, W03-D59): the Spec Architecture column is a link column."""
 
-    AD = "../../02.architecture/descriptions/9001-synthetic.md"
+    AD = "../../02.architecture/01.descriptions/9001-synthetic.md"
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -639,7 +656,7 @@ class SpecArchitectureLinkTests(unittest.TestCase):
         texts = {SPEC_PATH: spec}
         paths = [SPEC_PATH]
         if target is not None:
-            ad = PurePosixPath("docs/02.architecture/descriptions/9001-synthetic.md")
+            ad = PurePosixPath("docs/02.architecture/01.descriptions/9001-synthetic.md")
             paths.append(ad)
             views[ad] = self.views[target]
             texts[ad] = "# Synthetic\n"
@@ -678,7 +695,7 @@ class SpecArchitectureLinkTests(unittest.TestCase):
         self.assertIn("BODY-LINK-TARGET", self.rules("None apply"))
         self.assertIn(
             "BODY-LINK-BROKEN",
-            self.rules("[AD](../../02.architecture/descriptions/9999-missing.md)"),
+            self.rules("[AD](../../02.architecture/01.descriptions/9999-missing.md)"),
         )
         self.assertIn(
             "BODY-LINK-TARGET-PROFILE",

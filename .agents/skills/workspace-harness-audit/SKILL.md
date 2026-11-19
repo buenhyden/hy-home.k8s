@@ -11,7 +11,7 @@ metadata:
 disable-model-invocation: true
 ---
 
-Read `.agents/governance/approval-and-safety.md` and the selected role before
+Read `docs/00.workspace/04.quality/approval-and-safety.md` and the selected role before
 using this procedure. Skill invocation grants no authority
 ([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
@@ -87,7 +87,7 @@ package IDs.
 
 ##### Verification and handoff
 
-Follow [quality policy](../../governance/quality.md) and the work-lifecycle
+Follow [quality policy](../../../docs/00.workspace/04.quality/quality.md) and the work-lifecycle
 completion sequence. Check every acceptance item against current files and
 actual command results rather than against the intake map, and carry each
 unresolved item into the handoff by name.

@@ -29,7 +29,9 @@ from validation.repository.bounded_io import (
 KNOWLEDGE_ROOT = ".agents/knowledge"
 KNOWLEDGE_README = f"{KNOWLEDGE_ROOT}/README.md"
 POINTER_HEADING = "## Pointer Index"
-GLOSSARY = f"{KNOWLEDGE_ROOT}/glossary.md"
+# The common vocabulary is a workspace project document (SDLC-R036 W layer)
+# that this surface checks together with the agent knowledge documents.
+GLOSSARY = "docs/00.workspace/01.project/glossary.md"
 VOCABULARY_HEADING = "## Repository Vocabulary"
 EXTENSION_HEADING = "## Local Extensions"
 MAX_DOCUMENT_BYTES = 256 * 1024
@@ -136,7 +138,10 @@ def _knowledge_documents(root: Path) -> list[str]:
         for entry in directory.iterdir()
         if entry.is_file() and entry.suffix == ".md" and entry.name != "README.md"
     )
-    return [f"{KNOWLEDGE_ROOT}/{name}" for name in names]
+    documents = [f"{KNOWLEDGE_ROOT}/{name}" for name in names]
+    if (root / GLOSSARY).is_file():
+        documents.append(GLOSSARY)
+    return documents
 
 
 def _check_readme(root: Path, documents: Sequence[str]) -> list[Finding]:

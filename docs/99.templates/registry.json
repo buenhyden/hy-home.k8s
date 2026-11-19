@@ -10,7 +10,7 @@
       "document_role": "requirement",
       "path_pattern": "^docs/01\\.requirements/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^REQ-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/requirements/requirement-package.template.md",
+      "template_source": "docs/99.templates/02.templates/01.requirements/requirement-package.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -81,9 +81,9 @@
       "family": "sdlc",
       "mode": "authored",
       "document_role": "architecture",
-      "path_pattern": "^docs/02\\.architecture/descriptions/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^(?:docs/02\\.architecture/01\\.descriptions|docs/00\\.workspace/02\\.architecture/01\\.descriptions)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^AD-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/architecture/description.template.md",
+      "template_source": "docs/99.templates/02.templates/02.architecture/description.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -160,9 +160,9 @@
       "family": "sdlc",
       "mode": "authored",
       "document_role": "adr",
-      "path_pattern": "^docs/02\\.architecture/decisions/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^(?:docs/02\\.architecture/02\\.decisions|docs/00\\.workspace/02\\.architecture/02\\.decisions)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^ADR-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/architecture/decision.template.md",
+      "template_source": "docs/99.templates/02.templates/02.architecture/decision.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -237,7 +237,7 @@
       "document_role": "spec",
       "path_pattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/spec\\.md$",
       "artifact_id_pattern": "^SPEC-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/specs/spec.template.md",
+      "template_source": "docs/99.templates/02.templates/03.specs/spec.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -322,7 +322,7 @@
       "document_role": "plan",
       "path_pattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/plan\\.md$",
       "artifact_id_pattern": "^SPEC-[0-9]{4}-PLAN-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/specs/plan.template.md",
+      "template_source": "docs/99.templates/02.templates/03.specs/plan.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -404,9 +404,9 @@
       "family": "sdlc",
       "mode": "authored",
       "document_role": "task",
-      "path_pattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/01\\.tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^SPEC-[0-9]{4}-TSK-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/specs/task.template.md",
+      "template_source": "docs/99.templates/02.templates/03.specs/task.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -576,9 +576,9 @@
       "family": "operation",
       "mode": "authored",
       "document_role": "guide",
-      "path_pattern": "^docs/05\\.operations/guides/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^(?:docs/05\\.operations/01\\.guides|docs/00\\.workspace/04\\.quality)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^GDE-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/operations/guide.template.md",
+      "template_source": "docs/99.templates/02.templates/05.operations/guide.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -652,9 +652,9 @@
       "family": "operation",
       "mode": "authored",
       "document_role": "policy",
-      "path_pattern": "^docs/05\\.operations/policies/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/05\\.operations/02\\.policies/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^POL-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/operations/policy.template.md",
+      "template_source": "docs/99.templates/02.templates/05.operations/policy.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -728,9 +728,9 @@
       "family": "operation",
       "mode": "authored",
       "document_role": "runbook",
-      "path_pattern": "^docs/05\\.operations/runbooks/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^(?:docs/05\\.operations/03\\.runbooks|docs/00\\.workspace/03\\.process|docs/00\\.workspace/06\\.maintenance)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^RUN-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/operations/runbook.template.md",
+      "template_source": "docs/99.templates/02.templates/05.operations/runbook.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -805,9 +805,9 @@
       "family": "operation",
       "mode": "authored",
       "document_role": "incident",
-      "path_pattern": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/incident\\.md$",
+      "path_pattern": "^docs/05\\.operations/04\\.incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/incident\\.md$",
       "artifact_id_pattern": "^inc-[0-9]{4}-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/operations/incident.template.md",
+      "template_source": "docs/99.templates/02.templates/05.operations/incident.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -878,9 +878,9 @@
       "family": "operation",
       "mode": "authored",
       "document_role": "postmortem",
-      "path_pattern": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/postmortem\\.md$",
+      "path_pattern": "^docs/05\\.operations/04\\.incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/postmortem\\.md$",
       "artifact_id_pattern": "^inc-[0-9]{4}-[0-9]{4}-PM$",
-      "template_source": "docs/99.templates/templates/operations/postmortem.template.md",
+      "template_source": "docs/99.templates/02.templates/05.operations/postmortem.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -947,9 +947,9 @@
       "family": "reference",
       "mode": "authored",
       "document_role": "audit",
-      "path_pattern": "^docs/90\\.references/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/90\\.references/02\\.audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^AUD-[0-9]{4}-m[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/references/audit.template.md",
+      "template_source": "docs/99.templates/02.templates/90.references/audit.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1001,9 +1001,9 @@
       "family": "reference",
       "mode": "authored",
       "document_role": "research",
-      "path_pattern": "^docs/90\\.references/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/90\\.references/01\\.research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^RES-[0-9]{4}-m[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/references/research.template.md",
+      "template_source": "docs/99.templates/02.templates/90.references/research.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1055,9 +1055,9 @@
       "family": "reference",
       "mode": "authored",
       "document_role": "data-reference",
-      "path_pattern": "^docs/90\\.references/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/90\\.references/03\\.data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^DATA-[0-9]{4}-m[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/references/data.template.md",
+      "template_source": "docs/99.templates/02.templates/90.references/data.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1109,9 +1109,9 @@
       "family": "governance",
       "mode": "authored",
       "document_role": "knowledge-map",
-      "path_pattern": "^\\.agents/knowledge/(?!README\\.md$|glossary\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^\\.agents/knowledge/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/knowledge.template.md",
+      "template_source": "docs/99.templates/02.templates/91.agent-governance/knowledge.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1166,9 +1166,9 @@
       "family": "governance",
       "mode": "authored",
       "document_role": "vocabulary",
-      "path_pattern": "^\\.agents/knowledge/glossary\\.md$",
+      "path_pattern": "^docs/00\\.workspace/01\\.project/glossary\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/vocabulary.template.md",
+      "template_source": "docs/99.templates/02.templates/00.workspace/vocabulary.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1225,7 +1225,7 @@
       "document_role": "prompt",
       "path_pattern": "^\\.agents/prompts/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/prompt.template.md",
+      "template_source": "docs/99.templates/02.templates/91.agent-governance/prompt.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1282,7 +1282,7 @@
       "document_role": "governance-document",
       "path_pattern": "^\\.(?:claude|codex)/provider\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/provider.template.md",
+      "template_source": "docs/99.templates/02.templates/92.runtime/provider.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1339,7 +1339,7 @@
       "document_role": "governance-role",
       "path_pattern": "^\\.agents/roles/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/role.template.md",
+      "template_source": "docs/99.templates/02.templates/91.agent-governance/role.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1394,9 +1394,9 @@
       "family": "governance",
       "mode": "authored",
       "document_role": "policy",
-      "path_pattern": "^\\.agents/governance/(?:agent-execution|approval-and-safety|context-and-memory|document-authoring|document-lifecycle|formatting-and-linting|git|model-selection|quality|sdlc)\\.md$",
+      "path_pattern": "^(?:\\.agents/governance/(?:agent-execution|approval-and-safety|context-and-memory|git|model-selection)|docs/00\\.workspace/03\\.process/(?:sdlc|document-authoring|document-lifecycle|git)|docs/00\\.workspace/04\\.quality/(?:quality|formatting-and-linting|approval-and-safety))\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/rule.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/rule.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1453,7 +1453,7 @@
       "document_role": "skill",
       "path_pattern": "^\\.agents/workflows/(?:work-lifecycle|delegated-development)\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/skill.template.md",
+      "template_source": "docs/99.templates/02.templates/91.agent-governance/skill.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1510,7 +1510,7 @@
       "document_role": "root-readme",
       "path_pattern": "^README\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/readme-repository.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/readme-repository.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1550,9 +1550,9 @@
       "family": "common",
       "mode": "router",
       "document_role": "stage-readme",
-      "path_pattern": "^(?:docs/README\\.md|docs/01\\.requirements/README\\.md|docs/02\\.architecture/README\\.md|docs/03\\.specs/README\\.md|docs/05\\.operations/README\\.md|docs/90\\.references/README\\.md|docs/99\\.templates/README\\.md)$",
+      "path_pattern": "^(?:docs/README\\.md|docs/00\\.workspace/README\\.md|docs/01\\.requirements/README\\.md|docs/02\\.architecture/README\\.md|docs/03\\.specs/README\\.md|docs/05\\.operations/README\\.md|docs/90\\.references/README\\.md|docs/99\\.templates/README\\.md)$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/readme-stage-index.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/readme-stage-index.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1592,9 +1592,9 @@
       "family": "common",
       "mode": "router",
       "document_role": "stage-readme",
-      "path_pattern": "^(?:\\.agents/knowledge/README\\.md|\\.agents/prompts/README\\.md|\\.agents/roles/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/(?:audits|data|research)/README\\.md|docs/99\\.templates/templates/README\\.md|\\.agents/evaluations/(?:harnesses|templates)/README\\.md)$",
+      "path_pattern": "^(?:\\.agents/knowledge/README\\.md|docs/00\\.workspace/(?:01\\.project|02\\.architecture|02\\.architecture/01\\.descriptions|02\\.architecture/02\\.decisions|03\\.process|04\\.quality|06\\.maintenance)/README\\.md|\\.agents/prompts/README\\.md|\\.agents/roles/README\\.md|docs/02\\.architecture/02\\.decisions/README\\.md|docs/02\\.architecture/01\\.descriptions/README\\.md|docs/05\\.operations/01\\.guides/README\\.md|docs/05\\.operations/04\\.incidents/README\\.md|docs/05\\.operations/02\\.policies/README\\.md|docs/05\\.operations/03\\.runbooks/README\\.md|docs/90\\.references/(?:01\\.research|02\\.audits|03\\.data)/README\\.md|docs/99\\.templates/02\\.templates/README\\.md|\\.agents/evaluations/(?:harnesses|templates)/README\\.md)$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/readme-collection-index.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/readme-collection-index.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1636,7 +1636,7 @@
       "document_role": "service-readme",
       "path_pattern": "^(?:\\.agents/README\\.md|\\.claude/README\\.md|\\.codex/README\\.md|\\.agents/evaluations/README\\.md|examples/README\\.md|examples/sample\\-app/README\\.md|gitops/README\\.md|gitops/platform/README\\.md|gitops/workloads/README\\.md|infrastructure/README\\.md|infrastructure/verify/README\\.md|policy/README\\.md|scripts/README\\.md|secrets/README\\.md|tests/README\\.md|examples/azure/gitops/README\\.md|examples/azure/infrastructure/README\\.md|examples/azure/kubernetes/README\\.md|examples/(?:aws|azure)/README\\.md)$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/readme-implementation.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/readme-implementation.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1676,9 +1676,9 @@
       "family": "reference",
       "mode": "authored",
       "document_role": "reference-pack-readme",
-      "path_pattern": "^docs/90\\.references/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
+      "path_pattern": "^docs/90\\.references/02\\.audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
       "artifact_id_pattern": "^AUD-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/references/audit-pack.template.md",
+      "template_source": "docs/99.templates/02.templates/90.references/audit-pack.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1730,9 +1730,9 @@
       "family": "reference",
       "mode": "authored",
       "document_role": "reference-pack-readme",
-      "path_pattern": "^docs/90\\.references/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
+      "path_pattern": "^docs/90\\.references/03\\.data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
       "artifact_id_pattern": "^DATA-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/references/data-pack.template.md",
+      "template_source": "docs/99.templates/02.templates/90.references/data-pack.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1784,9 +1784,9 @@
       "family": "reference",
       "mode": "authored",
       "document_role": "reference-pack-readme",
-      "path_pattern": "^docs/90\\.references/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
+      "path_pattern": "^docs/90\\.references/01\\.research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
       "artifact_id_pattern": "^RES-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/references/research-pack.template.md",
+      "template_source": "docs/99.templates/02.templates/90.references/research-pack.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1840,7 +1840,7 @@
       "document_role": "workspace-readme",
       "path_pattern": "^_workspace/(?:diagnostics/(?:ci/|validation/)?|repo-support/(?:analysis/|previews/)?)?README\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/readme-workspace-staging.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1882,7 +1882,7 @@
       "document_role": "service-readme",
       "path_pattern": "^\\.github/repository-surface\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/readme-runtime-governance.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/readme-runtime-governance.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -1946,7 +1946,7 @@
       "document_role": "agents",
       "path_pattern": "^(?!docs/98\\.archive/)(?:[^/]+/)*AGENTS\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/agents.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/agents.template.md",
       "frontmatter": {
         "mode": "absent",
         "required": [],
@@ -1991,7 +1991,7 @@
       "document_role": "skill",
       "path_pattern": "^\\.agents/skills/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/SKILL\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/native-skill.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/native-skill.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -2101,7 +2101,7 @@
       "document_role": "provider-native",
       "path_pattern": "^\\.claude/agents/[^/]+\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/runtime/claude-agent.template.md",
+      "template_source": "docs/99.templates/02.templates/92.runtime/claude-agent.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -2137,7 +2137,7 @@
       "document_role": "provider-native",
       "path_pattern": "^\\.claude/commands/[^/]+\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/runtime/claude-command.template.md",
+      "template_source": "docs/99.templates/02.templates/92.runtime/claude-command.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -2169,7 +2169,7 @@
       "document_role": "provider-native",
       "path_pattern": "^\\.codex/agents/[^/]+\\.toml$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/runtime/codex-agent.template.toml",
+      "template_source": "docs/99.templates/02.templates/92.runtime/codex-agent.template.toml",
       "frontmatter": {
         "mode": "absent",
         "required": [],
@@ -2256,9 +2256,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "root-readme",
-      "path_pattern": "^docs/99\\.templates/templates/common/readme\\-repository\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/93\\.common/readme\\-repository\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/readme-repository.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/readme-repository.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -2304,17 +2304,17 @@
           "Defining the Stage, collection, implementation, workspace or reference-pack README forms, which keep their own profiles."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The repository README.md and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/common/readme-repository.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/93.common/readme-repository.template.md",
           "README.md",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
@@ -2383,9 +2383,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "stage-readme",
-      "path_pattern": "^docs/99\\.templates/templates/common/readme\\-stage\\-index\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/93\\.common/readme\\-stage\\-index\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/readme-stage-index.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/readme-stage-index.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -2431,17 +2431,17 @@
           "Defining the collection README form or the Root, Service, Workspace and Reference Pack README forms, which keep their own profiles."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The seven stage READMEs and their template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/common/readme-stage-index.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/93.common/readme-stage-index.template.md",
           "docs/01.requirements/README.md",
           "docs/02.architecture/README.md",
           "docs/03.specs/README.md",
@@ -2516,9 +2516,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "stage-readme",
-      "path_pattern": "^docs/99\\.templates/templates/common/readme\\-collection\\-index\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/93\\.common/readme\\-collection\\-index\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/readme-collection-index.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/readme-collection-index.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -2564,32 +2564,32 @@
           "Defining the stage README form or the Root, Service, Workspace and Reference Pack README forms, which keep their own profiles."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The fifteen collection READMEs and their template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/common/readme-collection-index.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/93.common/readme-collection-index.template.md",
           ".agents/evaluations/harnesses/README.md",
           ".agents/evaluations/templates/README.md",
           ".agents/knowledge/README.md",
           ".agents/prompts/README.md",
           ".agents/roles/README.md",
-          "docs/02.architecture/decisions/README.md",
-          "docs/02.architecture/descriptions/README.md",
-          "docs/05.operations/guides/README.md",
-          "docs/05.operations/incidents/README.md",
-          "docs/05.operations/policies/README.md",
-          "docs/05.operations/runbooks/README.md",
-          "docs/90.references/audits/README.md",
-          "docs/90.references/data/README.md",
-          "docs/90.references/research/README.md",
-          "docs/99.templates/templates/README.md",
+          "docs/02.architecture/02.decisions/README.md",
+          "docs/02.architecture/01.descriptions/README.md",
+          "docs/05.operations/01.guides/README.md",
+          "docs/05.operations/04.incidents/README.md",
+          "docs/05.operations/02.policies/README.md",
+          "docs/05.operations/03.runbooks/README.md",
+          "docs/90.references/02.audits/README.md",
+          "docs/90.references/03.data/README.md",
+          "docs/90.references/01.research/README.md",
+          "docs/99.templates/02.templates/README.md",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -2658,9 +2658,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "service-readme",
-      "path_pattern": "^docs/99\\.templates/templates/common/readme\\-implementation\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/93\\.common/readme\\-implementation\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/readme-implementation.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/readme-implementation.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -2706,17 +2706,17 @@
           "Defining the Workspace and Reference Pack README forms, which keep their own profiles, or the Stage and Root README forms."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The 20 implementation READMEs of the code, configuration, agent and provider folders and their template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/common/readme-implementation.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/93.common/readme-implementation.template.md",
           ".agents/README.md",
           ".claude/README.md",
           ".codex/README.md",
@@ -2847,9 +2847,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "reference-pack-readme",
-      "path_pattern": "^docs/99\\.templates/templates/references/audit\\-pack\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/90\\.references/audit\\-pack\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/references/audit-pack.template.md",
+      "template_source": "docs/99.templates/02.templates/90.references/audit-pack.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -2900,18 +2900,18 @@
           "Defining a table for the Pack Index, whose contents differ by pack kind."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Every audit pack README under docs/90.references/ and its template; the research, audit and data packs share one form and carry only their own closure section.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/references/audit-pack.template.md",
-          "docs/90.references/audits/0001-sdlc-governance/README.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/90.references/audit-pack.template.md",
+          "docs/90.references/02.audits/0001-sdlc-governance/README.md",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -2951,9 +2951,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "reference-pack-readme",
-      "path_pattern": "^docs/99\\.templates/templates/references/data\\-pack\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/90\\.references/data\\-pack\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/references/data-pack.template.md",
+      "template_source": "docs/99.templates/02.templates/90.references/data-pack.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -3004,18 +3004,18 @@
           "Defining a table for the Pack Index, whose contents differ by pack kind."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Every data pack README under docs/90.references/ and its template; the research, audit and data packs share one form and carry only their own closure section.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/references/data-pack.template.md",
-          "docs/90.references/data/README.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/90.references/data-pack.template.md",
+          "docs/90.references/03.data/README.md",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -3055,9 +3055,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "reference-pack-readme",
-      "path_pattern": "^docs/99\\.templates/templates/references/research\\-pack\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/90\\.references/research\\-pack\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/references/research-pack.template.md",
+      "template_source": "docs/99.templates/02.templates/90.references/research-pack.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -3108,19 +3108,19 @@
           "Defining a table for the Pack Index, whose contents differ by pack kind."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Every research pack README under docs/90.references/ and its template; the research, audit and data packs share one form and carry only their own closure section.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/references/research-pack.template.md",
-          "docs/90.references/research/0001-workspace-engineering/README.md",
-          "docs/90.references/research/0002-archive-retention-and-provenance/README.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/90.references/research-pack.template.md",
+          "docs/90.references/01.research/0001-workspace-engineering/README.md",
+          "docs/90.references/01.research/0002-archive-retention-and-provenance/README.md",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -3160,9 +3160,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "workspace-readme",
-      "path_pattern": "^docs/99\\.templates/templates/common/readme\\-workspace\\-staging\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/93\\.common/readme\\-workspace\\-staging\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/readme-workspace-staging.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -3208,17 +3208,17 @@
           "Restating policy, which belongs to its canonical owner document."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The seven tracked Workspace READMEs under _workspace/ outside the read-only input folder, and their template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/common/readme-workspace-staging.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/93.common/readme-workspace-staging.template.md",
           "_workspace/README.md",
           "_workspace/diagnostics/README.md",
           "_workspace/diagnostics/ci/README.md",
@@ -3262,9 +3262,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "service-readme",
-      "path_pattern": "^docs/99\\.templates/templates/common/readme\\-runtime\\-governance\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/93\\.common/readme\\-runtime\\-governance\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/readme-runtime-governance.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/readme-runtime-governance.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -3310,17 +3310,17 @@
           "Defining the Workspace and Reference Pack README forms, which keep their own profiles, or the Stage and Root README forms."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The .github/repository-surface.md README and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/common/readme-runtime-governance.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/93.common/readme-runtime-governance.template.md",
           ".github/repository-surface.md",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
@@ -3432,9 +3432,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "audit",
-      "path_pattern": "^docs/99\\.templates/templates/references/audit\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/90\\.references/audit\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/references/audit.template.md",
+      "template_source": "docs/99.templates/02.templates/90.references/audit.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -3485,13 +3485,13 @@
           "Promoting a Stage 90 claim to a requirement, decision or policy, which its Stage 01, 02 or 05 owner adopts."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "Audit members under docs/90.references/audits/ and their template.",
+        "applicability": "Audit members under docs/90.references/02.audits/ and their template.",
         "tables": [
           {
             "name": "Finding ID",
@@ -3694,9 +3694,9 @@
           }
         ],
         "consumer_paths": [
-          "docs/99.templates/templates/references/audit.template.md",
+          "docs/99.templates/02.templates/90.references/audit.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -3736,9 +3736,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "research",
-      "path_pattern": "^docs/99\\.templates/templates/references/research\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/90\\.references/research\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/references/research.template.md",
+      "template_source": "docs/99.templates/02.templates/90.references/research.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -3789,13 +3789,13 @@
           "Promoting a Stage 90 claim to a requirement, decision or policy, which its Stage 01, 02 or 05 owner adopts."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "Research members under docs/90.references/research/ and their template.",
+        "applicability": "Research members under docs/90.references/01.research/ and their template.",
         "tables": [
           {
             "name": "Source ID",
@@ -3919,9 +3919,9 @@
           }
         ],
         "consumer_paths": [
-          "docs/99.templates/templates/references/research.template.md",
+          "docs/99.templates/02.templates/90.references/research.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -3961,9 +3961,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "data-reference",
-      "path_pattern": "^docs/99\\.templates/templates/references/data\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/90\\.references/data\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/references/data.template.md",
+      "template_source": "docs/99.templates/02.templates/90.references/data.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -4014,13 +4014,13 @@
           "Promoting a Stage 90 claim to a requirement, decision or policy, which its Stage 01, 02 or 05 owner adopts."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "Data members under docs/90.references/data/ and their template.",
+        "applicability": "Data members under docs/90.references/03.data/ and their template.",
         "tables": [
           {
             "name": "Field",
@@ -4145,9 +4145,9 @@
           }
         ],
         "consumer_paths": [
-          "docs/99.templates/templates/references/data.template.md",
+          "docs/99.templates/02.templates/90.references/data.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -4187,9 +4187,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "adr",
-      "path_pattern": "^docs/99\\.templates/templates/architecture/decision\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/02\\.architecture/decision\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/architecture/decision.template.md",
+      "template_source": "docs/99.templates/02.templates/02.architecture/decision.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -4263,21 +4263,21 @@
           "Implementer-level contracts, work orders or execution evidence, which belong to a Spec, Plan or Task."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "Every sdlc/architecture-decision document under docs/02.architecture/decisions/ and its template; an accepted ADR from ADR-0001 to ADR-0061 keeps the seven H2 it was accepted with under the retained form.",
+        "applicability": "Every sdlc/architecture-decision document under docs/02.architecture/02.decisions/ and its template; an accepted ADR from ADR-0001 to ADR-0061 keeps the seven H2 it was accepted with under the retained form.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/architecture/decision.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/02.architecture/decision.template.md",
           "docs/99.templates/README.md",
           "docs/02.architecture/README.md",
-          "docs/02.architecture/decisions/README.md",
-          "docs/02.architecture/decisions/0062-accepted-decision-retained-form.md",
+          "docs/02.architecture/02.decisions/README.md",
+          "docs/00.workspace/02.architecture/02.decisions/0062-accepted-decision-retained-form.md",
           "scripts/document_contracts.py",
           "scripts/validate-document-contract-registry.py",
           "scripts/validate-markdown-profiles.py",
@@ -4403,9 +4403,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "architecture",
-      "path_pattern": "^docs/99\\.templates/templates/architecture/description\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/02\\.architecture/description\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/architecture/description.template.md",
+      "template_source": "docs/99.templates/02.templates/02.architecture/description.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -4483,23 +4483,23 @@
           "Kubernetes manifests or GitOps desired state, which the description links instead of copying."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "Every sdlc/architecture-description document under docs/02.architecture/descriptions/ and its template.",
+        "applicability": "Every sdlc/architecture-description document under docs/02.architecture/01.descriptions/ and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/architecture/description.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/02.architecture/description.template.md",
           "docs/99.templates/README.md",
           "docs/02.architecture/README.md",
-          "docs/02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md",
-          "docs/02.architecture/descriptions/0005-argo-notifications-slack.md",
-          "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
-          "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md",
+          "docs/02.architecture/01.descriptions/0004-argo-rollouts-progressive-delivery.md",
+          "docs/02.architecture/01.descriptions/0005-argo-notifications-slack.md",
+          "docs/00.workspace/02.architecture/01.descriptions/0006-workspace-agent-governance-platform.md",
+          "docs/02.architecture/01.descriptions/0007-current-local-gitops-platform.md",
           "scripts/document_contracts.py",
           "scripts/document_lifecycle.py",
           "scripts/validate-document-contract-registry.py",
@@ -4680,9 +4680,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "plan",
-      "path_pattern": "^docs/99\\.templates/templates/specs/plan\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/03\\.specs/plan\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/specs/plan.template.md",
+      "template_source": "docs/99.templates/02.templates/03.specs/plan.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -4764,12 +4764,12 @@
           "Durable policy or operating knowledge, which the Promotion Map points to and the current owner holds."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Every sdlc/plan document under docs/03.specs/ and its template.",
         "consumer_paths": [
@@ -4777,8 +4777,8 @@
           "docs/99.templates/README.md",
           "docs/03.specs/README.md",
           "docs/03.specs/AGENTS.md",
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md",
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md",
           "scripts/document_contracts.py",
           "scripts/document_lifecycle.py",
           "scripts/validate-document-contract-registry.py",
@@ -4786,7 +4786,7 @@
           "scripts/validate-links-and-owners.py",
           "scripts/validate-document-lifecycle.py",
           "tests/test_common_form_tree.py",
-          "docs/99.templates/templates/specs/plan.template.md"
+          "docs/99.templates/02.templates/03.specs/plan.template.md"
         ],
         "validation": {
           "positive": [
@@ -5011,9 +5011,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "task",
-      "path_pattern": "^docs/99\\.templates/templates/specs/task\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/03\\.specs/task\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/specs/task.template.md",
+      "template_source": "docs/99.templates/02.templates/03.specs/task.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -5181,13 +5181,13 @@
           "A progress ledger separate from the Task rows; the work residue ledger holds residue pointers only."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md",
-          ".agents/governance/quality.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md",
+          "docs/00.workspace/04.quality/quality.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Every sdlc/task document under docs/03.specs/ and its template.",
         "consumer_paths": [
@@ -5195,9 +5195,9 @@
           "docs/99.templates/README.md",
           "docs/03.specs/README.md",
           "docs/03.specs/AGENTS.md",
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md",
-          ".agents/governance/quality.md",
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md",
+          "docs/00.workspace/04.quality/quality.md",
           ".agents/workflows/work-lifecycle.md",
           "scripts/document_contracts.py",
           "scripts/document_lifecycle.py",
@@ -5209,7 +5209,7 @@
           "scripts/validation/repository/quality.py",
           "tests/test_common_form_tree.py",
           "tests/test_task_execution_contract.py",
-          "docs/99.templates/templates/specs/task.template.md"
+          "docs/99.templates/02.templates/03.specs/task.template.md"
         ],
         "validation": {
           "positive": [
@@ -5519,9 +5519,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "guide",
-      "path_pattern": "^docs/99\\.templates/templates/operations/guide\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/05\\.operations/guide\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/operations/guide.template.md",
+      "template_source": "docs/99.templates/02.templates/05.operations/guide.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -5593,19 +5593,19 @@
           "Granting authority to run any command."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "Every operation/guide document under docs/05.operations/guides/ and its template.",
+        "applicability": "Every operation/guide document under docs/05.operations/01.guides/ and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/operations/guide.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/05.operations/guide.template.md",
           "docs/99.templates/README.md",
-          "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
+          "docs/00.workspace/04.quality/0010-ci-cd-qa-reference-guide.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
           "scripts/validation/repository/form_contracts.py",
@@ -5706,9 +5706,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "incident",
-      "path_pattern": "^docs/99\\.templates/templates/operations/incident\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/05\\.operations/incident\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/operations/incident.template.md",
+      "template_source": "docs/99.templates/02.templates/05.operations/incident.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -5779,20 +5779,20 @@
           "Granting authority for any live action; a record of an action never authorizes repeating it."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "Every operation/incident document under docs/05.operations/incidents/ and its template.",
+        "applicability": "Every operation/incident document under docs/05.operations/04.incidents/ and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/operations/incident.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/05.operations/incident.template.md",
           "docs/99.templates/README.md",
-          "docs/05.operations/incidents/README.md",
+          "docs/05.operations/04.incidents/README.md",
           "docs/05.operations/AGENTS.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -5929,9 +5929,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "policy",
-      "path_pattern": "^docs/99\\.templates/templates/operations/policy\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/05\\.operations/policy\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/operations/policy.template.md",
+      "template_source": "docs/99.templates/02.templates/05.operations/policy.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -6003,23 +6003,23 @@
           "Granting authority beyond the owning policy, approval and safety documents."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "Every operation/policy document under docs/05.operations/policies/ and its template.",
+        "applicability": "Every operation/policy document under docs/05.operations/02.policies/ and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/operations/policy.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/05.operations/policy.template.md",
           "docs/99.templates/README.md",
-          "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md",
-          "docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md",
-          "docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md",
-          "docs/05.operations/policies/0005-observability-platform-operations-policy.md",
-          "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
+          "docs/05.operations/02.policies/0001-k8s-gitops-operations-policy.md",
+          "docs/05.operations/02.policies/0003-service-mesh-cert-manager-policy.md",
+          "docs/05.operations/02.policies/0004-rollouts-notifications-headlamp-policy.md",
+          "docs/05.operations/02.policies/0005-observability-platform-operations-policy.md",
+          "docs/05.operations/02.policies/0007-app-gitops-onboarding-policy.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
           "scripts/validate-links-and-owners.py",
@@ -6226,9 +6226,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "postmortem",
-      "path_pattern": "^docs/99\\.templates/templates/operations/postmortem\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/05\\.operations/postmortem\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/operations/postmortem.template.md",
+      "template_source": "docs/99.templates/02.templates/05.operations/postmortem.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -6296,20 +6296,20 @@
           "Granting authority for any live action; a corrective action never authorizes its own execution."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "Every operation/postmortem document under docs/05.operations/incidents/ and its template.",
+        "applicability": "Every operation/postmortem document under docs/05.operations/04.incidents/ and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/operations/postmortem.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/05.operations/postmortem.template.md",
           "docs/99.templates/README.md",
-          "docs/05.operations/incidents/README.md",
+          "docs/05.operations/04.incidents/README.md",
           "docs/05.operations/AGENTS.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -6422,9 +6422,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "runbook",
-      "path_pattern": "^docs/99\\.templates/templates/operations/runbook\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/05\\.operations/runbook\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/operations/runbook.template.md",
+      "template_source": "docs/99.templates/02.templates/05.operations/runbook.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -6497,29 +6497,29 @@
           "Granting authority to run any command; a command or its boundary marker never authorizes execution."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md",
-          ".agents/governance/approval-and-safety.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/sdlc.md",
+          "docs/00.workspace/04.quality/approval-and-safety.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "Every operation/runbook document under docs/05.operations/runbooks/ and its template.",
+        "applicability": "Every operation/runbook document under docs/05.operations/03.runbooks/ and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/operations/runbook.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/05.operations/runbook.template.md",
           "docs/99.templates/README.md",
-          "docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md",
-          "docs/05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md",
-          "docs/05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md",
-          "docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md",
-          "docs/05.operations/runbooks/0007-kiali-observability-connectivity-runbook.md",
-          "docs/05.operations/runbooks/0008-argocd-metrics-prometheus-runbook.md",
-          "docs/05.operations/runbooks/0009-k8s-observability-runbook.md",
-          "docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md",
-          "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md",
-          "docs/05.operations/runbooks/0012-main-release-preparation-runbook.md",
+          "docs/05.operations/03.runbooks/0001-argocd-platform-bootstrap-runbook.md",
+          "docs/05.operations/03.runbooks/0002-argocd-eso-vault-recovery-runbook.md",
+          "docs/05.operations/03.runbooks/0003-platform-expansion-bootstrap-runbook.md",
+          "docs/05.operations/03.runbooks/0004-rollouts-notifications-headlamp-runbook.md",
+          "docs/05.operations/03.runbooks/0007-kiali-observability-connectivity-runbook.md",
+          "docs/05.operations/03.runbooks/0008-argocd-metrics-prometheus-runbook.md",
+          "docs/05.operations/03.runbooks/0009-k8s-observability-runbook.md",
+          "docs/05.operations/03.runbooks/0010-github-app-gitops-onboarding-runbook.md",
+          "docs/00.workspace/06.maintenance/0011-reference-maintenance-runbook.md",
+          "docs/00.workspace/03.process/0012-main-release-preparation-runbook.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
           "scripts/validation/repository/form_contracts.py",
@@ -6623,9 +6623,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "requirement",
-      "path_pattern": "^docs/99\\.templates/templates/requirements/requirement\\-package\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/01\\.requirements/requirement\\-package\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/requirements/requirement-package.template.md",
+      "template_source": "docs/99.templates/02.templates/01.requirements/requirement-package.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -6696,17 +6696,17 @@
           "Task execution state, evidence or approval, which belong to a Task."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Every sdlc/requirement document under docs/01.requirements/ and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/requirements/requirement-package.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/01.requirements/requirement-package.template.md",
           "docs/99.templates/README.md",
           "docs/01.requirements/README.md",
           "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md",
@@ -6881,9 +6881,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "spec",
-      "path_pattern": "^docs/99\\.templates/templates/specs/spec\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/03\\.specs/spec\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/specs/spec.template.md",
+      "template_source": "docs/99.templates/02.templates/03.specs/spec.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -6966,12 +6966,12 @@
           "Requirement statements or architecture decisions, which belong to the Requirement, the architecture description or an ADR."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Every sdlc/spec document under docs/03.specs/ and its template.",
         "consumer_paths": [
@@ -6979,8 +6979,8 @@
           "docs/99.templates/README.md",
           "docs/03.specs/README.md",
           "docs/03.specs/AGENTS.md",
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md",
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md",
           "scripts/document_contracts.py",
           "scripts/document_lifecycle.py",
           "scripts/validate-document-contract-registry.py",
@@ -6988,7 +6988,7 @@
           "scripts/validate-links-and-owners.py",
           "scripts/validate-document-lifecycle.py",
           "tests/test_common_form_tree.py",
-          "docs/99.templates/templates/specs/spec.template.md"
+          "docs/99.templates/02.templates/03.specs/spec.template.md"
         ],
         "validation": {
           "positive": [
@@ -7128,9 +7128,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "provider-native",
-      "path_pattern": "^docs/99\\.templates/templates/runtime/claude\\-agent\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/92\\.runtime/claude\\-agent\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/runtime/claude-agent.template.md",
+      "template_source": "docs/99.templates/02.templates/92.runtime/claude-agent.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -7171,18 +7171,18 @@
           "Holding headings or tables, which this native body does not have."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
+          "docs/00.workspace/03.process/document-authoring.md",
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The .claude/agents/*.md files under the common/provider-native-metadata profile and their template.",
         "tables": [],
         "consumer_paths": [
-          "docs/99.templates/templates/runtime/claude-agent.template.md",
+          "docs/99.templates/02.templates/92.runtime/claude-agent.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -7231,9 +7231,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "provider-native",
-      "path_pattern": "^docs/99\\.templates/templates/runtime/claude\\-command\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/92\\.runtime/claude\\-command\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/runtime/claude-command.template.md",
+      "template_source": "docs/99.templates/02.templates/92.runtime/claude-command.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -7270,18 +7270,18 @@
           "Holding headings or tables, which this native body does not have."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
+          "docs/00.workspace/03.process/document-authoring.md",
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The .claude/commands/*.md files under the common/provider-native-command profile and their template.",
         "tables": [],
         "consumer_paths": [
-          "docs/99.templates/templates/runtime/claude-command.template.md",
+          "docs/99.templates/02.templates/92.runtime/claude-command.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -7330,9 +7330,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "provider-native",
-      "path_pattern": "^docs/99\\.templates/templates/runtime/codex\\-agent\\.template\\.toml$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/92\\.runtime/codex\\-agent\\.template\\.toml$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/runtime/codex-agent.template.toml",
+      "template_source": "docs/99.templates/02.templates/92.runtime/codex-agent.template.toml",
       "frontmatter": {
         "mode": "absent",
         "required": [],
@@ -7360,18 +7360,18 @@
           "Holding frontmatter, headings or tables, which a TOML file does not have."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
+          "docs/00.workspace/03.process/document-authoring.md",
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The .codex/agents/*.toml files under the common/codex-agent-binding profile and their template.",
         "tables": [],
         "consumer_paths": [
-          "docs/99.templates/templates/runtime/codex-agent.template.toml",
+          "docs/99.templates/02.templates/92.runtime/codex-agent.template.toml",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-agent-governance.py",
@@ -7420,9 +7420,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "knowledge-map",
-      "path_pattern": "^docs/99\\.templates/templates/governance/knowledge\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/91\\.agent\\-governance/knowledge\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/knowledge.template.md",
+      "template_source": "docs/99.templates/02.templates/91.agent-governance/knowledge.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -7475,18 +7475,18 @@
           "Holding a rule or a definition, which belong to the pointer's owner or to the vocabulary."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
+          "docs/00.workspace/03.process/document-authoring.md",
           ".agents/governance/context-and-memory.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Pointer documents under .agents/knowledge/ other than the README and the glossary, and their template.",
         "tables": [],
         "consumer_paths": [
-          "docs/99.templates/templates/governance/knowledge.template.md",
+          "docs/99.templates/02.templates/91.agent-governance/knowledge.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -7524,9 +7524,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "vocabulary",
-      "path_pattern": "^docs/99\\.templates/templates/governance/vocabulary\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/00\\.workspace/vocabulary\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/vocabulary.template.md",
+      "template_source": "docs/99.templates/02.templates/00.workspace/vocabulary.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -7579,13 +7579,13 @@
           "Defining approval steps, state transitions, commands or check algorithms, which stay with the owners each row names."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
+          "docs/00.workspace/03.process/document-authoring.md",
           ".agents/governance/context-and-memory.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "The glossary document .agents/knowledge/glossary.md and its template.",
+        "applicability": "The glossary document docs/00.workspace/01.project/glossary.md and its template.",
         "tables": [
           {
             "name": "Term ID",
@@ -7640,9 +7640,9 @@
           }
         ],
         "consumer_paths": [
-          "docs/99.templates/templates/governance/vocabulary.template.md",
+          "docs/99.templates/02.templates/00.workspace/vocabulary.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -7650,7 +7650,7 @@
           "scripts/validation/repository/form_contracts.py",
           "scripts/validation/repository/quality.py",
           "tests/test_common_form_tree.py",
-          ".agents/knowledge/glossary.md",
+          "docs/00.workspace/01.project/glossary.md",
           "tests/test_validate_knowledge_surface.py"
         ],
         "validation": {
@@ -7682,9 +7682,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "prompt",
-      "path_pattern": "^docs/99\\.templates/templates/governance/prompt\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/91\\.agent\\-governance/prompt\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/prompt.template.md",
+      "template_source": "docs/99.templates/02.templates/91.agent-governance/prompt.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -7737,18 +7737,18 @@
           "Granting authority or approval, which stays with the active Task and the governance policies."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
+          "docs/00.workspace/03.process/document-authoring.md",
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Prompt contracts under .agents/prompts/ other than the README, and their template.",
         "tables": [],
         "consumer_paths": [
-          "docs/99.templates/templates/governance/prompt.template.md",
+          "docs/99.templates/02.templates/91.agent-governance/prompt.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -7786,9 +7786,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "governance-document",
-      "path_pattern": "^docs/99\\.templates/templates/governance/provider\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/92\\.runtime/provider\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/provider.template.md",
+      "template_source": "docs/99.templates/02.templates/92.runtime/provider.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -7841,18 +7841,18 @@
           "Holding a table: this template records none and its documents keep their prose and links."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
+          "docs/00.workspace/03.process/document-authoring.md",
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The governance/provider profile document and its template.",
         "tables": [],
         "consumer_paths": [
-          "docs/99.templates/templates/governance/provider.template.md",
+          "docs/99.templates/02.templates/92.runtime/provider.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -7889,9 +7889,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "governance-role",
-      "path_pattern": "^docs/99\\.templates/templates/governance/role\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/91\\.agent\\-governance/role\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/role.template.md",
+      "template_source": "docs/99.templates/02.templates/91.agent-governance/role.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -7944,18 +7944,18 @@
           "Holding a table: this template records none and its documents keep their prose and links."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
+          "docs/00.workspace/03.process/document-authoring.md",
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The governance/role profile document and its template.",
         "tables": [],
         "consumer_paths": [
-          "docs/99.templates/templates/governance/role.template.md",
+          "docs/99.templates/02.templates/91.agent-governance/role.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -7993,9 +7993,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "policy",
-      "path_pattern": "^docs/99\\.templates/templates/governance/rule\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/93\\.common/rule\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/rule.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/rule.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -8048,28 +8048,28 @@
           "Granting authority beyond the owning policy, approval and safety documents."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/sdlc.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/sdlc.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Every governance/rule document under .agents/governance/ and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/governance/rule.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/93.common/rule.template.md",
           "docs/99.templates/README.md",
           ".agents/governance/agent-execution.md",
-          ".agents/governance/approval-and-safety.md",
+          "docs/00.workspace/04.quality/approval-and-safety.md",
           ".agents/governance/context-and-memory.md",
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/document-lifecycle.md",
-          ".agents/governance/formatting-and-linting.md",
-          ".agents/governance/git.md",
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/03.process/document-lifecycle.md",
+          "docs/00.workspace/04.quality/formatting-and-linting.md",
+          "docs/00.workspace/03.process/git.md",
           ".agents/governance/model-selection.md",
-          ".agents/governance/quality.md",
-          ".agents/governance/sdlc.md",
+          "docs/00.workspace/04.quality/quality.md",
+          "docs/00.workspace/03.process/sdlc.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
           "scripts/validate-links-and-owners.py",
@@ -8188,9 +8188,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "skill",
-      "path_pattern": "^docs/99\\.templates/templates/governance/skill\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/91\\.agent\\-governance/skill\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/skill.template.md",
+      "template_source": "docs/99.templates/02.templates/91.agent-governance/skill.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -8243,17 +8243,17 @@
           "Native SKILL.md packages, which keep their provider frontmatter and use the common/template-native-skill template."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
+          "docs/00.workspace/03.process/document-authoring.md",
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Every governance/skill workflow under .agents/workflows/ and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/governance/skill.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/91.agent-governance/skill.template.md",
           ".agents/workflows/delegated-development.md",
           ".agents/workflows/work-lifecycle.md",
           "docs/99.templates/README.md",
@@ -8323,9 +8323,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "skill",
-      "path_pattern": "^docs/99\\.templates/templates/common/native\\-skill\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/93\\.common/native\\-skill\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/native-skill.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/native-skill.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -8365,17 +8365,17 @@
           "Skill reference files and assets, which stay native without a common role."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
+          "docs/00.workspace/03.process/document-authoring.md",
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Every SKILL.md package under .agents/skills/ and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/common/native-skill.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/93.common/native-skill.template.md",
           ".agents/skills/deployment-strategies/SKILL.md",
           ".agents/skills/docs-stage-conformance/SKILL.md",
           ".agents/skills/docs-stage-routing/SKILL.md",
@@ -8462,9 +8462,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "agents",
-      "path_pattern": "^docs/99\\.templates/templates/common/agents\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/93\\.common/agents\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/common/agents.template.md",
+      "template_source": "docs/99.templates/02.templates/93.common/agents.template.md",
       "frontmatter": {
         "mode": "absent",
         "required": [],
@@ -8492,17 +8492,17 @@
           "The Claude import files named CLAUDE.md, which stay native and carry no common role."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
+          "docs/00.workspace/03.process/document-authoring.md",
           ".agents/governance/agent-execution.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "Every AGENTS.md outside docs/98.archive/, the repository root file and the folder files, and its template.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
-          "docs/99.templates/templates/common/agents.template.md",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
+          "docs/99.templates/02.templates/93.common/agents.template.md",
           ".github/AGENTS.md",
           "AGENTS.md",
           "docs/01.requirements/AGENTS.md",
@@ -8562,7 +8562,7 @@
       "document_role": "evaluation-task",
       "path_pattern": "^\\.agents/evaluations/harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/task\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/evaluations/evaluation-task.template.md",
+      "template_source": "docs/99.templates/02.templates/94.evaluations/evaluation-task.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -8613,7 +8613,7 @@
       "document_role": "evaluation-score",
       "path_pattern": "^\\.agents/evaluations/harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/score\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/evaluations/evaluation-score.template.md",
+      "template_source": "docs/99.templates/02.templates/94.evaluations/evaluation-score.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -8664,7 +8664,7 @@
       "document_role": "evaluation-results",
       "path_pattern": "^\\.agents/evaluations/results\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/evaluations/evaluation-results.template.md",
+      "template_source": "docs/99.templates/02.templates/94.evaluations/evaluation-results.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -8735,9 +8735,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "evaluation-task",
-      "path_pattern": "^docs/99\\.templates/templates/evaluations/evaluation\\-task\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/94\\.evaluations/evaluation\\-task\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/evaluations/evaluation-task.template.md",
+      "template_source": "docs/99.templates/02.templates/94.evaluations/evaluation-task.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -8784,11 +8784,11 @@
           "Authenticating a score, a provider session or a repository QA result."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/quality.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/04.quality/quality.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The evaluation/task profile documents under .agents/evaluations/ and their template.",
         "tables": [
@@ -8887,9 +8887,9 @@
           }
         ],
         "consumer_paths": [
-          "docs/99.templates/templates/evaluations/evaluation-task.template.md",
+          "docs/99.templates/02.templates/94.evaluations/evaluation-task.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -8930,9 +8930,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "evaluation-score",
-      "path_pattern": "^docs/99\\.templates/templates/evaluations/evaluation\\-score\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/94\\.evaluations/evaluation\\-score\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/evaluations/evaluation-score.template.md",
+      "template_source": "docs/99.templates/02.templates/94.evaluations/evaluation-score.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -8979,11 +8979,11 @@
           "Authenticating a score, a provider session or a repository QA result."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/quality.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/04.quality/quality.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The evaluation/score profile documents under .agents/evaluations/ and their template.",
         "tables": [
@@ -9094,9 +9094,9 @@
           }
         ],
         "consumer_paths": [
-          "docs/99.templates/templates/evaluations/evaluation-score.template.md",
+          "docs/99.templates/02.templates/94.evaluations/evaluation-score.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -9137,9 +9137,9 @@
       "family": "common",
       "mode": "template",
       "document_role": "evaluation-results",
-      "path_pattern": "^docs/99\\.templates/templates/evaluations/evaluation\\-results\\.template\\.md$",
+      "path_pattern": "^docs/99\\.templates/02\\.templates/94\\.evaluations/evaluation\\-results\\.template\\.md$",
       "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/evaluations/evaluation-results.template.md",
+      "template_source": "docs/99.templates/02.templates/94.evaluations/evaluation-results.template.md",
       "frontmatter": {
         "mode": "required",
         "required": [
@@ -9186,11 +9186,11 @@
           "Authenticating a score, a provider session or a repository QA result."
         ],
         "policy_refs": [
-          ".agents/governance/document-authoring.md",
-          ".agents/governance/quality.md"
+          "docs/00.workspace/03.process/document-authoring.md",
+          "docs/00.workspace/04.quality/quality.md"
         ],
         "vocabulary_refs": [
-          ".agents/knowledge/glossary.md"
+          "docs/00.workspace/01.project/glossary.md"
         ],
         "applicability": "The evaluation/results profile documents under .agents/evaluations/ and their template.",
         "tables": [
@@ -9292,9 +9292,9 @@
           }
         ],
         "consumer_paths": [
-          "docs/99.templates/templates/evaluations/evaluation-results.template.md",
+          "docs/99.templates/02.templates/94.evaluations/evaluation-results.template.md",
           "docs/99.templates/registry.json",
-          "docs/99.templates/contracts/document-profile.schema.json",
+          "docs/99.templates/01.contracts/document-profile.schema.json",
           "docs/99.templates/README.md",
           "scripts/document_contracts.py",
           "scripts/validate-markdown-profiles.py",
@@ -9744,7 +9744,8 @@
       ".codex/"
     ],
     "korean_allowed_markdown_roots": [
-      ".agents/"
+      ".agents/",
+      "docs/00.workspace/01.project/"
     ],
     "english_only_suffixes": [
       ".md",
@@ -22742,7 +22743,7 @@
         "reverse_view": "None: a policy owner never lists the templates that apply it.",
         "consumer_paths": [
           "scripts/document_contracts.py",
-          "docs/99.templates/contracts/document-profile.schema.json"
+          "docs/99.templates/01.contracts/document-profile.schema.json"
         ],
         "checks": [
           {
@@ -23166,58 +23167,111 @@
       },
       {
         "path": ".agents/governance/approval-and-safety.md",
-        "code": "SAFE"
+        "code": "SAFE",
+        "rules": [
+          "SAFE-R011",
+          "SAFE-R012",
+          "SAFE-R017",
+          "SAFE-R018",
+          "SAFE-R019"
+        ]
+      },
+      {
+        "path": "docs/00.workspace/04.quality/approval-and-safety.md",
+        "code": "SAFE",
+        "rules": [
+          "SAFE-R001",
+          "SAFE-R002",
+          "SAFE-R003",
+          "SAFE-R004",
+          "SAFE-R005",
+          "SAFE-R006",
+          "SAFE-R007",
+          "SAFE-R008",
+          "SAFE-R009",
+          "SAFE-R010",
+          "SAFE-R013",
+          "SAFE-R014",
+          "SAFE-R015",
+          "SAFE-R016",
+          "SAFE-R020",
+          "SAFE-R021"
+        ]
       },
       {
         "path": ".agents/governance/context-and-memory.md",
         "code": "CTX"
       },
       {
-        "path": ".agents/governance/document-authoring.md",
+        "path": "docs/00.workspace/03.process/document-authoring.md",
         "code": "AUTHOR"
       },
       {
-        "path": ".agents/governance/document-lifecycle.md",
+        "path": "docs/00.workspace/03.process/document-lifecycle.md",
         "code": "DOCLIFE"
       },
       {
-        "path": ".agents/governance/formatting-and-linting.md",
+        "path": "docs/00.workspace/04.quality/formatting-and-linting.md",
         "code": "FMT"
       },
       {
         "path": ".agents/governance/git.md",
-        "code": "GIT"
+        "code": "GIT",
+        "rules": [
+          "GIT-R011",
+          "GIT-R012",
+          "GIT-R013"
+        ]
+      },
+      {
+        "path": "docs/00.workspace/03.process/git.md",
+        "code": "GIT",
+        "rules": [
+          "GIT-R001",
+          "GIT-R002",
+          "GIT-R003",
+          "GIT-R004",
+          "GIT-R005",
+          "GIT-R006",
+          "GIT-R007",
+          "GIT-R008",
+          "GIT-R009",
+          "GIT-R010",
+          "GIT-R014",
+          "GIT-R015",
+          "GIT-R016"
+        ]
       },
       {
         "path": ".agents/governance/model-selection.md",
         "code": "MODEL"
       },
       {
-        "path": ".agents/governance/quality.md",
+        "path": "docs/00.workspace/04.quality/quality.md",
         "code": "QUAL"
       },
       {
-        "path": ".agents/governance/sdlc.md",
+        "path": "docs/00.workspace/03.process/sdlc.md",
         "code": "SDLC"
       },
       {
-        "path": "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md",
+        "path": "docs/05.operations/02.policies/0001-k8s-gitops-operations-policy.md",
         "code": "GITOPS"
       },
       {
-        "path": "docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md",
+        "path": "docs/05.operations/02.policies/0003-service-mesh-cert-manager-policy.md",
         "code": "MESH"
       },
       {
-        "path": "docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md",
+        "path": "docs/05.operations/02.policies/0004-rollouts-notifications-headlamp-policy.md",
         "code": "ROLLOUT"
       },
       {
-        "path": "docs/05.operations/policies/0005-observability-platform-operations-policy.md",
+        "path": "docs/05.operations/02.policies/0005-observability-platform-operations-policy.md",
         "code": "OBSERV"
       },
       {
-        "path": "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
+        "path": "docs/05.operations/02.policies/0007-app-gitops-onboarding-policy.md",
         "code": "ONBOARD"
       }
     ]

@@ -489,10 +489,10 @@ class RepositoryContractTests(unittest.TestCase):
                 )
 
     def test_research_collection_may_not_link_pack_members(self):
-        path = "docs/90.references/research/README.md"
+        path = "docs/90.references/01.research/README.md"
         files = (
-            "docs/90.references/research/0009-x/README.md",
-            "docs/90.references/research/0009-x/m0001-a.md",
+            "docs/90.references/01.research/0009-x/README.md",
+            "docs/90.references/01.research/0009-x/m0001-a.md",
         )
         text = (
             "# R\n\n## Current Contents\n\n### Paths\n\n- [0009-x/](./0009-x/)\n"

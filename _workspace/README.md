@@ -105,8 +105,8 @@ _workspace/
 
 ## Related Documents
 
-- [Documentation Protocol](../.agents/governance/document-authoring.md)
-- [Approval Boundaries](../.agents/governance/approval-and-safety.md)
+- [Documentation Protocol](../docs/00.workspace/03.process/document-authoring.md)
+- [Approval Boundaries](../docs/00.workspace/04.quality/approval-and-safety.md)
 - [Subagent Protocol](../.agents/workflows/delegated-development.md)
 - Documentation Contract (`docs/99.templates/README.md`)
 - [Workspace-staging 문서 양식 탐색](../docs/99.templates/README.md)

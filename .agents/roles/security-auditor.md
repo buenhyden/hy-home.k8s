@@ -79,5 +79,5 @@ Per [work lifecycle](../workflows/work-lifecycle.md), cite repository-static evi
 - [k8s-implementer](k8s-implementer.md)
 - [network-reviewer](network-reviewer.md)
 - [supervisor](supervisor.md)
-- [Approval and safety](../governance/approval-and-safety.md)
-- [Quality policy](../governance/quality.md)
+- [Approval and safety](../../docs/00.workspace/04.quality/approval-and-safety.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md)

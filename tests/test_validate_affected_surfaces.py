@@ -108,10 +108,10 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
         for path, required in (
             ("docs/99.templates/registry.json", "agent-governance"),
             (
-                "docs/99.templates/templates/evaluations/evaluation-task.template.md",
+                "docs/99.templates/02.templates/94.evaluations/evaluation-task.template.md",
                 "document-contract-registry",
             ),
-            (".agents/governance/quality.md", "agent-governance"),
+            ("docs/00.workspace/04.quality/quality.md", "agent-governance"),
             (".codex/provider.md", "agent-governance"),
             ("gitops/clusters/local/root-application.yaml", "k8s-manifests"),
         ):
@@ -156,7 +156,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             "tests/git_fixture.py",
             "scripts/validate-markdown-profiles.py",
             "docs/99.templates/registry.json",
-            "docs/99.templates/templates/specs/task.template.md",
+            "docs/99.templates/02.templates/03.specs/task.template.md",
         ):
             for lane in ("affected", "staged"):
                 with self.subTest(path=path, lane=lane):

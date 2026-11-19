@@ -62,9 +62,9 @@ change in order: WORK-001, then WORK-002, then WORK-003.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RESIDUE-001](spec.md#criteria) | Move the open residue and freeze the three Tasks | None | [Task](tasks/tsk-0001-work-residue-handoff.md) | Ledger gate |
-| WORK-002 | [VAL-RESIDUE-002](spec.md#criteria) | Exit the three packages and update their consumers | WORK-001 | [Task](tasks/tsk-0001-work-residue-handoff.md) | Lifecycle, registry and contract checks |
-| WORK-003 | [VAL-RESIDUE-003](spec.md#criteria) | Remove the Task header transition adapter, its readers' branches and its tests | WORK-002 | [Task](tasks/tsk-0001-work-residue-handoff.md) | `run-contract-tests.py --suite document` before and after, and staged QA |
+| WORK-001 | [VAL-RESIDUE-001](spec.md#criteria) | Move the open residue and freeze the three Tasks | None | [Task](01.tasks/tsk-0001-work-residue-handoff.md) | Ledger gate |
+| WORK-002 | [VAL-RESIDUE-002](spec.md#criteria) | Exit the three packages and update their consumers | WORK-001 | [Task](01.tasks/tsk-0001-work-residue-handoff.md) | Lifecycle, registry and contract checks |
+| WORK-003 | [VAL-RESIDUE-003](spec.md#criteria) | Remove the Task header transition adapter, its readers' branches and its tests | WORK-002 | [Task](01.tasks/tsk-0001-work-residue-handoff.md) | `run-contract-tests.py --suite document` before and after, and staged QA |
 
 | Work Unit | Outcome | Depends On | Owner | Write Scope | Acceptance | Checks |
 | --- | --- | --- | --- | --- | --- | --- |

@@ -47,7 +47,7 @@ handling 검증 명령을 명시하는지 확인한다.
 
 ### Interfaces
 
-- App Onboarding Policy (`docs/05.operations/policies/README.md`)
+- App Onboarding Policy (`docs/05.operations/02.policies/README.md`)
 
 #### Security Boundary
 
@@ -109,4 +109,4 @@ ESO의 준비 상태는 증명되지 않는다.
 
 #### Runbook Links
 
-- App Onboarding Runbook (`docs/05.operations/runbooks/README.md`)
+- App Onboarding Runbook (`docs/05.operations/03.runbooks/README.md`)

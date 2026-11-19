@@ -5,10 +5,10 @@ A review covers one commit. When later commits only append evidence, the
 review still stands and no new review is replayed. When any other path
 changes, only those paths and the findings they touch need review again.
 
-Evidence is a regular `tsk-NNNN-*.md` record in a Spec package's `tasks/`
+Evidence is a regular `tsk-NNNN-*.md` record in a Spec package's `01.tasks/`
 folder, or the work residue ledger, that only grows: a Task record may delete
 no line except its front matter `version` and `updated`, and the ledger keeps
-every earlier entry unchanged. Any other file in `tasks/` (such as a folder
+every earlier entry unchanged. Any other file in `01.tasks/` (such as a folder
 `CLAUDE.md`), a deletion, a mode change, a symlink, a gitlink or any other
 path is not evidence, so the exception cannot hide a change in behavior.
 Rewritten history (the reviewed commit is no longer an ancestor) needs a full
@@ -28,7 +28,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-TASK = re.compile(r"docs/03\.specs/[^/]+/tasks/tsk-[0-9]{4}-[^/]+\.md")
+TASK = re.compile(r"docs/03\.specs/[^/]+/01\.tasks/tsk-[0-9]{4}-[^/]+\.md")
 LEDGER = "docs/03.specs/work-residue-ledger.json"
 FRONT_MATTER = re.compile(r'(?:version|updated): "[^"\n]*"')
 REGULAR = "100644"

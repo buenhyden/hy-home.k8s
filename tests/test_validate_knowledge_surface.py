@@ -226,8 +226,10 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
             "| Term ID | Term | Korean | Definition | Not to Confuse | Policy Owner "
             "| Contract Version |\n| --- | --- | --- | --- | --- | --- | --- |\n"
         )
-        self.write_readme("glossary.md")
-        (self.surface / "glossary.md").write_text(
+        self.write_readme()
+        glossary = self.root / "docs/00.workspace/01.project/glossary.md"
+        glossary.parent.mkdir(parents=True, exist_ok=True)
+        glossary.write_text(
             FRONTMATTER.replace("governance/knowledge", "governance/vocabulary")
             + "# Repository Vocabulary\n\n## Purpose\n\nTerm meanings.\n\n"
             + "## Repository Vocabulary\n\n"
@@ -241,6 +243,13 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
 
     def term(self, term_id: str, owner: str = "owner/README.md") -> str:
         return f"| {term_id} | Term | 용어 | A short meaning. | Other | `{owner}` | 1.0.0 |"
+
+    def test_workspace_glossary_is_checked_where_it_lives(self) -> None:
+        # The common vocabulary moved to docs/00.workspace/01.project (Q07):
+        # a defect there must surface, not pass because nothing was read.
+        self.write_glossary(self.term("TERM-ONE"), self.term("TERM-ONE"))
+        self.assertIn("KNOWLEDGE-TERM-DUPLICATE", self.codes())
+        self.assertFalse((self.surface / "glossary.md").exists())
 
     def test_valid_vocabulary_passes(self) -> None:
         self.write_glossary(self.term("TERM-ONE"), self.term("TERM-LOCAL-TWO"))

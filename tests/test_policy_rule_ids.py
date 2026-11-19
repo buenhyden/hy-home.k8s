@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import dataclasses
 import importlib.util
 import json
@@ -18,10 +19,10 @@ import document_authority as AUTHORITY  # noqa: E402
 import document_contracts as CONTRACTS  # noqa: E402
 
 REGISTRY_FILE = ROOT / "docs/99.templates/registry.json"
-SCHEMA_FILE = ROOT / "docs/99.templates/contracts/document-profile.schema.json"
+SCHEMA_FILE = ROOT / "docs/99.templates/01.contracts/document-profile.schema.json"
 TEMPLATES = {
-    "common/template-governance-rule": "docs/99.templates/templates/governance/rule.template.md",
-    "common/template-operation-policy": "docs/99.templates/templates/operations/policy.template.md",
+    "common/template-governance-rule": "docs/99.templates/02.templates/93.common/rule.template.md",
+    "common/template-operation-policy": "docs/99.templates/02.templates/05.operations/policy.template.md",
 }
 # SPEC-0222: the core Rules table and the local Rule Levels table keyed by Rule ID.
 CORE_COLUMNS = ("Rule ID", "Condition", "Requirement", "Enforcement", "Evidence")
@@ -30,23 +31,25 @@ FORMER_COLUMNS = ("Rule ID", "Condition", "Level", "Evidence", "Status")
 CODES = {
     ".agents/governance/agent-execution.md": "EXEC",
     ".agents/governance/approval-and-safety.md": "SAFE",
-    ".agents/governance/context-and-memory.md": "CTX",
-    ".agents/governance/document-authoring.md": "AUTHOR",
-    ".agents/governance/document-lifecycle.md": "DOCLIFE",
-    ".agents/governance/formatting-and-linting.md": "FMT",
     ".agents/governance/git.md": "GIT",
+    "docs/00.workspace/04.quality/approval-and-safety.md": "SAFE",
+    ".agents/governance/context-and-memory.md": "CTX",
+    "docs/00.workspace/03.process/document-authoring.md": "AUTHOR",
+    "docs/00.workspace/03.process/document-lifecycle.md": "DOCLIFE",
+    "docs/00.workspace/04.quality/formatting-and-linting.md": "FMT",
+    "docs/00.workspace/03.process/git.md": "GIT",
     ".agents/governance/model-selection.md": "MODEL",
-    ".agents/governance/quality.md": "QUAL",
-    ".agents/governance/sdlc.md": "SDLC",
-    "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md": "GITOPS",
-    "docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md": "MESH",
-    "docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md": "ROLLOUT",
-    "docs/05.operations/policies/0005-observability-platform-operations-policy.md": "OBSERV",
-    "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md": "ONBOARD",
+    "docs/00.workspace/04.quality/quality.md": "QUAL",
+    "docs/00.workspace/03.process/sdlc.md": "SDLC",
+    "docs/05.operations/02.policies/0001-k8s-gitops-operations-policy.md": "GITOPS",
+    "docs/05.operations/02.policies/0003-service-mesh-cert-manager-policy.md": "MESH",
+    "docs/05.operations/02.policies/0004-rollouts-notifications-headlamp-policy.md": "ROLLOUT",
+    "docs/05.operations/02.policies/0005-observability-platform-operations-policy.md": "OBSERV",
+    "docs/05.operations/02.policies/0007-app-gitops-onboarding-policy.md": "ONBOARD",
 }
 LEVELS = ["required", "recommended", "optional"]
 SYNTHETIC = PurePosixPath(".agents/governance/synthetic.md")
-KOREAN = PurePosixPath("docs/05.operations/policies/9999-synthetic.md")
+KOREAN = PurePosixPath("docs/05.operations/02.policies/9999-synthetic.md")
 
 
 def _load_script(name: str, filename: str):
@@ -435,6 +438,28 @@ class RuleIdTests(EachLanguage):
 
         self.each(check)
 
+    def test_a_split_half_holds_exactly_its_registered_rules(self) -> None:
+        # SDLC-R036: one half of a split code may skip the other half's IDs,
+        # but must hold exactly the rule IDs its registry record lists.
+        def check(f: Fixture) -> None:
+            ids = f.profile.policy_rule_ids
+            record = CONTRACTS.PolicyRuleCode(
+                f.path.as_posix(), "SYN", ("SYN-R001", "SYN-R003")
+            )
+            f.profile = dataclasses.replace(
+                f.profile, policy_rule_ids=dataclasses.replace(ids, codes=(record,))
+            )
+            self.assertEqual(self.run_rows(f, f.level(1), f.level(3)), [])
+            for label, rows in (
+                ("other half's ID", (f.level(1), f.level(2))),
+                ("missing ID", (f.level(1),)),
+                ("extra ID", (f.level(1), f.level(3), f.level(4))),
+            ):
+                with self.subTest(case=label):
+                    self.assertIn("POLICY-RULE-ID", self.run_rows(f, *rows))
+
+        self.each(check)
+
     def test_another_code_or_a_malformed_id_fails(self) -> None:
         def check(f: Fixture) -> None:
             for identifier in (
@@ -649,12 +674,48 @@ class RegistryRecordTests(unittest.TestCase):
         )
         self.assertEqual({i["path"]: i["code"] for i in section["codes"]}, CODES)
         self.assertEqual(len({i["code"] for i in section["codes"]}), 15)
+        split = {"SAFE", "GIT"}
         for item in section["codes"]:
-            self.assertEqual(set(item), {"path", "code"})
+            self.assertEqual(
+                set(item),
+                {"path", "code", "rules"}
+                if item["code"] in split
+                else {"path", "code"},
+            )
             self.assertRegex(item["code"], section["code_pattern"])
             self.assertNotIn(item["code"], section["reserved_codes"])
         self.assertEqual(record_rules(raw), set())
         self.assertEqual(load_rules(raw), set())
+
+    def test_a_split_code_gives_every_rule_id_one_owner(self) -> None:
+        # SDLC-R036: SAFE and GIT span a workspace (W) and an agent (A) policy.
+        raw = raw_registry()
+        records = [i for i in raw["policy_rule_ids"]["codes"] if i["code"] == "SAFE"]
+        self.assertEqual(len(records), 2)
+        owned = [rule for item in records for rule in item["rules"]]
+        self.assertEqual(len(owned), len(set(owned)))
+        self.assertEqual(len(owned), 21)
+
+        twice = copy.deepcopy(raw)
+        first, second = [
+            i for i in twice["policy_rule_ids"]["codes"] if i["code"] == "SAFE"
+        ]
+        second["rules"].append(first["rules"][0])
+        self.assertEqual(record_rules(twice), {"REGISTRY_POLICY_RULE_CODE"})
+
+        unlisted = copy.deepcopy(raw)
+        half = next(
+            i for i in unlisted["policy_rule_ids"]["codes"] if i["code"] == "GIT"
+        )
+        del half["rules"]
+        self.assertEqual(record_rules(unlisted), {"REGISTRY_POLICY_RULE_CODE"})
+
+        foreign = copy.deepcopy(raw)
+        half = next(
+            i for i in foreign["policy_rule_ids"]["codes"] if i["code"] == "GIT"
+        )
+        half["rules"].append("SAFE-R099")
+        self.assertEqual(record_rules(foreign), {"REGISTRY_POLICY_RULE_CODE"})
 
     def test_the_loader_copies_the_section_to_the_authored_policy_profiles(
         self,
@@ -693,7 +754,7 @@ class RegistryRecordTests(unittest.TestCase):
                 path=".agents/governance/absent.md"
             ),
             "not an authored policy document": lambda s: s["codes"][0].update(
-                path="docs/05.operations/policies/README.md"
+                path="docs/05.operations/02.policies/README.md"
             ),
             "not a policy profile": lambda s: s["codes"][0].update(
                 path="docs/03.specs/README.md"
@@ -885,8 +946,8 @@ class RealPolicyTests(unittest.TestCase):
         counts = [
             MARKDOWN.policy_rule_units((ROOT / name).read_text("utf-8")).control_rows
             for name in (
-                "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md",
-                "docs/05.operations/policies/0005-observability-platform-operations-policy.md",
+                "docs/05.operations/02.policies/0001-k8s-gitops-operations-policy.md",
+                "docs/05.operations/02.policies/0005-observability-platform-operations-policy.md",
             )
         ]
         self.assertEqual(counts, [6, 6])

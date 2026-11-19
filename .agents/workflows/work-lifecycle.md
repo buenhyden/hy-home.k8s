@@ -16,8 +16,8 @@ updated: "2026-11-18"
 Use one intake-to-handoff procedure for substantial repository work rather than
 separate bootstrap, preflight, and postflight rule copies.
 
-Related policy and responsibility documents: [SDLC Flow](../governance/sdlc.md),
-[Document Authoring](../governance/document-authoring.md),
+Related policy and responsibility documents: [SDLC Flow](../../docs/00.workspace/03.process/sdlc.md),
+[Document Authoring](../../docs/00.workspace/03.process/document-authoring.md),
 [Context and Memory](../governance/context-and-memory.md) and
 [Roles](../roles/README.md).
 
@@ -34,8 +34,8 @@ This procedure names no repository work it must not be used for; if such a case 
 ### Authority Boundary
 
 This procedure applies [agent execution](../governance/agent-execution.md),
-[approval and safety](../governance/approval-and-safety.md), and
-[quality](../governance/quality.md). It does not grant new scope or override the
+[approval and safety](../../docs/00.workspace/04.quality/approval-and-safety.md), and
+[quality](../../docs/00.workspace/04.quality/quality.md). It does not grant new scope or override the
 active Task, registry permissions, or provider controls.
 
 ## Procedure
@@ -62,10 +62,10 @@ The procedure parts are Intake, Resume, Implementation and Completion.
    scope and conditions. Draft authoring, review and focused document checks
    use the writing scope. Before dependent implementation, operation or
    completion, confirm a current authority separate from the draft and apply
-   [the lifecycle policy](../governance/document-lifecycle.md#rules).
+   [the lifecycle policy](../../docs/00.workspace/03.process/document-lifecycle.md#rules).
 5. Resolve selected required-check tools, environment, actual resource/output
    needs, technical command limits and necessary native execution approval through
-   [quality preflight](../governance/quality.md#validation-runner-envelope).
+   [quality preflight](../../docs/00.workspace/04.quality/quality.md#validation-runner-envelope).
    Define focused checks, expected lanes, rollback, unavailable tools and next
    owner before implementation; protected authority remains separate.
    Quality preflight creates no business deadline, session timebox or
@@ -78,7 +78,7 @@ before dependent writes. Put worktree identity and relevant file hashes under
 Results, and current approval/revocation and writer ownership under
 Inputs and Authority. Carry command limits, partial output and known
 budget state with the lane results and limitations of the Next Owner section
-(the [handoff fields](../governance/quality.md#handoff-evidence-contract)). On conflict, retain completed work and name the
+(the [handoff fields](../../docs/00.workspace/04.quality/quality.md#handoff-evidence-contract)). On conflict, retain completed work and name the
 next owner; refresh the affected evidence before resuming.
 
 #### Implementation
@@ -94,7 +94,7 @@ the past result in its existing Task or Git history. Use
 
 For an ordinary authored document or README router edit, select common diff,
 applicable style and commit-message checks plus document content only, as
-[quality](../governance/quality.md#ordinary-document-selection) defines. Do
+[quality](../../docs/00.workspace/04.quality/quality.md#ordinary-document-selection) defines. Do
 not add a one-use test just to mirror prose. Treat changes to governance,
 provider or native contracts, Stage 99 forms, schema or registry, and
 implementation as their own contract or behavior changes with necessary
@@ -114,12 +114,12 @@ end the loop.
 #### Completion
 
 1. Check acceptance, links, owner boundaries, language, and README navigation
-   through the [semantic review contract](../governance/quality.md#semantic-review):
+   through the [semantic review contract](../../docs/00.workspace/04.quality/quality.md#semantic-review):
    a recorded risk class, applicable automated checks, a core-diff checklist
    and the owner's explicit acceptance. Apply the independent-review requirement
    to high-risk changes.
 2. Follow the delivery route and ordered sequence in
-   [quality policy](../governance/quality.md#delivery-ownership). Record local
+   [quality policy](../../docs/00.workspace/04.quality/quality.md#delivery-ownership). Record local
    selected QA and pre-commit lint/format over their actual snapshots. PR branch
    metadata and the selected hosted `style-pr` leaves have distinct SHA/run
    evidence. Push and merge do not replay an identical leaf.
@@ -129,7 +129,7 @@ end the loop.
    rollback, residual risk, and next owner. Write residue as a `Residue Handoff`
    row in that Task and an entry in the work residue ledger in the same change;
    a terminal entry leaves the ledger before its package exit.
-5. Follow [Git policy](../governance/git.md) for requested logical commits and
+5. Follow [Git policy](../../docs/00.workspace/03.process/git.md) for requested logical commits and
    branch finish. Do not infer push, merge, or cleanup approval.
 
 Hooks are supplemental evidence or enforcement only when their intended

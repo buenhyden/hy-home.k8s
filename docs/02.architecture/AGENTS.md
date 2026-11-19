@@ -1,16 +1,18 @@
 # AGENTS.md
 
-Agent instructions for `docs/02.architecture/` and its `descriptions/` and
-`decisions/` collections. The parent [`docs/AGENTS.md`](../AGENTS.md) still
+Agent instructions for `docs/02.architecture/` and its `01.descriptions/` and
+`02.decisions/` collections. The parent [`docs/AGENTS.md`](../AGENTS.md) still
 applies.
 
 ## Scope
 
 ### Allowed Scope
 
-Stage 02 holds Architecture Descriptions (AD), which expand requirements into
-system boundaries, views and quality attributes, and Architecture Decision
-Records (ADR), which record durable technical and operating decisions.
+Stage 02 holds the product (local k8s GitOps platform) Architecture
+Descriptions (AD), which expand requirements into system boundaries, views and
+quality attributes, and its Architecture Decision Records (ADR), which record
+durable platform decisions. Work-system records (documents, agents, QA, CI,
+Git, release, disposition) belong in `docs/00.workspace/02.architecture/`.
 
 | Work here | Role (`.agents/roles/`) | Skills | Claude | Codex |
 | --- | --- | --- | --- | --- |
@@ -35,10 +37,10 @@ Canonical sources are the documents linked or named in the opening paragraph and
 
 #### Local Obligations
 
-1. The parent folder decides the type: `descriptions/####-<slug>.md` uses
-   `sdlc/architecture-description`, `decisions/####-<slug>.md` uses
+1. The parent folder decides the type: `01.descriptions/####-<slug>.md` uses
+   `sdlc/architecture-description`, `02.decisions/####-<slug>.md` uses
    `sdlc/architecture-decision`. Start from the matching form in
-   `docs/99.templates/templates/architecture/`; a new ADR starts from the
+   `docs/99.templates/02.templates/02.architecture/`; a new ADR starts from the
    common ADR form, in every status.
 2. AD states are `draft`, `in-review` and `active`; ADR states are
    `proposed`, `accepted` and `rejected`. Moving an ADR to `accepted` needs
@@ -46,7 +48,7 @@ Canonical sources are the documents linked or named in the opening paragraph and
    triggers the ADR's exit, not a state kept in the tree: once the manual
    disposition review is satisfied, summarize the ADR in the owning AD's
    `Archived Lineage` and delete it in the same change, as the
-   [document lifecycle policy](../../.agents/governance/document-lifecycle.md)
+   [document lifecycle policy](../00.workspace/03.process/document-lifecycle.md)
    requires; otherwise defer.
 3. Never edit an accepted decision in place; an accepted ADR from ADR-0001 to
    ADR-0061 keeps the form it was accepted in until a successor replaces it.
@@ -64,7 +66,7 @@ Canonical sources are the documents linked or named in the opening paragraph and
    document body; link the implementing path.
 6. Hand implementer-level contracts to `docs/03.specs/` and operating
    procedures to `docs/05.operations/`.
-7. Update `descriptions/README.md` or `decisions/README.md` in the same change
+7. Update `01.descriptions/README.md` or `02.decisions/README.md` in the same change
    that adds, retitles or deletes a document.
 
 ### Execution

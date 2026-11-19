@@ -35,7 +35,7 @@ The subject inputs are `Local difference` and `Staged difference`. When both
 are empty the contract refuses, because there is no difference to review.
 
 The requesting author also supplies, once, the review packet that Git cannot,
-so the reviewer does not reconstruct it ([QUAL-R055](../governance/quality.md#requirements)):
+so the reviewer does not reconstruct it ([QUAL-R055](../../docs/00.workspace/04.quality/quality.md#requirements)):
 
 - the branch and the commit the difference sits on, or the new commit once
   made, so a later change can be classified against it; a repository with no
@@ -58,7 +58,7 @@ so the reviewer does not reconstruct it ([QUAL-R055](../governance/quality.md#re
 An ordered finding list, one finding per root cause. Each finding names the
 file and line, states the defect in one sentence, gives the concrete condition
 under which it goes wrong, and carries its grade under
-[QUAL-R053](../governance/quality.md#requirements). A finding without a failure
+[QUAL-R053](../../docs/00.workspace/04.quality/quality.md#requirements). A finding without a failure
 condition is a preference and is reported as `NOTE`.
 
 ## Validation
@@ -83,4 +83,4 @@ enforces the remaining conditions below.
 
 - [Common Prompt Contracts](README.md)
 - [Agent Responsibilities](../roles/README.md)
-- [Quality and Evidence Policy](../governance/quality.md)
+- [Quality and Evidence Policy](../../docs/00.workspace/04.quality/quality.md)

@@ -11,7 +11,7 @@ metadata:
 disable-model-invocation: true
 ---
 
-Read `.agents/governance/approval-and-safety.md` and the selected role before
+Read `docs/00.workspace/04.quality/approval-and-safety.md` and the selected role before
 using this procedure. Skill invocation grants no authority
 ([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
@@ -50,7 +50,7 @@ This skill takes no input beyond the user's request and the files its Steps name
 
 Run the checks through `python3 scripts/qa.py quick` or
 `python3 scripts/qa.py staged`, selected and bounded as
-[quality policy](../../governance/quality.md#validation-runner-envelope)
+[quality policy](../../../docs/00.workspace/04.quality/quality.md#validation-runner-envelope)
 defines; `python3 scripts/qa.py --list` shows what each profile reaches.
 
 1. Check manifest YAML syntax for the changed scope. Offline Kustomize render

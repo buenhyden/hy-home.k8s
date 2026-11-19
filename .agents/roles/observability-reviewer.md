@@ -87,4 +87,4 @@ Per [work lifecycle](../workflows/work-lifecycle.md), this role reads the reposi
 - [security-auditor](security-auditor.md)
 - [supervisor](supervisor.md)
 - [Claude provider notes](../../.claude/provider.md)
-- [Quality policy](../governance/quality.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md)

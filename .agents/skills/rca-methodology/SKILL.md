@@ -11,7 +11,7 @@ metadata:
 disable-model-invocation: true
 ---
 
-Read `.agents/governance/approval-and-safety.md` and the selected role before
+Read `docs/00.workspace/04.quality/approval-and-safety.md` and the selected role before
 using this procedure. Skill invocation grants no authority
 ([EXEC-R005](../../governance/agent-execution.md#requirements)).
 

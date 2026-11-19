@@ -1,6 +1,6 @@
 ---
 title: "Context and Memory Policy"
-version: "1.13.0"
+version: "1.14.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -39,7 +39,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | CTX-R004 | Always | Provider-local recall never writes canonical truth directly; verify it against the repository first. A provider's memory feature does not change repository ownership or permission. | Semantic review | none |
 | CTX-R005 | Always | Hand task-local evidence to its Task owner. Reusable decision context may instead be kept in the shared workspace memory store below; durable policy and domain knowledge still refresh, supersede, or retire through their profile contract. | Semantic review | none |
 | CTX-R006 | Always | Do not read or store credentials, secret values, personal data, auth configuration, shell history or environment dumps, in the store or its metadata. Do not store raw prompts, responses, tool arguments or outputs, or provider transcripts in the store, the capture archive or their metadata; CTX-R022 is the only route that reads a transcript, and it records pointers and structure only. | `workspace-memory-regressions` | none |
-| CTX-R007 | Always | The `memory/progress.md` ledger and the `memory/` directory are retired and neither is restored; Git history recovers their bytes. The work residue ledger is not the retired ledger. Progress and task status belong to the owning Spec Task, and durable knowledge stays with the responsible policy, skill, operating document, or reference owner. `.agents/knowledge/` maps those owners without restating them; it is a pointer surface, never a second store of current state. Its one exception, `glossary.md`, owns term meanings and states no rule (ADR-0058). | `repository-quality` | none |
+| CTX-R007 | Always | The `memory/progress.md` ledger and the `memory/` directory are retired and neither is restored; Git history recovers their bytes. The work residue ledger is not the retired ledger. Progress and task status belong to the owning Spec Task, and durable knowledge stays with the responsible policy, skill, operating document, or reference owner. `.agents/knowledge/` maps those owners without restating them; it is a pointer surface, never a second store of current state. Term meanings are owned by the workspace glossary `docs/00.workspace/01.project/glossary.md`, which states no rule (ADR-0058; moved from `.agents/knowledge/` by the 2026-11-19 path cutover). | `repository-quality` | none |
 | CTX-R008 | Always | A checkpoint is an optional, untracked human aid; no repository tool creates one. Static validation of a synthetic checkpoint proves neither actual checkpoint execution nor provider memory, hook, or compaction behavior. | Semantic review | none |
 | CTX-R009 | When using the shared workspace memory store | SPEC-0109 (Git history: package `0109-shared-workspace-memory` under `docs/03.specs/` at commit `69445fca`) defined one store that Claude and Codex sessions both read and write: `.workspace-memory/memory.sqlite3` at the main worktree root, resolved from the Git common directory so every linked worktree reaches the same file. It is Git-ignored runtime data. Use `scripts/workspace_memory.py`; run `init` once, and never create a second store when the root cannot be resolved. If the representative worktree or Git common directory moves, stop and have the operator reconnect the existing store and verify its workspace identity before resuming. A separate Git directory layout is currently unsupported; it reports `MEMORY_UNAVAILABLE` and does not authorize a replacement store. A store of another schema version reports `MEMORY_UNAVAILABLE`; converting it is an explicit operator step, never an automatic upgrade. | `workspace-memory-regressions` | none |
 | CTX-R010 | When writing a memory body | A memory body is decision context: why a choice was made, why a check failed, how it was resolved and when that applies again. It is never Task status, evidence, approval or acceptance, and the store rejects bodies that carry those fields. Cite the original record in the Task instead. | `workspace-memory-regressions` | none |
@@ -110,7 +110,7 @@ Retain completed evidence, identify failed/DEFER lanes, remaining work, rollback
 and next owner, then refresh only invalidated evidence. Carry actual
 cancellation, observed provider request/resource limits and `Retry-After`
 with the affected handoff. Deadlines, worker allocations and reserve approvals are not created from a
-checkpoint (see [quality](quality.md#validation-runner-envelope)); unknown
+checkpoint (see [quality](../../docs/00.workspace/04.quality/quality.md#validation-runner-envelope)); unknown
 account limits remain unverified for the dependent provider request and do
 not block independent local work. A summary saying PASS does not waive this
 recheck. These are agent and operator obligations, not a claim of native
@@ -130,7 +130,7 @@ Approval and review conditions are stated under Requirements.
 
 Check summaries for stale owner links, duplicated task state, and sensitive
 data. Report conflicting memory rather than rewriting the repository to match
-it. Use [quality policy](quality.md) for evidence and handoff classification.
+it. Use [quality policy](../../docs/00.workspace/04.quality/quality.md) for evidence and handoff classification.
 
 ### Limits
 
@@ -151,9 +151,9 @@ Temporary checkpoints and provider-local memory are advisory and confer no
 execution authority.
 
 - [Work Lifecycle](../workflows/work-lifecycle.md)
-- [Document Lifecycle](document-lifecycle.md)
-- [Approval and Safety](approval-and-safety.md)
-- [Quality Policy](quality.md)
+- [Document Lifecycle](../../docs/00.workspace/03.process/document-lifecycle.md)
+- [Approval and Safety](../../docs/00.workspace/04.quality/approval-and-safety.md)
+- [Quality Policy](../../docs/00.workspace/04.quality/quality.md)
 
 #### Responsibilities
 

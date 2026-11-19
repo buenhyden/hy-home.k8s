@@ -72,7 +72,7 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Per [work lifecycle](../workflows/work-lifecycle.md), run `python3 scripts/validate-knowledge-surface.py`, `scripts/validate-links-and-owners.py --mode strict` and `scripts/validate-markdown-profiles.py --mode strict`; report each as repository evidence under the [validation lane contract](../governance/quality.md#validation-lane-contract). Hosted and live lanes are not observed by this role. Review this role when its responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run `python3 scripts/validate-knowledge-surface.py`, `scripts/validate-links-and-owners.py --mode strict` and `scripts/validate-markdown-profiles.py --mode strict`; report each as repository evidence under the [validation lane contract](../../docs/00.workspace/04.quality/quality.md#validation-lane-contract). Hosted and live lanes are not observed by this role. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
@@ -81,4 +81,4 @@ Per [work lifecycle](../workflows/work-lifecycle.md), run `python3 scripts/valid
 - [doc-writer](doc-writer.md)
 - [supervisor](supervisor.md)
 - [Knowledge maps](../knowledge/README.md)
-- [Document authoring](../governance/document-authoring.md)
+- [Document authoring](../../docs/00.workspace/03.process/document-authoring.md)

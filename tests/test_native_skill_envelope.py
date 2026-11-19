@@ -97,7 +97,7 @@ class NativeSkillEnvelopeTests(unittest.TestCase):
     def test_resolved_incident_requires_real_zoned_time_and_evidence(self) -> None:
         registry = load_registry(ROOT)
         path = PurePosixPath(
-            "docs/05.operations/incidents/2026/inc-0001-example/incident.md"
+            "docs/05.operations/04.incidents/2026/inc-0001-example/incident.md"
         )
         profile = next(
             p for p in registry.profiles if p.profile_id == "operation/incident"

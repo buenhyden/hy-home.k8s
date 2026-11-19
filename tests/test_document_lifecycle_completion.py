@@ -45,7 +45,7 @@ class CompletionDiagnosticsTest(unittest.TestCase):
         cls.spec = next(
             path for path in map(PurePosixPath, fixture) if path.name == "spec.md"
         )
-        schema_path = ROOT / "docs/99.templates/contracts/frontmatter.schema.json"
+        schema_path = ROOT / "docs/99.templates/01.contracts/frontmatter.schema.json"
         cls.schema = json.loads(schema_path.read_text(encoding="utf-8"))
 
     def rules(self, documents, texts) -> set[str]:
@@ -76,7 +76,7 @@ class CompletionDiagnosticsTest(unittest.TestCase):
         self.assertIn("COMPLETION-PLAN", self.rules(*self.without(lambda p: p != plan)))
 
     def test_missing_task_is_rejected(self):
-        tasks = self.spec.parent / "tasks"
+        tasks = self.spec.parent / "01.tasks"
         documents, texts = self.without(lambda p: p.parent != tasks)
         self.assertIn("COMPLETION-TASK", self.rules(documents, texts))
 

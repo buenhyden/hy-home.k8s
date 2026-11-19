@@ -21,7 +21,7 @@ Fixes # (link to issue if applicable)
 Select every category that applies to this PR. These categories route review;
 they do not define commit-message types. [`.cz.toml`](../.cz.toml) owns the
 supported commit types and message syntax, and
-[Git policy](../.agents/governance/git.md) explains their validation.
+[Git policy](../docs/00.workspace/03.process/git.md) explains their validation.
 
 - [ ] `feat`: New feature or enhancement
 - [ ] `fix`: Bug fix
@@ -46,7 +46,7 @@ If yes, please describe the impact and migration path.
 
 Describe the manual verification or automated tests conducted.
 
-Follow the [Quality Policy](../.agents/governance/quality.md#canonical-completion-sequence)
+Follow the [Quality Policy](../docs/00.workspace/04.quality/quality.md#canonical-completion-sequence)
 for the delivery route and evidence required for this PR. Link the owning Task's
 selected local purpose checks and exact-index staged result on their actual
 inputs. Link both hosted `ci-summary` and `style-pr` results with each PR SHA
@@ -92,7 +92,7 @@ do not copy its progress or outcomes into this PR description.
 - [ ] Live runtime evidence is required
 
 For harness changes, record the applicable local checks and hosted result under
-[Quality Policy](../.agents/governance/quality.md). Live checks require explicit
+[Quality Policy](../docs/00.workspace/04.quality/quality.md). Live checks require explicit
 operator approval.
 
 Secret handling:
@@ -100,4 +100,4 @@ Secret handling:
 - [ ] No secret values, Vault tokens, private keys, or credential material are included
 - [ ] Secret-related changes record only path, key, property, mount, and redacted evidence
 
-See [Approval Boundaries](../.agents/governance/approval-and-safety.md) and the [Local Harness Catalog](../.agents/roles/README.md).
+See [Approval Boundaries](../docs/00.workspace/04.quality/approval-and-safety.md) and the [Local Harness Catalog](../.agents/roles/README.md).

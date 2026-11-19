@@ -34,8 +34,8 @@ from scripts import release  # noqa: E402
 from tests.git_fixture import GitFixture, lifecycle_registry_fixture  # noqa: E402
 
 REGISTRY_FILE = ROOT / "docs/99.templates/registry.json"
-SCHEMA_FILE = ROOT / "docs/99.templates/contracts/document-profile.schema.json"
-FRONTMATTER_SCHEMA = ROOT / "docs/99.templates/contracts/frontmatter.schema.json"
+SCHEMA_FILE = ROOT / "docs/99.templates/01.contracts/document-profile.schema.json"
+FRONTMATTER_SCHEMA = ROOT / "docs/99.templates/01.contracts/frontmatter.schema.json"
 REGISTRY_PATH = "docs/99.templates/registry.json"
 MODE = "explicit-ref"
 DOWNGRADE = "LIFECYCLE-VERSION-DOWNGRADE"
@@ -164,7 +164,7 @@ def document_text(version: str | None, artifact_id: str | None = None) -> str:
     )
 
 
-RULE_PATH = PurePosixPath(".agents/governance/quality.md")
+RULE_PATH = PurePosixPath("docs/00.workspace/04.quality/quality.md")
 SPEC_PATH = PurePosixPath("docs/03.specs/0208-w03-semver-tests/spec.md")
 
 

@@ -44,7 +44,7 @@ that a setting is in force; only a dated authenticated read-back is.
   operator decision and remote read-back; this document grants no bypass.
 
 Branch, merge, finish and recovery rules themselves are owned by
-`.agents/governance/git.md`. This file records only the remote settings that
+`docs/00.workspace/03.process/git.md`. This file records only the remote settings that
 support them.
 
 ## Repository Actions Policy Target

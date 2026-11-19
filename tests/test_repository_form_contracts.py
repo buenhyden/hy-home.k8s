@@ -21,13 +21,13 @@ from validation.repository.sample_app_contract import (  # noqa: E402
 class CanonicalFormContractTests(unittest.TestCase):
     def test_ownership_rejects_missing_unowned_duplicate_and_noncanonical_forms(self):
         form = pathlib.PurePosixPath(
-            "docs/99.templates/templates/common/example.template.md"
+            "docs/99.templates/02.templates/93.common/example.template.md"
         )
         other = pathlib.PurePosixPath(
-            "docs/99.templates/templates/common/extra.template.md"
+            "docs/99.templates/02.templates/93.common/extra.template.md"
         )
         bad_name = pathlib.PurePosixPath(
-            "docs/99.templates/templates/common/openapi.yaml"
+            "docs/99.templates/02.templates/93.common/openapi.yaml"
         )
         references = [("common/example", form)]
         owners = [("common/example", form)]
@@ -47,7 +47,7 @@ class CanonicalFormContractTests(unittest.TestCase):
 
     def test_content_rejects_prompt_table_and_comment_drift(self):
         form = pathlib.PurePosixPath(
-            "docs/99.templates/templates/common/example.template.md"
+            "docs/99.templates/02.templates/93.common/example.template.md"
         )
         profile = SimpleNamespace(
             form=SimpleNamespace(

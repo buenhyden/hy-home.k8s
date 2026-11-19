@@ -6,7 +6,7 @@
 # linters may intentionally retain reviewed defaults; Ruff names this selection
 # because its observed default change crossed this repository's rule boundary.
 #
-# See .agents/governance/formatting-and-linting.md before
+# See docs/00.workspace/04.quality/formatting-and-linting.md before
 # widening the selection: each added family needs its findings measured and
 # resolved, not suppressed.
 

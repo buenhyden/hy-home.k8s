@@ -11,7 +11,7 @@ metadata:
 disable-model-invocation: true
 ---
 
-Read `.agents/governance/approval-and-safety.md` and the selected role before
+Read `docs/00.workspace/04.quality/approval-and-safety.md` and the selected role before
 using this procedure. Skill invocation grants no authority
 ([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
@@ -44,7 +44,7 @@ This skill takes no input beyond the user's request and the files its Steps name
    document profiles and indexes from the Stage 99 registry. Read
    `.agents/knowledge/project-map.md` for the tree that owns a path and
    `.agents/knowledge/domains.md` for the entry document of a domain, and
-   `.agents/knowledge/glossary.md` for what a shared term means; take the
+   `docs/00.workspace/01.project/glossary.md` for what a shared term means; take the
    owner path, entry path and validity condition from the row and verify each
    against the tree rather than trusting the row.
 3. Apply the current document-authoring rule: outside-doc navigation reaches
@@ -78,9 +78,9 @@ follows [context and memory](../../governance/context-and-memory.md#objective). 
 
 ### Handoff
 
-- `.agents/governance/document-authoring.md`
+- `docs/00.workspace/03.process/document-authoring.md`
 - `.agents/governance/context-and-memory.md`
-- `.agents/governance/quality.md`
+- `docs/00.workspace/04.quality/quality.md`
 - `.agents/knowledge/README.md`
 
 ## Verification

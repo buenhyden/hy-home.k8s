@@ -1076,7 +1076,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)\\.agents/(?:README\\.md|governance/.*|workflows/.*|knowledge/.*|prompts/.*)$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?:\\.agents/(?:README\\.md|governance/.*|workflows/.*|knowledge/.*|prompts/.*)|docs/00\\.workspace/(?!(?:.*/)?(?:AGENTS|CLAUDE)\\.md$).*)$"
         }
       ],
       "validators": [
@@ -1105,7 +1105,7 @@
         },
         {
           "kind": "regex",
-          "value": "^docs/99\\.templates/contracts/.*\\.json$"
+          "value": "^docs/99\\.templates/01\\.contracts/.*\\.json$"
         }
       ],
       "validators": [
@@ -1132,7 +1132,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)(?:README|AGENTS|CLAUDE)\\.md$)(?!docs/99\\.templates/(?:registry\\.json$|contracts/.*\\.json$))docs/99\\.templates/.*$"
+          "value": "^(?!.*(?:^|/)(?:README|AGENTS|CLAUDE)\\.md$)(?!docs/99\\.templates/(?:registry\\.json$|01\\.contracts/.*\\.json$))docs/99\\.templates/.*$"
         }
       ],
       "validators": [

@@ -2140,22 +2140,22 @@ _STAGE_MACHINE_READS = frozenset(
             "machine-read",
         ),
         (
-            ".agents/governance/document-authoring.md",
+            "docs/00.workspace/03.process/document-authoring.md",
             "docs/99.templates/registry.json",
             "machine-read",
         ),
         (
-            ".agents/governance/document-authoring.md",
-            "docs/99.templates/contracts/frontmatter.schema.json",
+            "docs/00.workspace/03.process/document-authoring.md",
+            "docs/99.templates/01.contracts/frontmatter.schema.json",
             "machine-read",
         ),
         (
-            ".agents/governance/document-lifecycle.md",
+            "docs/00.workspace/03.process/document-lifecycle.md",
             "docs/99.templates/registry.json",
             "machine-read",
         ),
         (
-            ".agents/governance/sdlc.md",
+            "docs/00.workspace/03.process/sdlc.md",
             "docs/99.templates/registry.json",
             "machine-read",
         ),
@@ -2356,7 +2356,8 @@ def _stage_grammar_diagnostics(
     diagnostics: list[Diagnostic] = []
     reported: set[str] = set()
     for match in _STAGE_PATH_TOKEN.finditer(text):
-        target = match.group(0).rstrip(".")
+        # A heading anchor names a place inside the document, not another path.
+        target = re.sub(r"#[a-z0-9][a-z0-9-]*$", "", match.group(0).rstrip("."))
         if target in reported or not any(
             target.startswith(prefix) for prefix in prefixes
         ):

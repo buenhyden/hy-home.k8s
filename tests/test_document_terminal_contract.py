@@ -22,10 +22,10 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS_ROOT = REPOSITORY_ROOT / "scripts"
 REGISTRY_PATH = REPOSITORY_ROOT / "docs/99.templates/registry.json"
 PROFILE_SCHEMA_PATH = (
-    REPOSITORY_ROOT / "docs/99.templates/contracts/document-profile.schema.json"
+    REPOSITORY_ROOT / "docs/99.templates/01.contracts/document-profile.schema.json"
 )
 FRONTMATTER_SCHEMA_PATH = (
-    REPOSITORY_ROOT / "docs/99.templates/contracts/frontmatter.schema.json"
+    REPOSITORY_ROOT / "docs/99.templates/01.contracts/frontmatter.schema.json"
 )
 VALIDATOR_PATHS = {
     "registry": SCRIPTS_ROOT / "validate-document-contract-registry.py",
@@ -33,7 +33,7 @@ VALIDATOR_PATHS = {
     "markdown": SCRIPTS_ROOT / "validate-markdown-profiles.py",
     "links": SCRIPTS_ROOT / "validate-links-and-owners.py",
 }
-STAGE99_TEMPLATES_ROOT = REPOSITORY_ROOT / "docs/99.templates/templates"
+STAGE99_TEMPLATES_ROOT = REPOSITORY_ROOT / "docs/99.templates/02.templates"
 STAGE05_ROOT = REPOSITORY_ROOT / "docs/05.operations"
 COMMON_FRONTMATTER_PREFIX = [
     "title",
@@ -259,9 +259,9 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             shutil.copy2(REGISTRY_PATH, registry_path)
             shutil.copytree(
                 STAGE99_TEMPLATES_ROOT,
-                root / "docs/99.templates/templates",
+                root / "docs/99.templates/02.templates",
             )
-            template = root / "docs/99.templates/templates/specs/spec.template.md"
+            template = root / "docs/99.templates/02.templates/03.specs/spec.template.md"
             template.write_text(
                 "<!-- destination: docs/03.specs/9999-example/spec.md -->\n"
                 + template.read_text(encoding="utf-8"),
@@ -440,7 +440,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         contracts = load_document_contracts()
         missing = clone_registry(self.registry)
         missing["profiles"][0]["template_source"] = (
-            "docs/99.templates/templates/requirements/missing.template.md"
+            "docs/99.templates/02.templates/01.requirements/missing.template.md"
         )
         with self.assertRaisesRegex(
             contracts.DocumentContractError, "REGISTRY_TEMPLATE"
@@ -452,11 +452,11 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             schema = root / contracts.PROFILE_SCHEMA_PATH
             schema.parent.mkdir(parents=True)
             shutil.copy2(PROFILE_SCHEMA_PATH, schema)
-            templates = root / "docs/99.templates/templates"
+            templates = root / "docs/99.templates/02.templates"
             shutil.copytree(STAGE99_TEMPLATES_ROOT, templates)
-            linked_template = templates / "requirements/linked.template.md"
+            linked_template = templates / "01.requirements/linked.template.md"
             linked_template.symlink_to(
-                templates / "requirements/requirement-package.template.md"
+                templates / "01.requirements/requirement-package.template.md"
             )
             linked = clone_registry(self.registry)
             linked["profiles"][0]["template_source"] = linked_template.relative_to(
@@ -483,7 +483,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             shutil.copy2(PROFILE_SCHEMA_PATH, schema_path)
             shutil.copytree(
                 STAGE99_TEMPLATES_ROOT,
-                root / "docs/99.templates/templates",
+                root / "docs/99.templates/02.templates",
             )
             with self.assertRaisesRegex(
                 contracts.DocumentContractError, "REGISTRY_SOURCE_PROFILE"
@@ -494,7 +494,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         markdown = load_validator("frontmatter_quote", VALIDATOR_PATHS["markdown"])
         registry = markdown.load_registry(REPOSITORY_ROOT)
         path = PurePosixPath(
-            "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
+            "docs/02.architecture/01.descriptions/0007-current-local-gitops-platform.md"
         )
         profile = markdown.classify_path(registry, path)
         source = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")
@@ -675,9 +675,9 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 self.assertEqual(body_contract["source_link_column"], "Requirement ID")
 
         for relative_path in (
-            "requirements/requirement-package.template.md",
-            "architecture/description.template.md",
-            "specs/spec.template.md",
+            "01.requirements/requirement-package.template.md",
+            "02.architecture/description.template.md",
+            "03.specs/spec.template.md",
         ):
             contents = (STAGE99_TEMPLATES_ROOT / relative_path).read_text(
                 encoding="utf-8"
@@ -688,7 +688,8 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         self.assertIn(
             'artifact_id: "{{ARTIFACT_ID}}"',
             (
-                STAGE99_TEMPLATES_ROOT / "requirements/requirement-package.template.md"
+                STAGE99_TEMPLATES_ROOT
+                / "01.requirements/requirement-package.template.md"
             ).read_text(encoding="utf-8"),
         )
 
@@ -718,7 +719,7 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
         markdown = load_validator("stage05_terminal", VALIDATOR_PATHS["markdown"])
         registry = markdown.load_registry(REPOSITORY_ROOT)
         path = PurePosixPath(
-            "docs/05.operations/runbooks/0008-argocd-metrics-prometheus-runbook.md"
+            "docs/05.operations/03.runbooks/0008-argocd-metrics-prometheus-runbook.md"
         )
         profile = markdown.classify_path(registry, path)
         source = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")

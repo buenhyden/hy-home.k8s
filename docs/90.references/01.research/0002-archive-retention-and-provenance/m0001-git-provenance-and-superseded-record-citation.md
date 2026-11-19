@@ -1,0 +1,253 @@
+---
+title: "Reference: Git Provenance and Superseded Record Citation"
+version: "0.3.1"
+type: "reference/research"
+status: "draft"
+owner: "platform"
+updated: "2026-11-18"
+artifact_id: "RES-0002-m0001"
+---
+
+# Reference: Git Provenance and Superseded Record Citation
+
+## Question and Scope
+
+### Question
+
+This dated reference records what primary sources say about naming and keeping
+Git objects, keeping superseded decisions and incident records, signalling moved
+or removed public URLs, removing sensitive data, validating conditional schema
+fields, and parsing Markdown links. It was written to bound the Stage 98 choices in
+ADR-0039. ADR-0039 and its successor ADR-0040 left the tree (Git history
+recovers them); on 2026-11-05 the current Stage 98 decision is
+[ADR-0053](../../../00.workspace/02.architecture/02.decisions/0053-unvalidated-archive.md).
+
+#### Research Questions
+
+- How does Git name, keep and lose objects, so that a deleted document can be
+  recovered from history? (informs ADR-0053's Git-history recovery clause)
+- What do primary sources say about keeping superseded records, signalling
+  moved URLs, removing sensitive data, schema annotations and Markdown link
+  parsing?
+
+#### Reference Type
+
+Research reference with source-backed claims and stated limits.
+
+### Scope
+
+Included: Git revision syntax, object inspection, garbage collection, clone
+depth and filters; the original ADR article; SRE postmortem practice; HTTP
+redirect and gone semantics; GitHub sensitive-data removal; JSON Schema
+conditionals, annotations, and `format`; CommonMark links and code; Diátaxis.
+Excluded: hosting-provider garbage collection policy, digital preservation
+certification, and any runtime behavior.
+
+#### Method
+
+Each primary source was fetched on its observation date and a claim is recorded
+only with a captured quotation. A source that could not be fetched is recorded
+as `unreachable` without a claim. External statements are kept apart from this
+repository's local choices.
+
+## Sources
+
+### Primary Sources
+
+| Source ID | Source | Version | Checked At | Finding | Application | Limits |
+| --- | --- | --- | --- | --- | --- | --- |
+| M0001-S01 | [gitrevisions](https://git-scm.com/docs/gitrevisions) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S02 | [git-cat-file](https://git-scm.com/docs/git-cat-file) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S03 | [git-gc](https://git-scm.com/docs/git-gc) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S04 | [git-clone](https://git-scm.com/docs/git-clone) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S05 | [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S06 | [SRE Book, Postmortem Culture](https://sre.google/sre-book/postmortem-culture/) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | Fetched after one HTTP 403 retry |
+| M0001-S07 | [SRE Workbook, Postmortem Culture](https://sre.google/workbook/postmortem-culture/) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S08 | [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S09 | [GitHub, Removing sensitive data](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S10 | [Understanding JSON Schema, Conditionals](https://json-schema.org/understanding-json-schema/reference/conditionals) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S11 | [Understanding JSON Schema, Annotations](https://json-schema.org/understanding-json-schema/reference/annotations) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S12 | [Understanding JSON Schema, Type](https://json-schema.org/understanding-json-schema/reference/type) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S13 | [CommonMark Spec 0.31.2](https://spec.commonmark.org/0.31.2/) | 0.31.2 | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S14 | [Diátaxis](https://diataxis.fr/) | not stated in this document | 2026-09-15 | Fetched | not stated in this document | not stated in this document |
+| M0001-S15 | [PREMIS Ontology](https://www.loc.gov/standards/premis/ontology/index.html) | not stated in this document | 2026-09-15 | `unreachable`: HTTP 403 twice, and `https://www.loc.gov/standards/premis/v3/` also returned HTTP 403 | not stated in this document | no claim recorded |
+| M0001-S16 | [DPC, Retention and review](https://www.dpconline.org/handbook/organisational-activities/retention-and-review) | not stated in this document | 2026-09-28 | Read directly; no local Git or status prescription | not stated in this document | not stated in this document |
+| M0001-S17 | [DPC, Acquisition and appraisal](https://www.dpconline.org/handbook/organisational-activities/acquisition-and-appraisal) | not stated in this document | 2026-09-28 | Read directly; appraisal principles, no age-only disposal | not stated in this document | not stated in this document |
+| M0001-S18 | [AWS, ADR process](https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html) | not stated in this document | 2026-09-28 | Read directly; old-ADR marking differs from frozen local bodies | not stated in this document | not stated in this document |
+| M0001-S19 | [GitHub, About READMEs](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes) | not stated in this document | 2026-09-28 | Read directly; no universal deep-link prohibition | not stated in this document | not stated in this document |
+| M0001-S20 | [Git, gitrevisions](https://git-scm.com/docs/gitrevisions) | not stated in this document | 2026-09-28 | Read directly; distinguishes revision path from index path | not stated in this document | not stated in this document |
+| M0001-S21 | [Git, git-ls-tree](https://git-scm.com/docs/git-ls-tree) | not stated in this document | 2026-09-28 | Read directly; tree mode/type/object/path with recursive NUL output | not stated in this document | not stated in this document |
+| M0001-S22 | [Git, git-ls-files](https://git-scm.com/docs/git-ls-files) | not stated in this document | 2026-09-28 | Read directly; stage and eol expose index/worktree facts | not stated in this document | not stated in this document |
+| M0001-S23 | [Git, gitattributes](https://git-scm.com/docs/gitattributes) | not stated in this document | 2026-09-28 | Read directly; path attributes and checkout transformations | not stated in this document | not stated in this document |
+
+| Source                                                                                                                                                      | Grade      | Retrieved  | Relevance                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------- |
+| [gitrevisions](https://git-scm.com/docs/gitrevisions)                                                                                                       | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [git-cat-file](https://git-scm.com/docs/git-cat-file)                                                                                                       | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [git-gc](https://git-scm.com/docs/git-gc)                                                                                                                   | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [git-clone](https://git-scm.com/docs/git-clone)                                                                                                             | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)                                              | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [SRE Book, Postmortem Culture](https://sre.google/sre-book/postmortem-culture/)                                                                             | Not graded | 2026-09-15 | Fetched after one HTTP 403 retry                                                                                        |
+| [SRE Workbook, Postmortem Culture](https://sre.google/workbook/postmortem-culture/)                                                                         | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html)                                                                                                     | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [GitHub, Removing sensitive data](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository) | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [Understanding JSON Schema, Conditionals](https://json-schema.org/understanding-json-schema/reference/conditionals)                                         | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [Understanding JSON Schema, Annotations](https://json-schema.org/understanding-json-schema/reference/annotations)                                           | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [Understanding JSON Schema, Type](https://json-schema.org/understanding-json-schema/reference/type)                                                         | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [CommonMark Spec 0.31.2](https://spec.commonmark.org/0.31.2/)                                                                                               | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [Diátaxis](https://diataxis.fr/)                                                                                                                            | Not graded | 2026-09-15 | Fetched                                                                                                                 |
+| [PREMIS Ontology](https://www.loc.gov/standards/premis/ontology/index.html)                                                                                 | Not graded | 2026-09-15 | `unreachable`: HTTP 403 twice, and `https://www.loc.gov/standards/premis/v3/` also returned HTTP 403; no claim recorded |
+
+#### Related Documents
+
+- [Research pack](README.md)
+- [ADR-0053](../../../00.workspace/02.architecture/02.decisions/0053-unvalidated-archive.md)
+- Spec 0082, ADR-0039 and ADR-0040 left the tree; Git history recovers them (see the pack README)
+
+### Versions and Dates
+
+#### Review and Freshness
+
+Refresh when a cited Git, HTTP, JSON Schema, or CommonMark section changes, when
+PREMIS becomes reachable and an object, event, agent, or rights distinction is
+needed, or when ADR-0053 or its successor revises retention or citation. Current
+truth stays with the governance and registry owners named above.
+
+##### 2026-09-28 Retention and Provenance Addendum
+
+The earlier 2026-09-15 findings and source results above remain their dated evidence. The sources below were read directly on 2026-09-28 to assess the proposed Archive standard; they do not grant repository approval. The current local decision was ADR-0040 when this addendum was written; ADR-0040 has since left the tree and ADR-0053 (2026-11-05) supersedes it. The "frozen exact-byte bodies", "Archive index" and "successor decision" mentioned below describe that earlier local model, which ADR-0053 removed.
+
+- Digital Preservation Coalition describes iterative retention review, documented responsibility, timing, circumstances and approval for de-accession, and retaining a catalogue entry and process record after disposal. Acquisition and appraisal considers context, value, long-term cost and access. Neither guide prescribes a Git layout, a fixed retention period, local status enum or exact-byte rule. Age alone is not an appraisal result.
+- AWS describes an ADR's context, decision and consequences, and a later ADR superseding an accepted decision. Its advice to mark an old ADR superseded must be reconciled with this repository's frozen exact-byte bodies; current judgment in the Archive index and successor decision is a local choice, not an AWS-prescribed form.
+- GitHub's README guide supports purpose, getting started, help, maintainers and relative links. It does not require this repository's one-list navigation owner or prohibit every direct document link.
+- Git distinguishes `<rev>:<path>` (a blob or tree within a revision) from `:<path>` (an index blob). `git ls-tree -r -z` exposes tree membership with mode, type, object and path; `git ls-files --stage` exposes index mode, object and stage, while `--eol` describes index/worktree conversion. Attributes may transform checkout bytes through text/eol, working-tree encoding and clean/smudge filters. A worktree byte difference alone therefore does not prove a source Git object changed. Comparing source and retained Git objects, modes and member sets before diagnosing checkout differences is this repository's design inference, not an external requirement.
+
+| Source | URL | Checked | Result and limit |
+| --- | --- | --- | --- |
+| DPC, Retention and review | https://www.dpconline.org/handbook/organisational-activities/retention-and-review | 2026-09-28 | Read directly; no local Git or status prescription |
+| DPC, Acquisition and appraisal | https://www.dpconline.org/handbook/organisational-activities/acquisition-and-appraisal | 2026-09-28 | Read directly; appraisal principles, no age-only disposal |
+| AWS, ADR process | https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html | 2026-09-28 | Read directly; old-ADR marking differs from frozen local bodies |
+| GitHub, About READMEs | https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes | 2026-09-28 | Read directly; no universal deep-link prohibition |
+| Git, gitrevisions | https://git-scm.com/docs/gitrevisions | 2026-09-28 | Read directly; distinguishes revision path from index path |
+| Git, git-ls-tree | https://git-scm.com/docs/git-ls-tree | 2026-09-28 | Read directly; tree mode/type/object/path with recursive NUL output |
+| Git, git-ls-files | https://git-scm.com/docs/git-ls-files | 2026-09-28 | Read directly; stage and eol expose index/worktree facts |
+| Git, gitattributes | https://git-scm.com/docs/gitattributes | 2026-09-28 | Read directly; path attributes and checkout transformations |
+
+## Analysis
+
+### Claim-Source Matrix
+
+| Claim | Source | Verification state |
+| --- | --- | --- |
+| `<rev>:<path>` names a blob or tree in a revision; existence is local | gitrevisions, git-cat-file (2026-09-15) | verified |
+| Unreachable objects are pruned after a grace period; reachability from a kept ref is what persists | git-gc (2026-09-15) | verified |
+| Shallow and partial clones may lack objects | git-clone (2026-09-15) | verified |
+| A superseded decision is kept and marked, not deleted | Nygard 2011 (2026-09-15) | verified |
+| 301/308/410 are live-site response semantics | RFC 9110 (2026-09-15) | verified |
+| Revoke or rotate a leaked secret; a history rewrite changes hashes | GitHub Docs (2026-09-15) | verified |
+| `format` is by default an annotation, not validation | Understanding JSON Schema (2026-09-15) | verified; explanatory pages, not normative |
+| Link-like text in code is not a link | CommonMark 0.31.2 (2026-09-15) | verified |
+| PREMIS object, event, agent and rights distinctions | PREMIS Ontology | unverified (`unreachable`) |
+
+### Findings
+
+Git recovers a deleted document by name from any reachable commit, but a
+shallow or partial clone, or an object pruned after loss of every ref, can lack
+it; reachability, not the object name, is what persists. Primary sources keep
+superseded records and set no retention period or citation policy, so those
+choices are local. Format keywords and Markdown code are not enforcement or
+links, which bears on any comparison that rewrites them.
+
+#### Git object naming and availability
+
+- `<rev>:<path>` "names the blob or tree at the given path in the tree-ish
+  object named by the part before the colon" (gitrevisions, Specifying
+  Revisions). One envelope form can therefore name a document's blob or a
+  package's tree. The syntax does not assert the type; the object at the path
+  decides it.
+- `git cat-file -t` shows "the object type identified by `<object>`", and `-e`
+  exits zero "if `<object>` exists and is a valid object" (git-cat-file). Existence
+  is local and says nothing about reachability or persistence.
+- `git gc` "tries very hard not to delete objects that are referenced anywhere in
+  your repository", while unreachable objects are pruned after a grace period
+  that defaults to two weeks (git-gc, Notes and `gc.pruneExpire`). An object
+  name alone is not a durable reference; reachability from a kept ref is.
+- `--depth` creates "a shallow clone with a history truncated", and `--filter`
+  requests "a subset of reachable objects" (git-clone). A shallow or partial
+  clone may lack the object an envelope names.
+
+#### Superseded decisions and incident records
+
+- The original ADR article states: "If a decision is reversed, we will keep the
+  old one around, but mark it as superseded", with a reference to its
+  replacement (Nygard, 2011). The source keeps superseded decisions and does not
+  restrict citing them. Any local citation rule is a local policy choice; as of
+  2026-11-05 ADR-0053 carries no citation table forward for Stage 98.
+- A postmortem is "a written record of an incident, its impact, the actions
+  taken to mitigate or resolve it, the root cause(s), and the follow-up actions"
+  (SRE Book, Postmortem Culture). Well-written postmortems have action items
+  with "both an owner and a tracking number" (SRE Workbook, Postmortem Culture).
+  Neither chapter sets a retention period or a citation policy.
+
+#### Public URLs and sensitive data
+
+- HTTP 301 and 308 mean the resource "has been assigned a new permanent URI",
+  and 410 means it is "no longer available at any location" and likely
+  permanently (RFC 9110, 15.4.2, 15.4.9, 15.5.11). These are server response
+  semantics for a live site, not version-control provenance.
+- For a leaked secret, GitHub's first step is to "revoke and/or rotate that
+  secret"; rewriting history "will change the hashes" of affected commits
+  (GitHub Docs, Removing sensitive data). This is hosting-product guidance, and
+  it is why a history rewrite cannot be a routine retention step.
+
+#### Schema conditionals and annotations
+
+- `if`/`then`/`else` applies `then` only when `if` is valid, and
+  `dependentRequired` requires properties when a given property is present
+  (Understanding JSON Schema, Conditionals).
+- Annotation keywords such as `default`, `deprecated`, and `readOnly` "aren't
+  strictly used for validation", and "by default, `format` is just an annotation"
+  (Understanding JSON Schema, Annotations and Type). A declared format is not
+  proof that a validator enforces it. These guide pages are explanatory, not the
+  normative specification.
+
+#### Markdown links and code
+
+- A link reference definition "does not correspond to a structural element of a
+  document", and code fence content "is treated as literal text, not parsed as
+  inlines" (CommonMark 0.31.2, 4.7 and 4.5). Link-like text in code is not a
+  link, so a comparison that rewrites it changes bytes a renderer never treats
+  as links.
+
+#### Documentation purpose
+
+- Diátaxis "identifies four distinct needs, and four corresponding forms of
+  documentation" (diataxis.fr). A retained body keeps the purpose it had; an index
+  is navigation, not a fifth form.
+
+### Alternatives
+
+This reference weighs no design alternatives, because it records what primary sources say; the local choices belong to ADR-0053, and a later member that compares options records them here.
+
+## Application and Limits
+
+### Design Implications
+
+Local retention, citation and validation decisions belong to
+[ADR-0053](../../../00.workspace/02.architecture/02.decisions/0053-unvalidated-archive.md) and
+its successors; this reference only informs them.
+
+### Unverified Conditions
+
+PREMIS was `unreachable` (HTTP 403) and supports no claim. The JSON Schema pages
+are explanatory. Hosting-provider garbage collection policy and preservation
+certification are outside the scope. Observations date from 2026-09-15 and
+2026-09-28 and were not re-fetched on 2026-11-05.
+
+#### Authority Boundary
+
+A claim here states what an external source documents. Whether this repository
+retains, cites, or validates something is decided by
+[common governance](../../../../.agents/README.md), the Stage 99 registry, and
+[ADR-0053](../../../00.workspace/02.architecture/02.decisions/0053-unvalidated-archive.md).
+This reference is not policy.

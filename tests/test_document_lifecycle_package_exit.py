@@ -36,7 +36,7 @@ from document_lifecycle import (  # noqa: E402
 PKG = "docs/03.specs/0042-sample-change"
 SPEC_PATH = f"{PKG}/spec.md"
 PLAN_PATH = f"{PKG}/plan.md"
-TASK_PATH = f"{PKG}/tasks/tsk-0001-sample-change.md"
+TASK_PATH = f"{PKG}/01.tasks/tsk-0001-sample-change.md"
 REQ_PATH = "docs/01.requirements/0007-sample-requirement.md"
 PROFILES = {
     SPEC_PATH: "sdlc/spec",
@@ -117,7 +117,7 @@ class PackageExitRuleTest(unittest.TestCase):
         self.assertEqual(self.rules(base, closed()), [(PKG, "R1")])
 
     def test_one_open_task_among_several_keeps_the_package_open(self) -> None:
-        second = PurePosixPath(f"{PKG}/tasks/tsk-0002-sample-change.md")
+        second = PurePosixPath(f"{PKG}/01.tasks/tsk-0002-sample-change.md")
         base = snapshot()
         base[0][second] = LifecycleDocument(
             path=second, profile_id="sdlc/task", status="in-progress"
@@ -212,7 +212,7 @@ class PackageExitStagedWiringTest(unittest.TestCase):
         target.parent.mkdir(parents=True)
         target.write_text(json.dumps(raw))
         for relative in {
-            "docs/99.templates/contracts/document-profile.schema.json",
+            "docs/99.templates/01.contracts/document-profile.schema.json",
             *(
                 item["template_source"]
                 for item in raw["profiles"]

@@ -54,11 +54,11 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 "REQ-0072",
             ),
             "sdlc/architecture-description": (
-                "docs/02.architecture/descriptions/0072-example.md",
+                "docs/02.architecture/01.descriptions/0072-example.md",
                 "AD-0072",
             ),
             "sdlc/architecture-decision": (
-                "docs/02.architecture/decisions/0072-example.md",
+                "docs/02.architecture/02.decisions/0072-example.md",
                 "ADR-0072",
             ),
             "sdlc/spec": (
@@ -70,51 +70,51 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 "SPEC-0072-PLAN-0001",
             ),
             "sdlc/task": (
-                "docs/03.specs/0072-example/tasks/tsk-0002-example.md",
+                "docs/03.specs/0072-example/01.tasks/tsk-0002-example.md",
                 "SPEC-0072-TSK-0002",
             ),
             "operation/guide": (
-                "docs/05.operations/guides/0072-example.md",
+                "docs/05.operations/01.guides/0072-example.md",
                 "GDE-0072",
             ),
             "operation/policy": (
-                "docs/05.operations/policies/0072-example.md",
+                "docs/05.operations/02.policies/0072-example.md",
                 "POL-0072",
             ),
             "operation/runbook": (
-                "docs/05.operations/runbooks/0072-example.md",
+                "docs/05.operations/03.runbooks/0072-example.md",
                 "RUN-0072",
             ),
             "operation/incident": (
-                "docs/05.operations/incidents/2026/inc-0072-example/incident.md",
+                "docs/05.operations/04.incidents/2026/inc-0072-example/incident.md",
                 "inc-2026-0072",
             ),
             "operation/postmortem": (
-                "docs/05.operations/incidents/2026/inc-0072-example/postmortem.md",
+                "docs/05.operations/04.incidents/2026/inc-0072-example/postmortem.md",
                 "inc-2026-0072-PM",
             ),
             "reference/audit": (
-                "docs/90.references/audits/0072-example/m0002-example.md",
+                "docs/90.references/02.audits/0072-example/m0002-example.md",
                 "AUD-0072-m0002",
             ),
             "reference/audit-pack": (
-                "docs/90.references/audits/0072-example/README.md",
+                "docs/90.references/02.audits/0072-example/README.md",
                 "AUD-0072",
             ),
             "reference/research": (
-                "docs/90.references/research/0072-example/m0002-example.md",
+                "docs/90.references/01.research/0072-example/m0002-example.md",
                 "RES-0072-m0002",
             ),
             "reference/research-pack": (
-                "docs/90.references/research/0072-example/README.md",
+                "docs/90.references/01.research/0072-example/README.md",
                 "RES-0072",
             ),
             "reference/data": (
-                "docs/90.references/data/0072-example/m0002-example.md",
+                "docs/90.references/03.data/0072-example/m0002-example.md",
                 "DATA-0072-m0002",
             ),
             "reference/data-pack": (
-                "docs/90.references/data/0072-example/README.md",
+                "docs/90.references/03.data/0072-example/README.md",
                 "DATA-0072",
             ),
         }
@@ -235,12 +235,12 @@ class PathArtifactIdentityTest(unittest.TestCase):
                         target.parent.mkdir(parents=True, exist_ok=True)
                         shutil.copyfile(ROOT / named, target)
             source = (
-                ROOT / "docs/02.architecture/descriptions/"
+                ROOT / "docs/02.architecture/01.descriptions/"
                 "0004-argo-rollouts-progressive-delivery.md"
             ).read_text(encoding="utf-8")
             paths = (
-                "docs/02.architecture/descriptions/0004-alpha.md",
-                "docs/02.architecture/descriptions/0004-beta.md",
+                "docs/02.architecture/01.descriptions/0004-alpha.md",
+                "docs/02.architecture/01.descriptions/0004-beta.md",
             )
             for path in paths:
                 target = root / path
@@ -314,8 +314,8 @@ class RetiredArtifactIdentityTest(unittest.TestCase):
         )
 
     def test_unrelated_new_path_cannot_reuse_base_identity(self) -> None:
-        old = self.document("docs/02.architecture/decisions/0072-old.md", "ADR-0072")
-        new = self.document("docs/02.architecture/decisions/0072-new.md", "ADR-0072")
+        old = self.document("docs/02.architecture/02.decisions/0072-old.md", "ADR-0072")
+        new = self.document("docs/02.architecture/02.decisions/0072-new.md", "ADR-0072")
         diagnostics = LIFECYCLE.artifact_identity_reuse_diagnostics(
             {old.path: old}, {new.path: new}, base_mode="staged"
         )

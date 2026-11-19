@@ -519,7 +519,7 @@ class CommonFormsAdoptionRecordTests(unittest.TestCase):
     def test_the_version_pattern_is_the_one_the_semver_pin_expects(self) -> None:
         schema = json.loads(
             (
-                ROOT / "docs/99.templates/contracts/document-profile.schema.json"
+                ROOT / "docs/99.templates/01.contracts/document-profile.schema.json"
             ).read_text()
         )
         self.assertEqual(

@@ -47,6 +47,6 @@ enforcement, score truth or human calibration was observed for this draft.
 ## Related Documents
 
 - [Evaluation router](README.md)
-- [Quality policy](../governance/quality.md#agent-evaluation-evidence)
-- [Stage 99 template navigation](../../docs/99.templates/templates/README.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md#agent-evaluation-evidence)
+- [Stage 99 template navigation](../../docs/99.templates/02.templates/README.md)
 - [Agent evaluator responsibility](../roles/agent-evaluator.md)

@@ -73,4 +73,4 @@ Per [work lifecycle](../workflows/work-lifecycle.md), this role runs no reposito
 - [Agent registry](registry.json)
 - [doc-writer](doc-writer.md)
 - [supervisor](supervisor.md)
-- [Document authoring](../governance/document-authoring.md)
+- [Document authoring](../../docs/00.workspace/03.process/document-authoring.md)

@@ -81,7 +81,7 @@ secret 값은 이 manifest에 들어오지 않는다. Managed Identity와 Secret
 
 - **Example boundary**: [Azure reference implementation](../README.md)
 - **Infrastructure**: [../infrastructure/README.md](../infrastructure/README.md)
-- **Repository operations**: GitOps platform runbook (`docs/05.operations/runbooks/README.md`)
+- **Repository operations**: GitOps platform runbook (`docs/05.operations/03.runbooks/README.md`)
 
 ## Checks
 

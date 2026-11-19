@@ -9,7 +9,8 @@ and `.agents/governance/` still apply.
 
 ### Allowed Scope
 
-`docs/` is the staged documentation source of truth: requirements (01),
+`docs/` is the staged documentation source of truth: the workspace layer
+shared by people and agents (00), requirements (01),
 architecture (02), change Specs (03), operations (05), references (90), the
 unvalidated archive (98) and the Stage 99 registry and forms. Agents here
 write or review governed documents; they do not change runtime state.
@@ -50,10 +51,10 @@ Canonical sources are the documents linked or named in the opening paragraph and
 #### Local Obligations
 
 1. Follow the [work lifecycle](../.agents/workflows/work-lifecycle.md),
-   [document authoring](../.agents/governance/document-authoring.md) and
-   [document lifecycle](../.agents/governance/document-lifecycle.md) policies.
+   [document authoring](00.workspace/03.process/document-authoring.md) and
+   [document lifecycle](00.workspace/03.process/document-lifecycle.md) policies.
 2. Choose the owning stage and profile from `docs/99.templates/registry.json`
-   and start from the matching form in `docs/99.templates/templates/`.
+   and start from the matching form in `docs/99.templates/02.templates/`.
 3. Write agent-executable sections such as `AI Agent Requirements` and
    `Agent Execution Notes` in English. Human-facing prose follows the
    document language contract of its profile.
@@ -63,11 +64,11 @@ Canonical sources are the documents linked or named in the opening paragraph and
    authority or design input; link the current owner instead.
 6. Do not rewrite completed Task evidence to satisfy a later form.
 7. Each stage has its own `AGENTS.md` with the stage's profiles, states and
-   rules: [01](01.requirements/AGENTS.md), [02](02.architecture/AGENTS.md),
+   rules: [00](00.workspace/AGENTS.md), [01](01.requirements/AGENTS.md), [02](02.architecture/AGENTS.md),
    [03](03.specs/AGENTS.md), [05](05.operations/AGENTS.md),
    [90](90.references/AGENTS.md) and [99](99.templates/AGENTS.md). Read the
    one for the stage you change; `docs/98.archive/` has none.
-8. Select checks under the [quality policy](../.agents/governance/quality.md#ordinary-document-selection).
+8. Select checks under the [quality policy](00.workspace/04.quality/quality.md#ordinary-document-selection).
    Check the affected documents and incoming references for profile,
    relationship, link and lifecycle changes. Governance, Registry, form and
    executable changes select the focused checks registered for those surfaces.

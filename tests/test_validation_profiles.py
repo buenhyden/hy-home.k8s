@@ -61,7 +61,7 @@ class ValidationProfileTests(unittest.TestCase):
 
     def test_common_and_provider_authority_select_all_document_gates(self):
         cases = {
-            ".agents/governance/quality.md": "governance-documents",
+            "docs/00.workspace/04.quality/quality.md": "governance-documents",
             ".agents/workflows/work-lifecycle.md": "governance-documents",
             ".agents/evaluations/harnesses/example-pair/baseline.md": "evaluation-evidence",
             ".agents/roles/registry.json": "agent-shared",

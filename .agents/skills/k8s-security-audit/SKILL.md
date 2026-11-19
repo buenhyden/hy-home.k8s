@@ -11,7 +11,7 @@ metadata:
 disable-model-invocation: true
 ---
 
-Read `.agents/governance/approval-and-safety.md` and the selected role before
+Read `docs/00.workspace/04.quality/approval-and-safety.md` and the selected role before
 using this procedure. Skill invocation grants no authority
 ([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
@@ -156,8 +156,8 @@ A dimension not audited is stated in Dimension Results, never read as clean.
 
 State where each finding stands rather than ticking it off. Accepting an
 unresolved CRITICAL finding weakens security semantics, which
-[approval and safety](../../governance/approval-and-safety.md) places outside
-what an audit may decide for itself, and [the SDLC flow](../../governance/sdlc.md)
+[approval and safety](../../../docs/00.workspace/04.quality/approval-and-safety.md) places outside
+what an audit may decide for itself, and [the SDLC flow](../../../docs/00.workspace/03.process/sdlc.md)
 never infers approval from a checkbox. A report that carries the acceptance
 box also carries the invitation to tick it.
 

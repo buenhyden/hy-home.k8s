@@ -52,7 +52,7 @@ LIFECYCLE_CLI = load_script(
     "task_execution_lifecycle", "validate-document-lifecycle.py"
 )
 TASK = PurePosixPath(
-    "docs/03.specs/0106-stage99-lifecycle-normalization/tasks/tsk-0001-example.md"
+    "docs/03.specs/0106-stage99-lifecycle-normalization/01.tasks/tsk-0001-example.md"
 )
 SPEC = TASK.parent.parent / "spec.md"
 UPSTREAM = "[VAL-P02-001](../spec.md#criteria)"
@@ -269,7 +269,7 @@ def form_plan_text() -> str:
                         "| Verification |",
                         "| --- | --- | --- | --- | --- | --- |",
                         "| WORK-001 | [VAL-P02-001](spec.md#criteria) | Verify | none | "
-                        "[SPEC-0106-TSK-0001](tasks/tsk-0001-example.md) | Focused test |",
+                        "[SPEC-0106-TSK-0001](01.tasks/tsk-0001-example.md) | Focused test |",
                         "",
                         # SPEC-0222: the always core work units table, header-only.
                         "| Work Unit | Outcome | Depends On | Owner | Write Scope "
@@ -1034,7 +1034,7 @@ class CompletionIndexTests(unittest.TestCase):
         plan = (self.root / self.plan).read_text(encoding="utf-8")
         extra = (
             "| WORK-002 | [VAL-P02-001](spec.md#criteria) | Verify | none | "
-            "[SPEC-0106-TSK-0002](tasks/tsk-0002-example.md) | Focused test |\n"
+            "[SPEC-0106-TSK-0002](01.tasks/tsk-0002-example.md) | Focused test |\n"
         )
         first = next(
             line for line in plan.splitlines() if line.startswith("| WORK-001 |")
@@ -1231,7 +1231,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
     package = PurePosixPath("docs/03.specs/0900-approved-parent-fixture")
     spec = package / "spec.md"
     plan = package / "plan.md"
-    task = package / "tasks/tsk-0001-fixture.md"
+    task = package / "01.tasks/tsk-0001-fixture.md"
     CONSTRAINTS = "Keep the approved [Spec](spec.md#scope) parent contract.\n"
     NONE_ROW = "| none | none | none | No durable contract was introduced |"
 
@@ -1391,7 +1391,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             (
                 plan.replace(
                     self.NONE_ROW,
-                    "| Shared lifecycle | [old Task](tasks/tsk-0001-fixture.md) | done | done |",
+                    "| Shared lifecycle | [old Task](01.tasks/tsk-0001-fixture.md) | done | done |",
                 ),
                 "PLAN-PROMOTION",
             ),
@@ -1454,7 +1454,7 @@ class AdoptedExecutionParentTests(unittest.TestCase):
                 "| --- | --- | --- | --- | --- | --- |",
             ] + [
                 f"| {unit} | [VAL-P02-001](spec.md) | Work | {deps} "
-                "| [Task](tasks/tsk-0001-fixture.md) | Check |"
+                "| [Task](01.tasks/tsk-0001-fixture.md) | Check |"
                 for unit, deps in rows
             ]
             if extra:
@@ -1523,9 +1523,9 @@ class AdoptedExecutionParentTests(unittest.TestCase):
 
     def test_completed_task_receipt_names_each_promotion_and_anchor(self) -> None:
         # SDLC-ROWS: each Plan promotion row reaches its anchor and the Task receipt.
-        owner_path = PurePosixPath(".agents/governance/document-lifecycle.md")
+        owner_path = PurePosixPath("docs/00.workspace/03.process/document-lifecycle.md")
         owner_text = (ROOT / owner_path).read_text(encoding="utf-8")
-        target = "../../../.agents/governance/document-lifecycle.md"
+        target = "../../00.workspace/03.process/document-lifecycle.md"
         none_plan = self.plan_text()
         plan = none_plan.replace(
             self.NONE_ROW,
@@ -1559,12 +1559,12 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         )
 
     def test_promotion_requires_current_owner_and_sole_none_decision(self) -> None:
-        owner_path = PurePosixPath(".agents/governance/document-lifecycle.md")
+        owner_path = PurePosixPath("docs/00.workspace/03.process/document-lifecycle.md")
         owner_text = (ROOT / owner_path).read_text(encoding="utf-8")
         plan = self.plan_text()
         valid_row = (
             "| Lifecycle contract | "
-            "[current owner](../../../.agents/governance/document-lifecycle.md) "
+            "[current owner](../../00.workspace/03.process/document-lifecycle.md) "
             "| The sentence is in force | `Current Contract` |"
         )
         current = plan.replace(self.NONE_ROW, valid_row)
@@ -1589,10 +1589,10 @@ class AdoptedExecutionParentTests(unittest.TestCase):
             current
             + "\n| Promotion ID | Target Owner | Acceptance | Evidence |\n"
             + "| --- | --- | --- | --- |\n"
-            + "| Other | [current owner](../../../.agents/governance/document-lifecycle.md) | Done | `Current Contract` |\n",
+            + "| Other | [current owner](../../00.workspace/03.process/document-lifecycle.md) | Done | `Current Contract` |\n",
             current.replace(
-                "../../../.agents/governance/document-lifecycle.md",
-                "tasks/tsk-0001-fixture.md",
+                "../../00.workspace/03.process/document-lifecycle.md",
+                "01.tasks/tsk-0001-fixture.md",
             ),
         ):
             with self.subTest(bad=bad[-90:]):
@@ -1854,12 +1854,12 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         self,
     ) -> None:
         owner = PurePosixPath(
-            "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md"
+            "docs/00.workspace/04.quality/0010-ci-cd-qa-reference-guide.md"
         )
         owner_text = (ROOT / owner).read_text(encoding="utf-8")
         plan = self.plan_text().replace(
             self.NONE_ROW,
-            "| Lifecycle | [Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md) | Own current guidance | Existing receipt |",
+            "| Lifecycle | [Guide](../../00.workspace/04.quality/0010-ci-cd-qa-reference-guide.md) | Own current guidance | Existing receipt |",
         )
         base = {self.spec: self.spec_text(), self.plan: plan, owner: owner_text}
         self.assertNotIn(
@@ -2278,7 +2278,7 @@ class SpecArchitectureColumnTests(unittest.TestCase):
         profile = next(p for p in registry.profiles if p.profile_id == "sdlc/spec")
         path = PurePosixPath("docs/03.specs/0147-example/spec.md")
         text = ROOT.joinpath(
-            "docs/99.templates/templates/specs/spec.template.md"
+            "docs/99.templates/02.templates/03.specs/spec.template.md"
         ).read_text(encoding="utf-8")
         body = text.split("### Lifecycle Traceability", 1)[0]
         body = body.replace("{{TITLE}}", "Example").replace("{{OWNER}}", "platform")

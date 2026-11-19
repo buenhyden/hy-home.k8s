@@ -94,7 +94,7 @@ invocation. The common procedure retains the selected role and user scope.
   never the program. It enforces a boundary only when the intended runtime
   loads it, and its shell observation is advisory: a shell write is reported,
   never blocked. A program that opens files itself stays outside it; see
-  [approval and safety](../.agents/governance/approval-and-safety.md).
+  [approval and safety](../docs/00.workspace/04.quality/approval-and-safety.md).
   Run QA explicitly; edit, Stop, and compaction events do not run whole QA.
   Observed on Claude Code 2.1.327 (2026-11-18, SPEC-0161 EVD-191):
   - after a compaction, the session received the `SessionStart` hook's
@@ -197,4 +197,4 @@ Repository-static or hosted CI results cannot establish runtime success.
 - [Claude Baseline](CLAUDE.md)
 - [Agent Registry](../.agents/roles/registry.json)
 - [Model Selection](../.agents/governance/model-selection.md)
-- [Quality Policy](../.agents/governance/quality.md)
+- [Quality Policy](../docs/00.workspace/04.quality/quality.md)

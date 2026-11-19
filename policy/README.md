@@ -48,7 +48,7 @@ updated: "2026-11-17"
 
 ### Interfaces
 
-- [Quality Policy](../.agents/governance/quality.md)
+- [Quality Policy](../docs/00.workspace/04.quality/quality.md)
 
 #### Security Boundary
 

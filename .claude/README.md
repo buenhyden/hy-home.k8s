@@ -40,8 +40,8 @@ updated: "2026-11-18"
 ### Interfaces
 
 - [Common work lifecycle](../.agents/workflows/work-lifecycle.md)
-- [Approval and safety](../.agents/governance/approval-and-safety.md)
-- [Quality](../.agents/governance/quality.md)
+- [Approval and safety](../docs/00.workspace/04.quality/approval-and-safety.md)
+- [Quality](../docs/00.workspace/04.quality/quality.md)
 - [Model selection](../.agents/governance/model-selection.md)
 
 #### Security Boundary

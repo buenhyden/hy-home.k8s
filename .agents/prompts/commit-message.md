@@ -57,7 +57,7 @@ Generation is not validation. Selected staged file QA checks the exact index;
 the separate paired commit-msg checks validate the actual candidate message. A PR
 title or hosted `style-pr` result is no substitute for that check, including
 for a merge commit message. Follow
-the [Git policy](../governance/git.md)
+the [Git policy](../../docs/00.workspace/03.process/git.md)
 for validating the actual candidate message and observing active hooks;
 workstation configuration is Task evidence, never a shared policy assumption.
 
@@ -76,5 +76,5 @@ enforces the remaining conditions below.
 ## Related Documents
 
 - [Common Prompt Contracts](README.md)
-- [Git Policy](../governance/git.md)
+- [Git Policy](../../docs/00.workspace/03.process/git.md)
 - [Prompt input builder](../../scripts/prompt-input.py)

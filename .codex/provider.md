@@ -55,7 +55,7 @@ team document, not a special automatic entry filename.
   exact path. If the path cannot establish it, use a separately authorized
   review surface with verified read-only enforcement. An independent host CLI
   check does not establish Desktop enforcement. Apply the
-  [approval and safety policy](../.agents/governance/approval-and-safety.md#requirements)
+  [approval and safety policy](../docs/00.workspace/04.quality/approval-and-safety.md#requirements)
   when selecting the authorized review surface.
 - Observed on `codex-cli 0.153.4` (2026-09-06): the client reports `hooks` as a
   stable feature, and the documented surfaces are `.codex/hooks.json` and a
@@ -222,4 +222,4 @@ repository-static PASS establishes none of them.
 - [Codex Baseline](CODEX.md)
 - [Agent Registry](../.agents/roles/registry.json)
 - [Model Selection](../.agents/governance/model-selection.md)
-- [Quality Policy](../.agents/governance/quality.md)
+- [Quality Policy](../docs/00.workspace/04.quality/quality.md)

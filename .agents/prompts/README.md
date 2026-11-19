@@ -57,7 +57,7 @@ script는 선언된 입력을 모아 요청을 표준 출력으로 쓴다. model
 
 #### Add and Find
 
-1. 계약을 추가하기 전에 [document authoring](../governance/document-authoring.md)을
+1. 계약을 추가하기 전에 [document authoring](../../docs/00.workspace/03.process/document-authoring.md)을
    읽고 Stage 99 registry에서 prompt profile을 고른다.
 2. 식별자가 기존 skill 식별자나 command 진입점과 겹치지 않는지 확인한다.
 3. 입력 명령은 `scripts/prompt-input.py`의 닫힌 `ALLOWED_COMMANDS` 목록에 있는
@@ -77,8 +77,8 @@ script는 선언된 입력을 모아 요청을 표준 출력으로 쓴다. model
 
 #### Policy and Templates
 
-- [Quality and Evidence Policy](../governance/quality.md)
-- [Approval and Safety](../governance/approval-and-safety.md)
+- [Quality and Evidence Policy](../../docs/00.workspace/04.quality/quality.md)
+- [Approval and Safety](../../docs/00.workspace/04.quality/approval-and-safety.md)
 
 ### Checks
 

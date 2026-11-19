@@ -9,7 +9,7 @@ parent [`docs/AGENTS.md`](../AGENTS.md) still applies.
 
 Stage 03 holds change packages `####-<slug>/`: `spec.md` owns the change
 contract and acceptance criteria, `plan.md` the work order, risks and
-rollback, and `tasks/tsk-####-<slug>.md` the actual execution, evidence and
+rollback, and `01.tasks/tsk-####-<slug>.md` the actual execution, evidence and
 criterion acceptance. A package exists only while its change is open. The folder also holds
 `work-residue-ledger.json`, the work residue ledger of open handoff, conflict,
 adoption and survey residue as pointers; the Task owns execution state.
@@ -37,12 +37,12 @@ Canonical sources are the documents linked or named in the opening paragraph and
 
 #### Local Obligations
 
-1. Start from `docs/99.templates/templates/specs/{spec,plan,task}.template.md`.
+1. Start from `docs/99.templates/02.templates/03.specs/{spec,plan,task}.template.md`.
    Do not add a README or other router inside a package.
 2. Create a new Spec and Plan as `draft` and approve them in a separate
    commit after review. When scoped user approval and actual batch review
    precede their first Git record, the local first-record approval extension
-   in the [document lifecycle policy](../../.agents/governance/document-lifecycle.md)
+   in the [document lifecycle policy](../00.workspace/03.process/document-lifecycle.md)
    permits both same-package documents to enter at `approved` together only
    with the exact review and approval receipt in the Task's Results table. Keep
    the user's request in the Task's Inputs and Authority; do not invent a draft-only commit or omit observed
@@ -75,7 +75,7 @@ Canonical sources are the documents linked or named in the opening paragraph and
    deleted no later than the exit commit of the package whose Task holds its
    closure row. An unresolved condition defers the deletion. The
    staged `LIFECYCLE-PACKAGE-EXIT` check refuses the wrong shape; see the
-   [document lifecycle policy](../../.agents/governance/document-lifecycle.md).
+   [document lifecycle policy](../00.workspace/03.process/document-lifecycle.md).
 
 ### Execution
 
