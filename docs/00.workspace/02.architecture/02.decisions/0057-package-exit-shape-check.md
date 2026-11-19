@@ -7,6 +7,7 @@ owner: "platform"
 updated: "2026-11-11"
 layer: "architecture"
 artifact_id: "ADR-0057"
+retained_form: "adr-accepted-retained-form"
 ---
 
 # ADR-0057: Package Exit Shape Check

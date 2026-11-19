@@ -114,11 +114,11 @@ class RegistryValueTests(unittest.TestCase):
             {"const": raw_registry()["schema_version"]},
         )
 
-    def test_readable_majors_include_the_implemented_major(self) -> None:
-        majors = AUTHORITY.READABLE_REGISTRY_MAJORS
-        self.assertIn(AUTHORITY.REGISTRY_MAJOR, majors)
-        self.assertEqual(majors, tuple(sorted(set(majors))))
-        self.assertTrue(all(type(major) is int for major in majors))
+    def test_readable_majors_are_the_implemented_major_only(self) -> None:
+        # SPEC-0225 (Q07-H01): no reader keeps an older generation.
+        self.assertEqual(
+            AUTHORITY.READABLE_REGISTRY_MAJORS, (AUTHORITY.REGISTRY_MAJOR,)
+        )
 
     def test_registry_dataclass_carries_the_string(self) -> None:
         registry = CONTRACTS.load_registry(ROOT)
@@ -270,56 +270,17 @@ class HistoryReaderTests(unittest.TestCase):
     def profile_ids(self, raw: dict) -> tuple[str, ...]:
         return tuple(profile["id"] for profile in raw["profiles"])
 
-    def test_an_integer_generation_ten_blob_yields_its_own_profiles(self) -> None:
-        raw = self.own_blob(
-            lambda value: value.update(schema_version=LAST_INTEGER_GENERATION)
-        )
-        result = self.registry_at(self.commit_registry(raw))
-        self.assertIsNot(result, self.current)
-        own = tuple(profile.profile_id for profile in result.profiles)
-        self.assertEqual(own, self.profile_ids(raw))
-        self.assertNotEqual(
-            own, tuple(profile.profile_id for profile in self.current.profiles)
-        )
-        self.assertEqual(result.schema_version, f"{LAST_INTEGER_GENERATION}.0.0")
-
-    def test_generation_ten_task_evidence_has_no_separate_acceptance_section(
+    def test_an_older_generation_blob_falls_back_to_the_current_registry(
         self,
     ) -> None:
-        def legacy_evidence(raw):
-            raw["schema_version"] = 10
-            for profile in raw["profiles"]:
-                if profile["id"] not in {"sdlc/task", "common/template-sdlc-task"}:
-                    continue
-                execution = profile["relationships"]["body_contract"]["task_execution"]
-                execution["evidence_section"] = "Task Evidence"
-                execution["evidence_columns"] = [
-                    "Evidence",
-                    "Criteria",
-                    "Work Unit",
-                    "Check",
-                    "Input",
-                    "Result",
-                    "Location",
-                    "Acceptance",
-                ]
-                del execution["criterion_acceptance_section"]
-                del execution["criterion_acceptance_columns"]
-
-        raw = self.own_blob(legacy_evidence)
-        historical = self.registry_at(self.commit_registry(raw))
-        task = next(p for p in historical.profiles if p.profile_id == "sdlc/task")
-        binding = task.body_contract.task_execution
-        self.assertEqual(binding.evidence_section, "Task Evidence")
-        self.assertEqual(binding.evidence_columns[-1], "Acceptance")
-        self.assertEqual(binding.criterion_acceptance_section, "")
-        self.assertEqual(binding.criterion_acceptance_columns, ())
-
-        current = {**raw, "schema_version": self.current.schema_version}
-        with self.assertRaisesRegex(
-            VALIDATOR.InvocationError, "history registry is malformed"
-        ):
-            self.registry_at(self.commit_registry(current))
+        # SPEC-0225 (Q07-H01): generation 10 and every MAJOR below the current
+        # one are no longer read as themselves.
+        for value in (LAST_INTEGER_GENERATION, f"{AUTHORITY.REGISTRY_MAJOR - 1}.0.0"):
+            with self.subTest(value=value):
+                raw = self.own_blob(
+                    lambda item, value=value: item.update(schema_version=value)
+                )
+                self.assertIs(self.registry_at(self.commit_registry(raw)), self.current)
 
     def test_every_readable_major_is_read_as_itself(self) -> None:
         for major in AUTHORITY.READABLE_REGISTRY_MAJORS:

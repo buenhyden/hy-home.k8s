@@ -101,6 +101,9 @@ class PolicyCodeSection:
     reserved: frozenset[str]
     # path -> code of every record; a code split by SDLC-R036 has two paths.
     paths: Mapping[str, str] = field(default_factory=dict)
+    # SPEC-0225 (Q07-H01): the declared rule ID baseline; a section without the
+    # key is baseline 1. Codes and rule IDs are kept only within one baseline.
+    baseline: int = 1
 
 
 @dataclass(frozen=True)
@@ -980,6 +983,11 @@ def policy_history_diagnostics(
     if base is None:
         return ()
     proposed = context.proposed_policy_section or PolicyCodeSection({}, frozenset())
+    if proposed.baseline != base.baseline:
+        # SPEC-0225 (Q07-H01): a change that declares a new baseline is the
+        # user-approved reset DOCLIFE-R022 names; it may drop reserved codes and
+        # reissue rule IDs. Within one baseline every refusal below holds.
+        return ()
     found: list[LifecycleDiagnostic] = []
 
     def refuse(rule: str, path: PurePosixPath, expected: str, observed: str) -> None:

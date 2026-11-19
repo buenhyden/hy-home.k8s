@@ -66,7 +66,6 @@ class CanonicalFormContractTests(unittest.TestCase):
                     ),
                 )
             ),
-            listed_headings=None,
             body_contract=SimpleNamespace(
                 table_heading="Lifecycle Traceability",
                 required_columns=("ID", "Status"),

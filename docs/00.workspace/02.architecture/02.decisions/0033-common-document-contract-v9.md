@@ -7,6 +7,7 @@ owner: "platform"
 updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0033"
+retained_form: "adr-accepted-retained-form"
 ---
 
 # ADR-0033: Common Document Contract v9 and Governed Router Envelopes

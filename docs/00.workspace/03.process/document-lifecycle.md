@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "3.2.0"
+version: "3.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -58,7 +58,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | DOCLIFE-R019 | Always | A governed document that is no longer current leaves its stage. A stage other than 01, 02 or 03 may delete it or move it under a `docs/98.archive/` disposition directory. In ordinary disposition Git history is its record, recovered with `git show <commit>:<path>`. Stage 99 forms leave through Git history only, and a stage or collection index is retained in place. | `document-lifecycle` | none |
 | DOCLIFE-R020 | Always | `docs/98.archive/` is unvalidated history. It is outside the document inventory: no profile, lifecycle, link, catalog, retention, citation or migration check reads it, and its files carry no envelope, digest or ledger. A change to an Archive body reruns only secret scanning; its README keeps the existing formatting and Markdown-lint selection. The directory keeps its README and disposition structure. A current document links the current owner rather than an archived file; a link into it is not checked, not even for existence. | `.markdownlint-cli2.yaml` | none |
 | DOCLIFE-R021 | Always | A document that moves between active stages keeps no migration record. | Semantic review | none |
-| DOCLIFE-R022 | When a policy document leaves its profile path | A policy document that leaves its profile path moves its registered code to `reserved_codes` in the same change, and only then may its rule IDs leave their Rules tables. The reserved list never shrinks until a user-approved new baseline under the Q-07 contract, so the code and its IDs are never issued again. | `document-lifecycle` | none |
+| DOCLIFE-R022 | When a policy document leaves its profile path | A policy document that leaves its profile path moves its registered code to `reserved_codes` in the same change, and only then may its rule IDs leave their Rules tables. The reserved list never shrinks within one baseline, so the code and its IDs are never issued again; only a user-approved change that raises the registry `policy_rule_ids.baseline` under the Q-07 contract may reset codes and rule IDs. | `document-lifecycle` | none |
 | DOCLIFE-R023 | When a governed document moves to a new path | A move keeps the document when Git pairs the old and new paths, the old path's profile under the base commit's registry equals the new path's profile under the current registry, and the artifact ID is unchanged. The lifecycle comparison then reads the base document at its new path, so state, version, approval and Task evidence rules apply unchanged, and link destinations recomputed only for the move are not a body change. A registered policy code moves with its record, so DOCLIFE-R022 does not apply. A move that changes the profile or the artifact ID stays a rename and is refused. When one policy code is split between a workspace and an agent policy (SDLC-R036), each half lists its rule IDs in its registry record, each rule ID has one owner, and the new half continues the original policy for the comparison. A move never re-issues a document or rule ID and never rewrites historical bodies. | `document-lifecycle` | none |
 
 | Rule ID | Level | Status |

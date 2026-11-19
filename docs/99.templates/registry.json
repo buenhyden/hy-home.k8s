@@ -176,6 +176,7 @@
         ],
         "optional": [
           "layer",
+          "retained_form",
           "supersedes"
         ],
         "forbidden": [],
@@ -188,6 +189,7 @@
           "updated",
           "layer",
           "artifact_id",
+          "retained_form",
           "supersedes"
         ],
         "constants": {
@@ -4203,6 +4205,7 @@
         ],
         "optional": [
           "layer",
+          "retained_form",
           "supersedes"
         ],
         "forbidden": [],
@@ -4215,6 +4218,7 @@
           "updated",
           "layer",
           "artifact_id",
+          "retained_form",
           "supersedes"
         ],
         "constants": {
@@ -4269,7 +4273,7 @@
         "vocabulary_refs": [
           "docs/00.workspace/01.project/glossary.md"
         ],
-        "applicability": "Every sdlc/architecture-decision document under docs/02.architecture/02.decisions/ or docs/00.workspace/02.architecture/02.decisions/ and its template; an accepted ADR from ADR-0001 to ADR-0061 keeps the seven H2 it was accepted with under the retained form.",
+        "applicability": "Every sdlc/architecture-decision document under docs/02.architecture/02.decisions/ or docs/00.workspace/02.architecture/02.decisions/ and its template; an accepted ADR that carries retained_form keeps the seven H2 it was accepted with under the retained form.",
         "consumer_paths": [
           "docs/99.templates/registry.json",
           "docs/99.templates/01.contracts/document-profile.schema.json",
@@ -4287,14 +4291,14 @@
         ],
         "validation": {
           "positive": [
-            "The 36 accepted ADRs of ADR-0001 to ADR-0061 pass the retained form and ADR-0062 and the template pass the form tree, body-contract, table, author-prompt and residue checks.",
+            "The 36 accepted ADRs marked retained_form pass the retained form and ADR-0062 and the template pass the form tree, body-contract, table, author-prompt and residue checks.",
             "An accepted ADR inside the identity bound passes the retained H2 lists and an accepted ADR outside it passes the form tree.",
             "The Options table accepts zero rows, and ADR-0062 keeps its Alternatives table unchanged as a local table of its own after a header-only Options table."
           ],
           "negative": [
-            "An accepted ADR after ADR-0061 that keeps the retained H2 lists fails the form tree.",
+            "An accepted ADR without retained_form that keeps the retained H2 lists fails the form tree.",
             "A retained form of the ADR role without an anchored identity bound, or with one that matches ADR-0062, fails REGISTRY_FORM_EXTENSION.",
-            "A layer key on an accepted ADR after ADR-0061 fails FM-LAYER-ADR.",
+            "A layer key on an accepted ADR without retained_form fails FM-LAYER-ADR.",
             "A Lifecycle Traceability table whose keys differ from the body contract fails REGISTRY_TABLE_BODY_CONTRACT."
           ],
           "regression": [
@@ -4303,7 +4307,7 @@
           ]
         },
         "migration": {
-          "meaning_map": "No accepted ADR changes form (W03-D02): the retained form keeps the seven H2 of ADR-0001 to ADR-0061 and the decision template moves its former prompts into the five H2 and ten H3 of the form, with the Overview prompt under Chosen Option and the Traceability prompt above the Lifecycle Traceability table; the SPEC-0198 Task records each placement. SPEC-0222 WORK-006 binds the form to the core decision role: Alternatives becomes Options before Decision, the Traceability H2 leaves the form with its Sources and Supersession prompts kept as H4 under Authority and Effect and Lifecycle Traceability kept as the local H3 of Decision, and the Alternatives table becomes the core decision.options table; where a required core cell has no source fact (ADR-0062), the core table is rendered header-only and the Alternatives table stays unchanged after it as a local table of its own; the SPEC-0222 Task records each placement.",
+          "meaning_map": "No accepted ADR changes form (W03-D02): the retained form keeps the seven H2 of the ADRs marked retained_form and the decision template moves its former prompts into the five H2 and ten H3 of the form, with the Overview prompt under Chosen Option and the Traceability prompt above the Lifecycle Traceability table; the SPEC-0198 Task records each placement. SPEC-0222 WORK-006 binds the form to the core decision role: Alternatives becomes Options before Decision, the Traceability H2 leaves the form with its Sources and Supersession prompts kept as H4 under Authority and Effect and Lifecycle Traceability kept as the local H3 of Decision, and the Alternatives table becomes the core decision.options table; where a required core cell has no source fact (ADR-0062), the core table is rendered header-only and the Alternatives table stays unchanged after it as a local table of its own; the SPEC-0222 Task records each placement.",
           "retained_history": "Git history retains the seven-heading decision layout, the five-H2 form and their previous templates.",
           "rollback": "Revert the SPEC-0222 WORK-006 commit, then the SPEC-0198 implementation commit."
         },
@@ -19301,15 +19305,15 @@
           {
             "id": "adr-accepted-retained-form",
             "kind": "retained_form",
-            "condition": "an accepted ADR from ADR-0001 to ADR-0061 keeps the seven H2 it was accepted with; an ADR outside that range takes the form tree in every status",
+            "condition": "an accepted ADR that carries retained_form keeps the seven H2 it was accepted with; every other ADR takes the form tree in every status (SPEC-0225: selected by the marker, not by an ID range)",
             "owner": "platform",
             "verification": "tests/test_common_form_tree.py",
-            "review": "when an ADR in the range is replaced by a successor",
-            "removal": "when no ADR in the range remains in the tree, each having been replaced by a successor; the bound is never widened",
+            "review": "when a retained ADR is replaced by a successor",
+            "removal": "when no ADR carrying retained_form remains in the tree, each having been replaced by a successor; the marker is never added to a new ADR",
             "statuses": [
               "accepted"
             ],
-            "identity_bound": "^ADR-(?:000[1-9]|00[1-5][0-9]|006[01])$",
+            "frontmatter_marker": "retained_form",
             "retained_sections": {
               "required": [
                 "Overview",
@@ -21598,9 +21602,9 @@
     },
     {
       "key": "layer",
-      "purpose": "Names the stage a document lives in; kept only on accepted ADRs from ADR-0001 to ADR-0061, which are not edited in place.",
+      "purpose": "Names the stage a document lives in; kept only on accepted ADRs marked retained_form, which are not edited in place.",
       "data_type": "string",
-      "condition": "Allowed, never required, on the architecture decision profile and only on an accepted ADR whose identity matches the retained form's bound, ADR-0001 to ADR-0061 (FM-LAYER-ADR); refused on every other profile and on every ADR after ADR-0061.",
+      "condition": "Allowed, never required, on the architecture decision profile and only on an accepted ADR that carries retained_form (FM-LAYER-ADR); refused on every other profile and on every other ADR.",
       "authoring_owner": "derived",
       "derived_from": "The stage folder of the document path.",
       "duplicate_source": "The stage folder of the document path (W03-D22).",
@@ -21617,6 +21621,30 @@
       "negative_test": {
         "module": "tests/test_frontmatter_key_contract.py",
         "test": "test_layer_refused"
+      }
+    },
+    {
+      "key": "retained_form",
+      "purpose": "Marks an accepted ADR that keeps the retained seven-H2 form it was accepted with, so the form is chosen by the document and not by its ID number (SPEC-0225, Q07-H01).",
+      "data_type": "string, the id of the retained form it selects (adr-accepted-retained-form)",
+      "condition": "Allowed, never required, on the architecture decision profile; only the value adr-accepted-retained-form and only on an accepted ADR (FM-RETAINED-FORM); refused on every other profile.",
+      "authoring_owner": "author",
+      "derived_from": "",
+      "duplicate_source": "",
+      "consumer_paths": [
+        "scripts/document_contracts.py",
+        "scripts/validate-markdown-profiles.py",
+        "scripts/validate-links-and-owners.py"
+      ],
+      "lifecycle": "Kept on a retained ADR until a successor replaces it; never added to a new ADR.",
+      "migration": "Added by SPEC-0225 to the 36 accepted ADRs that the former ID bound ADR-0001 to ADR-0061 selected.",
+      "positive_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_retained_form_accepted"
+      },
+      "negative_test": {
+        "module": "tests/test_frontmatter_key_contract.py",
+        "test": "test_retained_form_refused"
       }
     },
     {
@@ -23150,6 +23178,7 @@
       "recommended",
       "optional"
     ],
+    "baseline": 1,
     "reserved_codes": [
       "PLAT",
       "OBS"

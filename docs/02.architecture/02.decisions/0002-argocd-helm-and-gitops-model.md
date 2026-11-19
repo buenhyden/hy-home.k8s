@@ -7,6 +7,7 @@ owner: "platform"
 updated: "2026-11-05"
 layer: "architecture"
 artifact_id: "ADR-0002"
+retained_form: "adr-accepted-retained-form"
 ---
 
 # ADR-0002: ArgoCD Helm Install with App-of-Apps and ApplicationSet

@@ -2084,8 +2084,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
 
 class RegistryHistoryHeadingTest(unittest.TestCase):
-    """SPEC-0205: the replay of an earlier commit reads the H2 lists its registry
-    carried; a registry of the current MAJOR is read with none."""
+    """SPEC-0225 (Q07-H01): the replay reads only the current MAJOR; a blob of an
+    older generation is classified with the current registry, and no H2 list is
+    built for any registry."""
 
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory(prefix="registry-history-")
@@ -2117,21 +2118,10 @@ class RegistryHistoryHeadingTest(unittest.TestCase):
         )
         return heading_contract(profile).required
 
-    def test_every_earlier_readable_major_replays_with_its_lists(self) -> None:
-        for major in AUTHORITY.READABLE_REGISTRY_MAJORS:
-            if major >= AUTHORITY.REGISTRY_MAJOR:
-                continue
-            with self.subTest(major=major):
-                result = self.registry_at(f"{major}.0.0")
-                self.assertIsNot(result, self.current)
-                self.assertEqual(self.listed(result), ("Overview", "Scope"))
-
-    def test_a_blob_that_holds_the_integer_generation_replays_with_its_lists(
-        self,
-    ) -> None:
-        result = self.registry_at(10)
-        self.assertEqual(result.schema_version, "10.0.0")
-        self.assertEqual(self.listed(result), ("Overview", "Scope"))
+    def test_an_older_generation_falls_back_to_the_current_registry(self) -> None:
+        for value in (10, f"{AUTHORITY.REGISTRY_MAJOR - 1}.0.0"):
+            with self.subTest(schema_version=value):
+                self.assertIs(self.registry_at(value), self.current)
 
     def test_a_registry_of_the_current_major_builds_no_list(self) -> None:
         result = self.registry_at(f"{AUTHORITY.REGISTRY_MAJOR}.0.0")

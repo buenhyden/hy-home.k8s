@@ -7,6 +7,7 @@ owner: "platform"
 updated: "2026-10-03"
 layer: "architecture"
 artifact_id: "ADR-0037"
+retained_form: "adr-accepted-retained-form"
 ---
 
 # ADR-0037: Kiali Operator Installation

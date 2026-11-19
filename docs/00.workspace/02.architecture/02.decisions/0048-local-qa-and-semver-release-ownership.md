@@ -7,6 +7,7 @@ owner: "platform"
 updated: "2026-11-13"
 layer: "architecture"
 artifact_id: "ADR-0048"
+retained_form: "adr-accepted-retained-form"
 ---
 
 # ADR-0048: Local QA and SemVer Release Ownership

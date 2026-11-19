@@ -7,6 +7,7 @@ owner: "platform"
 updated: "2026-11-12"
 layer: "architecture"
 artifact_id: "ADR-0058"
+retained_form: "adr-accepted-retained-form"
 ---
 
 # ADR-0058: Repository Vocabulary in the Knowledge Surface

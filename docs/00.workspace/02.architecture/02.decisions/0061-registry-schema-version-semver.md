@@ -6,6 +6,7 @@ status: "accepted"
 owner: "platform"
 updated: "2026-11-14"
 artifact_id: "ADR-0061"
+retained_form: "adr-accepted-retained-form"
 ---
 
 # ADR-0061: Registry Schema Version SemVer Amendment

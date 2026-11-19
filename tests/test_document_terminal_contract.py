@@ -71,6 +71,22 @@ def clone_registry(registry: dict[str, Any]) -> dict[str, Any]:
     return json.loads(json.dumps(registry))
 
 
+def requirement_sample() -> tuple[PurePosixPath, str, str, str]:
+    """SPEC-0225 (Q07-H01): the first current requirement document, found by
+    route, with its ID, its first FR member and another package's ID, so no
+    test depends on a real number or slug."""
+
+    found = sorted(
+        (REPOSITORY_ROOT / "docs/01.requirements").glob("[0-9][0-9][0-9][0-9]-*.md")
+    )[0]
+    path = PurePosixPath(found.relative_to(REPOSITORY_ROOT).as_posix())
+    rid = f"REQ-{path.name[:4]}"
+    text = found.read_text(encoding="utf-8")
+    first_fr = re.search(rf"{rid}-FR-[0-9]{{4}}", text).group(0)
+    other = f"REQ-{int(path.name[:4]) + 1:04d}"
+    return path, rid, first_fr, other
+
+
 class Stage99TerminalAuthorityTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -546,9 +562,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
     def test_artifact_id_validation_uses_profile_pattern(self) -> None:
         markdown = load_validator("artifact_id_contract", VALIDATOR_PATHS["markdown"])
         registry = markdown.load_registry(REPOSITORY_ROOT)
-        path = PurePosixPath(
-            "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md"
-        )
+        path, rid, first_fr, other = requirement_sample()
         profile = markdown.classify_path(registry, path)
         source = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")
         with tempfile.TemporaryDirectory() as directory:
@@ -556,7 +570,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             target = root / path
             target.parent.mkdir(parents=True)
             target.write_text(
-                source.replace('artifact_id: "REQ-0001"', 'artifact_id: "FR-0001"'),
+                source.replace(f'artifact_id: "{rid}"', 'artifact_id: "FR-0001"'),
                 encoding="utf-8",
             )
             diagnostics = markdown.validate_document(root, path, profile, "strict")
@@ -570,12 +584,10 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             "requirement_package_identity", VALIDATOR_PATHS["markdown"]
         )
         registry = markdown.load_registry(REPOSITORY_ROOT)
-        path = PurePosixPath(
-            "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md"
-        )
+        path, rid, first_fr, other = requirement_sample()
         profile = markdown.classify_path(registry, path)
         source = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")
-        for artifact_id in ("PRD-0001", "SRS-0001", "IFC-0001", "REQ-0002"):
+        for artifact_id in ("PRD-0001", "SRS-0001", "IFC-0001", other):
             with (
                 self.subTest(artifact_id=artifact_id),
                 tempfile.TemporaryDirectory() as directory,
@@ -585,7 +597,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 target.parent.mkdir(parents=True)
                 target.write_text(
                     source.replace(
-                        'artifact_id: "REQ-0001"', f'artifact_id: "{artifact_id}"'
+                        f'artifact_id: "{rid}"', f'artifact_id: "{artifact_id}"'
                     ),
                     encoding="utf-8",
                 )
@@ -602,15 +614,13 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             "requirement_package_members", VALIDATOR_PATHS["markdown"]
         )
         registry = markdown.load_registry(REPOSITORY_ROOT)
-        path = PurePosixPath(
-            "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md"
-        )
+        path, rid, first_fr, other = requirement_sample()
         profile = markdown.classify_path(registry, path)
         source = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")
 
         mutations = {
             "wrong-package": (
-                "REQ-0002-FR-0001",
+                f"{other}-FR-0001",
                 "REQUIREMENT-PACKAGE-MEMBER-ID",
             ),
             "abbreviated": ("FR-0001", "BODY-CONTRACT-IDENTIFIER"),
@@ -621,7 +631,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 target = root / path
                 target.parent.mkdir(parents=True)
                 target.write_text(
-                    source.replace("REQ-0001-FR-0001", identifier),
+                    source.replace(first_fr, identifier),
                     encoding="utf-8",
                 )
                 rule_ids = {
@@ -633,9 +643,9 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             self.assertIn(expected_rule, rule_ids)
 
         for identifier in (
-            "REQ-0001-FR-0001",
-            "REQ-0001-NFR-0001",
-            "REQ-0001-IF-0001",
+            f"{rid}-FR-0001",
+            f"{rid}-NFR-0001",
+            f"{rid}-IF-0001",
         ):
             with (
                 self.subTest(identifier=identifier),
@@ -645,7 +655,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 target = root / path
                 target.parent.mkdir(parents=True)
                 target.write_text(
-                    source.replace("REQ-0001-FR-0001", identifier),
+                    source.replace(first_fr, identifier),
                     encoding="utf-8",
                 )
                 rule_ids = {
@@ -876,9 +886,7 @@ class TerminalStrictValidatorTests(unittest.TestCase):
         ):
             validator.classify_path(
                 ambiguous,
-                PurePosixPath(
-                    "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md"
-                ),
+                requirement_sample()[0],
             )
 
     def test_provider_native_profile_routes_only_claude_markdown(self) -> None:

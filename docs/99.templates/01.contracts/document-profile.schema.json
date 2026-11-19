@@ -1146,8 +1146,13 @@
             "pattern": "\\S"
           }
         },
+        "baseline": {
+          "description": "SPEC-0225 (Q07-H01): the rule ID baseline. Within one baseline a registered code never changes, the reserved codes never shrink and a rule ID never leaves or is reissued; a change that raises it is the user-approved Q-07 reset. Absent means 1.",
+          "type": "integer",
+          "minimum": 1
+        },
         "reserved_codes": {
-          "description": "Codes no policy may take. The list never shrinks until a user-approved new baseline under the Q-07 contract, and the code of a policy that leaves the tree moves to it (SPEC-0206).",
+          "description": "Codes no policy may take. The list never shrinks within one baseline; only a user-approved new baseline under the Q-07 contract may shrink it, and the code of a policy that leaves the tree moves to it (SPEC-0206).",
           "type": "array",
           "uniqueItems": true,
           "items": {
@@ -1475,6 +1480,11 @@
         "identity_bound": {
           "type": "string",
           "pattern": "\\S"
+        },
+        "frontmatter_marker": {
+          "description": "SPEC-0225 (Q07-H01): a frontmatter key whose presence, with the value its schema fixes, selects this retained form instead of an identity bound.",
+          "type": "string",
+          "pattern": "^[a-z][a-z_]*$"
         },
         "body_contract": {
           "description": "SPEC-0221: on a retained form only, where the retained document keeps its body-contract table.",

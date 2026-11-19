@@ -637,20 +637,20 @@ ADR_EXTENSIONS = [
         "id": "adr-accepted-retained-form",
         "kind": "retained_form",
         "condition": (
-            "an accepted ADR from ADR-0001 to ADR-0061 keeps the seven H2 it was "
-            "accepted with; an ADR outside that range takes the form tree in every "
-            "status"
+            "an accepted ADR that carries retained_form keeps the seven H2 it was "
+            "accepted with; every other ADR takes the form tree in every status "
+            "(SPEC-0225: selected by the marker, not by an ID range)"
         ),
         "owner": "platform",
         "verification": "tests/test_common_form_tree.py",
-        "review": "when an ADR in the range is replaced by a successor",
+        "review": "when a retained ADR is replaced by a successor",
         "removal": (
-            "when no ADR in the range remains in the tree, each having been "
-            "replaced by a successor; the bound is never widened"
+            "when no ADR carrying retained_form remains in the tree, each having "
+            "been replaced by a successor; the marker is never added to a new ADR"
         ),
         "authority_ref": "ADR-0059",
         "statuses": ["accepted"],
-        "identity_bound": ADR_BOUND,
+        "frontmatter_marker": "retained_form",
         "retained_sections": ADR_RETAINED_LISTS,
         "body_contract": {
             "section": "Traceability",
@@ -5851,9 +5851,8 @@ class ResearchAuditFormTests(unittest.TestCase):
         self.assertIn("REGISTRY_FORM_EXTENSION", rules_of(raw))
 
 
-REQUIREMENT_PATH = PurePosixPath(
-    "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md"
-)
+# SPEC-0225 (Q07-H01): a synthetic path, so no test depends on a real number.
+REQUIREMENT_PATH = PurePosixPath("docs/01.requirements/0001-synthetic-requirement.md")
 REQUIREMENT_HEADER = REQUIREMENT_COLUMNS
 OLD_REQUIREMENT_HEADER = (
     "Requirement ID",
@@ -6016,10 +6015,14 @@ class RequirementFormTests(unittest.TestCase):
             "docs/99.templates/registry.json",
             "docs/99.templates/01.contracts/document-profile.schema.json",
             "docs/99.templates/02.templates/01.requirements/requirement-package.template.md",
-            "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md",
-            "docs/01.requirements/0002-argo-notifications-slack.md",
-            "docs/01.requirements/0003-workspace-agent-governance-platform.md",
-            "docs/01.requirements/0004-current-local-gitops-platform.md",
+            # SPEC-0225: every current requirement document, found by the
+            # profile route rather than by number.
+            *sorted(
+                path.relative_to(ROOT).as_posix()
+                for path in (ROOT / "docs/01.requirements").glob(
+                    "[0-9][0-9][0-9][0-9]-*.md"
+                )
+            ),
             "docs/01.requirements/README.md",
             "docs/99.templates/README.md",
             "scripts/document_contracts.py",
@@ -6544,7 +6547,8 @@ class TemplateTwinTableTests(unittest.TestCase):
 
 
 class RetainedFormTests(unittest.TestCase):
-    """W03-D02, W03-D52: a retained form applies by status and, when bounded, identity."""
+    """W03-D02, SPEC-0225: a retained form applies by status and, for the ADR role,
+    by the document's retained_form marker; the ADR number no longer decides."""
 
     INSIDE = PurePosixPath("docs/02.architecture/02.decisions/0050-temporary.md")
     OUTSIDE = PurePosixPath("docs/02.architecture/02.decisions/0062-temporary.md")
@@ -6558,7 +6562,7 @@ class RetainedFormTests(unittest.TestCase):
     TREE = md("# Decision title", "## Decision", "### Decision Statement\n\nWe decide.")
 
     @staticmethod
-    def retained(bound: str | None) -> dict:
+    def retained(bound: str | None, marker: str | None = None) -> dict:
         item = {
             "id": "a-legacy",
             "kind": "retained_form",
@@ -6577,6 +6581,8 @@ class RetainedFormTests(unittest.TestCase):
         }
         if bound is not None:
             item["identity_bound"] = bound
+        if marker is not None:
+            item["frontmatter_marker"] = marker
         return item
 
     @staticmethod
@@ -6601,7 +6607,7 @@ class RetainedFormTests(unittest.TestCase):
             "adr",
             ADR,
             cls.sections(),
-            extensions=[cls.retained(ADR_BOUND)],
+            extensions=[cls.retained(None, "retained_form")],
         )
         cls.profile = typed_profiles(raw)[ADR[0]]
         # The kind as SPEC-0168 defined it: no bound, selected by status alone.
@@ -6615,12 +6621,21 @@ class RetainedFormTests(unittest.TestCase):
         cls.unbounded = typed_profiles(unbounded)[GUIDE[0]]
 
     def found(
-        self, text: str, status: str, path: PurePosixPath | None = None
+        self,
+        text: str,
+        status: str,
+        path: PurePosixPath | None = None,
+        marked: bool | None = None,
     ) -> list[str]:
+        # SPEC-0225: the marker stands in for the former ID range, so INSIDE
+        # is marked and OUTSIDE is not unless a test says otherwise.
+        path = path or self.INSIDE
+        if marked is None:
+            marked = path == self.INSIDE
         return sorted(
             item.rule_id
             for item in MARKDOWN._body_diagnostics(
-                path or self.INSIDE, self.profile, text, status
+                path, self.profile, text, status, marked
             )
         )
 
@@ -6656,6 +6671,12 @@ class RetainedFormTests(unittest.TestCase):
                 "BODY-HEADING-UNSUPPORTED",
             ],
         )
+
+    def test_the_marker_not_the_number_selects_the_retained_form(self) -> None:
+        # SPEC-0225 (Q07-H01): a renumbered retained ADR keeps its form, and an
+        # unmarked ADR at a former in-range number takes the tree.
+        self.assertEqual(self.found(self.LEGACY, "accepted", self.OUTSIDE, True), [])
+        self.assertEqual(self.found(self.TREE, "accepted", self.INSIDE, False), [])
 
     def test_the_tree_applies_to_every_other_status_whatever_the_identity(self) -> None:
         for path in (self.INSIDE, self.OUTSIDE):
@@ -6700,12 +6721,19 @@ class RetainedFormTests(unittest.TestCase):
 
     def test_status_reaches_the_check_from_the_frontmatter(self) -> None:
         def document(status: str, number: str, body: str) -> str:
+            # SPEC-0225: number 0050 stands for a retained ADR, so it carries
+            # the marker.
+            marker = (
+                'retained_form: "adr-accepted-retained-form"\n'
+                if number == "0050"
+                else ""
+            )
             return (
                 "---\n"
                 'title: "Decision title"\nversion: "1.0.0"\n'
                 'type: "sdlc/architecture-decision"\n'
                 f'status: "{status}"\nowner: "platform"\nupdated: "2026-11-12"\n'
-                f'artifact_id: "ADR-{number}"\n---\n\n' + body
+                f'artifact_id: "ADR-{number}"\n{marker}---\n\n' + body
             )
 
         def body_rules(status: str, number: str, body: str) -> list[str]:
@@ -6736,28 +6764,32 @@ class RetainedFormTests(unittest.TestCase):
 
 
 class IdentityBoundTests(unittest.TestCase):
-    """SPEC-0198: the bound is an anchored expression; the ADR role's bound is closed."""
+    """SPEC-0198: a bound is an anchored expression; SPEC-0225: the ADR role selects
+    its retained form by a frontmatter marker and carries no bound."""
 
     RULE = "REGISTRY_FORM_EXTENSION"
 
     @staticmethod
     def with_bound(bound: str | None) -> dict:
+        """The ADR retained form with a bound added, or without its marker."""
+
         raw = load_raw()
         form_ = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "adr")
         retained = next(e for e in form_["extensions"] if e["kind"] == "retained_form")
         if bound is None:
-            retained.pop("identity_bound")
+            retained.pop("frontmatter_marker")
         else:
             retained["identity_bound"] = bound
         return raw
 
-    def test_the_repository_bound_matches_exactly_adr_0001_to_adr_0061(self) -> None:
+    def test_the_repository_adr_retained_form_uses_the_marker_and_no_bound(
+        self,
+    ) -> None:
         raw = load_raw()
         form_ = next(f for f in raw["common_forms"]["forms"] if f["form_id"] == "adr")
         retained = next(e for e in form_["extensions"] if e["kind"] == "retained_form")
-        self.assertEqual(retained["identity_bound"], ADR_BOUND)
-        matched = [n for n in range(0, 10000) if re.search(ADR_BOUND, f"ADR-{n:04d}")]
-        self.assertEqual(matched, list(range(1, 62)))
+        self.assertEqual(retained["frontmatter_marker"], "retained_form")
+        self.assertNotIn("identity_bound", retained)
         self.assertEqual(rules_of(raw), set())
 
     def test_an_unanchored_or_uncompilable_bound_is_refused(self) -> None:
@@ -6770,10 +6802,12 @@ class IdentityBoundTests(unittest.TestCase):
             with self.subTest(bound=bound):
                 self.assertIn(self.RULE, rules_of(self.with_bound(bound)))
 
-    def test_a_retained_form_of_the_adr_role_without_a_bound_is_refused(self) -> None:
+    def test_a_retained_form_of_the_adr_role_without_its_marker_is_refused(
+        self,
+    ) -> None:
         self.assertIn(self.RULE, rules_of(self.with_bound(None)))
 
-    def test_a_bound_of_the_adr_role_that_matches_adr_0062_is_refused(self) -> None:
+    def test_any_bound_on_the_adr_role_is_refused(self) -> None:
         for bound in (
             "^ADR-[0-9]{4}$",
             "^ADR-006[0-2]$",
@@ -6862,8 +6896,13 @@ class AdrFormTests(unittest.TestCase):
             ("local_h3", "decision.decision", "Lifecycle Traceability"),
         )
         self.assertEqual(
-            (retained.kind, retained.statuses, retained.identity_bound),
-            ("retained_form", ("accepted",), ADR_BOUND),
+            (
+                retained.kind,
+                retained.statuses,
+                retained.frontmatter_marker,
+                retained.identity_bound,
+            ),
+            ("retained_form", ("accepted",), "retained_form", None),
         )
         # The retained ADRs keep reading their lifecycle table under Traceability.
         self.assertEqual(
@@ -6970,7 +7009,9 @@ class AdrFormTests(unittest.TestCase):
                         [],
                     )
 
-    def test_an_accepted_adr_after_the_range_fails_the_retained_headings(self) -> None:
+    def test_an_accepted_adr_without_the_marker_fails_the_retained_headings(
+        self,
+    ) -> None:
         legacy = md(
             "# ADR-0062: Decision title",
             *(f"## {h}\n\nThe {h} text." for h in ADR_RETAINED_LISTS["required"]),
@@ -6987,7 +7028,7 @@ class AdrFormTests(unittest.TestCase):
             [
                 i.rule_id
                 for i in MARKDOWN._body_diagnostics(
-                    inside, self.profile, legacy, "accepted"
+                    inside, self.profile, legacy, "accepted", True
                 )
             ],
             [],
@@ -8063,45 +8104,31 @@ class HeadingListRemovalTests(unittest.TestCase):
             with self.subTest(profile=profile.profile_id):
                 with self.assertRaises(AttributeError):
                     profile.headings
-                self.assertIsNone(profile.listed_headings)
+                # SPEC-0225: the history list field left with the older MAJORs.
+                with self.assertRaises(AttributeError):
+                    profile.listed_headings
 
-    def test_a_registry_of_an_earlier_major_is_read_with_its_lists(self) -> None:
-        raw = load_raw()
-        earlier = f"{AUTHORITY.REGISTRY_MAJOR - 1}.0.0"
-        raw["schema_version"] = earlier
-        for profile in raw["profiles"]:
-            profile["sections"] = lists_of()
-        bare = profile_of(raw, "governance/provider")
-        bare["document_role"] = None
-        bare.pop("document_role")
-        bare["sections"] = lists_of(
-            required=["Overview", "Scope"], optional=["Notes"], ordered=True
-        )
-        # A profile whose role has a form keeps the form's titles over any list.
-        profile_of(raw, "sdlc/spec")["sections"] = lists_of(required=["Stale"])
-        loaded = CONTRACTS._typed_registry_from_mapping(raw)
-        by_id = {profile.profile_id: profile for profile in loaded.profiles}
-        listed = CONTRACTS.heading_contract(by_id["governance/provider"])
-        self.assertEqual(listed.required, ("Overview", "Scope"))
-        self.assertEqual(listed.allowed, ("Overview", "Scope", "Notes"))
-        self.assertTrue(listed.ordered)
-        spec = CONTRACTS.heading_contract(by_id["sdlc/spec"])
-        self.assertNotIn("Stale", spec.required)
-        self.assertEqual(loaded.schema_version, earlier)
-
-    def test_a_registry_of_the_current_major_is_read_with_no_list(self) -> None:
-        raw = load_raw()
-        for profile in raw["profiles"]:
-            profile["sections"] = lists_of(required=["Stale"])
-            profile.pop("document_role", None)
-        loaded = CONTRACTS._typed_registry_from_mapping(raw)
-        for profile in loaded.profiles:
-            with self.subTest(profile=profile.profile_id):
-                self.assertIsNone(profile.listed_headings)
-                self.assertEqual(
-                    CONTRACTS.heading_contract(profile),
-                    CONTRACTS.HeadingContract(required=(), allowed=()),
-                )
+    def test_a_registry_of_any_major_is_read_with_no_list(self) -> None:
+        # SPEC-0225 (Q07-H01): no reader keeps an older generation, so stale H2
+        # lists are ignored whatever MAJOR the blob names.
+        for version in (
+            f"{AUTHORITY.REGISTRY_MAJOR - 1}.0.0",
+            f"{AUTHORITY.REGISTRY_MAJOR}.0.0",
+        ):
+            raw = load_raw()
+            raw["schema_version"] = version
+            for profile in raw["profiles"]:
+                profile["sections"] = lists_of(required=["Stale"])
+                profile.pop("document_role", None)
+            loaded = CONTRACTS._typed_registry_from_mapping(raw)
+            self.assertEqual(loaded.schema_version, version)
+            for profile in loaded.profiles:
+                with self.subTest(version=version, profile=profile.profile_id):
+                    self.assertFalse(hasattr(profile, "listed_headings"))
+                    self.assertEqual(
+                        CONTRACTS.heading_contract(profile),
+                        CONTRACTS.HeadingContract(required=(), allowed=()),
+                    )
 
     def test_every_profile_meets_the_form_requirement(self) -> None:
         by_id = {profile.profile_id: profile for profile in self.registry.profiles}
@@ -8232,12 +8259,17 @@ class HeadingListRemovalTests(unittest.TestCase):
         path = PurePosixPath(
             "docs/02.architecture/02.decisions/0002-argocd-helm-and-gitops-model.md"
         )
-        body = (ROOT / path).read_text(encoding="utf-8").split("\n---\n", 1)[1]
-        self.assertEqual(MARKDOWN._body_diagnostics(path, adr, body, "accepted"), [])
+        text = (ROOT / path).read_text(encoding="utf-8")
+        body = text.split("\n---\n", 1)[1]
+        # SPEC-0225: the real document carries the marker that selects the form.
+        self.assertIn("\nretained_form: ", text)
+        self.assertEqual(
+            MARKDOWN._body_diagnostics(path, adr, body, "accepted", True), []
+        )
         broken = re.sub(r"(?m)^## Context\s*\n", "", body, count=1)
         rules = {
             item.rule_id
-            for item in MARKDOWN._body_diagnostics(path, adr, broken, "accepted")
+            for item in MARKDOWN._body_diagnostics(path, adr, broken, "accepted", True)
         }
         self.assertIn("BODY-HEADING-REQUIRED", rules)
 
@@ -8973,7 +9005,13 @@ class DecisionCoreBindingTests(unittest.TestCase):
                 '---\ntitle: "Decision title"\nversion: "1.0.0"\n'
                 'type: "sdlc/architecture-decision"\nstatus: "accepted"\n'
                 'owner: "platform"\nupdated: "2026-11-17"\n'
-                f'artifact_id: "ADR-{number}"\n---\n\n# ADR-{number}: Decision title\n\n'
+                f'artifact_id: "ADR-{number}"\n'
+                + (
+                    'retained_form: "adr-accepted-retained-form"\n'
+                    if section == "Traceability"
+                    else ""
+                )
+                + f"---\n\n# ADR-{number}: Decision title\n\n"
                 f"## Context\n\nNo link here.\n\n## {section}\n\nServes {link}.\n"
             )
             context = types.SimpleNamespace(
