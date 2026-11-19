@@ -1,10 +1,10 @@
 ---
 title: "Affected Pull Request GitOps Validation"
-version: "1.0.1"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 artifact_id: "ADR-0063"
 ---
 
@@ -53,6 +53,19 @@ data. The final step requires success for each selected leaf and a skipped
 outcome for each unselected leaf.
 
 ### Authority and Effect
+
+P01 clarification, 2026-11-20: the current scoped user request extends the
+existing selected PR job to affected purpose checks under D01. It retains
+this decision's exact merge binding, stable required name and fail-closed
+aggregation. The earlier base-tool-only execution method is replaced for
+purpose checks by candidate validators and their regressions under the
+read-only, no-secret job; style configuration and the Python dependency lock
+remain reviewed-base inputs. This is the new requested implementation scope,
+not retrospective acceptance or a new claim about the runs below. Current
+selection and evidence rules are owned by QUAL-R006 in the
+[quality policy](../../04.quality/quality.md#requirements); the SPEC-0223 Task
+records P01 implementation, review, hosted results and pending acceptance.
+
 
 The operator accepted this decision on 2026-11-18, on the basis of the
 implemented workflow and the observed aggregate runs. The workflow is

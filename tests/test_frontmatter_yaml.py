@@ -78,6 +78,20 @@ class LoaderRefusalTests(unittest.TestCase):
 
 
 class LoaderValueTests(unittest.TestCase):
+    def test_invocation_reuses_parse_without_mutable_aliases(self) -> None:
+        import frontmatter_yaml as loader
+
+        text = "outer:\n  value: before\n"
+        original = loader.YAML
+        with mock.patch.object(loader, "YAML", wraps=original) as yaml_factory:
+            with CONTRACTS.document_invocation():
+                first = load_frontmatter(text)
+                first["outer"]["value"] = "changed"
+                self.assertEqual(load_frontmatter(text), {"outer": {"value": "before"}})
+                self.assertEqual(yaml_factory.call_count, 1)
+            self.assertEqual(load_frontmatter(text), {"outer": {"value": "before"}})
+            self.assertEqual(yaml_factory.call_count, 2)
+
     def test_timestamps_stay_text(self) -> None:
         loaded = load_frontmatter(
             'date: 2026-11-13\nstamp: 2026-11-13T10:00:00Z\nquoted: "2026-11-13"\n'

@@ -5,14 +5,26 @@ from __future__ import annotations
 import ast
 import copy
 import json
+import os
 import re
 import stat
 import subprocess
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass, field as dataclass_field, replace
 from functools import lru_cache
 from types import MappingProxyType
 from pathlib import Path, PurePosixPath
-from typing import Any, Literal, Mapping, NoReturn, Sequence
+from typing import (
+    Any,
+    Callable,
+    Iterator,
+    Literal,
+    Mapping,
+    NoReturn,
+    Sequence,
+    TypeVar,
+)
 
 import yaml
 
@@ -79,6 +91,77 @@ PROFILE_SCHEMA_PATH = PurePosixPath(
 # schema it may load is the root-registry profile schema.
 SCHEMA_PATH = PROFILE_SCHEMA_PATH
 _UNSET = object()
+
+_T = TypeVar("_T")
+_INVOCATION: ContextVar[dict[object, object] | None] = ContextVar(
+    "document_invocation", default=None
+)
+
+
+@contextmanager
+def document_invocation() -> Iterator[None]:
+    """Share immutable document inputs only inside one bounded validation run."""
+
+    if _INVOCATION.get() is not None:
+        yield
+        return
+    token = _INVOCATION.set({})
+    try:
+        yield
+    finally:
+        _INVOCATION.reset(token)
+
+
+def invocation_cached(key: object, produce: Callable[[], _T]) -> _T:
+    """Memoize an immutable value for the active invocation, if any."""
+
+    cache = _INVOCATION.get()
+    if cache is None:
+        return produce()
+    if key not in cache:
+        cache[key] = produce()
+    return cache[key]  # type: ignore[return-value]
+
+
+def _regular_identity(root: Path, path: PurePosixPath) -> tuple[int, ...]:
+    """Recheck every ancestor and the final inode before a cached text hit."""
+
+    mode = _lstat_named_path(root, path)
+    if not stat.S_ISREG(mode):
+        raise ValueError(f"repository path is not a regular file: {path}")
+    info = os.stat(root / path, follow_symlinks=False)
+    return (
+        info.st_dev,
+        info.st_ino,
+        info.st_mode,
+        info.st_size,
+        info.st_mtime_ns,
+        info.st_ctime_ns,
+    )
+
+
+def _index_identity(root: Path) -> tuple[int, ...] | None:
+    """Identify the active Git index without reading its private contents."""
+
+    raw = _run_git(root, ("rev-parse", "--git-path", "index"))
+    try:
+        name = raw.decode("utf-8").strip()
+    except UnicodeError as exc:
+        raise ValueError("Git index path is not UTF-8") from exc
+    target = Path(name)
+    if not target.is_absolute():
+        target = root / target
+    try:
+        info = target.stat(follow_symlinks=False)
+    except FileNotFoundError:
+        return None
+    return (
+        info.st_dev,
+        info.st_ino,
+        info.st_size,
+        info.st_mtime_ns,
+        info.st_ctime_ns,
+    )
 
 
 @dataclass(frozen=True)
@@ -1854,14 +1937,19 @@ def read_repository_text(root: Path, path: PurePosixPath) -> str:
     """Read one normalized regular file without following path symlinks."""
 
     normalized = _normalize_relative_path(path)
-    mode = _lstat_named_path(root.absolute(), normalized)
-    if not stat.S_ISREG(mode):
-        raise ValueError(f"repository path is not a regular file: {normalized}")
+    absolute = root.absolute()
+    identity = _regular_identity(absolute, normalized)
     try:
-        return read_bounded_utf8(
-            root.absolute() / normalized,
-            max_bytes=DOCUMENT_TEXT_MAX_BYTES,
-        )
+
+        def read() -> str:
+            value = read_bounded_utf8(
+                absolute / normalized, max_bytes=DOCUMENT_TEXT_MAX_BYTES
+            )
+            if _regular_identity(absolute, normalized) != identity:
+                raise ValueError(f"repository path changed during read: {normalized}")
+            return value
+
+        return invocation_cached(("text", absolute, normalized, identity), read)
     except AuthorityError as exc:
         raise ValueError(str(exc)) from exc
 
@@ -1903,9 +1991,18 @@ def enumerate_target_markdown(
     include_paths: tuple[PurePosixPath, ...] = (),
 ) -> TargetInventory:
     root = root.absolute()
-    current_entries = _parse_ls_files_stage_z(
-        _run_git(root, ("ls-files", "--stage", "-z"))
-    )
+    index_identity = _index_identity(root) if _INVOCATION.get() is not None else None
+    if index_identity is None:
+        current_entries = _parse_ls_files_stage_z(
+            _run_git(root, ("ls-files", "--stage", "-z"))
+        )
+    else:
+        current_entries = invocation_cached(
+            ("target-markdown-index-v1", root, index_identity),
+            lambda: _parse_ls_files_stage_z(
+                _run_git(root, ("ls-files", "--stage", "-z"))
+            ),
+        )
 
     current_paths: set[PurePosixPath] = set()
     for entry in current_entries:
@@ -5168,13 +5265,28 @@ def load_internal_payload(
             expected="complete supplied registry, schema and template regularity facts",
             actual="a supplied input is unavailable or malformed",
         )
-    registry = _load_published_contract(
-        root,
-        REGISTRY_PATH,
-        PROFILE_SCHEMA_PATH,
-        raw_payload=raw_registry,
-        raw_schema=raw_schema,
-    )
+    if (
+        _INVOCATION.get() is not None
+        and raw_registry is _UNSET
+        and raw_schema is _UNSET
+    ):
+        identity = (
+            _regular_identity(root, REGISTRY_PATH),
+            _regular_identity(root, PROFILE_SCHEMA_PATH),
+        )
+        published = invocation_cached(
+            ("published-registry-v1", root, identity),
+            lambda: _load_published_contract(root, REGISTRY_PATH, PROFILE_SCHEMA_PATH),
+        )
+        registry = copy.deepcopy(published)
+    else:
+        registry = _load_published_contract(
+            root,
+            REGISTRY_PATH,
+            PROFILE_SCHEMA_PATH,
+            raw_payload=raw_registry,
+            raw_schema=raw_schema,
+        )
     try:
         validate_registry_authority(registry)
     except AuthorityError as exc:

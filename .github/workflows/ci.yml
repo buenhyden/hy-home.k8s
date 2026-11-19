@@ -232,7 +232,7 @@ jobs:
   style-pr:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 30
     permissions:
       contents: read
     steps:
@@ -247,8 +247,17 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: candidate
-          fetch-depth: 2
+          # The affected plan needs the complete PR ancestry, including multi-commit PRs.
+          fetch-depth: 2147483647
           persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install pinned validation runner
+        run: >-
+          python -I -m pip install --disable-pip-version-check --only-binary=:all:
+          --require-hashes -r trusted-base/.github/requirements/ci-validation.txt
       - name: Bind candidate and plan affected checks
         id: plan
         working-directory: candidate
@@ -261,34 +270,39 @@ jobs:
           umask 077
           test "$(git -C ../trusted-base rev-parse HEAD)" = "$BASE_SHA"
           test "$(git rev-list --parents -n 1 HEAD)" = "$MERGE_SHA $BASE_SHA $HEAD_SHA"
-          git diff --no-ext-diff --no-textconv --no-renames --name-status -z HEAD^1 HEAD > "$RUNNER_TEMP/pr-changes.z"
-          lock=false
-          gitops=false
+          test "$(git rev-parse --is-shallow-repository)" = false
+          git diff --no-ext-diff --no-textconv --no-renames --name-status -z "$BASE_SHA" HEAD > "$RUNNER_TEMP/pr-changes.z"
+          : > "$RUNNER_TEMP/pr-purpose-paths.z"
           while IFS= read -r -d '' status; do
             IFS= read -r -d '' path
+            printf '%s\0' "$path" >> "$RUNNER_TEMP/pr-purpose-paths.z"
             case "$status" in
-              A|C|M|R) printf '%s\0' "$path" ;;
-              D|T) ;;
+              A|M|T) printf '%s\0' "$path" ;;
+              D) ;;
               *) exit 1 ;;
-            esac
-            case "$path" in
-              .github/requirements|.github/requirements/*) lock=true ;;
-              gitops|gitops/*) gitops=true ;;
             esac
           done < "$RUNNER_TEMP/pr-changes.z" > "$RUNNER_TEMP/pr-style-paths.z"
           style=false
           if [ -s "$RUNNER_TEMP/pr-style-paths.z" ]; then style=true; fi
-          printf 'style=%s\nlock=%s\ngitops=%s\n' "$style" "$lock" "$gitops" >> "$GITHUB_OUTPUT"
-      - name: Set up Python
-        if: steps.plan.outputs.style == 'true' || steps.plan.outputs.lock == 'true' || steps.plan.outputs.gitops == 'true'
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-        with:
-          python-version: '3.12'
-      - name: Install pinned style runner
-        if: steps.plan.outputs.style == 'true' || steps.plan.outputs.lock == 'true' || steps.plan.outputs.gitops == 'true'
-        run: >-
-          python -I -m pip install --disable-pip-version-check --only-binary=:all:
-          --require-hashes -r trusted-base/.github/requirements/ci-validation.txt
+          export STYLE_REQUIRED="$style"
+          python3 -I scripts/run-validation-lane.py --root . --lane affected --profile pull-request --paths-file "$RUNNER_TEMP/pr-purpose-paths.z" --delimiter nul --base-ref "$BASE_SHA" --plan-output "$RUNNER_TEMP/pr-plan.json"
+          python3 -I - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          plan = json.loads((Path(os.environ["RUNNER_TEMP"]) / "pr-plan.json").read_text())
+          selected = set(plan["validators"])
+          output = Path(os.environ["GITHUB_OUTPUT"])
+          with output.open("a", encoding="utf-8") as stream:
+              for name, enabled in (
+                  ("style", os.environ["STYLE_REQUIRED"] == "true"),
+                  ("purpose", bool(selected)),
+                  ("kustomize", plan["tools"]["kustomize"]),
+                  ("conftest", plan["tools"]["conftest"]),
+              ):
+                  stream.write(f"{name}={'true' if enabled else 'false'}\n")
+          PY
       - name: Lint and format changed files
         id: style
         if: steps.plan.outputs.style == 'true'
@@ -302,28 +316,34 @@ jobs:
           --ruff-config ../trusted-base/.ruff.toml
           --paths-file "$RUNNER_TEMP/pr-style-paths.z" --delimiter nul
           --expected-base-sha "$BASE_SHA"
-      - name: Validate a changed CI lock
-        id: lock
-        if: steps.plan.outputs.lock == 'true'
+      - name: Prepare selected Kustomize renderer
+        if: steps.plan.outputs.kustomize == 'true'
+        run: |
+          set -euo pipefail
+          tool_dir=$(mktemp -d "$RUNNER_TEMP/kustomize.XXXXXX")
+          trap 'rm -f "$tool_dir/kustomize.tar.gz" "$tool_dir/kustomize"; rmdir "$tool_dir"' EXIT
+          curl --fail --location --show-error --silent --max-time 90 \
+            'https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz' \
+            --output "$tool_dir/kustomize.tar.gz"
+          tar -xzf "$tool_dir/kustomize.tar.gz" -C "$tool_dir" kustomize
+          printf '%s  %s\n' 'f7b1605aa5143e0dcbd754a4d43c47ad7a560c540b1356b064d69fe236164494' "$tool_dir/kustomize" | sha256sum --check --status
+          sudo install -m 0755 "$tool_dir/kustomize" /usr/local/bin/kustomize
+      - name: Prepare selected Conftest image
+        if: steps.plan.outputs.conftest == 'true'
+        run: docker pull 'openpolicyagent/conftest:v0.69.0@sha256:a38ba21668929a00dce2fe6ee43d1312228340bce5fd243f47dd0ce90516e558'
+      - name: Validate affected purpose contracts
+        id: purpose
+        if: steps.plan.outputs.purpose == 'true'
         working-directory: candidate
-        run: python -I ../trusted-base/scripts/validate-ci-python-contract.py --root .
-      - name: Validate affected GitOps identities
-        id: gitops
-        if: steps.plan.outputs.gitops == 'true'
-        working-directory: candidate
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: python -I ../trusted-base/scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_SHA"
+        run: python3 -I scripts/run-validation-lane.py --root . --lane affected --plan-file "$RUNNER_TEMP/pr-plan.json" --combine-documents
       - name: Verify affected check outcomes
         if: always()
         env:
           PLAN_OUTCOME: ${{ steps.plan.outcome }}
           STYLE_REQUIRED: ${{ steps.plan.outputs.style }}
           STYLE_OUTCOME: ${{ steps.style.outcome }}
-          LOCK_REQUIRED: ${{ steps.plan.outputs.lock }}
-          LOCK_OUTCOME: ${{ steps.lock.outcome }}
-          GITOPS_REQUIRED: ${{ steps.plan.outputs.gitops }}
-          GITOPS_OUTCOME: ${{ steps.gitops.outcome }}
+          PURPOSE_REQUIRED: ${{ steps.plan.outputs.purpose }}
+          PURPOSE_OUTCOME: ${{ steps.purpose.outcome }}
         run: |
           set -euo pipefail
           test "$PLAN_OUTCOME" = success
@@ -335,5 +355,4 @@ jobs:
             esac
           }
           check style "$STYLE_REQUIRED" "$STYLE_OUTCOME"
-          check lock "$LOCK_REQUIRED" "$LOCK_OUTCOME"
-          check gitops "$GITOPS_REQUIRED" "$GITOPS_OUTCOME"
+          check purpose "$PURPOSE_REQUIRED" "$PURPOSE_OUTCOME"

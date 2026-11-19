@@ -30,8 +30,8 @@ that a setting is in force; only a dated authenticated read-back is.
   (`strict: true`).
 - Require both `ci-summary` and PR-only `style-pr` from GitHub Actions App
   `15368` on a pull request; the former checks branch metadata and the latter
-  checks selected style. Their separate required results carry the style
-  failure to the merge decision.
+  checks selected style and affected purpose leaves. Their separate required
+  results carry any selected failure to the merge decision.
 - Allow merge commits only: squash and rebase merges are disabled at the
   repository level, and linear history is not required, so a merge keeps
   every commit a Task references.
@@ -107,10 +107,11 @@ it, left the tree and Git history recovers it.
 `ci-summary` checks pull-request base and source-prefix
 metadata directly, and reports branch policy as `NOT_APPLICABLE` on main
 push/manual dispatch. Success establishes only this metadata policy; local QA
-has its own input and evidence. The W06 workflow candidate extends `style-pr`
-to aggregate selected style, CI lock and static GitOps identity checks on the PR
-merge candidate using the reviewed base's tool and configuration copies. Its
-job result is separately required. A main push or manual dispatch skips the
+has its own input and evidence. The P01 workflow extends `style-pr` to aggregate selected style and affected
+purpose checks from the cumulative PR merge candidate. Style configuration and
+the hashed dependency lock use reviewed-base copies; purpose validators and
+their regressions execute candidate code with read-only permission and no
+secrets. Its job result remains separately required. A main push or manual dispatch skips the
 PR-only job. The SPEC-0161 Task records the 2026-11-16 read-back of both
 required contexts and `strict` in EVD-166.
 

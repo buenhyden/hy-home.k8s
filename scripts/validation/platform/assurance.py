@@ -15,11 +15,12 @@ import shutil
 import stat
 import subprocess
 import sys
-from typing import Any
+from typing import Any, Sequence
 
 import yaml
 
-from ingress import validate as validate_ingress
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from validation.platform.ingress import validate as validate_ingress  # noqa: E402
 
 
 KUSTOMIZE_SHA256 = "f7b1605aa5143e0dcbd754a4d43c47ad7a560c540b1356b064d69fe236164494"
@@ -53,6 +54,28 @@ GVK_PATTERN = re.compile(
     r"^[a-z0-9.-]+(?:/v[0-9]+(?:alpha|beta)?[0-9]*)?:[A-Z][A-Za-z0-9]*$"
 )
 MAX_MANIFEST_WALK_ENTRIES = 100_000
+INGRESS_CONSUMER_ROOTS = frozenset(
+    {
+        Path("gitops/platform/ingress-routes"),
+        Path("gitops/platform/cert-manager"),
+        Path("gitops/platform/headlamp"),
+        Path("gitops/platform/kiali"),
+        Path("gitops/workloads/adminer"),
+    }
+)
+PROJECT_CONTROL_ROOTS = frozenset(
+    {Path("gitops/apps/root"), Path("gitops/clusters/local")}
+)
+SCOPED_DEPENDENCY_KEYS = frozenset(
+    {"components", "patches", "patchesStrategicMerge", "patchesJson6902"}
+)
+RAW_SCOPE_COMMON_SOURCES = frozenset(
+    {
+        "scripts/validation/platform/assurance.py",
+        "scripts/run-validation-lane.py",
+        "scripts/validation/registry.json",
+    }
+)
 
 
 class AssuranceError(ValueError):
@@ -158,6 +181,104 @@ def validate_manifest_candidates(root: Path) -> None:
         raise AssuranceError("no manifest YAML candidate")
 
 
+def _raw_eligible(path: Path, *, policy: bool) -> bool:
+    if path.suffix not in {".yaml", ".yml"}:
+        return False
+    if path.parts[0] in {"gitops", "infrastructure"}:
+        return True
+    if path.parts[0] != "examples":
+        return False
+    return (
+        policy
+        or path.parts[:2] == ("examples", "sample-app")
+        or any(part in {"kubernetes", "gitops"} for part in path.parts[1:-1])
+    )
+
+
+def _existing_regular(root: Path, relative: Path) -> bool:
+    current = root
+    for index, part in enumerate(relative.parts):
+        current /= part
+        try:
+            mode = current.lstat().st_mode
+        except FileNotFoundError:
+            return False
+        except OSError as exc:
+            raise AssuranceError("manifest path unavailable") from exc
+        if stat.S_ISLNK(mode):
+            raise AssuranceError("linked manifest path")
+        if index < len(relative.parts) - 1 and not stat.S_ISDIR(mode):
+            raise AssuranceError("manifest parent is not a directory")
+    if not stat.S_ISREG(mode):
+        raise AssuranceError("manifest candidate must be a regular file")
+    if current.stat().st_size > 2_000_000:
+        raise AssuranceError("manifest candidate is oversized")
+    return True
+
+
+def manifest_paths(
+    root: Path, changed_paths: Sequence[str] | None = None, *, policy: bool = False
+) -> list[Path]:
+    """Return bounded repo-relative YAML inputs for syntax or Conftest consumers."""
+    if (
+        any(member.is_symlink() for member in (root, *root.parents))
+        or not root.is_dir()
+    ):
+        raise AssuranceError("repository root unavailable")
+    directories = ("gitops", "infrastructure", "examples")
+    for name in directories if policy else directories[:2]:
+        directory = root / name
+        if directory.is_symlink() or not directory.is_dir():
+            raise AssuranceError("required manifest root unavailable")
+    paths = (
+        None
+        if changed_paths is None
+        else [_changed_path(item) for item in changed_paths]
+    )
+    source_change = paths is not None and any(
+        path.as_posix() in RAW_SCOPE_COMMON_SOURCES
+        or path.as_posix().startswith(".github/requirements/")
+        or (
+            policy
+            and (
+                path.as_posix() == "scripts/validate-policy-gates.sh"
+                or path.as_posix().startswith("policy/conftest/")
+            )
+        )
+        or (not policy and path.as_posix() == "scripts/validate-k8s-manifests.sh")
+        for path in paths or []
+    )
+    if paths is not None and not source_change:
+        return sorted(
+            {
+                path
+                for path in paths
+                if _raw_eligible(path, policy=policy) and _existing_regular(root, path)
+            }
+        )
+    selected: list[Path] = []
+    inspected = 0
+    for name in directories:
+        directory = root / name
+        if not directory.exists():
+            continue
+        for path, mode in _walk_no_follow(directory):
+            inspected += 1
+            if inspected > MAX_MANIFEST_WALK_ENTRIES:
+                raise AssuranceError("manifest candidate walk limit exceeded")
+            relative = path.relative_to(root)
+            if not _raw_eligible(relative, policy=policy):
+                continue
+            if not stat.S_ISREG(mode):
+                raise AssuranceError("manifest candidate must be a regular file")
+            if path.stat().st_size > 2_000_000:
+                raise AssuranceError("manifest candidate is oversized")
+            selected.append(relative)
+    if not selected:
+        raise AssuranceError("no YAML manifests matched")
+    return sorted(set(selected))
+
+
 def discover_roots(root: Path) -> list[Path]:
     gitops = root / "gitops"
     if not gitops.is_dir() or gitops.is_symlink():
@@ -171,13 +292,129 @@ def discover_roots(root: Path) -> list[Path]:
     return sorted(roots)
 
 
+def _changed_path(value: str) -> Path:
+    if not isinstance(value, str) or not value or "\\" in value or "\0" in value:
+        raise AssuranceError("invalid changed path")
+    pure = PurePosixPath(value)
+    if (
+        pure.is_absolute()
+        or pure.as_posix() != value
+        or any(part in (".", "..") for part in pure.parts)
+    ):
+        raise AssuranceError("unsafe changed path")
+    return Path(*pure.parts)
+
+
+def _root_dependencies(root: Path, relative: Path) -> set[Path]:
+    dependencies: set[Path] = set()
+    completed: set[Path] = set()
+    active: set[Path] = set()
+
+    def visit(directory: Path) -> None:
+        path = directory / "kustomization.yaml"
+        if path in active:
+            raise AssuranceError("cyclic Kustomize root")
+        if path in completed:
+            return
+        active.add(path)
+        dependencies.add(path)
+        try:
+            document = yaml.load(_read_regular(path, 65536), Loader=UniqueSafeLoader)
+        except (yaml.YAMLError, UnicodeError) as exc:
+            raise AssuranceError("malformed Kustomization") from exc
+        if not isinstance(document, dict) or set(document) - (
+            {"apiVersion", "kind", "resources"} | SCOPED_DEPENDENCY_KEYS
+        ):
+            raise AssuranceError("unsupported Kustomization fields")
+        resources = document.get("resources", [])
+        if not isinstance(resources, list) or any(
+            not isinstance(item, str) for item in resources
+        ):
+            raise AssuranceError("invalid Kustomization resources")
+        components = document.get("components", [])
+        strategic = document.get("patchesStrategicMerge", [])
+        if any(
+            not isinstance(items, list)
+            or any(not isinstance(item, str) for item in items)
+            for items in (components, strategic)
+        ):
+            raise AssuranceError("invalid Kustomization dependencies")
+        for item in [*resources, *components, *strategic]:
+            target = _local_path(root, directory, item)
+            dependencies.add(target)
+            if item in (*resources, *components) and target.is_dir():
+                visit(target)
+        for field in ("patches", "patchesJson6902"):
+            entries = document.get(field, [])
+            if not isinstance(entries, list):
+                raise AssuranceError("invalid Kustomization patches")
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    raise AssuranceError("invalid Kustomization patch")
+                patch_path = entry.get("path")
+                if patch_path is not None:
+                    dependencies.add(_local_path(root, directory, patch_path))
+        active.remove(path)
+        completed.add(path)
+
+    visit(root / relative)
+    return dependencies
+
+
+def affected_roots(root: Path, changed_paths: list[str]) -> list[Path]:
+    """Select local Kustomize roots whose inputs or directory changed."""
+    paths = [_changed_path(path) for path in changed_paths]
+    roots = discover_roots(root)
+    if any(
+        path.as_posix().startswith(
+            ("infrastructure/", "charts/", "crds/", "scripts/validation/platform/")
+        )
+        or path.as_posix()
+        in {
+            "scripts/validate-gitops-change-set.py",
+            "scripts/render-platform-chart-kinds.sh",
+            "scripts/validation/registry.json",
+            ".kube-linter.yaml",
+        }
+        for path in paths
+    ):
+        return roots
+    selected = []
+    for relative in roots:
+        dependencies = _root_dependencies(root, relative)
+        if any(
+            path.is_relative_to(relative)
+            or any(
+                (root / path).is_relative_to(dependency) for dependency in dependencies
+            )
+            for path in paths
+        ):
+            selected.append(relative)
+    if set(selected) & (INGRESS_CONSUMER_ROOTS | {Path("gitops/apps/root")}):
+        selected = sorted(set(selected) | (INGRESS_CONSUMER_ROOTS & set(roots)))
+    if selected and any(relative.parts[0] == "gitops" for relative in selected):
+        selected = sorted(set(selected) | (PROJECT_CONTROL_ROOTS & set(roots)))
+    if not selected:
+        for path in paths:
+            if path.parts[0] != "gitops":
+                continue
+            try:
+                (root / path).lstat()
+            except FileNotFoundError:
+                continue  # A deleted root is checked against the base identity graph.
+            except OSError as exc:
+                raise AssuranceError("changed GitOps path unavailable") from exc
+            raise AssuranceError("changed GitOps path has no Kustomize owner")
+    return selected
+
+
 def _local_path(root: Path, base: Path, value: str) -> Path:
     if not isinstance(value, str) or not value or ":" in value or "\\" in value:
         raise AssuranceError("nonlocal resource reference")
     candidate = PurePosixPath(value)
-    if candidate.is_absolute() or any(part in (".", "..") for part in candidate.parts):
+    if candidate.is_absolute() or any(part == "." for part in candidate.parts):
         raise AssuranceError("unsafe resource path")
-    path = base.joinpath(*candidate.parts)
+    path = Path(os.path.normpath(base.joinpath(*candidate.parts)))
     if not path.is_relative_to(root):
         raise AssuranceError("resource escapes repository")
     for member in (path, *path.parents):
@@ -185,8 +422,6 @@ def _local_path(root: Path, base: Path, value: str) -> Path:
             break
         if member.is_symlink():
             raise AssuranceError("linked resource path")
-    if not path.is_relative_to(base):
-        raise AssuranceError("resource escapes Kustomize root")
     return path
 
 
@@ -222,6 +457,8 @@ def check_kustomization(
         if target.is_dir():
             check_kustomization(root, target.relative_to(root), visited)
         elif target.suffix in {".yaml", ".yml"}:
+            if not target.is_relative_to(directory):
+                raise AssuranceError("resource escapes Kustomize root")
             _read_regular(target, 2_000_000)
         else:
             raise AssuranceError("unsupported local resource")
@@ -376,10 +613,53 @@ def _render(root: Path, relative: Path, binary: Path) -> list[dict[str, Any]]:
     return documents
 
 
-def validate_project_scope(rendered: dict[str, list[dict[str, Any]]]) -> set[str]:
+def _raw_identity_index(
+    root: Path, relative: Path
+) -> dict[tuple[str, str, str], dict[str, Any]]:
+    """Index unchanged roots under the strict resources-only Kustomization contract."""
+    check_kustomization(root, relative)
+    documents: dict[tuple[str, str, str], dict[str, Any]] = {}
+    for path in sorted(_root_dependencies(root, relative)):
+        if path.name == "kustomization.yaml" or path.suffix not in {".yaml", ".yml"}:
+            continue
+        try:
+            parsed = list(
+                yaml.load_all(_read_regular(path, 2_000_000), Loader=UniqueSafeLoader)
+            )
+        except (yaml.YAMLError, UnicodeError) as exc:
+            raise AssuranceError("malformed unchanged manifest") from exc
+        if not parsed:
+            raise AssuranceError("empty unchanged manifest")
+        for document in parsed:
+            if not isinstance(document, dict) or document.get("kind") == "List":
+                raise AssuranceError("unsupported unchanged manifest")
+            api_version, kind = document.get("apiVersion"), document.get("kind")
+            metadata = document.get("metadata")
+            if (
+                not isinstance(api_version, str)
+                or not isinstance(kind, str)
+                or not isinstance(metadata, dict)
+                or not isinstance(metadata.get("name"), str)
+            ):
+                raise AssuranceError("unchanged manifest identity missing")
+            gvk = f"{api_version}:{kind}"
+            namespace = metadata.get("namespace", "")
+            if not GVK_PATTERN.fullmatch(gvk) or not isinstance(namespace, str):
+                raise AssuranceError("unchanged manifest identity invalid")
+            identity = (gvk, namespace, metadata["name"])
+            if identity in documents:
+                raise AssuranceError("duplicate unchanged rendered resource")
+            documents[identity] = document
+    return documents
+
+
+def validate_project_scope(
+    rendered: dict[str, list[dict[str, Any]]],
+    repository_roots: set[str] | None = None,
+) -> set[str]:
     """Check rendered repository roots against their declared Argo project pairs."""
 
-    roots = set(rendered)
+    roots = set(rendered) if repository_roots is None else repository_roots
     projects: dict[str, tuple[set[tuple[str, str]], set[tuple[str, str]]]] = {}
     assignments: dict[str, str] = {}
     failed: set[str] = set()
@@ -538,12 +818,21 @@ def validate_project_scope(rendered: dict[str, list[dict[str, Any]]]) -> set[str
     return failed
 
 
-def run(root: Path, binary: Path) -> list[dict[str, str]]:
+def run(
+    root: Path, binary: Path, changed_paths: list[str] | None = None
+) -> list[dict[str, str]]:
+    if changed_paths == []:
+        if root.is_symlink() or not root.is_dir():
+            raise AssuranceError("repository root unavailable")
+        return []
     validate_manifest_candidates(root)
-    roots = discover_roots(root)
+    all_roots = discover_roots(root)
+    roots = all_roots if changed_paths is None else affected_roots(root, changed_paths)
+    scoped = len(roots) < len(all_roots)
     rows: list[dict[str, str]] = []
     tool_ready = _tool_is_pinned(binary)
     all_documents: dict[tuple[str, str, str], dict[str, Any]] = {}
+    identity_roots: dict[tuple[str, str, str], set[str]] = {}
     rendered_by_root: dict[str, list[dict[str, Any]]] = {}
     all_rendered = tool_ready
     conflicting_roots: set[str] = set()
@@ -590,8 +879,10 @@ def run(root: Path, binary: Path) -> list[dict[str, str]]:
                 previous = all_documents.get(identity)
                 if previous is not None and previous != document:
                     all_rendered = False
+                    conflicting_roots.update(identity_roots[identity])
                     conflicting_roots.add(target)
                 all_documents[identity] = document
+                identity_roots.setdefault(identity, set()).add(target)
         for gvk, entries in sorted(grouped.items()):
             row_target = f"{target}#{gvk}"
             classification = schema_class(gvk)
@@ -626,17 +917,39 @@ def run(root: Path, binary: Path) -> list[dict[str, str]]:
                         "FAIL" if failed else "PASS",
                     )
                 )
+    if scoped and tool_ready:
+        unchanged: dict[tuple[str, str, str], dict[str, Any]] = {}
+        for relative in sorted(set(all_roots) - set(roots)):
+            if relative.parts[0] != "gitops":
+                continue
+            for identity, document in _raw_identity_index(root, relative).items():
+                previous = unchanged.get(identity)
+                if previous is not None and previous != document:
+                    raise AssuranceError("conflicting unchanged GitOps identity")
+                unchanged[identity] = document
+                selected = all_documents.get(identity)
+                if selected is not None and selected != document:
+                    all_rendered = False
+                    conflicting_roots.update(identity_roots[identity])
     project_failed: set[str] = set()
     ingress_failed = False
+    if scoped and all_rendered:
+        for control in sorted(PROJECT_CONTROL_ROOTS & set(all_roots) - set(roots)):
+            try:
+                rendered_by_root[control.as_posix()] = _render(root, control, binary)
+            except (AssuranceError, OSError, subprocess.TimeoutExpired):
+                all_rendered = False
     if all_rendered:
         project_failed = validate_project_scope(
             {
                 name: docs
                 for name, docs in rendered_by_root.items()
                 if name.startswith("gitops/")
-            }
+            },
+            {relative.as_posix() for relative in all_roots},
         )
-        ingress_failed = bool(validate_ingress(root, list(all_documents.values())))
+        if not scoped or set(roots) >= (INGRESS_CONSUMER_ROOTS & set(all_roots)):
+            ingress_failed = bool(validate_ingress(root, list(all_documents.values())))
     for relative in roots:
         target = relative.as_posix()
         if target not in rendered_by_root:
@@ -697,12 +1010,35 @@ def run(root: Path, binary: Path) -> list[dict[str, str]]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", default=".")
+    parser.add_argument("--changed-path", action="append", default=None)
+    parser.add_argument("--manifest-paths", action="store_true")
+    parser.add_argument("--policy-targets", action="store_true")
     args = parser.parse_args()
+    if args.policy_targets and not args.manifest_paths:
+        parser.error("--policy-targets requires --manifest-paths")
+    if args.manifest_paths:
+        try:
+            paths = manifest_paths(
+                Path(args.root).absolute(),
+                args.changed_path,
+                policy=args.policy_targets,
+            )
+        except AssuranceError as exc:
+            print(f"manifest path selection failed: {exc}", file=sys.stderr)
+            return 1
+        except OSError:
+            print("manifest path selection failed: filesystem error", file=sys.stderr)
+            return 1
+        sys.stdout.buffer.write(
+            b"".join(os.fsencode(path.as_posix()) + b"\0" for path in paths)
+        )
+        return 0
     binary_name = shutil.which("kustomize")
     try:
         rows = run(
             Path(args.root).resolve(),
             Path(binary_name) if binary_name else Path("/nonexistent/kustomize"),
+            args.changed_path,
         )
     except (AssuranceError, OSError):
         print("platform assurance internal failure", file=sys.stderr)

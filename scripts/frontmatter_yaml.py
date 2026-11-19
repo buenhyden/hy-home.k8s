@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import copy
+import sys
 from typing import Any
 
 try:
@@ -74,6 +76,19 @@ _Constructor.add_constructor(_TIMESTAMP, SafeConstructor.construct_yaml_str)
 
 def load_frontmatter(text: str) -> Any:
     """Return the plain Python value of one frontmatter block or raise FrontmatterError."""
+
+    cache_owner = sys.modules.get("document_contracts")
+    if cache_owner is None:
+        return _parse_frontmatter(text)
+    return copy.deepcopy(
+        cache_owner.invocation_cached(
+            ("frontmatter-yaml-1.2", text), lambda: _parse_frontmatter(text)
+        )
+    )
+
+
+def _parse_frontmatter(text: str) -> Any:
+    """Parse one block; the caller owns any mutable result it receives."""
 
     yaml = YAML(typ="safe", pure=True)
     yaml.version = (1, 2)

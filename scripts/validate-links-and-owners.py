@@ -7,6 +7,7 @@ import argparse
 import bisect
 import collections
 import html
+import importlib.util
 import json
 import os
 import posixpath
@@ -14,6 +15,7 @@ import re
 import stat
 import sys
 import unicodedata
+from contextlib import nullcontext, redirect_stdout
 from dataclasses import dataclass, field as dataclass_field
 from functools import cached_property, lru_cache
 from pathlib import Path
@@ -49,6 +51,8 @@ from document_contracts import (
     task_status,
     task_contract_issues,
     direct_parent,
+    document_invocation,
+    invocation_cached,
     MARKDOWN_TEMPLATE_PLACEHOLDER,
 )
 
@@ -2412,11 +2416,20 @@ def _heading_slug(heading: str) -> str:
     return re.sub(r"[^\w\- ]", "", text.casefold()).strip(" ").replace(" ", "-")
 
 
-@lru_cache(maxsize=1024)
 def root_form_structure(
     text: str,
 ) -> tuple[Mapping[int, tuple[int, str]], Mapping[int, bool], bool]:
     """Return root headings, fence lines and fence completeness for a form."""
+
+    return invocation_cached(
+        ("root-form-structure-v1", text), lambda: _parse_root_form_structure(text)
+    )
+
+
+@lru_cache(maxsize=1024)
+def _parse_root_form_structure(
+    text: str,
+) -> tuple[Mapping[int, tuple[int, str]], Mapping[int, bool], bool]:
 
     headings = {
         index: (
@@ -4643,10 +4656,15 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--include-path", action="append", default=[])
     parser.add_argument("--change-scope", action="store_true")
     parser.add_argument("--changed-path", action="append", default=[])
+    parser.add_argument(
+        "--with-profiles",
+        action="store_true",
+        help="run the Markdown profile leaf in the same document invocation",
+    )
     return parser
 
 
-def main(argv: Sequence[str] | None = None) -> int:
+def _main_single(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
         if args.change_scope != bool(args.changed_path):
@@ -4732,6 +4750,72 @@ def main(argv: Sequence[str] | None = None) -> int:
     ) as exc:
         print(f"configuration error: {exc}", file=sys.stderr)
         return 2
+
+
+def _profiles_main(arguments: Sequence[str]) -> int:
+    """Invoke the existing profile leaf in this process and invocation."""
+
+    profile_path = Path(__file__).with_name("validate-markdown-profiles.py")
+    specification = importlib.util.spec_from_file_location(
+        "_combined_markdown_profiles", profile_path
+    )
+    if specification is None or specification.loader is None:
+        print("configuration error: Markdown profile leaf unavailable", file=sys.stderr)
+        return 2
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = module
+    try:
+        specification.loader.exec_module(module)
+    except ImportError as exc:
+        print(
+            f"configuration error: Markdown profile leaf unavailable: {exc}",
+            file=sys.stderr,
+        )
+        return 2
+    return module.main(arguments)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    arguments = list(sys.argv[1:] if argv is None else argv)
+    leaf_report = "--leaf-report" in arguments
+    arguments = [item for item in arguments if item != "--leaf-report"]
+    if leaf_report and "--with-profiles" not in arguments:
+        print(
+            "configuration error: leaf report requires combined mode", file=sys.stderr
+        )
+        return 2
+    if "--with-profiles" not in arguments:
+        return _main_single(arguments)
+    if arguments.count("--with-profiles") != 1:
+        print("configuration error: duplicate combined document mode", file=sys.stderr)
+        return 2
+    shared_arguments = [item for item in arguments if item != "--with-profiles"]
+    if _parser().parse_args(arguments).format == "json":
+        print(
+            "configuration error: combined document mode requires text output",
+            file=sys.stderr,
+        )
+        return 2
+    with (
+        document_invocation(),
+        redirect_stdout(sys.stderr) if leaf_report else nullcontext(),
+    ):
+        links_result = _main_single(shared_arguments)
+        profiles_result = _profiles_main(shared_arguments)
+    if leaf_report:
+        print(
+            json.dumps(
+                {
+                    "version": 1,
+                    "results": {
+                        "links-and-owners": links_result,
+                        "markdown-profiles": profiles_result,
+                    },
+                },
+                separators=(",", ":"),
+            )
+        )
+    return max(links_result, profiles_result)
 
 
 if __name__ == "__main__":

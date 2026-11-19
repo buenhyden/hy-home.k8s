@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.15.10"
+version: "0.16.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-20"
 ---
 # scripts
 
@@ -46,7 +46,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `githooks/chained-hook.sh`와 그 `pre-commit`, `commit-msg`, `pre-push` 링크 | 사용자의 전역 Git hook을 먼저 실행한 뒤 이 workspace의 hook을 실행하고, 처음 나온 0이 아닌 상태를 반환 |
 | `commit-message-exceptions.py` | `.pre-commit-config.yaml`의 commit-msg stage에서 pinned Commitizen 뒤에 실행한다. `.cz.toml`의 생성 메시지 pattern으로 Git Merge/Revert 생성 형식의 구문만 예외로 인정하며 prefix 위조를 거부한다. 같은 형식의 수동 메시지도 통과하므로 실제 생성·merge/revert·provenance를 증명하지 않는다. 일반 메시지 문법은 Commitizen, PR title은 trusted-base authored schema가 소유하고 이 guard를 쓰지 않는다. hook 등록만으로 실제 로딩·실행을 주장하지 않는다. |
 | `validate-affected-surfaces.py` | registry와 추적 경로 coverage 검증 |
-| `run-validation-lane.py` | 현재 v4 소스의 affected·staged 선택 입력을 제한해 실행하고 결과를 정규화한다. 선택된 변경 경로를 문서 reader에 전달하며, 인자 수나 크기 한계를 넘으면 reader의 전체 검사를 사용한다. 구형 all-files 집계 경로 제거의 검증·수용 상태는 [Stage 03 Spec navigation](../docs/03.specs/README.md)에서 찾는 SPEC-0107 Task가 기록한다. |
+| `run-validation-lane.py` | 현재 v4 소스의 affected·staged 선택 입력을 제한해 실행하고 결과를 정규화한다. PR은 `pull-request` profile의 cumulative base-to-merge 계획을 `--plan-output`으로 한 번 만들고 `--plan-file`로 소비한다. `--combine-documents`는 links/profile의 invocation parse를 공유하며 manifest는 변경 의존 root를 받는다. 선택된 변경 경로를 문서 reader에 전달하며, 인자 수나 크기 한계를 넘으면 reader의 전체 검사를 사용한다. 구형 all-files 집계 경로 제거의 검증·수용 상태는 [Stage 03 Spec navigation](../docs/03.specs/README.md)에서 찾는 SPEC-0107 Task가 기록한다. |
 | `validate-selected-style.py` | 변경 경로에 검토된 style hook을 일회용 저장소에서 실행해 검사한다. |
 | `validate-selected-nonstyle.py` | 검토된 non-style hook을 격리된 QA 스냅샷의 선택 경로에 실행한다. |
 | `qa.py` | 지원되는 QA 진입점. profile의 gate ID를 registry에서 해석해, 격리된 작업 트리나 정확한 index 스냅샷에서 실행한다. 한 실행에서 캡처한 스냅샷 트리를 gate 입력 identity에도 재사용한다. validator argv나 규칙 구현은 담지 않는다. |

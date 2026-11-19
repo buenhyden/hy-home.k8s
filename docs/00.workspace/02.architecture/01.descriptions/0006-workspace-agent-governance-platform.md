@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture Description (AD)"
-version: "3.3.0"
+version: "3.4.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 artifact_id: "AD-0006"
 ---
 
@@ -304,17 +304,18 @@ protected workflow control requires separate remote evidence. Historical hosted
 full QA `NOT_RUN` records remain historical evidence. The `style-pr` job in
 `.github/workflows/ci.yml` binds the exact PR merge commit and both of its
 parents to the reviewed base and head. From the cumulative base-to-merge change
-it selects the style, CI lock and static GitOps identity checks, and runs each
-with reviewed base tooling against the candidate merge tree under read-only
-permission and without secrets. Its final step is a fail-closed aggregate: each
-selected leaf must succeed and each unselected leaf must be skipped. Each leaf
-reports its own guarantee. Local render, schema and unit evidence have their
-own inputs. [ADR-0063](../02.decisions/0063-affected-pr-gitops-validation.md),
-accepted by the operator on 2026-11-18, records this amendment of the ADR-0048
-hosted validation clause. The aggregate was observed on PR runs with the CI
-lock and GitOps leaves skipped for absent affected paths; a hosted run in which
-either leaf is selected and executes remains unobserved, and the first PR that
-changes `gitops/` or the CI lock owns that observation. Actual remote
+it selects style and affected purpose checks through the validation registry.
+One immutable invocation plan covers every cumulative changed path, including
+both sides of a move and deleted paths. Purpose code runs from the candidate
+with a read-only token, no secrets and no persisted credentials; style config
+and the hashed Python dependency lock come from the reviewed base. Shared
+invocation caches let the link and profile leaves reuse registry, index,
+text, frontmatter and heading parsing. Manifest rendering follows selected
+roots and their dependencies, with unsupported CRD schema kept separate from
+PASS. The final aggregate requires successful selected leaves and explicit
+nonselection for N/A. [ADR-0063](../02.decisions/0063-affected-pr-gitops-validation.md)
+preserves the earlier evidence and records the P01 scope clarification;
+QUAL-R006 owns the current evidence boundary. Actual remote
 protections, settings and execution require separate observation. W10 owns the
 review routing target for high-risk independent review and low-risk author
 review.
@@ -455,7 +456,7 @@ historical evidence rather than parallel operating instructions.
 | [REQ-0003-FR-0014](../../../01.requirements/0003-workspace-agent-governance-platform.md) | Stage-specific purpose boundaries and no parallel Release family | [ADR-0030](../02.decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0033](../02.decisions/0033-common-document-contract-v9.md), [ADR-0047](../02.decisions/0047-agent-contract-and-resource-ownership.md) |
 | [REQ-0003-FR-0015](../../../01.requirements/0003-workspace-agent-governance-platform.md) | Consumer succession and accepted manual pre-disposition review; completed package evidence is in REQ-0003 Archived Lineage | [ADR-0030](../02.decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0031](../02.decisions/0031-current-corpus-retention-and-validation-ownership.md), [ADR-0047](../02.decisions/0047-agent-contract-and-resource-ownership.md), [ADR-0056](../02.decisions/0056-manual-document-disposition-review.md), SPEC-0152 (left the tree; Git history recovers it) |
 | [REQ-0003-FR-0016](../../../01.requirements/0003-workspace-agent-governance-platform.md) | Local Registry dispatch, proportional selection and independent failure meanings | [ADR-0031](../02.decisions/0031-current-corpus-retention-and-validation-ownership.md), [ADR-0047](../02.decisions/0047-agent-contract-and-resource-ownership.md), [ADR-0048](../02.decisions/0048-local-qa-and-semver-release-ownership.md) |
-| [REQ-0003-FR-0017](../../../01.requirements/0003-workspace-agent-governance-platform.md) | Local QA, hosted metadata and the hosted PR aggregate of affected style, CI lock and static GitOps identity checks use separate evidence; the aggregate binds the exact PR merge and both parents and runs reviewed base tooling. | [ADR-0048](../02.decisions/0048-local-qa-and-semver-release-ownership.md), [ADR-0063](../02.decisions/0063-affected-pr-gitops-validation.md) |
+| [REQ-0003-FR-0017](../../../01.requirements/0003-workspace-agent-governance-platform.md) | Local QA, hosted metadata and the hosted PR aggregate of selected style and affected purpose checks use separate evidence; the aggregate binds the exact PR merge and both parents, retains reviewed-base style configuration and runs candidate purpose regressions with a read-only token. | [ADR-0048](../02.decisions/0048-local-qa-and-semver-release-ownership.md), [ADR-0063](../02.decisions/0063-affected-pr-gitops-validation.md) |
 | [REQ-0003-FR-0018](../../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-index delivery, no repeated identical leaf, and W10 risk-based review routing | [ADR-0048](../02.decisions/0048-local-qa-and-semver-release-ownership.md), [ADR-0052](../02.decisions/0052-single-main-trunk-branch-strategy.md) |
 | [REQ-0003-FR-0019](../../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local sequencing with unchanged historical program lineage | [ADR-0030](../02.decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0047](../02.decisions/0047-agent-contract-and-resource-ownership.md), [ADR-0060](../02.decisions/0060-work-residue-ledger-amendment.md) |
 | [REQ-0003-FR-0020](../../../01.requirements/0003-workspace-agent-governance-platform.md) | Ordinary manual hold, authority and exact-source recovery checks. Q07 owns the separately authorized final removal scope. | [ADR-0030](../02.decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0031](../02.decisions/0031-current-corpus-retention-and-validation-ownership.md), [ADR-0053](../02.decisions/0053-unvalidated-archive.md), [ADR-0056](../02.decisions/0056-manual-document-disposition-review.md), SPEC-0152 (left the tree; Git history recovers it) |

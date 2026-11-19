@@ -1,10 +1,10 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.6.2"
+version: "0.7.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-11-17"
+updated: "2026-11-20"
 ---
 # GitHub Configuration Hub
 
@@ -35,9 +35,9 @@ updated: "2026-11-17"
   `base..head` 새 commit 메시지를 해당 schema와 생성 Merge/Revert 형태로
   검사한다. 생성 예외는 title에는 없다. main push와 manual dispatch의
   branch·title·commit 대상은 `NOT_APPLICABLE`이다. 별도 `style-pr` job은 main 대상 PR에서만
-  선택된 style·CI lock·GitOps 정적 검사를 집계한다. 과거 hosted full QA `NOT_RUN` 기록은 Task 역사에
-  남고 현재 `ci-summary`의 완료 gate가 아니다. 어느 job의 성공도 로컬
-  목적·단위·문서 내용 검사의 통과를 뜻하지 않는다.
+  선택된 style과 변경 영향에 따른 기능·문서·manifest 정적 검사를 집계한다. 과거 hosted full QA `NOT_RUN` 기록은 Task 역사에
+  남고 현재 `ci-summary`의 완료 gate가 아니다. metadata·style 성공만으로 기능 검사를 주장하지 않는다. 선택 purpose 결과는
+  해당 hosted 입력의 검사이며 로컬 staged QA와 구분한다.
 - 로컬 QA 명령과 gate 구성은 `scripts/qa.py`와 validation registry가
   소유한다. 로컬 커밋, PR, main 통합과 인계의 증거 순서는
   [Quality policy](../docs/00.workspace/04.quality/quality.md#delivery-ownership)가
@@ -103,7 +103,7 @@ updated: "2026-11-17"
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
-| `ci.yml` | PR branch/title/new-commit metadata and independently selected PR style. | `ci-summary` runs on main-centered `push`, `pull_request` and `workflow_dispatch`; `style-pr` runs only on PRs targeting main. | `ci-summary` checks the inline PR base/source prefix policy and binds the actual merge SHA/parents; trusted-base `.cz.toml` supplies one-line title and complete new-commit message grammar. Generated Merge/Revert shapes apply only to commits; PR targets are `NOT_APPLICABLE` on main push/manual; `style-pr` checks selected style at its PR merge SHA/run with trusted-base tools. | No local purpose, unit or document-content QA; No deploy CD; no direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
+| `ci.yml` | PR metadata, selected style and affected purpose checks. | `ci-summary` runs on main-centered `push`, `pull_request` and `workflow_dispatch`; `style-pr` runs only on PRs targeting main. | `ci-summary` checks the inline PR base/source prefix policy and binds the actual merge SHA/parents; trusted-base `.cz.toml` supplies one-line title and complete new-commit message grammar. Generated Merge/Revert shapes apply only to commits; PR targets are `NOT_APPLICABLE` on main push/manual; `style-pr` binds one cumulative PR plan and records selected style and purpose leaves at its exact merge SHA/run. | No blanket full QA; candidate purpose code has a read-only token and no secrets; No deploy CD; no direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on every opened or synchronized pull request; the action matches paths itself. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
 
