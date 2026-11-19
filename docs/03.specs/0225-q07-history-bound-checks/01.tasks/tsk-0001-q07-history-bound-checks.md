@@ -43,10 +43,10 @@ baseline for the reserved policy codes, and the lineage reservations and
 
 | Item | Work Unit | Owner | Status | Blocker |
 | --- | --- | --- | --- | --- |
-| WORK-001 | WORK-001 | platform | in-progress | none |
-| WORK-002 | WORK-002 | platform | in-progress | none |
-| WORK-003 | WORK-003 | platform | in-progress | none |
-| WORK-004 | WORK-004 | platform | in-progress | none |
+| WORK-001 | WORK-001 | platform | completed | none |
+| WORK-002 | WORK-002 | platform | completed | none |
+| WORK-003 | WORK-003 | platform | completed | none |
+| WORK-004 | WORK-004 | platform | completed | none |
 
 WORK-001 set `READABLE_REGISTRY_MAJORS` to the current MAJOR and removed the
 code whose own removal condition that meets: `historical_major`, the
@@ -79,10 +79,10 @@ On 2026-11-19 the user approved the Spec and Plan over commit `7f211684` (EVD-00
 
 | Item | Upstream criterion | Result | Evidence |
 | --- | --- | --- | --- |
-| WORK-001 | [VAL-HISTORY-001](../spec.md#criteria) | NOT_RUN | Draft until the Spec and Plan are approved; observed checks are in Results |
-| WORK-002 | [VAL-HISTORY-001](../spec.md#criteria) | NOT_RUN | Draft until the Spec and Plan are approved; observed checks are in Results |
-| WORK-003 | [VAL-HISTORY-002](../spec.md#criteria) | NOT_RUN | Draft until the Spec and Plan are approved; observed checks are in Results |
-| WORK-004 | [VAL-HISTORY-003](../spec.md#criteria), [VAL-HISTORY-004](../spec.md#criteria) | NOT_RUN | Draft until the Spec and Plan are approved; observed checks are in Results |
+| WORK-001 | [VAL-HISTORY-001](../spec.md#criteria) | PASS | EVD-002 |
+| WORK-002 | [VAL-HISTORY-001](../spec.md#criteria) | PASS | EVD-002 |
+| WORK-003 | [VAL-HISTORY-002](../spec.md#criteria) | PASS | EVD-003 |
+| WORK-004 | [VAL-HISTORY-003](../spec.md#criteria), [VAL-HISTORY-004](../spec.md#criteria) | PASS | EVD-004, EVD-006 |
 
 ## Verification Evidence
 
@@ -108,15 +108,15 @@ EVD-001 is a non-required observation followed by EVD-003; EVD-006 resolves EVD-
 
 | Criterion | Intent | Acceptance | Evidence | Decision | Accepted By | Current Owner | Reassigned To |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [VAL-HISTORY-001](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [VAL-HISTORY-002](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [VAL-HISTORY-003](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
-| [VAL-HISTORY-004](../spec.md#criteria) | undecided | pending | none | none | none | platform | none |
+| [VAL-HISTORY-001](../spec.md#criteria) | accept | accepted | EVD-002, EVD-007 | User answer 'Accept all' of 2026-11-19 in this session | user | platform | none |
+| [VAL-HISTORY-002](../spec.md#criteria) | accept | accepted | EVD-003 | User answer 'Accept all' of 2026-11-19 in this session | user | platform | none |
+| [VAL-HISTORY-003](../spec.md#criteria) | accept | accepted | EVD-004 | User answer 'Accept all' of 2026-11-19 in this session | user | platform | none |
+| [VAL-HISTORY-004](../spec.md#criteria) | accept | accepted | EVD-006 | User answer 'Accept all' of 2026-11-19 in this session | user | platform | none |
 
 ### Remaining Conditions
 
-The user's acceptance of the criteria.
-Q07-H01 stays open for the cutover data it names.
+The user accepted VAL-HISTORY-001 to VAL-HISTORY-004 on 2026-11-19. Q07-H01
+stays open in the SPEC-0223 Task for the cutover data it names.
 
 ## Handoff
 
@@ -127,4 +127,6 @@ Rule ID baseline: DOCLIFE-R022 names the registry baseline in the
 
 ### Next Owner
 
-platform, after the user's approval; Q07-CUTOVER removes the data Q07-H01 names.
+Every item is completed with PASS evidence and an accepted criterion; the
+staged QA of each commit passed, and no provider or cluster check ran (not in
+scope). Q07-CUTOVER removes the data Q07-H01 names.
