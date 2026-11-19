@@ -196,7 +196,7 @@ class DocumentScopeSelectionTests(unittest.TestCase):
         staged = ROUTES.select_paths(CONTRACT, DOCUMENT_READERS, "staged")
         self.assertEqual(
             set(staged["validators"]),
-            readers | {"selected-nonstyle", "selected-style"},
+            DOCUMENT_GATES | {"selected-nonstyle", "selected-style"},
         )
 
     def test_shared_history_readers_keep_document_guards(self) -> None:

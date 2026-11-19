@@ -158,12 +158,15 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             "docs/99.templates/registry.json",
             "docs/99.templates/02.templates/03.specs/task.template.md",
         ):
-            for lane in ("affected", "staged"):
-                with self.subTest(path=path, lane=lane):
-                    selected = self.validator.select_paths(
-                        self.contract, [path], lane, ROOT
-                    )
-                    self.assertIn("document-contract-tests", selected["validators"])
+            with self.subTest(path=path):
+                affected = self.validator.select_paths(
+                    self.contract, [path], "affected", ROOT
+                )
+                staged = self.validator.select_paths(
+                    self.contract, [path], "staged", ROOT
+                )
+                self.assertIn("document-contract-tests", affected["validators"])
+                self.assertNotIn("document-contract-tests", staged["validators"])
         for path in (
             "docs/03.specs/README.md",
             "scripts/provider_write_guard.py",
@@ -307,11 +310,15 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             with self.subTest(module=relative):
                 gates = owners.get(relative, [])
                 self.assertEqual(len(gates), 1, gates)
-                for lane in ("affected", "staged"):
-                    selected = self.validator.select_paths(
-                        self.contract, [relative], lane, ROOT
-                    )
-                    self.assertIn(gates[0], selected["validators"])
+                affected = self.validator.select_paths(
+                    self.contract, [relative], "affected", ROOT
+                )
+                staged = self.validator.select_paths(
+                    self.contract, [relative], "staged", ROOT
+                )
+                self.assertIn(gates[0], affected["validators"])
+                self.assertNotIn(gates[0], staged["validators"])
+                self.assertIn(gates[0], self.contract["profiles"]["pull-request"])
 
     def test_root_changelog_uses_document_surface(self) -> None:
         self.assertEqual(
@@ -357,7 +364,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                         <= set(surface["validators"])
                     )
 
-    def test_release_tooling_keeps_its_direct_contract_checks(self) -> None:
+    def test_release_tooling_keeps_its_affected_regressions(self) -> None:
         for path in (
             "scripts/release.py",
             "tests/test_release.py",
@@ -383,11 +390,9 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     staged["validators"],
                     [
                         "affected-surface-contract",
-                        "release-tests",
                         "repository-quality",
                         "selected-nonstyle",
                         "selected-style",
-                        "tooling-ownership-tests",
                     ],
                 )
 
@@ -419,7 +424,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     )
                     self.assertFalse(forbidden & set(selected["validators"]))
 
-    def test_validation_routing_cases_keep_their_existing_owner(self) -> None:
+    def test_validation_routing_cases_keep_their_affected_owner(self) -> None:
         for path in (
             "tests/test_validate_affected_surfaces.py",
             "tests/fixtures/validation-surfaces.json",
@@ -429,6 +434,11 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     self.validator.classify_path(self.contract, path)["id"],
                     "validation-surface-contract",
                 )
+                affected = self.validator.select_paths(
+                    self.contract, [path], "affected", ROOT
+                )
+                self.assertIn("validation-routing-tests", affected["validators"])
+                self.assertIn("tooling-ownership-tests", affected["validators"])
                 selected = self.validator.select_paths(
                     self.contract, [path], "staged", ROOT
                 )
@@ -439,8 +449,6 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                         "repository-quality",
                         "selected-nonstyle",
                         "selected-style",
-                        "tooling-ownership-tests",
-                        "validation-routing-tests",
                     ],
                 )
 

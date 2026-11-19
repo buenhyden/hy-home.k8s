@@ -1,6 +1,6 @@
 ---
 title: "Git Policy"
-version: "2.12.0"
+version: "2.13.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -161,6 +161,15 @@ runs. It does not cover shell validators, which use the closed system `PATH`
 `scripts/qa.py` builds, or `language: python` hooks, which use pre-commit's own
 environments. Unsetting the option blocks the hook, so it is no way around a
 check.
+
+Commit QA reads the exact index, including staged configuration and the first
+commit. It never stages, stashes or formats the user's working tree. Selected
+syntax, style, secret and content checks remain local; implementation
+regression suites run through affected quick checks and PR CI. An empty index
+diff performs no selected checks. The chain retains environment ownership and
+mode checks; it installs nothing during commit. When no workspace or global
+pre-push hook is installed, pre-push drains its ref input without preparing
+the validation environment or replaying QA.
 
 If the same message is not checked by an active commit-msg hook, validate the
 actual UTF-8 message file in the pinned validation environment before
