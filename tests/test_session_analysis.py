@@ -316,6 +316,87 @@ class SessionAnalysisTest(unittest.TestCase):
         with self.assertRaisesRegex(ANALYSIS.AnalysisError, "ANALYSIS_PROMOTED"):
             self.analysis.review(identifier, decision="rejected", owner="r")
 
+    def test_an_accepted_candidate_is_rechecked_on_later_days(self) -> None:
+        self.session("s-1", 17, failures=3)
+        self.run_at(at(18))
+        (candidate,) = self.candidates()
+        self.assertEqual(candidate["acceptance"], "unverified")
+        self.analysis.review(
+            candidate["candidate_id"], decision="accepted", owner="r", now=at(18, 5)
+        )
+        self.session("s-2", 19, failures=1)  # below the threshold: met
+        # The review day itself is mixed, so day 19 is the first later day.
+        self.run_at(at(20))
+        (kept,) = [c for c in self.candidates() if c["decision"] == "accepted"]
+        self.assertEqual(kept["acceptance"], "met")
+        self.assertEqual(
+            [(r["window"], r["outcome"], r["frequency"]) for r in kept["rechecks"]],
+            [("2026-11-19", "met", 1)],
+        )
+        self.session("s-3", 20, failures=4)  # recurred
+        self.run_at(at(21))
+        (kept,) = [c for c in self.candidates() if c["decision"] == "accepted"]
+        self.assertEqual(kept["acceptance"], "recurred")
+        self.assertEqual(kept["rechecks"][-1]["frequency"], 4)
+
+    def test_a_day_without_sessions_or_before_review_is_not_a_recheck(self) -> None:
+        self.session("s-1", 17, failures=3)
+        self.run_at(at(18))
+        (candidate,) = self.candidates()
+        self.session("s-2", 18, failures=0)
+        self.run_at(at(19))  # day 18 is analyzed before the review
+        self.analysis.review(
+            candidate["candidate_id"], decision="accepted", owner="r", now=at(19, 5)
+        )
+        self.run_at(at(21))  # day 20 has no session
+        (kept,) = [c for c in self.candidates() if c["decision"] == "accepted"]
+        self.assertEqual((kept["acceptance"], kept["rechecks"]), ("unverified", []))
+        rejected = self.candidates()[0]
+        self.assertNotIn("met", json.dumps(rejected["rechecks"]))
+
+    def test_a_thin_day_is_inconclusive_and_a_recurrence_is_kept(self) -> None:
+        self.session("s-1", 17, failures=2)
+        self.session("s-2", 17, failures=2)
+        self.run_at(at(18))
+        (candidate,) = self.candidates()
+        self.analysis.review(
+            candidate["candidate_id"], decision="accepted", owner="r", now=at(18, 5)
+        )
+        self.session("s-3", 19, failures=0)  # one session against two: too thin
+        self.run_at(at(20))
+        (kept,) = [c for c in self.candidates() if c["decision"] == "accepted"]
+        self.assertEqual(kept["rechecks"][-1]["outcome"], "inconclusive")
+        self.assertEqual(kept["rechecks"][-1]["sessions"], 1)
+        self.assertEqual(kept["acceptance"], "unverified")
+        for name in ("s-4", "s-5"):
+            self.session(name, 20, failures=2)  # four failures: recurred
+        self.run_at(at(21))
+        for name in ("s-6", "s-7"):
+            self.session(name, 21, failures=0)
+        self.run_at(at(22))
+        (kept,) = [c for c in self.candidates() if c["decision"] == "accepted"]
+        self.assertEqual(
+            [r["outcome"] for r in kept["rechecks"]],
+            ["inconclusive", "recurred", "met"],
+        )
+        # A later met day never hides an earlier recurrence.
+        self.assertEqual(kept["acceptance"], "recurred")
+
+    def test_a_day_that_loses_its_sessions_loses_its_recheck(self) -> None:
+        self.session("s-1", 17, failures=3)
+        self.run_at(at(18))
+        (candidate,) = self.candidates()
+        self.analysis.review(
+            candidate["candidate_id"], decision="accepted", owner="r", now=at(18, 5)
+        )
+        self.session("s-2", 19, failures=0)
+        self.run_at(at(20))
+        self.assertEqual(self.candidates()[0]["acceptance"], "met")
+        self.capture.forget("claude", "s-2", owner="platform", approval_ref="user")
+        self.run_at(at(20, 4))
+        (kept,) = self.candidates()
+        self.assertEqual((kept["acceptance"], kept["rechecks"]), ("unverified", []))
+
     def test_capture_quality_and_missing_end_are_candidates(self) -> None:
         self.session("s-1", 17, end=False)
         self.run_at(at(18))
