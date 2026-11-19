@@ -289,7 +289,7 @@
       "kind": "handoff",
       "state": "open",
       "owner": "W10",
-      "resume_condition": "When the user authorizes model usage for provider workers",
+      "resume_condition": "In P12, after W10-H03 containment is repaired, observe actual Codex and Claude workers through supported surfaces using the existing account, models and finite execution limits under Q-03",
       "source": {
         "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }

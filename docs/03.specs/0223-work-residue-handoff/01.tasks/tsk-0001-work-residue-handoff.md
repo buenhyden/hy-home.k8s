@@ -1,6 +1,6 @@
 ---
 title: "Work Residue Handoff"
-version: "0.6.1"
+version: "0.7.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-11-20"
@@ -37,7 +37,7 @@ packages. Input revision: `93f130a8`.
 - **Rollback Plan**: revert the commits newest first
 - **Evidence Location**: this Task
 
-#### P00 intake, 2026-11-20 Asia/Seoul
+#### P00 1.0.0 intake, 2026-11-20 Asia/Seoul
 
 The current request is P00-RECONCILE, revision 1.0.0. Its input is the local
 package `_workspace/workspace_governance_remediation_1_0_0_20261119/`, whose
@@ -64,7 +64,7 @@ only the P00 additions and restores this Task's previous version/date.
 Native trust, paid provider work, raw session reads, live cluster changes,
 remote deletion and history rewriting are outside this execution.
 
-#### P01 current authorization
+#### P01 1.0.0 authorization
 
 On 2026-11-20 Asia/Seoul the user supplied the same package and selected
 `prompts/P01-CI-ROUTING.md` only, explicitly requesting implementation,
@@ -98,6 +98,35 @@ passed against this request and HEAD `6c352064`; all writers preserve other
 edits. Read-only security/correctness reviews are policy restrictions, not
 native Desktop sandbox evidence. P00's pre-existing uncommitted Task prose
 is preserved in this delivery.
+
+#### P00 1.1.0 current authorization
+
+The current user request selects only `prompts/P00-RECONCILE.md` from
+`_workspace/workspace_governance_remediation_1_1_0_20261120/` and explicitly
+authorizes commit, push, PR creation and merge after verification. Its README,
+execution contract, decisions, questions, sources, D00, baseline and k8s
+profile/findings are the inputs. `decision_revision: "2026-11-20"` records
+this P00 decision reconciliation only. No other stage is marked rechecked by
+copying that date. The old intake and P01 authorization above are historical.
+
+The write scope is this existing `sdlc/task` and the ledger's W10-H02 resume
+condition. Q-03 supersedes its additional model-usage authorization wait;
+the original shell-only execution remains historical evidence. All existing
+EVD cells, accepted criteria, completed work and other live residue conditions
+are preserved. The original Spec/Plan's exclusions describe their completed
+transfer, not a veto of this new scoped follow-up. This reuses the residue
+host and creates no new Spec, execution ledger or permanent package gate.
+
+Risk is low: reconciliation and one matching pointer condition only. Use
+existing selected document/ledger checks, exact-index QA and message hooks,
+then required PR checks. The current human request supplies delivery authority
+for this repository; no revocation is present. Rollback is a normal revert.
+The approving actor is the user of this request, the executor is the current
+Codex agent, and delivery targets `buenhyden/hy-home.k8s`, the current branch
+and `main`, using only the reviewed two-file change and its evidence receipt.
+P17 owns the Q-01 history operation after its readiness and rehearsal checks;
+P00 performs no history rewrite, native probe, session-content read or live
+service operation. The package remains available through P17.
 
 ## Execution Log
 
@@ -179,7 +208,8 @@ nor the current prompt accepts the unresolved provider or network failures.
 
 #### P00 owner and consumer inventory
 
-`git ls-files` enumerated the current files under every area below, including
+`git ls-files -z` re-enumerated the current files under every area below at
+`517be785`, including
 Stage 98's README and placeholders. This table records the owner routes and
 affected consumers, not a fixed corpus count. Old unnumbered category paths
 in the baseline resolve to these current numbered paths.
@@ -216,7 +246,7 @@ isolated-namespace probes; it does not establish whole-cluster LAN denial.
 
 | Finding | Disposition | Current implementation, consumer and evidence | Remaining work |
 | --- | --- | --- | --- |
-| K8S-01 | Supplement | Ledger has 30 entries, 28 open and 2 terminal; source Tasks retain each obligation and closure | Individual decisions below; P16 cannot blanket-accept native failures |
+| K8S-01 | Supplement | Current ledger has 30 entries, 27 open and 3 terminal; W06-H03 closed on EVD-016 after the 28-open profile snapshot | Individual decisions below; P16 cannot blanket-accept native failures |
 | K8S-02 | Supplement | Stage 99 `shared_contract` says adopted with unverified approval fields; document consumers read that contract | P04 reconcile adoption meaning and compatibility; invent no approval |
 | K8S-03 | Maintain | Workspace AD/ADRs and policy split exist under `docs/00.workspace/`; SPEC-0224 EVD-010/013 and accepted criteria | Exclude directory relocation; P03 removes only remaining duplication |
 | K8S-04 | New | `docs/00.workspace/01.project/glossary.md` owns shared terms; `.agents/knowledge/glossary.md` is absent | P03 split common definitions from K8s vocabulary with its validator consumers |
@@ -227,23 +257,24 @@ isolated-namespace probes; it does not establish whole-cluster LAN denial.
 | K8S-09 | Supplement | W07-H05 preserves Desktop/SSH workspace-write and null-profile FAIL, EVD-163/167 | P06 repair or explicitly choose another verified surface; denial probe on the exact path |
 | K8S-10 | Maintain | Risk-based review policy and `review_delta.py` exist; SPEC-0161 EVD-219 records regression PASS; SPEC-0224 EVD-006 records an independent review, not runtime isolation | Exclude review-policy rebuild; apply to new high-risk changes in P06 |
 | K8S-11 | Maintain | `workspace_memory.py` implements common-dir store, CAS/revision, idempotency, provenance, retrieval, quota and backup; SPEC-0161 EVD-193/195/197 regressions and EVD-196/198 two-provider synthetic-store roundtrip/search PASS | Exclude core and that roundtrip replay; P09 verifies changed workspace binding/adapters and actual current-workspace use; no broker without its trust condition |
-| K8S-12 | Supplement | `session_capture.py`/`session_analysis.py` store metadata and count rules; W08-H05 cites EVD-222 mixed failure types | P10 call correlation and classification; Q-02 limits content/TTL/new external transmission |
+| K8S-12 | Supplement | `session_capture.py`/`session_analysis.py` still store metadata and count rules; W08-H05 cites EVD-222 mixed failure types | P09/P10 implement fixed Q-02 selected redacted content, summaries, 30/90-day limits and no new paid periodic analysis; no unresolved content-scope question |
 | K8S-13 | Supplement | `session_analysis.py` uses fixed `hy-home-k8s-session-analysis` units; separate workspace installs can collide | P10 workspace-specific units and two-workspace regression; not runtime-only deferral |
 | K8S-14 | Maintain | `work_forecast.py` records forecast, elapsed/active/waits and scores; SPEC-0161 EVD-213 regression PASS and EVD-214 Claude measurement; Codex use still W10-H01 | P11 native roundtrip only; no unsupported calibration claim |
-| K8S-15 | Supplement | `work_parallel.py` has DAG/clones/path and resource leases/fencing/integration; SPEC-0161 EVD-215 to EVD-218 regression and shell integration PASS; W10-H02/H03 bound containment | P12 provider adapter and OS containment/state gap; retain shell DAG |
+| K8S-15 | Supplement | `work_parallel.py` has DAG/clones/path and resource leases/fencing/integration; SPEC-0161 EVD-215 to EVD-218 regression and shell integration PASS; W10-H02/H03 bound containment | P12 actual Codex/Claude workers under fixed Q-03 and repaired OS containment/state gap; retain shell DAG, not its former observation exemption |
 | K8S-16 | Maintain | `test_cluster.py` has small owned k3d, isolated kubeconfig, closure limit and failure cleanup; SPEC-0161 EVD-206/208/223 regressions and EVD-224 selective live PASS with no product pod | P07/P14-K8S selected component modes; base runner stays |
 | K8S-17 | New | Cluster app limit and dispatcher conflict set apply per invocation; no workspace-wide atomic admission/aggregate CPU-memory cap | P07/P12 shared admission with concurrent refusal/release checks |
 | K8S-18 | Supplement | W09-H02 records the whole-cluster isolation defect despite EVD-208/224 PASS for separate deny-namespace probes; product policies still allow production LAN | P07/P14-K8S host/VM deny boundary before product pods; P00 has no fresh network probe |
-| K8S-19 | Supplement | `ci.yml` PR leaves cover metadata/style/CI-lock/GitOps identity; main metadata N/A does not test features; SPEC-0224 EVD-013 covers those hosted leaves only | P01 affected implementation/document leaves and outcome aggregation; no full-suite-on-every-event |
-| K8S-20 | Unobserved | Chained hook and configured hooksPath exist; actual hook latency/global chain not measured | P02 separate setup, selected leaf and wait costs; no new pre-push full test |
+| K8S-19 | Maintain | P01 workflow/registry/runner, shared document invocation and scoped manifest consumers exist; EVD-015/016 and PR 331/332 CI runs verify 25 purpose leaves and 5 document leaves respectively | Exclude P01 reimplementation; P04 connects any new form consumer; W06-H02 and user acceptance remain separate |
+| K8S-20 | Supplement | Actual chained staged QA and both message hooks ran, EVD-015; P01 records selected regression time, not complete hook-phase/global-chain latency | P02 measures setup, hook/leaf and wait costs on the actual host; no new pre-push full test |
 | K8S-21 | Maintain | `_workspace/README.md` cleanup boundary exists; W09-H03 terminal with this Task EVD-002 | P15/P17 consumer-based cleanup only; preserve package through P17 |
-| K8S-22 | Supplement | SPEC-0225 EVD-002/003/004/006 and accepted criteria cover code conversion; DOC-H01/Q07-H01/T99-H03 preserve remaining data | P17 coordinated final numbering, links and disposition; do not repeat PR 330 |
+| K8S-22 | Supplement | SPEC-0225 EVD-002/003/004/006 and accepted criteria cover code conversion; DOC-H01/Q07-H01/T99-H03 preserve remaining data | P17 coordinated numbering, links and Q-01 managed-ref history cleanup after readiness/rehearsal; preserve valid product meaning and ref names; do not repeat PR 330 |
 
 #### P00 individual residue routing
 
 This is a classification of the existing live rows, not new residue entries.
-The original source row retains its state, owner and resume condition. Every
-entry is assessed once; 30/28 is this observation, not a permanent count gate.
+Source rows retain their state, owner and resume condition except the explicit
+W10-H02 decision update. W06-H03 is already terminal. Every entry is assessed
+once; the current 30/27/3 distribution is an observation, not a count gate.
 The default source is this Task's Residue Handoff; DOC-H01 and SDLC-H01 are
 in the SPEC-0224 Task linked above. Known defects below require repair, not
 an observation waiver. Conditional applicability does not cancel an obligation.
@@ -266,25 +297,28 @@ an observation waiver. Conditional applicability does not cancel an obligation.
 | Supplement; current owner gap | W04-H06 | P05 operations owner names escalation and break-glass approver; do not invent a contact or authorization |
 | Supplement; current owner mismatch | W04-H07 | P05 requirement/architecture owners move REQ-0002 mechanism meaning to AD-0005; keep acceptance intent |
 | Unobserved; selected hosted leaf | W06-H02 | EVD-211 covered docs only; P01/P14-K8S observes a PR actually selecting CI lock or changed GitOps manifest |
-| Supplement; current coverage gap | W06-H03 | P01 CI owner implements affected feature/doc checks beyond current hosted leaves |
+| Maintain; terminal exclusion | W06-H03 | EVD-016 and PR 331/332 verify affected feature/doc checks; exclude reimplementation and retain distinct P01 user acceptance |
 | Supplement; required rejection coverage | W07-H03 | P06 safety/validation owner verifies W01-B negative cases; QA/status/hash never grants approval |
 | Supplement; recorded runtime FAIL | W07-H05 | EVD-163/167; P06 host owner repairs Desktop/SSH boundary or names an alternate verified path; original path stays failed |
 | Maintain; future trust condition | W08-H01 | P09 memory owner: same-account strings are unauthenticated; broker/OS boundary only before another account/untrusted/remote writer |
 | Maintain; future search condition | W08-H02 | P09 retrieval owner: particle/inflection miss or scale/p95 condition triggers upgrade; no vector/broker work now |
 | Unobserved; native capture | W08-H03 | EVD-201; P08/P10 user reviews hooks, provider owner observes Codex lifecycle and Claude compact |
 | Unobserved; real catch-up | W08-H04 | EVD-222 proves first 03:00 KST run, not downtime recovery; P10 scheduler owner observes real catch-up |
-| Supplement; current attribution defect | W08-H05 | EVD-222; P10 capture/analysis owner adds call ID and distinct deliberate-negative/permission/hook/error outcomes |
+| Supplement; current attribution defect | W08-H05 | EVD-222; P10 Q-02 schema work meets the change trigger; add call ID and distinct deliberate-negative/permission/hook/error outcomes, not another content-scope question |
 | Supplement; known isolation defect | W09-H02 | EVD-208/224 cover selective probes, not whole-cluster denial; P07/P14-K8S environment operator establishes LAN deny before product pods; no blanket W11 acceptance |
 | Maintain; terminal exclusion | W09-H03 | This Task EVD-002; previously approved ten paths already absent; no repeat deletion |
-| Unobserved; provider roundtrip | W10-H01 | EVD-214; P11 Codex owner uses the same forecast store for create/start/finish/score |
-| Unobserved; provider worker | W10-H02 | EVD-216 shell-only user choice; P12 provider owner resolves Q-03 cost/surface scope before model workers |
+| Unobserved; provider roundtrip | W10-H01 | EVD-214; P11 Codex owner uses the same forecast store for create/start/finish/score under Q-03's supported native scope; no generic reauthorization wait |
+| Unobserved; provider worker | W10-H02 | EVD-216 preserves the historical shell-only choice; fixed Q-03 requires P12 actual Codex/Claude workers after W10-H03 containment, within the existing account and finite execution limits |
 | Supplement; current containment defect | W10-H03 | EVD-215; P12 runner/OS owner closes setsid/out-of-clone writes/disk/state-persistence gaps before provider/untrusted workers |
 | Unobserved; future scheduled result | W10-H04 | EVD-221/222; P13 analysis owner checks candidate 1 after 2026-11-21 03:00 Asia/Seoul, over 2026-11-20; no future success claim |
 
 #### P00 execution order and questions
 
-The next input is `prompts/P01-CI-ROUTING.md` in the same package. Continue
-P01 affected QA, P02 local feedback, P03 ownership/vocabulary, P04 common
+The next input is `prompts/P02-LOCAL-FEEDBACK.md` in the 1.1.0 package.
+P01 is retained on its existing implementation and hosted evidence; its
+applicable D01 guarantees are covered and P01 is outside the manifest's
+decision-update recheck list.
+Continue P02 local feedback, P03 ownership/vocabulary, P04 common
 forms/adoption, P05 current docs/SDLC, P06 independent-review execution,
 P07 aggregate environment limits and isolation, P08 native briefing,
 P09 memory integration, P10 sessions/timer, P11 forecast integration,
@@ -294,16 +328,31 @@ acceptance, then P17-FINAL-CUTOVER. The manifest's k8s predecessors govern
 dependency order; a blocked protected step holds only its dependents. No
 successor implementation is claimed by this list.
 
-Q-01 applies only to P17 remote history/PR/tag/artifact/locked-backup deletion;
-current-tree planning proceeds without that authority. Q-02 applies to P10's
-new redacted content, retention and paid external transmission, which differ
-from the current metadata-only policy. Event identity/cursor/atomicity work
-does not depend on expanding collection. Q-03 applies to P06/P08/P10/P12
-supported surfaces and any additional model usage; retain the recorded
-shell-only cost choice until changed. Normal supported CLI implementation is
-not blanket-blocked by a Desktop gap. Q-04 concerns Blog public text and is
-not applicable here. No OPEN01 to OPEN14 question is reopened; P00 itself
-needs no additional decision to record these distinctions.
+Q-01 to Q-04 are fixed, not open questions. Apply only the changed meanings:
+
+| Decision | Current mismatch and implementation owner | Boundary |
+| --- | --- | --- |
+| Q-01 | P15/P17 classify removable trials and obsolete IDs; P17 rewrites affected managed remote ref history and corresponding local Git remnants after readiness, rehearsal and expected-OID checks | Keep valid functionality, knowledge, public URLs and branch/tag names; PR bodies/reviews/comments, Actions artifacts, forks, other hosts and locked backups are excluded; server-wide physical deletion is not claimed |
+| Q-02 | P09/P10 update CTX-R001/R006/R022/R023 and SAFE-R014 with capture/analysis consumers: current metadata-only collection does not meet selected redacted request/correction/final-response/necessary-tool-content and broader-source summarization | Redact before storage, recheck summaries, no extra raw copy; selected content 30 days, summary/needed metadata 90 days, stricter compatible limits retained; new periodic external-analysis incremental budget 0 USD |
+| Q-03 | P06/P07/P08/P09/P10/P12/P13 implement and observe supported Codex/Claude briefing, enforced review boundary, memory, capture and overlapping workers; P11 keeps its native forecast obligation | Reuse equivalent actual native evidence; shell substitutes/configuration do not certify native success. Use existing accounts/models and finite limits; normal hook trust remains. W07-H05, W09-H02 and W10-H03 need repair, not observation-only waivers |
+| Q-04 | Blog public-reference boundary has no implementation consumer in this workspace | Do not copy Blog behavior or reopen the resolved decision |
+
+The repository policies above remain current implementation evidence; their
+specific mismatches are assigned to those successor owners, not interpreted
+as a reason to request the fixed choices again. P00 does not process session
+content. User hook trust and a real conflicting signed tag or outside-account
+cost, if encountered later, are precise execution conditions, not a reopened
+basic decision. No additional P00 question is identified.
+
+The original SPEC-0223 criteria and WORK-001 to WORK-003 remain accepted;
+its original no-residue-change exclusion and double staged-QA Plan sentence
+are historical transfer instructions. The current quality owner QUAL-R038
+requires one active-hook staged run, not a duplicate run. P05 owns package
+disposition after preserving live residue consumers. SPEC-0224's completed
+workspace/category move and SPEC-0225's completed history-dependent code
+conversion are retained; their DOC-H01/Q07-H01 data and published-reference
+conditions remain assigned to P17. No Spec is deleted or acceptance reset
+to remove an unresolved obligation.
 
 Implementation and local verification of P00 mean this reconciliation is
 written and checked. User acceptance of P00 is not yet recorded. Historical
@@ -311,6 +360,19 @@ acceptances above remain valid for their own criteria. Provider/runtime,
 hosted feature regressions and live service validation are not performed by
 this documentation change; successor owners must repair the named defects
 before claiming their runtime success.
+
+The 1.1.0 resume read is `codex/p01-ci-routing`, clean index/worktree at
+`517be78517b6c663a51165d2644047f29d7d3fcc`, matching remote `main`.
+The root is the current `hy-home.k8s` checkout and the resolved Git common-dir
+is `.git` under it; no checkout, clone or reset was performed. Relative to
+profile `6c352064`, only the 30 P01 paths changed in the implementation and
+receipt commits/merges. GitHub reports no open PR; the latest merged PRs
+332/331 are re-read with successful CI runs 44584287559/44581637168.
+Installed versions remain Codex 0.169.0 and Claude Code 2.1.328; Codex's
+read-only PATH-alias warning did not prevent version reporting and proves no
+native trust or isolation. The pre-edit Task SHA-256 is
+`b4cf585c178c8988cb423e2bec5aeebb459b00490b316c593e2d9153f4d24dd6`;
+the ledger is `5e4d4f9bafd43068f43b00e342a8d7854d1fd3bee78ac4189f24d007f9b876fb`.
 
 #### P01 implementation and verification
 
@@ -485,6 +547,10 @@ start P02 automatically.
 | EVD-014 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | Final P00 classification, corrected historical citations and EVD-009 to EVD-013 on `main` `6c352064`; only this receipt and the Next Owner receipt wording added afterwards | Python 3.12.3 in `/home/hyunyoun/.venvs/hyhome-validation/`; same selected QA configuration | `/home/hyunyoun/.venvs/hyhome-validation/bin/python3 scripts/qa.py quick` | 0 | PASS | All five selected document/ledger leaves PASS; inline preservation/coverage assertions and `git diff --check` PASS; no staged, hosted, native or live execution claimed | false | none |
 | EVD-015 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | Final P01 exact staged tree producing `e9f72ced`, after portable Task paths and pinned shell formatting were corrected | Existing pinned validation venv and active chained pre-commit/commit-msg hooks | `git commit -m 'ci: route PR checks through affected purpose validation'` invokes `python3 scripts/qa.py staged`, Commitizen and generated-message checks | 0 | PASS | Exact-index QA and both message hooks PASS; focused negative tests and independent correctness/security review recorded above; no hook bypass | false | none |
 | EVD-016 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | P01 W06-H03 follow-up; PR 331 head `e9f72ced`, test merge `43d84095`, CI run 44581637168, integrated merge `60ff97bd` | GitHub ubuntu-latest, pinned Actions and dependency lock, read-only candidate; GitHub jobs/logs API and local Git tree comparison | `python3 -I scripts/run-validation-lane.py --root . --lane affected --plan-file "$RUNNER_TEMP/pr-plan.json" --combine-documents`; `gh run view 44581637168 --job 135763534198 --log`; `git diff --exit-code e9f72ced7297e86c287b9634958ea838ac01bec7 HEAD` after integration | 0 | PASS | Both required checks and all 25 selected purpose leaves PASS; integrated tree identical; hosted scope/times above. Closes the W06-H03 implementation/hosted-coverage residue, not P01 user acceptance, W06-H02 or live/CRD guarantees | false | none |
+| EVD-017 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | P00 1.1.0 at clean `517be785`, profile `6c352064`, decision revision 2026-11-20 and current two-file reconciliation | Git, GitHub PR/run read-back, Python standard library, installed provider version commands and pinned validation venv | Git root/common-dir/branch/HEAD/status and profile diff; `git ls-files -z`; PR 331/332 and CI read-back; inline input/finding/residue coverage and preserved-cell assertions; `python3 scripts/validate-work-residue-ledger.py --root .`; selected style over this Task and ledger | 0 | PASS | All package finding IDs and current ledger IDs have one disposition; current 27 open/3 terminal; old EVD and criterion cells preserved; only W10-H02 resume condition changes. Ledger and two-file style PASS. No new provider/live/session-content operation | false | none |
+| EVD-018 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | review | P00 1.1.0 Task/ledger diff on `517be785`, including EVD-017 and actor/executor/target clarification | Independent code-reviewer, separate context, policy read-only restriction; current risk-report procedure | Semantic review against P00/D00 and the fixed Q-01 to Q-04 decisions | none | PASS | No BLOCK/FIX; W10-H02 stays open with containment prerequisite, Task/ledger condition matches, P01 and past acceptance preserved; no native enforcement or runtime proof claimed | false | none |
+| EVD-019 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | automated | P00 1.1.0 exact two-file index producing `e527d29786f92f4ef51c34c1c396dc97b2fe05e4`; this evidence receipt is the only later local change | Existing pinned validation venv and active chained pre-commit/commit-msg hooks | `git commit -m 'docs: reconcile P00 with confirmed decision revision'` invokes `python3 scripts/qa.py staged`, Commitizen and generated-message checks | 0 | PASS | Staged QA and both message checks PASS; existing template/profile/link/lifecycle/ledger and selected style consumers cover the changed input. Receipt-only additions use the same document route; no unchanged behavior suite or native/live probe is replayed | false | none |
+| EVD-020 | [VAL-RESIDUE-001](../spec.md#criteria) | WORK-001 | observation | Temporary k8s guidance input: P00 complete with decision revision 2026-11-20 and EVD-017/018/019; P01 retained with EVD-015/016 and PR 331/332 | Python standard library; this 1.1.0 package's read-only guidance tool | `python3 tools/next_prompt.py --workspace k8s --state TEMP_PROGRESS` with the package's actual tool path | 0 | PASS | NEXT is `prompts/P02-LOCAL-FEEDBACK.md`; no prompt executed. Empty open_runtime describes only the two supplied records, not completion of future native work. Temporary input/directory removed; no parallel permanent progress ledger | false | none |
 
 ### Resolution Links
 
@@ -521,7 +587,7 @@ The Resolves column names the row each PASS row closes.
 | W09-H02 | No legacy row: the product network policies allow egress to 192.168.0.13 from `apps`, `platform`, `monitoring` and other namespaces, and NetworkPolicies only add allowances, so a test workload with pods in those namespaces could reach the production LAN. Blocking it for a whole test cluster needs a host firewall rule on its Docker network or a dedicated VM, which need root (EVD-208). The approved closure runs no product pod. Recorded under W09-ENV on 2026-11-18 | open | W09 | Before a test cluster runs product pods in a namespace whose policy allows 192.168.0.13, or when the user provides a host firewall rule or a dedicated VM | none |
 | W09-H03 | No legacy row: the user-approved temporary material under `_workspace/`, `.workspace-test/` and `.qa-evidence/handoff/` is not yet deleted, because the agent's `rm` was denied | terminal | operator | When the user runs the handed-over deletion of the approved ignored paths (EVD-226) | EVD-002 |
 | W10-H01 | No legacy row: a Codex session creating, starting, finishing and scoring a record in the same `.workspace-memory/forecast.sqlite3` that Claude used; the CLI is provider-neutral source, but no Codex run was made (EVD-214) | open | W10 | At the next authorized Codex session in this workspace | none |
-| W10-H02 | No legacy row: real provider workers (`claude -p` or `codex exec`) dispatched by `scripts/work_parallel.py`. The user chose shell workers on 2026-11-19 to spend no model usage, so provider delegation through the dispatcher is unobserved (EVD-216) | open | W10 | When the user authorizes model usage for provider workers | none |
+| W10-H02 | No legacy row: real provider workers (`claude -p` or `codex exec`) dispatched by `scripts/work_parallel.py`. The shell-only choice of 2026-11-19 remains EVD-216 history; fixed Q-03 of 2026-11-20 now requires supported native worker observation, which is still unobserved | open | W10 | In P12, after W10-H03 containment is repaired, observe actual Codex and Claude workers through supported surfaces using the existing account, models and finite execution limits under Q-03 | none |
 | W10-H03 | No legacy row: a worker runs with the caller's own permissions. A process that calls `setsid` leaves the killed group, a worker can write outside its clone, total disk use has no quota, and a worker started in the moment before the dispatcher saves its state is not in `state.json` (EVD-215). OS containment, such as a cgroup or a dedicated sandbox, would close these | open | W10 | Before an untrusted or provider worker is dispatched | none |
 | W10-H04 | No legacy row: the first recheck of the accepted failure candidate 1, reviewed on 2026-11-19 KST, is the run at 03:00 KST on 2026-11-21 over 2026-11-20, so whether it reports `met`, `recurred` or `inconclusive` is not yet observed. Days analyzed before the change are not backfilled, which can only leave the candidate `unverified` (EVD-221, EVD-222) | open | W10 | After the 2026-11-21 03:00 KST run, read `session_analysis.py candidates` for candidate 1 | none |
 
@@ -547,12 +613,21 @@ The Plan promotes no durable contract.
 
 ### Next Owner
 
-P01 implementation, selected QA and hosted verification are delivered in
-PR 331; EVD-015 and EVD-016 record the actual results. Its receipt-only
-follow-up is checked by the selected document consumers. P01 user acceptance
-is pending. The next input is P02-LOCAL-FEEDBACK after this delivery record,
-using P00 reconciliation and the P01 selected-CI result; do not start it automatically.
-The P00 handoff below is retained predecessor context.
+Current handoff: P00 1.1.0 reconciles the fixed decisions and current source;
+implementation and local verification are recorded in EVD-017 to EVD-020.
+P01 implementation and verification are retained through PR 331/332 and
+EVD-015/016. The next input is
+`_workspace/workspace_governance_remediation_1_1_0_20261120/prompts/P02-LOCAL-FEEDBACK.md`,
+using this reconciliation and the P01 selected-CI result. Do not execute P02
+automatically. P00/P01 new user acceptance is not recorded. Q-01 to Q-04
+are resolved; no generic content, history-scope or native-cost question is open.
+Keep the 1.1.0 package through P17 and preserve other active work and memory.
+This evidence-only receipt changes no operative disposition or resume
+condition beyond the reviewed reconciliation. EVD-018 remains applicable;
+the receipt's selected document QA is checked through its own commit hook.
+No one-use script or `_workspace/` output was created. The guidance input
+was deleted, reusable QA cache retained, and no other package was cleaned.
+The 1.0.0 handoff below is retained historical context only.
 
 WORK-001 to WORK-003 remain completed and accepted; do not rerun them.
 For P00, the source and residue classification is implemented, with final
