@@ -1,10 +1,10 @@
 ---
 title: "workspace"
-version: "0.3.0"
+version: "0.4.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-19"
 ---
 # _workspace
 
@@ -29,6 +29,8 @@ ignore 상태로 남고 Git에 강제로 추가하면 안 된다.
 - 생성된 route inventory
 - migration 원장
 - 비밀이 아닌 scan 요약
+- 사용자가 준 작업 입력 패키지. 읽기 전용이며, 그 패키지를 입력으로 쓰는 업무가
+  모두 끝난 뒤 승인을 받아 지운다. 정규 명령·검사는 이 패키지를 읽지 않는다.
 
 모든 산출물은 저장소 지원 범위 안에 있어야 하고 지워도 안전해야 하며
 credential이나 secret이 담긴 runtime 세부 정보를 포함하지 않아야 한다.
@@ -63,6 +65,11 @@ credential이나 secret이 담긴 runtime 세부 정보를 포함하지 않아�
 - 변경 범위의 Spec, Plan, Task, 검증 계약은 Stage 03
 - 오래 유지할 감사와 참조 자료는 Stage 90
 - registry, schema, template 계약은 Stage 99
+
+공유 기억, 세션 수집, 예약 분석, 작업 예측 상태는 지속 상태이며 `_workspace/`가
+아니라 `.workspace-memory/`에 둔다. scratch 정리는 그 경로를 지우지 않는다.
+정리할 때는 대상 경로, symlink 여부, 소유자, 현재 소비자를 먼저 확인하고
+승인된 경로만 지운다. 일괄 `git clean`이나 와일드카드 삭제로 대신하지 않는다.
 
 옮길 곳이 없는 임시 산출물은 작업을 닫기 전에 삭제한다. 옮길 때는 대상 문서의
 template, 리뷰, secret 처리 계약을 지켜야 한다. 가공하지 않은 scratch를
