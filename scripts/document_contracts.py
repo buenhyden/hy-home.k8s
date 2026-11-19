@@ -194,87 +194,19 @@ def carry_evidence_rows(
     ]
 
 
-# SPEC-0222 transition adapter: the one reader of a Task table header. A Task is
-# read under either the header it recorded (the SPEC-0203 header of each Task table)
-# or the core header of the registry, never a mixture, and every rule then reads the
-# rows under the core names. It writes nothing: a recorded row keeps its bytes.
-# Remove it, these constants and their tests when the SPEC-0161, SPEC-0221 and
-# SPEC-0222 packages have exited.
-TASK_RECORDED_HEADERS: Mapping[str, tuple[str, ...]] = MappingProxyType(
-    {
-        "traceability": (
-            "ID",
-            "Upstream criterion",
-            "Work item",
-            "Owner",
-            "Status",
-            "Result",
-            "Evidence",
-        ),
-        "evidence": (
-            "Evidence ID",
-            "Consumer",
-            "Work Unit",
-            "Command",
-            "Input",
-            "Result",
-            "Location",
-            "Required",
-            "Resolves",
-        ),
-        "acceptance": (
-            "Criterion",
-            "Acceptance",
-            "Evidence",
-            "Disposition",
-            "Current owner",
-        ),
-    }
-)
-_TASK_RECORDED_NAMES = {
-    "ID": "Item",
-    "Consumer": "Criteria",
-    "Current owner": "Current Owner",
-}
-_TASK_RECORDED_REQUIRED = {"yes": "true", "no": "false"}
-TaskForm = Literal["recorded", "core"]
+# The one reader of a Task table header: a Task table is read only under the
+# core header of the registry (SPEC-0222). The recorded SPEC-0203 header left
+# with the last Task that carried it (SPEC-0223).
+TaskForm = Literal["core"]
 TaskTable = tuple[Sequence[str], Sequence[Sequence[str]]]
 
 
 def task_header_form(
     kind: str, header: Sequence[str], core: Sequence[str]
 ) -> TaskForm | None:
-    """Which header a Task table carries. The recorded header is tried first: a
-    comparison-base registry binds the recorded names as its own."""
+    """`core` when a Task table carries the core header, else None."""
 
-    if tuple(header) == TASK_RECORDED_HEADERS.get(kind):
-        return "recorded"
-    if core and tuple(header) == tuple(core):
-        return "core"
-    return None
-
-
-def task_core_name(column: str) -> str:
-    """The core name of one recorded Task column."""
-
-    return _TASK_RECORDED_NAMES.get(column, column)
-
-
-def task_recorded_row(kind: str, row: Mapping[str, str]) -> dict[str, str]:
-    """One row read under its recorded header, under the core names.
-
-    A column the recorded header lacks stays absent (not recorded). The recorded
-    work item ID is also its Work Unit, because a recorded evidence row cites that
-    ID in its Work Unit cell; `yes` and `no` read as `true` and `false`.
-    """
-
-    read = {task_core_name(key): value for key, value in row.items()}
-    if kind == "traceability" and "Item" in read:
-        read["Work Unit"] = read["Item"]
-    if kind == "evidence" and "Required" in read:
-        value = read["Required"].strip()
-        read["Required"] = _TASK_RECORDED_REQUIRED.get(value, read["Required"])
-    return read
+    return "core" if core and tuple(header) == tuple(core) else None
 
 
 def task_table_rows(
@@ -289,10 +221,7 @@ def task_table_rows(
     form = task_header_form(kind, header, core)
     if form is None or any(len(row) != len(header) for row in rows):
         return None
-    read = [dict(zip(header, row, strict=True)) for row in rows]
-    return form, [
-        task_recorded_row(kind, row) if form == "recorded" else row for row in read
-    ]
+    return form, [dict(zip(header, row, strict=True)) for row in rows]
 
 
 @dataclass(frozen=True)
@@ -403,24 +332,11 @@ def read_task_tables(
     decisions = task_table_rows(
         "acceptance", acceptance, binding.criterion_acceptance_columns
     )
-    # A comparison-base registry from before the core binds only recorded headers.
-    pre_core = not binding.work_item_columns
-    forms = {
-        "recorded" if pre_core else read[0]
-        for read in (lifecycle, items, checks, decisions)
-        if read
-    }
-    if work_items is not None:
-        forms.add("core")
-    if len(forms) > 1:
-        return TaskTables(
-            None,
-            None,
-            None,
-            None,
-            (("TASK-HEADER-MIXED", "recorded and core Task headers in one Task"),),
-        )
-    form = next(iter(forms), None)
+    form: TaskForm | None = (
+        "core"
+        if work_items is not None or any((lifecycle, items, checks, decisions))
+        else None
+    )
     issues: list[tuple[str, str]] = []
     work = None if lifecycle is None else lifecycle[1]
     if form == "core" and work is not None:
@@ -795,8 +711,7 @@ def _plain_table(lines: Sequence[str], start: int) -> list[list[str]]:
 
 
 def _task_row_states(text: str, contract: "BodyContract") -> list[str] | None:
-    """Status cells of the Task work items: the core work item table of a core
-    Task, else the recorded Lifecycle Traceability table (SPEC-0222)."""
+    """Status cells of the core work item table of a Task (SPEC-0222)."""
 
     binding = contract.task_execution
     lines = text.split("\n")
@@ -818,7 +733,7 @@ def _task_row_states(text: str, contract: "BodyContract") -> list[str] | None:
         table = _plain_table(lines, start)
         if len(table) < 3 or tuple(table[0]) != binding.work_item_columns:
             return None
-    elif form != "recorded":
+    else:
         return None
     column = table[0].index("Status")
     return [row[column] for row in table[2:] if len(row) == len(table[0])]

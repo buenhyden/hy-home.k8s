@@ -5213,24 +5213,23 @@
         ],
         "validation": {
           "positive": [
-            "A Task in the form, with its core Work Items table first under Work Performed when it tracks more than one item, its local Lifecycle Traceability table under Execution Log, its core evidence table under Results, its core criterion table under Criterion Decisions and its Approval and Safety Boundaries block under Inputs and Authority, passes the form tree, table, body-contract and lifecycle checks.",
-            "A Task recorded under the SPEC-0203 header of every Task table is read by the transition adapter under the core names and passes the same rules."
+            "A Task in the form, with its core Work Items table first under Work Performed when it tracks more than one item, its local Lifecycle Traceability table under Execution Log, its core evidence table under Results, its core criterion table under Criterion Decisions and its Approval and Safety Boundaries block under Inputs and Authority, passes the form tree, table, body-contract and lifecycle checks."
           ],
           "negative": [
             "A Task that keeps a previous H2 title such as Task Evidence fails the form tree.",
-            "A Task that mixes a recorded header and a core header fails TASK-HEADER-MIXED, and a core cell outside its type or allowed values fails TASK-CORE-CELL.",
+            "A Task table under any header other than the core header is not read and fails its column check, and a core cell outside its type or allowed values fails TASK-CORE-CELL.",
             "An edited, removed or reordered recorded evidence cell fails TASK-EVIDENCE-RETENTION and a removed work row fails TASK-ITEM-DELETE."
           ],
           "regression": [
             "The loaded Task profiles keep heading lists equal to the form H2 titles.",
-            "tests/test_task_execution_contract.py keeps every TASK- rule active on the repository registry with the form bound, reads each side of a comparison with its own registry and reads the recorded and the core header.",
+            "tests/test_task_execution_contract.py keeps every TASK- rule active on the repository registry with the form bound, reads each side of a comparison with its own registry and reads only the core header.",
             "tests/test_common_form_tree.py asserts exactly the Task form, its extensions, its four tables and this definition in the repository registry."
           ]
         },
         "migration": {
-          "meaning_map": "SPEC-0222 moves the Task section IDs to the core IDs and the Task tables to the core task.work_items, task.evidence and task.acceptance tables; the local Lifecycle Traceability table keeps the Upstream criterion, Result and Evidence of each Item. A recorded Task keeps its SPEC-0203 header, which the transition adapter reads under the core names.",
+          "meaning_map": "SPEC-0222 moves the Task section IDs to the core IDs and the Task tables to the core task.work_items, task.evidence and task.acceptance tables; the local Lifecycle Traceability table keeps the Upstream criterion, Result and Evidence of each Item. The transition adapter for Tasks recorded under the SPEC-0203 header left with the last such Task (SPEC-0223).",
           "retained_history": "Git history retains the slug section IDs, the SPEC-0203 Task headers and the previous template.",
-          "rollback": "Revert the SPEC-0222 WORK-002 commit."
+          "rollback": "Revert the SPEC-0223 WORK-003 commit, then the SPEC-0222 WORK-002 commit."
         },
         "tables": [
           {

@@ -45,7 +45,6 @@ from document_contracts import (
     carry_evidence_rows,
     read_task_tables,
     task_header_form,
-    task_recorded_row,
     task_table_rows,
     task_execution_issues,
     task_status,
@@ -2847,7 +2846,7 @@ def _body_contract_rows(
 
 
 def task_tables(text: str, profile: DocumentProfile) -> TaskTables:
-    """Every Task table of one document, read by the transition adapter."""
+    """Every Task table of one document, read under the core header."""
 
     contract = profile.body_contract
     binding = contract.task_execution if contract else None
@@ -2940,7 +2939,7 @@ def task_base_evidence_rows(
     table must hold the identity column that the binding names; the exact columns
     are the profile validator's rule, and the retention rule refuses a recorded
     cell whose column is missing instead of reading it as empty. Every table that
-    is not under the core header is read by the transition adapter (SPEC-0222).
+    is not under the core header is not read (SPEC-0223).
     """
 
     section_name = getattr(binding, "evidence_section", None) or "Task Evidence"
@@ -2964,9 +2963,7 @@ def task_base_evidence_rows(
         and "Evidence" not in columns
         and task_header_form("evidence", table[0], columns) == "core"
     )
-    if rows is None or core:
-        return rows
-    return [task_recorded_row("evidence", row) for row in rows]
+    return rows if rows is None or core else None
 
 
 def lifecycle_markdown_evidence(

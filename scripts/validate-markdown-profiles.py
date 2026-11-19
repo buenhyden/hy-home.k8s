@@ -51,7 +51,6 @@ from document_contracts import (
     task_status,
     task_contract_issues,
     read_task_tables,
-    task_core_name,
     task_header_form,
     direct_parent,
     MARKDOWN_TEMPLATE_PLACEHOLDER,
@@ -694,16 +693,7 @@ def _body_contract_diagnostics(
                 json.dumps(duplicate_columns),
             )
         ]
-    # SPEC-0222: an authored Task may keep its recorded header, read under the
-    # core names by the transition adapter; a template carries the core header.
-    task_form = (
-        task_header_form("traceability", header, contract.required_columns)
-        if contract.task_execution is not None
-        else None
-    )
-    if task_form == "recorded" and profile.mode == "authored":
-        header = [task_core_name(column) for column in header]
-    elif tuple(header) != contract.required_columns:
+    if tuple(header) != contract.required_columns:
         return [
             _diagnostic(
                 "BODY-CONTRACT-COLUMNS",
@@ -2752,7 +2742,7 @@ def validate_document_text(
 def _task_table_diagnostics(
     path: PurePosixPath, profile: DocumentProfile, body: str, status: str
 ) -> list[Diagnostic]:
-    """Read every Task table through the transition adapter (SPEC-0222)."""
+    """Read every Task table under the core header (SPEC-0222)."""
 
     contract = profile.body_contract
     assert contract is not None and contract.task_execution is not None
