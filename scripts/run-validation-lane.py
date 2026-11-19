@@ -183,7 +183,20 @@ def platform_result_line(
     )
 
 
-def parse_platform_report(payload: bytes, root: Path) -> list[dict[str, str]]:
+def _platform_scope(root: Path):
+    source = root / "scripts/validation/platform/assurance.py"
+    spec = importlib.util.spec_from_file_location("_scoped_platform_report", source)
+    if spec is None or spec.loader is None:
+        raise ValueError("platform scope reader unavailable")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def parse_platform_report(
+    payload: bytes, root: Path, *, changed_paths: Sequence[str] | None = None
+) -> list[dict[str, str]]:
     """Validate a bounded closed report before any child-supplied text is printed."""
     if not payload or len(payload) > PLATFORM_REPORT_LIMIT_BYTES:
         raise ValueError("platform report has invalid size")
@@ -206,7 +219,9 @@ def parse_platform_report(payload: bytes, root: Path) -> list[dict[str, str]]:
         or type(report["version"]) is not int
         or report["version"] != 2
         or type(report["results"]) is not list
-        or not 1 <= len(report["results"]) <= PLATFORM_REPORT_MAX_ROWS
+        or not (0 if changed_paths is not None else 1)
+        <= len(report["results"])
+        <= PLATFORM_REPORT_MAX_ROWS
     ):
         raise ValueError("platform report envelope is invalid")
 
@@ -218,6 +233,11 @@ def parse_platform_report(payload: bytes, root: Path) -> list[dict[str, str]]:
     sample = root / "examples/sample-app/kustomization.yaml"
     if sample.is_file():
         allowed_roots.add("examples/sample-app")
+    if changed_paths is not None:
+        module = _platform_scope(root)
+        allowed_roots = {
+            path.as_posix() for path in module.affected_roots(root, list(changed_paths))
+        }
     rows: list[dict[str, str]] = []
     seen: set[tuple[str, str]] = set()
     base_results: dict[str, dict[str, str]] = {}
@@ -293,7 +313,9 @@ def parse_platform_report(payload: bytes, root: Path) -> list[dict[str, str]]:
         else:
             base_results.setdefault(base, {})[row["depth"]] = row["result"]
         rows.append(row)
-    if not allowed_roots or set(base_results) != allowed_roots:
+    if (not allowed_roots and changed_paths is None) or set(
+        base_results
+    ) != allowed_roots:
         raise ValueError("platform report omits a Kustomize root")
     for base, depths in base_results.items():
         if not {"syntax", "render", "live-observation"} <= depths.keys():
@@ -1608,10 +1630,17 @@ def validator_argv(
     contract: dict[str, Any],
     contract_module: Any,
     base_ref: str | None = None,
+    scope_platform: bool = False,
 ) -> list[str]:
     argv = list(validator["argv"])
     if validator["id"] == "gitops-change-set" and base_ref is not None:
         argv[argv.index("--base-ref") + 1] = base_ref
+    if scope_platform and validator["id"] in {
+        "platform-assurance",
+        "k8s-manifests",
+        "policy-gates",
+    }:
+        argv.extend("--changed-path=" + path for path in paths)
     if validator.get("pathInput") == "include-existing-files":
         if lane != "staged":
             raise ValueError("selected file input requires staged lane")
@@ -1660,6 +1689,7 @@ def validator_argv(
 def validation_environment(root: Path) -> dict[str, str]:
     """Return the exact shared environment passed to repository validators."""
     environment = closed_subprocess_environment()
+    environment["HY_HOME_K8S_VALIDATION_PYTHON"] = os.path.abspath(sys.executable)
     gitleaks = secure_gitleaks_executable(root)
     if gitleaks is not None:
         environment[GITLEAKS_EXECUTABLE_ENV] = gitleaks
@@ -1667,6 +1697,177 @@ def validation_environment(root: Path) -> dict[str, str]:
     if conftest is not None:
         environment[CONFTEST_EXECUTABLE_ENV] = conftest
     return environment
+
+
+def _git_revision(root: Path, reference: str) -> str:
+    result = run_bounded_command(
+        ["git", "rev-parse", "--verify", "--end-of-options", reference + "^{commit}"],
+        cwd=root,
+        env=closed_subprocess_environment(),
+        timeout_seconds=15,
+    )
+    value = result.stdout.retained.decode("ascii", errors="replace").strip()
+    if (
+        result.status != "completed"
+        or result.returncode
+        or not re.fullmatch(r"[0-9a-f]{40}", value)
+    ):
+        raise ValueError("PR comparison revision is unavailable")
+    return value
+
+
+def build_pr_plan(root, paths, contract, contract_module, base_ref):
+    """Select the existing purpose gates once for the cumulative PR input."""
+    base = _git_revision(root, base_ref)
+    head = _git_revision(root, "HEAD")
+    normalized = sorted({contract_module.normalize_path(path) for path in paths})
+    selected = contract_module.select_paths(
+        contract, normalized, "affected", root, collect_unmatched=True
+    )
+    if selected["unmatchedPaths"]:
+        raise ValueError(
+            "PR paths have no validation owner: "
+            + ", ".join(selected["unmatchedPaths"])
+        )
+    profile = set(contract_module.profile_gate_ids(contract, "pull-request"))
+    selector_inputs = {
+        "scripts/validation/registry.json",
+        "scripts/validation/registry.schema.json",
+        "scripts/run-validation-lane.py",
+        "scripts/select-affected-surfaces.py",
+        "scripts/validate-affected-surfaces.py",
+    }
+    selected_ids = set(selected["validators"])
+    if selector_inputs.intersection(normalized):
+        required = {"affected-surface-contract", "validation-routing-tests"}
+        if not required <= profile:
+            raise ValueError("PR selector cannot exclude its own required regressions")
+        selected_ids |= required
+    validators = sorted(selected_ids & profile)
+    tools = {"kustomize": False, "conftest": False}
+    if {"platform-assurance", "policy-gates"}.intersection(validators):
+        module = _platform_scope(root)
+        if "platform-assurance" in validators:
+            tools["kustomize"] = bool(module.affected_roots(root, normalized))
+        if "policy-gates" in validators:
+            tools["conftest"] = bool(
+                module.manifest_paths(root, normalized, policy=True)
+            )
+    plan = {
+        "schemaVersion": 1,
+        "profile": "pull-request",
+        "base": base,
+        "head": head,
+        "registryDigest": hashlib.sha256(
+            contract_module.json_output(contract).encode()
+        ).hexdigest(),
+        "paths": normalized,
+        "validators": validators,
+        "tools": tools,
+    }
+    return {**plan, "planDigest": hashlib.sha256(encoded(plan).encode()).hexdigest()}
+
+
+def read_pr_plan(root, path, contract, contract_module):
+    """Consume an immutable invocation plan; never turn an invalid plan into N/A."""
+    from validation.repository.bounded_io import read_bytes
+
+    plan = json.loads(read_bytes(path, max_bytes=4 * 1024 * 1024))
+    keys = {
+        "schemaVersion",
+        "profile",
+        "base",
+        "head",
+        "registryDigest",
+        "paths",
+        "validators",
+        "planDigest",
+        "tools",
+    }
+    if (
+        not isinstance(plan, dict)
+        or set(plan) != keys
+        or plan["schemaVersion"] != 1
+        or plan["profile"] != "pull-request"
+    ):
+        raise ValueError("invalid PR plan shape")
+    payload = {key: value for key, value in plan.items() if key != "planDigest"}
+    if plan["planDigest"] != hashlib.sha256(encoded(payload).encode()).hexdigest():
+        raise ValueError("PR plan changed after selection")
+    expected = hashlib.sha256(
+        contract_module.json_output(contract).encode()
+    ).hexdigest()
+    if (
+        plan["registryDigest"] != expected
+        or plan["head"] != _git_revision(root, "HEAD")
+        or plan["base"] != _git_revision(root, plan["base"])
+    ):
+        raise ValueError("PR plan registry or candidate changed")
+    for key in ("paths", "validators"):
+        if (
+            not isinstance(plan[key], list)
+            or any(not isinstance(value, str) for value in plan[key])
+            or sorted(set(plan[key])) != plan[key]
+        ):
+            raise ValueError("invalid PR plan entries")
+    allowed = set(contract_module.profile_gate_ids(contract, "pull-request"))
+    if (
+        not isinstance(plan["tools"], dict)
+        or set(plan["tools"]) != {"kustomize", "conftest"}
+        or any(type(value) is not bool for value in plan["tools"].values())
+    ):
+        raise ValueError("invalid PR tool requirements")
+    if set(plan["validators"]) - allowed or (not plan["paths"] and plan["validators"]):
+        raise ValueError("PR plan selects an unregistered purpose gate")
+    for path in plan["paths"]:
+        contract_module.reject_symlink_traversal(root, path)
+    return plan
+
+
+def document_leaf_results(completed: BoundedCommandResult) -> dict[str, str]:
+    names = {"links-and-owners", "markdown-profiles"}
+    failed = dict.fromkeys(names, "FAIL")
+    if (
+        completed.status != "completed"
+        or not completed.cleanup_complete
+        or not completed.stdout.complete
+        or completed.stdout.observed_bytes > 4096
+    ):
+        return failed
+
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("duplicate document report key")
+            result[key] = value
+        return result
+
+    try:
+        report = json.loads(completed.stdout.retained, object_pairs_hook=unique)
+        if (
+            not isinstance(report, dict)
+            or set(report) != {"version", "results"}
+            or type(report["version"]) is not int
+            or report["version"] != 1
+        ):
+            return failed
+        results = report["results"]
+        if (
+            not isinstance(results, dict)
+            or set(results) != names
+            or any(
+                type(value) is not int or value not in (0, 1, 2)
+                for value in results.values()
+            )
+            or completed.returncode != max(results.values())
+        ):
+            return failed
+        return {
+            name: "PASS" if value == 0 else "FAIL" for name, value in results.items()
+        }
+    except (ValueError, UnicodeError):
+        return failed
 
 
 def run_selected(
@@ -1680,6 +1881,8 @@ def run_selected(
     base_ref: str | None = None,
     reuse_candidates: Mapping[str, dict[str, str]] | None = None,
     observed_results: MutableMapping[str, str] | None = None,
+    combine_documents: bool = False,
+    scope_platform: bool = False,
 ) -> int:
     if lane not in LOCAL_LANES:
         raise ValueError("unsupported local validation lane")
@@ -1720,11 +1923,26 @@ def run_selected(
 
     failed = False
     subprocess_environment = validation_environment(root)
+    document_pair = combine_documents and {
+        "links-and-owners",
+        "markdown-profiles",
+    } <= set(selected["validators"])
     for identifier in selected["validators"]:
+        if document_pair and identifier == "markdown-profiles":
+            continue
         validator = validators[identifier]
         argv = validator_argv(
-            root, lane, paths, validator, contract, contract_module, base_ref
+            root,
+            lane,
+            paths,
+            validator,
+            contract,
+            contract_module,
+            base_ref,
+            scope_platform=scope_platform,
         )
+        if document_pair and identifier == "links-and-owners":
+            argv.extend(("--with-profiles", "--leaf-report"))
         tool_token = argv[0]
         evidence = validator["evidenceLane"]
         if evidence == "remote/live":
@@ -1834,6 +2052,7 @@ def run_selected(
             pre_commit_home = account_home / ".cache/pre-commit"
             child_environment["PRE_COMMIT_HOME"] = str(pre_commit_home)
             child_environment.update(pre_commit_toolchain_caches(pre_commit_home))
+        started = time.monotonic()
         completed = run_bounded_command(
             argv,
             cwd=root,
@@ -1857,7 +2076,9 @@ def run_selected(
             ):
                 try:
                     platform_rows = parse_platform_report(
-                        completed.stdout.retained, root
+                        completed.stdout.retained,
+                        root,
+                        changed_paths=paths if scope_platform else None,
                     )
                 except ValueError:
                     report_error = True
@@ -1876,7 +2097,9 @@ def run_selected(
             and not report_error
             and not any(row["result"] == "FAIL" for row in platform_rows)
             and (
-                not structured or any(row["result"] == "PASS" for row in platform_rows)
+                not structured
+                or any(row["result"] == "PASS" for row in platform_rows)
+                or (scope_platform and not platform_rows and not report_error)
             )
             and (marker_count == 1 if marker is not None else True)
         )
@@ -1890,10 +2113,32 @@ def run_selected(
                 b"NONSTYLE-NOT_APPLICABLE: no selected index files",
             )
         )
-        status = (
-            "NOT_APPLICABLE" if style_not_applicable else ("PASS" if passed else "FAIL")
+        scoped_not_applicable = (
+            scope_platform
+            and passed
+            and completed.stdout.retained.strip()
+            == {
+                "k8s-manifests": b"MANIFEST-NOT_APPLICABLE: no selected manifests",
+                "policy-gates": b"POLICY-NOT_APPLICABLE: no selected manifests",
+            }.get(identifier, b"not-a-valid-result-marker")
         )
-        limitation = observation(completed)
+        status = (
+            "NOT_APPLICABLE"
+            if style_not_applicable
+            or scoped_not_applicable
+            or (structured and scope_platform and passed and not platform_rows)
+            else ("PASS" if passed else "FAIL")
+        )
+        limitation = (
+            observation(completed)
+            + f";elapsed_seconds={time.monotonic() - started:.3f}"
+        )
+        leaf_results = None
+        if document_pair and identifier == "links-and-owners":
+            leaf_results = document_leaf_results(completed)
+            status = leaf_results[identifier]
+            passed = all(value == "PASS" for value in leaf_results.values())
+            limitation += ";shared_document_process;leaf_result=" + status
         if structured:
             if report_error:
                 limitation += ";structured_report=invalid"
@@ -1923,6 +2168,25 @@ def run_selected(
             print(platform_result_line(row, identifier, lane, scope, evidence))
         if observed_results is not None:
             observed_results[identifier] = status
+        if document_pair and identifier == "links-and-owners":
+            print(
+                result_line(
+                    leaf_results["markdown-profiles"],
+                    "markdown-profiles",
+                    command=argv,
+                    tool=tool,
+                    scope=scope,
+                    limitation="shared_document_invocation;leaf_result="
+                    + leaf_results["markdown-profiles"]
+                    + ";"
+                    + observation(completed),
+                    evidence=evidence,
+                )
+            )
+            if observed_results is not None:
+                observed_results["markdown-profiles"] = leaf_results[
+                    "markdown-profiles"
+                ]
         failed = failed or not passed
     return 1 if failed else 0
 
@@ -1933,20 +2197,73 @@ def main() -> int:
     parser.add_argument("--lane", choices=LOCAL_LANES, required=True)
     parser.add_argument("--paths-file", type=Path)
     parser.add_argument("--delimiter", choices=("nul",))
+    parser.add_argument("--base-ref")
+    parser.add_argument("--profile", choices=("pull-request",))
+    parser.add_argument("--plan-output", type=Path)
+    parser.add_argument("--plan-file", type=Path)
+    parser.add_argument("--combine-documents", action="store_true")
     args = parser.parse_args()
 
     root = args.root.resolve()
-    if args.paths_file is None or args.delimiter is None:
+    if args.plan_file is None and (args.paths_file is None or args.delimiter is None):
         parser.error("affected and staged lanes require --paths-file and --delimiter")
+    if args.plan_output is not None and (
+        args.profile != "pull-request" or not args.base_ref
+    ):
+        parser.error("PR plan output requires --profile pull-request and --base-ref")
+    if args.plan_file is not None and (
+        args.paths_file is not None or args.plan_output is not None
+    ):
+        parser.error("a saved PR plan cannot be combined with another input")
+    if (args.profile or args.plan_file) and args.lane != "affected":
+        parser.error("PR checks use the affected lane")
 
     contract_module = load_contract_module()
     scope = f"{args.lane}:paths=unknown"
     try:
         contract = contract_module.validate_contract(root)
-        paths = contract_module.read_nul_paths(args.paths_file)
-        return run_selected(root, args.lane, paths, contract, contract_module)
-    except contract_module.ContractError as exc:
-        detail_metadata = bounded_metadata("detail", exc.detail)
+        if args.plan_file is not None:
+            plan = read_pr_plan(root, args.plan_file, contract, contract_module)
+        else:
+            paths = contract_module.read_nul_paths(args.paths_file)
+            plan = None
+            if args.profile:
+                if not args.base_ref:
+                    raise ValueError("PR selection requires a comparison base")
+                plan = build_pr_plan(
+                    root, paths, contract, contract_module, args.base_ref
+                )
+        if args.plan_output is not None:
+            from validation.repository.bounded_io import open_parent
+
+            with open_parent(args.plan_output) as (parent, name):
+                descriptor = os.open(
+                    name,
+                    os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                    0o600,
+                    dir_fd=parent,
+                )
+                with os.fdopen(descriptor, "w", encoding="utf-8") as output:
+                    output.write(encoded(plan) + "\n")
+            print(encoded(plan))
+            return 0
+        if plan is not None:
+            return run_selected(
+                root,
+                args.lane,
+                plan["paths"],
+                contract,
+                contract_module,
+                validator_ids=plan["validators"],
+                base_ref=plan["base"],
+                combine_documents=args.combine_documents,
+                scope_platform=True,
+            )
+        return run_selected(
+            root, args.lane, paths, contract, contract_module, base_ref=args.base_ref
+        )
+    except (contract_module.ContractError, ValueError, OSError) as exc:
+        detail_metadata = bounded_metadata("detail", str(exc))
         print(
             result_line(
                 "FAIL",
@@ -1954,7 +2271,7 @@ def main() -> int:
                 command=(),
                 tool="none",
                 scope=scope,
-                limitation=f"contract_error={exc.code};{detail_metadata}",
+                limitation=f"contract_error={getattr(exc, 'code', 'PR-PLAN')};{detail_metadata}",
                 evidence="repo-static",
             ),
             file=sys.stderr,

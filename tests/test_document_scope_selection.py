@@ -9,6 +9,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path, PurePosixPath
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -53,6 +54,126 @@ DOCUMENT_GATES = {
 
 
 class DocumentScopeSelectionTests(unittest.TestCase):
+    def test_invocation_shares_bounded_text_and_rechecks_changed_identity(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = PurePosixPath("sample.md")
+            target = root / path
+            target.write_text("first", encoding="utf-8")
+            original = DOCUMENTS.read_bounded_utf8
+            with mock.patch.object(
+                DOCUMENTS, "read_bounded_utf8", wraps=original
+            ) as reader:
+                with DOCUMENTS.document_invocation():
+                    self.assertEqual(
+                        DOCUMENTS.read_repository_text(root, path), "first"
+                    )
+                    self.assertEqual(
+                        DOCUMENTS.read_repository_text(root, path), "first"
+                    )
+                    self.assertEqual(reader.call_count, 1)
+                    target.write_text("second value", encoding="utf-8")
+                    self.assertEqual(
+                        DOCUMENTS.read_repository_text(root, path), "second value"
+                    )
+                    self.assertEqual(reader.call_count, 2)
+                self.assertEqual(
+                    DOCUMENTS.read_repository_text(root, path), "second value"
+                )
+                self.assertEqual(reader.call_count, 3)
+
+    def test_invocation_rejects_symlink_replacing_cached_text(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = PurePosixPath("sample.md")
+            target = root / path
+            other = root / "other.md"
+            target.write_text("safe", encoding="utf-8")
+            other.write_text("replacement", encoding="utf-8")
+            with DOCUMENTS.document_invocation():
+                self.assertEqual(DOCUMENTS.read_repository_text(root, path), "safe")
+                target.unlink()
+                target.symlink_to(other)
+                with self.assertRaises(ValueError):
+                    DOCUMENTS.read_repository_text(root, path)
+
+    def test_invocation_parses_one_git_index_for_two_document_readers(self) -> None:
+        original = DOCUMENTS._run_git
+        calls: list[tuple[str, ...]] = []
+
+        def counted(root: Path, args: tuple[str, ...]) -> bytes:
+            calls.append(args)
+            return original(root, args)
+
+        with mock.patch.object(DOCUMENTS, "_run_git", side_effect=counted):
+            with DOCUMENTS.document_invocation():
+                first = DOCUMENTS.enumerate_target_markdown(ROOT)
+                second = DOCUMENTS.enumerate_target_markdown(ROOT)
+        self.assertEqual(first, second)
+        self.assertEqual(calls.count(("ls-files", "--stage", "-z")), 1)
+
+    def test_invocation_shares_registry_parse_without_exposing_mutation(self) -> None:
+        original = DOCUMENTS._load_published_contract
+        with mock.patch.object(
+            DOCUMENTS, "_load_published_contract", wraps=original
+        ) as loader:
+            with DOCUMENTS.document_invocation():
+                first = DOCUMENTS.load_internal_payload(ROOT)
+                saved_version = first["schema_version"]
+                first["schema_version"] = "changed-by-caller"
+                second = DOCUMENTS.load_internal_payload(ROOT)
+                self.assertEqual(second["schema_version"], saved_version)
+                self.assertEqual(loader.call_count, 1)
+
+    def test_combined_document_leaf_runs_both_and_preserves_failure_class(self) -> None:
+        spec = importlib.util.spec_from_file_location(
+            "document_scope_combined_links",
+            ROOT / "scripts/validate-links-and-owners.py",
+        )
+        assert spec is not None and spec.loader is not None
+        links = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = links
+        spec.loader.exec_module(links)
+        with (
+            mock.patch.object(links, "_main_single", return_value=1) as first,
+            mock.patch.object(links, "_profiles_main", return_value=2) as second,
+        ):
+            self.assertEqual(links.main(["--with-profiles"]), 2)
+        first.assert_called_once_with([])
+        second.assert_called_once_with([])
+
+    def test_invocation_shares_heading_parse_across_reader_modules(self) -> None:
+        readers = []
+        for name in ("document_scope_heading_a", "document_scope_heading_b"):
+            spec = importlib.util.spec_from_file_location(
+                name, ROOT / "scripts/validate-links-and-owners.py"
+            )
+            assert spec is not None and spec.loader is not None
+            module = importlib.util.module_from_spec(spec)
+            sys.modules[name] = module
+            spec.loader.exec_module(module)
+            readers.append(module)
+        text = "# Shared heading parse probe\n\nUnique body.\n"
+        with (
+            mock.patch.object(
+                readers[0],
+                "_parse_root_form_structure",
+                wraps=readers[0]._parse_root_form_structure,
+            ) as first,
+            mock.patch.object(
+                readers[1],
+                "_parse_root_form_structure",
+                wraps=readers[1]._parse_root_form_structure,
+            ) as second,
+            DOCUMENTS.document_invocation(),
+        ):
+            self.assertEqual(
+                readers[0].root_form_structure(text),
+                readers[1].root_form_structure(text),
+            )
+        self.assertEqual(first.call_count, 1)
+        self.assertEqual(second.call_count, 0)
+
     def test_document_reader_paths_have_one_explicit_owner(self) -> None:
         ROUTES.validate_contract(ROOT, CONTRACT)
         for path in DOCUMENT_READERS:

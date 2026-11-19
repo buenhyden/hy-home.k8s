@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "3.3.0"
+version: "3.4.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 ---
 
 # Quality and Evidence Policy
@@ -41,7 +41,7 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 | QUAL-R003 | In the staged lane | **staged**: validate the exact logical Git index in an isolated snapshot. Unstaged repairs cannot hide invalid staged content; commit-message hooks remain separate. | `qa-runner-tests` | none |
 | QUAL-R004 | Always | **retired full / ci sweep**: historical local `full` and `ci` all-files profiles and blanket unit discovery are retained as past evidence, not selected for current completion. Even a shared QA-contract change selects its actual affected gates and named behavior and security unit regressions; it does not revive a repository-wide sweep. An explicit audit identifies its purpose, inputs and bounded named checks under the active registry before execution. | `validation-routing-tests` | none |
 | QUAL-R005 | When a commit-message or manual-stage check applies | **message/manual**: record applicable commit-message or explicit manual-stage checks individually. | Semantic review | none |
-| QUAL-R006 | Always | **hosted**: a former local `ci` alias never established GitHub Actions execution. Hosted automation runs branch or repository metadata checks and the separately selected shared style check on PR inputs. When a PR changes `.github/requirements/`, the style job also runs the reviewed base's CI Python contract check against the PR files, because a bot-authored lock update never passes local staged QA (SPEC-0123; Git history: package `0123-hosted-lock-check` under `docs/03.specs/` at commit `69445fca`). When a PR changes GitOps data, the same job runs the reviewed base's static GitOps identity check against the PR files. The job reports the selected style, CI lock and GitOps identity leaves of the cumulative PR change as one fail-closed aggregate under ADR-0063, which the operator accepted on 2026-11-18. The GitOps identity leaf has been selected and has passed on pull requests whose `gitops/` changes were documentation only; a hosted run over a changed GitOps manifest and any hosted run of the CI lock leaf remain unobserved. A deployment style route applies only if a real deployment workflow exists. Hosted automation does not run local unit or document-content QA. A hosted result reports only what its jobs actually observed and is never a proxy for a successful local run or style job. The user adopted on 2026-11-12 a target in which PR-time hosted CI runs the affected implementation and product checks with a read-only token and no secrets. ADR-0063 and the amended REQ-0003 FR-0017 make the affected style, CI lock and static GitOps identity checks current. Affected implementation or product checks beyond those remain a target, not current behavior, and the hosted jobs are `ci-summary` and `style-pr`. | `ci-python-contract` | none |
+| QUAL-R006 | Always | **hosted**: `ci-summary` validates PR metadata and `style-pr` aggregates selected style and purpose checks on the exact cumulative base-to-merge candidate. The `pull-request` profile in the validation registry selects affected implementation regressions, document content and static manifest/render/schema/policy consumers; it excludes the local repository-quality aggregate. Purpose checks execute candidate code with a read-only token, no secrets and no persisted checkout credentials. Style configuration and the hashed Python dependency lock come from the reviewed base. One saved invocation plan binds paths, base, candidate and registry; invalid input is not an empty diff. A selected leaf that is missing, skipped, cancelled or failed blocks the aggregate; only an explicit valid nonselection is NOT_APPLICABLE. No blanket full QA or post-merge replay is added. Hosted results require their exact run and candidate; static or local PASS proves no hosted execution. | `ci-python-contract`, `validation-routing-tests` | none |
 | QUAL-R007 | For provider discovery, authenticated operation, remote execution or runtime checks | **remote/live**: provider discovery or authenticated operation, remote execution, and operator-approved runtime checks need direct authorized evidence. Static presence and hosted CI do not imply this lane. | Semantic review | none |
 | QUAL-R008 | Always | Before implementation, identify the required gates and resolve their tools, environment, actual cost/output needs, technical command limits and necessary native execution approval. This is resource preflight, not secret/live authorization; [approval and safety](approval-and-safety.md) owns the latter. If an actual required resource or native permission is unavailable, preserve safe work and report the required check as unexecuted with its next owner. Never change a command or wrapper to evade a resource guard, disable a required check or report a false result. | `scripts/run-validation-lane.py` | none |
 | QUAL-R009 | When a Task records a FAIL, DEFER or NOT_RUN result | A modern Task evidence `FAIL` records concrete Command, Input and Location as a `PASS` does. `NOT_RUN` and `DEFER` may use `Pending` where no result artifact exists, while naming the reason and next owner. QA `NOT_APPLICABLE` judges a check's target; it is never the Task criterion verdict `not-required`, which requires a cancelled Task and same-package cancelled Spec with the actual criterion-specific scope and authorization evidence. | `document-lifecycle` | none |
@@ -154,10 +154,11 @@ This policy excludes no subject within its scope; if one is excluded, name it an
 
 `QUAL-R001`
 
-Document link and owner checks execute only through selected local QA. Hosted
-metadata jobs neither run nor certify them. A local repository link-target
-result does not establish external URL availability; record that as a separate
-unobserved external condition unless directly authorized and checked.
+Document link and owner checks execute through selected local QA or the
+selected hosted PR purpose path. Metadata and style alone certify no document
+content. Each invocation reports its own input and trust boundary. A repository
+link-target result does not establish external URL availability; record that
+as unobserved unless directly authorized and checked.
 
 #### Validation runner envelope
 
@@ -237,7 +238,7 @@ not a policy sentence, owns the exact gate list and per-check limits.
 | QUAL-R028 | Run focused behavior checks and selected affected `quick` checks over changed working-tree bytes. |
 | QUAL-R029 | Review the logical index, then commit with active hooks as one run: the `staged-qa` hook runs exact-index `staged` QA, which includes the selected lint and format gate (`selected-style`), and the commit-msg hooks validate the actual message. Record that run once. |
 | QUAL-R030 | Preserve checked commit evidence and observed push result; pushing adds no QA leaf for unchanged inputs. |
-| QUAL-R031 | Observe required hosted branch or repository metadata and the selected `style-pr` leaves (style, CI lock, GitOps identity) at the exact PR SHA and run identity. Hosted `style-pr` does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. A pull request completes only when the required checks pass, the review requirement is met (no approving review is required, count 0) and the core-diff checklist of the final diff records no unresolved `BLOCK` finding. The repository owner merges it, or explicitly directs its merge, with a merge commit; automated checks, Apps and signatures never stand in for the owner's approval. |
+| QUAL-R031 | Observe required hosted branch or repository metadata and the selected `style-pr` style and purpose leaves at the exact PR SHA and run identity. Hosted `style-pr` certifies only its selected hosted purpose and document-content checks; it does not certify a separate local execution. Remote protection remains `DEFER` when unobserved. A pull request completes only when the required checks pass, the review requirement is met (no approving review is required, count 0) and the core-diff checklist of the final diff records no unresolved `BLOCK` finding. The repository owner merges it, or explicitly directs its merge, with a merge commit; automated checks, Apps and signatures never stand in for the owner's approval. |
 | QUAL-R032 | Observe the selected style check at the actual deployment SHA/run before deployment, as the hosted lane requires; otherwise retain `NOT_RUN` or `DEFER`. Repository files alone cannot certify deployment. |
 | QUAL-R033 | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an unchanged merge candidate needs no repeat. Record the actual merge and any remote required-check result separately. |
 | QUAL-R034 | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing security guarantees. No session timebox or reserve approval is required. |

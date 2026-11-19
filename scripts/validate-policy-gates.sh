@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
 # validate-policy-gates.sh — run the Conftest deployment-safety policy
-# Usage: bash scripts/validate-policy-gates.sh [repo-root]
+# Usage: bash scripts/validate-policy-gates.sh [repo-root] [--changed-path=PATH ...]
 #
 # Conftest is required, not optional. A second built-in implementation of the
 # same rules used to run alongside it, which meant the gate could report a
 # clean result from an engine that had never evaluated the owning policy.
 # `policy/conftest/` is now the only owner of these rules.
 set -euo pipefail
+VALIDATION_PYTHON="${HY_HOME_K8S_VALIDATION_PYTHON:-python3}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEFAULT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 usage() {
-  printf 'Usage: bash scripts/validate-policy-gates.sh [repo-root]\n'
+  printf 'Usage: bash scripts/validate-policy-gates.sh [repo-root] [--changed-path=PATH ...]\n'
 }
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
@@ -20,13 +21,8 @@ if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   exit 0
 fi
 
-if [[ "$#" -gt 1 ]]; then
-  echo "ERR unexpected argument(s): $*" >&2
-  usage >&2
-  exit 2
-fi
-
 ROOT_INPUT="${1:-$DEFAULT_ROOT}"
+if (($#)); then shift; fi
 if [[ ! -d "$ROOT_INPUT" ]]; then
   echo "ERR repo root does not exist: $ROOT_INPUT" >&2
   exit 1
@@ -45,6 +41,23 @@ for required_path in \
     exit 1
   fi
 done
+
+target_list=$(mktemp)
+trap 'rm -f "$target_list"' EXIT
+"$VALIDATION_PYTHON" "$SCRIPT_DIR/validation/platform/assurance.py" --root "$ROOT_DIR" --manifest-paths --policy-targets "$@" >"$target_list"
+mapfile -d '' -t relative_targets <"$target_list"
+POLICY_TARGETS=()
+for relative in "${relative_targets[@]}"; do
+  POLICY_TARGETS+=("$ROOT_DIR/$relative")
+done
+if ((${#POLICY_TARGETS[@]} == 0)); then
+  if (($#)); then
+    echo 'POLICY-NOT_APPLICABLE: no selected manifests'
+    exit 0
+  fi
+  echo 'ERR no policy target YAML files found' >&2
+  exit 1
+fi
 
 # The validation runner resolves and validates the executable, then names it
 # here. A direct invocation falls back to the caller's search path.
@@ -77,20 +90,6 @@ run_conftest() {
     -v "$ROOT_DIR:/project:ro" -w /project \
     "$CONFTEST_IMAGE" "$@"
 }
-
-mapfile -d '' POLICY_TARGETS < <(
-  find \
-    "$ROOT_DIR/gitops" \
-    "$ROOT_DIR/infrastructure" \
-    "$ROOT_DIR/examples" \
-    -type f \( -name '*.yaml' -o -name '*.yml' \) -print0 |
-    sort -z
-)
-
-if ((${#POLICY_TARGETS[@]} == 0)); then
-  echo "ERR no policy target YAML files found" >&2
-  exit 1
-fi
 
 echo "=== validate-policy-gates ==="
 echo "Target : $ROOT_DIR"

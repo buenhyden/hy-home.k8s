@@ -33,6 +33,40 @@ SPEC.loader.exec_module(MODULE)
 
 
 class CreateNonRegularFixtureTests(unittest.TestCase):
+    def test_equal_identity_in_distinct_files_is_still_duplicate(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ("a", "b"):
+                owner = root / "gitops" / name
+                owner.mkdir(parents=True)
+                (owner / "kustomization.yaml").write_text(
+                    "apiVersion: kustomize.config.k8s.io/v1beta1\nkind: Kustomization\nresources: [object.yaml]\n"
+                )
+                (owner / "object.yaml").write_text(
+                    "apiVersion: v1\nkind: ConfigMap\nmetadata: {name: same, namespace: apps}\n"
+                )
+            with self.assertRaises(MODULE.GitOpsValidationError) as caught:
+                MODULE.render_identity_graph(root, MODULE.WORKTREE_REVISION)
+            self.assertEqual(caught.exception.code, "IDENTITY_DUPLICATE")
+
+    def test_one_shared_base_path_is_not_a_duplicate(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name, resources in (("root", "base"), ("root/base", "object.yaml")):
+                owner = root / "gitops" / name
+                owner.mkdir(parents=True)
+                (owner / "kustomization.yaml").write_text(
+                    "apiVersion: kustomize.config.k8s.io/v1beta1\nkind: Kustomization\nresources: ["
+                    + resources
+                    + "]\n"
+                )
+            (root / "gitops/root/base/object.yaml").write_text(
+                "apiVersion: v1\nkind: ConfigMap\nmetadata: {name: shared, namespace: apps}\n"
+            )
+            self.assertEqual(
+                len(MODULE.render_identity_graph(root, MODULE.WORKTREE_REVISION)), 1
+            )
+
     def test_fixture_change_set_matches_expected_object_identities(self) -> None:
         cases = json.loads((FIXTURE_PATH / "cases.json").read_text(encoding="utf-8"))
         rows = MODULE._render_path_diff(FIXTURE_PATH / "base", FIXTURE_PATH / "head")

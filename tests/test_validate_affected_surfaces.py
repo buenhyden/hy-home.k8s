@@ -250,7 +250,16 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     self.assertTrue(required <= set(selected["validators"]))
 
     def test_only_selected_profiles_and_no_blanket_discovery_gate(self) -> None:
-        self.assertEqual(set(self.contract["profiles"]), {"quick", "staged"})
+        self.assertEqual(
+            set(self.contract["profiles"]), {"quick", "staged", "pull-request"}
+        )
+        self.assertNotIn(
+            "repository-quality", self.contract["profiles"]["pull-request"]
+        )
+        self.assertLessEqual(
+            set(self.contract["profiles"]["pull-request"]),
+            set(self.contract["profiles"]["quick"]),
+        )
         self.assertNotIn("profileAliases", self.contract)
         self.assertFalse(
             {"unit-tests", "pre-commit"}

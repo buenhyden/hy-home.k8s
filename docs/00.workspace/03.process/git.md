@@ -1,10 +1,10 @@
 ---
 title: "Git Policy"
-version: "2.11.0"
+version: "2.12.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-11-19"
+updated: "2026-11-20"
 ---
 
 # Git Policy
@@ -189,7 +189,7 @@ widening the set of hooks that run is the only supported change.
 | --- | --- | --- | --- |
 | Commit (exact staged index) | `commit-msg` and `pre-commit` entries of `scripts/githooks` via `chained-hook.sh`; installed hooks `staged-qa`, `commitizen`, `commit-message-exceptions` of `.pre-commit-config.yaml`; lane: local staged QA | The same installed hooks over the staged index | none: no `post-commit` hook is installed or dispatched; the record is the active Task's evidence row |
 | Push (ref protection and transfer) | none from this repository: `scripts/githooks/pre-push` dispatches to an installed workspace or global `pre-push` hook if one exists and otherwise drains input and exits 0; lane: none | Ref protection is the GitHub classic `main` branch protection ([record](../../../.github/rulesets/main-protection.md)) and the provider deny rules, not a local hook; lane: dated remote read-back | none |
-| Pull request (cumulative `base..candidate`) | Local QA on the bounded final branch snapshot; lane: local | Hosted `ci-summary` (branch metadata, PR title and `base..head` messages) and `style-pr` (selected style, a changed CI lock and affected GitOps identities over the cumulative base-to-merge diff, one fail-closed aggregate under ADR-0063) of `ci.yml` on `pull_request`; lane: hosted, per PR SHA | none |
+| Pull request (cumulative `base..candidate`) | Local QA on the bounded final branch snapshot; lane: local | Hosted `ci-summary` (branch metadata, PR title and `base..head` messages) and `style-pr` (selected style and purpose checks from one cumulative base-to-merge plan, including affected implementation/document regressions and static manifest/render/schema/policy checks) of `ci.yml` on `pull_request`; lane: hosted, per PR SHA | none |
 | Merge (final candidate) | Required `ci-summary` and `style-pr`, `strict` latest head, from the main-protection record; lane: remote read-back | GitHub merge commit under the same protection | `ci.yml` runs only `ci-summary` on `push` to `main`; it reports `NOT_APPLICABLE` for the ref and adds no regression check, so no post-merge regression lane is adopted. Strict protection requires the PR checks on the latest head and `style-pr` checks the exact merge with both parents, so a replay on the merged tree would repeat a proven leaf (QUAL-R001). The merged `main` is compared with what was checked (GIT-R009), and the run is the observed push record |
 
 ### Exceptions

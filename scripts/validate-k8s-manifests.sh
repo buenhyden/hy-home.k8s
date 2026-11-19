@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # validate-k8s-manifests.sh — YAML syntax check on gitops/ and infrastructure/
 # Idempotent: safe to run multiple times.
-# Usage: bash scripts/validate-k8s-manifests.sh [repo-root]
+# Usage: bash scripts/validate-k8s-manifests.sh [repo-root] [--changed-path=PATH ...]
 #
 # kube-linter is owned by the pinned pre-commit hook, which installs the tool it
 # needs and therefore reports a real result in every environment. Running it a
@@ -10,9 +10,11 @@
 # binary. This script owns manifest YAML syntax, which is the part the affected
 # and staged lanes need and pre-commit does not cover there.
 set -euo pipefail
+VALIDATION_PYTHON="${HY_HOME_K8S_VALIDATION_PYTHON:-python3}"
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TARGET_INPUT="${1:-${PROJECT_DIR}}"
+if (($#)); then shift; fi
 EXIT_CODE=0
 
 if [[ ! -d "$TARGET_INPUT" ]]; then
@@ -25,43 +27,34 @@ TARGET="$(cd "$TARGET_INPUT" && pwd)"
 for required_dir in gitops infrastructure; do
   if [[ ! -d "$TARGET/$required_dir" ]]; then
     echo "ERR expected repo root at $TARGET_INPUT; missing $required_dir/ under that root" >&2
-    echo "Usage: bash scripts/validate-k8s-manifests.sh [repo-root]" >&2
+    echo "Usage: bash scripts/validate-k8s-manifests.sh [repo-root] [--changed-path=PATH ...]" >&2
     exit 1
   fi
 done
 
-if ! command -v python3 &>/dev/null; then
+if ! command -v "$VALIDATION_PYTHON" &>/dev/null; then
   echo "ERR python3 is required for YAML syntax validation" >&2
   exit 1
 fi
 
-if ! python3 -c 'import yaml' &>/dev/null; then
+if ! "$VALIDATION_PYTHON" -c 'import yaml' &>/dev/null; then
   echo "ERR python3 PyYAML package is required for YAML syntax validation" >&2
   exit 1
 fi
 
-declare -a YAML_TARGETS=(
-  "$TARGET/gitops"
-  "$TARGET/infrastructure"
-)
-
-if [[ -d "$TARGET/examples/sample-app" ]]; then
-  YAML_TARGETS+=("$TARGET/examples/sample-app")
-fi
-
-if [[ -d "$TARGET/examples" ]]; then
-  while IFS= read -r path; do
-    YAML_TARGETS+=("$path")
-  done < <(find "$TARGET/examples" -type d -path '*/kubernetes' 2>/dev/null)
-
-  while IFS= read -r path; do
-    YAML_TARGETS+=("$path")
-  done < <(find "$TARGET/examples" -type d -path '*/gitops' 2>/dev/null)
-fi
-
-mapfile -d '' YAML_FILES < <(find "${YAML_TARGETS[@]}" \( -name "*.yaml" -o -name "*.yml" \) -print0 2>/dev/null)
-
-if [[ "${#YAML_FILES[@]}" -eq 0 ]]; then
+target_list=$(mktemp)
+trap 'rm -f "$target_list"' EXIT
+"$VALIDATION_PYTHON" "$PROJECT_DIR/scripts/validation/platform/assurance.py" --root "$TARGET" --manifest-paths "$@" >"$target_list"
+mapfile -d '' -t relative_files <"$target_list"
+YAML_FILES=()
+for relative in "${relative_files[@]}"; do
+  YAML_FILES+=("$TARGET/$relative")
+done
+if ((${#YAML_FILES[@]} == 0)); then
+  if (($#)); then
+    echo 'MANIFEST-NOT_APPLICABLE: no selected manifests'
+    exit 0
+  fi
   echo "ERR no YAML manifests matched under repo root: $TARGET" >&2
   exit 1
 fi
@@ -74,7 +67,7 @@ echo "Files  : ${#YAML_FILES[@]}"
 echo ""
 echo "--- YAML syntax check ---"
 for f in "${YAML_FILES[@]}"; do
-  if python3 -c 'import sys, yaml; list(yaml.safe_load_all(open(sys.argv[1])))' "$f" 2>&1; then
+  if "$VALIDATION_PYTHON" -c 'import sys, yaml; list(yaml.safe_load_all(open(sys.argv[1])))' "$f" 2>&1; then
     echo "  OK  $f"
   else
     echo "  ERR $f"

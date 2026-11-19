@@ -1324,7 +1324,7 @@ def _validate_style_pr_job(
     required = {
         "if": "github.event_name == 'pull_request'",
         "runs-on": "ubuntu-latest",
-        "timeout-minutes": 5,
+        "timeout-minutes": 30,
         "permissions": {"contents": "read"},
     }
     if set(job) != {*required, "steps"} or any(
@@ -1347,9 +1347,14 @@ def _validate_style_pr_job(
             "with": {
                 "ref": "${{ github.sha }}",
                 "path": "candidate",
-                "fetch-depth": 2,
+                "fetch-depth": 2147483647,
                 "persist-credentials": False,
             },
+        },
+        {"uses": setup_python_action, "with": {"python-version": "3.12"}},
+        {
+            "run": "python -I -m pip install --disable-pip-version-check --only-binary=:all: "
+            "--require-hashes -r trusted-base/.github/requirements/ci-validation.txt"
         },
         {
             "id": "plan",
@@ -1364,38 +1369,43 @@ def _validate_style_pr_job(
             'test "$(git -C ../trusted-base rev-parse HEAD)" = "$BASE_SHA"\n'
             'test "$(git rev-list --parents -n 1 HEAD)" = "$MERGE_SHA $BASE_SHA '
             '$HEAD_SHA"\n'
-            "git diff --no-ext-diff --no-textconv --no-renames --name-status -z HEAD^1 "
-            'HEAD > "$RUNNER_TEMP/pr-changes.z"\n'
-            "lock=false\n"
-            "gitops=false\n"
+            'test "$(git rev-parse --is-shallow-repository)" = false\n'
+            "git diff --no-ext-diff --no-textconv --no-renames --name-status -z "
+            '"$BASE_SHA" HEAD > "$RUNNER_TEMP/pr-changes.z"\n'
+            ': > "$RUNNER_TEMP/pr-purpose-paths.z"\n'
             "while IFS= read -r -d '' status; do\n"
             "  IFS= read -r -d '' path\n"
+            '  printf \'%s\\0\' "$path" >> "$RUNNER_TEMP/pr-purpose-paths.z"\n'
             '  case "$status" in\n'
-            "    A|C|M|R) printf '%s\\0' \"$path\" ;;\n"
-            "    D|T) ;;\n"
+            "    A|M|T) printf '%s\\0' \"$path\" ;;\n"
+            "    D) ;;\n"
             "    *) exit 1 ;;\n"
-            "  esac\n"
-            '  case "$path" in\n'
-            "    .github/requirements|.github/requirements/*) lock=true ;;\n"
-            "    gitops|gitops/*) gitops=true ;;\n"
             "  esac\n"
             'done < "$RUNNER_TEMP/pr-changes.z" > "$RUNNER_TEMP/pr-style-paths.z"\n'
             "style=false\n"
             'if [ -s "$RUNNER_TEMP/pr-style-paths.z" ]; then style=true; fi\n'
-            'printf \'style=%s\\nlock=%s\\ngitops=%s\\n\' "$style" "$lock" "$gitops" >> '
-            '"$GITHUB_OUTPUT"',
-        },
-        {
-            "if": "steps.plan.outputs.style == 'true' || steps.plan.outputs.lock == 'true' || "
-            "steps.plan.outputs.gitops == 'true'",
-            "uses": setup_python_action,
-            "with": {"python-version": "3.12"},
-        },
-        {
-            "if": "steps.plan.outputs.style == 'true' || steps.plan.outputs.lock == 'true' || "
-            "steps.plan.outputs.gitops == 'true'",
-            "run": "python -I -m pip install --disable-pip-version-check --only-binary=:all: "
-            "--require-hashes -r trusted-base/.github/requirements/ci-validation.txt",
+            'export STYLE_REQUIRED="$style"\n'
+            "python3 -I scripts/run-validation-lane.py --root . --lane affected --profile "
+            'pull-request --paths-file "$RUNNER_TEMP/pr-purpose-paths.z" --delimiter nul '
+            '--base-ref "$BASE_SHA" --plan-output "$RUNNER_TEMP/pr-plan.json"\n'
+            "python3 -I - <<'PY'\n"
+            "import json\n"
+            "import os\n"
+            "from pathlib import Path\n"
+            "\n"
+            'plan = json.loads((Path(os.environ["RUNNER_TEMP"]) / '
+            '"pr-plan.json").read_text())\n'
+            'selected = set(plan["validators"])\n'
+            'output = Path(os.environ["GITHUB_OUTPUT"])\n'
+            'with output.open("a", encoding="utf-8") as stream:\n'
+            "    for name, enabled in (\n"
+            '        ("style", os.environ["STYLE_REQUIRED"] == "true"),\n'
+            '        ("purpose", bool(selected)),\n'
+            '        ("kustomize", plan["tools"]["kustomize"]),\n'
+            '        ("conftest", plan["tools"]["conftest"]),\n'
+            "    ):\n"
+            "        stream.write(f\"{name}={'true' if enabled else 'false'}\\n\")\n"
+            "PY",
         },
         {
             "id": "style",
@@ -1409,18 +1419,33 @@ def _validate_style_pr_job(
             '--delimiter nul --expected-base-sha "$BASE_SHA"',
         },
         {
-            "id": "lock",
-            "if": "steps.plan.outputs.lock == 'true'",
-            "working-directory": "candidate",
-            "run": "python -I ../trusted-base/scripts/validate-ci-python-contract.py --root .",
+            "if": "steps.plan.outputs.kustomize == 'true'",
+            "run": "set -euo pipefail\n"
+            'tool_dir=$(mktemp -d "$RUNNER_TEMP/kustomize.XXXXXX")\n'
+            'trap \'rm -f "$tool_dir/kustomize.tar.gz" "$tool_dir/kustomize"; rmdir '
+            '"$tool_dir"\' EXIT\n'
+            "curl --fail --location --show-error --silent --max-time 90 \\\n"
+            "  "
+            "'https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz' "
+            "\\\n"
+            '  --output "$tool_dir/kustomize.tar.gz"\n'
+            'tar -xzf "$tool_dir/kustomize.tar.gz" -C "$tool_dir" kustomize\n'
+            "printf '%s  %s\\n' "
+            "'f7b1605aa5143e0dcbd754a4d43c47ad7a560c540b1356b064d69fe236164494' "
+            '"$tool_dir/kustomize" | sha256sum --check --status\n'
+            'sudo install -m 0755 "$tool_dir/kustomize" /usr/local/bin/kustomize',
         },
         {
-            "id": "gitops",
-            "if": "steps.plan.outputs.gitops == 'true'",
+            "if": "steps.plan.outputs.conftest == 'true'",
+            "run": "docker pull "
+            "'openpolicyagent/conftest:v0.69.0@sha256:a38ba21668929a00dce2fe6ee43d1312228340bce5fd243f47dd0ce90516e558'",
+        },
+        {
+            "id": "purpose",
+            "if": "steps.plan.outputs.purpose == 'true'",
             "working-directory": "candidate",
-            "env": {"BASE_SHA": "${{ github.event.pull_request.base.sha }}"},
-            "run": "python -I ../trusted-base/scripts/validate-gitops-change-set.py --root . "
-            '--base-ref "$BASE_SHA"',
+            "run": "python3 -I scripts/run-validation-lane.py --root . --lane affected "
+            '--plan-file "$RUNNER_TEMP/pr-plan.json" --combine-documents',
         },
         {
             "if": "always()",
@@ -1428,10 +1453,8 @@ def _validate_style_pr_job(
                 "PLAN_OUTCOME": "${{ steps.plan.outcome }}",
                 "STYLE_REQUIRED": "${{ steps.plan.outputs.style }}",
                 "STYLE_OUTCOME": "${{ steps.style.outcome }}",
-                "LOCK_REQUIRED": "${{ steps.plan.outputs.lock }}",
-                "LOCK_OUTCOME": "${{ steps.lock.outcome }}",
-                "GITOPS_REQUIRED": "${{ steps.plan.outputs.gitops }}",
-                "GITOPS_OUTCOME": "${{ steps.gitops.outcome }}",
+                "PURPOSE_REQUIRED": "${{ steps.plan.outputs.purpose }}",
+                "PURPOSE_OUTCOME": "${{ steps.purpose.outcome }}",
             },
             "run": "set -euo pipefail\n"
             'test "$PLAN_OUTCOME" = success\n'
@@ -1443,8 +1466,7 @@ def _validate_style_pr_job(
             "  esac\n"
             "}\n"
             'check style "$STYLE_REQUIRED" "$STYLE_OUTCOME"\n'
-            'check lock "$LOCK_REQUIRED" "$LOCK_OUTCOME"\n'
-            'check gitops "$GITOPS_REQUIRED" "$GITOPS_OUTCOME"',
+            'check purpose "$PURPOSE_REQUIRED" "$PURPOSE_OUTCOME"',
         },
     )
     steps = job.get("steps")

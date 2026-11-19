@@ -2614,6 +2614,156 @@ if __name__ == "__main__":
     unittest.main()
 
 
+class PullRequestPlanTest(unittest.TestCase):
+    def setUp(self):
+        self.owner = RUNNER.load_contract_module()
+        self.contract = self.owner.validate_contract(ROOT)
+
+    def plan(self, paths, base_ref="HEAD"):
+        return RUNNER.build_pr_plan(ROOT, paths, self.contract, self.owner, base_ref)
+
+    def test_combined_document_leaf_results_stay_independent(self):
+        observed = {}
+        report = {
+            "version": 1,
+            "results": {"links-and-owners": 0, "markdown-profiles": 1},
+        }
+        with (
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=bounded_result(json.dumps(report), returncode=1),
+            ) as run,
+            redirect_stdout(StringIO()),
+        ):
+            result = RUNNER.run_selected(
+                ROOT,
+                "affected",
+                ["docs/README.md"],
+                self.contract,
+                self.owner,
+                validator_ids=["links-and-owners", "markdown-profiles"],
+                combine_documents=True,
+                observed_results=observed,
+            )
+        self.assertEqual(result, 1)
+        self.assertEqual(
+            observed, {"links-and-owners": "PASS", "markdown-profiles": "FAIL"}
+        )
+        self.assertEqual(run.call_count, 1)
+
+    def test_malformed_combined_report_cannot_pass(self):
+        observed = {}
+        with (
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=bounded_result('{"version":1,"results":{}}'),
+            ),
+            redirect_stdout(StringIO()),
+        ):
+            result = RUNNER.run_selected(
+                ROOT,
+                "affected",
+                ["docs/README.md"],
+                self.contract,
+                self.owner,
+                validator_ids=["links-and-owners", "markdown-profiles"],
+                combine_documents=True,
+                observed_results=observed,
+            )
+        self.assertEqual(result, 1)
+        self.assertEqual(set(observed.values()), {"FAIL"})
+
+    def test_content_and_code_select_consumers_without_repository_full(self):
+        plan = self.plan(["docs/03.specs/README.md", "scripts/session_analysis.py"])
+        self.assertIn("markdown-profiles", plan["validators"])
+        self.assertIn("session-analysis-regressions", plan["validators"])
+        self.assertNotIn("work-parallel-regressions", plan["validators"])
+        self.assertNotIn("repository-quality", plan["validators"])
+
+    def test_manifest_lock_and_deleted_or_renamed_documents_keep_old_consumers(self):
+        paths = [
+            "gitops/platform/namespaces/kustomization.yaml",
+            ".github/requirements/ci-validation.txt",
+            "docs/05.operations/03.runbooks/0098-removed.md",
+            "docs/05.operations/03.runbooks/0099-renamed.md",
+        ]
+        plan = self.plan(paths)
+        self.assertIn("platform-assurance", plan["validators"])
+        self.assertIn("ci-python-contract", plan["validators"])
+        self.assertIn("links-and-owners", plan["validators"])
+        self.assertEqual(plan["paths"], sorted(paths))
+
+    def test_global_document_contract_selects_related_regressions(self):
+        plan = self.plan(["scripts/document_contracts.py"])
+        self.assertIn("document-contract-tests", plan["validators"])
+        self.assertIn("markdown-profiles", plan["validators"])
+
+    def test_a_profile_cannot_exclude_its_own_selector_regressions(self):
+        contract = {
+            **self.contract,
+            "profiles": {
+                **self.contract["profiles"],
+                "pull-request": ["ci-python-contract"],
+            },
+        }
+        with self.assertRaises(ValueError):
+            self.owner.validate_contract(ROOT, raw_contract=contract)
+
+    def test_selector_route_edits_cannot_remove_their_own_regressions(self):
+        contract = json.loads(json.dumps(self.contract))
+        for surface in contract["surfaces"]:
+            if any(
+                route["value"] == "scripts/validation/registry.json"
+                for route in surface["routes"]
+            ):
+                surface["validators"] = ["ci-python-contract"]
+        plan = RUNNER.build_pr_plan(
+            ROOT, ["scripts/validation/registry.json"], contract, self.owner, "HEAD"
+        )
+        self.assertIn("affected-surface-contract", plan["validators"])
+        self.assertIn("validation-routing-tests", plan["validators"])
+
+    def test_tooling_config_keeps_an_explicit_hosted_consumer(self):
+        self.assertIn(
+            "affected-surface-contract", self.plan([".rtk/filters.toml"])["validators"]
+        )
+
+    def test_valid_empty_is_distinct_from_missing_base_and_unknown_path(self):
+        self.assertEqual(self.plan([])["validators"], [])
+        self.assertEqual(
+            self.plan([])["tools"], {"kustomize": False, "conftest": False}
+        )
+        with self.assertRaises(ValueError):
+            self.plan([], "refs/heads/p01-missing-fixture")
+        with self.assertRaises(ValueError):
+            self.plan(["unregistered-p01-fixture.xyz"])
+
+    def test_deleted_manifests_do_not_require_unused_downloads(self):
+        plan = self.plan(["gitops/p01-deleted-root/pod.yaml"])
+        self.assertFalse(plan["tools"]["conftest"])
+        self.assertFalse(plan["tools"]["kustomize"])
+
+    def test_plan_is_bound_to_paths_registry_and_candidate(self):
+        plan = self.plan(["scripts/session_analysis.py"])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "plan.json"
+            path.write_text(json.dumps(plan), encoding="utf-8")
+            self.assertEqual(
+                RUNNER.read_pr_plan(ROOT, path, self.contract, self.owner), plan
+            )
+            for key, value in (
+                ("head", "0" * 40),
+                ("registryDigest", "0" * 64),
+                ("validators", []),
+            ):
+                with self.subTest(key=key):
+                    path.write_text(json.dumps({**plan, key: value}), encoding="utf-8")
+                    with self.assertRaises(ValueError):
+                        RUNNER.read_pr_plan(ROOT, path, self.contract, self.owner)
+
+
 class ReuseCandidateTest(unittest.TestCase):
     def test_unverified_hosted_candidate_executes_and_failure_is_preserved(self):
         row = dict(

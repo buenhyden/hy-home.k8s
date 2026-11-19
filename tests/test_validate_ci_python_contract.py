@@ -111,12 +111,12 @@ GOVERNED_TEXT_OWNERS = (
     ),
 )
 
-LOCK_STEP = """\
-      - name: Validate a changed CI lock
-        id: lock
-        if: steps.plan.outputs.lock == 'true'
+PURPOSE_STEP = """\
+      - name: Validate affected purpose contracts
+        id: purpose
+        if: steps.plan.outputs.purpose == 'true'
         working-directory: candidate
-        run: python -I ../trusted-base/scripts/validate-ci-python-contract.py --root .
+        run: python3 -I scripts/run-validation-lane.py --root . --lane affected --plan-file "$RUNNER_TEMP/pr-plan.json" --combine-documents
 """
 
 CANDIDATE_BRANCH_REF = "${{ github.sha }}"
@@ -486,8 +486,8 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assertIn("hosted-installs=1", result.stdout)
 
-    def test_style_job_requires_the_changed_lock_step(self) -> None:
-        root = self.make_real_workflow_root((LOCK_STEP, ""))
+    def test_style_job_requires_the_purpose_step(self) -> None:
+        root = self.make_real_workflow_root((PURPOSE_STEP, ""))
         self.assert_rule_in_repository(root, "CI-STYLE-TOPOLOGY")
 
     def test_affected_plan_rejects_line_delimited_paths(self) -> None:
@@ -502,8 +502,8 @@ class CiPythonContractTests(unittest.TestCase):
     def test_affected_plan_lists_every_change_kind(self) -> None:
         root = self.make_real_workflow_root(
             (
-                '--name-status -z HEAD^1 HEAD > "$RUNNER_TEMP/pr-changes.z"',
-                '--name-status -z --diff-filter=ACMR HEAD^1 HEAD > "$RUNNER_TEMP/pr-changes.z"',
+                '--name-status -z "$BASE_SHA" HEAD > "$RUNNER_TEMP/pr-changes.z"',
+                '--name-status -z --diff-filter=ACMR "$BASE_SHA" HEAD > "$RUNNER_TEMP/pr-changes.z"',
             )
         )
         self.assert_rule_in_repository(root, "CI-STYLE-TOPOLOGY")
@@ -1464,6 +1464,16 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
             for index, step in enumerate(steps)
             if " -m pip install " in step.get("run", "")
         )
+        kustomize = next(
+            index
+            for index, step in enumerate(steps)
+            if step.get("name") == "Prepare selected Kustomize renderer"
+        )
+        conftest = next(
+            index
+            for index, step in enumerate(steps)
+            if step.get("name") == "Prepare selected Conftest image"
+        )
         cases = (
             (0, "uses", "actions/checkout@v7"),
             (
@@ -1496,17 +1506,27 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
                 "run",
                 steps[indexes["style"]]["run"].replace("python -I", "python", 1),
             ),
+            (indexes["purpose"], "run", "echo 'purpose PASS'"),
+            (indexes["purpose"], "if", "false"),
             (
-                indexes["lock"],
+                kustomize,
                 "run",
-                steps[indexes["lock"]]["run"].replace("../trusted-base/", "", 1),
+                steps[kustomize]["run"].replace(
+                    "f7b1605aa5143e0dcbd754a4d43c47ad7a560c540b1356b064d69fe236164494",
+                    "0" * 64,
+                ),
+            ),
+            (conftest, "run", "docker pull openpolicyagent/conftest:latest"),
+            (
+                indexes["plan"],
+                "run",
+                steps[indexes["plan"]]["run"].replace("--no-renames", "", 1),
             ),
             (
-                indexes["gitops"],
+                indexes["plan"],
                 "run",
-                steps[indexes["gitops"]]["run"].replace("../trusted-base/", "", 1),
+                steps[indexes["plan"]]["run"].replace("--profile pull-request", "", 1),
             ),
-            (indexes["gitops"], "if", "false"),
             (len(steps) - 1, "if", "success()"),
             (len(steps) - 1, "run", "echo PASS"),
         )
@@ -1552,6 +1572,16 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
                 ).stdout.strip()
 
             git("init", "--quiet")
+            (candidate / "scripts").mkdir()
+            (candidate / "scripts/run-validation-lane.py").write_text(
+                "import json,sys\n"
+                "from pathlib import Path\n"
+                "args=sys.argv\n"
+                "assert '--profile' in args and args[args.index('--profile')+1]=='pull-request'\n"
+                "assert '--delimiter' in args and args[args.index('--delimiter')+1]=='nul'\n"
+                "Path(args[args.index('--plan-output')+1]).write_text(json.dumps({'validators':['platform-assurance','policy-gates'],'tools':{'kustomize':True,'conftest':True}}))\n",
+                encoding="utf-8",
+            )
             manifest = candidate / "gitops/sample.yml"
             lock = candidate / ".github/requirements/sample.txt"
             for path in (manifest, lock):
@@ -1559,12 +1589,15 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
                 path.write_text("fixture\n", encoding="utf-8")
             git("add", "--all")
             base = git("commit-tree", git("write-tree"), "-m", "base")
+            (candidate / "intermediate.md").write_text("middle\n", encoding="utf-8")
+            git("add", "--all")
+            middle = git("commit-tree", git("write-tree"), "-p", base, "-m", "middle")
             lock.unlink()
             manifest.rename(candidate / "moved.yml")
             (candidate / "line\nbreak.md").write_text("fixture\n", encoding="utf-8")
             git("add", "--all")
             tree = git("write-tree")
-            head = git("commit-tree", tree, "-p", base, "-m", "candidate")
+            head = git("commit-tree", tree, "-p", middle, "-m", "candidate")
             merge = git("commit-tree", tree, "-p", base, "-p", head, "-m", "merge")
             git("update-ref", "HEAD", merge)
             git("clone", "--quiet", "--shared", "--no-checkout", ".", "../trusted-base")
@@ -1575,7 +1608,7 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
             )
             output = root / "outputs"
             env = {
-                "PATH": os.defpath,
+                "PATH": str(Path(sys.executable).parent) + os.pathsep + os.defpath,
                 "BASE_SHA": base,
                 "HEAD_SHA": head,
                 "MERGE_SHA": merge,
@@ -1594,12 +1627,22 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
                         check=False,
                         timeout=10,
                     )
-                    self.assertEqual(result.returncode, int(binding is not None))
+                    self.assertEqual(
+                        result.returncode, int(binding is not None), result.stderr
+                    )
                     if binding is not None:
                         self.assertFalse(output.exists())
-            self.assertEqual(output.read_text(), "style=true\nlock=true\ngitops=true\n")
             self.assertEqual(
-                (root / "pr-style-paths.z").read_bytes(), b"line\nbreak.md\0moved.yml\0"
+                output.read_text(),
+                "style=true\npurpose=true\nkustomize=true\nconftest=true\n",
+            )
+            self.assertEqual(
+                (root / "pr-style-paths.z").read_bytes(),
+                b"intermediate.md\0line\nbreak.md\0moved.yml\0",
+            )
+            self.assertEqual(
+                (root / "pr-purpose-paths.z").read_bytes(),
+                b".github/requirements/sample.txt\0gitops/sample.yml\0intermediate.md\0line\nbreak.md\0moved.yml\0",
             )
 
     def test_aggregate_only_accepts_success_and_proven_nonapplicability(self):
@@ -1608,10 +1651,8 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
             "PLAN_OUTCOME": "success",
             "STYLE_REQUIRED": "true",
             "STYLE_OUTCOME": "success",
-            "LOCK_REQUIRED": "false",
-            "LOCK_OUTCOME": "skipped",
-            "GITOPS_REQUIRED": "true",
-            "GITOPS_OUTCOME": "success",
+            "PURPOSE_REQUIRED": "true",
+            "PURPOSE_OUTCOME": "success",
         }
         script = self.job["steps"][-1]["run"]
         scenarios = (
@@ -1620,18 +1661,21 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
                 {
                     "STYLE_REQUIRED": "false",
                     "STYLE_OUTCOME": "skipped",
-                    "GITOPS_REQUIRED": "false",
-                    "GITOPS_OUTCOME": "skipped",
+                    "PURPOSE_REQUIRED": "false",
+                    "PURPOSE_OUTCOME": "skipped",
                 },
                 0,
             ),
             ({"PLAN_OUTCOME": "skipped"}, 1),
-            ({"GITOPS_OUTCOME": "skipped"}, 1),
-            ({"GITOPS_OUTCOME": "failure"}, 1),
-            ({"GITOPS_OUTCOME": "cancelled"}, 1),
-            ({"GITOPS_OUTCOME": ""}, 1),
-            ({"GITOPS_REQUIRED": ""}, 1),
-            ({"LOCK_OUTCOME": "success"}, 1),
+            ({"PLAN_OUTCOME": "cancelled"}, 1),
+            ({"PLAN_OUTCOME": "failure"}, 1),
+            ({"PLAN_OUTCOME": ""}, 1),
+            ({"PURPOSE_OUTCOME": "skipped"}, 1),
+            ({"PURPOSE_OUTCOME": "failure"}, 1),
+            ({"PURPOSE_OUTCOME": "cancelled"}, 1),
+            ({"PURPOSE_OUTCOME": ""}, 1),
+            ({"PURPOSE_REQUIRED": ""}, 1),
+            ({"PURPOSE_OUTCOME": "success", "PURPOSE_REQUIRED": "false"}, 1),
         )
         for changed, expected in scenarios:
             with self.subTest(changed=changed):
@@ -1647,12 +1691,11 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
                 if expected == 0:
                     self.assertEqual(
                         result.stdout.splitlines(),
-                        ["style PASS", "lock NOT_APPLICABLE", "gitops PASS"]
+                        ["style PASS", "purpose PASS"]
                         if not changed
                         else [
                             "style NOT_APPLICABLE",
-                            "lock NOT_APPLICABLE",
-                            "gitops NOT_APPLICABLE",
+                            "purpose NOT_APPLICABLE",
                         ],
                     )
 

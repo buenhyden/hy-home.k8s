@@ -433,6 +433,15 @@ def validate_contract(
                 f"{profile}: missing={sorted(expected - actual)}, "
                 f"unexpected={sorted(actual - expected)}",
             )
+    if "pull-request" in profiles and set(profiles["pull-request"]) != {
+        identifier
+        for identifier, row in static.items()
+        if "affected" in row["lanes"] and identifier != "repository-quality"
+    }:
+        fail(
+            "SURFACE-PROFILE-COVERAGE",
+            "PR purpose coverage cannot omit an affected leaf",
+        )
     return contract
 
 

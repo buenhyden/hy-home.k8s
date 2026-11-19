@@ -6,6 +6,7 @@ import copy
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -21,6 +22,259 @@ SPEC.loader.exec_module(ASSURANCE)
 
 
 class PlatformAssuranceTests(unittest.TestCase):
+    def test_explicit_empty_changed_scope_has_no_render_claim(self):
+        with (
+            tempfile.TemporaryDirectory() as raw,
+            mock.patch.object(ASSURANCE, "validate_manifest_candidates") as candidates,
+        ):
+            self.assertEqual(ASSURANCE.run(Path(raw), Path("/unused"), []), [])
+        candidates.assert_not_called()
+
+    def test_scoped_render_rejects_collision_with_untouched_root(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            for name, value in (("a", "new"), ("b", "old")):
+                directory = root / "gitops" / name
+                directory.mkdir(parents=True)
+                (directory / "kustomization.yaml").write_text(
+                    "apiVersion: kustomize.config.k8s.io/v1beta1\n"
+                    "kind: Kustomization\nresources: [map.yaml]\n"
+                )
+                (directory / "map.yaml").write_text(
+                    "apiVersion: v1\nkind: ConfigMap\nmetadata: {name: shared}\n"
+                    f"data: {{value: {value}}}\n"
+                )
+            changed = {
+                "apiVersion": "v1",
+                "kind": "ConfigMap",
+                "metadata": {"name": "shared"},
+                "data": {"value": "new"},
+            }
+            with (
+                mock.patch.object(ASSURANCE, "validate_manifest_candidates"),
+                mock.patch.object(ASSURANCE, "_tool_is_pinned", return_value=True),
+                mock.patch.object(
+                    ASSURANCE, "_render", return_value=[changed]
+                ) as render,
+                mock.patch.object(
+                    ASSURANCE, "validate_project_scope", return_value=set()
+                ),
+            ):
+                rows = ASSURANCE.run(
+                    root, Path("/tmp/kustomize"), ["gitops/a/map.yaml"]
+                )
+            self.assertEqual(render.call_count, 1)
+            self.assertEqual(
+                [row["result"] for row in rows if row["depth"] == "product-semantic"],
+                ["FAIL"],
+            )
+
+    def test_manifest_paths_selects_raw_scope_and_policy_corpus(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            names = (
+                "gitops/a.yaml",
+                "infrastructure/b.yml",
+                "examples/sample-app/c.yaml",
+                "examples/demo/kubernetes/d.yaml",
+                "examples/demo/gitops/e.yml",
+                "examples/demo/other/f.yaml",
+            )
+            for name in names:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("kind: ConfigMap\n")
+            self.assertEqual(
+                ASSURANCE.manifest_paths(root, ["gitops/a.yaml"]),
+                [Path("gitops/a.yaml")],
+            )
+            self.assertEqual(ASSURANCE.manifest_paths(root, ["gitops/gone.yaml"]), [])
+            self.assertEqual(
+                ASSURANCE.manifest_paths(root),
+                [Path(name) for name in sorted(names[:-1])],
+            )
+            self.assertEqual(
+                ASSURANCE.manifest_paths(root, ["scripts/validate-k8s-manifests.sh"]),
+                [Path(name) for name in sorted(names[:-1])],
+            )
+            self.assertEqual(
+                ASSURANCE.manifest_paths(
+                    root, ["policy/conftest/main.rego"], policy=True
+                ),
+                [Path(name) for name in sorted(names)],
+            )
+            with self.assertRaises(ASSURANCE.AssuranceError):
+                ASSURANCE.manifest_paths(root, ["../outside.yaml"])
+            linked = root / "gitops/linked.yaml"
+            linked.symlink_to(root / "gitops/a.yaml")
+            with self.assertRaises(ASSURANCE.AssuranceError):
+                ASSURANCE.manifest_paths(root, ["gitops/linked.yaml"])
+            (root / "gitops/linked-dir").symlink_to(root / "infrastructure")
+            with self.assertRaises(ASSURANCE.AssuranceError):
+                ASSURANCE.manifest_paths(root, ["gitops/linked-dir/b.yml"])
+
+    def test_manifest_paths_cli_nul_preserves_newline_in_name(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            (root / "gitops").mkdir()
+            (root / "infrastructure").mkdir()
+            relative = "gitops/new\nline.yaml"
+            (root / relative).write_text("kind: ConfigMap\n")
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPT),
+                    "--root",
+                    str(root),
+                    "--manifest-paths",
+                    "--changed-path",
+                    relative,
+                ],
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stderr.decode())
+            self.assertEqual(completed.stdout, relative.encode() + b"\0")
+
+    def test_manifest_paths_cli_reports_empty_broad_scope(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            (root / "gitops").mkdir()
+            (root / "infrastructure").mkdir()
+            completed = subprocess.run(
+                [sys.executable, str(SCRIPT), "--root", str(root), "--manifest-paths"],
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(completed.returncode, 1)
+            self.assertIn(b"no YAML manifests matched", completed.stderr)
+
+    def test_changed_manifest_selects_owner_and_inbound_base_consumer(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            for name, resources in {
+                "gitops/base": ["shared.yaml"],
+                "gitops/overlay": ["../base"],
+                "gitops/other": ["other.yaml"],
+            }.items():
+                directory = root / name
+                directory.mkdir(parents=True)
+                (directory / "kustomization.yaml").write_text(
+                    "apiVersion: kustomize.config.k8s.io/v1beta1\n"
+                    "kind: Kustomization\nresources:\n"
+                    + "".join(f"  - {item}\n" for item in resources)
+                )
+            (root / "gitops/base/shared.yaml").write_text("kind: ConfigMap\n")
+            (root / "gitops/other/other.yaml").write_text("kind: ConfigMap\n")
+            self.assertEqual(
+                ASSURANCE.affected_roots(root, ["gitops/base/shared.yaml"]),
+                [Path("gitops/base"), Path("gitops/overlay")],
+            )
+            self.assertEqual(ASSURANCE.affected_roots(root, ["docs/a.md"]), [])
+            self.assertEqual(
+                ASSURANCE.affected_roots(
+                    root, ["scripts/validation/platform/assurance.py"]
+                ),
+                ASSURANCE.discover_roots(root),
+            )
+            (root / "gitops/base/shared.yaml").unlink()
+            (root / "gitops/base/kustomization.yaml").unlink()
+            (root / "gitops/base").rmdir()
+            self.assertEqual(
+                ASSURANCE.affected_roots(root, ["gitops/base/shared.yaml"]),
+                [Path("gitops/overlay")],
+            )
+
+    def test_changed_path_rejects_traversal_and_missing_reference(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            directory = root / "gitops/one"
+            directory.mkdir(parents=True)
+            (directory / "kustomization.yaml").write_text(
+                "apiVersion: kustomize.config.k8s.io/v1beta1\n"
+                "kind: Kustomization\nresources: [missing.yaml]\n"
+            )
+            self.assertEqual(
+                ASSURANCE.affected_roots(root, ["gitops/one/missing.yaml"]),
+                [Path("gitops/one")],
+            )
+            with self.assertRaises(ASSURANCE.AssuranceError):
+                ASSURANCE.affected_roots(root, ["../outside.yaml"])
+
+    def test_deleted_root_is_empty_head_scope_but_new_unowned_file_fails(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            existing = root / "gitops/current"
+            existing.mkdir(parents=True)
+            (existing / "kustomization.yaml").write_text(
+                "apiVersion: kustomize.config.k8s.io/v1beta1\n"
+                "kind: Kustomization\nresources: []\n"
+            )
+            self.assertEqual(
+                ASSURANCE.affected_roots(root, ["gitops/removed/kustomization.yaml"]),
+                [],
+            )
+            unowned = root / "gitops/unowned.yaml"
+            unowned.write_text("kind: ConfigMap\n")
+            with self.assertRaises(ASSURANCE.AssuranceError):
+                ASSURANCE.affected_roots(root, ["gitops/unowned.yaml"])
+
+    def test_patch_path_selects_owner_but_unsupported_render_still_fails(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            directory = root / "gitops/patched"
+            directory.mkdir(parents=True)
+            (directory / "kustomization.yaml").write_text(
+                "apiVersion: kustomize.config.k8s.io/v1beta1\n"
+                "kind: Kustomization\nresources: [base.yaml]\n"
+                "patches: [{path: name-patch.yaml}]\n"
+            )
+            (directory / "base.yaml").write_text("kind: ConfigMap\n")
+            (directory / "name-patch.yaml").write_text("kind: ConfigMap\n")
+            self.assertEqual(
+                ASSURANCE.affected_roots(root, ["gitops/patched/name-patch.yaml"]),
+                [Path("gitops/patched")],
+            )
+            with self.assertRaises(ASSURANCE.AssuranceError):
+                ASSURANCE.check_kustomization(root, Path("gitops/patched"))
+
+    def test_scoped_render_checks_unchanged_identity_without_rerendering(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            for name in ("gitops/a", "gitops/b"):
+                directory = root / name
+                directory.mkdir(parents=True)
+                (directory / "kustomization.yaml").write_text(
+                    "apiVersion: kustomize.config.k8s.io/v1beta1\n"
+                    "kind: Kustomization\nresources: [map.yaml]\n"
+                )
+                (directory / "map.yaml").write_text(
+                    "apiVersion: v1\nkind: ConfigMap\nmetadata: {name: a}\n"
+                )
+            document = {
+                "apiVersion": "v1",
+                "kind": "ConfigMap",
+                "metadata": {"name": "a"},
+            }
+            with (
+                mock.patch.object(ASSURANCE, "validate_manifest_candidates"),
+                mock.patch.object(ASSURANCE, "_tool_is_pinned", return_value=True),
+                mock.patch.object(
+                    ASSURANCE, "validate_project_scope", return_value=set()
+                ),
+                mock.patch.object(
+                    ASSURANCE, "_render", return_value=[document]
+                ) as render,
+            ):
+                rows = ASSURANCE.run(
+                    root, Path("/tmp/kustomize"), ["gitops/a/map.yaml"]
+                )
+            self.assertEqual(render.call_count, 1)
+            self.assertEqual(
+                [row["result"] for row in rows if row["depth"] == "product-semantic"],
+                ["PASS"],
+            )
+
     def test_manifest_walk_stops_consuming_at_entry_limit(self):
         consumed = 0
 
@@ -128,6 +382,20 @@ class PlatformAssuranceTests(unittest.TestCase):
                 )
                 with self.assertRaises(ASSURANCE.AssuranceError):
                     ASSURANCE.check_kustomization(root, Path("gitops/platform/sample"))
+            (package.parent / "service.yaml").write_text(
+                "apiVersion: v1\nkind: Service\nmetadata: {name: outside}\n"
+            )
+            kustomization.write_text(
+                json.dumps(
+                    {
+                        "apiVersion": "kustomize.config.k8s.io/v1beta1",
+                        "kind": "Kustomization",
+                        "resources": ["../service.yaml"],
+                    }
+                )
+            )
+            with self.assertRaises(ASSURANCE.AssuranceError):
+                ASSURANCE.check_kustomization(root, Path("gitops/platform/sample"))
             manifest.unlink()
             manifest.symlink_to(kustomization)
             kustomization.write_text(
