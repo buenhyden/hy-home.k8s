@@ -43,9 +43,9 @@ target. Input revision: `4b2b670d` on branch `claude/q07-workspace-cutover`.
 
 | Item | Work Unit | Owner | Status | Blocker |
 | --- | --- | --- | --- | --- |
-| WORK-001 | WORK-001 | platform | ready | none |
-| WORK-002 | WORK-002 | platform | ready | none |
-| WORK-003 | WORK-003 | platform | ready | none |
+| WORK-001 | WORK-001 | platform | in-progress | none |
+| WORK-002 | WORK-002 | platform | in-progress | none |
+| WORK-003 | WORK-003 | platform | in-progress | none |
 
 A one-time script outside the tree ran `git mv` for 152 tracked files and
 recomputed relative links and repository-root path strings, protecting
