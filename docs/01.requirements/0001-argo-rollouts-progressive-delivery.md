@@ -67,7 +67,7 @@ This document owns product intent and acceptance criteria; the linked downstream
 #### Agent execution and approval requirements
 
 - **Allowed Actions**: Update the Requirement Package and documentation, run non-destructive static validation, and collect read-only status evidence.
-- **Disallowed Actions**: Expand AppProject permissions without approval, mutate the live cluster directly, or change manifests outside the implementation scope authorized under the [document lifecycle policy](../../.agents/governance/document-lifecycle.md#requirements).
+- **Disallowed Actions**: Expand AppProject permissions without approval, mutate the live cluster directly, or change manifests outside the implementation scope authorized under the [document lifecycle policy](../00.workspace/03.process/document-lifecycle.md#requirements).
 - **Human-in-the-loop Requirement**: Required before AppProject cluster resource allow-list changes or rollout promotion policy changes.
 - **Evaluation Expectation**: Verify controller status, Dashboard access, and ArgoCD sync traceability in a downstream validation stage.
 
@@ -99,10 +99,10 @@ This package declares no quality requirement member; every member above is a fun
 
 ### Verification Links
 
-- **AD**: [`../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md`](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md)
+- **AD**: [`../02.architecture/01.descriptions/0004-argo-rollouts-progressive-delivery.md`](../02.architecture/01.descriptions/0004-argo-rollouts-progressive-delivery.md)
 - **Spec**: N/A — SPEC-0004 left the tree; Git history recovers it ([REQ-0001 Archived Lineage](./0001-argo-rollouts-progressive-delivery.md#archived-lineage))
-- **ADR**: [`../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
-- **ADR**: [`../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
+- **ADR**: [`../02.architecture/02.decisions/0011-argo-rollouts-progressive-delivery.md`](../02.architecture/02.decisions/0011-argo-rollouts-progressive-delivery.md)
+- **ADR**: [`../02.architecture/02.decisions/0002-argocd-helm-and-gitops-model.md`](../02.architecture/02.decisions/0002-argocd-helm-and-gitops-model.md)
 
 #### Acceptance Conditions
 

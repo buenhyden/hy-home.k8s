@@ -66,7 +66,7 @@ This document owns the user value and security boundary of notifications; the li
 #### Agent execution and approval requirements
 
 - **Allowed Actions**: Update the Requirement Package and documentation, run non-destructive static validation, and collect read-only status evidence.
-- **Disallowed Actions**: Store Slack credentials in plaintext, modify secret backend paths without approval, or change manifests outside the implementation scope authorized under the [document lifecycle policy](../../.agents/governance/document-lifecycle.md#requirements).
+- **Disallowed Actions**: Store Slack credentials in plaintext, modify secret backend paths without approval, or change manifests outside the implementation scope authorized under the [document lifecycle policy](../00.workspace/03.process/document-lifecycle.md#requirements).
 - **Human-in-the-loop Requirement**: Required before initial notification credential registration or Slack channel permission changes.
 - **Evaluation Expectation**: Verify controller status, ExternalSecret readiness, and Slack notification receipt in a downstream validation stage.
 
@@ -100,10 +100,10 @@ This update adds no runtime observation.
 
 ### Verification Links
 
-- **AD**: [`../02.architecture/descriptions/0005-argo-notifications-slack.md`](../02.architecture/descriptions/0005-argo-notifications-slack.md)
+- **AD**: [`../02.architecture/01.descriptions/0005-argo-notifications-slack.md`](../02.architecture/01.descriptions/0005-argo-notifications-slack.md)
 - **Spec**: N/A — SPEC-0141 and SPEC-0005 left the tree; Git history recovers them ([REQ-0002 Archived Lineage](./0002-argo-notifications-slack.md#archived-lineage))
-- **ADR**: [`../02.architecture/decisions/0012-argo-notifications-slack.md`](../02.architecture/decisions/0012-argo-notifications-slack.md)
-- **ADR**: [`../02.architecture/decisions/0041-openbao-secret-backend.md`](../02.architecture/decisions/0041-openbao-secret-backend.md)
+- **ADR**: [`../02.architecture/02.decisions/0012-argo-notifications-slack.md`](../02.architecture/02.decisions/0012-argo-notifications-slack.md)
+- **ADR**: [`../02.architecture/02.decisions/0041-openbao-secret-backend.md`](../02.architecture/02.decisions/0041-openbao-secret-backend.md)
 
 #### Acceptance Conditions
 

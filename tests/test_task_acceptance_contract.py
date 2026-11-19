@@ -49,7 +49,7 @@ def shared_extension(name: str) -> dict[str, str]:
 
 
 class TaskHistoryRetentionTests(unittest.TestCase):
-    path = Path("docs/03.specs/0999-example-package/tasks/tsk-0001-example.md")
+    path = Path("docs/03.specs/0999-example-package/01.tasks/tsk-0001-example.md")
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -183,7 +183,7 @@ class SpecPlanAuthorityTests(unittest.TestCase):
         package = PurePosixPath("docs/03.specs/0999-new-package")
         spec = package / "spec.md"
         plan = package / "plan.md"
-        task = package / "tasks/tsk-0001-work.md"
+        task = package / "01.tasks/tsk-0001-work.md"
         texts = {
             spec: (
                 "---\n"
@@ -633,7 +633,7 @@ class SpecPlanAuthorityTests(unittest.TestCase):
     def test_local_lifecycle_extensions_remain_effective_after_adoption(self) -> None:
         raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
         spec = PurePosixPath("docs/03.specs/0999-new-package/spec.md")
-        task = PurePosixPath("docs/03.specs/0999-new-package/tasks/tsk-0001-work.md")
+        task = PurePosixPath("docs/03.specs/0999-new-package/01.tasks/tsk-0001-work.md")
         for stage in ("approved", "adopted"):
             registry = validate_registry(
                 ROOT,
@@ -721,7 +721,7 @@ class SpecPlanAuthorityTests(unittest.TestCase):
             local_extension_names(raw["shared_contract"]),
         )
         registry = validate_registry(ROOT, raw)
-        task = PurePosixPath("docs/03.specs/0999-new-package/tasks/tsk-0001-work.md")
+        task = PurePosixPath("docs/03.specs/0999-new-package/01.tasks/tsk-0001-work.md")
         for status in ("draft", "ready", "in-progress", "blocked"):
             with self.subTest(status=status):
                 created = LifecycleDocument(task, "sdlc/task", status)

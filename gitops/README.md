@@ -30,9 +30,9 @@ gitops/
 └── README.md
 ```
 
-- ADR-0002 (`docs/02.architecture/decisions/README.md`)
-- ADR-0014 (`docs/02.architecture/decisions/README.md`)
-- Architecture (`docs/02.architecture/descriptions/README.md`)
+- ADR-0002 (`docs/02.architecture/02.decisions/README.md`)
+- ADR-0014 (`docs/02.architecture/02.decisions/README.md`)
+- Architecture (`docs/02.architecture/01.descriptions/README.md`)
 - [Workloads README](./workloads/README.md)
 - [Examples README](../examples/README.md)
 
@@ -120,7 +120,7 @@ scan만으로 축소하지 않는다.
 | ---------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `apps`     | `clusterResourceWhitelist`          | None.                                                                                                           | Workloads own no cluster-scoped resources; `apps` namespace is owned by the platform namespace manifests.                                      | Re-add only with an approved app-owned cluster resource design and live reconciliation impact review.                        | `bash scripts/validate-gitops-structure.sh`.                                                                                                                                                       |
 | `apps`     | `active namespaceResourceWhitelist` | `AnalysisTemplate`, `DestinationRule`, `Ingress`, `PeerAuthentication`, `Rollout`, `Service`, `VirtualService`. | Active `gitops/workloads/adminer` manifests use these kinds.                                                                                                   | These kinds are required for the current implemented workload pattern.                                                       | `bash scripts/validate-gitops-structure.sh` and `bash scripts/validate-k8s-manifests.sh .`.                                                                                                          |
-| `apps`     | `policy namespaceResourceWhitelist` | `ExternalSecret`.                                                                                               | `docs/05.operations/policies/README.md` allows optional secret-backed workloads through ESO only.                                   | Remove only if app onboarding policy no longer supports ESO-backed app secrets.                                              | App onboarding policy review.                                                                                                                                                                             |
+| `apps`     | `policy namespaceResourceWhitelist` | `ExternalSecret`.                                                                                               | `docs/05.operations/02.policies/README.md` allows optional secret-backed workloads through ESO only.                                   | Remove only if app onboarding policy no longer supports ESO-backed app secrets.                                              | App onboarding policy review.                                                                                                                                                                             |
 | `platform` | `platform AppProject allow-lists`   | Raw platform manifests plus rendered chart-managed platform components.                                         | `bash scripts/render-platform-chart-kinds.sh .` renders Helm charts and confirms kind coverage against the platform AppProject after raw manifest scan review. | New platform chart kinds require chart render review and ArgoCD sync impact review before the AppProject allow-list changes. | `bash scripts/render-platform-chart-kinds.sh .`, `bash scripts/validate-infrastructure-contracts.sh`, `bash scripts/validate-gitops-structure.sh` and `bash scripts/validate-k8s-manifests.sh .`. |
 
 #### Platform Chart Render Review Matrix
@@ -205,7 +205,7 @@ secret과 credential을 저장소에 커밋하지 않는 경계는 아래 Usage 
 
 #### Working Procedure
 
-1. 현재 플랫폼 구조는 Architecture (`docs/02.architecture/descriptions/README.md`), 운영 통제는 Operations Policy (`docs/05.operations/policies/README.md`)에서 확인한다.
+1. 현재 플랫폼 구조는 Architecture (`docs/02.architecture/01.descriptions/README.md`), 운영 통제는 Operations Policy (`docs/05.operations/02.policies/README.md`)에서 확인한다.
 2. 새 앱은 [examples/sample-app](../examples/sample-app/README.md)을 복사해 `gitops/workloads/<appname>/`에서 시작한다.
 3. 변경은 feature branch와 PR review를 거쳐 `main`에 병합하고, ArgoCD가 Git 상태를 reconcile하도록 둔다.
 4. 변경 작업 중에는 `python3 scripts/qa.py quick`로 영향 경로를 검사하고,

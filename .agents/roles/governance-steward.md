@@ -67,7 +67,7 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Per [work lifecycle](../workflows/work-lifecycle.md), run `python3 scripts/validate-agent-governance.py --root .` and `python3 -m unittest tests.test_agent_governance tests.test_validate_agent_registry` plus the strict document checks on touched role bodies; report them as repository evidence under the [validation lane contract](../governance/quality.md#validation-lane-contract). Native discovery and runtime enforcement are provider-runtime evidence and stay unobserved unless directly evidenced. Review this role when its responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run `python3 scripts/validate-agent-governance.py --root .` and `python3 -m unittest tests.test_agent_governance tests.test_validate_agent_registry` plus the strict document checks on touched role bodies; report them as repository evidence under the [validation lane contract](../../docs/00.workspace/04.quality/quality.md#validation-lane-contract). Native discovery and runtime enforcement are provider-runtime evidence and stay unobserved unless directly evidenced. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
@@ -78,4 +78,4 @@ Per [work lifecycle](../workflows/work-lifecycle.md), run `python3 scripts/valid
 - [supervisor](supervisor.md)
 - [wiki-curator](wiki-curator.md)
 - [Agent execution](../governance/agent-execution.md)
-- [Quality policy](../governance/quality.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md)

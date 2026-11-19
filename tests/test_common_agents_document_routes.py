@@ -82,7 +82,7 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
                 contracts.classify_path(self.registry, PurePosixPath(path))
 
     def test_tracked_hidden_markdown_is_in_full_document_inventory(self) -> None:
-        path = PurePosixPath(".agents/governance/quality.md")
+        path = PurePosixPath("docs/00.workspace/04.quality/quality.md")
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             target = root / path
@@ -174,7 +174,7 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
         )
 
     def test_translated_common_governance_h2_is_rejected(self) -> None:
-        path = PurePosixPath(".agents/governance/document-authoring.md")
+        path = PurePosixPath("docs/00.workspace/03.process/document-authoring.md")
         profile = contracts.classify_path(self.registry, path)
         source = (ROOT / path).read_text(encoding="utf-8")
         translated = source.replace("## Purpose", "## 목적", 1)

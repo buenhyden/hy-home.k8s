@@ -340,7 +340,7 @@ class RelationshipRegistryTests(unittest.TestCase):
     def test_the_schema_relation_kind_enum_is_the_relation_kind_ids(self) -> None:
         schema = json.loads(
             (
-                ROOT / "docs/99.templates/contracts/document-profile.schema.json"
+                ROOT / "docs/99.templates/01.contracts/document-profile.schema.json"
             ).read_text("utf-8")
         )
         kind = schema["$defs"]["relation"]["properties"]["kind"]
@@ -376,14 +376,14 @@ class RelationshipRegistryTests(unittest.TestCase):
         for reference in (
             "./.agents/governance/quality.md",
             ".agents//governance/quality.md",
-            "docs/05.operations/policies/9999-missing-policy.md",
+            "docs/05.operations/02.policies/9999-missing-policy.md",
             "README.md",
         ):
             with self.subTest(reference=reference):
                 definition["policy_refs"] = [reference]
                 self.assertIn("REGISTRY_RELATION_POLICY_REF", contract_rules(raw))
 
-        reference = ".agents/governance/quality.md"
+        reference = "docs/00.workspace/04.quality/quality.md"
         definition["policy_refs"] = [reference]
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -440,9 +440,9 @@ def _cycles(tree: dict) -> set[str]:
 
 class OperationSupersessionTests(unittest.TestCase):
     OPERATIONS = (
-        ("guide", "guides", "GDE"),
-        ("policy", "policies", "POL"),
-        ("runbook", "runbooks", "RUN"),
+        ("guide", "01.guides", "GDE"),
+        ("policy", "02.policies", "POL"),
+        ("runbook", "03.runbooks", "RUN"),
     )
 
     @classmethod
@@ -687,7 +687,7 @@ class SupersessionCycleTests(unittest.TestCase):
         profile = next(
             item for item in registry.profiles if item.profile_id == "sdlc/task"
         )
-        path = PurePosixPath("docs/03.specs/0999-example/tasks/tsk-0001-example.md")
+        path = PurePosixPath("docs/03.specs/0999-example/01.tasks/tsk-0001-example.md")
         text = "\n".join(
             (
                 "---",

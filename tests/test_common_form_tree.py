@@ -1664,7 +1664,7 @@ def definition(**fields: object) -> dict:
         "purpose": "Give authors the guide form.",
         "responsibility": "One guide per procedure.",
         "non_goals": ["Runbook steps"],
-        "policy_refs": [".agents/governance/document-authoring.md"],
+        "policy_refs": ["docs/00.workspace/03.process/document-authoring.md"],
         "vocabulary_refs": ["docs/99.templates/registry.json"],
         "applicability": "Stage 05 guides",
         "consumer_paths": ["scripts/validate-markdown-profiles.py"],
@@ -2202,7 +2202,7 @@ class RepositoryRegistryTests(unittest.TestCase):
         )
         schema = json.loads(
             (
-                ROOT / "docs/99.templates/contracts/document-profile.schema.json"
+                ROOT / "docs/99.templates/01.contracts/document-profile.schema.json"
             ).read_text("utf-8")
         )
         allowed = schema["$defs"]["common_form"]["properties"]["form_id"]["enum"]
@@ -2686,7 +2686,7 @@ OVERVIEW = (
 )
 PROCEDURE = ("## Procedure", "### Steps", "Run the command and read the output.")
 RELATED = ("## Related Documents", "- [Specification](spec.md)")
-GUIDE_PATH = PurePosixPath("docs/05.operations/guides/0001-temporary-guide.md")
+GUIDE_PATH = PurePosixPath("docs/05.operations/01.guides/0001-temporary-guide.md")
 
 
 def md(*blocks: str) -> str:
@@ -3559,7 +3559,7 @@ class TableIteratorTests(unittest.TestCase):
         self.assertIsNone(MARKDOWN._first_visible_table("no table here"))
 
 
-RUNBOOK_PATH = PurePosixPath("docs/05.operations/runbooks/0001-temporary-runbook.md")
+RUNBOOK_PATH = PurePosixPath("docs/05.operations/03.runbooks/0001-temporary-runbook.md")
 RUNBOOK_STEPS = (
     "| Step | Action | Expected Result | On Failure |\n"
     "| --- | --- | --- | --- |\n| 1 | Restart | Ready | Stop and call the owner |"
@@ -3737,7 +3737,7 @@ class RunbookFormTests(unittest.TestCase):
 
 
 INCIDENT_PATH = PurePosixPath(
-    "docs/05.operations/incidents/2026/inc-0001-example/incident.md"
+    "docs/05.operations/04.incidents/2026/inc-0001-example/incident.md"
 )
 INCIDENT_BODY = md(
     "# Incident title",
@@ -3756,7 +3756,7 @@ INCIDENT_BODY = md(
     "#### Evidence Sources\n\nA log link.",
 )
 POSTMORTEM_PATH = PurePosixPath(
-    "docs/05.operations/incidents/2026/inc-0001-example/postmortem.md"
+    "docs/05.operations/04.incidents/2026/inc-0001-example/postmortem.md"
 )
 POSTMORTEM_BODY = md(
     "# Postmortem title",
@@ -4037,7 +4037,7 @@ class PostmortemFormTests(RoleFormTableBody):
 
 GOVERNANCE_POLICY_PATH = PurePosixPath(".agents/governance/agent-execution.md")
 OPERATIONS_POLICY_PATH = PurePosixPath(
-    "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md"
+    "docs/05.operations/02.policies/0001-k8s-gitops-operations-policy.md"
 )
 
 
@@ -4286,7 +4286,7 @@ class AgentsFormTests(RoleFormBody):
         self.assertEqual(folder["frontmatter"]["mode"], "absent")
         self.assertEqual(
             folder["template_source"],
-            "docs/99.templates/templates/common/agents.template.md",
+            "docs/99.templates/02.templates/93.common/agents.template.md",
         )
         self.assertEqual(twin["mode"], "template")
         self.assertEqual(twin["frontmatter"]["mode"], "absent")
@@ -4296,7 +4296,7 @@ class AgentsFormTests(RoleFormBody):
         )
         self.assertEqual(
             twin["path_pattern"],
-            "^docs/99\\.templates/templates/common/agents\\.template\\.md$",
+            "^docs/99\\.templates/02\\.templates/93\\.common/agents\\.template\\.md$",
         )
 
     def test_the_form_has_no_extension_and_no_body_section(self) -> None:
@@ -4626,7 +4626,7 @@ class NativeSkillFormTests(SkillFormBody):
         self.assertEqual(package["mode"], "native")
         self.assertEqual(
             package["template_source"],
-            "docs/99.templates/templates/common/native-skill.template.md",
+            "docs/99.templates/02.templates/93.common/native-skill.template.md",
         )
         self.assertEqual(twin["mode"], "template")
         self.assertEqual(twin["placeholder_policy"], "template-only")
@@ -4639,7 +4639,7 @@ class NativeSkillFormTests(SkillFormBody):
         )
         self.assertEqual(
             twin["path_pattern"],
-            "^docs/99\\.templates/templates/common/native\\-skill\\.template\\.md$",
+            "^docs/99\\.templates/02\\.templates/93\\.common/native\\-skill\\.template\\.md$",
         )
 
     def test_the_authority_sentence_before_the_h1_does_not_disturb_the_tree(
@@ -4662,10 +4662,10 @@ class NativeSkillFormTests(SkillFormBody):
 
 
 WORKSPACE_PATH = PurePosixPath("_workspace/diagnostics/README.md")
-PACK_PATH = PurePosixPath("docs/90.references/research/0001-example/README.md")
+PACK_PATH = PurePosixPath("docs/90.references/01.research/0001-example/README.md")
 LOCAL_FORM_CONSUMERS = (
     "docs/99.templates/registry.json",
-    "docs/99.templates/contracts/document-profile.schema.json",
+    "docs/99.templates/01.contracts/document-profile.schema.json",
     "docs/99.templates/README.md",
     "scripts/document_contracts.py",
     "scripts/validate-markdown-profiles.py",
@@ -4799,12 +4799,13 @@ class LocalReadmeForm(unittest.TestCase):
                 self.assertEqual(
                     definition_["policy_refs"],
                     [
-                        ".agents/governance/document-authoring.md",
-                        ".agents/governance/document-lifecycle.md",
+                        "docs/00.workspace/03.process/document-authoring.md",
+                        "docs/00.workspace/03.process/document-lifecycle.md",
                     ],
                 )
                 self.assertEqual(
-                    definition_["vocabulary_refs"], [".agents/knowledge/glossary.md"]
+                    definition_["vocabulary_refs"],
+                    ["docs/00.workspace/01.project/glossary.md"],
                 )
                 paths = definition_["consumer_paths"]
                 self.assertEqual(len(paths), len(set(paths)))
@@ -5034,14 +5035,17 @@ class ReferencePackFormTests(LocalReadmeForm):
         registry = CONTRACTS.load_registry(ROOT)
         for path, profile_id in (
             (
-                "docs/90.references/research/0001-workspace-engineering/README.md",
+                "docs/90.references/01.research/0001-workspace-engineering/README.md",
                 "reference/research-pack",
             ),
             (
-                "docs/90.references/audits/0001-sdlc-governance/README.md",
+                "docs/90.references/02.audits/0001-sdlc-governance/README.md",
                 "reference/audit-pack",
             ),
-            ("docs/90.references/data/0001-example/README.md", "reference/data-pack"),
+            (
+                "docs/90.references/03.data/0001-example/README.md",
+                "reference/data-pack",
+            ),
         ):
             with self.subTest(path=path):
                 profile = CONTRACTS.classify_path(registry, PurePosixPath(path))
@@ -5054,7 +5058,7 @@ class SmallLocalFormTests(unittest.TestCase):
 
     PATHS = {
         "knowledge-map": PurePosixPath(".agents/knowledge/domains.md"),
-        "vocabulary": PurePosixPath(".agents/knowledge/glossary.md"),
+        "vocabulary": PurePosixPath("docs/00.workspace/01.project/glossary.md"),
         "prompt": PurePosixPath(".agents/prompts/doc-update.md"),
         "evaluation-task": PurePosixPath(".agents/evaluations/harnesses/x/task.md"),
         "evaluation-score": PurePosixPath(".agents/evaluations/harnesses/x/score.md"),
@@ -5532,7 +5536,7 @@ class GovernanceRoleFormTests(unittest.TestCase):
         self,
     ) -> None:
         text = (
-            ROOT / "docs/99.templates/templates/governance/role.template.md"
+            ROOT / "docs/99.templates/02.templates/91.agent-governance/role.template.md"
         ).read_text(encoding="utf-8")
         section = text.split("## Current Contract\n", 1)[1].split("\n## ", 1)[0]
         headings = [x[4:] for x in section.splitlines() if x.startswith("### ")]
@@ -5548,7 +5552,7 @@ class GovernanceRoleFormTests(unittest.TestCase):
 class DataReferenceFormTests(unittest.TestCase):
     """SPEC-0222 WORK-008: the data reports bind the data-reference core role."""
 
-    PATH = PurePosixPath("docs/90.references/data/0001-sample/m0001-sample.md")
+    PATH = PurePosixPath("docs/90.references/03.data/0001-sample/m0001-sample.md")
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -5700,8 +5704,8 @@ class ResearchAuditFormTests(unittest.TestCase):
     """SPEC-0222 WORK-008: the research and audit reports bind their core roles;
     the thirteen published members keep their former H2 until Q07-CUTOVER."""
 
-    RES = "docs/90.references/research/0001-sample/m{:04d}-sample.md"
-    AUD = "docs/90.references/audits/0001-sample/m{:04d}-sample.md"
+    RES = "docs/90.references/01.research/0001-sample/m{:04d}-sample.md"
+    AUD = "docs/90.references/02.audits/0001-sample/m{:04d}-sample.md"
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -6010,8 +6014,8 @@ class RequirementFormTests(unittest.TestCase):
         definition_ = self.profiles[REQUIREMENT[1]].template_definition
         for path in (
             "docs/99.templates/registry.json",
-            "docs/99.templates/contracts/document-profile.schema.json",
-            "docs/99.templates/templates/requirements/requirement-package.template.md",
+            "docs/99.templates/01.contracts/document-profile.schema.json",
+            "docs/99.templates/02.templates/01.requirements/requirement-package.template.md",
             "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md",
             "docs/01.requirements/0002-argo-notifications-slack.md",
             "docs/01.requirements/0003-workspace-agent-governance-platform.md",
@@ -6030,10 +6034,13 @@ class RequirementFormTests(unittest.TestCase):
                 self.assertIn(path, definition_["consumer_paths"])
         self.assertEqual(
             definition_["policy_refs"],
-            [".agents/governance/document-authoring.md", ".agents/governance/sdlc.md"],
+            [
+                "docs/00.workspace/03.process/document-authoring.md",
+                "docs/00.workspace/03.process/sdlc.md",
+            ],
         )
         self.assertEqual(
-            definition_["vocabulary_refs"], [".agents/knowledge/glossary.md"]
+            definition_["vocabulary_refs"], ["docs/00.workspace/01.project/glossary.md"]
         )
 
     def test_a_complete_document_passes_and_quality_requirements_is_required(
@@ -6262,7 +6269,7 @@ class RequirementFormTests(unittest.TestCase):
 
 
 ARCHITECTURE_PATH = PurePosixPath(
-    "docs/02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md"
+    "docs/02.architecture/01.descriptions/0004-argo-rollouts-progressive-delivery.md"
 )
 
 
@@ -6409,12 +6416,12 @@ class ArchitectureFormTests(unittest.TestCase):
         self.assertEqual(definition_["contract_version"], "2.0.0")
         for path in (
             "docs/99.templates/registry.json",
-            "docs/99.templates/contracts/document-profile.schema.json",
-            "docs/99.templates/templates/architecture/description.template.md",
-            "docs/02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md",
-            "docs/02.architecture/descriptions/0005-argo-notifications-slack.md",
-            "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
-            "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md",
+            "docs/99.templates/01.contracts/document-profile.schema.json",
+            "docs/99.templates/02.templates/02.architecture/description.template.md",
+            "docs/02.architecture/01.descriptions/0004-argo-rollouts-progressive-delivery.md",
+            "docs/02.architecture/01.descriptions/0005-argo-notifications-slack.md",
+            "docs/00.workspace/02.architecture/01.descriptions/0006-workspace-agent-governance-platform.md",
+            "docs/02.architecture/01.descriptions/0007-current-local-gitops-platform.md",
             "docs/02.architecture/README.md",
             "docs/99.templates/README.md",
             "scripts/document_contracts.py",
@@ -6430,10 +6437,13 @@ class ArchitectureFormTests(unittest.TestCase):
                 self.assertTrue((ROOT / path).is_file())
         self.assertEqual(
             definition_["policy_refs"],
-            [".agents/governance/document-authoring.md", ".agents/governance/sdlc.md"],
+            [
+                "docs/00.workspace/03.process/document-authoring.md",
+                "docs/00.workspace/03.process/sdlc.md",
+            ],
         )
         self.assertEqual(
-            definition_["vocabulary_refs"], [".agents/knowledge/glossary.md"]
+            definition_["vocabulary_refs"], ["docs/00.workspace/01.project/glossary.md"]
         )
 
     def test_a_complete_document_passes_with_and_without_rows_or_lineage(self) -> None:
@@ -6512,7 +6522,7 @@ class TemplateTwinTableTests(unittest.TestCase):
         twin = copy.deepcopy(profile_of(raw, GUIDE[1]))
         twin["id"] = "common/template-operation-guide-second"
         twin["path_pattern"] = (
-            "^docs/99\\.templates/templates/operations/guide\\.second$"
+            "^docs/99\\.templates/02\\.templates/05\\.operations/guide\\.second$"
         )
         if not tables:
             twin["template_definition"]["tables"] = []
@@ -6536,9 +6546,9 @@ class TemplateTwinTableTests(unittest.TestCase):
 class RetainedFormTests(unittest.TestCase):
     """W03-D02, W03-D52: a retained form applies by status and, when bounded, identity."""
 
-    INSIDE = PurePosixPath("docs/02.architecture/decisions/0050-temporary.md")
-    OUTSIDE = PurePosixPath("docs/02.architecture/decisions/0062-temporary.md")
-    GUIDE_PATH = PurePosixPath("docs/05.operations/guides/0099-temporary.md")
+    INSIDE = PurePosixPath("docs/02.architecture/02.decisions/0050-temporary.md")
+    OUTSIDE = PurePosixPath("docs/02.architecture/02.decisions/0062-temporary.md")
+    GUIDE_PATH = PurePosixPath("docs/05.operations/01.guides/0099-temporary.md")
     LEGACY = md(
         "# Decision title",
         "## Context\n\nWhy we decide.",
@@ -6700,7 +6710,7 @@ class RetainedFormTests(unittest.TestCase):
 
         def body_rules(status: str, number: str, body: str) -> list[str]:
             relative = PurePosixPath(
-                f"docs/02.architecture/decisions/{number}-temporary.md"
+                f"docs/02.architecture/02.decisions/{number}-temporary.md"
             )
             with tempfile.TemporaryDirectory() as root:
                 path = Path(root) / relative
@@ -6790,7 +6800,7 @@ class IdentityBoundTests(unittest.TestCase):
         self.assertNotEqual(rules_of(raw), set())
 
 
-ADR_PATH = PurePosixPath("docs/02.architecture/decisions/0062-example.md")
+ADR_PATH = PurePosixPath("docs/02.architecture/02.decisions/0062-example.md")
 
 
 def adr_body(*, supersession: bool = True) -> str:
@@ -6925,7 +6935,10 @@ class AdrFormTests(unittest.TestCase):
         self.assertEqual(definition_["contract_version"], "2.0.0")
         self.assertEqual(
             definition_["policy_refs"],
-            [".agents/governance/document-authoring.md", ".agents/governance/sdlc.md"],
+            [
+                "docs/00.workspace/03.process/document-authoring.md",
+                "docs/00.workspace/03.process/sdlc.md",
+            ],
         )
         for path in definition_["consumer_paths"]:
             with self.subTest(path=path):
@@ -6969,7 +6982,7 @@ class AdrFormTests(unittest.TestCase):
             )
         }
         self.assertIn("BODY-HEADING-UNSUPPORTED", found)
-        inside = PurePosixPath("docs/02.architecture/decisions/0061-example.md")
+        inside = PurePosixPath("docs/02.architecture/02.decisions/0061-example.md")
         self.assertEqual(
             [
                 i.rule_id
@@ -6981,7 +6994,11 @@ class AdrFormTests(unittest.TestCase):
         )
 
     def test_the_36_accepted_adrs_and_the_template_gain_no_diagnostic(self) -> None:
-        for path in sorted((ROOT / "docs/02.architecture/decisions").glob("00*.md")):
+        folders = (
+            ROOT / "docs/02.architecture/02.decisions",
+            ROOT / "docs/00.workspace/02.architecture/02.decisions",
+        )
+        for path in sorted(p for f in folders for p in f.glob("00*.md")):
             relative = PurePosixPath(path.relative_to(ROOT).as_posix())
             with self.subTest(adr=relative.name):
                 self.assertEqual(
@@ -7026,7 +7043,7 @@ class AdrFormTests(unittest.TestCase):
 
 
 # SPEC-0196 (W03-D56, W03-D65): the full TemplateDefinition record.
-RECORD_SCHEMA = ROOT / "docs/99.templates/contracts/template-definition.schema.json"
+RECORD_SCHEMA = ROOT / "docs/99.templates/01.contracts/template-definition.schema.json"
 # SPEC-0222: the research, audit and data-reference core-role forms outside the
 # first sixteen also take the common contract.
 COMMON_RECORD_ROLES = frozenset(FORM_IDS[:16]) | {"research", "audit", "data-reference"}
@@ -7822,7 +7839,9 @@ class FormlessRoleTableTests(unittest.TestCase):
                 self.assertFalse(table["section"].startswith("#"), profile["id"])
 
 
-TASK_PATH = PurePosixPath("docs/03.specs/0900-form-fixture/tasks/tsk-0001-fixture.md")
+TASK_PATH = PurePosixPath(
+    "docs/03.specs/0900-form-fixture/01.tasks/tsk-0001-fixture.md"
+)
 
 
 def task_form_body(*, evidence_header: tuple[str, ...] | None = None) -> str:
@@ -7968,7 +7987,7 @@ class TaskFormTests(unittest.TestCase):
     def test_the_extension_kinds_are_the_local_h3_and_the_retained_form(self) -> None:
         schema = json.loads(
             (
-                ROOT / "docs/99.templates/contracts/document-profile.schema.json"
+                ROOT / "docs/99.templates/01.contracts/document-profile.schema.json"
             ).read_text(encoding="utf-8")
         )
         kinds = schema["$defs"]["form_extension"]["properties"]["kind"]["enum"]
@@ -7985,7 +8004,7 @@ class HeadingListRemovalTests(unittest.TestCase):
         cls.registry = CONTRACTS.load_registry(ROOT)
         cls.schema = json.loads(
             (
-                ROOT / "docs/99.templates/contracts/document-profile.schema.json"
+                ROOT / "docs/99.templates/01.contracts/document-profile.schema.json"
             ).read_text(encoding="utf-8")
         )
 
@@ -8211,7 +8230,7 @@ class HeadingListRemovalTests(unittest.TestCase):
             if p.profile_id == "sdlc/architecture-decision"
         )
         path = PurePosixPath(
-            "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md"
+            "docs/02.architecture/02.decisions/0002-argocd-helm-and-gitops-model.md"
         )
         body = (ROOT / path).read_text(encoding="utf-8").split("\n---\n", 1)[1]
         self.assertEqual(MARKDOWN._body_diagnostics(path, adr, body, "accepted"), [])
@@ -8807,7 +8826,7 @@ class OperationsCoreBindingTests(unittest.TestCase):
         # SPEC-0222: runbook.steps is always required; a runbook whose steps lack
         # a stated Expected Result keeps its header-only table (W04-CONTENT).
         profile = typed_profiles(load_raw())[RUNBOOK[0]]
-        paths = sorted((ROOT / "docs/05.operations/runbooks").glob("0*.md"))
+        paths = sorted((ROOT / "docs/05.operations/03.runbooks").glob("0*.md"))
         self.assertTrue(paths)
         for path in paths:
             text = path.read_text(encoding="utf-8")
@@ -8826,7 +8845,7 @@ class OperationsCoreBindingTests(unittest.TestCase):
 
     def test_the_converted_runbook_passes_and_its_former_header_fails(self) -> None:
         path = PurePosixPath(
-            "docs/05.operations/runbooks/0012-main-release-preparation-runbook.md"
+            "docs/00.workspace/03.process/0012-main-release-preparation-runbook.md"
         )
         text = (ROOT / path).read_text(encoding="utf-8")
         profile = typed_profiles(load_raw())[RUNBOOK[0]]
@@ -8948,7 +8967,7 @@ class DecisionCoreBindingTests(unittest.TestCase):
         registry = CONTRACTS.load_registry(ROOT)
         for number, section in (("0064", "Decision"), ("0050", "Traceability")):
             path = PurePosixPath(
-                f"docs/02.architecture/decisions/{number}-temporary.md"
+                f"docs/02.architecture/02.decisions/{number}-temporary.md"
             )
             text = (
                 '---\ntitle: "Decision title"\nversion: "1.0.0"\n'
@@ -9235,11 +9254,16 @@ class SdlcCoreBindingTests(unittest.TestCase):
         self,
     ) -> None:
         profile = typed_profiles(load_raw())[ARCHITECTURE[0]]
-        folder = ROOT / "docs/02.architecture/descriptions"
-        self.assertEqual(
-            sorted(p.name for p in folder.glob("0*.md")), sorted(AD_INTERFACE_TABLES)
+        # Q07: the workspace AD-0006 lives under docs/00.workspace; the
+        # product descriptions stay in Stage 02. Both folders are read.
+        folders = (
+            ROOT / "docs/02.architecture/01.descriptions",
+            ROOT / "docs/00.workspace/02.architecture/01.descriptions",
         )
+        located = {p.name: p.parent for f in folders for p in f.glob("0*.md")}
+        self.assertEqual(sorted(located), sorted(AD_INTERFACE_TABLES))
         for name, rows in AD_INTERFACE_TABLES.items():
+            folder = located[name]
             text = (folder / name).read_text(encoding="utf-8")
             with self.subTest(path=name):
                 section = MARKDOWN._exact_heading_section(text, "### Interfaces") or ""
@@ -9353,11 +9377,13 @@ class CoreTableDocumentTests(unittest.TestCase):
     """SPEC-0222 WORK-009: the document validators refuse a missing always core
     table, a drifted core header and a core cell of the wrong type."""
 
-    AUDIT_PATH = PurePosixPath("docs/90.references/audits/0001-sample/m0003-sample.md")
-    DATA_PATH = PurePosixPath("docs/90.references/data/0001-sample/m0001-sample.md")
-    RES_PATH = "docs/90.references/research/0001-sample/m{:04d}-sample.md"
+    AUDIT_PATH = PurePosixPath(
+        "docs/90.references/02.audits/0001-sample/m0003-sample.md"
+    )
+    DATA_PATH = PurePosixPath("docs/90.references/03.data/0001-sample/m0001-sample.md")
+    RES_PATH = "docs/90.references/01.research/0001-sample/m{:04d}-sample.md"
     RUNBOOK_TEMPLATE = PurePosixPath(
-        "docs/99.templates/templates/operations/runbook.template.md"
+        "docs/99.templates/02.templates/05.operations/runbook.template.md"
     )
     FINDINGS = "| " + " | ".join(label for label, _, _ in AUDIT_FINDINGS) + " |"
     SCHEMA = "| " + " | ".join(label for label, _, _ in DATA_REFERENCE_SCHEMA) + " |"

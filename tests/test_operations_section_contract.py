@@ -30,9 +30,9 @@ def load_markdown_validator():
 
 markdown = load_markdown_validator()
 SCHEMA = json.loads(
-    (ROOT / "docs/99.templates/contracts/document-profile.schema.json").read_text()
+    (ROOT / "docs/99.templates/01.contracts/document-profile.schema.json").read_text()
 )
-GUIDE_PATH = PurePosixPath("docs/05.operations/guides/9999-section-example.md")
+GUIDE_PATH = PurePosixPath("docs/05.operations/01.guides/9999-section-example.md")
 
 
 RETAINED_STATUS = "accepted"
@@ -205,8 +205,8 @@ class OperationsSectionContractTests(unittest.TestCase):
 
     def test_link_only_body_does_not_fill_an_instruction_section(self) -> None:
         for body in (
-            "[RUN-0001](../runbooks/0001-example.md)\n",
-            "- [RUN-0001](../runbooks/0001-example.md)\n- [POL-0001](./0001-x.md)\n",
+            "[RUN-0001](../03.runbooks/0001-example.md)\n",
+            "- [RUN-0001](../03.runbooks/0001-example.md)\n- [POL-0001](./0001-x.md)\n",
             "<https://example.invalid/runbook>\n",
         ):
             with self.subTest(body=body):

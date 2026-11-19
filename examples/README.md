@@ -46,7 +46,7 @@ examples/
 
 | 디렉토리 | 설명 | 관련 문서 |
 | --- | --- | --- |
-| [`sample-app`](sample-app) | Rollout + AnalysisTemplate + Ingress + ESO 패턴 최소 앱 온보딩 템플릿 | Policy (`docs/05.operations/policies/README.md`) · Runbook (`docs/05.operations/runbooks/README.md`) |
+| [`sample-app`](sample-app) | Rollout + AnalysisTemplate + Ingress + ESO 패턴 최소 앱 온보딩 템플릿 | Policy (`docs/05.operations/02.policies/README.md`) · Runbook (`docs/05.operations/03.runbooks/README.md`) |
 | [`aws`](aws) | EKS 1.35 target, Terraform AWS provider 6.x 기반 AWS migration 참조 예시 | [AWS example boundary](./aws/README.md) |
 | [`azure`](azure) | AKS 1.35 target, Bicep, AGC/Gateway API 기반 Azure migration 참조 예시 | [Azure example boundary](./azure/README.md) |
 

@@ -73,4 +73,4 @@ Per [work lifecycle](../workflows/work-lifecycle.md), this role runs no validato
 - [Agent registry](registry.json)
 - [security-auditor](security-auditor.md)
 - [supervisor](supervisor.md)
-- [Quality policy](../governance/quality.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md)

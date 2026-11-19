@@ -18,7 +18,7 @@ Declarative Rego policy rules that Conftest evaluates against Kubernetes manifes
 Claude reads each skill through `.claude/skills/<id>`. Native loading and
 permission limits are in [`.claude/provider.md`](../.claude/provider.md) and
 [`.codex/provider.md`](../.codex/provider.md); approval boundaries are in
-[approval and safety](../.agents/governance/approval-and-safety.md).
+[approval and safety](../docs/00.workspace/04.quality/approval-and-safety.md).
 
 #### Non-goals
 

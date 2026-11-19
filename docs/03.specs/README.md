@@ -51,18 +51,18 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 
 위 내용은 각각 `01.requirements/`, `05.operations/policies/`,
 `05.operations/runbooks/`, 그리고 각 Stage 03 work-unit의
-`tasks/tsk-####-<slug>.md` records로 분리한다.
+`01.tasks/tsk-####-<slug>.md` records로 분리한다.
 
 ### Excluded Responsibilities
 
-이 stage는 제품 우선순위와 사용자 가치 중심 설명, 전사 운영 정책, 실시간 장애 대응 절차, work-unit 밖의 실행 추적 정본을 소유하지 않는다. 이는 각각 `01.requirements/`, `05.operations/policies/`, `05.operations/runbooks/`, 그리고 각 Stage 03 work-unit의 `tasks/tsk-####-<slug>.md` records로 분리한다. 새 Spec·Plan의 `approved`는 구현 완료나 기준 수용의 표지가 아니며, `ready` Task도 승인이나 실제 착수의 증거가 아니다.
+이 stage는 제품 우선순위와 사용자 가치 중심 설명, 전사 운영 정책, 실시간 장애 대응 절차, work-unit 밖의 실행 추적 정본을 소유하지 않는다. 이는 각각 `01.requirements/`, `05.operations/policies/`, `05.operations/runbooks/`, 그리고 각 Stage 03 work-unit의 `01.tasks/tsk-####-<slug>.md` records로 분리한다. 새 Spec·Plan의 `approved`는 구현 완료나 기준 수용의 표지가 아니며, `ready` Task도 승인이나 실제 착수의 증거가 아니다.
 
 ## Current Contents
 
 ### Paths
 
 각 package 폴더는 자신의 탐색을 스스로 소유한다. `spec.md`는 변경 계약을,
-`plan.md`는 구현 순서와 위험을, `tasks/`는 package-local Task 기록을
+`plan.md`는 구현 순서와 위험을, `01.tasks/`는 package-local Task 기록을
 소유한다. 이 README는 package 폴더까지만 안내하며, 각 package의 상태와
 날짜는 그 package의 `spec.md` frontmatter가 소유한다.
 
@@ -71,17 +71,19 @@ Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순�
 ```text
 03.specs/
 ├── 0223-work-residue-handoff/
+├── 0224-workspace-path-cutover/
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
 └── work-residue-ledger.json
 ```
 
-현재 열린 package는 세 개다.
+현재 열린 package는 두 개다.
 
 | Path | Purpose |
 | --- | --- |
 | [SPEC-0223 Work Residue Handoff](./0223-work-residue-handoff/) | SPEC-0161, SPEC-0221, SPEC-0222의 열린 잔여를 넘겨받아 live residue 표를 두고, 세 package를 종료시키는 변경 package다. |
+| [SPEC-0224 Workspace Path Cutover](./0224-workspace-path-cutover/) | W 계층 문서를 `docs/00.workspace/`로 옮기고 SAFE·GIT 규칙을 W/A로 나누며 `docs/` 분류 폴더를 번호화하는 변경 package다. |
 | [work-residue-ledger.json](./work-residue-ledger.json) | 열린 인계·충돌·채택·조사 잔여 항목을 포인터로만 담는 work residue ledger다. 실행 상태, 증거, 수용은 담지 않고 Task가 소유한다. 종결된 항목은 그 Task가 속한 package의 종료 commit까지 삭제한다. |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시다. |
 | [CLAUDE.md](./CLAUDE.md) | Claude가 그 지시를 불러오게 하는 한 줄 `@AGENTS.md` import다. |
@@ -100,7 +102,7 @@ SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-sla
 ### Entry Points
 
 1. 관련 Requirement Package, AD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
-2. 새 Spec은 `../99.templates/templates/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<####-slug>/spec.md`다.
+2. 새 Spec은 `../99.templates/02.templates/03.specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<####-slug>/spec.md`다.
 3. 변경 한정 설계와 수용 기준은 `spec.md`, 실행 순서·위험·예정 검증·rollback은 `plan.md`, 실제 실행·검사 사실·기준별 수용 판정은 package-local Task record가 소유한다. 범위나 근거가 승인 계약을 바꾸면 영향을 받는 Spec·Plan을 재검토한다.
 4. 장기 구조는 Stage 02 Architecture Description으로, 중요한 장기 결정은 ADR로 승격한다. 폐기된 Stage 04 경로는 새 문서에서 사용하지 않는다.
 
@@ -110,7 +112,7 @@ SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-sla
 
 - 상위 문서는 `../`로 시작하는 상대 경로를 사용한다.
 - 같은 stage의 package는 `./<####-numbering>-<feature-id>/` 폴더로 연결한다.
-- 실행 문서는 같은 work-unit의 `plan.md`와 `tasks/tsk-####-<slug>.md`, 운영 문서는 `../05.operations/`로 연결한다.
+- 실행 문서는 같은 work-unit의 `plan.md`와 `01.tasks/tsk-####-<slug>.md`, 운영 문서는 `../05.operations/`로 연결한다.
 
 #### Spec Authoring Rules
 
@@ -126,17 +128,17 @@ SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-sla
 
 아래 템플릿은 `docs/03.specs/<####-slug>/` package의 Spec, Plan, Task에 사용한다.
 
-- `../99.templates/templates/specs/spec.template.md`
-- `../99.templates/templates/specs/plan.template.md`
-- `../99.templates/templates/specs/task.template.md`
+- `../99.templates/02.templates/03.specs/spec.template.md`
+- `../99.templates/02.templates/03.specs/plan.template.md`
+- `../99.templates/02.templates/03.specs/task.template.md`
 
 #### Upstream and Downstream
 
 - [Docs README](../README.md)
 - [01.requirements](../01.requirements/README.md)
-- [02.architecture/descriptions](../02.architecture/descriptions/README.md)
-- [02.architecture/decisions](../02.architecture/decisions/README.md)
-- [05.operations/runbooks](../05.operations/runbooks/README.md)
+- [02.architecture/descriptions](../02.architecture/01.descriptions/README.md)
+- [02.architecture/decisions](../02.architecture/02.decisions/README.md)
+- [05.operations/runbooks](../05.operations/03.runbooks/README.md)
 - [Archive Index](../98.archive/README.md)
 
 #### Policy and Templates
@@ -145,4 +147,4 @@ SPEC-0141의 요약은 [REQ-0002](../01.requirements/0002-argo-notifications-sla
 
 ### Checks
 
-1. 끝난 package는 지속 계약을 현재 소유 문서로 승격하고 Requirement의 `Archived Lineage`에 요약한다. 대체되거나 철회된 단독 문서도 소유 문서에 요약한다. 삭제 전에는 [문서 수명주기 정책](../../.agents/governance/document-lifecycle.md)의 처분 조건을 확인하며, 원본은 확인된 Git 이력에서 복구한다([ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md)). 개별 단순 처분마다 새 Spec을 만들지 않는다.
+1. 끝난 package는 지속 계약을 현재 소유 문서로 승격하고 Requirement의 `Archived Lineage`에 요약한다. 대체되거나 철회된 단독 문서도 소유 문서에 요약한다. 삭제 전에는 [문서 수명주기 정책](../00.workspace/03.process/document-lifecycle.md)의 처분 조건을 확인하며, 원본은 확인된 Git 이력에서 복구한다([ADR-0053](../00.workspace/02.architecture/02.decisions/0053-unvalidated-archive.md)). 개별 단순 처분마다 새 Spec을 만들지 않는다.

@@ -71,7 +71,7 @@ work, record the response, remaining scope and next owner in the Task.
 Use only an available, permitted model. An unsupported or rejected model is
 DEFER for that dependent selection until an authorized supported choice is
 established. Deadlines, timeboxes, allocations and reserves are governed by
-[quality](quality.md#validation-runner-envelope). Respect actual cancellation,
+[quality](../../docs/00.workspace/04.quality/quality.md#validation-runner-envelope). Respect actual cancellation,
 observed account/request limits and technical process bounds; honor an actual
 `Retry-After` when the authorized request can resume, otherwise defer that
 request and continue independent local work. Never silently choose a more
@@ -121,7 +121,7 @@ proves availability, entitlement, resolution or execution.
 - [Agent Registry](../roles/registry.json)
 - [Codex Provider](../../.codex/provider.md)
 - [Claude Provider](../../.claude/provider.md)
-- [Quality Policy](quality.md)
+- [Quality Policy](../../docs/00.workspace/04.quality/quality.md)
 
 #### Responsibilities
 

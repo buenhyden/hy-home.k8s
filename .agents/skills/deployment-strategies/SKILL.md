@@ -11,7 +11,7 @@ metadata:
 disable-model-invocation: true
 ---
 
-Read `.agents/governance/approval-and-safety.md` and the selected role before
+Read `docs/00.workspace/04.quality/approval-and-safety.md` and the selected role before
 using this procedure. Skill invocation grants no authority
 ([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
@@ -64,9 +64,9 @@ This workspace has one integration branch and no environment promotion chain,
 so the generic multi-branch models a deployment guide usually lists do not
 describe it. `main` is the integration base, a change reaches it through a
 prefixed branch and review, and Argo CD reconciles the merged desired state
-under operator control. [Git policy](../../governance/git.md) owns the branch,
+under operator control. [Git policy](../../../docs/00.workspace/03.process/git.md) owns the branch,
 merge and finish rules, `.github/workflows/ci.yml` owns the executable branch
-shape, and [approval and safety](../../governance/approval-and-safety.md) owns
+shape, and [approval and safety](../../../docs/00.workspace/04.quality/approval-and-safety.md) owns
 which actions need explicit authorization.
 
 No promotion path shortens an approval. A passing check is evidence, never

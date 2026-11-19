@@ -70,7 +70,7 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Per [work lifecycle](../workflows/work-lifecycle.md), run the selected gates through `python3 scripts/qa.py quick` or `staged` and the focused unit tests; report each result under its lane (repository-static, hosted, provider-runtime or live) and never treat one lane as proof for another. Lanes follow [quality](../governance/quality.md#validation-lane-contract). Review this role when its responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run the selected gates through `python3 scripts/qa.py quick` or `staged` and the focused unit tests; report each result under its lane (repository-static, hosted, provider-runtime or live) and never treat one lane as proof for another. Lanes follow [quality](../../docs/00.workspace/04.quality/quality.md#validation-lane-contract). Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
@@ -81,4 +81,4 @@ Per [work lifecycle](../workflows/work-lifecycle.md), run the selected gates thr
 - [supervisor](supervisor.md)
 - [Validation registry](../../scripts/validation/registry.json)
 - [Scripts instructions](../../scripts/AGENTS.md)
-- [Quality policy](../governance/quality.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md)

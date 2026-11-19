@@ -39,7 +39,7 @@ secret 값을 출력하지 않는 경계는 아래 Usage > Prerequisites에 적�
 ### Selected Start
 
 전체 라이브 검증은 `run-all.sh`로 실행한다. 복구 절차는
-`docs/05.operations/runbooks/`가 소유한다.
+`docs/05.operations/03.runbooks/`가 소유한다.
 
 ## Checks
 
@@ -67,8 +67,8 @@ secret 값을 출력하지 않는 경계는 아래 Usage > Prerequisites에 적�
 
 ### Failure Handling
 
-이 README는 별도의 관측·복구 절차를 두지 않으며, 복구 절차는 Selected Start에 적힌 `docs/05.operations/runbooks/`가 소유한다.
+이 README는 별도의 관측·복구 절차를 두지 않으며, 복구 절차는 Selected Start에 적힌 `docs/05.operations/03.runbooks/`가 소유한다.
 
 #### Runbook Links
 
-이 README는 별도의 runbook 링크를 두지 않으며, 복구 절차의 소유처는 Selected Start에 `docs/05.operations/runbooks/`로 적혀 있다.
+이 README는 별도의 runbook 링크를 두지 않으며, 복구 절차의 소유처는 Selected Start에 `docs/05.operations/03.runbooks/`로 적혀 있다.

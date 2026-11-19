@@ -25,7 +25,7 @@ current Azure support, subscription readiness or cost.
 Native loading and permission limits are in
 [`.claude/provider.md`](../../.claude/provider.md) and
 [`.codex/provider.md`](../../.codex/provider.md). Approval boundaries are in
-[approval and safety](../../.agents/governance/approval-and-safety.md).
+[approval and safety](../../docs/00.workspace/04.quality/approval-and-safety.md).
 
 #### Non-goals
 

@@ -246,7 +246,7 @@ MATRIXES: dict[str, tuple[Matrix, ...]] = {
             (2,),
         ),
     ),
-    "docs/05.operations/incidents/README.md": (
+    "docs/05.operations/04.incidents/README.md": (
         Matrix(
             "Incident Boundary Matrix",
             (
@@ -263,9 +263,9 @@ MATRIXES: dict[str, tuple[Matrix, ...]] = {
 }
 INDEX_FOLDERS = frozenset(
     {
-        "docs/05.operations/guides/README.md",
-        "docs/05.operations/policies/README.md",
-        "docs/05.operations/runbooks/README.md",
+        "docs/05.operations/01.guides/README.md",
+        "docs/05.operations/02.policies/README.md",
+        "docs/05.operations/03.runbooks/README.md",
     }
 )
 INDEX_SECTION = "Current Contents"
@@ -326,7 +326,7 @@ def _children(root: Path, folder: str, kind: str) -> tuple[str, ...]:
 
 
 def _incident_records(root: Path) -> tuple[tuple[Path, ...], bool]:
-    folder = "docs/05.operations/incidents"
+    folder = "docs/05.operations/04.incidents"
     records: list[Path] = []
     invalid_location = False
     record_names = {"incident.md", "postmortem.md"}
@@ -493,11 +493,11 @@ def _matrix_findings(
             incident_targets = {
                 "Incident Record": (
                     "./<year>/inc-####-<slug>/incident.md",
-                    "../../99.templates/templates/operations/incident.template.md",
+                    "../../99.templates/02.templates/05.operations/incident.template.md",
                 ),
                 "Postmortem": (
                     "./<year>/inc-####-<slug>/postmortem.md",
-                    "../../99.templates/templates/operations/postmortem.template.md",
+                    "../../99.templates/02.templates/05.operations/postmortem.template.md",
                 ),
             }
             expected_pair = incident_targets.get(row_keys[0])
@@ -519,9 +519,18 @@ def _matrix_findings(
     if sorted(keys) != sorted(expected):
         found.append(("DOC-MATRIX-PARITY", matrix.title, "row-target-set-differs"))
     if matrix.source == "operations-routing":
-        locations = ("guides", "policies", "runbooks", "incidents", "incidents")
+        locations = (
+            "01.guides",
+            "02.policies",
+            "03.runbooks",
+            "04.incidents",
+            "04.incidents",
+        )
         expected_pairs = tuple(
-            (f"./{folder}/README.md", f"../99.templates/templates/operations/{name}")
+            (
+                f"./{folder}/README.md",
+                f"../99.templates/02.templates/05.operations/{name}",
+            )
             for folder, name in zip(locations, expected, strict=True)
         )
         if tuple(operation_pairs) != expected_pairs:
@@ -641,11 +650,11 @@ def validate_document_content(
         )
     if relative == ".github/repository-surface.md":
         required_refs = (
-            ".agents/governance/git.md",
+            "docs/00.workspace/03.process/git.md",
             "workflows/ci.yml",
             "scripts/qa.py",
             "PULL_REQUEST_TEMPLATE.md",
-            ".agents/governance/quality.md",
+            "docs/00.workspace/04.quality/quality.md",
         )
         if not all(reference in text for reference in required_refs):
             found.append(
@@ -674,8 +683,8 @@ def validate_document_content(
                     "boundary-missing",
                 )
             )
-    if relative == "docs/05.operations/incidents/README.md":
-        incident_root = root / "docs/05.operations/incidents"
+    if relative == "docs/05.operations/04.incidents/README.md":
+        incident_root = root / "docs/05.operations/04.incidents"
         record_groups = (
             ("incident.md", "No tracked incident records."),
             ("postmortem.md", "No tracked postmortems."),

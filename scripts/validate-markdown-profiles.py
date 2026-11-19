@@ -84,7 +84,7 @@ NATIVE_TRACKED_PATHSPECS = (
 )
 OWNER = "markdown-profile-validator"
 FRONTMATTER_SCHEMA_PATH = PurePosixPath(
-    "docs/99.templates/contracts/frontmatter.schema.json"
+    "docs/99.templates/01.contracts/frontmatter.schema.json"
 )
 
 AUTHOR_PROMPT_MARKER = "Author prompt:"
@@ -1402,11 +1402,16 @@ def _policy_rule_diagnostics(
     for number, (row, own, status) in enumerate(
         zip(level_rows, row_ids, statuses), start=1
     ):
-        if own != f"{record.code}-R{number:03d}":
+        expected = (
+            record.rules[number - 1]
+            if record.rules and number <= len(record.rules)
+            else f"{record.code}-R{number:03d}"
+        )
+        if own != expected:
             add(
                 "POLICY-RULE-ID",
-                f"{record.code}-R{number:03d}: this policy's code, "
-                "ascending from R001 without a gap or duplicate",
+                f"{expected}: this policy's code, ascending from R001 without a "
+                "gap or duplicate, or the registered rules of a split code",
                 own,
             )
         if len(row) > 1 and row[1] not in ids.levels:
@@ -1414,6 +1419,12 @@ def _policy_rule_diagnostics(
         fault = _rules_status_fault(status, own, row_ids, codes)
         if fault is not None:
             add("POLICY-RULE-TABLE", f"{own}: Status {fault}", status)
+    if record.rules and len(row_ids) != len(record.rules):
+        add(
+            "POLICY-RULE-ID",
+            f"exactly the registered rules {list(record.rules)}",
+            json.dumps(row_ids),
+        )
     active = [own for own, status in zip(row_ids, statuses) if status == "active"]
     core_ids = [_identifier_text(row[0]) for row in core_rows]
     if len(cores) == 1 and len(levels) == 1:

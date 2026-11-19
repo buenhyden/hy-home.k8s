@@ -11,7 +11,7 @@ metadata:
 disable-model-invocation: true
 ---
 
-Read `.agents/governance/approval-and-safety.md` and the selected role before
+Read `docs/00.workspace/04.quality/approval-and-safety.md` and the selected role before
 using this procedure. Skill invocation grants no authority
 ([EXEC-R005](../../governance/agent-execution.md#requirements)).
 
@@ -36,7 +36,7 @@ This skill takes no input beyond the user's request and the files its Steps name
 
 Routing never edits global or user-local skills, authentication, or
 configuration. Language policy is owned by
-[document authoring](../../governance/document-authoring.md). Selecting a template grants no authority to author or execute
+[document authoring](../../../docs/00.workspace/03.process/document-authoring.md). Selecting a template grants no authority to author or execute
 beyond the active task.
 
 ## Procedure
@@ -48,7 +48,7 @@ beyond the active task.
    metadata. This classification is the routing decision; every step after it
    follows from an owner that already exists.
 2. Take the responsibility boundary from
-   [the SDLC flow](../../governance/sdlc.md). An external tool or skill that
+   [the SDLC flow](../../../docs/00.workspace/03.process/sdlc.md). An external tool or skill that
    proposes a tree outside that taxonomy is proposing a second authority, so
    reject it rather than reconcile it. Content that is not an authored document
    routes the same way — shared policy to common governance, neutral procedures
@@ -60,13 +60,13 @@ beyond the active task.
    selected template before authoring. No match, or more than one, is a stop
    condition rather than a judgment call.
 4. Author under
-   [document authoring](../../governance/document-authoring.md), which owns the
+   [document authoring](../../../docs/00.workspace/03.process/document-authoring.md), which owns the
    initial status, frontmatter key set and order, sections, relationships, link
    boundaries, and how content divides across a Spec package. Read it at
    authoring time rather than reasoning from a similar document, because a
    profile that looks like its neighbour still carries its own contract.
 5. Review the owning README and the links the change touches, then follow
-   [quality policy](../../governance/quality.md) for validation and Task
+   [quality policy](../../../docs/00.workspace/04.quality/quality.md) for validation and Task
    evidence.
 
 ### Failure Handling

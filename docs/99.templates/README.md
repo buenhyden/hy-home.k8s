@@ -58,14 +58,14 @@ WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 
 | Path | Purpose |
 | --- | --- |
-| [contracts/](./contracts/) | 기계 계약과 그 schema |
-| [templates/](./templates/) | 복사해서 쓰는 form catalog |
+| [01.contracts/](./01.contracts/) | 기계 계약과 그 schema |
+| [02.templates/](./02.templates/) | 복사해서 쓰는 form catalog |
 | [registry.json](./registry.json) | Document Profile Registry |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 | [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
 
 이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
-[form catalog](./templates/README.md)가 소유한다.
+[form catalog](./02.templates/README.md)가 소유한다.
 
 ### Owners
 
@@ -73,7 +73,7 @@ WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 
 | Surface | Role | Canonical owner |
 | --- | --- | --- |
-| Machine contract | 경로를 정확히 하나의 profile과 form으로 분류하고 lifecycle edge를 검증한다. | [Document Profile Registry](./registry.json)와 [`contracts/`](./contracts/)의 네 schema |
+| Machine contract | 경로를 정확히 하나의 profile과 form으로 분류하고 lifecycle edge를 검증한다. | [Document Profile Registry](./registry.json)와 [`01.contracts/`](./01.contracts/)의 네 schema |
 | Human guidance | profile을 고르고 안전하게 작성·검증·복구하는 방법을 설명하며 machine authority가 아니다. | 이 README |
 | Forms | 작성자가 복사한 뒤 topic-specific 사실과 증거로 채우는 최소 구조를 제공한다. | [`templates/`](#physical-form-inventory) |
 | Authored documents | 요구, 결정, 명세, 실행, 운영, 참조를 소유한다. | `docs/01.requirements`부터 `docs/05.operations`, `docs/90.references` |
@@ -149,7 +149,7 @@ form 경로의 대응은 Registry만 소유한다.
   맞춰 검사한다. `contract_id`는 공통 양식이면 `COMMON-DOC-FORM-1`, 지역
   양식이면 `STAGE99-LOCAL-FORM-1`이다. `contract_version`은 그 계약의
   ASCII 숫자 세 요소 판본을 별도 필드에 기록한다. 변경 수준은
-  [작성 정책](../../.agents/governance/document-authoring.md#frontmatter-order-and-versions)의
+  [작성 정책](../00.workspace/03.process/document-authoring.md#frontmatter-order-and-versions)의
   소비자 호환성 기준을 따른다.
   `provider-native`의 빈 heading은 조건·소유자·검증·검토·제거 기준을 갖는
   조건부 확장(`headings_extension`)으로 기록한다. profile의 heading은 role의
@@ -291,7 +291,7 @@ form 경로의 대응은 Registry만 소유한다.
 `operation/incident`와 `operation/postmortem`은 사건 발생 전에도 운영 증거를
 기록할 수 있도록 유지한다. `reference/audit`, `reference/data`,
 `reference/audit-pack`, `reference/data-pack`은 각각 Stage 90의 감사와
-데이터 자료를 지원한다. [Audit collection](../90.references/audits/README.md)은
+데이터 자료를 지원한다. [Audit collection](../90.references/02.audits/README.md)은
 현재 감사 pack을 안내한다. Data는 자료가 생길 때 사용할 pack과 member
 profile을 유지한다.
 
@@ -382,7 +382,7 @@ supersession, provenance key는 선택된 profile의 order에만 따라 나타�
 | "artifact_id" | stable identity profile만 | "artifact_id_pattern" | "&#123;&#123;ARTIFACT_ID&#125;&#125;" |
 
 값의 scalar/array 문법은
-[frontmatter schema](./contracts/frontmatter.schema.json)가, profile별
+[frontmatter schema](./01.contracts/frontmatter.schema.json)가, profile별
 required, optional, forbidden, order, constant, lifecycle, identity pattern은
 [Registry](./registry.json)가 소유한다. 각 key의 의미·작성 주체·소비 경로·테스트는
 Registry의 `frontmatter_keys`가, YAML과 JSON Schema dialect는 `frontmatter_dialect`가
@@ -408,15 +408,15 @@ inventory 밖이며 검증하지 않는다.
 #### Policy and Templates
 
 - [Agent Governance Hub](../../.agents/README.md)
-- [Document Authoring Policy](../../.agents/governance/document-authoring.md)
+- [Document Authoring Policy](../00.workspace/03.process/document-authoring.md)
 
 ### Checks
 
 #### Task Status Authoring
 
 Task 행 상태와 frontmatter `status`의 작성법은
-[Document Authoring Policy](../../.agents/governance/document-authoring.md)와
-[Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)가,
+[Document Authoring Policy](../00.workspace/03.process/document-authoring.md)와
+[Document Lifecycle Policy](../00.workspace/03.process/document-lifecycle.md)가,
 Task 최초 기록이 허용하는 상태와 Spec·Plan의 direct approval·first-record
 approval 예외는 Document Lifecycle Policy가 정본이다. 이 README는 그 규칙을
 다시 적지 않는다. 지역 확장의 정확한 이름은 Registry

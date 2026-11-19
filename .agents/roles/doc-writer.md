@@ -73,7 +73,7 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Per [work lifecycle](../workflows/work-lifecycle.md), run `scripts/validate-markdown-profiles.py --mode strict`, `scripts/validate-links-and-owners.py --mode strict` and `scripts/validate-document-lifecycle.py --mode strict`, and `python3 scripts/qa.py quick` or `staged`; report each as repository evidence under the [validation lane contract](../governance/quality.md#validation-lane-contract). Hosted style and live checks stay unobserved unless run. Review this role when its responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run `scripts/validate-markdown-profiles.py --mode strict`, `scripts/validate-links-and-owners.py --mode strict` and `scripts/validate-document-lifecycle.py --mode strict`, and `python3 scripts/qa.py quick` or `staged`; report each as repository evidence under the [validation lane contract](../../docs/00.workspace/04.quality/quality.md#validation-lane-contract). Hosted style and live checks stay unobserved unless run. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
@@ -83,5 +83,5 @@ Per [work lifecycle](../workflows/work-lifecycle.md), run `scripts/validate-mark
 - [docs-researcher](docs-researcher.md)
 - [supervisor](supervisor.md)
 - [wiki-curator](wiki-curator.md)
-- [Document authoring](../governance/document-authoring.md)
-- [Quality policy](../governance/quality.md)
+- [Document authoring](../../docs/00.workspace/03.process/document-authoring.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md)

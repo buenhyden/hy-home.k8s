@@ -57,7 +57,7 @@ NUMERIC_INVALID = (
 
 
 def _schema(name: str) -> dict:
-    path = ROOT / "docs/99.templates/contracts" / (name + ".schema.json")
+    path = ROOT / "docs/99.templates/01.contracts" / (name + ".schema.json")
     return json.loads(path.read_text(encoding="utf-8"))
 
 

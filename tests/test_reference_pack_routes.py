@@ -41,6 +41,10 @@ def git_blob_id(content: bytes) -> str:
     return hashlib.sha1(payload).hexdigest()
 
 
+# Q07: the reference categories are numbered folders.
+FOLDER = {"research": "01.research", "audits": "02.audits", "data": "03.data"}
+
+
 class ReferencePackRouteTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -57,7 +61,7 @@ class ReferencePackRouteTest(unittest.TestCase):
                 profile = classify_path(
                     self.registry,
                     PurePosixPath(
-                        f"docs/90.references/{category}/0001-example/README.md"
+                        f"docs/90.references/{FOLDER[category]}/0001-example/README.md"
                     ),
                 )
                 self.assertEqual(profile.profile_id, f"reference/{singular}-pack")
@@ -71,14 +75,15 @@ class ReferencePackRouteTest(unittest.TestCase):
                 self.assertEqual(
                     profile.template,
                     PurePosixPath(
-                        f"docs/99.templates/templates/references/{singular}-pack.template.md"
+                        f"docs/99.templates/02.templates/90.references/{singular}-pack.template.md"
                     ),
                 )
 
     def test_pack_templates_name_the_pack_contract_and_the_pack_index(self) -> None:
         for kind in ("audit", "data", "research"):
             template = (
-                ROOT / f"docs/99.templates/templates/references/{kind}-pack.template.md"
+                ROOT
+                / f"docs/99.templates/02.templates/90.references/{kind}-pack.template.md"
             )
             headings = [
                 line
@@ -99,7 +104,7 @@ class ReferencePackRouteTest(unittest.TestCase):
                 profile = classify_path(
                     self.registry,
                     PurePosixPath(
-                        f"docs/90.references/{category}/0001-example/m0001-report.md"
+                        f"docs/90.references/{FOLDER[category]}/0001-example/m0001-report.md"
                     ),
                 )
                 singular = category.removesuffix("s")
@@ -108,8 +113,8 @@ class ReferencePackRouteTest(unittest.TestCase):
     def test_date_based_and_loose_reference_paths_are_uncovered(self) -> None:
         for category in ("audits", "data", "research"):
             for path in (
-                f"docs/90.references/{category}/2026-08-31-example/README.md",
-                f"docs/90.references/{category}/example.md",
+                f"docs/90.references/{FOLDER[category]}/2026-08-31-example/README.md",
+                f"docs/90.references/{FOLDER[category]}/example.md",
             ):
                 with (
                     self.subTest(path=path),
@@ -124,7 +129,7 @@ class ReferencePackRouteTest(unittest.TestCase):
     def test_existing_reference_material_uses_numbered_pack_routes(self) -> None:
         stage_root = ROOT / "docs/90.references"
         for category in ("audits", "data", "research"):
-            category_root = stage_root / category
+            category_root = stage_root / FOLDER[category]
             self.assertFalse(category_root.is_symlink())
             self.assertTrue(category_root.is_dir())
             for path in category_root.rglob("*"):
@@ -156,7 +161,7 @@ class ReferencePackRouteTest(unittest.TestCase):
                 for category in ("audits", "data", "research"):
                     if category == missing:
                         continue
-                    directory = stage / category
+                    directory = stage / FOLDER[category]
                     directory.mkdir()
                     (directory / "README.md").write_text("router\n", encoding="utf-8")
                 inventory = {
@@ -186,13 +191,13 @@ class ReferencePackRouteTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="reference-topology-") as raw:
             root = Path(raw)
             stage = root / "docs/90.references"
-            research = stage / "research"
+            research = stage / "01.research"
             research.mkdir(parents=True)
             (stage / "README.md").write_text("stage\n", encoding="utf-8")
             (research / "README.md").write_text("category\n", encoding="utf-8")
             for category in ("audits", "data"):
-                (stage / category).mkdir()
-                (stage / category / "README.md").write_text(
+                (stage / FOLDER[category]).mkdir()
+                (stage / FOLDER[category] / "README.md").write_text(
                     "category\n", encoding="utf-8"
                 )
             (research / "loose.md").write_text("loose\n", encoding="utf-8")
@@ -231,15 +236,15 @@ class ReferencePackRouteTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="reference-index-drift-") as raw:
             root = Path(raw)
             stage = root / "docs/90.references"
-            research = stage / "research"
+            research = stage / "01.research"
             pack = research / "0001-alpha"
             pack.mkdir(parents=True)
             worktree_paths = (
                 "docs/90.references/README.md",
-                "docs/90.references/audits/README.md",
-                "docs/90.references/data/README.md",
-                "docs/90.references/research/README.md",
-                "docs/90.references/research/0001-alpha/README.md",
+                "docs/90.references/02.audits/README.md",
+                "docs/90.references/03.data/README.md",
+                "docs/90.references/01.research/README.md",
+                "docs/90.references/01.research/0001-alpha/README.md",
             )
             for relative in worktree_paths:
                 path = root / relative
@@ -247,7 +252,7 @@ class ReferencePackRouteTest(unittest.TestCase):
                 path.write_text("reference\n", encoding="utf-8")
             staged_paths = (
                 *worktree_paths,
-                "docs/90.references/research/0001-beta/README.md",
+                "docs/90.references/01.research/0001-beta/README.md",
             )
             stdout = b"".join(
                 f"100644 {'0' * 40} 0\t{relative}\0".encode("utf-8")
@@ -268,10 +273,10 @@ class ReferencePackRouteTest(unittest.TestCase):
             root = Path(raw)
             worktree_contents = {
                 "docs/90.references/README.md": b"stage\n",
-                "docs/90.references/audits/README.md": b"category\n",
-                "docs/90.references/data/README.md": b"category\n",
-                "docs/90.references/research/README.md": b"category\n",
-                "docs/90.references/research/0001-alpha/README.md": b"valid\n",
+                "docs/90.references/02.audits/README.md": b"category\n",
+                "docs/90.references/03.data/README.md": b"category\n",
+                "docs/90.references/01.research/README.md": b"category\n",
+                "docs/90.references/01.research/0001-alpha/README.md": b"valid\n",
             }
             for relative, content in worktree_contents.items():
                 path = root / relative
@@ -279,7 +284,7 @@ class ReferencePackRouteTest(unittest.TestCase):
                 path.write_bytes(content)
             staged_contents = {
                 **worktree_contents,
-                "docs/90.references/research/0001-alpha/README.md": b"invalid\n",
+                "docs/90.references/01.research/0001-alpha/README.md": b"invalid\n",
             }
             stdout = b"".join(
                 (f"100644 {git_blob_id(content)} 0\t{relative}\0").encode("utf-8")
@@ -298,7 +303,7 @@ class ReferencePackRouteTest(unittest.TestCase):
     def test_preserved_research_does_not_claim_retired_llm_wiki_as_current(
         self,
     ) -> None:
-        pack = ROOT / "docs/90.references/research/0001-workspace-engineering"
+        pack = ROOT / "docs/90.references/01.research/0001-workspace-engineering"
         offenders: list[str] = []
         for path in sorted(pack.glob("*.md")):
             text = path.read_text(encoding="utf-8")
@@ -325,8 +330,8 @@ class PublishedMemberFreezeTest(unittest.TestCase):
         cls.registry = load_registry(ROOT)
         cls.validator = load_registry_validator()
 
-    MEMBER = PurePosixPath("docs/90.references/audits/0001-example/m0001-example.md")
-    PACK = PurePosixPath("docs/90.references/audits/0001-example/README.md")
+    MEMBER = PurePosixPath("docs/90.references/02.audits/0001-example/m0001-example.md")
+    PACK = PurePosixPath("docs/90.references/02.audits/0001-example/README.md")
 
     @staticmethod
     def member(status: str, body: str) -> bytes:

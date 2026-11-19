@@ -55,5 +55,5 @@ updated: "2026-10-27"
 ## Related Documents
 
 - [상위 staging 경계](../README.md)
-- [Approval Boundaries](../../../.agents/governance/approval-and-safety.md)
+- [Approval Boundaries](../../../docs/00.workspace/04.quality/approval-and-safety.md)
 - [Workspace-staging 문서 양식 탐색](../../../docs/99.templates/README.md)

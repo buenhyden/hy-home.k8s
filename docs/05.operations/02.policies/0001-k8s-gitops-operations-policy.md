@@ -1,0 +1,194 @@
+---
+title: "K8s GitOps Platform Operations Policy"
+version: "1.8.3"
+type: "operation/policy"
+status: "active"
+owner: "platform"
+updated: "2026-11-18"
+artifact_id: "POL-0001"
+---
+
+# K8s GitOps Platform Operations Policy
+
+## Purpose and Scope
+
+### Objective
+
+이 문서는 Linux server 기반 로컬 k3d GitOps 플랫폼의 운영 통제를 정의한다.
+여기서 multi-node 또는 HA는 production 고가용성 보장이 아니라
+`infrastructure/k3d/k3d-cluster.yaml`의 `servers: 1`, `agents: 3` 로컬
+검증 baseline을 뜻한다.
+
+### Applies To
+
+- k3d cluster와 ArgoCD pull 기반 GitOps 운영
+- ESO와 외부 OpenBao의 시크릿 경계
+- 외부 PostgreSQL·Valkey·OpenBao 서비스 인터페이스와 management/development 경계
+- Traefik, k8s 전용 router, AppProject, NetworkPolicy 통제
+- repository 정적 검증과 승인된 runtime 검증의 증적 경계
+
+- **Systems**: `infrastructure/`, `gitops/`, `.github/workflows/`
+- **Roles**: Platform Owner, Security Reviewer, GitOps/Docs automation agents
+- **Environment**: Linux server local cluster와 GitHub Actions
+
+#### Exclusions
+
+이 정책은 위 Applies To에 적은 범위 밖으로 제외한다고 따로 표시한 항목을 두지 않는다.
+
+## Rules
+
+### Requirements
+
+| Rule ID | Condition | Requirement | Enforcement | Evidence |
+| --- | --- | --- | --- | --- |
+| GITOPS-R001 | Always | Required: External-service Service와 EndpointSlice desired state는 `gitops/platform/external-services/*.yaml`을 single source of truth로 삼는다. | PLAT-002 | none |
+| GITOPS-R002 | Always | Required: K8s가 소비하는 외부 서비스 인터페이스는 검토한 `192.168.0.13` 경로를 따른다. OpenBao는 외부 Traefik `443`, 필수 ArgoCD Valkey는 management `mng-valkey`의 `valkey-external:6379` → host `26379`다. 이전 `postgres-ha`/`pg-router` write/read `15432/15433`과 Valkey cluster는 현행 K8s 인터페이스에서 폐기한다. EndpointSlice의 존재만으로 실제 runtime 접근을 판정하지 않는다. | PLAT-002 | none |
+| GITOPS-R003 | Always | Required: 외부 Docker workspace의 `mng-pg`는 기본 `127.0.0.1:25432`, `dev-pg`는 기본 `127.0.0.1:25433`으로 host에 게시한다. `dev-valkey`는 Docker `dev_data_net` 내부 `6379`만 expose하고 host publish가 없다. 이 세 인터페이스는 K8s Service/EndpointSlice 대상이 아니다 ([ADR-0049](../../02.architecture/02.decisions/0049-external-data-service-contract-alignment.md)). PostgreSQL localhost publish를 LAN 또는 K8s가 직접 접근할 수 있다고 간주하거나 임의로 재지정하지 않는다. 현재 Adminer는 기본 DB 서버를 지정하지 않는다. K8s에서 관리/개발 PG를 사용하려면 별도 연결·NetworkPolicy·Secret 설계와 승인이 필요하다. | PLAT-002 | none |
+| GITOPS-R004 | Always | Required: OpenBao([ADR-0041](../../02.architecture/02.decisions/0041-openbao-secret-backend.md))는 시크릿의 단일 소스이며 문서, manifest, Git history에 평문 토큰, 비밀번호, API key를 저장하지 않는다. Kubernetes 식별자 `ClusterSecretStore` `vault-backend`와 ESO `vault` provider 이름은 유지한다. | PLAT-003 | none |
+| GITOPS-R005 | Always | Required: 호스트와 cluster 내부 ESO 모두 `https://openbao.hy.home.arpa`를 쓴다. cluster 안의 이름 해석은 CoreDNS custom zone이, 인증서 검증은 `external-secrets/openbao-ca` ConfigMap이 맡는다. | PLAT-003 | none |
+| GITOPS-R006 | Always | Required: OpenBao Kubernetes auth는 현재 API endpoint, CA와 ESO token audience 경계를 소유 Runbook의 검증 대상으로 유지한다. | PLAT-003 | none |
+| GITOPS-R007 | Always | Required: ArgoCD host는 `argo.hy-k8s.home.arpa`, TLS secret은 `argocd-local-tls`다. | PLAT-004 | none |
+| GITOPS-R008 | Always | Required: k8s 플랫폼 UI와 앱은 `<name>.hy-k8s.home.arpa`로만 노출하고, k8s 전용 router(k3d serverlb, `192.168.0.14:80/443` → Traefik NodePort `30080/30443`)를 거친다 ([ADR-0043](../../02.architecture/02.decisions/0043-dedicated-k8s-ingress-router.md)). `hy-k8s.home.arpa/<name>`은 `gitops/platform/ingress-routes/`의 301 redirect가 소유한다. 외부 서비스 workspace의 Traefik은 k8s route를 싣지 않는다. | PLAT-004 | none |
+| GITOPS-R009 | Always | Required: AppProject source/destination과 RBAC는 최소 allow-list, NetworkPolicy는 필요한 DNS·HTTPS·external-service egress만 허용한다. | PLAT-005 | none |
+| GITOPS-R010 | Always | Required: CD는 ArgoCD pull/reconciliation이 소유한다. GitHub Actions와 로컬 gate는 정적 검증 증적이며 배포 완료 증적을 대신하지 않는다. | PLAT-006 | none |
+| GITOPS-R011 | 검토된 변경일 때 | Allowed: 검토된 Git desired state 변경과 ArgoCD reconciliation | PLAT-006 | none |
+| GITOPS-R012 | Always | Allowed: read-only 진단과 소유 Runbook에 따른 복구 | RUN-0002 | none |
+| GITOPS-R013 | 명시적 human approval과 증적이 있을 때 | Allowed: 명시적 human approval과 증적을 갖춘 bootstrap/break-glass 작업 | Semantic review | none |
+| GITOPS-R014 | Always | Disallowed: 평문 시크릿 커밋, 승인 없는 권한 확장, wildcard AppProject 허용 | PLAT-003, PLAT-005 | none |
+| GITOPS-R015 | Always | Disallowed: 로컬 파일 또는 정적 PASS만으로 runtime 배포·복구 완료 선언 | PLAT-006 | none |
+| GITOPS-R016 | Always | Disallowed: k3d agent 동시 재시작 또는 production HA로의 과장된 증적 표현 | PLAT-001 | none |
+| GITOPS-R017 | Always | Disallowed: Git desired state 없이 EndpointSlice를 상시 수동 관리 | PLAT-002 | none |
+| GITOPS-R018 | Always | Disallowed: 외부 서비스 workspace의 Traefik에 k8s route 추가 | PLAT-004 | none |
+
+| Rule ID | Level | Status |
+| --- | --- | --- |
+| GITOPS-R001 | required | active |
+| GITOPS-R002 | required | active |
+| GITOPS-R003 | required | active |
+| GITOPS-R004 | required | active |
+| GITOPS-R005 | required | active |
+| GITOPS-R006 | required | active |
+| GITOPS-R007 | required | active |
+| GITOPS-R008 | required | active |
+| GITOPS-R009 | required | active |
+| GITOPS-R010 | required | active |
+| GITOPS-R011 | required | active |
+| GITOPS-R012 | required | active |
+| GITOPS-R013 | required | active |
+| GITOPS-R014 | required | active |
+| GITOPS-R015 | required | active |
+| GITOPS-R016 | required | active |
+| GITOPS-R017 | required | active |
+| GITOPS-R018 | required | active |
+
+#### Control Register
+
+| Control | Accountable role | Enforcement surface | Evidence |
+| --- | --- | --- | --- |
+| PLAT-001 topology | Platform Owner | `infrastructure/k3d/k3d-cluster.yaml` | `servers: 1`, `agents: 3`; inotify preflight `>= 512` |
+| PLAT-002 external desired state | Platform Owner | `gitops/platform/external-services/*.yaml` | reviewed Service/EndpointSlice definitions |
+| PLAT-003 secret boundary | Security Reviewer | OpenBao, ESO, secret scanners | no plaintext secret; approved OpenBao/ESO health evidence |
+| PLAT-004 ingress and TLS | Platform Owner | Traefik (`nginx` IngressClass), k8s router, ArgoCD ingress | host, TLS secret, router bind and redirect agreement |
+| PLAT-005 least privilege | Security Reviewer | AppProject, RBAC, NetworkPolicy | wildcard absence and destination/egress review |
+| PLAT-006 validation | Change author | local validators and GitHub Actions | static PASS plus separately approved runtime evidence when required |
+
+#### Required
+
+- `GITOPS-R001`
+- `GITOPS-R002`
+- `GITOPS-R003`
+- `GITOPS-R004`
+- `GITOPS-R005`
+- `GITOPS-R006`
+- `GITOPS-R007`
+- `GITOPS-R008`
+- `GITOPS-R009`
+- `GITOPS-R010`
+
+#### Allowed
+
+- `GITOPS-R011`
+- `GITOPS-R012`
+- `GITOPS-R013`
+
+#### Disallowed
+
+- `GITOPS-R014`
+- `GITOPS-R015`
+- `GITOPS-R016`
+- `GITOPS-R017`
+- `GITOPS-R018`
+
+### Exceptions
+
+이 절은 Stage 05 전체의 live 변경 예외 기준이다. 다른 Policy는 자신의
+component 고유 예외만 추가하고 이 기준을 반복하지 않는다.
+
+`kubectl apply/patch/delete`, EndpointSlice patch, AppProject live 반영,
+forced ArgoCD reconciliation, 외부 OpenBao 변경, 외부 Docker runtime,
+host 주소와 이름 해석 변경은 즉시 복구가 필요하고 Platform Owner가 범위·기간·위험·rollback을 승인한
+bootstrap 또는 break-glass 상황에서만 허용한다. 실행 후 실제 상태를 Git
+desired state와 맞추고 승인·검증 증적을 남긴다. 예외는 만료 시 기본 통제로
+복귀한다. 승인 결정 자체는
+[Approval and Safety Policy](../../00.workspace/04.quality/approval-and-safety.md)가
+소유하며, Runbook은 이 예외 안에서 실행할 절차만 제공한다.
+
+#### Approval and Review
+
+예외의 승인과 검토 주체는 위 Exceptions의 승인 문장과 Ownership의 Responsibilities 표에 적혀 있다.
+
+## Enforcement
+
+### Mechanisms
+
+| Control Area | Required Evidence | Runbook Owner |
+| --- | --- | --- |
+| Bootstrap and GitOps root | source path, revision, AppProject가 current Git 계약과 일치 | [RUN-0001](../03.runbooks/0001-argocd-platform-bootstrap-runbook.md) |
+| External endpoints | Service/EndpointSlice 이름, IP, 포트가 reviewed desired state와 일치 | [RUN-0001](../03.runbooks/0001-argocd-platform-bootstrap-runbook.md) |
+| OpenBao and ESO recovery | auth, network, ExternalSecret 상태와 plaintext 부재 | [RUN-0002](../03.runbooks/0002-argocd-eso-vault-recovery-runbook.md) |
+| Static controls | affected validators와 hosted CI 결과; runtime claim과 분리 | [GDE-0010](../../00.workspace/04.quality/0010-ci-cd-qa-reference-guide.md) |
+
+월 1회 또는 topology, external endpoint, OpenBao auth, ingress/TLS, AppProject,
+NetworkPolicy, CI workflow 계약이 바뀔 때 즉시 검토한다. 고정된 job 수나
+문서 수가 아니라 현재 source와 semantic contract를 검토한다.
+제품 품질의 표본·계산식·판정 목표는
+[REQ-0004의 GitOps 재현성](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-gitops-reproducibility),
+[외부 인터페이스](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-external-interface),
+[단일 호스트 복구](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-single-host-recovery)
+시나리오가 소유한다. 이 정책의 manifest 값과 static PASS는 해당 목표의
+설정 근거이며, reconciled 상태나 복구 시간을 측정한 결과가 아니다.
+
+- [Platform Bootstrap Runbook](../03.runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- [ESO Recovery Runbook (RUN-0002)](../03.runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+
+### Limits
+
+이 정책의 매니페스트 값과 정적 PASS 결과는 REQ-0004 목표에 대한 구성 근거일 뿐, 측정된 reconcile 상태나 복구 시간이 아니다. 정적 통제 결과는 런타임 주장과 분리하며, 제품 품질의 표본·공식·목표는 이 정책이 아니라 REQ-0004 시나리오가 소유한다.
+
+## Ownership
+
+### Owner
+
+이 정책이 근거로 삼는 상위 문서는 다음과 같다.
+
+- [AD-0007 Current Local GitOps Platform](../../02.architecture/01.descriptions/0007-current-local-gitops-platform.md)
+
+#### Responsibilities
+
+| Role | Responsibility | Escalation owner |
+| --- | --- | --- |
+| Platform Owner | GitOps desired state, external endpoint, runtime baseline을 승인한다. | Workspace Owner |
+| Security Reviewer | OpenBao, RBAC, NetworkPolicy, 예외의 최소권한을 검토한다. | Workspace Owner |
+| Change author | 정적 검증과 필요한 승인·runtime 증적을 handoff한다. | Platform Owner |
+
+### Review Triggers
+
+변경 검토 시점은 위 Enforcement의 월 1회 및 계약 변경 시 검토 문단을 따른다.
+
+### Lifecycle Traceability
+
+SPEC-0008은 초기 구현 증적이며 트리를 떠났다(Git history로 복구). 현재 플랫폼 구조는 위 AD-0007이 소유한다.
+
+| Promoted owner | Control owner | Enforcement surface |
+| --- | --- | --- |
+| N/A — SPEC-0008 left the tree; Git history recovers it | Platform Owner; Security Reviewer for secrets and exceptions | k3d topology, GitOps desired state, OpenBao/ESO, ingress, AppProject, NetworkPolicy, static and approved runtime evidence |

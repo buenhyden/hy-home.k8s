@@ -23,7 +23,7 @@ def _load(name: str, path: str):
 
 
 DELTA = _load("review_delta", "scripts/review_delta.py")
-TASK = "docs/03.specs/0001-x/tasks/tsk-0001-x.md"
+TASK = "docs/03.specs/0001-x/01.tasks/tsk-0001-x.md"
 LEDGER = "docs/03.specs/work-residue-ledger.json"
 LEDGER_ONE = '{"entries": [{"id": "A-1", "state": "open"}]}\n'
 LEDGER_TWO = (
@@ -139,12 +139,14 @@ class ReviewDeltaTest(unittest.TestCase):
                 self.commit(name)
                 self.assertEqual(self.classify()["verdict"], "REREVIEW", name)
         self.git("reset", "--quiet", "--hard", self.reviewed)
-        self.write("docs/03.specs/0001-x/tasks/tsk-0002-y.md", "| EVD-001 | PASS |\n")
+        self.write(
+            "docs/03.specs/0001-x/01.tasks/tsk-0002-y.md", "| EVD-001 | PASS |\n"
+        )
         self.commit("new task")
         self.assertEqual(self.classify()["verdict"], "EVIDENCE_ONLY")
 
     def test_special_entries_are_never_evidence(self):
-        task_link = "docs/03.specs/0001-x/tasks/tsk-0003-z.md"
+        task_link = "docs/03.specs/0001-x/01.tasks/tsk-0003-z.md"
         self.git("reset", "--quiet", "--hard", self.reviewed)
         (self.root / task_link).parent.mkdir(parents=True, exist_ok=True)
         os.symlink("../../../../scripts/tool.py", self.root / task_link)
@@ -155,7 +157,7 @@ class ReviewDeltaTest(unittest.TestCase):
             "update-index",
             "--add",
             "--cacheinfo",
-            f"160000,{self.reviewed},docs/03.specs/0001-x/tasks/tsk-0004-g.md",
+            f"160000,{self.reviewed},docs/03.specs/0001-x/01.tasks/tsk-0004-g.md",
         )
         self.git("commit", "--quiet", "-m", "gitlink")
         self.assertEqual(self.classify()["verdict"], "REREVIEW")

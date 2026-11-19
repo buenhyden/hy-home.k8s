@@ -23,7 +23,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 호출하고 결과를 정규화한다. production module은 top-level `tests/`를 import하거나
 `tests/fixtures/`를 runtime input으로 읽지 않는다.
 
-- Validation ownership ADR (`docs/02.architecture/decisions/README.md`)
+- Validation ownership ADR (`docs/02.architecture/02.decisions/README.md`)
 - [Tests](../tests/README.md)
 
 검증 책임의 현재 owner는 공통 Quality policy와 `scripts/validation/registry.json`이다.
@@ -104,8 +104,8 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 ### Interfaces
 
 - [Agent execution policy](../.agents/governance/agent-execution.md)
-- [Quality policy](../.agents/governance/quality.md)
-- [Document authoring policy](../.agents/governance/document-authoring.md)
+- [Quality policy](../docs/00.workspace/04.quality/quality.md)
+- [Document authoring policy](../docs/00.workspace/03.process/document-authoring.md)
 
 #### Security Boundary
 
@@ -123,7 +123,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
   선언되지 않은 validator나 중복된 규칙 owner를 들여오면 안 된다.
 - 구조화 쓰기 경로 검사는 `provider_write_guard.py`가 소유하고 각 provider
   adapter가 native event를 등록한다. shell 관찰은 advisory이며, 실제 전달과
-  native 강제는 [승인 정책](../.agents/governance/approval-and-safety.md)과
+  native 강제는 [승인 정책](../docs/00.workspace/04.quality/approval-and-safety.md)과
   provider note의 관측 경계를 따른다. 품질 검증은 명시적으로 실행하는 QA 작업이다.
 - 테스트와 제한된 합성 데이터는 `tests/`와 `tests/fixtures/`에 둔다.
 - 기본 복구 출처는 Git history다. digest는 외부에서 바뀌지 않는 의존성
@@ -219,7 +219,7 @@ metadata와 PR style 결과는 로컬 QA의 대체 증거가 아니다. global Q
 바꾸거나 한정 감사를 수행해도 해당 목적 gate와 명명된 단위 회귀만 선택한다.
 긴 full/ci 일괄 검사와 blanket unit discovery는 현재 완료 조건이 아니다.
 나머지 선택과 인계는
-[Quality policy](../.agents/governance/quality.md#delivery-ownership)가 소유한다.
+[Quality policy](../docs/00.workspace/04.quality/quality.md#delivery-ownership)가 소유한다.
 
 ```bash
 git diff --check
@@ -272,7 +272,7 @@ conftest만 신뢰할 수 있는 interpreter 인접 경로나 계정 소유의 �
 `PATH` 맨 앞에 두고 워크스페이스 hook을 실행한다. 설정이 없거나, 환경이
 checkout 안에 있거나, group·other 쓰기 권한이나 다른 계정 소유 파일이
 있으면 `HOOK-ENV`로 커밋을 막는다. 구성 명령과 범위는
-[Git policy](../.agents/governance/git.md)가 소유한다.
+[Git policy](../docs/00.workspace/03.process/git.md)가 소유한다.
 저장소 로컬 venv나 namespace가 매핑된 상위 디렉터리 소유권 때문에 그 fallback이
 달라질 수 있으므로, venv 활성화 여부가 아니라 실제로 해석된 실행 파일을
 기록한다. shell validator의 `python3`는 닫힌 시스템 PATH를 따르므로 그 library
@@ -299,7 +299,7 @@ pre-commit run <hook-id> --hook-stage manual --files <reviewed-path>...
 
 commit-msg는 별도이며 실제 후보 UTF-8 메시지에는 pinned Commitizen과
 `commit-message-exceptions`를 같은 파일로 적용하는
-[공통 Git 정책](../.agents/governance/git.md#commit-message-validation)을 따른다.
+[공통 Git 정책](../docs/00.workspace/03.process/git.md#commit-message-validation)을 따른다.
 활성 hook에서 같은 입력의 leaf가 실제 실행되었다면 수동으로 반복하지 않는다.
 수동 fallback 검증은 hook 설치·전달 증거를 대신하지 않는다.
 

@@ -16,7 +16,7 @@ updated: "2026-11-17"
 이 디렉터리는 같은 작업을 실제로 짝지어 실행한 근거로 안내한다. 한 번은
 `noSkill` 기준선, 한 번은 `withSkill` 실행이다. 평가는
 [agent evaluator](../roles/agent-evaluator.md)가, 근거의 의미는
-[quality policy](../governance/quality.md#agent-evaluation-evidence)가, 문서
+[quality policy](../../docs/00.workspace/04.quality/quality.md#agent-evaluation-evidence)가, 문서
 양식은 [Stage 99](../../docs/99.templates/README.md)가 소유한다. 저장된 응답만으로는
 native skill 적재, 명령 실행, 권한 강제, 저장소 QA 관문 통과를 증명하지 못한다.
 
@@ -32,7 +32,7 @@ native skill 적재, 명령 실행, 권한 강제, 저장소 QA 관문 통과를
 ### Interfaces
 
 - [Agent evaluator responsibility](../roles/agent-evaluator.md)
-- [Quality policy](../governance/quality.md#agent-evaluation-evidence)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md#agent-evaluation-evidence)
 - [Stage 99 profiles and templates](../../docs/99.templates/README.md)
 
 #### Configuration Boundary

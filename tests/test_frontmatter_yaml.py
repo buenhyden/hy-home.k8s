@@ -131,8 +131,8 @@ class MissingLibraryTests(unittest.TestCase):
                 spec.loader.exec_module(module)
         message = str(caught.exception)
         self.assertIn(".github/requirements/ci-validation.txt", message)
-        self.assertIn(".agents/governance/git.md", message)
-        policy = (ROOT / ".agents/governance/git.md").read_text("utf-8")
+        self.assertIn("docs/00.workspace/03.process/git.md", message)
+        policy = (ROOT / "docs/00.workspace/03.process/git.md").read_text("utf-8")
         install = "--require-hashes -r .github/requirements/ci-validation.txt"
         self.assertIn(install, message)
         self.assertIn(install, policy)

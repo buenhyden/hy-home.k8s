@@ -35,7 +35,7 @@ AGENT_GOVERNANCE = _load_script(
 )
 TODAY = dt.date(2026, 11, 13)
 REGISTRY_FILE = ROOT / "docs/99.templates/registry.json"
-SCHEMA_FILE = ROOT / "docs/99.templates/contracts/frontmatter.schema.json"
+SCHEMA_FILE = ROOT / "docs/99.templates/01.contracts/frontmatter.schema.json"
 BINDINGS_FILE = ROOT / ".claude/bindings.json"
 
 KEYS = (
@@ -63,7 +63,7 @@ KEYS = (
     "allowed-tools",
 )
 
-GOV_PATH = ".agents/governance/document-lifecycle.md"
+GOV_PATH = "docs/00.workspace/03.process/document-lifecycle.md"
 GOV = {
     "title": '"Example"',
     "version": '"1.0.0"',
@@ -82,7 +82,7 @@ SPEC = {
     "updated": '"2026-11-13"',
     "artifact_id": '"SPEC-0999"',
 }
-ADR_PATH = "docs/02.architecture/decisions/0999-example.md"
+ADR_PATH = "docs/02.architecture/02.decisions/0999-example.md"
 ADR = {
     "title": '"Example"',
     "version": '"1.0.0"',
@@ -92,11 +92,11 @@ ADR = {
     "updated": '"2026-11-13"',
     "artifact_id": '"ADR-0999"',
 }
-RETAINED_ADR_PATH = "docs/02.architecture/decisions/0050-example.md"
+RETAINED_ADR_PATH = "docs/02.architecture/02.decisions/0050-example.md"
 RETAINED_ADR = {**ADR, "artifact_id": '"ADR-0050"'}
-LAST_ADR_PATH = "docs/02.architecture/decisions/0061-example.md"
+LAST_ADR_PATH = "docs/02.architecture/02.decisions/0061-example.md"
 LAST_ADR = {**ADR, "artifact_id": '"ADR-0061"'}
-FIRST_NEW_ADR_PATH = "docs/02.architecture/decisions/0062-example.md"
+FIRST_NEW_ADR_PATH = "docs/02.architecture/02.decisions/0062-example.md"
 FIRST_NEW_ADR = {**ADR, "artifact_id": '"ADR-0062"'}
 PLAN_PATH = "docs/03.specs/0999-example/plan.md"
 PLAN = {
@@ -105,7 +105,7 @@ PLAN = {
     "artifact_id": '"SPEC-0999-PLAN-0001"',
     "parent_ids": '["SPEC-0999"]',
 }
-TASK_PATH = "docs/03.specs/0999-example/tasks/tsk-0001-example.md"
+TASK_PATH = "docs/03.specs/0999-example/01.tasks/tsk-0001-example.md"
 TASK = {
     **SPEC,
     "type": '"sdlc/task"',

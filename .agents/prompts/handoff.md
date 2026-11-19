@@ -18,7 +18,7 @@ whatever the session happened to remember.
 ## Authority Boundary
 
 The handoff fields belong to the
-[quality policy](../governance/quality.md#handoff-evidence-contract); this
+[quality policy](../../docs/00.workspace/04.quality/quality.md#handoff-evidence-contract); this
 contract reuses them and redefines none. A handoff records authority; it never
 grants it, and a recorded boundary is not a standing authorization.
 
@@ -69,5 +69,5 @@ enforces the remaining conditions below.
 ## Related Documents
 
 - [Common Prompt Contracts](README.md)
-- [Quality and Evidence Policy](../governance/quality.md)
+- [Quality and Evidence Policy](../../docs/00.workspace/04.quality/quality.md)
 - [Work Lifecycle](../workflows/work-lifecycle.md)

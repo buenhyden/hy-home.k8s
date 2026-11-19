@@ -25,9 +25,9 @@ SPEC.loader.exec_module(PROFILES)
 
 from document_contracts import classify_path, load_registry  # noqa: E402
 
-RULE = PurePosixPath(".agents/governance/document-lifecycle.md")
+RULE = PurePosixPath("docs/00.workspace/03.process/document-lifecycle.md")
 FOLDER_AGENTS = PurePosixPath("docs/AGENTS.md")
-AUDIT_FORM = ROOT / "docs/99.templates/templates/references/audit.template.md"
+AUDIT_FORM = ROOT / "docs/99.templates/02.templates/90.references/audit.template.md"
 AUDIT_COLUMNS = [
     "ID",
     "Finding or gap",

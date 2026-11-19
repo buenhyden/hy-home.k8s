@@ -193,12 +193,12 @@
     },
     {
       "name": "current-research-report",
-      "path": "docs/90.references/research/9999-route-probe/report.md",
+      "path": "docs/90.references/01.research/9999-route-probe/report.md",
       "expectedSurface": "authored-documents"
     },
     {
       "name": "numbered-audit-pack",
-      "path": "docs/90.references/audits/0001-example-audit/README.md",
+      "path": "docs/90.references/02.audits/0001-example-audit/README.md",
       "expectedSurface": "readme-router-review"
     },
     {
@@ -339,8 +339,8 @@
       "name": "collection-index-guard",
       "lane": "affected",
       "paths": [
-        "docs/90.references/research/README.md",
-        "docs/90.references/research/0001-workspace-engineering/README.md",
+        "docs/90.references/01.research/README.md",
+        "docs/90.references/01.research/0001-workspace-engineering/README.md",
         "docs/99.templates/README.md",
         "scripts/validate-links-and-owners.py",
         "scripts/qa.py"

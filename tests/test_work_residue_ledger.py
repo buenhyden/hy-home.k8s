@@ -18,11 +18,11 @@ from tests.form_headings import form_body
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = REPOSITORY_ROOT / "scripts"
-SCHEMA_REL = "docs/99.templates/contracts/work-residue-ledger.schema.json"
+SCHEMA_REL = "docs/99.templates/01.contracts/work-residue-ledger.schema.json"
 LEDGER_REL = "docs/03.specs/work-residue-ledger.json"
 REGISTRY_REL = "docs/99.templates/registry.json"
-TASK = "docs/03.specs/0001-x/tasks/tsk-0001-x.md"
-OTHER_TASK = "docs/03.specs/0002-y/tasks/tsk-0001-y.md"
+TASK = "docs/03.specs/0001-x/01.tasks/tsk-0001-x.md"
+OTHER_TASK = "docs/03.specs/0002-y/01.tasks/tsk-0001-y.md"
 COLUMNS = ["ID", "Residue", "State", "Owner", "Resume condition", "Closure"]
 EVIDENCE_COLUMNS = [
     "Evidence ID",
@@ -169,7 +169,7 @@ class Tree:
 
     def ledger(self, entries: list[dict]) -> None:
         document = {
-            "$schema": "../99.templates/contracts/work-residue-ledger.schema.json",
+            "$schema": "../99.templates/01.contracts/work-residue-ledger.schema.json",
             "schema_version": 1,
             "entries": entries,
         }
@@ -460,7 +460,7 @@ class ClosureTests(GateCase):
 
 class SourceTests(GateCase):
     def test_source_that_does_not_resolve(self) -> None:
-        self.agree(entries=[entry(path="docs/03.specs/0009-z/tasks/tsk-0001-z.md")])
+        self.agree(entries=[entry(path="docs/03.specs/0009-z/01.tasks/tsk-0001-z.md")])
         self.assertRefused("RESIDUE-SOURCE")
 
     def test_source_task_that_left_the_tree(self) -> None:

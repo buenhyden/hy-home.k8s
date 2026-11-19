@@ -23,12 +23,12 @@ from json_schema_validation import SchemaEvaluationError, schema_errors  # noqa:
 from validation.repository.bounded_io import BoundedInputError, read_text  # noqa: E402
 
 LEDGER = "docs/03.specs/work-residue-ledger.json"
-SCHEMA = "docs/99.templates/contracts/work-residue-ledger.schema.json"
+SCHEMA = "docs/99.templates/01.contracts/work-residue-ledger.schema.json"
 REGISTRY = "docs/99.templates/registry.json"
 MAX_BYTES = 4 * 1024 * 1024
 STATES = ("open", "terminal")
-TASK_GLOB = "docs/03.specs/*/tasks/*.md"
-TASK_PATH = re.compile(r"docs/03\.specs/[^/]+/tasks/[^/]+\.md")
+TASK_GLOB = "docs/03.specs/*/01.tasks/*.md"
+TASK_PATH = re.compile(r"docs/03\.specs/[^/]+/01\.tasks/[^/]+\.md")
 HANDOFF_ID = re.compile(r"W[0-9]{2}-H[0-9]{2}")
 EXCLUDED_PREFIXES = ("docs/90.references/", "docs/98.archive/")
 HEADING = re.compile(r"^ {0,3}#{1,6}[ \t]+(.*?)(?:[ \t]+#+)?[ \t]*$")

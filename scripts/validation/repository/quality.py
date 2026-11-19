@@ -477,6 +477,7 @@ for local_rule_path in claude_local_rule_paths:
             fail(f"{local_rule_rel} must define Hookify pattern or conditions")
 
 allowed_top_level_docs = {
+    "00.workspace",
     "01.requirements",
     "02.architecture",
     "03.specs",
@@ -556,7 +557,7 @@ def template_path(template_name: str) -> pathlib.Path:
     return root / "docs/99.templates" / location
 
 
-template_root = root / "docs/99.templates/templates"
+template_root = root / "docs/99.templates/02.templates"
 
 
 physical_form_paths = collect_physical_form_paths(root, template_root)
@@ -669,7 +670,7 @@ for raw_relative_path in tracked_active_paths:
         or path.is_symlink()
     ):
         continue
-    if path.is_relative_to(root / "docs/99.templates/templates"):
+    if path.is_relative_to(root / "docs/99.templates/02.templates"):
         continue
     if path.is_relative_to(root / "tests/fixtures"):
         continue
@@ -763,12 +764,14 @@ for scan_root in active_stale_contract_roots:
                 )
 
 authored_command_roots = [
-    root / "docs/02.architecture/decisions",
+    # Q07: the workspace stage holds the moved ADRs, guide and runbooks.
+    root / "docs/00.workspace",
+    root / "docs/02.architecture/02.decisions",
     root / "docs/03.specs",
-    root / "docs/05.operations/guides",
-    root / "docs/05.operations/policies",
-    root / "docs/05.operations/runbooks",
-    root / "docs/05.operations/incidents",
+    root / "docs/05.operations/01.guides",
+    root / "docs/05.operations/02.policies",
+    root / "docs/05.operations/03.runbooks",
+    root / "docs/05.operations/04.incidents",
 ]
 
 
@@ -826,7 +829,7 @@ def is_task_evidence_record(relative: str, line: str) -> bool:
     """Task evidence rows cite commands as retained records, not instructions."""
 
     return (
-        re.fullmatch(r"docs/03\.specs/[^/]+/tasks/[^/]+\.md", relative) is not None
+        re.fullmatch(r"docs/03\.specs/[^/]+/01\.tasks/[^/]+\.md", relative) is not None
         and re.match(r"^\|\s*EVD-\d{3}\s*\|", line) is not None
     )
 
@@ -1053,7 +1056,7 @@ pr_template_text = read_text(pr_template_path)
 # Harness implementation surfaces: existence and cross-reference contracts only.
 # Wrapper script existence is already enforced by the scripts inventory, so it
 # is not re-validated here.
-approval_boundaries_path = root / ".agents/governance/approval-and-safety.md"
+approval_boundaries_path = root / "docs/00.workspace/04.quality/approval-and-safety.md"
 if not approval_boundaries_path.exists():
     fail(f"required harness surface is missing: {rel(approval_boundaries_path)}")
 if "## 8. Harness Impact" not in pr_template_text:
@@ -1061,7 +1064,7 @@ if "## 8. Harness Impact" not in pr_template_text:
         f"{rel(pr_template_path)} missing Harness Impact section heading: ## 8. Harness Impact"
     )
 canonical_task_form_text = read_text(
-    root / "docs/99.templates/templates/specs/task.template.md"
+    root / "docs/99.templates/02.templates/03.specs/task.template.md"
 )
 # SPEC-0203 (W03-D61): the eight approval and safety fields stand under the form
 # section Inputs and Authority, the H3 that replaced the old H2.

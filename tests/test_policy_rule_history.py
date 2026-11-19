@@ -28,8 +28,8 @@ SPEC.loader.exec_module(VALIDATOR)
 from document_contracts import load_registry  # noqa: E402
 
 REGISTRY = "docs/99.templates/registry.json"
-GIT_POLICY = ".agents/governance/git.md"
-SDLC_POLICY = ".agents/governance/sdlc.md"
+GIT_POLICY = "docs/00.workspace/03.process/git.md"
+SDLC_POLICY = "docs/00.workspace/03.process/sdlc.md"
 MOVED_POLICY = ".agents/governance/git-moved.md"
 HISTORY_RULES = {"POLICY-RULE-DELETE", "POLICY-RULE-REISSUE", "POLICY-CODE-CHANGE"}
 

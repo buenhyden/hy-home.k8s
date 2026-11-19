@@ -15,7 +15,7 @@ artifact_id: "REQ-0004"
 ### Problem and Outcome
 
 This document owns the user value, operating boundaries, and delivery assurance requirements of the local GitOps platform.
-[AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) owns the concrete topology and implementation choices,
+[AD-0007](../02.architecture/01.descriptions/0007-current-local-gitops-platform.md) owns the concrete topology and implementation choices,
 and [REQ-0003](./0003-workspace-agent-governance-platform.md) owns the common governance, validation, and approval requirements.
 
 Users must be able to reproduce the local platform and change it safely from the repository's desired state and from evidence whose depth is kept distinct.
@@ -48,7 +48,7 @@ Reading secrets, pushing, cloud work, and live mutation each need separate appro
 
 #### Delivery assurance coverage and limits
 
-The repository checks structure, Kubernetes YAML, required policy tools, secret handling, the ESO/OpenBao boundary (the `vault-backend` ClusterSecretStore uses the Vault-API provider against OpenBao, ADR-0041) and product semantics. [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md), ADR-0043 and ADR-0050 own the current ingress architecture; `gitops/apps/root/platform-traefik-app.yaml` and `gitops/platform/ingress-routes/` own its desired state. SPEC-0104 closed the repository-static assurance of FR-0008 and FR-0010; the remaining custom CRD schema, generated-output and live-observation work has no active Spec and stays DEFER under the owners in the trace below. Git history recovers the withdrawn assurance Specs. The original REQ-0007 program history is kept; its current platform meaning passes to this document and its common routing, approval, and QA meaning to REQ-0003. This succession does not declare any tranche complete.
+The repository checks structure, Kubernetes YAML, required policy tools, secret handling, the ESO/OpenBao boundary (the `vault-backend` ClusterSecretStore uses the Vault-API provider against OpenBao, ADR-0041) and product semantics. [AD-0007](../02.architecture/01.descriptions/0007-current-local-gitops-platform.md), ADR-0043 and ADR-0050 own the current ingress architecture; `gitops/apps/root/platform-traefik-app.yaml` and `gitops/platform/ingress-routes/` own its desired state. SPEC-0104 closed the repository-static assurance of FR-0008 and FR-0010; the remaining custom CRD schema, generated-output and live-observation work has no active Spec and stays DEFER under the owners in the trace below. Git history recovers the withdrawn assurance Specs. The original REQ-0007 program history is kept; its current platform meaning passes to this document and its common routing, approval, and QA meaning to REQ-0003. This succession does not declare any tranche complete.
 
 ## Requirements
 
@@ -105,7 +105,7 @@ fallback and diagnostics recorded. If no target is selected, the result is
 `NOT_APPLICABLE` with the actual selection reason, never a passing zero
 denominator. The Platform Owner owns the static decision;
 ArgoCD reconciliation at a named cluster is a separate operator observation.
-This scenario refines REQ-0004-FR-0001, FR-0002 and FR-0008; [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+This scenario refines REQ-0004-FR-0001, FR-0002 and FR-0008; [AD-0007](../02.architecture/01.descriptions/0007-current-local-gitops-platform.md)
 owns the render target and source paths.
 
 #### Quality scenario: Secret TLS recovery
@@ -157,7 +157,7 @@ Prometheus and post-reconciliation time window, repeated
 on target or label changes. The current source can establish relabel and
 remote-write configuration only; no query result or availability is
 established here. This scenario refines REQ-0004-FR-0008 and NFR-0001;
-[POL-0005](../05.operations/policies/0005-observability-platform-operations-policy.md)
+[POL-0005](../05.operations/02.policies/0005-observability-platform-operations-policy.md)
 routes the authorized checks.
 
 #### Quality scenario: Workload onboarding
@@ -224,11 +224,11 @@ The table below records the succession of current meaning. Earlier member IDs ar
 
 REQ-0004-FR-0009 also inherits the requirement of the former REQ-0005-FR-0006 (REQ-0005 was merged into REQ-0003; see its member-ID transfer and Archived Lineage) that examples sit beside their executable sources.
 
-- Current architecture: [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md).
-- Current desired state and validation: `gitops/`, `infrastructure/`, and `scripts/` as routed by [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md).
+- Current architecture: [AD-0007](../02.architecture/01.descriptions/0007-current-local-gitops-platform.md).
+- Current desired state and validation: `gitops/`, `infrastructure/`, and `scripts/` as routed by [AD-0007](../02.architecture/01.descriptions/0007-current-local-gitops-platform.md).
 - Earlier delivery evidence: N/A — SPEC-0008 left the tree; Git history recovers it ([Archived Lineage](#archived-lineage)).
-- Shared architecture: [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md).
-- Current self-source and namespace decisions remain in the [decision log](../02.architecture/decisions/README.md).
+- Shared architecture: [AD-0006](../00.workspace/02.architecture/01.descriptions/0006-workspace-agent-governance-platform.md).
+- Current self-source and namespace decisions remain in the [decision log](../02.architecture/02.decisions/README.md).
 
 ### Verification Links
 

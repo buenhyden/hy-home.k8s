@@ -33,7 +33,7 @@ residue and the evidence of the move and of the three exits.
 [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
 FR-0015 and FR-0020 own consumer succession and ordinary package disposition;
 its Archived Lineage receives the three summaries and recovery proofs. The
-[document lifecycle policy](../../../.agents/governance/document-lifecycle.md)
+[document lifecycle policy](../../00.workspace/03.process/document-lifecycle.md)
 DOCLIFE-R008 requires the exit. No architecture decision changes.
 
 ### Consumers
@@ -106,8 +106,8 @@ check is fixed at its cause; no check or test is weakened to finish.
 
 #### Normative and Evidence
 
-The [document lifecycle policy](../../../.agents/governance/document-lifecycle.md)
-and REQ-0003 FR-0020 set the exit. Evidence is in the [Task](tasks/tsk-0001-work-residue-handoff.md).
+The [document lifecycle policy](../../00.workspace/03.process/document-lifecycle.md)
+and REQ-0003 FR-0020 set the exit. Evidence is in the [Task](01.tasks/tsk-0001-work-residue-handoff.md).
 
 #### Historical and Navigation
 

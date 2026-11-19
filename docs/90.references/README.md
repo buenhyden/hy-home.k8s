@@ -35,7 +35,7 @@ Stage 90 자료는 공통 거버넌스(`.agents/`)와 현재 Stage 01/02/03/05 o
 인용할 수 있지만,
 Stage 98의 문서나 파일을 인용하거나 cross-link하지 않는다. 일반 처분의
 본문 복구는 Git history가 담당한다. 승인된 최종 전환 대상의 처분은
-[문서 수명주기 정책](../../.agents/governance/document-lifecycle.md#rules)을 따른다.
+[문서 수명주기 정책](../00.workspace/03.process/document-lifecycle.md#rules)을 따른다.
 
 ### Excluded Responsibilities
 
@@ -57,9 +57,9 @@ docs/90.references/
 
 | Path | Purpose |
 | --- | --- |
-| [audits/](./audits/) | 감사 pack collection |
-| [data/](./data/) | 데이터 pack collection |
-| [research/](./research/) | 외부 조사 pack collection |
+| [02.audits/](./02.audits/) | 감사 pack collection |
+| [03.data/](./03.data/) | 데이터 pack collection |
+| [01.research/](./01.research/) | 외부 조사 pack collection |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 | [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
 
@@ -91,18 +91,18 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
    `research/####-<slug>/` 중 하나에만 둔다. `####`는 category 안에서 고유한
    네 자리 번호이고 `<slug>`는 날짜가 아닌 의미 기반 kebab-case 이름이다.
 4. pack `README.md`는 category와 일치하는
-   [Audit](../99.templates/templates/references/audit-pack.template.md),
-   [Data](../99.templates/templates/references/data-pack.template.md), 또는
-   [Research](../99.templates/templates/references/research-pack.template.md)
+   [Audit](../99.templates/02.templates/90.references/audit-pack.template.md),
+   [Data](../99.templates/02.templates/90.references/data-pack.template.md), 또는
+   [Research](../99.templates/02.templates/90.references/research-pack.template.md)
    template을 사용한다. 내부 report는 같은 family의
-   [Audit Reference](../99.templates/templates/references/audit.template.md),
-   [Data Reference](../99.templates/templates/references/data.template.md),
-   [Research Reference](../99.templates/templates/references/research.template.md)
+   [Audit Reference](../99.templates/02.templates/90.references/audit.template.md),
+   [Data Reference](../99.templates/02.templates/90.references/data.template.md),
+   [Research Reference](../99.templates/02.templates/90.references/research.template.md)
    template을 사용한다. 관찰일은 frontmatter 또는 source metadata에만 둔다.
 5. 목록이나 링크가 바뀌면 이 router와 category router를 같은 변경에서 갱신한다.
    일반 처분과 승인된 최종 전환은 위 수명주기 정책을 따른다.
 6. 참조 자료를 실행 입력이나 중복 control plane으로 사용하지 않는다.
-7. [일반 문서 변경의 검사 선택](../../.agents/governance/quality.md#ordinary-document-selection)에
+7. [일반 문서 변경의 검사 선택](../00.workspace/04.quality/quality.md#ordinary-document-selection)에
    따라 변경 문서의 형식, 관계, 링크와 수명주기 상태를 확인한다.
    경로나 제목 앵커의 이동·삭제가 기존 참조에 영향을 주면 해당 대상을
    인용하는 문서의 링크도 검사한다.
@@ -114,12 +114,12 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 - [Architecture](../02.architecture/README.md)
 - [Specs](../03.specs/README.md)
 - [Operations](../05.operations/README.md)
-- [Reference Maintenance Runbook](../05.operations/runbooks/0011-reference-maintenance-runbook.md)
+- [Reference Maintenance Runbook](../00.workspace/06.maintenance/0011-reference-maintenance-runbook.md)
 
 #### Policy and Templates
 
 - [Agent Governance Hub](../../.agents/README.md)
-- [Research Reference Template](../99.templates/templates/references/research.template.md)
+- [Research Reference Template](../99.templates/02.templates/90.references/research.template.md)
 
 ### Checks
 

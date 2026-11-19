@@ -34,15 +34,16 @@ DOCUMENT_REGISTRY_ROOT_ERROR = (
 )
 TERMINAL_TEMPLATE_GROUPS = frozenset(
     {
-        "architecture",
-        "common",
-        "evaluations",
-        "governance",
-        "operations",
-        "references",
-        "requirements",
-        "runtime",
-        "specs",
+        "00.workspace",
+        "01.requirements",
+        "02.architecture",
+        "03.specs",
+        "05.operations",
+        "90.references",
+        "91.agent-governance",
+        "92.runtime",
+        "93.common",
+        "94.evaluations",
     }
 )
 GIT_TIMEOUT_SECONDS = 10
@@ -54,9 +55,9 @@ REFERENCE_PACK_PATTERN = re.compile(
     r"(?P<number>[0-9]{4})-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\Z"
 )
 REFERENCE_PACK_CATEGORIES = (
-    ("audits", "audit"),
-    ("data", "data"),
-    ("research", "research"),
+    ("02.audits", "audit"),
+    ("03.data", "data"),
+    ("01.research", "research"),
 )
 
 
@@ -448,7 +449,7 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
                         ),
                     )
                     expected_template = PurePosixPath(
-                        "docs/99.templates/templates/references/"
+                        "docs/99.templates/02.templates/90.references/"
                         f"{singular}-pack.template.md"
                     )
                     if (
@@ -570,7 +571,7 @@ def _assert_template_source_parity(registry: Registry) -> None:
         parts = profile.template.parts
         if (
             len(parts) < 4
-            or parts[:3] != ("docs", "99.templates", "templates")
+            or parts[:3] != ("docs", "99.templates", "02.templates")
             or parts[3] not in TERMINAL_TEMPLATE_GROUPS
         ):
             raise AssertionError(f"{profile_id}: template path is not terminal")

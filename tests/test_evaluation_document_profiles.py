@@ -111,7 +111,7 @@ class EvaluationDocumentProfilesTests(unittest.TestCase):
     def test_forms_keep_six_key_envelope_and_required_headings(self) -> None:
         for kind in ("task", "score", "results"):
             path = PurePosixPath(
-                f"docs/99.templates/templates/evaluations/evaluation-{kind}.template.md"
+                f"docs/99.templates/02.templates/94.evaluations/evaluation-{kind}.template.md"
             )
             profile = contracts.classify_path(self.registry, path)
             text = (ROOT / path).read_text(encoding="utf-8")

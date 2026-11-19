@@ -1,5 +1,5 @@
 {
-  "$schema": "../99.templates/contracts/work-residue-ledger.schema.json",
+  "$schema": "../99.templates/01.contracts/work-residue-ledger.schema.json",
   "schema_version": 1,
   "entries": [
     {
@@ -9,7 +9,7 @@
       "owner": "W07",
       "resume_condition": "When a trusted Claude and Codex session can observe nested, resume and compact hook delivery (RUNTIME-CLOSE)",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -19,7 +19,7 @@
       "owner": "Q07",
       "resume_condition": "After W11 and every applicable docs task, in the separate Q07 task",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -29,7 +29,7 @@
       "owner": "Q07",
       "resume_condition": "In the Q07-CUTOVER task, after every package is closed and Q07-H01 is converted",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0224-workspace-path-cutover/01.tasks/tsk-0001-workspace-path-cutover.md"
       }
     },
     {
@@ -39,7 +39,7 @@
       "owner": "Q07",
       "resume_condition": "In the Q07-CUTOVER task, after W11",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -49,17 +49,21 @@
       "owner": "W07",
       "resume_condition": "At the next provider note edit or at RUNTIME-CLOSE",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
       "id": "SDLC-H01",
       "kind": "handoff",
-      "state": "open",
+      "state": "terminal",
       "owner": "Q07",
       "resume_condition": "In the Q07-CUTOVER task, together with the SDD-PATHS renumbering",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0224-workspace-path-cutover/01.tasks/tsk-0001-workspace-path-cutover.md"
+      },
+      "closure": {
+        "path": "docs/03.specs/0224-workspace-path-cutover/01.tasks/tsk-0001-workspace-path-cutover.md",
+        "evidence": "EVD-010"
       }
     },
     {
@@ -69,7 +73,7 @@
       "owner": "W04+ platform",
       "resume_condition": "When the owner of the Plan text, of the Stage 99 `AGENTS.md` and of the registry TemplateDefinition text next edits them in its own package",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -79,7 +83,7 @@
       "owner": "W04+ platform",
       "resume_condition": "When the owner of those registry TemplateDefinition, form and profile texts next edits them in its own package",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -89,7 +93,7 @@
       "owner": "Q07",
       "resume_condition": "At Q07-CUTOVER, after every work package's acceptance",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -99,7 +103,7 @@
       "owner": "platform",
       "resume_condition": "When the runbook owner observes or states each result and failure action",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -109,7 +113,7 @@
       "owner": "platform",
       "resume_condition": "When the architecture owner states each interface's failure boundary",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -119,7 +123,7 @@
       "owner": "platform",
       "resume_condition": "When the reference maintainer re-observes the sources under RUN-0011 or states the requirement",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -129,7 +133,7 @@
       "owner": "platform",
       "resume_condition": "When each rule gains a check or is reclassified as semantic review",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -139,7 +143,7 @@
       "owner": "platform",
       "resume_condition": "When the Stage 05 owner names the escalation contact and approver",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -149,7 +153,7 @@
       "owner": "platform",
       "resume_condition": "When the Requirement owner revises REQ-0002 with approval",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -159,7 +163,7 @@
       "owner": "W06",
       "resume_condition": "At the first pull request that changes a GitOps manifest or the CI lock",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -169,7 +173,7 @@
       "owner": "W06",
       "resume_condition": "When a successor decision selects the next hosted affected leaf",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -179,7 +183,7 @@
       "owner": "W07",
       "resume_condition": "At the next approval or receipt validator change, or at W11-ACCEPT",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -189,7 +193,7 @@
       "owner": "W07",
       "resume_condition": "When the Desktop host owner supplies the outgoing turn permission fields or a client fix, rerun the read-only reviewer write denial on that path",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -199,7 +203,7 @@
       "owner": "W08",
       "resume_condition": "When a second local account, an untrusted writer or a remote host must use the store",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -209,7 +213,7 @@
       "owner": "W08",
       "resume_condition": "When a real memory query misses because of a particle or inflection, or when current memories exceed 1,000 or live search p95 exceeds 100 ms",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -219,7 +223,7 @@
       "owner": "W08",
       "resume_condition": "When the user has reviewed the Codex hooks in `/hooks`, observe a Codex session and a Claude compaction in `session_capture.py status`",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -229,7 +233,7 @@
       "owner": "W08",
       "resume_condition": "After the host has been off across a 03:00 KST run, read `session_analysis.py status` and the journal for the catch-up run",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -239,7 +243,7 @@
       "owner": "W08",
       "resume_condition": "At the next capture schema change, or when a failure candidate cannot be acted on",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -249,7 +253,7 @@
       "owner": "W09",
       "resume_condition": "Before a test cluster runs product pods in a namespace whose policy allows 192.168.0.13, or when the user provides a host firewall rule or a dedicated VM",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -259,10 +263,10 @@
       "owner": "operator",
       "resume_condition": "When the user runs the handed-over deletion of the approved ignored paths (EVD-226)",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       },
       "closure": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md",
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md",
         "evidence": "EVD-002"
       }
     },
@@ -273,7 +277,7 @@
       "owner": "W10",
       "resume_condition": "At the next authorized Codex session in this workspace",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -283,7 +287,7 @@
       "owner": "W10",
       "resume_condition": "When the user authorizes model usage for provider workers",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -293,7 +297,7 @@
       "owner": "W10",
       "resume_condition": "Before an untrusted or provider worker is dispatched",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     },
     {
@@ -303,7 +307,7 @@
       "owner": "W10",
       "resume_condition": "After the 2026-11-21 03:00 KST run, read `session_analysis.py candidates` for candidate 1",
       "source": {
-        "path": "docs/03.specs/0223-work-residue-handoff/tasks/tsk-0001-work-residue-handoff.md"
+        "path": "docs/03.specs/0223-work-residue-handoff/01.tasks/tsk-0001-work-residue-handoff.md"
       }
     }
   ]

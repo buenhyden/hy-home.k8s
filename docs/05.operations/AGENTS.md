@@ -38,13 +38,13 @@ Canonical sources are the documents linked or named in the opening paragraph and
 
 1. Profiles: `operation/guide`, `operation/policy`, `operation/runbook`,
    `operation/incident` and `operation/postmortem`, started from
-   `docs/99.templates/templates/operations/`.
+   `docs/99.templates/02.templates/05.operations/`.
 2. By default limit agent work here to Git file edits, review, ArgoCD
    reconciliation planning and evidence organization. A command or a command
    boundary marker in an operations document never grants execution
    authority; live cluster, Vault and DNS actions need the operator's
    explicit approval under
-   [approval and safety](../../.agents/governance/approval-and-safety.md).
+   [approval and safety](../00.workspace/04.quality/approval-and-safety.md).
 3. Mark every mutating command with its boundary (operator-approved,
    break-glass, bootstrap-only) so the repository quality gate can tell an
    example from an instruction.

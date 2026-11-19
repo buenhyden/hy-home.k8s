@@ -97,8 +97,10 @@ class LifecycleEvidenceDocument:
 class PolicyCodeSection:
     """The `policy_rule_ids` codes of one registry snapshot, read as plain JSON."""
 
-    codes: Mapping[str, str]  # code -> path of its record
+    codes: Mapping[str, str]  # code -> path of its first record
     reserved: frozenset[str]
+    # path -> code of every record; a code split by SDLC-R036 has two paths.
+    paths: Mapping[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -1012,7 +1014,9 @@ def policy_history_diagnostics(
                 f"{rule_id} stays retired",
                 f"{rule_id}: {status} -> {kept[1]}",
             )
-    by_path = {path: code for code, path in proposed.codes.items()}
+    by_path = dict(proposed.paths) or {
+        path: code for code, path in proposed.codes.items()
+    }
     for code, path in sorted(base.codes.items()):
         if code not in proposed.codes and code not in proposed.reserved:
             observed = f"{code} ({path}) neither registered nor reserved"
@@ -1315,7 +1319,7 @@ def _archived_lineage_text(text: str) -> str:
 
 _HISTORICAL_IDENTITY = ("OPS-[0-9]{4}", "MIG-[0-9]{4}")
 _SCHEMA_PATH = Path(__file__).resolve().parents[1] / (
-    "docs/99.templates/contracts/frontmatter.schema.json"
+    "docs/99.templates/01.contracts/frontmatter.schema.json"
 )
 _TABLE_SEPARATOR = re.compile(r"\s*:?-+:?\s*")
 
@@ -1429,7 +1433,7 @@ def package_exit_diagnostics(
     for name in sorted(packages):
         root = PurePosixPath("docs/03.specs", name)
         paths = packages[name]
-        tasks = [path for path in paths if path.parts[3] == "tasks"]
+        tasks = [path for path in paths if path.parts[3] == "01.tasks"]
         tasks_terminal = all(
             base_documents[path].status in _TERMINAL_TASK_STATES for path in tasks
         )

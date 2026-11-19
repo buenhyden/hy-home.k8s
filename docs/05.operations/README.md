@@ -67,10 +67,10 @@ provider/runtime, 실제 운영 검증은 각각 관측한 결과를 링크한�
 
 | Path | Purpose |
 | --- | --- |
-| [guides/](./guides/) | 안정 상태의 사용자·개발자·운영자 가이드 |
-| [policies/](./policies/) | 공유 운영 정책과 표준 |
-| [runbooks/](./runbooks/) | 실행 가능한 운영 절차 |
-| [incidents/](./incidents/) | 사고 기록과 사후 분석 |
+| [01.guides/](./01.guides/) | 안정 상태의 사용자·개발자·운영자 가이드 |
+| [02.policies/](./02.policies/) | 공유 운영 정책과 표준 |
+| [03.runbooks/](./03.runbooks/) | 실행 가능한 운영 절차 |
+| [04.incidents/](./04.incidents/) | 사고 기록과 사후 분석 |
 | [AGENTS.md](./AGENTS.md) | 이 stage에 적용되는 AI 에이전트 지시 |
 | [CLAUDE.md](./CLAUDE.md) | Claude가 이 stage의 `AGENTS.md`를 불러오게 하는 한 줄 `@AGENTS.md` import |
 
@@ -89,11 +89,11 @@ provider/runtime, 실제 운영 검증은 각각 관측한 결과를 링크한�
 
 | 필요 상황                                   | 사용할 위치                                                                  | 시작 템플릿                                                      |
 | ------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| 시스템을 이해하거나 온보딩 절차를 따라야 함 | [guides](./guides/README.md)                                                 | [guide.template.md](../99.templates/templates/operations/guide.template.md)           |
-| 허용/금지/예외 승인 기준을 확인해야 함      | [policies](./policies/README.md)                                             | [policy.template.md](../99.templates/templates/operations/policy.template.md)         |
-| 정해진 순서로 실행, 검증, 복구해야 함       | [runbooks](./runbooks/README.md)                                             | [runbook.template.md](../99.templates/templates/operations/runbook.template.md)       |
-| 실제 사고 사실, 타임라인을 기록해야 함      | [incidents](./incidents/README.md)                                           | [incident.template.md](../99.templates/templates/operations/incident.template.md)     |
-| 사고 후 원인과 재발 방지를 분석해야 함      | [incidents README](./incidents/README.md)에서 postmortem 경로 생성 조건 확인 | [postmortem.template.md](../99.templates/templates/operations/postmortem.template.md) |
+| 시스템을 이해하거나 온보딩 절차를 따라야 함 | [guides](./01.guides/README.md)                                                 | [guide.template.md](../99.templates/02.templates/05.operations/guide.template.md)           |
+| 허용/금지/예외 승인 기준을 확인해야 함      | [policies](./02.policies/README.md)                                             | [policy.template.md](../99.templates/02.templates/05.operations/policy.template.md)         |
+| 정해진 순서로 실행, 검증, 복구해야 함       | [runbooks](./03.runbooks/README.md)                                             | [runbook.template.md](../99.templates/02.templates/05.operations/runbook.template.md)       |
+| 실제 사고 사실, 타임라인을 기록해야 함      | [incidents](./04.incidents/README.md)                                           | [incident.template.md](../99.templates/02.templates/05.operations/incident.template.md)     |
+| 사고 후 원인과 재발 방지를 분석해야 함      | [incidents README](./04.incidents/README.md)에서 postmortem 경로 생성 조건 확인 | [postmortem.template.md](../99.templates/02.templates/05.operations/postmortem.template.md) |
 
 #### Operations Mutation Boundary
 
@@ -122,9 +122,9 @@ raw secret 출력 명령의 실제 출력을 바꾸지 않는다.
 repository quality validator의 command boundary 규칙이며, 해당 변경에
 선택된 문서 내용·repository quality gate가 authored docs와 examples를
 스캔해 marker가 없으면 실패한다. live 변경 예외의 승인 조건은
-[POL-0001](./policies/0001-k8s-gitops-operations-policy.md#exceptions)이
+[POL-0001](./02.policies/0001-k8s-gitops-operations-policy.md#exceptions)이
 소유한다. 공통 승인 원본 확인과 저술/실행 권한은
-[Approval and Safety](../../.agents/governance/approval-and-safety.md)가 소유한다.
+[Approval and Safety](../00.workspace/04.quality/approval-and-safety.md)가 소유한다.
 marker는 실행 권한을 부여하지 않는다.
 
 ## Usage
@@ -153,19 +153,19 @@ cluster, OpenBao, secret, ArgoCD 같은 고위험 명령의 실행 경계는 언
 
 #### Upstream and Downstream
 
-- [Guides README](./guides/README.md)
-- [Policies README](./policies/README.md)
-- [Runbooks README](./runbooks/README.md)
-- [Incidents README](./incidents/README.md)
-- [Reference Maintenance Runbook](./runbooks/0011-reference-maintenance-runbook.md)
+- [Guides README](./01.guides/README.md)
+- [Policies README](./02.policies/README.md)
+- [Runbooks README](./03.runbooks/README.md)
+- [Incidents README](./04.incidents/README.md)
+- [Reference Maintenance Runbook](../00.workspace/06.maintenance/0011-reference-maintenance-runbook.md)
 
 #### Policy and Templates
 
-- [Document Stage Routing](../../.agents/governance/document-authoring.md)
+- [Document Stage Routing](../00.workspace/03.process/document-authoring.md)
 - [Templates README](../99.templates/README.md)
 - [Local Agent Registry](../../.agents/roles/registry.json)
-- [Approval Boundaries](../../.agents/governance/approval-and-safety.md)
+- [Approval Boundaries](../00.workspace/04.quality/approval-and-safety.md)
 
 ### Checks
 
-1. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)에 따라 처분한다. 대체 Guide·Policy·Runbook이 `supersedes`에 선행 문서의 ID를 기록한다. 수명주기 검사기는 그 관계에서 후속 문서를 찾아 현재 소유자를 확인한다.
+1. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 [Document Lifecycle Policy](../00.workspace/03.process/document-lifecycle.md)에 따라 처분한다. 대체 Guide·Policy·Runbook이 `supersedes`에 선행 문서의 ID를 기록한다. 수명주기 검사기는 그 관계에서 후속 문서를 찾아 현재 소유자를 확인한다.

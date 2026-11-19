@@ -68,7 +68,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             if profile["template_source"] is not None
         }
         for relative in {
-            "docs/99.templates/contracts/document-profile.schema.json",
+            "docs/99.templates/01.contracts/document-profile.schema.json",
             *templates,
         }:
             target = cls.seed_root / relative
@@ -233,7 +233,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 "{{ARTIFACT_ID}}": artifact_id,
                 "{{PARENT_ID}}": "SPEC-9999",
                 "{{SPEC_RELATIVE_PATH}}": "spec.md",
-                "{{TASK_RELATIVE_PATH}}": "tasks/tsk-0001-copy.md",
+                "{{TASK_RELATIVE_PATH}}": "01.tasks/tsk-0001-copy.md",
             }.items():
                 text = text.replace(placeholder, value)
             text = text.replace(
@@ -249,7 +249,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 text.replace('status: "draft"', 'status: "approved"', 1).encode(),
             )
         self.base = self.oid("HEAD")
-        target = PurePosixPath(f"{package}/tasks/tsk-0001-copy.md")
+        target = PurePosixPath(f"{package}/01.tasks/tsk-0001-copy.md")
         for status in ("draft", "ready", "in-progress", "completed"):
             self.git.commit(target.as_posix(), self.registered_task_document(status))
         return target, self.oid("HEAD")
@@ -274,7 +274,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 "{{ARTIFACT_ID}}": artifact_id,
                 "{{PARENT_ID}}": "SPEC-9999",
                 "{{SPEC_RELATIVE_PATH}}": "spec.md",
-                "{{TASK_RELATIVE_PATH}}": "tasks/tsk-0001-work.md",
+                "{{TASK_RELATIVE_PATH}}": "01.tasks/tsk-0001-work.md",
             }.items():
                 text = text.replace(placeholder, value)
             text = text.replace(
@@ -335,7 +335,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             "Synthetic user approval receipt | true | none |",
             1,
         )
-        files = parents | {f"{package}/tasks/tsk-0001-work.md": task.encode()}
+        files = parents | {f"{package}/01.tasks/tsk-0001-work.md": task.encode()}
         for relative, payload in files.items():
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -346,7 +346,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.git.run("commit", "--quiet", "-m", "first approved fixture")
         tip = self.oid("HEAD")
         history_cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
-        task_path = PurePosixPath(f"{package}/tasks/tsk-0001-work.md")
+        task_path = PurePosixPath(f"{package}/01.tasks/tsk-0001-work.md")
         self.assertEqual(
             history_cache._snapshot(tip)[0][task_path].profile_id,
             "sdlc/task",
@@ -363,7 +363,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         )
         spec_path = PurePosixPath(f"{package}/spec.md")
         unrelated_source = PurePosixPath(
-            "docs/99.templates/templates/specs/plan.template.md"
+            "docs/99.templates/02.templates/03.specs/plan.template.md"
         )
         unrelated_blob = VALIDATOR._tree_blob_oid(
             self.root, self.base, unrelated_source
@@ -512,7 +512,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
     def test_real_registered_task_template_first_draft_copy_is_admitted(self) -> None:
         target = PurePosixPath(
-            "docs/03.specs/9999-template-history/tasks/tsk-0001-copy.md"
+            "docs/03.specs/9999-template-history/01.tasks/tsk-0001-copy.md"
         )
         self.git.commit(target.as_posix(), self.registered_task_document())
         created = self.oid("HEAD")
@@ -531,7 +531,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertTrue(records[destination - 2].startswith(b"C"))
         self.assertEqual(
             records[destination - 1],
-            b"docs/99.templates/templates/specs/task.template.md",
+            b"docs/99.templates/02.templates/03.specs/task.template.md",
         )
         cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
         document = cache._snapshot(created)[0][target]
@@ -551,7 +551,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         package = "docs/03.specs/9999-template-history"
         self.registered_task_history()
         approved_parents = self.base
-        target = PurePosixPath(f"{package}/tasks/tsk-0001-copy.md")
+        target = PurePosixPath(f"{package}/01.tasks/tsk-0001-copy.md")
         self.git.run("reset", "--hard", approved_parents)
         self.git.commit(target.as_posix(), self.registered_task_document("in-progress"))
         first = self.oid("HEAD")
@@ -570,7 +570,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertTrue(records[destination - 2].startswith(b"C"))
         self.assertEqual(
             records[destination - 1],
-            b"docs/99.templates/templates/specs/task.template.md",
+            b"docs/99.templates/02.templates/03.specs/task.template.md",
         )
         self.git.commit(target.as_posix(), self.registered_task_document("completed"))
         completed = self.oid("HEAD")
@@ -585,7 +585,8 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
     def adr_document(self, artifact_id: str, *, status: str = "proposed") -> bytes:
         template = (
-            self.root / "docs/99.templates/templates/architecture/decision.template.md"
+            self.root
+            / "docs/99.templates/02.templates/02.architecture/decision.template.md"
         ).read_text()
         text = (
             template.replace("{{TITLE}}", "Synthetic decision")
@@ -597,8 +598,35 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         )
         return text.replace('status: "proposed"', f'status: "{status}"', 1).encode()
 
+    def test_a_relocation_keeps_profile_name_and_id_or_stays_refused(self) -> None:
+        # DOCLIFE-R023 (Q07): an accepted ADR moved to the workspace stage keeps
+        # its state; the same move under another file name is a new document.
+        source = PurePosixPath("docs/02.architecture/02.decisions/0998-source.md")
+        moved = PurePosixPath(
+            "docs/00.workspace/02.architecture/02.decisions/0998-source.md"
+        )
+        renamed = PurePosixPath(
+            "docs/00.workspace/02.architecture/02.decisions/0998-other.md"
+        )
+        self.git.commit(
+            source.as_posix(), self.adr_document("ADR-0998", status="accepted")
+        )
+        self.base = self.oid("HEAD")
+        for target, admitted in ((moved, True), (renamed, False)):
+            with self.subTest(target=target.as_posix()):
+                self.git.run("reset", "--hard", self.base)
+                (self.root / target).parent.mkdir(parents=True, exist_ok=True)
+                self.git.run("mv", source.as_posix(), target.as_posix())
+                self.git.run("commit", "--quiet", "-m", "move ADR")
+                result, output = self.explicit(self.base, self.oid("HEAD"))
+                if admitted:
+                    self.assertEqual(result, 0, output)
+                else:
+                    self.assertNotEqual(result, 0, output)
+                    self.assertIn("LIFECYCLE-RENAME", output)
+
     def test_rejected_adr_cannot_remain_in_the_candidate(self) -> None:
-        target = PurePosixPath("docs/02.architecture/decisions/0999-target.md")
+        target = PurePosixPath("docs/02.architecture/02.decisions/0999-target.md")
         self.git.commit(target.as_posix(), self.adr_document("ADR-0999"))
         proposed_commit = self.oid("HEAD")
         (self.root / target).write_bytes(
@@ -618,7 +646,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertEqual(result, 1, output)
         self.assertIn(f"LIFECYCLE-ADR-RETAINED {target}", output)
 
-        owner = "docs/02.architecture/decisions/0998-owner.md"
+        owner = "docs/02.architecture/02.decisions/0998-owner.md"
         self.git.commit(owner, self.adr_document("ADR-0998"))
         self.git.commit(owner, self.adr_document("ADR-0998", status="accepted"))
         (self.root / owner).write_bytes(
@@ -632,8 +660,8 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertEqual(result, 0, output)
 
     def test_distinct_adr_authoring_copies_admit_proposed_then_accepted(self) -> None:
-        source = PurePosixPath("docs/02.architecture/decisions/0998-source.md")
-        target = PurePosixPath("docs/02.architecture/decisions/0999-target.md")
+        source = PurePosixPath("docs/02.architecture/02.decisions/0998-source.md")
+        target = PurePosixPath("docs/02.architecture/02.decisions/0999-target.md")
         self.git.commit(source.as_posix(), self.adr_document("ADR-0998"))
         self.base = self.oid("HEAD")
         for scale in ("high", "low"):
@@ -677,8 +705,8 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                     self.assertEqual(result, 0, output)
 
     def test_adr_authoring_copy_rejects_invalid_identity_and_provenance(self) -> None:
-        source = PurePosixPath("docs/02.architecture/decisions/0998-source.md")
-        target = PurePosixPath("docs/02.architecture/decisions/0999-target.md")
+        source = PurePosixPath("docs/02.architecture/02.decisions/0998-source.md")
+        target = PurePosixPath("docs/02.architecture/02.decisions/0999-target.md")
         self.git.commit(source.as_posix(), self.adr_document("ADR-0998"))
         self.base = self.oid("HEAD")
         for mutation in ("same-id", "source-mutated", "rename", "first-accepted"):
@@ -729,8 +757,8 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
     def test_explicit_ref_refuses_a_new_document_reusing_a_lineage_identity(
         self,
     ) -> None:
-        owner = PurePosixPath("docs/02.architecture/decisions/0998-owner.md")
-        target = PurePosixPath("docs/02.architecture/decisions/0997-target.md")
+        owner = PurePosixPath("docs/02.architecture/02.decisions/0998-owner.md")
+        target = PurePosixPath("docs/02.architecture/02.decisions/0997-target.md")
         self.git.commit(owner.as_posix(), self.lineage_owner("ADR-0997"))
         base = self.oid("HEAD")
         self.git.commit(target.as_posix(), self.adr_document("ADR-0997"))
@@ -745,8 +773,8 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
     def test_history_call_refuses_a_new_document_reusing_a_lineage_identity(
         self,
     ) -> None:
-        owner = PurePosixPath("docs/02.architecture/decisions/0998-owner.md")
-        target = PurePosixPath("docs/02.architecture/decisions/0997-target.md")
+        owner = PurePosixPath("docs/02.architecture/02.decisions/0998-owner.md")
+        target = PurePosixPath("docs/02.architecture/02.decisions/0997-target.md")
         self.git.commit(owner.as_posix(), self.lineage_owner("ADR-0997"))
         base = self.oid("HEAD")
         self.git.commit(target.as_posix(), self.adr_document("ADR-0997"))
@@ -762,7 +790,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
     def test_ordinary_adr_edges_skip_full_context_but_supersession_keeps_it(
         self,
     ) -> None:
-        target = PurePosixPath("docs/02.architecture/decisions/0999-target.md")
+        target = PurePosixPath("docs/02.architecture/02.decisions/0999-target.md")
         self.git.commit(target.as_posix(), self.adr_document("ADR-0999"))
         proposed_commit = self.oid("HEAD")
         accepted = self.adr_document("ADR-0999", status="accepted")
@@ -863,7 +891,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             return data.replace(b"SPEC-9999-TSK-0001", b"SPEC-9999-TSK-0002")
         if mutation == "reused":
             self.git.commit(
-                "docs/03.specs/9999-template-history/tasks/tsk-0002-other.md",
+                "docs/03.specs/9999-template-history/01.tasks/tsk-0002-other.md",
                 data,
             )
         elif mutation == "existing-target":
@@ -888,20 +916,22 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             raw = json.loads(path.read_text())
             next(p for p in raw["profiles"] if p["id"] == "sdlc/task")[
                 "template_source"
-            ] = "docs/99.templates/templates/specs/plan.template.md"
+            ] = "docs/99.templates/02.templates/03.specs/plan.template.md"
             path.write_text(json.dumps(raw))
             self.git.run("add", "--", "docs/99.templates/registry.json")
         elif mutation == "proposed-duplicate":
-            relative = "docs/03.specs/9999-template-history/tasks/tsk-0002-other.md"
+            relative = "docs/03.specs/9999-template-history/01.tasks/tsk-0002-other.md"
             (self.root / relative).parent.mkdir(parents=True, exist_ok=True)
             (self.root / relative).write_bytes(data)
             self.git.run("add", "--", relative)
 
     def test_registered_task_template_boundary_rejects_invalid_inputs(self) -> None:
         target = PurePosixPath(
-            "docs/03.specs/9999-template-history/tasks/tsk-0001-copy.md"
+            "docs/03.specs/9999-template-history/01.tasks/tsk-0001-copy.md"
         )
-        source = PurePosixPath("docs/99.templates/templates/specs/task.template.md")
+        source = PurePosixPath(
+            "docs/99.templates/02.templates/03.specs/task.template.md"
+        )
         for mutation in (
             "state",
             "identity",
@@ -930,7 +960,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 before = cache._snapshot(self.base)[0]
                 after = cache._snapshot(created)[0]
                 candidate_source = (
-                    PurePosixPath("docs/99.templates/templates/specs/plan.template.md")
+                    PurePosixPath(
+                        "docs/99.templates/02.templates/03.specs/plan.template.md"
+                    )
                     if mutation == "other-form"
                     else source
                 )
@@ -954,9 +986,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                     )
 
     def test_ordinary_canonical_task_copy_remains_rejected_by_ci(self) -> None:
-        source = PurePosixPath("docs/03.specs/9998-source/tasks/tsk-0001-source.md")
+        source = PurePosixPath("docs/03.specs/9998-source/01.tasks/tsk-0001-source.md")
         target = PurePosixPath(
-            "docs/03.specs/9999-template-history/tasks/tsk-0001-copy.md"
+            "docs/03.specs/9999-template-history/01.tasks/tsk-0001-copy.md"
         )
         data = self.registered_task_document()
         self.git.commit(source.as_posix(), data.replace(b"SPEC-9999", b"SPEC-9998"))
@@ -2105,6 +2137,64 @@ class RegistryHistoryHeadingTest(unittest.TestCase):
         result = self.registry_at(f"{AUTHORITY.REGISTRY_MAJOR}.0.0")
         self.assertIsNot(result, self.current)
         self.assertEqual(self.listed(result), ())
+
+
+class RelocationGuardTest(unittest.TestCase):
+    """Q07 review findings: the relocation helpers stay narrow."""
+
+    def test_a_folder_maps_only_when_every_base_file_moved_with_it(self) -> None:
+        old = PurePosixPath("docs/x/descriptions/0001-a.md")
+        new = PurePosixPath("docs/x/01.descriptions/0001-a.md")
+        sibling = PurePosixPath("docs/x/descriptions/0002-b.md")
+        whole = VALIDATOR._relocated_folders(
+            {old: new, sibling: new.parent / sibling.name},
+            frozenset({old, sibling}),
+        )
+        self.assertEqual(
+            whole[PurePosixPath("docs/x/descriptions")],
+            PurePosixPath("docs/x/01.descriptions"),
+        )
+        partial = VALIDATOR._relocated_folders({old: new}, frozenset({old, sibling}))
+        self.assertNotIn(PurePosixPath("docs/x/descriptions"), partial)
+
+    def test_a_split_half_inherits_only_a_registered_original(self) -> None:
+        original = PurePosixPath("docs/w/safety.md")
+        half = PurePosixPath(".agents/safety.md")
+
+        def registry(*records):
+            return {"policy_rule_ids": {"codes": list(records)}}
+
+        proposed = registry(
+            {"path": original.as_posix(), "code": "SAFE", "rules": ["SAFE-R001"]},
+            {"path": half.as_posix(), "code": "SAFE", "rules": ["SAFE-R002"]},
+        )
+        base = registry({"path": original.as_posix(), "code": "SAFE"})
+        rules = {original: frozenset({"SAFE-R001", "SAFE-R002"})}
+        blobs = {original: "oid"}
+
+        def origins(base_blob, base_rules=rules):
+            return VALIDATOR._split_origins(
+                proposed,
+                blobs,
+                base_blob,
+                lambda path: base_rules.get(path, frozenset()),
+            )
+
+        self.assertEqual(origins(base), {half: original})
+        self.assertEqual(origins(None), {})
+        self.assertEqual(origins(registry()), {})
+        self.assertEqual(origins(base, {original: frozenset({"SAFE-R001"})}), {})
+
+    def test_an_id_less_pair_needs_the_same_file_name(self) -> None:
+        registry = load_registry(ROOT)
+        old = PurePosixPath(".agents/governance/agent-execution.md")
+        same = PurePosixPath("docs/00.workspace/03.process/sdlc.md")
+        found = VALIDATOR._relocations(
+            ((PurePosixPath(".agents/governance/sdlc.md"), same), (old, same)),
+            registry,
+            registry,
+        )
+        self.assertNotIn(old, found)
 
 
 if __name__ == "__main__":  # pragma: no cover

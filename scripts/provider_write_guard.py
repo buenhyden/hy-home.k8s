@@ -454,7 +454,7 @@ def authored_doc_route(
     template_path = PurePosixPath(str(template))
     if (
         template_path.is_absolute()
-        or template_path.parts[:3] != ("docs", "99.templates", "templates")
+        or template_path.parts[:3] != ("docs", "99.templates", "02.templates")
         or any(part in {"", ".", ".."} for part in template_path.parts)
     ):
         reject_with_detail(
@@ -512,7 +512,7 @@ def build_messages(resolved_root: str, shell_targets: list[str]) -> list[str]:
             else:
                 route_line = (
                     f"- Required template: `{template}`."
-                    if template.startswith("docs/99.templates/templates/")
+                    if template.startswith("docs/99.templates/02.templates/")
                     else f"- Route note: `{template}`."
                 )
                 messages.append(

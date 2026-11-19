@@ -66,7 +66,7 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Per [work lifecycle](../workflows/work-lifecycle.md), run `bash scripts/validate-k8s-manifests.sh`, the external-service endpoint checker and `python3 scripts/qa.py quick` or `staged` over the touched paths; report each as repository evidence under the [validation lane contract](../governance/quality.md#validation-lane-contract). Reconciliation against a cluster is the live lane and stays unobserved. Review this role when its responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run `bash scripts/validate-k8s-manifests.sh`, the external-service endpoint checker and `python3 scripts/qa.py quick` or `staged` over the touched paths; report each as repository evidence under the [validation lane contract](../../docs/00.workspace/04.quality/quality.md#validation-lane-contract). Reconciliation against a cluster is the live lane and stays unobserved. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
@@ -76,4 +76,4 @@ Per [work lifecycle](../workflows/work-lifecycle.md), run `bash scripts/validate
 - [security-auditor](security-auditor.md)
 - [supervisor](supervisor.md)
 - [GitOps tree](../../gitops/README.md)
-- [Quality policy](../governance/quality.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md)

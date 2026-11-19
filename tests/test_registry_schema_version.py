@@ -28,7 +28,7 @@ from semver_grammar import SEMVER_PATTERN  # noqa: E402
 from tests.git_fixture import GitFixture  # noqa: E402
 
 REGISTRY_FILE = ROOT / "docs/99.templates/registry.json"
-SCHEMA_FILE = ROOT / "docs/99.templates/contracts/document-profile.schema.json"
+SCHEMA_FILE = ROOT / "docs/99.templates/01.contracts/document-profile.schema.json"
 LAST_INTEGER_GENERATION = 10
 # Past Python's int-conversion limit of 4300 digits; the grammar allows it.
 HUGE_MAJOR_VALUE = "1" * 5000 + ".0.0"

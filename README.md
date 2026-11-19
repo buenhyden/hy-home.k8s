@@ -97,7 +97,7 @@ cd hy-home.k8s
 1. [README.md](./README.md) - 저장소 개요
 2. [docs/README.md](./docs/README.md) - 단계형 문서 체계 개요
 3. [AGENTS.md](./AGENTS.md), [CLAUDE.md](./CLAUDE.md) - provider별 얇은 에이전트 게이트웨이
-4. `docs/05.operations/runbooks/README.md` - 실제 부트스트랩 절차
+4. `docs/05.operations/03.runbooks/README.md` - 실제 부트스트랩 절차
 
 #### 3. External Dependencies Readiness
 
@@ -108,7 +108,7 @@ cd hy-home.k8s
 - Valkey가 저장소 문서에 정의된 호스트/포트로 노출된다(필수).
 - PostgreSQL 관리·개발 프로필은 선택이며, 닫혀 있으면 스크립트가 경고만 한다.
 
-필요한 확인 방법은 runbook (`docs/05.operations/runbooks/README.md`)에 정리되어 있다.
+필요한 확인 방법은 runbook (`docs/05.operations/03.runbooks/README.md`)에 정리되어 있다.
 
 #### 4. Bootstrap Local Platform
 
@@ -154,7 +154,7 @@ python3 scripts/qa.py staged
 로컬 커밋 직전 선택된 lint·format과 실제 메시지를 확인한다. 동일 입력의
 검사를 다른 단계라는 이유로 다시 실행하지 않는다. 필수 도구가 없으면
 실패나 환경 공백으로 기록하며, 설치 절차와 준비 조건은 QA 운영 안내
-(`docs/05.operations/guides/README.md`)를 따른다. 검증기의 bounded
+(`docs/05.operations/01.guides/README.md`)를 따른다. 검증기의 bounded
 timeout·출력·프로세스 정리 보장은 유지된다.
 
 표면별 승인 경계와 역할·스킬 정본은 [에이전트 거버넌스](.agents/README.md)가 라우팅한다. 정적 PASS는 네이티브 발견·권한 강제·훅 수신이나 hosted CI·클러스터 동작의 증거가 아니다. 실제 k3d/Argo CD/Vault 작업은 별도 승인된 운영 범위에 속한다.
@@ -234,7 +234,7 @@ README는 사람을 위한 안내이고, `AGENTS.md`는 AI 에이전트를 위�
 `scripts/`, `tests/`, `.github/`, `examples/`, `examples/azure/`)에만 README와
 함께 두며 하위 폴더에 적용된다.
 나머지 폴더는 README만 둔다. 판정 규칙은
-[문서 작성 정책](.agents/governance/document-authoring.md)이 소유한다. 에이전트의 역할과 절차는 [공통 거버넌스](.agents/README.md)에 있다.
+문서 작성 정책(`docs/00.workspace/03.process/document-authoring.md`)이 소유한다. 에이전트의 역할과 절차는 [공통 거버넌스](.agents/README.md)에 있다.
 문서 작성·링크·언어 기준과 에이전트 실행·승인·Git 절차는
 [공통 거버넌스](.agents/README.md)에서 각 정책 소유자를 찾는다.
 
@@ -266,10 +266,10 @@ README는 사람을 위한 안내이고, `AGENTS.md`는 AI 에이전트를 위�
 - [문서 허브](./docs/README.md)
 - [문서 작성 양식과 가이드](./docs/99.templates/README.md)
 - [에이전트 실행 거버넌스](.agents/README.md)
-- [문서 저술 정책](.agents/governance/document-authoring.md)
+- 문서 저술 정책 (`docs/00.workspace/03.process/document-authoring.md`)
 - 현재 로컬 GitOps 플랫폼 요구사항 (`docs/01.requirements/README.md`)
 - Stage 03 Spec 안내 (`docs/03.specs/README.md`)
-- ArgoCD 플랫폼 부트스트랩 Runbook (`docs/05.operations/runbooks/README.md`)
+- ArgoCD 플랫폼 부트스트랩 Runbook (`docs/05.operations/03.runbooks/README.md`)
 - [저장소 스크립트 인덱스](./scripts/README.md)
 
 #### Language Policy

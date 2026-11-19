@@ -180,12 +180,33 @@ class DocumentScopeSelectionTests(unittest.TestCase):
                 selected = ROUTES.select_paths(CONTRACT, (path,), "affected")
                 self.assertIn("markdown-profiles", selected["validators"])
 
+    def test_workspace_stage_paths_route_to_one_surface_each(self) -> None:
+        # Q07: the workspace gateway is only a folder guide, while its policies
+        # are governance documents that select the knowledge gate.
+        gateway = ROUTES.select_paths(
+            CONTRACT, ("docs/00.workspace/AGENTS.md",), "affected"
+        )
+        self.assertEqual(
+            gateway["validators"],
+            [
+                "document-contract-registry",
+                "links-and-owners",
+                "markdown-profiles",
+                "repository-quality",
+            ],
+        )
+        policy = ROUTES.select_paths(
+            CONTRACT, ("docs/00.workspace/04.quality/quality.md",), "affected"
+        )
+        self.assertIn("knowledge-surface", policy["validators"])
+        self.assertEqual(policy["unmatchedPaths"], [])
+
     def test_operation_record_paths_select_the_content_reader(self) -> None:
         for path in (
-            "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
-            "docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md",
-            "docs/05.operations/runbooks/0012-main-release-preparation-runbook.md",
-            "docs/05.operations/incidents/2026/inc-2026-new/incident.md",
+            "docs/00.workspace/04.quality/0010-ci-cd-qa-reference-guide.md",
+            "docs/05.operations/02.policies/0003-service-mesh-cert-manager-policy.md",
+            "docs/00.workspace/03.process/0012-main-release-preparation-runbook.md",
+            "docs/05.operations/04.incidents/2026/inc-2026-new/incident.md",
         ):
             with self.subTest(path=path):
                 selected = ROUTES.select_paths(CONTRACT, (path,), "affected")
@@ -300,20 +321,16 @@ class DocumentContentClosureTests(unittest.TestCase):
             ("gitops/clusters/local/kustomization.yaml", "gitops/README.md"),
             ("gitops/apps/root/kustomization.yaml", "gitops/README.md"),
             (
-                "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
-                "docs/05.operations/guides/README.md",
+                "docs/05.operations/02.policies/0003-service-mesh-cert-manager-policy.md",
+                "docs/05.operations/02.policies/README.md",
             ),
             (
-                "docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md",
-                "docs/05.operations/policies/README.md",
+                "docs/05.operations/03.runbooks/0010-github-app-gitops-onboarding-runbook.md",
+                "docs/05.operations/03.runbooks/README.md",
             ),
             (
-                "docs/05.operations/runbooks/0012-main-release-preparation-runbook.md",
-                "docs/05.operations/runbooks/README.md",
-            ),
-            (
-                "docs/05.operations/incidents/2026/inc-2026-new/incident.md",
-                "docs/05.operations/incidents/README.md",
+                "docs/05.operations/04.incidents/2026/inc-2026-new/incident.md",
+                "docs/05.operations/04.incidents/README.md",
             ),
         )
         for producer, owner in cases:
@@ -330,8 +347,8 @@ class DocumentContentClosureTests(unittest.TestCase):
     ) -> None:
         for path in (
             "docs/99.templates/registry.json",
-            "docs/99.templates/contracts/frontmatter.schema.json",
-            "docs/99.templates/templates/specs/task.template.md",
+            "docs/99.templates/01.contracts/frontmatter.schema.json",
+            "docs/99.templates/02.templates/03.specs/task.template.md",
             "scripts/document_language.py",
             "scripts/validation/document_content.py",
         ):
@@ -416,17 +433,19 @@ class DocumentContentClosureTests(unittest.TestCase):
         )
         self.assertIn(owner, scope)
 
-    def test_deleted_last_guide_fails_unchanged_collection_index(self) -> None:
-        owner = PurePosixPath("docs/05.operations/guides/README.md")
+    def test_deleted_listed_runbook_fails_unchanged_collection_index(self) -> None:
+        # Q07 moved the last Stage 05 guide (GDE-0010) to docs/00.workspace, so
+        # the listed-member deletion case reads the runbook collection index.
+        owner = PurePosixPath("docs/05.operations/03.runbooks/README.md")
         reader_spec = importlib.util.spec_from_file_location(
-            "p05_guide_index_reader", ROOT / "scripts/validate-markdown-profiles.py"
+            "p05_runbook_index_reader", ROOT / "scripts/validate-markdown-profiles.py"
         )
         assert reader_spec is not None and reader_spec.loader is not None
         reader = importlib.util.module_from_spec(reader_spec)
         sys.modules[reader_spec.name] = reader
         reader_spec.loader.exec_module(reader)
         text = (ROOT / owner).read_text(encoding="utf-8")
-        changed = "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md"
+        changed = "docs/05.operations/03.runbooks/0010-github-app-gitops-onboarding-runbook.md"
         with tempfile.TemporaryDirectory() as temporary:
             temporary_root = Path(temporary)
             folder = temporary_root / owner.parent
@@ -453,7 +472,7 @@ class DocumentContentClosureTests(unittest.TestCase):
         self.assertIn(owner, scope)
 
     def test_new_incident_fails_unchanged_absence_router(self) -> None:
-        owner = PurePosixPath("docs/05.operations/incidents/README.md")
+        owner = PurePosixPath("docs/05.operations/04.incidents/README.md")
         text = (ROOT / owner).read_text(encoding="utf-8")
         with tempfile.TemporaryDirectory() as temporary:
             temporary_root = Path(temporary)
@@ -473,7 +492,7 @@ class DocumentContentClosureTests(unittest.TestCase):
             self.assertIn("DOC-INCIDENT-STATE", {item[0] for item in findings})
         scope = DOCUMENTS.scoped_document_content_paths(
             self.registry,
-            ("docs/05.operations/incidents/2026/inc-2026-new/incident.md",),
+            ("docs/05.operations/04.incidents/2026/inc-2026-new/incident.md",),
             self.current,
         )
         self.assertIn(owner, scope)

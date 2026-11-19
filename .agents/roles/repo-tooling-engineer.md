@@ -77,7 +77,7 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Per [work lifecycle](../workflows/work-lifecycle.md), show the failing case then the passing result and run the covering unit tests plus `python3 scripts/qa.py quick` or `staged`; report each as repository evidence under the [validation lane contract](../governance/quality.md#validation-lane-contract). Hosted and live lanes stay unobserved unless run. Review this role when its responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), show the failing case then the passing result and run the covering unit tests plus `python3 scripts/qa.py quick` or `staged`; report each as repository evidence under the [validation lane contract](../../docs/00.workspace/04.quality/quality.md#validation-lane-contract). Hosted and live lanes stay unobserved unless run. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
@@ -90,4 +90,4 @@ Per [work lifecycle](../workflows/work-lifecycle.md), show the failing case then
 - [supervisor](supervisor.md)
 - [Scripts instructions](../../scripts/AGENTS.md)
 - [Validation registry](../../scripts/validation/registry.json)
-- [Quality policy](../governance/quality.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md)

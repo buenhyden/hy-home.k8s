@@ -86,7 +86,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 ### Entry Points
 
 1. 같은 문제를 다루는 현재 Requirement Package를 먼저 확인하고 중복 package를 만들지 않는다.
-2. `../99.templates/templates/requirements/requirement-package.template.md`를 복사해 `####-<slug>.md`를 만든다. 템플릿은 재사용 가능하도록 `artifact_id`를 비워 두므로, 복사 직후 아직 발급되지 않은 다음 번호를 `REQ-####`로 할당하고 경로 번호와 일치시킨다.
+2. `../99.templates/02.templates/01.requirements/requirement-package.template.md`를 복사해 `####-<slug>.md`를 만든다. 템플릿은 재사용 가능하도록 `artifact_id`를 비워 두므로, 복사 직후 아직 발급되지 않은 다음 번호를 `REQ-####`로 할당하고 경로 번호와 일치시킨다.
 3. package 안의 기능·비기능·interface 요구에는 각각 `REQ-####-FR-####`, `REQ-####-NFR-####`, `REQ-####-IF-####` 형식의 안정 ID를 발급한다. 다른 문서에서도 축약형 `FR-####`가 아니라 전체 ID를 사용하며, 삭제된 ID를 재사용하지 않는다.
 4. 문제·목표·stakeholder 요구, 기능·비기능·interface 요구, 제약, acceptance 기준과 범위·비범위를 구현 독립적으로 작성한다.
 5. 관련 `../02.architecture/descriptions/`, `../02.architecture/decisions/`, `../03.specs/` 추적 링크를 함께 갱신한다. 변경 가능한 실행 계약과 interface 구현 산출물은 Stage 03에 둔다.
@@ -116,7 +116,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 #### Upstream and Downstream
 
 - [Docs README](../README.md)
-- [02.architecture/descriptions](../02.architecture/descriptions/README.md)
+- [02.architecture/descriptions](../02.architecture/01.descriptions/README.md)
 - [03.specs](../03.specs/README.md)
 - [Archive Index](../98.archive/README.md)
 
@@ -126,11 +126,11 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 
 ### Checks
 
-1. 이 stage에는 superseded·retired·deprecated 상태를 두지 않는다. 대체되거나 철회된 요구는 후속 문서의 `supersedes`와 Traceability에 ID를 남기고, 현재 소유 문서의 `Archived Lineage` 표에 요약한다. 같은 변경에서 삭제하기 전에는 [Document Lifecycle](../../.agents/governance/document-lifecycle.md)의 소비자·보존·권한·복구 확인을 거친다.
+1. 이 stage에는 superseded·retired·deprecated 상태를 두지 않는다. 대체되거나 철회된 요구는 후속 문서의 `supersedes`와 Traceability에 ID를 남기고, 현재 소유 문서의 `Archived Lineage` 표에 요약한다. 같은 변경에서 삭제하기 전에는 [Document Lifecycle](../00.workspace/03.process/document-lifecycle.md)의 소비자·보존·권한·복구 확인을 거친다.
 
 #### 요구사항 읽는 순서
 
 1. 현재 로컬 GitOps 플랫폼 기준은 [`0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md)와 `gitops/**`, `infrastructure/**`, `scripts/**` 정적 검증 증적이 소유한다.
 2. `approved` 문서는 현재 요구 권위다. downstream AD/ADR/Spec과 구현 증적을 함께 확인한다.
-3. 구현·운영 적용·완료 판정 전에 적용되는 승인된 근거나 별도로 검증한 범위별 승인을 확인한다. 초안은 해당 범위의 참고 입력으로 두고 문서 상태를 유지한다. 권한과 증거의 확인 기준은 [Document Lifecycle](../../.agents/governance/document-lifecycle.md#requirements)을 따른다.
-4. 과거 문서가 필요한 경우 Git history에서 복구한다(`git show <commit>:<path>`). 대체·완료된 문서는 현재 소유 문서의 Archived Lineage 표에 요약된다([ADR-0053](../02.architecture/decisions/0053-unvalidated-archive.md)).
+3. 구현·운영 적용·완료 판정 전에 적용되는 승인된 근거나 별도로 검증한 범위별 승인을 확인한다. 초안은 해당 범위의 참고 입력으로 두고 문서 상태를 유지한다. 권한과 증거의 확인 기준은 [Document Lifecycle](../00.workspace/03.process/document-lifecycle.md#requirements)을 따른다.
+4. 과거 문서가 필요한 경우 Git history에서 복구한다(`git show <commit>:<path>`). 대체·완료된 문서는 현재 소유 문서의 Archived Lineage 표에 요약된다([ADR-0053](../00.workspace/02.architecture/02.decisions/0053-unvalidated-archive.md)).

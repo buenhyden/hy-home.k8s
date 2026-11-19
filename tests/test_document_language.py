@@ -94,7 +94,7 @@ class ClassifyTests(unittest.TestCase):
     def test_templates_take_their_output_language(self):
         self.assertEqual(
             self.kind(
-                "docs/99.templates/templates/operations/runbook.template.md",
+                "docs/99.templates/02.templates/05.operations/runbook.template.md",
                 "common/template-operation-runbook",
                 "template",
                 "operation/runbook",
@@ -103,7 +103,7 @@ class ClassifyTests(unittest.TestCase):
         )
         self.assertEqual(
             self.kind(
-                "docs/99.templates/templates/specs/spec.template.md",
+                "docs/99.templates/02.templates/03.specs/spec.template.md",
                 "common/template-sdlc-spec",
                 "template",
                 "sdlc/spec",
@@ -335,7 +335,7 @@ class ValidatorTests(unittest.TestCase):
         self.assertEqual(self.codes([], english_only=texts), ["LANG-ENGLISH-ONLY"])
 
     def test_korean_common_agent_markdown_keeps_other_surfaces_english(self):
-        common_path = PurePosixPath(".agents/governance/quality.md")
+        common_path = PurePosixPath(".agents/governance/agent-execution.md")
         native_path = PurePosixPath(".codex/provider.md")
         texts = {
             common_path: f"## Overview\n\n{KO}\n",
@@ -408,6 +408,15 @@ class RegistryTests(unittest.TestCase):
     def test_consistent_contract_passes(self):
         self.assertEqual(self.faults(), [])
         self.assertEqual(self.faults(pending_paths=[".agents/README.md"]), [])
+        self.assertEqual(
+            self.faults(
+                korean_allowed_markdown_roots=[
+                    ".agents/",
+                    "docs/00.workspace/01.project/",
+                ]
+            ),
+            [],
+        )
 
     def test_contradictions_fail(self):
         for changes in (
@@ -416,6 +425,7 @@ class RegistryTests(unittest.TestCase):
             {"english_only_roots": [".agents"]},
             {"korean_allowed_markdown_roots": [".codex/"]},
             {"korean_allowed_markdown_roots": [".agents"]},
+            {"korean_allowed_markdown_roots": ["docs/00.workspace/"]},
             {"english_only_suffixes": ["md"]},
             {"english_sections": [""]},
             {"min_latin_words": 0},

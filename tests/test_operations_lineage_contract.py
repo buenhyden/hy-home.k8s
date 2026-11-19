@@ -43,8 +43,8 @@ class OperationsLineageContractTests(unittest.TestCase):
             profile,
             body_contract=replace(profile.body_contract, section="Related Documents"),
         )
-        first = PurePosixPath("docs/05.operations/guides/0001-example-guide.md")
-        second = PurePosixPath("docs/05.operations/guides/0002-example-guide.md")
+        first = PurePosixPath("docs/05.operations/01.guides/0001-example-guide.md")
+        second = PurePosixPath("docs/05.operations/01.guides/0002-example-guide.md")
         view = links.ProfileView(
             profile.profile_id, profile.profile_class, profile.mode
         )

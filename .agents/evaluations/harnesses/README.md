@@ -74,7 +74,7 @@ skill과 판본, provider·세션 입력을 보존한다. 주장된 점수마다
 #### Policy and Templates
 
 - [Agent evaluator responsibility](../../roles/agent-evaluator.md)
-- [Quality policy](../../governance/quality.md#agent-evaluation-evidence)
+- [Quality policy](../../../docs/00.workspace/04.quality/quality.md#agent-evaluation-evidence)
 
 ### Checks
 

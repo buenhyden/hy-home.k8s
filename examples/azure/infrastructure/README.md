@@ -91,7 +91,7 @@ what-if 증거를 얻으려면 승인된 Azure 구독과 운영자가 소유한 
 #### Reference Links
 
 - **Example boundary**: [Azure reference implementation](../README.md)
-- **Repository architecture**: Current local GitOps platform (`docs/02.architecture/descriptions/README.md`)
+- **Repository architecture**: Current local GitOps platform (`docs/02.architecture/01.descriptions/README.md`)
 - **GitOps**: [../gitops/README.md](../gitops/README.md)
 
 ## Checks

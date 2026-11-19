@@ -45,9 +45,10 @@ Stage 04는 사용하지 않는다. 모든 변경이 모든 stage의 새 문서�
 
 | Path | Purpose |
 | --- | --- |
+| [00.workspace](00.workspace/README.md) | 사람과 에이전트 공통 작업 기준(W): 어휘, 작업 시스템 구조, 절차, 품질·승인, 유지보수 |
 | [01.requirements](01.requirements/README.md) | 하나의 Package에 기능·비기능·interface 요구와 acceptance 통합 |
-| [02.architecture](02.architecture/README.md) | descriptions와 decisions |
-| [03.specs](03.specs/README.md) | spec.md, plan.md, tasks/tsk-####-slug.md |
+| [02.architecture](02.architecture/README.md) | 01.descriptions와 02.decisions |
+| [03.specs](03.specs/README.md) | spec.md, plan.md, 01.tasks/tsk-####-slug.md |
 | [05.operations](05.operations/README.md) | 운영 설명·통제·절차·사고 기록 |
 | [90.references](90.references/README.md) | 출처와 시점이 명확한 Audit·Research·Data 참고 근거 |
 | [98.archive](98.archive/README.md) | 검증하지 않는 historical archive. README와 구조만 유지 |
@@ -66,7 +67,7 @@ skill과 provider projection을 소유한다.
 
 ### Entry Points
 
-1. [SDLC 흐름](../.agents/governance/sdlc.md)으로 목적과 소유 stage를 정한다.
+1. [작업 기준 stage](00.workspace/README.md)의 SDLC 흐름(`00.workspace/03.process/sdlc.md`)으로 목적과 소유 stage를 정한다.
 2. [Stage 99 안내](99.templates/README.md)와 registry에서 최종 경로의
    profile을 하나로 선택하고 해당 template을 읽는다.
 3. profile이 정한 초기 상태·ID·section·relationship을 사용한다. 모든
@@ -76,8 +77,8 @@ skill과 provider projection을 소유한다.
    구현 순서·위험·검증·rollback은 Plan, 작업 결과는 개별 Task에 둔다.
 5. 경로 또는 내용 변경 시 해당 README와 현재 cross-link를 함께 점검한다.
    ID는 재사용하지 않고 다른 문서에서는 전체 ID로 추적한다.
-6. [문서 작성 정책](../.agents/governance/document-authoring.md)과
-   [품질·증거 정책](../.agents/governance/quality.md)에 따라 검증하고
+6. 문서 작성 정책(`00.workspace/03.process/document-authoring.md`)과
+   품질·증거 정책(`00.workspace/04.quality/quality.md`)에 따라 검증하고
    현재 Task에 결과·제한·다음 담당자를 기록한다.
 
 정적 검증은 live cluster 변경 승인이나 실제 provider 실행 증거가 아니다.
@@ -103,13 +104,13 @@ skill과 provider projection을 소유한다.
 #### Policy and Templates
 
 - [Governance Hub](../.agents/README.md)
-- [Document Lifecycle](../.agents/governance/document-lifecycle.md)
+- Document Lifecycle (`00.workspace/03.process/document-lifecycle.md`)
 - [Templates](99.templates/README.md)
 
 ### Checks
 
 1. 완료된 본문을 새 형식에 맞추려고 다시 쓰지 않는다. 더 이상 현재가 아닌
-   문서는 [문서 수명주기 정책](../.agents/governance/document-lifecycle.md)의
+   문서는 문서 수명주기 정책(`00.workspace/03.process/document-lifecycle.md`)의
    처분 전 확인을 거쳐 해당 stage를 떠난다. Git 이력만 남기는 처분은 확인된
    원본 `commit:path`에서 복구한다. Stage 98은 검증하지 않는 기록 보관소로,
    README와 disposition 디렉터리 구조만 유지한다. 현재 문서는 Archive 대신

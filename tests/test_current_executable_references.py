@@ -123,7 +123,7 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
         target = PurePosixPath("scripts/retired/deep/check-contract.py")
         recovered: list[PurePosixPath] = []
         diagnostics = self.validate(
-            "docs/03.specs/0001-example/tasks/tsk-0001-example.md",
+            "docs/03.specs/0001-example/01.tasks/tsk-0001-example.md",
             f"---\nstatus: completed\n---\n\nHistorical command: `python3 {target}`.\n",
             historical_path_exists=lambda path: recovered.append(path) or True,
         )
@@ -170,9 +170,9 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
     ) -> None:
         target = PurePosixPath("scripts/retired/deep/check-contract.py")
         for source, status in (
-            ("docs/02.architecture/decisions/0001-example.md", "rejected"),
+            ("docs/02.architecture/02.decisions/0001-example.md", "rejected"),
             (".agents/governance/example.md", "superseded"),
-            ("docs/05.operations/guides/example.md", "retired"),
+            ("docs/05.operations/01.guides/example.md", "retired"),
         ):
             with self.subTest(status=status):
                 recovered: list[PurePosixPath] = []

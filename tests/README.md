@@ -22,7 +22,7 @@ updated: "2026-11-17"
 배포, 원격 상태, live cluster 준비 상태를 주장하지 않는다.
 
 - [Scripts](../scripts/README.md)
-- Validation ownership ADR (`docs/02.architecture/decisions/README.md`)
+- Validation ownership ADR (`docs/02.architecture/02.decisions/README.md`)
 
 위의 승인된 결정이 검증 책임의 현재 owner다. 그 결정을 처음 실행한 완료 Spec과
 Task는 삭제되었고 Git history에서 복구한다. 그 문서들은 한 번 실행한 일을
@@ -36,7 +36,7 @@ Task는 삭제되었고 Git history에서 복구한다. 그 문서들은 한 번
 
 ### Interfaces
 
-- [Quality policy](../.agents/governance/quality.md)
+- [Quality policy](../docs/00.workspace/04.quality/quality.md)
 - [Work lifecycle](../.agents/workflows/work-lifecycle.md)
 
 #### Configuration Boundary
@@ -160,7 +160,7 @@ git diff --check
 경계 사례를 선택한다.
 
 완료 순서와 PASS/FAIL/DEFER/NOT_RUN/NOT_APPLICABLE의 의미는
-[Quality policy](../.agents/governance/quality.md)가 소유한다. 이 README는 현재
+[Quality policy](../docs/00.workspace/04.quality/quality.md)가 소유한다. 이 README는 현재
 테스트 진입점을 나열할 뿐 그 정책을 다시 정의하지 않는다.
 
 ### Failure Handling

@@ -36,7 +36,7 @@ Canonical sources are the documents linked or named in the opening paragraph and
 #### Local Obligations
 
 1. Profile `sdlc/requirement`; start from
-   `docs/99.templates/templates/requirements/requirement-package.template.md`
+   `docs/99.templates/02.templates/01.requirements/requirement-package.template.md`
    and name the file `####-<slug>.md`. Reuse an existing package for the same
    problem instead of creating a duplicate.
 2. Issue stable IDs `REQ-####-FR-####`, `REQ-####-NFR-####` and
@@ -48,7 +48,7 @@ Canonical sources are the documents linked or named in the opening paragraph and
    document checks may proceed within the writing scope. Before implementation,
    operation or completion, verify the applicable approved basis or separate
    scoped authority and keep the draft status intact. Follow the
-   [document lifecycle policy](../../.agents/governance/document-lifecycle.md#requirements)
+   [document lifecycle policy](../00.workspace/03.process/document-lifecycle.md#requirements)
    for the authority and evidence boundary.
 4. This stage has no `superseded`, `retired` or `deprecated` state. A replaced
    or completed document is summarized in the `Archived Lineage` table under

@@ -71,7 +71,7 @@ Architecture Description과 ADR은 구조 관점과 지속 선택을, Spec은 �
 
 - 구조 변경은 완결된 Requirement Package ID와 영향받는 Spec까지 추적한다.
 - 승인된 결정을 바꿀 때는 후속 ADR을 쓴다. 대체된 ADR은 해당 AD의
-  `Archived Lineage` 표에 요약하고 [문서 수명주기 정책](../governance/document-lifecycle.md)의
+  `Archived Lineage` 표에 요약하고 [문서 수명주기 정책](../../docs/00.workspace/03.process/document-lifecycle.md)의
   처분 전 조건을 확인한 뒤 같은 변경에서 삭제한다. 일부 조항만 개정한 경우에는
   기존 ADR을 보존한다.
 - 구현·운영·보안 영향은 각 책임 소유자에게 넘긴다. 모든 문서의 소유권을
@@ -85,7 +85,7 @@ Architecture Description과 ADR은 구조 관점과 지속 선택을, Spec은 �
 유지한다. 이 경계는 공통 작성·탐색 관심사와 배정된 문서 편집을 다루며, 모든
 단계 내용에 대한 권한은 아니다. 실질 결정은 각 단계 소유자에게, 정확한 양식은
 Stage 99에 있다. 더는 현행이 아닌 Stage 01~03 문서는 현행 소유 문서의
-`Archived Lineage` 표에 요약하고 [문서 수명주기 정책](../governance/document-lifecycle.md)의
+`Archived Lineage` 표에 요약하고 [문서 수명주기 정책](../../docs/00.workspace/03.process/document-lifecycle.md)의
 처분 전 조건을 확인한 뒤 삭제한다. 원본은 확인된 Git 이력에서 복구한다.
 Stage 98은 검증하지 않는 보관 자리다.
 
@@ -187,7 +187,7 @@ projection을 통해 추가한다. 새 역할 본문은 `status: "draft"`로 만
 없으므로 그 커밋 전에 staged 검증 결과를 읽는다. 작업이 도메인을 넘을 때는 소유권
 전환을 선언하고, 경계가 불분명하거나 충돌하면 에스컬레이션한다.
 
-증거와 인계는 [quality policy](../governance/quality.md)에 따라 기록한다. 활성
+증거와 인계는 [quality policy](../../docs/00.workspace/04.quality/quality.md)에 따라 기록한다. 활성
 Task의 범위가 바뀌면 책임을 다시 판단한다. 정확한 역할, 권한, skill, 인계
 구성은 agent registry에 있다.
 
@@ -199,10 +199,10 @@ Task의 범위가 바뀌면 책임을 다시 판단한다. 정확한 역할, 권
 
 #### Policy and Templates
 
-- [SDLC Flow](../governance/sdlc.md)
+- [SDLC Flow](../../docs/00.workspace/03.process/sdlc.md)
 - [Delegated Development](../workflows/delegated-development.md)
-- [Approval and Safety](../governance/approval-and-safety.md)
-- [Document Authoring](../governance/document-authoring.md)
+- [Approval and Safety](../../docs/00.workspace/04.quality/approval-and-safety.md)
+- [Document Authoring](../../docs/00.workspace/03.process/document-authoring.md)
 
 ### Checks
 

@@ -71,7 +71,7 @@ Run `.agents/workflows/work-lifecycle.md#completion` before returning results.
 
 ## Validation and Refresh
 
-Per [work lifecycle](../workflows/work-lifecycle.md), run `python3 scripts/validate-github-actions-security.py --root .` and `python3 scripts/qa.py staged`; report them as repository evidence under the [validation lane contract](../governance/quality.md#validation-lane-contract). A hosted result needs its exact SHA and run identity, and local execution of workflow steps is never reported as hosted. Review this role when its responsibility changes; update machine references only in the registry.
+Per [work lifecycle](../workflows/work-lifecycle.md), run `python3 scripts/validate-github-actions-security.py --root .` and `python3 scripts/qa.py staged`; report them as repository evidence under the [validation lane contract](../../docs/00.workspace/04.quality/quality.md#validation-lane-contract). A hosted result needs its exact SHA and run identity, and local execution of workflow steps is never reported as hosted. Review this role when its responsibility changes; update machine references only in the registry.
 
 ## Related Documents
 
@@ -82,4 +82,4 @@ Per [work lifecycle](../workflows/work-lifecycle.md), run `python3 scripts/valid
 - [security-auditor](security-auditor.md)
 - [supervisor](supervisor.md)
 - [GitHub surface](../../.github/repository-surface.md)
-- [Quality policy](../governance/quality.md)
+- [Quality policy](../../docs/00.workspace/04.quality/quality.md)

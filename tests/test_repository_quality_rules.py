@@ -122,7 +122,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
 
     def test_current_collection_index_header_uses_shared_navigation_contract(self):
         validator = self.document_validator
-        path = pathlib.PurePosixPath("docs/05.operations/guides/README.md")
+        path = pathlib.PurePosixPath("docs/05.operations/01.guides/README.md")
         text = (ROOT / path).read_text(encoding="utf-8")
         profile = validator.classify_path(self.document_registry, path)
         self.assertEqual(
@@ -201,7 +201,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
 
     def test_incident_state_tracks_each_record_kind_independently(self):
         validator = self.document_validator
-        path = pathlib.PurePosixPath("docs/05.operations/incidents/README.md")
+        path = pathlib.PurePosixPath("docs/05.operations/04.incidents/README.md")
         text = (ROOT / path).read_text(encoding="utf-8")
         profile = validator.classify_path(self.document_registry, path)
         self.assertEqual(
@@ -211,7 +211,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             with self.subTest(filename=filename), tempfile.TemporaryDirectory() as temp:
                 sample = (
                     pathlib.Path(temp)
-                    / "docs/05.operations/incidents/2026/inc-0001-example"
+                    / "docs/05.operations/04.incidents/2026/inc-0001-example"
                     / filename
                 )
                 sample.parent.mkdir(parents=True)
@@ -228,7 +228,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
     def test_document_inventory_rejects_unsafe_or_incomplete_scans(self):
         validator = self.document_validator
         registry = self.document_registry
-        guide = pathlib.PurePosixPath("docs/05.operations/guides/README.md")
+        guide = pathlib.PurePosixPath("docs/05.operations/01.guides/README.md")
         guide_profile = validator.classify_path(registry, guide)
         empty_index = "## Current Contents\n\n| Path | Purpose |\n| --- | --- |\n"
         with (
@@ -246,14 +246,14 @@ class RepositoryQualityRuleTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as temp:
             root = pathlib.Path(temp)
-            guides = root / "docs/05.operations/guides"
+            guides = root / "docs/05.operations/01.guides"
             guides.mkdir(parents=True)
             (guides / "linked.md").symlink_to(ROOT / guide)
             with self.assertRaises(content.BoundedInputError):
-                content._children(root, "docs/05.operations/guides", "file")
+                content._children(root, "docs/05.operations/01.guides", "file")
             with mock.patch.object(content.os, "scandir", side_effect=PermissionError):
                 with self.assertRaises(content.BoundedInputError):
-                    content._children(root, "docs/05.operations/guides", "file")
+                    content._children(root, "docs/05.operations/01.guides", "file")
 
         with tempfile.TemporaryDirectory() as temp:
             root = pathlib.Path(temp)
@@ -269,7 +269,9 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             tempfile.TemporaryDirectory() as outside,
         ):
             root = pathlib.Path(temp)
-            incident = pathlib.PurePosixPath("docs/05.operations/incidents/README.md")
+            incident = pathlib.PurePosixPath(
+                "docs/05.operations/04.incidents/README.md"
+            )
             incident_profile = validator.classify_path(registry, incident)
             incident_parent = root / "docs/05.operations"
             incident_parent.mkdir(parents=True)
@@ -285,7 +287,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
     def test_incident_inventory_reports_noncanonical_depth(self):
         validator = self.document_validator
         registry = self.document_registry
-        path = pathlib.PurePosixPath("docs/05.operations/incidents/README.md")
+        path = pathlib.PurePosixPath("docs/05.operations/04.incidents/README.md")
         profile = validator.classify_path(registry, path)
         text = (ROOT / path).read_text(encoding="utf-8")
         for parts in (
@@ -294,7 +296,9 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         ):
             with self.subTest(parts=parts), tempfile.TemporaryDirectory() as temp:
                 root = pathlib.Path(temp)
-                misplaced = root / "docs/05.operations/incidents" / pathlib.Path(*parts)
+                misplaced = (
+                    root / "docs/05.operations/04.incidents" / pathlib.Path(*parts)
+                )
                 misplaced.parent.mkdir(parents=True)
                 misplaced.write_text("record", encoding="utf-8")
                 issues = validator.document_content_diagnostics(
@@ -509,11 +513,11 @@ class RepositoryQualityRuleTests(unittest.TestCase):
     def test_task_evidence_rows_cite_commands_as_records(self):
         record = self.rules["is_task_evidence_record"]
         row = "| EVD-011 | [VAL-X](../spec.md) | WORK-001 | Review | head | FAIL | scan of `kubectl apply` and `git push` removed | yes | none |"
-        task = "docs/03.specs/0140-archive-check-removal/tasks/tsk-0001-archive-check-removal.md"
+        task = "docs/03.specs/0140-archive-check-removal/01.tasks/tsk-0001-archive-check-removal.md"
         self.assertTrue(record(task, row))
         self.assertFalse(record(task, "Run `kubectl apply -f app.yaml` now."))
         self.assertFalse(record(task, "| WORK-001 | `kubectl apply` |"))
-        self.assertFalse(record("docs/05.operations/runbooks/0001-x.md", row))
+        self.assertFalse(record("docs/05.operations/03.runbooks/0001-x.md", row))
         self.assertFalse(
             record("docs/03.specs/0140-archive-check-removal/spec.md", row)
         )
