@@ -99,8 +99,9 @@ fences.
 
 ### Blockers and Decisions
 
-The Spec and Plan are draft until the user approves them. ADR-0064 is
-proposed until the user accepts it.
+On 2026-11-19 the user approved the Spec and Plan (EVD-011) and accepted
+ADR-0064 (EVD-012), each over the reviewed bytes of commit `8557aa8e`.
+Criterion acceptance stays a separate decision.
 
 ### Lifecycle Traceability
 
@@ -126,6 +127,8 @@ proposed until the user accepts it.
 | EVD-008 | [VAL-CUTOVER-002](../spec.md#criteria) | WORK-002 | automated | Same tests after the three fixes, and the whole module | pinned `hyhome-validation` venv | `python -m unittest tests.test_document_lifecycle_cumulative_history` | 0 | PASS | this Task | true | none |
 | EVD-009 | [VAL-CUTOVER-003](../spec.md#criteria) | WORK-003 | automated | Staged cutover index against `4b2b670d`, including the workspace architecture split | pinned `hyhome-validation` venv | `python3 scripts/qa.py staged` | 1 | FAIL | 23 of 24 gates PASS; `selected-nonstyle` fails because detect-secrets reads the trusted HEAD `.secrets.baseline`, which names the pre-move paths of 17 unchanged findings. Stage 99 rule 6 needs the baseline commit first | true | none |
 | EVD-010 | [VAL-CUTOVER-003](../spec.md#criteria) | WORK-003 | automated | Exact index of commit `8557aa8e` on `0806c3b0`, whose `.secrets.baseline` names the moved paths | pinned `hyhome-validation` venv; the `staged-qa` pre-commit hook | `python3 scripts/qa.py staged` | 0 | PASS | commit `8557aa8e`; every selected gate, `selected-nonstyle` included, passed in the hook | true | EVD-005, EVD-009 |
+| EVD-011 | [VAL-CUTOVER-001](../spec.md#criteria) | WORK-001 | observation | {"actor": "user", "approval_ref": "user message of 2026-11-19 in this session, after reviewing the committed package, asking to proceed with the Task evidence, the approval, the post-approval residue cleanup and the worktree cleanup", "review_ref": "the user's own review of commit 8557aa8e", "scope": ["SPEC-0224", "SPEC-0224-PLAN-0001"], "reviewed_spec_sha256": "4ae07f633c01a4013e513f7e941d7c72e4e6d064250e80eaab6ed36ecc931155", "reviewed_plan_sha256": "4e6f6a45ace0569d510a983b88574fde0b475f036ca9449b0c556db07eaa996f", "validity": "confirmed", "revocation": "none"} | none | Spec/Plan approval | none | PASS | this Task | true | none |
+| EVD-012 | [VAL-CUTOVER-001](../spec.md#criteria) | WORK-001 | observation | {"actor": "user", "approval_ref": "user message of 2026-11-19 in this session, after reviewing the committed package, asking to proceed with the Task evidence, the approval, the post-approval residue cleanup and the worktree cleanup", "scope": ["ADR-0064"], "reviewed_adr_sha256": "9a6012f505b7eb40fde85a452fd40aa94e3d3161ee84cd6eb052d88ec4cf12c5", "validity": "confirmed", "revocation": "none"} | none | ADR acceptance | none | PASS | this Task | true | none |
 
 ### Resolution Links
 
@@ -143,8 +146,7 @@ EVD-010 resolves EVD-005 and EVD-009. EVD-001, EVD-006 and EVD-007 are non-requi
 
 ### Remaining Conditions
 
-The user's approval of the Spec and Plan, acceptance of the criteria and of
-ADR-0064; then the residue rows SDLC-H01 (closed by this change) and DOC-H01
+The user's acceptance of the criteria; then the residue rows SDLC-H01 (closed by this change) and DOC-H01
 (narrowed to ID renumbering, history rewrite and Stage 98 disposal) in the
 SPEC-0223 Task. Push and pull request stay with the user.
 

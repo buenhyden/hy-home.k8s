@@ -2,7 +2,7 @@
 title: "Workspace Layer Physical Owner and Numbered Categories"
 version: "0.1.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-11-19"
 artifact_id: "ADR-0064"
@@ -62,9 +62,9 @@ sequence. A move keeps every document ID, rule ID and historical body
 ### Authority and Effect
 
 The user adopted the physical owner on 2026-11-18 (SDLC-H01) and the path plan
-on 2026-11-19 (DOC-H01), and asked for this change on 2026-11-19. The
-implementation is in SPEC-0224; this decision takes effect for the record when
-the user accepts it.
+on 2026-11-19 (DOC-H01), asked for this change on 2026-11-19, and accepted this
+decision on 2026-11-19 after reviewing it (SPEC-0224 Task EVD-012). The
+implementation is in SPEC-0224, commits `0806c3b0` and `8557aa8e`.
 
 #### Sources
 

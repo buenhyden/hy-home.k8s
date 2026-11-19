@@ -2,7 +2,7 @@
 title: "Workspace Path Cutover"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-11-19"
 artifact_id: "SPEC-0224"
