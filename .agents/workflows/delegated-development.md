@@ -1,10 +1,10 @@
 ---
 title: "Delegated Development"
-version: "1.4.0"
+version: "1.5.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-19"
 ---
 
 # Delegated Development
@@ -70,6 +70,12 @@ roster or tool inventory.
    conflict to the supervising workflow or human.
 5. Run independent tasks concurrently only when their ownership is disjoint;
    serialize dependent implementation and reconcile shared boundaries.
+   `scripts/work_parallel.py` enforces this for command workers: it locks each
+   unit's owned paths and named shared resources with fencing generations,
+   runs each attempt in its own clone, refuses a result outside the owned
+   paths or from an expired attempt, and reruns the integration check on the
+   combined candidate. A clone separates files only; it is not a sandbox, and
+   a worker's own PASS never replaces the integration check.
 6. Require returning workers to report the
    [quality handoff fields](../governance/quality.md#handoff-evidence-contract).
    Review actual changes and commands; a worker's assertion alone is not

@@ -1,10 +1,10 @@
 ---
 title: "W00 v14.7 Delta Intake"
-version: "0.2.47"
+version: "0.2.48"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
-updated: "2026-11-18"
+updated: "2026-11-19"
 artifact_id: "SPEC-0161-TSK-0001"
 parent_ids: ["SPEC-0161-PLAN-0001"]
 ---
@@ -327,6 +327,8 @@ No separate blocker or decision list is kept here; a blocker and its resume cond
 | EVD-212 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | DOC-PATH-PLAN path plan and rehearsal on a throwaway copy | User answer `Adopt at Q07` to SDD-PATHS, 2026-11-19; `git archive` of `59e418e0` into a scratch Git repository outside the checkout; two one-off rewrite passes for the folder moves of the DOC-PATH-PLAN plan table; `validate-agent-governance.py`, `validate-document-contract-registry.py`, `validate-markdown-profiles.py`, `validate-links-and-owners.py`, `validate-document-lifecycle.py`, `validate-knowledge-surface.py`, `validate-work-residue-ledger.py`, `validation/repository/quality.py` and `validate-affected-surfaces.py` run on the copy; `document-generator.py` for `docs/03.specs/0001-first-spec/spec.md` after removing the copy's three packages; Python 3.12.3 in `~/.venvs/hyhome-validation` | PASS | Path strings and parent-relative links moved mechanically in 149 files, and the escaped registry and code patterns in 5 more. After that, agent governance, lifecycle, knowledge surface and the residue ledger passed on the renamed copy. The remaining failures name the consumers that need hand edits: the alternation over `audits`, `data` and `research` in the registry README route and in `validate-links-and-owners.py`; the `contracts/` exclusion of the `template-documents` surface in `scripts/validation/registry.json` (SURFACE-PATH-AMBIGUOUS); and the segment tuple `("docs", "99.templates", "templates")` in `validate-document-contract-registry.py` (template path is not terminal). The five EXECUTABLE-HISTORY errors and the uncovered `docs/98.archive/README.md` route appear on the unrenamed copy too, so the move does not cause them. The generator refused `SPEC-0001` because the Archived Lineage of REQ-0004 reserves it, and the lifecycle check refused the removal of the three packages because none is finished. No target path exists in the checkout, no name under `docs/` is non-ASCII or collides by case, and `docs/` holds no symlink. The rehearsal did not change the checkout. The copy and its scripts stay in the session scratchpad outside the checkout, because their deletion was denied in this session; they are not consumed by any check. | false | none |
 | EVD-213 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W10-FORECAST forecast store and SDLC-R038 | Branch `claude/w10-forecast` from `fde994e6`; new `scripts/work_forecast.py` and `tests/test_work_forecast.py`, the module first run absent; registry validator `work-forecast-regressions` with its routes; `.agents/governance/sdlc.md` 4.3.0; an independent read-only `code-reviewer` sub-agent, 2026-11-19; Python 3.12.3 | PASS | Nine first cases failed against the absent module, then passed. The review found three blockers: an `insert or replace` rewrote an outcome around the update and delete triggers, a started forecast could be superseded so its miss left the score, and a clock moved backwards stored a negative actual. It also found four should-fix items: unstarted and open records vanished from the score, one task reference could hold several live forecasts, `empirical` was printed at N 1, and SDLC-R038 claimed more than the tool enforces. Five new cases failed against that code; all 14 pass after the fixes. Replacing inserts are refused, each row carries a digest chained to its forecast that every read recomputes, only an unstarted forecast is superseded, the clock may not go backwards, every group counts censored, open, unstarted and superseded records, and every forecast is labelled uncalibrated. | true | none |
 | EVD-214 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W10-FORECAST real staged QA runs measured by the store | `python3 scripts/work_forecast.py forecast`, `start`, `finish` and `score` around `python scripts/qa.py staged` on this branch's index, 2026-11-19, in `.workspace-memory/forecast.sqlite3` | PASS | Run 1, on the first store version, started at 21:44:56Z with P30 240, P50 420 and P80 720 seconds; it was invalid. Its 15 gates passed, but QA returned 1 because the selected source files changed while it ran, from the review fixes, and its finish could not be written because the schema had changed. Its output file closed about 640 seconds later by file time, and that store was kept as `forecast.prerelease.sqlite3`, unscored. Run 2 is record 1 of the new store: forecast at 21:56:28Z with P30 480, P50 620 and P80 850 seconds, digest `b653c24ee893`; it started at 21:56:33Z and completed in 647.6 seconds with all 15 gates PASS. The score for `qa-staged`, elapsed seconds, shows N 1: coverage 0, 0 and 1 for P30, P50 and P80, and nothing censored, open or unstarted. Run 3 is record 2: forecast at 22:07:37Z with P30 560, P50 650 and P80 800 seconds and sample size 1, still uncalibrated, digest `d87c951f3687`; it measures the final QA of this change, and its outcome is in the store. One run is no calibration. | false | none |
+| EVD-215 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W10-PARALLEL dispatcher and regressions | Branch `claude/w10-parallel` from `891c9deb`; new `scripts/work_parallel.py` and `tests/test_work_parallel.py`, registered as `work-parallel-regressions`; `python3 tests/test_work_parallel.py`, 2026-11-19 | PASS | Test-first: the first 16 tests failed with the module missing, then passed. An independent code review found 2 blocking defects, both reproduced: a rename into an owned directory hid the deletion of an unowned file, and stripping the first NUL-separated path let a directory named by a single space, holding `a.md`, pass as `docs/a.md`. It also found 10 should-fix items: a 4-second kill wait on a zombie leader, sweep liveness by command line, a run aborted by one unit's git error, a partial clone left behind, an integration check that ignored cancel and sweep, unbounded git output and plan reads, exact-key cross-run locks, ignored output dropped silently, a fencing path untested at dispatch, and sweep gaps. Each got a failing test first and was fixed: `--no-renames` with byte-exact paths, reaping during the group kill, a `dispatcher.lock` held for the run's life, per-unit failure, removal of a partial clone, a cancellable integration check carrying the run marker, git output and plan reads bounded at 16 MiB and 1 MiB, shared ancestor locks, an `ignored` list in the report, and a sweep that kills an exited leader's surviving group. Staged QA then failed `work-parallel-regressions`. The cause: `qa.py` runs each gate with SIGINT and SIGTERM blocked, a Python worker inherited that mask, so SIGTERM never reached it, and a cancelled worker finished a write outside its clone before the SIGKILL 2 seconds later. A test that blocks the signals itself failed first; workers and the integration check now clear the mask before exec, and the CLI unblocks SIGINT and SIGTERM. The second QA run failed the same gate with a 4.5-second cancel: the lane runner is a child subreaper, so a killed worker's orphaned grandchild stayed its unreaped zombie, and `killpg(pgid, 0)` succeeds for a group of zombies. A test that makes itself a subreaper failed first; the group now counts as alive only while `/proc/<pid>/stat` shows a member that is not a zombie. 27 tests pass plainly, with the signals blocked, and through the lane's bounded runner. | false | none |
+| EVD-216 | [VAL-DELTA-001](../spec.md#criteria) | WORK-001 | W10-PARALLEL real runs on this repository with shell workers | `python3 scripts/work_parallel.py run` on HEAD `891c9deb`, with the real brief preflight, three units each running a test module and appending to `scripts/README.md`, `tests/README.md` or `infrastructure/README.md`; 12 CPUs, 31 GiB; 2026-11-19 | PASS | The brief's first revision was refused for all units with `PARALLEL_BRIEF: material input changed` after this branch edited `scripts/README.md`, so the preflight stops a stale brief on the real path; revision 2 with current hashes ran. With units `a` and `c` sharing `k3d:test-cluster`, parallel runs took 7.68 and 7.56 seconds and serial runs 8.63 and 8.91 seconds, and `c` started only after `a` ended. Without the shared resource, parallel runs took 6.95 and 7.43 seconds and serial runs 8.45 and 8.29 seconds. Every elapsed time includes clone setup of 1.1 to 1.5 seconds and integration of 0.6 to 0.9 seconds; all runs completed with integration PASS. N is 2 per mode, so the gain of about 13 to 14 percent describes this host and plan only. A SIGTERM to a run cancelled every unit, skipped integration and left no recorded process or clone. A SIGKILL of the dispatcher left both workers running; `sweep` then killed them and removed the run directory. The source checkout was never written. No service, cluster or container was started. | false | none |
 
 #### Edition Delta
 
@@ -3310,6 +3312,55 @@ merge.
 | Long-run calibration | Not accumulated: N 1 | EVD-214 | operator, as runs accumulate |
 | Codex creating and reading the same record | UNVERIFIED | W10-H01 | W10 |
 
+#### W10-PARALLEL (4.2.0)
+
+The 2026-11-19 request applies the 4.2.0 W10-PARALLEL prompt from merged
+`891c9deb`, limited to that prompt. The designs read were D10, D11 and D08,
+with D25 for the open items. The prerequisites W07-ADAPTER and W09-ENV are
+complete. Before this change, concurrent delegation existed only as a rule in
+`delegated-development.md`; no dispatcher, lease or fencing code existed.
+
+**Decision.** Asked on 2026-11-19 which workers the real runs use, the user
+chose shell workers only, so no model usage was spent. Real provider workers
+stay W10-H02.
+
+**Design.**
+
+- The plan is a transient projection of the Task. Each unit names its inputs,
+  outputs, shared resources, services, brief action and command, so
+  parallelism follows from the dependency graph, not from role names.
+- Each attempt runs in its own shared clone of the base commit, with its
+  upstream patches applied.
+- Locks are taken in the run and across runs. Each exclusive lock carries an
+  increasing generation, which is the fencing token; promotion consumes it.
+- A unit's result is a patch. The integrator applies the patches in a fresh
+  clone and reruns the integration check there. The source checkout is never
+  written.
+- Services reuse the closure and limit of `test_cluster.py`, applied to the
+  union of running units.
+- The brief preflight of `validate-execution-brief.py` runs for every attempt.
+- The rejected alternative, Git worktrees, shares the source repository's
+  refs and needs a forced removal for a dirty tree.
+
+**Prior forecast for this work.** Store record 3, digest `40c4b51e56c4`, fixed
+at 2026-11-18T22:37:06Z before any code: elapsed from branch creation to merge,
+P30 60, P50 90 and P80 140 minutes, uncalibrated. Its outcome is recorded in
+the store at the merge.
+
+| Item | Disposition | Basis | Next owner |
+| --- | --- | --- | --- |
+| Work units with inputs, outputs, dependencies and completion check | CHANGED | EVD-215 | none |
+| Ownership and locks for files, shared resources and services, in the run and across runs | CHANGED | EVD-215 | none |
+| Brief, Task and base revision passed to each worker; quota from CPU, memory and service limits | CHANGED | EVD-215 | none |
+| Fencing, timeout and retry, failure isolation, user cancel, dispatcher death | VERIFIED | EVD-215, EVD-216 | none |
+| Integration check rerun on the combined candidate | VERIFIED | EVD-215, EVD-216 | none |
+| Two independent units and one shared-resource unit on this repository | VERIFIED | EVD-216 | none |
+| No lost write, orphan or run after cancel | VERIFIED | EVD-216 | none |
+| No whole-service start: whole, wildcard and over-limit unions refused | CHANGED | EVD-215 | none |
+| Gain over serial with setup and integration included | Measured, N 2 per mode: about 13 to 14 percent | EVD-216 | none |
+| Real provider workers (`claude -p`, `codex exec`) | RUNTIME_ONLY by the user's choice | W10-H02 | user, W10 |
+| OS containment of a worker: `setsid`, writes outside its clone, total disk use | Limit recorded: a clone separates files only | W10-H03 | W10 |
+
 ### Resolution Links
 
 The Resolves column of the evidence table under Results names the earlier evidence row that each PASS row closes.
@@ -3433,6 +3484,8 @@ Added 2026-11-14 under SPEC-0191 (W03-D47), the live work residue table. Each ro
 | SDLC-H01 | No legacy row: the user adopted `docs/00.workspace/` as the physical owner of the W layer on 2026-11-18 and chose to move it once with the final path cutover. The move takes the W rows of the SDLC-R036 table and splits approval and safety along its rule lists, updating routers, validators, registry routes and links in one change (EVD-209) | open | Q07 | In the Q07-CUTOVER task, together with the SDD-PATHS renumbering | none |
 | DOC-H01 | No legacy row: the DOC-PATH-PLAN path plan, adopted by the user on 2026-11-19 (SDD-PATHS), with its hand-edit consumers and preconditions; the category moves, the W owner moves of SDLC-H01, the renumbering and the Stage 98 disposal run once at the cutover after a full validator run on a copy (EVD-212) | open | Q07 | In the Q07-CUTOVER task, after every package is closed and Q07-H01 is converted | none |
 | W10-H01 | No legacy row: a Codex session creating, starting, finishing and scoring a record in the same `.workspace-memory/forecast.sqlite3` that Claude used; the CLI is provider-neutral source, but no Codex run was made (EVD-214) | open | W10 | At the next authorized Codex session in this workspace | none |
+| W10-H02 | No legacy row: real provider workers (`claude -p` or `codex exec`) dispatched by `scripts/work_parallel.py`. The user chose shell workers on 2026-11-19 to spend no model usage, so provider delegation through the dispatcher is unobserved (EVD-216) | open | W10 | When the user authorizes model usage for provider workers | none |
+| W10-H03 | No legacy row: a worker runs with the caller's own permissions. A process that calls `setsid` leaves the killed group, a worker can write outside its clone, total disk use has no quota, and a worker started in the moment before the dispatcher saves its state is not in `state.json` (EVD-215). OS containment, such as a cgroup or a dedicated sandbox, would close these | open | W10 | Before an untrusted or provider worker is dispatched | none |
 | W07-H04 | No legacy row: the `tools` placeholder `__READ_GREP_GLOB__` of `docs/99.templates/templates/runtime/claude-agent.template.md` predates SPEC-0098, which gives every role's Claude scope `Bash` (native builds from 2.1.117 drop `Grep` and `Glob`). Found by the SPEC-0211 W03-H35 template read at `bb0c5168`. Recorded under SPEC-0211 (user answer "Record both as residue (Recommended)", 2026-11-15) | terminal | W07 | When W07 starts (provider projections) | EVD-144 |
 | W05-H09 | No legacy row: remove the checks of finished one-time transitions and the compatibility branches for older registry generations found by the SPEC-0219 audit, with their tests, and give any guarantee they still hold to a current contract. The audit names `RETIRED_REFERENCE_ALIASES` in `scripts/validate-links-and-owners.py`, the `docs/00.agent-governance` absence test, the retired progress-ledger and full/ci QA mode checks, the legacy empty-body rule of `validate-markdown-profiles.py`, the old Task and Requirement form layouts in tests, the legacy idempotency-key test of the memory store, the provenance-string assertions on the registry `migration.meaning_map`, and the readers of registry majors 10 to 19. Overlaps: W05-H06 (`done` and `archived` branches) and W05-H08 (validator and schema points) stay separate; W03-H11 holds the qa-runner fixture branch name | terminal | W05 | At the next change to a file that holds the retired aliases or readable majors | EVD-185 |
 | W05-H10 | No legacy row: SDLC-R034 conflict order and one-change-set rule. A test or downstream document edited without its owner is refused only by semantic review; split from W05-H05 on 2026-11-18 | terminal | W05 | When a change-set selection rule can name each owner of a test or downstream document | EVD-187 |
