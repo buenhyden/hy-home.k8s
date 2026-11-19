@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import io
 import json
 import sys
 import tempfile
@@ -101,7 +102,14 @@ class TestClusterTest(unittest.TestCase):
         directory = self.root / ".workspace-test" / run
         directory.mkdir(parents=True)
         (directory / "state.json").write_text(
-            json.dumps({"run_id": run, "cluster": f"hyk8s-test-{run}"} | extra)
+            json.dumps(
+                {
+                    "run_id": run,
+                    "cluster": f"hyk8s-test-{run}",
+                    "authority": "fixture:approval",
+                }
+                | extra
+            )
         )
 
     def test_plan_adds_the_namespace_provider_in_order(self) -> None:
@@ -202,9 +210,50 @@ class TestClusterTest(unittest.TestCase):
             mock.patch.object(CLUSTER, "free_port", return_value=40123),
         ):
             with self.assertRaisesRegex(CLUSTER.ClusterError, "CLUSTER_STEP_FAILED"):
-                CLUSTER.up(self.root, ["platform-network-policies"], run_id="abc12345")
+                CLUSTER.up(
+                    self.root,
+                    ["platform-network-policies"],
+                    run_id="abc12345",
+                    authority="fixture:approval",
+                )
         self.assertEqual(calls[-1], ["k3d", "cluster", "delete", "hyk8s-test-abc12345"])
         self.assertFalse((self.root / ".workspace-test" / "abc12345").exists())
+
+    def test_up_names_its_authority_or_is_refused_before_any_action(self) -> None:
+        with mock.patch.object(CLUSTER, "_run") as run:
+            for authority in (None, "", "   ", 123):
+                with self.subTest(authority=authority):
+                    with self.assertRaisesRegex(
+                        CLUSTER.ClusterError, "CLUSTER_AUTHORITY"
+                    ):
+                        CLUSTER.up(
+                            self.root,
+                            ["platform-network-policies"],
+                            run_id="abc12345",
+                            authority=authority,
+                        )
+            run.assert_not_called()
+        self.assertFalse((self.root / ".workspace-test" / "abc12345").exists())
+        # Mocked so a regression can never reach a real cluster tool.
+        with (
+            mock.patch.object(
+                CLUSTER, "_run", side_effect=AssertionError("live tool reached")
+            ),
+            mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
+            self.assertRaises(SystemExit) as exited,
+        ):
+            CLUSTER.main(["--root", str(self.root), "up", "platform-network-policies"])
+        self.assertEqual(exited.exception.code, 2)
+        self.assertIn("--authority", stderr.getvalue())
+
+    def test_probe_refuses_a_run_that_names_no_authority(self) -> None:
+        self.state("abc12345", authority=None)
+        with mock.patch.object(CLUSTER, "_run") as run:
+            with self.assertRaisesRegex(CLUSTER.ClusterError, "CLUSTER_AUTHORITY"):
+                CLUSTER.probe(
+                    self.root, "abc12345", "192.168.0.13:443", "192.168.0.0/24"
+                )
+        run.assert_not_called()
 
     def test_labels_are_read_from_the_node_containers(self) -> None:
         output = "hyk8s-test-abc12345 abc12345\nhyk8s-test-abc12345 abc12345\n"
@@ -266,11 +315,17 @@ class TestClusterTest(unittest.TestCase):
             mock.patch.object(CLUSTER, "free_port", return_value=40123),
         ):
             with self.assertRaises(CLUSTER.ClusterError):
-                CLUSTER.up(self.root, ["platform-network-policies"], run_id="abc12345")
+                CLUSTER.up(
+                    self.root,
+                    ["platform-network-policies"],
+                    run_id="abc12345",
+                    authority=" fixture:approval ",
+                )
         record = json.loads(
             (self.root / ".workspace-test/abc12345/state.json").read_text()
         )
         self.assertEqual(record["status"], "failed")
+        self.assertEqual(record["authority"], "fixture:approval")
 
     def test_up_refuses_a_name_that_already_exists(self) -> None:
         with (
@@ -280,7 +335,12 @@ class TestClusterTest(unittest.TestCase):
             mock.patch.object(CLUSTER, "_run") as run,
         ):
             with self.assertRaisesRegex(CLUSTER.ClusterError, "CLUSTER_EXISTS"):
-                CLUSTER.up(self.root, ["platform-network-policies"], run_id="abc12345")
+                CLUSTER.up(
+                    self.root,
+                    ["platform-network-policies"],
+                    run_id="abc12345",
+                    authority="fixture:approval",
+                )
         run.assert_not_called()
 
     def test_run_ids_are_short_ascii(self) -> None:

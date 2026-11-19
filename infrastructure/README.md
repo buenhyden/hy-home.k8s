@@ -202,7 +202,11 @@ rollback은 백업 파일을 `~/.kube/config`로 되돌리는 방식이다.
 - `plan APP...`은 선택한 root Application의 manifest에서 필요한 namespace
   제공 앱을 더해 closure를 만든다. 빈 선택, `all`·와일드카드, App-of-Apps
   root, 원격 chart 또는 CRD가 필요한 앱, 4개를 넘는 closure는 거부한다.
-- `up APP...`은 `hyk8s-test-<run>` 클러스터를 server 1개, load balancer 없이,
+- `up APP... --authority REF`는 이 run을 허가한 운영자 승인을 `REF`로
+  이름 붙여야 실행되고, 없거나 빈 값이면 어떤 도구도 호출하기 전에 거부한다.
+  `REF`는 run 상태 파일에 기록될 뿐 승인의 진위를 증명하지 않는다
+  (`infrastructure/AGENTS.md` 규칙 1). `up`은 `hyk8s-test-<run>` 클러스터를
+  server 1개, load balancer 없이,
   API를 `127.0.0.1`에만 열어 만들고 node에 run 라벨을 붙인다. kubeconfig는
   Git이 무시하는 `.workspace-test/<run>/`에만 두며 모든 도구가 그 파일만
   쓴다. 실패나 중단 시 자기 클러스터를 지운다.

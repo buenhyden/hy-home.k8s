@@ -65,11 +65,21 @@ updated: "2026-11-17"
 - `jq`
 - `openssl`
 - `rg` (`ripgrep`)
-- `VAULT_TOKEN` 환경변수
+- 기본 명령: `ip`, `ss`, `awk`, `sed`, `timeout`
+- 커널 설정: `fs.inotify.max_user_instances`가 512 이상이어야 한다.
+- k8s router 주소: `K8S_ROUTER_IP`(기본 `192.168.0.14`)가 이 호스트에 할당되어
+  있어야 하고, cluster를 만들 때 그 주소의 `80`, `443`이 비어 있어야 한다.
+- 대화형 터미널: `bootstrap-local.sh`는 Vault token을 `/dev/tty`에서 숨김
+  입력으로 받으며 환경변수로 받지 않는다.
+- 인증서 파일: `CERT_DIR`(기본 `secrets/certs/`)의 `cert.pem`, `key.pem`,
+  `rootCA.pem`, `rootCA-key.pem`. Vault CA는 `VAULT_CA_FILE`(기본
+  `rootCA.pem`)이다. 이 파일들은 커밋하지 않는다.
 - 외부 서비스 런타임 준비:
-  - OpenBao, Vault API 호환 (`https://openbao.hy.home.arpa`)
-  - PostgreSQL write/read 포트
-  - Valkey 접근 경로
+  - OpenBao, Vault API 호환. `VAULT_ADDR`(기본
+    `https://openbao.hy.home.arpa`)은 `https://`여야 한다.
+  - Valkey(필수): `VALKEY_ADDR:VALKEY_PORT`, 기본 `192.168.0.13:26379`
+  - PostgreSQL 관리·개발 프로필(선택): Docker 호스트 loopback의 `25432`,
+    `25433`. 닫혀 있으면 경고만 한다.
 
 ### First Use
 
@@ -95,8 +105,8 @@ cd hy-home.k8s
 
 - Vault가 접근 가능하고 unseal 상태다.
 - `secret/platform/argocd`에 `valkey_password`가 존재한다.
-- PostgreSQL write/read 포트가 열려 있다.
-- Valkey가 저장소 문서에 정의된 호스트/포트로 노출된다.
+- Valkey가 저장소 문서에 정의된 호스트/포트로 노출된다(필수).
+- PostgreSQL 관리·개발 프로필은 선택이며, 닫혀 있으면 스크립트가 경고만 한다.
 
 필요한 확인 방법은 runbook (`docs/05.operations/runbooks/README.md`)에 정리되어 있다.
 

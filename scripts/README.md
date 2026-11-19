@@ -82,7 +82,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `workspace_memory.py` | Claude와 Codex 세션이 공유하는 workspace memory 저장소. memory는 결정 맥락일 뿐 Task 상태나 증거가 아니다. |
 | `session_capture.py` | 이 workspace의 Claude·Codex 세션 수명주기 hook과 transcript cursor scan으로 위치·구조만 기록하는 로컬 세션 수집기. 본문은 복사하지 않으며 memory나 Task 증거가 아니다. |
 | `session_analysis.py` | 세션 수집 기록을 Asia/Seoul 날짜별로 결정론적으로 집계해 개선 후보를 만드는 예약 분석. lease·재시도·취소·따라잡기를 갖추며, 후보는 검토 뒤에만 memory 후보나 Task 참조가 된다. |
-| `test_cluster.py` | 이 workspace가 소유한 일회성 k3d 시험 클러스터에 선택한 GitOps 앱 closure만 올리고, 소유가 입증된 클러스터만 지우는 진입점. 전체·와일드카드·root 선택은 거부한다. |
+| `test_cluster.py` | 이 workspace가 소유한 일회성 k3d 시험 클러스터에 선택한 GitOps 앱 closure만 올리고, 소유가 입증된 클러스터만 지우는 진입점. 전체·와일드카드·root 선택과, 운영자 승인을 `--authority`로 이름 붙이지 않은 `up`은 거부한다. |
 | `work_forecast.py` | 작업 시작 전에 P30/P50/P80 예측을 도구 시계로 고정하고, 시작·결과를 한 번씩 기록한 뒤 유형·시간기준·단위별 coverage와 pinball 손실을 N과 함께 보고하는 로컬 저장소. 수정은 새 revision이며, 취소·실패는 censored로 따로 센다. 예측은 승인·기한·timeout이 아니다. |
 | `work_parallel.py` | 계획의 work unit을 입력·출력·의존성·공유 자원과 함께 받아, 겹치지 않는 unit만 각자의 clone에서 동시에 실행하고 통합 clone에서 통합 검사를 다시 실행하는 dispatcher. 잠금마다 fencing generation을 두어 만료·취소된 시도의 결과를 거부하고, 소유 경로 밖 변경을 거부하며, 동시 서비스 합집합을 `test_cluster.py` 한도로 묶는다. 결과는 `candidate.patch`이며 원본 checkout은 쓰지 않는다. `sweep`은 죽은 dispatcher가 남긴 worker와 clone을 정리한다. clone은 파일 분리일 뿐 sandbox가 아니다. |
 | `review_delta.py` | 검토한 commit 이후의 commit이 Task 기록(`tsk-NNNN-*.md`)과 잔여 원장을 늘리기만 했는지(`EVIDENCE_ONLY`, 검토 유지), 다른 경로를 바꿨는지(`REREVIEW`)를 판정한다. Task에서 front matter의 `version`·`updated` 외 줄 삭제, 원장 항목 변경·제거, 삭제·mode 변경·symlink·gitlink·이력 재작성은 증거가 아니다. 경로만 분류하며, 전이 영향이나 경계 전체로 넓힐지는 검토자가 판단한다(QUAL-R054). |

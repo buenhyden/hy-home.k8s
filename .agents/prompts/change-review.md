@@ -1,6 +1,6 @@
 ---
 title: "Change Review Prompt Contract"
-version: "0.2.0"
+version: "0.3.0"
 type: "governance/prompt"
 status: "draft"
 owner: "platform"
@@ -42,6 +42,11 @@ so the reviewer does not reconstruct it ([QUAL-R055](../governance/quality.md#re
   commit yet has none;
 - the risk class and its reason (QUAL-R016);
 - the acceptance IDs the change claims to meet;
+- for a change to a governance, role, skill or provider file, its Kubernetes
+  impact: the GitOps or infrastructure consumers whose behavior it changes, or
+  `none`. Such a change may select only document checks (for example
+  `.agents/governance/`), so the reviewer checks this statement against
+  `gitops/` and `infrastructure/`;
 - the check results already observed on the candidate commit, with their
   snapshot, which the reviewer does not rerun to repeat a PASS;
 - for a re-review, the reviewed commit, the earlier findings and the
