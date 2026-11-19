@@ -2,7 +2,7 @@
 title: "Reference: AI Agents and Agency-Agents"
 version: "0.1.2"
 type: "reference/research"
-status: "draft"
+status: "published"
 owner: "platform"
 updated: "2026-11-18"
 artifact_id: "RES-0001-m0023"
