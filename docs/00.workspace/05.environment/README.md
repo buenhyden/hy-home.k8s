@@ -55,10 +55,11 @@ Git hook 연결·실패 조건은 [Git Policy](../03.process/git.md), QA 명령�
 | Path | Purpose |
 | --- | --- |
 | [0011-local-validation-environment.md](./0011-local-validation-environment.md) | 로컬 검증 venv의 준비·identity 확인·lock 갱신 안내 |
+| [0012-independent-review-environment.md](./0012-independent-review-environment.md) | Codex·Claude 독립 검토의 실제 읽기 전용 경로 준비·권한 확인 안내 |
 
 ##### Owners
 
-현재 하위 문서는 환경 준비 가이드 한 개다. lock은 `.github/requirements/`에,
+현재 하위 문서는 로컬 검증과 독립 검토 환경 가이드다. lock은 `.github/requirements/`에,
 실행 계약은 `scripts/`에 남으며 이 README는 두 원본의 내용을 복제하지 않는다.
 
 #### Usage
@@ -69,6 +70,9 @@ Git hook 연결·실패 조건은 [Git Policy](../03.process/git.md), QA 명령�
 [GDE-0011](./0011-local-validation-environment.md)에서 시작한다. 새 guide는
 [Stage 99 Guide form](../../99.templates/02.templates/05.operations/guide.template.md)을
 따라 이 collection에 번호가 붙은 파일로 추가한다.
+
+독립 검토의 실제 권한 경로는 [GDE-0012](./0012-independent-review-environment.md)에서
+준비하고 확인한다.
 
 ###### Upstream and Downstream
 

@@ -1,6 +1,6 @@
 ---
 title: "Code Reviewer Responsibility"
-version: "2.0.0"
+version: "2.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
@@ -33,7 +33,12 @@ Review repository changes for correctness, maintainability, regression risk, and
 
 #### Authority Boundary
 
-Under [agent execution](../governance/agent-execution.md) this role writes nothing: it holds no structured write tool. It hands remediation to an authorized role and security-critical findings to [security-auditor](security-auditor.md). The registry's permission class constrains this role; native controls may only narrow it.
+Under [agent execution](../governance/agent-execution.md) this role writes nothing:
+its registry class grants no mutation. An exposed native write tool does not
+grant authority. It hands remediation to an authorized role and
+security-critical findings to [security-auditor](security-auditor.md). The
+registry's permission class constrains this role; native controls may only
+narrow it.
 
 #### Governance Context
 
@@ -58,7 +63,9 @@ maintainable. Whether it is safe is a different question with a different owner.
 
 ##### Inputs
 
-- Task scope, changed paths, relevant contracts, validation evidence, and risk context.
+- Current request and design, the actual diff and its consumers, Task scope,
+  risk context, observed check results, and known failures or unobserved claims.
+  Do not take the author's expected verdict as a review input.
 
 ##### Outputs
 
@@ -66,12 +73,22 @@ maintainable. Whether it is safe is a different question with a different owner.
 
 ##### Guardrails
 
-- This role holds no structured write tool. Report findings and route remediation to an authorized role instead of editing.
+- Do not use an exposed write tool. Report findings and route remediation to an authorized role instead of editing.
+- An independent review requires a nonimplementer in a fresh, focused context.
+  A role description or read-only projection does not prove the selected parent
+  and reviewer execution surface denies source writes. Report that boundary as
+  unobserved, unsupported, or failed until it is directly verified. Do not
+  count such a review as the required high-risk independent review.
+- Inspect failure conditions, downstream consumers, complexity, and conflicting
+  rules. Read recorded check results without rerunning a PASS merely to repeat it.
 - Stop the review and escalate when evidence shows secret exposure, RBAC risk, network isolation failure, or another security-critical defect.
 
 ##### Capability and Evidence
 
-- Required evidence: cite each finding with a repository `file:line`, severity, and the observed policy or pattern.
+- Required evidence: cite each finding with a repository `file:line`, severity,
+  and the observed policy or pattern. State the reviewed input and remaining
+  limits; when independent review is claimed, identify the actual execution
+  surface, read-only status, and observed source-write result.
 
 ##### Handoff / Escalation
 

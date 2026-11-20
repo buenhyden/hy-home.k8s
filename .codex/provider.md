@@ -1,6 +1,6 @@
 ---
 title: "Codex Provider Notes"
-version: "2.0.0"
+version: "2.1.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
@@ -70,11 +70,23 @@ team document, not a special automatic entry filename.
   projection. The client prepared the request without a named permission
   profile and with `workspaceWrite`. Before using this path for a read-only
   role, establish the active parent and reviewer runtime restriction on the
-  exact path. If the path cannot establish it, use a separately authorized
-  review surface with verified read-only enforcement. An independent host CLI
-  check does not establish Desktop enforcement. Apply the
+  exact path: a child role's projected `sandbox_mode` cannot narrow a writable
+  parent. If the path cannot establish it, use a separately authorized
+  read-only parent or full-process review boundary and verify source-write
+  denial there. An independent host CLI check does not establish Desktop
+  enforcement; keep the original failure separate. Apply the
   [approval and safety policy](../docs/00.workspace/04.quality/approval-and-safety.md#requirements)
   when selecting the authorized review surface.
+- On 2026-11-20 a separate Linux host `codex-cli 0.169.0` parent used an
+  explicit profile with root denied, only the copied packet and required
+  executables readable, and network disabled, plus `--ignore-user-config`,
+  `--ephemeral`, and `-a never` for one representative review. In that surface,
+  reading the copied source packet succeeded; a shell source write returned `EROFS`,
+  a read of an existing outside dummy target returned `ENOENT`, network socket
+  creation returned `EPERM`, and a child `apply_patch` was rejected. These
+  observations support source-write denial for that profile and tested calls,
+  not the original Desktop path or native role/model binding. Provider hook
+  delivery and actual charge were not measured in this review.
 - Observed on `codex-cli 0.153.4` (2026-09-06): the client reports `hooks` as a
   stable feature, and the documented surfaces are `.codex/hooks.json` and a
   `[hooks]` table in `.codex/config.toml`. `hooks.json` is adopted; the inline

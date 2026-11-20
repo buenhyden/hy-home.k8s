@@ -1,6 +1,6 @@
 ---
 title: "Change Review Prompt Contract"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/prompt"
 status: "draft"
 owner: "platform"
@@ -29,9 +29,11 @@ platform은 이 prompt 계약을 유지한다. 허용 권한은 [Authority Bound
 
 #### Overview
 
-Identifier `change-review`. Assemble the request that produces a review of a
-local difference before it is committed or handed off, so the same review lens
-is applied each time instead of whatever the session recalls.
+Identifier `change-review`. Assemble a review request for the actual candidate
+before commit or handoff. The local builder collects unstaged and staged diffs;
+the requesting author supplies the base-to-candidate diff when reviewing a
+commit or PR candidate. The review lens follows the current requirement and
+affected consumers, rather than the author's expected conclusion.
 
 #### Authority Boundary
 
@@ -55,21 +57,30 @@ are empty the contract refuses, because there is no difference to review.
 The requesting author also supplies, once, the review packet that Git cannot,
 so the reviewer does not reconstruct it ([QUAL-R055](../../docs/00.workspace/04.quality/quality.md#requirements)):
 
-- the branch and the commit the difference sits on, or the new commit once
-  made, so a later change can be classified against it; a repository with no
-  commit yet has none;
-- the risk class and its reason (QUAL-R016);
-- the acceptance IDs the change claims to meet;
+- the current user request, applicable Spec and design, acceptance IDs, and
+  the concrete behavior expected of affected consumers;
+- the actual candidate and base: branch, commit when one exists, changed paths
+  and the full local or base-to-candidate diff being reviewed;
+- the risk class, impact and authority reason (QUAL-R016), affected permissions
+  and approved cost limits;
 - for a change to a governance, role, skill or provider file, its Kubernetes
   impact: the GitOps or infrastructure consumers whose behavior it changes, or
   `none`. Such a change may select only document checks (for example
   `.agents/governance/`), so the reviewer checks this statement against
   `gitops/` and `infrastructure/`;
-- the check results already observed on the candidate commit, with their
-  snapshot, which the reviewer does not rerun to repeat a PASS;
+- check results already observed on the candidate, with their snapshot, and
+  known failures, unsupported conditions and unobserved scope; the reviewer
+  does not rerun a check to repeat a PASS;
 - for a re-review, the reviewed commit, the earlier findings and the
   `scripts/review_delta.py` result (QUAL-R054);
-- the scope left unreviewed, such as live or provider behavior.
+- the review surface and actual source-write boundary evidence when required.
+
+Start a fresh review context with these inputs, without the implementer's
+proposed verdict or self-evaluation. The reviewer tests reachable failure
+conditions, affected consumers, complexity and rule conflicts. A medium-risk
+review uses a focused non-implementer; a high-risk review also needs the
+verified read-only boundary and relevant domain expertise of QUAL-R015. Do not
+send the same unchanged candidate to two paid providers by default.
 
 #### Output
 
@@ -77,21 +88,29 @@ An ordered finding list, one finding per root cause. Each finding names the
 file and line, states the defect in one sentence, gives the concrete condition
 under which it goes wrong, and carries its grade under
 [QUAL-R053](../../docs/00.workspace/04.quality/quality.md#requirements). A finding without a failure
-condition is a preference and is reported as `NOTE`.
+condition is a preference and is reported as `NOTE`. State the exact reviewed
+candidate and scope, the review surface, enforcement status (`enforced`,
+`failed`, `unobserved`, `unsupported`), observed source-write result
+(`denied`, `allowed`, `unobserved`), and any excluded runtime or consumer scope.
+A review verdict is neither an execution grant nor user acceptance.
 
 #### Validation
 
-Findings are checked against the changed files before they are acted on. A
-finding that names a path outside the changed set, or that neither difference
-supports, is discarded rather than reported.
+Findings are checked against the candidate and affected consumers before they
+are acted on. A finding on an unchanged consumer names the changed cause and
+the reachable failure it introduces. A finding unsupported by either the
+diff or its affected consumer is discarded rather than reported. Recheck only
+the semantic delta and its affected findings after repair; factual evidence
+alone does not cause a new whole review under QUAL-R054.
 
 #### Refusal Conditions
 
 The builder enforces only the empty-subject refusal; the requesting agent
 enforces the remaining conditions below.
 
-- Both differences are empty, so there is nothing to review. An untracked-only
-  path set does not establish a reviewable difference.
+- Both builder differences are empty, so that local builder has nothing to
+  review. An untracked-only path set does not establish a reviewable diff;
+  supply the actual content or a commit candidate for review.
 - The request asks for a verdict on live cluster, hosted, or provider-runtime
   behavior, which a local difference cannot establish.
 - The request asks to review content the approval boundary excludes from

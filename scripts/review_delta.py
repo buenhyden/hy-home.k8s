@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """Decide what a change after a reviewed commit needs (W10-REVIEW, QUAL-R054).
 
-A review covers one commit. When later commits only append evidence, the
-review still stands and no new review is replayed. When any other path
-changes, only those paths and the findings they touch need review again.
+A review covers one commit. When later commits only append factual Task check
+rows, the review still stands. Other changes need review of the changed paths
+and the findings they touch.
 
-Evidence is a regular `tsk-NNNN-*.md` record in a Spec package's `01.tasks/`
-folder, or the work residue ledger, that only grows: a Task record may delete
-no line except its front matter `version` and `updated`, and the ledger keeps
-every earlier entry unchanged. Any other file in `01.tasks/` (such as a folder
-`CLAUDE.md`), a deletion, a mode change, a symlink, a gitlink or any other
-path is not evidence, so the exception cannot hide a change in behavior.
+Evidence is an added factual row at the end of an existing Task's Verification
+Evidence / Results table, with optional front matter `version` and `updated`
+value changes. Authority and acceptance receipts, new Tasks and residue ledger
+changes can change obligations and need review. Any other file in `01.tasks/`
+(such as a folder `CLAUDE.md`), a deletion, a mode change, a symlink, a gitlink
+or any other path is not evidence.
 Rewritten history (the reviewed commit is no longer an ancestor) needs a full
 review. The tool classifies changed paths only; whether a change widens the
 review to its transitive impact or a whole boundary is the reviewer's call.
@@ -29,8 +29,13 @@ import sys
 from pathlib import Path
 
 TASK = re.compile(r"docs/03\.specs/[^/]+/01\.tasks/tsk-[0-9]{4}-[^/]+\.md")
-LEDGER = "docs/03.specs/work-residue-ledger.json"
-FRONT_MATTER = re.compile(r'(?:version|updated): "[^"\n]*"')
+FRONT_MATTER = re.compile(r'(version|updated): "[^"\n]*"')
+EVIDENCE_ID = re.compile(r"EVD-(?:[A-Z0-9]+-)*[0-9]{3}")
+# shortcut: lexical cues cannot decide all prose semantics; reviewers resolve ambiguous rows.
+SEMANTIC_ROW = re.compile(
+    r"\b(?:approv\w*|accept\w*|adopt\w*|authori\w*|requirement\w*|promot\w*)\b",
+    re.IGNORECASE,
+)
 REGULAR = "100644"
 OUTPUT_LIMIT = 16 * 1024 * 1024
 
@@ -73,37 +78,75 @@ def _front_matter_end(lines: list[str]) -> int:
     return 0
 
 
-def _grows(root: Path, old: str, new: str, path: str) -> bool:
-    """Whether an evidence file only gained content, read from the two blobs.
+def _evidence_end(lines: list[str]) -> int | None:
+    """Insertion point after the existing Task check table, if unambiguous."""
+    section = results = False
+    found = []
+    for index, line in enumerate(lines):
+        heading = re.fullmatch(r"#{2,6} (.+)", line)
+        if heading:
+            title = heading.group(1)
+            if title == "Verification Evidence":
+                section, results = True, False
+            elif title == "Results" and section:
+                results = True
+            else:
+                section = results = False
+        elif results and line.startswith("| Evidence ID |"):
+            if index + 1 >= len(lines) or not lines[index + 1].startswith("| ---"):
+                return None
+            end = index + 2
+            while end < len(lines) and lines[end].startswith("|"):
+                end += 1
+            found.append(end)
+    return found[0] if len(found) == 1 else None
 
-    Diff text is never parsed: a NUL makes git print a binary notice, and a
-    deleted line that starts with `--` looks like a header.
-    """
+
+def _factual_row(line: str) -> bool:
+    parts = line.split("|")
+    if len(parts) != 14 or parts[0] or parts[-1]:
+        return False
+    cells = [part.strip() for part in parts[1:-1]]
+    return bool(
+        EVIDENCE_ID.fullmatch(cells[0])
+        and cells[3] in {"automated", "review", "observation"}
+        and cells[6]
+        and not SEMANTIC_ROW.search(line)
+        and not re.search(r'"(?:actor|accepted_by)"\s*:', line)
+    )
+
+
+def _grows(root: Path, old: str, new: str, path: str) -> bool:
+    """Whether the Task only gained factual check rows, read from both blobs."""
     before, after = _blob(root, old, path), _blob(root, new, path)
     if before is None or after is None or b"\0" in before or b"\0" in after:
         return False
-    if path == LEDGER:
-        try:
-            first, second = json.loads(before), json.loads(after)
-            entries = [first.pop("entries"), second.pop("entries")]
-            kept = {json.dumps(e, sort_keys=True) for e in entries[1]}
-            return first == second and all(
-                json.dumps(e, sort_keys=True) in kept for e in entries[0]
-            )
-        except (ValueError, AttributeError, TypeError, KeyError):
-            return False
     try:
         old_lines = before.decode().splitlines()
         new_lines = after.decode().splitlines()
     except UnicodeDecodeError:
         return False
     limit = _front_matter_end(old_lines)
+    evidence_end = _evidence_end(old_lines)
+    if not limit or evidence_end is None:
+        return False
     matcher = difflib.SequenceMatcher(None, old_lines, new_lines, autojunk=False)
-    for tag, i1, i2, _, _ in matcher.get_opcodes():
-        if tag in ("delete", "replace"):
-            for index in range(i1, i2):
-                if index >= limit or not FRONT_MATTER.fullmatch(old_lines[index]):
-                    return False
+    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        if tag == "equal":
+            continue
+        if tag == "insert" and i1 == evidence_end:
+            if all(_factual_row(line) for line in new_lines[j1:j2]):
+                continue
+        elif tag == "replace" and i2 <= limit and i2 - i1 == j2 - j1:
+            prior = [FRONT_MATTER.fullmatch(line) for line in old_lines[i1:i2]]
+            later = [FRONT_MATTER.fullmatch(line) for line in new_lines[j1:j2]]
+            if (
+                all(prior)
+                and all(later)
+                and [x.group(1) for x in prior] == [x.group(1) for x in later]
+            ):
+                continue
+        return False
     return True
 
 
@@ -132,10 +175,10 @@ def classify(root: Path, reviewed: str, head: str = "HEAD") -> dict:
         old_mode, new_mode, _, _, status = meta.decode().lstrip(":").split()
         name = path.decode(errors="surrogateescape")
         evidence = (
-            (TASK.fullmatch(name) or name == LEDGER)
+            TASK.fullmatch(name)
             and new_mode == REGULAR
-            and (status, old_mode) in (("A", "000000"), ("M", REGULAR))
-            and (status == "A" or _grows(root, old, new, name))
+            and (status, old_mode) == ("M", REGULAR)
+            and _grows(root, old, new, name)
         )
         result["evidence" if evidence else "rereview"].append(name)
     if not result["rereview"] and not result["evidence"]:
@@ -146,7 +189,7 @@ def classify(root: Path, reviewed: str, head: str = "HEAD") -> dict:
     return {
         **result,
         "verdict": "EVIDENCE_ONLY",
-        "reason": "only evidence was appended; the review of the reviewed commit stands",
+        "reason": "only factual-looking check rows were appended; confirm their meaning before carrying the review",
     }
 
 

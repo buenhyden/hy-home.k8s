@@ -21,7 +21,7 @@
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
     "schema_version": {
-      "const": "22.1.0"
+      "const": "22.2.0"
     },
     "common_document_contract": {
       "description": "Local candidate binding to the separate WORKSPACE-DOCUMENT-CORE contract; it records no approval or user acceptance.",
@@ -50,9 +50,9 @@
         "workspace_scope_artifact_ids": {
           "type": "array",
           "uniqueItems": true,
-          "minItems": 5,
-          "maxItems": 5,
-          "items": {"enum": ["REQ-0003", "SPEC-0226", "SPEC-0227", "AD-0006", "GDE-0011"]}
+          "minItems": 7,
+          "maxItems": 7,
+          "items": {"enum": ["REQ-0003", "SPEC-0226", "SPEC-0227", "AD-0006", "GDE-0011", "SPEC-0228", "GDE-0012"]}
         },
         "profile_kinds": {
           "type": "object",

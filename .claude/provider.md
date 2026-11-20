@@ -1,6 +1,6 @@
 ---
 title: "Claude Provider Notes"
-version: "2.0.0"
+version: "2.1.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
@@ -136,10 +136,30 @@ invocation. The common procedure retains the selected role and user scope.
   latter with the sub-agent's own transcript path. `PreCompact` delivery stays
   unobserved.
 - Here the `read-only-evidence` permission class withholds the structured
-  write tools while leaving a shell available, so a shell write is prohibited
-  by policy and observed advisorily rather than blocked. How this differs from
-  Codex, and why it is not parity, is owned by
+  write tools while leaving `Bash` available for search. Its shell write
+  prohibition and pre-edit observation are advisory, not a source-write
+  boundary. A high-risk independent reviewer needs a separately verified
+  read-only parent or full-process boundary that also covers file tools, MCP,
+  and hooks; the role projection alone cannot establish that result. Report
+  an unavailable or failed boundary for its actual execution surface. How
+  this differs from Codex is owned by
   [SAFE-R018](../.agents/governance/approval-and-safety.md#execution-controls).
+- The installed Claude CLI 2.1.328 advertises `--restricted`, `--safe-mode`,
+  `--strict-mcp-config`, and `--tools`. The selected P06 review route uses a
+  separate parent over a disposable packet directory with `--restricted`,
+  `--safe-mode`, `--strict-mcp-config`, and `--tools Read`. Restricted mode
+  excludes command/code tools unless explicitly re-added, confines file tools
+  to the working directory, and ignores user, project and local settings;
+  safe mode removes custom agents, plugins and hooks except managed ones.
+  An explicit empty MCP config is supplied with strict mode; check the
+  effective tools and managed hooks. The ordinary review uses `--tools Read`.
+  A separate dummy-write diagnostic may expose `Read,Write` with `Read`
+  allowed, `dontAsk` and `mcp__*` denied, then return to the ordinary route.
+  The packet supplies the current role and review inputs explicitly. This is
+  an advertised configuration path, not evidence that it ran or denied a write.
+  The [environment index](../docs/00.workspace/05.environment/README.md)
+  routes the procedure, and the [Stage 03 index](../docs/03.specs/README.md)
+  routes the Task that records actual boundary and focused-review observations.
 - Claude loads root `CLAUDE.md`, not a folder `AGENTS.md`: with a `CLAUDE.md`
   present, Claude Code 2.1.319 reads no `AGENTS.md`, and the setting that loads
   both is ignored in project settings (observed 2026-11-06). Each folder that

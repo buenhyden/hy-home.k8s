@@ -29,6 +29,17 @@ LEDGER_ONE = '{"entries": [{"id": "A-1", "state": "open"}]}\n'
 LEDGER_TWO = (
     '{"entries": [{"id": "A-1", "state": "open"}, {"id": "B-1", "state": "open"}]}\n'
 )
+EVIDENCE_HEADER = (
+    "## Verification Evidence\n### Results\n"
+    "| Evidence ID | Criteria | Work Unit | Method | Input | Tool and Config | Command | Exit | Result | Location | Required | Resolves |\n"
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+)
+EVD_ONE = "| EVD-001 | AC-1 | WORK-001 | automated | fixture | none | Check fixture | 0 | PASS | here | true | none |\n"
+EVD_TWO = "| EVD-002 | AC-1 | WORK-001 | automated | fixture | none | Check fixture | 0 | PASS | here | true | none |\n"
+
+
+def task_text(rows: str = EVD_ONE, *, version: str = "0.1.0") -> str:
+    return f'---\nversion: "{version}"\nupdated: "2026-11-20"\n---\n{EVIDENCE_HEADER}{rows}'
 
 
 class ReviewDeltaTest(unittest.TestCase):
@@ -37,7 +48,7 @@ class ReviewDeltaTest(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
         self.git("init", "--quiet", "--initial-branch=main")
-        self.write(TASK, '---\nversion: "0.1.0"\n---\n| EVD-001 | PASS |\n')
+        self.write(TASK, task_text())
         self.write(LEDGER, LEDGER_ONE)
         self.write("scripts/tool.py", "print('a')\n")
         self.reviewed = self.commit("reviewed")
@@ -71,18 +82,85 @@ class ReviewDeltaTest(unittest.TestCase):
 
     def test_appended_evidence_keeps_the_review(self):
         self.write(
-            TASK, '---\nversion: "0.1.1"\n---\n| EVD-001 | PASS |\n| EVD-002 | PASS |\n'
+            TASK,
+            task_text(EVD_ONE + EVD_TWO, version="0.1.1").replace(
+                'updated: "2026-11-20"', 'updated: "2026-11-21"'
+            ),
         )
-        self.write(LEDGER, LEDGER_TWO)
         self.commit("evidence")
         result = self.classify()
         self.assertEqual(result["verdict"], "EVIDENCE_ONLY")
-        self.assertEqual(sorted(result["evidence"]), sorted([LEDGER, TASK]))
+        self.assertEqual(result["evidence"], [TASK])
+
+    def test_factual_row_before_a_following_section_keeps_the_review(self):
+        following = "\n### Residue Handoff\n| ID | State |\n| --- | --- |\n"
+        self.write(TASK, task_text() + following)
+        self.reviewed = self.commit("reviewed task with following section")
+        self.write(TASK, task_text(EVD_ONE + EVD_TWO) + following)
+        self.commit("factual result")
+        self.assertEqual(self.classify()["evidence"], [TASK])
+
+    def test_factual_evidence_in_other_table_or_prose_needs_review(self):
+        for text in (
+            task_text() + "New acceptance condition.\n",
+            task_text() + "\n## Acceptance Decision\n" + EVD_TWO,
+            task_text() + "\n| Requirement | New rule |\n",
+        ):
+            with self.subTest(text=text[-45:]):
+                self.git("reset", "--quiet", "--hard", self.reviewed)
+                self.write(TASK, text)
+                self.commit("semantic task addition")
+                self.assertEqual(self.classify()["rereview"], [TASK])
+
+    def test_authority_receipt_cannot_hide_in_an_evidence_row(self):
+        for command in (
+            "Scoped execution approval",
+            "Spec/Plan first-record approval",
+            "Criterion acceptance",
+            "Requirement adoption",
+            "Authority granted",
+        ):
+            with self.subTest(command=command):
+                self.git("reset", "--quiet", "--hard", self.reviewed)
+                self.write(
+                    TASK, task_text(EVD_ONE + EVD_TWO.replace("Check fixture", command))
+                )
+                self.commit("authority receipt")
+                self.assertEqual(self.classify()["rereview"], [TASK])
+
+    def test_normative_evidence_payload_needs_review(self):
+        self.write(
+            TASK,
+            task_text(
+                EVD_ONE
+                + EVD_TWO.replace(
+                    "| fixture | none |", "| New requirement grants access | none |"
+                )
+            ),
+        )
+        self.commit("semantic evidence payload")
+        self.assertEqual(self.classify()["rereview"], [TASK])
+
+    def test_metadata_addition_or_owner_replacement_needs_review(self):
+        for text in (
+            task_text().replace(
+                'updated: "2026-11-20"', 'owner: "other"\nupdated: "2026-11-20"'
+            ),
+            task_text().replace('updated: "2026-11-20"', 'status: "approved"'),
+        ):
+            with self.subTest(text=text[:80]):
+                self.git("reset", "--quiet", "--hard", self.reviewed)
+                self.write(TASK, text)
+                self.commit("metadata semantic change")
+                self.assertEqual(self.classify()["rereview"], [TASK])
+
+    def test_ledger_new_obligation_needs_review(self):
+        self.write(LEDGER, LEDGER_TWO)
+        self.commit("new residue obligation")
+        self.assertEqual(self.classify()["rereview"], [LEDGER])
 
     def test_any_other_path_needs_rereview_of_that_path_only(self):
-        self.write(
-            TASK, '---\nversion: "0.1.0"\n---\n| EVD-001 | PASS |\n| EVD-002 | PASS |\n'
-        )
+        self.write(TASK, task_text(EVD_ONE + EVD_TWO))
         self.write("scripts/tool.py", "print('b')\n")
         self.commit("code and evidence")
         result = self.classify()
@@ -110,8 +188,8 @@ class ReviewDeltaTest(unittest.TestCase):
 
     def test_evidence_must_only_grow(self):
         cases = {
-            "deleted row": '---\nversion: "0.1.0"\n---\n',
-            "flipped result": '---\nversion: "0.1.0"\n---\n| EVD-001 | FAIL |\n',
+            "deleted row": task_text(""),
+            "flipped result": task_text(EVD_ONE.replace("PASS", "FAIL")),
         }
         for name, text in cases.items():
             with self.subTest(name):
@@ -139,11 +217,9 @@ class ReviewDeltaTest(unittest.TestCase):
                 self.commit(name)
                 self.assertEqual(self.classify()["verdict"], "REREVIEW", name)
         self.git("reset", "--quiet", "--hard", self.reviewed)
-        self.write(
-            "docs/03.specs/0001-x/01.tasks/tsk-0002-y.md", "| EVD-001 | PASS |\n"
-        )
+        self.write("docs/03.specs/0001-x/01.tasks/tsk-0002-y.md", task_text())
         self.commit("new task")
-        self.assertEqual(self.classify()["verdict"], "EVIDENCE_ONLY")
+        self.assertEqual(self.classify()["verdict"], "REREVIEW")
 
     def test_special_entries_are_never_evidence(self):
         task_link = "docs/03.specs/0001-x/01.tasks/tsk-0003-z.md"
@@ -166,7 +242,7 @@ class ReviewDeltaTest(unittest.TestCase):
         os.chmod(self.root / TASK, 0o755)
         self.reviewed = self.commit("executable task")
         os.chmod(self.root / TASK, 0o644)
-        self.write(TASK, '---\nversion: "0.1.0"\n---\n| EVD-001 | PASS |\n| E2 |\n')
+        self.write(TASK, task_text(EVD_ONE + EVD_TWO))
         self.commit("regular again")
         self.assertEqual(self.classify()["verdict"], "REREVIEW")
 
@@ -177,15 +253,15 @@ class ReviewDeltaTest(unittest.TestCase):
         self.assertIn("no path changed", result["reason"])
 
     def test_growth_is_read_from_the_blobs_not_the_diff_text(self):
-        body = '---\nversion: "0.1.0"\n---\n| EVD-001 | PASS |\n'
+        body = task_text()
         cases = {
-            "removed delimiter": ('version: "0.1.0"\n---\n| EVD-001 | PASS |\n', body),
-            "removed dash line": (body + "| E2 |\n", body + "-- keep\n"),
+            "removed delimiter": (body.replace("---\n", "", 1), body),
+            "removed dash line": (body + "-- keep\n", body + EVD_TWO),
             "version line outside front matter": (
-                body + "| E2 |\n",
+                body + EVD_TWO,
                 body + 'version: "9"\n',
             ),
-            "binary task": (body + "\0| E2 |\n", body),
+            "binary task": (body + "\0" + EVD_TWO, body),
         }
         for name, (after, before) in cases.items():
             with self.subTest(name):
@@ -208,7 +284,7 @@ class ReviewDeltaTest(unittest.TestCase):
                 self.assertEqual(self.classify()["verdict"], "REREVIEW", name)
 
     def test_rewritten_history_needs_a_full_review(self):
-        self.write(TASK, "| EVD-001 | PASS |\n| EVD-002 | PASS |\n")
+        self.write(TASK, task_text(EVD_ONE + EVD_TWO))
         self.git("add", "-A")
         self.git("commit", "--quiet", "--amend", "-m", "amended")
         result = self.classify()
