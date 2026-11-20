@@ -2405,6 +2405,9 @@ _ATX_HEADING = re.compile(r" {0,3}(#{1,6})(?:[ \t]+(.*?))?(?:[ \t]+#+)?[ \t]*")
 _EXPLICIT_ANCHOR = re.compile(
     r"""<[A-Za-z][^<>]*?\b(?:id|name)\s*=\s*(?:"([^"]+)"|'([^']+)')"""
 )
+_HTML_TAG_START = re.compile(r"</?[A-Za-z][A-Za-z0-9-]*\b")
+_ANCHOR_HTML_TOKEN = re.compile(r"</?a\b", re.IGNORECASE)
+_EMPTY_EXPLICIT_ANCHOR_LINE = re.compile(r"""<a (?:id|name)="[^"'<>=\s]+"></a>""")
 
 
 def _heading_slug(heading: str) -> str:
@@ -2529,6 +2532,44 @@ def _fragment_diagnostic(
     )
 
 
+def _explicit_anchor_shape_diagnostics(
+    source: PurePosixPath, profile: str, text: str
+) -> list[Diagnostic]:
+    """Constrain MD033's a-element allowance to empty fragment anchors."""
+
+    text = _FRONTMATTER_BLOCK.sub("", text, count=1)
+    # Mark tag starts as text so raw HTML blocks cannot hide nested a tags.
+    marker = "\ue000"
+    while marker in text:
+        marker += "\ue000"
+    marked = _HTML_TAG_START.sub(
+        lambda match: match.group(0)[:-1] + marker + match.group(0)[-1], text
+    )
+    visible = _mask_inline_code_spans(
+        _rendered_markdown(marked)
+        .replace("<" + marker, "<")
+        .replace("</" + marker, "</")
+    )
+    for line_number, line in enumerate(visible.splitlines(), 1):
+        tokens = (
+            match
+            for match in _ANCHOR_HTML_TOKEN.finditer(line)
+            if not _source_character_escaped(line, match.start())
+        )
+        if not any(tokens) or _EMPTY_EXPLICIT_ANCHOR_LINE.fullmatch(line.strip()):
+            continue
+        return [
+            _diag(
+                "HTML-ANCHOR-SHAPE",
+                source,
+                profile,
+                'only a standalone empty <a id="fragment"></a> or name anchor',
+                f"unsupported visible a element on rendered line {line_number}",
+            )
+        ]
+    return []
+
+
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     registry = context.current_registry or load_registry(context.root)
@@ -2541,6 +2582,9 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
 
     for source in context.paths:
         profile = context.profiles[source].profile_id
+        diagnostics.extend(
+            _explicit_anchor_shape_diagnostics(source, profile, context.texts[source])
+        )
         diagnostics.extend(
             _stage_reference_diagnostics(source, profile, context.texts[source])
         )
